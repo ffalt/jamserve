@@ -4,9 +4,9 @@
   "author": "ffalt",
   "license": "MIT",
   "description": "jamserve streaming audio server",
-  "repository": {
-    "type": "git+ssh",
-    "url": "git@lab.dingshirn.de:2224/jam/serve.git"
+   "repository": {
+    "type": "git",
+    "url": "https://github.com/ffalt/jamserve.git"
   },
   "bin": {
     "jamserve": "./dist/bundle.js"
