@@ -12,6 +12,7 @@ This is the backend development repository. Web-Client, Installation & Usage Scr
 
 Features:
 * API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
+* API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/master/src/model/jam-openapi-0.1.0.json)
 * Enhance Metadata via Musicbrainz, LastFM, Chartlyrics & AcoustID
 * Database Support for NeDB or ElasticSearch
 
