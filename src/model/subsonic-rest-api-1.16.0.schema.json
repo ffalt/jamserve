@@ -1,0 +1,4661 @@
+{
+	"type": "object",
+	"properties": {
+		"GET": {
+			"type": "object",
+			"properties": {
+				"addChatMessage.view": {
+					"description": "Chat: Adds a message to the chat log.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ChatMessage"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"changePassword.view": {
+					"description": "User: Changes the password of an existing Subsonic user, using the following parameters. You can only change your own password unless you have admin privileges.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ChangePassword"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"createBookmark.view": {
+					"description": "Bookmarks: Creates or updates a bookmark (a position within a media file). Bookmarks are personal and not visible to other users.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Bookmark"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"createPlaylist.view": {
+					"description": "Playlists: Creates (or updates) a playlist.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.PlaylistCreate"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"playlist": {
+									"$ref": "#/definitions/Subsonic.PlaylistWithSongs"
+								}
+							},
+							"required": [
+								"playlist"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"createPodcastChannel.view": {
+					"description": "Podcast: Adds a new Podcast channel.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.PodcastChannel"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"podcast"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"podcast"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"createShare.view": {
+					"description": "Sharing: Creates a public URL that can be used by anyone to stream music or video from the Subsonic server. The URL is short and suitable for posting on Facebook, Twitter etc.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Share"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"share"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"share"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"createUser.view": {
+					"description": "User: Creates a new Subsonic user.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.CreateUser"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"deleteBookmark.view": {
+					"description": "Bookmarks: Deletes the bookmark for a given file.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"deleteInternetRadioStation.view": {
+					"description": "InternetRadio: Deletes an existing internet radio station.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"deletePlaylist.view": {
+					"description": "Playlists: Deletes a saved playlist.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"deletePodcastChannel.view": {
+					"description": "Podcast: Deletes a Podcast channel.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"podcast"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"podcast"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"deletePodcastEpisode.view": {
+					"description": "Podcast: Deletes a Podcast episode.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"podcast"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"podcast"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"deleteShare.view": {
+					"description": "Sharing: Deletes an existing share.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"deleteUser.view": {
+					"description": "User: Deletes an existing Subsonic user.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Username"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"downloadPodcastEpisode.view": {
+					"description": "Podcast: Request the server to start downloading a given Podcast episode.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"podcast"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"podcast"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"getAlbum.view": {
+					"description": "Browsing: Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"album": {
+									"$ref": "#/definitions/Subsonic.AlbumWithSongsID3"
+								}
+							},
+							"required": [
+								"album"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getAlbumInfo.view": {
+					"description": "Browsing: Returns album notes, image URLs etc, using data from last.fm.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"albumInfo": {
+									"$ref": "#/definitions/Subsonic.AlbumInfo"
+								}
+							},
+							"required": [
+								"albumInfo"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getAlbumInfo2.view": {
+					"description": "Browsing: Similar to getAlbumInfo, but organizes music according to ID3 tags.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"albumInfo": {
+									"$ref": "#/definitions/Subsonic.AlbumInfo"
+								}
+							},
+							"required": [
+								"albumInfo"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getAlbumList.view": {
+					"description": "Lists: Returns a list of random, newest, highest rated etc. albums. Similar to the album lists on the home page of the Subsonic web interface.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.AlbumList"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"albumList": {
+									"$ref": "#/definitions/Subsonic.AlbumList"
+								}
+							},
+							"required": [
+								"albumList"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getAlbumList2.view": {
+					"description": "Lists: Similar to getAlbumList, but organizes music according to ID3 tags.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.AlbumList2"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"albumList2": {
+									"$ref": "#/definitions/Subsonic.AlbumList2"
+								}
+							},
+							"required": [
+								"albumList2"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getArtist.view": {
+					"description": "Browsing: Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"artist": {
+									"$ref": "#/definitions/Subsonic.ArtistWithAlbumsID3"
+								}
+							},
+							"required": [
+								"artist"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getArtistInfo.view": {
+					"description": "Browsing: Returns artist info with biography, image URLs and similar artists, using data from last.fm.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ArtistInfo"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"artistInfo": {
+									"$ref": "#/definitions/Subsonic.ArtistInfo"
+								}
+							},
+							"required": [
+								"artistInfo"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getArtistInfo2.view": {
+					"description": "Browsing: Similar to getArtistInfo, but organizes music according to ID3 tags.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ArtistInfo"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"artistInfo2": {
+									"$ref": "#/definitions/Subsonic.ArtistInfo2"
+								}
+							},
+							"required": [
+								"artistInfo2"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getArtists.view": {
+					"description": "Browsing: Similar to getIndexes, but organizes music according to ID3 tags.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.MusicFolderID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"artists": {
+									"$ref": "#/definitions/Subsonic.ArtistsID3"
+								}
+							},
+							"required": [
+								"artists"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getBookmarks.view": {
+					"description": "Bookmarks: Returns all bookmarks for this user. A bookmark is a position within a certain media file.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"bookmarks": {
+									"$ref": "#/definitions/Subsonic.Bookmarks"
+								}
+							},
+							"required": [
+								"bookmarks"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"getChatMessages.view": {
+					"description": "Chat: Returns the current visible (non-expired) chat messages.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ChatMessages"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"chatMessages": {
+									"$ref": "#/definitions/Subsonic.ChatMessages"
+								}
+							},
+							"required": [
+								"chatMessages"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getGenres.view": {
+					"description": "Browsing: Returns all genres.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"genres": {
+									"$ref": "#/definitions/Subsonic.Genres"
+								}
+							},
+							"required": [
+								"genres"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"getIndexes.view": {
+					"description": "Browsing: Returns an indexed structure of all artists.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Indexes"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"indexes": {
+									"$ref": "#/definitions/Subsonic.Indexes"
+								}
+							},
+							"required": [
+								"indexes"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getInternetRadioStations.view": {
+					"description": "InternetRadio: Returns all internet radio stations.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"internetRadioStations": {
+									"$ref": "#/definitions/Subsonic.InternetRadioStations"
+								}
+							},
+							"required": [
+								"internetRadioStations"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"createInternetRadioStation.view": {
+					"description": "InternetRadio: Adds a new internet radio station.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.InternetRadioCreate"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"updateInternetRadioStation.view": {
+					"description": "InternetRadio: Updates an existing internet radio station.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.InternetRadioUpdate"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"getLicense.view": {
+					"description": "System: Get details about the software license.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"license": {
+									"$ref": "#/definitions/Subsonic.License"
+								}
+							},
+							"required": [
+								"license"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"getLyrics.view": {
+					"description": "MediaRetrieval: Searches for and returns lyrics for a given song.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Lyrics"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"lyrics": {
+									"$ref": "#/definitions/Subsonic.Lyrics"
+								}
+							},
+							"required": [
+								"lyrics"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getMusicDirectory.view": {
+					"description": "Browsing: Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"directory": {
+									"$ref": "#/definitions/Subsonic.Directory"
+								}
+							},
+							"required": [
+								"directory"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getMusicFolders.view": {
+					"description": "Browsing: Returns all configured top-level music folders.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"musicFolders": {
+									"$ref": "#/definitions/Subsonic.MusicFolders"
+								}
+							},
+							"required": [
+								"musicFolders"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"getNewestPodcasts.view": {
+					"description": "Podcast: Returns the most recently published Podcast episodes.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.PodcastEpisodesNewest"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"newestPodcasts": {
+									"$ref": "#/definitions/Subsonic.NewestPodcasts"
+								}
+							},
+							"required": [
+								"newestPodcasts"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getNowPlaying.view": {
+					"description": "Lists: Returns what is currently being played by all users.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"nowPlaying": {
+									"$ref": "#/definitions/Subsonic.NowPlaying"
+								}
+							},
+							"required": [
+								"nowPlaying"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"getPlaylist.view": {
+					"description": "Playlists: Returns a listing of files in a saved playlist.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"playlist": {
+									"$ref": "#/definitions/Subsonic.PlaylistWithSongs"
+								}
+							},
+							"required": [
+								"playlist"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getPlaylists.view": {
+					"description": "Playlists: Returns all playlists a user is allowed to play.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Playlists"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"playlists": {
+									"$ref": "#/definitions/Subsonic.Playlists"
+								}
+							},
+							"required": [
+								"playlists"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getPlayQueue.view": {
+					"description": "Bookmarks: Returns the state of the play queue for this user (as set by savePlayQueue). This includes the tracks in the play queue, the currently playing track, and the position within this track. Typically used to allow a user to move between different clients/apps while retaining the same play queue (for instance when listening to an audio book).",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"playQueue": {
+									"$ref": "#/definitions/Subsonic.PlayQueue"
+								}
+							},
+							"required": [
+								"playQueue"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"getPodcasts.view": {
+					"description": "Podcast: Returns all Podcast channels the server subscribes to, and (optionally) their episodes. This method can also be used to return details for only one channel - refer to the id parameter. A typical use case for this method would be to first retrieve all channels without episodes, and then retrieve all episodes for the single channel the user selects.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.PodcastChannels"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"podcasts": {
+									"$ref": "#/definitions/Subsonic.Podcasts"
+								}
+							},
+							"required": [
+								"podcasts"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getRandomSongs.view": {
+					"description": "Lists: Returns random songs matching the given criteria.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.RandomSong"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"randomSongs": {
+									"$ref": "#/definitions/Subsonic.Songs"
+								}
+							},
+							"required": [
+								"randomSongs"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getScanStatus.view": {
+					"description": "Library: Returns the current status for media library scanning.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"scanStatus": {
+									"$ref": "#/definitions/Subsonic.ScanStatus"
+								}
+							},
+							"required": [
+								"scanStatus"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"startScan.view": {
+					"description": "Library: Initiates a rescan of the media libraries.",
+					"type": "object",
+					"properties": {}
+				},
+				"getShares.view": {
+					"description": "Sharing: Returns information about shared media this user is allowed to manage.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"shares": {
+									"$ref": "#/definitions/Subsonic.Shares"
+								}
+							},
+							"required": [
+								"shares"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"getSimilarSongs.view": {
+					"description": "Browsing: Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.SimilarSongs"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"similarSongs": {
+									"$ref": "#/definitions/Subsonic.SimilarSongs"
+								}
+							},
+							"required": [
+								"similarSongs"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getSimilarSongs2.view": {
+					"description": "Browsing: Similar to getSimilarSongs, but organizes music according to ID3 tags.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.SimilarSongs"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"similarSongs2": {
+									"$ref": "#/definitions/Subsonic.SimilarSongs2"
+								}
+							},
+							"required": [
+								"similarSongs2"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getSong.view": {
+					"description": "Browsing: Returns details for a song.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"song": {
+									"$ref": "#/definitions/Subsonic.Child"
+								}
+							},
+							"required": [
+								"song"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getSongsByGenre.view": {
+					"description": "Lists: Returns songs in a given genre.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.SongsByGenre"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"songsByGenre": {
+									"$ref": "#/definitions/Subsonic.Songs"
+								}
+							},
+							"required": [
+								"songsByGenre"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getStarred.view": {
+					"description": "Lists: Returns starred songs, albums and artists.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.MusicFolderID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"starred": {
+									"$ref": "#/definitions/Subsonic.Starred"
+								}
+							},
+							"required": [
+								"starred"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getStarred2.view": {
+					"description": "Lists: Similar to getStarred, but organizes music according to ID3 tags.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.MusicFolderID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"starred2": {
+									"$ref": "#/definitions/Subsonic.Starred2"
+								}
+							},
+							"required": [
+								"starred2"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getTopSongs.view": {
+					"description": "Browsing: Returns top songs for the given artist, using data from last.fm.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.TopSongs"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"topSongs": {
+									"$ref": "#/definitions/Subsonic.TopSongs"
+								}
+							},
+							"required": [
+								"topSongs"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getUser.view": {
+					"description": "User: Get details about a given user, including which authorization roles and folder access it has. Can be used to enable/disable certain features in the client, such as jukebox control.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Username"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"user": {
+									"$ref": "#/definitions/Subsonic.User"
+								}
+							},
+							"required": [
+								"user"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getUsers.view": {
+					"description": "User: Get details about all users, including which authorization roles and folder access they have.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"users": {
+									"$ref": "#/definitions/Subsonic.Users"
+								}
+							},
+							"required": [
+								"users"
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"result",
+						"roles"
+					]
+				},
+				"getVideoInfo.view": {
+					"description": "Browsing: Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.ID"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"videoInfo": {
+									"$ref": "#/definitions/Subsonic.VideoInfo"
+								}
+							},
+							"required": [
+								"videoInfo"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"getVideos.view": {
+					"description": "Browsing: Returns all video files.",
+					"type": "object",
+					"properties": {
+						"result": {
+							"type": "object",
+							"properties": {
+								"videos": {
+									"$ref": "#/definitions/Subsonic.Videos"
+								}
+							},
+							"required": [
+								"videos"
+							]
+						}
+					},
+					"required": [
+						"result"
+					]
+				},
+				"jukeboxControl.view": {
+					"description": "Jukebox: Controls the jukebox, i.e., playback directly on the server's audio hardware. Note: The user must be authorized to control the jukebox.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Jukebox"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"jukeboxStatus": {
+									"$ref": "#/definitions/Subsonic.JukeboxStatus"
+								}
+							},
+							"required": [
+								"jukeboxStatus"
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"jukebox"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"jukebox"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"result",
+						"roles"
+					]
+				},
+				"ping.view": {
+					"description": "System: Used to test connectivity with the server.",
+					"type": "object",
+					"properties": {}
+				},
+				"refreshPodcasts.view": {
+					"description": "Podcast: Requests the server to check for new Podcast episodes.",
+					"type": "object",
+					"properties": {
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"podcast"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"podcast"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"roles"
+					]
+				},
+				"savePlayQueue.view": {
+					"description": "Bookmarks: Saves the state of the play queue for this user. This includes the tracks in the play queue, the currently playing track, and the position within this track. Typically used to allow a user to move between different clients/apps while retaining the same play queue (for instance when listening to an audio book).",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.PlayQueue"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"scrobble.view": {
+					"description": "Annotation: Registers the local playback of one or more media files. Typically used when playing media that is cached on the client.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Scrobble"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"search.view": {
+					"description": "Searching: Returns a listing of files matching the given search criteria. Supports paging through the result.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Search"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"searchResult": {
+									"$ref": "#/definitions/Subsonic.SearchResult"
+								}
+							},
+							"required": [
+								"searchResult"
+							]
+						},
+						"deprecated": {
+							"type": "boolean",
+							"enum": [
+								true
+							]
+						}
+					},
+					"required": [
+						"deprecated",
+						"params",
+						"result"
+					]
+				},
+				"search2.view": {
+					"description": "Searching: Returns albums, artists and songs matching the given search criteria. Supports paging through the result.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Search2"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"searchResult2": {
+									"$ref": "#/definitions/Subsonic.SearchResult2"
+								}
+							},
+							"required": [
+								"searchResult2"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"search3.view": {
+					"description": "Searching: Similar to search2, but organizes music according to ID3 tags.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Search2"
+						},
+						"result": {
+							"type": "object",
+							"properties": {
+								"searchResult3": {
+									"$ref": "#/definitions/Subsonic.SearchResult3"
+								}
+							},
+							"required": [
+								"searchResult3"
+							]
+						}
+					},
+					"required": [
+						"params",
+						"result"
+					]
+				},
+				"setRating.view": {
+					"description": "Annotation: Sets the rating for a music file.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Rate"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"star.view": {
+					"description": "Annotation: Attaches a star to a song, album or artist.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.State"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"unstar.view": {
+					"description": "Annotation: Removes the star from a song, album or artist.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.State"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"updatePlaylist.view": {
+					"description": "Playlists: Updates a playlist. Only the owner of a playlist is allowed to update it.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.PlaylistUpdate"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"updateShare.view": {
+					"description": "Sharing: Updates the description and/or expiration date for an existing share.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Share"
+						}
+					},
+					"required": [
+						"params"
+					]
+				},
+				"updateUser.view": {
+					"description": "User: Modifies an existing Subsonic user.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.UpdateUser"
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"params",
+						"roles"
+					]
+				},
+				"getAvatar.view": {
+					"description": "MediaRetrieval: Returns the avatar (personal image) for a user.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Username"
+						},
+						"binary": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"image/jpeg"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"image/png"
+									]
+								}
+							],
+							"minItems": 2,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"image/jpeg"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"image/png"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"binary",
+						"params"
+					]
+				},
+				"getCaptions.view": {
+					"description": "MediaRetrieval: Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Captions"
+						},
+						"binary": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"text/plain"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"text/plain"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"binary",
+						"params"
+					]
+				},
+				"getCoverArt.view": {
+					"description": "MediaRetrieval: Returns a cover art image.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.CoverArt"
+						},
+						"binary": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"image/jpeg"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"image/png"
+									]
+								}
+							],
+							"minItems": 2,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"image/jpeg"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"image/png"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"binary",
+						"params"
+					]
+				},
+				"hls.view": {
+					"description": "MediaRetrieval: Creates an HLS (HTTP Live Streaming) playlist used for streaming video or audio. HLS is a streaming protocol implemented by Apple and works by breaking the overall stream into a sequence of small HTTP-based file downloads. It's supported by iOS and newer versions of Android. This method also supports adaptive bitrate streaming, see the bitRate parameter.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.HLS"
+						},
+						"binary": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"application/vnd.apple.mpegurl"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"application/vnd.apple.mpegurl"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"binary",
+						"params"
+					]
+				},
+				"stream.view": {
+					"description": "MediaRetrieval: Streams a given media file.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Stream"
+						},
+						"binary": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"audio/mpeg"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"audio/flac"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"audio/mp4"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"audio/ogg"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"audio/x-flv"
+									]
+								}
+							],
+							"minItems": 5,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"audio/mpeg"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"audio/flac"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"audio/mp4"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"audio/ogg"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"audio/x-flv"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"binary",
+						"params"
+					]
+				},
+				"download.view": {
+					"description": "MediaRetrieval: Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/SubsonicParameters.Download"
+						},
+						"binary": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"audio/mpeg"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"audio/flac"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"audio/mp4"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"audio/ogg"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"audio/x-flv"
+									]
+								}
+							],
+							"minItems": 5,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"audio/mpeg"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"audio/flac"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"audio/mp4"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"audio/ogg"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"audio/x-flv"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"binary",
+						"params"
+					]
+				}
+			}
+		}
+	},
+	"required": [
+		"GET"
+	],
+	"definitions": {
+		"SubsonicParameters.ChatMessage": {
+			"type": "object",
+			"properties": {
+				"message": {
+					"description": "The chat message.",
+					"type": "string"
+				}
+			},
+			"required": [
+				"message"
+			]
+		},
+		"SubsonicParameters.ChangePassword": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"description": "The name of the user which should change its password.",
+					"type": "string"
+				},
+				"password": {
+					"description": "The new password of the new user, either in clear text of hex-encoded.",
+					"type": "string"
+				}
+			},
+			"required": [
+				"password",
+				"username"
+			]
+		},
+		"SubsonicParameters.Bookmark": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "ID of the media file to bookmark. If a bookmark already exists for this file it will be overwritten.",
+					"type": "string"
+				},
+				"position": {
+					"description": "The position (in milliseconds) within the media file.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"comment": {
+					"description": "A user-defined comment.",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"position"
+			]
+		},
+		"SubsonicParameters.PlaylistCreate": {
+			"type": "object",
+			"properties": {
+				"playlistId": {
+					"description": "The playlist ID. (if updating)",
+					"type": "string"
+				},
+				"name": {
+					"description": "The human-readable name of the playlist.",
+					"type": "string"
+				},
+				"songId": {
+					"description": "ID of a song in the playlist. Use one songId parameter for each song in the playlist.",
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						{
+							"type": "string"
+						}
+					]
+				}
+			}
+		},
+		"Subsonic.PlaylistWithSongs": {
+			"type": "object",
+			"properties": {
+				"entry": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				},
+				"allowedUser": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"owner": {
+					"type": "string"
+				},
+				"public": {
+					"type": "boolean"
+				},
+				"songCount": {
+					"type": "number"
+				},
+				"duration": {
+					"type": "number"
+				},
+				"created": {
+					"type": "string"
+				},
+				"changed": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"changed",
+				"created",
+				"duration",
+				"id",
+				"name",
+				"songCount"
+			]
+		},
+		"Subsonic.Child": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"parent": {
+					"type": "string"
+				},
+				"isDir": {
+					"type": "boolean"
+				},
+				"title": {
+					"type": "string"
+				},
+				"album": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"track": {
+					"type": "number"
+				},
+				"year": {
+					"type": "number"
+				},
+				"genre": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				},
+				"size": {
+					"type": "number"
+				},
+				"contentType": {
+					"type": "string"
+				},
+				"suffix": {
+					"type": "string"
+				},
+				"transcodedContentType": {
+					"type": "string"
+				},
+				"transcodedSuffix": {
+					"type": "string"
+				},
+				"duration": {
+					"type": "number"
+				},
+				"bitRate": {
+					"type": "number"
+				},
+				"path": {
+					"type": "string"
+				},
+				"isVideo": {
+					"type": "boolean"
+				},
+				"userRating": {
+					"type": "number"
+				},
+				"averageRating": {
+					"type": "number"
+				},
+				"playCount": {
+					"type": "number"
+				},
+				"discNumber": {
+					"type": "number"
+				},
+				"created": {
+					"type": "string"
+				},
+				"starred": {
+					"type": "string"
+				},
+				"albumId": {
+					"type": "string"
+				},
+				"artistId": {
+					"type": "string"
+				},
+				"type": {
+					"enum": [
+						"audiobook",
+						"music",
+						"podcast",
+						"video"
+					],
+					"type": "string"
+				},
+				"bookmarkPosition": {
+					"type": "number"
+				},
+				"originalWidth": {
+					"type": "number"
+				},
+				"originalHeight": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"id",
+				"isDir",
+				"title"
+			]
+		},
+		"SubsonicParameters.PodcastChannel": {
+			"type": "object",
+			"properties": {
+				"url": {
+					"description": "The URL of the Podcast to add.",
+					"type": "string"
+				}
+			},
+			"required": [
+				"url"
+			]
+		},
+		"SubsonicParameters.Share": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "ID of a song, album or video to share. Use one id parameter for each entry to share.",
+					"type": "string"
+				},
+				"description": {
+					"description": "A user-defined description that will be displayed to people visiting the shared media.",
+					"type": "string"
+				},
+				"expires": {
+					"description": "The time at which the share expires. Given as milliseconds since 1970.",
+					"type": "integer",
+					"minimum": 0
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"SubsonicParameters.CreateUser": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"description": "The name of the new user.",
+					"type": "string"
+				},
+				"password": {
+					"description": "The password of the new user, either in clear text of hex-encoded (see above).",
+					"type": "string"
+				},
+				"email": {
+					"description": "The email address of the new user.",
+					"type": "string"
+				},
+				"ldapAuthenticated": {
+					"description": "Whether the user is authenicated in LDAP.",
+					"default": false,
+					"type": "boolean"
+				},
+				"adminRole": {
+					"description": "Whether the user is administrator.",
+					"default": false,
+					"type": "boolean"
+				},
+				"settingsRole": {
+					"description": "Whether the user is allowed to change personal settings and password.",
+					"default": true,
+					"type": "boolean"
+				},
+				"streamRole": {
+					"description": "Whether the user is allowed to play files.",
+					"default": true,
+					"type": "boolean"
+				},
+				"jukeboxRole": {
+					"description": "Whether the user is allowed to play files in jukebox mode.",
+					"default": false,
+					"type": "boolean"
+				},
+				"downloadRole": {
+					"description": "Whether the user is allowed to download files.",
+					"default": false,
+					"type": "boolean"
+				},
+				"uploadRole": {
+					"description": "Whether the user is allowed to upload files.",
+					"default": false,
+					"type": "boolean"
+				},
+				"coverArtRole": {
+					"description": "Whether the user is allowed to change cover art and tags.",
+					"default": false,
+					"type": "boolean"
+				},
+				"commentRole": {
+					"description": "Whether the user is allowed to create and edit comments and ratings.",
+					"default": false,
+					"type": "boolean"
+				},
+				"podcastRole": {
+					"description": "Whether the user is allowed to administrate Podcasts.",
+					"default": false,
+					"type": "boolean"
+				},
+				"playlistRole": {
+					"description": "Whether the user is allowed to create and delete playlists.",
+					"default": false,
+					"type": "boolean"
+				},
+				"shareRole": {
+					"description": "Whether the user is allowed to share files with anyone.",
+					"default": false,
+					"type": "boolean"
+				},
+				"videoConversionRole": {
+					"description": "Whether the user is allowed to start video conversions.",
+					"default": false,
+					"type": "boolean"
+				},
+				"musicFolderId": {
+					"description": "IDs of the music folders the user is allowed access to. Include the parameter once for each folder.",
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "number"
+							}
+						},
+						{
+							"type": "number"
+						}
+					]
+				}
+			},
+			"required": [
+				"username"
+			]
+		},
+		"SubsonicParameters.ID": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "The item ID",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"SubsonicParameters.Username": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"description": "The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.",
+					"type": "string"
+				}
+			},
+			"required": [
+				"username"
+			]
+		},
+		"Subsonic.AlbumWithSongsID3": {
+			"type": "object",
+			"properties": {
+				"song": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"artistId": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				},
+				"songCount": {
+					"type": "number"
+				},
+				"duration": {
+					"type": "number"
+				},
+				"playCount": {
+					"type": "number"
+				},
+				"created": {
+					"type": "string"
+				},
+				"starred": {
+					"type": "string"
+				},
+				"year": {
+					"type": "number"
+				},
+				"genre": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"created",
+				"duration",
+				"id",
+				"name",
+				"songCount"
+			]
+		},
+		"Subsonic.AlbumInfo": {
+			"type": "object",
+			"properties": {
+				"notes": {
+					"type": "string"
+				},
+				"musicBrainzId": {
+					"type": "string"
+				},
+				"lastFmUrl": {
+					"type": "string"
+				},
+				"smallImageUrl": {
+					"type": "string"
+				},
+				"mediumImageUrl": {
+					"type": "string"
+				},
+				"largeImageUrl": {
+					"type": "string"
+				}
+			}
+		},
+		"SubsonicParameters.AlbumList": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"$ref": "#/definitions/SubsonicParameters.AlbumListType",
+					"description": "The list type. Must be one of the following: random, newest, frequent, recent, starred, alphabeticalByName or alphabeticalByArtist. Since 1.10.1 you can use byYear and byGenre to list albums in a given year range or genre."
+				},
+				"size": {
+					"description": "The number of albums to return. Max 500.",
+					"type": "integer",
+					"maximum": 500,
+					"default": 10
+				},
+				"offset": {
+					"description": "The list offset. Useful if you for example want to page through the list of newest albums.",
+					"type": "integer",
+					"default": 0
+				},
+				"genre": {
+					"description": "The name of the genre, e.g., \"Rock\".",
+					"type": "string"
+				},
+				"fromYear": {
+					"description": "The first year in the range. If fromYear > toYear a reverse chronological list is returned.",
+					"type": "number"
+				},
+				"toYear": {
+					"description": "The last year in the range.",
+					"type": "integer",
+					"minimum": 0
+				}
+			},
+			"required": [
+				"type"
+			]
+		},
+		"SubsonicParameters.AlbumListType": {
+			"enum": [
+				"alphabeticalByArtist",
+				"alphabeticalByName",
+				"byGenre",
+				"byYear",
+				"frequent",
+				"highest",
+				"newest",
+				"random",
+				"recent",
+				"starred"
+			],
+			"type": "string"
+		},
+		"Subsonic.AlbumList": {
+			"type": "object",
+			"properties": {
+				"album": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"SubsonicParameters.AlbumList2": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"$ref": "#/definitions/SubsonicParameters.AlbumListType",
+					"description": "The list type. Must be one of the following: random, newest, frequent, recent, starred, alphabeticalByName or alphabeticalByArtist. Since 1.10.1 you can use byYear and byGenre to list albums in a given year range or genre."
+				},
+				"size": {
+					"description": "The number of albums to return. Max 500.",
+					"type": "integer",
+					"maximum": 500,
+					"default": 10
+				},
+				"offset": {
+					"description": "The list offset. Useful if you for example want to page through the list of newest albums.",
+					"type": "integer",
+					"default": 0
+				},
+				"genre": {
+					"description": "The name of the genre, e.g., \"Rock\".",
+					"type": "string"
+				},
+				"fromYear": {
+					"description": "The first year in the range. If fromYear > toYear a reverse chronological list is returned.",
+					"type": "number"
+				},
+				"toYear": {
+					"description": "The last year in the range.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"musicFolderId": {
+					"description": "Only return albums in the music folder with the given ID. See getMusicFolders.",
+					"type": "number"
+				}
+			},
+			"required": [
+				"type"
+			]
+		},
+		"Subsonic.AlbumList2": {
+			"type": "object",
+			"properties": {
+				"album": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.AlbumID3"
+					}
+				}
+			}
+		},
+		"Subsonic.AlbumID3": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"artistId": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				},
+				"songCount": {
+					"type": "number"
+				},
+				"duration": {
+					"type": "number"
+				},
+				"playCount": {
+					"type": "number"
+				},
+				"created": {
+					"type": "string"
+				},
+				"starred": {
+					"type": "string"
+				},
+				"year": {
+					"type": "number"
+				},
+				"genre": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"created",
+				"duration",
+				"id",
+				"name",
+				"songCount"
+			]
+		},
+		"Subsonic.ArtistWithAlbumsID3": {
+			"type": "object",
+			"properties": {
+				"album": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.AlbumID3"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				},
+				"albumCount": {
+					"type": "number"
+				},
+				"starred": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"albumCount",
+				"id",
+				"name"
+			]
+		},
+		"SubsonicParameters.ArtistInfo": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "The artist, album or song ID.",
+					"type": "string"
+				},
+				"count": {
+					"description": "Max number of similar artists to return.",
+					"type": "integer",
+					"default": 20,
+					"minimum": 1
+				},
+				"includeNotPresent": {
+					"description": "Whether to return artists that are not present in the media library.",
+					"default": false,
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"Subsonic.ArtistInfo": {
+			"type": "object",
+			"properties": {
+				"similarArtist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Artist"
+					}
+				},
+				"biography": {
+					"type": "string"
+				},
+				"musicBrainzId": {
+					"type": "string"
+				},
+				"lastFmUrl": {
+					"type": "string"
+				},
+				"smallImageUrl": {
+					"type": "string"
+				},
+				"mediumImageUrl": {
+					"type": "string"
+				},
+				"largeImageUrl": {
+					"type": "string"
+				}
+			}
+		},
+		"Subsonic.Artist": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"starred": {
+					"type": "string"
+				},
+				"userRating": {
+					"type": "number"
+				},
+				"averageRating": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"id",
+				"name"
+			]
+		},
+		"Subsonic.ArtistInfo2": {
+			"type": "object",
+			"properties": {
+				"similarArtist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.ArtistID3"
+					}
+				},
+				"biography": {
+					"type": "string"
+				},
+				"musicBrainzId": {
+					"type": "string"
+				},
+				"lastFmUrl": {
+					"type": "string"
+				},
+				"smallImageUrl": {
+					"type": "string"
+				},
+				"mediumImageUrl": {
+					"type": "string"
+				},
+				"largeImageUrl": {
+					"type": "string"
+				}
+			}
+		},
+		"Subsonic.ArtistID3": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				},
+				"albumCount": {
+					"type": "number"
+				},
+				"starred": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"albumCount",
+				"id",
+				"name"
+			]
+		},
+		"SubsonicParameters.MusicFolderID": {
+			"type": "object",
+			"properties": {
+				"musicFolderId": {
+					"description": "Only return results from the music folder with the given ID. See getMusicFolders",
+					"type": "number"
+				}
+			}
+		},
+		"Subsonic.ArtistsID3": {
+			"type": "object",
+			"properties": {
+				"index": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.IndexID3"
+					}
+				},
+				"ignoredArticles": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"ignoredArticles"
+			]
+		},
+		"Subsonic.IndexID3": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.ArtistID3"
+					}
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name"
+			]
+		},
+		"Subsonic.Bookmarks": {
+			"type": "object",
+			"properties": {
+				"bookmark": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Bookmark"
+					}
+				}
+			}
+		},
+		"Subsonic.Bookmark": {
+			"type": "object",
+			"properties": {
+				"entry": {
+					"$ref": "#/definitions/Subsonic.Child"
+				},
+				"position": {
+					"type": "number"
+				},
+				"username": {
+					"type": "string"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"created": {
+					"type": "string"
+				},
+				"changed": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"changed",
+				"created",
+				"entry",
+				"position",
+				"username"
+			]
+		},
+		"SubsonicParameters.ChatMessages": {
+			"type": "object",
+			"properties": {
+				"since": {
+					"description": "Only return messages newer than this time (in millis since Jan 1 1970).",
+					"type": "number"
+				}
+			}
+		},
+		"Subsonic.ChatMessages": {
+			"type": "object",
+			"properties": {
+				"chatMessage": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.ChatMessage"
+					}
+				}
+			}
+		},
+		"Subsonic.ChatMessage": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"type": "string"
+				},
+				"time": {
+					"type": "number"
+				},
+				"message": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"message",
+				"time",
+				"username"
+			]
+		},
+		"Subsonic.Genres": {
+			"type": "object",
+			"properties": {
+				"genre": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Genre"
+					}
+				}
+			}
+		},
+		"Subsonic.Genre": {
+			"type": "object",
+			"properties": {
+				"content": {
+					"type": "string"
+				},
+				"songCount": {
+					"type": "number"
+				},
+				"albumCount": {
+					"type": "number"
+				},
+				"artistCount": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"albumCount",
+				"artistCount",
+				"content",
+				"songCount"
+			]
+		},
+		"SubsonicParameters.Indexes": {
+			"type": "object",
+			"properties": {
+				"musicFolderId": {
+					"description": "Only return results from the music folder with the given ID. See getMusicFolders",
+					"type": "number"
+				},
+				"ifModifiedSince": {
+					"description": "If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).",
+					"type": "integer",
+					"minimum": 0
+				}
+			}
+		},
+		"Subsonic.Indexes": {
+			"type": "object",
+			"properties": {
+				"shortcut": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Artist"
+					}
+				},
+				"index": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Index"
+					}
+				},
+				"child": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				},
+				"lastModified": {
+					"type": "number"
+				},
+				"ignoredArticles": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"ignoredArticles",
+				"lastModified"
+			]
+		},
+		"Subsonic.Index": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Artist"
+					}
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name"
+			]
+		},
+		"Subsonic.InternetRadioStations": {
+			"type": "object",
+			"properties": {
+				"internetRadioStation": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.InternetRadioStation"
+					}
+				}
+			}
+		},
+		"Subsonic.InternetRadioStation": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"streamUrl": {
+					"type": "string"
+				},
+				"homePageUrl": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"name",
+				"streamUrl"
+			]
+		},
+		"SubsonicParameters.InternetRadioCreate": {
+			"type": "object",
+			"properties": {
+				"streamUrl": {
+					"description": "The stream URL for the station.",
+					"type": "string"
+				},
+				"name": {
+					"description": "The user-defined name for the station.",
+					"type": "string"
+				},
+				"homepageUrl": {
+					"description": "The home page URL for the station.",
+					"type": "string"
+				}
+			},
+			"required": [
+				"name",
+				"streamUrl"
+			]
+		},
+		"SubsonicParameters.InternetRadioUpdate": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "The ID for the station.",
+					"type": "string"
+				},
+				"streamUrl": {
+					"description": "The stream URL for the station.",
+					"type": "string"
+				},
+				"name": {
+					"description": "The user-defined name for the station.",
+					"type": "string"
+				},
+				"homepageUrl": {
+					"description": "The home page URL for the station.",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"name",
+				"streamUrl"
+			]
+		},
+		"Subsonic.License": {
+			"type": "object",
+			"properties": {
+				"valid": {
+					"type": "boolean"
+				},
+				"email": {
+					"type": "string"
+				},
+				"licenseExpires": {
+					"type": "string"
+				},
+				"trialExpires": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"valid"
+			]
+		},
+		"SubsonicParameters.Lyrics": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"description": "The artist name.",
+					"type": "string"
+				},
+				"title": {
+					"description": "The song title.",
+					"type": "string"
+				}
+			}
+		},
+		"Subsonic.Lyrics": {
+			"type": "object",
+			"properties": {
+				"content": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"content"
+			]
+		},
+		"Subsonic.Directory": {
+			"type": "object",
+			"properties": {
+				"child": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"parent": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"starred": {
+					"type": "string"
+				},
+				"userRating": {
+					"type": "number"
+				},
+				"averageRating": {
+					"type": "number"
+				},
+				"playCount": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"id",
+				"name"
+			]
+		},
+		"Subsonic.MusicFolders": {
+			"type": "object",
+			"properties": {
+				"musicFolder": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.MusicFolder"
+					}
+				}
+			}
+		},
+		"Subsonic.MusicFolder": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "number"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"SubsonicParameters.PodcastEpisodesNewest": {
+			"type": "object",
+			"properties": {
+				"count": {
+					"description": "The maximum number of episodes to return.",
+					"type": "integer",
+					"default": 20,
+					"minimum": 0
+				}
+			}
+		},
+		"Subsonic.NewestPodcasts": {
+			"type": "object",
+			"properties": {
+				"episode": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.PodcastEpisode"
+					}
+				}
+			}
+		},
+		"Subsonic.PodcastEpisode": {
+			"type": "object",
+			"properties": {
+				"streamId": {
+					"type": "string"
+				},
+				"channelId": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"status": {
+					"$ref": "#/definitions/Subsonic.PodcastStatus"
+				},
+				"publishDate": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"parent": {
+					"type": "string"
+				},
+				"isDir": {
+					"type": "boolean"
+				},
+				"title": {
+					"type": "string"
+				},
+				"album": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"track": {
+					"type": "number"
+				},
+				"year": {
+					"type": "number"
+				},
+				"genre": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				},
+				"size": {
+					"type": "number"
+				},
+				"contentType": {
+					"type": "string"
+				},
+				"suffix": {
+					"type": "string"
+				},
+				"transcodedContentType": {
+					"type": "string"
+				},
+				"transcodedSuffix": {
+					"type": "string"
+				},
+				"duration": {
+					"type": "number"
+				},
+				"bitRate": {
+					"type": "number"
+				},
+				"path": {
+					"type": "string"
+				},
+				"isVideo": {
+					"type": "boolean"
+				},
+				"userRating": {
+					"type": "number"
+				},
+				"averageRating": {
+					"type": "number"
+				},
+				"playCount": {
+					"type": "number"
+				},
+				"discNumber": {
+					"type": "number"
+				},
+				"created": {
+					"type": "string"
+				},
+				"starred": {
+					"type": "string"
+				},
+				"albumId": {
+					"type": "string"
+				},
+				"artistId": {
+					"type": "string"
+				},
+				"type": {
+					"enum": [
+						"audiobook",
+						"music",
+						"podcast",
+						"video"
+					],
+					"type": "string"
+				},
+				"bookmarkPosition": {
+					"type": "number"
+				},
+				"originalWidth": {
+					"type": "number"
+				},
+				"originalHeight": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"channelId",
+				"id",
+				"isDir",
+				"status",
+				"title"
+			]
+		},
+		"Subsonic.PodcastStatus": {
+			"enum": [
+				"completed",
+				"deleted",
+				"downloading",
+				"error",
+				"new",
+				"skipped"
+			],
+			"type": "string"
+		},
+		"Subsonic.NowPlaying": {
+			"type": "object",
+			"properties": {
+				"entry": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.NowPlayingEntry"
+					}
+				}
+			}
+		},
+		"Subsonic.NowPlayingEntry": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"type": "string"
+				},
+				"minutesAgo": {
+					"type": "number"
+				},
+				"playerId": {
+					"type": "number"
+				},
+				"playerName": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"parent": {
+					"type": "string"
+				},
+				"isDir": {
+					"type": "boolean"
+				},
+				"title": {
+					"type": "string"
+				},
+				"album": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"track": {
+					"type": "number"
+				},
+				"year": {
+					"type": "number"
+				},
+				"genre": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				},
+				"size": {
+					"type": "number"
+				},
+				"contentType": {
+					"type": "string"
+				},
+				"suffix": {
+					"type": "string"
+				},
+				"transcodedContentType": {
+					"type": "string"
+				},
+				"transcodedSuffix": {
+					"type": "string"
+				},
+				"duration": {
+					"type": "number"
+				},
+				"bitRate": {
+					"type": "number"
+				},
+				"path": {
+					"type": "string"
+				},
+				"isVideo": {
+					"type": "boolean"
+				},
+				"userRating": {
+					"type": "number"
+				},
+				"averageRating": {
+					"type": "number"
+				},
+				"playCount": {
+					"type": "number"
+				},
+				"discNumber": {
+					"type": "number"
+				},
+				"created": {
+					"type": "string"
+				},
+				"starred": {
+					"type": "string"
+				},
+				"albumId": {
+					"type": "string"
+				},
+				"artistId": {
+					"type": "string"
+				},
+				"type": {
+					"enum": [
+						"audiobook",
+						"music",
+						"podcast",
+						"video"
+					],
+					"type": "string"
+				},
+				"bookmarkPosition": {
+					"type": "number"
+				},
+				"originalWidth": {
+					"type": "number"
+				},
+				"originalHeight": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"id",
+				"isDir",
+				"minutesAgo",
+				"playerId",
+				"title",
+				"username"
+			]
+		},
+		"SubsonicParameters.Playlists": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"description": "If specified, return playlists for this user rather than for the authenticated user. The authenticated user must have admin role if this parameter is used.",
+					"type": "string"
+				}
+			}
+		},
+		"Subsonic.Playlists": {
+			"type": "object",
+			"properties": {
+				"playlist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Playlist"
+					}
+				}
+			}
+		},
+		"Subsonic.Playlist": {
+			"type": "object",
+			"properties": {
+				"allowedUser": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"owner": {
+					"type": "string"
+				},
+				"public": {
+					"type": "boolean"
+				},
+				"songCount": {
+					"type": "number"
+				},
+				"duration": {
+					"type": "number"
+				},
+				"created": {
+					"type": "string"
+				},
+				"changed": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"changed",
+				"created",
+				"duration",
+				"id",
+				"name",
+				"songCount"
+			]
+		},
+		"Subsonic.PlayQueue": {
+			"type": "object",
+			"properties": {
+				"entry": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				},
+				"current": {
+					"type": "number"
+				},
+				"position": {
+					"type": "number"
+				},
+				"username": {
+					"type": "string"
+				},
+				"changed": {
+					"type": "string"
+				},
+				"changedBy": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"changed",
+				"changedBy",
+				"username"
+			]
+		},
+		"SubsonicParameters.PodcastChannels": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "If specified, only return the Podcast channel with this ID.",
+					"type": "string"
+				},
+				"includeEpisodes": {
+					"description": "Whether to include Podcast episodes in the returned result.",
+					"default": true,
+					"type": "boolean"
+				}
+			}
+		},
+		"Subsonic.Podcasts": {
+			"type": "object",
+			"properties": {
+				"channel": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.PodcastChannel"
+					}
+				}
+			}
+		},
+		"Subsonic.PodcastChannel": {
+			"type": "object",
+			"properties": {
+				"episode": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.PodcastEpisode"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"coverArt": {
+					"type": "string"
+				},
+				"originalImageUrl": {
+					"type": "string"
+				},
+				"status": {
+					"$ref": "#/definitions/Subsonic.PodcastStatus"
+				},
+				"errorMessage": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"status",
+				"url"
+			]
+		},
+		"SubsonicParameters.RandomSong": {
+			"type": "object",
+			"properties": {
+				"size": {
+					"description": "The maximum number of songs to return. Max 500.",
+					"type": "integer",
+					"default": 10,
+					"minimum": 1,
+					"maximum": 500
+				},
+				"musicFolderId": {
+					"description": "Only return songs in the music folder with the given ID. See getMusicFolders.",
+					"type": "number"
+				},
+				"genre": {
+					"description": "Only returns songs belonging to this genre.",
+					"type": "string"
+				},
+				"fromYear": {
+					"description": "Only return songs published after or in this year.",
+					"type": "integer"
+				},
+				"toYear": {
+					"description": "Only return songs published before or in this year.",
+					"type": "integer"
+				}
+			}
+		},
+		"Subsonic.Songs": {
+			"type": "object",
+			"properties": {
+				"song": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"Subsonic.ScanStatus": {
+			"type": "object",
+			"properties": {
+				"scanning": {
+					"type": "boolean"
+				},
+				"count": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"scanning"
+			]
+		},
+		"Subsonic.Shares": {
+			"type": "object",
+			"properties": {
+				"share": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Share"
+					}
+				}
+			}
+		},
+		"Subsonic.Share": {
+			"type": "object",
+			"properties": {
+				"entry": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"username": {
+					"type": "string"
+				},
+				"created": {
+					"type": "string"
+				},
+				"expires": {
+					"type": "string"
+				},
+				"lastVisited": {
+					"type": "string"
+				},
+				"visitCount": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"id",
+				"url",
+				"username",
+				"visitCount"
+			]
+		},
+		"SubsonicParameters.SimilarSongs": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "The artist, album or song ID.",
+					"type": "string"
+				},
+				"count": {
+					"description": "Max number of songs to return.",
+					"type": "integer",
+					"default": 50,
+					"minimum": 1
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"Subsonic.SimilarSongs": {
+			"type": "object",
+			"properties": {
+				"song": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"Subsonic.SimilarSongs2": {
+			"type": "object",
+			"properties": {
+				"song": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"SubsonicParameters.SongsByGenre": {
+			"type": "object",
+			"properties": {
+				"genre": {
+					"description": "The genre, as returned by getGenres.",
+					"type": "string"
+				},
+				"count": {
+					"description": "The maximum number of songs to return. Max 500.",
+					"type": "integer",
+					"default": 10,
+					"maximum": 500,
+					"minimum": 1
+				},
+				"offset": {
+					"description": "The offset. Useful if you want to page through the songs in a genre.",
+					"type": "integer",
+					"default": 0,
+					"minimum": 0
+				},
+				"musicFolderId": {
+					"description": "Only return albums in the music folder with the given ID. See getMusicFolders",
+					"type": "number"
+				}
+			},
+			"required": [
+				"genre"
+			]
+		},
+		"Subsonic.Starred": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Artist"
+					}
+				},
+				"album": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				},
+				"song": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"Subsonic.Starred2": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.ArtistID3"
+					}
+				},
+				"album": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.AlbumID3"
+					}
+				},
+				"song": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"SubsonicParameters.TopSongs": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"description": "The artist name.",
+					"type": "string"
+				},
+				"count": {
+					"description": "Max number of songs to return.",
+					"type": "integer",
+					"default": 50,
+					"minimum": 1
+				}
+			},
+			"required": [
+				"artist"
+			]
+		},
+		"Subsonic.TopSongs": {
+			"type": "object",
+			"properties": {
+				"song": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"Subsonic.User": {
+			"type": "object",
+			"properties": {
+				"folder": {
+					"type": "array",
+					"items": {
+						"type": "number"
+					}
+				},
+				"username": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"scrobblingEnabled": {
+					"type": "boolean"
+				},
+				"maxBitRate": {
+					"type": "number"
+				},
+				"adminRole": {
+					"type": "boolean"
+				},
+				"settingsRole": {
+					"type": "boolean"
+				},
+				"downloadRole": {
+					"type": "boolean"
+				},
+				"uploadRole": {
+					"type": "boolean"
+				},
+				"playlistRole": {
+					"type": "boolean"
+				},
+				"coverArtRole": {
+					"type": "boolean"
+				},
+				"commentRole": {
+					"type": "boolean"
+				},
+				"podcastRole": {
+					"type": "boolean"
+				},
+				"streamRole": {
+					"type": "boolean"
+				},
+				"jukeboxRole": {
+					"type": "boolean"
+				},
+				"shareRole": {
+					"type": "boolean"
+				},
+				"videoConversionRole": {
+					"type": "boolean"
+				},
+				"avatarLastChanged": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"adminRole",
+				"commentRole",
+				"coverArtRole",
+				"downloadRole",
+				"jukeboxRole",
+				"playlistRole",
+				"podcastRole",
+				"scrobblingEnabled",
+				"settingsRole",
+				"shareRole",
+				"streamRole",
+				"uploadRole",
+				"username",
+				"videoConversionRole"
+			]
+		},
+		"Subsonic.Users": {
+			"type": "object",
+			"properties": {
+				"user": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.User"
+					}
+				}
+			}
+		},
+		"Subsonic.VideoInfo": {
+			"type": "object",
+			"properties": {
+				"captions": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Captions"
+					}
+				},
+				"audioTrack": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.AudioTrack"
+					}
+				},
+				"conversion": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.VideoConversion"
+					}
+				},
+				"id": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"Subsonic.Captions": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"Subsonic.AudioTrack": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"languageCode": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"Subsonic.VideoConversion": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"bitRate": {
+					"type": "number"
+				},
+				"audioTrackId": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"Subsonic.Videos": {
+			"type": "object",
+			"properties": {
+				"video": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"SubsonicParameters.Jukebox": {
+			"type": "object",
+			"properties": {
+				"action": {
+					"$ref": "#/definitions/SubsonicParameters.JukeboxAction",
+					"description": "The operation to perform."
+				},
+				"index": {
+					"description": "Used by skip and remove. Zero-based index of the song to skip to or remove.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"offset": {
+					"description": "Used by skip. Start playing this many seconds into the track.",
+					"type": "integer",
+					"default": 0,
+					"minimum": 0
+				},
+				"id": {
+					"description": "Used by add and set. ID of song to add to the jukebox playlist. Use multiple id parameters to add many songs in the same request. (set is similar to a clear followed by a add, but will not change the currently playing track.)",
+					"type": "string"
+				},
+				"gain": {
+					"description": "Used by setGain to control the playback volume. A float value between 0.0 and 1.0.",
+					"type": "number",
+					"minimum": 0,
+					"maximum": 1
+				}
+			},
+			"required": [
+				"action"
+			]
+		},
+		"SubsonicParameters.JukeboxAction": {
+			"enum": [
+				"add",
+				"clear",
+				"get",
+				"remove",
+				"set",
+				"setGain",
+				"shuffle",
+				"skip",
+				"start",
+				"status",
+				"stop"
+			],
+			"type": "string"
+		},
+		"Subsonic.JukeboxStatus": {
+			"type": "object",
+			"properties": {
+				"currentIndex": {
+					"type": "number"
+				},
+				"playing": {
+					"type": "boolean"
+				},
+				"gain": {
+					"type": "number"
+				},
+				"position": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"currentIndex",
+				"gain",
+				"playing"
+			]
+		},
+		"SubsonicParameters.PlayQueue": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "ID of a song in the play queue. Use one id parameter for each song in the play queue.",
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"current": {
+					"description": "The ID of the current playing song.",
+					"type": "string"
+				},
+				"position": {
+					"description": "The position in milliseconds within the currently playing song.",
+					"type": "integer",
+					"minimum": 0
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"SubsonicParameters.Scrobble": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "A string which uniquely identifies the file to scrobble.",
+					"type": "string"
+				},
+				"time": {
+					"description": "The time (in milliseconds since 1 Jan 1970) at which the song was listened to.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"submission": {
+					"description": "Whether this is a \"submission\" or a \"now playing\" notification.",
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"SubsonicParameters.Search": {
+			"type": "object",
+			"properties": {
+				"any": {
+					"description": "Searches all fields.",
+					"type": "string"
+				},
+				"artist": {
+					"description": "Artist to search for.",
+					"type": "string"
+				},
+				"album": {
+					"description": "Album to search for.",
+					"type": "string"
+				},
+				"title": {
+					"description": "Song title to search for.",
+					"type": "string"
+				},
+				"count": {
+					"description": "Maximum number of results to return.",
+					"type": "integer",
+					"default": 20,
+					"minimum": 1
+				},
+				"offset": {
+					"description": "Search result offset. Used for paging.",
+					"type": "integer",
+					"minimum": 0,
+					"default": 0
+				},
+				"newerThan": {
+					"description": "Only return matches that are newer than this. Given as milliseconds since 1970.",
+					"type": "number"
+				}
+			}
+		},
+		"Subsonic.SearchResult": {
+			"type": "object",
+			"properties": {
+				"match": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"totalHits": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"offset",
+				"totalHits"
+			]
+		},
+		"SubsonicParameters.Search2": {
+			"type": "object",
+			"properties": {
+				"query": {
+					"description": "Search query.",
+					"type": "string"
+				},
+				"artistCount": {
+					"description": "Maximum number of artists to return.",
+					"type": "integer",
+					"minimum": 1,
+					"default": 20
+				},
+				"artistOffset": {
+					"description": "Search result offset for artists. Used for paging.",
+					"type": "integer",
+					"minimum": 0,
+					"default": 0
+				},
+				"albumCount": {
+					"description": "Maximum number of albums to return.",
+					"type": "integer",
+					"minimum": 1,
+					"default": 20
+				},
+				"albumOffset": {
+					"description": "Search result offset for albums. Used for paging.",
+					"type": "integer",
+					"minimum": 0,
+					"default": 0
+				},
+				"songCount": {
+					"description": "Maximum number of songs to return.",
+					"type": "integer",
+					"minimum": 1,
+					"default": 20
+				},
+				"songOffset": {
+					"description": "Search result offset for songs. Used for paging.",
+					"type": "integer",
+					"minimum": 0,
+					"default": 0
+				},
+				"musicFolderId": {
+					"description": "Only return results from the music folder with the given ID. See getMusicFolders.",
+					"type": "number"
+				}
+			}
+		},
+		"Subsonic.SearchResult2": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Artist"
+					}
+				},
+				"album": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				},
+				"song": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"Subsonic.SearchResult3": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.ArtistID3"
+					}
+				},
+				"album": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.AlbumID3"
+					}
+				},
+				"song": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Subsonic.Child"
+					}
+				}
+			}
+		},
+		"SubsonicParameters.Rate": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "A string which uniquely identifies the file (song) or folder (album/artist) to rate.",
+					"type": "string"
+				},
+				"rating": {
+					"description": "The rating between 1 and 5 (inclusive), or 0 to remove the rating.",
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 5
+				}
+			},
+			"required": [
+				"id",
+				"rating"
+			]
+		},
+		"SubsonicParameters.State": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.",
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"albumId": {
+					"description": "The ID of an album to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.",
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"artistId": {
+					"description": "The ID of an artist to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.",
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						{
+							"type": "string"
+						}
+					]
+				}
+			}
+		},
+		"SubsonicParameters.PlaylistUpdate": {
+			"type": "object",
+			"properties": {
+				"playlistId": {
+					"description": "The playlist ID.",
+					"type": "string"
+				},
+				"name": {
+					"description": "The human-readable name of the playlist.",
+					"type": "string"
+				},
+				"comment": {
+					"description": "The playlist comment.",
+					"type": "string"
+				},
+				"public": {
+					"description": "true if the playlist should be visible to all users, false otherwise.",
+					"type": "boolean"
+				},
+				"songIdToAdd": {
+					"description": "Add this song with this ID to the playlist. Multiple parameters allowed.",
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"songIndexToRemove": {
+					"description": "Remove the song at this position in the playlist. Multiple parameters allowed.",
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "number"
+							}
+						},
+						{
+							"type": "number"
+						}
+					]
+				}
+			},
+			"required": [
+				"playlistId"
+			]
+		},
+		"SubsonicParameters.UpdateUser": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"description": "The name of the user.",
+					"type": "string"
+				},
+				"password": {
+					"description": "The password of the user, either in clear text of hex-encoded.",
+					"type": "string"
+				},
+				"email": {
+					"description": "The email address of the user.",
+					"type": "string"
+				},
+				"ldapAuthenticated": {
+					"description": "Whether the user is authenicated in LDAP.",
+					"type": "boolean"
+				},
+				"adminRole": {
+					"description": "Whether the user is administrator.",
+					"type": "boolean"
+				},
+				"settingsRole": {
+					"description": "Whether the user is allowed to change personal settings and password.",
+					"type": "boolean"
+				},
+				"streamRole": {
+					"description": "Whether the user is allowed to play files.",
+					"type": "boolean"
+				},
+				"jukeboxRole": {
+					"description": "Whether the user is allowed to play files in jukebox mode.",
+					"type": "boolean"
+				},
+				"downloadRole": {
+					"description": "Whether the user is allowed to download files.",
+					"type": "boolean"
+				},
+				"uploadRole": {
+					"description": "Whether the user is allowed to upload files.",
+					"type": "boolean"
+				},
+				"coverArtRole": {
+					"description": "Whether the user is allowed to change cover art and tags.",
+					"type": "boolean"
+				},
+				"commentRole": {
+					"description": "Whether the user is allowed to create and edit comments and ratings.",
+					"type": "boolean"
+				},
+				"podcastRole": {
+					"description": "Whether the user is allowed to administrate Podcasts.",
+					"type": "boolean"
+				},
+				"playlistRole": {
+					"description": "Whether the user is allowed to create and delete playlists.",
+					"type": "boolean"
+				},
+				"shareRole": {
+					"description": "Whether the user is allowed to share files with anyone.",
+					"type": "boolean"
+				},
+				"videoConversionRole": {
+					"description": "Whether the user is allowed to start video conversions.",
+					"type": "boolean"
+				},
+				"musicFolderId": {
+					"description": "IDs of the music folders the user is allowed access to. Include the parameter once for each folder.",
+					"anyOf": [
+						{
+							"type": "array",
+							"items": {
+								"type": "number"
+							}
+						},
+						{
+							"type": "number"
+						}
+					]
+				},
+				"maxBitRate": {
+					"description": "The maximum bit rate (in Kbps) for the user. Audio streams of higher bit rates are automatically downsampled to this bit rate. Legal values: 0 (no limit), 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320.",
+					"type": "integer"
+				}
+			},
+			"required": [
+				"username"
+			]
+		},
+		"SubsonicParameters.Captions": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "The ID of the video.",
+					"type": "string"
+				},
+				"format": {
+					"description": "Preferred captions format (\"srt\" or \"vtt\").",
+					"enum": [
+						"srt",
+						"vtt"
+					],
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"SubsonicParameters.CoverArt": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "The ID of a song, album or artist.",
+					"type": "string"
+				},
+				"size": {
+					"description": "If specified, scale image to this size.",
+					"type": "number"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"SubsonicParameters.HLS": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "A string which uniquely identifies the media file to stream.",
+					"type": "string"
+				},
+				"bitRate": {
+					"description": "If specified, the server will attempt to limit the bitrate to this value, in kilobits per second. If this parameter is specified more than once,\nthe server will create a variant playlist, suitable for adaptive bitrate streaming.\nThe playlist will support streaming at all the specified bitrates. The server will automatically choose video dimensions that are suitable for the given bitrates.\nSince 1.9.0 you may explicitly request a certain width (480) and height (360) like so: bitRate=1000@480x360",
+					"type": "string"
+				},
+				"audioTrack": {
+					"description": "The ID of the audio track to use. See getVideoInfo for how to get the list of available audio tracks for a video.",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"SubsonicParameters.Stream": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "A string which uniquely identifies the file to stream. Obtained by calls to getMusicDirectory.",
+					"type": "string"
+				},
+				"maxBitRate": {
+					"description": "If specified, the server will attempt to limit the bitrate to this value, in kilobits per second. If set to zero, no limit is imposed.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"timeOffset": {
+					"description": "Only applicable to video streaming. If specified, start streaming at the given offset (in seconds) into the video. Typically used to implement video skipping.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"size": {
+					"description": "Only applicable to video streaming. Requested video size specified as WxH, for instance \"640x480\".",
+					"type": "string"
+				},
+				"converted": {
+					"description": "Only applicable to video streaming. Subsonic can optimize videos for streaming by converting them to MP4. If a conversion exists for the video in question, then setting this parameter to \"true\" will cause the converted video to be returned instead of the original.",
+					"default": false,
+					"type": "boolean"
+				},
+				"estimateContentLength": {
+					"description": "if set to \"true\", the Content-Length HTTP header will be set to an estimated value for transcoded or downsampled media.",
+					"default": false,
+					"type": "boolean"
+				},
+				"format": {
+					"description": "Specifies the preferred target format (e.g., \"mp3\" or \"flv\") in case there are multiple applicable transcodings. Starting with 1.9.0 you can use the special value \"raw\" to disable transcoding.",
+					"enum": [
+						"flv",
+						"mp3",
+						"raw"
+					],
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"SubsonicParameters.Download": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		}
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#"
+}

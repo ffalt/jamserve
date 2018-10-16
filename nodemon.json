@@ -1,0 +1,10 @@
+{
+  "verbose": true,
+  "watch": ["dist/bundle.js"],
+  "exec": "node ./dist/bundle.js",
+  "events": {},
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js"
+}

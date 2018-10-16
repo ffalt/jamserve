@@ -1,0 +1,4248 @@
+{
+	"type": "object",
+	"properties": {
+		"ping": {
+			"$ref": "#/definitions/Jam.Ping"
+		},
+		"root": {
+			"$ref": "#/definitions/Jam.Root"
+		},
+		"roots": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.Root"
+			}
+		},
+		"user": {
+			"$ref": "#/definitions/Jam.User"
+		},
+		"users": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.User"
+			}
+		},
+		"nowPlaying": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.NowPlaying"
+			}
+		},
+		"artist": {
+			"$ref": "#/definitions/Jam.Artist"
+		},
+		"artists": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.Artist"
+			}
+		},
+		"album": {
+			"$ref": "#/definitions/Jam.Album"
+		},
+		"albums": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.Album"
+			}
+		},
+		"artistInfo": {
+			"$ref": "#/definitions/Jam.ArtistInfo"
+		},
+		"albumInfo": {
+			"$ref": "#/definitions/Jam.AlbumInfo"
+		},
+		"artistFolderInfo": {
+			"$ref": "#/definitions/Jam.ArtistFolderInfo"
+		},
+		"albumFolderInfo": {
+			"$ref": "#/definitions/Jam.AlbumFolderInfo"
+		},
+		"folder": {
+			"$ref": "#/definitions/Jam.Folder"
+		},
+		"episode": {
+			"$ref": "#/definitions/Jam.PodcastEpisode"
+		},
+		"episodes": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.PodcastEpisode"
+			}
+		},
+		"playlist": {
+			"$ref": "#/definitions/Jam.Playlist"
+		},
+		"playlists": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.Playlist"
+			}
+		},
+		"podcast": {
+			"$ref": "#/definitions/Jam.Podcast"
+		},
+		"podcasts": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.Podcast"
+			}
+		},
+		"track": {
+			"$ref": "#/definitions/Jam.Track"
+		},
+		"tracks": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.Track"
+			}
+		},
+		"folders": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.Folder"
+			}
+		},
+		"bookmarks": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.TrackBookmark"
+			}
+		},
+		"folderChildren": {
+			"$ref": "#/definitions/Jam.FolderChildren"
+		},
+		"state": {
+			"$ref": "#/definitions/Jam.State"
+		},
+		"states": {
+			"$ref": "#/definitions/Jam.States"
+		},
+		"tagID3": {
+			"$ref": "#/definitions/Jam.ID3Tag"
+		},
+		"tagID3s": {
+			"$ref": "#/definitions/Jam.ID3Tags"
+		},
+		"brainz": {
+			"$ref": "#/definitions/MusicBrainz.Response"
+		},
+		"lastfm": {
+			"$ref": "#/definitions/LastFM.Result"
+		},
+		"acoustid": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Acoustid.Result"
+			}
+		},
+		"genres": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.Genre"
+			}
+		},
+		"folderIndex": {
+			"$ref": "#/definitions/Jam.FolderIndex"
+		},
+		"artistIndex": {
+			"$ref": "#/definitions/Jam.ArtistIndex"
+		},
+		"chatMessages": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Jam.ChatMessage"
+			}
+		},
+		"playqueue": {
+			"$ref": "#/definitions/Jam.PlayQueue"
+		},
+		"session": {
+			"$ref": "#/definitions/Jam.Session"
+		}
+	},
+	"definitions": {
+		"Jam.Ping": {
+			"type": "object",
+			"properties": {
+				"version": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"version"
+			]
+		},
+		"Jam.Root": {
+			"type": "object",
+			"properties": {
+				"path": {
+					"type": "string"
+				},
+				"scanState": {
+					"$ref": "#/definitions/Jam.RootState"
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"id",
+				"name",
+				"path",
+				"scanState"
+			]
+		},
+		"Jam.RootState": {
+			"type": "object",
+			"properties": {
+				"lastScan": {
+					"type": "number"
+				},
+				"error": {
+					"type": "string"
+				},
+				"scanning": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"lastScan"
+			]
+		},
+		"Jam.State": {
+			"type": "object",
+			"properties": {
+				"played": {
+					"type": "number"
+				},
+				"lastplayed": {
+					"type": "number"
+				},
+				"faved": {
+					"type": "number"
+				},
+				"rated": {
+					"type": "number"
+				}
+			}
+		},
+		"Jam.User": {
+			"type": "object",
+			"properties": {
+				"email": {
+					"type": "string"
+				},
+				"roles": {
+					"$ref": "#/definitions/Jam.Roles"
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"email",
+				"id",
+				"name",
+				"roles"
+			]
+		},
+		"Jam.Roles": {
+			"type": "object",
+			"properties": {
+				"stream": {
+					"type": "boolean"
+				},
+				"upload": {
+					"type": "boolean"
+				},
+				"podcast": {
+					"type": "boolean"
+				},
+				"admin": {
+					"type": "boolean"
+				}
+			}
+		},
+		"Jam.NowPlaying": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"type": "string"
+				},
+				"minutesAgo": {
+					"type": "number"
+				},
+				"track": {
+					"$ref": "#/definitions/Jam.Track"
+				}
+			},
+			"required": [
+				"minutesAgo",
+				"username"
+			]
+		},
+		"Jam.Track": {
+			"type": "object",
+			"properties": {
+				"duration": {
+					"type": "number"
+				},
+				"tag": {
+					"$ref": "#/definitions/Jam.TrackTag"
+				},
+				"tagID3": {
+					"$ref": "#/definitions/Jam.ID3Tag"
+				},
+				"media": {
+					"$ref": "#/definitions/Jam.TrackMedia"
+				},
+				"parentID": {
+					"type": "string"
+				},
+				"artistID": {
+					"type": "string"
+				},
+				"albumID": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"duration",
+				"id",
+				"name",
+				"parentID"
+			]
+		},
+		"Jam.TrackTag": {
+			"type": "object",
+			"properties": {
+				"title": {
+					"type": "string"
+				},
+				"album": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"genre": {
+					"type": "string"
+				},
+				"year": {
+					"type": "number"
+				},
+				"trackNr": {
+					"type": "number"
+				},
+				"musicbrainz": {
+					"$ref": "#/definitions/Jam.TrackMBTag"
+				}
+			}
+		},
+		"Jam.TrackMBTag": {
+			"type": "object",
+			"properties": {
+				"trackID": {
+					"type": "string"
+				},
+				"recordingID": {
+					"type": "string"
+				},
+				"releaseTrackID": {
+					"type": "string"
+				},
+				"artistID": {
+					"type": "string"
+				},
+				"albumID": {
+					"type": "string"
+				}
+			}
+		},
+		"Jam.ID3Tag": {
+			"type": "object",
+			"properties": {
+				"version": {
+					"type": "number"
+				},
+				"frames": {
+					"$ref": "#/definitions/ID3v2FrameValues.Frames"
+				}
+			},
+			"required": [
+				"frames",
+				"version"
+			]
+		},
+		"ID3v2FrameValues.Frames": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "array",
+				"items": {}
+			},
+			"properties": {
+				"AENC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.AudioEncryption"
+					}
+				},
+				"APIC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Pic"
+					}
+				},
+				"ASPI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"BUF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"CDM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"CHAP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Chapter"
+					}
+				},
+				"CM1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"CNT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Number"
+					}
+				},
+				"COM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.LangDescText"
+					}
+				},
+				"COMM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.LangDescText"
+					}
+				},
+				"COMR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"CRA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.AudioEncryption"
+					}
+				},
+				"CRM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"CTOC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.ChapterToc"
+					}
+				},
+				"ENCR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"EQU": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"EQUA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"ETC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.EventTimingCodes"
+					}
+				},
+				"ETCO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.EventTimingCodes"
+					}
+				},
+				"GEO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.GEOB"
+					}
+				},
+				"GEOB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.GEOB"
+					}
+				},
+				"GRID": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"IPL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.TextList"
+					}
+				},
+				"IPLS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.TextList"
+					}
+				},
+				"LINK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Link"
+					}
+				},
+				"LNK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Link"
+					}
+				},
+				"MCDI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"MLL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"MLLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"NCO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"NCON": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"OWNE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"PCNT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Number"
+					}
+				},
+				"PCS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Number"
+					}
+				},
+				"PCST": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Number"
+					}
+				},
+				"PIC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Pic"
+					}
+				},
+				"POP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Popularimeter"
+					}
+				},
+				"POPM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Popularimeter"
+					}
+				},
+				"POSS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"PRI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.IdBin"
+					}
+				},
+				"PRIV": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.IdBin"
+					}
+				},
+				"RBUF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"REV": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"RGAD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.ReplayGainAdjustment"
+					}
+				},
+				"RVA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.RVA"
+					}
+				},
+				"RVA2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.RVA2"
+					}
+				},
+				"RVAD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.RVA"
+					}
+				},
+				"RVRB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"SEEK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"SIGN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"SLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.SynchronisedLyricsEvent"
+					}
+				},
+				"STC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"SYLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.SynchronisedLyrics"
+					}
+				},
+				"SYTC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"TAL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TALB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TBP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TBPM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TCM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TCMP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bool"
+					}
+				},
+				"TCO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.TextList"
+					}
+				},
+				"TCOM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TCON": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.TextList"
+					}
+				},
+				"TCOP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TCP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bool"
+					}
+				},
+				"TCR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDAT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDES": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDLY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDOR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDRC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDRL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDTG": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TEN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TENC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TEXT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TFLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TGID": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TID": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TIM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TIME": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TIPL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.TextList"
+					}
+				},
+				"TIT1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TIT2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TIT3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TKE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TKEY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TKWD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"TLA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TLAN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TLE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TLEN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TMCL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.TextList"
+					}
+				},
+				"TMED": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TMOO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TMT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOAL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOFN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOLY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOPE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TORY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TOWN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TP1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.TextList"
+					}
+				},
+				"TP2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TP3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TP4": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TPA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TPB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TPE1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.TextList"
+					}
+				},
+				"TPE2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TPE3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TPE4": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TPOS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TPRO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TPUB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TRC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TRCK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TRD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TRDA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TRK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TRSN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TRSO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TS2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSIZ": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSO2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSOA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSOC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSOP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSOT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSRC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TSSE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TST": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TT1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TT2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TT3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TXT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TXX": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.IdText"
+					}
+				},
+				"TXXX": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.IdText"
+					}
+				},
+				"TYE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TYER": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"UFI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.IdAscii"
+					}
+				},
+				"UFID": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.IdAscii"
+					}
+				},
+				"ULT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.LangDescText"
+					}
+				},
+				"USER": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"USLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.LangDescText"
+					}
+				},
+				"WAF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WAR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WAS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WCM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WCOM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WCOP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WCP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WFD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"WFED": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"WOAF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WOAR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WOAS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WORS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WPAY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WPB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WPUB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Ascii"
+					}
+				},
+				"WXX": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.IdText"
+					}
+				},
+				"WXXX": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.IdText"
+					}
+				},
+				"XDOR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"XHD3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Bin"
+					}
+				},
+				"XSOA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"XSOP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"XSOT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				}
+			}
+		},
+		"ID3v2FrameValues.AudioEncryption": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"previewStart": {
+					"type": "number"
+				},
+				"previewLength": {
+					"type": "number"
+				},
+				"bin": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"bin",
+				"id",
+				"previewLength",
+				"previewStart"
+			]
+		},
+		"ID3v2FrameValues.Pic": {
+			"type": "object",
+			"properties": {
+				"description": {
+					"type": "string"
+				},
+				"pictureType": {
+					"type": "number"
+				},
+				"url": {
+					"type": "string"
+				},
+				"bin": {
+					"type": "string"
+				},
+				"mimeType": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"description",
+				"pictureType"
+			]
+		},
+		"ID3v2FrameValues.Bin": {
+			"type": "object",
+			"properties": {
+				"bin": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"bin"
+			]
+		},
+		"ID3v2FrameValues.Chapter": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"start": {
+					"type": "number"
+				},
+				"end": {
+					"type": "number"
+				},
+				"offset": {
+					"type": "number"
+				},
+				"offsetEnd": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"end",
+				"id",
+				"offset",
+				"offsetEnd",
+				"start"
+			]
+		},
+		"ID3v2FrameValues.Text": {
+			"type": "object",
+			"properties": {
+				"text": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"text"
+			]
+		},
+		"ID3v2FrameValues.Number": {
+			"type": "object",
+			"properties": {
+				"num": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"num"
+			]
+		},
+		"ID3v2FrameValues.LangDescText": {
+			"type": "object",
+			"properties": {
+				"language": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"text": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"language",
+				"text"
+			]
+		},
+		"ID3v2FrameValues.ChapterToc": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"ordered": {
+					"type": "boolean"
+				},
+				"topLevel": {
+					"type": "boolean"
+				},
+				"children": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"children",
+				"id",
+				"ordered",
+				"topLevel"
+			]
+		},
+		"ID3v2FrameValues.EventTimingCodes": {
+			"type": "object",
+			"properties": {
+				"format": {
+					"type": "number"
+				},
+				"events": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.EventTimingCodesEvent"
+					}
+				}
+			},
+			"required": [
+				"events",
+				"format"
+			]
+		},
+		"ID3v2FrameValues.EventTimingCodesEvent": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "number"
+				},
+				"timestamp": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"timestamp",
+				"type"
+			]
+		},
+		"ID3v2FrameValues.GEOB": {
+			"type": "object",
+			"properties": {
+				"filename": {
+					"type": "string"
+				},
+				"mimeType": {
+					"type": "string"
+				},
+				"contentDescription": {
+					"type": "string"
+				},
+				"bin": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"bin",
+				"contentDescription",
+				"filename",
+				"mimeType"
+			]
+		},
+		"ID3v2FrameValues.TextList": {
+			"type": "object",
+			"properties": {
+				"list": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"list"
+			]
+		},
+		"ID3v2FrameValues.Link": {
+			"type": "object",
+			"properties": {
+				"url": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"additional": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"additional",
+				"id",
+				"url"
+			]
+		},
+		"ID3v2FrameValues.Popularimeter": {
+			"type": "object",
+			"properties": {
+				"rating": {
+					"type": "number"
+				},
+				"count": {
+					"type": "number"
+				},
+				"email": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"count",
+				"email",
+				"rating"
+			]
+		},
+		"ID3v2FrameValues.IdBin": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"bin": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"bin",
+				"id"
+			]
+		},
+		"ID3v2FrameValues.ReplayGainAdjustment": {
+			"type": "object",
+			"properties": {
+				"peak": {
+					"type": "number"
+				},
+				"radioAdjustment": {
+					"type": "number"
+				},
+				"audiophileAdjustment": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"audiophileAdjustment",
+				"peak",
+				"radioAdjustment"
+			]
+		},
+		"ID3v2FrameValues.RVA": {
+			"type": "object",
+			"properties": {
+				"right": {
+					"type": "number"
+				},
+				"left": {
+					"type": "number"
+				},
+				"peakRight": {
+					"type": "number"
+				},
+				"peakLeft": {
+					"type": "number"
+				},
+				"rightBack": {
+					"type": "number"
+				},
+				"leftBack": {
+					"type": "number"
+				},
+				"peakRightBack": {
+					"type": "number"
+				},
+				"peakLeftBack": {
+					"type": "number"
+				},
+				"center": {
+					"type": "number"
+				},
+				"peakCenter": {
+					"type": "number"
+				},
+				"bass": {
+					"type": "number"
+				},
+				"peakBass": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"left",
+				"right"
+			]
+		},
+		"ID3v2FrameValues.RVA2": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"channels": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.RVA2Channel"
+					}
+				}
+			},
+			"required": [
+				"channels",
+				"id"
+			]
+		},
+		"ID3v2FrameValues.RVA2Channel": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "number"
+				},
+				"adjustment": {
+					"type": "number"
+				},
+				"peak": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"adjustment",
+				"type"
+			]
+		},
+		"ID3v2FrameValues.SynchronisedLyricsEvent": {
+			"type": "object",
+			"properties": {
+				"timestamp": {
+					"type": "number"
+				},
+				"text": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"text",
+				"timestamp"
+			]
+		},
+		"ID3v2FrameValues.SynchronisedLyrics": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"language": {
+					"type": "string"
+				},
+				"timestampFormat": {
+					"type": "number"
+				},
+				"contentType": {
+					"type": "number"
+				},
+				"events": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.SynchronisedLyricsEvent"
+					}
+				}
+			},
+			"required": [
+				"contentType",
+				"events",
+				"id",
+				"language",
+				"timestampFormat"
+			]
+		},
+		"ID3v2FrameValues.Bool": {
+			"type": "object",
+			"properties": {
+				"bool": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"bool"
+			]
+		},
+		"ID3v2FrameValues.IdText": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"text": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"text"
+			]
+		},
+		"ID3v2FrameValues.IdAscii": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"text": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"text"
+			]
+		},
+		"ID3v2FrameValues.Ascii": {
+			"type": "object",
+			"properties": {
+				"text": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"text"
+			]
+		},
+		"Jam.TrackMedia": {
+			"type": "object",
+			"properties": {
+				"bitRate": {
+					"type": "number"
+				},
+				"format": {
+					"type": "string"
+				},
+				"channels": {
+					"type": "number"
+				},
+				"sampleRate": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"bitRate",
+				"channels",
+				"format",
+				"sampleRate"
+			]
+		},
+		"Jam.Artist": {
+			"type": "object",
+			"properties": {
+				"albumCount": {
+					"type": "number"
+				},
+				"trackCount": {
+					"type": "number"
+				},
+				"musicbrainz": {
+					"type": "object",
+					"properties": {
+						"artistID": {
+							"type": "string"
+						}
+					}
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Track"
+					}
+				},
+				"trackIDs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"albumIDs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"albums": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Album"
+					}
+				},
+				"info": {
+					"$ref": "#/definitions/Jam.ArtistInfo"
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"albumCount",
+				"created",
+				"id",
+				"name",
+				"trackCount"
+			]
+		},
+		"Jam.Album": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"type": "string"
+				},
+				"tag": {
+					"$ref": "#/definitions/Jam.AlbumTag"
+				},
+				"trackCount": {
+					"type": "number"
+				},
+				"artistID": {
+					"type": "string"
+				},
+				"trackIDs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Track"
+					}
+				},
+				"info": {
+					"$ref": "#/definitions/Jam.AlbumInfo"
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"artistID",
+				"created",
+				"id",
+				"name",
+				"trackCount"
+			]
+		},
+		"Jam.AlbumTag": {
+			"type": "object",
+			"properties": {
+				"duration": {
+					"type": "number"
+				},
+				"created": {
+					"type": "number"
+				},
+				"genre": {
+					"type": "string"
+				},
+				"year": {
+					"type": "number"
+				},
+				"musicbrainz": {
+					"type": "object",
+					"properties": {
+						"artistID": {
+							"type": "string"
+						},
+						"albumID": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"required": [
+				"created",
+				"duration"
+			]
+		},
+		"Jam.AlbumInfo": {
+			"type": "object",
+			"properties": {
+				"releases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Release"
+					}
+				},
+				"description": {
+					"type": "string"
+				},
+				"lastFmUrl": {
+					"type": "string"
+				},
+				"smallImageUrl": {
+					"type": "string"
+				},
+				"mediumImageUrl": {
+					"type": "string"
+				},
+				"largeImageUrl": {
+					"type": "string"
+				}
+			}
+		},
+		"MusicBrainz.Release": {
+			"type": "object",
+			"properties": {
+				"media": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ReleaseMedia"
+					}
+				},
+				"score": {
+					"type": "number"
+				},
+				"count": {
+					"type": "number"
+				},
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"sortName": {
+					"type": "string"
+				},
+				"status": {
+					"type": "string"
+				},
+				"statusId": {
+					"type": "string"
+				},
+				"date": {
+					"type": "string"
+				},
+				"country": {
+					"type": "string"
+				},
+				"packaging": {
+					"type": "string"
+				},
+				"packagingId": {
+					"type": "string"
+				},
+				"disambiguation": {
+					"type": "string"
+				},
+				"annotation": {
+					"type": "string"
+				},
+				"quality": {
+					"type": "string"
+				},
+				"barcode": {
+					"type": "string"
+				},
+				"asin": {
+					"type": "string"
+				},
+				"textRepresentation": {
+					"type": "object",
+					"properties": {
+						"language": {
+							"type": "string"
+						},
+						"script": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"language",
+						"script"
+					]
+				},
+				"trackCount": {
+					"type": "number"
+				},
+				"artistCredit": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
+					}
+				},
+				"releaseGroup": {
+					"$ref": "#/definitions/MusicBrainz.ReleaseGroupBase"
+				},
+				"labelInfo": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Label"
+					}
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"count": {
+								"type": "number"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"count",
+							"name"
+						]
+					}
+				},
+				"releaseEvents": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ReleaseEvent"
+					}
+				},
+				"coverArtArchive": {
+					"type": "object",
+					"properties": {
+						"front": {
+							"type": "boolean"
+						},
+						"back": {
+							"type": "boolean"
+						},
+						"darkened": {
+							"type": "boolean"
+						},
+						"artwork": {
+							"type": "boolean"
+						},
+						"count": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"artwork",
+						"back",
+						"count",
+						"darkened",
+						"front"
+					]
+				}
+			},
+			"required": [
+				"artistCredit",
+				"id",
+				"labelInfo",
+				"media",
+				"releaseEvents",
+				"releaseGroup",
+				"sortName",
+				"status",
+				"tags",
+				"textRepresentation",
+				"title",
+				"trackCount"
+			]
+		},
+		"MusicBrainz.ReleaseMedia": {
+			"type": "object",
+			"properties": {
+				"format": {
+					"type": "string"
+				},
+				"formatId": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"discCount": {
+					"type": "number"
+				},
+				"trackCount": {
+					"type": "number"
+				},
+				"position": {
+					"type": "number"
+				},
+				"trackOffset": {
+					"type": "number"
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ReleaseTrack"
+					}
+				},
+				"discs": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Disc"
+					}
+				}
+			},
+			"required": [
+				"discCount",
+				"format",
+				"position",
+				"trackCount",
+				"trackOffset"
+			]
+		},
+		"MusicBrainz.ReleaseTrack": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"position": {
+					"type": "number"
+				},
+				"length": {
+					"type": "number"
+				},
+				"number": {
+					"type": "string"
+				},
+				"recording": {
+					"$ref": "#/definitions/MusicBrainz.RecordingBase"
+				},
+				"artistCredit": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"length",
+				"number",
+				"position",
+				"title"
+			]
+		},
+		"MusicBrainz.RecordingBase": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"disambiguation": {
+					"type": "string"
+				},
+				"length": {
+					"type": "number"
+				},
+				"video": {
+					"type": "boolean"
+				},
+				"rating": {
+					"$ref": "#/definitions/MusicBrainz.Rating"
+				},
+				"aliases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Alias"
+					}
+				},
+				"artistCredit": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
+					}
+				},
+				"isrcs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"disambiguation",
+				"id",
+				"length",
+				"title",
+				"video"
+			]
+		},
+		"MusicBrainz.Rating": {
+			"type": "object",
+			"properties": {
+				"votesCount": {
+					"type": "number"
+				},
+				"value": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"value",
+				"votesCount"
+			]
+		},
+		"MusicBrainz.Alias": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"sortName": {
+					"type": "string"
+				},
+				"locale": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string"
+				},
+				"typeId": {
+					"type": "string"
+				},
+				"primary": {
+					"type": "string"
+				},
+				"beginDate": {
+					"type": "string"
+				},
+				"endDate": {
+					"type": "string"
+				},
+				"ended": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"ended",
+				"name"
+			]
+		},
+		"MusicBrainz.ArtistCredit": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"joinphrase": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"sortName": {
+							"type": "string"
+						},
+						"disambiguation": {
+							"type": "string"
+						},
+						"aliases": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/MusicBrainz.Alias"
+							}
+						}
+					},
+					"required": [
+						"aliases",
+						"disambiguation",
+						"id",
+						"name",
+						"sortName"
+					]
+				}
+			},
+			"required": [
+				"artist",
+				"joinphrase",
+				"name"
+			]
+		},
+		"MusicBrainz.Disc": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"sectors": {
+					"type": "number"
+				},
+				"offsetCount": {
+					"type": "number"
+				},
+				"offsets": {
+					"type": "array",
+					"items": {
+						"type": "number"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"offsetCount",
+				"offsets",
+				"sectors"
+			]
+		},
+		"MusicBrainz.ReleaseGroupBase": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"disambiguation": {
+					"type": "string"
+				},
+				"firstReleaseDate": {
+					"type": "string"
+				},
+				"primaryType": {
+					"type": "string"
+				},
+				"primaryTypeId": {
+					"type": "string"
+				},
+				"secondaryTypes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"secondaryTypeIds": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"rating": {
+					"$ref": "#/definitions/MusicBrainz.Rating"
+				},
+				"artistCredit": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"primaryType",
+				"title"
+			]
+		},
+		"MusicBrainz.Label": {
+			"type": "object",
+			"properties": {
+				"catalogNumber": {
+					"type": "string"
+				},
+				"label": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"disambiguation": {
+							"type": "string"
+						},
+						"labelCode": {
+							"type": "string"
+						},
+						"sortName": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"id",
+						"name"
+					]
+				},
+				"aliases": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string"
+							},
+							"sortName": {
+								"type": "string"
+							},
+							"ended": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"ended",
+							"name",
+							"sortName"
+						]
+					}
+				}
+			},
+			"required": [
+				"aliases",
+				"catalogNumber",
+				"label"
+			]
+		},
+		"MusicBrainz.ReleaseEvent": {
+			"type": "object",
+			"properties": {
+				"date": {
+					"type": "string"
+				},
+				"area": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"sortName": {
+							"type": "string"
+						},
+						"disambiguation": {
+							"type": "string"
+						},
+						"iso31661Codes": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": [
+						"id",
+						"iso31661Codes",
+						"name",
+						"sortName"
+					]
+				}
+			},
+			"required": [
+				"area",
+				"date"
+			]
+		},
+		"Jam.ArtistInfo": {
+			"type": "object",
+			"properties": {
+				"similar": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"description": {
+					"type": "string"
+				},
+				"lastFmUrl": {
+					"type": "string"
+				},
+				"smallImageUrl": {
+					"type": "string"
+				},
+				"mediumImageUrl": {
+					"type": "string"
+				},
+				"largeImageUrl": {
+					"type": "string"
+				}
+			}
+		},
+		"Jam.ArtistFolderInfo": {
+			"type": "object",
+			"properties": {
+				"similar": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"description": {
+					"type": "string"
+				},
+				"lastFmUrl": {
+					"type": "string"
+				},
+				"smallImageUrl": {
+					"type": "string"
+				},
+				"mediumImageUrl": {
+					"type": "string"
+				},
+				"largeImageUrl": {
+					"type": "string"
+				}
+			}
+		},
+		"Jam.AlbumFolderInfo": {
+			"type": "object",
+			"properties": {
+				"releases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Release"
+					}
+				},
+				"description": {
+					"type": "string"
+				},
+				"lastFmUrl": {
+					"type": "string"
+				},
+				"smallImageUrl": {
+					"type": "string"
+				},
+				"mediumImageUrl": {
+					"type": "string"
+				},
+				"largeImageUrl": {
+					"type": "string"
+				}
+			}
+		},
+		"Jam.Folder": {
+			"type": "object",
+			"properties": {
+				"parentID": {
+					"type": "string"
+				},
+				"type": {
+					"$ref": "#/definitions/Jam.FolderType"
+				},
+				"tag": {
+					"$ref": "#/definitions/Jam.FolderTag"
+				},
+				"health": {
+					"$ref": "#/definitions/Jam.FolderHealth"
+				},
+				"artistInfo": {
+					"$ref": "#/definitions/Jam.ArtistFolderInfo"
+				},
+				"albumInfo": {
+					"$ref": "#/definitions/Jam.AlbumInfo"
+				},
+				"folders": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Folder"
+					}
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Track"
+					}
+				},
+				"parents": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.FolderParent"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"id",
+				"name",
+				"type"
+			]
+		},
+		"Jam.FolderType": {
+			"enum": [
+				"album",
+				"artist",
+				"extras",
+				"multialbum",
+				"multiartist",
+				"unknown"
+			],
+			"type": "string"
+		},
+		"Jam.FolderTag": {
+			"type": "object",
+			"properties": {
+				"album": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"genre": {
+					"type": "string"
+				},
+				"year": {
+					"type": "number"
+				},
+				"musicbrainz": {
+					"type": "object",
+					"properties": {
+						"artistID": {
+							"type": "string"
+						},
+						"albumID": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
+		"Jam.FolderHealth": {
+			"type": "object",
+			"properties": {
+				"problems": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.FolderProblem"
+					}
+				}
+			}
+		},
+		"Jam.FolderProblem": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"name"
+			]
+		},
+		"Jam.FolderParent": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"name"
+			]
+		},
+		"Jam.PodcastEpisode": {
+			"type": "object",
+			"properties": {
+				"podcastID": {
+					"type": "string"
+				},
+				"status": {
+					"type": "string"
+				},
+				"errorMessage": {
+					"type": "string"
+				},
+				"duration": {
+					"type": "number"
+				},
+				"tag": {
+					"$ref": "#/definitions/Jam.TrackTag"
+				},
+				"tagID3": {
+					"$ref": "#/definitions/Jam.ID3Tag"
+				},
+				"media": {
+					"$ref": "#/definitions/Jam.TrackMedia"
+				},
+				"parentID": {
+					"type": "string"
+				},
+				"artistID": {
+					"type": "string"
+				},
+				"albumID": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"duration",
+				"id",
+				"name",
+				"parentID",
+				"podcastID",
+				"status"
+			]
+		},
+		"Jam.Playlist": {
+			"type": "object",
+			"properties": {
+				"userID": {
+					"type": "string"
+				},
+				"isPublic": {
+					"type": "boolean"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"duration": {
+					"type": "number"
+				},
+				"trackCount": {
+					"type": "number"
+				},
+				"changed": {
+					"type": "number"
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Track"
+					}
+				},
+				"trackIDs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"changed",
+				"created",
+				"duration",
+				"id",
+				"isPublic",
+				"name",
+				"trackCount",
+				"userID"
+			]
+		},
+		"Jam.Podcast": {
+			"type": "object",
+			"properties": {
+				"url": {
+					"type": "string"
+				},
+				"status": {
+					"type": "string"
+				},
+				"errorMessage": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"episodes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.PodcastEpisode"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"id",
+				"name",
+				"status",
+				"url"
+			]
+		},
+		"Jam.TrackBookmark": {
+			"type": "object",
+			"properties": {
+				"track": {
+					"$ref": "#/definitions/Jam.Track"
+				},
+				"trackID": {
+					"type": "string"
+				},
+				"position": {
+					"type": "number"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				},
+				"changed": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"changed",
+				"created",
+				"position",
+				"trackID"
+			]
+		},
+		"Jam.FolderChildren": {
+			"type": "object",
+			"properties": {
+				"folders": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Folder"
+					}
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Track"
+					}
+				}
+			}
+		},
+		"Jam.States": {
+			"type": "object",
+			"additionalProperties": {
+				"$ref": "#/definitions/Jam.State"
+			}
+		},
+		"Jam.ID3Tags": {
+			"type": "object",
+			"additionalProperties": {
+				"$ref": "#/definitions/Jam.ID3Tag"
+			}
+		},
+		"MusicBrainz.Response": {
+			"type": "object",
+			"properties": {
+				"release": {
+					"$ref": "#/definitions/MusicBrainz.Release"
+				},
+				"releases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Release"
+					}
+				},
+				"releaseGroup": {
+					"$ref": "#/definitions/MusicBrainz.ReleaseGroup"
+				},
+				"releaseGroups": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ReleaseGroup"
+					}
+				},
+				"recording": {
+					"$ref": "#/definitions/MusicBrainz.Recording"
+				},
+				"recordings": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Recording"
+					}
+				},
+				"count": {
+					"type": "number"
+				},
+				"offset": {
+					"type": "number"
+				},
+				"created": {
+					"type": "string"
+				}
+			}
+		},
+		"MusicBrainz.ReleaseGroup": {
+			"type": "object",
+			"properties": {
+				"releases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Release"
+					}
+				},
+				"score": {
+					"type": "number"
+				},
+				"count": {
+					"type": "number"
+				},
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"disambiguation": {
+					"type": "string"
+				},
+				"firstReleaseDate": {
+					"type": "string"
+				},
+				"primaryType": {
+					"type": "string"
+				},
+				"primaryTypeId": {
+					"type": "string"
+				},
+				"secondaryTypes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"secondaryTypeIds": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"rating": {
+					"$ref": "#/definitions/MusicBrainz.Rating"
+				},
+				"artistCredit": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"primaryType",
+				"title"
+			]
+		},
+		"MusicBrainz.Recording": {
+			"type": "object",
+			"properties": {
+				"releases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Release"
+					}
+				},
+				"score": {
+					"type": "number"
+				},
+				"count": {
+					"type": "number"
+				},
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"disambiguation": {
+					"type": "string"
+				},
+				"length": {
+					"type": "number"
+				},
+				"video": {
+					"type": "boolean"
+				},
+				"rating": {
+					"$ref": "#/definitions/MusicBrainz.Rating"
+				},
+				"aliases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Alias"
+					}
+				},
+				"artistCredit": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
+					}
+				},
+				"isrcs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"disambiguation",
+				"id",
+				"length",
+				"title",
+				"video"
+			]
+		},
+		"LastFM.Result": {
+			"type": "object",
+			"properties": {
+				"similartracks": {
+					"$ref": "#/definitions/LastFM.SimilarTracks"
+				},
+				"toptracks": {
+					"$ref": "#/definitions/LastFM.TopTracks"
+				},
+				"artist": {
+					"$ref": "#/definitions/LastFM.Artist"
+				},
+				"album": {
+					"$ref": "#/definitions/LastFM.Album"
+				},
+				"track": {
+					"$ref": "#/definitions/LastFM.Track"
+				}
+			}
+		},
+		"LastFM.SimilarTracks": {
+			"type": "object",
+			"properties": {
+				"track": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Track"
+					}
+				},
+				"artist": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artist",
+				"track"
+			]
+		},
+		"LastFM.Track": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"duration": {
+					"type": "string"
+				},
+				"playcount": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"match": {
+					"type": "string"
+				},
+				"rank": {
+					"type": "string"
+				},
+				"streamable": {
+					"$ref": "#/definitions/LastFM.Streamable"
+				},
+				"artist": {
+					"$ref": "#/definitions/LastFM.ArtistInfo"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				}
+			},
+			"required": [
+				"artist",
+				"duration",
+				"image",
+				"match",
+				"mbid",
+				"name",
+				"playcount",
+				"rank",
+				"streamable",
+				"url"
+			]
+		},
+		"LastFM.Streamable": {
+			"type": "object",
+			"properties": {
+				"url": {
+					"type": "string"
+				},
+				"fulltrack": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"fulltrack",
+				"url"
+			]
+		},
+		"LastFM.ArtistInfo": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"mbid",
+				"name",
+				"url"
+			]
+		},
+		"LastFM.Image": {
+			"type": "object",
+			"properties": {
+				"url": {
+					"type": "string"
+				},
+				"size": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"size",
+				"url"
+			]
+		},
+		"LastFM.TopTracks": {
+			"type": "object",
+			"properties": {
+				"track": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.TopTrack"
+					}
+				},
+				"artist": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artist",
+				"track"
+			]
+		},
+		"LastFM.TopTrack": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"streamable": {
+					"type": "string"
+				},
+				"playcount": {
+					"type": "number"
+				},
+				"listeners": {
+					"type": "number"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				},
+				"artist": {
+					"$ref": "#/definitions/LastFM.ArtistInfo"
+				},
+				"rank": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artist",
+				"image",
+				"listeners",
+				"mbid",
+				"name",
+				"playcount",
+				"rank",
+				"streamable",
+				"url"
+			]
+		},
+		"LastFM.Artist": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				},
+				"streamable": {
+					"type": "string"
+				},
+				"ontour": {
+					"type": "string"
+				},
+				"stats": {
+					"$ref": "#/definitions/LastFM.Stats"
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Tag"
+					}
+				},
+				"bio": {
+					"$ref": "#/definitions/LastFM.Biography"
+				},
+				"similar": {
+					"$ref": "#/definitions/LastFM.SimilarArtists"
+				}
+			},
+			"required": [
+				"image",
+				"mbid",
+				"name",
+				"ontour",
+				"streamable",
+				"tags",
+				"url"
+			]
+		},
+		"LastFM.Stats": {
+			"type": "object",
+			"properties": {
+				"listeners": {
+					"type": "string"
+				},
+				"playcount": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"listeners",
+				"playcount"
+			]
+		},
+		"LastFM.Tag": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name",
+				"url"
+			]
+		},
+		"LastFM.Biography": {
+			"type": "object",
+			"properties": {
+				"published": {
+					"type": "string"
+				},
+				"summary": {
+					"type": "string"
+				},
+				"content": {
+					"type": "string"
+				},
+				"links": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Link"
+					}
+				}
+			},
+			"required": [
+				"content",
+				"published",
+				"summary"
+			]
+		},
+		"LastFM.Link": {
+			"type": "object",
+			"properties": {
+				"url": {
+					"type": "string"
+				},
+				"rel": {
+					"type": "string"
+				},
+				"href": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"href",
+				"rel",
+				"url"
+			]
+		},
+		"LastFM.SimilarArtists": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.SimilarArtist"
+					}
+				}
+			}
+		},
+		"LastFM.SimilarArtist": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				}
+			},
+			"required": [
+				"image",
+				"name",
+				"url"
+			]
+		},
+		"LastFM.Album": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				},
+				"listeners": {
+					"type": "string"
+				},
+				"playcount": {
+					"type": "string"
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Track"
+					}
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Tag"
+					}
+				},
+				"wiki": {
+					"$ref": "#/definitions/LastFM.Wiki"
+				}
+			},
+			"required": [
+				"artist",
+				"image",
+				"listeners",
+				"mbid",
+				"name",
+				"playcount",
+				"tracks",
+				"url"
+			]
+		},
+		"LastFM.Wiki": {
+			"type": "object",
+			"properties": {
+				"published": {
+					"type": "string"
+				},
+				"summary": {
+					"type": "string"
+				},
+				"content": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"content",
+				"published",
+				"summary"
+			]
+		},
+		"Acoustid.Result": {
+			"type": "object",
+			"properties": {
+				"recordings": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Recording"
+					}
+				},
+				"score": {
+					"type": "number"
+				},
+				"id": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"recordings",
+				"score"
+			]
+		},
+		"Acoustid.Recording": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"sources": {
+					"type": "number"
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Artist"
+					}
+				},
+				"duration": {
+					"type": "number"
+				},
+				"releasegroups": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Releasegroup"
+					}
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artists",
+				"duration",
+				"id",
+				"releasegroups",
+				"sources",
+				"title"
+			]
+		},
+		"Acoustid.Artist": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"name"
+			]
+		},
+		"Acoustid.Releasegroup": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"releases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Release"
+					}
+				},
+				"title": {
+					"type": "string"
+				},
+				"secondarytypes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"type": {
+					"type": "string"
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Artist"
+					}
+				}
+			},
+			"required": [
+				"artists",
+				"id",
+				"releases",
+				"secondarytypes",
+				"title",
+				"type"
+			]
+		},
+		"Acoustid.Release": {
+			"type": "object",
+			"properties": {
+				"mediums": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Medium"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"track_count": {
+					"type": "number"
+				},
+				"medium_count": {
+					"type": "number"
+				},
+				"releaseevents": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Releaseevent"
+					}
+				},
+				"country": {
+					"type": "string"
+				},
+				"date": {
+					"$ref": "#/definitions/Acoustid.AcousticDate"
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"country",
+				"date",
+				"id",
+				"medium_count",
+				"mediums",
+				"releaseevents",
+				"title",
+				"track_count"
+			]
+		},
+		"Acoustid.Medium": {
+			"type": "object",
+			"properties": {
+				"position": {
+					"type": "number"
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Track"
+					}
+				},
+				"track_count": {
+					"type": "number"
+				},
+				"format": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"format",
+				"position",
+				"title",
+				"track_count",
+				"tracks"
+			]
+		},
+		"Acoustid.Track": {
+			"type": "object",
+			"properties": {
+				"position": {
+					"type": "number"
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Artist"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artists",
+				"id",
+				"position",
+				"title"
+			]
+		},
+		"Acoustid.Releaseevent": {
+			"type": "object",
+			"properties": {
+				"date": {
+					"$ref": "#/definitions/Acoustid.AcousticDate"
+				},
+				"country": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"country",
+				"date"
+			]
+		},
+		"Acoustid.AcousticDate": {
+			"type": "object",
+			"properties": {
+				"month": {
+					"type": "number"
+				},
+				"year": {
+					"type": "number"
+				},
+				"day": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"month",
+				"year"
+			]
+		},
+		"Jam.Genre": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"trackCount": {
+					"type": "number"
+				},
+				"albumCount": {
+					"type": "number"
+				},
+				"artistCount": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"albumCount",
+				"artistCount",
+				"name",
+				"trackCount"
+			]
+		},
+		"Jam.FolderIndex": {
+			"type": "object",
+			"properties": {
+				"lastModified": {
+					"type": "number"
+				},
+				"groups": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.FolderIndexGroup"
+					}
+				}
+			},
+			"required": [
+				"groups",
+				"lastModified"
+			]
+		},
+		"Jam.FolderIndexGroup": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"entries": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.FolderIndexEntry"
+					}
+				}
+			},
+			"required": [
+				"entries",
+				"name"
+			]
+		},
+		"Jam.FolderIndexEntry": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"folderID": {
+					"type": "string"
+				},
+				"trackCount": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"folderID",
+				"name",
+				"trackCount"
+			]
+		},
+		"Jam.ArtistIndex": {
+			"type": "object",
+			"properties": {
+				"lastModified": {
+					"type": "number"
+				},
+				"groups": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.ArtistIndexGroup"
+					}
+				}
+			},
+			"required": [
+				"groups",
+				"lastModified"
+			]
+		},
+		"Jam.ArtistIndexGroup": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"entries": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.ArtistIndexEntry"
+					}
+				}
+			},
+			"required": [
+				"entries",
+				"name"
+			]
+		},
+		"Jam.ArtistIndexEntry": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"artistID": {
+					"type": "string"
+				},
+				"trackCount": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"artistID",
+				"name",
+				"trackCount"
+			]
+		},
+		"Jam.ChatMessage": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"type": "string"
+				},
+				"time": {
+					"type": "number"
+				},
+				"message": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"message",
+				"time",
+				"username"
+			]
+		},
+		"Jam.PlayQueue": {
+			"type": "object",
+			"properties": {
+				"trackIDs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Track"
+					}
+				},
+				"currentID": {
+					"type": "string"
+				},
+				"position": {
+					"type": "number"
+				},
+				"changed": {
+					"type": "number"
+				},
+				"changedBy": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"changed",
+				"changedBy"
+			]
+		},
+		"Jam.Session": {
+			"type": "object",
+			"properties": {
+				"version": {
+					"type": "string"
+				},
+				"user": {
+					"$ref": "#/definitions/Jam.User"
+				},
+				"jwt": {
+					"type": "string"
+				},
+				"allowedCookieDomains": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"allowedCookieDomains",
+				"version"
+			]
+		}
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#"
+}
