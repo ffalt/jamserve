@@ -1,9 +1,9 @@
-import {FileTyp} from '../types';
+import {FileTyp} from '../../types';
 import path from 'path';
 import fs from 'fs';
-import {getFileType} from '../utils/filetype';
-import Logger from '../utils/logger';
-import {dirRead, fsStat} from '../utils/fs-utils';
+import {getFileType} from '../../utils/filetype';
+import Logger from '../../utils/logger';
+import {dirRead, fsStat} from '../../utils/fs-utils';
 
 const log = Logger('IO.scan');
 

@@ -2,7 +2,7 @@ import path from 'path';
 import {JamServe} from '../../model/jamserve';
 import {Engine} from '../../engine/engine';
 import {DBObjectType, FolderType} from '../../types';
-import {getFolderProblems} from '../../io/health';
+import {getFolderProblems} from '../../io/components/health';
 import {fileSuffix} from '../../utils/fs-utils';
 import {APIVERSION, FORMAT} from './format';
 import {BaseStore} from '../../store/store';

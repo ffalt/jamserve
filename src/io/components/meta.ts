@@ -1,7 +1,7 @@
-import {JamServe} from '../model/jamserve';
-import {AlbumType, DBObjectType} from '../types';
-import {Store} from '../store/store';
-import Logger from '../utils/logger';
+import {JamServe} from '../../model/jamserve';
+import {AlbumType, DBObjectType} from '../../types';
+import {Store} from '../../store/store';
+import Logger from '../../utils/logger';
 import {MergeChanges, MergeTrackInfo} from './merge';
 import {clearID3} from './clean';
 import {cUnknownAlbum, cUnknownArtist} from './tag';

@@ -2,13 +2,13 @@ import {JamServe} from '../model/jamserve';
 import {Store} from '../store/store';
 import {Audio} from '../audio/audio';
 import Logger from '../utils/logger';
-import {ScanDir, scanDir} from './scan';
-import {MatchDir, matchDir} from './match';
-import {MergeChanges, Merger} from './merge';
-import {MetaMerge} from './meta';
-import {scanCleanStore} from './clean';
+import {ScanDir, scanDir} from './components/scan';
+import {MatchDir, matchDir} from './components/match';
+import {MergeChanges, Merger} from './components/merge';
+import {MetaMerge} from './components/meta';
+import {scanCleanStore} from './components/clean';
 import {Subsonic} from '../model/subsonic-rest-data-1.16.0';
-import {Images} from './images';
+import {Images} from './components/images';
 
 const log = Logger('IO');
 

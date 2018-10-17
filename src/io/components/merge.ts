@@ -1,11 +1,11 @@
-import {Store} from '../store/store';
-import {JamServe} from '../model/jamserve';
+import {Store} from '../../store/store';
+import {JamServe} from '../../model/jamserve';
 import {MatchDir, MatchFile} from './match';
-import {DBObjectType, FileTyp, FolderType} from '../types';
+import {DBObjectType, FileTyp, FolderType} from '../../types';
 import path from 'path';
-import {Audio} from '../audio/audio';
-import {deepCompare} from '../utils/deep-compare';
-import Logger from '../utils/logger';
+import {Audio} from '../../audio/audio';
+import {deepCompare} from '../../utils/deep-compare';
+import Logger from '../../utils/logger';
 import {fillMatchTags} from './tag';
 
 const log = Logger('IO.merge');

@@ -1,8 +1,8 @@
-import {Store} from '../store/store';
+import {Store} from '../../store/store';
 import {ScanDir, ScanFile} from './scan';
-import {JamServe} from '../model/jamserve';
+import {JamServe} from '../../model/jamserve';
 import path from 'path';
-import Logger from '../utils/logger';
+import Logger from '../../utils/logger';
 
 const log = Logger('IO.match');
 

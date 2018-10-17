@@ -3,7 +3,7 @@ import {JamServe} from '../model/jamserve';
 import {IO} from '../io/io';
 import {BaseStore, Store} from '../store/store';
 import {Audio} from '../audio/audio';
-import {Images} from '../io/images';
+import {Images} from '../io/components/images';
 import {DBObjectType, FolderType, FolderTypeImageName} from '../types';
 import Logger from '../utils/logger';
 import {dirExist, dirRename, fileCopy, fileDeleteIfExists, fileSuffix, makePath, replaceFileSystemChars} from '../utils/fs-utils';

@@ -1,8 +1,8 @@
-import {JamServe} from '../model/jamserve';
+import {JamServe} from '../../model/jamserve';
 import path from 'path';
-import {FolderType} from '../types';
-import {Jam} from '../model/jam-rest-data-0.1.0';
-import {replaceFileSystemChars} from '../utils/fs-utils';
+import {FolderType} from '../../types';
+import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {replaceFileSystemChars} from '../../utils/fs-utils';
 
 interface ProblemCheck {
 	name: string;

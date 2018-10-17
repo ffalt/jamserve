@@ -2,7 +2,7 @@ import {JamServe} from '../../model/jamserve';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import path from 'path';
 import {Store} from '../../store/store';
-import {Images} from '../../io/images';
+import {Images} from '../../io/components/images';
 import {Config} from '../../config';
 
 export class Users {

@@ -1,11 +1,11 @@
-import {JamServe} from '../model/jamserve';
-import {dirExist, fileExists} from '../utils/fs-utils';
+import {JamServe} from '../../model/jamserve';
+import {dirExist, fileExists} from '../../utils/fs-utils';
 import path from 'path';
-import Logger from '../utils/logger';
-import {Store} from '../store/store';
+import Logger from '../../utils/logger';
+import {Store} from '../../store/store';
 import {MergeChanges} from './merge';
-import {DBObjectType} from '../types';
-import {updatePlayListTracks} from '../engine/components/playlists';
+import {DBObjectType} from '../../types';
+import {updatePlayListTracks} from '../../engine/components/playlists';
 import {Images} from './images';
 
 const log = Logger('IO.clean');

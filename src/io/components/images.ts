@@ -1,11 +1,12 @@
 import path from 'path';
-import Logger from '../utils/logger';
-import {downloadFile} from '../utils/download';
-import {dirRead, fileDelete, fileDeleteIfExists, fileExists, fileRename, fileWrite} from '../utils/fs-utils';
-import {IApiBinaryResult} from '../typings';
-import {Config} from '../config';
+import Logger from '../../utils/logger';
+import {downloadFile} from '../../utils/download';
+import {dirRead, fileDelete, fileDeleteIfExists, fileExists, fileRename, fileWrite} from '../../utils/fs-utils';
+import {IApiBinaryResult} from '../../typings';
+import {Config} from '../../config';
 import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
+import {DebouncePromises} from '../../utils/debounce-promises';
 
 const log = Logger('Images');
 
@@ -17,6 +18,7 @@ export class Images {
 	private imageCachePath: string;
 	private format = 'png';
 	private font: Jimp.Font | undefined;
+	private imageCacheDebounce = new DebouncePromises<IApiBinaryResult>();
 
 	constructor(config: Config) {
 		this.imageCachePath = config.getDataPath(['cache', 'images']);
@@ -60,7 +62,7 @@ export class Images {
 		};
 	}
 
-	async getImage(filename: string, size: number | undefined, name: string): Promise<IApiBinaryResult> {
+	private async getImage(filename: string, size: number | undefined, name: string): Promise<IApiBinaryResult> {
 		const exists = await fileExists(filename);
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
@@ -89,17 +91,30 @@ export class Images {
 			return Promise.reject(Error('Invalid Path'));
 		}
 		if (size) {
-			const cachefile = path.join(this.imageCachePath, 'thumb-' + id + '-' + size + '.' + this.format);
-			const exists = await fileExists(cachefile);
-			if (exists) {
-				return {file: {filename: cachefile, name: id + '-' + size + '.' + this.format}};
+			const cacheID = 'thumb-' + id + '-' + size + '.' + this.format;
+			if (this.imageCacheDebounce.isPending(cacheID)) {
+				return this.imageCacheDebounce.append(cacheID);
 			}
-			const result = await this.getImage(filename, size, id + '-' + size + '.' + this.format);
-			if (result.buffer) {
-				log.debug('Writing image cache file', cachefile);
-				await fileWrite(cachefile, result.buffer.buffer);
+			this.imageCacheDebounce.setPending(cacheID);
+			try {
+				let result: IApiBinaryResult;
+				const cachefile = path.join(this.imageCachePath, cacheID);
+				const exists = await fileExists(cachefile);
+				if (exists) {
+					result = {file: {filename: cachefile, name: cacheID}};
+				} else {
+					result = await this.getImage(filename, size, cacheID);
+					if (result.buffer) {
+						log.debug('Writing image cache file', cachefile);
+						await fileWrite(cachefile, result.buffer.buffer);
+					}
+				}
+				await this.imageCacheDebounce.resolve(cacheID, result);
+				return result;
+			} catch (e) {
+				await this.imageCacheDebounce.reject(cacheID, e);
+				return Promise.reject(e);
 			}
-			return result;
 		} else {
 			return this.getImage(filename, size, id + '.' + this.format);
 		}

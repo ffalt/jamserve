@@ -1,8 +1,8 @@
 import {MatchDir} from './match';
-import {JamServe} from '../model/jamserve';
-import {AlbumType, FileTyp, FolderType} from '../types';
+import {JamServe} from '../../model/jamserve';
+import {AlbumType, FileTyp, FolderType} from '../../types';
 import path from 'path';
-import Logger from '../utils/logger';
+import Logger from '../../utils/logger';
 
 const log = Logger('IO.tag');
 
