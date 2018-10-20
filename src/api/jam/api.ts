@@ -16,6 +16,7 @@ import {MusicBrainz} from '../../model/musicbrainz-rest-data-2.0';
 import {Acoustid} from '../../model/acoustid-rest-data-2.0';
 import {LastFM} from '../../model/lastfm-rest-data-2.0';
 import {GenericError, InvalidParamError, NotFoundError, UnauthError} from './error';
+import {PodcastStatus} from '../../utils/feed';
 
 export interface ApiOptions<T> {
 	query: T;
@@ -261,7 +262,12 @@ class APIJamEpisode extends APIJamObj<JamParameters.Episode, JamParameters.Episo
 	}
 
 	async prepare(episode: JamServe.Episode, includes: JamParameters.IncludesEpisode, user: JamServe.User): Promise<Jam.PodcastEpisode> {
-		return FORMAT.packPodcastEpisode(episode, includes);
+		const result = FORMAT.packPodcastEpisode(episode, includes, this.engine.podcasts.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status);
+		if (includes.trackState) {
+			const state = await this.engine.store.state.findOrCreate(episode.id, user.id, DBObjectType.episode);
+			result.state = FORMAT.packState(state);
+		}
+		return result;
 	}
 
 	translateQuery(query: JamParameters.EpisodeSearch, user: JamServe.User): JamServe.SearchQueryPodcastEpisode {
@@ -271,7 +277,7 @@ class APIJamEpisode extends APIJamObj<JamParameters.Episode, JamParameters.Episo
 			status: query.status,
 			offset: query.offset,
 			amount: query.amount,
-			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] : undefined
+			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] :  undefined
 		};
 	}
 
@@ -897,8 +903,8 @@ class APIJamUser extends APIJamObj<JamParameters.ID, JamParameters.IDs, {}, JamS
 			roles: {
 				adminRole: req.query.roleAdmin !== undefined ? req.query.roleAdmin : false,
 				streamRole: req.query.roleStream !== undefined ? req.query.roleStream : true,
-				uploadRole:  req.query.roleUpload !== undefined ? req.query.roleUpload : false,
-				podcastRole:  req.query.rolePodcast !== undefined ? req.query.rolePodcast : false,
+				uploadRole: req.query.roleUpload !== undefined ? req.query.roleUpload : false,
+				podcastRole: req.query.rolePodcast !== undefined ? req.query.rolePodcast : false,
 				// settingsRole: false,
 				// jukeboxRole: false,
 				// downloadRole: false,
