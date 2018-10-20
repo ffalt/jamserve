@@ -10628,6 +10628,24 @@
 				"status": {
 					"type": "string"
 				},
+				"date": {
+					"type": "number"
+				},
+				"title": {
+					"type": "string"
+				},
+				"summary": {
+					"type": "string"
+				},
+				"guid": {
+					"type": "string"
+				},
+				"author": {
+					"type": "string"
+				},
+				"link": {
+					"type": "string"
+				},
 				"errorMessage": {
 					"type": "string"
 				},
@@ -10667,12 +10685,14 @@
 			},
 			"required": [
 				"created",
+				"date",
 				"duration",
 				"id",
 				"name",
 				"parentID",
 				"podcastID",
-				"status"
+				"status",
+				"title"
 			]
 		},
 		"JamParameters.Episodes": {
