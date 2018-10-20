@@ -99,7 +99,7 @@ export class SubsonicApi {
 	private async prepareEpisodes(episodes: Array<JamServe.Episode>, user: JamServe.User): Promise<Array<Subsonic.PodcastEpisode>> {
 		const states = await this.engine.store.state.findOrCreateMulti(episodes.map(episode => episode.id), user.id, DBObjectType.episode);
 		return episodes.map(episode => {
-			return FORMAT.packPodcastEpisode(episode, states[episode.id], (this.engine.podcasts.isDownloadingPodcast(episode.id) ? PodcastStatus.downloading : undefined));
+			return FORMAT.packPodcastEpisode(episode, states[episode.id], (this.engine.podcasts.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status));
 		});
 	}
 

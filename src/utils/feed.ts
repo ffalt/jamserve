@@ -144,6 +144,7 @@ export class Feed {
 					chapters = pscChap.map(item => item['@']);
 				}
 			}
+			console.log(post.date);
 			return {
 				id: '',
 				podcastID: podcast.id,
@@ -154,7 +155,7 @@ export class Feed {
 				guid: post.guid,
 				summary: post.summary,
 				enclosures: <any>post.enclosures, // TODO: validate podcast enclosures (wrong interface description?)
-				date: post.date ? post.date.valueOf() : undefined,
+				date: post.date ? post.date.valueOf() : 0,
 				title: post.title,
 				chapters: chapters
 			};

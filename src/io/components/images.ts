@@ -38,7 +38,7 @@ export class Images {
 
 	async paint(text: string, size: number, format: string | undefined): Promise<IApiBinaryResult> {
 		size = size || 320;
-		const image = new Jimp(360, 360, '#404040');
+		const image = new Jimp(360, 360, '#282828');
 		if (!this.font) {
 			this.font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
 		}
@@ -47,7 +47,7 @@ export class Images {
 			alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
 			alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE
 		}, 340, 340);
-		image.greyscale();
+		// image.greyscale();
 		image.resize(size, size);
 		const mime = mimeTypes.lookup(format ? format : this.format);
 		if (!mime) {

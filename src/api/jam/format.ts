@@ -252,16 +252,22 @@ export class FORMAT {
 		};
 	}
 
-	static packPodcastEpisode(episode: JamServe.Episode, includes: JamParameters.IncludesTrack): Jam.PodcastEpisode {
+	static packPodcastEpisode(episode: JamServe.Episode, includes: JamParameters.IncludesTrack, status: string): Jam.PodcastEpisode {
 		return {
 			id: episode.id,
 			parentID: '',
 			created: episode.stat ? episode.stat.created : 0,
 			podcastID: episode.podcastID,
-			status: episode.status,
+			status: status,
 			errorMessage: episode.error,
 			name: episode.title,
 			duration: episode.media ? (episode.media.duration || -1) : -1,
+			date: episode.date,
+			title: episode.title,
+			summary: episode.summary,
+			guid: episode.guid,
+			author: episode.author,
+			link: episode.link,
 			media: includes.trackMedia && episode.media ? {
 				bitRate: episode.media.bitRate || -1,
 				format: episode.media.format || '',
@@ -282,7 +288,8 @@ export class FORMAT {
 				playing.track = FORMAT.packTrack(<JamServe.Track>entry.obj, {});
 				break;
 			case DBObjectType.episode:
-				playing.track = FORMAT.packPodcastEpisode(<JamServe.Episode>entry.obj, {});
+				const episode = <JamServe.Episode>entry.obj;
+				playing.track = FORMAT.packPodcastEpisode(episode, {}, episode.status);
 				break;
 		}
 		return playing;

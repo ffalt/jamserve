@@ -30,6 +30,10 @@ export class Podcasts {
 		return !!this.podstate[podcastId];
 	}
 
+	isDownloadingPodcastEpisode(podcastEpisodeId: string): boolean {
+		return !!this.podstate[podcastEpisodeId];
+	}
+
 	async mergePodcastEpisodes(podcast: JamServe.Podcast, episodes: Array<JamServe.Episode>): Promise<void> {
 		if ((!episodes) || (!episodes.length)) {
 			return;
@@ -42,41 +46,45 @@ export class Podcasts {
 	}
 
 	async downloadPodcastEpisode(episode: JamServe.Episode): Promise<void> {
-		this.podstate[episode.id] = episode;
-		let url = '';
-		if (episode.enclosures && episode.enclosures.length > 0) {
-			url = episode.enclosures[0].url;
-		} else {
-			return Promise.reject(Error('No podcast episode url found'));
-		}
-		const ext = fileSuffix(url);
-		if (SupportedAudioFormat.indexOf(ext) < 0) {
-			return Promise.reject(Error('Unsupported Podcast audio format'));
-		}
-		const p = path.resolve(this.podcastsPath, episode.podcastID);
-		await makePath(p);
-		const filename = path.join(p, episode.id + '.' + (ext || 'mp3'));
 		try {
+			this.podstate[episode.id] = episode;
+			let url = '';
+			if (episode.enclosures && episode.enclosures.length > 0) {
+				url = episode.enclosures[0].url;
+			} else {
+				return Promise.reject(Error('No podcast episode url found'));
+			}
+			const ext = fileSuffix(url);
+			if (SupportedAudioFormat.indexOf(ext) < 0) {
+				return Promise.reject(Error('Unsupported Podcast audio format'));
+			}
+			const p = path.resolve(this.podcastsPath, episode.podcastID);
+			await makePath(p);
+			const filename = path.join(p, episode.id + '.' + (ext || 'mp3'));
+			log.info('retrieving file', url);
 			await downloadFile(url, filename);
+			const stat = await fsStat(filename);
+			const result = await this.audio.read(filename);
+			episode.status = PodcastStatus.completed;
+			episode.tag = result.tag;
+			episode.media = result.media;
+			episode.stat = {
+				created: stat.ctime.valueOf(),
+				modified: stat.mtime.valueOf(),
+				size: stat.size
+			};
+			episode.path = filename;
+			log.info('updating episode', filename);
+			console.log(episode);
+			await this.store.episode.replace(episode);
+			delete this.podstate[episode.id];
 		} catch (e) {
+			console.error(e);
 			episode.status = PodcastStatus.error;
 			episode.error = (e || '').toString();
 			delete this.podstate[episode.id];
 			return this.store.episode.replace(episode);
 		}
-		const stat = await fsStat(filename);
-		const result = await this.audio.read(filename);
-		episode.status = PodcastStatus.completed;
-		episode.tag = result.tag;
-		episode.media = result.media;
-		episode.stat = {
-			created: stat.ctime.valueOf(),
-			modified: stat.mtime.valueOf(),
-			size: stat.size
-		};
-		episode.path = filename;
-		await this.store.episode.replace(episode);
-		delete this.podstate[episode.id];
 	}
 
 	async refreshPodcast(podcast: JamServe.Podcast): Promise<void> {

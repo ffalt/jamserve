@@ -91,6 +91,12 @@ export declare namespace Jam {
 	export interface PodcastEpisode extends Track {
 		podcastID: string;
 		status: string;
+		date: number;
+		title: string;
+		summary?: string;
+		guid?: string;
+		author?: string;
+		link?: string;
 		errorMessage?: string;
 	}
 

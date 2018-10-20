@@ -413,7 +413,7 @@ export namespace JamServe {
 		path?: string;
 		link?: string;
 		summary: string;
-		date?: number;
+		date: number;
 		title: string;
 		guid?: string;
 		author?: string;
