@@ -377,6 +377,7 @@ export namespace JamServe {
 	export interface Podcast extends DBObject {
 		url: string;
 		created: number;
+		lastCheck: number;
 		status: Subsonic.PodcastStatus;
 		errorMessage?: string;
 		tag?: PodcastTag;

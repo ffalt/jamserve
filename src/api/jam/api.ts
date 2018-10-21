@@ -205,7 +205,7 @@ class APIJamPodcast extends APIJamObj<JamParameters.Podcast, JamParameters.Podca
 	}
 
 	async prepare(podcast: JamServe.Podcast, includes: JamParameters.IncludesPodcast, user: JamServe.User): Promise<Jam.Podcast> {
-		const result = FORMAT.packPodcast(podcast);
+		const result = FORMAT.packPodcast(podcast, this.engine.podcasts.isDownloadingPodcast(podcast.id) ? PodcastStatus.downloading : podcast.status);
 		if (includes.podcastState) {
 			const state = await this.engine.store.state.findOrCreate(podcast.id, user.id, DBObjectType.podcast);
 			result.state = FORMAT.packState(state);
@@ -253,6 +253,13 @@ class APIJamPodcast extends APIJamObj<JamParameters.Podcast, JamParameters.Podca
 		await this.engine.podcasts.removePodcast(podcast);
 	}
 
+	async status(req: ApiOptions<JamParameters.ID>): Promise<Jam.PodcastStatus> {
+		const podcast = await this.byID(req.query.id);
+		return {
+			lastCheck: podcast.lastCheck,
+			status: this.engine.podcasts.isDownloadingPodcast(podcast.id) ? PodcastStatus.downloading : podcast.status
+		};
+	}
 }
 
 class APIJamEpisode extends APIJamObj<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, JamServe.SearchQueryPodcastEpisode, JamParameters.EpisodeSearch, JamServe.Episode, Jam.PodcastEpisode> {
@@ -262,7 +269,9 @@ class APIJamEpisode extends APIJamObj<JamParameters.Episode, JamParameters.Episo
 	}
 
 	async prepare(episode: JamServe.Episode, includes: JamParameters.IncludesEpisode, user: JamServe.User): Promise<Jam.PodcastEpisode> {
-		const result = FORMAT.packPodcastEpisode(episode, includes, this.engine.podcasts.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status);
+		const result = FORMAT.packPodcastEpisode(episode, includes,
+			this.engine.podcasts.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status
+		);
 		if (includes.trackState) {
 			const state = await this.engine.store.state.findOrCreate(episode.id, user.id, DBObjectType.episode);
 			result.state = FORMAT.packState(state);
@@ -277,7 +286,7 @@ class APIJamEpisode extends APIJamObj<JamParameters.Episode, JamParameters.Episo
 			status: query.status,
 			offset: query.offset,
 			amount: query.amount,
-			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] :  undefined
+			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] : undefined
 		};
 	}
 
@@ -307,6 +316,13 @@ class APIJamEpisode extends APIJamObj<JamParameters.Episode, JamParameters.Episo
 		} else {
 			return {file: {filename, name: (episode.id + '.' + format)}};
 		}
+	}
+
+	async status(req: ApiOptions<JamParameters.ID>): Promise<Jam.PodcastEpisodeStatus> {
+		const episode = await this.byID(req.query.id);
+		return {
+			status: this.engine.podcasts.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status
+		};
 	}
 
 }

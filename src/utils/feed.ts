@@ -144,7 +144,6 @@ export class Feed {
 					chapters = pscChap.map(item => item['@']);
 				}
 			}
-			console.log(post.date);
 			return {
 				id: '',
 				podcastID: podcast.id,

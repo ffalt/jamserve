@@ -105,7 +105,7 @@ export class Podcasts {
 			podcast.status = PodcastStatus.error;
 			podcast.errorMessage = (e || '').toString();
 		}
-
+		podcast.lastCheck = Date.now();
 		await this.store.podcast.replace(podcast);
 		await this.mergePodcastEpisodes(podcast, episodes);
 		delete this.podstate[podcast.id];
@@ -126,6 +126,7 @@ export class Podcasts {
 			id: '',
 			type: DBObjectType.podcast,
 			created: Date.now(),
+			lastCheck: 0,
 			url: url,
 			status: PodcastStatus.fresh
 		};

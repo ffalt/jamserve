@@ -3122,6 +3122,9 @@
 				"status": {
 					"type": "string"
 				},
+				"lastCheck": {
+					"type": "number"
+				},
 				"errorMessage": {
 					"type": "string"
 				},

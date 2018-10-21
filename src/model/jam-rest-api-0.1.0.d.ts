@@ -335,6 +335,11 @@ export interface JamApi {
 			result: Jam.States;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		'episode/status'?: {
+			params: JamParameters.ID;
+			result: Jam.PodcastEpisodeStatus;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
 
 		'podcast/id'?: {
 			params: JamParameters.Podcast;
@@ -344,6 +349,11 @@ export interface JamApi {
 		'podcast/ids'?: {
 			params: JamParameters.Podcasts;
 			result: Array<Jam.Podcast>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		'podcast/status'?: {
+			params: JamParameters.ID;
+			result: Jam.PodcastStatus;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		'podcast/search'?: {

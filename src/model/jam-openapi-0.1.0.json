@@ -3642,6 +3642,46 @@
 				]
 			}
 		},
+		"/episode/status": {
+			"get": {
+				"operationId": "episode.status",
+				"tags": [
+					"episode"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.PodcastEpisodeStatus"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
 		"/podcast/id": {
 			"get": {
 				"operationId": "podcast.id",
@@ -3847,6 +3887,46 @@
 						},
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false
+					}
+				]
+			}
+		},
+		"/podcast/status": {
+			"get": {
+				"operationId": "podcast.status",
+				"tags": [
+					"podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.PodcastStatus"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
 					}
 				]
 			}
@@ -14542,6 +14622,17 @@
 					"title"
 				]
 			},
+			"Jam.PodcastEpisodeStatus": {
+				"type": "object",
+				"properties": {
+					"status": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"status"
+				]
+			},
 			"Jam.Podcast": {
 				"type": "object",
 				"properties": {
@@ -14550,6 +14641,9 @@
 					},
 					"status": {
 						"type": "string"
+					},
+					"lastCheck": {
+						"type": "number"
 					},
 					"errorMessage": {
 						"type": "string"
@@ -14582,6 +14676,20 @@
 					"name",
 					"status",
 					"url"
+				]
+			},
+			"Jam.PodcastStatus": {
+				"type": "object",
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"lastCheck": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"status"
 				]
 			},
 			"Jam.Artist": {

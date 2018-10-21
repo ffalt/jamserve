@@ -540,6 +540,7 @@ const type_JamServe_Podcast = {
 	properties: {
 		url: type_key,
 		created: type_int,
+		lastCheck: type_int,
 		status: type_key,
 		errorMessage: type_key,
 		tag: type_JamServe_PodcastTag,

@@ -392,6 +392,16 @@ export function registerUserApi(router: express.Router, api: ApiJam, image: expr
 		}
 	});
 
+	router.get('/episode/status', apiCheck('/episode/status'), async (req, res) => {
+		try {
+			const options: ApiOptions<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+			const result: Jam.PodcastEpisodeStatus = await api.episode.status(options);
+			await ApiResponder.data(res, result);
+		} catch (e) {
+			await ApiResponder.error(res, e);
+		}
+	});
+
 	router.get('/podcast/id', apiCheck('/podcast/id'), async (req, res) => {
 		try {
 			const options: ApiOptions<JamParameters.Podcast> = {query: req.query, user: req.user, client: req.client};
@@ -406,6 +416,16 @@ export function registerUserApi(router: express.Router, api: ApiJam, image: expr
 		try {
 			const options: ApiOptions<JamParameters.Podcasts> = {query: req.query, user: req.user, client: req.client};
 			const result: Array<Jam.Podcast> = await api.podcast.ids(options);
+			await ApiResponder.data(res, result);
+		} catch (e) {
+			await ApiResponder.error(res, e);
+		}
+	});
+
+	router.get('/podcast/status', apiCheck('/podcast/status'), async (req, res) => {
+		try {
+			const options: ApiOptions<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+			const result: Jam.PodcastStatus = await api.podcast.status(options);
 			await ApiResponder.data(res, result);
 		} catch (e) {
 			await ApiResponder.error(res, e);

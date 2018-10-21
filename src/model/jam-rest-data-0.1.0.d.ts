@@ -100,9 +100,19 @@ export declare namespace Jam {
 		errorMessage?: string;
 	}
 
+	export interface PodcastEpisodeStatus {
+		status: string; // TODO: type for Podcast Episode Status
+	}
+
+	export interface PodcastStatus {
+		status: string; // TODO: type for Podcast Status
+		lastCheck?: number;
+	}
+
 	export interface Podcast extends Base {
 		url: string;
-		status: string;
+		status: string; // TODO: type for Podcast Status
+		lastCheck?: number;
 		errorMessage?: string;
 		description?: string;
 		episodes?: Array<PodcastEpisode>;
@@ -353,5 +363,7 @@ export declare namespace Jam {
 		chatMessages?: Array<ChatMessage>;
 		playqueue?: PlayQueue;
 		session?: Session;
+		podcastStatus?: PodcastStatus;
+		episodeStatus?: PodcastEpisodeStatus;
 	}
 }

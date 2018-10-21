@@ -1307,6 +1307,35 @@
 						"result"
 					]
 				},
+				"episode/status": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.PodcastEpisodeStatus"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"podcast/id": {
 					"type": "object",
 					"properties": {
@@ -1350,6 +1379,35 @@
 							"items": {
 								"$ref": "#/definitions/Jam.Podcast"
 							}
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
+				"podcast/status": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.PodcastStatus"
 						},
 						"errors": {
 							"anyOf": [
@@ -10787,6 +10845,17 @@
 				}
 			}
 		},
+		"Jam.PodcastEpisodeStatus": {
+			"type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"status"
+			]
+		},
 		"JamParameters.Podcast": {
 			"type": "object",
 			"properties": {
@@ -10837,6 +10906,9 @@
 				},
 				"status": {
 					"type": "string"
+				},
+				"lastCheck": {
+					"type": "number"
 				},
 				"errorMessage": {
 					"type": "string"
@@ -10914,6 +10986,20 @@
 			},
 			"required": [
 				"ids"
+			]
+		},
+		"Jam.PodcastStatus": {
+			"type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				},
+				"lastCheck": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"status"
 			]
 		},
 		"JamParameters.PodcastSearch": {
