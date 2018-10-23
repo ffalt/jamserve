@@ -509,7 +509,7 @@ class APiJamPlaylist extends APIJamObj<JamParameters.Playlist, JamParameters.Pla
 
 	async create(req: ApiOptions<JamParameters.PlaylistNew>): Promise<Jam.Playlist> {
 		const playlist = await this.engine.playlists.createPlaylist(req.query.name, req.query.comment, req.query.isPublic === undefined ? false : req.query.isPublic, req.user.id, req.query.trackIDs || []);
-		return this.prepare(playlist, {playlistTracksIDs: true}, req.user);
+		return this.prepare(playlist, {playlistTracksIDs: true, playlistState: true}, req.user);
 	}
 
 	async update(req: ApiOptions<JamParameters.PlaylistUpdate>): Promise<void> {
