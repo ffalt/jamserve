@@ -371,6 +371,12 @@ export class Engine {
 						text = 'podcast';
 					}
 					return text;
+				case DBObjectType.playlist:
+					const playlist: JamServe.Playlist = <JamServe.Playlist>o;
+					return playlist.name;
+				case DBObjectType.podcast:
+					const podcast: JamServe.Podcast = <JamServe.Podcast>o;
+					return podcast.tag ? podcast.tag.title : podcast.url;
 				case DBObjectType.album:
 					const album: JamServe.Album = <JamServe.Album>o;
 					return album.name;
