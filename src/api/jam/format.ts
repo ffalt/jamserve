@@ -347,6 +347,7 @@ export class FORMAT {
 	static packChatMessage(message: JamServe.ChatMessage): Jam.ChatMessage {
 		return {
 			username: message.username,
+			userID: message.userID,
 			time: message.time,
 			message: message.message
 		};

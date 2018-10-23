@@ -9290,6 +9290,9 @@
 				"username": {
 					"type": "string"
 				},
+				"userID": {
+					"type": "string"
+				},
 				"time": {
 					"type": "number"
 				},
@@ -9300,6 +9303,7 @@
 			"required": [
 				"message",
 				"time",
+				"userID",
 				"username"
 			]
 		},

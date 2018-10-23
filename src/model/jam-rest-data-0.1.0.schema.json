@@ -159,6 +159,12 @@
 		},
 		"session": {
 			"$ref": "#/definitions/Jam.Session"
+		},
+		"podcastStatus": {
+			"$ref": "#/definitions/Jam.PodcastStatus"
+		},
+		"episodeStatus": {
+			"$ref": "#/definitions/Jam.PodcastEpisodeStatus"
 		}
 	},
 	"definitions": {
@@ -4196,6 +4202,9 @@
 				"username": {
 					"type": "string"
 				},
+				"userID": {
+					"type": "string"
+				},
 				"time": {
 					"type": "number"
 				},
@@ -4206,6 +4215,7 @@
 			"required": [
 				"message",
 				"time",
+				"userID",
 				"username"
 			]
 		},
@@ -4264,6 +4274,31 @@
 			"required": [
 				"allowedCookieDomains",
 				"version"
+			]
+		},
+		"Jam.PodcastStatus": {
+			"type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				},
+				"lastCheck": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"status"
+			]
+		},
+		"Jam.PodcastEpisodeStatus": {
+			"type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"status"
 			]
 		}
 	},

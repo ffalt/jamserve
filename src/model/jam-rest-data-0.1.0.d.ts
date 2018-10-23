@@ -310,6 +310,7 @@ export declare namespace Jam {
 
 	export interface ChatMessage {
 		username: string;
+		userID: string;
 		time: number;
 		message: string;
 	}
