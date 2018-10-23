@@ -19,12 +19,12 @@ export class IndexTreeBuilder {
 	}
 
 	getIndexChar(name: string, sortname?: string): string {
-		const c = (sortname || this.removeArticles(name) || '').trim().toUpperCase()[0];
-		const i = c.charCodeAt(0);
-		if ((i < 65) || (i > 90)) {
-			return '#';
+		const c = (sortname || this.removeArticles(name) || '').trim().toUpperCase().charAt(0);
+		const regex_symbols = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#\d]/;
+		if (c.match(regex_symbols) === null) {
+			return c;
 		}
-		return c;
+		return '#';
 	}
 
 	async buildArtistIndex(): Promise<JamServe.ArtistIndex> {
