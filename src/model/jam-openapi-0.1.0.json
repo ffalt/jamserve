@@ -7860,6 +7860,46 @@
 				}
 			}
 		},
+		"/root/status": {
+			"get": {
+				"operationId": "root.status",
+				"tags": [
+					"root"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.RootStatus"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
 		"/folder/download": {
 			"get": {
 				"operationId": "folder.download",
@@ -15033,8 +15073,8 @@
 					"path": {
 						"type": "string"
 					},
-					"scanState": {
-						"$ref": "#/components/schemas/Jam.RootState"
+					"status": {
+						"$ref": "#/components/schemas/Jam.RootStatus"
 					},
 					"id": {
 						"type": "string"
@@ -15054,10 +15094,10 @@
 					"id",
 					"name",
 					"path",
-					"scanState"
+					"status"
 				]
 			},
-			"Jam.RootState": {
+			"Jam.RootStatus": {
 				"type": "object",
 				"properties": {
 					"lastScan": {

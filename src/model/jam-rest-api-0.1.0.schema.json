@@ -2722,6 +2722,35 @@
 						"roles"
 					]
 				},
+				"root/status": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.RootStatus"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"folder/download": {
 					"type": "object",
 					"properties": {
@@ -12455,8 +12484,8 @@
 				"path": {
 					"type": "string"
 				},
-				"scanState": {
-					"$ref": "#/definitions/Jam.RootState"
+				"status": {
+					"$ref": "#/definitions/Jam.RootStatus"
 				},
 				"id": {
 					"type": "string"
@@ -12476,10 +12505,10 @@
 				"id",
 				"name",
 				"path",
-				"scanState"
+				"status"
 			]
 		},
-		"Jam.RootState": {
+		"Jam.RootStatus": {
 			"type": "object",
 			"properties": {
 				"lastScan": {

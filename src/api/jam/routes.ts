@@ -762,6 +762,16 @@ export function registerUserApi(router: express.Router, api: ApiJam, image: expr
 		}
 	});
 
+	router.get('/root/status', apiCheck('/root/status'), async (req, res) => {
+		try {
+			const options: ApiOptions<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+			const result: Jam.RootStatus = await api.root.status(options);
+			await ApiResponder.data(res, result);
+		} catch (e) {
+			await ApiResponder.error(res, e);
+		}
+	});
+
 	router.get('/folder/download', apiCheck('/folder/download'), async (req, res) => {
 		try {
 			const options: ApiOptions<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};

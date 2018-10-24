@@ -125,14 +125,10 @@ export namespace JamServe {
 		created: number;
 	}
 
-	export interface RootState {
+	export interface RootStatus {
 		lastScan: number;
 		scanning?: boolean;
 		error?: string;
-	}
-
-	export interface RootStates {
-		[id: string]: RootState;
 	}
 
 	/* meta */

@@ -36,13 +36,13 @@ export class FORMAT {
 		};
 	}
 
-	static packRoot(root: JamServe.Root, rootState: JamServe.RootState): Jam.Root {
+	static packRoot(root: JamServe.Root, rootState: JamServe.RootStatus): Jam.Root {
 		return {
 			id: root.id,
 			name: root.name,
 			created: root.created,
 			path: root.path,
-			scanState: rootState
+			status: rootState
 		};
 	}
 

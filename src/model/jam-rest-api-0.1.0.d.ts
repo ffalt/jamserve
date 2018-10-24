@@ -548,6 +548,11 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 			roles: ['admin'];
 		};
+		'root/status'?: {
+			params: JamParameters.ID;
+			result: Jam.RootStatus;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
 
 		// binary
 

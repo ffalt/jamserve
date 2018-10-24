@@ -839,7 +839,7 @@ class APIJamRoot extends APIJamObj<JamParameters.ID, JamParameters.IDs, {}, JamS
 	}
 
 	async prepare(root: JamServe.Root, includes: {}, user: JamServe.User): Promise<Jam.Root> {
-		return FORMAT.packRoot(root, this.engine.io.getRootState(root.id));
+		return FORMAT.packRoot(root, this.engine.io.getRootStatus(root.id));
 	}
 
 	translateQuery(query: JamParameters.Paginate, user: JamServe.User): JamServe.SearchQueryRoot {
@@ -882,6 +882,11 @@ class APIJamRoot extends APIJamObj<JamParameters.ID, JamParameters.IDs, {}, JamS
 	async scan(req: ApiOptions<JamParameters.ID>): Promise<void> {
 		const root = await this.byID(req.query.id);
 		this.engine.refreshRoot(root); // do not wait
+	}
+
+	async status(req: ApiOptions<JamParameters.ID>): Promise<Jam.RootStatus> {
+		const root = await this.byID(req.query.id);
+		return this.engine.io.getRootStatus(root.id);
 	}
 
 }

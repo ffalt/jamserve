@@ -32,7 +32,7 @@ export class IO {
 	private audio: Audio;
 	private images: Images;
 	private scanningCount: undefined | number;
-	private rootstates: JamServe.RootStates = {};
+	private rootstatus: { [id: string]: JamServe.RootStatus } = {};
 
 	constructor(store: Store, audio: Audio, images: Images) {
 		this.store = store;
@@ -57,8 +57,8 @@ export class IO {
 		return {scanning: this.scanning, count: this.scanningCount};
 	}
 
-	getRootState(id: string): JamServe.RootState {
-		return this.rootstates[id];
+	getRootStatus(id: string): JamServe.RootStatus {
+		return this.rootstatus[id];
 	}
 
 	private startScanning(): MergeChanges {
@@ -129,16 +129,16 @@ export class IO {
 
 	private async scanRoot(root: JamServe.Root, changes: MergeChanges): Promise<void> {
 		log.info('Scanning Root', root.path);
-		this.rootstates[root.id] = {lastScan: Date.now(), scanning: true};
+		this.rootstatus[root.id] = {lastScan: Date.now(), scanning: true};
 		try {
 			await this.scanDir(root.path, undefined, 0, root.id, changes);
-			this.rootstates[root.id] = {lastScan: Date.now()};
+			this.rootstatus[root.id] = {lastScan: Date.now()};
 		} catch (e) {
 			log.error('Scanning Error', root.path, e.toString());
 			if (['EACCES', 'ENOENT'].indexOf((<any>e).code) >= 0) {
-				this.rootstates[root.id] = {lastScan: Date.now(), error: 'Directory not found/no access/error in filesystem'};
+				this.rootstatus[root.id] = {lastScan: Date.now(), error: 'Directory not found/no access/error in filesystem'};
 			} else {
-				this.rootstates[root.id] = {lastScan: Date.now(), error: e.toString()};
+				this.rootstatus[root.id] = {lastScan: Date.now(), error: e.toString()};
 			}
 		}
 	}

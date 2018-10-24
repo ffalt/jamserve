@@ -20,7 +20,7 @@ export declare namespace Jam {
 		allowedCookieDomains: Array<string>;
 	}
 
-	export interface RootState {
+	export interface RootStatus {
 		lastScan: number;
 		error?: string;
 		scanning?: boolean;
@@ -28,7 +28,7 @@ export declare namespace Jam {
 
 	export interface Root extends Base {
 		path: string;
-		scanState: RootState;
+		status: RootStatus;
 	}
 
 	export interface TrackMBTag {
