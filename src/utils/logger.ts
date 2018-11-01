@@ -43,8 +43,8 @@ class Logger {
 		this.applyLog('warn', format, params);
 	}
 
-	error(format: string, ...params: any[]) {
-		this.applyLog('error', format, params);
+	error(format: string | Error, ...params: any[]) {
+		this.applyLog('error', format.toString(), params);
 	}
 
 	time(name: string) {
