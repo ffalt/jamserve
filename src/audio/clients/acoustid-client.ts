@@ -46,7 +46,12 @@ export class AcoustidClient extends WebserviceClient {
 	}
 
 	async acoustid(file: string, includes: string | undefined): Promise<Array<Acoustid.Result>> {
-		const result = await fpcalc(file, this.options.fpcalc || {});
-		return this.get(result, includes);
+		try {
+			const result = await fpcalc(file, this.options.fpcalc || {});
+			return this.get(result, includes);
+		} catch (e) {
+			log.error(e);
+			return [];
+		}
 	}
 }
