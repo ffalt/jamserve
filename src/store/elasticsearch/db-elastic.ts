@@ -243,7 +243,7 @@ export class DBIndexElastic<T extends JamServe.DBObject> implements JamServe.Dat
 			type: this._type,
 			body: this.filterProperties(body),
 			id,
-			refresh: this.db.indexRefresh
+			refresh: <elasticsearch.Refresh>this.db.indexRefresh
 		});
 		return id;
 	}
@@ -254,7 +254,7 @@ export class DBIndexElastic<T extends JamServe.DBObject> implements JamServe.Dat
 			type: this._type,
 			body: this.filterProperties(body),
 			id,
-			refresh: this.db.indexRefresh
+			refresh: <elasticsearch.Refresh>this.db.indexRefresh
 		});
 	}
 
@@ -268,7 +268,7 @@ export class DBIndexElastic<T extends JamServe.DBObject> implements JamServe.Dat
 			type: this._type,
 			body: this.filterProperties(body),
 			id,
-			refresh: this.db.indexRefresh
+			refresh: <elasticsearch.Refresh>this.db.indexRefresh
 		});
 	}
 
