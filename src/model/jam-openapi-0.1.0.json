@@ -1607,6 +1607,15 @@
 					},
 					{
 						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "sortField",
 						"schema": {
 							"type": "string"
@@ -1889,6 +1898,15 @@
 							}
 						},
 						"description": "filter by folder types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
 						"required": false
 					},
 					{
@@ -2646,6 +2664,15 @@
 					},
 					{
 						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "sortField",
 						"schema": {
 							"type": "string"
@@ -2917,6 +2944,15 @@
 							"type": "integer"
 						},
 						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
 						"required": false
 					},
 					{
@@ -3453,6 +3489,15 @@
 							"type": "string"
 						},
 						"description": "filter by status",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
 						"required": false
 					},
 					{
@@ -4008,6 +4053,15 @@
 							"type": "string"
 						},
 						"description": "filter by podcast status",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
 						"required": false
 					},
 					{
@@ -4757,6 +4811,15 @@
 					},
 					{
 						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "sortField",
 						"schema": {
 							"type": "string"
@@ -5120,6 +5183,15 @@
 							"type": "integer"
 						},
 						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
 						"required": false
 					},
 					{
@@ -6250,6 +6322,15 @@
 					},
 					{
 						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "sortField",
 						"schema": {
 							"type": "string"
@@ -6431,6 +6512,15 @@
 							"type": "integer"
 						},
 						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
 						"required": false
 					},
 					{
@@ -7121,6 +7211,15 @@
 					},
 					{
 						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "sortField",
 						"schema": {
 							"type": "string"
@@ -7461,6 +7560,15 @@
 					},
 					{
 						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "sortField",
 						"schema": {
 							"type": "string"
@@ -7711,6 +7819,34 @@
 							"type": "integer"
 						},
 						"description": "get back number of items",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "the sort direction",
 						"required": false
 					}
 				]

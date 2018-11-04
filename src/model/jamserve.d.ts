@@ -458,6 +458,7 @@ export namespace JamServe {
 	/* search */
 
 	export interface SearchQuery {
+		query?: string;
 		offset?: number;
 		amount?: number;
 		sorts?: Array<SearchQuerySort>;
@@ -486,7 +487,6 @@ export namespace JamServe {
 		newerThan?: number;
 		fromYear?: number;
 		toYear?: number;
-		query?: string;
 	}
 
 	export interface SearchQueryFolder extends SearchQuery {
@@ -504,7 +504,6 @@ export namespace JamServe {
 		newerThan?: number;
 		fromYear?: number;
 		toYear?: number;
-		query?: string;
 		mbAlbumID?: string;
 		mbArtistID?: string;
 		types?: Array<string>;
@@ -579,7 +578,6 @@ export namespace JamServe {
 		newerThan?: number;
 		fromYear?: number;
 		toYear?: number;
-		query?: string;
 	}
 
 	export interface SearchQueryAlbum extends SearchQuery {
@@ -596,7 +594,6 @@ export namespace JamServe {
 		newerThan?: number;
 		fromYear?: number;
 		toYear?: number;
-		query?: string;
 	}
 
 	/* genre */

@@ -2538,7 +2538,7 @@
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.Paginate"
+							"$ref": "#/definitions/JamParameters.RootSearch"
 						},
 						"result": {
 							"type": "array",
@@ -10067,6 +10067,10 @@
 						"type": "string"
 					}
 				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
 					"type": "string"
@@ -10216,6 +10220,10 @@
 						],
 						"type": "string"
 					}
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
 				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
@@ -10496,6 +10504,10 @@
 					"description": "filter by year",
 					"type": "integer"
 				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
 					"type": "string"
@@ -10569,6 +10581,10 @@
 				"toYear": {
 					"description": "filter by year",
 					"type": "integer"
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
 				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
@@ -10847,6 +10863,10 @@
 					"description": "filter by status",
 					"type": "string"
 				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
 					"type": "string"
@@ -11059,6 +11079,10 @@
 				},
 				"status": {
 					"description": "filter by podcast status",
+					"type": "string"
+				},
+				"query": {
+					"description": "search query",
 					"type": "string"
 				},
 				"sortField": {
@@ -11518,6 +11542,10 @@
 					"minimum": 0,
 					"type": "integer"
 				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
 					"type": "string"
@@ -11641,6 +11669,10 @@
 					"description": "filter by year",
 					"minimum": 0,
 					"type": "integer"
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
 				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
@@ -12009,6 +12041,10 @@
 					"minimum": 0,
 					"type": "integer"
 				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
 					"type": "string"
@@ -12087,6 +12123,10 @@
 					"description": "filter by year",
 					"minimum": 0,
 					"type": "integer"
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
 				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
@@ -12315,6 +12355,10 @@
 					"description": "filter by public state",
 					"type": "boolean"
 				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
 					"type": "string"
@@ -12382,6 +12426,10 @@
 				"isAdmin": {
 					"description": "filter by user admin role",
 					"type": "boolean"
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
 				},
 				"sortField": {
 					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
@@ -12462,7 +12510,7 @@
 				"changedBy"
 			]
 		},
-		"JamParameters.Paginate": {
+		"JamParameters.RootSearch": {
 			"type": "object",
 			"properties": {
 				"offset": {
@@ -12475,6 +12523,19 @@
 					"description": "get back number of items",
 					"minimum": 1,
 					"type": "integer"
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
+				"sortField": {
+					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+					"type": "string"
+				},
+				"sortDescending": {
+					"description": "the sort direction",
+					"default": false,
+					"type": "boolean"
 				}
 			}
 		},

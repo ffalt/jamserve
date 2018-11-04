@@ -734,7 +734,7 @@ export function registerUserApi(router: express.Router, api: ApiJam, image: expr
 
 	router.get('/root/search', apiCheck('/root/search'), async (req, res) => {
 		try {
-			const options: ApiOptions<JamParameters.Paginate> = {query: req.query, user: req.user, client: req.client};
+			const options: ApiOptions<JamParameters.RootSearch> = {query: req.query, user: req.user, client: req.client};
 			const result: Array<Jam.Root> = await api.root.search(options);
 			await ApiResponder.data(res, result);
 		} catch (e) {

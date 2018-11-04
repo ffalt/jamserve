@@ -220,6 +220,7 @@ class APIJamPodcast extends APIJamObj<JamParameters.Podcast, JamParameters.Podca
 
 	translateQuery(query: JamParameters.PodcastSearch, user: JamServe.User): JamServe.SearchQueryPodcast {
 		return {
+			query: query.query,
 			url: query.url,
 			title: query.title,
 			status: query.status,
@@ -281,6 +282,7 @@ class APIJamEpisode extends APIJamObj<JamParameters.Episode, JamParameters.Episo
 
 	translateQuery(query: JamParameters.EpisodeSearch, user: JamServe.User): JamServe.SearchQueryPodcastEpisode {
 		return {
+			query: query.query,
 			title: query.title,
 			podcastID: query.podcastID,
 			status: query.status,
@@ -352,6 +354,7 @@ class APIJamAlbum extends APIJamObj<JamParameters.Album, JamParameters.Albums, J
 
 	translateQuery(query: JamParameters.AlbumSearch, user: JamServe.User): JamServe.SearchQueryAlbum {
 		return {
+			query: query.query,
 			name: query.name,
 			rootID: query.rootID,
 			artist: query.artist,
@@ -428,6 +431,7 @@ class APIJamArtist extends APIJamObj<JamParameters.Artist, JamParameters.Artists
 
 	translateQuery(query: JamParameters.ArtistSearch, user: JamServe.User): JamServe.SearchQueryArtist {
 		return {
+			query: query.query,
 			name: query.name,
 			rootID: query.rootID,
 			albumID: query.albumID,
@@ -498,6 +502,7 @@ class APiJamPlaylist extends APIJamObj<JamParameters.Playlist, JamParameters.Pla
 
 	translateQuery(query: JamParameters.PlaylistSearch, user: JamServe.User): JamServe.SearchQueryPlaylist {
 		return {
+			query: query.query,
 			name: query.name,
 			userID: user.id,
 			isPublic: query.isPublic,
@@ -565,6 +570,7 @@ class APIJamTrack extends APIJamObj<JamParameters.Track, JamParameters.Tracks, J
 
 	translateQuery(query: JamParameters.TrackSearch, user: JamServe.User): JamServe.SearchQueryTrack {
 		return {
+			query: query.query,
 			rootID: query.rootID,
 			parentID: query.parentID,
 			artist: query.artist,
@@ -734,6 +740,7 @@ class APIJamFolder extends APIJamObj<JamParameters.Folder, JamParameters.Folders
 
 	translateQuery(query: JamParameters.FolderSearch, user: JamServe.User): JamServe.SearchQueryFolder {
 		return {
+			query: query.query,
 			rootID: query.rootID,
 			parentID: query.parentID,
 			artist: query.artist,
@@ -832,7 +839,7 @@ class APIJamFolder extends APIJamObj<JamParameters.Folder, JamParameters.Folders
 
 }
 
-class APIJamRoot extends APIJamObj<JamParameters.ID, JamParameters.IDs, {}, JamServe.SearchQueryRoot, JamParameters.Paginate, JamServe.Root, Jam.Root> {
+class APIJamRoot extends APIJamObj<JamParameters.ID, JamParameters.IDs, {}, JamServe.SearchQueryRoot, JamParameters.RootSearch, JamServe.Root, Jam.Root> {
 
 	constructor(engine: Engine, api: ApiJam) {
 		super(engine, engine.store.root, DBObjectType.root, api);
@@ -842,11 +849,12 @@ class APIJamRoot extends APIJamObj<JamParameters.ID, JamParameters.IDs, {}, JamS
 		return FORMAT.packRoot(root, this.engine.io.getRootStatus(root.id));
 	}
 
-	translateQuery(query: JamParameters.Paginate, user: JamServe.User): JamServe.SearchQueryRoot {
+	translateQuery(query: JamParameters.RootSearch, user: JamServe.User): JamServe.SearchQueryRoot {
 		return {
+			query: query.query,
 			offset: query.offset,
 			amount: query.amount,
-			// sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] : undefined
+			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] : undefined
 		};
 	}
 
@@ -903,6 +911,7 @@ class APIJamUser extends APIJamObj<JamParameters.ID, JamParameters.IDs, {}, JamS
 
 	translateQuery(query: JamParameters.UserSearch, user: JamServe.User): JamServe.SearchQueryUser {
 		return {
+			query: query.query,
 			name: query.name,
 			isAdmin: query.isAdmin,
 			offset: query.offset,

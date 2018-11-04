@@ -525,7 +525,7 @@ export interface JamApi {
 		};
 
 		'root/search'?: {
-			params: JamParameters.Paginate;
+			params: JamParameters.RootSearch;
 			result: Array<Jam.Root>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};

@@ -182,6 +182,7 @@ class StoreUser extends BaseStore<JamServe.User, JamServe.SearchQueryUser> {
 		q.terms('id', query.ids);
 		q.term('name', query.name);
 		q.true('roles.adminRole', query.isAdmin);
+		q.match('name', query.query);
 		return q.get(query);
 	}
 
@@ -311,6 +312,7 @@ class StorePlaylist extends BaseStore<JamServe.Playlist, JamServe.SearchQueryPla
 		q.term('userID', query.userID);
 		q.term('name', query.name);
 		q.true('isPublic', query.isPublic);
+		q.match('name', query.query);
 		return q.get(query);
 	}
 
@@ -327,6 +329,7 @@ class StorePodcasts extends BaseStore<JamServe.Podcast, JamServe.SearchQueryPodc
 		q.term('url', query.url);
 		q.term('title', query.title);
 		q.term('status', query.status);
+		q.match('title', query.query);
 		return q.get(query);
 	}
 
@@ -352,6 +355,7 @@ class StoreEpisodes extends BaseStore<JamServe.Episode, JamServe.SearchQueryPodc
 		q.term('podcastID', query.podcastID);
 		q.term('status', query.status);
 		q.term('tag.title', query.title);
+		q.match('tag.title', query.query);
 		return q.get(query, this.fieldMap);
 	}
 
@@ -383,6 +387,7 @@ class StoreRoot extends BaseStore<JamServe.Root, JamServe.SearchQueryRoot> {
 		const q = new QueryHelper();
 		q.term('name', query.name);
 		q.term('path', query.path);
+		q.match('name', query.query);
 		return q.get(query);
 	}
 
@@ -412,6 +417,7 @@ class StoreRadio extends BaseStore<JamServe.Radio, JamServe.SearchQueryRadio> {
 		const q = new QueryHelper();
 		q.term('url', query.url);
 		q.term('name', query.name);
+		q.match('name', query.query);
 		return q.get(query);
 	}
 }

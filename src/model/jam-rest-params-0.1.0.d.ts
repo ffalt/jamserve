@@ -285,6 +285,10 @@ export declare namespace JamParameters {
 
 	export interface SearchQuery {
 		/**
+		 * search query
+		 */
+		query?: string;
+		/**
 		 * the obj property name to sort on (e.g. 'artist', 'creation')
 		 */
 		sortField?: string; // TODO: typescript-type the sort fields for the different items
@@ -779,7 +783,7 @@ export declare namespace JamParameters {
 		 * filter by musicbrainz album id
 		 */
 		mbArtistID?: string;
-		/**
+			/**
 		 * filter by genre
 		 */
 		genre?: string;
@@ -906,6 +910,9 @@ export declare namespace JamParameters {
 		 * filter by user admin role
 		 */
 		isAdmin?: boolean;
+	}
+
+	export interface RootSearch extends Paginate, SearchQuery {
 	}
 
 	export interface UserSearch extends Paginate, UserSearchQuery {
