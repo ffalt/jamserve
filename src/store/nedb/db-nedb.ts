@@ -201,12 +201,12 @@ export class DBIndexNedb<T extends JamServe.DBObject> implements JamServe.Databa
 			const o = query.range;
 			Object.keys(o).forEach(key => {
 				const vals = o[key];
-				if (vals.hasOwnProperty('gte')) {
+				if (vals.hasOwnProperty('gte') && vals.gte !== undefined) {
 					const term: any = {};
 					term[key] = {$gte: vals.gte};
 					must.push(term);
 				}
-				if (vals.hasOwnProperty('lte')) {
+				if (vals.hasOwnProperty('lte') && vals.lte !== undefined) {
 					const term: any = {};
 					term[key] = {$lte: vals.lte};
 					must.push(term);
