@@ -337,6 +337,7 @@ class StoreEpisodes extends BaseStore<JamServe.Episode, JamServe.SearchQueryPodc
 		'podcastIDs': 'podcastID',
 		'podcastID': 'podcastID',
 		'status': 'status',
+		'date': 'date',
 		'title': 'tag.title',
 		'created': 'stat.created'
 	};
