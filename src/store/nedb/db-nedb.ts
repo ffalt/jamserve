@@ -86,6 +86,10 @@ export class DBNedb implements JamServe.Database {
 
 let globaltempid = (new Date()).valueOf();
 
+function regExpEscape(literal_string: string): string {
+	return literal_string.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
+}
+
 export class DBIndexNedb<T extends JamServe.DBObject> implements JamServe.DatabaseIndex<T> {
 	protected _index: string;
 	protected _type: string;
@@ -148,12 +152,12 @@ export class DBIndexNedb<T extends JamServe.DBObject> implements JamServe.Databa
 				})
 			);
 		}
-		if (query.match) { // TODO: implement match on nedb
+		if (query.match) {
 			const o = query.match;
 			must = must.concat(
 				Object.keys(o).map(key => {
 					const term: any = {};
-					term[key] = o[key];
+					term[key] = new RegExp(regExpEscape(o[key].toString()), 'ig');
 					return term;
 				})
 			);
