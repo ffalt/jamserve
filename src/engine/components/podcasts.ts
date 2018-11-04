@@ -75,7 +75,6 @@ export class Podcasts {
 			};
 			episode.path = filename;
 			log.info('updating episode', filename);
-			console.log(episode);
 			await this.store.episode.replace(episode);
 			delete this.podstate[episode.id];
 		} catch (e) {
