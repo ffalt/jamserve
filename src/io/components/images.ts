@@ -75,6 +75,8 @@ export class Images {
 			if (!mime) {
 				return Promise.reject('Unknown Image Format Request');
 			}
+			image.crop(1, 1, image.getWidth() - 2, image.getHeight() - 2);
+			// image.autocrop({cropOnlyFrames: false, tolerance: 0.0004, cropSymmetric: true});
 			image.contain(size, size);
 			const buffer = await image.getBufferAsync(mime);
 			return {
