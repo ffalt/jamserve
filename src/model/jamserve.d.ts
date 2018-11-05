@@ -563,6 +563,8 @@ export namespace JamServe {
 		type?: DBObjectType;
 		isPlayed?: boolean;
 		isFaved?: boolean;
+		minRating?: number;
+		maxRating?: number;
 	}
 
 	export interface SearchQueryArtist extends SearchQuery {

@@ -100,7 +100,7 @@ export class Engine {
 	}
 
 	async getListHighestRated(type: DBObjectType, user: JamServe.User): Promise<Array<string>> {
-		const states = await this.store.state.search({userID: user.id, type});
+		const states = await this.store.state.search({userID: user.id, type, minRating: 1});
 		const ratings = states.filter(state => state.rated !== undefined).sort((a, b) => <number>b.rated - <number>a.rated);
 		return ratings.map(a => a.destID);
 	}
