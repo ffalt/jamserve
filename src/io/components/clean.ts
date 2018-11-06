@@ -7,6 +7,7 @@ import {MergeChanges} from './merge';
 import {DBObjectType} from '../../types';
 import {updatePlayListTracks} from '../../engine/components/playlists';
 import {Images} from './images';
+import {Waveforms} from './waveforms';
 
 const log = Logger('IO.clean');
 
@@ -20,7 +21,7 @@ function isInRoot(list: Array<JamServe.Root>, fullpath: string): JamServe.Root |
 	return result;
 }
 
-export async function scanCleanStore(store: Store, images: Images, changes: MergeChanges): Promise<void> {
+export async function scanCleanStore(store: Store, images: Images, waveforms: Waveforms, changes: MergeChanges): Promise<void> {
 
 	const removeTracks: Array<JamServe.Track> = changes.removedTracks;
 	const removeFolders: Array<JamServe.Folder> = changes.removedFolders;
@@ -61,7 +62,7 @@ export async function scanCleanStore(store: Store, images: Images, changes: Merg
 			}
 		}
 	});
-	await cleanStore(store, images, removeTracks, removeFolders);
+	await cleanStore(store, images, waveforms, removeTracks, removeFolders);
 }
 
 export async function clearID3(store: Store, images: Images, removeTracks: Array<JamServe.Track>): Promise<void> {
@@ -110,7 +111,7 @@ export async function clearID3(store: Store, images: Images, removeTracks: Array
 	await images.clearImageCacheByIDs(ids);
 }
 
-export async function cleanStore(store: Store, images: Images, removeTracks: Array<JamServe.Track>, removeFolders: Array<JamServe.Folder>): Promise<void> {
+export async function cleanStore(store: Store, images: Images, waveforms: Waveforms, removeTracks: Array<JamServe.Track>, removeFolders: Array<JamServe.Folder>): Promise<void> {
 	let ids: Array<string> = [];
 	if (removeFolders.length > 0) {
 		log.debug('Cleaning folders', removeFolders.length);
@@ -141,5 +142,6 @@ export async function cleanStore(store: Store, images: Images, removeTracks: Arr
 		}
 	}
 	await images.clearImageCacheByIDs(ids);
+	await waveforms.clearWaveformCacheByIDs(ids);
 	await clearID3(store, images, removeTracks);
 }

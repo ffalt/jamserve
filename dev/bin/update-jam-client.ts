@@ -28,6 +28,10 @@ async function run() {
 	return this.buildRequestUrl('${call.name}', params);
 }`;
 				resultAPI.push(s);
+				const s1 = `async ${callname}_binary(params: ${call.paramType}): Promise<ArrayBuffer> {
+	return await this.binary('${call.name}', params);
+}`;
+				resultAPI.push(s1);
 			} else if (call.pathParams && call.pathParams.parameters) {
 				const params = call.pathParams.parameters.map(para => para.name + (para.required ? '' : '?') + ': ' + para.type).join(', ');
 				const basename = call.name.split('/')[0];
@@ -42,11 +46,19 @@ async function run() {
 	return this.buildRequestUrl('${basename}/' + ${parampath});
 }`;
 				resultAPI.push(s);
+				const s1 = `${basename}_binary(${params}): Promise<ArrayBuffer> {
+	return this.binary('${basename}/' + ${parampath});
+}`;
+				resultAPI.push(s1);
 			} else if (call.pathParams) {
 				const s = `${callname}_url(params: ${call.pathParams.paramType}): string {
 	return this.buildRequestUrl('${call.name}', params);
 }`;
 				resultAPI.push(s);
+				const s1 = `${callname}_binary(params: ${call.pathParams.paramType}): Promise<ArrayBuffer> {
+	return this.binary('${call.name}', params);
+}`;
+				resultAPI.push(s1);
 			}
 		} else if (!call.resultType) {
 			const params = (call.paramType ? 'params: ' + call.paramType : '');

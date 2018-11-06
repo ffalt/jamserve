@@ -301,23 +301,7 @@ class APIJamEpisode extends APIJamObj<JamParameters.Episode, JamParameters.Episo
 
 	async stream(req: ApiOptions<JamParameters.Stream>): Promise<IApiBinaryResult> {
 		const episode = await this.byID(req.query.id);
-		if (!episode || !episode.path || !episode.media) {
-			return Promise.reject(GenericError('Podcast episode not ready'));
-		}
-		const filename = episode.path;
-		let format = req.query.format || 'mp3';
-		if (format[0] === '.') {
-			format = format.slice(1);
-		}
-		const maxBitRate = req.query.maxBitRate || 0;
-		if (Transcoder.needsTranscoding(episode.media.format || fileSuffix(filename), format, maxBitRate)) {
-			if (!Transcoder.validTranscoding(episode.media, format)) {
-				return Promise.reject(InvalidParamError('Unsupported transcoding format'));
-			}
-			return {pipe: new PreTranscoder(filename, format, maxBitRate)};
-		} else {
-			return {file: {filename, name: (episode.id + '.' + format)}};
-		}
+		return await this.engine.getObjStream(episode, req.query.format, req.query.maxBitRate, req.user);
 	}
 
 	async status(req: ApiOptions<JamParameters.ID>): Promise<Jam.PodcastEpisodeStatus> {
@@ -660,20 +644,7 @@ class APIJamTrack extends APIJamObj<JamParameters.Track, JamParameters.Tracks, J
 
 	async stream(req: ApiOptions<JamParameters.Stream>): Promise<IApiBinaryResult> {
 		const track = await this.byID(req.query.id);
-		const filename = path.join(track.path, track.name);
-		let format = req.query.format || 'mp3';
-		if (format[0] === '.') {
-			format = format.slice(1);
-		}
-		const maxBitRate = req.query.maxBitRate || 0;
-		if (Transcoder.needsTranscoding(track.media.format || fileSuffix(filename), format, maxBitRate)) {
-			if (!Transcoder.validTranscoding(track.media, format)) {
-				return Promise.reject(InvalidParamError('Unsupported transcoding format'));
-			}
-			return {pipe: new PreTranscoder(filename, format, maxBitRate)};
-		} else {
-			return {file: {filename, name: track.id + '.' + format}};
-		}
+		return await this.engine.getObjStream(track, req.query.format, req.query.maxBitRate, req.user);
 	}
 
 	async similar(req: ApiOptions<JamParameters.SimilarTracks>): Promise<Array<Jam.Track>> {
@@ -1182,6 +1153,22 @@ export class ApiJam {
 			return Promise.reject(NotFoundError());
 		}
 		const result = await this.engine.getObjStream(obj, req.query.format, undefined, req.user);
+		if (!result) {
+			return Promise.reject(NotFoundError());
+		}
+		return result;
+	}
+
+	async streamSVG(req: ApiOptions<JamParameters.ID>): Promise<IApiBinaryResult> {
+		const id = req.query.id;
+		if (!id || id.length === 0) {
+			return Promise.reject(InvalidParamError());
+		}
+		const obj = await this.engine.store.findInAll(id);
+		if (!obj) {
+			return Promise.reject(NotFoundError());
+		}
+		const result = await this.engine.getObjStreamSVG(obj, req.user);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}

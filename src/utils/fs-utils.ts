@@ -1,6 +1,7 @@
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import path from 'path';
+import tmp from 'tmp';
 
 export async function fsStat(pathName: string): Promise<fs.Stats> {
 	return new Promise<fs.Stats>((resolve, reject) => {
@@ -143,4 +144,16 @@ export function replaceFileSystemChars(s: string, replace: string): string {
 	return s.toString()
 		.replace(/:/g, ' - ').replace(/  /g, ' ')
 		.replace(/[\?\/!\\]/g, replace);
+}
+
+export async function tmpFile(): Promise<{ filename: string; cleanupCallback: () => void; }> {
+	return new Promise<{ filename: string; cleanupCallback: () => void; }>((resolve, reject) => {
+		tmp.file((err, filename, fd, cleanupCallback) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve({filename, cleanupCallback});
+			}
+		});
+	});
 }

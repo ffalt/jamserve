@@ -9624,6 +9624,50 @@
 				]
 			}
 		},
+		"/streamSVG/{id}": {
+			"get": {
+				"operationId": "streamSVG.{id}",
+				"tags": [
+					"streamSVG"
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"image/svg+xml": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
 		"/download/{id}": {
 			"get": {
 				"operationId": "download.{id}",

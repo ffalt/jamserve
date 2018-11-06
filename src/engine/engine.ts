@@ -16,13 +16,15 @@ import {Podcasts} from './components/podcasts';
 import {NowPlaying} from './components/nowplaying';
 import {Jam} from '../model/jam-rest-data-0.1.0';
 import {CompressListStream, CompressStream} from '../utils/compress-stream';
-import {Transcoder} from '../audio/transcoder';
+import {PreTranscoder, Transcoder} from '../audio/transcoder';
 import {Roots} from './components/roots';
 import {Playlists} from './components/playlists';
 import {PlayQueues} from './components/playqueues';
 import {IApiBinaryResult} from '../typings';
 import {Config} from '../config';
 import DBObject = JamServe.DBObject;
+import {Waveforms} from '../io/components/waveforms';
+import {GenericError, InvalidParamError} from '../api/jam/error';
 
 const log = Logger('Engine');
 
@@ -31,6 +33,7 @@ export class Engine {
 	public store: Store;
 	public audio: Audio;
 	public images: Images;
+	public waveforms: Waveforms;
 	public io: IO;
 	public meta: Metainfo;
 	public index: IndexTree;
@@ -47,6 +50,7 @@ export class Engine {
 		this.config = config;
 		this.store = new Store(config);
 		this.audio = new Audio(config);
+		this.waveforms = new Waveforms(config);
 		this.images = new Images(config);
 		this.chat = new Chat(config);
 		this.genres = new Genres(this.store);
@@ -57,7 +61,7 @@ export class Engine {
 		this.index = new IndexTree(config, this.store);
 		this.users = new Users(this.config, this.store, this.images);
 		this.meta = new Metainfo(this.store, this.audio);
-		this.io = new IO(this.store, this.audio, this.images);
+		this.io = new IO(this.store, this.audio, this.images, this.waveforms);
 		this.roots = new Roots(this.store, this.io);
 	}
 
@@ -394,16 +398,35 @@ export class Engine {
 		return this.images.paint(s, size || 128, format);
 	}
 
+	async getObjStreamSVG(o: DBObject, user: JamServe.User): Promise<IApiBinaryResult> {
+		switch (o.type) {
+			case DBObjectType.track:
+				const track: JamServe.Track = <JamServe.Track>o;
+				return await this.waveforms.get(o.id, path.join(track.path, track.name), track.media);
+			case DBObjectType.episode:
+				const episode: JamServe.Episode = <JamServe.Episode>o;
+				if (episode.path && episode.media) {
+					return await this.waveforms.get(o.id, path.join(episode.path), episode.media);
+				}
+				break;
+		}
+		return Promise.reject(Error('Invalid Object Type for SVG generation'));
+	}
+
 	async getObjStream(o: DBObject, format: string | undefined, maxBitRate: number | undefined, user: JamServe.User): Promise<IApiBinaryResult> {
 
 		async function stream(filename: string, media: JamServe.TrackMedia): Promise<IApiBinaryResult> {
-			const f = format || 'mp3';
+			let f = format || 'mp3';
+			if (f[0] === '.') {
+				f = f.slice(1);
+			}
 			const bitRate = maxBitRate || 0;
 			if (f !== 'raw' && Transcoder.needsTranscoding(media.format || fileSuffix(filename), f, bitRate)) {
 				if (!Transcoder.validTranscoding(media, f)) {
 					return Promise.reject(Error('Unsupported transcoding format'));
 				}
-				return {pipe: new Transcoder(filename, f, bitRate, media.duration)};
+				return {pipe: new PreTranscoder(filename, f, bitRate)};
+				// return {pipe: new Transcoder(filename, f, bitRate, media.duration)};
 			} else {
 				return {file: {filename, name: o.id + '.' + f}};
 			}
@@ -419,8 +442,9 @@ export class Engine {
 				if (episode.path && episode.media) {
 					this.nowPlaying.reportEpisode(episode, user);
 					return stream(episode.path, episode.media);
+				} else {
+					return Promise.reject(GenericError('Podcast episode not ready'));
 				}
-				break;
 		}
 		return Promise.reject(Error('Invalid Object Type for Streaming'));
 	}
@@ -511,6 +535,7 @@ export class Engine {
 
 	private async checkDataPaths(): Promise<void> {
 		await makePath(path.resolve(this.config.paths.data));
+		await makePath(path.resolve(this.config.paths.data, 'cache', 'waveforms'));
 		await makePath(path.resolve(this.config.paths.data, 'cache', 'uploads'));
 		await makePath(path.resolve(this.config.paths.data, 'cache', 'images'));
 		await makePath(path.resolve(this.config.paths.data, 'images'));

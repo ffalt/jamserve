@@ -9,6 +9,7 @@ import {MetaMerge} from './components/meta';
 import {scanCleanStore} from './components/clean';
 import {Subsonic} from '../model/subsonic-rest-data-1.16.0';
 import {Images} from './components/images';
+import {Waveforms} from './components/waveforms';
 
 const log = Logger('IO');
 
@@ -31,13 +32,15 @@ export class IO {
 	private store: Store;
 	private audio: Audio;
 	private images: Images;
+	private waveforms: Waveforms;
 	private scanningCount: undefined | number;
 	private rootstatus: { [id: string]: JamServe.RootStatus } = {};
 
-	constructor(store: Store, audio: Audio, images: Images) {
+	constructor(store: Store, audio: Audio, images: Images, waveforms: Waveforms) {
 		this.store = store;
 		this.audio = audio;
 		this.images = images;
+		this.waveforms = waveforms;
 	}
 
 	private async scanDir(dir: string, parent: JamServe.Folder | undefined, level: number, rootID: string, changes: MergeChanges): Promise<JamServe.Folder | undefined> {
@@ -97,7 +100,7 @@ export class IO {
 	}
 
 	private async cleanScanStore(changes: MergeChanges): Promise<void> {
-		await scanCleanStore(this.store, this.images, changes);
+		await scanCleanStore(this.store, this.images, this.waveforms, changes);
 		const meta = new MetaMerge(this.store, this.images);
 		await meta.sync(changes);
 		log.info('New Tracks', changes.newTracks.length);

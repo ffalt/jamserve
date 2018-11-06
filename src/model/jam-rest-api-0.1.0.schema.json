@@ -4387,6 +4387,57 @@
 						"pathParams"
 					]
 				},
+				"streamSVG/{id}": {
+					"type": "object",
+					"properties": {
+						"pathParams": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"binary": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"image/svg+xml"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"image/svg+xml"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"binary",
+						"errors",
+						"pathParams"
+					]
+				},
 				"download/{id}": {
 					"type": "object",
 					"properties": {

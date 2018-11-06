@@ -1012,6 +1012,16 @@ export function registerUserApi(router: express.Router, api: ApiJam, image: expr
 		}
 	});
 
+	router.get('/streamSVG/:id', apiCheck('/streamSVG/{id}'), async (req, res) => {
+		try {
+			const options: ApiOptions<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
+			const result: IApiBinaryResult = await api.streamSVG(options);
+			await ApiResponder.binary(res, result);
+		} catch (e) {
+			await ApiResponder.error(res, e);
+		}
+	});
+
 	router.get('/download/:id', apiCheck('/download/{id}'), async (req, res) => {
 		try {
 			const options: ApiOptions<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
