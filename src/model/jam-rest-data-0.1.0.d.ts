@@ -200,7 +200,7 @@ export declare namespace Jam {
 	}
 
 	export interface ArtistFolderInfo extends ExtendedInfo {
-		similar?: Array<{ id: string, name: string }>;
+		similar?: Array<Folder>;
 	}
 
 	export interface AlbumFolderInfo extends ExtendedInfo {
@@ -208,7 +208,7 @@ export declare namespace Jam {
 	}
 
 	export interface ArtistInfo extends ExtendedInfo {
-		similar?: Array<{ id: string, name: string }>;
+		similar?: Array<Artist>;
 	}
 
 	export interface AlbumInfo extends ExtendedInfo {

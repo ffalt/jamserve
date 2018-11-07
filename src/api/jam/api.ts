@@ -393,10 +393,10 @@ class APIJamArtist extends APIJamObj<JamParameters.Artist, JamParameters.Artists
 			const infos = await this.engine.meta.getArtistInfos(artist, false, !!includes.artistInfoSimilar);
 			result.info = FORMAT.packArtistInfo(infos.info);
 			if (includes.artistInfoSimilar) {
-				const similar: Array<{ id: string, name: string }> = [];
+				const similar: Array<Jam.Artist> = [];
 				(infos.similar || []).forEach(sim => {
 					if (sim.artist) {
-						similar.push({id: sim.artist.id, name: sim.artist.name});
+						similar.push(FORMAT.packArtist(sim.artist, includes));
 					}
 				});
 				result.info.similar = similar;
@@ -686,10 +686,10 @@ class APIJamFolder extends APIJamObj<JamParameters.Folder, JamParameters.Folders
 				const infos = await this.engine.meta.getFolderArtistInfo(folder, false, !!includes.folderInfoSimilar);
 				result.artistInfo = FORMAT.packArtistFolderInfo(infos.info);
 				if (includes.folderInfoSimilar) {
-					const similar: Array<{ id: string, name: string }> = [];
+					const similar: Array<Jam.Folder> = [];
 					(infos.similar || []).forEach(sim => {
 						if (sim.folder) {
-							similar.push({id: sim.folder.id, name: sim.folder.tag && sim.folder.tag.artist ? sim.folder.tag.artist : path.basename(sim.folder.path)});
+							similar.push(FORMAT.packFolder(sim.folder, includes));
 						}
 					});
 					result.artistInfo.similar = similar;

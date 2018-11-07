@@ -2751,19 +2751,7 @@
 				"similar": {
 					"type": "array",
 					"items": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "string"
-							},
-							"name": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"id",
-							"name"
-						]
+						"$ref": "#/definitions/Jam.Artist"
 					}
 				},
 				"description": {
@@ -2789,45 +2777,7 @@
 				"similar": {
 					"type": "array",
 					"items": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "string"
-							},
-							"name": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"id",
-							"name"
-						]
-					}
-				},
-				"description": {
-					"type": "string"
-				},
-				"lastFmUrl": {
-					"type": "string"
-				},
-				"smallImageUrl": {
-					"type": "string"
-				},
-				"mediumImageUrl": {
-					"type": "string"
-				},
-				"largeImageUrl": {
-					"type": "string"
-				}
-			}
-		},
-		"Jam.AlbumFolderInfo": {
-			"type": "object",
-			"properties": {
-				"releases": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/MusicBrainz.Release"
+						"$ref": "#/definitions/Jam.Folder"
 					}
 				},
 				"description": {
@@ -2985,6 +2935,32 @@
 				"id",
 				"name"
 			]
+		},
+		"Jam.AlbumFolderInfo": {
+			"type": "object",
+			"properties": {
+				"releases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Release"
+					}
+				},
+				"description": {
+					"type": "string"
+				},
+				"lastFmUrl": {
+					"type": "string"
+				},
+				"smallImageUrl": {
+					"type": "string"
+				},
+				"mediumImageUrl": {
+					"type": "string"
+				},
+				"largeImageUrl": {
+					"type": "string"
+				}
+			}
 		},
 		"Jam.PodcastEpisode": {
 			"type": "object",
