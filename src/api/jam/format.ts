@@ -102,7 +102,7 @@ export class FORMAT {
 			played: state && state.played > 0 ? state.played : undefined,
 			lastplayed: state && state.lastplayed > 0 ? state.lastplayed : undefined,
 			faved: state ? state.faved : undefined,
-			rated: state && state.rated !== undefined ? state.rated : undefined
+			rated: state && state.rated !== undefined && state.rated > 0 ? state.rated : undefined
 		};
 	}
 
