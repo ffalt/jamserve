@@ -25,6 +25,7 @@ import {Config} from '../config';
 import DBObject = JamServe.DBObject;
 import {Waveforms} from '../io/components/waveforms';
 import {GenericError, InvalidParamError} from '../api/jam/error';
+import {JamParameters} from '../model/jam-rest-params-0.1.0';
 
 const log = Logger('Engine');
 
@@ -592,5 +593,51 @@ export class Engine {
 		return state;
 	}
 
+	async autocomplete(query: JamParameters.AutoComplete): Promise<Jam.AutoComplete> {
+		const result: Jam.AutoComplete = {};
+		if (query.track !== undefined && query.track > 0) {
+			const list = await this.store.track.search({query: query.query, amount: query.track});
+			result.tracks = list.map(o => {
+				return {id: o.id, name: o.tag.title || ''};
+			});
+		}
+		if (query.album !== undefined && query.album > 0) {
+			const list = await this.store.album.search({query: query.query, amount: query.album});
+			result.albums = list.map(o => {
+				return {id: o.id, name: o.name};
+			});
+		}
+		if (query.artist !== undefined && query.artist > 0) {
+			const list = await this.store.artist.search({query: query.query, amount: query.artist});
+			result.artists = list.map(o => {
+				return {id: o.id, name: o.name};
+			});
+		}
+		if (query.folder !== undefined && query.folder > 0) {
+			const list = await this.store.artist.search({query: query.query, amount: query.folder});
+			result.folders = list.map(o => {
+				return {id: o.id, name: o.name};
+			});
+		}
+		if (query.playlist !== undefined && query.playlist > 0) {
+			const list = await this.store.playlist.search({query: query.query, amount: query.playlist});
+			result.playlists = list.map(o => {
+				return {id: o.id, name: o.name};
+			});
+		}
+		if (query.podcast !== undefined && query.podcast > 0) {
+			const list = await this.store.podcast.search({query: query.query, amount: query.podcast});
+			result.podcasts = list.map(o => {
+				return {id: o.id, name: o.tag ? o.tag.title : ''};
+			});
+		}
+		if (query.episode !== undefined && query.episode > 0) {
+			const list = await this.store.episode.search({query: query.query, amount: query.episode});
+			result.episodes = list.map(o => {
+				return {id: o.id, name: o.title};
+			});
+		}
+		return result;
+	}
 }
 

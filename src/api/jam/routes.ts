@@ -72,6 +72,16 @@ export function registerUserApi(router: express.Router, api: ApiJam, image: expr
 		}
 	});
 
+	router.get('/autocomplete', apiCheck('/autocomplete'), async (req, res) => {
+		try {
+			const options: ApiOptions<JamParameters.AutoComplete> = {query: req.query, user: req.user, client: req.client};
+			const result: Jam.AutoComplete = await api.autocomplete(options);
+			await ApiResponder.data(res, result);
+		} catch (e) {
+			await ApiResponder.error(res, e);
+		}
+	});
+
 	router.get('/genre/list', apiCheck('/genre/list'), async (req, res) => {
 		try {
 			const options: ApiOptions<JamParameters.Genres> = {query: req.query, user: req.user, client: req.client};

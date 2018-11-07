@@ -13,6 +13,9 @@
 				"$ref": "#/definitions/Jam.Root"
 			}
 		},
+		"autocomplete": {
+			"$ref": "#/definitions/Jam.AutoComplete"
+		},
 		"user": {
 			"$ref": "#/definitions/Jam.User"
 		},
@@ -240,6 +243,137 @@
 				},
 				"rated": {
 					"type": "number"
+				}
+			}
+		},
+		"Jam.AutoComplete": {
+			"type": "object",
+			"properties": {
+				"tracks": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"albums": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"folders": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"playlists": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"podcasts": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"episodes": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
 				}
 			}
 		},

@@ -1122,6 +1122,10 @@ export class ApiJam {
 		return list.map(entry => FORMAT.packNowPlaying(entry));
 	}
 
+	async autocomplete(req: ApiOptions<JamParameters.AutoComplete>): Promise<Jam.AutoComplete> {
+		return await this.engine.autocomplete(req.query);
+	}
+
 	async genreList(req: ApiOptions<JamParameters.Genres>): Promise<Array<Jam.Genre>> {
 		const genres = await this.engine.genres.getGenres(req.query.rootID, false);
 		return genres.map(genre => FORMAT.packGenre(genre));

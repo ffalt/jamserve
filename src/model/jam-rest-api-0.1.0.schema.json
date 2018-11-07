@@ -193,6 +193,39 @@
 						"result"
 					]
 				},
+				"autocomplete": {
+					"description": "various: autocomplete",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.AutoComplete"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.AutoComplete"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"genre/list": {
 					"description": "various: get list of genres found in the library",
 					"type": "object",
@@ -7599,6 +7632,212 @@
 				"type"
 			]
 		},
+		"JamParameters.AutoComplete": {
+			"type": "object",
+			"properties": {
+				"query": {
+					"description": "query to complete",
+					"type": "string"
+				},
+				"track": {
+					"description": "amount of track names to complete",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"artist": {
+					"description": "amount of artist names to complete",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"album": {
+					"description": "amount of album names to complete",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"folder": {
+					"description": "amount of folder names to complete",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"playlist": {
+					"description": "amount of playlist names to complete",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"podcast": {
+					"description": "amount of podcast names to complete",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"episode": {
+					"description": "amount of episode names to complete",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"query"
+			]
+		},
+		"Jam.AutoComplete": {
+			"type": "object",
+			"properties": {
+				"tracks": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"albums": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"folders": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"playlists": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"podcasts": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				},
+				"episodes": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"name"
+						]
+					}
+				}
+			}
+		},
+		"JamApiErrorNotFound": {
+			"type": "object",
+			"properties": {
+				"error": {
+					"type": "number",
+					"enum": [
+						404
+					]
+				},
+				"text": {
+					"type": "string",
+					"enum": [
+						"requested object not found"
+					]
+				}
+			},
+			"required": [
+				"error",
+				"text"
+			]
+		},
 		"JamParameters.Genres": {
 			"type": "object",
 			"properties": {
@@ -9717,27 +9956,6 @@
 			"required": [
 				"id",
 				"name"
-			]
-		},
-		"JamApiErrorNotFound": {
-			"type": "object",
-			"properties": {
-				"error": {
-					"type": "number",
-					"enum": [
-						404
-					]
-				},
-				"text": {
-					"type": "string",
-					"enum": [
-						"requested object not found"
-					]
-				}
-			},
-			"required": [
-				"error",
-				"text"
 			]
 		},
 		"JamParameters.Folders": {

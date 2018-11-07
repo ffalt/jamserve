@@ -324,10 +324,21 @@ export declare namespace Jam {
 		changedBy: string;
 	}
 
+	export interface AutoComplete {
+		tracks?: Array<{ id: string; name: string; }>;
+		artists?: Array<{ id: string; name: string; }>;
+		albums?: Array<{ id: string; name: string; }>;
+		folders?: Array<{ id: string; name: string; }>;
+		playlists?: Array<{ id: string; name: string; }>;
+		podcasts?: Array<{ id: string; name: string; }>;
+		episodes?: Array<{ id: string; name: string; }>;
+	}
+
 	export interface Data {
 		ping?: Ping;
 		root?: Root;
 		roots?: Array<Root>;
+		autocomplete?: AutoComplete;
 		user?: User;
 		users?: Array<User>;
 		nowPlaying?: Array<NowPlaying>;

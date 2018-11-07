@@ -783,7 +783,7 @@ export declare namespace JamParameters {
 		 * filter by musicbrainz album id
 		 */
 		mbArtistID?: string;
-			/**
+		/**
 		 * filter by genre
 		 */
 		genre?: string;
@@ -1064,6 +1064,69 @@ export declare namespace JamParameters {
 		 * array of id3 tag updates
 		 */
 		tagID3s: Array<TagID3Update>;
+	}
+
+	export interface AutoComplete {
+		/**
+		 * query to complete
+		 */
+		query: string;
+		/**
+		 * amount of track names to complete
+		 *
+		 * @default 0
+		 * @minimum 0
+		 * @TJS-type integer
+		 */
+		track?: number;
+		/**
+		 * amount of artist names to complete
+		 *
+		 * @default 0
+		 * @minimum 0
+		 * @TJS-type integer
+		 */
+		artist?: number;
+		/**
+		 * amount of album names to complete
+		 *
+		 * @default 0
+		 * @minimum 0
+		 * @TJS-type integer
+		 */
+		album?: number;
+		/**
+		 * amount of folder names to complete
+		 *
+		 * @default 0
+		 * @minimum 0
+		 * @TJS-type integer
+		 */
+		folder?: number;
+		/**
+		 * amount of playlist names to complete
+		 *
+		 * @default 0
+		 * @minimum 0
+		 * @TJS-type integer
+		 */
+		playlist?: number;
+		/**
+		 * amount of podcast names to complete
+		 *
+		 * @default 0
+		 * @minimum 0
+		 * @TJS-type integer
+		 */
+		podcast?: number;
+		/**
+		 * amount of episode names to complete
+		 *
+		 * @default 0
+		 * @minimum 0
+		 * @TJS-type integer
+		 */
+		episode?: number;
 	}
 
 }

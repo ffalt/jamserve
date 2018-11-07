@@ -315,6 +315,127 @@
 				]
 			}
 		},
+		"/autocomplete": {
+			"get": {
+				"operationId": "autocomplete",
+				"description": "autocomplete",
+				"tags": [
+					"various"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AutoComplete"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "query to complete",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "track",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "amount of track names to complete",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "amount of artist names to complete",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "album",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "amount of album names to complete",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folder",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "amount of folder names to complete",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "playlist",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "amount of playlist names to complete",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "podcast",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "amount of podcast names to complete",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "episode",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "amount of episode names to complete",
+						"required": false
+					}
+				]
+			}
+		},
 		"/genre/list": {
 			"get": {
 				"operationId": "genreList",
@@ -12647,6 +12768,137 @@
 					"title",
 					"video"
 				]
+			},
+			"Jam.AutoComplete": {
+				"type": "object",
+				"properties": {
+					"tracks": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"id",
+								"name"
+							]
+						}
+					},
+					"artists": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"id",
+								"name"
+							]
+						}
+					},
+					"albums": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"id",
+								"name"
+							]
+						}
+					},
+					"folders": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"id",
+								"name"
+							]
+						}
+					},
+					"playlists": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"id",
+								"name"
+							]
+						}
+					},
+					"podcasts": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"id",
+								"name"
+							]
+						}
+					},
+					"episodes": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"id",
+								"name"
+							]
+						}
+					}
+				}
 			},
 			"Jam.Genre": {
 				"type": "object",

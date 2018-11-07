@@ -87,6 +87,14 @@ export interface JamApi {
 		};
 
 		/**
+		 * various: autocomplete
+		 */
+		'autocomplete'?: {
+			params: JamParameters.AutoComplete;
+			result: Jam.AutoComplete;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
 		 * various: get list of genres found in the library
 		 */
 		'genre/list'?: {
