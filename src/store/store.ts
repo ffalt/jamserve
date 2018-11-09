@@ -320,6 +320,13 @@ class StorePlaylist extends BaseStore<JamServe.Playlist, JamServe.SearchQueryPla
 }
 
 class StorePodcasts extends BaseStore<JamServe.Podcast, JamServe.SearchQueryPodcast> {
+	fieldMap: { [name: string]: string } = {
+		'url': 'url',
+		'title': 'tag.title',
+		'status': 'status',
+		'query': 'tag.title',
+		'created': 'created'
+	};
 
 	constructor(db: JamServe.Database) {
 		super(DBObjectType.podcast, db);
@@ -328,10 +335,10 @@ class StorePodcasts extends BaseStore<JamServe.Podcast, JamServe.SearchQueryPodc
 	protected transformQuery(query: JamServe.SearchQueryPodcast): JamServe.DatabaseQuery {
 		const q = new QueryHelper();
 		q.term('url', query.url);
-		q.term('title', query.title);
+		q.term('tag.title', query.title);
 		q.term('status', query.status);
-		q.match('title', query.query);
-		return q.get(query);
+		q.match('tag.title', query.query);
+		return q.get(query, this.fieldMap);
 	}
 
 }
