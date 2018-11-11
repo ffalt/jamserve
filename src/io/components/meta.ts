@@ -245,6 +245,7 @@ export class MetaMerge {
 				});
 			}
 		}
+
 		// search albums
 		for (const artistID of  Object.keys(artistTracks)) {
 			const artistidtracks = artistTracks[artistID];
@@ -307,21 +308,16 @@ export class MetaMerge {
 				}
 			}
 		}
+
 		// save artists
-		for (const artistID of Object.keys(artistTracks)) {
-			const artistidtracks = artistTracks[artistID];
-			if (artistidtracks.hasChanged) {
-				log.debug('Update Artist', artistidtracks.artist.name);
-				await this.store.artist.replace(artistidtracks.artist);
-			}
-		}
+		const artists = Object.keys(artistTracks).filter(artistID => artistTracks[artistID].hasChanged).map(artistID => artistTracks[artistID].artist);
+		log.debug('Updating Artists:', artists.length);
+		await this.store.artist.replaceMany(artists);
+
 		// save tracks
-		for (const trackInfo of trackInfos) {
-			if (trackInfo.track.albumID || trackInfo.track.artistID) {
-				log.debug('Update Track', trackInfo.track.name);
-				await this.store.track.replace(trackInfo.track);
-			}
-		}
+		const tracks = trackInfos.filter(trackInfo => (trackInfo.track.albumID || trackInfo.track.artistID)).map(trackInfo => trackInfo.track);
+		log.debug('Updating Tracks:', tracks.length);
+		await this.store.track.replaceMany(tracks);
 	}
 
 	private async syncID3(trackInfo: MergeTrackInfo): Promise<void> {
