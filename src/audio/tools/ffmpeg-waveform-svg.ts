@@ -1,222 +1,266 @@
-/* adapted from
-	https://github.com/phding/waveform-node
-	https://github.com/t4nz/ffmpeg-peaks
-	https://github.com/antonKalinin/audio-waveform-svg-path
-	https://github.com/invokemedia/audio-to-svg-waveform
- */
-
-import {spawnTool} from '../../utils/tool';
 import SVGO from 'svgo';
-import {fsStat, tmpFile} from '../../utils/fs-utils';
 import fs from 'fs';
+import {Readable, Stream, PassThrough, Transform, TransformCallback} from 'stream';
+import * as util from 'util';
+import Logger from '../../utils/logger';
+import Ffmpeg from 'fluent-ffmpeg';
+
+// import WaveformData from 'waveform-data';
+const WaveformData = require('waveform-data');
+
+const log = Logger('Waveform');
 
 export async function getWaveFormSVG(filepath: string): Promise<string> {
-	const wf = new WaveFormSVG();
+	const wf = new WaveformSVG();
 	const result = await wf.generate(filepath);
 	return result;
 }
 
-class PeakData {
-	lastMax: Array<number>;
-	lastMin: Array<number>;
-	indexI: Array<number>;
-	indexJ: Array<number>;
-	indexJJOverflow: Array<number>;
-	splitPeaks: Array<Array<number>>;
-
-	constructor(private channels: number) {
-		this.lastMax = Array(channels).fill(0);
-		this.lastMin = Array(channels).fill(0);
-		this.indexI = Array(channels).fill(0);
-		this.indexJ = Array(channels).fill(0);
-		this.indexJJOverflow = Array(channels).fill(0);
-		this.splitPeaks = [];
-		for (let i = 0; i < channels; i++) {
-			this.splitPeaks[i] = [];
-		}
-	}
+export interface IWaveformData {
+	version: number;
+	sample_rate: number;
+	samples_per_pixel: number;
+	bits: number;
+	length: number;
+	data: Array<number>;
 }
 
-class GetPeaks {
-	/*
-	Source: https://github.com/t4nz/ffmpeg-peaks/blob/master/getPeaks.js
-	 */
-	private mergedPeaks: Array<number> = [];
-	private data?: PeakData;
-
-	constructor(private splitChannels: boolean, private length: number, private sampleStep: number, private totalSamples: number) {
-	}
-
-	update(buffers: Array<Array<number>>) {
-		const sampleSize = this.totalSamples / this.length;
-		const channels = buffers.length;
-		if (this.data === undefined) {
-			this.data = new PeakData(channels);
-		}
-		for (let c = 0; c < channels; c++) {
-			const chan = buffers[c];
-			const peaks = this.data.splitPeaks[c];
-			let i;
-			for (i = this.data.indexI[c]; i < this.length; i++) {
-				const start = Math.max(~~(i * sampleSize), this.data.indexJ[c]);
-				const end = ~~((i + 1) * sampleSize);
-				let min = this.data.lastMin[c];
-				let max = this.data.lastMax[c];
-
-				let broken = false;
-				let jj;
-				for (let j = start; j < end; j += this.sampleStep) {
-					jj = j - this.data.indexJ[c] + this.data.indexJJOverflow[c];
-
-					if (jj > chan.length - 1) {
-						this.data.indexI[c] = i;
-						this.data.indexJJOverflow[c] = jj - (chan.length - 1) - 1;
-						this.data.indexJ[c] = j;
-						this.data.lastMax[c] = max;
-						this.data.lastMin[c] = min;
-						broken = true;
-						break;
-					}
-
-					const value = chan[jj];
-					if (value > max) {
-						max = value;
-					}
-					if (value < min) {
-						min = value;
-					}
-				}
-				if (broken) {
-					break;
-				} else {
-					this.data.lastMax[c] = 0;
-					this.data.lastMin[c] = 0;
-				}
-				peaks[2 * i] = max;
-				peaks[2 * i + 1] = min;
-				if (c === 0 || max > this.mergedPeaks[2 * i]) {
-					this.mergedPeaks[2 * i] = max;
-				}
-				if (c === 0 || min < this.mergedPeaks[2 * i + 1]) {
-					this.mergedPeaks[2 * i + 1] = min;
-				}
-			}
-			this.data.indexI[c] = i;  // We finished for channel c. For the next call start from i = this.length so we do nothing.
-		}
-	}
-
-	get() {
-		return this.splitChannels && this.data ? this.data.splitPeaks : this.mergedPeaks;
-	}
-}
-
-export class WaveFormSVG {
+export class WaveformSVG {
 	private svgo = new SVGO();
 
 	async generate(filename: string): Promise<string> {
-		const temp = await tmpFile();
-		await this.convertFile(filename, temp.filename);
-		const peaks = await this.getPeaks(temp.filename);
-		temp.cleanupCallback();
-		const paths = this.svgPath(peaks);
-		const svg = this.svg(paths);
+		const data = await this.generateWaveformData(filename);
+		const svg = this.svg(data);
 		const optimized = await this.svgo.optimize(svg);
 		return optimized.data;
 	}
 
-	private svg(paths: string): string {
-		const w = 100;
-		const h = 81;
-		const result = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" preserveAspectRatio="none"
-     viewBox="0 0 ${w} ${h}" style="fill-rule:evenodd;clip-rule:evenodd;">
-    <g transform="matrix(0.0334504,0,0,81,0,40.5)">
-		<path stroke="black" d="${paths}" />
-	</g>
-</svg>`;
-		return result;
+	/**
+	 async generateWithFFMPEGData(filename: string): Promise<string> {
+		const res = await spawnTool('ffmpeg', 'FFMPEG_PATH', ['-v', 'error', '-i', filename,
+			'-ac', '1', '-filter:a', 'aresample=8000', '-map', '0:a', '-c:a', 'pcm_s16le', '-f', 'data', '-']);
+		const buffer = Buffer.from(res);
+		console.log('buffer.length', buffer.length);
+		let pos = 0;
+		const l = [];
+		while (pos < buffer.length) {
+			l.push(buffer.readIntBE(pos, 2));
+			pos += 2;
+		}
+		console.log('samples', l.length);
+
+		return '';
+	}*/
+
+	async generateWaveformData(filename: string): Promise<IWaveformData> {
+		const stream = fs.createReadStream(filename);
+		return new Promise<IWaveformData>((resolve, reject) => {
+			const wf: Waveform = new Waveform(stream, {
+				samplesPerPixel: 256,
+				sampleRate: 44100
+			}, (err) => {
+				if (err) {
+					console.log(err);
+					reject(err);
+				} else {
+					resolve(wf.asJSON());
+					// fileWrite(filename + '.waveform.json', JSON.stringify(result)).then(() => {
+					// 	console.log(wfd);
+					// 	resolve(this.svg(d.join(' '), 256, totalPeaks / 2));
+					// }).catch(e => {
+					// 	reject(e);
+					// });
+				}
+			});
+		});
 	}
 
-	private svgPathMixedChannel(peaks: Array<number>): string {
-		const totalPeaks = peaks.length;
+	private svg(data: IWaveformData): string {
+		const width = 4000;
+		const height = 256;
+		const wfd = WaveformData.create(data).resample({
+			width: width * 2
+		});
+		wfd.adapter.data.data = wfd.adapter.data.data.slice(0, width * 2);
+		data = wfd.adapter.data;
+		const totalPeaks = data.data.length;
 		const d: Array<string> = [];
-		// "for" is used for faster iteration
 		for (let peakNumber = 0; peakNumber < totalPeaks; peakNumber++) {
-			const num = peaks[peakNumber] / 3;
+			const num = (data.data[peakNumber] / height) + (height / 2);
 			if (peakNumber % 2 === 0) {
 				d.push(`M${~~(peakNumber / 2)}, ${num}`);
 			} else {
 				d.push(`L${~~(peakNumber / 2)}, ${num}`);
 			}
 		}
-		return d.join(' ');
+		const result = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" preserveAspectRatio="none"
+     viewBox="0 0 ${width} ${height}" style="fill-rule:evenodd;clip-rule:evenodd;">
+		<path stroke="green" d="${d.join(' ')}" />
+</svg>`;
+		return result;
 	}
 
-	private svgPath(peaks: Array<number> | Array<Array<number>>): string {
-		if (Array.isArray(peaks[0])) {
-			const left: Array<number> = <Array<number>>peaks[0];
-			const right: Array<number> = <Array<number>>peaks[1];
-			const d: Array<string> = [];
-			for (let peakNumber = 0, totalPeaks = left.length; peakNumber < totalPeaks; peakNumber++) {
-				const leftValue = left[peakNumber];
-				const rightValue = right[peakNumber];
-				d.push(`M${peakNumber}, ${leftValue} L${peakNumber}, ${rightValue} `);
-				console.log(leftValue, rightValue);
+}
+
+/**
+ class WaveformStream & class Waveform
+
+ based on https://github.com/StreamMachine/sm-waveform
+ MIT: https://github.com/StreamMachine/sm-waveform/blob/master/LICENSE
+
+ */
+
+class WaveformStream extends Transform {
+	_buf = new PassThrough;
+	_out = new PassThrough;
+	_ffmpeg: Ffmpeg.FfmpegCommand;
+	_sampleRate: number;
+	_samplesPerPixel: number;
+	_started = false;
+	_min: number | null = null;
+	_max: number | null = null;
+	_samples = 0;
+	_total = 0;
+
+	constructor(_at__samplesPerPixel?: number, _at__sampleRate?: number) {
+		super({writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024});
+		this._samplesPerPixel = _at__samplesPerPixel != null ? _at__samplesPerPixel : 256;
+		this._sampleRate = _at__sampleRate != null ? _at__sampleRate : 44100;
+		const options: Ffmpeg.FfmpegCommandOptions = {
+			source: <Readable>this._buf
+		};
+		this._ffmpeg = Ffmpeg(options).addOptions(['-f s16le', '-ac 1', '-acodec pcm_s16le', '-ar ' + this._sampleRate]);
+		this._ffmpeg.on('start', (cmd: string) => {
+			log.debug('ffmpeg started with ' + cmd);
+			this._started = true;
+			return this.emit('_started');
+		});
+		this._ffmpeg.on('error', (err: any) => {
+			if (err.code === 'ENOENT') {
+				log.debug('ffmpeg failed to start.');
+				return this.emit('error', 'ffmpeg failed to start');
+			} else {
+				log.debug('ffmpeg decoding error: ' + err);
+				return this.emit('error', 'ffmpeg decoding error: ' + err);
 			}
-			return d.join(' ');
-		} else {
-			return this.svgPathMixedChannel(<Array<number>>peaks);
+		});
+		this._ffmpeg.writeToStream(this._out);
+		this._out.on('readable', () => this.start());
+	}
+
+	start() {
+		let oddByte: number | null = null;
+		let i: number;
+		let value: number;
+		let data: Buffer | undefined = this._out.read();
+		while (data && data.length > 0) {
+			i = 0;
+			if (oddByte != null) {
+				value = ((data.readInt8(0, true) << 8) | oddByte);
+				oddByte = null;
+				i = 1;
+			} else {
+				value = data.readInt16LE(0, true);
+				i = 2;
+			}
+			this.readResults(value, i, data);
+			data = this._out.read();
 		}
 	}
 
-	private async getPeaks(filename: string): Promise<Array<number> | Array<Array<number>>> {
-		const stats = await fsStat(filename);
-		const opts = Object.assign({
-			numOfChannels: 2,
-			sampleRate: 44100,
-			maxValue: 1.0,
-			minValue: -1.0,
-			width: 4000,
-			precision: 1
-		}, {});
-		let oddByte: number | null = null;
-		let sc = 0;
-		const totalSamples = ~~((stats.size / 2) / opts.numOfChannels);
-		const splitChannels = false; // opts.numOfChannels >= 2;
-		const peaks = new GetPeaks(splitChannels, opts.width, opts.precision, totalSamples);
-		const readable = fs.createReadStream(filename);
-		readable.on('data', (chunk) => {
-			let i = 0;
-			let value: number;
-			const samples: Array<Array<number>> = [];
-			for (let ii = 0; ii < opts.numOfChannels; ii++) {
-				samples[ii] = [];
+	readResults(value: number, pos: number, data: Buffer) {
+		const dataLen = data.length;
+		while (true) {
+			this._min = this._min === null ? value : Math.min(this._min, value);
+			this._max = this._max === null ? value : Math.max(this._max, value);
+			this._samples += 1;
+			if (this._samples === this._samplesPerPixel) {
+				this.push([Math.round(this._min), Math.round(this._max)]);
+				this._min = null;
+				this._max = null;
+				this._samples = 0;
 			}
-			if (oddByte !== null) {
-				value = ((chunk.readInt8(i++, true) << 8) | oddByte) / 32768.0;
-				samples[sc].push(value);
-				sc = (sc + 1) % opts.numOfChannels;
+			if (pos >= dataLen) {
+				break;
 			}
-			for (; i + 1 < chunk.length; i += 2) {
-				value = chunk.readInt16LE(i, true) / 32768.0;
-				samples[sc].push(value);
-				sc = (sc + 1) % opts.numOfChannels;
-			}
-			oddByte = (i < chunk.length ? chunk.readUInt8(i, true) : null);
-			peaks.update(samples);
-		});
-		return new Promise<Array<number> | Array<Array<number>>>((resolve, reject) => {
-			readable.on('error', (err) => {
-				reject(err);
+			value = data.readInt16LE(pos, true);
+			pos += 2;
+		}
+	}
+
+	_transform(chunk: Buffer, encoding: string, cb: TransformCallback) {
+		this._total += chunk.length;
+		// debug('_trans chunk: ' + chunk.length + '/' + this._total);
+		if (this._started) {
+			return this._buf.write(chunk, encoding, <any>cb);
+		} else {
+			return this.once('_started', () => {
+				return this._buf.write(chunk, encoding, <any>cb);
 			});
-			readable.on('end', () => {
-				resolve(peaks.get());
-			});
+		}
+	}
+
+	_flush(cb: TransformCallback) {
+		this._buf.end();
+		return this._out.once('end', () => {
+			if (this._samples > 0) {
+				this.push([this._min, this._max]);
+			}
+			return cb();
 		});
 	}
 
-	private async convertFile(filepath: string, destpath: string): Promise<void> {
-		await spawnTool('ffmpeg', 'FFMPEG_PATH', ['-v', 'error', '-i', filepath, '-f', 's16le', '-acodec', 'pcm_s16le', '-y', destpath]);
+}
+
+interface WaveformOptions {
+	samplesPerPixel: number;
+	sampleRate: number;
+}
+
+class Waveform {
+
+	_errored = false;
+	_samples: Array<number> = [];
+
+	constructor(private stream: Stream, private opts: WaveformOptions, cb: (err?: Error) => void) {
+		this.opts = Object.assign({
+			samplesPerPixel: 256,
+			sampleRate: 44100
+		}, opts || {});
+		log.debug('New waveform with opts: ' + (util.inspect(this.opts)));
+		const ws = new WaveformStream(this.opts.samplesPerPixel, this.opts.sampleRate);
+		ws.on('readable', () => {
+			let px = ws.read();
+			while (px && px.length > 0) {
+				this._samples.push(px[0]);
+				this._samples.push(px[1]);
+				px = ws.read();
+			}
+		});
+		ws.on('error', (err) => {
+			cb(err);
+			this._errored = true;
+			return;
+		});
+		ws.once('end', () => {
+			log.debug('Waveform got stream end');
+			if (!this._errored) {
+				return cb();
+			}
+		});
+		stream.pipe(ws);
+	}
+
+	asJSON(): IWaveformData {
+		return {
+			version: 1,
+			sample_rate: this.opts.sampleRate,
+			samples_per_pixel: this.opts.samplesPerPixel,
+			bits: 16,
+			length: this._samples.length,
+			data: this._samples
+		};
 	}
 
 }
