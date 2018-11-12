@@ -9626,8 +9626,9 @@
 		"/stream/{id}.{format}": {
 			"get": {
 				"operationId": "stream.{id}.{format}",
+				"description": "stream a media file in a format",
 				"tags": [
-					"stream"
+					"media"
 				],
 				"responses": {
 					"200": {
@@ -9704,8 +9705,9 @@
 		"/stream/{id}": {
 			"get": {
 				"operationId": "stream.{id}",
+				"description": "stream a media file",
 				"tags": [
-					"stream"
+					"media"
 				],
 				"responses": {
 					"200": {
@@ -9748,8 +9750,9 @@
 		"/waveform/{id}.{format}": {
 			"get": {
 				"operationId": "waveform.{id}.{format}",
+				"description": "get peaks waveform data as svg | json | binary",
 				"tags": [
-					"waveform"
+					"media"
 				],
 				"responses": {
 					"200": {

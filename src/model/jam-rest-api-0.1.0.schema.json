@@ -4264,6 +4264,7 @@
 					]
 				},
 				"stream/{id}.{format}": {
+					"description": "media: stream a media file in a format",
 					"type": "object",
 					"properties": {
 						"pathParams": {
@@ -4363,6 +4364,7 @@
 					]
 				},
 				"stream/{id}": {
+					"description": "media: stream a media file",
 					"type": "object",
 					"properties": {
 						"pathParams": {
@@ -4421,6 +4423,7 @@
 					]
 				},
 				"waveform/{id}.{format}": {
+					"description": "media: get peaks waveform data as svg | json | binary",
 					"type": "object",
 					"properties": {
 						"pathParams": {

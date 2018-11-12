@@ -688,17 +688,26 @@ export interface JamApi {
 			aliasFor: 'image/{id}-{size}.{format}';
 		};
 
+		/**
+		 * media: stream a media file in a format
+		 */
 		'stream/{id}.{format}'?: {
 			pathParams: JamParameters.PathStream;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiStreamTypes;
 		};
+		/**
+		 * media: stream a media file
+		 */
 		'stream/{id}'?: {
 			pathParams: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDefaultStreamTypes;
 			aliasFor: 'stream/{id}.{format}';
 		};
+		/**
+		 * media: get peaks waveform data as svg | json | binary
+		 */
 		'waveform/{id}.{format}'?: {
 			pathParams: JamParameters.Waveform;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
