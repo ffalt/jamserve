@@ -19,6 +19,7 @@ export interface IStreamData {
 
 export interface IApiBinaryResult {
 	file?: { filename: string; name: string };
+	json?: any;
 	pipe?: IStreamData;
 	buffer?: {
 		buffer: Buffer;

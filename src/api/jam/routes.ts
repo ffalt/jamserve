@@ -1022,10 +1022,10 @@ export function registerUserApi(router: express.Router, api: ApiJam, image: expr
 		}
 	});
 
-	router.get('/streamSVG/:id', apiCheck('/streamSVG/{id}'), async (req, res) => {
+	router.get('/waveform/:id.:format', apiCheck('/waveform/{id}.{format}'), async (req, res) => {
 		try {
-			const options: ApiOptions<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
-			const result: IApiBinaryResult = await api.streamSVG(options);
+			const options: ApiOptions<JamParameters.Waveform> = {query: req.params, user: req.user, client: req.client};
+			const result: IApiBinaryResult = await api.waveform(options);
 			await ApiResponder.binary(res, result);
 		} catch (e) {
 			await ApiResponder.error(res, e);

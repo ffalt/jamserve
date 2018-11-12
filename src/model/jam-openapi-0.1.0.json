@@ -9745,17 +9745,29 @@
 				]
 			}
 		},
-		"/streamSVG/{id}": {
+		"/waveform/{id}.{format}": {
 			"get": {
-				"operationId": "streamSVG.{id}",
+				"operationId": "waveform.{id}.{format}",
 				"tags": [
-					"streamSVG"
+					"waveform"
 				],
 				"responses": {
 					"200": {
 						"description": "binary data",
 						"content": {
 							"image/svg+xml": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"application/binary": {
 								"schema": {
 									"type": "string",
 									"format": "binary"
@@ -9777,6 +9789,20 @@
 					}
 				},
 				"parameters": [
+					{
+						"in": "path",
+						"name": "format",
+						"schema": {
+							"enum": [
+								"dat",
+								"json",
+								"svg"
+							],
+							"type": "string"
+						},
+						"description": "format of waveform data",
+						"required": true
+					},
 					{
 						"in": "path",
 						"name": "id",

@@ -464,6 +464,13 @@ export declare namespace JamParameters {
 		format?: string;
 	}
 
+	export interface Waveform extends ID {
+		/**
+		 * format of waveform data
+		 */
+		format: 'svg' | 'json' | 'dat';
+	}
+
 	export interface SimilarTracks extends ID, IncludesTrack, Paginate {
 	}
 

@@ -1161,7 +1161,7 @@ export class ApiJam {
 		return result;
 	}
 
-	async streamSVG(req: ApiOptions<JamParameters.ID>): Promise<IApiBinaryResult> {
+	async waveform(req: ApiOptions<JamParameters.Waveform>): Promise<IApiBinaryResult> {
 		const id = req.query.id;
 		if (!id || id.length === 0) {
 			return Promise.reject(InvalidParamError());
@@ -1170,7 +1170,7 @@ export class ApiJam {
 		if (!obj) {
 			return Promise.reject(NotFoundError());
 		}
-		const result = await this.engine.getObjStreamSVG(obj, req.user);
+		const result = await this.engine.getObjWaveform(obj, <string>req.query.format, req.user);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}

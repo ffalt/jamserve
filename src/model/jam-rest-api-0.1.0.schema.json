@@ -4420,11 +4420,11 @@
 						"pathParams"
 					]
 				},
-				"streamSVG/{id}": {
+				"waveform/{id}.{format}": {
 					"type": "object",
 					"properties": {
 						"pathParams": {
-							"$ref": "#/definitions/JamParameters.ID"
+							"$ref": "#/definitions/JamParameters.Waveform"
 						},
 						"errors": {
 							"anyOf": [
@@ -4450,15 +4450,39 @@
 									"enum": [
 										"image/svg+xml"
 									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"application/json"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"application/binary"
+									]
 								}
 							],
-							"minItems": 1,
+							"minItems": 3,
 							"additionalItems": {
 								"anyOf": [
 									{
 										"type": "string",
 										"enum": [
 											"image/svg+xml"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"application/json"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"application/binary"
 										]
 									}
 								]
@@ -12940,6 +12964,28 @@
 				}
 			},
 			"required": [
+				"id"
+			]
+		},
+		"JamParameters.Waveform": {
+			"type": "object",
+			"properties": {
+				"format": {
+					"description": "format of waveform data",
+					"enum": [
+						"dat",
+						"json",
+						"svg"
+					],
+					"type": "string"
+				},
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"format",
 				"id"
 			]
 		},

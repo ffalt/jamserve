@@ -11,9 +11,19 @@ const WaveformData = require('waveform-data');
 const log = Logger('Waveform');
 
 export async function getWaveFormSVG(filepath: string): Promise<string> {
-	const wf = new WaveformSVG();
-	const result = await wf.generate(filepath);
+	const wf = new WaveformGenerator();
+	const result = await wf.generateSVG(filepath);
 	return result;
+}
+
+export async function getWaveFormJSON(filepath: string): Promise<IWaveformData> {
+	const wf = new WaveformGenerator();
+	return await wf.generateWaveformData(filepath);
+}
+
+export async function getWaveFormBinary(filepath: string): Promise<Buffer> {
+	const wf = new WaveformGenerator();
+	return await wf.generateWaveformBinary(filepath);
 }
 
 export interface IWaveformData {
@@ -25,13 +35,18 @@ export interface IWaveformData {
 	data: Array<number>;
 }
 
-export class WaveformSVG {
-	private svgo = new SVGO();
+export class WaveformGenerator {
 
-	async generate(filename: string): Promise<string> {
+	async generateWaveformBinary(filename: string): Promise<Buffer> {
+		const wf: Waveform = await this.generateWaveform(filename);
+		return wf.asBinary();
+	}
+
+	async generateSVG(filename: string): Promise<string> {
 		const data = await this.generateWaveformData(filename);
 		const svg = this.svg(data);
-		const optimized = await this.svgo.optimize(svg);
+		const svgo = new SVGO();
+		const optimized = await svgo.optimize(svg);
 		return optimized.data;
 	}
 
@@ -53,8 +68,13 @@ export class WaveformSVG {
 	}*/
 
 	async generateWaveformData(filename: string): Promise<IWaveformData> {
+		const wf: Waveform = await this.generateWaveform(filename);
+		return wf.asJSON();
+	}
+
+	async generateWaveform(filename: string): Promise<Waveform> {
 		const stream = fs.createReadStream(filename);
-		return new Promise<IWaveformData>((resolve, reject) => {
+		return new Promise<Waveform>((resolve, reject) => {
 			const wf: Waveform = new Waveform(stream, {
 				samplesPerPixel: 256,
 				sampleRate: 44100
@@ -63,13 +83,7 @@ export class WaveformSVG {
 					console.log(err);
 					reject(err);
 				} else {
-					resolve(wf.asJSON());
-					// fileWrite(filename + '.waveform.json', JSON.stringify(result)).then(() => {
-					// 	console.log(wfd);
-					// 	resolve(this.svg(d.join(' '), 256, totalPeaks / 2));
-					// }).catch(e => {
-					// 	reject(e);
-					// });
+					resolve(wf);
 				}
 			});
 		});
@@ -252,13 +266,30 @@ class Waveform {
 		stream.pipe(ws);
 	}
 
+	asBinary(): Buffer {
+		// https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md
+		const result = new Buffer(20 + (this._samples.length * 2));
+		result.writeInt32LE(1, 0); // version
+		result.writeUInt32LE(0, 4); // flags 0 (lsb) 	0: 16-bit resolution, 1: 8-bit resolution 1-31 	Unused
+		result.writeInt32LE(this.opts.sampleRate, 8); // Sample rate
+		result.writeInt32LE(this.opts.samplesPerPixel, 12); // Samples per pixel
+		result.writeInt32LE(this._samples.length / 2, 16); // Length of waveform data (number of minimum and maximum value pairs)
+		let pos = 20;
+		this._samples.forEach(num => {
+			result.writeUInt16LE(num, pos);
+			pos += 2;
+		});
+		return result;
+	}
+
 	asJSON(): IWaveformData {
+		// https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md
 		return {
 			version: 1,
 			sample_rate: this.opts.sampleRate,
 			samples_per_pixel: this.opts.samplesPerPixel,
 			bits: 16,
-			length: this._samples.length,
+			length: this._samples.length / 2,
 			data: this._samples
 		};
 	}

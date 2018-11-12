@@ -19,7 +19,9 @@ export class ApiResponder {
 	}
 
 	public static binary(res: express.Response, data: IApiBinaryResult) {
-		if (data.pipe) {
+		if (data.json) {
+			res.status(200).json(data.json);
+		} else if (data.pipe) {
 			data.pipe.pipe(res);
 		} else if (data.buffer) {
 			res.set('Content-Type', data.buffer.contentType);

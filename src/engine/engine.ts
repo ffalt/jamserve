@@ -399,19 +399,19 @@ export class Engine {
 		return this.images.paint(s, size || 128, format);
 	}
 
-	async getObjStreamSVG(o: DBObject, user: JamServe.User): Promise<IApiBinaryResult> {
-		switch (o.type) {
+	async getObjWaveform(o: DBObject, format: string, user: JamServe.User): Promise<IApiBinaryResult> {
+			switch (o.type) {
 			case DBObjectType.track:
 				const track: JamServe.Track = <JamServe.Track>o;
-				return await this.waveforms.get(o.id, path.join(track.path, track.name), track.media);
+				return await this.waveforms.get(o.id, path.join(track.path, track.name), format, track.media);
 			case DBObjectType.episode:
 				const episode: JamServe.Episode = <JamServe.Episode>o;
 				if (episode.path && episode.media) {
-					return await this.waveforms.get(o.id, path.join(episode.path), episode.media);
+					return await this.waveforms.get(o.id, path.join(episode.path), format, episode.media);
 				}
 				break;
 		}
-		return Promise.reject(Error('Invalid Object Type for SVG generation'));
+		return Promise.reject(Error('Invalid Object Type for Waveform generation'));
 	}
 
 	async getObjStream(o: DBObject, format: string | undefined, maxBitRate: number | undefined, user: JamServe.User): Promise<IApiBinaryResult> {
