@@ -92,9 +92,13 @@ export class WaveformGenerator {
 	private svg(data: IWaveformData): string {
 		const width = 4000;
 		const height = 256;
-		const wfd = WaveformData.create(data).resample({
-			width: width * 2
-		});
+		let wfd = WaveformData.create(data);
+		const samplesPerPixel = Math.floor(wfd.duration * wfd.adapter.sample_rate / (width * 2));
+		if (samplesPerPixel < 256) {
+			wfd = wfd.resample({width: width * 2, scale: 256});
+		} else {
+			wfd = wfd.resample({width: width * 2});
+		}
 		wfd.adapter.data.data = wfd.adapter.data.data.slice(0, width * 2);
 		data = wfd.adapter.data;
 		const totalPeaks = data.data.length;
