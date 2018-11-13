@@ -270,12 +270,6 @@ export class MetaMerge {
 					log.debug('Update Album', album.name);
 					artistidtracks.artist.albumIDs.push(album.id);
 					artistidtracks.hasChanged = true;
-					artistidtracks.tracks.forEach(t => {
-						t.track.albumID = album.id;
-						if (album.rootIDs.indexOf(t.track.rootID) < 0) {
-							album.rootIDs.push(t.track.rootID);
-						}
-					});
 					await this.store.album.replace(album);
 				} else {
 					const a: JamServe.Album = {
@@ -301,7 +295,7 @@ export class MetaMerge {
 					log.debug('Add Album', a.name);
 					a.id = await this.store.album.add(a);
 					artistidtracks.artist.albumIDs.push(a.id);
-					artistidtracks.tracks.forEach(t => {
+					atracks.forEach(t => {
 						t.track.albumID = a.id;
 					});
 					artistidtracks.hasChanged = true;
