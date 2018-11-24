@@ -1,9 +1,9 @@
 import path from 'path';
+import fse from 'fs-extra';
 import {IoService} from './io/io.service';
 import {Store} from './store';
 import {AudioService} from './audio/audio.service';
 import {DBObjectType} from '../types';
-import {makePath} from '../utils/fs-utils';
 import {IndexService} from './index/index.service';
 import {MetaDataService} from './metadata/metadata.service';
 import {UserService} from './user/user.service';
@@ -126,13 +126,13 @@ export class Engine {
 	}
 
 	private async checkDataPaths(): Promise<void> {
-		await makePath(path.resolve(this.config.paths.data));
-		await makePath(path.resolve(this.config.paths.data, 'cache', 'waveforms'));
-		await makePath(path.resolve(this.config.paths.data, 'cache', 'uploads'));
-		await makePath(path.resolve(this.config.paths.data, 'cache', 'images'));
-		await makePath(path.resolve(this.config.paths.data, 'images'));
-		await makePath(path.resolve(this.config.paths.data, 'session'));
-		await makePath(path.resolve(this.config.paths.data, 'podcasts'));
+		await fse.ensureDir(path.resolve(this.config.paths.data));
+		await fse.ensureDir(path.resolve(this.config.paths.data, 'cache', 'waveforms'));
+		await fse.ensureDir(path.resolve(this.config.paths.data, 'cache', 'uploads'));
+		await fse.ensureDir(path.resolve(this.config.paths.data, 'cache', 'images'));
+		await fse.ensureDir(path.resolve(this.config.paths.data, 'images'));
+		await fse.ensureDir(path.resolve(this.config.paths.data, 'session'));
+		await fse.ensureDir(path.resolve(this.config.paths.data, 'podcasts'));
 	}
 
 	async start(): Promise<void> {

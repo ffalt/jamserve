@@ -1,6 +1,6 @@
 import {getJamApiCalls, IApiCall} from './utils';
 import path from 'path';
-import {fileWrite} from '../../src/utils/fs-utils';
+import fse from 'fs-extra';
 
 const destPath = '../../dist/';
 const destfile = path.resolve(destPath, 'jam.service.ts');
@@ -107,7 +107,7 @@ ${resultAPI.join('\n\n')}
 		}
 `;
 
-	await fileWrite(destfile, result);
+	await fse.writeFile(destfile, result);
 }
 
 run()

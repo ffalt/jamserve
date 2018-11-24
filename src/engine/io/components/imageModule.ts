@@ -1,12 +1,13 @@
 import path from 'path';
 import Logger from '../../../utils/logger';
 import {downloadFile} from '../../../utils/download';
-import {dirRead, fileDelete, fileDeleteIfExists, fileExists, fileRename, fileWrite} from '../../../utils/fs-utils';
+import {fileDeleteIfExists} from '../../../utils/fs-utils';
 import {IApiBinaryResult} from '../../../typings';
 import {Config} from '../../../config';
 import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
 import {DebouncePromises} from '../../../utils/debounce-promises';
+import fse from 'fs-extra';
 
 const log = Logger('Images');
 
@@ -63,7 +64,7 @@ export class ImageModule {
 	}
 
 	private async getImage(filename: string, size: number | undefined, name: string): Promise<IApiBinaryResult> {
-		const exists = await fileExists(filename);
+		const exists = await fse.pathExists(filename);
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
 		}
@@ -101,14 +102,14 @@ export class ImageModule {
 			try {
 				let result: IApiBinaryResult;
 				const cachefile = path.join(this.imageCachePath, cacheID);
-				const exists = await fileExists(cachefile);
+				const exists = await fse.pathExists(cachefile);
 				if (exists) {
 					result = {file: {filename: cachefile, name: cacheID}};
 				} else {
 					result = await this.getImage(filename, size, cacheID);
 					if (result.buffer) {
 						log.debug('Writing image cache file', cachefile);
-						await fileWrite(cachefile, result.buffer.buffer);
+						await fse.writeFile(cachefile, result.buffer.buffer);
 					}
 				}
 				await this.imageCacheDebounce.resolve(cacheID, result);
@@ -131,12 +132,12 @@ export class ImageModule {
 	async clearImageCacheByIDs(ids: Array<string>): Promise<void> {
 		const searches = ids.filter(id => id.length > 0).map(id => 'thumb-' + id);
 		if (searches.length > 0) {
-			let list = await dirRead(this.imageCachePath);
+			let list = await fse.readdir(this.imageCachePath);
 			list = list.filter(name => {
 				return searches.findIndex(s => name.indexOf(s) === 0) >= 0;
 			});
 			for (const filename of list) {
-				await fileDelete(path.resolve(this.imageCachePath, filename));
+				await fse.unlink(path.resolve(this.imageCachePath, filename));
 			}
 		}
 	}
@@ -146,10 +147,10 @@ export class ImageModule {
 			return;
 		}
 		const search = 'thumb-' + id;
-		let list = await dirRead(this.imageCachePath);
+		let list = await fse.readdir(this.imageCachePath);
 		list = list.filter(name => name.indexOf(search) === 0);
 		for (const filename of list) {
-			await fileDelete(path.resolve(this.imageCachePath, filename));
+			await fse.unlink(path.resolve(this.imageCachePath, filename));
 		}
 	}
 
@@ -157,13 +158,13 @@ export class ImageModule {
 		if ((!filename)) {
 			return Promise.reject(Error('Invalid Path'));
 		}
-		const exists = await fileExists(filename);
+		const exists = await fse.pathExists(filename);
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
 		}
 		await this.resizeImage(filename, filename + '.new', 64);
 		await fileDeleteIfExists(destination);
-		await fileRename(filename + '.new', destination);
+		await fse.rename(filename + '.new', destination);
 	}
 
 }

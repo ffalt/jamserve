@@ -1,11 +1,10 @@
 import {IApiBinaryResult} from '../../typings';
 import {DBObjectType, FolderType, FolderTypeImageName} from '../../types';
 import path from 'path';
-import Logger from '../../utils/logger';
 import {ImageModule} from '../io/components/imageModule';
 import {Store} from '../store';
 import {Config} from '../../config';
-import {fileCopy, fileDeleteIfExists} from '../../utils/fs-utils';
+import {fileDeleteIfExists} from '../../utils/fs-utils';
 import {Folder} from '../folder/folder.model';
 import {Track} from '../track/track.model';
 import {User} from '../user/user.model';
@@ -15,8 +14,7 @@ import {DBObject} from '../base/base.model';
 import {Episode} from '../episode/episode.model';
 import {Playlist} from '../playlist/playlist.model';
 import {Podcast} from '../podcast/podcast.model';
-
-const log = Logger('ImageService');
+import fse from 'fs-extra';
 
 export class ImageService {
 	private images: ImageModule;
@@ -29,7 +27,7 @@ export class ImageService {
 		const destFileName = FolderTypeImageName[folder.tag.type] + path.extname(filename);
 		const destName = path.join(folder.path, destFileName);
 		await fileDeleteIfExists(destName);
-		await fileCopy(filename, destName);
+		await fse.copy(filename, destName);
 		folder.tag.image = destFileName;
 		await this.store.folderStore.replace(folder);
 	}

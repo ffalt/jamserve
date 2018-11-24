@@ -1,11 +1,11 @@
 import path from 'path';
 import Logger from '../../utils/logger';
-import {dirRead, fileDelete, fileExists, fileWrite} from '../../utils/fs-utils';
 import {IApiBinaryResult} from '../../typings';
 import {Config} from '../../config';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {getWaveFormBinary, getWaveFormJSON, getWaveFormSVG} from '../audio/tools/ffmpeg-waveform-svg';
 import {TrackMedia} from '../track/track.model';
+import fse from 'fs-extra';
 
 const log = Logger('WaveformService');
 
@@ -22,7 +22,7 @@ export class WaveformService {
 	}
 
 	private async getWaveform(filename: string, format: string): Promise<IApiBinaryResult> {
-		const exists = await fileExists(filename);
+		const exists = await fse.pathExists(filename);
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
 		}
@@ -48,12 +48,12 @@ export class WaveformService {
 	async clearWaveformCacheByIDs(ids: Array<string>): Promise<void> {
 		const searches = ids.filter(id => id.length > 0).map(id => this.getCacheID(id, ''));
 		if (searches.length > 0) {
-			let list = await dirRead(this.waveformCachePath);
+			let list = await fse.readdir(this.waveformCachePath);
 			list = list.filter(name => {
 				return searches.findIndex(s => name.indexOf(s) === 0) >= 0;
 			});
 			for (const filename of list) {
-				await fileDelete(path.resolve(this.waveformCachePath, filename));
+				await fse.unlink(path.resolve(this.waveformCachePath, filename));
 			}
 		}
 	}
@@ -70,17 +70,17 @@ export class WaveformService {
 		try {
 			let result: IApiBinaryResult;
 			const cachefile = path.join(this.waveformCachePath, cacheID);
-			const exists = await fileExists(cachefile);
+			const exists = await fse.pathExists(cachefile);
 			if (exists) {
 				result = {file: {filename: cachefile, name: cacheID}};
 			} else {
 				result = await this.getWaveform(filename, format);
 				if (result.buffer) {
 					log.debug('Writing waveform cache file', cachefile);
-					await fileWrite(cachefile, result.buffer.buffer);
+					await fse.writeFile(cachefile, result.buffer.buffer);
 				} else if (result.json) {
 					log.debug('Writing waveform cache file', cachefile);
-					await fileWrite(cachefile, JSON.stringify(result.json));
+					await fse.writeFile(cachefile, JSON.stringify(result.json));
 				}
 			}
 			await this.waveformCacheDebounce.resolve(cacheID, result);

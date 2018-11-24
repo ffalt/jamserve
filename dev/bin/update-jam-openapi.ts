@@ -1,7 +1,7 @@
 import {OpenAPIObject} from '../../src/model/openapi';
 import path from 'path';
 import {getJamApiCalls, IApiCall, transformTS2JSONScheme} from './utils';
-import {fileWrite} from '../../src/utils/fs-utils';
+import fse from 'fs-extra';
 
 const version = '0.1.0';
 const basePath = path.resolve('../../src/model/');
@@ -162,7 +162,7 @@ async function run() {
 	});
 
 	const oa = JSON.stringify(openapi, null, '\t').replace(/\/definitions/g, '/components/schemas');
-	await fileWrite(destfile, oa);
+	await fse.writeFile(destfile, oa);
 }
 
 run()

@@ -1,6 +1,6 @@
 import {Store} from '../store';
 import {Feed, PodcastStatus} from '../../utils/feed';
-import {fileDeleteIfExists, fileSuffix, fsStat, makePath} from '../../utils/fs-utils';
+import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {SupportedAudioFormat} from '../../utils/filetype';
 import path from 'path';
 import Logger from '../../utils/logger';
@@ -10,6 +10,7 @@ import {downloadFile} from '../../utils/download';
 import {Config} from '../../config';
 import {Podcast} from './podcast.model';
 import {Episode} from '../episode/episode.model';
+import fse from 'fs-extra';
 
 const log = Logger('PodcastService');
 
@@ -60,11 +61,11 @@ export class PodcastService {
 				return Promise.reject(Error('Unsupported Podcast audio format'));
 			}
 			const p = path.resolve(this.podcastsPath, episode.podcastID);
-			await makePath(p);
+			await fse.ensureDir(p);
 			const filename = path.join(p, episode.id + '.' + (ext || 'mp3'));
 			log.info('retrieving file', url);
 			await downloadFile(url, filename);
-			const stat = await fsStat(filename);
+			const stat = await fse.stat(filename);
 			const result = await this.audio.read(filename);
 			episode.status = PodcastStatus.completed;
 			episode.tag = result.tag;

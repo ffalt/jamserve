@@ -1,11 +1,3 @@
-// static FAIL = {
-// 	GENERIC: 500,
-// 	PARAMETER: 400,
-// 	UNAUTH: 401,
-// 	NOTFOUND: 404
-// };
-
-
 class ApiError extends Error {
 	failCode: number;
 

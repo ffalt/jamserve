@@ -1,6 +1,6 @@
 import {Store} from '../store';
 import {IoService} from '../io/io.service';
-import {dirExist, dirRename, replaceFileSystemChars} from '../../utils/fs-utils';
+import {replaceFileSystemChars} from '../../utils/fs-utils';
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {IndexService} from '../index/index.service';
@@ -8,6 +8,7 @@ import {GenreService} from '../genre/genre.service';
 import {Folder} from '../folder/folder.model';
 import {Root, RootStatus} from './root.model';
 import {Track} from '../track/track.model';
+import fse from 'fs-extra';
 
 export class RootService {
 
@@ -69,11 +70,11 @@ export class RootService {
 		}
 		const p = path.dirname(folder.path);
 		const dest = path.join(p, name);
-		const exists = await dirExist(dest);
+		const exists = await fse.pathExists(dest);
 		if (exists) {
 			return Promise.reject(Error('Directory already exists'));
 		}
-		await dirRename(folder.path, dest);
+		await fse.rename(folder.path, dest);
 		await this.io.applyFolderMove(folder, dest);
 	}
 

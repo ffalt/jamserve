@@ -1,6 +1,6 @@
 import path from 'path';
 import {transformTS2JSONScheme} from './utils';
-import {fileWrite} from '../../src/utils/fs-utils';
+import fse from 'fs-extra';
 
 const basePath = '../../src/';
 const destfile = path.resolve(basePath, 'db', 'elasticsearch', 'mapping.ts');
@@ -103,7 +103,7 @@ async function run(): Promise<void> {
 		result[symbol.toLowerCase()] = 'type_' + symbol.replace(/\./g, '_');
 	}
 	strings.push('export const mapping: any = ' + JSON.stringify(result, null, '\t').replace(/"/g, '') + ';\n');
-	await fileWrite(destfile, strings.join('\n'));
+	await fse.writeFile(destfile, strings.join('\n'));
 }
 
 run()

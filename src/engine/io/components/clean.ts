@@ -1,4 +1,3 @@
-import {dirExist, fileExists} from '../../../utils/fs-utils';
 import path from 'path';
 import Logger from '../../../utils/logger';
 import {Store} from '../../store';
@@ -10,6 +9,7 @@ import {ImageService} from '../../image/image.service';
 import {Root} from '../../root/root.model';
 import {Track} from '../../track/track.model';
 import {Folder} from '../../folder/folder.model';
+import fse from 'fs-extra';
 
 const log = Logger('IO.clean');
 
@@ -44,7 +44,7 @@ export async function scanCleanStore(store: Store, imageService: ImageService, w
 			if (!isInRoot(roots, folder.path)) {
 				removeFolders.push(folder);
 			} else if (doneFolderIds.indexOf(folder.id) < 0) {
-				const exists = await dirExist(folder.path);
+				const exists = await fse.pathExists(folder.path);
 				if (!exists) {
 					removeFolders.push(folder);
 				}
@@ -57,7 +57,7 @@ export async function scanCleanStore(store: Store, imageService: ImageService, w
 			if (!isInRoot(roots, track.path)) {
 				removeTracks.push(track);
 			} else if (doneFileIds.indexOf(track.id) < 0) {
-				const exists = await fileExists(path.join(track.path, track.name));
+				const exists = await fse.pathExists(path.join(track.path, track.name));
 				if (!exists) {
 					removeTracks.push(track);
 				}

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fse from 'fs-extra';
 import path from 'path';
 import {Store} from 'express-session';
 import {Express} from 'express';
@@ -13,31 +13,27 @@ export class SessionJSONFileStore extends Store {
 
 	constructor(filename: string) {
 		super();
-		this.filename = filename || 'sessions.json';
+		this.filename = path.resolve(filename || 'sessions.json');
+		this.init().catch(e => {
+			console.log('SessionJSONFileStore', e);
+		});
+	}
 
-		fs.mkdir(path.dirname(filename), (err) => {
-			if (err && err.code !== 'EEXIST') {
-				throw err;
-			}
-			fs.readFile(filename, 'utf8', (err2, data) => {
-				if (err2 && err2.code !== 'ENOENT') {
-					throw err2;
+	async init() {
+		await fse.ensureDir(path.dirname(this.filename));
+		const exists = await fse.pathExists(this.filename);
+		if (exists) {
+			const archive = await fse.readJson(this.filename);
+			Object.keys(archive).forEach(key => {
+				const sessionData = archive[key];
+				if (sessionData.cookie.expires !== undefined && typeof sessionData.cookie.expires !== 'boolean') {
+					sessionData.cookie.expires = new Date(sessionData.cookie.expires);
 				}
-				if ((!err2) && (data)) {
-					this.cache = {};
-					const archive = JSON.parse(data.toString());
-					Object.keys(archive).forEach(key => {
-						const sessionData = archive[key];
-						if (sessionData.cookie.expires !== undefined && typeof sessionData.cookie.expires !== 'boolean') {
-							sessionData.cookie.expires = new Date(sessionData.cookie.expires);
-						}
-						if (!this.expired(sessionData)) {
-							this.cache[key] = sessionData;
-						}
-					});
+				if (!this.expired(sessionData)) {
+					this.cache[key] = sessionData;
 				}
 			});
-		});
+		}
 	}
 
 	get: (sid: string, callback: (err: any, data?: Express.SessionData | null) => void) => void = (sid, callback) => {
@@ -85,7 +81,7 @@ export class SessionJSONFileStore extends Store {
 	}
 
 	private savejson(callback?: (err?: Error) => void): void {
-		fs.writeFile(this.filename, JSON.stringify(this.cache), (err) => {
+		fse.writeFile(this.filename, JSON.stringify(this.cache), (err) => {
 			if (callback) {
 				callback(err);
 			}

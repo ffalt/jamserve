@@ -1,7 +1,6 @@
-import fs from 'fs';
 import path from 'path';
 import {NodeDataCallback} from '../typings';
-import {fileExists} from './fs-utils';
+import fse from 'fs-extra';
 
 const isWindows = process && (process.platform === 'win32' || /^(msys|cygwin)$/.test(process.env.OSTYPE || ''));
 
@@ -49,7 +48,7 @@ function getNotFoundError(cmd: string): Error {
 	return er;
 }
 
-function checkWindowsMode(filename: string, options: { pathExt?: string }, stat: fs.Stats): boolean {
+function checkWindowsMode(filename: string, options: { pathExt?: string }, stat: fse.Stats): boolean {
 	if (!stat.isSymbolicLink() && !stat.isFile()) {
 		return false;
 	}
@@ -70,7 +69,7 @@ function checkWindowsMode(filename: string, options: { pathExt?: string }, stat:
 	return false;
 }
 
-function checkMode(filename: string, options: { pathExt?: string }, stat: fs.Stats): boolean {
+function checkMode(filename: string, options: { pathExt?: string }, stat: fse.Stats): boolean {
 	const mod = stat.mode;
 	const uid = stat.uid;
 	const gid = stat.gid;
@@ -87,7 +86,7 @@ function checkMode(filename: string, options: { pathExt?: string }, stat: fs.Sta
 	return !!ret;
 }
 
-function isexeStat(filename: string, options: { pathExt?: string }, stat: fs.Stats) {
+function isexeStat(filename: string, options: { pathExt?: string }, stat: fse.Stats) {
 	if (!stat.isFile()) {
 		return false;
 	}
@@ -99,7 +98,7 @@ function isexeStat(filename: string, options: { pathExt?: string }, stat: fs.Sta
 }
 
 function isexe(filename: string, options: { pathExt?: string }, cb: NodeDataCallback<boolean>) {
-	fs.stat(filename, (err, stat) => {
+	fse.stat(filename, (err, stat) => {
 		cb(err, err ? false : isexeStat(filename, options, stat));
 	});
 }
@@ -165,7 +164,7 @@ async function which(name: string): Promise<string | undefined> {
 
 async function localBin(name: string): Promise<string | undefined> {
 	const s = path.join('.', 'bin', 'tools', name, process.platform, process.arch, name) + (isWindows ? '.exe' : '');
-	const exists = await fileExists(s);
+	const exists = await fse.pathExists(s);
 	if (exists) {
 		return s;
 	}
@@ -174,7 +173,7 @@ async function localBin(name: string): Promise<string | undefined> {
 async function enviroment(envName: string): Promise<string | undefined> {
 	const s = process.env[envName];
 	if (s && s.length > 0) {
-		const exists = await fileExists(s);
+		const exists = await fse.pathExists(s);
 		if (exists) {
 			return s;
 		}

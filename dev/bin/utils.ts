@@ -1,7 +1,7 @@
 import * as TJS from 'typescript-json-schema';
 import path from 'path';
 import {Definition} from 'typescript-json-schema/typescript-json-schema';
-import {fileWrite} from '../../src/utils/fs-utils';
+import fse from 'fs-extra';
 
 const settings: TJS.PartialArgs = {
 	required: true
@@ -35,7 +35,7 @@ export async function transformTS2JSONScheme(basePath: string, filename: string,
 export async function saveTS2JSONScheme(basePath: string, filename: string, symbol: string): Promise<void> {
 	const scheme = await transformTS2JSONScheme(basePath, filename, symbol);
 	const destfile = path.resolve(basePath, filename + '.schema.json');
-	await fileWrite(destfile, JSON.stringify(scheme, null, '\t'));
+	await fse.writeFile(destfile, JSON.stringify(scheme, null, '\t'));
 	console.log(destfile, 'written');
 }
 

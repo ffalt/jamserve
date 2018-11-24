@@ -1,9 +1,8 @@
 import {FileTyp} from '../../../types';
 import path from 'path';
-import fs from 'fs';
 import {getFileType} from '../../../utils/filetype';
 import Logger from '../../../utils/logger';
-import {dirRead, fsStat} from '../../../utils/fs-utils';
+import fse from 'fs-extra';
 
 const log = Logger('IO.scan');
 
@@ -27,7 +26,7 @@ export interface ScanFile {
 	};
 }
 
-async function scanDirR(dir: string, stat: fs.Stats): Promise<ScanDir> {
+async function scanDirR(dir: string, stat: fse.Stats): Promise<ScanDir> {
 	log.debug('Scanning Directory', dir);
 	const result: ScanDir = {
 		name: dir,
@@ -38,22 +37,22 @@ async function scanDirR(dir: string, stat: fs.Stats): Promise<ScanDir> {
 		directories: [],
 		files: []
 	};
-	const folders: Array<{ dir: string, stat: fs.Stats }> = [];
-	const list = await dirRead(dir);
+	const folders: Array<{ dir: string, stat: fse.Stats }> = [];
+	const list = await fse.readdir(dir);
 	for (const filename of list) {
 		if (filename[0] !== '.') {
 			const sub = path.join(dir, filename);
-			const substat = await fsStat(sub);
-			if (substat.isDirectory()) {
-				folders.push({dir: sub, stat: substat});
+			const subStat = await fse.stat(sub);
+			if (subStat.isDirectory()) {
+				folders.push({dir: sub, stat: subStat});
 			} else {
 				const file: ScanFile = {
 					name: sub,
 					type: getFileType(sub),
 					stat: {
-						ctime: substat.ctime.valueOf(),
-						mtime: substat.mtime.valueOf(),
-						size: substat.size
+						ctime: subStat.ctime.valueOf(),
+						mtime: subStat.mtime.valueOf(),
+						size: subStat.size
 					}
 				};
 				result.files.push(file);
@@ -68,6 +67,6 @@ async function scanDirR(dir: string, stat: fs.Stats): Promise<ScanDir> {
 }
 
 export async function scanDir(dir: string): Promise<ScanDir> {
-	const stat = await fsStat(dir);
+	const stat = await fse.stat(dir);
 	return scanDirR(dir, stat);
 }

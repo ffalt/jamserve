@@ -7,13 +7,14 @@ import {MusicbrainzClientApi} from './clients/musicbrainz-client.interface';
 import {LastFM} from '../../model/lastfm-rest-data-2.0';
 import {Acoustid} from '../../model/acoustid-rest-data-2.0';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data-2.0';
-import {fileCopy, fileExists, fileSuffix} from '../../utils/fs-utils';
+import {fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {Config} from '../../config';
 import {TrackMedia, TrackTag} from '../track/track.model';
 import {MetaInfoAlbum, MetaInfoArtist, MetaInfoImage, MetaInfoTopSong, MetaInfoTrackSimilarSong} from '../metadata/metadata.model';
 import {Folder} from '../folder/folder.model';
+import fse from 'fs-extra';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -277,9 +278,9 @@ export class AudioService {
 	}
 
 	async saveID3v2(filename: string, tag: Jam.ID3Tag): Promise<void> {
-		const exists = await fileExists(filename + '.bak.org');
+		const exists = await fse.pathExists(filename + '.bak.org');
 		if (exists) {
-			await fileCopy(filename, filename + '.bak.org');
+			await fse.copy(filename, filename + '.bak.org');
 		}
 		const frames: Array<IID3V2.Frame> = [];
 		Object.keys(tag.frames).map(id => {

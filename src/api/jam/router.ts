@@ -4,7 +4,7 @@ import {ApiResponder} from './response';
 import multer from 'multer';
 import path from 'path';
 import Logger from '../../utils/logger';
-import {APIVERSION, JamController, JamRequest} from './api';
+import {APIVERSION, JamController} from './api';
 import {Engine} from '../../engine/engine';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import cors, {CorsOptions} from 'cors';

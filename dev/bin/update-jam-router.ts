@@ -1,7 +1,7 @@
 import {getJamApiCalls, IApiCall} from './utils';
 import path from 'path';
 import {IApiBinaryResult} from '../../src/typings';
-import {fileWrite} from '../../src/utils/fs-utils';
+import fse from 'fs-extra';
 
 const destPath = '../../src/api/jam/';
 const destfile = path.resolve(destPath, 'routes.ts');
@@ -104,7 +104,7 @@ ${adminApi}
 }
 `;
 
-	await fileWrite(destfile, ts);
+	await fse.writeFile(destfile, ts);
 }
 
 run()
