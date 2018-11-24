@@ -1,6 +1,7 @@
-import {JamServe} from '../../src/model/jamserve';
 import {DBObjectType} from '../../src/types';
 import path from 'path';
+import {User} from '../../src/engine/user/user.model';
+import {Root} from '../../src/engine/root/root.model';
 
 export const mockupAdmin: User = {
 	id: '',

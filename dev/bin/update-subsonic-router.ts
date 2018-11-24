@@ -5,6 +5,7 @@ import {fileWrite} from '../../src/utils/fs-utils';
 
 const destPath = '../../src/api/subsonic/';
 const destfile = path.resolve(destPath, 'routes.ts');
+const basePath = path.resolve('../../src/model/');
 
 function generateCode(calls: Array<IApiCall>): string {
 	const result: Array<string> = [];
@@ -67,7 +68,7 @@ function generateCode(calls: Array<IApiCall>): string {
 }
 
 async function run() {
-	const apicalls: Array<IApiCall> = await getSubsonicApiCalls();
+	const apicalls: Array<IApiCall> = await getSubsonicApiCalls(basePath);
 	const roles: Array<string> = [];
 	apicalls.forEach(call => {
 		(call.roles || []).forEach(role => {

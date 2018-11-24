@@ -3,7 +3,7 @@ import {transformTS2JSONScheme} from './utils';
 import {fileWrite} from '../../src/utils/fs-utils';
 
 const basePath = '../../src/';
-const destfile = path.resolve(basePath, 'store', 'elasticsearch', 'mapping.ts');
+const destfile = path.resolve(basePath, 'db', 'elasticsearch', 'mapping.ts');
 
 async function run(): Promise<void> {
 	const strings: Array<string> = [];
@@ -97,10 +97,10 @@ async function run(): Promise<void> {
 	strings.push('const type_string = {type: \'text\'};\n');
 	strings.push('const type_key = {type: \'keyword\'};\n');
 	for (const symbol of symbols) {
-		const name = '' + symbol;
-		const scheme = await transformTS2JSONScheme('jamserve', name);
-		transformProperties(name, scheme.properties || {}, scheme.definitions || {}, []);
-		result[symbol.toLowerCase()] = 'type_' + name.replace(/\./g, '_');
+		const baseP = path.resolve(basePath, `engine/${symbol.toLowerCase()}`);
+		const scheme = await transformTS2JSONScheme(baseP, symbol.toLowerCase() + '.model', symbol);
+		transformProperties(symbol, scheme.properties || {}, scheme.definitions || {}, []);
+		result[symbol.toLowerCase()] = 'type_' + symbol.replace(/\./g, '_');
 	}
 	strings.push('export const mapping: any = ' + JSON.stringify(result, null, '\t').replace(/"/g, '') + ';\n');
 	await fileWrite(destfile, strings.join('\n'));

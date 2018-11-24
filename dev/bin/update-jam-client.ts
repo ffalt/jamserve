@@ -4,10 +4,11 @@ import {fileWrite} from '../../src/utils/fs-utils';
 
 const destPath = '../../dist/';
 const destfile = path.resolve(destPath, 'jam.service.ts');
+const basePath = path.resolve('../../src/model/');
 
 async function run() {
 
-	const calls: Array<IApiCall> = await getJamApiCalls();
+	const calls: Array<IApiCall> = await getJamApiCalls(basePath);
 	const resultAPI: Array<string> = [];
 	calls.forEach(call => {
 		if (call.aliasFor) {

@@ -5,6 +5,7 @@ import {fileWrite} from '../../src/utils/fs-utils';
 
 const destPath = '../../src/api/jam/';
 const destfile = path.resolve(destPath, 'routes.ts');
+const basePath = path.resolve('../../src/model/');
 
 function generateCode(calls: Array<IApiCall>): string {
 	const result: Array<string> = [];
@@ -22,18 +23,17 @@ function generateCode(calls: Array<IApiCall>): string {
 		const options = '{query: ' + datasouce + ', user: req.user, client: req.client' + (call.upload ? ', file: req.file ? req.file.path : undefined' : '') + '}';
 
 		let name = call.name;
-		let operation = 'api.' + call.operationId;
+		const operation = 'api.' + call.operationId;
 		let paramType = call.paramType || '{}';
 		let resultType = call.resultType;
 		if (call.binaryResult) {
 			resultType = 'IApiBinaryResult';
 		}
 		if (call.pathParams) {
-			operation = 'api.' + call.name.split('/')[0];
 			name = call.name.replace(/}/g, '').replace(/{/g, ':');
 			paramType = call.pathParams.paramType;
 		}
-		let code = `const options: ApiOptions<${paramType}> = ${options};`;
+		let code = `const options: JamRequest<${paramType}> = ${options};`;
 		if (resultType) {
 			code += `\n\tconst result: ${resultType} = await ${operation}(options);`;
 		} else {
@@ -46,16 +46,19 @@ function generateCode(calls: Array<IApiCall>): string {
 		} else {
 			code += '\n\tawait ApiResponder.data(res, result);';
 		}
-		code = code.replace(/\n/g, '\n\t\t');
-		const upload = call.upload ? call.upload + ', uploadAutoRemove, ' : '';
-		const apicheck = `apiCheck('/${call.name}'),`;
-		const s = `	router.${call.method}('/${name}', ${upload}${apicheck} async (req, res) => {
-		try {
-			${code}
-		} catch (e) {
-			await ApiResponder.error(res, e);
+		code = code.replace(/\n/g, '\n\t');
+		const upload = call.upload ? ` '${call.upload}' ,` : '';
+		let method = call.method;
+		if (call.upload) {
+			method = 'upload';
 		}
-	});`;
+		let apicheck = '';
+		if (call.name !== name) {
+			apicheck = `, '/${call.name}'`;
+		}
+		const s = `	register.${method}('/${name}',${upload} async (req, res) => {
+		${code}
+	}${apicheck});`;
 
 		result.push(s);
 	});
@@ -63,31 +66,40 @@ function generateCode(calls: Array<IApiCall>): string {
 }
 
 async function run() {
-	const apicalls: Array<IApiCall> = await getJamApiCalls();
+	const apicalls: Array<IApiCall> = await getJamApiCalls(basePath);
 	const publicApi = generateCode(apicalls.filter(call => call.isPublic));
 	const adminApi = generateCode(apicalls.filter(call => call.needsAdmin));
 	const userApi = generateCode(apicalls.filter(call => !call.needsAdmin && !call.isPublic));
 
-	const ts = `import {Jam} from '../../model/jam-rest-data-0.1.0';
+	const ts = `// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
+import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data-2.0';
 import {Acoustid} from '../../model/acoustid-rest-data-2.0';
 import {LastFM} from '../../model/lastfm-rest-data-2.0';
 import {JamParameters} from '../../model/jam-rest-params-0.1.0';
-import {ApiJam, ApiOptions} from './api';
+import {JamController, JamRequest} from './api';
 import {ApiResponder} from './response';
 import express from 'express';
 import {IApiBinaryResult} from '../../typings';
 import {apiCheck} from './check';
 
-export function registerPublicApi(router: express.Router, api: ApiJam): void {
+export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
+export interface Register {
+	get: (name: string, execute: RegisterCallback, apiCheckName?: string) => void;
+	post: (name: string, execute: RegisterCallback, apiCheckName?: string) => void;
+	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string) => void;
+}
+
+export function registerPublicApi(register: Register, api: JamController): void {
 ${publicApi}
 }
 
-export function registerUserApi(router: express.Router, api: ApiJam, image: express.RequestHandler, uploadAutoRemove: express.RequestHandler): void {
+export function registerUserApi(register: Register, api: JamController): void {
 ${userApi}
 }
 
-export function registerAdminApi(router: express.Router, api: ApiJam, image: express.RequestHandler, uploadAutoRemove: express.RequestHandler): void {
+export function registerAdminApi(register: Register, api: JamController): void {
 ${adminApi}
 }
 `;

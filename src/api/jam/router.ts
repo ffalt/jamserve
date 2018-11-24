@@ -4,7 +4,7 @@ import {ApiResponder} from './response';
 import multer from 'multer';
 import path from 'path';
 import Logger from '../../utils/logger';
-import {APIVERSION, JamController} from './api';
+import {APIVERSION, JamController, JamRequest} from './api';
 import {Engine} from '../../engine/engine';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import cors, {CorsOptions} from 'cors';
@@ -15,7 +15,7 @@ import passportJWT from 'passport-jwt';
 import passportLocal from 'passport-local';
 import jwt from 'jsonwebtoken';
 import {NotFoundError, UnauthError} from './error';
-import {registerAdminApi, registerPublicApi, registerUserApi} from './routes';
+import {Register, registerAdminApi, RegisterCallback, registerPublicApi, registerUserApi} from './routes';
 import {apiCheck} from './check';
 import {getMaxAge} from '../../utils/max-age';
 import {formatUser} from '../../engine/user/user.format';
@@ -182,7 +182,38 @@ export function initJamRouter(engine: Engine): express.Router {
 		origin: true,
 		methods: ['GET', 'POST']
 	}));
-	registerPublicApi(router, api);
+
+	const register: Register = {
+		get: (name: string, execute: RegisterCallback, apiCheckName?: string) => {
+			router.get(name, apiCheck(apiCheckName || name), async (req, res) => {
+				try {
+					await execute(req, res);
+				} catch (e) {
+					await ApiResponder.error(res, e);
+				}
+			});
+		},
+		post: (name: string, execute: RegisterCallback, apiCheckName?: string) => {
+			router.post(name, apiCheck(apiCheckName || name), async (req, res) => {
+				try {
+					await execute(req, res);
+				} catch (e) {
+					await ApiResponder.error(res, e);
+				}
+			});
+		},
+		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string) => {
+			router.post(name, apiCheck(apiCheckName || name), upload.single(field), autoUploadTempReap, async (req, res) => {
+				try {
+					await execute(req, res);
+				} catch (e) {
+					await ApiResponder.error(res, e);
+				}
+			});
+		}
+	};
+
+	registerPublicApi(register, api);
 	router.post('/login', LoginLimiter, apiCheck('/login'), <express.RequestHandler>CallSessionLoginHandler);
 
 	const corsOptionsDelegate = function(req: express.Request, callback: (err: Error | null, options: CorsOptions) => void) {
@@ -213,11 +244,11 @@ export function initJamRouter(engine: Engine): express.Router {
 
 	router.use(<express.RequestHandler>CheckAuthMiddleWare); // ensure req.user exists for all requests after this
 
-	registerUserApi(router, api, upload.single('image'), autoUploadTempReap);
+	registerUserApi(register, api);
 
 	router.use(<express.RequestHandler>AdminMiddleWare); // ensure req.user is an admin for all requests after this
 
-	registerAdminApi(router, api, upload.single('image'), autoUploadTempReap);
+	registerAdminApi(register, api);
 
 	router.use((req, res, next) => {
 		ApiResponder.error(res, NotFoundError('jam api cmd not found'));

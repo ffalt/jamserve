@@ -3,12 +3,12 @@ import path from 'path';
 import {getSubsonicApiCalls, IApiCall, transformTS2JSONScheme} from './utils';
 import {fileWrite} from '../../src/utils/fs-utils';
 
-const basePath = '../../src/model/';
 const version = '1.16.0';
+const basePath = path.resolve('../../src/model/');
 const destfile = path.resolve(basePath, 'subsonic-openapi-' + version + '.json');
 
 async function run() {
-	const data = await transformTS2JSONScheme('subsonic-rest-data-' + version, 'Subsonic.Response');
+	const data = await transformTS2JSONScheme(basePath, 'subsonic-rest-data-' + version, 'Subsonic.Response');
 	data.definitions = data.definitions || {};
 	data.definitions['Subsonic.ResponseStatus'] = {
 		'enum': [
@@ -21,7 +21,7 @@ async function run() {
 		'enum': [version],
 		'type': 'string'
 	};
-	const apicalls: Array<IApiCall> = await getSubsonicApiCalls();
+	const apicalls: Array<IApiCall> = await getSubsonicApiCalls(basePath);
 
 	function fillResponse(p: any): any {
 		const o = Object.assign({}, p);

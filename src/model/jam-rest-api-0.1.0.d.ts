@@ -90,6 +90,7 @@ export interface JamApi {
 		 * various: autocomplete
 		 */
 		'autocomplete'?: {
+			operationId: 'autocomplete.autocomplete'
 			params: JamParameters.AutoComplete;
 			result: Jam.AutoComplete;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
@@ -98,7 +99,6 @@ export interface JamApi {
 		 * various: get list of genres found in the library
 		 */
 		'genre/list'?: {
-			operationId: 'genreList'
 			params: JamParameters.Genres;
 			result: Array<Jam.Genre>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -106,7 +106,7 @@ export interface JamApi {
 		/**
 		 * various: get list of tracks played by all users
 		 */
-		'nowPlaying'?: {
+		'nowPlaying/list'?: {
 			result: Array<Jam.NowPlaying>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 		};
@@ -665,23 +665,27 @@ export interface JamApi {
 		};
 
 		'image/{id}-{size}.{format}'?: {
+			operationId: 'image.image';
 			pathParams: JamParameters.Image;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiImageTypes;
 		};
 		'image/{id}-{size}'?: {
+			operationId: 'image.image';
 			pathParams: JamParameters.PathImageSize;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiImageTypes;
 			aliasFor: 'image/{id}-{size}.{format}';
 		};
 		'image/{id}.{format}'?: {
+			operationId: 'image.image';
 			pathParams: JamParameters.PathImageFormat;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiImageTypes;
 			aliasFor: 'image/{id}-{size}.{format}';
 		};
 		'image/{id}'?: {
+			operationId: 'image.image';
 			pathParams: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiImageTypes;
@@ -692,6 +696,7 @@ export interface JamApi {
 		 * media: stream a media file in a format
 		 */
 		'stream/{id}.{format}'?: {
+			operationId: 'stream.stream';
 			pathParams: JamParameters.PathStream;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiStreamTypes;
@@ -700,6 +705,7 @@ export interface JamApi {
 		 * media: stream a media file
 		 */
 		'stream/{id}'?: {
+			operationId: 'stream.stream';
 			pathParams: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDefaultStreamTypes;
@@ -709,18 +715,21 @@ export interface JamApi {
 		 * media: get peaks waveform data as svg | json | binary
 		 */
 		'waveform/{id}.{format}'?: {
+			operationId: 'waveform.waveform';
 			pathParams: JamParameters.Waveform;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiWaveformTypes;
 		};
 
 		'download/{id}'?: {
+			operationId: 'download.download';
 			pathParams: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDefaultDownloadTypes;
 			aliasFor: 'download/{id}.{format}';
 		};
 		'download/{id}.{format}'?: {
+			operationId: 'download.download';
 			pathParams: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDownloadTypes;

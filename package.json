@@ -87,6 +87,7 @@
     "@types/feedparser": "^2.2.1",
     "@types/fluent-ffmpeg": "^2.1.8",
     "@types/helmet": "0.0.42",
+    "@types/json-stable-stringify": "^1.0.32",
     "@types/mime-types": "^2.1.0",
     "@types/mkdirp": "^0.5.2",
     "@types/mocha": "^5.2.5",

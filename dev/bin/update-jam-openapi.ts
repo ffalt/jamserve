@@ -3,8 +3,8 @@ import path from 'path';
 import {getJamApiCalls, IApiCall, transformTS2JSONScheme} from './utils';
 import {fileWrite} from '../../src/utils/fs-utils';
 
-const basePath = '../../src/model/';
 const version = '0.1.0';
+const basePath = path.resolve('../../src/model/');
 const destfile = path.resolve(basePath, 'jam-openapi-' + version + '.json');
 
 async function run() {
@@ -93,8 +93,8 @@ async function run() {
 		return result;
 	}
 
-	const data = await transformTS2JSONScheme('jam-rest-data-' + version, 'Jam.Data');
-	const apicalls: Array<IApiCall> = await getJamApiCalls();
+	const data = await transformTS2JSONScheme(basePath, 'jam-rest-data-' + version, 'Jam.Data');
+	const apicalls: Array<IApiCall> = await getJamApiCalls(basePath);
 
 	apicalls.forEach(call => {
 		const cmd: any = {

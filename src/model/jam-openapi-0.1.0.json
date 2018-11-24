@@ -69,7 +69,7 @@
 		},
 		"/lastfm/lookup": {
 			"get": {
-				"operationId": "metadata.lastfmLookup",
+				"operationId": "metadataController.lastfmLookup",
 				"description": "lookup lastfm data",
 				"tags": [
 					"metadata"
@@ -119,7 +119,7 @@
 		},
 		"/acoustid/lookup": {
 			"get": {
-				"operationId": "metadata.acoustidLookup",
+				"operationId": "metadataController.acoustidLookup",
 				"description": "lookup acoustid data",
 				"tags": [
 					"metadata"
@@ -172,7 +172,7 @@
 		},
 		"/brainz/lookup": {
 			"get": {
-				"operationId": "metadata.brainzLookup",
+				"operationId": "metadataController.brainzLookup",
 				"description": "lookup musicbrainz data",
 				"tags": [
 					"metadata"
@@ -231,7 +231,7 @@
 		},
 		"/brainz/search": {
 			"get": {
-				"operationId": "metadata.brainzSearch",
+				"operationId": "metadataController.brainzSearch",
 				"description": "search musicbrainz data",
 				"tags": [
 					"metadata"
@@ -317,7 +317,7 @@
 		},
 		"/autocomplete": {
 			"get": {
-				"operationId": "autocomplete",
+				"operationId": "autocompleteController.autocomplete",
 				"description": "autocomplete",
 				"tags": [
 					"various"
@@ -438,7 +438,7 @@
 		},
 		"/genre/list": {
 			"get": {
-				"operationId": "genreList",
+				"operationId": "genreController.list",
 				"description": "get list of genres found in the library",
 				"tags": [
 					"various"
@@ -480,9 +480,9 @@
 				]
 			}
 		},
-		"/nowPlaying": {
+		"/nowPlaying/list": {
 			"get": {
-				"operationId": "nowPlaying",
+				"operationId": "nowPlayingController.list",
 				"description": "get list of tracks played by all users",
 				"tags": [
 					"various"
@@ -512,7 +512,7 @@
 		},
 		"/chat/list": {
 			"get": {
-				"operationId": "chat.list",
+				"operationId": "chatController.list",
 				"description": "get chat messages",
 				"tags": [
 					"chat"
@@ -557,7 +557,7 @@
 		},
 		"/folder/index": {
 			"get": {
-				"operationId": "folder.index",
+				"operationId": "folderController.index",
 				"description": "get the navigation index for folders",
 				"tags": [
 					"folder"
@@ -598,7 +598,7 @@
 		},
 		"/folder/id": {
 			"get": {
-				"operationId": "folder.id",
+				"operationId": "folderController.id",
 				"description": "get a folder by id",
 				"tags": [
 					"folder"
@@ -772,7 +772,7 @@
 		},
 		"/folder/ids": {
 			"get": {
-				"operationId": "folder.ids",
+				"operationId": "folderController.ids",
 				"description": "get folders by ids",
 				"tags": [
 					"folder"
@@ -949,7 +949,7 @@
 		},
 		"/folder/children": {
 			"get": {
-				"operationId": "folder.children",
+				"operationId": "folderController.children",
 				"description": "get tracks and subfolders of a folder by id",
 				"tags": [
 					"folder"
@@ -1093,7 +1093,7 @@
 		},
 		"/folder/tracks": {
 			"get": {
-				"operationId": "folder.tracks",
+				"operationId": "folderController.tracks",
 				"description": "get tracks of a folder by id",
 				"tags": [
 					"folder"
@@ -1193,7 +1193,7 @@
 		},
 		"/folder/subfolders": {
 			"get": {
-				"operationId": "folder.subfolders",
+				"operationId": "folderController.subfolders",
 				"description": "get sub folders of a folder by id",
 				"tags": [
 					"folder"
@@ -1300,7 +1300,7 @@
 		},
 		"/folder/artist/similar": {
 			"get": {
-				"operationId": "folder.artistSimilar",
+				"operationId": "folderController.artistSimilar",
 				"description": "get similar artist folders of a folder by id",
 				"tags": [
 					"folder"
@@ -1477,7 +1477,7 @@
 		},
 		"/folder/artist/info": {
 			"get": {
-				"operationId": "folder.artistInfo",
+				"operationId": "folderController.artistInfo",
 				"description": "get extended artist meta data of a folder by id",
 				"tags": [
 					"folder"
@@ -1531,7 +1531,7 @@
 		},
 		"/folder/album/info": {
 			"get": {
-				"operationId": "folder.albumInfo",
+				"operationId": "folderController.albumInfo",
 				"description": "get extended album meta data of a folder by id",
 				"tags": [
 					"folder"
@@ -1575,7 +1575,7 @@
 		},
 		"/folder/list": {
 			"get": {
-				"operationId": "folder.list",
+				"operationId": "folderController.list",
 				"description": "get a list of folders by list type",
 				"tags": [
 					"folder"
@@ -1849,7 +1849,7 @@
 		},
 		"/folder/search": {
 			"get": {
-				"operationId": "folder.search",
+				"operationId": "folderController.search",
 				"description": "search folders",
 				"tags": [
 					"folder"
@@ -2184,7 +2184,7 @@
 		},
 		"/folder/state": {
 			"get": {
-				"operationId": "folder.state",
+				"operationId": "folderController.state",
 				"description": "get the user state (fav/rating) by folder id",
 				"tags": [
 					"folder"
@@ -2228,7 +2228,7 @@
 		},
 		"/folder/states": {
 			"get": {
-				"operationId": "folder.states",
+				"operationId": "folderController.states",
 				"description": "get the user states (fav/rating) by folders ids",
 				"tags": [
 					"folder"
@@ -2275,7 +2275,7 @@
 		},
 		"/folder/artist/similar/tracks": {
 			"get": {
-				"operationId": "folder.artistSimilarTracks",
+				"operationId": "folderController.artistSimilarTracks",
 				"description": "get similar tracks of a by artist folder id",
 				"tags": [
 					"folder"
@@ -2383,7 +2383,7 @@
 		},
 		"/track/id": {
 			"get": {
-				"operationId": "track.id",
+				"operationId": "trackController.id",
 				"description": "get a track by id",
 				"tags": [
 					"track"
@@ -2467,7 +2467,7 @@
 		},
 		"/track/ids": {
 			"get": {
-				"operationId": "track.ids",
+				"operationId": "trackController.ids",
 				"description": "get tracks by ids",
 				"tags": [
 					"track"
@@ -2554,7 +2554,7 @@
 		},
 		"/track/tagID3": {
 			"get": {
-				"operationId": "track.tagID3",
+				"operationId": "trackController.tagID3",
 				"description": "get an id3 tag by track id",
 				"tags": [
 					"track"
@@ -2598,7 +2598,7 @@
 		},
 		"/track/tagID3s": {
 			"get": {
-				"operationId": "track.tagID3s",
+				"operationId": "trackController.tagID3s",
 				"description": "get id3 tags by track ids",
 				"tags": [
 					"track"
@@ -2642,7 +2642,7 @@
 		},
 		"/track/search": {
 			"get": {
-				"operationId": "track.search",
+				"operationId": "trackController.search",
 				"description": "search tracks",
 				"tags": [
 					"track"
@@ -2856,7 +2856,7 @@
 		},
 		"/track/state": {
 			"get": {
-				"operationId": "track.state",
+				"operationId": "trackController.state",
 				"description": "get the user state (fav/rating) by track id",
 				"tags": [
 					"track"
@@ -2900,7 +2900,7 @@
 		},
 		"/track/states": {
 			"get": {
-				"operationId": "track.states",
+				"operationId": "trackController.states",
 				"description": "get the user states (fav/rating) by track ids",
 				"tags": [
 					"track"
@@ -2947,7 +2947,7 @@
 		},
 		"/track/list": {
 			"get": {
-				"operationId": "track.list",
+				"operationId": "trackController.list",
 				"description": "get a track list by track list type",
 				"tags": [
 					"track"
@@ -3170,7 +3170,7 @@
 		},
 		"/track/similar": {
 			"get": {
-				"operationId": "track.similar",
+				"operationId": "trackController.similar",
 				"description": "get the similar tracks by track id",
 				"tags": [
 					"track"
@@ -3278,7 +3278,7 @@
 		},
 		"/track/bookmark/list": {
 			"get": {
-				"operationId": "track.bookmarkList",
+				"operationId": "trackController.bookmarkList",
 				"description": "get a bookmarks list by track id",
 				"tags": [
 					"track"
@@ -3366,7 +3366,7 @@
 		},
 		"/episode/id": {
 			"get": {
-				"operationId": "episode.id",
+				"operationId": "episodeController.id",
 				"tags": [
 					"episode"
 				],
@@ -3449,7 +3449,7 @@
 		},
 		"/episode/ids": {
 			"get": {
-				"operationId": "episode.ids",
+				"operationId": "episodeController.ids",
 				"tags": [
 					"episode"
 				],
@@ -3535,7 +3535,7 @@
 		},
 		"/episode/search": {
 			"get": {
-				"operationId": "episode.search",
+				"operationId": "episodeController.search",
 				"tags": [
 					"episode"
 				],
@@ -3685,7 +3685,7 @@
 		},
 		"/episode/retrieve": {
 			"get": {
-				"operationId": "episode.retrieve",
+				"operationId": "episodeController.retrieve",
 				"tags": [
 					"episode"
 				],
@@ -3721,7 +3721,7 @@
 		},
 		"/episode/state": {
 			"get": {
-				"operationId": "episode.state",
+				"operationId": "episodeController.state",
 				"tags": [
 					"episode"
 				],
@@ -3764,7 +3764,7 @@
 		},
 		"/episode/states": {
 			"get": {
-				"operationId": "episode.states",
+				"operationId": "episodeController.states",
 				"tags": [
 					"episode"
 				],
@@ -3810,7 +3810,7 @@
 		},
 		"/episode/status": {
 			"get": {
-				"operationId": "episode.status",
+				"operationId": "episodeController.status",
 				"tags": [
 					"episode"
 				],
@@ -3850,7 +3850,7 @@
 		},
 		"/podcast/id": {
 			"get": {
-				"operationId": "podcast.id",
+				"operationId": "podcastController.id",
 				"tags": [
 					"podcast"
 				],
@@ -3953,7 +3953,7 @@
 		},
 		"/podcast/ids": {
 			"get": {
-				"operationId": "podcast.ids",
+				"operationId": "podcastController.ids",
 				"tags": [
 					"podcast"
 				],
@@ -4059,7 +4059,7 @@
 		},
 		"/podcast/status": {
 			"get": {
-				"operationId": "podcast.status",
+				"operationId": "podcastController.status",
 				"tags": [
 					"podcast"
 				],
@@ -4099,7 +4099,7 @@
 		},
 		"/podcast/search": {
 			"get": {
-				"operationId": "podcast.search",
+				"operationId": "podcastController.search",
 				"tags": [
 					"podcast"
 				],
@@ -4269,7 +4269,7 @@
 		},
 		"/podcast/refreshAll": {
 			"get": {
-				"operationId": "podcast.refreshAll",
+				"operationId": "podcastController.refreshAll",
 				"tags": [
 					"podcast"
 				],
@@ -4282,7 +4282,7 @@
 		},
 		"/podcast/refresh": {
 			"get": {
-				"operationId": "podcast.refresh",
+				"operationId": "podcastController.refresh",
 				"tags": [
 					"podcast"
 				],
@@ -4318,7 +4318,7 @@
 		},
 		"/podcast/state": {
 			"get": {
-				"operationId": "podcast.state",
+				"operationId": "podcastController.state",
 				"tags": [
 					"podcast"
 				],
@@ -4361,7 +4361,7 @@
 		},
 		"/podcast/states": {
 			"get": {
-				"operationId": "podcast.states",
+				"operationId": "podcastController.states",
 				"tags": [
 					"podcast"
 				],
@@ -4407,7 +4407,7 @@
 		},
 		"/artist/id": {
 			"get": {
-				"operationId": "artist.id",
+				"operationId": "artistController.id",
 				"tags": [
 					"artist"
 				],
@@ -4609,7 +4609,7 @@
 		},
 		"/artist/ids": {
 			"get": {
-				"operationId": "artist.ids",
+				"operationId": "artistController.ids",
 				"tags": [
 					"artist"
 				],
@@ -4805,7 +4805,7 @@
 		},
 		"/artist/search": {
 			"get": {
-				"operationId": "artist.search",
+				"operationId": "artistController.search",
 				"tags": [
 					"artist"
 				],
@@ -5113,7 +5113,7 @@
 		},
 		"/artist/state": {
 			"get": {
-				"operationId": "artist.state",
+				"operationId": "artistController.state",
 				"tags": [
 					"artist"
 				],
@@ -5156,7 +5156,7 @@
 		},
 		"/artist/states": {
 			"get": {
-				"operationId": "artist.states",
+				"operationId": "artistController.states",
 				"tags": [
 					"artist"
 				],
@@ -5202,7 +5202,7 @@
 		},
 		"/artist/list": {
 			"get": {
-				"operationId": "artist.list",
+				"operationId": "artistController.list",
 				"tags": [
 					"artist"
 				],
@@ -5519,7 +5519,7 @@
 		},
 		"/artist/similar/tracks": {
 			"get": {
-				"operationId": "artist.similarTracks",
+				"operationId": "artistController.similarTracks",
 				"tags": [
 					"artist"
 				],
@@ -5626,7 +5626,7 @@
 		},
 		"/artist/similar": {
 			"get": {
-				"operationId": "artist.similar",
+				"operationId": "artistController.similar",
 				"tags": [
 					"artist"
 				],
@@ -5831,7 +5831,7 @@
 		},
 		"/artist/index": {
 			"get": {
-				"operationId": "artist.index",
+				"operationId": "artistController.index",
 				"tags": [
 					"artist"
 				],
@@ -5871,7 +5871,7 @@
 		},
 		"/artist/tracks": {
 			"get": {
-				"operationId": "artist.tracks",
+				"operationId": "artistController.tracks",
 				"tags": [
 					"artist"
 				],
@@ -5960,7 +5960,7 @@
 		},
 		"/album/id": {
 			"get": {
-				"operationId": "album.id",
+				"operationId": "albumController.id",
 				"tags": [
 					"album"
 				],
@@ -6083,7 +6083,7 @@
 		},
 		"/album/ids": {
 			"get": {
-				"operationId": "album.ids",
+				"operationId": "albumController.ids",
 				"tags": [
 					"album"
 				],
@@ -6209,7 +6209,7 @@
 		},
 		"/album/list": {
 			"get": {
-				"operationId": "album.list",
+				"operationId": "albumController.list",
 				"tags": [
 					"album"
 				],
@@ -6483,7 +6483,7 @@
 		},
 		"/album/search": {
 			"get": {
-				"operationId": "album.search",
+				"operationId": "albumController.search",
 				"tags": [
 					"album"
 				],
@@ -6748,7 +6748,7 @@
 		},
 		"/album/state": {
 			"get": {
-				"operationId": "album.state",
+				"operationId": "albumController.state",
 				"tags": [
 					"album"
 				],
@@ -6791,7 +6791,7 @@
 		},
 		"/album/states": {
 			"get": {
-				"operationId": "album.states",
+				"operationId": "albumController.states",
 				"tags": [
 					"album"
 				],
@@ -6837,7 +6837,7 @@
 		},
 		"/album/similar/tracks": {
 			"get": {
-				"operationId": "album.similarTracks",
+				"operationId": "albumController.similarTracks",
 				"tags": [
 					"album"
 				],
@@ -6944,7 +6944,7 @@
 		},
 		"/album/tracks": {
 			"get": {
-				"operationId": "album.tracks",
+				"operationId": "albumController.tracks",
 				"tags": [
 					"album"
 				],
@@ -7033,7 +7033,7 @@
 		},
 		"/playlist/id": {
 			"get": {
-				"operationId": "playlist.id",
+				"operationId": "playlistController.id",
 				"tags": [
 					"playlist"
 				],
@@ -7146,7 +7146,7 @@
 		},
 		"/playlist/ids": {
 			"get": {
-				"operationId": "playlist.ids",
+				"operationId": "playlistController.ids",
 				"tags": [
 					"playlist"
 				],
@@ -7262,7 +7262,7 @@
 		},
 		"/playlist/search": {
 			"get": {
-				"operationId": "playlist.search",
+				"operationId": "playlistController.search",
 				"tags": [
 					"playlist"
 				],
@@ -7433,7 +7433,7 @@
 		},
 		"/playlist/state": {
 			"get": {
-				"operationId": "playlist.state",
+				"operationId": "playlistController.state",
 				"tags": [
 					"playlist"
 				],
@@ -7476,7 +7476,7 @@
 		},
 		"/playlist/states": {
 			"get": {
-				"operationId": "playlist.states",
+				"operationId": "playlistController.states",
 				"tags": [
 					"playlist"
 				],
@@ -7522,7 +7522,7 @@
 		},
 		"/playlist/tracks": {
 			"get": {
-				"operationId": "playlist.tracks",
+				"operationId": "playlistController.tracks",
 				"tags": [
 					"playlist"
 				],
@@ -7611,7 +7611,7 @@
 		},
 		"/user/search": {
 			"get": {
-				"operationId": "user.search",
+				"operationId": "userController.search",
 				"tags": [
 					"user"
 				],
@@ -7712,7 +7712,7 @@
 		},
 		"/user/id": {
 			"get": {
-				"operationId": "user.id",
+				"operationId": "userController.id",
 				"tags": [
 					"user"
 				],
@@ -7755,7 +7755,7 @@
 		},
 		"/user/ids": {
 			"get": {
-				"operationId": "user.ids",
+				"operationId": "userController.ids",
 				"tags": [
 					"user"
 				],
@@ -7801,7 +7801,7 @@
 		},
 		"/user/playqueue": {
 			"get": {
-				"operationId": "user.playqueue",
+				"operationId": "userController.playqueue",
 				"tags": [
 					"user"
 				],
@@ -7892,7 +7892,7 @@
 		},
 		"/root/search": {
 			"get": {
-				"operationId": "root.search",
+				"operationId": "rootController.search",
 				"tags": [
 					"root"
 				],
@@ -7975,7 +7975,7 @@
 		},
 		"/root/id": {
 			"get": {
-				"operationId": "root.id",
+				"operationId": "rootController.id",
 				"tags": [
 					"root"
 				],
@@ -8018,7 +8018,7 @@
 		},
 		"/root/ids": {
 			"get": {
-				"operationId": "root.ids",
+				"operationId": "rootController.ids",
 				"tags": [
 					"root"
 				],
@@ -8064,7 +8064,7 @@
 		},
 		"/root/scan": {
 			"get": {
-				"operationId": "root.scan",
+				"operationId": "rootController.scan",
 				"tags": [
 					"root"
 				],
@@ -8100,7 +8100,7 @@
 		},
 		"/root/scanAll": {
 			"get": {
-				"operationId": "root.scanAll",
+				"operationId": "rootController.scanAll",
 				"tags": [
 					"root"
 				],
@@ -8119,7 +8119,7 @@
 		},
 		"/root/status": {
 			"get": {
-				"operationId": "root.status",
+				"operationId": "rootController.status",
 				"tags": [
 					"root"
 				],
@@ -8159,7 +8159,7 @@
 		},
 		"/folder/download": {
 			"get": {
-				"operationId": "folder.download",
+				"operationId": "folderController.download",
 				"tags": [
 					"folder"
 				],
@@ -8219,7 +8219,7 @@
 		},
 		"/folder/image": {
 			"get": {
-				"operationId": "folder.image",
+				"operationId": "folderController.image",
 				"tags": [
 					"folder"
 				],
@@ -8289,7 +8289,7 @@
 		},
 		"/track/stream": {
 			"get": {
-				"operationId": "track.stream",
+				"operationId": "trackController.stream",
 				"tags": [
 					"track"
 				],
@@ -8377,7 +8377,7 @@
 		},
 		"/track/download": {
 			"get": {
-				"operationId": "track.download",
+				"operationId": "trackController.download",
 				"tags": [
 					"track"
 				],
@@ -8437,7 +8437,7 @@
 		},
 		"/track/image": {
 			"get": {
-				"operationId": "track.image",
+				"operationId": "trackController.image",
 				"tags": [
 					"track"
 				],
@@ -8507,7 +8507,7 @@
 		},
 		"/episode/stream": {
 			"get": {
-				"operationId": "episode.stream",
+				"operationId": "episodeController.stream",
 				"tags": [
 					"episode"
 				],
@@ -8595,7 +8595,7 @@
 		},
 		"/episode/download": {
 			"get": {
-				"operationId": "episode.download",
+				"operationId": "episodeController.download",
 				"tags": [
 					"episode"
 				],
@@ -8655,7 +8655,7 @@
 		},
 		"/episode/image": {
 			"get": {
-				"operationId": "episode.image",
+				"operationId": "episodeController.image",
 				"tags": [
 					"episode"
 				],
@@ -8725,7 +8725,7 @@
 		},
 		"/podcast/image": {
 			"get": {
-				"operationId": "podcast.image",
+				"operationId": "podcastController.image",
 				"tags": [
 					"podcast"
 				],
@@ -8795,7 +8795,7 @@
 		},
 		"/podcast/download": {
 			"get": {
-				"operationId": "podcast.download",
+				"operationId": "podcastController.download",
 				"tags": [
 					"podcast"
 				],
@@ -8855,7 +8855,7 @@
 		},
 		"/artist/image": {
 			"get": {
-				"operationId": "artist.image",
+				"operationId": "artistController.image",
 				"tags": [
 					"artist"
 				],
@@ -8925,7 +8925,7 @@
 		},
 		"/artist/download": {
 			"get": {
-				"operationId": "artist.download",
+				"operationId": "artistController.download",
 				"tags": [
 					"artist"
 				],
@@ -8985,7 +8985,7 @@
 		},
 		"/album/image": {
 			"get": {
-				"operationId": "album.image",
+				"operationId": "albumController.image",
 				"tags": [
 					"album"
 				],
@@ -9055,7 +9055,7 @@
 		},
 		"/album/download": {
 			"get": {
-				"operationId": "album.download",
+				"operationId": "albumController.download",
 				"tags": [
 					"album"
 				],
@@ -9115,7 +9115,7 @@
 		},
 		"/playlist/image": {
 			"get": {
-				"operationId": "playlist.image",
+				"operationId": "playlistController.image",
 				"tags": [
 					"playlist"
 				],
@@ -9185,7 +9185,7 @@
 		},
 		"/playlist/download": {
 			"get": {
-				"operationId": "playlist.download",
+				"operationId": "playlistController.download",
 				"tags": [
 					"playlist"
 				],
@@ -9245,7 +9245,7 @@
 		},
 		"/user/image": {
 			"get": {
-				"operationId": "user.image",
+				"operationId": "userController.image",
 				"tags": [
 					"user"
 				],
@@ -9315,7 +9315,7 @@
 		},
 		"/root/image": {
 			"get": {
-				"operationId": "root.image",
+				"operationId": "rootController.image",
 				"tags": [
 					"root"
 				],
@@ -9385,7 +9385,7 @@
 		},
 		"/image/{id}-{size}.{format}": {
 			"get": {
-				"operationId": "image.{id}-{size}.{format}",
+				"operationId": "imageController.image",
 				"tags": [
 					"image"
 				],
@@ -9455,7 +9455,7 @@
 		},
 		"/image/{id}-{size}": {
 			"get": {
-				"operationId": "image.{id}-{size}",
+				"operationId": "imageController.image",
 				"tags": [
 					"image"
 				],
@@ -9516,7 +9516,7 @@
 		},
 		"/image/{id}.{format}": {
 			"get": {
-				"operationId": "image.{id}.{format}",
+				"operationId": "imageController.image",
 				"tags": [
 					"image"
 				],
@@ -9575,7 +9575,7 @@
 		},
 		"/image/{id}": {
 			"get": {
-				"operationId": "image.{id}",
+				"operationId": "imageController.image",
 				"tags": [
 					"image"
 				],
@@ -9625,7 +9625,7 @@
 		},
 		"/stream/{id}.{format}": {
 			"get": {
-				"operationId": "stream.{id}.{format}",
+				"operationId": "streamController.stream",
 				"description": "stream a media file in a format",
 				"tags": [
 					"media"
@@ -9704,7 +9704,7 @@
 		},
 		"/stream/{id}": {
 			"get": {
-				"operationId": "stream.{id}",
+				"operationId": "streamController.stream",
 				"description": "stream a media file",
 				"tags": [
 					"media"
@@ -9749,7 +9749,7 @@
 		},
 		"/waveform/{id}.{format}": {
 			"get": {
-				"operationId": "waveform.{id}.{format}",
+				"operationId": "waveformController.waveform",
 				"description": "get peaks waveform data as svg | json | binary",
 				"tags": [
 					"media"
@@ -9820,7 +9820,7 @@
 		},
 		"/download/{id}": {
 			"get": {
-				"operationId": "download.{id}",
+				"operationId": "downloadController.download",
 				"tags": [
 					"download"
 				],
@@ -9864,7 +9864,7 @@
 		},
 		"/download/{id}.{format}": {
 			"get": {
-				"operationId": "download.{id}.{format}",
+				"operationId": "downloadController.download",
 				"tags": [
 					"download"
 				],
@@ -9994,7 +9994,7 @@
 		},
 		"/track/bookmark/delete": {
 			"post": {
-				"operationId": "track.bookmarkDelete",
+				"operationId": "trackController.bookmarkDelete",
 				"tags": [
 					"track"
 				],
@@ -10029,7 +10029,7 @@
 		},
 		"/podcast/delete": {
 			"post": {
-				"operationId": "podcast.delete",
+				"operationId": "podcastController.delete",
 				"tags": [
 					"podcast"
 				],
@@ -10064,7 +10064,7 @@
 		},
 		"/chat/delete": {
 			"post": {
-				"operationId": "chat.delete",
+				"operationId": "chatController.delete",
 				"tags": [
 					"chat"
 				],
@@ -10099,7 +10099,7 @@
 		},
 		"/playlist/delete": {
 			"post": {
-				"operationId": "playlist.delete",
+				"operationId": "playlistController.delete",
 				"tags": [
 					"playlist"
 				],
@@ -10134,7 +10134,7 @@
 		},
 		"/user/delete": {
 			"post": {
-				"operationId": "user.delete",
+				"operationId": "userController.delete",
 				"tags": [
 					"user"
 				],
@@ -10169,7 +10169,7 @@
 		},
 		"/root/delete": {
 			"post": {
-				"operationId": "root.delete",
+				"operationId": "rootController.delete",
 				"tags": [
 					"root"
 				],
@@ -10204,7 +10204,7 @@
 		},
 		"/chat/create": {
 			"post": {
-				"operationId": "chat.create",
+				"operationId": "chatController.create",
 				"tags": [
 					"chat"
 				],
@@ -10236,7 +10236,7 @@
 		},
 		"/track/fav/update": {
 			"post": {
-				"operationId": "track.favUpdate",
+				"operationId": "trackController.favUpdate",
 				"tags": [
 					"track"
 				],
@@ -10272,7 +10272,7 @@
 		},
 		"/track/rate/update": {
 			"post": {
-				"operationId": "track.rateUpdate",
+				"operationId": "trackController.rateUpdate",
 				"tags": [
 					"track"
 				],
@@ -10308,7 +10308,7 @@
 		},
 		"/track/tagID3/update": {
 			"post": {
-				"operationId": "track.tagID3Update",
+				"operationId": "trackController.tagID3Update",
 				"tags": [
 					"track"
 				],
@@ -10343,7 +10343,7 @@
 		},
 		"/track/tagID3s/update": {
 			"post": {
-				"operationId": "track.tagID3sUpdate",
+				"operationId": "trackController.tagID3sUpdate",
 				"tags": [
 					"track"
 				],
@@ -10378,7 +10378,7 @@
 		},
 		"/folder/imageUpload/update": {
 			"post": {
-				"operationId": "folder.imageUploadUpdate",
+				"operationId": "folderController.imageUploadUpdate",
 				"tags": [
 					"folder"
 				],
@@ -10413,7 +10413,7 @@
 		},
 		"/folder/imageUrl/update": {
 			"post": {
-				"operationId": "folder.imageUrlUpdate",
+				"operationId": "folderController.imageUrlUpdate",
 				"tags": [
 					"folder"
 				],
@@ -10449,7 +10449,7 @@
 		},
 		"/folder/name/update": {
 			"post": {
-				"operationId": "folder.nameUpdate",
+				"operationId": "folderController.nameUpdate",
 				"tags": [
 					"folder"
 				],
@@ -10485,7 +10485,7 @@
 		},
 		"/folder/fav/update": {
 			"post": {
-				"operationId": "folder.favUpdate",
+				"operationId": "folderController.favUpdate",
 				"tags": [
 					"folder"
 				],
@@ -10521,7 +10521,7 @@
 		},
 		"/folder/rate/update": {
 			"post": {
-				"operationId": "folder.rateUpdate",
+				"operationId": "folderController.rateUpdate",
 				"tags": [
 					"folder"
 				],
@@ -10557,7 +10557,7 @@
 		},
 		"/track/bookmark/create": {
 			"post": {
-				"operationId": "track.bookmarkCreate",
+				"operationId": "trackController.bookmarkCreate",
 				"tags": [
 					"track"
 				],
@@ -10596,7 +10596,7 @@
 		},
 		"/album/fav/update": {
 			"post": {
-				"operationId": "album.favUpdate",
+				"operationId": "albumController.favUpdate",
 				"tags": [
 					"album"
 				],
@@ -10632,7 +10632,7 @@
 		},
 		"/album/rate/update": {
 			"post": {
-				"operationId": "album.rateUpdate",
+				"operationId": "albumController.rateUpdate",
 				"tags": [
 					"album"
 				],
@@ -10668,7 +10668,7 @@
 		},
 		"/artist/fav/update": {
 			"post": {
-				"operationId": "artist.favUpdate",
+				"operationId": "artistController.favUpdate",
 				"tags": [
 					"artist"
 				],
@@ -10704,7 +10704,7 @@
 		},
 		"/artist/rate/update": {
 			"post": {
-				"operationId": "artist.rateUpdate",
+				"operationId": "artistController.rateUpdate",
 				"tags": [
 					"artist"
 				],
@@ -10740,7 +10740,7 @@
 		},
 		"/episode/fav/update": {
 			"post": {
-				"operationId": "episode.favUpdate",
+				"operationId": "episodeController.favUpdate",
 				"tags": [
 					"episode"
 				],
@@ -10776,7 +10776,7 @@
 		},
 		"/episode/rate/update": {
 			"post": {
-				"operationId": "episode.rateUpdate",
+				"operationId": "episodeController.rateUpdate",
 				"tags": [
 					"episode"
 				],
@@ -10812,7 +10812,7 @@
 		},
 		"/podcast/create": {
 			"post": {
-				"operationId": "podcast.create",
+				"operationId": "podcastController.create",
 				"tags": [
 					"podcast"
 				],
@@ -10851,7 +10851,7 @@
 		},
 		"/podcast/fav/update": {
 			"post": {
-				"operationId": "podcast.favUpdate",
+				"operationId": "podcastController.favUpdate",
 				"tags": [
 					"podcast"
 				],
@@ -10887,7 +10887,7 @@
 		},
 		"/podcast/rate/update": {
 			"post": {
-				"operationId": "podcast.rateUpdate",
+				"operationId": "podcastController.rateUpdate",
 				"tags": [
 					"podcast"
 				],
@@ -10923,7 +10923,7 @@
 		},
 		"/playlist/create": {
 			"post": {
-				"operationId": "playlist.create",
+				"operationId": "playlistController.create",
 				"tags": [
 					"playlist"
 				],
@@ -10962,7 +10962,7 @@
 		},
 		"/playlist/update": {
 			"post": {
-				"operationId": "playlist.update",
+				"operationId": "playlistController.update",
 				"tags": [
 					"playlist"
 				],
@@ -10997,7 +10997,7 @@
 		},
 		"/playlist/fav/update": {
 			"post": {
-				"operationId": "playlist.favUpdate",
+				"operationId": "playlistController.favUpdate",
 				"tags": [
 					"playlist"
 				],
@@ -11033,7 +11033,7 @@
 		},
 		"/playlist/rate/update": {
 			"post": {
-				"operationId": "playlist.rateUpdate",
+				"operationId": "playlistController.rateUpdate",
 				"tags": [
 					"playlist"
 				],
@@ -11069,7 +11069,7 @@
 		},
 		"/user/playqueue/update": {
 			"post": {
-				"operationId": "user.playqueueUpdate",
+				"operationId": "userController.playqueueUpdate",
 				"tags": [
 					"user"
 				],
@@ -11104,7 +11104,7 @@
 		},
 		"/user/create": {
 			"post": {
-				"operationId": "user.create",
+				"operationId": "userController.create",
 				"tags": [
 					"user"
 				],
@@ -11143,7 +11143,7 @@
 		},
 		"/user/update": {
 			"post": {
-				"operationId": "user.update",
+				"operationId": "userController.update",
 				"tags": [
 					"user"
 				],
@@ -11178,7 +11178,7 @@
 		},
 		"/user/imageUpload/update": {
 			"post": {
-				"operationId": "user.imageUploadUpdate",
+				"operationId": "userController.imageUploadUpdate",
 				"tags": [
 					"user"
 				],
@@ -11213,7 +11213,7 @@
 		},
 		"/root/create": {
 			"post": {
-				"operationId": "root.create",
+				"operationId": "rootController.create",
 				"tags": [
 					"root"
 				],
@@ -11252,7 +11252,7 @@
 		},
 		"/root/update": {
 			"post": {
-				"operationId": "root.update",
+				"operationId": "rootController.update",
 				"tags": [
 					"root"
 				],

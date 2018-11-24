@@ -6,7 +6,7 @@ const type_string = {type: 'text'};
 
 const type_key = {type: 'keyword'};
 
-const type_JamServe_Root = {
+const type_Root = {
 	properties: {
 		name: type_key,
 		path: type_key,
@@ -16,7 +16,7 @@ const type_JamServe_Root = {
 	}
 };
 
-const type_JamServe_UserRoles = {
+const type_UserRoles = {
 	properties: {
 		streamRole: type_bool,
 		uploadRole: type_bool,
@@ -25,7 +25,7 @@ const type_JamServe_UserRoles = {
 	}
 };
 
-const type_JamServe_User = {
+const type_User = {
 	properties: {
 		name: type_key,
 		pass: type_key,
@@ -37,13 +37,13 @@ const type_JamServe_User = {
 		avatar: type_key,
 		maxBitRate: type_int,
 		allowedfolder: type_key,
-		roles: type_JamServe_UserRoles,
+		roles: type_UserRoles,
 		id: type_key,
 		type: type_int
 	}
 };
 
-const type_JamServe_FolderTag = {
+const type_FolderTag = {
 	properties: {
 		tracks: type_int,
 		level: type_int,
@@ -247,7 +247,7 @@ const type_MusicBrainz_Release = {
 	}
 };
 
-const type_JamServe_MetaInfoAlbum = {
+const type_MetaInfoAlbum = {
 	properties: {
 		name: type_key,
 		artist: type_key,
@@ -271,7 +271,7 @@ const type_JamServe_MetaInfoAlbum = {
 	}
 };
 
-const type_JamServe_MetaInfoImage = {
+const type_MetaInfoImage = {
 	properties: {
 		small: type_key,
 		medium: type_key,
@@ -279,21 +279,21 @@ const type_JamServe_MetaInfoImage = {
 	}
 };
 
-const type_JamServe_MetaInfoSimilarArtist = {
+const type_MetaInfoSimilarArtist = {
 	properties: {
 		name: type_key,
 		url: type_key,
 		mbid: type_key,
-		image: type_JamServe_MetaInfoImage
+		image: type_MetaInfoImage
 	}
 };
 
-const type_JamServe_MetaInfoArtist = {
+const type_MetaInfoArtist = {
 	properties: {
 		name: type_key,
 		mbid: type_key,
 		url: type_key,
-		image: type_JamServe_MetaInfoImage,
+		image: type_MetaInfoImage,
 		tags: {
 			properties: {
 				name: type_key,
@@ -301,11 +301,11 @@ const type_JamServe_MetaInfoArtist = {
 			}
 		},
 		description: type_key,
-		similar: type_JamServe_MetaInfoSimilarArtist
+		similar: type_MetaInfoSimilarArtist
 	}
 };
 
-const type_JamServe_MetaInfoTopSong = {
+const type_MetaInfoTopSong = {
 	properties: {
 		name: type_key,
 		artist: {
@@ -318,19 +318,19 @@ const type_JamServe_MetaInfoTopSong = {
 		mbid: type_key,
 		url: type_key,
 		rank: type_key,
-		image: type_JamServe_MetaInfoImage
+		image: type_MetaInfoImage
 	}
 };
 
-const type_JamServe_MetaInfo = {
+const type_MetaInfo = {
 	properties: {
-		album: type_JamServe_MetaInfoAlbum,
-		artist: type_JamServe_MetaInfoArtist,
-		topSongs: type_JamServe_MetaInfoTopSong
+		album: type_MetaInfoAlbum,
+		artist: type_MetaInfoArtist,
+		topSongs: type_MetaInfoTopSong
 	}
 };
 
-const type_JamServe_Folder = {
+const type_Folder = {
 	properties: {
 		rootID: type_key,
 		path: type_key,
@@ -341,14 +341,14 @@ const type_JamServe_Folder = {
 				modified: type_int
 			}
 		},
-		tag: type_JamServe_FolderTag,
-		info: type_JamServe_MetaInfo,
+		tag: type_FolderTag,
+		info: type_MetaInfo,
 		id: type_key,
 		type: type_int
 	}
 };
 
-const type_JamServe_PlayQueue = {
+const type_PlayQueue = {
 	properties: {
 		userID: type_key,
 		trackIDs: type_key,
@@ -361,7 +361,7 @@ const type_JamServe_PlayQueue = {
 	}
 };
 
-const type_JamServe_TrackTag = {
+const type_TrackTag = {
 	properties: {
 		album: type_key,
 		albumSort: type_key,
@@ -388,7 +388,7 @@ const type_JamServe_TrackTag = {
 	}
 };
 
-const type_JamServe_TrackMedia = {
+const type_TrackMedia = {
 	properties: {
 		duration: type_int,
 		bitRate: type_int,
@@ -401,7 +401,7 @@ const type_JamServe_TrackMedia = {
 	}
 };
 
-const type_JamServe_MetaInfoTrackSimilarSong = {
+const type_MetaInfoTrackSimilarSong = {
 	properties: {
 		name: type_key,
 		mbid: type_key,
@@ -414,17 +414,17 @@ const type_JamServe_MetaInfoTrackSimilarSong = {
 				url: type_key
 			}
 		},
-		image: type_JamServe_MetaInfoImage
+		image: type_MetaInfoImage
 	}
 };
 
-const type_JamServe_MetaInfoTrack = {
+const type_MetaInfoTrack = {
 	properties: {
-		similar: type_JamServe_MetaInfoTrackSimilarSong
+		similar: type_MetaInfoTrackSimilarSong
 	}
 };
 
-const type_JamServe_Track = {
+const type_Track = {
 	properties: {
 		rootID: type_key,
 		parentID: type_key,
@@ -439,15 +439,15 @@ const type_JamServe_Track = {
 		},
 		albumID: type_key,
 		artistID: type_key,
-		tag: type_JamServe_TrackTag,
-		media: type_JamServe_TrackMedia,
-		info: type_JamServe_MetaInfoTrack,
+		tag: type_TrackTag,
+		media: type_TrackMedia,
+		info: type_MetaInfoTrack,
 		id: type_key,
 		type: type_int
 	}
 };
 
-const type_JamServe_Album = {
+const type_Album = {
 	properties: {
 		name: type_key,
 		rootIDs: type_key,
@@ -460,13 +460,13 @@ const type_JamServe_Album = {
 		created: type_int,
 		mbArtistID: type_key,
 		mbAlbumID: type_key,
-		info: type_JamServe_MetaInfo,
+		info: type_MetaInfo,
 		id: type_key,
 		type: type_int
 	}
 };
 
-const type_JamServe_Artist = {
+const type_Artist = {
 	properties: {
 		name: type_key,
 		nameSort: type_key,
@@ -474,14 +474,14 @@ const type_JamServe_Artist = {
 		trackIDs: type_key,
 		albumIDs: type_key,
 		mbArtistID: type_key,
-		info: type_JamServe_MetaInfo,
+		info: type_MetaInfo,
 		created: type_int,
 		id: type_key,
 		type: type_int
 	}
 };
 
-const type_JamServe_Radio = {
+const type_Radio = {
 	properties: {
 		name: type_key,
 		url: type_key,
@@ -492,7 +492,7 @@ const type_JamServe_Radio = {
 	}
 };
 
-const type_JamServe_State = {
+const type_State = {
 	properties: {
 		userID: type_key,
 		destID: type_key,
@@ -506,7 +506,7 @@ const type_JamServe_State = {
 	}
 };
 
-const type_JamServe_Playlist = {
+const type_Playlist = {
 	properties: {
 		name: type_key,
 		userID: type_key,
@@ -523,7 +523,7 @@ const type_JamServe_Playlist = {
 	}
 };
 
-const type_JamServe_PodcastTag = {
+const type_PodcastTag = {
 	properties: {
 		title: type_key,
 		status: type_key,
@@ -536,27 +536,27 @@ const type_JamServe_PodcastTag = {
 	}
 };
 
-const type_JamServe_Podcast = {
+const type_Podcast = {
 	properties: {
 		url: type_key,
 		created: type_int,
 		lastCheck: type_int,
 		status: type_key,
 		errorMessage: type_key,
-		tag: type_JamServe_PodcastTag,
+		tag: type_PodcastTag,
 		id: type_key,
 		type: type_int
 	}
 };
 
-const type_JamServe_PodcastEpisodeChapter = {
+const type_PodcastEpisodeChapter = {
 	properties: {
 		start: type_int,
 		title: type_key
 	}
 };
 
-const type_JamServe_PodcastEpisodeEnclosure = {
+const type_PodcastEpisodeEnclosure = {
 	properties: {
 		url: type_key,
 		type: type_key,
@@ -564,7 +564,7 @@ const type_JamServe_PodcastEpisodeEnclosure = {
 	}
 };
 
-const type_JamServe_Episode = {
+const type_Episode = {
 	properties: {
 		podcastID: type_key,
 		status: type_key,
@@ -576,8 +576,8 @@ const type_JamServe_Episode = {
 		title: type_key,
 		guid: type_key,
 		author: type_key,
-		chapters: type_JamServe_PodcastEpisodeChapter,
-		enclosures: type_JamServe_PodcastEpisodeEnclosure,
+		chapters: type_PodcastEpisodeChapter,
+		enclosures: type_PodcastEpisodeEnclosure,
 		stat: {
 			properties: {
 				created: type_int,
@@ -585,14 +585,14 @@ const type_JamServe_Episode = {
 				size: type_int
 			}
 		},
-		tag: type_JamServe_TrackTag,
-		media: type_JamServe_TrackMedia,
+		tag: type_TrackTag,
+		media: type_TrackMedia,
 		id: type_key,
 		type: type_int
 	}
 };
 
-const type_JamServe_Bookmark = {
+const type_Bookmark = {
 	properties: {
 		destID: type_key,
 		userID: type_key,
@@ -606,17 +606,17 @@ const type_JamServe_Bookmark = {
 };
 
 export const mapping: any = {
-	root: type_JamServe_Root,
-	user: type_JamServe_User,
-	folder: type_JamServe_Folder,
-	playqueue: type_JamServe_PlayQueue,
-	track: type_JamServe_Track,
-	album: type_JamServe_Album,
-	artist: type_JamServe_Artist,
-	radio: type_JamServe_Radio,
-	state: type_JamServe_State,
-	playlist: type_JamServe_Playlist,
-	podcast: type_JamServe_Podcast,
-	episode: type_JamServe_Episode,
-	bookmark: type_JamServe_Bookmark
+	root: type_Root,
+	user: type_User,
+	folder: type_Folder,
+	playqueue: type_PlayQueue,
+	track: type_Track,
+	album: type_Album,
+	artist: type_Artist,
+	radio: type_Radio,
+	state: type_State,
+	playlist: type_Playlist,
+	podcast: type_Podcast,
+	episode: type_Episode,
+	bookmark: type_Bookmark
 };

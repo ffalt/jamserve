@@ -1,6 +1,6 @@
 import {Engine} from '../../src/engine/engine';
 import {it} from 'mocha';
-import {JamServe} from '../../src/model/jamserve';
+import {User} from '../../src/engine/user/user.model';
 
 interface EngineThis extends Mocha.Context {
 	engine: Engine;

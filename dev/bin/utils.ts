@@ -3,19 +3,16 @@ import path from 'path';
 import {Definition} from 'typescript-json-schema/typescript-json-schema';
 import {fileWrite} from '../../src/utils/fs-utils';
 
-const basePath = path.resolve('../../src/model/');
-
 const settings: TJS.PartialArgs = {
 	required: true
 };
 
-const compilerOptions: TJS.CompilerOptions = {
-	strictNullChecks: true,
-	rootDir: basePath,
-	typeRoots: [basePath]
-};
-
-export async function transformTS2JSONScheme(filename: string, symbol: string): Promise<Definition> {
+export async function transformTS2JSONScheme(basePath: string, filename: string, symbol: string): Promise<Definition> {
+	const compilerOptions: TJS.CompilerOptions = {
+		strictNullChecks: true,
+		rootDir: basePath,
+		typeRoots: [basePath]
+	};
 	const file = path.resolve(basePath, filename + '.d.ts');
 	const program = TJS.getProgramFromFiles([file], compilerOptions, basePath);
 	const generator = TJS.buildGenerator(program, settings);
@@ -35,8 +32,8 @@ export async function transformTS2JSONScheme(filename: string, symbol: string): 
 	}
 }
 
-export async function saveTS2JSONScheme(filename: string, symbol: string): Promise<void> {
-	const scheme = await transformTS2JSONScheme(filename, symbol);
+export async function saveTS2JSONScheme(basePath: string, filename: string, symbol: string): Promise<void> {
+	const scheme = await transformTS2JSONScheme(basePath, filename, symbol);
 	const destfile = path.resolve(basePath, filename + '.schema.json');
 	await fileWrite(destfile, JSON.stringify(scheme, null, '\t'));
 	console.log(destfile, 'written');
@@ -99,13 +96,13 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): {
 	return {paramType, parameters};
 }
 
-export async function getSubsonicApiCalls(): Promise<Array<IApiCall>> {
-	const api = await transformTS2JSONScheme('subsonic-rest-api-1.16.0', 'SubsonicApi');
+export async function getSubsonicApiCalls(basePath: string): Promise<Array<IApiCall>> {
+	const api = await transformTS2JSONScheme(basePath, 'subsonic-rest-api-1.16.0', 'SubsonicApi');
 	return getApiCalls(api);
 }
 
-export async function getJamApiCalls(): Promise<Array<IApiCall>> {
-	const api = await transformTS2JSONScheme('jam-rest-api-0.1.0', 'JamApi');
+export async function getJamApiCalls(basePath: string): Promise<Array<IApiCall>> {
+	const api = await transformTS2JSONScheme(basePath, 'jam-rest-api-0.1.0', 'JamApi');
 	return getApiCalls(api);
 }
 
@@ -118,16 +115,23 @@ export function getApiCalls(api: any): Array<IApiCall> {
 			const resultdef = apidef.properties.result;
 			const binarydef = apidef.properties.binary;
 			const paramType = parasdef && parasdef.$ref ? parasdef.$ref.split('/')[2] : undefined;
-			const splits = name.split('/');
-			let operationId = splits[0];
-			if (splits.length > 1) {
-				operationId += '.' + splits[1];
-				if (splits.length > 2) {
-					operationId += splits.slice(2).map(sp => sp[0].toUpperCase() + sp.slice(1).toLowerCase()).join('');
+			let operationId = apidef.properties.operationId ? apidef.properties.operationId.enum[0] : undefined;
+			let splits: Array<string>;
+			if (operationId) {
+				splits = operationId.split('.');
+				if (splits.length > 1) {
+					operationId = splits[0] + 'Controller.' + splits[1];
+				}
+			} else {
+				splits = name.split('/');
+				if (splits.length > 1) {
+					operationId = splits[0] + 'Controller.' + splits[1];
+				} else {
+					operationId = name;
 				}
 			}
-			if (apidef.properties.operationId) {
-				operationId = apidef.properties.operationId.enum[0];
+			if (splits.length > 2) {
+				operationId += splits.slice(2).map(sp => sp[0].toUpperCase() + sp.slice(1).toLowerCase()).join('');
 			}
 			const pathParams = apidef.properties.pathParams;
 			let upload: string | undefined;

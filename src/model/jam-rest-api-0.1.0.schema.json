@@ -197,6 +197,12 @@
 					"description": "various: autocomplete",
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"autocomplete.autocomplete"
+							]
+						},
 						"params": {
 							"$ref": "#/definitions/JamParameters.AutoComplete"
 						},
@@ -222,6 +228,7 @@
 					},
 					"required": [
 						"errors",
+						"operationId",
 						"params",
 						"result"
 					]
@@ -230,12 +237,6 @@
 					"description": "various: get list of genres found in the library",
 					"type": "object",
 					"properties": {
-						"operationId": {
-							"type": "string",
-							"enum": [
-								"genreList"
-							]
-						},
 						"params": {
 							"$ref": "#/definitions/JamParameters.Genres"
 						},
@@ -261,12 +262,11 @@
 					},
 					"required": [
 						"errors",
-						"operationId",
 						"params",
 						"result"
 					]
 				},
-				"nowPlaying": {
+				"nowPlaying/list": {
 					"description": "various: get list of tracks played by all users",
 					"type": "object",
 					"properties": {
@@ -3993,6 +3993,12 @@
 				"image/{id}-{size}.{format}": {
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"image.image"
+							]
+						},
 						"pathParams": {
 							"$ref": "#/definitions/JamParameters.Image"
 						},
@@ -4050,12 +4056,19 @@
 					"required": [
 						"binary",
 						"errors",
+						"operationId",
 						"pathParams"
 					]
 				},
 				"image/{id}-{size}": {
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"image.image"
+							]
+						},
 						"pathParams": {
 							"$ref": "#/definitions/JamParameters.PathImageSize"
 						},
@@ -4120,12 +4133,19 @@
 						"aliasFor",
 						"binary",
 						"errors",
+						"operationId",
 						"pathParams"
 					]
 				},
 				"image/{id}.{format}": {
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"image.image"
+							]
+						},
 						"pathParams": {
 							"$ref": "#/definitions/JamParameters.PathImageFormat"
 						},
@@ -4190,12 +4210,19 @@
 						"aliasFor",
 						"binary",
 						"errors",
+						"operationId",
 						"pathParams"
 					]
 				},
 				"image/{id}": {
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"image.image"
+							]
+						},
 						"pathParams": {
 							"$ref": "#/definitions/JamParameters.ID"
 						},
@@ -4260,6 +4287,7 @@
 						"aliasFor",
 						"binary",
 						"errors",
+						"operationId",
 						"pathParams"
 					]
 				},
@@ -4267,6 +4295,12 @@
 					"description": "media: stream a media file in a format",
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"stream.stream"
+							]
+						},
 						"pathParams": {
 							"$ref": "#/definitions/JamParameters.PathStream"
 						},
@@ -4360,6 +4394,7 @@
 					"required": [
 						"binary",
 						"errors",
+						"operationId",
 						"pathParams"
 					]
 				},
@@ -4367,6 +4402,12 @@
 					"description": "media: stream a media file",
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"stream.stream"
+							]
+						},
 						"pathParams": {
 							"$ref": "#/definitions/JamParameters.ID"
 						},
@@ -4419,6 +4460,7 @@
 						"aliasFor",
 						"binary",
 						"errors",
+						"operationId",
 						"pathParams"
 					]
 				},
@@ -4426,6 +4468,12 @@
 					"description": "media: get peaks waveform data as svg | json | binary",
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"waveform.waveform"
+							]
+						},
 						"pathParams": {
 							"$ref": "#/definitions/JamParameters.Waveform"
 						},
@@ -4495,12 +4543,19 @@
 					"required": [
 						"binary",
 						"errors",
+						"operationId",
 						"pathParams"
 					]
 				},
 				"download/{id}": {
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"download.download"
+							]
+						},
 						"pathParams": {
 							"$ref": "#/definitions/JamParameters.ID"
 						},
@@ -4553,12 +4608,19 @@
 						"aliasFor",
 						"binary",
 						"errors",
+						"operationId",
 						"pathParams"
 					]
 				},
 				"download/{id}.{format}": {
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"download.download"
+							]
+						},
 						"pathParams": {
 							"$ref": "#/definitions/JamParameters.Download"
 						},
@@ -4616,6 +4678,7 @@
 					"required": [
 						"binary",
 						"errors",
+						"operationId",
 						"pathParams"
 					]
 				}

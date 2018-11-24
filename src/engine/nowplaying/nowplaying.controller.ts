@@ -9,7 +9,7 @@ export class NowPlayingController {
 
 	}
 
-	async nowPlaying(req: JamRequest<{}>): Promise<Array<Jam.NowPlaying>> {
+	async list(req: JamRequest<{}>): Promise<Array<Jam.NowPlaying>> {
 		const list = await this.nowplayingService.getNowPlaying();
 		return list.map(entry => packNowPlaying(entry));
 	}
