@@ -1,12 +1,12 @@
 import express from 'express';
-import {JamServe} from '../../model/jamserve';
 import {EngineRequest} from '../server';
+import {User} from '../../engine/user/user.model';
 
 /**
  * Fill user into req.user express requests
  */
 export interface UserRequest extends EngineRequest {
-	user: JamServe.User;
+	user: User;
 	client: string;
 	jwt: boolean;
 }

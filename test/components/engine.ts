@@ -21,14 +21,14 @@ export function shouldBehaveLikeAEngine() {
 	});
 	describe('user admin', function() {
 		before(function(done) {
-			this.user = mockupAdmin;
+			this.userController = mockupAdmin;
 			done();
 		});
 		shouldBehaveLikeAUser();
 	});
 	describe('user user', function() {
 		before(function(done) {
-			this.user = mockupUser;
+			this.userController = mockupUser;
 			done();
 		});
 		shouldBehaveLikeAUser();
@@ -38,8 +38,8 @@ export function shouldBehaveLikeAEngine() {
 	});
 	describe('user-library', function() {
 		before(function(done) {
-			this.user = mockupAdmin;
-			this.root = mockupRoot;
+			this.userController = mockupAdmin;
+			this.rootController = mockupRoot;
 			done();
 		});
 		shouldBehaveLikaAUserLibrary();

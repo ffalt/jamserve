@@ -6,7 +6,8 @@ import FeedParser from 'feedparser';
 import iconv from 'iconv-lite';
 import {DBObjectType} from '../types';
 import {Subsonic} from '../model/subsonic-rest-data-1.16.0';
-import {JamServe} from '../model/jamserve';
+import {PodcastTag} from '../engine/podcast/podcast.model';
+import {Episode, PodcastEpisodeChapter} from '../engine/episode/episode.model';
 
 export const PodcastStatus: { [name: string]: Subsonic.PodcastStatus } = {
 	fresh: 'new',
@@ -119,9 +120,9 @@ export class Feed {
 		});
 	}
 
-	public async get(podcast: Subsonic.PodcastChannel): Promise<{ tag: JamServe.PodcastTag, episodes: Array<JamServe.Episode> }> {
+	public async get(podcast: Subsonic.PodcastChannel): Promise<{ tag: PodcastTag, episodes: Array<Episode> }> {
 		const data = await this.fetch(podcast.url);
-		const tag: JamServe.PodcastTag = {
+		const tag: PodcastTag = {
 			title: data.feed.title,
 			status: PodcastStatus.completed,
 			description: data.feed.description,
@@ -134,8 +135,8 @@ export class Feed {
 		if (data.feed['itunes:summary'] && data.feed['itunes:summary']['#']) {
 			tag.description = data.feed['itunes:summary']['#'];
 		}
-		const episodes: Array<JamServe.Episode> = data.posts.map(post => {
-			let chapters: Array<JamServe.PodcastEpisodeChapter> = [];
+		const episodes: Array<Episode> = data.posts.map(post => {
+			let chapters: Array<PodcastEpisodeChapter> = [];
 
 			const pscChaps: any = (<any>post)['psc:chapters'];
 			if (pscChaps) {

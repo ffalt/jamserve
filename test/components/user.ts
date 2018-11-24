@@ -4,7 +4,7 @@ import {iti} from './contexts';
 
 export function shouldBehaveLikeAUser() {
 
-	// (this: { engine: Engine, user: JamServe.User }) => void =
+	// (this: { engine: Engine, user: User }) => void =
 	let userID: string;
 	iti('should add the user', async function() {
 		userID = await this.engine.users.createUser(this.user);

@@ -1,9 +1,26 @@
 import moment from 'moment';
-import {JamServe} from '../../model/jamserve';
 import path from 'path';
 import {fileSuffix} from '../../utils/fs-utils';
 import {AudioMimeTypes, DBObjectType} from '../../types';
 import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
+import {Root} from '../../engine/root/root.model';
+import {User} from '../../engine/user/user.model';
+import {ArtistIndex, FolderIndex, FolderIndexEntry} from '../../engine/index/index.model';
+import {State, States} from '../../engine/state/state.model';
+import {Folder} from '../../engine/folder/folder.model';
+import {Album} from '../../engine/album/album.model';
+import {Artist} from '../../engine/artist/artist.model';
+import {MetaInfo} from '../../engine/metadata/metadata.model';
+import {Track} from '../../engine/track/track.model';
+import {Episode} from '../../engine/episode/episode.model';
+import {NowPlaying} from '../../engine/nowplaying/nowplaying.model';
+import {Podcast} from '../../engine/podcast/podcast.model';
+import {Playlist} from '../../engine/playlist/playlist.model';
+import {Bookmark} from '../../engine/bookmark/bookmark.model';
+import {PlayQueue} from '../../engine/playqueue/playqueue.model';
+import {Radio} from '../../engine/radio/radio.model';
+import {ChatMessage} from '../../engine/chat/chat.model';
+import {Genre} from '../../engine/genre/genre.model';
 
 
 export interface SubsonicExtResponse extends Subsonic.Response {
@@ -94,11 +111,11 @@ export class FORMAT {
 		return moment(date).utc().format(); // .format('YYYY-MM-DDThh:mm:ss.000Z');
 	}
 
-	static packRoot(root: JamServe.Root): Subsonic.MusicFolder {
+	static packRoot(root: Root): Subsonic.MusicFolder {
 		return {id: parseInt(root.id, 10), name: root.name};
 	}
 
-	static packUser(user: JamServe.User): Subsonic.User {
+	static packUser(user: User): Subsonic.User {
 		return {
 			username: user.name,
 			email: user.email,
@@ -121,7 +138,7 @@ export class FORMAT {
 		};
 	}
 
-	static packFolderIndexArtist(entry: JamServe.FolderIndexEntry, state: JamServe.State): Subsonic.Artist {
+	static packFolderIndexArtist(entry: FolderIndexEntry, state: State): Subsonic.Artist {
 		/*
 <xs:complexType name="Artist">
 	<xs:attribute name="id" type="xs:string" use="required"/>
@@ -140,7 +157,7 @@ export class FORMAT {
 		};
 	}
 
-	static packFolderIndex(index: JamServe.FolderIndex, states: JamServe.States): Array<Subsonic.Index> {
+	static packFolderIndex(index: FolderIndex, states: States): Array<Subsonic.Index> {
 		if (!index) {
 			return [];
 		}
@@ -152,7 +169,7 @@ export class FORMAT {
 		}));
 	}
 
-	static packArtistIndex(index: JamServe.ArtistIndex, states: JamServe.States): Array<Subsonic.IndexID3> {
+	static packArtistIndex(index: ArtistIndex, states: States): Array<Subsonic.IndexID3> {
 		if (!index) {
 			return [];
 		}
@@ -162,7 +179,7 @@ export class FORMAT {
 		}));
 	}
 
-	static packDirectory(folder: JamServe.Folder, state: JamServe.State): Subsonic.Directory {
+	static packDirectory(folder: Folder, state: State): Subsonic.Directory {
 		/*
 		 <xs:complexType name="Directory">
 		 <xs:sequence>
@@ -182,7 +199,7 @@ export class FORMAT {
 		};
 	}
 
-	static packFolderArtist(folder: JamServe.Folder, state: JamServe.State): Subsonic.Artist {
+	static packFolderArtist(folder: Folder, state: State): Subsonic.Artist {
 		/*
     <xs:complexType name="Artist">
         <xs:attribute name="id" type="xs:string" use="required"/>
@@ -200,7 +217,7 @@ export class FORMAT {
 		};
 	}
 
-	static packAlbum(album: JamServe.Album, state: JamServe.State): Subsonic.AlbumID3 {
+	static packAlbum(album: Album, state: State): Subsonic.AlbumID3 {
 		/*
 		 <xs:complexType name="AlbumID3">
 		 <xs:attribute name="id" type="xs:string" use="required"/>
@@ -231,7 +248,7 @@ export class FORMAT {
 		};
 	}
 
-	static packArtist(artist: JamServe.Artist, state: JamServe.State): Subsonic.ArtistID3 {
+	static packArtist(artist: Artist, state: State): Subsonic.ArtistID3 {
 		/*
 		 <xs:complexType name="ArtistID3">
 		 <xs:attribute name="id" type="xs:string" use="required"/>
@@ -250,7 +267,7 @@ export class FORMAT {
 		};
 	}
 
-	static packAlbumInfo(info: JamServe.MetaInfo): Subsonic.AlbumInfo {
+	static packAlbumInfo(info: MetaInfo): Subsonic.AlbumInfo {
 		return {
 			notes: info.album.description,
 			musicBrainzId: info.album.mbid,
@@ -261,7 +278,7 @@ export class FORMAT {
 		};
 	}
 
-	static packArtistInfo(info: JamServe.MetaInfo, similar?: Array<Subsonic.Artist>): Subsonic.ArtistInfo {
+	static packArtistInfo(info: MetaInfo, similar?: Array<Subsonic.Artist>): Subsonic.ArtistInfo {
 		return {
 			biography: info.artist.description,
 			musicBrainzId: info.artist.mbid,
@@ -273,7 +290,7 @@ export class FORMAT {
 		};
 	}
 
-	static packArtistInfo2(info: JamServe.MetaInfo, similar?: Array<Subsonic.ArtistID3>): Subsonic.ArtistInfo2 {
+	static packArtistInfo2(info: MetaInfo, similar?: Array<Subsonic.ArtistID3>): Subsonic.ArtistInfo2 {
 		return {
 			biography: info.artist.description,
 			musicBrainzId: info.artist.mbid,
@@ -285,7 +302,7 @@ export class FORMAT {
 		};
 	}
 
-	static packTrack(track: JamServe.Track, state: JamServe.State): Subsonic.Child {
+	static packTrack(track: Track, state: State): Subsonic.Child {
 		/*
 		 <xs:complexType name="Child">
 		 <xs:attribute name="id" type="xs:string" use="required"/>
@@ -359,14 +376,14 @@ export class FORMAT {
 		return result;
 	}
 
-	static packNowPlaying(nowPlaying: JamServe.NowPlaying, state: JamServe.State): Subsonic.NowPlayingEntry {
+	static packNowPlaying(nowPlaying: NowPlaying, state: State): Subsonic.NowPlayingEntry {
 		let entry: Subsonic.Child;
 		switch (nowPlaying.obj.type) {
 			case DBObjectType.track:
-				entry = FORMAT.packTrack(<JamServe.Track>nowPlaying.obj, state);
+				entry = FORMAT.packTrack(<Track>nowPlaying.obj, state);
 				break;
 			case DBObjectType.episode:
-				entry = FORMAT.packPodcastEpisode(<JamServe.Episode>nowPlaying.obj, state);
+				entry = FORMAT.packPodcastEpisode(<Episode>nowPlaying.obj, state);
 				break;
 			default:
 				entry = {
@@ -382,7 +399,7 @@ export class FORMAT {
 		return nowPlay;
 	}
 
-	static packFolder(folder: JamServe.Folder, state: JamServe.State): Subsonic.Child {
+	static packFolder(folder: Folder, state: State): Subsonic.Child {
 		return {
 			id: folder.id,
 			path: folder.path,
@@ -402,7 +419,7 @@ export class FORMAT {
 		};
 	}
 
-	static packPodcast(podcast: JamServe.Podcast, status?: Subsonic.PodcastStatus): Subsonic.PodcastChannel {
+	static packPodcast(podcast: Podcast, status?: Subsonic.PodcastStatus): Subsonic.PodcastChannel {
 		return {
 			id: podcast.id,
 			url: podcast.url,
@@ -415,7 +432,7 @@ export class FORMAT {
 		};
 	}
 
-	static packPodcastEpisode(episode: JamServe.Episode, state: JamServe.State, status?: Subsonic.PodcastStatus): Subsonic.PodcastEpisode {
+	static packPodcastEpisode(episode: Episode, state: State, status?: Subsonic.PodcastStatus): Subsonic.PodcastEpisode {
 		const result: Subsonic.PodcastEpisode = {
 			// albumId:episode.albumId,
 			// artistId:episode.artistId,
@@ -473,7 +490,7 @@ export class FORMAT {
 		return result;
 	}
 
-	static packPlaylist(playlist: JamServe.Playlist): Subsonic.Playlist {
+	static packPlaylist(playlist: Playlist): Subsonic.Playlist {
 		return {
 			id: playlist.id,
 			name: playlist.name,
@@ -489,13 +506,13 @@ export class FORMAT {
 		};
 	}
 
-	static packPlaylistWithSongs(playlist: JamServe.Playlist, tracks: Array<JamServe.Track>, states: JamServe.States): Subsonic.PlaylistWithSongs {
+	static packPlaylistWithSongs(playlist: Playlist, tracks: Array<Track>, states: States): Subsonic.PlaylistWithSongs {
 		const result = <Subsonic.PlaylistWithSongs>FORMAT.packPlaylist(playlist);
 		result.entry = tracks.map(track => FORMAT.packTrack(track, states[track.id]));
 		return result;
 	}
 
-	static packBookmark(bookmark: JamServe.Bookmark, username: string, child: Subsonic.Child): Subsonic.Bookmark {
+	static packBookmark(bookmark: Bookmark, username: string, child: Subsonic.Child): Subsonic.Bookmark {
 		return {
 			entry: child,
 			username: username,
@@ -518,7 +535,7 @@ export class FORMAT {
 		};
 	}
 
-	static packPlayQueue(playqueue: JamServe.PlayQueue, user: JamServe.User, childs: Array<Subsonic.Child>): Subsonic.PlayQueue {
+	static packPlayQueue(playqueue: PlayQueue, user: User, childs: Array<Subsonic.Child>): Subsonic.PlayQueue {
 		return {
 			entry: childs,
 			current: playqueue.currentID !== undefined ? parseInt(playqueue.currentID, 10) : undefined,
@@ -529,7 +546,7 @@ export class FORMAT {
 		};
 	}
 
-	static packRadio(radio: JamServe.Radio): Subsonic.InternetRadioStation {
+	static packRadio(radio: Radio): Subsonic.InternetRadioStation {
 		return {
 			id: radio.id,
 			name: radio.name,
@@ -538,7 +555,7 @@ export class FORMAT {
 		};
 	}
 
-	static packGenre(genre: JamServe.Genre): Subsonic.Genre {
+	static packGenre(genre: Genre): Subsonic.Genre {
 		return {
 			content: genre.name,
 			songCount: genre.trackCount,
@@ -547,7 +564,7 @@ export class FORMAT {
 		};
 	}
 
-	static packChatMessage(message: JamServe.ChatMessage): Subsonic.ChatMessage {
+	static packChatMessage(message: ChatMessage): Subsonic.ChatMessage {
 		return {
 			username: message.username,
 			time: message.time,

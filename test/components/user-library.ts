@@ -2,13 +2,13 @@ import {describe, it} from 'mocha';
 import {expect, should} from 'chai';
 import {Engine} from '../../src/engine/engine';
 import {JamServe} from '../../src/model/jamserve';
-import {BaseStore} from '../../src/store/store';
+import {BaseStore} from '../../src/engine/base/base.store';
 import {DBObjectType} from '../../src/types';
 
 interface EngineUserThis extends Mocha.Context {
 	engine: Engine;
-	user: JamServe.User;
-	root: JamServe.Root;
+	user: User;
+	root: Root;
 }
 
 type EngineUserFunc = (this: EngineUserThis, done: Mocha.Done) => void;
@@ -31,8 +31,8 @@ export function shouldBehaveLikeARootFolderAdd() {
 	}).timeout(30000);
 }
 
-function getStore(engine: Engine, name: string): BaseStore<JamServe.DBObject, JamServe.SearchQuery> {
-	return <BaseStore<JamServe.DBObject, JamServe.SearchQuery>>(<any>engine.store)[name];
+function getStore(engine: Engine, name: string): BaseStore<DBObject, SearchQuery> {
+	return <BaseStore<DBObject, SearchQuery>>(<any>engine.store)[name];
 }
 
 function shouldBehaveLikeAFavRateUser() {
@@ -94,11 +94,11 @@ function shouldBehaveLikeAFavRateUser() {
 }
 
 function shouldBehaveLikeABookmarkUser() {
-	let track: JamServe.Track;
+	let track: Track;
 	iti('should find a track', async function() {
 		const t = await this.engine.store.track.searchOne({});
 		should().exist(t);
-		track = <JamServe.Track>t;
+		track = <Track>t;
 	});
 	iti('should add a track bookmark', async function() {
 		await this.engine.trackBookmarkCreate(track, this.user, 1, 'a comment');
@@ -125,11 +125,11 @@ function shouldBehaveLikeABookmarkUser() {
 }
 
 function shouldBehaveLikeAPlaylistUser() {
-	let track: JamServe.Track;
+	let track: Track;
 	iti('should find a track', async function() {
 		const t = await this.engine.store.track.searchOne({});
 		should().exist(t);
-		track = <JamServe.Track>t;
+		track = <Track>t;
 	});
 	iti('should add a playlist', async function() {
 		const playlist = await this.engine.playlists.createPlaylist('playlist', 'a comment', false, this.user.id, [track.id]);
@@ -199,11 +199,11 @@ export function shouldBehaveLikaAUserLibrary() {
 
 /*
 function testSuiteUserLibraryPlayQueue() {
-	let track: JamServe.Track;
+	let track: Track;
 	iti('should find a track', async function() {
 		const t = await this.engine.store.track.searchOne({});
 		should().exist(t);
-		track = <JamServe.Track>t;
+		track = <Track>t;
 	});
 	iti('should add a playqueue', async function() {
 		const playlist = await this.engine.playlists.createPlaylist('playlist', 'a comment', false, this.user.id, [track.id]);

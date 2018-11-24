@@ -4,9 +4,7 @@ import {ApiResponder} from './response';
 import multer from 'multer';
 import path from 'path';
 import Logger from '../../utils/logger';
-import {JamServe} from '../../model/jamserve';
-import {ApiJam} from './api';
-import {APIVERSION, FORMAT} from './format';
+import {APIVERSION, JamController} from './api';
 import {Engine} from '../../engine/engine';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import cors, {CorsOptions} from 'cors';
@@ -20,6 +18,8 @@ import {NotFoundError, UnauthError} from './error';
 import {registerAdminApi, registerPublicApi, registerUserApi} from './routes';
 import {apiCheck} from './check';
 import {getMaxAge} from '../../utils/max-age';
+import {formatUser} from '../../engine/user/user.format';
+import {User} from '../../engine/user/user.model';
 
 const autoUploadTempReap = require('multer-autoreap'); // TODO: multer-autoreap types
 const rateLimit = require('express-rate-limit');
@@ -57,7 +57,7 @@ function CallSessionLoginHandler(req: UserRequest, res: express.Response, next: 
 				client
 			};
 			const token = jwt.sign(tokenData, req.engine.config.server.jwt.secret);
-			const result: Jam.Session = {version: APIVERSION, allowedCookieDomains: req.engine.config.server.session.allowedCookieDomains, jwt: token, user: FORMAT.packUser(req.user)};
+			const result: Jam.Session = {version: APIVERSION, allowedCookieDomains: req.engine.config.server.session.allowedCookieDomains, jwt: token, user: formatUser(req.user)};
 			ApiResponder.data(res, result);
 		});
 	})(req, res, next);
@@ -77,7 +77,7 @@ function AdminMiddleWare(req: UserRequest, res: express.Response, next: express.
 }
 
 export function initJamRouter(engine: Engine): express.Router {
-	const api = new ApiJam(engine);
+	const api = new JamController(engine);
 
 	const UPLOAD_PATH = engine.config.getDataPath(['cache', 'uploads']);
 	const upload = multer({dest: `${UPLOAD_PATH}/`}); // multer configuration
@@ -102,17 +102,17 @@ export function initJamRouter(engine: Engine): express.Router {
 	}));
 	router.use(passport.initialize());
 	router.use(passport.session());
-	passport.serializeUser((user: JamServe.User, done) => {
+	passport.serializeUser((user: User, done) => {
 		done(null, user.id);
 	});
 	passport.deserializeUser((id: string, done) => {
-		engine.users.getUser(id).then(user => done(null, user ? user : false)).catch(done);
+		engine.userService.getUser(id).then(user => done(null, user ? user : false)).catch(done);
 	});
 
 	passport.use('local', new passportLocal.Strategy(
 		{usernameField: 'username', passwordField: 'password'},
 		(username, password, done) => {
-			engine.users.auth(username, password).then(user => done(null, user ? user : false)).catch(done);
+			engine.userService.auth(username, password).then(user => done(null, user ? user : false)).catch(done);
 		}
 	));
 	passport.use('jwt-header', new passportJWT.Strategy(
@@ -121,7 +121,7 @@ export function initJamRouter(engine: Engine): express.Router {
 			secretOrKey: engine.config.server.jwt.secret
 		},
 		(jwt_payload, done) => {
-			engine.users.getUser(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
+			engine.userService.getUser(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
 		}
 	));
 	passport.use('jwt-parameter', new passportJWT.Strategy(
@@ -130,7 +130,7 @@ export function initJamRouter(engine: Engine): express.Router {
 			secretOrKey: engine.config.server.jwt.secret
 		},
 		(jwt_payload, done) => {
-			engine.users.getUser(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
+			engine.userService.getUser(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
 		}
 	));
 

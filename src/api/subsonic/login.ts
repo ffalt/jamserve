@@ -22,27 +22,27 @@ http://your-server/rest/ping.view?u=joe&t=26719a1196d2a940705a59634eb18eab&s=c19
  */
 
 import express from 'express';
-import {JamServe} from '../../model/jamserve';
 import {SubsonicParameterRequest} from './parameters';
 import {ApiResponder} from './response';
 import {FORMAT} from './format';
+import {User} from '../../engine/user/user.model';
 
 /**
  * Fill user into req.user express requests
  */
 export interface UserRequest extends SubsonicParameterRequest {
-	user: JamServe.User;
+	user: User;
 	client: string;
 }
 
-async function validateCredentials(req: SubsonicParameterRequest): Promise<JamServe.User> {
+async function validateCredentials(req: SubsonicParameterRequest): Promise<User> {
 	if (req.user) {
-		return <JamServe.User>req.user;
+		return <User>req.user;
 	}
 	if (req.parameters.password) {
-		return req.engine.users.auth(req.parameters.username, req.parameters.password);
+		return req.engine.userService.auth(req.parameters.username, req.parameters.password);
 	} else if (req.parameters.token && req.parameters.salt) {
-		return req.engine.users.authToken(req.parameters.username, req.parameters.token, req.parameters.salt);
+		return req.engine.userService.authToken(req.parameters.username, req.parameters.token, req.parameters.salt);
 	} else {
 		return Promise.reject('Invalid Login Type');
 	}

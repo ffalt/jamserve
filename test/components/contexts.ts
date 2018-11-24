@@ -19,7 +19,7 @@ export const ite: EngineTestFunction = <EngineTestFunction>it;
 
 interface EngineUserThis extends Mocha.Context {
 	engine: Engine;
-	user: JamServe.User;
+	user: User;
 }
 
 type EngineUserFunc = (this: EngineUserThis, done: Mocha.Done) => void;

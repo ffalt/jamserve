@@ -11,19 +11,19 @@ async function run(): Promise<void> {
 
 	/*
 	const stringDefs: { [name: string]: { texts: Array<string> } } = {
-		// 'JamServe.Root': {texts: []},
-		// 'JamServe.Bookmark': {texts: ['comment']},
-		// 'JamServe.Episode': {texts: ['title', 'summary']},
-		// 'JamServe.User': {texts: []},
-		// 'JamServe.Folder': {texts: []},
-		// 'JamServe.Artist': {texts: ['name', 'nameSort']},
-		// 'JamServe.Podcast': {texts: []},
-		// 'JamServe.Radio': {texts: ['name']},
-		// 'JamServe.Playlist': {texts: ['name', 'comment']},
-		// 'JamServe.PodcastTag': {texts: ['description', 'author', 'title']},
-		// 'JamServe.PodcastEpisodeChapter': {texts: ['title']},
-		// 'JamServe.MetaInfoAlbum': {texts: ['name', 'artist']},
-		// 'JamServe.FolderTag': {texts: ['genre', 'album', 'artist', 'artistSort', 'title']}
+		// 'Root': {texts: []},
+		// 'Bookmark': {texts: ['comment']},
+		// 'Episode': {texts: ['title', 'summary']},
+		// 'User': {texts: []},
+		// 'Folder': {texts: []},
+		// 'Artist': {texts: ['name', 'nameSort']},
+		// 'Podcast': {texts: []},
+		// 'Radio': {texts: ['name']},
+		// 'Playlist': {texts: ['name', 'comment']},
+		// 'PodcastTag': {texts: ['description', 'author', 'title']},
+		// 'PodcastEpisodeChapter': {texts: ['title']},
+		// 'MetaInfoAlbum': {texts: ['name', 'artist']},
+		// 'FolderTag': {texts: ['genre', 'album', 'artist', 'artistSort', 'title']}
 	};
 	*/
 
@@ -97,7 +97,7 @@ async function run(): Promise<void> {
 	strings.push('const type_string = {type: \'text\'};\n');
 	strings.push('const type_key = {type: \'keyword\'};\n');
 	for (const symbol of symbols) {
-		const name = 'JamServe.' + symbol;
+		const name = '' + symbol;
 		const scheme = await transformTS2JSONScheme('jamserve', name);
 		transformProperties(name, scheme.properties || {}, scheme.definitions || {}, []);
 		result[symbol.toLowerCase()] = 'type_' + name.replace(/\./g, '_');

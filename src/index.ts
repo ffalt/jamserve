@@ -2,7 +2,7 @@ import {Engine} from './engine/engine';
 import {configureLogger} from './utils/logger';
 import {Server} from './api/server';
 import {loadConfig} from './config';
-import {Store} from './store/store';
+import {Store} from './engine/store';
 
 const config = loadConfig();
 
@@ -19,7 +19,7 @@ async function run(): Promise<void> {
 		return;
 	}
 	try {
-		await engine.refresh();
+		await engine.rootService.refresh();
 	} catch (e) {
 		console.error('Error on startup refresh', e);
 	}
