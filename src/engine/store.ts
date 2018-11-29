@@ -38,9 +38,10 @@ export class Store {
 	constructor(config: Config) {
 		this.config = config;
 		if (this.config.database.use === 'elasticsearch') {
-			this.db = new DBElastic(config);
+			this.db = new DBElastic(config.database.options.elasticsearch);
 		} else {
-			this.db = new DBNedb(config);
+			const db_path = config.getDataPath(['nedb']);
+			this.db = new DBNedb(db_path);
 		}
 		this.trackStore = new TrackStore(this.db);
 		this.folderStore = new FolderStore(this.db);

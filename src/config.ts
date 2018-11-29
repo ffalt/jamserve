@@ -1,9 +1,9 @@
 import path from 'path';
 import {AppConfig} from './config/app.config';
 import {ThirdPartyConfig} from './config/thirdparty.config';
+import {ElasticsearchConfig} from './db/elasticsearch/config-elastic';
 
 type LogLevel = 'error' | 'warn' | 'info' | 'debug';
-type ElasticLogLevel = 'warning' | 'error' | 'trace';
 
 export interface BaseConfig {
 	log: { level: LogLevel };
@@ -33,12 +33,7 @@ export interface BaseConfig {
 	database: {
 		use: string;
 		options: {
-			elasticsearch: {
-				host: string,
-				indexPrefix: string
-				indexRefresh?: string
-				log?: Array<ElasticLogLevel>;
-			};
+			elasticsearch: ElasticsearchConfig;
 			nedb?: {};
 		}
 	};

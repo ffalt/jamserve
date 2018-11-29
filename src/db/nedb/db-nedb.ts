@@ -10,8 +10,7 @@ export class DBNedb implements Database {
 		[type: string]: Nedb;
 	} = {};
 
-	constructor(config: Config) {
-		const db_path = config.getDataPath(['nedb']);
+	constructor(db_path: string) {
 		this.getTypes().forEach(type => {
 			this.clients[DBObjectType[type]] = new Nedb({filename: path.resolve(db_path, DBObjectType[type] + '.db')});
 		});

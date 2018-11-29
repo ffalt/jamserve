@@ -7,6 +7,7 @@ import {Config} from '../../config';
 import {wait} from '../../utils/wait';
 import {DBObject} from '../../engine/base/base.model';
 import {Database, DatabaseIndex, DatabaseQuery} from '../db.model';
+import {ElasticsearchConfig} from './config-elastic';
 
 const log = Logger('DB.elastic');
 
@@ -16,11 +17,11 @@ export class DBElastic implements Database {
 	indexPrefix: string;
 	indexRefresh: string | undefined;
 
-	constructor(config: Config) {
-		this.client = new elasticsearch.Client({host: config.database.options.elasticsearch.host, log: config.database.options.elasticsearch.log});
+	constructor(config: ElasticsearchConfig) {
+		this.client = new elasticsearch.Client({host: config.host, log: config.log});
 		this.sequence = new ESSequence(this.client);
-		this.indexPrefix = config.database.options.elasticsearch.indexPrefix;
-		this.indexRefresh = config.database.options.elasticsearch.indexRefresh;
+		this.indexPrefix = config.indexPrefix;
+		this.indexRefresh = config.indexRefresh;
 	}
 
 	async close(): Promise<void> {
