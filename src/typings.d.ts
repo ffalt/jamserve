@@ -13,6 +13,11 @@ declare global {
 	}
 }
 
+declare module '*.json' {
+	const value: any;
+	export default value;
+}
+
 export interface IStreamData {
 	pipe: (stream: express.Response) => void;
 }

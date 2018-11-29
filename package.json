@@ -38,7 +38,7 @@
     "dev:docs:api:jam": "redoc-cli bundle src/model/jam-openapi-0.1.0.json --output ./dist/docs/api/jam/index.html",
     "clean": "rimraf dist",
     "test:mocha": "mocha --recursive test/test.ts test/**/test.ts",
-    "test": "tsc && ava",
+    "test": "mocha --recursive src/**/*.spec.ts",
     "coverage": "nyc mocha --recursive test/test.ts test/**/test.ts"
   },
   "dependencies": {
