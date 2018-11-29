@@ -1,11 +1,11 @@
 import {describe, it} from 'mocha';
 import {expect, should} from 'chai';
 import {Engine} from '../../src/engine/engine';
-import {BaseStore, SearchQuery} from '../../src/engine/base/base.store';
-import {DBObjectType} from '../../src/types';
-import {User} from '../../src/engine/user/user.model';
 import {Root} from '../../src/engine/root/root.model';
+import {User} from '../../src/engine/user/user.model';
+import {BaseStore, SearchQuery} from '../../src/engine/base/base.store';
 import {DBObject} from '../../src/engine/base/base.model';
+import {DBObjectType} from '../../src/types';
 import {Track} from '../../src/engine/track/track.model';
 
 interface EngineUserThis extends Mocha.Context {

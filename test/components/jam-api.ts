@@ -1,24 +1,23 @@
-import {Server} from '../../src/api/server';
 import supertest from 'supertest';
 import {expect, should, use} from 'chai';
 import {it} from 'mocha';
 import {mockupAdmin} from './mockups';
-import {JamParameters} from '../../src/model/jam-rest-params-0.1.0';
 import {ite} from './contexts';
-import {APIVERSION} from '../../src/api/jam/format';
+import {Server} from '../../src/api/server';
 import {validate} from '../../src/utils/validate-json';
-
-const JamResponseSchema = require('../../src/model/jam-rest-data-0.1.0.schema.json');
+import {APIVERSION} from '../../src/api/jam/api';
+import {JamParameters} from '../../src/model/jam-rest-params-0.1.0';
+import * as JamResponseSchema from '../../src/model/jam-rest-data-0.1.0.schema.json';
 
 export function shouldBehaveLikeAJamApi() {
 	let server: Server;
 	let api: supertest.SuperTest<supertest.Test>;
 	ite('should add a user to engine', async function() {
-		const id = await this.engine.users.createUser(mockupAdmin);
+		const id = await this.engine.userService.createUser(mockupAdmin);
 		should().exist(id);
 	});
 	ite('should auth the user by name', async function() {
-		const user = await this.engine.users.auth(mockupAdmin.name, mockupAdmin.pass);
+		const user = await this.engine.userService.auth(mockupAdmin.name, mockupAdmin.pass);
 		should().exist(user);
 		expect(user).to.deep.equal(mockupAdmin);
 	});

@@ -4,8 +4,8 @@ import {describe, it} from 'mocha';
 import path from 'path';
 import rimraf from 'rimraf';
 import {configureLogger} from '../src/utils/logger';
-import {shouldBehaveLikeAEngine} from './components/engine';
 import {BaseConfig, Config, extendConfig} from '../src/config';
+import {shouldBehaveLikeAEngine} from './components/engine';
 
 function testSuiteEngine(config: Config) {
 	describe('engine', () => {
