@@ -35,7 +35,7 @@ export class PodcastController extends BaseController<JamParameters.Podcast, Jam
 	async prepare(podcast: Podcast, includes: JamParameters.IncludesPodcast, user: User): Promise<Jam.Podcast> {
 		const result = formatPodcast(podcast, this.podcastService.isDownloadingPodcast(podcast.id) ? PodcastStatus.downloading : podcast.status);
 		if (includes.podcastState) {
-			const state = await this.stateStore.findOrCreate(podcast.id, user.id, DBObjectType.podcast);
+			const state = await this.stateService.findOrCreate(podcast.id, user.id, DBObjectType.podcast);
 			result.state = formatState(state);
 		}
 		if (includes.podcastEpisodes) {

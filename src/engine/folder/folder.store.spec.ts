@@ -21,17 +21,46 @@ function mockFolder(): Folder {
 		tag: {
 			tracks: 10,
 			level: 1,
-			type: FolderType.album,
+			type: FolderType.artist,
 			genre: 'a genre',
 			album: 'an album name',
 			artist: 'an artist name',
 			artistSort: 'artist sort name, an',
-			albumType: AlbumType.album,
+			albumType: AlbumType.unknown,
 			title: 'a title',
 			image: 'folder.jpg',
 			year: 1984,
-			mbAlbumID: 'mbAlbumID',
-			mbArtistID: 'mbArtistID'
+			mbAlbumID: 'mbAlbumID1',
+			mbArtistID: 'mbArtistID1'
+		}
+	};
+}
+
+function mockFolder2(): Folder {
+	return {
+		id: '',
+		type: DBObjectType.folder,
+		rootID: 'rootID2',
+		path: '/var/media/second/folder name',
+		parentID: 'folderID3',
+		stat: {
+			created: 1443495268,
+			modified: 1443495269
+		},
+		tag: {
+			tracks: 2,
+			level: 2,
+			type: FolderType.album,
+			genre: 'second genre',
+			album: 'second album name',
+			artist: 'second artist name',
+			artistSort: 'artist sort name, second',
+			albumType: AlbumType.album,
+			title: 'second title',
+			image: 'second folder.jpg',
+			year: 2000,
+			mbAlbumID: 'mbAlbumID2',
+			mbArtistID: 'mbArtistID2'
 		}
 	};
 }
@@ -52,7 +81,9 @@ describe('FolderStore', () => {
 
 	beforeEach(function() {
 		this.store = folderStore;
-		this.obj = mockFolder();
+		this.generateMockObjects = () => {
+			return [mockFolder(), mockFolder2()];
+		};
 		this.generateMatchingQueries = (mock: Folder) => {
 			const matches: Array<SearchQueryFolder> = [
 				{id: mock.id},

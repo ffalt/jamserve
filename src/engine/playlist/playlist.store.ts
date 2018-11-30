@@ -5,8 +5,6 @@ import {Playlist} from './playlist.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryPlaylist extends SearchQuery {
-	id?: string;
-	ids?: Array<string>;
 	name?: string;
 	userID?: string;
 	isPublic?: boolean;
@@ -23,8 +21,6 @@ export class PlaylistStore extends BaseStore<Playlist, SearchQueryPlaylist> {
 
 	protected transformQuery(query: SearchQueryPlaylist): DatabaseQuery {
 		const q = new QueryHelper();
-		q.term('id', query.id);
-		q.terms('id', query.ids);
 		q.term('trackIDs', query.trackID);
 		q.terms('trackIDs', query.trackIDs);
 		q.term('userID', query.userID);

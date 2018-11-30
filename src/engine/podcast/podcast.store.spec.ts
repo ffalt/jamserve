@@ -27,6 +27,27 @@ function mockPodcast(): Podcast {
 	};
 }
 
+function mockPodcast2(): Podcast {
+	return {
+		id: '',
+		type: DBObjectType.podcast,
+		url: 'https://example.org/feeds/podcastID2.xml',
+		created: 1443495268,
+		lastCheck: 1443495269,
+		status: 'completed',
+		errorMessage: 'second error message',
+		tag: {
+			title: 'second title',
+			link: 'https://example.org/podcastID2',
+			author: 'second author',
+			description: 'second description',
+			generator: 'second generator',
+			image: 'podcastID2.jpg',
+			categories: ['category3', 'category4']
+		}
+	};
+}
+
 describe('PodcastStore', () => {
 
 	const testDB = new TestNeDB();
@@ -43,7 +64,9 @@ describe('PodcastStore', () => {
 
 	beforeEach(function() {
 		this.store = podcastStore;
-		this.obj = mockPodcast();
+		this.generateMockObjects = () => {
+			return [mockPodcast(), mockPodcast2()];
+		};
 		this.generateMatchingQueries = (mock: Podcast) => {
 			const matches: Array<SearchQueryPodcast> = [
 				{id: mock.id},

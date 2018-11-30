@@ -5,8 +5,6 @@ import {Podcast} from './podcast.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryPodcast extends SearchQuery {
-	id?: string;
-	ids?: Array<string>;
 	url?: string;
 	title?: string;
 	status?: string;
@@ -28,8 +26,6 @@ export class PodcastStore extends BaseStore<Podcast, SearchQueryPodcast> {
 
 	protected transformQuery(query: SearchQueryPodcast): DatabaseQuery {
 		const q = new QueryHelper();
-		q.term('id', query.id);
-		q.terms('id', query.ids);
 		q.term('url', query.url);
 		q.term('tag.title', query.title);
 		q.term('status', query.status);

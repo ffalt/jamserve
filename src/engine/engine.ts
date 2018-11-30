@@ -58,7 +58,8 @@ export class Engine {
 		this.downloadService = new DownloadService(this.store);
 		this.chatService = new ChatService(config);
 		this.genreService = new GenreService(this.store);
-		this.nowPlaylingService = new NowPlaylingService(this.store);
+		this.stateService = new StateService(this.store.stateStore);
+		this.nowPlaylingService = new NowPlaylingService(this.store, this.stateService);
 		this.streamService = new StreamService(this.nowPlaylingService);
 		this.playlistService = new PlaylistService(this.store);
 		this.playqueueService = new PlayqueueService(this.store);
@@ -69,7 +70,6 @@ export class Engine {
 		this.metaDataService = new MetaDataService(this.store, this.audioService);
 		this.listService = new ListService(this.store.stateStore);
 		this.rootService = new RootService(this.store, this.ioService, this.indexService, this.genreService);
-		this.stateService = new StateService(this.store.stateStore);
 	}
 
 	private async checkFirstStart(): Promise<void> {
@@ -86,7 +86,7 @@ export class Engine {
 					pass: adminUser.pass || '',
 					email: adminUser.mail || '',
 					type: DBObjectType.user,
-					ldapAuthenticated: true,
+					// ldapAuthenticated: true,
 					scrobblingEnabled: true,
 					created: Date.now(),
 					roles: {
@@ -104,7 +104,7 @@ export class Engine {
 						// shareRole: true
 					}
 				};
-				await this.store.userStore.add(user);
+				await this.userService.createUser(user);
 			}
 		}
 		if (this.config.firstStart.roots) {

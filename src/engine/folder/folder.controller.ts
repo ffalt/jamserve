@@ -54,7 +54,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			result.folders = await this.prepareList(folders, {folderState: includes.folderState, folderHealth: includes.folderHealth, folderTag: includes.folderTag}, user);
 		}
 		if (includes.folderState) {
-			const state = await this.stateStore.findOrCreate(folder.id, user.id, DBObjectType.folder);
+			const state = await this.stateService.findOrCreate(folder.id, user.id, DBObjectType.folder);
 			result.state = formatState(state);
 		}
 		if (includes.folderInfo) {

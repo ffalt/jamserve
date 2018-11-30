@@ -36,7 +36,7 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 	async prepare(album: Album, includes: JamParameters.IncludesAlbum, user: User): Promise<Jam.Album> {
 		const result = formatAlbum(album, includes);
 		if (includes.albumState) {
-			result.state = await this.stateStore.findOrCreate(album.id, user.id, DBObjectType.album);
+			result.state = await this.stateService.findOrCreate(album.id, user.id, DBObjectType.album);
 		}
 		if (includes.albumInfo) {
 			const info = await this.metaDataService.getAlbumInfo(album);

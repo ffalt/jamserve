@@ -28,10 +28,8 @@ export class ArtistStore extends BaseStore<Artist, SearchQueryArtist> {
 
 	protected transformQuery(query: SearchQueryArtist): DatabaseQuery {
 		const q = new QueryHelper();
-		q.terms('id', query.ids);
 		q.terms('trackIDs', query.trackIDs);
 		q.terms('name', query.names);
-		q.term('id', query.id);
 		q.term('rootIDs', query.rootID);
 		q.term('albumIDs', query.albumID);
 		q.term('trackIDs', query.trackID);

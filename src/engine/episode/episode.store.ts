@@ -5,8 +5,6 @@ import {Episode} from './episode.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryEpisode extends SearchQuery {
-	id?: string;
-	ids?: Array<string>;
 	podcastID?: string;
 	podcastIDs?: Array<string>;
 	title?: string;
@@ -34,8 +32,6 @@ export class EpisodeStore extends BaseStore<Episode, SearchQueryEpisode> {
 		q.term('podcastID', query.podcastID);
 		q.term('status', query.status);
 		q.term('title', query.title);
-		q.term('id', query.id);
-		q.terms('id', query.ids);
 		q.range('date', undefined, query.newerThan);
 		q.match('title', query.query);
 		return q.get(query, this.fieldMap);

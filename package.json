@@ -37,9 +37,9 @@
     "dev:docs:api:subsonic": "redoc-cli bundle src/model/subsonic-openapi-1.16.0.json --output ./dist/docs/api/subsonic/index.html",
     "dev:docs:api:jam": "redoc-cli bundle src/model/jam-openapi-0.1.0.json --output ./dist/docs/api/jam/index.html",
     "clean": "rimraf dist",
-    "test:mocha": "mocha --recursive test/test.ts test/**/test.ts",
+    "test:all": "mocha --recursive src/**/*.spec.ts test/test.ts test/**/test.ts",
     "test": "mocha --recursive src/**/*.spec.ts",
-    "coverage": "nyc mocha --recursive test/test.ts test/**/test.ts"
+    "coverage": "nyc mocha --recursive src/**/*.spec.ts"
   },
   "dependencies": {
     "ajv": "^6.5.5",
@@ -138,7 +138,7 @@
     ]
   },
   "nyc": {
-    "temp-directory": "./reports/.nyc_output",
+    "temp-dir": "./reports/.nyc_output",
     "report-dir": "./reports/coverage",
     "include": [
       "src/**/*.ts",

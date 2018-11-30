@@ -20,6 +20,20 @@ function mockState(): State {
 	};
 }
 
+function mockState2(): State {
+	return {
+		id: '',
+		type: DBObjectType.state,
+		userID: 'userID2',
+		destID: 'folderID2',
+		destType: DBObjectType.folder,
+		played: 0,
+		lastplayed: 0,
+		faved: 0,
+		rated: 0
+	};
+}
+
 describe('StateStore', () => {
 
 	const testDB = new TestNeDB();
@@ -36,7 +50,9 @@ describe('StateStore', () => {
 
 	beforeEach(function() {
 		this.store = stateStore;
-		this.obj = mockState();
+		this.generateMockObjects = () => {
+			return [mockState(), mockState2()];
+		};
 		this.generateMatchingQueries = (mock: State) => {
 			const matches: Array<SearchQueryState> = [
 				{destID: mock.destID},

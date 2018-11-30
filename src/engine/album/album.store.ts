@@ -5,8 +5,6 @@ import {Album} from './album.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryAlbum extends SearchQuery {
-	id?: string;
-	ids?: Array<string>;
 	name?: string;
 	rootID?: string;
 	artist?: string;
@@ -40,8 +38,6 @@ export class AlbumStore extends BaseStore<Album, SearchQueryAlbum> {
 		q.term('name', query.name);
 		q.range('year', query.toYear, query.fromYear);
 		q.range('created', undefined, query.newerThan);
-		q.terms('id', query.ids);
-		q.term('id', query.id);
 		q.match('name', query.query);
 		return q.get(query);
 	}

@@ -16,6 +16,16 @@ function mockRoot(): Root {
 	};
 }
 
+function mockRoot2(): Root {
+	return {
+		id: '',
+		type: DBObjectType.root,
+		name: 'second name',
+		path: '/var/media/second root name',
+		created: 1443495268
+	};
+}
+
 describe('RootStore', () => {
 
 	const testDB = new TestNeDB();
@@ -32,7 +42,9 @@ describe('RootStore', () => {
 
 	beforeEach(function() {
 		this.store = rootStore;
-		this.obj = mockRoot();
+		this.generateMockObjects = () => {
+			return [mockRoot(), mockRoot2()];
+		};
 		this.generateMatchingQueries = (mock: Root) => {
 			const matches: Array<SearchQueryRoot> = [
 				{id: mock.id},

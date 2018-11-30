@@ -28,6 +28,28 @@ function mockUser(): User {
 	};
 }
 
+function mockUser2(): User {
+	return {
+		id: '',
+		type: DBObjectType.user,
+		name: 'second name',
+		pass: 'second pass',
+		email: 'second@mail',
+		created: 1443495268,
+		scrobblingEnabled: true,
+		avatarLastChanged: 1443495269,
+		avatar: 'userID2.jpg',
+		maxBitRate: 20,
+		allowedfolder: [],
+		roles: {
+			adminRole: true,
+			podcastRole: true,
+			streamRole: true,
+			uploadRole: true
+		}
+	};
+}
+
 describe('UserStore', () => {
 
 	const testDB = new TestNeDB();
@@ -44,7 +66,9 @@ describe('UserStore', () => {
 
 	beforeEach(function() {
 		this.store = userStore;
-		this.obj = mockUser();
+		this.generateMockObjects = () => {
+			return [mockUser(), mockUser2()];
+		};
 		this.generateMatchingQueries = (mock: User) => {
 			const matches: Array<SearchQueryUser> = [
 				{id: mock.id},

@@ -44,7 +44,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 	async prepare(artist: Artist, includes: JamParameters.IncludesArtist, user: User): Promise<Jam.Artist> {
 		const result = formatArtist(artist, includes);
 		if (includes.artistState) {
-			const state = await this.stateStore.findOrCreate(artist.id, user.id, DBObjectType.artist);
+			const state = await this.stateService.findOrCreate(artist.id, user.id, DBObjectType.artist);
 			result.state = formatState(state);
 		}
 		if (includes.artistInfo) {

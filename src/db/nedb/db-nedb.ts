@@ -1,7 +1,6 @@
 import {DatabaseQuerySortType, DBObjectType} from '../../types';
 import path from 'path';
 import Nedb from 'nedb';
-import {Config} from '../../config';
 import {DBObject} from '../../engine/base/base.model';
 import {Database, DatabaseIndex, DatabaseQuery} from '../db.model';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
@@ -118,13 +117,8 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 
 	constructor(type: DBObjectType, client: Nedb) {
 		this.type = type;
-		if (type === undefined) {
-			this._index = 'jam_*'; // '_all';
-			this._type = '';
-		} else {
-			this._type = DBObjectType[type];
-			this._index = 'jam_' + DBObjectType[type];
-		}
+		this._type = DBObjectType[type];
+		this._index = 'jam_' + DBObjectType[type];
 		this.client = client;
 	}
 
@@ -166,7 +160,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 			must = must.concat(
 				Object.keys(o).map(key => {
 					const term: any = {};
-					term[key] = new RegExp(regExpEscape(o[key].toString()), 'ig');
+					term[key] = {$regex: new RegExp(regExpEscape(o[key].toString()), 'i')};
 					return term;
 				})
 			);
@@ -343,6 +337,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		if (query.amount) {
 			dbquery = dbquery.limit(query.amount);
 		}
+
 		return new Promise<Array<T>>((resolve, reject) => {
 			dbquery.exec((err, docs) => {
 				if (err) {

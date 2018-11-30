@@ -55,7 +55,7 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 			this.podcastService.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status
 		);
 		if (includes.trackState) {
-			const state = await this.stateStore.findOrCreate(episode.id, user.id, DBObjectType.episode);
+			const state = await this.stateService.findOrCreate(episode.id, user.id, DBObjectType.episode);
 			result.state = formatState(state);
 		}
 		return result;

@@ -37,7 +37,7 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 	async prepare(playlist: Playlist, includes: JamParameters.IncludesPlaylist, user: User): Promise<Jam.Playlist> {
 		const result = formatPlaylist(playlist, includes);
 		if (includes.playlistState) {
-			const state = await this.stateStore.findOrCreate(playlist.id, user.id, DBObjectType.artist);
+			const state = await this.stateService.findOrCreate(playlist.id, user.id, DBObjectType.artist);
 			result.state = formatState(state);
 		}
 		if (includes.playlistTracks) {

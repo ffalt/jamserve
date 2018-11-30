@@ -3,6 +3,8 @@ import {DBObject} from './base.model';
 import {Database, DatabaseIndex, DatabaseQuery, DatabaseQuerySort} from '../../db/db.model';
 
 export interface SearchQuery {
+	id?: string;
+	ids?: Array<string>;
 	query?: string;
 	offset?: number;
 	amount?: number;
@@ -53,10 +55,6 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 
 	async all(): Promise<Array<T>> {
 		return await this.group.query({all: true});
-	}
-
-	async async(): Promise<Array<string>> {
-		return await this.group.queryIds({all: true});
 	}
 
 	async count(): Promise<number> {
@@ -155,6 +153,8 @@ export class QueryHelper {
 	}
 
 	get(query: SearchQuery, fieldMap?: { [name: string]: string }): DatabaseQuery {
+		this.terms('id', query.ids);
+		this.term('id', query.id);
 		if (Object.keys(this.q).length === 0) {
 			this.q.all = true;
 		}

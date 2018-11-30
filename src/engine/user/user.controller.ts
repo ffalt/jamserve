@@ -56,7 +56,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 			email: '',
 			type: DBObjectType.user,
 			created: Date.now(),
-			ldapAuthenticated: false,
+			// ldapAuthenticated: false,
 			scrobblingEnabled: false,
 			roles: {
 				adminRole: req.query.roleAdmin !== undefined ? req.query.roleAdmin : false,
@@ -77,11 +77,12 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		return this.prepare(u, {}, req.user);
 	}
 
+
 	async update(req: JamRequest<JamParameters.UserUpdate>): Promise<Jam.User> {
 		const u = await this.byID(req.query.id);
 		if (req.query.name) {
 			if (req.query.name !== u.name) {
-				const u2 = await this.userStore.get(req.query.name);
+				const u2 = await this.userService.get(req.query.name);
 				if (u2) {
 					return Promise.reject(GenericError('Username already exists'));
 				}

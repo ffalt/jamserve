@@ -5,8 +5,6 @@ import {Track} from './track.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryTrack extends SearchQuery {
-	id?: string;
-	ids?: Array<string>;
 	path?: string;
 	inPath?: string;
 	inPaths?: Array<string>;
@@ -47,8 +45,6 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 
 	protected transformQuery(query: SearchQueryTrack): DatabaseQuery {
 		const q = new QueryHelper();
-		q.terms('id', query.ids);
-		q.term('id', query.id);
 		q.terms('parentID', query.parentIDs);
 		q.term('path', query.path);
 		q.startsWiths('path', query.inPaths);
@@ -68,8 +64,8 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 		return q.get(query, this.fieldMap);
 	}
 
-	async genres(): Promise<Array<string>> {
-		return await this.group.distinct('tag.genre');
-	}
+	// async genres(): Promise<Array<string>> {
+	// 	return await this.group.distinct('tag.genre');
+	// }
 
 }

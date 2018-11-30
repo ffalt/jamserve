@@ -17,6 +17,7 @@ export class TestNeDB {
 
 	async cleanup() {
 		await this.database.drop();
+		await this.database.close();
 		this.dir.removeCallback();
 	}
 }

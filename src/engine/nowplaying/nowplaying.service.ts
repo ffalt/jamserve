@@ -4,12 +4,13 @@ import {NowPlaying} from './nowplaying.model';
 import {User} from '../user/user.model';
 import {Episode} from '../episode/episode.model';
 import {Track} from '../track/track.model';
+import {StateService} from '../state/state.service';
 
 export class NowPlaylingService {
 	private readonly store: Store;
 	playing: Array<NowPlaying> = [];
 
-	constructor(store: Store) {
+	constructor(store: Store, private stateService: StateService) {
 		this.store = store;
 	}
 
@@ -18,7 +19,7 @@ export class NowPlaylingService {
 	}
 
 	async reportPlaying(id: string, type: DBObjectType, user: User): Promise<void> {
-		const state = await this.store.stateStore.findOrCreate(id, user.id, type);
+		const state = await this.stateService.findOrCreate(id, user.id, type);
 		state.played++;
 		state.lastplayed = (new Date()).valueOf();
 		await this.store.stateStore.upsert([state]);

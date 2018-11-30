@@ -19,6 +19,19 @@ function mockBookmark(): Bookmark {
 	};
 }
 
+function mockBookmark2(): Bookmark {
+	return {
+		id: '',
+		type: DBObjectType.bookmark,
+		destID: 'trackID2',
+		userID: 'userID2',
+		comment: 'second comment',
+		created: 1443495268,
+		changed: 1443495269,
+		position: 4321
+	};
+}
+
 describe('BookmarkStore', () => {
 
 	const testDB = new TestNeDB();
@@ -35,7 +48,9 @@ describe('BookmarkStore', () => {
 
 	beforeEach(function() {
 		this.store = bookmarkStore;
-		this.obj = mockBookmark();
+		this.generateMockObjects = () => {
+			return [mockBookmark(), mockBookmark2()];
+		};
 		this.generateMatchingQueries = (mock: Bookmark) => {
 			const matches: Array<SearchQueryBookmark> = [
 				{userID: mock.userID, destID: mock.destID},

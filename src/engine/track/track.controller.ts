@@ -64,7 +64,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 			result.tagID3 = await this.audioService.readID3v2(path.join(track.path, track.name));
 		}
 		if (includes.trackState) {
-			const state = await this.stateStore.findOrCreate(track.id, user.id, DBObjectType.track);
+			const state = await this.stateService.findOrCreate(track.id, user.id, DBObjectType.track);
 			result.state = formatState(state);
 		}
 		return result;

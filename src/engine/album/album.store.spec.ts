@@ -13,7 +13,7 @@ function mockAlbum(): Album {
 		name: 'album name',
 		rootIDs: ['rootID1', 'rootID2'],
 		trackIDs: ['trackID1', 'trackID2'],
-		artistID: 'artistID',
+		artistID: 'artistID1',
 		artist: 'artist name',
 		genre: 'genre name',
 		year: 1984,
@@ -21,6 +21,24 @@ function mockAlbum(): Album {
 		created: 1543495268,
 		mbArtistID: 'mbArtistID',
 		mbAlbumID: 'mbAlbumID'
+	};
+}
+
+function mockAlbum2(): Album {
+	return {
+		id: '',
+		type: DBObjectType.album,
+		name: 'second album name',
+		rootIDs: ['rootID2', 'rootID3'],
+		trackIDs: ['trackID3', 'trackID4'],
+		artistID: 'artistID2',
+		artist: 'second artist name',
+		genre: 'second genre name',
+		year: 2000,
+		duration: 54321,
+		created: 1443495268,
+		mbArtistID: 'mbArtistID2',
+		mbAlbumID: 'mbAlbumID2'
 	};
 }
 
@@ -40,7 +58,9 @@ describe('AlbumStore', () => {
 
 	beforeEach(function() {
 		this.store = albumStore;
-		this.obj = mockAlbum();
+		this.generateMockObjects = () => {
+			return [mockAlbum(), mockAlbum2()];
+		};
 		this.generateMatchingQueries = (mock: Album) => {
 			const matches: Array<SearchQueryAlbum> = [
 				{id: mock.id},

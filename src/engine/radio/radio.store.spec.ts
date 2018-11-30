@@ -17,6 +17,17 @@ function mockRadio(): Radio {
 	};
 }
 
+function mockRadio2(): Radio {
+	return {
+		id: '',
+		type: DBObjectType.radio,
+		name: 'second name',
+		url: 'https://example.org/radioID2/stream',
+		homepage: 'https://example.org/radioID2',
+		disabled: true
+	};
+}
+
 describe('RadioStore', () => {
 
 	const testDB = new TestNeDB();
@@ -33,7 +44,9 @@ describe('RadioStore', () => {
 
 	beforeEach(function() {
 		this.store = radioStore;
-		this.obj = mockRadio();
+		this.generateMockObjects = () => {
+			return [mockRadio(), mockRadio2()];
+		};
 		this.generateMatchingQueries = (mock: Radio) => {
 			const matches: Array<SearchQueryRadio> = [
 				{name: mock.name},

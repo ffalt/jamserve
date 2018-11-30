@@ -45,14 +45,14 @@ export class SubsonicApi {
 	/* helper functions */
 
 	private async prepareList<T extends DBObject, R>(type: DBObjectType, objs: Array<T>, pack: (o: T, state: State) => R, user: User): Promise<Array<R>> {
-		const states = await this.engine.store.stateStore.findOrCreateMulti(objs.map(o => o.id), user.id, type);
+		const states = await this.engine.stateService.findOrCreateMulti(objs.map(o => o.id), user.id, type);
 		return objs.map(o => {
 			return pack(o, states[o.id]);
 		});
 	}
 
 	private async prepareObj<T extends DBObject, R>(type: DBObjectType, obj: T, pack: (o: T, state: State) => R, user: User): Promise<R> {
-		const state = await this.engine.store.stateStore.findOrCreate(obj.id, user.id, type);
+		const state = await this.engine.stateService.findOrCreate(obj.id, user.id, type);
 		return pack(obj, state);
 	}
 
@@ -106,12 +106,12 @@ export class SubsonicApi {
 
 	private async preparePlaylist(playlist: Playlist, user: User): Promise<Subsonic.PlaylistWithSongs> {
 		const tracks = await this.engine.store.trackStore.byIds(playlist.trackIDs);
-		const states = await this.engine.store.stateStore.findOrCreateMulti(playlist.trackIDs || [], user.id, DBObjectType.track);
+		const states = await this.engine.stateService.findOrCreateMulti(playlist.trackIDs || [], user.id, DBObjectType.track);
 		return FORMAT.packPlaylistWithSongs(playlist, tracks, states);
 	}
 
 	private async prepareEpisodes(episodes: Array<Episode>, user: User): Promise<Array<Subsonic.PodcastEpisode>> {
-		const states = await this.engine.store.stateStore.findOrCreateMulti(episodes.map(episode => episode.id), user.id, DBObjectType.episode);
+		const states = await this.engine.stateService.findOrCreateMulti(episodes.map(episode => episode.id), user.id, DBObjectType.episode);
 		return episodes.map(episode => {
 			return FORMAT.packPodcastEpisode(episode, states[episode.id], (this.engine.podcastService.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status));
 		});
@@ -214,7 +214,7 @@ export class SubsonicApi {
 		childs = childs.concat(list);
 		list = await this.prepareTracks(tracks, req.user);
 		childs = childs.concat(list);
-		const state = await this.engine.store.stateStore.findOrCreate(folder.id, req.user.id, DBObjectType.folder);
+		const state = await this.engine.stateService.findOrCreate(folder.id, req.user.id, DBObjectType.folder);
 		const directory = FORMAT.packDirectory(folder, state);
 		directory.child = childs;
 		return {directory};
@@ -245,7 +245,7 @@ export class SubsonicApi {
 			index.groups.forEach(entry => {
 				ids = ids.concat(entry.entries.map(e => e.folder.id));
 			});
-			const states = await this.engine.store.stateStore.findOrCreateMulti(ids, req.user.id, DBObjectType.folder);
+			const states = await this.engine.stateService.findOrCreateMulti(ids, req.user.id, DBObjectType.folder);
 			return {
 				indexes: {
 					lastModified: index.lastModified,
@@ -278,7 +278,7 @@ export class SubsonicApi {
 		index.groups.forEach(entry => {
 			ids = ids.concat(entry.entries.map(e => e.artist.id));
 		});
-		const states = await this.engine.store.stateStore.findOrCreateMulti(ids, req.user.id, DBObjectType.artist);
+		const states = await this.engine.stateService.findOrCreateMulti(ids, req.user.id, DBObjectType.artist);
 		return {
 			artists: {
 				ignoredArticles: (this.engine.store.config.app.index.ignore || []).join(' '),
@@ -456,7 +456,7 @@ export class SubsonicApi {
 		 Returns the avatar image in binary form.
 		 */
 		const name = req.query.username;
-		const user = await this.engine.store.userStore.get(name);
+		const user = await this.engine.userService.get(name);
 		if (!user) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
@@ -580,7 +580,7 @@ export class SubsonicApi {
 		}
 		const infos = await this.engine.metaDataService.getArtistInfos(artist, includeNotPresent, true);
 		const ids = (infos.similar || []).filter(sim => !!sim.artist).map(sim => (<Artist>sim.artist).id);
-		const states = await this.engine.store.stateStore.findOrCreateMulti(ids, req.user.id, DBObjectType.artist);
+		const states = await this.engine.stateService.findOrCreateMulti(ids, req.user.id, DBObjectType.artist);
 		const result: Array<Subsonic.ArtistID3> = [];
 		(infos.similar || []).forEach(sim => {
 			if (sim.artist) {
@@ -802,7 +802,7 @@ export class SubsonicApi {
 		} else if (!req.user.roles.adminRole) {
 			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 		} else {
-			const u = await this.engine.store.userStore.get(req.query.username);
+			const u = await this.engine.userService.get(req.query.username);
 			if (!u) {
 				return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 			} else {
@@ -895,7 +895,7 @@ export class SubsonicApi {
 		const list = await this.engine.nowPlaylingService.getNowPlaying();
 		const result: Array<Subsonic.NowPlayingEntry> = [];
 		for (const entry of list) {
-			const state = await this.engine.store.stateStore.findOrCreate(entry.obj.id, req.user.id, entry.obj.type);
+			const state = await this.engine.stateService.findOrCreate(entry.obj.id, req.user.id, entry.obj.type);
 			result.push(FORMAT.packNowPlaying(entry, state));
 		}
 		return {nowPlaying: {entry: result}};
@@ -948,7 +948,7 @@ export class SubsonicApi {
 			return b === undefined ? def : b;
 		};
 		const username = req.query.username;
-		const u = await this.engine.store.userStore.get(username);
+		const u = await this.engine.userService.get(username);
 		if (!u) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
@@ -967,7 +967,7 @@ export class SubsonicApi {
 		if (req.query.username) {
 			u.name = req.query.username;
 		}
-		u.ldapAuthenticated = getBool(req.query.ldapAuthenticated, u.ldapAuthenticated);
+		// u.ldapAuthenticated = getBool(req.query.ldapAuthenticated, u.ldapAuthenticated);
 		// u.scrobblingEnabled = getBool(req.query.scrobblingEnabled, u.scrobblingEnabled);
 		u.roles.adminRole = getBool(req.query.adminRole, u.roles.adminRole);
 		// u.roles.settingsRole = getBool(req.query.settingsRole, u.roles.settingsRole);
@@ -1032,7 +1032,7 @@ export class SubsonicApi {
 			avatarLastChanged: Date.now(),
 			created: Date.now(),
 			type: DBObjectType.user,
-			ldapAuthenticated: getBool(req.query.ldapAuthenticated, false),
+			// ldapAuthenticated: getBool(req.query.ldapAuthenticated, false),
 			scrobblingEnabled: false, // getBool(req.query.scrobblingEnabled, false),
 			roles: {
 				adminRole: getBool(req.query.adminRole, false),
@@ -1065,7 +1065,7 @@ export class SubsonicApi {
 
 		 Returns an empty <subsonic-response> element on success.
 		 */
-		const u = await this.engine.store.userStore.get(req.query.username);
+		const u = await this.engine.userService.get(req.query.username);
 		if (!u) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
@@ -1098,12 +1098,12 @@ export class SubsonicApi {
 				return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 			}
 		}
-		const u = await this.engine.store.userStore.get(req.query.username);
+		const u = await this.engine.userService.get(req.query.username);
 		if (!u) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
 		u.pass = req.query.password;
-		await this.engine.store.userStore.replace(u);
+		await this.engine.userService.updateUser(u);
 	}
 
 	async getChatMessages(req: ApiOptions<SubsonicParameters.ChatMessages>): Promise<{ chatMessages: Subsonic.ChatMessages }> {
@@ -1157,7 +1157,7 @@ export class SubsonicApi {
 			if (!req.user.roles.adminRole) {
 				return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 			}
-			const u = await this.engine.store.userStore.get(req.query.username);
+			const u = await this.engine.userService.get(req.query.username);
 			if (!u) {
 				return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 			}
@@ -1230,7 +1230,7 @@ export class SubsonicApi {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
 		const tracks = await this.engine.store.trackStore.byIds(playlist.trackIDs);
-		const states = await this.engine.store.stateStore.findOrCreateMulti(playlist.trackIDs, req.user.id, DBObjectType.track);
+		const states = await this.engine.stateService.findOrCreateMulti(playlist.trackIDs, req.user.id, DBObjectType.track);
 		return {playlist: FORMAT.packPlaylistWithSongs(playlist, tracks, states)};
 	}
 
@@ -1697,7 +1697,7 @@ export class SubsonicApi {
 		}
 		const folderlist = await this.engine.store.folderStore.search({query: req.query.query, rootID});
 		if (folderlist.length > 0) {
-			const states = await this.engine.store.stateStore.findOrCreateMulti(folderlist.map(f => f.id), req.user.id, DBObjectType.folder);
+			const states = await this.engine.stateService.findOrCreateMulti(folderlist.map(f => f.id), req.user.id, DBObjectType.folder);
 			const artists: Array<Subsonic.Artist> = [];
 			const albums: Array<Subsonic.Child> = [];
 			folderlist.forEach(folder => {
@@ -1795,8 +1795,8 @@ export class SubsonicApi {
 		albumlist.sort((a, b) => {
 			return (a.year || 0) - (b.year || 0);
 		});
-		const state = await this.engine.store.stateStore.findOrCreate(artist.id, req.user.id, DBObjectType.artist);
-		const states = await this.engine.store.stateStore.findOrCreateMulti(albumlist.map(a => a.id), req.user.id, DBObjectType.album);
+		const state = await this.engine.stateService.findOrCreate(artist.id, req.user.id, DBObjectType.artist);
+		const states = await this.engine.stateService.findOrCreateMulti(albumlist.map(a => a.id), req.user.id, DBObjectType.album);
 		const artistid3 = <Subsonic.ArtistWithAlbumsID3>FORMAT.packArtist(artist, state);
 		artistid3.album = albumlist.map(a => FORMAT.packAlbum(a, states[a.id]));
 		return {artist: artistid3};
@@ -1817,7 +1817,7 @@ export class SubsonicApi {
 		 */
 		const album = await this.byID<Album>(req.query.id, this.engine.store.albumStore);
 		const tracks = await this.engine.store.trackStore.byIds(album.trackIDs);
-		const state = await this.engine.store.stateStore.findOrCreate(album.id, req.user.id, DBObjectType.album);
+		const state = await this.engine.stateService.findOrCreate(album.id, req.user.id, DBObjectType.album);
 		tracks.sort((a, b) => {
 			return (a.tag.track || 0) - (b.tag.track || 0);
 		});

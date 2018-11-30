@@ -4,6 +4,8 @@ import {Store} from '../store';
 import {Config} from '../../config';
 import {ImageService} from '../image/image.service';
 import {User} from './user.model';
+import {hexDecode} from '../../utils/hex';
+import {Md5} from 'md5-typescript';
 
 export class UserService {
 	private cached: {
@@ -19,6 +21,10 @@ export class UserService {
 		this.cached = {};
 	}
 
+	async get(name: string): Promise<User | undefined> {
+		return await this.store.userStore.searchOne({'name': name || ''});
+	}
+
 	async setUserImage(user: User, filename: string): Promise<void> {
 		const destFileName = 'avatar-' + user.id + '.png';
 		const destName = path.join(this.imagesPath, destFileName);
@@ -27,7 +33,7 @@ export class UserService {
 		await this.imageService.clearImageCacheByID(user.id);
 		user.avatar = destFileName;
 		user.avatarLastChanged = Date.now();
-		await this.store.userStore.replace(user);
+		await this.updateUser(user);
 	}
 
 	async deleteUser(user: User): Promise<void> {
@@ -48,9 +54,12 @@ export class UserService {
 		if (!user.name || user.name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const existingUser = await this.store.userStore.get(user.name);
+		const existingUser = await this.get(user.name);
 		if (existingUser) {
 			return Promise.reject(Error('Username already exists'));
+		}
+		if (user.pass.indexOf('enc:') === 0) {
+			user.pass = hexDecode(user.pass);
 		}
 		return this.store.userStore.add(user);
 	}
@@ -68,14 +77,47 @@ export class UserService {
 	}
 
 	async auth(name: string, pass: string): Promise<User> {
-		return this.store.userStore.auth(name, pass);
+		if ((!name) || (!name.length)) {
+			return Promise.reject(Error('Invalid Username'));
+		}
+		if ((!pass) || (!pass.length)) {
+			return Promise.reject(Error('Invalid Password'));
+		}
+		const user = await this.get(name);
+		if (!user) {
+			return Promise.reject(Error('Invalid Username'));
+		}
+		if (pass.indexOf('enc:') === 0) {
+			pass = hexDecode(pass.slice(4)).trim();
+		}
+		if (pass !== user.pass) {
+			return Promise.reject(Error('Invalid Password'));
+		}
+		return user;
 	}
 
 	async authToken(name: string, token: string, salt: string): Promise<User> {
-		return this.store.userStore.authToken(name, token, salt);
+		if ((!name) || (!name.length)) {
+			return Promise.reject(Error('Invalid Username'));
+		}
+		if ((!token) || (!token.length)) {
+			return Promise.reject(Error('Invalid Token'));
+		}
+		const user = await this.get(name);
+		if (!user) {
+			return Promise.reject(Error('Invalid Username'));
+		}
+		const t = Md5.init(user.pass + salt);
+		if (token !== t) {
+			return Promise.reject(Error('Invalid Token'));
+		}
+		return user;
 	}
 
 	async updateUser(user: User): Promise<void> {
+		if (user.pass.indexOf('enc:') === 0) {
+			user.pass = hexDecode(user.pass);
+		}
 		await this.store.userStore.replace(user);
 		delete this.cached[user.id];
 	}

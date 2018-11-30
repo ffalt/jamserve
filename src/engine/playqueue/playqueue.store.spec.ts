@@ -15,7 +15,20 @@ function mockPlayQueue(): PlayQueue {
 		trackIDs: ['trackID1', 'trackID2'],
 		position: 1234,
 		changed: 1543495268,
-		changedBy: 'jamberry'
+		changedBy: 'berry'
+	};
+}
+
+function mockPlayQueue2(): PlayQueue {
+	return {
+		id: '',
+		type: DBObjectType.playqueue,
+		userID: 'userID2',
+		currentID: 'trackID3',
+		trackIDs: ['trackID3', 'trackID4'],
+		position: 54321,
+		changed: 1443495268,
+		changedBy: 'boree'
 	};
 }
 
@@ -35,7 +48,9 @@ describe('PlayQueueStore', () => {
 
 	beforeEach(function() {
 		this.store = playqueueStore;
-		this.obj = mockPlayQueue();
+		this.generateMockObjects = () => {
+			return [mockPlayQueue(), mockPlayQueue2()];
+		};
 		this.generateMatchingQueries = (mock: PlayQueue) => {
 			const matches: Array<SearchQueryPlayQueue> = [
 				{userID: mock.userID}

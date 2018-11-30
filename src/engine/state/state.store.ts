@@ -33,40 +33,4 @@ export class StateStore extends BaseStore<State, SearchQueryState> {
 		return q.get(query);
 	}
 
-	private emptyState(destID: string, destType: DBObjectType, userID: string): State {
-		return {
-			id: '',
-			type: DBObjectType.state,
-			destID,
-			destType,
-			played: 0,
-			lastplayed: 0,
-			faved: undefined,
-			rated: 0,
-			userID
-		};
-	}
-
-	async findOrCreate(destID: string, userID: string, type: DBObjectType): Promise<State> {
-		const state = await this.searchOne({userID, destID, type});
-		return state || this.emptyState(destID, type, userID);
-	}
-
-	async findOrCreateMulti(destIDs: Array<string>, userID: string, type: DBObjectType): Promise<States> {
-		if (!destIDs || destIDs.length === 0) {
-			return {};
-		}
-		const list = await this.search({userID, type, destIDs});
-		const result: { [id: string]: State } = {};
-		list.forEach((state) => {
-			result[state.destID] = state;
-		});
-		destIDs.forEach((id) => {
-			if (!result[id]) {
-				result[id] = this.emptyState(id, type, userID);
-			}
-		});
-		return result;
-	}
-
 }
