@@ -1528,7 +1528,7 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <bookmarks> element on success.
 		 */
-		const bookmarklist = await this.engine.store.bookmarkStore.search({userID: req.user.id});
+		const bookmarklist = await this.engine.bookmarkService.getAll(req.user.id);
 		const bookmarks: Subsonic.Bookmarks = {};
 		bookmarks.bookmark = await this.prepareBookmarks(bookmarklist, req.user);
 		return {bookmarks};

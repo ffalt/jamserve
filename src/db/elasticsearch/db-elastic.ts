@@ -3,7 +3,6 @@ import {DBObjectType} from '../../types';
 import {ESSequence} from './es-sequence';
 import Logger from '../../utils/logger';
 import {mapping} from './mapping';
-import {Config} from '../../config';
 import {wait} from '../../utils/wait';
 import {DBObject} from '../../engine/base/base.model';
 import {Database, DatabaseIndex, DatabaseQuery} from '../db.model';
@@ -22,6 +21,12 @@ export class DBElastic implements Database {
 		this.sequence = new ESSequence(this.client);
 		this.indexPrefix = config.indexPrefix;
 		this.indexRefresh = config.indexRefresh;
+	}
+
+	async drop(): Promise<void> {
+		for (const type of this.getTypes()) {
+			await this.resetIndex(type);
+		}
 	}
 
 	async close(): Promise<void> {
@@ -114,6 +119,7 @@ export class DBElastic implements Database {
 export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 	protected _index: string;
 	protected _type: string;
+	protected _map: any;
 	public type: DBObjectType;
 	public db: DBElastic;
 
@@ -126,6 +132,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			this._type = DBObjectType[type];
 			this._index = db.indexName(DBObjectType[type]);
 		}
+		this._map = mapping[this._type];
 		this.db = db;
 	}
 
@@ -141,6 +148,15 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		return result;
 	}
 
+	private getPropertyMapping(key: string): any {
+		const parts = key.split('.');
+		let o = this._map;
+		for (const p of parts) {
+			o = o.properties[p];
+		}
+		return o;
+	}
+
 	private translateElasticQuery(query: DatabaseQuery) {
 		if (query.all) {
 			return {match_all: {}};
@@ -151,8 +167,34 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			must = must.concat(
 				Object.keys(o).map(key => {
 					const term: any = {};
-					term[key] = o[key];
+					const prop = this.getPropertyMapping(key);
+					if (!prop) {
+						console.log('Unknown prop', this._type, key);
+					}
+					if (prop && prop.type === 'text') {
+						term[key + '.keyword'] = o[key];
+					} else {
+						term[key] = o[key];
+					}
 					return {'term': term};
+				})
+			);
+		}
+		if (query.terms) {
+			const o = query.terms;
+			must = must.concat(
+				Object.keys(o).map(key => {
+					const term: any = {};
+					const prop = this.getPropertyMapping(key);
+					if (!prop) {
+						console.log('Unknown prop', this._type, key);
+					}
+					if (prop && prop.type === 'text') {
+						term[key + '.keyword'] = o[key];
+					} else {
+						term[key] = o[key];
+					}
+					return {'terms': term};
 				})
 			);
 		}
@@ -162,17 +204,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 				Object.keys(o).map(key => {
 					const term: any = {};
 					term[key] = o[key];
-					return {'match': term};
-				})
-			);
-		}
-		if (query.terms) {
-			const o = query.terms;
-			must = must.concat(
-				Object.keys(o).map(key => {
-					const term: any = {};
-					term[key] = o[key];
-					return {'terms': term};
+					return {'match_phrase_prefix': term};
 				})
 			);
 		}
@@ -181,20 +213,20 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			must = must.concat(
 				Object.keys(o).map(key => {
 					const term: any = {};
-					term[key] = {'query': o[key], 'max_expansions': 50000};
-					return {'match_phrase_prefix': term};
+					term[key] = o[key];
+					return {'prefix': term};
 				})
 			);
 		}
 		if (query.startsWiths) {
 			const o = query.startsWiths;
-			must = must.concat(
-				Object.keys(o).map(key => {
+			Object.keys(o).forEach(key => {
+				o[key].forEach(s => {
 					const term: any = {};
-					term[key] = {'query': o[key], 'max_expansions': 50000};
-					return {'match_phrase_prefix': term};
-				})
-			);
+					term[key] = s;
+					must.push({'prefix': term});
+				});
+			});
 		}
 		if (query.range) {
 			const o = query.range;
@@ -376,6 +408,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		const response = await this.db.client.search({
 			index: this._index,
 			type: this._type,
+			size: 1,
 			body: {
 				query: this.translateElasticQuery(query)
 			}
@@ -383,6 +416,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		if (response.hits.total > 0) {
 			return this.hit2Obj(response.hits.hits[0]);
 		}
+		console.log(query, this.translateElasticQuery(query));
 		return;
 	}
 

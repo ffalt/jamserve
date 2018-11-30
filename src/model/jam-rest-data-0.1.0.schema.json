@@ -3108,9 +3108,6 @@
 				"date": {
 					"type": "number"
 				},
-				"title": {
-					"type": "string"
-				},
 				"summary": {
 					"type": "string"
 				},
@@ -3168,8 +3165,7 @@
 				"name",
 				"parentID",
 				"podcastID",
-				"status",
-				"title"
+				"status"
 			]
 		},
 		"Jam.Playlist": {

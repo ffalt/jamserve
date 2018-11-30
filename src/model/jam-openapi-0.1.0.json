@@ -3596,7 +3596,7 @@
 					},
 					{
 						"in": "query",
-						"name": "title",
+						"name": "name",
 						"schema": {
 							"type": "string"
 						},
@@ -4893,41 +4893,12 @@
 					},
 					{
 						"in": "query",
-						"name": "genre",
-						"schema": {
-							"type": "string"
-						},
-						"description": "filter by genre",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by creation date (unix time)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "fromYear",
-						"schema": {
-							"minimum": 0,
-							"type": "integer"
-						},
-						"description": "filter by year",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "toYear",
-						"schema": {
-							"minimum": 0,
-							"type": "integer"
-						},
-						"description": "filter by year",
 						"required": false
 					},
 					{
@@ -5269,41 +5240,12 @@
 					},
 					{
 						"in": "query",
-						"name": "genre",
-						"schema": {
-							"type": "string"
-						},
-						"description": "filter by genre",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by creation date (unix time)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "fromYear",
-						"schema": {
-							"minimum": 0,
-							"type": "integer"
-						},
-						"description": "filter by year",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "toYear",
-						"schema": {
-							"minimum": 0,
-							"type": "integer"
-						},
-						"description": "filter by year",
 						"required": false
 					},
 					{
@@ -15051,9 +14993,6 @@
 					"date": {
 						"type": "number"
 					},
-					"title": {
-						"type": "string"
-					},
 					"summary": {
 						"type": "string"
 					},
@@ -15111,8 +15050,7 @@
 					"name",
 					"parentID",
 					"podcastID",
-					"status",
-					"title"
+					"status"
 				]
 			},
 			"Jam.PodcastEpisodeStatus": {

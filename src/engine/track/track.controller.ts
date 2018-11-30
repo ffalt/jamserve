@@ -44,18 +44,16 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 	constructor(
 		private trackStore: TrackStore,
 		private audioService: AudioService,
-		private bookmarkStore: BookmarkStore,
 		private bookmarkService: BookmarkService,
 		private metaService: MetaDataService,
 		private streamService: StreamService,
 		private rootService: RootService,
-		protected stateStore: StateStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService,
 		protected listService: ListService
 	) {
-		super(trackStore, DBObjectType.track, stateStore, stateService, imageService, downloadService, listService);
+		super(trackStore, DBObjectType.track, stateService, imageService, downloadService, listService);
 	}
 
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
@@ -148,7 +146,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 	}
 
 	async bookmarkList(req: JamRequest<JamParameters.BookmarkList>): Promise<Array<Jam.TrackBookmark>> {
-		const bookmarks = await this.bookmarkStore.search({userID: req.user.id});
+		const bookmarks = await this.bookmarkService.getAll(req.user.id);
 		const result = bookmarks.map(bookmark => formatBookmark(bookmark));
 		if (req.query.bookmarkTrack) {
 			const entries = await this.trackStore.byIds(bookmarks.map(b => b.destID));

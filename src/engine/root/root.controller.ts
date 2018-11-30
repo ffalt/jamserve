@@ -18,12 +18,11 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 	constructor(
 		private rootStore: RootStore,
 		private rootService: RootService,
-		protected stateStore: StateStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(rootStore, DBObjectType.root, stateStore, stateService, imageService, downloadService);
+		super(rootStore, DBObjectType.root, stateService, imageService, downloadService);
 	}
 
 	async prepare(root: Root, includes: {}, user: User): Promise<Jam.Root> {

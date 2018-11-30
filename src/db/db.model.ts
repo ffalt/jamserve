@@ -4,6 +4,8 @@ import {DatabaseQuerySortType, DBObjectType} from '../types';
 export interface Database {
 	open(): Promise<void>;
 
+	drop(): Promise<void>;
+
 	close(): Promise<void>;
 
 	check(): Promise<void>;

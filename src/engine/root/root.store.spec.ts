@@ -1,10 +1,10 @@
 import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {RootStore, SearchQueryRoot} from './root.store';
-import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {Root} from './root.model';
 import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
+import {TestDBs} from '../../db/db.test';
 
 function mockRoot(): Root {
 	return {
@@ -28,38 +28,45 @@ function mockRoot2(): Root {
 
 describe('RootStore', () => {
 
-	const testDB = new TestNeDB();
-	let rootStore: RootStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		rootStore = new RootStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let rootStore: RootStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					rootStore = new RootStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = rootStore;
-		this.generateMockObjects = () => {
-			return [mockRoot(), mockRoot2()];
-		};
-		this.generateMatchingQueries = (mock: Root) => {
-			const matches: Array<SearchQueryRoot> = [
-				{id: mock.id},
-				{ids: [mock.id]},
-				{name: mock.name},
-				{path: mock.path},
-				{query: mock.name[0]}
-			];
-			return matches;
-		};
-	});
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
+			beforeEach(function() {
+				this.store = rootStore;
+				this.generateMockObjects = () => {
+					return [mockRoot(), mockRoot2()];
+				};
+				this.generateMatchingQueries = (mock: Root) => {
+					const matches: Array<SearchQueryRoot> = [
+						{id: mock.id},
+						{ids: [mock.id]},
+						{name: mock.name},
+						{path: mock.path},
+						{query: mock.name[0]}
+					];
+					return matches;
+				};
+			});
 
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
-

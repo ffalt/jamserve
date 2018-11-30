@@ -54,7 +54,7 @@ export class AutocompleteController {
 		if (query.episode !== undefined && query.episode > 0) {
 			const list = await this.store.episodeStore.search({query: query.query, amount: query.episode});
 			result.episodes = list.map(o => {
-				return {id: o.id, name: o.title};
+				return {id: o.id, name: o.name};
 			});
 		}
 		return result;

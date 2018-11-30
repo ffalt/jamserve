@@ -155,7 +155,7 @@ export class Feed {
 				summary: post.summary,
 				enclosures: <any>post.enclosures, // TODO: validate podcast enclosures (wrong interface description?)
 				date: post.date ? post.date.valueOf() : 0,
-				title: post.title,
+				name: post.title,
 				chapters: chapters
 			};
 		});

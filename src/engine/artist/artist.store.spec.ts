@@ -5,6 +5,9 @@ import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {Artist} from './Artist.model';
 import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
+import {TestDBs} from '../../db/db.test';
+import {AlbumStore, SearchQueryAlbum} from '../album/album.store';
+import {Album} from '../album/album.model';
 
 function mockArtist(): Artist {
 	return {
@@ -34,44 +37,52 @@ function mockArtist2(): Artist {
 
 describe('ArtistStore', () => {
 
-	const testDB = new TestNeDB();
-	let artistStore: ArtistStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		artistStore = new ArtistStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let artistStore: ArtistStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					artistStore = new ArtistStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = artistStore;
-		this.generateMockObjects = () => {
-			return [mockArtist(), mockArtist2()];
-		};
-		this.generateMatchingQueries = (mock: Artist) => {
-			const matches: Array<SearchQueryArtist> = [
-				{id: mock.id},
-				{ids: [mock.id]},
-				{name: mock.name},
-				{names: [mock.name]},
-				{trackIDs: mock.trackIDs},
-				{mbArtistID: mock.mbArtistID},
-				{newerThan: mock.created - 1},
-				{query: mock.name[0]}
-			];
-			mock.albumIDs.forEach(albumID => matches.push({albumID}));
-			mock.rootIDs.forEach(rootID => matches.push({rootID}));
-			mock.trackIDs.forEach(trackID => matches.push({trackID}));
-			return matches;
-		};
-	});
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
+			beforeEach(function() {
+				this.store = artistStore;
+				this.generateMockObjects = () => {
+					return [mockArtist(), mockArtist2()];
+				};
+				this.generateMatchingQueries = (mock: Artist) => {
+					const matches: Array<SearchQueryArtist> = [
+						{id: mock.id},
+						{ids: [mock.id]},
+						{name: mock.name},
+						{names: [mock.name]},
+						{trackIDs: mock.trackIDs},
+						{mbArtistID: mock.mbArtistID},
+						{newerThan: mock.created - 1},
+						{query: mock.name[0]}
+					];
+					mock.albumIDs.forEach(albumID => matches.push({albumID}));
+					mock.rootIDs.forEach(rootID => matches.push({rootID}));
+					mock.trackIDs.forEach(trackID => matches.push({trackID}));
+					return matches;
+				};
+			});
 
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
 

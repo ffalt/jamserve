@@ -24,12 +24,11 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 		private playlistService: PlaylistService,
 		private trackController: TrackController,
 		private trackStore: TrackStore,
-		protected stateStore: StateStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(playlistStore, DBObjectType.playlist, stateStore, stateService, imageService, downloadService);
+		super(playlistStore, DBObjectType.playlist, stateService, imageService, downloadService);
 	}
 
 	// TODO: filter none public playlist in base api functions?

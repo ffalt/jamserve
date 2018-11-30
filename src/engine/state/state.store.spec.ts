@@ -1,10 +1,10 @@
 import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {StateStore, SearchQueryState} from './state.store';
-import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {State} from './state.model';
 import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
+import {TestDBs} from '../../db/db.test';
 
 function mockState(): State {
 	return {
@@ -36,41 +36,49 @@ function mockState2(): State {
 
 describe('StateStore', () => {
 
-	const testDB = new TestNeDB();
-	let stateStore: StateStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		stateStore = new StateStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let stateStore: StateStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					stateStore = new StateStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = stateStore;
-		this.generateMockObjects = () => {
-			return [mockState(), mockState2()];
-		};
-		this.generateMatchingQueries = (mock: State) => {
-			const matches: Array<SearchQueryState> = [
-				{destID: mock.destID},
-				{destIDs: [mock.destID]},
-				{userID: mock.userID},
-				{type: mock.destType},
-				{isPlayed: mock.played > 0},
-				{isFaved: mock.faved ? mock.faved > 0 : false},
-				{minRating: mock.rated ? mock.rated - 1 : 0},
-				{maxRating: mock.rated ? mock.rated + 1 : 5}
-			];
-			return matches;
-		};
-	});
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
 
+			beforeEach(function() {
+				this.store = stateStore;
+				this.generateMockObjects = () => {
+					return [mockState(), mockState2()];
+				};
+				this.generateMatchingQueries = (mock: State) => {
+					const matches: Array<SearchQueryState> = [
+						{destID: mock.destID},
+						{destIDs: [mock.destID]},
+						{userID: mock.userID},
+						{type: mock.destType},
+						{isPlayed: mock.played > 0},
+						{isFaved: mock.faved ? mock.faved > 0 : false},
+						{minRating: mock.rated ? mock.rated - 1 : 0},
+						{maxRating: mock.rated ? mock.rated + 1 : 5}
+					];
+					return matches;
+				};
+			});
+
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
-

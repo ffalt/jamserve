@@ -443,7 +443,7 @@ export class FORMAT {
 			channelId: episode.podcastID,
 			description: episode.summary,
 			publishDate: episode.date !== undefined ? this.formatSubSonicDate(episode.date) : undefined,
-			title: episode.title,
+			title: episode.name,
 			status: episode.status,
 			id: episode.id,
 			parent: episode.podcastID,

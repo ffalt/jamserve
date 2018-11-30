@@ -1,10 +1,10 @@
 import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {PlayQueueStore, SearchQueryPlayQueue} from './playqueue.store';
-import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {PlayQueue} from './playqueue.model';
 import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
+import {TestDBs} from '../../db/db.test';
 
 function mockPlayQueue(): PlayQueue {
 	return {
@@ -34,34 +34,41 @@ function mockPlayQueue2(): PlayQueue {
 
 describe('PlayQueueStore', () => {
 
-	const testDB = new TestNeDB();
-	let playqueueStore: PlayQueueStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		playqueueStore = new PlayQueueStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let playqueueStore: PlayQueueStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					playqueueStore = new PlayQueueStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = playqueueStore;
-		this.generateMockObjects = () => {
-			return [mockPlayQueue(), mockPlayQueue2()];
-		};
-		this.generateMatchingQueries = (mock: PlayQueue) => {
-			const matches: Array<SearchQueryPlayQueue> = [
-				{userID: mock.userID}
-			];
-			return matches;
-		};
-	});
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
+			beforeEach(function() {
+				this.store = playqueueStore;
+				this.generateMockObjects = () => {
+					return [mockPlayQueue(), mockPlayQueue2()];
+				};
+				this.generateMatchingQueries = (mock: PlayQueue) => {
+					const matches: Array<SearchQueryPlayQueue> = [
+						{userID: mock.userID}
+					];
+					return matches;
+				};
+			});
 
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
-

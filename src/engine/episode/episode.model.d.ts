@@ -10,7 +10,7 @@ export interface Episode extends DBObject {
 	link?: string;
 	summary: string;
 	date: number;
-	title: string;
+	name: string;
 	guid?: string;
 	author?: string;
 	chapters?: Array<PodcastEpisodeChapter>;

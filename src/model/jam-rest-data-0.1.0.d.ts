@@ -92,7 +92,6 @@ export declare namespace Jam {
 		podcastID: string;
 		status: string;
 		date: number;
-		title: string;
 		summary?: string;
 		guid?: string;
 		author?: string;

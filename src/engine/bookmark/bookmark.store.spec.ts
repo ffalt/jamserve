@@ -5,6 +5,9 @@ import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {Bookmark} from './Bookmark.model';
 import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
+import {TestDBs} from '../../db/db.test';
+import {AlbumStore, SearchQueryAlbum} from '../album/album.store';
+import {Album} from '../album/album.model';
 
 function mockBookmark(): Bookmark {
 	return {
@@ -34,37 +37,44 @@ function mockBookmark2(): Bookmark {
 
 describe('BookmarkStore', () => {
 
-	const testDB = new TestNeDB();
-	let bookmarkStore: BookmarkStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		bookmarkStore = new BookmarkStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let bookmarkStore: BookmarkStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					bookmarkStore = new BookmarkStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = bookmarkStore;
-		this.generateMockObjects = () => {
-			return [mockBookmark(), mockBookmark2()];
-		};
-		this.generateMatchingQueries = (mock: Bookmark) => {
-			const matches: Array<SearchQueryBookmark> = [
-				{userID: mock.userID, destID: mock.destID},
-				{userID: mock.userID},
-				{destID: mock.destID},
-				{destIDs: [mock.destID]}
-			];
-			return matches;
-		};
-	});
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
+			beforeEach(function() {
+				this.store = bookmarkStore;
+				this.generateMockObjects = () => {
+					return [mockBookmark(), mockBookmark2()];
+				};
+				this.generateMatchingQueries = (mock: Bookmark) => {
+					const matches: Array<SearchQueryBookmark> = [
+						{userID: mock.userID, destID: mock.destID},
+						{userID: mock.userID},
+						{destID: mock.destID},
+						{destIDs: [mock.destID]}
+					];
+					return matches;
+				};
+			});
 
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
-

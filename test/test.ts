@@ -61,7 +61,7 @@ function testSuiteNeDB() {
 		const testPath = './test/data/nedb/';
 		const config = mockupConfig(testPath);
 		config.database.use = 'nedb';
-		configureLogger(config);
+		configureLogger(config.log.level);
 		testSuiteEngine(config);
 		before(function() {
 			// runs before all tests in this block
@@ -81,7 +81,7 @@ function testSuiteElastic() {
 		const testPath = './test/data/elastic/';
 		const config = mockupConfig(testPath);
 		config.database.use = 'elasticsearch';
-		configureLogger(config);
+		configureLogger(config.log.level);
 		testSuiteEngine(config);
 		after(function() {
 			// runs after all tests in this block

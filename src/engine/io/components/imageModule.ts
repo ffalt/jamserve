@@ -9,6 +9,8 @@ import mimeTypes from 'mime-types';
 import {DebouncePromises} from '../../../utils/debounce-promises';
 import fse from 'fs-extra';
 
+type JimpFont = any;
+
 const log = Logger('Images');
 
 /**
@@ -18,7 +20,7 @@ const log = Logger('Images');
 export class ImageModule {
 	private imageCachePath: string;
 	private format = 'png';
-	private font: Jimp.Font | undefined;
+	private font: JimpFont | undefined;
 	private imageCacheDebounce = new DebouncePromises<IApiBinaryResult>();
 
 	constructor(config: Config) {

@@ -1,11 +1,10 @@
 import winston from 'winston';
-import {Config} from '../config';
 
 require('winston-timer')(winston);
 
-export function configureLogger(config: Config) {
+export function configureLogger(level: string) {
 	winston.configure({
-		level: config.log.level,
+		level,
 		transports: [
 			new winston.transports.Console({
 				format:
@@ -28,7 +27,8 @@ class Logger {
 	}
 
 	private applyLog(level: string, format: string, ...params: any[]) {
-		winston.log.apply(this, [level, (new Date()).toISOString() + ' ' + this.name + ': ' + [format].concat(params).join(' ')]);
+		const line: string = (new Date()).toISOString() + ' ' + this.name + ': ' + [format].concat(params).join(' ');
+		winston.log(level, line);
 	}
 
 	debug(format: string, ...params: any[]) {

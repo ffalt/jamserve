@@ -107,7 +107,7 @@ function shouldBehaveLikeABookmarkUser() {
 		await this.engine.bookmarkService.create(track, this.user, 1, 'a comment');
 	});
 	iti('should find, compare & remove the track bookmark', async function() {
-		const bookmarks = await this.engine.store.bookmarkStore.search({userID: this.user.id});
+		const bookmarks = await this.engine.bookmarkService.getAll(this.user.id);
 		should().exist(bookmarks);
 		expect(bookmarks.length).to.equal(1);
 		const bookmark = bookmarks[0];
@@ -119,7 +119,7 @@ function shouldBehaveLikeABookmarkUser() {
 		}
 	});
 	iti('should not find any track bookmark', async function() {
-		const bookmarks = await this.engine.store.bookmarkStore.search({userID: this.user.id});
+		const bookmarks = await this.engine.bookmarkService.getAll(this.user.id);
 		expect(bookmarks.length).to.equal(0);
 	});
 	iti('should add a track bookmark again', async function() {

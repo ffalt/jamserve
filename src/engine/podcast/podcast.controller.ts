@@ -4,7 +4,7 @@ import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {DBObjectType} from '../../types';
 import {PodcastStatus} from '../../utils/feed';
 import {JamRequest} from '../../api/jam/api';
-import {EpisodeController, defaultEpisodesSort} from '../episode/epsiode.controller';
+import {EpisodeController, defaultEpisodesSort} from '../episode/episode.controller';
 import {formatPodcast} from './podcast.format';
 import {StateStore} from '../state/state.store';
 import {EpisodeStore} from '../episode/episode.store';
@@ -23,13 +23,12 @@ export class PodcastController extends BaseController<JamParameters.Podcast, Jam
 		private podcastStore: PodcastStore,
 		private podcastService: PodcastService,
 		private episodeController: EpisodeController,
-		protected stateStore: StateStore,
 		private episodeStore: EpisodeStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(podcastStore, DBObjectType.podcast, stateStore, stateService, imageService, downloadService);
+		super(podcastStore, DBObjectType.podcast, stateService, imageService, downloadService);
 	}
 
 	async prepare(podcast: Podcast, includes: JamParameters.IncludesPodcast, user: User): Promise<Jam.Podcast> {

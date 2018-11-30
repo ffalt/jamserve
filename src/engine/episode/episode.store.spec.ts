@@ -1,10 +1,10 @@
 import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {EpisodeStore, SearchQueryEpisode} from './episode.store';
-import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {Episode} from './episode.model';
 import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
+import {TestDBs} from '../../db/db.test';
 
 function mockEpisode(): Episode {
 	return {
@@ -17,7 +17,7 @@ function mockEpisode(): Episode {
 		link: 'https://example.org/podcastID1/episodeID',
 		summary: 'a episode summary',
 		date: 1543495268,
-		title: 'a title',
+		name: 'a name',
 		guid: 'a GUID',
 		author: 'an author name',
 		chapters: [{
@@ -81,7 +81,7 @@ function mockEpisode2(): Episode {
 		link: 'https://example.org/podcastID1/episodeID',
 		summary: 'second episode summary',
 		date: 1543495268,
-		title: 'second title',
+		name: 'second name',
 		guid: 'second GUID',
 		author: 'second author name',
 		chapters: [{
@@ -136,41 +136,48 @@ function mockEpisode2(): Episode {
 
 describe('EpisodeStore', () => {
 
-	const testDB = new TestNeDB();
-	let episodeStore: EpisodeStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		episodeStore = new EpisodeStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let episodeStore: EpisodeStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					episodeStore = new EpisodeStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = episodeStore;
-		this.generateMockObjects = () => {
-			return [mockEpisode(), mockEpisode2()];
-		};
-		this.generateMatchingQueries = (mock: Episode) => {
-			const matches: Array<SearchQueryEpisode> = [
-				{id: mock.id},
-				{ids: [mock.id]},
-				{podcastID: mock.podcastID},
-				{podcastIDs: [mock.podcastID]},
-				{title: mock.title},
-				{status: mock.status},
-				{newerThan: mock.date - 1},
-				{query: mock.title[0]}
-			];
-			return matches;
-		};
-	});
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
+			beforeEach(function() {
+				this.store = episodeStore;
+				this.generateMockObjects = () => {
+					return [mockEpisode(), mockEpisode2()];
+				};
+				this.generateMatchingQueries = (mock: Episode) => {
+					const matches: Array<SearchQueryEpisode> = [
+						{id: mock.id},
+						{ids: [mock.id]},
+						{podcastID: mock.podcastID},
+						{podcastIDs: [mock.podcastID]},
+						{name: mock.name},
+						{status: mock.status},
+						{newerThan: mock.date - 1},
+						{query: mock.name[0]}
+					];
+					return matches;
+				};
+			});
 
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
-

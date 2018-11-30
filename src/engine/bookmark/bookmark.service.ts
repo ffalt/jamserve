@@ -10,6 +10,14 @@ export class BookmarkService {
 
 	}
 
+	async getAll(userID: string): Promise<Array<Bookmark>> {
+		return await this.bookmarkStore.search({userID});
+	}
+
+	async get(trackID: string, userID: string): Promise<Array<Bookmark>> {
+		return await this.bookmarkStore.search({userID, destID: trackID});
+	}
+
 	async create(track: Track, user: User, position: number, comment: string | undefined): Promise<Bookmark> {
 		let bookmark = await this.bookmarkStore.searchOne({destID: track.id, userID: user.id});
 		if (!bookmark) {

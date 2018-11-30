@@ -32,13 +32,12 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		private metadataService: MetaDataService,
 		private indexService: IndexService,
 		private rootService: RootService,
-		protected stateStore: StateStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService,
 		protected listService: ListService
 	) {
-		super(folderStore, DBObjectType.folder, stateStore, stateService, imageService, downloadService, listService);
+		super(folderStore, DBObjectType.folder, stateService, imageService, downloadService, listService);
 	}
 
 	async prepare(folder: Folder, includes: JamParameters.IncludesFolderChildren, user: User): Promise<Jam.Folder> {

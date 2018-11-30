@@ -1,10 +1,10 @@
 import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {PodcastStore, SearchQueryPodcast} from './podcast.store';
-import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {Podcast} from './podcast.model';
 import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
+import {TestDBs} from '../../db/db.test';
 
 function mockPodcast(): Podcast {
 	return {
@@ -50,41 +50,48 @@ function mockPodcast2(): Podcast {
 
 describe('PodcastStore', () => {
 
-	const testDB = new TestNeDB();
-	let podcastStore: PodcastStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		podcastStore = new PodcastStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let podcastStore: PodcastStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					podcastStore = new PodcastStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = podcastStore;
-		this.generateMockObjects = () => {
-			return [mockPodcast(), mockPodcast2()];
-		};
-		this.generateMatchingQueries = (mock: Podcast) => {
-			const matches: Array<SearchQueryPodcast> = [
-				{id: mock.id},
-				{ids: [mock.id]},
-				{url: mock.url},
-				{title: mock.tag ? mock.tag.title : ''},
-				{status: mock.status},
-				{newerThan: mock.created - 1},
-				{query: (mock.tag ? mock.tag.title : '')[0]}
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-			];
-			return matches;
-		};
-	});
+			beforeEach(function() {
+				this.store = podcastStore;
+				this.generateMockObjects = () => {
+					return [mockPodcast(), mockPodcast2()];
+				};
+				this.generateMatchingQueries = (mock: Podcast) => {
+					const matches: Array<SearchQueryPodcast> = [
+						{id: mock.id},
+						{ids: [mock.id]},
+						{url: mock.url},
+						{title: mock.tag ? mock.tag.title : ''},
+						{status: mock.status},
+						{newerThan: mock.created - 1},
+						{query: (mock.tag ? mock.tag.title : '')[0]}
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
+					];
+					return matches;
+				};
+			});
 
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
-

@@ -32,13 +32,12 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 		private albumStore: AlbumStore,
 		private trackStore: TrackStore,
 		private indexService: IndexService,
-		protected stateStore: StateStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService,
 		protected listService: ListService
 	) {
-		super(artistStore, DBObjectType.artist, stateStore, stateService, imageService, downloadService, listService);
+		super(artistStore, DBObjectType.artist, stateService, imageService, downloadService, listService);
 	}
 
 	async prepare(artist: Artist, includes: JamParameters.IncludesArtist, user: User): Promise<Jam.Artist> {

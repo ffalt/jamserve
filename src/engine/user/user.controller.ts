@@ -25,12 +25,11 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		private userService: UserService,
 		private trackController: TrackController,
 		private playqueueService: PlayqueueService,
-		protected stateStore: StateStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(userStore, DBObjectType.user, stateStore, stateService, imageService, downloadService);
+		super(userStore, DBObjectType.user,  stateService, imageService, downloadService);
 	}
 
 	async prepare(item: User, includes: {}, user: User): Promise<Jam.User> {

@@ -1,10 +1,10 @@
 import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {UserStore, SearchQueryUser} from './user.store';
-import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {User} from './user.model';
 import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
+import {TestDBs} from '../../db/db.test';
 
 function mockUser(): User {
 	return {
@@ -52,38 +52,45 @@ function mockUser2(): User {
 
 describe('UserStore', () => {
 
-	const testDB = new TestNeDB();
-	let userStore: UserStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		userStore = new UserStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let userStore: UserStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					userStore = new UserStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = userStore;
-		this.generateMockObjects = () => {
-			return [mockUser(), mockUser2()];
-		};
-		this.generateMatchingQueries = (mock: User) => {
-			const matches: Array<SearchQueryUser> = [
-				{id: mock.id},
-				{ids: [mock.id]},
-				{name: mock.name},
-				{isAdmin: mock.roles.adminRole},
-				{query: mock.name[0]}
-			];
-			return matches;
-		};
-	});
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
+			beforeEach(function() {
+				this.store = userStore;
+				this.generateMockObjects = () => {
+					return [mockUser(), mockUser2()];
+				};
+				this.generateMatchingQueries = (mock: User) => {
+					const matches: Array<SearchQueryUser> = [
+						{id: mock.id},
+						{ids: [mock.id]},
+						{name: mock.name},
+						{isAdmin: mock.roles.adminRole},
+						{query: mock.name[0]}
+					];
+					return matches;
+				};
+			});
 
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
-

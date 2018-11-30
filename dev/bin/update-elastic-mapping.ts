@@ -54,6 +54,9 @@ async function run(): Promise<void> {
 			// 	}
 			// 	return 'type_key';
 			// }
+			if (['name', 'title'].indexOf(name) >= 0) {
+				return 'type_string';
+			}
 			// console.log(name + ': string in ' + parent);
 			return 'type_key';
 		} else if (prop.type === 'number') {
@@ -94,7 +97,7 @@ async function run(): Promise<void> {
 	const result: any = {};
 	strings.push('const type_bool = {type: \'boolean\'};\n');
 	strings.push('const type_int = {type: \'long\'};\n');
-	strings.push('const type_string = {type: \'text\'};\n');
+	strings.push('const type_string = {type: \'text\', fields: {keyword: {type: \'keyword\'}}};\n');
 	strings.push('const type_key = {type: \'keyword\'};\n');
 	for (const symbol of symbols) {
 		const baseP = path.resolve(basePath, `engine/${symbol.toLowerCase()}`);

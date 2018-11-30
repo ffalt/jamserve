@@ -18,7 +18,6 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 	protected constructor(
 		protected objstore: BaseStore<DBOBJECT, SearchQuery>,
 		protected type: DBObjectType,
-		protected stateStore: StateStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService

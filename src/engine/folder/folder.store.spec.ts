@@ -1,11 +1,11 @@
 import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {FolderStore, SearchQueryFolder} from './folder.store';
-import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {Folder} from './folder.model';
 import path from 'path';
 import {AlbumType, DBObjectType, FolderType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
+import {TestDBs} from '../../db/db.test';
 
 function mockFolder(): Folder {
 	return {
@@ -67,52 +67,59 @@ function mockFolder2(): Folder {
 
 describe('FolderStore', () => {
 
-	const testDB = new TestNeDB();
-	let folderStore: FolderStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		folderStore = new FolderStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let folderStore: FolderStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					folderStore = new FolderStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = folderStore;
-		this.generateMockObjects = () => {
-			return [mockFolder(), mockFolder2()];
-		};
-		this.generateMatchingQueries = (mock: Folder) => {
-			const matches: Array<SearchQueryFolder> = [
-				{id: mock.id},
-				{ids: [mock.id]},
-				{rootID: mock.rootID},
-				{parentID: mock.parentID},
-				{path: mock.path},
-				{inPath: path.dirname(mock.path)},
-				{artist: mock.tag.artist},
-				{artists: [mock.tag.artist || '']},
-				{title: mock.tag.title},
-				{album: mock.tag.album},
-				{genre: mock.tag.genre},
-				{level: mock.tag.level},
-				{mbAlbumID: mock.tag.mbAlbumID},
-				{mbArtistID: mock.tag.mbArtistID},
-				{newerThan: mock.stat.created - 1},
-				{fromYear: mock.tag.year, toYear: mock.tag.year},
-				{types: [mock.tag.type]},
-				{query: (mock.tag.title || '')[0]}
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-			];
-			return matches;
-		};
-	});
+			beforeEach(function() {
+				this.store = folderStore;
+				this.generateMockObjects = () => {
+					return [mockFolder(), mockFolder2()];
+				};
+				this.generateMatchingQueries = (mock: Folder) => {
+					const matches: Array<SearchQueryFolder> = [
+						{id: mock.id},
+						{ids: [mock.id]},
+						{rootID: mock.rootID},
+						{parentID: mock.parentID},
+						{path: mock.path},
+						{inPath: path.dirname(mock.path)},
+						{artist: mock.tag.artist},
+						{artists: [mock.tag.artist || '']},
+						{title: mock.tag.title},
+						{album: mock.tag.album},
+						{genre: mock.tag.genre},
+						{level: mock.tag.level},
+						{mbAlbumID: mock.tag.mbAlbumID},
+						{mbArtistID: mock.tag.mbArtistID},
+						{newerThan: mock.stat.created - 1},
+						{fromYear: mock.tag.year, toYear: mock.tag.year},
+						{types: [mock.tag.type]},
+						{query: (mock.tag.title || '')[0]}
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
+					];
+					return matches;
+				};
+			});
 
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
-

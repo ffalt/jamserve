@@ -6,7 +6,7 @@ import {Store} from './engine/store';
 
 const config = loadConfig();
 
-configureLogger(config);
+configureLogger(config.log.level);
 const engine = new Engine(config);
 const server = new Server(engine);
 

@@ -3,6 +3,7 @@ import {SynchrounousResult} from 'tmp';
 import tmp from 'tmp';
 
 export class TestNeDB {
+	name = 'nedb';
 	database: DBNedb;
 	dir: SynchrounousResult;
 

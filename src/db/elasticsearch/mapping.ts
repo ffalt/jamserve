@@ -2,13 +2,13 @@ const type_bool = {type: 'boolean'};
 
 const type_int = {type: 'long'};
 
-const type_string = {type: 'text'};
+const type_string = {type: 'text', fields: {keyword: {type: 'keyword'}}};
 
 const type_key = {type: 'keyword'};
 
 const type_Root = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		path: type_key,
 		created: type_int,
 		id: type_key,
@@ -27,11 +27,10 @@ const type_UserRoles = {
 
 const type_User = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		pass: type_key,
 		email: type_key,
 		created: type_int,
-		ldapAuthenticated: type_bool,
 		scrobblingEnabled: type_bool,
 		avatarLastChanged: type_int,
 		avatar: type_key,
@@ -53,7 +52,7 @@ const type_FolderTag = {
 		artist: type_key,
 		artistSort: type_key,
 		albumType: type_key,
-		title: type_key,
+		title: type_string,
 		image: type_key,
 		year: type_int,
 		mbAlbumID: type_key,
@@ -70,7 +69,7 @@ const type_MusicBrainz_Rating = {
 
 const type_MusicBrainz_Alias = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		sortName: type_key,
 		locale: type_key,
 		type: type_key,
@@ -84,12 +83,12 @@ const type_MusicBrainz_Alias = {
 
 const type_MusicBrainz_ArtistCredit = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		joinphrase: type_key,
 		artist: {
 			properties: {
 				id: type_key,
-				name: type_key,
+				name: type_string,
 				sortName: type_key,
 				disambiguation: type_key,
 				aliases: type_MusicBrainz_Alias
@@ -101,7 +100,7 @@ const type_MusicBrainz_ArtistCredit = {
 const type_MusicBrainz_RecordingBase = {
 	properties: {
 		id: type_key,
-		title: type_key,
+		title: type_string,
 		disambiguation: type_key,
 		length: type_int,
 		video: type_bool,
@@ -115,7 +114,7 @@ const type_MusicBrainz_RecordingBase = {
 const type_MusicBrainz_ReleaseTrack = {
 	properties: {
 		id: type_key,
-		title: type_key,
+		title: type_string,
 		position: type_int,
 		length: type_int,
 		number: type_key,
@@ -137,7 +136,7 @@ const type_MusicBrainz_ReleaseMedia = {
 	properties: {
 		format: type_key,
 		formatId: type_key,
-		title: type_key,
+		title: type_string,
 		discCount: type_int,
 		trackCount: type_int,
 		position: type_int,
@@ -150,7 +149,7 @@ const type_MusicBrainz_ReleaseMedia = {
 const type_MusicBrainz_ReleaseGroupBase = {
 	properties: {
 		id: type_key,
-		title: type_key,
+		title: type_string,
 		disambiguation: type_key,
 		firstReleaseDate: type_key,
 		primaryType: type_key,
@@ -168,7 +167,7 @@ const type_MusicBrainz_Label = {
 		label: {
 			properties: {
 				id: type_key,
-				name: type_key,
+				name: type_string,
 				disambiguation: type_key,
 				labelCode: type_key,
 				sortName: type_key
@@ -176,7 +175,7 @@ const type_MusicBrainz_Label = {
 		},
 		aliases: {
 			properties: {
-				name: type_key,
+				name: type_string,
 				sortName: type_key,
 				ended: type_bool
 			}
@@ -190,7 +189,7 @@ const type_MusicBrainz_ReleaseEvent = {
 		area: {
 			properties: {
 				id: type_key,
-				name: type_key,
+				name: type_string,
 				sortName: type_key,
 				disambiguation: type_key,
 				iso31661Codes: type_key
@@ -205,7 +204,7 @@ const type_MusicBrainz_Release = {
 		score: type_int,
 		count: type_int,
 		id: type_key,
-		title: type_key,
+		title: type_string,
 		sortName: type_key,
 		status: type_key,
 		statusId: type_key,
@@ -231,7 +230,7 @@ const type_MusicBrainz_Release = {
 		tags: {
 			properties: {
 				count: type_int,
-				name: type_key
+				name: type_string
 			}
 		},
 		releaseEvents: type_MusicBrainz_ReleaseEvent,
@@ -249,7 +248,7 @@ const type_MusicBrainz_Release = {
 
 const type_MetaInfoAlbum = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		artist: type_key,
 		mbid: type_key,
 		url: type_key,
@@ -262,7 +261,7 @@ const type_MetaInfoAlbum = {
 		},
 		tags: {
 			properties: {
-				name: type_key,
+				name: type_string,
 				url: type_key
 			}
 		},
@@ -281,7 +280,7 @@ const type_MetaInfoImage = {
 
 const type_MetaInfoSimilarArtist = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		url: type_key,
 		mbid: type_key,
 		image: type_MetaInfoImage
@@ -290,13 +289,13 @@ const type_MetaInfoSimilarArtist = {
 
 const type_MetaInfoArtist = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		mbid: type_key,
 		url: type_key,
 		image: type_MetaInfoImage,
 		tags: {
 			properties: {
-				name: type_key,
+				name: type_string,
 				url: type_key
 			}
 		},
@@ -307,10 +306,10 @@ const type_MetaInfoArtist = {
 
 const type_MetaInfoTopSong = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		artist: {
 			properties: {
-				name: type_key,
+				name: type_string,
 				mbid: type_key,
 				url: type_key
 			}
@@ -371,7 +370,7 @@ const type_TrackTag = {
 		artistSort: type_key,
 		genre: type_key,
 		disc: type_int,
-		title: type_key,
+		title: type_string,
 		titleSort: type_key,
 		track: type_int,
 		year: type_int,
@@ -403,13 +402,13 @@ const type_TrackMedia = {
 
 const type_MetaInfoTrackSimilarSong = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		mbid: type_key,
 		url: type_key,
 		duration: type_int,
 		artist: {
 			properties: {
-				name: type_key,
+				name: type_string,
 				mbid: type_key,
 				url: type_key
 			}
@@ -428,7 +427,7 @@ const type_Track = {
 	properties: {
 		rootID: type_key,
 		parentID: type_key,
-		name: type_key,
+		name: type_string,
 		path: type_key,
 		stat: {
 			properties: {
@@ -449,7 +448,7 @@ const type_Track = {
 
 const type_Album = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		rootIDs: type_key,
 		trackIDs: type_key,
 		artistID: type_key,
@@ -468,7 +467,7 @@ const type_Album = {
 
 const type_Artist = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		nameSort: type_key,
 		rootIDs: type_key,
 		trackIDs: type_key,
@@ -483,7 +482,7 @@ const type_Artist = {
 
 const type_Radio = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		url: type_key,
 		homepage: type_key,
 		disabled: type_bool,
@@ -508,7 +507,7 @@ const type_State = {
 
 const type_Playlist = {
 	properties: {
-		name: type_key,
+		name: type_string,
 		userID: type_key,
 		comment: type_key,
 		coverArt: type_key,
@@ -525,8 +524,7 @@ const type_Playlist = {
 
 const type_PodcastTag = {
 	properties: {
-		title: type_key,
-		status: type_key,
+		title: type_string,
 		link: type_key,
 		author: type_key,
 		description: type_key,
@@ -552,7 +550,7 @@ const type_Podcast = {
 const type_PodcastEpisodeChapter = {
 	properties: {
 		start: type_int,
-		title: type_key
+		title: type_string
 	}
 };
 
@@ -573,7 +571,7 @@ const type_Episode = {
 		link: type_key,
 		summary: type_key,
 		date: type_int,
-		title: type_key,
+		name: type_string,
 		guid: type_key,
 		author: type_key,
 		chapters: type_PodcastEpisodeChapter,

@@ -31,7 +31,7 @@ export function defaultEpisodesSort(episodes: Array<Episode>): Array<Episode> {
 					return res;
 				}
 			}
-			return a.title.localeCompare(b.title);
+			return a.name.localeCompare(b.name);
 		}
 	);
 }
@@ -42,12 +42,11 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 		private episodeStore: EpisodeStore,
 		private podcastService: PodcastService,
 		private streamService: StreamService,
-		protected stateStore: StateStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(episodeStore, DBObjectType.episode, stateStore, stateService, imageService, downloadService);
+		super(episodeStore, DBObjectType.episode, stateService, imageService, downloadService);
 	}
 
 	async prepare(episode: Episode, includes: JamParameters.IncludesEpisode, user: User): Promise<Jam.PodcastEpisode> {
@@ -64,7 +63,7 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 	translateQuery(query: JamParameters.EpisodeSearch, user: User): SearchQueryEpisode {
 		return {
 			query: query.query,
-			title: query.title,
+			name: query.name,
 			podcastID: query.podcastID,
 			status: query.status,
 			offset: query.offset,

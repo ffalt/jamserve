@@ -11085,9 +11085,6 @@
 				"date": {
 					"type": "number"
 				},
-				"title": {
-					"type": "string"
-				},
 				"summary": {
 					"type": "string"
 				},
@@ -11145,8 +11142,7 @@
 				"name",
 				"parentID",
 				"podcastID",
-				"status",
-				"title"
+				"status"
 			]
 		},
 		"JamParameters.Episodes": {
@@ -11202,7 +11198,7 @@
 					"description": "filter by podcast id",
 					"type": "string"
 				},
-				"title": {
+				"name": {
 					"description": "filter by title",
 					"type": "string"
 				},
@@ -11858,22 +11854,8 @@
 					"description": "filter by musicbrainz album id",
 					"type": "string"
 				},
-				"genre": {
-					"description": "filter by genre",
-					"type": "string"
-				},
 				"newerThan": {
 					"description": "filter by creation date (unix time)",
-					"minimum": 0,
-					"type": "integer"
-				},
-				"fromYear": {
-					"description": "filter by year",
-					"minimum": 0,
-					"type": "integer"
-				},
-				"toYear": {
-					"description": "filter by year",
 					"minimum": 0,
 					"type": "integer"
 				},
@@ -11986,22 +11968,8 @@
 					"description": "filter by musicbrainz album id",
 					"type": "string"
 				},
-				"genre": {
-					"description": "filter by genre",
-					"type": "string"
-				},
 				"newerThan": {
 					"description": "filter by creation date (unix time)",
-					"minimum": 0,
-					"type": "integer"
-				},
-				"fromYear": {
-					"description": "filter by year",
-					"minimum": 0,
-					"type": "integer"
-				},
-				"toYear": {
-					"description": "filter by year",
 					"minimum": 0,
 					"type": "integer"
 				},

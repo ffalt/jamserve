@@ -591,7 +591,7 @@ export declare namespace JamParameters {
 		/**
 		 * filter by title
 		 */
-		title?: string;
+		name?: string;
 		/**
 		 * filter by status
 		 */

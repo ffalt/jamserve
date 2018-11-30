@@ -1,11 +1,11 @@
 import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {TrackStore, SearchQueryTrack} from './track.store';
-import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {Track} from './track.model';
 import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
 import path from 'path';
+import {TestDBs} from '../../db/db.test';
 
 function mockTrack(): Track {
 	return {
@@ -113,51 +113,58 @@ function mockTrack2(): Track {
 
 describe('TrackStore', () => {
 
-	const testDB = new TestNeDB();
-	let trackStore: TrackStore;
+	const testDBs = new TestDBs();
 
-	before(async () => {
-		await testDB.setup();
-		trackStore = new TrackStore(testDB.database);
-	});
+	for (const testDB of testDBs.dbs) {
+		describe(testDB.name, () => {
+			let trackStore: TrackStore;
 
-	after(async () => {
-		await testDB.cleanup();
-	});
+			before(function(done) {
+				this.timeout(40000);
+				testDB.setup().then(() => {
+					trackStore = new TrackStore(testDB.database);
+					done();
+				}).catch(e => {
+					throw e;
+				});
+			});
 
-	beforeEach(function() {
-		this.store = trackStore;
-		this.generateMockObjects = () => {
-			return [mockTrack(), mockTrack2()];
-		};
-		this.generateMatchingQueries = (mock: Track) => {
-			const matches: Array<SearchQueryTrack> = [
-				{id: mock.id},
-				{ids: [mock.id]},
-				{path: mock.path},
-				{inPath: path.dirname(mock.path)},
-				{inPaths: [path.dirname(mock.path)]},
-				{artist: mock.tag.artist},
-				{artistID: mock.artistID},
-				{parentID: mock.parentID},
-				{parentIDs: [mock.parentID]},
-				{mbTrackID: mock.tag.mbTrackID},
-				{mbTrackIDs: [mock.tag.mbTrackID || '']},
-				{rootID: mock.rootID},
-				{title: mock.tag.title},
-				{album: mock.tag.album},
-				{genre: mock.tag.genre},
-				{fromYear: mock.tag.year, toYear: mock.tag.year},
-				{newerThan: mock.stat.created - 1},
-				{query: (mock.tag.title || '')[0]}
-			];
-			return matches;
-		};
-	});
+			after(async () => {
+				await testDB.cleanup();
+			});
 
-	describe('DBObject Store', () => {
-		shouldBehaveLikeADBObjectStore();
-	});
+			beforeEach(function() {
+				this.store = trackStore;
+				this.generateMockObjects = () => {
+					return [mockTrack(), mockTrack2()];
+				};
+				this.generateMatchingQueries = (mock: Track) => {
+					const matches: Array<SearchQueryTrack> = [
+						{id: mock.id},
+						{ids: [mock.id]},
+						{path: mock.path},
+						{inPath: path.dirname(mock.path)},
+						{inPaths: [path.dirname(mock.path)]},
+						{artist: mock.tag.artist},
+						{artistID: mock.artistID},
+						{parentID: mock.parentID},
+						{parentIDs: [mock.parentID]},
+						{mbTrackID: mock.tag.mbTrackID},
+						{mbTrackIDs: [mock.tag.mbTrackID || '']},
+						{rootID: mock.rootID},
+						{title: mock.tag.title},
+						{album: mock.tag.album},
+						{genre: mock.tag.genre},
+						{fromYear: mock.tag.year, toYear: mock.tag.year},
+						{newerThan: mock.stat.created - 1},
+						{query: (mock.tag.title || '')[0]}
+					];
+					return matches;
+				};
+			});
 
+			shouldBehaveLikeADBObjectStore();
+		});
+
+	}
 });
-

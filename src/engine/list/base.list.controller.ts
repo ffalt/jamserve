@@ -18,13 +18,12 @@ export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | I
 	protected constructor(
 		protected objstore: BaseStore<DBOBJECT, SearchQuery>,
 		protected type: DBObjectType,
-		protected stateStore: StateStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService,
 		protected listService: ListService
 	) {
-		super(objstore, type, stateStore, stateService, imageService, downloadService);
+		super(objstore, type, stateService, imageService, downloadService);
 	}
 
 	async getList(listQuery: JamParameters.List, jamquery: S, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
