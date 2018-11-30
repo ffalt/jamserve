@@ -78,10 +78,10 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 			rootID: query.rootID,
 			albumID: query.albumID,
 			mbArtistID: query.mbArtistID,
-			genre: query.genre,
+			// genre: query.genre,
 			newerThan: query.newerThan,
-			fromYear: query.fromYear,
-			toYear: query.toYear,
+			// fromYear: query.fromYear,
+			// toYear: query.toYear,
 			offset: query.offset,
 			amount: query.amount,
 			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] : undefined

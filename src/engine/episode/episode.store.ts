@@ -4,20 +4,23 @@ import {QueryHelper} from '../base/base.store';
 import {Episode} from './episode.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
-export interface SearchQueryPodcastEpisode extends SearchQuery {
+export interface SearchQueryEpisode extends SearchQuery {
+	id?: string;
+	ids?: Array<string>;
 	podcastID?: string;
 	podcastIDs?: Array<string>;
 	title?: string;
 	status?: string;
+	newerThan?: number;
 }
 
-export class EpisodeStore extends BaseStore<Episode, SearchQueryPodcastEpisode> {
+export class EpisodeStore extends BaseStore<Episode, SearchQueryEpisode> {
 	fieldMap: { [name: string]: string } = {
 		'podcastIDs': 'podcastID',
 		'podcastID': 'podcastID',
 		'status': 'status',
 		'date': 'date',
-		'title': 'tag.title',
+		'title': 'title',
 		'created': 'stat.created'
 	};
 
@@ -25,13 +28,16 @@ export class EpisodeStore extends BaseStore<Episode, SearchQueryPodcastEpisode> 
 		super(DBObjectType.episode, db);
 	}
 
-	protected transformQuery(query: SearchQueryPodcastEpisode): DatabaseQuery {
+	protected transformQuery(query: SearchQueryEpisode): DatabaseQuery {
 		const q = new QueryHelper();
 		q.terms('podcastID', query.podcastIDs);
 		q.term('podcastID', query.podcastID);
 		q.term('status', query.status);
-		q.term('tag.title', query.title);
-		q.match('tag.title', query.query);
+		q.term('title', query.title);
+		q.term('id', query.id);
+		q.terms('id', query.ids);
+		q.range('date', undefined, query.newerThan);
+		q.match('title', query.query);
 		return q.get(query, this.fieldMap);
 	}
 

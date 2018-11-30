@@ -5,6 +5,7 @@ import {Folder} from './folder.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryFolder extends SearchQuery {
+	id?: string;
 	ids?: Array<string>;
 	rootID?: string;
 	parentID?: string;
@@ -45,6 +46,7 @@ export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 
 	protected transformQuery(query: SearchQueryFolder): DatabaseQuery {
 		const q = new QueryHelper();
+		q.term('id', query.id);
 		q.term('path', query.path);
 		q.terms('id', query.ids);
 		q.startsWith('path', query.inPath);

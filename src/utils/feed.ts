@@ -124,7 +124,6 @@ export class Feed {
 		const data = await this.fetch(podcast.url);
 		const tag: PodcastTag = {
 			title: data.feed.title,
-			status: PodcastStatus.completed,
 			description: data.feed.description,
 			link: data.feed.link,
 			author: data.feed.author,

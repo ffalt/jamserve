@@ -425,7 +425,7 @@ export class FORMAT {
 			url: podcast.url,
 			errorMessage: podcast.errorMessage,
 			title: podcast.tag ? podcast.tag.title : undefined,
-			status: status ? status : (podcast.tag ? podcast.tag.status : podcast.status),
+			status: status ? status : podcast.status,
 			description: podcast.tag ? podcast.tag.description : undefined,
 			coverArt: podcast.id,
 			originalImageUrl: podcast.tag ? podcast.tag.image : undefined

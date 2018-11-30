@@ -7,16 +7,17 @@ import {Database, DatabaseQuery} from '../../db/db.model';
 export interface SearchQueryArtist extends SearchQuery {
 	name?: string;
 	names?: Array<string>;
+	id?: string;
 	ids?: Array<string>;
 	trackID?: string;
 	trackIDs?: Array<string>;
 	rootID?: string;
 	mbArtistID?: string;
 	albumID?: string;
-	genre?: string;
+	// genre?: string;
 	newerThan?: number;
-	fromYear?: number;
-	toYear?: number;
+	// fromYear?: number;
+	// toYear?: number;
 }
 
 export class ArtistStore extends BaseStore<Artist, SearchQueryArtist> {
@@ -30,13 +31,14 @@ export class ArtistStore extends BaseStore<Artist, SearchQueryArtist> {
 		q.terms('id', query.ids);
 		q.terms('trackIDs', query.trackIDs);
 		q.terms('name', query.names);
+		q.term('id', query.id);
 		q.term('rootIDs', query.rootID);
 		q.term('albumIDs', query.albumID);
 		q.term('trackIDs', query.trackID);
 		q.term('name', query.name);
-		q.term('genre', query.genre);
+		// q.term('genre', query.genre);
 		q.term('mbArtistID', query.mbArtistID);
-		q.range('year', query.toYear, query.fromYear);
+		// q.range('year', query.toYear, query.fromYear);
 		q.range('created', undefined, query.newerThan);
 		q.match('name', query.query);
 		return q.get(query);

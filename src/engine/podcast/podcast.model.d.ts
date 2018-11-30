@@ -12,7 +12,6 @@ export interface Podcast extends DBObject {
 
 export interface PodcastTag {
 	title: string;
-	status: Subsonic.PodcastStatus;
 	link: string;
 	author: string;
 	description: string;

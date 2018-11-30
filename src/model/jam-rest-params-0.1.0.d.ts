@@ -791,30 +791,12 @@ export declare namespace JamParameters {
 		 */
 		mbArtistID?: string;
 		/**
-		 * filter by genre
-		 */
-		genre?: string;
-		/**
 		 * filter by creation date (unix time)
 		 *
 		 * @minimum 0
 		 * @TJS-type integer
 		 */
 		newerThan?: number;
-		/**
-		 * filter by year
-		 *
-		 * @minimum 0
-		 * @TJS-type integer
-		 */
-		fromYear?: number;
-		/**
-		 * filter by year
-		 *
-		 * @minimum 0
-		 * @TJS-type integer
-		 */
-		toYear?: number;
 	}
 
 	export interface ArtistSearch extends Paginate, ArtistSearchQuery, IncludesArtist {

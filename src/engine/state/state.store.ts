@@ -28,7 +28,7 @@ export class StateStore extends BaseStore<State, SearchQueryState> {
 		q.terms('destID', query.destIDs);
 		q.term('destType', query.type);
 		q.notNull('faved', query.isFaved);
-		q.range('rating', query.maxRating, query.minRating);
+		q.range('rated', query.maxRating, query.minRating);
 		q.range('played', undefined, query.isPlayed ? 1 : undefined);
 		return q.get(query);
 	}

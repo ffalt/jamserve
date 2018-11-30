@@ -133,10 +133,10 @@ export class QueryHelper {
 		}
 	}
 
-	true(field: string, value: boolean | undefined) {
+	bool(field: string, value: boolean | undefined) {
 		if (value !== undefined && value !== null) {
 			this.q.term = this.q.term || {};
-			this.q.term[field] = true;
+			this.q.term[field] = value;
 		}
 	}
 

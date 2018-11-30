@@ -4,16 +4,25 @@ import Nedb from 'nedb';
 import {Config} from '../../config';
 import {DBObject} from '../../engine/base/base.model';
 import {Database, DatabaseIndex, DatabaseQuery} from '../db.model';
+import {fileDeleteIfExists} from '../../utils/fs-utils';
 
 export class DBNedb implements Database {
 	clients: {
-		[type: string]: Nedb;
+		[type: string]: { client: Nedb; filename: string };
 	} = {};
 
 	constructor(db_path: string) {
 		this.getTypes().forEach(type => {
-			this.clients[DBObjectType[type]] = new Nedb({filename: path.resolve(db_path, DBObjectType[type] + '.db')});
+			const filename = path.resolve(db_path, DBObjectType[type] + '.db');
+			this.clients[DBObjectType[type]] = {client: new Nedb({filename}), filename};
 		});
+	}
+
+	async drop(): Promise<void> {
+		for (const type of this.getTypes()) {
+			const db = this.clients[DBObjectType[type]];
+			await fileDeleteIfExists(db.filename);
+		}
 	}
 
 	private async loadDatabase(db: Nedb) {
@@ -30,7 +39,7 @@ export class DBNedb implements Database {
 	async open(): Promise<void> {
 		for (const type of this.getTypes()) {
 			const db = this.clients[DBObjectType[type]];
-			await this.loadDatabase(db);
+			await this.loadDatabase(db.client);
 		}
 		await this.check();
 	}
@@ -64,7 +73,7 @@ export class DBNedb implements Database {
 	async reset(): Promise<void> {
 		for (const type of this.getTypes()) {
 			const db = this.clients[DBObjectType[type]];
-			await this.resetIndex(db);
+			await this.resetIndex(db.client);
 		}
 	}
 
@@ -75,12 +84,12 @@ export class DBNedb implements Database {
 	async check(): Promise<void> {
 		for (const type of this.getTypes()) {
 			const db = this.clients[DBObjectType[type]];
-			await this.checkIndex(db);
+			await this.checkIndex(db.client);
 		}
 	}
 
 	getDBIndex<T extends DBObject>(type: DBObjectType) {
-		return new DBIndexNedb<T>(type, this.clients[DBObjectType[type]]);
+		return new DBIndexNedb<T>(type, this.clients[DBObjectType[type]].client);
 	}
 }
 

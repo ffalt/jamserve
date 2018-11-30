@@ -12,7 +12,7 @@ import {StateStore} from '../state/state.store';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../image/image.service';
 import {DownloadService} from '../download/download.service';
-import {EpisodeStore, SearchQueryPodcastEpisode} from './episode.store';
+import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 import {PodcastService} from '../podcast/podcast.service';
 import {Episode} from './episode.model';
 import {User} from '../user/user.model';
@@ -36,7 +36,7 @@ export function defaultEpisodesSort(episodes: Array<Episode>): Array<Episode> {
 	);
 }
 
-export class EpisodeController extends BaseController<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, SearchQueryPodcastEpisode, JamParameters.EpisodeSearch, Episode, Jam.PodcastEpisode> {
+export class EpisodeController extends BaseController<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, SearchQueryEpisode, JamParameters.EpisodeSearch, Episode, Jam.PodcastEpisode> {
 
 	constructor(
 		private episodeStore: EpisodeStore,
@@ -61,7 +61,7 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 		return result;
 	}
 
-	translateQuery(query: JamParameters.EpisodeSearch, user: User): SearchQueryPodcastEpisode {
+	translateQuery(query: JamParameters.EpisodeSearch, user: User): SearchQueryEpisode {
 		return {
 			query: query.query,
 			title: query.title,

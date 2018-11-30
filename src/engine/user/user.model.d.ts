@@ -5,7 +5,7 @@ export interface User extends DBObject {
 	pass: string;
 	email: string;
 	created: number;
-	ldapAuthenticated: boolean;
+	// ldapAuthenticated: boolean;
 	scrobblingEnabled: boolean;
 	avatarLastChanged?: number;
 	avatar?: string;

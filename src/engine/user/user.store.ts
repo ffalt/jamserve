@@ -7,6 +7,7 @@ import {User} from './user.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryUser extends SearchQuery {
+	id?: string;
 	ids?: Array<string>;
 	name?: string;
 	isAdmin?: boolean;
@@ -22,7 +23,7 @@ export class UserStore extends BaseStore<User, SearchQueryUser> {
 		const q = new QueryHelper();
 		q.terms('id', query.ids);
 		q.term('name', query.name);
-		q.true('roles.adminRole', query.isAdmin);
+		q.bool('roles.adminRole', query.isAdmin);
 		q.match('name', query.query);
 		return q.get(query);
 	}

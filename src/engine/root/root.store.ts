@@ -5,6 +5,8 @@ import {Root} from './root.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryRoot extends SearchQuery {
+	id?: string;
+	ids?: Array<string>;
 	name?: string;
 	path?: string;
 }
@@ -17,6 +19,8 @@ export class RootStore extends BaseStore<Root, SearchQueryRoot> {
 
 	protected transformQuery(query: SearchQueryRoot): DatabaseQuery {
 		const q = new QueryHelper();
+		q.term('id', query.id);
+		q.terms('id', query.ids);
 		q.term('name', query.name);
 		q.term('path', query.path);
 		q.match('name', query.query);
