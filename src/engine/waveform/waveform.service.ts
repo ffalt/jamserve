@@ -4,7 +4,7 @@ import {IApiBinaryResult} from '../../typings';
 import {Config} from '../../config';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {getWaveFormBinary, getWaveFormJSON, getWaveFormSVG} from '../audio/tools/ffmpeg-waveform-svg';
-import {TrackMedia} from '../track/track.model';
+import {TrackMedia} from '../../objects/track/track.model';
 import fse from 'fs-extra';
 
 const log = Logger('WaveformService');

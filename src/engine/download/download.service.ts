@@ -4,13 +4,13 @@ import {CompressListStream, CompressStream} from '../../utils/compress-stream';
 import {replaceFileSystemChars} from '../../utils/fs-utils';
 import {DBObjectType} from '../../types';
 import {Store} from '../store';
-import {User} from '../user/user.model';
-import {DBObject} from '../base/base.model';
-import {Track} from '../track/track.model';
-import {Folder} from '../folder/folder.model';
-import {Artist} from '../artist/artist.model';
-import {Album} from '../album/album.model';
-import {Playlist} from '../playlist/playlist.model';
+import {User} from '../../objects/user/user.model';
+import {DBObject} from '../../objects/base/base.model';
+import {Track} from '../../objects/track/track.model';
+import {Folder} from '../../objects/folder/folder.model';
+import {Artist} from '../../components/artist/artist.model';
+import {Album} from '../../components/album/album.model';
+import {Playlist} from '../../objects/playlist/playlist.model';
 
 export class DownloadService {
 

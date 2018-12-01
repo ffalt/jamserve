@@ -1,10 +1,10 @@
 import {Store} from '../store';
 import {DBObjectType} from '../../types';
 import {NowPlaying} from './nowplaying.model';
-import {User} from '../user/user.model';
-import {Episode} from '../episode/episode.model';
-import {Track} from '../track/track.model';
-import {StateService} from '../state/state.service';
+import {User} from '../../objects/user/user.model';
+import {Episode} from '../../objects/episode/episode.model';
+import {Track} from '../../objects/track/track.model';
+import {StateService} from '../../objects/state/state.service';
 
 export class NowPlaylingService {
 	private readonly store: Store;

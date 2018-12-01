@@ -9,9 +9,9 @@ import {scanCleanStore} from './components/clean';
 import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
 import {WaveformService} from '../waveform/waveform.service';
 import {ImageService} from '../image/image.service';
-import {Root, RootStatus} from '../root/root.model';
-import {Folder} from '../folder/folder.model';
-import {Track} from '../track/track.model';
+import {Root, RootStatus} from '../../objects/root/root.model';
+import {Folder} from '../../objects/folder/folder.model';
+import {Track} from '../../objects/track/track.model';
 
 const log = Logger('IO');
 

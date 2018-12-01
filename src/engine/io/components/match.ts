@@ -2,8 +2,8 @@ import {Store} from '../../store';
 import {ScanDir, ScanFile} from './scan';
 import path from 'path';
 import Logger from '../../../utils/logger';
-import {Folder, FolderTag} from '../../folder/folder.model';
-import {Track} from '../../track/track.model';
+import {Folder, FolderTag} from '../../../objects/folder/folder.model';
+import {Track} from '../../../objects/track/track.model';
 
 const log = Logger('IO.match');
 

@@ -5,10 +5,10 @@ import {DBObjectType} from '../../types';
 import path from 'path';
 import {GenericError} from '../../api/jam/error';
 import {NowPlaylingService} from '../nowplaying/nowplaying.service';
-import {User} from '../user/user.model';
-import {Track, TrackMedia} from '../track/track.model';
-import {Episode} from '../episode/episode.model';
-import {DBObject} from '../base/base.model';
+import {User} from '../../objects/user/user.model';
+import {Track, TrackMedia} from '../../objects/track/track.model';
+import {Episode} from '../../objects/episode/episode.model';
+import {DBObject} from '../../objects/base/base.model';
 
 export class StreamService {
 

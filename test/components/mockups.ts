@@ -1,7 +1,7 @@
 import path from 'path';
-import {User} from '../../src/engine/user/user.model';
+import {User} from '../../src/objects/user/user.model';
 import {DBObjectType} from '../../src/types';
-import {Root} from '../../src/engine/root/root.model';
+import {Root} from '../../src/objects/root/root.model';
 
 export const mockupAdmin: User = {
 	id: '',

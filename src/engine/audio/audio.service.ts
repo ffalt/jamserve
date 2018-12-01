@@ -11,9 +11,9 @@ import {fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {Config} from '../../config';
-import {TrackMedia, TrackTag} from '../track/track.model';
+import {TrackMedia, TrackTag} from '../../objects/track/track.model';
 import {MetaInfoAlbum, MetaInfoArtist, MetaInfoImage, MetaInfoTopSong, MetaInfoTrackSimilarSong} from '../metadata/metadata.model';
-import {Folder} from '../folder/folder.model';
+import {Folder} from '../../objects/folder/folder.model';
 import fse from 'fs-extra';
 
 export interface AudioScanResult {

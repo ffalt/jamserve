@@ -25,7 +25,7 @@ import express from 'express';
 import {SubsonicParameterRequest} from './parameters';
 import {ApiResponder} from './response';
 import {FORMAT} from './format';
-import {User} from '../../engine/user/user.model';
+import {User} from '../../objects/user/user.model';
 
 /**
  * Fill user into req.user express requests

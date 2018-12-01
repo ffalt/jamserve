@@ -4,7 +4,7 @@ import {ESSequence} from './es-sequence';
 import Logger from '../../utils/logger';
 import {mapping} from './mapping';
 import {wait} from '../../utils/wait';
-import {DBObject} from '../../engine/base/base.model';
+import {DBObject} from '../../objects/base/base.model';
 import {Database, DatabaseIndex, DatabaseQuery} from '../db.model';
 import {ElasticsearchConfig} from './config-elastic';
 

@@ -3,12 +3,12 @@ import Logger from '../../../utils/logger';
 import {Store} from '../../store';
 import {MergeChanges} from './merge';
 import {DBObjectType} from '../../../types';
-import {updatePlayListTracks} from '../../playlist/playlist.service';
+import {updatePlayListTracks} from '../../../objects/playlist/playlist.service';
 import {WaveformService} from '../../waveform/waveform.service';
 import {ImageService} from '../../image/image.service';
-import {Root} from '../../root/root.model';
-import {Track} from '../../track/track.model';
-import {Folder} from '../../folder/folder.model';
+import {Root} from '../../../objects/root/root.model';
+import {Track} from '../../../objects/track/track.model';
+import {Folder} from '../../../objects/folder/folder.model';
 import fse from 'fs-extra';
 
 const log = Logger('IO.clean');

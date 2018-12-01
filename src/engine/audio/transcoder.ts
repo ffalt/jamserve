@@ -4,7 +4,7 @@ import tmp from 'tmp';
 import {IStreamData} from '../../typings';
 import Logger from '../../utils/logger';
 import * as fs from 'fs';
-import {TrackMedia} from '../track/track.model';
+import {TrackMedia} from '../../objects/track/track.model';
 
 const log = Logger('audio.transcoder');
 

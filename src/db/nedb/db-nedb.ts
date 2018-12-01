@@ -1,7 +1,7 @@
 import {DatabaseQuerySortType, DBObjectType} from '../../types';
 import path from 'path';
 import Nedb from 'nedb';
-import {DBObject} from '../../engine/base/base.model';
+import {DBObject} from '../../objects/base/base.model';
 import {Database, DatabaseIndex, DatabaseQuery} from '../db.model';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 

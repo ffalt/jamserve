@@ -4,7 +4,7 @@ import {Acoustid} from '../../model/acoustid-rest-data-2.0';
 import path from 'path';
 import {LastFM} from '../../model/lastfm-rest-data-2.0';
 import {JamRequest} from '../../api/jam/api';
-import {TrackController} from '../track/track.controller';
+import {TrackController} from '../../objects/track/track.controller';
 import {AudioService} from '../audio/audio.service';
 
 export class MetadataController {

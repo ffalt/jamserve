@@ -2,7 +2,7 @@ import {MatchDir} from './match';
 import {AlbumType, FileTyp, FolderType} from '../../../types';
 import path from 'path';
 import Logger from '../../../utils/logger';
-import {FolderTag} from '../../folder/folder.model';
+import {FolderTag} from '../../../objects/folder/folder.model';
 
 const log = Logger('IO.tag');
 

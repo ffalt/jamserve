@@ -6,8 +6,8 @@ import {AudioService} from '../../audio/audio.service';
 import {deepCompare} from '../../../utils/deep-compare';
 import Logger from '../../../utils/logger';
 import {fillMatchTags} from './tag';
-import {Track} from '../../track/track.model';
-import {Folder} from '../../folder/folder.model';
+import {Track} from '../../../objects/track/track.model';
+import {Folder} from '../../../objects/folder/folder.model';
 
 const log = Logger('IO.merge');
 

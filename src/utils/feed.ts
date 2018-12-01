@@ -6,8 +6,8 @@ import FeedParser from 'feedparser';
 import iconv from 'iconv-lite';
 import {DBObjectType} from '../types';
 import {Subsonic} from '../model/subsonic-rest-data-1.16.0';
-import {PodcastTag} from '../engine/podcast/podcast.model';
-import {Episode, PodcastEpisodeChapter} from '../engine/episode/episode.model';
+import {PodcastTag} from '../objects/podcast/podcast.model';
+import {Episode, PodcastEpisodeChapter} from '../objects/episode/episode.model';
 
 export const PodcastStatus: { [name: string]: Subsonic.PodcastStatus } = {
 	fresh: 'new',

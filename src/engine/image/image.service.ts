@@ -5,15 +5,15 @@ import {ImageModule} from '../io/components/imageModule';
 import {Store} from '../store';
 import {Config} from '../../config';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
-import {Folder} from '../folder/folder.model';
-import {Track} from '../track/track.model';
-import {User} from '../user/user.model';
-import {Album} from '../album/album.model';
-import {Artist} from '../artist/artist.model';
-import {DBObject} from '../base/base.model';
-import {Episode} from '../episode/episode.model';
-import {Playlist} from '../playlist/playlist.model';
-import {Podcast} from '../podcast/podcast.model';
+import {Folder} from '../../objects/folder/folder.model';
+import {Track} from '../../objects/track/track.model';
+import {User} from '../../objects/user/user.model';
+import {Album} from '../../components/album/album.model';
+import {Artist} from '../../components/artist/artist.model';
+import {DBObject} from '../../objects/base/base.model';
+import {Episode} from '../../objects/episode/episode.model';
+import {Playlist} from '../../objects/playlist/playlist.model';
+import {Podcast} from '../../objects/podcast/podcast.model';
 import fse from 'fs-extra';
 
 export class ImageService {

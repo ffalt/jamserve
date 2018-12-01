@@ -5,9 +5,9 @@ import {MergeChanges, MergeTrackInfo} from './merge';
 import {clearID3} from './clean';
 import {cUnknownAlbum, cUnknownArtist} from './tag';
 import {ImageService} from '../../image/image.service';
-import {Artist} from '../../artist/artist.model';
-import {Track} from '../../track/track.model';
-import {Album} from '../../album/album.model';
+import {Artist} from '../../../components/artist/artist.model';
+import {Track} from '../../../objects/track/track.model';
+import {Album} from '../../../components/album/album.model';
 
 const log = Logger('IO.meta');
 

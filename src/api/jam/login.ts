@@ -1,6 +1,6 @@
 import express from 'express';
 import {EngineRequest} from '../server';
-import {User} from '../../engine/user/user.model';
+import {User} from '../../objects/user/user.model';
 
 /**
  * Fill user into req.user express requests

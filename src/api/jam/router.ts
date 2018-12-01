@@ -18,8 +18,8 @@ import {NotFoundError, UnauthError} from './error';
 import {Register, registerAdminApi, RegisterCallback, registerPublicApi, registerUserApi} from './routes';
 import {apiCheck} from './check';
 import {getMaxAge} from '../../utils/max-age';
-import {formatUser} from '../../engine/user/user.format';
-import {User} from '../../engine/user/user.model';
+import {formatUser} from '../../objects/user/user.format';
+import {User} from '../../objects/user/user.model';
 
 const autoUploadTempReap = require('multer-autoreap'); // TODO: multer-autoreap types
 const rateLimit = require('express-rate-limit');

@@ -3,7 +3,7 @@ import {Store} from '../store';
 import {Config} from '../../config';
 import {IoService} from '../io/io.service';
 import {ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry, Indexes} from './index.model';
-import {Folder} from '../folder/folder.model';
+import {Folder} from '../../objects/folder/folder.model';
 
 export class IndexTreeBuilder {
 	private readonly store: Store;

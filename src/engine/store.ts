@@ -1,21 +1,21 @@
 import {DBElastic} from '../db/elasticsearch/db-elastic';
 import {DBNedb} from '../db/nedb/db-nedb';
 import {Config} from '../config';
-import {UserStore} from './user/user.store';
-import {TrackStore} from './track/track.store';
-import {FolderStore} from './folder/folder.store';
-import {EpisodeStore} from './episode/episode.store';
-import {AlbumStore} from './album/album.store';
-import {ArtistStore} from './artist/artist.store';
-import {RadioStore} from './radio/radio.store';
-import {PlayQueueStore} from './playqueue/playqueue.store';
-import {RootStore} from './root/root.store';
-import {BookmarkStore} from './bookmark/bookmark.store';
-import {PodcastStore} from './podcast/podcast.store';
-import {PlaylistStore} from './playlist/playlist.store';
-import {StateStore} from './state/state.store';
-import {BaseStore, SearchQuery} from './base/base.store';
-import {DBObject} from './base/base.model';
+import {UserStore} from '../objects/user/user.store';
+import {TrackStore} from '../objects/track/track.store';
+import {FolderStore} from '../objects/folder/folder.store';
+import {EpisodeStore} from '../objects/episode/episode.store';
+import {AlbumStore} from '../components/album/album.store';
+import {ArtistStore} from '../components/artist/artist.store';
+import {RadioStore} from '../objects/radio/radio.store';
+import {PlayQueueStore} from '../objects/playqueue/playqueue.store';
+import {RootStore} from '../objects/root/root.store';
+import {BookmarkStore} from '../components/bookmark/bookmark.store';
+import {PodcastStore} from '../objects/podcast/podcast.store';
+import {PlaylistStore} from '../objects/playlist/playlist.store';
+import {StateStore} from '../objects/state/state.store';
+import {BaseStore, SearchQuery} from '../objects/base/base.store';
+import {DBObject} from '../objects/base/base.model';
 import {Database} from '../db/db.model';
 
 export class Store {

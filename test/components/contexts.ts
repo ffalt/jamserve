@@ -1,6 +1,6 @@
 import {it} from 'mocha';
 import {Engine} from '../../src/engine/engine';
-import {User} from '../../src/engine/user/user.model';
+import {User} from '../../src/objects/user/user.model';
 
 interface EngineThis extends Mocha.Context {
 	engine: Engine;

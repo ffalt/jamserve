@@ -2,7 +2,7 @@ import path from 'path';
 import {FolderType} from '../../../types';
 import {Jam} from '../../../model/jam-rest-data-0.1.0';
 import {replaceFileSystemChars} from '../../../utils/fs-utils';
-import {Folder, FolderTag} from '../../folder/folder.model';
+import {Folder, FolderTag} from '../../../objects/folder/folder.model';
 
 interface ProblemCheck {
 	name: string;

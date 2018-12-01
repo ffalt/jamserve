@@ -1,8 +1,8 @@
 import {DBObjectType} from '../../types';
-import {BaseStore, SearchQuery} from '../base/base.store';
-import {StateStore} from '../state/state.store';
-import {User} from '../user/user.model';
-import {DBObject} from '../base/base.model';
+import {BaseStore, SearchQuery} from '../../objects/base/base.store';
+import {StateStore} from '../../objects/state/state.store';
+import {User} from '../../objects/user/user.model';
+import {DBObject} from '../../objects/base/base.model';
 
 export class ListService {
 

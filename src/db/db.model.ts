@@ -1,4 +1,4 @@
-import {DBObject} from '../engine/base/base.model';
+import {DBObject} from '../objects/base/base.model';
 import {DatabaseQuerySortType, DBObjectType} from '../types';
 
 export interface Database {

@@ -1,7 +1,7 @@
 import moment from 'moment';
 import {Config} from '../../config';
 import {ChatMessage} from './chat.model';
-import {User} from '../user/user.model';
+import {User} from '../../objects/user/user.model';
 
 export class ChatService {
 	private readonly config: Config;

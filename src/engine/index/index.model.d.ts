@@ -1,5 +1,5 @@
-import {Folder} from '../folder/folder.model';
-import {Artist} from '../artist/artist.model';
+import {Folder} from '../../objects/folder/folder.model';
+import {Artist} from '../../components/artist/artist.model';
 
 export interface FolderIndexEntry {
 	name: string;

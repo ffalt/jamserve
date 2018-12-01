@@ -4,12 +4,12 @@ import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
 import {Store} from '../store';
 import {WaveformService} from './waveform.service';
-import {DBObject} from '../base/base.model';
-import {User} from '../user/user.model';
+import {DBObject} from '../../objects/base/base.model';
+import {User} from '../../objects/user/user.model';
 import {DBObjectType} from '../../types';
-import {Track} from '../track/track.model';
+import {Track} from '../../objects/track/track.model';
 import path from 'path';
-import {Episode} from '../episode/episode.model';
+import {Episode} from '../../objects/episode/episode.model';
 
 export class WaveformController {
 	constructor(private store: Store, private waveformService: WaveformService) {

@@ -556,7 +556,7 @@ export declare namespace SubsonicParameters {
 		 * The maximum bit rate (in Kbps) for the user. Audio streams of higher bit rates are automatically downsampled to this bit rate. Legal values: 0 (no limit), 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320.
 		 * @TJS-type integer
 		 */
-		maxBitRate?: MaxBitrates
+		maxBitRate?: MaxBitrates;
 	}
 
 	export interface Bookmark {
