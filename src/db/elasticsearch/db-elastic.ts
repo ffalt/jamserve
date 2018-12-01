@@ -43,7 +43,7 @@ export class DBElastic implements Database {
 	}
 
 	async open(): Promise<void> {
-		log.info('Open connection to elasticsearch');
+		log.debug('Open connection to elasticsearch');
 		await this.sequence.init(this.client);
 		await this.ping();
 		await this.check();

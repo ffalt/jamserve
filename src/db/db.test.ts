@@ -2,7 +2,7 @@ import {TestElastic} from './elasticsearch/db-elastic.test';
 import {TestNeDB} from './nedb/db-nedb.test';
 import {Database} from './db.model';
 import {configureLogger} from '../utils/logger';
-configureLogger('debug');
+configureLogger('warn');
 
 export interface TestDB {
 	name: string;
