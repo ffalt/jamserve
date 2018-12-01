@@ -10,8 +10,8 @@ import {SubsonicParameters} from '../../model/subsonic-rest-params-1.16.0';
 import {BaseStore, SearchQuery} from '../../objects/base/base.store';
 import {User} from '../../objects/user/user.model';
 import {DBObject} from '../../objects/base/base.model';
-import {Album} from '../../components/album/album.model';
-import {Artist} from '../../components/artist/artist.model';
+import {Album} from '../../objects/album/album.model';
+import {Artist} from '../../objects/artist/artist.model';
 import {Folder} from '../../objects/folder/folder.model';
 import {Track} from '../../objects/track/track.model';
 import {Playlist} from '../../objects/playlist/playlist.model';
@@ -19,11 +19,11 @@ import {Episode} from '../../objects/episode/episode.model';
 import {State} from '../../objects/state/state.model';
 import {Podcast} from '../../objects/podcast/podcast.model';
 import {Radio} from '../../objects/radio/radio.model';
-import {Bookmark} from '../../components/bookmark/bookmark.model';
+import {Bookmark} from '../../objects/bookmark/bookmark.model';
 import {SearchQueryFolder} from '../../objects/folder/folder.store';
-import {SearchQueryAlbum} from '../../components/album/album.store';
+import {SearchQueryAlbum} from '../../objects/album/album.store';
 import {SearchQueryTrack} from '../../objects/track/track.store';
-import {SearchQueryArtist} from '../../components/artist/artist.store';
+import {SearchQueryArtist} from '../../objects/artist/artist.store';
 
 /*
 	http://www.subsonic.org/pages/api.jsp

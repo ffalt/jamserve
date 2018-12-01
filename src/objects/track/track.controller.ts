@@ -12,18 +12,18 @@ import {SearchQueryTrack, TrackStore} from './track.store';
 import {AudioService} from '../../engine/audio/audio.service';
 import {StateStore} from '../state/state.store';
 import {RootService} from '../root/root.service';
-import {BookmarkService} from '../../components/bookmark/bookmark.service';
-import {BookmarkStore} from '../../components/bookmark/bookmark.store';
+import {BookmarkService} from '../../objects/bookmark/bookmark.service';
+import {BookmarkStore} from '../../objects/bookmark/bookmark.store';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
 import {StreamService} from '../../engine/stream/stream.service';
 import {formatState} from '../state/state.format';
-import {formatBookmark} from '../../components/bookmark/bookmark.format';
+import {formatBookmark} from '../../objects/bookmark/bookmark.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
 import {ListService} from '../../engine/list/list.service';
 import {Track} from './track.model';
-import {Bookmark} from '../../components/bookmark/bookmark.model';
+import {Bookmark} from '../../objects/bookmark/bookmark.model';
 import {User} from '../user/user.model';
 
 export function defaultTrackSort(tracks: Array<Track>): Array<Track> {

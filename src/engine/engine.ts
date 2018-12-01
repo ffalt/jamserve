@@ -17,7 +17,7 @@ import {PlayqueueService} from '../objects/playqueue/playqueue.service';
 import {Config} from '../config';
 import {WaveformService} from './waveform/waveform.service';
 import {StreamService} from './stream/stream.service';
-import {BookmarkService} from '../components/bookmark/bookmark.service';
+import {BookmarkService} from '../objects/bookmark/bookmark.service';
 import {StateService} from '../objects/state/state.service';
 import {ImageService} from './image/image.service';
 import {DownloadService} from './download/download.service';
