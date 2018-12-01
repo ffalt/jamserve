@@ -97,7 +97,7 @@ export class Feed {
 				if (err) {
 					reject(err);
 				} else {
-					resolve({feed, posts})
+					resolve({feed, posts});
 				}
 			};
 

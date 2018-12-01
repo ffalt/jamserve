@@ -20,6 +20,13 @@ export declare namespace Jam {
 		allowedCookieDomains: Array<string>;
 	}
 
+	export interface Base {
+		id: string;
+		state?: State;
+		name: string;
+		created: number;
+	}
+
 	export interface RootStatus {
 		lastScan: number;
 		error?: string;
@@ -69,13 +76,6 @@ export declare namespace Jam {
 		username: string;
 		minutesAgo: number;
 		track?: Track;
-	}
-
-	export interface Base {
-		id: string;
-		state?: State;
-		name: string;
-		created: number;
 	}
 
 	export interface Track extends Base {

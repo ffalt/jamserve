@@ -10,22 +10,6 @@ const WaveformData = require('waveform-data');
 
 const log = Logger('Waveform');
 
-export async function getWaveFormSVG(filepath: string): Promise<string> {
-	const wf = new WaveformGenerator();
-	const result = await wf.generateSVG(filepath);
-	return result;
-}
-
-export async function getWaveFormJSON(filepath: string): Promise<IWaveformData> {
-	const wf = new WaveformGenerator();
-	return await wf.generateWaveformData(filepath);
-}
-
-export async function getWaveFormBinary(filepath: string): Promise<Buffer> {
-	const wf = new WaveformGenerator();
-	return await wf.generateWaveformBinary(filepath);
-}
-
 export interface IWaveformData {
 	version: number;
 	sample_rate: number;
@@ -33,92 +17,6 @@ export interface IWaveformData {
 	bits: number;
 	length: number;
 	data: Array<number>;
-}
-
-export class WaveformGenerator {
-
-	async generateWaveformBinary(filename: string): Promise<Buffer> {
-		const wf: Waveform = await this.generateWaveform(filename);
-		return wf.asBinary();
-	}
-
-	async generateSVG(filename: string): Promise<string> {
-		const data = await this.generateWaveformData(filename);
-		const svg = this.svg(data);
-		const svgo = new SVGO();
-		const optimized = await svgo.optimize(svg);
-		return optimized.data;
-	}
-
-	/**
-	 async generateWithFFMPEGData(filename: string): Promise<string> {
-		const res = await spawnTool('ffmpeg', 'FFMPEG_PATH', ['-v', 'error', '-i', filename,
-			'-ac', '1', '-filter:a', 'aresample=8000', '-map', '0:a', '-c:a', 'pcm_s16le', '-f', 'data', '-']);
-		const buffer = Buffer.from(res);
-		console.log('buffer.length', buffer.length);
-		let pos = 0;
-		const l = [];
-		while (pos < buffer.length) {
-			l.push(buffer.readIntBE(pos, 2));
-			pos += 2;
-		}
-		console.log('samples', l.length);
-
-		return '';
-	}*/
-
-	async generateWaveformData(filename: string): Promise<IWaveformData> {
-		const wf: Waveform = await this.generateWaveform(filename);
-		return wf.asJSON();
-	}
-
-	async generateWaveform(filename: string): Promise<Waveform> {
-		const stream = fs.createReadStream(filename);
-		return new Promise<Waveform>((resolve, reject) => {
-			const wf: Waveform = new Waveform(stream, {
-				samplesPerPixel: 256,
-				sampleRate: 44100
-			}, (err) => {
-				if (err) {
-					console.log(err);
-					reject(err);
-				} else {
-					resolve(wf);
-				}
-			});
-		});
-	}
-
-	private svg(data: IWaveformData): string {
-		const width = 4000;
-		const height = 256;
-		let wfd = WaveformData.create(data);
-		const samplesPerPixel = Math.floor(wfd.duration * wfd.adapter.sample_rate / (width * 2));
-		if (samplesPerPixel < 256) {
-			wfd = wfd.resample({width: width * 2, scale: 256});
-		} else {
-			wfd = wfd.resample({width: width * 2});
-		}
-		wfd.adapter.data.data = wfd.adapter.data.data.slice(0, width * 2);
-		data = wfd.adapter.data;
-		const totalPeaks = data.data.length;
-		const d: Array<string> = [];
-		for (let peakNumber = 0; peakNumber < totalPeaks; peakNumber++) {
-			const num = (data.data[peakNumber] / height) + (height / 2);
-			if (peakNumber % 2 === 0) {
-				d.push(`M${~~(peakNumber / 2)}, ${num}`);
-			} else {
-				d.push(`L${~~(peakNumber / 2)}, ${num}`);
-			}
-		}
-		const result = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" preserveAspectRatio="none"
-     viewBox="0 0 ${width} ${height}" style="fill-rule:evenodd;clip-rule:evenodd;">
-		<path stroke="green" d="${d.join(' ')}" />
-</svg>`;
-		return result;
-	}
-
 }
 
 /**
@@ -298,4 +196,106 @@ class Waveform {
 		};
 	}
 
+}
+
+export class WaveformGenerator {
+
+	async generateWaveformBinary(filename: string): Promise<Buffer> {
+		const wf: Waveform = await this.generateWaveform(filename);
+		return wf.asBinary();
+	}
+
+	async generateSVG(filename: string): Promise<string> {
+		const data = await this.generateWaveformData(filename);
+		const svg = this.svg(data);
+		const svgo = new SVGO();
+		const optimized = await svgo.optimize(svg);
+		return optimized.data;
+	}
+
+	/**
+	 async generateWithFFMPEGData(filename: string): Promise<string> {
+		const res = await spawnTool('ffmpeg', 'FFMPEG_PATH', ['-v', 'error', '-i', filename,
+			'-ac', '1', '-filter:a', 'aresample=8000', '-map', '0:a', '-c:a', 'pcm_s16le', '-f', 'data', '-']);
+		const buffer = Buffer.from(res);
+		console.log('buffer.length', buffer.length);
+		let pos = 0;
+		const l = [];
+		while (pos < buffer.length) {
+			l.push(buffer.readIntBE(pos, 2));
+			pos += 2;
+		}
+		console.log('samples', l.length);
+
+		return '';
+	}*/
+
+	async generateWaveformData(filename: string): Promise<IWaveformData> {
+		const wf: Waveform = await this.generateWaveform(filename);
+		return wf.asJSON();
+	}
+
+	async generateWaveform(filename: string): Promise<Waveform> {
+		const stream = fs.createReadStream(filename);
+		return new Promise<Waveform>((resolve, reject) => {
+			const wf: Waveform = new Waveform(stream, {
+				samplesPerPixel: 256,
+				sampleRate: 44100
+			}, (err) => {
+				if (err) {
+					console.log(err);
+					reject(err);
+				} else {
+					resolve(wf);
+				}
+			});
+		});
+	}
+
+	private svg(data: IWaveformData): string {
+		const width = 4000;
+		const height = 256;
+		let wfd = WaveformData.create(data);
+		const samplesPerPixel = Math.floor(wfd.duration * wfd.adapter.sample_rate / (width * 2));
+		if (samplesPerPixel < 256) {
+			wfd = wfd.resample({width: width * 2, scale: 256});
+		} else {
+			wfd = wfd.resample({width: width * 2});
+		}
+		wfd.adapter.data.data = wfd.adapter.data.data.slice(0, width * 2);
+		data = wfd.adapter.data;
+		const totalPeaks = data.data.length;
+		const d: Array<string> = [];
+		for (let peakNumber = 0; peakNumber < totalPeaks; peakNumber++) {
+			const num = (data.data[peakNumber] / height) + (height / 2);
+			if (peakNumber % 2 === 0) {
+				d.push(`M${~~(peakNumber / 2)}, ${num}`);
+			} else {
+				d.push(`L${~~(peakNumber / 2)}, ${num}`);
+			}
+		}
+		const result = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" preserveAspectRatio="none"
+     viewBox="0 0 ${width} ${height}" style="fill-rule:evenodd;clip-rule:evenodd;">
+		<path stroke="green" d="${d.join(' ')}" />
+</svg>`;
+		return result;
+	}
+
+}
+
+export async function getWaveFormSVG(filepath: string): Promise<string> {
+	const wf = new WaveformGenerator();
+	const result = await wf.generateSVG(filepath);
+	return result;
+}
+
+export async function getWaveFormJSON(filepath: string): Promise<IWaveformData> {
+	const wf = new WaveformGenerator();
+	return await wf.generateWaveformData(filepath);
+}
+
+export async function getWaveFormBinary(filepath: string): Promise<Buffer> {
+	const wf = new WaveformGenerator();
+	return await wf.generateWaveformBinary(filepath);
 }

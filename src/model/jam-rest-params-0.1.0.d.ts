@@ -178,6 +178,9 @@ export declare namespace JamParameters {
 		position?: number;
 	}
 
+	export interface IncludesEpisode extends IncludesTrack {
+	}
+
 	export interface IncludesPodcast extends IncludesEpisode {
 		/**
 		 * include user states (fav,rate) on podcast(s)
@@ -191,9 +194,6 @@ export declare namespace JamParameters {
 		 * @default false
 		 */
 		podcastEpisodes?: boolean;
-	}
-
-	export interface IncludesEpisode extends IncludesTrack {
 	}
 
 	export interface IncludesPlaylist extends IncludesTrack {
@@ -375,9 +375,6 @@ export declare namespace JamParameters {
 	export interface Tracks extends IDs, IncludesTrack {
 	}
 
-	export interface TrackList extends TrackSearchQuery, IncludesTrack, List {
-	}
-
 	export interface TrackSearchQuery extends SearchQuery {
 		/**
 		 * filter by artist name
@@ -425,6 +422,9 @@ export declare namespace JamParameters {
 		 * @TJS-type integer
 		 */
 		toYear?: number;
+	}
+
+	export interface TrackList extends TrackSearchQuery, IncludesTrack, List {
 	}
 
 	export interface TrackSearch extends Paginate, TrackSearchQuery, IncludesTrack {
@@ -478,44 +478,6 @@ export declare namespace JamParameters {
 	}
 
 	export interface Folders extends IDs, IncludesFolder, IncludesFolderChildren {
-	}
-
-	export interface FolderList extends FolderSearchQuery, IncludesFolder, List {
-	}
-
-	export interface FolderSubFolders extends ID, IncludesFolder {
-	}
-
-	export interface FolderChildren extends ID, IncludesTrack, IncludesFolder {
-	}
-
-	export interface FolderTracks extends Tracks {
-		/**
-		 * include tracks of a sub folders
-		 *
-		 * @default false
-		 */
-		recursive?: boolean;
-	}
-
-	/**
-	 * Set the image of a folder by url
-	 */
-	export interface FolderEditImg extends ID {
-		/**
-		 * url of an image
-		 */
-		url: string;
-	}
-
-	/**
-	 * Rename the folder
-	 */
-	export interface FolderEditName extends ID {
-		/**
-		 * the new folder name
-		 */
-		name: string;
 	}
 
 	export interface FolderSearchQuery extends SearchQuery {
@@ -572,6 +534,44 @@ export declare namespace JamParameters {
 		 * filter by folder types
 		 */
 		types?: Array<Jam.FolderType>;
+	}
+
+	export interface FolderList extends FolderSearchQuery, IncludesFolder, List {
+	}
+
+	export interface FolderSubFolders extends ID, IncludesFolder {
+	}
+
+	export interface FolderChildren extends ID, IncludesTrack, IncludesFolder {
+	}
+
+	export interface FolderTracks extends Tracks {
+		/**
+		 * include tracks of a sub folders
+		 *
+		 * @default false
+		 */
+		recursive?: boolean;
+	}
+
+	/**
+	 * Set the image of a folder by url
+	 */
+	export interface FolderEditImg extends ID {
+		/**
+		 * url of an image
+		 */
+		url: string;
+	}
+
+	/**
+	 * Rename the folder
+	 */
+	export interface FolderEditName extends ID {
+		/**
+		 * the new folder name
+		 */
+		name: string;
 	}
 
 	export interface FolderSearch extends Paginate, FolderSearchQuery, IncludesFolderChildren {
@@ -638,9 +638,6 @@ export declare namespace JamParameters {
 	export interface Albums extends IDs, IncludesAlbum {
 	}
 
-	export interface AlbumList extends Paginate, IncludesAlbum, AlbumSearchQuery, List {
-	}
-
 	export interface AlbumSearchQuery extends SearchQuery {
 		/**
 		 * filter by name
@@ -695,6 +692,9 @@ export declare namespace JamParameters {
 		 * @TJS-type integer
 		 */
 		toYear?: number;
+	}
+
+	export interface AlbumList extends Paginate, IncludesAlbum, AlbumSearchQuery, List {
 	}
 
 	export interface AlbumSearch extends Paginate, AlbumSearchQuery, IncludesAlbum {
@@ -770,9 +770,6 @@ export declare namespace JamParameters {
 	export interface Artists extends IDs, IncludesArtist {
 	}
 
-	export interface ArtistList extends ArtistSearchQuery, IncludesArtist, List {
-	}
-
 	export interface ArtistSearchQuery extends SearchQuery {
 		/**
 		 * filter by name
@@ -797,6 +794,9 @@ export declare namespace JamParameters {
 		 * @TJS-type integer
 		 */
 		newerThan?: number;
+	}
+
+	export interface ArtistList extends ArtistSearchQuery, IncludesArtist, List {
 	}
 
 	export interface ArtistSearch extends Paginate, ArtistSearchQuery, IncludesArtist {
