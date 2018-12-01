@@ -4,10 +4,8 @@ import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {DBObjectType} from '../../types';
 import {PodcastStatus} from '../../utils/feed';
 import {JamRequest} from '../../api/jam/api';
-import {EpisodeController, defaultEpisodesSort} from '../episode/episode.controller';
+import {EpisodeController} from '../episode/episode.controller';
 import {formatPodcast} from './podcast.format';
-import {StateStore} from '../state/state.store';
-import {EpisodeStore} from '../episode/episode.store';
 import {PodcastService} from './podcast.service';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
@@ -23,12 +21,15 @@ export class PodcastController extends BaseController<JamParameters.Podcast, Jam
 		private podcastStore: PodcastStore,
 		private podcastService: PodcastService,
 		private episodeController: EpisodeController,
-		private episodeStore: EpisodeStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
 		super(podcastStore, DBObjectType.podcast, stateService, imageService, downloadService);
+	}
+
+	defaultSort(items: Array<Podcast>): Array<Podcast> {
+		return items.sort((a, b) => (a.tag && a.tag.title ? a.tag.title : a.url).localeCompare((b.tag && b.tag.title ? b.tag.title : b.url)));
 	}
 
 	async prepare(podcast: Podcast, includes: JamParameters.IncludesPodcast, user: User): Promise<Jam.Podcast> {
@@ -38,9 +39,7 @@ export class PodcastController extends BaseController<JamParameters.Podcast, Jam
 			result.state = formatState(state);
 		}
 		if (includes.podcastEpisodes) {
-			let episodes = await this.episodeStore.search({podcastID: podcast.id});
-			episodes = defaultEpisodesSort(episodes);
-			result.episodes = await this.episodeController.prepareList(episodes, includes, user);
+			result.episodes = await this.episodeController.prepareByQuery({podcastID: podcast.id}, includes, user);
 		}
 		return result;
 	}
@@ -58,8 +57,7 @@ export class PodcastController extends BaseController<JamParameters.Podcast, Jam
 	}
 
 	async tracks(req: JamRequest<JamParameters.Tracks>): Promise<Array<Jam.PodcastEpisode>> {
-		const episodes = await this.episodeStore.search({podcastIDs: req.query.ids});
-		return this.episodeController.prepareList(episodes, req.query, req.user);
+		return this.episodeController.prepareByQuery({podcastIDs: req.query.ids}, req.query, req.user);
 	}
 
 	async refreshAll(req: JamRequest<{}>): Promise<void> {

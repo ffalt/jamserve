@@ -6,28 +6,27 @@ import {InvalidParamError} from '../../api/jam/error';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
-import {TrackController, defaultTrackSort} from '../track/track.controller';
+import {TrackController} from '../track/track.controller';
 import {formatFolder, formatAlbumFolderInfo, formatArtistFolderInfo} from './folder.format';
 import {formatState} from '../state/state.format';
 import {formatFolderIndex} from '../../engine/index/index.format';
-import {StateStore} from '../state/state.store';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
 import {FolderStore, SearchQueryFolder} from './folder.store';
-import {SearchQueryTrack, TrackStore} from '../track/track.store';
+import {SearchQueryTrack} from '../track/track.store';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
 import {RootService} from '../root/root.service';
 import {IndexService} from '../../engine/index/index.service';
 import {ListService} from '../../engine/list/list.service';
 import {Folder} from './folder.model';
 import {User} from '../user/user.model';
+import * as path from 'path';
 
 export class FolderController extends BaseListController<JamParameters.Folder, JamParameters.Folders, JamParameters.IncludesFolderChildren, SearchQueryFolder, JamParameters.FolderSearch, Folder, Jam.Folder> {
 
 	constructor(
 		private folderStore: FolderStore,
-		private trackStore: TrackStore,
 		private trackController: TrackController,
 		private metadataService: MetaDataService,
 		private indexService: IndexService,
@@ -40,12 +39,14 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		super(folderStore, DBObjectType.folder, stateService, imageService, downloadService, listService);
 	}
 
+	defaultSort(items: Array<Folder>): Array<Folder> {
+		return items.sort((a, b) => (a.tag && a.tag.title ? a.tag.title : path.basename(a.path)).localeCompare((b.tag && b.tag.title ? b.tag.title : path.basename(b.path))));
+	}
+
 	async prepare(folder: Folder, includes: JamParameters.IncludesFolderChildren, user: User): Promise<Jam.Folder> {
 		const result = formatFolder(folder, includes);
 		if (includes.folderChildren || includes.folderTracks) {
-			let tracks = await this.trackStore.search({parentID: folder.id});
-			tracks = defaultTrackSort(tracks);
-			result.tracks = await this.trackController.prepareList(tracks, includes, user);
+			result.tracks = await this.trackController.prepareByQuery({parentID: folder.id}, includes, user);
 		}
 		if (includes.folderChildren || includes.folderSubfolders) {
 			const folders = await this.folderStore.search({parentID: folder.id, sorts: [{field: 'name', descending: false}]});
@@ -113,15 +114,12 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	async tracks(req: JamRequest<JamParameters.FolderTracks>): Promise<Array<Jam.Track>> {
 		const folders = await this.byIDs(req.query.ids);
 		const trackQuery: SearchQueryTrack = req.query.recursive ? {inPaths: folders.map(folder => folder.path)} : {parentIDs: folders.map(folder => folder.id)};
-		const tracks = await this.trackStore.search(trackQuery);
-		return this.trackController.prepareList(defaultTrackSort(tracks), req.query, req.user);
+		return this.trackController.prepareByQuery(trackQuery, req.query, req.user);
 	}
 
 	async children(req: JamRequest<JamParameters.FolderChildren>): Promise<Jam.FolderChildren> {
 		const folders = await this.folderStore.search({parentID: req.query.id});
-		let tracks = await this.trackStore.search({parentID: req.query.id});
-		tracks = defaultTrackSort(tracks);
-		const resultTracks = await this.trackController.prepareList(tracks, req.query, req.user);
+		const resultTracks = await this.trackController.prepareByQuery({parentID: req.query.id}, req.query, req.user);
 		const resultFolders = await this.prepareList(folders, req.query, req.user);
 		return {folders: resultFolders, tracks: resultTracks};
 	}

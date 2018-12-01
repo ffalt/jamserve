@@ -27,6 +27,8 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 
 	abstract translateQuery(query: S, user: User): JAMQUERY;
 
+	abstract defaultSort(items: Array<DBOBJECT>): Array<DBOBJECT>;
+
 	async byID(id?: string): Promise<DBOBJECT> {
 		if (!id) {
 			return Promise.reject(InvalidParamError());
@@ -60,6 +62,11 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		return result.sort((a, b) => {
 			return ids.indexOf(a.id) - ids.indexOf(b.id);
 		});
+	}
+
+	async prepareByQuery(query: JAMQUERY, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
+		const list = await this.objstore.search(query);
+		return this.prepareList(this.defaultSort(list), includes, user);
 	}
 
 	async id(req: JamRequest<OBJREQUEST>): Promise<RESULTOBJ> {

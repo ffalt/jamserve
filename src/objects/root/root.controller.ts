@@ -6,7 +6,6 @@ import {JamRequest} from '../../api/jam/api';
 import {RootStore, SearchQueryRoot} from './root.store';
 import {RootService} from './root.service';
 import {formatRoot} from './root.format';
-import {StateStore} from '../state/state.store';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
@@ -23,6 +22,10 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 		protected downloadService: DownloadService
 	) {
 		super(rootStore, DBObjectType.root, stateService, imageService, downloadService);
+	}
+
+	defaultSort(items: Array<Root>): Array<Root> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
 	async prepare(root: Root, includes: {}, user: User): Promise<Jam.Root> {

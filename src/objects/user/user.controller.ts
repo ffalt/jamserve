@@ -7,13 +7,11 @@ import {JamRequest} from '../../api/jam/api';
 import {TrackController} from '../track/track.controller';
 import {formatUser} from './user.format';
 import {formatPlayQueue} from '../playqueue/playqueue.format';
-import {StateStore} from '../state/state.store';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
 import {SearchQueryUser, UserStore} from './user.store';
 import {UserService} from './user.service';
-import {TrackStore} from '../track/track.store';
 import {PlayqueueService} from '../playqueue/playqueue.service';
 import {User} from './user.model';
 
@@ -21,7 +19,6 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 
 	constructor(
 		private userStore: UserStore,
-		private trackStore: TrackStore,
 		private userService: UserService,
 		private trackController: TrackController,
 		private playqueueService: PlayqueueService,
@@ -29,7 +26,11 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(userStore, DBObjectType.user,  stateService, imageService, downloadService);
+		super(userStore, DBObjectType.user, stateService, imageService, downloadService);
+	}
+
+	defaultSort(items: Array<User>): Array<User> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
 	async prepare(item: User, includes: {}, user: User): Promise<Jam.User> {
@@ -115,8 +116,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		const playQueue = await this.playqueueService.getQueueOrCreate(req.user.id, req.client);
 		const result = formatPlayQueue(playQueue, req.query);
 		if (req.query.playQueueTracks) {
-			const entries = await this.trackStore.byIds(playQueue.trackIDs);
-			result.tracks = await this.trackController.prepareList(entries, req.query, req.user);
+			result.tracks = await this.trackController.prepareListByIDs(playQueue.trackIDs, req.query, req.user);
 		}
 		return result;
 	}

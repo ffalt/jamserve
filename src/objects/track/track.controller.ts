@@ -10,34 +10,19 @@ import {BaseListController} from '../base/base.list.controller';
 import {formatTrack} from './track.format';
 import {SearchQueryTrack, TrackStore} from './track.store';
 import {AudioService} from '../../engine/audio/audio.service';
-import {StateStore} from '../state/state.store';
 import {RootService} from '../root/root.service';
-import {BookmarkService} from '../../objects/bookmark/bookmark.service';
-import {BookmarkStore} from '../../objects/bookmark/bookmark.store';
+import {BookmarkService} from '../bookmark/bookmark.service';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
 import {StreamService} from '../../engine/stream/stream.service';
 import {formatState} from '../state/state.format';
-import {formatBookmark} from '../../objects/bookmark/bookmark.format';
+import {formatBookmark} from '../bookmark/bookmark.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
 import {ListService} from '../../engine/list/list.service';
 import {Track} from './track.model';
-import {Bookmark} from '../../objects/bookmark/bookmark.model';
+import {Bookmark} from '../bookmark/bookmark.model';
 import {User} from '../user/user.model';
-
-export function defaultTrackSort(tracks: Array<Track>): Array<Track> {
-	return tracks.sort((a, b) => {
-			if (a.tag.track !== undefined && b.tag.track !== undefined) {
-				const res = a.tag.track - b.tag.track;
-				if (res !== 0) {
-					return res;
-				}
-			}
-			return a.name.localeCompare(b.name);
-		}
-	);
-}
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
@@ -54,6 +39,19 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		protected listService: ListService
 	) {
 		super(trackStore, DBObjectType.track, stateService, imageService, downloadService, listService);
+	}
+
+	defaultSort(tracks: Array<Track>): Array<Track> {
+		return tracks.sort((a, b) => {
+				if (a.tag.track !== undefined && b.tag.track !== undefined) {
+					const res = a.tag.track - b.tag.track;
+					if (res !== 0) {
+						return res;
+					}
+				}
+				return a.name.localeCompare(b.name);
+			}
+		);
 	}
 
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
@@ -95,7 +93,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	async tagID3s(req: JamRequest<JamParameters.IDs>): Promise<Jam.ID3Tags> {
 		let tracks = await this.byIDs(req.query.ids);
-		tracks = defaultTrackSort(tracks);
+		tracks = this.defaultSort(tracks);
 		const result: Jam.ID3Tags = {};
 		for (const track of tracks) {
 			result[track.id] = await this.audioService.readID3v2(path.join(track.path, track.name));

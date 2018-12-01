@@ -8,7 +8,6 @@ import {BaseController} from '../base/base.controller';
 import {formatEpisode} from './episode.format';
 import {StreamService} from '../../engine/stream/stream.service';
 import {formatState} from '../state/state.format';
-import {StateStore} from '../state/state.store';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
@@ -16,25 +15,6 @@ import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 import {PodcastService} from '../podcast/podcast.service';
 import {Episode} from './episode.model';
 import {User} from '../user/user.model';
-
-export function defaultEpisodesSort(episodes: Array<Episode>): Array<Episode> {
-	return episodes.sort((a, b) => {
-			if (!a.tag) {
-				return -1;
-			}
-			if (!b.tag) {
-				return 1;
-			}
-			if (a.tag.track !== undefined && b.tag.track !== undefined) {
-				const res = a.tag.track - b.tag.track;
-				if (res !== 0) {
-					return res;
-				}
-			}
-			return a.name.localeCompare(b.name);
-		}
-	);
-}
 
 export class EpisodeController extends BaseController<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, SearchQueryEpisode, JamParameters.EpisodeSearch, Episode, Jam.PodcastEpisode> {
 
@@ -47,6 +27,25 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 		protected downloadService: DownloadService
 	) {
 		super(episodeStore, DBObjectType.episode, stateService, imageService, downloadService);
+	}
+
+	defaultSort(items: Array<Episode>): Array<Episode> {
+		return items.sort((a, b) => {
+				if (!a.tag) {
+					return -1;
+				}
+				if (!b.tag) {
+					return 1;
+				}
+				if (a.tag.track !== undefined && b.tag.track !== undefined) {
+					const res = a.tag.track - b.tag.track;
+					if (res !== 0) {
+						return res;
+					}
+				}
+				return a.name.localeCompare(b.name);
+			}
+		);
 	}
 
 	async prepare(episode: Episode, includes: JamParameters.IncludesEpisode, user: User): Promise<Jam.PodcastEpisode> {

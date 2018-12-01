@@ -4,11 +4,9 @@ import {DBObjectType} from '../../types';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
-import {TrackController, defaultTrackSort} from '../track/track.controller';
+import {TrackController} from '../track/track.controller';
 import {formatAlbum, formatAlbumInfo} from './album.format';
 import {AlbumStore, SearchQueryAlbum} from './album.store';
-import {StateStore} from '../state/state.store';
-import {TrackStore} from '../track/track.store';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
@@ -20,9 +18,8 @@ import {User} from '../user/user.model';
 export class AlbumController extends BaseListController<JamParameters.Album, JamParameters.Albums, JamParameters.IncludesAlbum, SearchQueryAlbum, JamParameters.AlbumSearch, Album, Jam.Album> {
 
 	constructor(
-		private trackController: TrackController,
-		private trackStore: TrackStore,
 		private albumStore: AlbumStore,
+		private trackController: TrackController,
 		private metaDataService: MetaDataService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
@@ -30,6 +27,10 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 		protected listService: ListService
 	) {
 		super(albumStore, DBObjectType.album, stateService, imageService, downloadService, listService);
+	}
+
+	defaultSort(items: Array<Album>): Array<Album> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
 	async prepare(album: Album, includes: JamParameters.IncludesAlbum, user: User): Promise<Jam.Album> {
@@ -42,9 +43,7 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 			result.info = formatAlbumInfo(info);
 		}
 		if (includes.albumTracks) {
-			let tracks = await this.trackStore.byIds(album.trackIDs);
-			tracks = defaultTrackSort(tracks);
-			result.tracks = await this.trackController.prepareList(tracks, includes, user);
+			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user);
 		}
 		return result;
 	}

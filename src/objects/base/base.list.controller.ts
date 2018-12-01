@@ -5,7 +5,6 @@ import {paginate} from '../../utils/paginate';
 import {BaseController} from './base.controller';
 import {BaseStore, SearchQuery} from './base.store';
 import {DBObjectType} from '../../types';
-import {StateStore} from '../state/state.store';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';

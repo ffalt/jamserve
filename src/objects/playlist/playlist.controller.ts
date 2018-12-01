@@ -7,11 +7,9 @@ import {JamRequest} from '../../api/jam/api';
 import {TrackController} from '../track/track.controller';
 import {formatState} from '../state/state.format';
 import {formatPlaylist} from './playlist.format';
-import {StateStore} from '../state/state.store';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
-import {TrackStore} from '../track/track.store';
 import {PlaylistStore, SearchQueryPlaylist} from './playlist.store';
 import {PlaylistService} from './playlist.service';
 import {Playlist} from './playlist.model';
@@ -23,7 +21,6 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 		private playlistStore: PlaylistStore,
 		private playlistService: PlaylistService,
 		private trackController: TrackController,
-		private trackStore: TrackStore,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
@@ -33,6 +30,10 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 
 	// TODO: filter none public playlist in base api functions?
 
+	defaultSort(items: Array<Playlist>): Array<Playlist> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
+	}
+
 	async prepare(playlist: Playlist, includes: JamParameters.IncludesPlaylist, user: User): Promise<Jam.Playlist> {
 		const result = formatPlaylist(playlist, includes);
 		if (includes.playlistState) {
@@ -40,8 +41,7 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 			result.state = formatState(state);
 		}
 		if (includes.playlistTracks) {
-			const tracks = await this.trackStore.byIds(playlist.trackIDs);
-			result.tracks = await this.trackController.prepareList(tracks, includes, user);
+			result.tracks = await this.trackController.prepareListByIDs(playlist.trackIDs, includes, user);
 		}
 		return result;
 	}
