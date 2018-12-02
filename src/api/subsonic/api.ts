@@ -1550,7 +1550,7 @@ export class SubsonicApi {
 		 Returns an empty <subsonic-response> element on success.
 		 */
 		const track = await this.byID<Track>(req.query.id, this.engine.store.trackStore);
-		await this.engine.bookmarkService.create(track, req.user, req.query.position, req.query.comment);
+		await this.engine.bookmarkService.create(track.id, req.user.id, req.query.position, req.query.comment);
 	}
 
 	async deleteBookmark(req: ApiOptions<SubsonicParameters.ID>): Promise<void> {

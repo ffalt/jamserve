@@ -219,12 +219,6 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/track/bookmark/list', async (req, res) => {
-		const options: JamRequest<JamParameters.BookmarkList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.TrackBookmark> = await api.trackController.bookmarkList(options);
-		await ApiResponder.data(res, result);
-	});
-
 	register.get('/episode/id', async (req, res) => {
 		const options: JamRequest<JamParameters.Episode> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.PodcastEpisode = await api.episodeController.id(options);
@@ -567,6 +561,12 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.binary(res, result);
 	});
 
+	register.get('/bookmark/list', async (req, res) => {
+		const options: JamRequest<JamParameters.BookmarkList> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.Bookmark> = await api.bookmarkController.list(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/playlist/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.playlistController.image(options);
@@ -645,9 +645,9 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.binary(res, result);
 	}, '/download/{id}.{format}');
 
-	register.post('/track/bookmark/delete', async (req, res) => {
+	register.post('/bookmark/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.bookmarkDelete(options);
+		await api.bookmarkController.delete(options);
 		await ApiResponder.ok(res);
 	});
 
@@ -693,9 +693,9 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.ok(res);
 	});
 
-	register.post('/track/bookmark/create', async (req, res) => {
+	register.post('/bookmark/create', async (req, res) => {
 		const options: JamRequest<JamParameters.BookmarkCreate> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.TrackBookmark = await api.trackController.bookmarkCreate(options);
+		const result: Jam.Bookmark = await api.bookmarkController.create(options);
 		await ApiResponder.data(res, result);
 	});
 

@@ -121,41 +121,6 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		this.rootService.refreshTracks(tracks); // do not wait
 	}
 
-	async prepareBookmark(bookmark: Bookmark, includes: JamParameters.IncludesBookmark, user: User): Promise<Jam.TrackBookmark> {
-		const result = formatBookmark(bookmark);
-		if (includes.bookmarkTrack && bookmark.destID) {
-			const track = await this.trackStore.byId(bookmark.destID);
-			if (track) {
-				result.track = await this.prepare(track, includes, user);
-			}
-		}
-		return result;
-	}
-
-
-	async bookmarkCreate(req: JamRequest<JamParameters.BookmarkCreate>): Promise<Jam.TrackBookmark> {
-		const track = await this.byID(req.query.id);
-		const bookmark = await this.bookmarkService.create(track, req.user, req.query.position || 0, req.query.comment);
-		return this.prepareBookmark(bookmark, {}, req.user);
-	}
-
-	async bookmarkDelete(req: JamRequest<JamParameters.ID>): Promise<void> {
-		await this.bookmarkService.remove(req.query.id, req.user);
-	}
-
-	async bookmarkList(req: JamRequest<JamParameters.BookmarkList>): Promise<Array<Jam.TrackBookmark>> {
-		const bookmarks = await this.bookmarkService.getAll(req.user.id);
-		const result = bookmarks.map(bookmark => formatBookmark(bookmark));
-		if (req.query.bookmarkTrack) {
-			const entries = await this.trackStore.byIds(bookmarks.map(b => b.destID));
-			const tracks = await this.prepareList(entries, req.query, req.user);
-			result.forEach(bookmark => {
-				bookmark.track = tracks.find(t => t.id === bookmark.trackID);
-			});
-		}
-		return result;
-	}
-
 	async stream(req: JamRequest<JamParameters.Stream>): Promise<IApiBinaryResult> {
 		const track = await this.byID(req.query.id);
 		return await this.streamService.getObjStream(track, req.query.format, req.query.maxBitRate, req.user);

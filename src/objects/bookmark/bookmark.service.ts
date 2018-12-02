@@ -18,14 +18,14 @@ export class BookmarkService {
 		return await this.bookmarkStore.search({userID, destID: trackID});
 	}
 
-	async create(track: Track, user: User, position: number, comment: string | undefined): Promise<Bookmark> {
-		let bookmark = await this.bookmarkStore.searchOne({destID: track.id, userID: user.id});
+	async create(destID: string, userID: string, position: number, comment: string | undefined): Promise<Bookmark> {
+		let bookmark = await this.bookmarkStore.searchOne({destID, userID});
 		if (!bookmark) {
 			bookmark = {
 				id: '',
 				type: DBObjectType.bookmark,
-				destID: track.id,
-				userID: user.id,
+				destID,
+				userID,
 				position,
 				comment,
 				created: Date.now(),

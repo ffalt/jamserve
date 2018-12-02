@@ -63,7 +63,8 @@ export declare namespace Jam {
 		sampleRate: number;
 	}
 
-	export interface TrackBookmark {
+	export interface Bookmark {
+		id: string;
 		track?: Track;
 		trackID: string;
 		position: number;
@@ -359,7 +360,7 @@ export declare namespace Jam {
 		track?: Track;
 		tracks?: Array<Track>;
 		folders?: Array<Folder>;
-		bookmarks?: Array<TrackBookmark>;
+		bookmarks?: Array<Bookmark>;
 		folderChildren?: FolderChildren;
 		state?: State;
 		states?: States;

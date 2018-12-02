@@ -100,7 +100,7 @@ async function run(): Promise<void> {
 	strings.push('const type_string = {type: \'text\', fields: {keyword: {type: \'keyword\'}}};\n');
 	strings.push('const type_key = {type: \'keyword\'};\n');
 	for (const symbol of symbols) {
-		const baseP = path.resolve(basePath, `engine/${symbol.toLowerCase()}`);
+		const baseP = path.resolve(basePath, `objects/${symbol.toLowerCase()}`);
 		const scheme = await transformTS2JSONScheme(baseP, symbol.toLowerCase() + '.model', symbol);
 		transformProperties(symbol, scheme.properties || {}, scheme.definitions || {}, []);
 		result[symbol.toLowerCase()] = 'type_' + symbol.replace(/\./g, '_');

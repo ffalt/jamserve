@@ -64,14 +64,18 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		});
 	}
 
+	async prepareByID(id: string, includes: INCLUDE, user: User): Promise<RESULTOBJ> {
+		const o = await this.byID(id);
+		return await this.prepare(o, includes, user);
+	}
+
 	async prepareByQuery(query: JAMQUERY, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
 		const list = await this.objstore.search(query);
 		return this.prepareList(this.defaultSort(list), includes, user);
 	}
 
 	async id(req: JamRequest<OBJREQUEST>): Promise<RESULTOBJ> {
-		const item = await this.byID((<JamParameters.ID>req.query).id);
-		return this.prepare(item, <INCLUDE>req.query, req.user);
+		return this.prepareByID((<JamParameters.ID>req.query).id, <INCLUDE>req.query, req.user);
 	}
 
 	async ids(req: JamRequest<OBJLISTREQUEST>): Promise<Array<RESULTOBJ>> {

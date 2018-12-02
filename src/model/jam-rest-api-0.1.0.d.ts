@@ -305,14 +305,6 @@ export interface JamApi {
 			result: Array<Jam.Track>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
-		/**
-		 * track: get a bookmarks list by track id
-		 */
-		'track/bookmark/list'?: {
-			params: JamParameters.BookmarkList;
-			result: Array<Jam.TrackBookmark>;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-		};
 
 		'episode/id'?: {
 			params: JamParameters.Episode;
@@ -641,6 +633,15 @@ export interface JamApi {
 			binary: JamApiDownloadTypes;
 		};
 
+		/**
+		 * bookmark: get a bookmarks list for the calling user
+		 */
+		'bookmark/list'?: {
+			params: JamParameters.BookmarkList;
+			result: Array<Jam.Bookmark>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+
 		'playlist/image'?: {
 			params: JamParameters.Image;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
@@ -757,7 +758,10 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 		};
 
-		'track/bookmark/delete'?: {
+		/**
+		 * bookmark: delete a bookmark
+		 */
+		'bookmark/delete'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
@@ -834,9 +838,12 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
-		'track/bookmark/create'?: {
+		/**
+		 * bookmark: create a bookmark
+		 */
+		'bookmark/create'?: {
 			params: JamParameters.BookmarkCreate;
-			result: Jam.TrackBookmark;
+			result: Jam.Bookmark;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 

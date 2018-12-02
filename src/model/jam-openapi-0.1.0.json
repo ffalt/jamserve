@@ -3276,94 +3276,6 @@
 				]
 			}
 		},
-		"/track/bookmark/list": {
-			"get": {
-				"operationId": "trackController.bookmarkList",
-				"description": "get a bookmarks list by track id",
-				"tags": [
-					"track"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.TrackBookmark"
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"parameters": [
-					{
-						"in": "query",
-						"name": "bookmarkTrack",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include the track of the bookmark",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackMedia",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include media informations on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackID3",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include id3 tag on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackState",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include user states (fav,rate) on track(s)",
-						"required": false
-					}
-				]
-			}
-		},
 		"/episode/id": {
 			"get": {
 				"operationId": "episodeController.id",
@@ -9055,6 +8967,94 @@
 				]
 			}
 		},
+		"/bookmark/list": {
+			"get": {
+				"operationId": "bookmarkController.list",
+				"description": "get a bookmarks list for the calling user",
+				"tags": [
+					"bookmark"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.Bookmark"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "bookmarkTrack",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include the track of the bookmark",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackMedia",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include media informations on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackID3",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include id3 tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					}
+				]
+			}
+		},
 		"/playlist/image": {
 			"get": {
 				"operationId": "playlistController.image",
@@ -9934,11 +9934,12 @@
 				}
 			}
 		},
-		"/track/bookmark/delete": {
+		"/bookmark/delete": {
 			"post": {
-				"operationId": "trackController.bookmarkDelete",
+				"operationId": "bookmarkController.delete",
+				"description": "delete a bookmark",
 				"tags": [
-					"track"
+					"bookmark"
 				],
 				"responses": {
 					"200": {
@@ -10497,11 +10498,12 @@
 				}
 			}
 		},
-		"/track/bookmark/create": {
+		"/bookmark/create": {
 			"post": {
-				"operationId": "trackController.bookmarkCreate",
+				"operationId": "bookmarkController.create",
+				"description": "create a bookmark",
 				"tags": [
-					"track"
+					"bookmark"
 				],
 				"responses": {
 					"200": {
@@ -10509,7 +10511,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.TrackBookmark"
+									"$ref": "#/components/schemas/Jam.Bookmark"
 								}
 							}
 						}
@@ -14952,35 +14954,6 @@
 					"$ref": "#/components/schemas/Jam.ID3Tag"
 				}
 			},
-			"Jam.TrackBookmark": {
-				"type": "object",
-				"properties": {
-					"track": {
-						"$ref": "#/components/schemas/Jam.Track"
-					},
-					"trackID": {
-						"type": "string"
-					},
-					"position": {
-						"type": "number"
-					},
-					"comment": {
-						"type": "string"
-					},
-					"created": {
-						"type": "number"
-					},
-					"changed": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"changed",
-					"created",
-					"position",
-					"trackID"
-				]
-			},
 			"Jam.PodcastEpisode": {
 				"type": "object",
 				"properties": {
@@ -15489,6 +15462,39 @@
 					"lastScan"
 				]
 			},
+			"Jam.Bookmark": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"track": {
+						"$ref": "#/components/schemas/Jam.Track"
+					},
+					"trackID": {
+						"type": "string"
+					},
+					"position": {
+						"type": "number"
+					},
+					"comment": {
+						"type": "string"
+					},
+					"created": {
+						"type": "number"
+					},
+					"changed": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"changed",
+					"created",
+					"id",
+					"position",
+					"trackID"
+				]
+			},
 			"JamParameters.Login": {
 				"type": "object",
 				"properties": {
@@ -15657,6 +15663,10 @@
 			"JamParameters.BookmarkCreate": {
 				"type": "object",
 				"properties": {
+					"trackID": {
+						"description": "a track id",
+						"type": "string"
+					},
 					"comment": {
 						"description": "a comment",
 						"type": "string"
@@ -15665,14 +15675,9 @@
 						"description": "the position of the bookmark (in ms)",
 						"minimum": 0,
 						"type": "integer"
-					},
-					"id": {
-						"description": "the item id",
-						"type": "string"
 					}
 				},
 				"required": [
-					"id",
 					"position"
 				]
 			},

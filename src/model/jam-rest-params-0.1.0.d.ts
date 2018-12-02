@@ -307,7 +307,11 @@ export declare namespace JamParameters {
 		list: ListType;
 	}
 
-	export interface BookmarkCreate extends ID {
+	export interface BookmarkCreate {
+		/**
+		 * a track id
+		 */
+		trackID?: string;
 		/**
 		 * a comment
 		 */
@@ -323,6 +327,14 @@ export declare namespace JamParameters {
 
 	export interface BookmarkList extends IncludesBookmark {
 	}
+
+
+	export interface Bookmark extends ID, IncludesBookmark {
+	}
+
+	export interface Bookmarks extends IDs, IncludesBookmark {
+	}
+
 
 	export interface ArtistInfo extends ID {
 		/**
@@ -599,6 +611,20 @@ export declare namespace JamParameters {
 	}
 
 	export interface EpisodeSearch extends Paginate, EpisodeSearchQuery, IncludesEpisode {
+	}
+
+	export interface BookmarkSearchQuery extends SearchQuery {
+		/**
+		 * filter by track id
+		 */
+		trackID?: string;
+		/**
+		 * filter by user id
+		 */
+		userID?: string;
+	}
+
+	export interface BookmarkSearch extends Paginate, BookmarkSearchQuery, IncludesBookmark {
 	}
 
 	export interface Podcast extends ID, IncludesPodcast {

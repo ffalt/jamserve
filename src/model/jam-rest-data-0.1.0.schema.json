@@ -109,7 +109,7 @@
 		"bookmarks": {
 			"type": "array",
 			"items": {
-				"$ref": "#/definitions/Jam.TrackBookmark"
+				"$ref": "#/definitions/Jam.Bookmark"
 			}
 		},
 		"folderChildren": {
@@ -3270,9 +3270,12 @@
 				"url"
 			]
 		},
-		"Jam.TrackBookmark": {
+		"Jam.Bookmark": {
 			"type": "object",
 			"properties": {
+				"id": {
+					"type": "string"
+				},
 				"track": {
 					"$ref": "#/definitions/Jam.Track"
 				},
@@ -3295,6 +3298,7 @@
 			"required": [
 				"changed",
 				"created",
+				"id",
 				"position",
 				"trackID"
 			]
