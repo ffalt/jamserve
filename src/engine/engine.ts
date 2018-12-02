@@ -13,7 +13,7 @@ import {PodcastService} from '../objects/podcast/podcast.service';
 import {NowPlaylingService} from './nowplaying/nowplaying.service';
 import {RootService} from '../objects/root/root.service';
 import {PlaylistService} from '../objects/playlist/playlist.service';
-import {PlayqueueService} from '../objects/playqueue/playqueue.service';
+import {PlayQueueService} from '../objects/playqueue/playqueue.service';
 import {Config} from '../config';
 import {WaveformService} from './waveform/waveform.service';
 import {StreamService} from './stream/stream.service';
@@ -37,7 +37,7 @@ export class Engine {
 	public rootService: RootService;
 	public chatService: ChatService;
 	public genreService: GenreService;
-	public playqueueService: PlayqueueService;
+	public playqueueService: PlayQueueService;
 	public podcastService: PodcastService;
 	public playlistService: PlaylistService;
 	public nowPlaylingService: NowPlaylingService;
@@ -62,7 +62,7 @@ export class Engine {
 		this.nowPlaylingService = new NowPlaylingService(this.store, this.stateService);
 		this.streamService = new StreamService(this.nowPlaylingService);
 		this.playlistService = new PlaylistService(this.store);
-		this.playqueueService = new PlayqueueService(this.store);
+		this.playqueueService = new PlayQueueService(this.store);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
 		this.podcastService = new PodcastService(this.config, this.store, this.audioService);
 		this.indexService = new IndexService(config, this.store, this.ioService);

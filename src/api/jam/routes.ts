@@ -447,9 +447,9 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/user/playqueue', async (req, res) => {
-		const options: JamRequest<JamParameters.IncludesPlayQueue> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.PlayQueue = await api.userController.playqueue(options);
+	register.get('/playqueue/get', async (req, res) => {
+		const options: JamRequest<JamParameters.PlayQueue> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.PlayQueue = await api.playqueueController.get(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -771,9 +771,15 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.ok(res);
 	});
 
-	register.post('/user/playqueue/update', async (req, res) => {
+	register.post('/playqueue/update', async (req, res) => {
 		const options: JamRequest<JamParameters.PlayQueueSet> = {query: req.body, user: req.user, client: req.client};
-		await api.userController.playqueueUpdate(options);
+		await api.playqueueController.update(options);
+		await ApiResponder.ok(res);
+	});
+
+	register.post('/playqueue/delete', async (req, res) => {
+		const options: JamRequest<{}> = {query: req.body, user: req.user, client: req.client};
+		await api.playqueueController.delete(options);
 		await ApiResponder.ok(res);
 	});
 

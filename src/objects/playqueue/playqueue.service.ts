@@ -2,7 +2,7 @@ import {Store} from '../../engine/store';
 import {DBObjectType} from '../../types';
 import {PlayQueue} from './playqueue.model';
 
-export class PlayqueueService {
+export class PlayQueueService {
 	store: Store;
 
 	constructor(store: Store) {
@@ -27,6 +27,13 @@ export class PlayqueueService {
 
 	async getQueue(userID: string): Promise<PlayQueue | undefined> {
 		return this.store.playQueueStore.searchOne({userID});
+	}
+
+	async removeQueue(userID: string): Promise<void> {
+		const playQueue = await this.getQueue(userID);
+		if (playQueue) {
+			await this.store.playQueueStore.remove(playQueue.id);
+		}
 	}
 
 	async saveQueue(userID: string, trackIDs: Array<string>, currentID: string | undefined, position: number | undefined, client?: string): Promise<void> {

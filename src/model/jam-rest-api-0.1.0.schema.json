@@ -2502,11 +2502,12 @@
 						"roles"
 					]
 				},
-				"user/playqueue": {
+				"playqueue/get": {
+					"description": "playqueue: get a playqueue for calling user",
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.IncludesPlayQueue"
+							"$ref": "#/definitions/JamParameters.PlayQueue"
 						},
 						"result": {
 							"$ref": "#/definitions/Jam.PlayQueue"
@@ -5800,7 +5801,8 @@
 						"params"
 					]
 				},
-				"user/playqueue/update": {
+				"playqueue/update": {
+					"description": "playqueue: create/update the playqueue for calling user",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -5826,6 +5828,31 @@
 					"required": [
 						"errors",
 						"params"
+					]
+				},
+				"playqueue/delete": {
+					"description": "playqueue: delete the playqueue for calling user",
+					"type": "object",
+					"properties": {
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors"
 					]
 				},
 				"user/create": {
@@ -12688,7 +12715,7 @@
 				}
 			}
 		},
-		"JamParameters.IncludesPlayQueue": {
+		"JamParameters.PlayQueue": {
 			"type": "object",
 			"properties": {
 				"playQueueTracks": {

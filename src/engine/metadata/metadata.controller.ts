@@ -10,7 +10,7 @@ import {AudioService} from '../audio/audio.service';
 export class MetadataController {
 	private cache: { [key: string]: any } = {};
 
-	constructor(private trackController: TrackController, private audioService: AudioService) {
+	constructor(private audioService: AudioService, private trackController: TrackController) {
 	}
 
 	async brainzSearch(req: JamRequest<JamParameters.BrainzSearch>): Promise<MusicBrainz.Response> {

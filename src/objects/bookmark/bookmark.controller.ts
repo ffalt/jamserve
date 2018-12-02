@@ -1,29 +1,19 @@
 import {JamParameters} from '../../model/jam-rest-params-0.1.0';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
-import {DBObjectType} from '../../types';
 import {JamRequest} from '../../api/jam/api';
-import {BaseController} from '../base/base.controller';
-import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
-import {DownloadService} from '../../engine/download/download.service';
 import {User} from '../user/user.model';
 import {Bookmark} from './bookmark.model';
-import {BookmarkStore, SearchQueryBookmark} from './bookmark.store';
+import {SearchQueryBookmark} from './bookmark.store';
 import {TrackController} from '../track/track.controller';
 import {formatBookmark} from './bookmark.format';
 import {BookmarkService} from './bookmark.service';
 
-export class BookmarkController extends BaseController<JamParameters.Bookmark, JamParameters.Bookmarks, JamParameters.IncludesBookmark, SearchQueryBookmark, JamParameters.BookmarkSearch, Bookmark, Jam.Bookmark> {
+export class BookmarkController {
 
 	constructor(
-		private bookmarkStore: BookmarkStore,
 		private bookmarkService: BookmarkService,
-		private trackController: TrackController,
-		protected stateService: StateService,
-		protected imageService: ImageService,
-		protected downloadService: DownloadService
+		private trackController: TrackController
 	) {
-		super(bookmarkStore, DBObjectType.bookmark, stateService, imageService, downloadService);
 	}
 
 	defaultSort(items: Array<Bookmark>): Array<Bookmark> {

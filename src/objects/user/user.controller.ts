@@ -6,13 +6,11 @@ import {GenericError, InvalidParamError, UnauthError} from '../../api/jam/error'
 import {JamRequest} from '../../api/jam/api';
 import {TrackController} from '../track/track.controller';
 import {formatUser} from './user.format';
-import {formatPlayQueue} from '../playqueue/playqueue.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
 import {SearchQueryUser, UserStore} from './user.store';
 import {UserService} from './user.service';
-import {PlayqueueService} from '../playqueue/playqueue.service';
 import {User} from './user.model';
 
 export class UserController extends BaseController<JamParameters.ID, JamParameters.IDs, {}, SearchQueryUser, JamParameters.UserSearch, User, Jam.User> {
@@ -20,8 +18,6 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	constructor(
 		private userStore: UserStore,
 		private userService: UserService,
-		private trackController: TrackController,
-		private playqueueService: PlayqueueService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
@@ -106,19 +102,6 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		}
 		await this.userService.updateUser(u);
 		return this.prepare(u, {}, req.user);
-	}
-
-	async playqueueUpdate(req: JamRequest<JamParameters.PlayQueueSet>): Promise<void> {
-		await this.playqueueService.saveQueue(req.user.id, req.query.trackIDs, req.query.currentID, req.query.position, req.client);
-	}
-
-	async playqueue(req: JamRequest<JamParameters.IncludesPlayQueue>): Promise<Jam.PlayQueue> {
-		const playQueue = await this.playqueueService.getQueueOrCreate(req.user.id, req.client);
-		const result = formatPlayQueue(playQueue, req.query);
-		if (req.query.playQueueTracks) {
-			result.tracks = await this.trackController.prepareListByIDs(playQueue.trackIDs, req.query, req.user);
-		}
-		return result;
 	}
 
 	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {

@@ -7653,11 +7653,12 @@
 				]
 			}
 		},
-		"/user/playqueue": {
+		"/playqueue/get": {
 			"get": {
-				"operationId": "userController.playqueue",
+				"operationId": "playqueueController.get",
+				"description": "get a playqueue for calling user",
 				"tags": [
-					"user"
+					"playqueue"
 				],
 				"responses": {
 					"200": {
@@ -11011,11 +11012,12 @@
 				}
 			}
 		},
-		"/user/playqueue/update": {
+		"/playqueue/update": {
 			"post": {
-				"operationId": "userController.playqueueUpdate",
+				"operationId": "playqueueController.update",
+				"description": "create/update the playqueue for calling user",
 				"tags": [
-					"user"
+					"playqueue"
 				],
 				"responses": {
 					"200": {
@@ -11042,6 +11044,32 @@
 								"$ref": "#/components/schemas/JamParameters.PlayQueueSet"
 							}
 						}
+					}
+				}
+			}
+		},
+		"/playqueue/delete": {
+			"post": {
+				"operationId": "playqueueController.delete",
+				"description": "delete the playqueue for calling user",
+				"tags": [
+					"playqueue"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
 					}
 				}
 			}

@@ -21,6 +21,7 @@ import {User} from '../../objects/user/user.model';
 import {WaveformController} from '../../engine/waveform/waveform.controller';
 import {AutocompleteController} from '../../engine/autocomplete/autocomplete.controller';
 import {BookmarkController} from '../../objects/bookmark/bookmark.controller';
+import {PlayQueueController} from '../../objects/playqueue/playqueue.controller';
 
 export const APIVERSION = '0.1.0';
 
@@ -51,6 +52,7 @@ export class JamController {
 	downloadController: DownloadController;
 	autocompleteController: AutocompleteController;
 	bookmarkController: BookmarkController;
+	playqueueController: PlayQueueController;
 
 	constructor(private engine: Engine) {
 		this.streamController = new StreamController(this.engine.streamService, this.engine.store);
@@ -76,15 +78,13 @@ export class JamController {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
 		this.folderController = new FolderController(this.engine.store.folderStore, this.trackController, this.engine.metaDataService, this.engine.indexService, this.engine.rootService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
-		this.userController = new UserController(this.engine.store.userStore, this.engine.userService, this.trackController, this.engine.playqueueService,
+		this.userController = new UserController(this.engine.store.userStore, this.engine.userService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.playlistController = new PlaylistController(this.engine.store.playlistStore, this.engine.playlistService, this.trackController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.bookmarkController = new BookmarkController(this.engine.store.bookmarkStore, this.engine.bookmarkService, this.trackController,
-			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-
-		this.metadataController = new MetadataController(this.trackController, this.engine.audioService);
-
+		this.bookmarkController = new BookmarkController(this.engine.bookmarkService, this.trackController);
+		this.playqueueController = new PlayQueueController(this.engine.playqueueService, this.trackController);
+		this.metadataController = new MetadataController(this.engine.audioService, this.trackController);
 	}
 
 	async ping(req: JamRequest<{}>): Promise<Jam.Ping> {

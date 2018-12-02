@@ -160,6 +160,9 @@ export declare namespace JamParameters {
 		playQueueTrackIDs?: boolean;
 	}
 
+	export interface PlayQueue extends IncludesPlayQueue {
+	}
+
 	export interface PlayQueueSet {
 		/**
 		 * the track ids of the playqueue

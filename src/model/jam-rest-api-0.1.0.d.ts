@@ -519,8 +519,12 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['admin'];
 		};
-		'user/playqueue'?: {
-			params: JamParameters.IncludesPlayQueue;
+
+		/**
+		 * playqueue: get a playqueue for calling user
+		 */
+		'playqueue/get'?: {
+			params: JamParameters.PlayQueue;
 			result: Jam.PlayQueue;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
@@ -907,8 +911,18 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
-		'user/playqueue/update'?: {
+		/**
+		 * playqueue: create/update the playqueue for calling user
+		 */
+		'playqueue/update'?: {
 			params: JamParameters.PlayQueueSet;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+
+		/**
+		 * playqueue: delete the playqueue for calling user
+		 */
+		'playqueue/delete'?: {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
