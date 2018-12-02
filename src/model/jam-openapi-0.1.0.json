@@ -4317,6 +4317,260 @@
 				]
 			}
 		},
+		"/radio/id": {
+			"get": {
+				"operationId": "radioController.id",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Radio"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "radioState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on radio(s)",
+						"required": true
+					}
+				]
+			}
+		},
+		"/radio/ids": {
+			"get": {
+				"operationId": "radioController.ids",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.Radio"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "array of item ids",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "radioState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on radio(s)",
+						"required": true
+					}
+				]
+			}
+		},
+		"/radio/search": {
+			"get": {
+				"operationId": "radioController.search",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.Radio"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "array of item ids",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "radioState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on radio(s)",
+						"required": true
+					}
+				]
+			}
+		},
+		"/radio/state": {
+			"get": {
+				"operationId": "radioController.state",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
+		"/radio/states": {
+			"get": {
+				"operationId": "radioController.states",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.States"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "array of item ids",
+						"required": true
+					}
+				]
+			}
+		},
 		"/artist/id": {
 			"get": {
 				"operationId": "artistController.id",
@@ -10146,6 +10400,41 @@
 				}
 			}
 		},
+		"/radio/delete": {
+			"post": {
+				"operationId": "radioController.delete",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/chat/create": {
 			"post": {
 				"operationId": "chatController.create",
@@ -10314,6 +10603,41 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.TagID3sUpdate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/radio/update": {
+			"post": {
+				"operationId": "radioController.update",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.RadioUpdate"
 							}
 						}
 					}
@@ -10493,46 +10817,6 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.Rate"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/bookmark/create": {
-			"post": {
-				"operationId": "bookmarkController.create",
-				"description": "create a bookmark",
-				"tags": [
-					"bookmark"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.Bookmark"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.BookmarkCreate"
 							}
 						}
 					}
@@ -10749,6 +11033,85 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.Rate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/bookmark/create": {
+			"post": {
+				"operationId": "bookmarkController.create",
+				"description": "create a bookmark",
+				"tags": [
+					"bookmark"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Bookmark"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.BookmarkCreate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/radio/create": {
+			"post": {
+				"operationId": "radioController.create",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Radio"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.RadioNew"
 							}
 						}
 					}
@@ -15124,6 +15487,39 @@
 					"status"
 				]
 			},
+			"Jam.Radio": {
+				"type": "object",
+				"properties": {
+					"url": {
+						"type": "string"
+					},
+					"homepage": {
+						"type": "string"
+					},
+					"updated": {
+						"type": "number"
+					},
+					"id": {
+						"type": "string"
+					},
+					"state": {
+						"$ref": "#/components/schemas/Jam.State"
+					},
+					"name": {
+						"type": "string"
+					},
+					"created": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"created",
+					"id",
+					"name",
+					"updated",
+					"url"
+				]
+			},
 			"Jam.Artist": {
 				"type": "object",
 				"properties": {
@@ -15652,6 +16048,30 @@
 					"tagID3s"
 				]
 			},
+			"JamParameters.RadioUpdate": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "radio name",
+						"type": "string"
+					},
+					"url": {
+						"description": "radio stream url",
+						"type": "string"
+					},
+					"homepage": {
+						"description": "radio homepage url",
+						"type": "string"
+					},
+					"id": {
+						"description": "the item id",
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
 			"JamParameters.FolderEditImg": {
 				"description": "Set the image of a folder by url",
 				"type": "object",
@@ -15707,6 +16127,27 @@
 				},
 				"required": [
 					"position"
+				]
+			},
+			"JamParameters.RadioNew": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "radio name",
+						"type": "string"
+					},
+					"url": {
+						"description": "radio stream url",
+						"type": "string"
+					},
+					"homepage": {
+						"description": "radio homepage url",
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"url"
 				]
 			},
 			"JamParameters.PodcastNew": {

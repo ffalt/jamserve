@@ -1,6 +1,6 @@
 import {OpenAPIObject} from '../../src/model/openapi';
 import path from 'path';
-import {getJamApiCalls, IApiCall, transformTS2JSONScheme} from './utils';
+import {getJamApiCalls, IApiCall, transformTS2JSONScheme, transformTS2NamespaceJSONScheme} from './utils';
 import fse from 'fs-extra';
 
 const version = '0.1.0';
@@ -57,7 +57,10 @@ async function run() {
 			p = definitions[proptype];
 			if (openapi.components && openapi.components.schemas && !openapi.components.schemas[proptype]) {
 				openapi.components.schemas[proptype] = p;
-				if (p.properties) {
+				if (!p) {
+					console.error('Missing property type', proptype);
+				}
+				if (p && p.properties) {
 					Object.keys(p.properties).forEach(key => {
 						collectSchema(p.properties[key], definitions);
 					});
@@ -93,7 +96,7 @@ async function run() {
 		return result;
 	}
 
-	const data = await transformTS2JSONScheme(basePath, 'jam-rest-data-' + version, 'Jam.Data');
+	const data = await transformTS2NamespaceJSONScheme(basePath, 'jam-rest-data-' + version);
 	const apicalls: Array<IApiCall> = await getJamApiCalls(basePath);
 
 	apicalls.forEach(call => {

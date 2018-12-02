@@ -7,6 +7,7 @@ import {Database, DatabaseQuery} from '../../db/db.model';
 export interface SearchQueryRadio extends SearchQuery {
 	name?: string;
 	url?: string;
+	homepage?: string;
 }
 
 export class RadioStore extends BaseStore<Radio, SearchQueryRadio> {
@@ -18,6 +19,7 @@ export class RadioStore extends BaseStore<Radio, SearchQueryRadio> {
 	protected transformQuery(query: SearchQueryRadio): DatabaseQuery {
 		const q = new QueryHelper();
 		q.term('url', query.url);
+		q.term('homepage', query.homepage);
 		q.term('name', query.name);
 		q.match('name', query.query);
 		return q.get(query);

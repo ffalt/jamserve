@@ -24,6 +24,7 @@ import {DownloadService} from './download/download.service';
 import {ListService} from './list/list.service';
 import {User} from '../objects/user/user.model';
 import {Root} from '../objects/root/root.model';
+import {RadioService} from '../objects/radio/radio.service';
 
 export class Engine {
 	public config: Config;
@@ -47,6 +48,7 @@ export class Engine {
 	public imageService: ImageService;
 	public downloadService: DownloadService;
 	public listService: ListService;
+	public radioService: RadioService;
 
 	constructor(config: Config) {
 		this.config = config;
@@ -70,6 +72,7 @@ export class Engine {
 		this.metaDataService = new MetaDataService(this.store, this.audioService);
 		this.listService = new ListService(this.store.stateStore);
 		this.rootService = new RootService(this.store, this.ioService, this.indexService, this.genreService);
+		this.radioService = new RadioService(this.store.radioStore);
 	}
 
 	private async checkFirstStart(): Promise<void> {

@@ -5,4 +5,6 @@ export interface Radio extends DBObject {
 	url: string;
 	homepage?: string;
 	disabled?: boolean;
+	created: number;
+	updated: number;
 }

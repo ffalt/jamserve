@@ -303,6 +303,36 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/radio/id', async (req, res) => {
+		const options: JamRequest<JamParameters.Radio> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.Radio = await api.radioController.id(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/radio/ids', async (req, res) => {
+		const options: JamRequest<JamParameters.Radios> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.Radio> = await api.radioController.ids(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/radio/search', async (req, res) => {
+		const options: JamRequest<JamParameters.Radios> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.Radio> = await api.radioController.search(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/radio/state', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.State = await api.radioController.state(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/radio/states', async (req, res) => {
+		const options: JamRequest<JamParameters.IDs> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.States = await api.radioController.states(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/artist/id', async (req, res) => {
 		const options: JamRequest<JamParameters.Artist> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Artist = await api.artistController.id(options);
@@ -693,12 +723,6 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.ok(res);
 	});
 
-	register.post('/bookmark/create', async (req, res) => {
-		const options: JamRequest<JamParameters.BookmarkCreate> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.Bookmark = await api.bookmarkController.create(options);
-		await ApiResponder.data(res, result);
-	});
-
 	register.post('/album/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
 		await api.albumController.favUpdate(options);
@@ -733,6 +757,12 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
 		await api.episodeController.rateUpdate(options);
 		await ApiResponder.ok(res);
+	});
+
+	register.post('/bookmark/create', async (req, res) => {
+		const options: JamRequest<JamParameters.BookmarkCreate> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.Bookmark = await api.bookmarkController.create(options);
+		await ApiResponder.data(res, result);
 	});
 
 	register.post('/podcast/fav/update', async (req, res) => {
@@ -845,6 +875,12 @@ export function registerAdminApi(register: Register, api: JamController): void {
 		await ApiResponder.ok(res);
 	});
 
+	register.post('/radio/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.radioController.delete(options);
+		await ApiResponder.ok(res);
+	});
+
 	register.post('/track/tagID3/update', async (req, res) => {
 		const options: JamRequest<JamParameters.TagID3Update> = {query: req.body, user: req.user, client: req.client};
 		await api.trackController.tagID3Update(options);
@@ -854,6 +890,12 @@ export function registerAdminApi(register: Register, api: JamController): void {
 	register.post('/track/tagID3s/update', async (req, res) => {
 		const options: JamRequest<JamParameters.TagID3sUpdate> = {query: req.body, user: req.user, client: req.client};
 		await api.trackController.tagID3sUpdate(options);
+		await ApiResponder.ok(res);
+	});
+
+	register.post('/radio/update', async (req, res) => {
+		const options: JamRequest<JamParameters.RadioUpdate> = {query: req.body, user: req.user, client: req.client};
+		await api.radioController.update(options);
 		await ApiResponder.ok(res);
 	});
 
@@ -873,6 +915,12 @@ export function registerAdminApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.FolderEditName> = {query: req.body, user: req.user, client: req.client};
 		await api.folderController.nameUpdate(options);
 		await ApiResponder.ok(res);
+	});
+
+	register.post('/radio/create', async (req, res) => {
+		const options: JamRequest<JamParameters.RadioNew> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.Radio = await api.radioController.create(options);
+		await ApiResponder.data(res, result);
 	});
 
 	register.post('/podcast/create', async (req, res) => {

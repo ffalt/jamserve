@@ -32,8 +32,37 @@ export async function transformTS2JSONScheme(basePath: string, filename: string,
 	}
 }
 
+export async function transformTS2NamespaceJSONScheme(basePath: string, filename: string): Promise<Definition> {
+	const compilerOptions: TJS.CompilerOptions = {
+		strictNullChecks: true,
+		rootDir: basePath,
+		typeRoots: [basePath]
+	};
+	const file = path.resolve(basePath, filename + '.d.ts');
+	const program = TJS.getProgramFromFiles([file], compilerOptions, basePath);
+	const generator = TJS.buildGenerator(program, settings);
+	if (!generator) {
+		console.log(program);
+		return Promise.reject('Typescript generation failed');
+	}
+	const symbols = generator.getUserSymbols();
+	const scheme = generator.getSchemaForSymbols(symbols);
+	if (scheme) {
+		return scheme;
+	} else {
+		return Promise.reject('Typescript schema could not be created: ' + filename);
+	}
+}
+
 export async function saveTS2JSONScheme(basePath: string, filename: string, symbol: string): Promise<void> {
 	const scheme = await transformTS2JSONScheme(basePath, filename, symbol);
+	const destfile = path.resolve(basePath, filename + '.schema.json');
+	await fse.writeFile(destfile, JSON.stringify(scheme, null, '\t'));
+	console.log(destfile, 'written');
+}
+
+export async function saveTS2NamespaceJSONScheme(basePath: string, filename: string): Promise<void> {
+	const scheme = await transformTS2NamespaceJSONScheme(basePath, filename);
 	const destfile = path.resolve(basePath, filename + '.schema.json');
 	await fse.writeFile(destfile, JSON.stringify(scheme, null, '\t'));
 	console.log(destfile, 'written');

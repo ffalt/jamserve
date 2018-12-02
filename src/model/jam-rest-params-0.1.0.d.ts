@@ -43,6 +43,15 @@ export declare namespace JamParameters {
 		rootID?: string;
 	}
 
+	export interface IncludesRadio {
+		/**
+		 * include user states (fav,rate) on radio(s)
+		 *
+		 * @default false
+		 */
+		radioState: boolean;
+	}
+
 	export interface IncludesTrack {
 		/**
 		 * include media informations on track(s)
@@ -636,6 +645,57 @@ export declare namespace JamParameters {
 	export interface Podcasts extends IDs, IncludesPodcast {
 	}
 
+	export interface Radio extends ID, IncludesRadio {
+	}
+
+	export interface Radios extends IDs, IncludesRadio {
+	}
+
+	export interface RadioNew {
+		/**
+		 * radio name
+		 */
+		name: string;
+		/**
+		 * radio stream url
+		 */
+		url: string;
+		/**
+		 * radio homepage url
+		 */
+		homepage?: string;
+	}
+
+	export interface RadioUpdate extends ID {
+		/**
+		 * radio name
+		 */
+		name?: string;
+		/**
+		 * radio stream url
+		 */
+		url?: string;
+		/**
+		 * radio homepage url
+		 */
+		homepage?: string;
+	}
+
+	export interface RadioSearchQuery extends SearchQuery {
+		/**
+		 * filter by radio url
+		 */
+		url?: string;
+		/**
+		 * filter by radio homepage url
+		 */
+		homepage?: string;
+		/**
+		 * filter by radio name
+		 */
+		name?: string;
+	}
+
 	export interface PodcastSearchQuery extends SearchQuery {
 		/**
 		 * filter by podcast url
@@ -660,6 +720,10 @@ export declare namespace JamParameters {
 
 	export interface PodcastSearch extends Paginate, PodcastSearchQuery, IncludesPodcast {
 	}
+
+	export interface RadioSearch extends Paginate, RadioSearchQuery, IncludesRadio {
+	}
+
 
 	export interface Album extends ID, IncludesAlbum {
 	}

@@ -118,6 +118,12 @@ export declare namespace Jam {
 		episodes?: Array<PodcastEpisode>;
 	}
 
+	export interface Radio extends Base {
+		url: string;
+		homepage?: string;
+		updated: number;
+	}
+
 	export interface ID3Tag {
 		version: number;
 		frames: ID3v2FrameValues.Frames;
@@ -334,48 +340,4 @@ export declare namespace Jam {
 		episodes?: Array<{ id: string; name: string; }>;
 	}
 
-	export interface Data {
-		ping?: Ping;
-		root?: Root;
-		roots?: Array<Root>;
-		autocomplete?: AutoComplete;
-		user?: User;
-		users?: Array<User>;
-		nowPlaying?: Array<NowPlaying>;
-		artist?: Artist;
-		artists?: Array<Artist>;
-		album?: Album;
-		albums?: Array<Album>;
-		artistInfo?: ArtistInfo;
-		albumInfo?: AlbumInfo;
-		artistFolderInfo?: ArtistFolderInfo;
-		albumFolderInfo?: AlbumFolderInfo;
-		folder?: Folder;
-		episode?: PodcastEpisode;
-		episodes?: Array<PodcastEpisode>;
-		playlist?: Playlist;
-		playlists?: Array<Playlist>;
-		podcast?: Podcast;
-		podcasts?: Array<Podcast>;
-		track?: Track;
-		tracks?: Array<Track>;
-		folders?: Array<Folder>;
-		bookmarks?: Array<Bookmark>;
-		folderChildren?: FolderChildren;
-		state?: State;
-		states?: States;
-		tagID3?: ID3Tag;
-		tagID3s?: ID3Tags;
-		brainz?: MusicBrainz.Response;
-		lastfm?: LastFM.Result;
-		acoustid?: Array<Acoustid.Result>;
-		genres?: Array<Genre>;
-		folderIndex?: FolderIndex;
-		artistIndex?: ArtistIndex;
-		chatMessages?: Array<ChatMessage>;
-		playqueue?: PlayQueue;
-		session?: Session;
-		podcastStatus?: PodcastStatus;
-		episodeStatus?: PodcastEpisodeStatus;
-	}
 }

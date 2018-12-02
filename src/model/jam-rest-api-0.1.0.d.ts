@@ -378,6 +378,33 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+
+		'radio/id'?: {
+			params: JamParameters.Radio;
+			result: Jam.Radio;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		'radio/ids'?: {
+			params: JamParameters.Radios;
+			result: Array<Jam.Radio>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		'radio/search'?: {
+			params: JamParameters.Radios;
+			result: Array<Jam.Radio>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		'radio/state'?: {
+			params: JamParameters.ID;
+			result: Jam.State
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		'radio/states'?: {
+			params: JamParameters.IDs;
+			result: Jam.States;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+
 		'artist/id'?: {
 			params: JamParameters.Artist;
 			result: Jam.Artist;
@@ -792,6 +819,11 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		'radio/delete'?: {
+			params: JamParameters.ID;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
 
 		'chat/create'?: {
 			params: JamParameters.ChatNew;
@@ -813,6 +845,11 @@ export interface JamApi {
 		};
 		'track/tagID3s/update'?: {
 			params: JamParameters.TagID3sUpdate;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		'radio/update'?: {
+			params: JamParameters.RadioUpdate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -842,15 +879,6 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
-		/**
-		 * bookmark: create a bookmark
-		 */
-		'bookmark/create'?: {
-			params: JamParameters.BookmarkCreate;
-			result: Jam.Bookmark;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-		};
-
 		'album/fav/update'?: {
 			params: JamParameters.Fav;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
@@ -876,6 +904,22 @@ export interface JamApi {
 		'episode/rate/update'?: {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+
+		/**
+		 * bookmark: create a bookmark
+		 */
+		'bookmark/create'?: {
+			params: JamParameters.BookmarkCreate;
+			result: Jam.Bookmark;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+
+		'radio/create'?: {
+			params: JamParameters.RadioNew;
+			result: Jam.Radio;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+			roles: ['admin'];
 		};
 
 		'podcast/create'?: {
