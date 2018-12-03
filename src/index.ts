@@ -37,10 +37,9 @@ async function stop(): Promise<void> {
 }
 
 async function runClearDB(): Promise<void> {
-	const store = new Store(config);
-	await store.open();
-	await store.reset();
-	await store.close();
+	await engine.store.open();
+	await engine.store.reset();
+	await engine.store.close();
 }
 
 if (process.argv.indexOf('--cleardb') > 0) {

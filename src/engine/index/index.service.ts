@@ -98,7 +98,7 @@ export class IndexTreeBuilder {
 export class IndexService {
 	private cached?: Indexes;
 
-	constructor(private indexConfig: IndexConfig, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore, private io: IoService) {
+	constructor(public indexConfig: IndexConfig, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore, private io: IoService) {
 	}
 
 	async buildIndexes(): Promise<void> {

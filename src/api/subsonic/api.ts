@@ -35,10 +35,8 @@ export interface ApiOptions<T> {
 }
 
 export class SubsonicApi {
-	public engine: Engine;
 
-	constructor(engine: Engine) {
-		this.engine = engine;
+	constructor(public engine: Engine) {
 	}
 
 	/* helper functions */
@@ -248,7 +246,7 @@ export class SubsonicApi {
 			return {
 				indexes: {
 					lastModified: index.lastModified,
-					ignoredArticles: (this.engine.store.config.app.index.ignore || []).join(' '),
+					ignoredArticles: (this.engine.indexService.indexConfig.ignore || []).join(' '),
 					index: FORMAT.packFolderIndex(index, states),
 					// shortcut?: Artist[]; use unknown, there is no api to add/remove shortcuts
 					// child?: Child[]; use unknown
@@ -280,7 +278,7 @@ export class SubsonicApi {
 		const states = await this.engine.stateService.findOrCreateMulti(ids, req.user.id, DBObjectType.artist);
 		return {
 			artists: {
-				ignoredArticles: (this.engine.store.config.app.index.ignore || []).join(' '),
+				ignoredArticles: (this.engine.indexService.indexConfig.ignore || []).join(' '),
 				index: FORMAT.packArtistIndex(index, states)
 			}
 		};

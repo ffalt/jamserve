@@ -26,9 +26,13 @@ import {User} from '../objects/user/user.model';
 import {Root} from '../objects/root/root.model';
 import {RadioService} from '../objects/radio/radio.service';
 import {FolderService} from '../objects/folder/folder.service';
+import {DBElastic} from '../db/elasticsearch/db-elastic';
+import {DBNedb} from '../db/nedb/db-nedb';
+import {Database} from '../db/db.model';
 
 export class Engine {
 	public config: Config;
+	public db: Database;
 	public store: Store;
 	public ioService: IoService;
 	public audioService: AudioService;
@@ -54,7 +58,12 @@ export class Engine {
 
 	constructor(config: Config) {
 		this.config = config;
-		this.store = new Store(config);
+		if (config.database.use === 'elasticsearch') {
+			this.db = new DBElastic(config.database.options.elasticsearch);
+		} else {
+			this.db = new DBNedb(config.getDataPath(['nedb']));
+		}
+		this.store = new Store(this.db);
 		this.audioService = new AudioService(config.tools);
 		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
 		this.imageService = new ImageService(config.getDataPath(['cache', 'images']), this.config.getDataPath(['images']), this.store.folderStore, this.store.trackStore);

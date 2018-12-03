@@ -1,6 +1,3 @@
-import {DBElastic} from '../db/elasticsearch/db-elastic';
-import {DBNedb} from '../db/nedb/db-nedb';
-import {Config} from '../config';
 import {UserStore} from '../objects/user/user.store';
 import {TrackStore} from '../objects/track/track.store';
 import {FolderStore} from '../objects/folder/folder.store';
@@ -17,20 +14,15 @@ import {StateStore} from '../objects/state/state.store';
 import {BaseStore, SearchQuery} from '../objects/base/base.store';
 import {DBObject} from '../objects/base/base.model';
 import {Database} from '../db/db.model';
-import {ImageService} from './image/image.service';
-import {WaveformService} from './waveform/waveform.service';
 import {Track} from '../objects/track/track.model';
 import {Folder} from '../objects/folder/folder.model';
 import {DBObjectType} from '../types';
 import {updatePlayListTracks} from '../objects/playlist/playlist.service';
-import {clearID3} from './io/components/clean';
 import Logger from '../utils/logger';
 
 const log = Logger('Store');
 
 export class Store {
-	public config: Config;
-	public db: Database;
 	public trackStore: TrackStore;
 	public folderStore: FolderStore;
 	public userStore: UserStore;
@@ -45,14 +37,7 @@ export class Store {
 	public playQueueStore: PlayQueueStore;
 	public radioStore: RadioStore;
 
-	constructor(config: Config) {
-		this.config = config;
-		if (this.config.database.use === 'elasticsearch') {
-			this.db = new DBElastic(config.database.options.elasticsearch);
-		} else {
-			const db_path = config.getDataPath(['nedb']);
-			this.db = new DBNedb(db_path);
-		}
+	constructor(public db: Database) {
 		this.trackStore = new TrackStore(this.db);
 		this.folderStore = new FolderStore(this.db);
 		this.userStore = new UserStore(this.db);
