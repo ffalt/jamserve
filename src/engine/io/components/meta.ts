@@ -8,6 +8,10 @@ import {ImageService} from '../../image/image.service';
 import {Artist} from '../../../objects/artist/artist.model';
 import {Track} from '../../../objects/track/track.model';
 import {Album} from '../../../objects/album/album.model';
+import {ArtistStore} from '../../../objects/artist/artist.store';
+import {StateStore} from '../../../objects/state/state.store';
+import {AlbumStore} from '../../../objects/album/album.store';
+import {TrackStore} from '../../../objects/track/track.store';
 
 const log = Logger('IO.meta');
 

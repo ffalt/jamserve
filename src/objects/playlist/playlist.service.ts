@@ -1,10 +1,11 @@
-import {Store} from '../../engine/store';
 import {DBObjectType} from '../../types';
 import {Playlist} from './playlist.model';
 import {Track} from '../track/track.model';
+import {PlaylistStore} from './playlist.store';
+import {TrackStore} from '../track/track.store';
 
-export async function updatePlayListTracks(store: Store, playlist: Playlist): Promise<void> {
-	const tracks = await store.trackStore.byIds(playlist.trackIDs);
+export async function updatePlayListTracks(trackStore: TrackStore, playlist: Playlist): Promise<void> {
+	const tracks = await trackStore.byIds(playlist.trackIDs);
 	const trackHash: { [id: string]: Track } = {};
 	tracks.forEach(track => {
 		trackHash[track.id] = track;
@@ -18,10 +19,8 @@ export async function updatePlayListTracks(store: Store, playlist: Playlist): Pr
 }
 
 export class PlaylistService {
-	private readonly store: Store;
 
-	constructor(store: Store) {
-		this.store = store;
+	constructor(private playlistStore: PlaylistStore, private trackStore: TrackStore) {
 	}
 
 	async createPlaylist(name: string, comment: string | undefined, isPublic: boolean, userID: string, trackIDs: Array<string>): Promise<Playlist> {
@@ -38,17 +37,17 @@ export class PlaylistService {
 			trackIDs: trackIDs,
 			duration: 0
 		};
-		await updatePlayListTracks(this.store, playlist);
-		playlist.id = await this.store.playlistStore.add(playlist);
+		await updatePlayListTracks(this.trackStore, playlist);
+		playlist.id = await this.playlistStore.add(playlist);
 		return playlist;
 	}
 
 	async updatePlaylist(playlist: Playlist): Promise<void> {
-		await updatePlayListTracks(this.store, playlist);
-		await this.store.playlistStore.replace(playlist);
+		await updatePlayListTracks(this.trackStore, playlist);
+		await this.playlistStore.replace(playlist);
 	}
 
 	async removePlaylist(playlist: Playlist): Promise<void> {
-		return this.store.playlistStore.remove(playlist.id);
+		return this.playlistStore.remove(playlist.id);
 	}
 }

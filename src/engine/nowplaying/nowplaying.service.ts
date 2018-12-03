@@ -1,4 +1,3 @@
-import {Store} from '../store';
 import {DBObjectType} from '../../types';
 import {NowPlaying} from './nowplaying.model';
 import {User} from '../../objects/user/user.model';
@@ -6,12 +5,10 @@ import {Episode} from '../../objects/episode/episode.model';
 import {Track} from '../../objects/track/track.model';
 import {StateService} from '../../objects/state/state.service';
 
-export class NowPlaylingService {
-	private readonly store: Store;
+export class NowPlayingService {
 	playing: Array<NowPlaying> = [];
 
-	constructor(store: Store, private stateService: StateService) {
-		this.store = store;
+	constructor(private stateService: StateService) {
 	}
 
 	async getNowPlaying(): Promise<Array<NowPlaying>> {
@@ -22,7 +19,7 @@ export class NowPlaylingService {
 		const state = await this.stateService.findOrCreate(id, user.id, type);
 		state.played++;
 		state.lastplayed = (new Date()).valueOf();
-		await this.store.stateStore.upsert([state]);
+		await this.stateService.upsert([state]);
 	}
 
 	async reportEpisode(episode: Episode, user: User): Promise<void> {

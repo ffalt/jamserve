@@ -11,10 +11,11 @@ import {Folder} from '../../objects/folder/folder.model';
 import {Artist} from '../../objects/artist/artist.model';
 import {Album} from '../../objects/album/album.model';
 import {Playlist} from '../../objects/playlist/playlist.model';
+import {TrackStore} from '../../objects/track/track.store';
 
 export class DownloadService {
 
-	constructor(private store: Store) {
+	constructor(private trackStore: TrackStore) {
 
 	}
 
@@ -34,17 +35,17 @@ export class DownloadService {
 				return {pipe: new CompressStream(folder.path, path.basename(folder.path))};
 			case DBObjectType.artist:
 				const artist = <Artist>o;
-				return sendTrackList(artist.name || 'artist', await this.store.trackStore.byIds(artist.trackIDs));
+				return sendTrackList(artist.name || 'artist', await this.trackStore.byIds(artist.trackIDs));
 			case DBObjectType.album:
 				const album = <Album>o;
-				return sendTrackList(album.name || 'album', await this.store.trackStore.byIds(album.trackIDs));
+				return sendTrackList(album.name || 'album', await this.trackStore.byIds(album.trackIDs));
 			case DBObjectType.playlist:
 				const playlist = <Playlist>o;
 				if (playlist.userID !== user.id) {
 					return Promise.reject(Error('Unauthorized'));
 				}
 				// TODO: add playlist index file m3u/pls
-				return sendTrackList(playlist.name || 'playlist', await this.store.trackStore.byIds(playlist.trackIDs));
+				return sendTrackList(playlist.name || 'playlist', await this.trackStore.byIds(playlist.trackIDs));
 		}
 		return Promise.reject(Error('Invalid Object Type for Download'));
 	}

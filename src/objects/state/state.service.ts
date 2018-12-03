@@ -8,6 +8,10 @@ export class StateService {
 
 	}
 
+	async upsert(items: Array<State>): Promise<void> {
+		await this.stateStore.upsert(items);
+	}
+
 	async fav(id: string, type: DBObjectType, userID: string, remove: boolean): Promise<State> {
 		const state = await this.findOrCreate(id, userID, type);
 		if (remove) {

@@ -1,22 +1,20 @@
 import moment from 'moment';
-import {Config} from '../../config';
+import {ChatConfig} from '../../config';
 import {ChatMessage} from './chat.model';
 import {User} from '../../objects/user/user.model';
 
 export class ChatService {
-	private readonly config: Config;
 	private lastCheck = 0;
 	private messages: Array<ChatMessage> = [];
 
-	constructor(config: Config) {
-		this.config = config;
+	constructor(private chatConfig: ChatConfig) {
 	}
 
 	async cleanOld(): Promise<void> {
 		const now = (new Date()).valueOf();
 		if ((now - (60 * 1000)) > this.lastCheck) {
 			this.lastCheck = now;
-			const duration = moment.duration(this.config.app.chat.maxAge.value, <moment.unitOfTime.Base>this.config.app.chat.maxAge.unit);
+			const duration = moment.duration(this.chatConfig.maxAge.value, <moment.unitOfTime.Base>this.chatConfig.maxAge.unit);
 			const d = moment().subtract(duration).valueOf();
 			this.messages = this.messages.filter(c => d < c.time);
 		}
@@ -48,7 +46,7 @@ export class ChatService {
 			userID: user.id
 		};
 		this.messages.push(c);
-		if (this.messages.length > this.config.app.chat.maxMsgs) {
+		if (this.messages.length > this.chatConfig.maxMsgs) {
 			this.messages.shift();
 		}
 	}

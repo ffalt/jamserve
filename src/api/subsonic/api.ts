@@ -891,7 +891,7 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <nowPlaying> element on success.
 		 */
-		const list = await this.engine.nowPlaylingService.getNowPlaying();
+		const list = await this.engine.nowPlayingService.getNowPlaying();
 		const result: Array<Subsonic.NowPlayingEntry> = [];
 		for (const entry of list) {
 			const state = await this.engine.stateService.findOrCreate(entry.obj.id, req.user.id, entry.obj.type);
@@ -1862,7 +1862,7 @@ export class SubsonicApi {
 		Returns a <subsonic-response> element with a nested <playQueue> element on success,
 		or an empty <subsonic-response> if no play queue has been saved.
 		 */
-		const playqueue = await this.engine.playqueueService.getQueue(req.user.id);
+		const playqueue = await this.engine.playQueueService.getQueue(req.user.id);
 		if (!playqueue) {
 			const empty: any = {};
 			return empty;
@@ -1887,7 +1887,7 @@ export class SubsonicApi {
 		Returns an empty <subsonic-response> element on success.
 		 */
 		const ids: Array<string> = req.query.id ? (Array.isArray(req.query.id) ? req.query.id : [req.query.id]) : [];
-		await this.engine.playqueueService.saveQueue(req.user.id, ids, req.query.current, req.query.position, req.client);
+		await this.engine.playQueueService.saveQueue(req.user.id, ids, req.query.current, req.query.position, req.client);
 	}
 
 	async deleteInternetRadioStation(req: ApiOptions<SubsonicParameters.ID>): Promise<void> {

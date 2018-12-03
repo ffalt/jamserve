@@ -6,15 +6,19 @@ import {ImageService} from '../../engine/image/image.service';
 import {User} from './user.model';
 import {hexDecode} from '../../utils/hex';
 import {Md5} from 'md5-typescript';
+import {UserStore} from './user.store';
+import {StateStore} from '../state/state.store';
+import {PlaylistStore} from '../playlist/playlist.store';
+import {BookmarkStore} from '../bookmark/bookmark.store';
+import {PlayQueueStore} from '../playqueue/playqueue.store';
 
 export class UserService {
 	private cached: {
 		[id: string]: User;
 	} = {};
-	private readonly imagesPath: string;
 
-	constructor(private config: Config, private store: Store, private imageService: ImageService) {
-		this.imagesPath = config.getDataPath(['images']);
+	constructor(private userStore: UserStore, private stateStore: StateStore, private playlistStore: PlaylistStore, private bookmarkStore: BookmarkStore,
+				private playQueueStore: PlayQueueStore, private imageService: ImageService) {
 	}
 
 	clearCache() {
@@ -22,12 +26,12 @@ export class UserService {
 	}
 
 	async get(name: string): Promise<User | undefined> {
-		return await this.store.userStore.searchOne({'name': name || ''});
+		return await this.userStore.searchOne({'name': name || ''});
 	}
 
 	async setUserImage(user: User, filename: string): Promise<void> {
 		const destFileName = 'avatar-' + user.id + '.png';
-		const destName = path.join(this.imagesPath, destFileName);
+		const destName = path.join(this.imageService.userAvatarPath, destFileName);
 		await fileDeleteIfExists(destName);
 		await this.imageService.createAvatar(filename, destName);
 		await this.imageService.clearImageCacheByID(user.id);
@@ -38,15 +42,15 @@ export class UserService {
 
 	async deleteUser(user: User): Promise<void> {
 		delete this.cached[user.id];
-		await this.store.stateStore.removeByQuery({userID: user.id});
-		await this.store.playlistStore.removeByQuery({userID: user.id});
-		await this.store.bookmarkStore.removeByQuery({userID: user.id});
-		await this.store.playQueueStore.removeByQuery({userID: user.id});
+		await this.stateStore.removeByQuery({userID: user.id});
+		await this.playlistStore.removeByQuery({userID: user.id});
+		await this.bookmarkStore.removeByQuery({userID: user.id});
+		await this.playQueueStore.removeByQuery({userID: user.id});
 		await this.imageService.clearImageCacheByID(user.id);
-		await this.store.userStore.remove(user.id);
+		await this.userStore.remove(user.id);
 		// TODO: remove user chat msg on user.delete
 		if (user.avatar) {
-			await fileDeleteIfExists(path.join(this.imagesPath, user.avatar));
+			await fileDeleteIfExists(path.join(this.imageService.userAvatarPath, user.avatar));
 		}
 	}
 
@@ -61,7 +65,7 @@ export class UserService {
 		if (user.pass.indexOf('enc:') === 0) {
 			user.pass = hexDecode(user.pass);
 		}
-		return this.store.userStore.add(user);
+		return this.userStore.add(user);
 	}
 
 	async getUser(id: string): Promise<User | undefined> {
@@ -69,7 +73,7 @@ export class UserService {
 		if (user) {
 			return user;
 		}
-		user = await this.store.userStore.byId(id);
+		user = await this.userStore.byId(id);
 		if (user) {
 			this.cached[id] = user;
 		}
@@ -118,7 +122,7 @@ export class UserService {
 		if (user.pass.indexOf('enc:') === 0) {
 			user.pass = hexDecode(user.pass);
 		}
-		await this.store.userStore.replace(user);
+		await this.userStore.replace(user);
 		delete this.cached[user.id];
 	}
 }

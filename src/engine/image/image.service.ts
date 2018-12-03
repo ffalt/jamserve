@@ -15,26 +15,22 @@ import {Episode} from '../../objects/episode/episode.model';
 import {Playlist} from '../../objects/playlist/playlist.model';
 import {Podcast} from '../../objects/podcast/podcast.model';
 import fse from 'fs-extra';
+import {FolderStore} from '../../objects/folder/folder.store';
+import {TrackStore} from '../../objects/track/track.store';
 
 export class ImageService {
 	private images: ImageModule;
 
-	constructor(private config: Config, private store: Store) {
-		this.images = new ImageModule(config);
+	constructor(public imageCachePath: string, public userAvatarPath: string, private folderStore: FolderStore, private trackStore: TrackStore) {
+		this.images = new ImageModule(imageCachePath);
 	}
 
-	async setFolderImage(folder: Folder, filename: string): Promise<void> {
-		const destFileName = FolderTypeImageName[folder.tag.type] + path.extname(filename);
-		const destName = path.join(folder.path, destFileName);
-		await fileDeleteIfExists(destName);
-		await fse.copy(filename, destName);
-		folder.tag.image = destFileName;
-		await this.store.folderStore.replace(folder);
-	}
-
-	async downloadFolderImage(folder: Folder, imageUrl: string): Promise<void> {
-		folder.tag.image = await this.images.storeImage(folder.path, FolderTypeImageName[folder.tag.type], imageUrl);
-		await this.store.folderStore.replace(folder);
+	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+		await this.checkFolderInfoImage(folder);
+		if (!folder.tag.image) {
+			return;
+		}
+		return await this.images.get(folder.id, path.join(folder.path, folder.tag.image), size, format);
 	}
 
 	async checkFolderInfoImage(folder: Folder): Promise<void> {
@@ -48,8 +44,22 @@ export class ImageService {
 		}
 	}
 
+	async setFolderImage(folder: Folder, filename: string): Promise<void> {
+		const destFileName = FolderTypeImageName[folder.tag.type] + path.extname(filename);
+		const destName = path.join(folder.path, destFileName);
+		await fileDeleteIfExists(destName);
+		await fse.copy(filename, destName);
+		folder.tag.image = destFileName;
+		await this.folderStore.replace(folder);
+	}
+
+	async downloadFolderImage(folder: Folder, imageUrl: string): Promise<void> {
+		folder.tag.image = await this.images.storeImage(folder.path, FolderTypeImageName[folder.tag.type], imageUrl);
+		await this.folderStore.replace(folder);
+	}
+
 	async getTrackImage(track: Track, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
-		const folder = await this.store.folderStore.byId(track.parentID);
+		const folder = await this.folderStore.byId(track.parentID);
 		if (!folder) {
 			return;
 		}
@@ -58,27 +68,19 @@ export class ImageService {
 
 	async getUserImage(user: User, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
 		if (user.avatar) {
-			return this.images.get(user.id, path.join(this.config.getDataPath(['images']), user.avatar), size, format);
+			return this.images.get(user.id, path.join(this.userAvatarPath, user.avatar), size, format);
 		}
-	}
-
-	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
-		await this.checkFolderInfoImage(folder);
-		if (!folder.tag.image) {
-			return;
-		}
-		return await this.images.get(folder.id, path.join(folder.path, folder.tag.image), size, format);
 	}
 
 	async getAlbumImage(album: Album, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
 		if (album.trackIDs.length === 0) {
 			return;
 		}
-		const track = await this.store.trackStore.byId(album.trackIDs[0]);
+		const track = await this.trackStore.byId(album.trackIDs[0]);
 		if (!track) {
 			return;
 		}
-		const folder = await this.store.folderStore.byId(track.parentID);
+		const folder = await this.folderStore.byId(track.parentID);
 		if (!folder) {
 			return;
 		}
@@ -88,7 +90,7 @@ export class ImageService {
 
 	async collectFolderPath(folderId: string | undefined): Promise<Array<Folder>> {
 		const result: Array<Folder> = [];
-		const store = this.store.folderStore;
+		const store = this.folderStore;
 
 		async function collect(id?: string): Promise<void> {
 			if (!id) {
@@ -109,7 +111,7 @@ export class ImageService {
 		if (artist.trackIDs.length === 0) {
 			return;
 		}
-		const track = await this.store.trackStore.byId(artist.trackIDs[0]);
+		const track = await this.trackStore.byId(artist.trackIDs[0]);
 		if (!track) {
 			return;
 		}

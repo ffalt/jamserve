@@ -1,4 +1,3 @@
-import {Store} from '../../engine/store';
 import {Feed, PodcastStatus} from '../../utils/feed';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {SupportedAudioFormat} from '../../utils/filetype';
@@ -7,25 +6,20 @@ import Logger from '../../utils/logger';
 import {AudioService} from '../../engine/audio/audio.service';
 import {DBObjectType} from '../../types';
 import {downloadFile} from '../../utils/download';
-import {Config} from '../../config';
 import {Podcast} from './podcast.model';
 import {Episode} from '../episode/episode.model';
 import fse from 'fs-extra';
+import {EpisodeStore} from '../episode/episode.store';
+import {PodcastStore} from './podcast.store';
 
 const log = Logger('PodcastService');
 
 export class PodcastService {
-	private readonly audio: AudioService;
-	private readonly store: Store;
-	private readonly podcastsPath: string;
 	podstate: {
 		[id: string]: any;
 	} = {};
 
-	constructor(config: Config, store: Store, audio: AudioService) {
-		this.audio = audio;
-		this.podcastsPath = config.getDataPath(['podcasts']);
-		this.store = store;
+	constructor(private podcastsPath: string, private podcastStore: PodcastStore, private episodeStore: EpisodeStore, private audioService: AudioService) {
 	}
 
 	isDownloadingPodcast(podcastId: string): boolean {
@@ -40,11 +34,11 @@ export class PodcastService {
 		if ((!episodes) || (!episodes.length)) {
 			return;
 		}
-		const epi = await this.store.episodeStore.search({podcastID: podcast.id});
+		const epi = await this.episodeStore.search({podcastID: podcast.id});
 		const links = epi.map(e => e.link);
 		episodes = episodes.filter(e => links.indexOf(e.link) < 0);
 		log.info(podcast.url + ': ' + episodes.length + ' new episodes');
-		await this.store.episodeStore.upsert(episodes);
+		await this.episodeStore.upsert(episodes);
 	}
 
 	async downloadPodcastEpisode(episode: Episode): Promise<void> {
@@ -66,7 +60,7 @@ export class PodcastService {
 			log.info('retrieving file', url);
 			await downloadFile(url, filename);
 			const stat = await fse.stat(filename);
-			const result = await this.audio.read(filename);
+			const result = await this.audioService.read(filename);
 			episode.status = PodcastStatus.completed;
 			episode.tag = result.tag;
 			episode.media = result.media;
@@ -77,14 +71,14 @@ export class PodcastService {
 			};
 			episode.path = filename;
 			log.info('updating episode', filename);
-			await this.store.episodeStore.replace(episode);
+			await this.episodeStore.replace(episode);
 			delete this.podstate[episode.id];
 		} catch (e) {
 			console.error(e);
 			episode.status = PodcastStatus.error;
 			episode.error = (e || '').toString();
 			delete this.podstate[episode.id];
-			return this.store.episodeStore.replace(episode);
+			return this.episodeStore.replace(episode);
 		}
 	}
 
@@ -107,7 +101,7 @@ export class PodcastService {
 			podcast.errorMessage = (e || '').toString();
 		}
 		podcast.lastCheck = Date.now();
-		await this.store.podcastStore.replace(podcast);
+		await this.podcastStore.replace(podcast);
 		await this.mergePodcastEpisodes(podcast, episodes);
 		delete this.podstate[podcast.id];
 	}
@@ -115,7 +109,7 @@ export class PodcastService {
 	async refreshPodcasts(): Promise<void> {
 		log.info('Refreshing');
 		const podcasts = await
-			this.store.podcastStore.all();
+			this.podcastStore.all();
 		for (const podcast of podcasts) {
 			await this.refreshPodcast(podcast);
 		}
@@ -131,15 +125,15 @@ export class PodcastService {
 			url: url,
 			status: PodcastStatus.fresh
 		};
-		podcast.id = await this.store.podcastStore.add(podcast);
+		podcast.id = await this.podcastStore.add(podcast);
 		return podcast;
 	}
 
 	async removePodcast(podcast: Podcast): Promise<void> {
-		await this.store.podcastStore.remove(podcast.id);
-		const removeEpisodes = await this.store.episodeStore.search({podcastID: podcast.id});
+		await this.podcastStore.remove(podcast.id);
+		const removeEpisodes = await this.episodeStore.search({podcastID: podcast.id});
 		const ids = removeEpisodes.map(episode => episode.id);
-		await this.store.episodeStore.remove(ids);
+		await this.episodeStore.remove(ids);
 		for (const episode of removeEpisodes) {
 			if (episode.path) {
 				await fileDeleteIfExists(episode.path);
@@ -154,7 +148,7 @@ export class PodcastService {
 			episode.stat = undefined;
 			episode.media = undefined;
 			episode.status = PodcastStatus.skipped;
-			await this.store.episodeStore.replace(episode);
+			await this.episodeStore.replace(episode);
 		}
 
 	}

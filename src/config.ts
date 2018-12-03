@@ -43,35 +43,39 @@ export interface BaseConfig {
 	};
 }
 
+export interface ThirdpartyToolsConfig {
+	acoustid: {
+		apiKey: string;
+		userAgent: string;
+	};
+	lastfm: {
+		apiKey: string;
+		userAgent: string;
+	};
+	musicbrainz: {
+		userAgent: string;
+	};
+	chartlyrics: {
+		userAgent: string;
+	};
+}
+export interface ChatConfig {
+	maxMsgs: number;
+	maxAge: {
+		value: number;
+		unit: string;
+	};
+}
+export interface IndexConfig {
+	ignore: Array<string>;
+}
+
 export interface Config extends BaseConfig {
 	app: {
-		chat: {
-			maxMsgs: number;
-			maxAge: {
-				value: number;
-				unit: string;
-			};
-		};
-		index: {
-			ignore: Array<string>;
-		};
+		chat: ChatConfig;
+		index: IndexConfig;
 	};
-	tools: {
-		acoustid: {
-			apiKey: string;
-			userAgent: string;
-		};
-		lastfm: {
-			apiKey: string;
-			userAgent: string;
-		};
-		musicbrainz: {
-			userAgent: string;
-		};
-		chartlyrics: {
-			userAgent: string;
-		};
-	};
+	tools: ThirdpartyToolsConfig;
 	firstStart?: {
 		adminUser?: {
 			name: string;

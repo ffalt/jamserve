@@ -8,20 +8,20 @@ import {Folder} from '../../objects/folder/folder.model';
 import {Artist} from '../../objects/artist/artist.model';
 import {Album} from '../../objects/album/album.model';
 import {Track} from '../../objects/track/track.model';
+import {ArtistStore} from '../../objects/artist/artist.store';
+import {AlbumStore} from '../../objects/album/album.store';
+import {TrackStore} from '../../objects/track/track.store';
+import {FolderStore} from '../../objects/folder/folder.store';
 
 const log = Logger('MetaDataService');
 
 export class MetaDataService {
-	private store: Store;
-	private audio: AudioService;
 
-	constructor(store: Store, audio: AudioService) {
-		this.store = store;
-		this.audio = audio;
+	constructor(private folderStore: FolderStore, private trackStore: TrackStore, private albumStore: AlbumStore, private artistStore: ArtistStore, private audioService: AudioService) {
 	}
 
 	private async getInfo(isArtist: boolean, artistId: string | undefined, artistName: string | undefined, albumId: string | undefined, albumName: string | undefined): Promise<MetaInfo> {
-		const audio = this.audio;
+		const audio = this.audioService;
 
 		async function checkAlbumById(): Promise<MetaInfoAlbum | undefined> {
 			if (albumId) {
@@ -106,12 +106,12 @@ export class MetaDataService {
 			return {similar: []};
 		}
 		if (track.tag.mbTrackID) {
-			const tracks = await this.audio.mediaInfoSimilarTrackByMBTrackID(track.tag.mbTrackID);
+			const tracks = await this.audioService.mediaInfoSimilarTrackByMBTrackID(track.tag.mbTrackID);
 			if (tracks) {
 				return {similar: tracks};
 			}
 		} else if (track.tag.artist && track.tag.title) {
-			const tracks = await this.audio.mediaInfoSimilarTrack(track.tag.title, track.tag.artist);
+			const tracks = await this.audioService.mediaInfoSimilarTrack(track.tag.title, track.tag.artist);
 			if (tracks) {
 				return {similar: tracks};
 			}
@@ -129,7 +129,7 @@ export class MetaDataService {
 		}
 		info = info || {album: {}, artist: {}, topSongs: []};
 		artist.info = info;
-		await this.store.artistStore.replace(artist);
+		await this.artistStore.replace(artist);
 		return info;
 	}
 
@@ -143,7 +143,7 @@ export class MetaDataService {
 		}
 		info = info || {album: {}, artist: {}, topSongs: []};
 		album.info = info;
-		await this.store.albumStore.replace(album);
+		await this.albumStore.replace(album);
 		return info;
 	}
 
@@ -157,7 +157,7 @@ export class MetaDataService {
 		}
 		info = info || {similar: []};
 		track.info = info;
-		await this.store.trackStore.replace(track);
+		await this.trackStore.replace(track);
 		return info;
 	}
 
@@ -171,12 +171,12 @@ export class MetaDataService {
 		}
 		info = info || {album: {}, artist: {}, topSongs: []};
 		folder.info = info;
-		await this.store.folderStore.replace(folder);
+		await this.folderStore.replace(folder);
 		return info;
 	}
 
 	private async getSimilarSongs(similar: Array<MetaInfoSimilarArtist>): Promise<Array<MetaInfoTrackSimilarSong>> {
-		const audio = this.audio;
+		const audio = this.audioService;
 
 		async function checkTopSongs(artist: MetaInfoSimilarArtist): Promise<Array<MetaInfoTopSong> | void> {
 			if (artist.mbid) {
@@ -220,7 +220,7 @@ export class MetaDataService {
 			}
 		});
 		const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
-		const tracks = await this.store.trackStore.search({mbTrackIDs});
+		const tracks = await this.trackStore.search({mbTrackIDs});
 		ids.forEach(sim => {
 			const t = tracks.find(tr => tr.tag.mbTrackID === sim.mbid);
 			if (!t) {
@@ -230,7 +230,7 @@ export class MetaDataService {
 			}
 		});
 		for (const sim of vals) {
-			const track = await this.store.trackStore.searchOne({title: sim.name, artist: sim.artist.name});
+			const track = await this.trackStore.searchOne({title: sim.name, artist: sim.artist.name});
 			if (track) {
 				result.push(track);
 			}
@@ -255,7 +255,7 @@ export class MetaDataService {
 				artistsHash[a.name] = {info: a};
 			}
 		});
-		const folders = await this.store.folderStore.search({types: [FolderType.artist], artists: names});
+		const folders = await this.folderStore.search({types: [FolderType.artist], artists: names});
 		folders.forEach(f => {
 			const name = f.tag.artist || '';
 			if (artistsHash[name]) {
@@ -301,7 +301,7 @@ export class MetaDataService {
 				artistsHash[a.name] = {info: a};
 			}
 		});
-		const artists = await this.store.artistStore.search({names});
+		const artists = await this.artistStore.search({names});
 		artists.forEach(a => {
 			const name = a.name || '';
 			if (artistsHash[name]) {
@@ -377,7 +377,7 @@ export class MetaDataService {
 	}
 
 	async getTopTracks(artist: string, count: number): Promise<Array<Track>> {
-		const folder = await this.store.folderStore.searchOne({types: [FolderType.artist], artist});
+		const folder = await this.folderStore.searchOne({types: [FolderType.artist], artist});
 		if (!folder) {
 			return [];
 		}
@@ -397,7 +397,7 @@ export class MetaDataService {
 				}
 			});
 			const mbTrackIDs = ids.map(track => track.mbid || '-').filter(i => i !== '-');
-			const tracks = await this.store.trackStore.search({mbTrackIDs});
+			const tracks = await this.trackStore.search({mbTrackIDs});
 			ids.forEach(sim => {
 				const t = tracks.find(tr => tr.tag.mbTrackID === sim.mbid);
 				if (!t) {
@@ -407,7 +407,7 @@ export class MetaDataService {
 				}
 			});
 			for (const top of vals) {
-				const track = await this.store.trackStore.searchOne({title: top.name, artist: top.artist.name});
+				const track = await this.trackStore.searchOne({title: top.name, artist: top.artist.name});
 				if (track) {
 					result.push(track);
 				}
@@ -457,7 +457,7 @@ export class MetaDataService {
 			}
 		});
 		const mbTrackIDs = ids.map(t => t.mbid || '-').filter(i => i !== '-');
-		const tracks = await this.store.trackStore.search({mbTrackIDs});
+		const tracks = await this.trackStore.search({mbTrackIDs});
 		ids.forEach(sim => {
 			const t = tracks.find(tr => tr.tag.mbTrackID === sim.mbid);
 			if (!t) {
@@ -467,7 +467,7 @@ export class MetaDataService {
 			}
 		});
 		for (const sim of vals) {
-			const t = await this.store.trackStore.searchOne({title: sim.name, artist: sim.artist.name});
+			const t = await this.trackStore.searchOne({title: sim.name, artist: sim.artist.name});
 			if (t) {
 				result.push(t);
 			}

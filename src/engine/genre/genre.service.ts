@@ -1,5 +1,5 @@
-import {Store} from '../store';
 import {Genre} from './genre.model';
+import {TrackStore} from '../../objects/track/track.store';
 
 export interface GenreInfo {
 	name: string;
@@ -12,11 +12,9 @@ export interface GenreInfo {
 }
 
 export class GenreService {
-	private readonly store: Store;
 	private genres: Array<GenreInfo> = [];
 
-	constructor(store: Store) {
-		this.store = store;
+	constructor(private trackStore: TrackStore) {
 	}
 
 	async buildGenres(): Promise<void> {
@@ -33,7 +31,7 @@ export class GenreService {
 			}
 		} = {};
 
-		await this.store.trackStore.iterate(async (tracks) => {
+		await this.trackStore.iterate(async (tracks) => {
 			for (const track of tracks) {
 				const genre = track.tag.genre || '[No genre]';
 				const data = genreHash[genre] || {roots: {}};
@@ -67,8 +65,8 @@ export class GenreService {
 		});
 	}
 
-	async getGenres(rootID: string | undefined, forcerebuild: boolean): Promise<Array<Genre>> {
-		if (forcerebuild || this.genres.length === 0) {
+	async getGenres(rootID: string | undefined, forceRebuild: boolean): Promise<Array<Genre>> {
+		if (forceRebuild || this.genres.length === 0) {
 			await this.buildGenres();
 		}
 		return this.genres.map(g => {

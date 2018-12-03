@@ -1,47 +1,13 @@
-import {Store} from '../../engine/store';
 import {IoService} from '../../engine/io/io.service';
-import {replaceFileSystemChars} from '../../utils/fs-utils';
-import path from 'path';
-import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {IndexService} from '../../engine/index/index.service';
 import {GenreService} from '../../engine/genre/genre.service';
-import {Folder} from '../folder/folder.model';
 import {Root, RootStatus} from './root.model';
 import {Track} from '../track/track.model';
-import fse from 'fs-extra';
+import {RootStore} from './root.store';
 
 export class RootService {
 
-	constructor(private store: Store, private io: IoService, private indexService: IndexService, private genreService: GenreService) {
-	}
-
-	async collectFolderPath(folderId: string | undefined): Promise<Array<Folder>> {
-		const result: Array<Folder> = [];
-		const store = this.store.folderStore;
-
-		async function collect(id?: string): Promise<void> {
-			if (!id) {
-				return;
-			}
-			const folder = await store.byId(id);
-			if (folder) {
-				result.unshift(folder);
-				await collect(folder.parentID);
-			}
-		}
-
-		await collect(folderId);
-		return result;
-	}
-
-	async getFolderParents(folder: Folder): Promise<Array<Jam.FolderParent>> {
-		const result = await this.collectFolderPath(folder.parentID);
-		return result.map(parent => {
-			return {
-				id: parent.id,
-				name: path.basename(parent.path)
-			};
-		});
+	constructor(private rootStore: RootStore, private io: IoService, private indexService: IndexService, private genreService: GenreService) {
 	}
 
 	async refresh(): Promise<void> {
@@ -63,34 +29,19 @@ export class RootService {
 		await this.io.rescanTracks(tracks);
 	}
 
-	async renameFolder(folder: Folder, name: string): Promise<void> {
-		name = replaceFileSystemChars(name, '').trim();
-		if (name.length === 0) {
-			return Promise.reject(Error('Invalid Name'));
-		}
-		const p = path.dirname(folder.path);
-		const dest = path.join(p, name);
-		const exists = await fse.pathExists(dest);
-		if (exists) {
-			return Promise.reject(Error('Directory already exists'));
-		}
-		await fse.rename(folder.path, dest);
-		await this.io.applyFolderMove(folder, dest);
-	}
-
 	async createRoot(root: Root): Promise<string> {
-		const roots = await this.store.rootStore.search({});
+		const roots = await this.rootStore.search({});
 		const invalid = roots.find(r => {
 			return root.path.indexOf(r.path) >= 0 || r.path.indexOf(root.path) >= 0;
 		});
 		if (invalid) {
 			return Promise.reject(Error('Root path already used'));
 		}
-		return this.store.rootStore.add(root);
+		return this.rootStore.add(root);
 	}
 
 	async removeRoot(root: Root): Promise<void> {
-		await this.store.rootStore.remove(root.id);
+		await this.rootStore.remove(root.id);
 		await this.io.cleanStore();
 	}
 
@@ -99,13 +50,13 @@ export class RootService {
 	}
 
 	async updateRoot(root: Root): Promise<void> {
-		const roots = await this.store.rootStore.search({});
+		const roots = await this.rootStore.search({});
 		const invalid = roots.find(r => {
 			return r.id !== root.id && (root.path.indexOf(r.path) >= 0 || r.path.indexOf(root.path) >= 0);
 		});
 		if (invalid) {
 			return Promise.reject(Error('Root path already used'));
 		}
-		await this.store.rootStore.replace(root);
+		await this.rootStore.replace(root);
 	}
 }

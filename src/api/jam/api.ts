@@ -60,7 +60,7 @@ export class JamController {
 		this.streamController = new StreamController(this.engine.streamService, this.engine.store);
 		this.chatController = new ChatController(this.engine.chatService);
 		this.genreController = new GenreController(engine.genreService);
-		this.nowPlayingController = new NowPlayingController(engine.nowPlaylingService);
+		this.nowPlayingController = new NowPlayingController(engine.nowPlayingService);
 		this.imageController = new ImageController(this.engine.store, this.engine.imageService);
 		this.downloadController = new DownloadController(this.engine.store, this.engine.downloadService);
 		this.waveformController = new WaveformController(this.engine.store, this.engine.waveformService);
@@ -79,14 +79,14 @@ export class JamController {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
 		this.artistController = new ArtistController(this.engine.store.artistStore, this.trackController, this.albumController, this.engine.metaDataService, this.engine.indexService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
-		this.folderController = new FolderController(this.engine.store.folderStore, this.trackController, this.engine.metaDataService, this.engine.indexService, this.engine.rootService,
+		this.folderController = new FolderController(this.engine.store.folderStore, this.engine.folderService, this.trackController, this.engine.metaDataService, this.engine.indexService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
 		this.userController = new UserController(this.engine.store.userStore, this.engine.userService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.playlistController = new PlaylistController(this.engine.store.playlistStore, this.engine.playlistService, this.trackController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.bookmarkController = new BookmarkController(this.engine.bookmarkService, this.trackController);
-		this.playqueueController = new PlayQueueController(this.engine.playqueueService, this.trackController);
+		this.playqueueController = new PlayQueueController(this.engine.playQueueService, this.trackController);
 		this.metadataController = new MetadataController(this.engine.audioService, this.trackController);
 	}
 

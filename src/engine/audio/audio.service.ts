@@ -10,7 +10,7 @@ import {MusicBrainz} from '../../model/musicbrainz-rest-data-2.0';
 import {fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
-import {Config} from '../../config';
+import {Config, ThirdpartyToolsConfig} from '../../config';
 import {TrackMedia, TrackTag} from '../../objects/track/track.model';
 import {MetaInfoAlbum, MetaInfoArtist, MetaInfoImage, MetaInfoTopSong, MetaInfoTrackSimilarSong} from '../metadata/metadata.model';
 import {Folder} from '../../objects/folder/folder.model';
@@ -204,11 +204,11 @@ export class AudioService {
 	lastFM: LastFMClient;
 	chartLyrics: ChartLyricsClient;
 
-	constructor(config: Config) {
-		this.musicbrainz = new MusicbrainzClient({userAgent: config.tools.musicbrainz.userAgent, retryOn: true});
-		this.lastFM = new LastFMClient({key: config.tools.lastfm.apiKey, userAgent: config.tools.lastfm.userAgent});
-		this.acoustid = new AcoustidClient({key: config.tools.acoustid.apiKey, userAgent: config.tools.acoustid.userAgent});
-		this.chartLyrics = new ChartLyricsClient(config.tools.chartlyrics.userAgent);
+	constructor(tools: ThirdpartyToolsConfig) {
+		this.musicbrainz = new MusicbrainzClient({userAgent: tools.musicbrainz.userAgent, retryOn: true});
+		this.lastFM = new LastFMClient({key: tools.lastfm.apiKey, userAgent: tools.lastfm.userAgent});
+		this.acoustid = new AcoustidClient({key: tools.acoustid.apiKey, userAgent: tools.acoustid.userAgent});
+		this.chartLyrics = new ChartLyricsClient(tools.chartlyrics.userAgent);
 	}
 
 	async read(filename: string): Promise<AudioScanResult> {

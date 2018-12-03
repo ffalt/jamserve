@@ -17,6 +17,16 @@ import {StateStore} from '../objects/state/state.store';
 import {BaseStore, SearchQuery} from '../objects/base/base.store';
 import {DBObject} from '../objects/base/base.model';
 import {Database} from '../db/db.model';
+import {ImageService} from './image/image.service';
+import {WaveformService} from './waveform/waveform.service';
+import {Track} from '../objects/track/track.model';
+import {Folder} from '../objects/folder/folder.model';
+import {DBObjectType} from '../types';
+import {updatePlayListTracks} from '../objects/playlist/playlist.service';
+import {clearID3} from './io/components/clean';
+import Logger from '../utils/logger';
+
+const log = Logger('Store');
 
 export class Store {
 	public config: Config;
@@ -94,6 +104,39 @@ export class Store {
 			result = result.concat(objs);
 		}
 		return result;
+	}
+
+	async cleanStore(removeTracks: Array<Track>, removeFolders: Array<Folder>): Promise<Array<string>> {
+		let ids: Array<string> = [];
+		if (removeFolders.length > 0) {
+			log.debug('Cleaning folders', removeFolders.length);
+			const folderIDs = removeFolders.map(folder => folder.id);
+			await this.folderStore.remove(folderIDs);
+			await this.stateStore.removeByQuery({destIDs: folderIDs, type: DBObjectType.folder});
+			ids = folderIDs;
+		}
+		if (removeTracks.length > 0) {
+			log.debug('Cleaning tracks', removeTracks.length);
+			const trackIDs = removeTracks.map(track => track.id);
+			await this.trackStore.remove(trackIDs);
+			await this.stateStore.removeByQuery({destIDs: trackIDs, type: DBObjectType.track});
+			await this.bookmarkStore.removeByQuery({destIDs: trackIDs});
+			const playlists = await this.playlistStore.search({trackIDs: trackIDs});
+			ids = ids.concat(trackIDs);
+			if (playlists.length > 0) {
+				for (const playlist of playlists) {
+					playlist.trackIDs = playlist.trackIDs.filter(id => trackIDs.indexOf(id) < 0);
+					if (playlist.trackIDs.length === 0) {
+						await this.playlistStore.remove(playlist.id);
+					} else {
+						await updatePlayListTracks(this.trackStore, playlist);
+						await this.playlistStore.replace(playlist);
+					}
+				}
+
+			}
+		}
+		return ids;
 	}
 
 }

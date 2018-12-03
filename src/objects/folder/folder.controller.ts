@@ -1,3 +1,4 @@
+import path from 'path';
 import {JamParameters} from '../../model/jam-rest-params-0.1.0';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {DBObjectType, FolderType} from '../../types';
@@ -16,21 +17,20 @@ import {DownloadService} from '../../engine/download/download.service';
 import {FolderStore, SearchQueryFolder} from './folder.store';
 import {SearchQueryTrack} from '../track/track.store';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
-import {RootService} from '../root/root.service';
 import {IndexService} from '../../engine/index/index.service';
 import {ListService} from '../../engine/list/list.service';
 import {Folder} from './folder.model';
 import {User} from '../user/user.model';
-import * as path from 'path';
+import {FolderService} from './folder.service';
 
 export class FolderController extends BaseListController<JamParameters.Folder, JamParameters.Folders, JamParameters.IncludesFolderChildren, SearchQueryFolder, JamParameters.FolderSearch, Folder, Jam.Folder> {
 
 	constructor(
 		private folderStore: FolderStore,
+		private folderService: FolderService,
 		private trackController: TrackController,
 		private metadataService: MetaDataService,
 		private indexService: IndexService,
-		private rootService: RootService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService,
@@ -80,7 +80,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			result.health = {problems};
 		}
 		if (includes.folderParents) {
-			result.parents = await this.rootService.getFolderParents(folder);
+			result.parents = await this.folderService.getFolderParents(folder);
 		}
 		return result;
 	}
@@ -139,7 +139,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 
 	async nameUpdate(req: JamRequest<JamParameters.FolderEditName>): Promise<void> {
 		const folder = await this.byID(req.query.id);
-		await this.rootService.renameFolder(folder, req.query.name);
+		await this.folderService.renameFolder(folder, req.query.name);
 	}
 
 	async artistInfo(req: JamRequest<JamParameters.ArtistInfo>): Promise<Jam.ArtistFolderInfo> {

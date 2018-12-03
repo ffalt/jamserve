@@ -5,13 +5,16 @@ import {ScanDir, scanDir} from './components/scan';
 import {MatchDir, matchDir} from './components/match';
 import {MergeChanges, Merger} from './components/merge';
 import {MetaMerge} from './components/meta';
-import {scanCleanStore} from './components/clean';
+import {clearID3, scanForRemoved} from './components/clean';
 import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
 import {WaveformService} from '../waveform/waveform.service';
 import {ImageService} from '../image/image.service';
 import {Root, RootStatus} from '../../objects/root/root.model';
 import {Folder} from '../../objects/folder/folder.model';
 import {Track} from '../../objects/track/track.model';
+import {RootStore} from '../../objects/root/root.store';
+import {FolderStore} from '../../objects/folder/folder.store';
+import {TrackStore} from '../../objects/track/track.store';
 
 const log = Logger('IO');
 
@@ -94,7 +97,11 @@ export class IoService {
 	}
 
 	private async cleanScanStore(changes: MergeChanges): Promise<void> {
-		await scanCleanStore(this.store, this.imageService, this.waveformService, changes);
+		const {removeTracks, removeFolders} = await scanForRemoved(this.store, changes);
+		const trackIDs = await this.store.cleanStore(removeTracks, removeFolders);
+		await this.imageService.clearImageCacheByIDs(trackIDs);
+		await this.waveformService.clearWaveformCacheByIDs(trackIDs);
+		await clearID3(this.store, this.imageService, removeTracks);
 		const meta = new MetaMerge(this.store, this.imageService);
 		await meta.sync(changes);
 		log.info('New Tracks', changes.newTracks.length);

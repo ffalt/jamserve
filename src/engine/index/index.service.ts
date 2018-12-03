@@ -1,17 +1,18 @@
 import path from 'path';
 import {Store} from '../store';
-import {Config} from '../../config';
+import {Config, IndexConfig} from '../../config';
 import {IoService} from '../io/io.service';
 import {ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry, Indexes} from './index.model';
 import {Folder} from '../../objects/folder/folder.model';
+import {ArtistStore} from '../../objects/artist/artist.store';
+import {FolderStore} from '../../objects/folder/folder.store';
+import {TrackStore} from '../../objects/track/track.store';
 
 export class IndexTreeBuilder {
-	private readonly store: Store;
 	private ignore: string;
 
-	constructor(config: Config, store: Store) {
-		this.ignore = config.app.index.ignore.join('|');
-		this.store = store;
+	constructor(indexConfig: IndexConfig, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
+		this.ignore = indexConfig.ignore.join('|');
 	}
 
 	removeArticles(name: string): string {
@@ -31,7 +32,7 @@ export class IndexTreeBuilder {
 
 	async buildArtistIndex(): Promise<ArtistIndex> {
 		const result: ArtistIndex = {groups: [], lastModified: Date.now()};
-		const artists = await this.store.artistStore.all();
+		const artists = await this.artistStore.all();
 		artists.forEach(artist => {
 			const entry: ArtistIndexEntry = {artist};
 			const indexChar = this.getIndexChar(artist.name, artist.nameSort);
@@ -54,12 +55,12 @@ export class IndexTreeBuilder {
 	}
 
 	private async getTotalTrackCount(folder: Folder): Promise<number> {
-		return this.store.trackStore.searchCount({inPath: folder.path});
+		return this.trackStore.searchCount({inPath: folder.path});
 	}
 
 	async buildFolderIndex(): Promise<FolderIndex> {
 		const result: FolderIndex = {groups: [], lastModified: Date.now()};
-		const folders = await this.store.folderStore.search({level: 1});
+		const folders = await this.folderStore.search({level: 1});
 		for (const folder of folders) {
 			const trackCount = await this.getTotalTrackCount(folder);
 			const entry: FolderIndexEntry = {
@@ -97,16 +98,16 @@ export class IndexTreeBuilder {
 export class IndexService {
 	private cached?: Indexes;
 
-	constructor(private config: Config, private store: Store, private io: IoService) {
+	constructor(private indexConfig: IndexConfig, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore, private io: IoService) {
 	}
 
 	async buildIndexes(): Promise<void> {
-		const builder = new IndexTreeBuilder(this.config, this.store);
+		const builder = new IndexTreeBuilder(this.indexConfig, this.artistStore, this.folderStore, this.trackStore);
 		this.cached = await builder.buildIndexes();
 	}
 
-	async getIndexes(forcerebuild: boolean): Promise<Indexes> {
-		if (forcerebuild || !this.cached) {
+	async getIndexes(forceRebuild: boolean): Promise<Indexes> {
+		if (forceRebuild || !this.cached) {
 			await this.buildIndexes();
 		}
 		return <Indexes>this.cached;

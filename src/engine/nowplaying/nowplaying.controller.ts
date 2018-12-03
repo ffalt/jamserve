@@ -1,11 +1,11 @@
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {JamRequest} from '../../api/jam/api';
-import {NowPlaylingService} from './nowplaying.service';
+import {NowPlayingService} from './nowplaying.service';
 import {packNowPlaying} from './nowplaying.format';
 
 export class NowPlayingController {
 
-	constructor(private nowplayingService: NowPlaylingService) {
+	constructor(private nowplayingService: NowPlayingService) {
 
 	}
 

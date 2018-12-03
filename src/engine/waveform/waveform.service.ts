@@ -1,7 +1,6 @@
 import path from 'path';
 import Logger from '../../utils/logger';
 import {IApiBinaryResult} from '../../typings';
-import {Config} from '../../config';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {getWaveFormBinary, getWaveFormJSON, getWaveFormSVG} from '../audio/tools/ffmpeg-waveform-svg';
 import {TrackMedia} from '../../objects/track/track.model';
@@ -10,11 +9,9 @@ import fse from 'fs-extra';
 const log = Logger('WaveformService');
 
 export class WaveformService {
-	private waveformCachePath: string;
 	private waveformCacheDebounce = new DebouncePromises<IApiBinaryResult>();
 
-	constructor(config: Config) {
-		this.waveformCachePath = config.getDataPath(['cache', 'waveforms']);
+	constructor(private waveformCachePath: string) {
 	}
 
 	private getCacheID(id: string, format: string): string {

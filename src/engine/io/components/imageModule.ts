@@ -3,7 +3,6 @@ import Logger from '../../../utils/logger';
 import {downloadFile} from '../../../utils/download';
 import {fileDeleteIfExists} from '../../../utils/fs-utils';
 import {IApiBinaryResult} from '../../../typings';
-import {Config} from '../../../config';
 import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
 import {DebouncePromises} from '../../../utils/debounce-promises';
@@ -18,13 +17,11 @@ const log = Logger('Images');
  */
 
 export class ImageModule {
-	private imageCachePath: string;
 	private format = 'png';
 	private font: JimpFont | undefined;
 	private imageCacheDebounce = new DebouncePromises<IApiBinaryResult>();
 
-	constructor(config: Config) {
-		this.imageCachePath = config.getDataPath(['cache', 'images']);
+	constructor(private imageCachePath: string) {
 	}
 
 	async storeImage(filepath: string, name: string, imageUrl: string): Promise<string> {
