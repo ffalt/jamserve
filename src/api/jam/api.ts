@@ -22,6 +22,7 @@ import {WaveformController} from '../../engine/waveform/waveform.controller';
 import {AutocompleteController} from '../../engine/autocomplete/autocomplete.controller';
 import {BookmarkController} from '../../objects/bookmark/bookmark.controller';
 import {PlayQueueController} from '../../objects/playqueue/playqueue.controller';
+import {RadioController} from '../../objects/radio/radio.controller';
 
 export const APIVERSION = '0.1.0';
 
@@ -53,6 +54,7 @@ export class JamController {
 	autocompleteController: AutocompleteController;
 	bookmarkController: BookmarkController;
 	playqueueController: PlayQueueController;
+	radioController: RadioController;
 
 	constructor(private engine: Engine) {
 		this.streamController = new StreamController(this.engine.streamService, this.engine.store);
@@ -63,7 +65,8 @@ export class JamController {
 		this.downloadController = new DownloadController(this.engine.store, this.engine.downloadService);
 		this.waveformController = new WaveformController(this.engine.store, this.engine.waveformService);
 		this.autocompleteController = new AutocompleteController(this.engine.store);
-
+		this.radioController = new RadioController(this.engine.store.radioStore, this.engine.radioService,
+			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.rootController = new RootController(this.engine.store.rootStore, this.engine.rootService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.trackController = new TrackController(this.engine.store.trackStore, this.engine.audioService, this.engine.bookmarkService, this.engine.metaDataService, this.engine.streamService, this.engine.rootService,

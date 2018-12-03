@@ -21,7 +21,10 @@ export class RadioService {
 		return radio;
 	}
 
-	async updateRadio(radio: Radio): Promise<void> {
+	async updateRadio(radio: Radio, name?: string, url?: string, homepageUrl?: string): Promise<void> {
+		radio.homepage = homepageUrl || radio.homepage;
+		radio.url = url || radio.url;
+		radio.name = name || radio.name;
 		radio.updated = Date.now();
 		await this.radioStore.replace(radio);
 	}

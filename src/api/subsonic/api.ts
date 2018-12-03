@@ -18,7 +18,6 @@ import {Playlist} from '../../objects/playlist/playlist.model';
 import {Episode} from '../../objects/episode/episode.model';
 import {State} from '../../objects/state/state.model';
 import {Podcast} from '../../objects/podcast/podcast.model';
-import {Radio} from '../../objects/radio/radio.model';
 import {Bookmark} from '../../objects/bookmark/bookmark.model';
 import {SearchQueryFolder} from '../../objects/folder/folder.store';
 import {SearchQueryAlbum} from '../../objects/album/album.store';
@@ -1921,15 +1920,7 @@ export class SubsonicApi {
 
 		Returns an empty <subsonic-response> element on success.
 		 */
-		const radio: Radio = {
-			id: '',
-			type: DBObjectType.radio,
-			name: req.query.name,
-			url: req.query.streamUrl,
-			homepage: req.query.homepageUrl,
-			disabled: false
-		};
-		await this.engine.store.radioStore.add(radio);
+		await this.engine.radioService.addRadio(req.query.name, req.query.streamUrl, req.query.homepageUrl);
 	}
 
 	async updateInternetRadioStation(req: ApiOptions<SubsonicParameters.InternetRadioUpdate>): Promise<void> {
@@ -1948,10 +1939,7 @@ export class SubsonicApi {
 		Returns an empty <subsonic-response> element on success.
 		 */
 		const radio = await this.byID(req.query.id, await this.engine.store.radioStore);
-		radio.homepage = req.query.homepageUrl;
-		radio.name = req.query.name;
-		radio.url = req.query.streamUrl;
-		await this.engine.store.radioStore.replace(radio);
+		await this.engine.radioService.updateRadio(radio, req.query.name, req.query.streamUrl, req.query.homepageUrl);
 	}
 
 	async getInternetRadioStations(req: ApiOptions<{}>): Promise<{ internetRadioStations: Subsonic.InternetRadioStations }> {
