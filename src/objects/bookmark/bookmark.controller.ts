@@ -46,7 +46,7 @@ export class BookmarkController {
 	}
 
 	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
-		await this.bookmarkService.remove(req.query.id, req.user);
+		await this.bookmarkService.remove(req.query.id, req.user.id);
 	}
 
 	async list(req: JamRequest<JamParameters.BookmarkList>): Promise<Array<Jam.Bookmark>> {
