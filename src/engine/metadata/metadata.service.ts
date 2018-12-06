@@ -1,5 +1,5 @@
 import {FolderType} from '../../types';
-import {Store} from '../store';
+import {Store} from '../store/store';
 import {AudioService} from '../audio/audio.service';
 import {shuffle} from '../../utils/random';
 import Logger from '../../utils/logger';

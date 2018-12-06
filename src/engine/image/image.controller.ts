@@ -3,7 +3,7 @@ import {JamParameters} from '../../model/jam-rest-params-0.1.0';
 import {IApiBinaryResult} from '../../typings';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {ImageService} from './image.service';
-import {Store} from '../store';
+import {Store} from '../store/store';
 
 export class ImageController {
 	constructor(

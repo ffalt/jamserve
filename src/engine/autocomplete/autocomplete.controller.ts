@@ -1,6 +1,6 @@
 import {JamParameters} from '../../model/jam-rest-params-0.1.0';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
-import {Store} from '../store';
+import {Store} from '../store/store';
 import {JamRequest} from '../../api/jam/api';
 
 export class AutocompleteController {

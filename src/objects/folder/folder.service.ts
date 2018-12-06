@@ -1,30 +1,47 @@
 import {Folder} from './folder.model';
 import {FolderStore} from './folder.store';
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {cleanFolderSystemChars} from '../../utils/fs-utils';
+import {TrackStore} from '../track/track.store';
 import path from 'path';
-import {replaceFileSystemChars} from '../../utils/fs-utils';
 import fse from 'fs-extra';
-import {IoService} from '../../engine/io/io.service';
+import Logger from '../../utils/logger';
+
+const log = Logger('FolderService');
 
 export class FolderService {
 
-	constructor(private folderStore: FolderStore, private io: IoService) {
+	constructor(public folderStore: FolderStore, private trackStore: TrackStore) {
 
 	}
 
 	async renameFolder(folder: Folder, name: string): Promise<void> {
-		name = replaceFileSystemChars(name, '').trim();
+		name = cleanFolderSystemChars(name, '').trim();
 		if (name.length === 0) {
 			return Promise.reject(Error('Invalid Name'));
 		}
 		const p = path.dirname(folder.path);
-		const dest = path.join(p, name);
-		const exists = await fse.pathExists(dest);
+		const newPath = path.join(p, name);
+		const exists = await fse.pathExists(newPath);
 		if (exists) {
 			return Promise.reject(Error('Directory already exists'));
 		}
-		await fse.rename(folder.path, dest);
-		await this.io.applyFolderMove(folder, dest);
+		await fse.rename(folder.path, newPath);
+		const folders = await this.folderStore.search({inPath: folder.path});
+		for (const f of folders) {
+			const rest = f.path.slice(folder.path.length - 1);
+			if (rest.length > 0 && rest[0] !== path.sep) {
+				log.error('WRONG inPath MATCH', rest, folder.path, f.path);
+			} else {
+				f.path = newPath + rest;
+				await this.folderStore.replace(f);
+			}
+		}
+		const tracks = await this.trackStore.search({inPath: folder.path});
+		for (const t of tracks) {
+			t.path = t.path.replace(folder.path, newPath);
+			await this.trackStore.replace(t);
+		}
+		folder.path = newPath;
 	}
 
 	async collectFolderPath(folderId: string | undefined): Promise<Array<Folder>> {
@@ -46,15 +63,5 @@ export class FolderService {
 		return result;
 	}
 
-
-	async getFolderParents(folder: Folder): Promise<Array<Jam.FolderParent>> {
-		const result = await this.collectFolderPath(folder.parentID);
-		return result.map(parent => {
-			return {
-				id: parent.id,
-				name: path.basename(parent.path)
-			};
-		});
-	}
 
 }

@@ -1,7 +1,7 @@
 import path from 'path';
 import fse from 'fs-extra';
 import {IoService} from './io/io.service';
-import {Store} from './store';
+import {Store} from './store/store';
 import {AudioService} from './audio/audio.service';
 import {DBObjectType} from '../types';
 import {IndexService} from './index/index.service';
@@ -26,14 +26,9 @@ import {User} from '../objects/user/user.model';
 import {Root} from '../objects/root/root.model';
 import {RadioService} from '../objects/radio/radio.service';
 import {FolderService} from '../objects/folder/folder.service';
-import {DBElastic} from '../db/elasticsearch/db-elastic';
-import {DBNedb} from '../db/nedb/db-nedb';
-import {Database} from '../db/db.model';
 
 export class Engine {
-	public config: Config;
-	public db: Database;
-	public store: Store;
+	// public config: Config;
 	public ioService: IoService;
 	public audioService: AudioService;
 	public waveformService: WaveformService;
@@ -56,14 +51,7 @@ export class Engine {
 	public radioService: RadioService;
 	public folderService: FolderService;
 
-	constructor(config: Config) {
-		this.config = config;
-		if (config.database.use === 'elasticsearch') {
-			this.db = new DBElastic(config.database.options.elasticsearch);
-		} else {
-			this.db = new DBNedb(config.getDataPath(['nedb']));
-		}
-		this.store = new Store(this.db);
+	constructor(public config: Config, public store: Store) {
 		this.audioService = new AudioService(config.tools);
 		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
 		this.imageService = new ImageService(config.getDataPath(['cache', 'images']), this.config.getDataPath(['images']), this.store.folderStore, this.store.trackStore);

@@ -3,7 +3,7 @@ import {IApiBinaryResult} from '../../typings';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
 import {DownloadService} from './download.service';
-import {Store} from '../store';
+import {Store} from '../store/store';
 
 export class DownloadController {
 

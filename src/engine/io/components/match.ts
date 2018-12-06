@@ -1,4 +1,4 @@
-import {Store} from '../../store';
+import {Store} from '../../store/store';
 import {ScanDir, ScanFile} from './scan';
 import path from 'path';
 import Logger from '../../../utils/logger';

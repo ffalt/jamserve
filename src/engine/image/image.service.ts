@@ -2,7 +2,7 @@ import {IApiBinaryResult} from '../../typings';
 import {DBObjectType, FolderType, FolderTypeImageName} from '../../types';
 import path from 'path';
 import {ImageModule} from '../io/components/imageModule';
-import {Store} from '../store';
+import {Store} from '../store/store';
 import {Config} from '../../config';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import {Folder} from '../../objects/folder/folder.model';

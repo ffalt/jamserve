@@ -3,6 +3,7 @@ import {BaseStore, SearchQuery} from '../base/base.store';
 import {QueryHelper} from '../base/base.store';
 import {Folder} from './folder.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
+import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 
 export interface SearchQueryFolder extends SearchQuery {
 	rootID?: string;
@@ -45,7 +46,7 @@ export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 	protected transformQuery(query: SearchQueryFolder): DatabaseQuery {
 		const q = new QueryHelper();
 		q.term('path', query.path);
-		q.startsWith('path', query.inPath);
+		q.startsWith('path', query.inPath ? ensureTrailingPathSeparator(query.inPath) : undefined);
 		q.term('tag.mbAlbumID', query.mbAlbumID);
 		q.term('tag.mbArtistID', query.mbArtistID);
 		q.term('tag.genre', query.genre);

@@ -7,36 +7,8 @@ type LogLevel = 'error' | 'warn' | 'info' | 'debug';
 
 export interface BaseConfig {
 	log: { level: LogLevel };
-	server: {
-		listen: string;
-		port: number;
-		session: {
-			allowedCookieDomains: Array<string>;
-			secret: string;
-			cookie: {
-				name: string;
-				secure: boolean
-				maxAge: {
-					value: number;
-					unit: string;
-				};
-			};
-		};
-		jwt: {
-			secret: string;
-			maxAge: {
-				value: number;
-				unit: string;
-			};
-		}
-	};
-	database: {
-		use: string;
-		options: {
-			elasticsearch: ElasticsearchConfig;
-			nedb?: {};
-		}
-	};
+	server: ServerConfig;
+	database: DBConfig;
 	paths: {
 		data: string,
 		jamberry: string
@@ -59,6 +31,7 @@ export interface ThirdpartyToolsConfig {
 		userAgent: string;
 	};
 }
+
 export interface ChatConfig {
 	maxMsgs: number;
 	maxAge: {
@@ -66,9 +39,43 @@ export interface ChatConfig {
 		unit: string;
 	};
 }
+
 export interface IndexConfig {
 	ignore: Array<string>;
 }
+
+export interface DBConfig {
+	use: string;
+	options: {
+		elasticsearch: ElasticsearchConfig;
+		nedb?: {};
+	};
+}
+
+export interface ServerConfig {
+	listen: string;
+	port: number;
+	session: {
+		allowedCookieDomains: Array<string>;
+		secret: string;
+		cookie: {
+			name: string;
+			secure: boolean
+			maxAge: {
+				value: number;
+				unit: string;
+			};
+		};
+	};
+	jwt: {
+		secret: string;
+		maxAge: {
+			value: number;
+			unit: string;
+		};
+	};
+}
+
 
 export interface Config extends BaseConfig {
 	app: {

@@ -25,6 +25,8 @@
     "node_modules",
     ".git",
     ".idea",
+    "**/*.test.ts",
+    "**/*.mock.ts",
     "**/*.spec.ts"
   ]
 }

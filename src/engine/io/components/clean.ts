@@ -1,6 +1,6 @@
 import path from 'path';
 import Logger from '../../../utils/logger';
-import {Store} from '../../store';
+import {Store} from '../../store/store';
 import {MergeChanges} from './merge';
 import {DBObjectType} from '../../../types';
 import {updatePlayListTracks} from '../../../objects/playlist/playlist.service';

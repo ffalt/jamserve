@@ -3,7 +3,7 @@ import {IApiBinaryResult} from '../../typings';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
 import {StreamService} from './stream.service';
-import {Store} from '../store';
+import {Store} from '../store/store';
 
 export class StreamController {
 

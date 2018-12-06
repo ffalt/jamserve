@@ -17,3 +17,16 @@ export function replaceFileSystemChars(s: string, replace: string): string {
 		.replace(/:/g, ' - ').replace(/  /g, ' ')
 		.replace(/[\?\/!\\]/g, replace);
 }
+
+export function cleanFolderSystemChars(s: string, replace: string): string {
+	return s.toString()
+		.replace(/:/g, ' - ').replace(/  /g, ' ')
+		.replace(/[\.\*\?\/!\\]/g, replace);
+}
+
+export function ensureTrailingPathSeparator(s: string): string {
+	if (s.length > 0 && s[s.length - 1] !== path.sep) {
+		return s + path.sep;
+	}
+	return s;
+}

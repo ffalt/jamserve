@@ -57,6 +57,10 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 		return await this.group.query({all: true});
 	}
 
+	async allIds(): Promise<Array<string>> {
+		return await this.group.queryIds({all: true});
+	}
+
 	async count(): Promise<number> {
 		return await this.group.count({all: true});
 	}

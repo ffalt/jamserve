@@ -2,12 +2,23 @@ import {Engine} from './engine/engine';
 import {configureLogger} from './utils/logger';
 import {Server} from './api/server';
 import {loadConfig} from './config';
-import {Store} from './engine/store';
+import {Store} from './engine/store/store';
+import {DBElastic} from './db/elasticsearch/db-elastic';
+import {DBNedb} from './db/nedb/db-nedb';
+import {Database} from './db/db.model';
 
 const config = loadConfig();
 
 configureLogger(config.log.level);
-const engine = new Engine(config);
+
+let db: Database;
+if (config.database.use === 'elasticsearch') {
+	db = new DBElastic(config.database.options.elasticsearch);
+} else {
+	db = new DBNedb(config.getDataPath(['nedb']));
+}
+const store = new Store(db);
+const engine = new Engine(config, store);
 const server = new Server(engine);
 
 async function run(): Promise<void> {

@@ -4,15 +4,17 @@ import tmp from 'tmp';
 
 export class TestNeDB {
 	name = 'nedb';
+	// @ts-ignore
 	database: DBNedb;
+	// @ts-ignore
 	dir: SynchrounousResult;
 
 	constructor() {
-		this.dir = tmp.dirSync();
-		this.database = new DBNedb(this.dir.name);
 	}
 
 	async setup() {
+		this.dir = tmp.dirSync();
+		this.database = new DBNedb(this.dir.name);
 		await this.database.open();
 	}
 

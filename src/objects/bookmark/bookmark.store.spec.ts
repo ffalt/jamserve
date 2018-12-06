@@ -1,39 +1,10 @@
 import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {BookmarkStore, SearchQueryBookmark} from './bookmark.store';
-import {TestNeDB} from '../../db/nedb/db-nedb.test';
 import {Bookmark} from './bookmark.model';
-import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
 import {TestDBs} from '../../db/db.test';
-import {AlbumStore, SearchQueryAlbum} from '../album/album.store';
-import {Album} from '../album/album.model';
-
-function mockBookmark(): Bookmark {
-	return {
-		id: '',
-		type: DBObjectType.bookmark,
-		destID: 'trackID1',
-		userID: 'userID1',
-		comment: 'a comment',
-		created: 1543495268,
-		changed: 1543495269,
-		position: 1234
-	};
-}
-
-function mockBookmark2(): Bookmark {
-	return {
-		id: '',
-		type: DBObjectType.bookmark,
-		destID: 'trackID2',
-		userID: 'userID2',
-		comment: 'second comment',
-		created: 1443495268,
-		changed: 1443495269,
-		position: 4321
-	};
-}
+import {mockBookmark, mockBookmark2} from './bookmark.mock';
 
 describe('BookmarkStore', () => {
 

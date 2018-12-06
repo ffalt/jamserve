@@ -1,4 +1,4 @@
-import {Store} from '../store';
+import {Store} from '../store/store';
 import {AudioService} from '../audio/audio.service';
 import Logger from '../../utils/logger';
 import {ScanDir, scanDir} from './components/scan';
@@ -175,23 +175,6 @@ export class IoService {
 	async rescanTracks(tracks: Array<Track>): Promise<void> {
 		// TODO: rescan tracks only, not the whole thing
 		await this.refresh();
-	}
-
-	async applyFolderMove(folder: Folder, newPath: string): Promise<void> {
-		const folders = await this.store.folderStore.search({inPath: folder.path});
-		for (const f of folders) {
-			f.path = f.path.replace(folder.path, newPath);
-			await this.store.folderStore.replace(f);
-		}
-		const tracks = await this.store.trackStore.search({inPath: folder.path});
-		for (const t of tracks) {
-			t.path = t.path.replace(folder.path, newPath);
-			await this.store.trackStore.replace(t);
-		}
-		const root = await this.store.rootStore.byId(folder.rootID);
-		if (root) {
-			await this.rescanRoot(root);
-		}
 	}
 
 }

@@ -1,4 +1,4 @@
-import {Store} from '../../store';
+import {Store} from '../../store/store';
 import {MatchDir, MatchFile} from './match';
 import {DBObjectType, FileTyp, FolderType} from '../../../types';
 import path from 'path';
@@ -8,6 +8,7 @@ import Logger from '../../../utils/logger';
 import {fillMatchTags} from './tag';
 import {Track} from '../../../objects/track/track.model';
 import {Folder} from '../../../objects/folder/folder.model';
+import {ensureTrailingPathSeparator} from '../../../utils/fs-utils';
 
 const log = Logger('IO.merge');
 
@@ -60,7 +61,7 @@ export class Merger {
 		const folder: Folder = {
 			id: '',
 			rootID: dir.rootID,
-			path: dir.name,
+			path: ensureTrailingPathSeparator(dir.name),
 			parentID: (dir.parent && dir.parent.folder ? dir.parent.folder.id : undefined),
 			stat: {
 				created: dir.stat.ctime,
@@ -83,7 +84,7 @@ export class Merger {
 		const folder: Folder = {
 			id: old.id,
 			rootID: dir.rootID,
-			path: dir.name,
+			path: ensureTrailingPathSeparator(dir.name),
 			parentID: (dir.parent && dir.parent.folder ? dir.parent.folder.id : undefined),
 			stat: {
 				created: dir.stat.ctime,

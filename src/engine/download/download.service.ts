@@ -3,7 +3,7 @@ import path from 'path';
 import {CompressListStream, CompressStream} from '../../utils/compress-stream';
 import {replaceFileSystemChars} from '../../utils/fs-utils';
 import {DBObjectType} from '../../types';
-import {Store} from '../store';
+import {Store} from '../store/store';
 import {User} from '../../objects/user/user.model';
 import {DBObject} from '../../objects/base/base.model';
 import {Track} from '../../objects/track/track.model';

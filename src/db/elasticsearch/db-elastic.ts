@@ -310,7 +310,6 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		if (response.hits.total > 0) {
 			return this.hit2Obj(response.hits.hits[0]);
 		}
-		console.log(query, this.translateElasticQuery(query));
 		return;
 	}
 

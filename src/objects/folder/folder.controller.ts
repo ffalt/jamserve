@@ -80,7 +80,13 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			result.health = {problems};
 		}
 		if (includes.folderParents) {
-			result.parents = await this.folderService.getFolderParents(folder);
+			const parents = await this.folderService.collectFolderPath(folder.parentID);
+			result.parents = parents.map(parent => {
+				return {
+					id: parent.id,
+					name: path.basename(parent.path)
+				};
+			});
 		}
 		return result;
 	}

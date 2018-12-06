@@ -2,29 +2,9 @@ import {expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {RootStore, SearchQueryRoot} from './root.store';
 import {Root} from './root.model';
-import {DBObjectType} from '../../types';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
 import {TestDBs} from '../../db/db.test';
-
-function mockRoot(): Root {
-	return {
-		id: '',
-		type: DBObjectType.root,
-		name: 'a name',
-		path: '/var/media/root name',
-		created: 1543495268
-	};
-}
-
-function mockRoot2(): Root {
-	return {
-		id: '',
-		type: DBObjectType.root,
-		name: 'second name',
-		path: '/var/media/second root name',
-		created: 1443495268
-	};
-}
+import {mockRoot, mockRoot2} from './root.mock';
 
 describe('RootStore', () => {
 

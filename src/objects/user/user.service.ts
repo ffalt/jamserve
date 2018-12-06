@@ -1,6 +1,6 @@
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import path from 'path';
-import {Store} from '../../engine/store';
+import {Store} from '../../engine/store/store';
 import {Config} from '../../config';
 import {ImageService} from '../../engine/image/image.service';
 import {User} from './user.model';

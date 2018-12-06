@@ -3,6 +3,7 @@ import {BaseStore, SearchQuery} from '../base/base.store';
 import {QueryHelper} from '../base/base.store';
 import {Track} from './track.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
+import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 
 export interface SearchQueryTrack extends SearchQuery {
 	path?: string;
@@ -47,8 +48,8 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 		const q = new QueryHelper();
 		q.terms('parentID', query.parentIDs);
 		q.term('path', query.path);
-		q.startsWiths('path', query.inPaths);
-		q.startsWith('path', query.inPath);
+		q.startsWiths('path', query.inPaths ? query.inPaths.map(s => ensureTrailingPathSeparator(s)) : undefined);
+		q.startsWith('path', query.inPath ? ensureTrailingPathSeparator(query.inPath) : undefined);
 		q.term('tag.genre', query.genre);
 		q.term('rootID', query.rootID);
 		q.term('parentID', query.parentID);

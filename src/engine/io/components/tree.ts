@@ -1,4 +1,4 @@
-import {Store} from '../../store';
+import {Store} from '../../store/store';
 import {MatchDir, MatchFile} from './match';
 import * as path from 'path';
 import {FileTyp} from '../../../types';
