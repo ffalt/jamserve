@@ -23,9 +23,10 @@ import {ImageService} from './image/image.service';
 import {DownloadService} from './download/download.service';
 import {ListService} from './list/list.service';
 import {User} from '../objects/user/user.model';
-import {Root} from '../objects/root/root.model';
+import {Root, RootStatus} from '../objects/root/root.model';
 import {RadioService} from '../objects/radio/radio.service';
 import {FolderService} from '../objects/folder/folder.service';
+import {Track} from '../objects/track/track.model';
 
 export class Engine {
 	// public config: Config;
@@ -55,11 +56,13 @@ export class Engine {
 		this.audioService = new AudioService(config.tools);
 		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
 		this.imageService = new ImageService(config.getDataPath(['cache', 'images']), this.config.getDataPath(['images']), this.store.folderStore, this.store.trackStore);
-		this.ioService = new IoService(this.store, this.audioService, this.imageService, this.waveformService);
+
+		this.genreService = new GenreService(this.store.trackStore);
+		this.indexService = new IndexService(config.app.index, this.store.artistStore, this.store.folderStore, this.store.trackStore);
+		this.ioService = new IoService(this.store, this.audioService, this.imageService, this.waveformService, this.indexService, this.genreService);
 		this.downloadService = new DownloadService(this.store.trackStore);
 		this.chatService = new ChatService(config.app.chat);
-		this.folderService = new FolderService(this.store.folderStore, this.ioService);
-		this.genreService = new GenreService(this.store.trackStore);
+		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore);
 		this.stateService = new StateService(this.store.stateStore);
 		this.nowPlayingService = new NowPlayingService(this.stateService);
 		this.streamService = new StreamService(this.nowPlayingService);
@@ -67,11 +70,10 @@ export class Engine {
 		this.playQueueService = new PlayQueueService(this.store.playQueueStore);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
 		this.podcastService = new PodcastService(config.getDataPath(['podcasts']), this.store.podcastStore, this.store.episodeStore, this.audioService);
-		this.indexService = new IndexService(config.app.index, this.store.artistStore, this.store.folderStore, this.store.trackStore, this.ioService);
 		this.userService = new UserService(this.store.userStore, this.store.stateStore, this.store.playlistStore, this.store.bookmarkStore, this.store.playQueueStore, this.imageService);
 		this.metaDataService = new MetaDataService(this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioService);
 		this.listService = new ListService(this.store.stateStore);
-		this.rootService = new RootService(this.store.rootStore, this.ioService, this.indexService, this.genreService);
+		this.rootService = new RootService(this.store.rootStore);
 		this.radioService = new RadioService(this.store.radioStore);
 	}
 
@@ -150,6 +152,7 @@ export class Engine {
 	async stop(): Promise<void> {
 		await this.store.close();
 	}
+
 
 }
 

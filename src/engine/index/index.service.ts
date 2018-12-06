@@ -98,7 +98,7 @@ export class IndexTreeBuilder {
 export class IndexService {
 	private cached?: Indexes;
 
-	constructor(public indexConfig: IndexConfig, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore, private io: IoService) {
+	constructor(public indexConfig: IndexConfig, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
 	}
 
 	async buildIndexes(): Promise<void> {
@@ -113,13 +113,13 @@ export class IndexService {
 		return <Indexes>this.cached;
 	}
 
-	async getFolderIndex(): Promise<FolderIndex> {
-		const indexes = await this.getIndexes(this.io.scanning);
+	async getFolderIndex(forceRebuild: boolean): Promise<FolderIndex> {
+		const indexes = await this.getIndexes(forceRebuild);
 		return indexes.folderIndex;
 	}
 
-	async getArtistIndex(): Promise<ArtistIndex> {
-		const indexes = await this.getIndexes(this.io.scanning);
+	async getArtistIndex(forceRebuild: boolean): Promise<ArtistIndex> {
+		const indexes = await this.getIndexes(forceRebuild);
 		return indexes.artistIndex;
 	}
 

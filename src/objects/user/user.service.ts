@@ -1,7 +1,5 @@
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import path from 'path';
-import {Store} from '../../engine/store/store';
-import {Config} from '../../config';
 import {ImageService} from '../../engine/image/image.service';
 import {User} from './user.model';
 import {hexDecode} from '../../utils/hex';
@@ -9,8 +7,8 @@ import {Md5} from 'md5-typescript';
 import {UserStore} from './user.store';
 import {StateStore} from '../state/state.store';
 import {PlaylistStore} from '../playlist/playlist.store';
-import {BookmarkStore} from '../bookmark/bookmark.store';
 import {PlayQueueStore} from '../playqueue/playqueue.store';
+import {BookmarkStore} from '../bookmark/bookmark.store';
 
 export class UserService {
 	private cached: {

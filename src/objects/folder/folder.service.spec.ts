@@ -98,4 +98,3 @@ describe('FolderService', () => {
 	}
 
 });
-

@@ -232,7 +232,7 @@ export class SubsonicApi {
 		 Returns a <subsonic-response> element with a nested <indexes> element on success.
 		 */
 
-		const folderIndex = await this.engine.indexService.getFolderIndex();
+		const folderIndex = await this.engine.indexService.getFolderIndex(this.engine.ioService.scanning);
 		if (req.query.ifModifiedSince && req.query.ifModifiedSince > 0 && (folderIndex.lastModified <= req.query.ifModifiedSince)) {
 			const empty: any = {};
 			return empty;
@@ -269,7 +269,7 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <artists> element on success.
 		 */
-		const artistIndex = await this.engine.indexService.getArtistIndex();
+		const artistIndex = await this.engine.indexService.getArtistIndex(this.engine.ioService.scanning);
 		const index = this.engine.indexService.filterArtistIndex(req.query.musicFolderId ? req.query.musicFolderId.toString() : undefined, artistIndex);
 		let ids: Array<string> = [];
 		index.groups.forEach(entry => {
@@ -1563,7 +1563,7 @@ export class SubsonicApi {
 
 		 Returns an empty <subsonic-response> element on success.
 		 */
-		await this.engine.bookmarkService.remove(req.query.id, req.user);
+		await this.engine.bookmarkService.remove(req.query.id, req.user.id);
 	}
 
 	async getRandomSongs(req: ApiOptions<SubsonicParameters.RandomSong>): Promise<{ randomSongs: Subsonic.Songs }> {
@@ -1771,7 +1771,7 @@ export class SubsonicApi {
 
 		Returns a <subsonic-response> element with a nested <scanStatus> element on success.
 		 */
-		this.engine.rootService.refresh(); // do not wait
+		this.engine.ioService.refresh(); // do not wait
 	}
 
 	async getArtist(req: ApiOptions<SubsonicParameters.ID>): Promise<{ artist: Subsonic.ArtistWithAlbumsID3 }> {

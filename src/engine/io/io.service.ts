@@ -15,6 +15,8 @@ import {Track} from '../../objects/track/track.model';
 import {RootStore} from '../../objects/root/root.store';
 import {FolderStore} from '../../objects/folder/folder.store';
 import {TrackStore} from '../../objects/track/track.store';
+import {IndexService} from '../index/index.service';
+import {GenreService} from '../genre/genre.service';
 
 const log = Logger('IO');
 
@@ -37,7 +39,7 @@ export class IoService {
 	private scanningCount: undefined | number;
 	private rootstatus: { [id: string]: RootStatus } = {};
 
-	constructor(private store: Store, private audioService: AudioService, private imageService: ImageService, private waveformService: WaveformService) {
+	constructor(private store: Store, private audioService: AudioService, private imageService: ImageService, private waveformService: WaveformService, private  indexService: IndexService, private genreService: GenreService) {
 	}
 
 	private async scanDir(dir: string, parent: Folder | undefined, level: number, rootID: string, changes: MergeChanges): Promise<Folder | undefined> {
@@ -147,7 +149,7 @@ export class IoService {
 		}
 	}
 
-	async rescanRoot(root: Root): Promise<void> {
+	private async rescanRoot(root: Root): Promise<void> {
 		if (this.scanning) {
 			return;
 		}
@@ -158,7 +160,7 @@ export class IoService {
 		await this.stopScanning(changes);
 	}
 
-	async refresh(): Promise<void> {
+	private async refreshInternal(): Promise<void> {
 		if (this.scanning) {
 			return;
 		}
@@ -172,9 +174,30 @@ export class IoService {
 		await this.stopScanning(changes);
 	}
 
-	async rescanTracks(tracks: Array<Track>): Promise<void> {
+	async refresh(): Promise<void> {
+		await this.refreshInternal();
+		await this.indexService.buildIndexes();
+		await this.genreService.buildGenres();
+	}
+
+	async refreshTracks(tracks: Array<Track>): Promise<void> {
 		// TODO: rescan tracks only, not the whole thing
 		await this.refresh();
+		// await this.rescanTracks(tracks);
+		await this.indexService.buildIndexes();
+		await this.genreService.buildGenres();
+	}
+
+	async refreshRoot(root: Root): Promise<void> {
+		await this.rescanRoot(root);
+		await this.indexService.buildIndexes();
+		await this.genreService.buildGenres();
+	}
+
+	async clean(): Promise<void> {
+		await this.cleanStore();
+		await this.indexService.buildIndexes();
+		await this.genreService.buildGenres();
 	}
 
 }

@@ -30,7 +30,7 @@ async function run(): Promise<void> {
 		return;
 	}
 	try {
-		await engine.rootService.refresh();
+		await engine.ioService.refresh();
 	} catch (e) {
 		console.error('Error on startup refresh', e);
 	}

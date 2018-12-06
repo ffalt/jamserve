@@ -23,6 +23,7 @@ import {ListService} from '../../engine/list/list.service';
 import {Track} from './track.model';
 import {Bookmark} from '../bookmark/bookmark.model';
 import {User} from '../user/user.model';
+import {IoService} from '../../engine/io/io.service';
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
@@ -32,7 +33,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		private bookmarkService: BookmarkService,
 		private metaService: MetaDataService,
 		private streamService: StreamService,
-		private rootService: RootService,
+		private ioService: IoService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService,
@@ -104,7 +105,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 	async tagID3Update(req: JamRequest<JamParameters.TagID3Update>): Promise<void> {
 		const track = await this.byID(req.query.id);
 		await this.audioService.saveID3v2(path.join(track.path, track.name), req.query.tag);
-		this.rootService.refreshTracks([track]); // do not wait
+		this.ioService.refreshTracks([track]); // do not wait
 	}
 
 	async tagID3sUpdate(req: JamRequest<JamParameters.TagID3sUpdate>): Promise<void> {
@@ -118,7 +119,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 			}
 			await this.audioService.saveID3v2(path.join(item.track.path, item.track.name), item.tag);
 		}
-		this.rootService.refreshTracks(tracks); // do not wait
+		this.ioService.refreshTracks(tracks); // do not wait
 	}
 
 	async stream(req: JamRequest<JamParameters.Stream>): Promise<IApiBinaryResult> {
