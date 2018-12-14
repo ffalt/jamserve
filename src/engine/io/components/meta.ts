@@ -2,18 +2,16 @@ import {AlbumType, DBObjectType} from '../../../types';
 import {Store} from '../../store/store';
 import Logger from '../../../utils/logger';
 import {MergeChanges, MergeTrackInfo} from './merge';
-import {clearID3} from './clean';
 import {cUnknownAlbum, cUnknownArtist} from './tag';
 import {Artist} from '../../../objects/artist/artist.model';
 import {Track} from '../../../objects/track/track.model';
 import {Album} from '../../../objects/album/album.model';
-import {ImageModule} from '../../image/image.module';
 
 const log = Logger('IO.meta');
 
 export class MetaMerge {
 
-	constructor(private store: Store, private imageModule: ImageModule) {
+	constructor(private store: Store) {
 	}
 
 	private static getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
@@ -324,6 +322,5 @@ export class MetaMerge {
 		for (const trackInfo of changes.updateTracks) {
 			await this.syncID3(trackInfo);
 		}
-		await clearID3(this.store, this.imageModule, changes.removedTracks);
 	}
 }

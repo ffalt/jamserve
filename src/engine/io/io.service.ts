@@ -101,8 +101,9 @@ export class IoService {
 		await this.imageModule.clearImageCacheByIDs(trackIDs);
 		await this.waveformService.clearWaveformCacheByIDs(trackIDs);
 		await clearID3(this.store, this.imageModule, removeTracks);
-		const meta = new MetaMerge(this.store, this.imageModule);
+		const meta = new MetaMerge(this.store);
 		await meta.sync(changes);
+		await clearID3(this.store, this.imageModule, changes.removedTracks);
 		log.info('New Tracks', changes.newTracks.length);
 		log.info('New Folders', changes.newFolders.length);
 		log.info('Update Tracks', changes.updateTracks.length);
