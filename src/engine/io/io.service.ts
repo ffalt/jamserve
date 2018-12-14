@@ -1,5 +1,5 @@
 import {Store} from '../store/store';
-import {AudioService} from '../audio/audio.service';
+import {AudioModule} from '../audio/audio.module';
 import Logger from '../../utils/logger';
 import {ScanDir, scanDir} from './components/scan';
 import {MatchDir, matchDir} from './components/match';
@@ -8,15 +8,12 @@ import {MetaMerge} from './components/meta';
 import {clearID3, scanForRemoved} from './components/clean';
 import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
 import {WaveformService} from '../waveform/waveform.service';
-import {ImageService} from '../image/image.service';
 import {Root, RootStatus} from '../../objects/root/root.model';
 import {Folder} from '../../objects/folder/folder.model';
 import {Track} from '../../objects/track/track.model';
-import {RootStore} from '../../objects/root/root.store';
-import {FolderStore} from '../../objects/folder/folder.store';
-import {TrackStore} from '../../objects/track/track.store';
 import {IndexService} from '../index/index.service';
 import {GenreService} from '../genre/genre.service';
+import {ImageModule} from '../image/image.module';
 
 const log = Logger('IO');
 
@@ -39,7 +36,7 @@ export class IoService {
 	private scanningCount: undefined | number;
 	private rootstatus: { [id: string]: RootStatus } = {};
 
-	constructor(private store: Store, private audioService: AudioService, private imageService: ImageService, private waveformService: WaveformService, private  indexService: IndexService, private genreService: GenreService) {
+	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService, private indexService: IndexService, private genreService: GenreService) {
 	}
 
 	private async scanDir(dir: string, parent: Folder | undefined, level: number, rootID: string, changes: MergeChanges): Promise<Folder | undefined> {
@@ -48,7 +45,7 @@ export class IoService {
 		if (parent) {
 			match.parent = {name: parent.path, folder: parent, level, rootID: rootID, files: [], directories: [match], removedFolders: [], removedTracks: [], stat: {mtime: 0, ctime: 0}};
 		}
-		const merger = new Merger(rootID, this.store, this.audioService, (count: number) => {
+		const merger = new Merger(rootID, this.store, this.audioModule, (count: number) => {
 			this.scanningCount = count;
 		});
 		await await merger.merge(match, changes);
@@ -101,10 +98,10 @@ export class IoService {
 	private async cleanScanStore(changes: MergeChanges): Promise<void> {
 		const {removeTracks, removeFolders} = await scanForRemoved(this.store, changes);
 		const trackIDs = await this.store.cleanStore(removeTracks, removeFolders);
-		await this.imageService.clearImageCacheByIDs(trackIDs);
+		await this.imageModule.clearImageCacheByIDs(trackIDs);
 		await this.waveformService.clearWaveformCacheByIDs(trackIDs);
-		await clearID3(this.store, this.imageService, removeTracks);
-		const meta = new MetaMerge(this.store, this.imageService);
+		await clearID3(this.store, this.imageModule, removeTracks);
+		const meta = new MetaMerge(this.store, this.imageModule);
 		await meta.sync(changes);
 		log.info('New Tracks', changes.newTracks.length);
 		log.info('New Folders', changes.newFolders.length);

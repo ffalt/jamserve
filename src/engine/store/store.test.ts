@@ -10,7 +10,7 @@ import {matchDir, MatchDir} from '../io/components/match';
 import {DBObjectType} from '../../types';
 import {Root} from '../../objects/root/root.model';
 import {MergeChanges, Merger} from '../io/components/merge';
-import {AudioService} from '../audio/audio.service';
+import {AudioModule} from '../audio/audio.module';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 
 interface MockTrack {
@@ -104,7 +104,7 @@ async function writeMockRoot(root: MockRoot): Promise<void> {
 	}
 }
 
-export class TestDataStore {
+export class StoreTest {
 	// @ts-ignore
 	dir: SynchrounousResult;
 	// @ts-ignore
@@ -116,7 +116,7 @@ export class TestDataStore {
 	async setup(): Promise<void> {
 		this.dir = tmp.dirSync();
 		this.mockRoot = buildRandomMockRoot(this.dir.name, 1);
-		const audioService = new AudioService(ThirdPartyConfig);
+		const audioModule = new AudioModule(ThirdPartyConfig);
 		await writeMockRoot(this.mockRoot);
 		const root: Root = {
 			id: '',
@@ -138,7 +138,7 @@ export class TestDataStore {
 		};
 		const scan: ScanDir = await scanDir(this.mockRoot.path);
 		const match: MatchDir = await matchDir(scan, this.store, root.id);
-		const merger = new Merger(root.id, this.store, audioService, (count: number) => {
+		const merger = new Merger(root.id, this.store, audioModule, (count: number) => {
 			// this.scanningCount = count;
 		});
 		await await merger.merge(match, changes);

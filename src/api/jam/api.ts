@@ -69,7 +69,7 @@ export class JamController {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.rootController = new RootController(this.engine.store.rootStore, this.engine.rootService, this.engine.ioService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.trackController = new TrackController(this.engine.store.trackStore, this.engine.audioService, this.engine.bookmarkService, this.engine.metaDataService, this.engine.streamService, this.engine.ioService,
+		this.trackController = new TrackController(this.engine.store.trackStore, this.engine.audioModule, this.engine.bookmarkService, this.engine.metaDataService, this.engine.streamService, this.engine.ioService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
 		this.episodeController = new EpisodeController(this.engine.store.episodeStore, this.engine.podcastService, this.engine.streamService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
@@ -87,7 +87,7 @@ export class JamController {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.bookmarkController = new BookmarkController(this.engine.bookmarkService, this.trackController);
 		this.playqueueController = new PlayQueueController(this.engine.playQueueService, this.trackController);
-		this.metadataController = new MetadataController(this.engine.audioService, this.trackController);
+		this.metadataController = new MetadataController(this.engine.audioModule, this.trackController);
 	}
 
 	async ping(req: JamRequest<{}>): Promise<Jam.Ping> {

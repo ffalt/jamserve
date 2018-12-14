@@ -3,7 +3,7 @@ import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {SupportedAudioFormat} from '../../utils/filetype';
 import path from 'path';
 import Logger from '../../utils/logger';
-import {AudioService} from '../../engine/audio/audio.service';
+import {AudioModule} from '../../engine/audio/audio.module';
 import {DBObjectType} from '../../types';
 import {downloadFile} from '../../utils/download';
 import {Podcast} from './podcast.model';
@@ -19,7 +19,7 @@ export class PodcastService {
 		[id: string]: any;
 	} = {};
 
-	constructor(private podcastsPath: string, private podcastStore: PodcastStore, private episodeStore: EpisodeStore, private audioService: AudioService) {
+	constructor(private podcastsPath: string, private podcastStore: PodcastStore, private episodeStore: EpisodeStore, private audioModule: AudioModule) {
 	}
 
 	isDownloadingPodcast(podcastId: string): boolean {
@@ -60,7 +60,7 @@ export class PodcastService {
 			log.info('retrieving file', url);
 			await downloadFile(url, filename);
 			const stat = await fse.stat(filename);
-			const result = await this.audioService.read(filename);
+			const result = await this.audioModule.read(filename);
 			episode.status = PodcastStatus.completed;
 			episode.tag = result.tag;
 			episode.media = result.media;

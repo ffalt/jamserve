@@ -1,6 +1,5 @@
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import path from 'path';
-import {ImageService} from '../../engine/image/image.service';
 import {User} from './user.model';
 import {hexDecode} from '../../utils/hex';
 import {Md5} from 'md5-typescript';
@@ -9,14 +8,22 @@ import {StateStore} from '../state/state.store';
 import {PlaylistStore} from '../playlist/playlist.store';
 import {PlayQueueStore} from '../playqueue/playqueue.store';
 import {BookmarkStore} from '../bookmark/bookmark.store';
+import {IApiBinaryResult} from '../../typings';
+import {ImageModule} from '../../engine/image/image.module';
 
 export class UserService {
 	private cached: {
 		[id: string]: User;
 	} = {};
 
-	constructor(private userStore: UserStore, private stateStore: StateStore, private playlistStore: PlaylistStore, private bookmarkStore: BookmarkStore,
-				private playQueueStore: PlayQueueStore, private imageService: ImageService) {
+	constructor(public userAvatarPath: string, public userStore: UserStore, private stateStore: StateStore, private playlistStore: PlaylistStore, private bookmarkStore: BookmarkStore,
+				private playQueueStore: PlayQueueStore, private imageModule: ImageModule) {
+	}
+
+	async getUserImage(user: User, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+		if (user.avatar) {
+			return this.imageModule.get(user.id, path.join(this.userAvatarPath, user.avatar), size, format);
+		}
 	}
 
 	clearCache() {
@@ -29,10 +36,10 @@ export class UserService {
 
 	async setUserImage(user: User, filename: string): Promise<void> {
 		const destFileName = 'avatar-' + user.id + '.png';
-		const destName = path.join(this.imageService.userAvatarPath, destFileName);
+		const destName = path.join(this.userAvatarPath, destFileName);
 		await fileDeleteIfExists(destName);
-		await this.imageService.createAvatar(filename, destName);
-		await this.imageService.clearImageCacheByID(user.id);
+		await this.imageModule.createAvatar(filename, destName);
+		await this.imageModule.clearImageCacheByID(user.id);
 		user.avatar = destFileName;
 		user.avatarLastChanged = Date.now();
 		await this.updateUser(user);
@@ -44,11 +51,11 @@ export class UserService {
 		await this.playlistStore.removeByQuery({userID: user.id});
 		await this.bookmarkStore.removeByQuery({userID: user.id});
 		await this.playQueueStore.removeByQuery({userID: user.id});
-		await this.imageService.clearImageCacheByID(user.id);
+		await this.imageModule.clearImageCacheByID(user.id);
 		await this.userStore.remove(user.id);
 		// TODO: remove user chat msg on user.delete
 		if (user.avatar) {
-			await fileDeleteIfExists(path.join(this.imageService.userAvatarPath, user.avatar));
+			await fileDeleteIfExists(path.join(this.userAvatarPath, user.avatar));
 		}
 	}
 

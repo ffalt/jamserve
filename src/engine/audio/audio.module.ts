@@ -10,7 +10,7 @@ import {MusicBrainz} from '../../model/musicbrainz-rest-data-2.0';
 import {fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
-import {Config, ThirdpartyToolsConfig} from '../../config';
+import {ThirdpartyToolsConfig} from '../../config';
 import {TrackMedia, TrackTag} from '../../objects/track/track.model';
 import {MetaInfoAlbum, MetaInfoArtist, MetaInfoImage, MetaInfoTopSong, MetaInfoTrackSimilarSong} from '../metadata/metadata.model';
 import {Folder} from '../../objects/folder/folder.model';
@@ -198,7 +198,7 @@ export class FORMAT {
 	}
 }
 
-export class AudioService {
+export class AudioModule {
 	musicbrainz: MusicbrainzClient;
 	acoustid: AcoustidClient;
 	lastFM: LastFMClient;

@@ -1,12 +1,13 @@
 import path from 'path';
-import Logger from '../../../utils/logger';
-import {downloadFile} from '../../../utils/download';
-import {fileDeleteIfExists} from '../../../utils/fs-utils';
-import {IApiBinaryResult} from '../../../typings';
+import Logger from '../../utils/logger';
+import {downloadFile} from '../../utils/download';
+import {fileDeleteIfExists} from '../../utils/fs-utils';
+import {IApiBinaryResult} from '../../typings';
 import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
-import {DebouncePromises} from '../../../utils/debounce-promises';
+import {DebouncePromises} from '../../utils/debounce-promises';
 import fse from 'fs-extra';
+import {SupportedWriteImageFormat} from '../../utils/filetype';
 
 type JimpFont = any;
 
@@ -63,21 +64,33 @@ export class ImageModule {
 	}
 
 	private async getImage(filename: string, size: number | undefined, name: string): Promise<IApiBinaryResult> {
+		let fileFormat = path.extname(filename);
+		if (fileFormat[0] === '.') {
+			fileFormat = fileFormat.slice(1);
+		}
+		return this.getImageAs(filename, fileFormat, size, name);
+	}
+
+	private async getImageAs(filename: string, format: string, size: number | undefined, name: string): Promise<IApiBinaryResult> {
+		let fileFormat = path.extname(filename);
+		if (fileFormat[0] === '.') {
+			fileFormat = fileFormat.slice(1);
+		}
 		const exists = await fse.pathExists(filename);
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
 		}
-		if (!size) {
-			return {file: {filename, name}};
-		} else {
+		if (size || (fileFormat !== format)) {
 			const image = await Jimp.read(filename);
-			const mime = mimeTypes.lookup(path.extname(filename));
+			const mime = mimeTypes.lookup(format);
 			if (!mime) {
 				return Promise.reject('Unknown Image Format Request');
 			}
-			image.crop(1, 1, image.getWidth() - 2, image.getHeight() - 2);
-			// image.autocrop({cropOnlyFrames: false, tolerance: 0.0004, cropSymmetric: true});
-			image.contain(size, size);
+			if (size) {
+				image.crop(1, 1, image.getWidth() - 2, image.getHeight() - 2);
+				// image.autocrop({cropOnlyFrames: false, tolerance: 0.0004, cropSymmetric: true});
+				image.contain(size, size);
+			}
 			const buffer = await image.getBufferAsync(mime);
 			return {
 				buffer: {
@@ -85,6 +98,8 @@ export class ImageModule {
 					contentType: mime
 				}
 			};
+		} else {
+			return {file: {filename, name}};
 		}
 	}
 
@@ -92,8 +107,11 @@ export class ImageModule {
 		if (!filename) {
 			return Promise.reject(Error('Invalid Path'));
 		}
-		if (size) {
-			const cacheID = 'thumb-' + id + '-' + size + '.' + this.format;
+		if (format && SupportedWriteImageFormat.indexOf(format) < 0) {
+			return Promise.reject(Error('Invalid Format'));
+		}
+		if (format || size) {
+			const cacheID = 'thumb-' + id + (size ? '-' + size : '') + '.' + (format || this.format);
 			if (this.imageCacheDebounce.isPending(cacheID)) {
 				return this.imageCacheDebounce.append(cacheID);
 			}
@@ -105,7 +123,11 @@ export class ImageModule {
 				if (exists) {
 					result = {file: {filename: cachefile, name: cacheID}};
 				} else {
-					result = await this.getImage(filename, size, cacheID);
+					if (format) {
+						result = await this.getImageAs(filename, format, size, cacheID);
+					} else {
+						result = await this.getImage(filename, size, cacheID);
+					}
 					if (result.buffer) {
 						log.debug('Writing image cache file', cachefile);
 						await fse.writeFile(cachefile, result.buffer.buffer);
@@ -118,7 +140,7 @@ export class ImageModule {
 				return Promise.reject(e);
 			}
 		} else {
-			return this.getImage(filename, size, id + '.' + this.format);
+			return this.getImage(filename, size, id + '.' + format);
 		}
 	}
 

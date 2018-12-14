@@ -5,12 +5,12 @@ import path from 'path';
 import {LastFM} from '../../model/lastfm-rest-data-2.0';
 import {JamRequest} from '../../api/jam/api';
 import {TrackController} from '../../objects/track/track.controller';
-import {AudioService} from '../audio/audio.service';
+import {AudioModule} from '../audio/audio.module';
 
 export class MetadataController {
 	private cache: { [key: string]: any } = {};
 
-	constructor(private audioService: AudioService, private trackController: TrackController) {
+	constructor(private audioModule: AudioModule, private trackController: TrackController) {
 	}
 
 	async brainzSearch(req: JamRequest<JamParameters.BrainzSearch>): Promise<MusicBrainz.Response> {
@@ -21,7 +21,7 @@ export class MetadataController {
 			console.log('serving from cache search');
 			return this.cache[key];
 		}
-		const brainz = await this.audioService.musicbrainzSearch(req.query.type, query);
+		const brainz = await this.audioModule.musicbrainzSearch(req.query.type, query);
 		this.cache[key] = brainz;
 		return brainz;
 	}
@@ -33,7 +33,7 @@ export class MetadataController {
 			return this.cache[key];
 		}
 		const track = await this.trackController.byID(req.query.id);
-		const acoustid = await this.audioService.acoustidLookup(path.join(track.path, track.name), req.query.inc);
+		const acoustid = await this.audioModule.acoustidLookup(path.join(track.path, track.name), req.query.inc);
 		this.cache[key] = acoustid;
 		return acoustid;
 	}
@@ -44,7 +44,7 @@ export class MetadataController {
 			console.log('serving from cache lastfm');
 			return this.cache[key];
 		}
-		const lastfm = await this.audioService.lastFMLookup(req.query.type, req.query.id);
+		const lastfm = await this.audioModule.lastFMLookup(req.query.type, req.query.id);
 		this.cache[key] = lastfm;
 		return lastfm;
 	}
@@ -55,7 +55,7 @@ export class MetadataController {
 			console.log('serving from cache lookup');
 			return this.cache[key];
 		}
-		const brainz = await this.audioService.musicbrainzLookup(req.query.type, req.query.id, req.query.inc);
+		const brainz = await this.audioModule.musicbrainzLookup(req.query.type, req.query.id, req.query.inc);
 		this.cache[key] = brainz;
 		return brainz;
 	}

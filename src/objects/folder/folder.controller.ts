@@ -26,8 +26,8 @@ import {FolderService} from './folder.service';
 export class FolderController extends BaseListController<JamParameters.Folder, JamParameters.Folders, JamParameters.IncludesFolderChildren, SearchQueryFolder, JamParameters.FolderSearch, Folder, Jam.Folder> {
 
 	constructor(
-		private folderStore: FolderStore,
-		private folderService: FolderService,
+		protected folderStore: FolderStore,
+		protected folderService: FolderService,
 		private trackController: TrackController,
 		private metadataService: MetaDataService,
 		private indexService: IndexService,
@@ -132,7 +132,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 
 	async imageUrlUpdate(req: JamRequest<JamParameters.FolderEditImg>): Promise<void> {
 		const folder = await this.byID(req.query.id);
-		await this.imageService.downloadFolderImage(folder, req.query.url);
+		await this.folderService.downloadFolderImage(folder, req.query.url);
 	}
 
 	async imageUploadUpdate(req: JamRequest<JamParameters.ID>): Promise<void> {
@@ -140,7 +140,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			return Promise.reject(InvalidParamError('Image upload failed'));
 		}
 		const folder = await this.byID(req.query.id);
-		await this.imageService.setFolderImage(folder, req.file);
+		await this.folderService.setFolderImage(folder, req.file);
 	}
 
 	async nameUpdate(req: JamRequest<JamParameters.FolderEditName>): Promise<void> {

@@ -1,6 +1,5 @@
 import {FolderType} from '../../types';
-import {Store} from '../store/store';
-import {AudioService} from '../audio/audio.service';
+import {AudioModule} from '../audio/audio.module';
 import {shuffle} from '../../utils/random';
 import Logger from '../../utils/logger';
 import {MetaInfo, MetaInfoAlbum, MetaInfoArtist, MetaInfoArtistSimilarArtist, MetaInfoFolderSimilarArtist, MetaInfoSimilarArtist, MetaInfoTopSong, MetaInfoTrack, MetaInfoTrackSimilarSong} from './metadata.model';
@@ -17,11 +16,11 @@ const log = Logger('MetaDataService');
 
 export class MetaDataService {
 
-	constructor(private folderStore: FolderStore, private trackStore: TrackStore, private albumStore: AlbumStore, private artistStore: ArtistStore, private audioService: AudioService) {
+	constructor(private folderStore: FolderStore, private trackStore: TrackStore, private albumStore: AlbumStore, private artistStore: ArtistStore, private audioModule: AudioModule) {
 	}
 
 	private async getInfo(isArtist: boolean, artistId: string | undefined, artistName: string | undefined, albumId: string | undefined, albumName: string | undefined): Promise<MetaInfo> {
-		const audio = this.audioService;
+		const audio = this.audioModule;
 
 		async function checkAlbumById(): Promise<MetaInfoAlbum | undefined> {
 			if (albumId) {
@@ -106,12 +105,12 @@ export class MetaDataService {
 			return {similar: []};
 		}
 		if (track.tag.mbTrackID) {
-			const tracks = await this.audioService.mediaInfoSimilarTrackByMBTrackID(track.tag.mbTrackID);
+			const tracks = await this.audioModule.mediaInfoSimilarTrackByMBTrackID(track.tag.mbTrackID);
 			if (tracks) {
 				return {similar: tracks};
 			}
 		} else if (track.tag.artist && track.tag.title) {
-			const tracks = await this.audioService.mediaInfoSimilarTrack(track.tag.title, track.tag.artist);
+			const tracks = await this.audioModule.mediaInfoSimilarTrack(track.tag.title, track.tag.artist);
 			if (tracks) {
 				return {similar: tracks};
 			}
@@ -176,7 +175,7 @@ export class MetaDataService {
 	}
 
 	private async getSimilarSongs(similar: Array<MetaInfoSimilarArtist>): Promise<Array<MetaInfoTrackSimilarSong>> {
-		const audio = this.audioService;
+		const audio = this.audioModule;
 
 		async function checkTopSongs(artist: MetaInfoSimilarArtist): Promise<Array<MetaInfoTopSong> | void> {
 			if (artist.mbid) {

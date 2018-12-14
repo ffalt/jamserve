@@ -3,18 +3,11 @@ import Logger from '../../../utils/logger';
 import {Store} from '../../store/store';
 import {MergeChanges} from './merge';
 import {DBObjectType} from '../../../types';
-import {updatePlayListTracks} from '../../../objects/playlist/playlist.service';
-import {WaveformService} from '../../waveform/waveform.service';
-import {ImageService} from '../../image/image.service';
 import {Root} from '../../../objects/root/root.model';
 import {Track} from '../../../objects/track/track.model';
 import {Folder} from '../../../objects/folder/folder.model';
 import fse from 'fs-extra';
-import {AlbumStore} from '../../../objects/album/album.store';
-import {StateStore} from '../../../objects/state/state.store';
-import {ArtistStore} from '../../../objects/artist/artist.store';
-import {FolderStore} from '../../../objects/folder/folder.store';
-import {TrackStore} from '../../../objects/track/track.store';
+import {ImageModule} from '../../image/image.module';
 
 const log = Logger('IO.clean');
 
@@ -74,7 +67,7 @@ export async function scanForRemoved(store: Store, changes: MergeChanges): Promi
 	return {removeTracks, removeFolders};
 }
 
-export async function clearID3(store: Store, imageService: ImageService, removeTracks: Array<Track>): Promise<void> {
+export async function clearID3(store: Store, imageModule: ImageModule, removeTracks: Array<Track>): Promise<void> {
 	if (removeTracks.length === 0) {
 		return;
 	}
@@ -117,6 +110,6 @@ export async function clearID3(store: Store, imageService: ImageService, removeT
 		await store.artistStore.replaceMany(updateArtists);
 	}
 	const ids = removeAlbums.concat(removeArtists);
-	await imageService.clearImageCacheByIDs(ids);
+	await imageModule.clearImageCacheByIDs(ids);
 }
 

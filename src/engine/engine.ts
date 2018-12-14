@@ -2,7 +2,7 @@ import path from 'path';
 import fse from 'fs-extra';
 import {IoService} from './io/io.service';
 import {Store} from './store/store';
-import {AudioService} from './audio/audio.service';
+import {AudioModule} from './audio/audio.module';
 import {DBObjectType} from '../types';
 import {IndexService} from './index/index.service';
 import {MetaDataService} from './metadata/metadata.service';
@@ -27,11 +27,16 @@ import {Root, RootStatus} from '../objects/root/root.model';
 import {RadioService} from '../objects/radio/radio.service';
 import {FolderService} from '../objects/folder/folder.service';
 import {Track} from '../objects/track/track.model';
+import {ImageModule} from './image/image.module';
+import {TrackService} from '../objects/track/track.service';
+import {ArtistService} from '../objects/artist/artist.service';
+import {AlbumService} from '../objects/album/album.service';
 
 export class Engine {
 	// public config: Config;
 	public ioService: IoService;
-	public audioService: AudioService;
+	public audioModule: AudioModule;
+	public imageModule: ImageModule;
 	public waveformService: WaveformService;
 	public metaDataService: MetaDataService;
 	public indexService: IndexService;
@@ -51,27 +56,33 @@ export class Engine {
 	public listService: ListService;
 	public radioService: RadioService;
 	public folderService: FolderService;
+	public trackService: TrackService;
+	public artistService: ArtistService;
+	public albumService: AlbumService;
 
 	constructor(public config: Config, public store: Store) {
-		this.audioService = new AudioService(config.tools);
+		this.audioModule = new AudioModule(config.tools);
 		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
-		this.imageService = new ImageService(config.getDataPath(['cache', 'images']), this.config.getDataPath(['images']), this.store.folderStore, this.store.trackStore);
-
+		this.imageModule = new ImageModule(config.getDataPath(['cache', 'images']));
+		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.imageModule);
+		this.trackService = new TrackService(this.store.trackStore, this.folderService);
+		this.artistService = new ArtistService(this.store.artistStore, this.store.trackStore, this.folderService);
+		this.albumService = new AlbumService(this.store.albumStore, this.store.trackStore, this.folderService);
+		this.userService = new UserService(this.config.getDataPath(['images']), this.store.userStore, this.store.stateStore, this.store.playlistStore, this.store.bookmarkStore, this.store.playQueueStore, this.imageModule);
+		this.imageService = new ImageService(this.imageModule, this.trackService, this.folderService, this.artistService, this.albumService, this.userService);
 		this.genreService = new GenreService(this.store.trackStore);
 		this.indexService = new IndexService(config.app.index, this.store.artistStore, this.store.folderStore, this.store.trackStore);
-		this.ioService = new IoService(this.store, this.audioService, this.imageService, this.waveformService, this.indexService, this.genreService);
+		this.ioService = new IoService(this.store, this.audioModule, this.imageModule, this.waveformService, this.indexService, this.genreService);
 		this.downloadService = new DownloadService(this.store.trackStore);
 		this.chatService = new ChatService(config.app.chat);
-		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore);
 		this.stateService = new StateService(this.store.stateStore);
 		this.nowPlayingService = new NowPlayingService(this.stateService);
 		this.streamService = new StreamService(this.nowPlayingService);
 		this.playlistService = new PlaylistService(this.store.playlistStore, this.store.trackStore);
 		this.playQueueService = new PlayQueueService(this.store.playQueueStore);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
-		this.podcastService = new PodcastService(config.getDataPath(['podcasts']), this.store.podcastStore, this.store.episodeStore, this.audioService);
-		this.userService = new UserService(this.store.userStore, this.store.stateStore, this.store.playlistStore, this.store.bookmarkStore, this.store.playQueueStore, this.imageService);
-		this.metaDataService = new MetaDataService(this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioService);
+		this.podcastService = new PodcastService(config.getDataPath(['podcasts']), this.store.podcastStore, this.store.episodeStore, this.audioModule);
+		this.metaDataService = new MetaDataService(this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
 		this.listService = new ListService(this.store.stateStore);
 		this.rootService = new RootService(this.store.rootStore);
 		this.radioService = new RadioService(this.store.radioStore);

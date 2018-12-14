@@ -4,7 +4,6 @@ import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {DBObjectType} from '../../types';
 import {GenericError, InvalidParamError, UnauthError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
-import {TrackController} from '../track/track.controller';
 import {formatUser} from './user.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';

@@ -2,7 +2,7 @@ import {Store} from '../../store/store';
 import {MatchDir, MatchFile} from './match';
 import {DBObjectType, FileTyp, FolderType} from '../../../types';
 import path from 'path';
-import {AudioService} from '../../audio/audio.service';
+import {AudioModule} from '../../audio/audio.module';
 import {deepCompare} from '../../../utils/deep-compare';
 import Logger from '../../../utils/logger';
 import {fillMatchTags} from './tag';
@@ -30,12 +30,12 @@ export interface MergeChanges {
 
 export class Merger {
 	store: Store;
-	audio: AudioService;
+	audio: AudioModule;
 	scanningCount = 0;
 	rootID: string;
 	onProgress: (count: number) => void;
 
-	constructor(rootID: string, store: Store, audio: AudioService, onProgress: (count: number) => void) {
+	constructor(rootID: string, store: Store, audio: AudioModule, onProgress: (count: number) => void) {
 		this.store = store;
 		this.audio = audio;
 		this.onProgress = onProgress;

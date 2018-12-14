@@ -9,7 +9,7 @@ import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {formatTrack} from './track.format';
 import {SearchQueryTrack, TrackStore} from './track.store';
-import {AudioService} from '../../engine/audio/audio.service';
+import {AudioModule} from '../../engine/audio/audio.module';
 import {RootService} from '../root/root.service';
 import {BookmarkService} from '../bookmark/bookmark.service';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
@@ -29,7 +29,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	constructor(
 		private trackStore: TrackStore,
-		private audioService: AudioService,
+		private audioModule: AudioModule,
 		private bookmarkService: BookmarkService,
 		private metaService: MetaDataService,
 		private streamService: StreamService,
@@ -58,7 +58,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
 		const result = formatTrack(track, includes);
 		if (includes.trackID3) {
-			result.tagID3 = await this.audioService.readID3v2(path.join(track.path, track.name));
+			result.tagID3 = await this.audioModule.readID3v2(path.join(track.path, track.name));
 		}
 		if (includes.trackState) {
 			const state = await this.stateService.findOrCreate(track.id, user.id, DBObjectType.track);
@@ -89,7 +89,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	async tagID3(req: JamRequest<JamParameters.ID>): Promise<Jam.ID3Tag> {
 		const track = await this.byID(req.query.id);
-		return this.audioService.readID3v2(path.join(track.path, track.name));
+		return this.audioModule.readID3v2(path.join(track.path, track.name));
 	}
 
 	async tagID3s(req: JamRequest<JamParameters.IDs>): Promise<Jam.ID3Tags> {
@@ -97,14 +97,14 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		tracks = this.defaultSort(tracks);
 		const result: Jam.ID3Tags = {};
 		for (const track of tracks) {
-			result[track.id] = await this.audioService.readID3v2(path.join(track.path, track.name));
+			result[track.id] = await this.audioModule.readID3v2(path.join(track.path, track.name));
 		}
 		return result;
 	}
 
 	async tagID3Update(req: JamRequest<JamParameters.TagID3Update>): Promise<void> {
 		const track = await this.byID(req.query.id);
-		await this.audioService.saveID3v2(path.join(track.path, track.name), req.query.tag);
+		await this.audioModule.saveID3v2(path.join(track.path, track.name), req.query.tag);
 		this.ioService.refreshTracks([track]); // do not wait
 	}
 
@@ -117,7 +117,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 			if (!item.track) {
 				return Promise.reject(NotFoundError());
 			}
-			await this.audioService.saveID3v2(path.join(item.track.path, item.track.name), item.tag);
+			await this.audioModule.saveID3v2(path.join(item.track.path, item.track.name), item.tag);
 		}
 		this.ioService.refreshTracks(tracks); // do not wait
 	}

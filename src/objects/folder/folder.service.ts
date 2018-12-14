@@ -1,16 +1,19 @@
 import {Folder} from './folder.model';
 import {FolderStore} from './folder.store';
-import {cleanFolderSystemChars} from '../../utils/fs-utils';
+import {cleanFolderSystemChars, fileDeleteIfExists} from '../../utils/fs-utils';
 import {TrackStore} from '../track/track.store';
 import path from 'path';
 import fse from 'fs-extra';
 import Logger from '../../utils/logger';
+import {IApiBinaryResult} from '../../typings';
+import {FolderTypeImageName} from '../../types';
+import {ImageModule} from '../../engine/image/image.module';
 
 const log = Logger('FolderService');
 
 export class FolderService {
 
-	constructor(public folderStore: FolderStore, private trackStore: TrackStore) {
+	constructor(public folderStore: FolderStore, private trackStore: TrackStore, private imageModule: ImageModule) {
 
 	}
 
@@ -61,6 +64,34 @@ export class FolderService {
 
 		await collect(folderId);
 		return result;
+	}
+
+	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+		if (!folder.tag.image) {
+			if (folder.info && folder.info.album.image && folder.info.album.image.large) {
+				await this.downloadFolderImage(folder, folder.info.album.image.large);
+			} else if (folder.info && folder.info.artist.image && folder.info.artist.image.large) {
+				await this.downloadFolderImage(folder, folder.info.artist.image.large);
+			}
+			if (!folder.tag.image) {
+				return;
+			}
+		}
+		return await this.imageModule.get(folder.id, path.join(folder.path, folder.tag.image), size, format);
+	}
+
+	async downloadFolderImage(folder: Folder, imageUrl: string): Promise<void> {
+		folder.tag.image = await this.imageModule.storeImage(folder.path, FolderTypeImageName[folder.tag.type], imageUrl);
+		await this.folderStore.replace(folder);
+	}
+
+	async setFolderImage(folder: Folder, filename: string): Promise<void> {
+		const destFileName = FolderTypeImageName[folder.tag.type] + path.extname(filename);
+		const destName = path.join(folder.path, destFileName);
+		await fileDeleteIfExists(destName);
+		await fse.copy(filename, destName);
+		folder.tag.image = destFileName;
+		await this.folderStore.replace(folder);
 	}
 
 

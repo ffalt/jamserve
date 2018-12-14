@@ -436,7 +436,7 @@ export class SubsonicApi {
 		if (!o) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
-		return await this.engine.imageService.getObjImage(o, req.query.size, undefined);
+		return await this.engine.imageService.getObjImage(o, req.query.size);
 	}
 
 	async getAvatar(req: ApiOptions<SubsonicParameters.Username>): Promise<IApiBinaryResult> {
@@ -457,7 +457,7 @@ export class SubsonicApi {
 		if (!user) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
-		return await this.engine.imageService.getObjImage(user, undefined, undefined);
+		return await this.engine.imageService.getObjImage(user);
 	}
 
 	async getAlbumInfo(req: ApiOptions<SubsonicParameters.ID>): Promise<{ albumInfo: Subsonic.AlbumInfo }> {
@@ -1841,7 +1841,7 @@ export class SubsonicApi {
 		if (!req.query.artist || !req.query.title) {
 			return {lyrics: {content: ''}};
 		}
-		const lyrics = await this.engine.audioService.getLyrics(req.query.artist, req.query.title);
+		const lyrics = await this.engine.audioModule.getLyrics(req.query.artist, req.query.title);
 		if (!lyrics) {
 			return {lyrics: {content: ''}};
 		}
