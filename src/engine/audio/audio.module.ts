@@ -309,7 +309,7 @@ export class AudioModule {
 	async readID3v2(filename: string): Promise<Jam.ID3Tag> {
 		const id3v2 = new ID3v2();
 		const id3v2tag = await id3v2.read(filename);
-		if (!id3v2tag) {
+		if (!id3v2tag || !id3v2tag.head) {
 			return Promise.reject(Error('No ID3v2 Tag found'));
 		}
 		const tag: Jam.ID3Tag = {
