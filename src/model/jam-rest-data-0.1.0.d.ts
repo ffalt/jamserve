@@ -121,7 +121,8 @@ export declare namespace Jam {
 	export interface Radio extends Base {
 		url: string;
 		homepage?: string;
-		updated: number;
+		created: number;
+		changed: number;
 	}
 
 	export interface ID3Tag {

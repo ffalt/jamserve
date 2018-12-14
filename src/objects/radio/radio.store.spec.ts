@@ -4,7 +4,7 @@ import {RadioStore, SearchQueryRadio} from './radio.store';
 import {Radio} from './radio.model';
 import {shouldBehaveLikeADBObjectStore} from '../base/base.store.spec';
 import {TestDBs} from '../../db/db.test';
-import {mockRadio, mockRadio2} from './radio.mock';
+import {generateMockObjects} from './radio.mock';
 
 describe('RadioStore', () => {
 
@@ -30,9 +30,7 @@ describe('RadioStore', () => {
 
 			beforeEach(function() {
 				this.store = radioStore;
-				this.generateMockObjects = () => {
-					return [mockRadio(), mockRadio2()];
-				};
+				this.generateMockObjects = generateMockObjects;
 				this.generateMatchingQueries = (mock: Radio) => {
 					const matches: Array<SearchQueryRadio> = [
 						{name: mock.name},

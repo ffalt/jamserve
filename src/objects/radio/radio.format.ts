@@ -6,7 +6,7 @@ export function formatRadio(radio: Radio): Jam.Radio {
 		id: radio.id,
 		url: radio.url,
 		created: radio.created,
-		updated: radio.updated,
+		changed: radio.changed,
 		name: radio.name,
 		homepage: radio.homepage,
 	};
