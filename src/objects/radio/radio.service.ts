@@ -15,7 +15,7 @@ export class RadioService {
 			homepage: homepageUrl,
 			url,
 			created: Date.now(),
-			updated: Date.now()
+			changed: Date.now()
 		};
 		radio.id = await this.radioStore.add(radio);
 		return radio;
@@ -25,7 +25,7 @@ export class RadioService {
 		radio.homepage = homepageUrl || radio.homepage;
 		radio.url = url || radio.url;
 		radio.name = name || radio.name;
-		radio.updated = Date.now();
+		radio.changed = Date.now();
 		await this.radioStore.replace(radio);
 	}
 
