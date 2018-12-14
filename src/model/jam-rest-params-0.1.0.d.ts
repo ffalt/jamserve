@@ -3,6 +3,10 @@ import {Jam} from './jam-rest-data-0.1.0';
 export declare namespace JamParameters {
 
 	export type ListType = 'random' | 'highest' | 'avghighest' | 'frequent' | 'faved' | 'recent';
+	export type ImageFormatType = 'bmp' | 'png' | 'jpeg' | 'jpg' | 'tiff';
+	export type AudioFormatType = 'mp3';
+	export type DownloadFormatType = 'zip';
+	export type WaveformFormatType = 'svg' | 'json' | 'dat';
 
 	export interface ID {
 		/**
@@ -363,8 +367,10 @@ export declare namespace JamParameters {
 	export interface Image extends ID {
 		/**
 		 * format of the image
+		 *
+		 * @default 'png'
 		 */
-		format?: string;
+		format?: ImageFormatType;
 		/**
 		 * size of the image
 		 *
@@ -389,8 +395,10 @@ export declare namespace JamParameters {
 	export interface PathImageFormat extends ID {
 		/**
 		 * format of the image
+		 *
+		 * @default 'png'
 		 */
-		format?: string;
+		format?: ImageFormatType;
 	}
 
 	export interface Track extends ID, IncludesTrack {
@@ -460,7 +468,7 @@ export declare namespace JamParameters {
 		 *
 		 * @default 'zip'
 		 */
-		format?: string;
+		format?: DownloadFormatType;
 	}
 
 	export interface Stream extends ID {
@@ -476,7 +484,7 @@ export declare namespace JamParameters {
 		 *
 		 * @default 'mp3'
 		 */
-		format?: string;
+		format?: AudioFormatType;
 	}
 
 	export interface PathStream extends ID {
@@ -485,14 +493,14 @@ export declare namespace JamParameters {
 		 *
 		 * @default 'mp3'
 		 */
-		format?: string;
+		format?: AudioFormatType;
 	}
 
 	export interface Waveform extends ID {
 		/**
 		 * format of waveform data
 		 */
-		format: 'svg' | 'json' | 'dat';
+		format: WaveformFormatType;
 	}
 
 	export interface SimilarTracks extends ID, IncludesTrack, Paginate {
