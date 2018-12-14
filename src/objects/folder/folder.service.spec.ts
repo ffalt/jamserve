@@ -150,6 +150,10 @@ describe('FolderService', () => {
 								const mime = mimeTypes.lookup(format);
 								expect(res.buffer.contentType).to.equal(mime);
 							}
+							if (res.file) {
+								expect(path.extname(res.file.filename)).to.equal('.' + format);
+								expect(path.extname(res.file.name)).to.equal('.' + format);
+							}
 						}
 					}
 					await imageModuleTest.imageModule.clearImageCacheByID(folder.id);
@@ -176,6 +180,10 @@ describe('FolderService', () => {
 					should().exist(res);
 					if (res) {
 						expect(!!res.buffer || !!res.file).to.equal(true);
+						if (res.file) {
+							expect(path.extname(res.file.filename)).to.equal('.png');
+							expect(res.file.name).to.equal(folder.id + '.png');
+						}
 					}
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
 					folder.tag.image = undefined;
@@ -191,12 +199,14 @@ describe('FolderService', () => {
 					};
 					scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 						.get('/image.png').reply(200, mockImage.buffer, {'Content-Type': mockImage.mime});
-					console.log('is done', scope.isDone());
 					res = await folderService.getFolderImage(folder);
 					should().exist(res);
 					if (res) {
-						console.log(res);
 						expect(!!res.buffer || !!res.file).to.equal(true);
+						if (res.file) {
+							expect(path.extname(res.file.filename)).to.equal('.png');
+							expect(res.file.name).to.equal(folder.id + '.png');
+						}
 					}
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
 				});

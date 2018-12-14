@@ -140,7 +140,7 @@ export class ImageModule {
 				return Promise.reject(e);
 			}
 		} else {
-			return this.getImage(filename, size, id + '.' + format);
+			return this.getImage(filename, size, id + '.' + (format || this.format));
 		}
 	}
 
