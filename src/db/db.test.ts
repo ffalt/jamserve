@@ -17,7 +17,7 @@ export class TestDBs {
 	dbs: Array<TestDB> = [];
 
 	constructor() {
-		this.dbs.push(new TestElastic());
+		// this.dbs.push(new TestElastic());
 		this.dbs.push(new TestNeDB());
 	}
 
