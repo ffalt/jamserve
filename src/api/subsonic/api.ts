@@ -1221,7 +1221,7 @@ export class SubsonicApi {
 			await this.updatePlaylist(<ApiOptions<SubsonicParameters.PlaylistUpdate>>req);
 			playlist = await this.byID<Playlist>(req.query.playlistId, this.engine.store.playlistStore);
 		} else if (req.query.name) {
-			playlist = await this.engine.playlistService.createPlaylist(req.query.name, undefined, false, req.user.id, req.query.songId !== undefined ? (Array.isArray(req.query.songId) ? req.query.songId : [req.query.songId]) : []);
+			playlist = await this.engine.playlistService.create(req.query.name, undefined, false, req.user.id, req.query.songId !== undefined ? (Array.isArray(req.query.songId) ? req.query.songId : [req.query.songId]) : []);
 		}
 		if (!playlist) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
@@ -1266,7 +1266,7 @@ export class SubsonicApi {
 		playlist.comment = req.query.comment || playlist.comment;
 		playlist.isPublic = req.query.public !== undefined ? req.query.public : playlist.isPublic;
 		playlist.changed = Date.now();
-		await this.engine.playlistService.updatePlaylist(playlist);
+		await this.engine.playlistService.update(playlist);
 	}
 
 	async deletePlaylist(req: ApiOptions<SubsonicParameters.ID>): Promise<void> {
@@ -1286,7 +1286,7 @@ export class SubsonicApi {
 		if (playlist.userID !== req.user.id) {
 			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 		}
-		await this.engine.playlistService.removePlaylist(playlist);
+		await this.engine.playlistService.remove(playlist);
 	}
 
 	async getStarred(req: ApiOptions<SubsonicParameters.MusicFolderID>): Promise<{ starred: Subsonic.Starred }> {

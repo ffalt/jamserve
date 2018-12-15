@@ -59,7 +59,7 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 	}
 
 	async create(req: JamRequest<JamParameters.PlaylistNew>): Promise<Jam.Playlist> {
-		const playlist = await this.playlistService.createPlaylist(req.query.name, req.query.comment, req.query.isPublic === undefined ? false : req.query.isPublic, req.user.id, req.query.trackIDs || []);
+		const playlist = await this.playlistService.create(req.query.name, req.query.comment, req.query.isPublic === undefined ? false : req.query.isPublic, req.user.id, req.query.trackIDs || []);
 		return this.prepare(playlist, {playlistTracksIDs: true, playlistState: true}, req.user);
 	}
 
@@ -73,7 +73,7 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 		playlist.isPublic = req.query.isPublic === undefined ? playlist.isPublic : req.query.isPublic;
 		playlist.changed = Date.now();
 		playlist.trackIDs = req.query.trackIDs || [];
-		await this.playlistService.updatePlaylist(playlist);
+		await this.playlistService.update(playlist);
 	}
 
 	async tracks(req: JamRequest<JamParameters.Tracks>): Promise<Array<Jam.Track>> {
@@ -91,7 +91,7 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 		if (playlist.userID !== req.user.id) {
 			return Promise.reject(UnauthError());
 		}
-		await this.playlistService.removePlaylist(playlist);
+		await this.playlistService.remove(playlist);
 	}
 
 }

@@ -29,17 +29,9 @@ export interface MergeChanges {
 }
 
 export class Merger {
-	store: Store;
-	audio: AudioModule;
 	scanningCount = 0;
-	rootID: string;
-	onProgress: (count: number) => void;
 
-	constructor(rootID: string, store: Store, audio: AudioModule, onProgress: (count: number) => void) {
-		this.store = store;
-		this.audio = audio;
-		this.onProgress = onProgress;
-		this.rootID = rootID;
+	constructor(private rootID: string, private store: Store, private audio: AudioModule, private onProgress: (count: number) => void) {
 	}
 
 	private static folderHasChanged(dir: MatchDir): boolean {

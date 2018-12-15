@@ -20,10 +20,10 @@ export async function updatePlayListTracks(trackStore: TrackStore, playlist: Pla
 
 export class PlaylistService {
 
-	constructor(private playlistStore: PlaylistStore, private trackStore: TrackStore) {
+	constructor(public playlistStore: PlaylistStore, private trackStore: TrackStore) {
 	}
 
-	async createPlaylist(name: string, comment: string | undefined, isPublic: boolean, userID: string, trackIDs: Array<string>): Promise<Playlist> {
+	async create(name: string, comment: string | undefined, isPublic: boolean, userID: string, trackIDs: Array<string>): Promise<Playlist> {
 		const now = Date.now();
 		const playlist: Playlist = {
 			id: '',
@@ -42,12 +42,12 @@ export class PlaylistService {
 		return playlist;
 	}
 
-	async updatePlaylist(playlist: Playlist): Promise<void> {
+	async update(playlist: Playlist): Promise<void> {
 		await updatePlayListTracks(this.trackStore, playlist);
 		await this.playlistStore.replace(playlist);
 	}
 
-	async removePlaylist(playlist: Playlist): Promise<void> {
+	async remove(playlist: Playlist): Promise<void> {
 		return this.playlistStore.remove(playlist.id);
 	}
 }
