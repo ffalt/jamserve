@@ -1,10 +1,10 @@
 import {Engine} from './engine';
 import {BaseConfig, Config, extendConfig} from '../config';
-import {mockElasticDBConfig, TestElastic} from '../db/elasticsearch/db-elastic.test';
+import {mockElasticDBConfig, TestElastic} from '../db/elasticsearch/db-elastic.spec';
 import {Store} from './store/store';
 import {SynchrounousResult} from 'tmp';
 import tmp from 'tmp';
-import {TestNeDB} from '../db/nedb/db-nedb.test';
+import {TestNeDB} from '../db/nedb/db-nedb.spec';
 
 export interface TestEngine {
 	name: string;

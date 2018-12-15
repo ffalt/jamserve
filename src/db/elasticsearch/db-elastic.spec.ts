@@ -1,7 +1,6 @@
 import {DBElastic} from './db-elastic';
 import {ElasticsearchConfig} from './config-elastic';
 
-
 export function mockElasticDBConfig(): ElasticsearchConfig {
 	return {
 		host: 'localhost:9200',
