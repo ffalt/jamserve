@@ -1,58 +1,25 @@
-import chai, {assert, expect, should, use} from 'chai';
+import {assert, expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {FolderService} from './folder.service';
-import {TestDBs} from '../../db/db.test';
-import {Store} from '../../engine/store/store';
-import {StoreTest} from '../../engine/store/store.test';
+import nock from 'nock';
 import path from 'path';
 import tmp from 'tmp';
 import fse from 'fs-extra';
-import chaiAsPromised from 'chai-as-promised';
-import nock from 'nock';
-import {ImageModuleTest} from '../../engine/image/image.module.test';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import mimeTypes from 'mime-types';
 import {FolderType} from '../../types';
-
-before(() => {
-	chai.should();
-	chai.use(chaiAsPromised);
-});
-nock.disableNetConnect();
+import {testService} from '../base/base.service.spec';
+import {ImageModuleTest} from '../../engine/image/image.module.test';
 
 describe('FolderService', () => {
-
-	const testDBs = new TestDBs();
-
-	for (const testDB of testDBs.dbs) {
-		describe(testDB.name, () => {
-			let folderService: FolderService;
-			let storeTest: StoreTest;
-			let imageModuleTest: ImageModuleTest;
-
-			before(function(done) {
-				this.timeout(40000);
-				testDB.setup().then(() => {
-					const store = new Store(testDB.database);
-					storeTest = new StoreTest(store);
-					imageModuleTest = new ImageModuleTest();
-					imageModuleTest.setup().then(() => {
-						folderService = new FolderService(store.folderStore, store.trackStore, imageModuleTest.imageModule);
-						storeTest.setup().then(() => done());
-					});
-				}).catch(e => {
-					throw e;
-				});
-			});
-
-			after(async () => {
-				await imageModuleTest.cleanup();
-				await storeTest.cleanup();
-				await testDB.cleanup();
-			});
-
-			beforeEach(function() {
-			});
+	let folderService: FolderService;
+	let imageModuleTest: ImageModuleTest;
+	testService(
+		(storeTest, imageModuleTestPara) => {
+			imageModuleTest = imageModuleTestPara;
+			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, imageModuleTest.imageModule);
+		},
+		() => {
 
 			describe('setFolderImage', () => {
 				it('should do handle invalid parameters', async () => {
@@ -260,8 +227,7 @@ describe('FolderService', () => {
 				});
 
 			});
-		});
 
-	}
-
+		}
+	);
 });

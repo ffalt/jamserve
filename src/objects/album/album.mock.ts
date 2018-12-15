@@ -36,3 +36,7 @@ export function mockAlbum2(): Album {
 		mbAlbumID: 'mbAlbumID2'
 	};
 }
+
+export function generateMockObjects(): Array<Album> {
+	return [mockAlbum(), mockAlbum2()];
+}

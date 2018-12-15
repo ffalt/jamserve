@@ -12,9 +12,13 @@ import {Root} from '../../objects/root/root.model';
 import {MergeChanges, Merger} from '../io/components/merge';
 import {AudioModule} from '../audio/audio.module';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
+import {MetaMerge} from '../io/components/meta';
 
 interface MockTrack {
 	path: string;
+	number: number;
+	artist: string;
+	album: string;
 }
 
 interface MockFolder {
@@ -30,9 +34,12 @@ interface MockRoot {
 	folders: Array<MockFolder>;
 }
 
-function buildRandomTrack(dir: string, name: string, nr: number): MockTrack {
+function buildRandomTrack(dir: string, name: string, number: number, artist: string, album: string): MockTrack {
 	return {
-		path: path.resolve(dir, nr + ' ' + name + '.mp3')
+		path: path.resolve(dir, number + ' ' + name + '.mp3'),
+		artist,
+		album,
+		number
 	};
 }
 
@@ -58,7 +65,7 @@ function buildRandomMockRoot(dir: string, nr: number): MockRoot {
 			artist.folders.push(album);
 			const amountTracks = randomInt(1, 25);
 			for (let k = 1; k < amountTracks; k++) {
-				const track = buildRandomTrack(album.path, artist.name + album.name, k);
+				const track = buildRandomTrack(album.path, artist.name + album.name, k, artist.name, album.name);
 				album.tracks.push(track);
 			}
 		}
@@ -73,18 +80,31 @@ function buildRandomMockRoot(dir: string, nr: number): MockRoot {
 async function writeMockTrack(track: MockTrack): Promise<void> {
 	const t: IID3V2.Tag = {
 		id: 'ID3v2',
-		head: {
-			ver: 4,
-			rev: 0,
-			size: 0,
-			valid: true
-		},
 		start: 0,
 		end: 0,
-		frames: []
+		frames: [
+			{
+				'id': 'TALB',
+				'value': {
+					'text': track.album
+				}
+			},
+			{
+				'id': 'TPE1',
+				'value': {
+					'text': track.artist
+				}
+			},
+			{
+				'id': 'TRCK',
+				'value': {
+					'text': track.number
+				}
+			}
+		]
 	};
 	const id3v2 = new ID3v2();
-	await id3v2.write(track.path, t, t.head.ver, 0);
+	await id3v2.write(track.path, t, 4, 0);
 }
 
 async function writeMockFolder(f: MockFolder): Promise<void> {
@@ -110,7 +130,7 @@ export class StoreTest {
 	// @ts-ignore
 	mockRoot: MockRoot;
 
-	constructor(private store: Store) {
+	constructor(public store: Store) {
 	}
 
 	async setup(): Promise<void> {
@@ -142,6 +162,8 @@ export class StoreTest {
 			// this.scanningCount = count;
 		});
 		await await merger.merge(match, changes);
+		const meta = new MetaMerge(this.store);
+		await meta.sync(changes);
 		// console.log(this.dir.name, match, changes);
 	}
 
