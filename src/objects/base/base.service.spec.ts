@@ -4,7 +4,7 @@ import {Store} from '../../engine/store/store';
 import {StoreTest} from '../../engine/store/store.test';
 import {ImageModuleTest} from '../../engine/image/image.module.spec';
 
-export function testService(setup: (testStore: StoreTest, testImageModule: ImageModuleTest) => void, tests: () => void) {
+export function testService(setup: (testStore: StoreTest, testImageModule: ImageModuleTest) => void, tests: () => void, cleanup?: () => Promise<void>) {
 	let imageModuleTest: ImageModuleTest;
 	let storeTest: StoreTest;
 	testDatabases(async (testDB) => {
@@ -17,6 +17,9 @@ export function testService(setup: (testStore: StoreTest, testImageModule: Image
 	}, async () => {
 		await imageModuleTest.cleanup();
 		await storeTest.cleanup();
+		if (cleanup) {
+			await cleanup();
+		}
 	}, () => {
 		tests();
 	});

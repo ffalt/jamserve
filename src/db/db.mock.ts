@@ -26,18 +26,11 @@ export interface TestDB {
 	cleanup(): Promise<void>;
 }
 
-class TestDBs {
-	dbs: Array<TestDB> = [];
-
-	constructor() {
-		this.dbs.push(new TestNeDB());
-		this.dbs.push(new TestElastic());
-	}
-}
-
 export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup: () => Promise<void>, tests: () => void) {
-	const testDBs = new TestDBs();
-	for (const testDB of testDBs.dbs) {
+	const dbs: Array<TestDB> = [];
+	dbs.push(new TestNeDB());
+	dbs.push(new TestElastic());
+	for (const testDB of dbs) {
 		describe(testDB.name, () => {
 			before(function(done) {
 				this.timeout(40000);

@@ -2,8 +2,7 @@ import {Store} from './store';
 import fse from 'fs-extra';
 import path from 'path';
 import {randomInt} from '../../utils/random';
-import {SynchrounousResult} from 'tmp';
-import tmp from 'tmp';
+import tmp, {SynchrounousResult} from 'tmp';
 import {ID3v2, IID3V2} from 'jamp3';
 import {scanDir, ScanDir} from '../io/components/scan';
 import {matchDir, MatchDir} from '../io/components/match';
@@ -78,6 +77,12 @@ function buildRandomMockRoot(dir: string, nr: number): MockRoot {
 }
 
 async function writeMockTrack(track: MockTrack): Promise<void> {
+	const mp3stub = Buffer.from([255, 251, 176, 196, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 110, 102, 111, 0, 0, 0, 15, 0, 0, 0, 2, 0, 0, 7,
+		87, 0, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
+		128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 57]);
+	await fse.writeFile(track.path, mp3stub);
 	const t: IID3V2.Tag = {
 		id: 'ID3v2',
 		start: 0,
@@ -158,6 +163,14 @@ export class StoreTest {
 		};
 		const scan: ScanDir = await scanDir(this.mockRoot.path);
 		const match: MatchDir = await matchDir(scan, this.store, root.id);
+		const oldread = audioModule.read;
+		audioModule.read = async (filename: string) => {
+			const result = await oldread(filename);
+			if (result && result.media) {
+				result.media.duration = 1;
+			}
+			return result;
+		};
 		const merger = new Merger(root.id, this.store, audioModule, (count: number) => {
 			// this.scanningCount = count;
 		});
