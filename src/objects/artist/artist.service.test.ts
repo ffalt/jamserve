@@ -3,6 +3,7 @@ import {after, before, beforeEach, describe, it} from 'mocha';
 import {FolderService} from '../folder/folder.service';
 import {ArtistService} from './artist.service';
 import {testService} from '../base/base.service.spec';
+import {FolderType} from '../../types';
 
 describe('ArtistService', () => {
 	let artistService: ArtistService;
@@ -13,11 +14,16 @@ describe('ArtistService', () => {
 			artistService = new ArtistService(storeTest.store.artistStore, storeTest.store.trackStore, folderService);
 		},
 		() => {
-			describe('getArtistImage', () => {
-				it('should return an empty response for not available images', async () => {
+			describe('getArtistFolder', () => {
+				it('should return the right folder', async () => {
 					const artists = await artistService.artistStore.all();
-					// const artist = artists[0];
-					// console.log(artists);
+					for (const artist of artists) {
+						const folder = await artistService.getArtistFolder(artist);
+						should().exist(folder);
+						if (folder) {
+							expect(folder.tag.type).to.be.equal(FolderType.artist);
+						}
+					}
 				});
 			});
 		}

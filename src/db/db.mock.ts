@@ -3,9 +3,6 @@ import {TestNeDB} from './nedb/db-nedb.spec';
 import {Database} from './db.model';
 import {configureLogger} from '../utils/logger';
 import {after, before, describe} from 'mocha';
-import {Store} from '../engine/store/store';
-import {StoreTest} from '../engine/store/store.test';
-import {ImageModuleTest} from '../engine/image/image.module.test';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import nock from 'nock';
@@ -33,8 +30,8 @@ class TestDBs {
 	dbs: Array<TestDB> = [];
 
 	constructor() {
-		this.dbs.push(new TestElastic());
 		this.dbs.push(new TestNeDB());
+		this.dbs.push(new TestElastic());
 	}
 }
 

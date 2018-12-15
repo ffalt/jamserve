@@ -9,7 +9,7 @@ import {SupportedWriteImageFormat} from '../../utils/filetype';
 import mimeTypes from 'mime-types';
 import {FolderType} from '../../types';
 import {testService} from '../base/base.service.spec';
-import {ImageModuleTest} from '../../engine/image/image.module.test';
+import {ImageModuleTest, mockImage} from '../../engine/image/image.module.spec';
 
 describe('FolderService', () => {
 	let folderService: FolderService;
@@ -62,9 +62,9 @@ describe('FolderService', () => {
 				it('should download an image', async () => {
 					const folders = await folderService.folderStore.all();
 					const folder = folders[0];
-					const mockImage = await imageModuleTest.mockImage('png');
+					const image = await mockImage('png');
 					const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
-						.get('/image.png').reply(200, mockImage.buffer, {'Content-Type': mockImage.mime});
+						.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
 					await folderService.downloadFolderImage(folder, 'http://invaliddomain.invaliddomain.invaliddomain/image.png');
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
 					const filename = path.resolve(folder.path, folder.tag.image || 'invalid-not-existent');
@@ -91,9 +91,9 @@ describe('FolderService', () => {
 					const folders = await folderService.folderStore.all();
 					const folder = folders[0];
 					folder.info = undefined;
-					const mockImage = await imageModuleTest.mockImage('png');
+					const image = await mockImage('png');
 					const filename = path.resolve(folder.path, 'dummy.png');
-					await fse.writeFile(filename, mockImage.buffer);
+					await fse.writeFile(filename, image.buffer);
 					folder.tag.image = 'dummy.png';
 					let res = await folderService.getFolderImage(folder);
 					should().exist(res);
@@ -140,9 +140,9 @@ describe('FolderService', () => {
 						artist: {},
 						topSongs: []
 					};
-					const mockImage = await imageModuleTest.mockImage('png');
+					const image = await mockImage('png');
 					let scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
-						.get('/image.png').reply(200, mockImage.buffer, {'Content-Type': mockImage.mime});
+						.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
 					let res = await folderService.getFolderImage(folder);
 					should().exist(res);
 					if (res) {
@@ -165,7 +165,7 @@ describe('FolderService', () => {
 						topSongs: []
 					};
 					scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
-						.get('/image.png').reply(200, mockImage.buffer, {'Content-Type': mockImage.mime});
+						.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
 					res = await folderService.getFolderImage(folder);
 					should().exist(res);
 					if (res) {

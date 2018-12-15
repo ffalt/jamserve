@@ -4,6 +4,7 @@ import {FolderService} from '../folder/folder.service';
 import {Artist} from './artist.model';
 import {FolderType} from '../../types';
 import {ArtistStore} from './artist.store';
+import {Folder} from '../folder/folder.model';
 
 export class ArtistService {
 
@@ -13,7 +14,7 @@ export class ArtistService {
 	}
 
 
-	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+	async getArtistFolder(artist: Artist): Promise<Folder | undefined> {
 		if (artist.trackIDs.length === 0) {
 			return;
 		}
@@ -29,6 +30,11 @@ export class ArtistService {
 		if (!folder) {
 			folder = folders[folders.length - 1];
 		}
+		return folder;
+	}
+
+	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+		const folder = await this.getArtistFolder(artist);
 		if (!folder) {
 			return;
 		}

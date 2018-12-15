@@ -2,7 +2,7 @@ import {after, before, beforeEach, describe, it} from 'mocha';
 import {testDatabases} from '../../db/db.mock';
 import {Store} from '../../engine/store/store';
 import {StoreTest} from '../../engine/store/store.test';
-import {ImageModuleTest} from '../../engine/image/image.module.test';
+import {ImageModuleTest} from '../../engine/image/image.module.spec';
 
 export function testService(setup: (testStore: StoreTest, testImageModule: ImageModuleTest) => void, tests: () => void) {
 	let imageModuleTest: ImageModuleTest;
