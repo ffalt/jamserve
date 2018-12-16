@@ -8,33 +8,31 @@ export class PlayQueueService {
 	}
 
 	async getQueueOrCreate(userID: string, client?: string): Promise<PlayQueue> {
-		let playQueue = await this.getQueue(userID);
-		if (!playQueue) {
-			playQueue = {
-				id: '',
-				type: DBObjectType.playqueue,
-				userID,
-				trackIDs: [],
-				changed: Date.now(),
-				changedBy: client || 'Unknown Client'
-			};
+		let playQueue = await this.get(userID);
+		if (playQueue) {
+			return playQueue;
 		}
-		await this.playQueueStore.replace(playQueue);
+		playQueue = this.emptyPlaylist(userID, client);
+		await this.playQueueStore.add(playQueue);
 		return playQueue;
 	}
 
-	async getQueue(userID: string): Promise<PlayQueue | undefined> {
+	emptyPlaylist(userID: string, client?: string): PlayQueue {
+		return {
+			id: '',
+			type: DBObjectType.playqueue,
+			userID,
+			trackIDs: [],
+			changed: Date.now(),
+			changedBy: client || 'Unknown Client'
+		};
+	}
+
+	async get(userID: string): Promise<PlayQueue | undefined> {
 		return this.playQueueStore.searchOne({userID});
 	}
 
-	async removeQueue(userID: string): Promise<void> {
-		const playQueue = await this.getQueue(userID);
-		if (playQueue) {
-			await this.playQueueStore.remove(playQueue.id);
-		}
-	}
-
-	async saveQueue(userID: string, trackIDs: Array<string>, currentID: string | undefined, position: number | undefined, client?: string): Promise<void> {
+	async save(userID: string, trackIDs: Array<string>, currentID: string | undefined, position: number | undefined, client?: string): Promise<PlayQueue> {
 		let playQueue = await this.playQueueStore.searchOne({userID});
 		if (!playQueue) {
 			playQueue = {
@@ -56,5 +54,14 @@ export class PlayQueueService {
 			playQueue.changedBy = client || 'Unknown Client';
 			await this.playQueueStore.replace(playQueue);
 		}
+		return playQueue;
 	}
+
+	async remove(userID: string): Promise<void> {
+		const playQueue = await this.get(userID);
+		if (playQueue) {
+			await this.playQueueStore.remove(playQueue.id);
+		}
+	}
+
 }

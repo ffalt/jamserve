@@ -22,12 +22,12 @@ export class PlayQueueController {
 		return result;
 	}
 
-	async update(req: JamRequest<JamParameters.PlayQueueSet>): Promise<void> {
-		await this.playqueueService.saveQueue(req.user.id, req.query.trackIDs, req.query.currentID, req.query.position, req.client);
+	async update(req: JamRequest<JamParameters.PlayQueueSet>): Promise<Jam.PlayQueue> {
+		return await this.playqueueService.save(req.user.id, req.query.trackIDs, req.query.currentID, req.query.position, req.client);
 	}
 
 	async delete(req: JamRequest<{}>): Promise<void> {
-		await this.playqueueService.removeQueue(req.user.id);
+		await this.playqueueService.remove(req.user.id);
 	}
 
 
