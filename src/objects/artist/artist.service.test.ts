@@ -4,6 +4,9 @@ import {FolderService} from '../folder/folder.service';
 import {ArtistService} from './artist.service';
 import {testService} from '../base/base.service.spec';
 import {FolderType} from '../../types';
+import {mockImage} from '../../engine/image/image.module.spec';
+import path from 'path';
+import fse from 'fs-extra';
 
 describe('ArtistService', () => {
 	let artistService: ArtistService;
@@ -14,17 +17,37 @@ describe('ArtistService', () => {
 			artistService = new ArtistService(storeTest.store.artistStore, storeTest.store.trackStore, folderService);
 		},
 		() => {
-			describe('getArtistFolder', () => {
-				it('should return the right folder', async () => {
-					const artists = await artistService.artistStore.all();
-					for (const artist of artists) {
-						const folder = await artistService.getArtistFolder(artist);
-						should().exist(folder);
-						if (folder) {
-							expect(folder.tag.type).to.be.equal(FolderType.artist);
+			it('should return the artist folder', async () => {
+				const artists = await artistService.artistStore.all();
+				expect(artists.length > 0).to.be.equal(true, 'Wrong Test Setup');
+				for (const artist of artists) {
+					const folder = await artistService.getArtistFolder(artist);
+					should().exist(folder);
+					if (folder) {
+						expect(folder.tag.type).to.be.equal(FolderType.artist);
+					}
+				}
+			});
+			it('should return an album image', async () => {
+				const artists = await artistService.artistStore.all();
+				const artist = artists[0];
+				const folder = await artistService.getArtistFolder(artist);
+				should().exist(folder);
+				if (folder) {
+					folder.tag.image = 'dummy.png';
+					const image = await mockImage('png');
+					const filename = path.resolve(folder.path, folder.tag.image);
+					await fse.writeFile(filename, image.buffer);
+					await folderService.folderStore.replace(folder);
+					const img = await artistService.getArtistImage(artist);
+					should().exist(img, 'Image not found');
+					if (img) {
+						should().exist(img.file, 'Image response not valid');
+						if (img.file) {
+							expect(img.file.filename).to.be.equal(filename);
 						}
 					}
-				});
+				}
 			});
 		}
 	);
