@@ -68,7 +68,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 				// videoConversionRole: false
 			}
 		};
-		u.id = await this.userService.createUser(u);
+		u.id = await this.userService.create(u);
 		return this.prepare(u, {}, req.user);
 	}
 
@@ -77,7 +77,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		const u = await this.byID(req.query.id);
 		if (req.query.name) {
 			if (req.query.name !== u.name) {
-				const u2 = await this.userService.get(req.query.name);
+				const u2 = await this.userService.getByName(req.query.name);
 				if (u2) {
 					return Promise.reject(GenericError('Username already exists'));
 				}
@@ -99,13 +99,13 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		if (req.query.roleUpload !== undefined) {
 			u.roles.uploadRole = req.query.roleUpload;
 		}
-		await this.userService.updateUser(u);
+		await this.userService.update(u);
 		return this.prepare(u, {}, req.user);
 	}
 
 	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const u = await this.byID(req.query.id);
-		await this.userService.deleteUser(u);
+		await this.userService.remove(u);
 	}
 
 	async imageUploadUpdate(req: JamRequest<JamParameters.ID>): Promise<void> {

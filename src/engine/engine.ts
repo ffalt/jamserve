@@ -23,10 +23,9 @@ import {ImageService} from './image/image.service';
 import {DownloadService} from './download/download.service';
 import {ListService} from './list/list.service';
 import {User} from '../objects/user/user.model';
-import {Root, RootStatus} from '../objects/root/root.model';
+import {Root} from '../objects/root/root.model';
 import {RadioService} from '../objects/radio/radio.service';
 import {FolderService} from '../objects/folder/folder.service';
-import {Track} from '../objects/track/track.model';
 import {ImageModule} from './image/image.module';
 import {TrackService} from '../objects/track/track.service';
 import {ArtistService} from '../objects/artist/artist.service';
@@ -120,7 +119,7 @@ export class Engine {
 						// shareRole: true
 					}
 				};
-				await this.userService.createUser(user);
+				await this.userService.create(user);
 			}
 		}
 		if (this.config.firstStart.roots) {

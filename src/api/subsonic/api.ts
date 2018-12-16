@@ -23,6 +23,7 @@ import {SearchQueryFolder} from '../../objects/folder/folder.store';
 import {SearchQueryAlbum} from '../../objects/album/album.store';
 import {SearchQueryTrack} from '../../objects/track/track.store';
 import {SearchQueryArtist} from '../../objects/artist/artist.store';
+import {hexDecode} from '../../utils/hex';
 
 /*
 	http://www.subsonic.org/pages/api.jsp
@@ -453,7 +454,7 @@ export class SubsonicApi {
 		 Returns the avatar image in binary form.
 		 */
 		const name = req.query.username;
-		const user = await this.engine.userService.get(name);
+		const user = await this.engine.userService.getByName(name);
 		if (!user) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
@@ -799,7 +800,7 @@ export class SubsonicApi {
 		} else if (!req.user.roles.adminRole) {
 			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 		} else {
-			const u = await this.engine.userService.get(req.query.username);
+			const u = await this.engine.userService.getByName(req.query.username);
 			if (!u) {
 				return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 			} else {
@@ -945,7 +946,7 @@ export class SubsonicApi {
 			return b === undefined ? def : b;
 		};
 		const username = req.query.username;
-		const u = await this.engine.userService.get(username);
+		const u = await this.engine.userService.getByName(username);
 		if (!u) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
@@ -978,7 +979,7 @@ export class SubsonicApi {
 		// u.roles.playlistRole = getBool(req.query.playlistRole, u.roles.playlistRole);
 		// u.roles.shareRole = getBool(req.query.shareRole, u.roles.shareRole);
 		// u.roles.videoConversionRole = getBool(req.query.videoConversionRole, u.roles.videoConversionRole);
-		await this.engine.userService.updateUser(u);
+		await this.engine.userService.update(u);
 	}
 
 	async createUser(req: ApiOptions<SubsonicParameters.UpdateUser>): Promise<void> {
@@ -1046,7 +1047,10 @@ export class SubsonicApi {
 				// videoConversionRole: getBool(req.query.videoConversionRole, false)
 			}
 		};
-		await this.engine.userService.createUser(u);
+		if (u.pass.indexOf('enc:') === 0) {
+			u.pass = hexDecode(u.pass.slice(4)).trim();
+		}
+		await this.engine.userService.create(u);
 	}
 
 	async deleteUser(req: ApiOptions<SubsonicParameters.Username>): Promise<void> {
@@ -1062,11 +1066,11 @@ export class SubsonicApi {
 
 		 Returns an empty <subsonic-response> element on success.
 		 */
-		const u = await this.engine.userService.get(req.query.username);
+		const u = await this.engine.userService.getByName(req.query.username);
 		if (!u) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
-		await this.engine.userService.deleteUser(u);
+		await this.engine.userService.remove(u);
 	}
 
 	async changePassword(req: ApiOptions<SubsonicParameters.ChangePassword>): Promise<void> {
@@ -1095,12 +1099,15 @@ export class SubsonicApi {
 				return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 			}
 		}
-		const u = await this.engine.userService.get(req.query.username);
+		const u = await this.engine.userService.getByName(req.query.username);
 		if (!u) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
 		u.pass = req.query.password;
-		await this.engine.userService.updateUser(u);
+		if (u.pass.indexOf('enc:') === 0) {
+			u.pass = hexDecode(u.pass.slice(4)).trim();
+		}
+		await this.engine.userService.update(u);
 	}
 
 	async getChatMessages(req: ApiOptions<SubsonicParameters.ChatMessages>): Promise<{ chatMessages: Subsonic.ChatMessages }> {
@@ -1154,7 +1161,7 @@ export class SubsonicApi {
 			if (!req.user.roles.adminRole) {
 				return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 			}
-			const u = await this.engine.userService.get(req.query.username);
+			const u = await this.engine.userService.getByName(req.query.username);
 			if (!u) {
 				return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 			}

@@ -106,7 +106,7 @@ export function initJamRouter(engine: Engine): express.Router {
 		done(null, user.id);
 	});
 	passport.deserializeUser((id: string, done) => {
-		engine.userService.getUser(id).then(user => done(null, user ? user : false)).catch(done);
+		engine.userService.getByID(id).then(user => done(null, user ? user : false)).catch(done);
 	});
 
 	passport.use('local', new passportLocal.Strategy(
@@ -121,7 +121,7 @@ export function initJamRouter(engine: Engine): express.Router {
 			secretOrKey: engine.config.server.jwt.secret
 		},
 		(jwt_payload, done) => {
-			engine.userService.getUser(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
+			engine.userService.getByID(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
 		}
 	));
 	passport.use('jwt-parameter', new passportJWT.Strategy(
@@ -130,7 +130,7 @@ export function initJamRouter(engine: Engine): express.Router {
 			secretOrKey: engine.config.server.jwt.secret
 		},
 		(jwt_payload, done) => {
-			engine.userService.getUser(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
+			engine.userService.getByID(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
 		}
 	));
 

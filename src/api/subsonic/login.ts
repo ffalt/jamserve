@@ -26,6 +26,7 @@ import {SubsonicParameterRequest} from './parameters';
 import {ApiResponder} from './response';
 import {FORMAT} from './format';
 import {User} from '../../objects/user/user.model';
+import {hexDecode} from '../../utils/hex';
 
 /**
  * Fill user into req.user express requests
@@ -40,7 +41,11 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 		return <User>req.user;
 	}
 	if (req.parameters.password) {
-		return req.engine.userService.auth(req.parameters.username, req.parameters.password);
+		let pass = req.parameters.password;
+		if (pass.indexOf('enc:') === 0) {
+			pass = hexDecode(pass.slice(4)).trim();
+		}
+		return req.engine.userService.auth(req.parameters.username, pass);
 	} else if (req.parameters.token && req.parameters.salt) {
 		return req.engine.userService.authToken(req.parameters.username, req.parameters.token, req.parameters.salt);
 	} else {

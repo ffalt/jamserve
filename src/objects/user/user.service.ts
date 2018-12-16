@@ -1,7 +1,6 @@
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import path from 'path';
 import {User} from './user.model';
-import {hexDecode} from '../../utils/hex';
 import {Md5} from 'md5-typescript';
 import {UserStore} from './user.store';
 import {StateStore} from '../state/state.store';
@@ -26,14 +25,6 @@ export class UserService {
 		}
 	}
 
-	clearCache() {
-		this.cached = {};
-	}
-
-	async get(name: string): Promise<User | undefined> {
-		return await this.userStore.searchOne({'name': name || ''});
-	}
-
 	async setUserImage(user: User, filename: string): Promise<void> {
 		const destFileName = 'avatar-' + user.id + '.png';
 		const destName = path.join(this.userAvatarPath, destFileName);
@@ -42,10 +33,29 @@ export class UserService {
 		await this.imageModule.clearImageCacheByID(user.id);
 		user.avatar = destFileName;
 		user.avatarLastChanged = Date.now();
-		await this.updateUser(user);
+		await this.update(user);
 	}
 
-	async deleteUser(user: User): Promise<void> {
+	async create(user: User): Promise<string> {
+		if (!user.name || user.name.trim().length === 0) {
+			return Promise.reject(Error('Invalid Username'));
+		}
+		if (!user.pass || user.pass.trim().length === 0) {
+			return Promise.reject(Error('Invalid Password'));
+		}
+		const existingUser = await this.getByName(user.name);
+		if (existingUser) {
+			return Promise.reject(Error('Username already exists'));
+		}
+		return this.userStore.add(user);
+	}
+
+	async update(user: User): Promise<void> {
+		await this.userStore.replace(user);
+		delete this.cached[user.id];
+	}
+
+	async remove(user: User): Promise<void> {
 		delete this.cached[user.id];
 		await this.stateStore.removeByQuery({userID: user.id});
 		await this.playlistStore.removeByQuery({userID: user.id});
@@ -59,21 +69,24 @@ export class UserService {
 		}
 	}
 
-	async createUser(user: User): Promise<string> {
-		if (!user.name || user.name.trim().length === 0) {
+	async getByName(name: string): Promise<User | undefined> {
+		if (!name || name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const existingUser = await this.get(user.name);
-		if (existingUser) {
-			return Promise.reject(Error('Username already exists'));
+		const ids = Object.keys(this.cached);
+		for (const id of ids) {
+			if (this.cached[id].name === name) {
+				return this.cached[id];
+			}
 		}
-		if (user.pass.indexOf('enc:') === 0) {
-			user.pass = hexDecode(user.pass);
+		const user = await this.userStore.searchOne({name});
+		if (user) {
+			this.cached[user.id] = user;
 		}
-		return this.userStore.add(user);
+		return user;
 	}
 
-	async getUser(id: string): Promise<User | undefined> {
+	async getByID(id: string): Promise<User | undefined> {
 		let user: User | undefined = this.cached[id];
 		if (user) {
 			return user;
@@ -86,18 +99,12 @@ export class UserService {
 	}
 
 	async auth(name: string, pass: string): Promise<User> {
-		if ((!name) || (!name.length)) {
-			return Promise.reject(Error('Invalid Username'));
-		}
 		if ((!pass) || (!pass.length)) {
 			return Promise.reject(Error('Invalid Password'));
 		}
-		const user = await this.get(name);
+		const user = await this.getByName(name);
 		if (!user) {
 			return Promise.reject(Error('Invalid Username'));
-		}
-		if (pass.indexOf('enc:') === 0) {
-			pass = hexDecode(pass.slice(4)).trim();
 		}
 		if (pass !== user.pass) {
 			return Promise.reject(Error('Invalid Password'));
@@ -106,13 +113,13 @@ export class UserService {
 	}
 
 	async authToken(name: string, token: string, salt: string): Promise<User> {
-		if ((!name) || (!name.length)) {
+		if (!name || name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));
 		}
 		if ((!token) || (!token.length)) {
 			return Promise.reject(Error('Invalid Token'));
 		}
-		const user = await this.get(name);
+		const user = await this.getByName(name);
 		if (!user) {
 			return Promise.reject(Error('Invalid Username'));
 		}
@@ -123,11 +130,7 @@ export class UserService {
 		return user;
 	}
 
-	async updateUser(user: User): Promise<void> {
-		if (user.pass.indexOf('enc:') === 0) {
-			user.pass = hexDecode(user.pass);
-		}
-		await this.userStore.replace(user);
-		delete this.cached[user.id];
+	public clearCache() {
+		this.cached = {};
 	}
 }
