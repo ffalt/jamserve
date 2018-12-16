@@ -30,6 +30,7 @@ import {ImageModule} from './image/image.module';
 import {TrackService} from '../objects/track/track.service';
 import {ArtistService} from '../objects/artist/artist.service';
 import {AlbumService} from '../objects/album/album.service';
+import {EpisodeService} from '../objects/episode/episode.service';
 
 export class Engine {
 	// public config: Config;
@@ -45,6 +46,7 @@ export class Engine {
 	public genreService: GenreService;
 	public playQueueService: PlayQueueService;
 	public podcastService: PodcastService;
+	public episodeService: EpisodeService;
 	public playlistService: PlaylistService;
 	public nowPlayingService: NowPlayingService;
 	public streamService: StreamService;
@@ -80,7 +82,8 @@ export class Engine {
 		this.playlistService = new PlaylistService(this.store.playlistStore, this.store.trackStore);
 		this.playQueueService = new PlayQueueService(this.store.playQueueStore);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
-		this.podcastService = new PodcastService(config.getDataPath(['podcasts']), this.store.podcastStore, this.store.episodeStore, this.audioModule);
+		this.episodeService = new EpisodeService(config.getDataPath(['podcasts']), this.store.episodeStore, this.audioModule);
+		this.podcastService = new PodcastService(this.store.podcastStore, this.episodeService);
 		this.metaDataService = new MetaDataService(this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
 		this.listService = new ListService(this.store.stateStore);
 		this.rootService = new RootService(this.store.rootStore);

@@ -1500,7 +1500,7 @@ export class SubsonicApi {
 
 		const episode = await this.byID<Episode>(req.query.id, this.engine.store.episodeStore);
 		if (!episode.path) {
-			this.engine.podcastService.downloadPodcastEpisode(episode); // do not wait
+			this.engine.episodeService.downloadPodcastEpisode(episode); // do not wait
 		}
 	}
 
@@ -1518,7 +1518,7 @@ export class SubsonicApi {
 		 Returns an empty <subsonic-response> element on success.
 		 */
 		const episode = await this.byID<Episode>(req.query.id, this.engine.store.episodeStore);
-		await this.engine.podcastService.deletePodcastEpisode(episode);
+		await this.engine.episodeService.deletePodcastEpisodeFile(episode);
 	}
 
 	async getBookmarks(req: ApiOptions<{}>): Promise<{ bookmarks: Subsonic.Bookmarks }> {
