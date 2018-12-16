@@ -9,11 +9,10 @@ export class PlayQueueService {
 
 	async getQueueOrCreate(userID: string, client?: string): Promise<PlayQueue> {
 		let playQueue = await this.get(userID);
-		if (playQueue) {
-			return playQueue;
+		if (!playQueue) {
+			playQueue = this.emptyPlaylist(userID, client);
+			playQueue.id = await this.playQueueStore.add(playQueue);
 		}
-		playQueue = this.emptyPlaylist(userID, client);
-		await this.playQueueStore.add(playQueue);
 		return playQueue;
 	}
 

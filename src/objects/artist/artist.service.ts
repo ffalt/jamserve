@@ -35,10 +35,9 @@ export class ArtistService {
 
 	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
 		const folder = await this.getArtistFolder(artist);
-		if (!folder) {
-			return;
+		if (folder) {
+			return this.folderService.getFolderImage(folder, size, format);
 		}
-		return this.folderService.getFolderImage(folder, size, format);
 	}
 
 }
