@@ -487,7 +487,7 @@ const type_Radio = {
 		homepage: type_key,
 		disabled: type_bool,
 		created: type_int,
-		updated: type_int,
+		changed: type_int,
 		id: type_key,
 		type: type_int
 	}

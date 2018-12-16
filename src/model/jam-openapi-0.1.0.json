@@ -15612,7 +15612,10 @@
 					"homepage": {
 						"type": "string"
 					},
-					"updated": {
+					"created": {
+						"type": "number"
+					},
+					"changed": {
 						"type": "number"
 					},
 					"id": {
@@ -15623,16 +15626,13 @@
 					},
 					"name": {
 						"type": "string"
-					},
-					"created": {
-						"type": "number"
 					}
 				},
 				"required": [
+					"changed",
 					"created",
 					"id",
 					"name",
-					"updated",
 					"url"
 				]
 			},
