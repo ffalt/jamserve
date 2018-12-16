@@ -24,7 +24,7 @@ export async function transformTS2JSONScheme(basePath: string, filename: string,
 	// const symbols = generator.getUserSymbols();
 	// console.log(symbols);
 	// }
-	const scheme = generator.getSchemaForSymbol(symbol);
+	const scheme = generator.getSchemaForSymbol(symbol, true);
 	if (scheme) {
 		return scheme;
 	} else {
@@ -115,6 +115,7 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): {
 			const prefix = defs[0];
 			const id = defs[1];
 			const prop = paramDef.properties[id];
+			console.log('p', prop);
 			let type = prop.type;
 			if (type === 'integer') {
 				type = 'number';
