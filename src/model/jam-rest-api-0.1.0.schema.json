@@ -13250,7 +13250,7 @@
 			"properties": {
 				"format": {
 					"description": "format of download stream",
-					"default": "'zip'",
+					"default": "zip",
 					"enum": [
 						"zip"
 					],
@@ -13270,7 +13270,7 @@
 			"properties": {
 				"format": {
 					"description": "format of the image",
-					"default": "'png'",
+					"default": "png",
 					"enum": [
 						"bmp",
 						"jpeg",
@@ -13305,7 +13305,7 @@
 				},
 				"format": {
 					"description": "format of audio stream",
-					"default": "'mp3'",
+					"default": "mp3",
 					"enum": [
 						"mp3"
 					],
@@ -13406,7 +13406,7 @@
 			"properties": {
 				"format": {
 					"description": "format of the image",
-					"default": "'png'",
+					"default": "png",
 					"enum": [
 						"bmp",
 						"jpeg",
@@ -13430,7 +13430,7 @@
 			"properties": {
 				"format": {
 					"description": "format of audio stream",
-					"default": "'mp3'",
+					"default": "mp3",
 					"enum": [
 						"mp3"
 					],
@@ -13449,8 +13449,14 @@
 			"type": "object",
 			"properties": {
 				"format": {
-					"$ref": "#/definitions/JamParameters.WaveformFormatType",
-					"description": "format of waveform data"
+					"description": "format of waveform data",
+					"default": "svg",
+					"enum": [
+						"dat",
+						"json",
+						"svg"
+					],
+					"type": "string"
 				},
 				"id": {
 					"description": "the item id",
@@ -13458,17 +13464,8 @@
 				}
 			},
 			"required": [
-				"format",
 				"id"
 			]
-		},
-		"JamParameters.WaveformFormatType": {
-			"enum": [
-				"dat",
-				"json",
-				"svg"
-			],
-			"type": "string"
 		},
 		"JamParameters.Login": {
 			"type": "object",

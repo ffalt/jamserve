@@ -8308,7 +8308,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'zip'",
+							"default": "zip",
 							"enum": [
 								"zip"
 							],
@@ -8371,7 +8371,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -8477,7 +8477,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'mp3'",
+							"default": "mp3",
 							"enum": [
 								"mp3"
 							],
@@ -8540,7 +8540,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'zip'",
+							"default": "zip",
 							"enum": [
 								"zip"
 							],
@@ -8603,7 +8603,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -8709,7 +8709,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'mp3'",
+							"default": "mp3",
 							"enum": [
 								"mp3"
 							],
@@ -8772,7 +8772,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'zip'",
+							"default": "zip",
 							"enum": [
 								"zip"
 							],
@@ -8835,7 +8835,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -8913,7 +8913,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -8991,7 +8991,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'zip'",
+							"default": "zip",
 							"enum": [
 								"zip"
 							],
@@ -9054,7 +9054,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -9132,7 +9132,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'zip'",
+							"default": "zip",
 							"enum": [
 								"zip"
 							],
@@ -9195,7 +9195,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -9273,7 +9273,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'zip'",
+							"default": "zip",
 							"enum": [
 								"zip"
 							],
@@ -9424,7 +9424,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -9502,7 +9502,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'zip'",
+							"default": "zip",
 							"enum": [
 								"zip"
 							],
@@ -9565,7 +9565,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -9643,7 +9643,7 @@
 						"in": "query",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -9721,7 +9721,7 @@
 						"in": "path",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -9860,7 +9860,7 @@
 						"in": "path",
 						"name": "format",
 						"schema": {
-							"default": "'png'",
+							"default": "png",
 							"enum": [
 								"bmp",
 								"jpeg",
@@ -9996,7 +9996,7 @@
 						"in": "path",
 						"name": "format",
 						"schema": {
-							"default": "'mp3'",
+							"default": "mp3",
 							"enum": [
 								"mp3"
 							],
@@ -10111,7 +10111,13 @@
 						"in": "path",
 						"name": "format",
 						"schema": {
-							"$ref": "#/components/schemas/JamParameters.WaveformFormatType"
+							"default": "svg",
+							"enum": [
+								"dat",
+								"json",
+								"svg"
+							],
+							"type": "string"
 						},
 						"description": "format of waveform data",
 						"required": true
@@ -10214,7 +10220,7 @@
 						"in": "path",
 						"name": "format",
 						"schema": {
-							"default": "'zip'",
+							"default": "zip",
 							"enum": [
 								"zip"
 							],
@@ -16034,14 +16040,6 @@
 					"position",
 					"trackID"
 				]
-			},
-			"JamParameters.WaveformFormatType": {
-				"enum": [
-					"dat",
-					"json",
-					"svg"
-				],
-				"type": "string"
 			},
 			"JamParameters.Login": {
 				"type": "object",
