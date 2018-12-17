@@ -1,6 +1,6 @@
-import {Feed, PodcastStatus} from '../../utils/feed';
+import {Feed} from '../../utils/feed';
 import Logger from '../../utils/logger';
-import {DBObjectType} from '../../types';
+import {DBObjectType, PodcastStatus} from '../../types';
 import {Podcast} from './podcast.model';
 import {Episode} from '../episode/episode.model';
 import {PodcastStore} from './podcast.store';
@@ -16,15 +16,29 @@ export class PodcastService {
 	constructor(public podcastStore: PodcastStore, private episodeService: EpisodeService) {
 	}
 
-	isDownloadingPodcast(podcastId: string): boolean {
+	isDownloading(podcastId: string): boolean {
 		return !!this.podstate[podcastId];
 	}
 
-	isDownloadingPodcastEpisode(podcastEpisodeId: string): boolean {
-		return !!this.podstate[podcastEpisodeId];
+	async create(url: string): Promise<Podcast> {
+		const podcast: Podcast = {
+			id: '',
+			type: DBObjectType.podcast,
+			created: Date.now(),
+			lastCheck: 0,
+			url: url,
+			status: PodcastStatus.new
+		};
+		podcast.id = await this.podcastStore.add(podcast);
+		return podcast;
 	}
 
-	async refreshPodcast(podcast: Podcast): Promise<void> {
+	async remove(podcast: Podcast): Promise<void> {
+		await this.podcastStore.remove(podcast.id);
+		await this.episodeService.removePodcastEpisodes(podcast.id);
+	}
+
+	async refresh(podcast: Podcast): Promise<void> {
 		log.debug('Refreshing Podcast', podcast.url);
 		this.podstate[podcast.id] = podcast;
 		const feed = new Feed();
@@ -38,7 +52,7 @@ export class PodcastService {
 			podcast.status = PodcastStatus.completed;
 			podcast.errorMessage = undefined;
 		} catch (e) {
-			log.error('Refreshing Podcast', e);
+			log.info('Refreshing Podcast failed', e);
 			podcast.status = PodcastStatus.error;
 			podcast.errorMessage = (e || '').toString();
 		}
@@ -54,27 +68,8 @@ export class PodcastService {
 		const podcasts = await
 			this.podcastStore.all();
 		for (const podcast of podcasts) {
-			await this.refreshPodcast(podcast);
+			await this.refresh(podcast);
 		}
 		log.info('Refreshed');
 	}
-
-	async addPodcast(url: string): Promise<Podcast> {
-		const podcast: Podcast = {
-			id: '',
-			type: DBObjectType.podcast,
-			created: Date.now(),
-			lastCheck: 0,
-			url: url,
-			status: PodcastStatus.fresh
-		};
-		podcast.id = await this.podcastStore.add(podcast);
-		return podcast;
-	}
-
-	async removePodcast(podcast: Podcast): Promise<void> {
-		await this.podcastStore.remove(podcast.id);
-		await this.episodeService.removePodcastEpisodes(podcast.id);
-	}
-
 }

@@ -1,7 +1,6 @@
 import {IApiBinaryResult} from '../../typings';
 import {Engine} from '../../engine/engine';
-import {DBObjectType, FolderType, FolderTypesAlbum} from '../../types';
-import {PodcastStatus} from '../../utils/feed';
+import {DBObjectType, FolderType, FolderTypesAlbum, PodcastStatus} from '../../types';
 import {randomItems} from '../../utils/random';
 import {paginate} from '../../utils/paginate';
 import {FORMAT} from './format';
@@ -111,7 +110,7 @@ export class SubsonicApi {
 	private async prepareEpisodes(episodes: Array<Episode>, user: User): Promise<Array<Subsonic.PodcastEpisode>> {
 		const states = await this.engine.stateService.findOrCreateMany(episodes.map(episode => episode.id), user.id, DBObjectType.episode);
 		return episodes.map(episode => {
-			return FORMAT.packPodcastEpisode(episode, states[episode.id], (this.engine.podcastService.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status));
+			return FORMAT.packPodcastEpisode(episode, states[episode.id], (this.engine.episodeService.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status));
 		});
 	}
 
@@ -1392,7 +1391,7 @@ export class SubsonicApi {
 
 		 Returns an empty <subsonic-response> element on success.
 		 */
-		await this.engine.podcastService.addPodcast(req.query.url);
+		await this.engine.podcastService.create(req.query.url);
 	}
 
 	async getPodcasts(req: ApiOptions<SubsonicParameters.PodcastChannels>): Promise<{ podcasts: Subsonic.Podcasts }> {
@@ -1428,7 +1427,7 @@ export class SubsonicApi {
 		} else {
 			podcastList = await this.engine.store.podcastStore.all();
 		}
-		const channel = podcastList.map(podcast => FORMAT.packPodcast(podcast, (this.engine.podcastService.isDownloadingPodcast(podcast.id) ? PodcastStatus.downloading : undefined)));
+		const channel = podcastList.map(podcast => FORMAT.packPodcast(podcast, (this.engine.podcastService.isDownloading(podcast.id) ? PodcastStatus.downloading : undefined)));
 		const podcasts: Subsonic.Podcasts = {channel};
 		if (includeEpisodes) {
 			for (const podcast of channel) {
@@ -1481,7 +1480,7 @@ export class SubsonicApi {
 		 Returns an empty <subsonic-response> element on success.
 		 */
 		const podcast = await this.byID<Podcast>(req.query.id, this.engine.store.podcastStore);
-		await this.engine.podcastService.removePodcast(podcast);
+		await this.engine.podcastService.remove(podcast);
 	}
 
 	async downloadPodcastEpisode(req: ApiOptions<SubsonicParameters.ID>): Promise<void> {

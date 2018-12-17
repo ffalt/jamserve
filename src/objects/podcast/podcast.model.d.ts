@@ -1,11 +1,11 @@
 import {DBObject} from '../base/base.model';
-import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
+import {PodcastStatus} from '../../types';
 
 export interface Podcast extends DBObject {
 	url: string;
 	created: number;
 	lastCheck: number;
-	status: Subsonic.PodcastStatus;
+	status: PodcastStatus;
 	errorMessage?: string;
 	tag?: PodcastTag;
 }

@@ -4,19 +4,10 @@ import stream from 'stream';
 import request from 'request';
 import FeedParser from 'feedparser';
 import iconv from 'iconv-lite';
-import {DBObjectType} from '../types';
+import {DBObjectType, PodcastStatus} from '../types';
 import {Subsonic} from '../model/subsonic-rest-data-1.16.0';
 import {PodcastTag} from '../objects/podcast/podcast.model';
 import {Episode, PodcastEpisodeChapter} from '../objects/episode/episode.model';
-
-export const PodcastStatus: { [name: string]: Subsonic.PodcastStatus } = {
-	fresh: 'new',
-	downloading: 'downloading',
-	completed: 'completed',
-	deleted: 'deleted',
-	error: 'error',
-	skipped: 'skipped'
-};
 
 export class Feed {
 
@@ -105,7 +96,7 @@ export class Feed {
 			req.on('response', (res: request.Response) => {
 				if (res.statusCode !== 200) {
 					req.abort();
-					return done(new Error('Bad status code ' + res.statusCode + ' ' + res.statusMessage));
+					return done(new Error('Bad status code ' + res.statusCode + (res.statusMessage ? ' ' + res.statusMessage : '')));
 				}
 				const encoding = res.headers['content-encoding'] || 'identity';
 				const charset = this.getParams(res.headers['content-type'] || '').charset;
@@ -147,7 +138,7 @@ export class Feed {
 			return {
 				id: '',
 				podcastID: podcast.id,
-				status: PodcastStatus.fresh,
+				status: PodcastStatus.new,
 				type: DBObjectType.episode,
 				author: post.author,
 				link: post.link,

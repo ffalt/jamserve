@@ -1,4 +1,3 @@
-import {PodcastStatus} from '../../utils/feed';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {SupportedAudioFormat} from '../../utils/filetype';
 import path from 'path';
@@ -8,6 +7,7 @@ import {downloadFile} from '../../utils/download';
 import fse from 'fs-extra';
 import {EpisodeStore} from './episode.store';
 import {Episode} from './episode.model';
+import {PodcastStatus} from '../../types';
 
 const log = Logger('EpisodeService');
 

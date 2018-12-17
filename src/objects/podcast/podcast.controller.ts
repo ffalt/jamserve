@@ -1,8 +1,7 @@
 import {BaseController} from '../base/base.controller';
 import {JamParameters} from '../../model/jam-rest-params-0.1.0';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
-import {DBObjectType} from '../../types';
-import {PodcastStatus} from '../../utils/feed';
+import {DBObjectType, PodcastStatus} from '../../types';
 import {JamRequest} from '../../api/jam/api';
 import {EpisodeController} from '../episode/episode.controller';
 import {formatPodcast} from './podcast.format';
@@ -33,7 +32,7 @@ export class PodcastController extends BaseController<JamParameters.Podcast, Jam
 	}
 
 	async prepare(podcast: Podcast, includes: JamParameters.IncludesPodcast, user: User): Promise<Jam.Podcast> {
-		const result = formatPodcast(podcast, this.podcastService.isDownloadingPodcast(podcast.id) ? PodcastStatus.downloading : podcast.status);
+		const result = formatPodcast(podcast, this.podcastService.isDownloading(podcast.id) ? PodcastStatus.downloading : podcast.status);
 		if (includes.podcastState) {
 			const state = await this.stateService.findOrCreate(podcast.id, user.id, DBObjectType.podcast);
 			result.state = formatState(state);
@@ -66,24 +65,24 @@ export class PodcastController extends BaseController<JamParameters.Podcast, Jam
 
 	async refresh(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const podcast = await this.byID(req.query.id);
-		this.podcastService.refreshPodcast(podcast); // do not wait
+		this.podcastService.refresh(podcast); // do not wait
 	}
 
 	async create(req: JamRequest<JamParameters.PodcastNew>): Promise<Jam.Podcast> {
-		const podcast = await this.podcastService.addPodcast(req.query.url);
+		const podcast = await this.podcastService.create(req.query.url);
 		return this.prepare(podcast, {}, req.user);
 	}
 
 	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const podcast = await this.byID(req.query.id);
-		await this.podcastService.removePodcast(podcast);
+		await this.podcastService.remove(podcast);
 	}
 
 	async status(req: JamRequest<JamParameters.ID>): Promise<Jam.PodcastStatus> {
 		const podcast = await this.byID(req.query.id);
 		return {
 			lastCheck: podcast.lastCheck,
-			status: this.podcastService.isDownloadingPodcast(podcast.id) ? PodcastStatus.downloading : podcast.status
+			status: this.podcastService.isDownloading(podcast.id) ? PodcastStatus[PodcastStatus.downloading] : PodcastStatus[podcast.status]
 		};
 	}
 }

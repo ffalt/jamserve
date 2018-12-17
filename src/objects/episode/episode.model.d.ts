@@ -1,10 +1,10 @@
 import {DBObject} from '../base/base.model';
-import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
 import {TrackMedia, TrackTag} from '../track/track.model';
+import {PodcastStatus} from '../../types';
 
 export interface Episode extends DBObject {
 	podcastID: string;
-	status: Subsonic.PodcastStatus;
+	status: PodcastStatus;
 	error?: string;
 	path?: string;
 	link?: string;

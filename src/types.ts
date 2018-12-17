@@ -41,6 +41,17 @@ export enum FolderType {
 	extras = 'extras',
 }
 
+
+export enum PodcastStatus {
+	'new' = 'new',
+	downloading = 'downloading',
+	completed = 'completed',
+	error = 'error',
+	deleted = 'deleted',
+	skipped = 'skipped'
+}
+
+
 export const FolderTypeImageName: { [foldertype: string]: string } = {
 	unknown: 'folder',
 	artist: 'artist',

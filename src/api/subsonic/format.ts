@@ -1,7 +1,7 @@
 import moment from 'moment';
 import path from 'path';
 import {fileSuffix} from '../../utils/fs-utils';
-import {AudioMimeTypes, DBObjectType} from '../../types';
+import {AudioMimeTypes, DBObjectType, PodcastStatus} from '../../types';
 import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
 import {Root} from '../../objects/root/root.model';
 import {User} from '../../objects/user/user.model';
@@ -25,6 +25,7 @@ import {Genre} from '../../engine/genre/genre.model';
 
 export interface SubsonicExtResponse extends Subsonic.Response {
 	[name: string]: any;
+
 	xmlns: string;
 }
 
@@ -419,20 +420,20 @@ export class FORMAT {
 		};
 	}
 
-	static packPodcast(podcast: Podcast, status?: Subsonic.PodcastStatus): Subsonic.PodcastChannel {
+	static packPodcast(podcast: Podcast, status?: PodcastStatus): Subsonic.PodcastChannel {
 		return {
 			id: podcast.id,
 			url: podcast.url,
 			errorMessage: podcast.errorMessage,
 			title: podcast.tag ? podcast.tag.title : undefined,
-			status: status ? status : podcast.status,
+			status: status ? PodcastStatus[status] : PodcastStatus[podcast.status],
 			description: podcast.tag ? podcast.tag.description : undefined,
 			coverArt: podcast.id,
 			originalImageUrl: podcast.tag ? podcast.tag.image : undefined
 		};
 	}
 
-	static packPodcastEpisode(episode: Episode, state: State, status?: Subsonic.PodcastStatus): Subsonic.PodcastEpisode {
+	static packPodcastEpisode(episode: Episode, state: State, status?: PodcastStatus): Subsonic.PodcastEpisode {
 		const result: Subsonic.PodcastEpisode = {
 			// albumId:episode.albumId,
 			// artistId:episode.artistId,
@@ -444,7 +445,7 @@ export class FORMAT {
 			description: episode.summary,
 			publishDate: episode.date !== undefined ? this.formatSubSonicDate(episode.date) : undefined,
 			title: episode.name,
-			status: episode.status,
+			status: status ? PodcastStatus[status] : PodcastStatus[episode.status],
 			id: episode.id,
 			parent: episode.podcastID,
 			artist: episode.tag ? episode.tag.artist : episode.author,
