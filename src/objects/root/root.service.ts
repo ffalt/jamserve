@@ -1,38 +1,32 @@
-import {IoService} from '../../engine/io/io.service';
-import {IndexService} from '../../engine/index/index.service';
-import {GenreService} from '../../engine/genre/genre.service';
-import {Root, RootStatus} from './root.model';
-import {Track} from '../track/track.model';
+import {Root} from './root.model';
 import {RootStore} from './root.store';
 
 export class RootService {
 
-	constructor(private rootStore: RootStore) {
+	constructor(public rootStore: RootStore) {
 	}
 
-	async createRoot(root: Root): Promise<string> {
-		const roots = await this.rootStore.search({});
-		const invalid = roots.find(r => {
-			return root.path.indexOf(r.path) >= 0 || r.path.indexOf(root.path) >= 0;
-		});
-		if (invalid) {
-			return Promise.reject(Error('Root path already used'));
+	private async checkUsedPath(dir: string, roots: Array<Root>): Promise<void> {
+		for (const r of roots) {
+			if (dir.indexOf(r.path) === 0 || r.path.indexOf(dir) === 0) {
+				return Promise.reject(Error('Root path already used'));
+			}
 		}
+	}
+
+	async create(root: Root): Promise<string> {
+		const roots = await this.rootStore.all();
+		await this.checkUsedPath(root.path, roots);
 		return this.rootStore.add(root);
 	}
 
-	async updateRoot(root: Root): Promise<void> {
-		const roots = await this.rootStore.search({});
-		const invalid = roots.find(r => {
-			return r.id !== root.id && (root.path.indexOf(r.path) >= 0 || r.path.indexOf(root.path) >= 0);
-		});
-		if (invalid) {
-			return Promise.reject(Error('Root path already used'));
-		}
+	async update(root: Root): Promise<void> {
+		const roots = await this.rootStore.all();
+		await this.checkUsedPath(root.path, roots.filter(r => r.id !== root.id));
 		await this.rootStore.replace(root);
 	}
 
-	async removeRoot(root: Root): Promise<void> {
+	async remove(root: Root): Promise<void> {
 		await this.rootStore.remove(root.id);
 	}
 }
