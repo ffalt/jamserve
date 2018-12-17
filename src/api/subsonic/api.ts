@@ -43,7 +43,7 @@ export class SubsonicApi {
 	/* helper functions */
 
 	private async prepareList<T extends DBObject, R>(type: DBObjectType, objs: Array<T>, pack: (o: T, state: State) => R, user: User): Promise<Array<R>> {
-		const states = await this.engine.stateService.findOrCreateMulti(objs.map(o => o.id), user.id, type);
+		const states = await this.engine.stateService.findOrCreateMany(objs.map(o => o.id), user.id, type);
 		return objs.map(o => {
 			return pack(o, states[o.id]);
 		});
@@ -104,12 +104,12 @@ export class SubsonicApi {
 
 	private async preparePlaylist(playlist: Playlist, user: User): Promise<Subsonic.PlaylistWithSongs> {
 		const tracks = await this.engine.store.trackStore.byIds(playlist.trackIDs);
-		const states = await this.engine.stateService.findOrCreateMulti(playlist.trackIDs || [], user.id, DBObjectType.track);
+		const states = await this.engine.stateService.findOrCreateMany(playlist.trackIDs || [], user.id, DBObjectType.track);
 		return FORMAT.packPlaylistWithSongs(playlist, tracks, states);
 	}
 
 	private async prepareEpisodes(episodes: Array<Episode>, user: User): Promise<Array<Subsonic.PodcastEpisode>> {
-		const states = await this.engine.stateService.findOrCreateMulti(episodes.map(episode => episode.id), user.id, DBObjectType.episode);
+		const states = await this.engine.stateService.findOrCreateMany(episodes.map(episode => episode.id), user.id, DBObjectType.episode);
 		return episodes.map(episode => {
 			return FORMAT.packPodcastEpisode(episode, states[episode.id], (this.engine.podcastService.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status));
 		});
@@ -243,7 +243,7 @@ export class SubsonicApi {
 			index.groups.forEach(entry => {
 				ids = ids.concat(entry.entries.map(e => e.folder.id));
 			});
-			const states = await this.engine.stateService.findOrCreateMulti(ids, req.user.id, DBObjectType.folder);
+			const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.folder);
 			return {
 				indexes: {
 					lastModified: index.lastModified,
@@ -276,7 +276,7 @@ export class SubsonicApi {
 		index.groups.forEach(entry => {
 			ids = ids.concat(entry.entries.map(e => e.artist.id));
 		});
-		const states = await this.engine.stateService.findOrCreateMulti(ids, req.user.id, DBObjectType.artist);
+		const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.artist);
 		return {
 			artists: {
 				ignoredArticles: (this.engine.indexService.indexConfig.ignore || []).join(' '),
@@ -324,19 +324,19 @@ export class SubsonicApi {
 				folders = await this.engine.store.folderStore.search({types: FolderTypesAlbum, offset, amount, sorts: [{field: 'album', descending: false}]});
 				break;
 			case 'starred':
-				ids = await this.engine.listService.getFilteredListFaved<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
+				ids = await this.engine.listService.getFaved<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
 				folders = await this.engine.store.folderStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'frequent':
-				ids = await this.engine.listService.getFilteredListFrequentlyPlayed<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
+				ids = await this.engine.listService.getFrequentlyPlayed<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
 				folders = await this.engine.store.folderStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'recent':
-				ids = await this.engine.listService.getFilteredListRecentlyPlayed<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
+				ids = await this.engine.listService.getRecentlyPlayed<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
 				folders = await this.engine.store.folderStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'highest':
-				ids = await this.engine.listService.getFilteredListHighestRated<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
+				ids = await this.engine.listService.getHighestRated<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
 				folders = await this.engine.store.folderStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'byGenre':
@@ -397,19 +397,19 @@ export class SubsonicApi {
 				albums = await this.engine.store.albumStore.search({rootID, offset, amount, sorts: [{field: 'name', descending: false}]});
 				break;
 			case 'starred':
-				ids = await this.engine.listService.getFilteredListFaved<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+				ids = await this.engine.listService.getFaved<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
 				albums = await this.engine.store.albumStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'frequent':
-				ids = await this.engine.listService.getFilteredListFrequentlyPlayed<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+				ids = await this.engine.listService.getFrequentlyPlayed<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
 				albums = await this.engine.store.albumStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'recent':
-				ids = await this.engine.listService.getFilteredListRecentlyPlayed<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+				ids = await this.engine.listService.getRecentlyPlayed<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
 				albums = await this.engine.store.albumStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'highest':
-				ids = await this.engine.listService.getFilteredListHighestRated<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+				ids = await this.engine.listService.getHighestRated<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
 				albums = await this.engine.store.albumStore.byIds(paginate(ids, amount, offset));
 				break;
 			default:
@@ -578,7 +578,7 @@ export class SubsonicApi {
 		}
 		const infos = await this.engine.metaDataService.getArtistInfos(artist, includeNotPresent, true);
 		const ids = (infos.similar || []).filter(sim => !!sim.artist).map(sim => (<Artist>sim.artist).id);
-		const states = await this.engine.stateService.findOrCreateMulti(ids, req.user.id, DBObjectType.artist);
+		const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.artist);
 		const result: Array<Subsonic.ArtistID3> = [];
 		(infos.similar || []).forEach(sim => {
 			if (sim.artist) {
@@ -1234,7 +1234,7 @@ export class SubsonicApi {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
 		const tracks = await this.engine.store.trackStore.byIds(playlist.trackIDs);
-		const states = await this.engine.stateService.findOrCreateMulti(playlist.trackIDs, req.user.id, DBObjectType.track);
+		const states = await this.engine.stateService.findOrCreateMany(playlist.trackIDs, req.user.id, DBObjectType.track);
 		return {playlist: FORMAT.packPlaylistWithSongs(playlist, tracks, states)};
 	}
 
@@ -1312,17 +1312,17 @@ export class SubsonicApi {
 		 */
 		const rootID = (req.query.musicFolderId !== undefined ? req.query.musicFolderId.toString() : undefined);
 		const starred: Subsonic.Starred = {};
-		const trackIDs = await this.engine.listService.getFilteredListFaved<SearchQueryTrack>(DBObjectType.track, {rootID}, req.user, this.engine.store.trackStore);
+		const trackIDs = await this.engine.listService.getFaved<SearchQueryTrack>(DBObjectType.track, {rootID}, req.user, this.engine.store.trackStore);
 		if (trackIDs.length > 0) {
 			const tracks = await this.engine.store.trackStore.byIds(trackIDs);
 			starred.song = await this.prepareTracks(tracks, req.user);
 		}
-		const artistFolderIDs = await this.engine.listService.getFilteredListFaved<SearchQueryFolder>(DBObjectType.folder, {types: [FolderType.artist], rootID}, req.user, this.engine.store.folderStore);
+		const artistFolderIDs = await this.engine.listService.getFaved<SearchQueryFolder>(DBObjectType.folder, {types: [FolderType.artist], rootID}, req.user, this.engine.store.folderStore);
 		if (artistFolderIDs.length > 0) {
 			const folders = await this.engine.store.folderStore.byIds(artistFolderIDs);
 			starred.artist = await this.prepareFolderArtists(folders, req.user);
 		}
-		const albumFolderIDs = await this.engine.listService.getFilteredListFaved<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum, rootID}, req.user, this.engine.store.folderStore);
+		const albumFolderIDs = await this.engine.listService.getFaved<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum, rootID}, req.user, this.engine.store.folderStore);
 		if (albumFolderIDs.length > 0) {
 			const folders = await this.engine.store.folderStore.byIds(albumFolderIDs);
 			starred.album = await this.prepareFolders(folders, req.user);
@@ -1347,17 +1347,17 @@ export class SubsonicApi {
 		 */
 		const rootID = (req.query.musicFolderId !== undefined ? req.query.musicFolderId.toString() : undefined);
 		const starred2: Subsonic.Starred2 = {};
-		const trackIDs = await this.engine.listService.getFilteredListFaved<SearchQueryTrack>(DBObjectType.track, {rootID}, req.user, this.engine.store.trackStore);
+		const trackIDs = await this.engine.listService.getFaved<SearchQueryTrack>(DBObjectType.track, {rootID}, req.user, this.engine.store.trackStore);
 		if (trackIDs.length > 0) {
 			const tracks = await this.engine.store.trackStore.byIds(trackIDs);
 			starred2.song = await this.prepareTracks(tracks, req.user);
 		}
-		const albumIDs = await this.engine.listService.getFilteredListFaved<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+		const albumIDs = await this.engine.listService.getFaved<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
 		if (albumIDs.length > 0) {
 			const albums = await this.engine.store.albumStore.byIds(albumIDs);
 			starred2.album = await this.prepareAlbums(albums, req.user);
 		}
-		const artistIDs = await this.engine.listService.getFilteredListFaved<SearchQueryArtist>(DBObjectType.artist, {rootID}, req.user, this.engine.store.artistStore);
+		const artistIDs = await this.engine.listService.getFaved<SearchQueryArtist>(DBObjectType.artist, {rootID}, req.user, this.engine.store.artistStore);
 		if (artistIDs.length > 0) {
 			const artists = await this.engine.store.artistStore.byIds(artistIDs);
 			starred2.artist = await this.prepareArtists(artists, req.user);
@@ -1701,7 +1701,7 @@ export class SubsonicApi {
 		}
 		const folderlist = await this.engine.store.folderStore.search({query: req.query.query, rootID});
 		if (folderlist.length > 0) {
-			const states = await this.engine.stateService.findOrCreateMulti(folderlist.map(f => f.id), req.user.id, DBObjectType.folder);
+			const states = await this.engine.stateService.findOrCreateMany(folderlist.map(f => f.id), req.user.id, DBObjectType.folder);
 			const artists: Array<Subsonic.Artist> = [];
 			const albums: Array<Subsonic.Child> = [];
 			folderlist.forEach(folder => {
@@ -1800,7 +1800,7 @@ export class SubsonicApi {
 			return (a.year || 0) - (b.year || 0);
 		});
 		const state = await this.engine.stateService.findOrCreate(artist.id, req.user.id, DBObjectType.artist);
-		const states = await this.engine.stateService.findOrCreateMulti(albumlist.map(a => a.id), req.user.id, DBObjectType.album);
+		const states = await this.engine.stateService.findOrCreateMany(albumlist.map(a => a.id), req.user.id, DBObjectType.album);
 		const artistid3 = <Subsonic.ArtistWithAlbumsID3>FORMAT.packArtist(artist, state);
 		artistid3.album = albumlist.map(a => FORMAT.packAlbum(a, states[a.id]));
 		return {artist: artistid3};

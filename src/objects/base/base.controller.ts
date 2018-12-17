@@ -91,7 +91,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 
 	async states(req: JamRequest<JamParameters.IDs>): Promise<Jam.States> {
 		const items = await this.byIDs(req.query.ids);
-		const states = await this.stateService.findOrCreateMulti(items.map(item => item.id), req.user.id, this.type);
+		const states = await this.stateService.findOrCreateMany(items.map(item => item.id), req.user.id, this.type);
 		return formatStates(states);
 	}
 

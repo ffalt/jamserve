@@ -38,12 +38,12 @@ export class StreamService {
 		switch (o.type) {
 			case DBObjectType.track:
 				const track: Track = <Track>o;
-				this.nowPlaylingService.reportTrack(track, user);
+				this.nowPlaylingService.reportTrack(track, user); // do not wait
 				return stream(path.join(track.path, track.name), track.media);
 			case DBObjectType.episode:
 				const episode: Episode = <Episode>o;
 				if (episode.path && episode.media) {
-					this.nowPlaylingService.reportEpisode(episode, user);
+					this.nowPlaylingService.reportEpisode(episode, user); // do not wait
 					return stream(episode.path, episode.media);
 				} else {
 					return Promise.reject(GenericError('Podcast episode not ready'));

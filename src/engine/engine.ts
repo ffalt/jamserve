@@ -85,7 +85,7 @@ export class Engine {
 		this.episodeService = new EpisodeService(config.getDataPath(['podcasts']), this.store.episodeStore, this.audioModule);
 		this.podcastService = new PodcastService(this.store.podcastStore, this.episodeService);
 		this.metaDataService = new MetaDataService(this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
-		this.listService = new ListService(this.store.stateStore);
+		this.listService = new ListService(this.stateService);
 		this.rootService = new RootService(this.store.rootStore);
 		this.radioService = new RadioService(this.store.radioStore);
 	}

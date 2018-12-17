@@ -34,23 +34,23 @@ export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | I
 				ids = randomItems<string>(ids, listQuery.amount || 20);
 				break;
 			case 'highest':
-				ids = await this.listService.getFilteredListHighestRated(this.type, query, user, this.objstore);
+				ids = await this.listService.getHighestRated(this.type, query, user, this.objstore);
 				ids = paginate(ids, listQuery.amount, listQuery.offset);
 				break;
 			case 'avghighest':
-				ids = await this.listService.getFilteredListAvgHighest(this.type, query, user, this.objstore);
+				ids = await this.listService.getAvgHighest(this.type, query, user, this.objstore);
 				ids = paginate(ids, listQuery.amount, listQuery.offset);
 				break;
 			case 'frequent':
-				ids = await this.listService.getFilteredListFrequentlyPlayed(this.type, query, user, this.objstore);
+				ids = await this.listService.getFrequentlyPlayed(this.type, query, user, this.objstore);
 				ids = paginate(ids, listQuery.amount, listQuery.offset);
 				break;
 			case 'faved':
-				ids = await this.listService.getFilteredListFaved(this.type, query, user, this.objstore);
+				ids = await this.listService.getFaved(this.type, query, user, this.objstore);
 				ids = paginate(ids, listQuery.amount, listQuery.offset);
 				break;
 			case 'recent':
-				ids = await this.listService.getFilteredListRecentlyPlayed(this.type, query, user, this.objstore);
+				ids = await this.listService.getRecentlyPlayed(this.type, query, user, this.objstore);
 				ids = paginate(ids, listQuery.amount, listQuery.offset);
 				break;
 			default:
