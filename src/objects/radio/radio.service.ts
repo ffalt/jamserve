@@ -4,10 +4,10 @@ import {RadioStore} from './radio.store';
 
 export class RadioService {
 
-	constructor(private radioStore: RadioStore) {
+	constructor(public radioStore: RadioStore) {
 	}
 
-	async addRadio(name: string, url: string, homepageUrl?: string): Promise<Radio> {
+	async create(name: string, url: string, homepageUrl?: string): Promise<Radio> {
 		const radio: Radio = {
 			id: '',
 			type: DBObjectType.radio,
@@ -21,7 +21,7 @@ export class RadioService {
 		return radio;
 	}
 
-	async updateRadio(radio: Radio, name?: string, url?: string, homepageUrl?: string): Promise<void> {
+	async update(radio: Radio, name?: string, url?: string, homepageUrl?: string): Promise<void> {
 		radio.homepage = homepageUrl || radio.homepage;
 		radio.url = url || radio.url;
 		radio.name = name || radio.name;
@@ -29,7 +29,7 @@ export class RadioService {
 		await this.radioStore.replace(radio);
 	}
 
-	async removeRadio(radio: Radio): Promise<void> {
+	async remove(radio: Radio): Promise<void> {
 		await this.radioStore.remove(radio.id);
 	}
 }

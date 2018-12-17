@@ -51,18 +51,18 @@ export class RadioController extends BaseController<JamParameters.Radio, JamPara
 	}
 
 	async create(req: JamRequest<JamParameters.RadioNew>): Promise<Jam.Radio> {
-		const radio = await this.radioService.addRadio(req.query.name, req.query.url, req.query.homepage);
+		const radio = await this.radioService.create(req.query.name, req.query.url, req.query.homepage);
 		return this.prepare(radio, {radioState: true}, req.user);
 	}
 
 	async update(req: JamRequest<JamParameters.RadioUpdate>): Promise<void> {
 		const radio = await this.byID(req.query.id);
-		await this.radioService.updateRadio(radio, req.query.name, req.query.url, req.query.homepage);
+		await this.radioService.update(radio, req.query.name, req.query.url, req.query.homepage);
 	}
 
 	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const radio = await this.byID(req.query.id);
-		await this.radioService.removeRadio(radio);
+		await this.radioService.remove(radio);
 	}
 
 }

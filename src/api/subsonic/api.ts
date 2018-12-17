@@ -1925,7 +1925,7 @@ export class SubsonicApi {
 
 		Returns an empty <subsonic-response> element on success.
 		 */
-		await this.engine.radioService.addRadio(req.query.name, req.query.streamUrl, req.query.homepageUrl);
+		await this.engine.radioService.create(req.query.name, req.query.streamUrl, req.query.homepageUrl);
 	}
 
 	async updateInternetRadioStation(req: ApiOptions<SubsonicParameters.InternetRadioUpdate>): Promise<void> {
@@ -1944,7 +1944,7 @@ export class SubsonicApi {
 		Returns an empty <subsonic-response> element on success.
 		 */
 		const radio = await this.byID(req.query.id, await this.engine.store.radioStore);
-		await this.engine.radioService.updateRadio(radio, req.query.name, req.query.streamUrl, req.query.homepageUrl);
+		await this.engine.radioService.update(radio, req.query.name, req.query.streamUrl, req.query.homepageUrl);
 	}
 
 	async getInternetRadioStations(req: ApiOptions<{}>): Promise<{ internetRadioStations: Subsonic.InternetRadioStations }> {
