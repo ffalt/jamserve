@@ -15,14 +15,19 @@ export class NowPlayingService {
 		return this.playing;
 	}
 
+	clear() {
+		this.playing = [];
+	}
+
 	async reportEpisode(episode: Episode, user: User): Promise<void> {
 		this.playing = this.playing.filter(np => (np.user.id !== user.id));
 		this.playing.push({
-			time: (new Date()).valueOf(),
+			time: Date.now(),
 			obj: episode,
 			user: user
 		});
 		await this.stateService.reportPlaying(episode.id, DBObjectType.episode, user.id);
+		await this.stateService.reportPlaying(episode.podcastID, DBObjectType.podcast, user.id);
 	}
 
 	async reportTrack(track: Track, user: User): Promise<void> {
