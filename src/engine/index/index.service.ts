@@ -1,7 +1,5 @@
 import path from 'path';
-import {Store} from '../store/store';
-import {Config, IndexConfig} from '../../config';
-import {IoService} from '../io/io.service';
+import {IndexConfig} from '../../config';
 import {ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry, Indexes} from './index.model';
 import {Folder} from '../../objects/folder/folder.model';
 import {ArtistStore} from '../../objects/artist/artist.store';
