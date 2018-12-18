@@ -115,7 +115,6 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): {
 			const prefix = defs[0];
 			const id = defs[1];
 			const prop = paramDef.properties[id];
-			console.log('p', prop);
 			let type = prop.type;
 			if (type === 'integer') {
 				type = 'number';
