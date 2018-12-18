@@ -31,9 +31,9 @@ import {TrackService} from '../objects/track/track.service';
 import {ArtistService} from '../objects/artist/artist.service';
 import {AlbumService} from '../objects/album/album.service';
 import {EpisodeService} from '../objects/episode/episode.service';
+import {ThirdPartyConfig} from '../config/thirdparty.config';
 
 export class Engine {
-	// public config: Config;
 	public ioService: IoService;
 	public audioModule: AudioModule;
 	public imageModule: ImageModule;
@@ -62,7 +62,7 @@ export class Engine {
 	public albumService: AlbumService;
 
 	constructor(public config: Config, public store: Store) {
-		this.audioModule = new AudioModule(config.tools);
+		this.audioModule = new AudioModule(ThirdPartyConfig);
 		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
 		this.imageModule = new ImageModule(config.getDataPath(['cache', 'images']));
 		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.imageModule);

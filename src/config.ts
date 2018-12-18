@@ -1,6 +1,5 @@
 import path from 'path';
 import {AppConfig} from './config/app.config';
-import {ThirdPartyConfig} from './config/thirdparty.config';
 import {ElasticsearchConfig} from './db/elasticsearch/config-elastic';
 
 type LogLevel = 'error' | 'warn' | 'info' | 'debug';
@@ -12,23 +11,6 @@ export interface BaseConfig {
 	paths: {
 		data: string,
 		jamberry: string
-	};
-}
-
-export interface ThirdpartyToolsConfig {
-	acoustid: {
-		apiKey: string;
-		userAgent: string;
-	};
-	lastfm: {
-		apiKey: string;
-		userAgent: string;
-	};
-	musicbrainz: {
-		userAgent: string;
-	};
-	chartlyrics: {
-		userAgent: string;
 	};
 }
 
@@ -82,7 +64,6 @@ export interface Config extends BaseConfig {
 		chat: ChatConfig;
 		index: IndexConfig;
 	};
-	tools: ThirdpartyToolsConfig;
 	firstStart?: {
 		adminUser?: {
 			name: string;
@@ -97,7 +78,6 @@ export interface Config extends BaseConfig {
 
 export function extendConfig(config: BaseConfig): Config {
 	const result = <Config>config;
-	result.tools = ThirdPartyConfig;
 	result.app = AppConfig;
 	result.getDataPath = (parts: Array<string>): string => {
 		return path.resolve(config.paths.data, ...parts);

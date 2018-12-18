@@ -1,7 +1,25 @@
 /*
 	Third Party Web Services
  */
-export const ThirdPartyConfig = {
+
+export interface ThirdpartyToolsConfig {
+	acoustid: {
+		apiKey: string;
+		userAgent: string;
+	};
+	lastfm: {
+		apiKey: string;
+		userAgent: string;
+	};
+	musicbrainz: {
+		userAgent: string;
+	};
+	chartlyrics: {
+		userAgent: string;
+	};
+}
+
+export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 	/*
 		Acoustid
 		https://acoustid.org/
