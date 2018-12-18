@@ -34,7 +34,7 @@ export class PodcastService {
 
 	async remove(podcast: Podcast): Promise<void> {
 		await this.podcastStore.remove(podcast.id);
-		await this.episodeService.removePodcastEpisodes(podcast.id);
+		await this.episodeService.removeEpisodes(podcast.id);
 	}
 
 	async refresh(podcast: Podcast): Promise<void> {
@@ -61,7 +61,7 @@ export class PodcastService {
 			}
 			podcast.lastCheck = Date.now();
 			await this.podcastStore.replace(podcast);
-			const newEpisodes = await this.episodeService.mergePodcastEpisodes(podcast.id, episodes);
+			const newEpisodes = await this.episodeService.mergeEpisodes(podcast.id, episodes);
 			log.info(podcast.url + ': New Episodes: ' + newEpisodes.length);
 			await this.podcastRefreshDebounce.resolve(podcast.id, undefined);
 		} catch (e) {

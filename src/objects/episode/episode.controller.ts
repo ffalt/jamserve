@@ -49,7 +49,7 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 
 	async prepare(episode: Episode, includes: JamParameters.IncludesEpisode, user: User): Promise<Jam.PodcastEpisode> {
 		const result = formatEpisode(episode, includes,
-			this.episodeService.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status
+			this.episodeService.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status
 		);
 		if (includes.trackState) {
 			const state = await this.stateService.findOrCreate(episode.id, user.id, DBObjectType.episode);
@@ -73,7 +73,7 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 	async retrieve(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const episode = await this.byID(req.query.id);
 		if (!episode.path) {
-			this.episodeService.downloadPodcastEpisode(episode); // do not wait
+			this.episodeService.downloadEpisode(episode); // do not wait
 		}
 	}
 
@@ -85,7 +85,7 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 	async status(req: JamRequest<JamParameters.ID>): Promise<Jam.PodcastEpisodeStatus> {
 		const episode = await this.byID(req.query.id);
 		return {
-			status: this.episodeService.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status
+			status: this.episodeService.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status
 		};
 	}
 

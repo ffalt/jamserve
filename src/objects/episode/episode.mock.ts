@@ -1,15 +1,15 @@
 import {Episode} from './episode.model';
-import {DBObjectType} from '../../types';
+import {DBObjectType, PodcastStatus} from '../../types';
 
 export function mockEpisode(): Episode {
 	return {
 		id: '',
 		type: DBObjectType.episode,
 		podcastID: 'podcastID1',
-		status: 'new',
+		status: PodcastStatus.new,
 		error: 'an error',
 		path: '/tmp/jam/podcasts/podcastID1.mp3',
-		link: 'https://example.org/podcastID1/episodeID',
+		link: 'https://example.org/podcastID1/episodeID1',
 		summary: 'a episode summary',
 		date: 1543495268,
 		name: 'a name',
@@ -70,12 +70,12 @@ export function mockEpisode2(): Episode {
 		id: '',
 		type: DBObjectType.episode,
 		podcastID: 'podcastID2',
-		status: 'completed',
+		status: PodcastStatus.completed,
 		error: 'second error',
 		path: '/tmp/jam/podcasts/podcastID1.mp3',
-		link: 'https://example.org/podcastID1/episodeID',
+		link: 'https://example.org/podcastID1/episodeID2',
 		summary: 'second episode summary',
-		date: 1543495268,
+		date: 1543495269,
 		name: 'second name',
 		guid: 'second GUID',
 		author: 'second author name',
@@ -88,8 +88,8 @@ export function mockEpisode2(): Episode {
 		}],
 		enclosures: [],
 		stat: {
-			created: 1443495268,
-			modified: 1443495268,
+			created: 1443495269,
+			modified: 1443495269,
 			size: 1001
 		},
 		tag: {

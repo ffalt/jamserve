@@ -3,7 +3,6 @@ import fse from 'fs-extra';
 import path from 'path';
 import {randomInt} from '../../utils/random';
 import tmp, {SynchrounousResult} from 'tmp';
-import {ID3v2, IID3V2} from 'jamp3';
 import {scanDir, ScanDir} from '../io/components/scan';
 import {matchDir, MatchDir} from '../io/components/match';
 import {DBObjectType} from '../../types';
@@ -12,6 +11,7 @@ import {MergeChanges, Merger} from '../io/components/merge';
 import {AudioModule} from '../audio/audio.module';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import {MetaMerge} from '../io/components/meta';
+import {writeMP3Track} from '../audio/audio.mock';
 
 interface MockTrack {
 	path: string;
@@ -77,39 +77,7 @@ function buildRandomMockRoot(dir: string, nr: number): MockRoot {
 }
 
 async function writeMockTrack(track: MockTrack): Promise<void> {
-	const mp3stub = Buffer.from([255, 251, 176, 196, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 110, 102, 111, 0, 0, 0, 15, 0, 0, 0, 2, 0, 0, 7,
-		87, 0, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
-		128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 57]);
-	await fse.writeFile(track.path, mp3stub);
-	const t: IID3V2.Tag = {
-		id: 'ID3v2',
-		start: 0,
-		end: 0,
-		frames: [
-			{
-				'id': 'TALB',
-				'value': {
-					'text': track.album
-				}
-			},
-			{
-				'id': 'TPE1',
-				'value': {
-					'text': track.artist
-				}
-			},
-			{
-				'id': 'TRCK',
-				'value': {
-					'text': track.number
-				}
-			}
-		]
-	};
-	const id3v2 = new ID3v2();
-	await id3v2.write(track.path, t, 4, 0);
+	await writeMP3Track(track.path, track.album, track.artist, track.number);
 }
 
 async function writeMockFolder(f: MockFolder): Promise<void> {

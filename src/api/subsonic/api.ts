@@ -110,7 +110,7 @@ export class SubsonicApi {
 	private async prepareEpisodes(episodes: Array<Episode>, user: User): Promise<Array<Subsonic.PodcastEpisode>> {
 		const states = await this.engine.stateService.findOrCreateMany(episodes.map(episode => episode.id), user.id, DBObjectType.episode);
 		return episodes.map(episode => {
-			return FORMAT.packPodcastEpisode(episode, states[episode.id], (this.engine.episodeService.isDownloadingPodcastEpisode(episode.id) ? PodcastStatus.downloading : episode.status));
+			return FORMAT.packPodcastEpisode(episode, states[episode.id], (this.engine.episodeService.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status));
 		});
 	}
 
@@ -1499,7 +1499,7 @@ export class SubsonicApi {
 
 		const episode = await this.byID<Episode>(req.query.id, this.engine.store.episodeStore);
 		if (!episode.path) {
-			this.engine.episodeService.downloadPodcastEpisode(episode); // do not wait
+			this.engine.episodeService.downloadEpisode(episode); // do not wait
 		}
 	}
 
@@ -1517,7 +1517,7 @@ export class SubsonicApi {
 		 Returns an empty <subsonic-response> element on success.
 		 */
 		const episode = await this.byID<Episode>(req.query.id, this.engine.store.episodeStore);
-		await this.engine.episodeService.deletePodcastEpisodeFile(episode);
+		await this.engine.episodeService.deleteEpisode(episode);
 	}
 
 	async getBookmarks(req: ApiOptions<{}>): Promise<{ bookmarks: Subsonic.Bookmarks }> {

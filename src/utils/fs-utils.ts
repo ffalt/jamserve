@@ -8,6 +8,13 @@ export async function fileDeleteIfExists(pathName: string): Promise<void> {
 	}
 }
 
+export async function pathDeleteIfExists(pathName: string): Promise<void> {
+	const exists = await fse.pathExists(pathName);
+	if (exists) {
+		await fse.remove(pathName);
+	}
+}
+
 export function fileSuffix(filename: string): string {
 	return path.extname(filename).slice(1).toLowerCase();
 }
