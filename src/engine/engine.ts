@@ -78,7 +78,7 @@ export class Engine {
 		this.chatService = new ChatService(config.app.chat);
 		this.stateService = new StateService(this.store.stateStore);
 		this.nowPlayingService = new NowPlayingService(this.stateService);
-		this.streamService = new StreamService(this.nowPlayingService);
+		this.streamService = new StreamService();
 		this.playlistService = new PlaylistService(this.store.playlistStore, this.store.trackStore);
 		this.playQueueService = new PlayQueueService(this.store.playQueueStore);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);

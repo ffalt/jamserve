@@ -57,7 +57,7 @@ export class JamController {
 	radioController: RadioController;
 
 	constructor(private engine: Engine) {
-		this.streamController = new StreamController(this.engine.streamService, this.engine.store);
+		this.streamController = new StreamController(this.engine.streamService, this.engine.nowPlayingService, this.engine.store);
 		this.chatController = new ChatController(this.engine.chatService);
 		this.genreController = new GenreController(engine.genreService);
 		this.nowPlayingController = new NowPlayingController(engine.nowPlayingService);
@@ -69,9 +69,9 @@ export class JamController {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.rootController = new RootController(this.engine.store.rootStore, this.engine.rootService, this.engine.ioService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.trackController = new TrackController(this.engine.store.trackStore, this.engine.audioModule, this.engine.bookmarkService, this.engine.metaDataService, this.engine.streamService, this.engine.ioService,
+		this.trackController = new TrackController(this.engine.store.trackStore, this.engine.audioModule, this.engine.bookmarkService, this.engine.metaDataService, this.streamController, this.engine.ioService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
-		this.episodeController = new EpisodeController(this.engine.store.episodeStore, this.engine.episodeService, this.engine.streamService,
+		this.episodeController = new EpisodeController(this.engine.store.episodeStore, this.engine.episodeService, this.streamController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.podcastController = new PodcastController(this.engine.store.podcastStore, this.engine.podcastService, this.episodeController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);

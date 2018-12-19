@@ -713,11 +713,17 @@ export class SubsonicApi {
 		if (!o) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		} else {
-			const result = await this.engine.streamService.getObjStream(o, req.query.format, req.query.maxBitRate, req.user);
-			if (!result) {
-				return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+			switch (o.type) {
+				case DBObjectType.track:
+					const res = await this.engine.streamService.streamTrack(<Track>o, req.query.format, req.query.maxBitRate, req.user);
+					this.engine.nowPlayingService.reportTrack(<Track>o, req.user);
+					return res;
+				case DBObjectType.episode:
+					const result = await this.engine.streamService.streamEpisode(<Episode>o, req.query.format, req.query.maxBitRate, req.user);
+					this.engine.nowPlayingService.reportEpisode(<Episode>o, req.user);
+					return result;
 			}
-			return result;
+			return Promise.reject(Error('Invalid Object Type for Streaming'));
 		}
 	}
 

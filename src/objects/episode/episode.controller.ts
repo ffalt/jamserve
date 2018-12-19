@@ -5,7 +5,6 @@ import {IApiBinaryResult} from '../../typings';
 import {JamRequest} from '../../api/jam/api';
 import {BaseController} from '../base/base.controller';
 import {formatEpisode} from './episode.format';
-import {StreamService} from '../../engine/stream/stream.service';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
@@ -14,13 +13,14 @@ import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 import {Episode} from './episode.model';
 import {User} from '../user/user.model';
 import {EpisodeService} from './episode.service';
+import {StreamController} from '../../engine/stream/stream.controller';
 
 export class EpisodeController extends BaseController<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, SearchQueryEpisode, JamParameters.EpisodeSearch, Episode, Jam.PodcastEpisode> {
 
 	constructor(
 		private episodeStore: EpisodeStore,
 		private episodeService: EpisodeService,
-		private streamService: StreamService,
+		private streamController: StreamController,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
@@ -79,7 +79,7 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 
 	async stream(req: JamRequest<JamParameters.Stream>): Promise<IApiBinaryResult> {
 		const episode = await this.byID(req.query.id);
-		return await this.streamService.getObjStream(episode, req.query.format, req.query.maxBitRate, req.user);
+		return await this.streamController.streamEpisode(episode, req.query.format, req.query.maxBitRate, req.user);
 	}
 
 	async status(req: JamRequest<JamParameters.ID>): Promise<Jam.PodcastEpisodeStatus> {

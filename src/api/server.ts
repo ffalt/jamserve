@@ -39,7 +39,7 @@ export class Server {
 
 		// jamberry
 		app.get('/assets/config/config.js', (req, res) => {
-			res.sendFile(path.resolve('../config/jamberry.config.js'));
+			res.sendFile(path.resolve('./config/jamberry.config.js'));
 		});
 		app.get('/*', express.static(path.resolve(engine.config.paths.jamberry)));
 		app.get('/*', (req: express.Request, res: express.Response) => {

@@ -5,6 +5,7 @@ export const SupportedReadImageFormat = ['bmp', 'png', 'jpeg', 'jpg', 'gif', 'ti
 export const SupportedWriteImageFormat = ['bmp', 'png', 'jpeg', 'jpg', 'tiff'];
 
 export const SupportedAudioFormat = ['mp3', 'flac', 'm4a', 'ogg', 'oga', 'webma', 'wav'];
+export const SupportedTranscodeAudioFormat = ['mp3', 'flv', 'ogg', 'oga', 'flac', 'mp4'];
 
 export function getFileType(filename: string): FileTyp {
 	const suffix = fileSuffix(filename);

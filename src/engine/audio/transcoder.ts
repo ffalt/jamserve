@@ -4,7 +4,7 @@ import tmp from 'tmp';
 import {IStreamData} from '../../typings';
 import Logger from '../../utils/logger';
 import * as fs from 'fs';
-import {TrackMedia} from '../../objects/track/track.model';
+import {SupportedTranscodeAudioFormat} from '../../utils/filetype';
 
 const log = Logger('audio.transcoder');
 
@@ -28,8 +28,8 @@ export class Transcoder implements IStreamData {
 		return (format !== mediaFormat) || (maxBitRate > 0);
 	}
 
-	static validTranscoding(media: TrackMedia, format: string) {
-		return ['mp3', 'flv', 'ogg', 'oga', 'flac', 'mp4'].indexOf(format) >= 0;
+	static validTranscoding(format: string) {
+		return SupportedTranscodeAudioFormat.indexOf(format) >= 0;
 	}
 
 	static async getAvailableFormats(): Promise<Array<{ format: string, name: string }>> {

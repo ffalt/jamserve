@@ -10,20 +10,17 @@ import {BaseListController} from '../base/base.list.controller';
 import {formatTrack} from './track.format';
 import {SearchQueryTrack, TrackStore} from './track.store';
 import {AudioModule} from '../../engine/audio/audio.module';
-import {RootService} from '../root/root.service';
 import {BookmarkService} from '../bookmark/bookmark.service';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
-import {StreamService} from '../../engine/stream/stream.service';
 import {formatState} from '../state/state.format';
-import {formatBookmark} from '../bookmark/bookmark.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
 import {ListService} from '../../engine/list/list.service';
 import {Track} from './track.model';
-import {Bookmark} from '../bookmark/bookmark.model';
 import {User} from '../user/user.model';
 import {IoService} from '../../engine/io/io.service';
+import {StreamController} from '../../engine/stream/stream.controller';
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
@@ -32,7 +29,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		private audioModule: AudioModule,
 		private bookmarkService: BookmarkService,
 		private metaService: MetaDataService,
-		private streamService: StreamService,
+		private streamController: StreamController,
 		private ioService: IoService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
@@ -124,7 +121,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	async stream(req: JamRequest<JamParameters.Stream>): Promise<IApiBinaryResult> {
 		const track = await this.byID(req.query.id);
-		return await this.streamService.getObjStream(track, req.query.format, req.query.maxBitRate, req.user);
+		return await this.streamController.streamTrack(track, req.query.format, req.query.maxBitRate, req.user);
 	}
 
 	async similar(req: JamRequest<JamParameters.SimilarTracks>): Promise<Array<Jam.Track>> {
