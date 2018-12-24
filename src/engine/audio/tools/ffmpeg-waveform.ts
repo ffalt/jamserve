@@ -170,7 +170,7 @@ class Waveform {
 
 	asBinary(): Buffer {
 		// https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md
-		const result = new Buffer(20 + (this._samples.length * 2));
+		const result = Buffer.alloc(20 + (this._samples.length * 2));
 		result.writeInt32LE(1, 0); // version
 		result.writeUInt32LE(0, 4); // flags 0 (lsb) 	0: 16-bit resolution, 1: 8-bit resolution 1-31 	Unused
 		result.writeInt32LE(this.opts.sampleRate, 8); // Sample rate
@@ -178,7 +178,7 @@ class Waveform {
 		result.writeInt32LE(this._samples.length / 2, 16); // Length of waveform data (number of minimum and maximum value pairs)
 		let pos = 20;
 		this._samples.forEach(num => {
-			result.writeUInt16LE(num, pos);
+			result.writeInt16LE(num, pos);
 			pos += 2;
 		});
 		return result;
@@ -200,42 +200,25 @@ class Waveform {
 
 export class WaveformGenerator {
 
-	async generateWaveformBinary(filename: string): Promise<Buffer> {
+	async binary(filename: string): Promise<Buffer> {
 		const wf: Waveform = await this.generateWaveform(filename);
 		return wf.asBinary();
 	}
 
-	async generateSVG(filename: string): Promise<string> {
-		const data = await this.generateWaveformData(filename);
-		const svg = this.svg(data);
+	async json(filename: string): Promise<IWaveformData> {
+		const wf: Waveform = await this.generateWaveform(filename);
+		return wf.asJSON();
+	}
+
+	async svg(filename: string): Promise<string> {
+		const data = await this.json(filename);
+		const svg = this.buildSvg(data);
 		const svgo = new SVGO();
 		const optimized = await svgo.optimize(svg);
 		return optimized.data;
 	}
 
-	/**
-	 async generateWithFFMPEGData(filename: string): Promise<string> {
-		const res = await spawnTool('ffmpeg', 'FFMPEG_PATH', ['-v', 'error', '-i', filename,
-			'-ac', '1', '-filter:a', 'aresample=8000', '-map', '0:a', '-c:a', 'pcm_s16le', '-f', 'data', '-']);
-		const buffer = Buffer.from(res);
-		console.log('buffer.length', buffer.length);
-		let pos = 0;
-		const l = [];
-		while (pos < buffer.length) {
-			l.push(buffer.readIntBE(pos, 2));
-			pos += 2;
-		}
-		console.log('samples', l.length);
-
-		return '';
-	}*/
-
-	async generateWaveformData(filename: string): Promise<IWaveformData> {
-		const wf: Waveform = await this.generateWaveform(filename);
-		return wf.asJSON();
-	}
-
-	async generateWaveform(filename: string): Promise<Waveform> {
+	private async generateWaveform(filename: string): Promise<Waveform> {
 		const stream = fs.createReadStream(filename);
 		return new Promise<Waveform>((resolve, reject) => {
 			const wf: Waveform = new Waveform(stream, {
@@ -252,7 +235,7 @@ export class WaveformGenerator {
 		});
 	}
 
-	private svg(data: IWaveformData): string {
+	private buildSvg(data: IWaveformData): string {
 		const width = 4000;
 		const height = 256;
 		if (data.data.length > 0) {
@@ -284,19 +267,4 @@ export class WaveformGenerator {
 		return result;
 	}
 
-}
-
-export async function getWaveFormSVG(filepath: string): Promise<string> {
-	const wf = new WaveformGenerator();
-	return await wf.generateSVG(filepath);
-}
-
-export async function getWaveFormJSON(filepath: string): Promise<IWaveformData> {
-	const wf = new WaveformGenerator();
-	return await wf.generateWaveformData(filepath);
-}
-
-export async function getWaveFormBinary(filepath: string): Promise<Buffer> {
-	const wf = new WaveformGenerator();
-	return await wf.generateWaveformBinary(filepath);
 }
