@@ -2,7 +2,7 @@ import path from 'path';
 import Logger from '../../utils/logger';
 import {IApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
-import {getWaveFormBinary, getWaveFormJSON, getWaveFormSVG} from '../audio/tools/ffmpeg-waveform';
+import {WaveformGenerator} from '../audio/tools/ffmpeg-waveform';
 import fse from 'fs-extra';
 import {JamParameters} from '../../model/jam-rest-params-0.1.0';
 import {Track} from '../../objects/track/track.model';
@@ -21,21 +21,17 @@ export class WaveformService {
 		return 'waveform-' + id + '.' + format;
 	}
 
-	private async getWaveform(filename: string, format: WaveformFormatType): Promise<IApiBinaryResult> {
-		const exists = await fse.pathExists(filename);
-		if (!exists) {
-			return Promise.reject(Error('File not found'));
-		}
+	private async generateWaveform(filename: string, format: WaveformFormatType): Promise<IApiBinaryResult> {
+		const wf = new WaveformGenerator();
 		switch (format) {
 			case 'svg':
-				return {buffer: {buffer: Buffer.from(await getWaveFormSVG(filename)), contentType: 'image/svg+xml'}};
+				return {buffer: {buffer: Buffer.from(await wf.svg(filename)), contentType: 'image/svg+xml'}};
 			case 'json':
-				return {json: await getWaveFormJSON(filename)};
+				return {json: await wf.json(filename)};
 			case 'dat':
-				return {buffer: {buffer: await getWaveFormBinary(filename), contentType: 'application/binary'}};
-			default:
-				return Promise.reject(Error('Invalid Format for Waveform generation'));
+				return {buffer: {buffer: await wf.binary(filename), contentType: 'application/binary'}};
 		}
+		return Promise.reject(Error('Invalid Format for Waveform generation'));
 	}
 
 	async clearWaveformCacheByIDs(ids: Array<string>): Promise<void> {
@@ -67,7 +63,7 @@ export class WaveformService {
 			if (exists) {
 				result = {file: {filename: cachefile, name: cacheID}};
 			} else {
-				result = await this.getWaveform(filename, format);
+				result = await this.generateWaveform(filename, format);
 				if (result.buffer) {
 					log.debug('Writing waveform cache file', cachefile);
 					await fse.writeFile(cachefile, result.buffer.buffer);
