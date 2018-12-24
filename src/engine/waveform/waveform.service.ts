@@ -2,9 +2,12 @@ import path from 'path';
 import Logger from '../../utils/logger';
 import {IApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
-import {getWaveFormBinary, getWaveFormJSON, getWaveFormSVG} from '../audio/tools/ffmpeg-waveform-svg';
-import {TrackMedia} from '../../objects/track/track.model';
+import {getWaveFormBinary, getWaveFormJSON, getWaveFormSVG} from '../audio/tools/ffmpeg-waveform';
 import fse from 'fs-extra';
+import {JamParameters} from '../../model/jam-rest-params-0.1.0';
+import {Track} from '../../objects/track/track.model';
+import {Episode} from '../../objects/episode/episode.model';
+import WaveformFormatType = JamParameters.WaveformFormatType;
 
 const log = Logger('WaveformService');
 
@@ -18,7 +21,7 @@ export class WaveformService {
 		return 'waveform-' + id + '.' + format;
 	}
 
-	private async getWaveform(filename: string, format: string): Promise<IApiBinaryResult> {
+	private async getWaveform(filename: string, format: WaveformFormatType): Promise<IApiBinaryResult> {
 		const exists = await fse.pathExists(filename);
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
@@ -35,13 +38,6 @@ export class WaveformService {
 		}
 	}
 
-	async clearWaveformCacheByID(id: string): Promise<void> {
-		if (id.length === 0) {
-			return;
-		}
-		await this.clearWaveformCacheByIDs([id]);
-	}
-
 	async clearWaveformCacheByIDs(ids: Array<string>): Promise<void> {
 		const searches = ids.filter(id => id.length > 0).map(id => this.getCacheID(id, ''));
 		if (searches.length > 0) {
@@ -55,9 +51,9 @@ export class WaveformService {
 		}
 	}
 
-	async get(id: string, filename: string, format: string, media: TrackMedia): Promise<IApiBinaryResult> {
-		if (!filename) {
-			return Promise.reject(Error('Invalid Media Path for Waveform generation'));
+	private async get(id: string, filename: string, format: WaveformFormatType): Promise<IApiBinaryResult> {
+		if (!filename || !(await fse.pathExists(filename))) {
+			return Promise.reject(Error('Invalid filename for waveform generation'));
 		}
 		const cacheID = this.getCacheID(id, format);
 		if (this.waveformCacheDebounce.isPending(cacheID)) {
@@ -88,4 +84,15 @@ export class WaveformService {
 		}
 	}
 
+	async getTrackWaveform(track: Track, format: WaveformFormatType): Promise<IApiBinaryResult> {
+		return await this.get(track.id, path.join(track.path, track.name), format);
+	}
+
+	async getEpisodeWaveform(episode: Episode, format: WaveformFormatType): Promise<IApiBinaryResult> {
+		if (episode.path && episode.media) {
+			return await this.get(episode.id, episode.path, format);
+		} else {
+			return Promise.reject(Error('Podcast episode not ready'));
+		}
+	}
 }

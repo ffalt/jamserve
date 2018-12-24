@@ -1,7 +1,6 @@
 import SVGO from 'svgo';
 import fs from 'fs';
-import {Readable, Stream, PassThrough, Transform, TransformCallback} from 'stream';
-import * as util from 'util';
+import {PassThrough, Readable, Stream, Transform, TransformCallback} from 'stream';
 import Logger from '../../../utils/logger';
 import Ffmpeg from 'fluent-ffmpeg';
 
@@ -52,13 +51,21 @@ class WaveformStream extends Transform {
 			this._started = true;
 			return this.emit('_started');
 		});
+		let errored = false;
 		this._ffmpeg.on('error', (err: any) => {
 			if (err.code === 'ENOENT') {
+				errored = true;
 				log.debug('ffmpeg failed to start.');
-				return this.emit('error', 'ffmpeg failed to start');
+				return this.emit('done', 'ffmpeg failed to start');
 			} else {
+				errored = true;
 				log.debug('ffmpeg decoding error: ' + err);
-				return this.emit('error', 'ffmpeg decoding error: ' + err);
+				return this.emit('done', 'ffmpeg decoding error: ' + err);
+			}
+		});
+		this._ffmpeg.on('end', () => {
+			if (!errored) {
+				return this.emit('done');
 			}
 		});
 		this._ffmpeg.writeToStream(this._out);
@@ -136,15 +143,16 @@ interface WaveformOptions {
 
 class Waveform {
 
-	_errored = false;
 	_samples: Array<number> = [];
 
-	constructor(private stream: Stream, private opts: WaveformOptions, cb: (err?: Error) => void) {
+	constructor(private stream: Stream, private opts: WaveformOptions) {
 		this.opts = Object.assign({
 			samplesPerPixel: 256,
 			sampleRate: 44100
 		}, opts || {});
-		log.debug('New waveform with opts: ' + (util.inspect(this.opts)));
+	}
+
+	run(cb: (err?: Error) => void) {
 		const ws = new WaveformStream(this.opts.samplesPerPixel, this.opts.sampleRate);
 		ws.on('readable', () => {
 			let px = ws.read();
@@ -154,18 +162,10 @@ class Waveform {
 				px = ws.read();
 			}
 		});
-		ws.on('error', (err) => {
+		ws.on('done', (err) => {
 			cb(err);
-			this._errored = true;
-			return;
 		});
-		ws.once('end', () => {
-			log.debug('Waveform got stream end');
-			if (!this._errored) {
-				return cb();
-			}
-		});
-		stream.pipe(ws);
+		this.stream.pipe(ws);
 	}
 
 	asBinary(): Buffer {
@@ -241,9 +241,9 @@ export class WaveformGenerator {
 			const wf: Waveform = new Waveform(stream, {
 				samplesPerPixel: 256,
 				sampleRate: 44100
-			}, (err) => {
+			});
+			wf.run((err) => {
 				if (err) {
-					console.log(err);
 					reject(err);
 				} else {
 					resolve(wf);
@@ -255,15 +255,17 @@ export class WaveformGenerator {
 	private svg(data: IWaveformData): string {
 		const width = 4000;
 		const height = 256;
-		let wfd = WaveformData.create(data);
-		const samplesPerPixel = Math.floor(wfd.duration * wfd.adapter.sample_rate / (width * 2));
-		if (samplesPerPixel < 256) {
-			wfd = wfd.resample({width: width * 2, scale: 256});
-		} else {
-			wfd = wfd.resample({width: width * 2});
+		if (data.data.length > 0) {
+			let wfd = WaveformData.create(data);
+			const samplesPerPixel = Math.floor(wfd.duration * wfd.adapter.sample_rate / (width * 2));
+			if (samplesPerPixel < 256) {
+				wfd = wfd.resample({width: width * 2, scale: 256});
+			} else {
+				wfd = wfd.resample({width: width * 2});
+			}
+			wfd.adapter.data.data = wfd.adapter.data.data.slice(0, width * 2);
+			data = wfd.adapter.data;
 		}
-		wfd.adapter.data.data = wfd.adapter.data.data.slice(0, width * 2);
-		data = wfd.adapter.data;
 		const totalPeaks = data.data.length;
 		const d: Array<string> = [];
 		for (let peakNumber = 0; peakNumber < totalPeaks; peakNumber++) {
@@ -286,8 +288,7 @@ export class WaveformGenerator {
 
 export async function getWaveFormSVG(filepath: string): Promise<string> {
 	const wf = new WaveformGenerator();
-	const result = await wf.generateSVG(filepath);
-	return result;
+	return await wf.generateSVG(filepath);
 }
 
 export async function getWaveFormJSON(filepath: string): Promise<IWaveformData> {
