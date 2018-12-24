@@ -12,7 +12,7 @@ describe('RootService', () => {
 		},
 		() => {
 			it('should find roots', async () => {
-				const roots = await rootService.rootStore.all();
+				const roots = await rootService.rootStore.allIds();
 				expect(roots.length > 0).to.be.equal(true, 'Wrong Test Setup');
 			});
 			it('should create a root', async () => {

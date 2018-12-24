@@ -53,6 +53,10 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 		return await this.group.byIds(ids);
 	}
 
+	async random(): Promise<T | undefined> {
+		return await this.group.queryOne({all: true});
+	}
+
 	async all(): Promise<Array<T>> {
 		return await this.group.query({all: true});
 	}

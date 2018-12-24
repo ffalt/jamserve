@@ -2,6 +2,7 @@ import {IApiBinaryResult} from '../../typings';
 import {PreTranscoder, Transcoder} from '../audio/transcoder';
 import {fileSuffix} from '../../utils/fs-utils';
 import path from 'path';
+import fse from 'fs-extra';
 import {GenericError} from '../../api/jam/error';
 import {User} from '../../objects/user/user.model';
 import {Track} from '../../objects/track/track.model';
@@ -14,6 +15,10 @@ export class StreamService {
 	}
 
 	async streamFile(filename: string, id: string, sourceFormat?: string, destFormat?: string, maxBitRate?: number): Promise<IApiBinaryResult> {
+		const exists = await fse.pathExists(filename);
+		if (!exists) {
+			return Promise.reject(Error('File not found'));
+		}
 		destFormat = destFormat || 'mp3';
 		if (destFormat[0] === '.') {
 			destFormat = destFormat.slice(1);

@@ -15,8 +15,11 @@ describe('RadioService', () => {
 				should().exist(radio);
 			});
 			it('should update a radio', async () => {
-				const radios = await radioService.radioStore.all();
-				const radio = radios[0];
+				const radio = await radioService.radioStore.random();
+				should().exist(radio, 'Wrong Test Setup');
+				if (!radio) {
+					return;
+				}
 				await radioService.update(radio, 'a new name');
 				const r = await radioService.radioStore.byId(radio.id);
 				should().exist(r);
@@ -28,8 +31,11 @@ describe('RadioService', () => {
 				await radioService.update(radio, undefined, undefined, undefined);
 			});
 			it('should remove a radio', async () => {
-				const radios = await radioService.radioStore.all();
-				const radio = radios[0];
+				const radio = await radioService.radioStore.random();
+				should().exist(radio, 'Wrong Test Setup');
+				if (!radio) {
+					return;
+				}
 				await radioService.remove(radio);
 				const r = await radioService.radioStore.byId(radio.id);
 				should().not.exist(r);

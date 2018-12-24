@@ -23,14 +23,20 @@ describe('FolderService', () => {
 
 			describe('setFolderImage', () => {
 				it('should do handle invalid parameters', async () => {
-					const folders = await folderService.folderStore.all();
-					const folder = folders[0];
+					const folder = await folderService.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
 					await folderService.setFolderImage(folder, 'invalid-not-existent').should.eventually.be.rejectedWith(Error);
 					await folderService.setFolderImage(folder, '').should.eventually.be.rejectedWith(Error);
 				});
 				it('should set an image', async () => {
-					const folders = await folderService.folderStore.all();
-					const folder = folders[0];
+					const folder = await folderService.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
 					folder.tag.image = undefined;
 					const file = tmp.fileSync();
 					await folderService.setFolderImage(folder, file.name);
@@ -50,8 +56,11 @@ describe('FolderService', () => {
 			describe('downloadFolderImage', () => {
 
 				it('should do handle invalid parameters', async () => {
-					const folders = await folderService.folderStore.all();
-					const folder = folders[0];
+					const folder = await folderService.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
 					await folderService.downloadFolderImage(folder, 'invalid').should.eventually.be.rejectedWith(Error);
 					await folderService.downloadFolderImage(folder, 'http://invaliddomain.invaliddomain.invaliddomain/invalid').should.eventually.be.rejectedWith(Error);
 					const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
@@ -60,8 +69,11 @@ describe('FolderService', () => {
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
 				});
 				it('should download an image', async () => {
-					const folders = await folderService.folderStore.all();
-					const folder = folders[0];
+					const folder = await folderService.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
 					const image = await mockImage('png');
 					const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 						.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
@@ -80,16 +92,22 @@ describe('FolderService', () => {
 
 			describe('getFolderImage', () => {
 				it('should return an empty response for not available images', async () => {
-					const folders = await folderService.folderStore.all();
-					const folder = folders[0];
+					const folder = await folderService.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
 					folder.tag.image = undefined;
 					folder.info = undefined;
 					const res = await folderService.getFolderImage(folder);
 					should().not.exist(res);
 				});
 				it('should deliver local images', async () => {
-					const folders = await folderService.folderStore.all();
-					const folder = folders[0];
+					const folder = await folderService.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
 					folder.info = undefined;
 					const image = await mockImage('png');
 					const filename = path.resolve(folder.path, 'dummy.png');
@@ -127,8 +145,11 @@ describe('FolderService', () => {
 				});
 
 				it('should deliver remote images', async () => {
-					const folders = await folderService.folderStore.all();
-					const folder = folders[0];
+					const folder = await folderService.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
 					folder.tag.image = undefined;
 					folder.tag.type = FolderType.album;
 					folder.info = {
@@ -182,8 +203,11 @@ describe('FolderService', () => {
 			describe('renameFolder', function() {
 				this.timeout(40000);
 				it('should do handle invalid parameters', async () => {
-					const folders = await folderService.folderStore.all();
-					const folder = folders[0];
+					const folder = await folderService.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
 					await folderService.renameFolder(folder, '').should.eventually.be.rejectedWith(Error);
 					await folderService.renameFolder(folder, '.').should.eventually.be.rejectedWith(Error);
 					await folderService.renameFolder(folder, '//..*\.').should.eventually.be.rejectedWith(Error);

@@ -29,8 +29,11 @@ describe('ArtistService', () => {
 				}
 			});
 			it('should return an album image', async () => {
-				const artists = await artistService.artistStore.all();
-				const artist = artists[0];
+				const artist = await artistService.artistStore.random();
+				should().exist(artist, 'Wrong Test Setup');
+				if (!artist) {
+					return;
+				}
 				const folder = await artistService.getArtistFolder(artist);
 				should().exist(folder);
 				if (folder) {

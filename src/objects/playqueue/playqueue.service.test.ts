@@ -10,7 +10,7 @@ describe('PlayQueueService', () => {
 			playQueueService = new PlayQueueService(storeTest.store.playQueueStore);
 		},
 		() => {
-			it('create an empty playqueue', async () => {
+			it('should create an empty playqueue', async () => {
 				const playQueue = await playQueueService.save('userID1', ['trackID1'], 'trackID1', 10, 'testClient');
 				should().exist(playQueue);
 			});

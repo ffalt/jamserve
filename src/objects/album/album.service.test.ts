@@ -32,9 +32,11 @@ describe('AlbumService', () => {
 				}
 			});
 			it('should return an album image', async () => {
-				const albums = await albumService.albumStore.all();
-				const album = albums[0];
+				const album = await albumService.albumStore.random();
 				should().exist(album, 'Wrong Test Setup');
+				if (!album) {
+					return;
+				}
 				const folder = await albumService.getAlbumFolder(album);
 				should().exist(folder);
 				if (folder) {

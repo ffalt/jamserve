@@ -17,7 +17,7 @@ describe('TrackService', () => {
 			trackService = new TrackService(storeTest.store.trackStore, folderService);
 		},
 		() => {
-			it('should return the album folder', async () => {
+			it('should return the track folder', async () => {
 				const tracks = await trackService.trackStore.all();
 				expect(tracks.length > 0).to.be.equal(true, 'Wrong Test Setup');
 				for (const track of tracks) {
@@ -29,9 +29,11 @@ describe('TrackService', () => {
 				}
 			});
 			it('should return a track image', async () => {
-				const tracks = await trackService.trackStore.all();
-				const track = tracks[0];
+				const track = await trackService.trackStore.random();
 				should().exist(track, 'Wrong Test Setup');
+				if (!track) {
+					return;
+				}
 				const folder = await trackService.getTrackFolder(track);
 				should().exist(folder);
 				if (folder) {

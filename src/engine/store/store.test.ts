@@ -1,7 +1,6 @@
 import {Store} from './store';
 import fse from 'fs-extra';
 import path from 'path';
-import {randomInt} from '../../utils/random';
 import tmp, {SynchrounousResult} from 'tmp';
 import {scanDir, ScanDir} from '../io/components/scan';
 import {matchDir, MatchDir} from '../io/components/match';
@@ -51,18 +50,18 @@ function buildRandomFolder(dir: string, type: string, nr: number): MockFolder {
 	};
 }
 
-function buildRandomMockRoot(dir: string, nr: number): MockRoot {
+function buildMockRoot(dir: string, nr: number): MockRoot {
 	const rootDir = path.resolve(dir, 'root ' + nr);
 	const folders: Array<MockFolder> = [];
-	const amountArtists = randomInt(1, 25);
+	const amountArtists = 5; // randomInt(1, 25);
 	for (let i = 1; i < amountArtists; i++) {
 		const artist = buildRandomFolder(rootDir, 'artist', i);
 		folders.push(artist);
-		const amountAlbums = randomInt(1, 25);
+		const amountAlbums = i; // randomInt(1, 25);
 		for (let j = 1; j < amountAlbums; j++) {
 			const album = buildRandomFolder(artist.path, 'album', i);
 			artist.folders.push(album);
-			const amountTracks = randomInt(1, 25);
+			const amountTracks = i; // randomInt(1, 25);
 			for (let k = 1; k < amountTracks; k++) {
 				const track = buildRandomTrack(album.path, artist.name + album.name, k, artist.name, album.name);
 				album.tracks.push(track);
@@ -108,7 +107,7 @@ export class StoreTest {
 
 	async setup(): Promise<void> {
 		this.dir = tmp.dirSync();
-		this.mockRoot = buildRandomMockRoot(this.dir.name, 1);
+		this.mockRoot = buildMockRoot(this.dir.name, 1);
 		const audioModule = new AudioModule(ThirdPartyConfig);
 		await writeMockRoot(this.mockRoot);
 		const root: Root = {
