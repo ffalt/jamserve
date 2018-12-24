@@ -5,7 +5,7 @@ import {DBObject} from '../../objects/base/base.model';
 import {Database, DatabaseIndex, DatabaseQuery} from '../db.model';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 
-let globaltempid = (new Date()).valueOf();
+let globaltempid = Date.now();
 
 function regExpEscape(literal_string: string): string {
 	return literal_string.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
