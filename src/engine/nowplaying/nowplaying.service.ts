@@ -33,7 +33,7 @@ export class NowPlayingService {
 	async reportTrack(track: Track, user: User): Promise<void> {
 		this.playing = this.playing.filter(np => (np.user.id !== user.id));
 		this.playing.push({
-			time: (new Date()).valueOf(),
+			time: Date.now(),
 			obj: track,
 			user: user
 		});

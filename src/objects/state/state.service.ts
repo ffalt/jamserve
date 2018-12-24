@@ -125,7 +125,7 @@ export class StateService {
 	async reportPlaying(id: string, type: DBObjectType, userID: string): Promise<State> {
 		const state = await this.findOrCreate(id, userID, type);
 		state.played++;
-		state.lastplayed = (new Date()).valueOf();
+		state.lastplayed = Date.now();
 		await this.stateStore.upsert([state]);
 		return state;
 	}
