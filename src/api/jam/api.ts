@@ -34,27 +34,27 @@ export interface JamRequest<T> {
 }
 
 export class JamController {
-	podcastController: PodcastController;
-	episodeController: EpisodeController;
 	albumController: AlbumController;
-	trackController: TrackController;
 	artistController: ArtistController;
-	folderController: FolderController;
-	rootController: RootController;
-	userController: UserController;
-	chatController: ChatController;
-	playlistController: PlaylistController;
-	metadataController: MetadataController;
-	streamController: StreamController;
-	genreController: GenreController;
-	nowPlayingController: NowPlayingController;
-	imageController: ImageController;
-	waveformController: WaveformController;
-	downloadController: DownloadController;
 	autocompleteController: AutocompleteController;
 	bookmarkController: BookmarkController;
+	chatController: ChatController;
+	downloadController: DownloadController;
+	episodeController: EpisodeController;
+	folderController: FolderController;
+	genreController: GenreController;
+	imageController: ImageController;
+	metadataController: MetadataController;
+	nowPlayingController: NowPlayingController;
+	playlistController: PlaylistController;
 	playqueueController: PlayQueueController;
+	podcastController: PodcastController;
 	radioController: RadioController;
+	rootController: RootController;
+	streamController: StreamController;
+	trackController: TrackController;
+	userController: UserController;
+	waveformController: WaveformController;
 
 	constructor(private engine: Engine) {
 		this.streamController = new StreamController(this.engine.streamService, this.engine.nowPlayingService, this.engine.store);
@@ -65,25 +65,25 @@ export class JamController {
 		this.downloadController = new DownloadController(this.engine.store, this.engine.downloadService);
 		this.waveformController = new WaveformController(this.engine.store, this.engine.waveformService);
 		this.autocompleteController = new AutocompleteController(this.engine.store);
-		this.radioController = new RadioController(this.engine.store.radioStore, this.engine.radioService,
+		this.radioController = new RadioController(this.engine.radioService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.rootController = new RootController(this.engine.store.rootStore, this.engine.rootService, this.engine.ioService,
+		this.rootController = new RootController(this.engine.rootService, this.engine.ioService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.trackController = new TrackController(this.engine.store.trackStore, this.engine.audioModule, this.engine.bookmarkService, this.engine.metaDataService, this.streamController, this.engine.ioService,
-			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
-		this.episodeController = new EpisodeController(this.engine.store.episodeStore, this.engine.episodeService, this.streamController,
+		this.trackController = new TrackController(this.engine.trackService, this.engine.audioModule, this.engine.bookmarkService, this.engine.metaDataService, this.streamController, this.engine.ioService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.podcastController = new PodcastController(this.engine.store.podcastStore, this.engine.podcastService, this.episodeController,
+		this.episodeController = new EpisodeController(this.engine.episodeService, this.streamController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.albumController = new AlbumController(this.engine.store.albumStore, this.trackController, this.engine.metaDataService,
-			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
-		this.artistController = new ArtistController(this.engine.store.artistStore, this.trackController, this.albumController, this.engine.metaDataService, this.engine.indexService,
-			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
-		this.folderController = new FolderController(this.engine.store.folderStore, this.engine.folderService, this.trackController, this.engine.metaDataService, this.engine.indexService,
-			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.listService);
-		this.userController = new UserController(this.engine.store.userStore, this.engine.userService,
+		this.podcastController = new PodcastController(this.engine.podcastService, this.episodeController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.playlistController = new PlaylistController(this.engine.store.playlistStore, this.engine.playlistService, this.trackController,
+		this.albumController = new AlbumController(this.engine.albumService, this.trackController, this.engine.metaDataService,
+			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
+		this.artistController = new ArtistController(this.engine.artistService, this.trackController, this.albumController, this.engine.metaDataService, this.engine.indexService,
+			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
+		this.folderController = new FolderController(this.engine.folderService, this.trackController, this.engine.metaDataService, this.engine.indexService,
+			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
+		this.userController = new UserController(this.engine.userService,
+			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
+		this.playlistController = new PlaylistController(this.engine.playlistService, this.trackController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.bookmarkController = new BookmarkController(this.engine.bookmarkService, this.trackController);
 		this.playqueueController = new PlayQueueController(this.engine.playQueueService, this.trackController);

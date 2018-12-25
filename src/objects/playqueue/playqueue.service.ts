@@ -1,10 +1,12 @@
 import {DBObjectType} from '../../types';
 import {PlayQueue} from './playqueue.model';
-import {PlayQueueStore} from './playqueue.store';
+import {PlayQueueStore, SearchQueryPlayQueue} from './playqueue.store';
+import {BaseStoreService} from '../base/base.service';
 
-export class PlayQueueService {
+export class PlayQueueService extends BaseStoreService<PlayQueue, SearchQueryPlayQueue> {
 
 	constructor(private playQueueStore: PlayQueueStore) {
+		super(playQueueStore);
 	}
 
 	async getQueueOrCreate(userID: string, client?: string): Promise<PlayQueue> {

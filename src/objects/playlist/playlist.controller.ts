@@ -10,7 +10,7 @@ import {formatPlaylist} from './playlist.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
-import {PlaylistStore, SearchQueryPlaylist} from './playlist.store';
+import {SearchQueryPlaylist} from './playlist.store';
 import {PlaylistService} from './playlist.service';
 import {Playlist} from './playlist.model';
 import {User} from '../user/user.model';
@@ -18,14 +18,13 @@ import {User} from '../user/user.model';
 export class PlaylistController extends BaseController<JamParameters.Playlist, JamParameters.Playlists, JamParameters.IncludesPlaylist, SearchQueryPlaylist, JamParameters.PlaylistSearch, Playlist, Jam.Playlist> {
 
 	constructor(
-		private playlistStore: PlaylistStore,
 		private playlistService: PlaylistService,
 		private trackController: TrackController,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(playlistStore, DBObjectType.playlist, stateService, imageService, downloadService);
+		super(playlistService, stateService, imageService, downloadService);
 	}
 
 	// TODO: filter none public playlist in base api functions?

@@ -5,17 +5,19 @@ import Logger from '../../utils/logger';
 import {AudioModule} from '../../engine/audio/audio.module';
 import {downloadFile} from '../../utils/download';
 import fse from 'fs-extra';
-import {EpisodeStore} from './episode.store';
+import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 import {Episode} from './episode.model';
 import {PodcastStatus} from '../../types';
 import {DebouncePromises} from '../../utils/debounce-promises';
+import {BaseStoreService} from '../base/base.service';
 
 const log = Logger('EpisodeService');
 
-export class EpisodeService {
+export class EpisodeService extends BaseStoreService<Episode, SearchQueryEpisode> {
 	private episodeDownloadDebounce = new DebouncePromises<void>();
 
 	constructor(private podcastsPath: string, public episodeStore: EpisodeStore, private audioModule: AudioModule) {
+		super(episodeStore);
 	}
 
 	isDownloading(podcastEpisodeId: string): boolean {

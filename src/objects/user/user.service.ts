@@ -2,21 +2,23 @@ import {fileDeleteIfExists} from '../../utils/fs-utils';
 import path from 'path';
 import {User} from './user.model';
 import {Md5} from 'md5-typescript';
-import {UserStore} from './user.store';
+import {SearchQueryUser, UserStore} from './user.store';
 import {StateStore} from '../state/state.store';
 import {PlaylistStore} from '../playlist/playlist.store';
 import {PlayQueueStore} from '../playqueue/playqueue.store';
 import {BookmarkStore} from '../bookmark/bookmark.store';
 import {IApiBinaryResult} from '../../typings';
 import {ImageModule} from '../../engine/image/image.module';
+import {BaseStoreService} from '../base/base.service';
 
-export class UserService {
+export class UserService extends BaseStoreService<User, SearchQueryUser> {
 	private cached: {
 		[id: string]: User;
 	} = {};
 
 	constructor(public userAvatarPath: string, public userStore: UserStore, private stateStore: StateStore, private playlistStore: PlaylistStore, private bookmarkStore: BookmarkStore,
 				private playQueueStore: PlayQueueStore, private imageModule: ImageModule) {
+		super(userStore);
 	}
 
 	async getUserImage(user: User, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {

@@ -1,9 +1,11 @@
 import {Root} from './root.model';
-import {RootStore} from './root.store';
+import {RootStore, SearchQueryRoot} from './root.store';
+import {BaseStoreService} from '../base/base.service';
 
-export class RootService {
+export class RootService extends BaseStoreService<Root, SearchQueryRoot> {
 
 	constructor(public rootStore: RootStore) {
+		super(rootStore);
 	}
 
 	private async checkUsedPath(dir: string, roots: Array<Root>): Promise<void> {

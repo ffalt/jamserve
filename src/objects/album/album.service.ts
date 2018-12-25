@@ -1,15 +1,17 @@
 import {Album} from './album.model';
 import {IApiBinaryResult} from '../../typings';
 import {TrackStore} from '../track/track.store';
-import {AlbumStore} from './album.store';
+import {AlbumStore, SearchQueryAlbum} from './album.store';
 import {FolderService} from '../folder/folder.service';
 import {FolderTypesAlbum} from '../../types';
 import {Folder} from '../folder/folder.model';
+import {BaseListService} from '../base/base.list.service';
+import {StateService} from '../state/state.service';
 
-export class AlbumService {
+export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 
-	constructor(public albumStore: AlbumStore, private trackStore: TrackStore, private folderService: FolderService) {
-
+	constructor(public albumStore: AlbumStore, private trackStore: TrackStore, private folderService: FolderService, stateService: StateService) {
+		super(albumStore, stateService);
 	}
 
 	async getAlbumImage(album: Album, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {

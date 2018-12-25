@@ -10,6 +10,7 @@ import mimeTypes from 'mime-types';
 import {FolderType} from '../../types';
 import {testService} from '../base/base.service.spec';
 import {ImageModuleTest, mockImage} from '../../engine/image/image.module.spec';
+import {StateService} from '../state/state.service';
 
 describe('FolderService', () => {
 	let folderService: FolderService;
@@ -17,7 +18,8 @@ describe('FolderService', () => {
 	testService(
 		(storeTest, imageModuleTestPara) => {
 			imageModuleTest = imageModuleTestPara;
-			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, imageModuleTest.imageModule);
+			const stateService = new StateService(storeTest.store.stateStore);
+			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, stateService, imageModuleTest.imageModule);
 		},
 		() => {
 

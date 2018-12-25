@@ -1,11 +1,12 @@
 import {DBObjectType} from '../../types';
-import {StateStore} from './state.store';
+import {SearchQueryState, StateStore} from './state.store';
 import {State, States} from './state.model';
+import {BaseStoreService} from '../base/base.service';
 
-export class StateService {
+export class StateService extends BaseStoreService<State, SearchQueryState> {
 
 	constructor(public stateStore: StateStore) {
-
+		super(stateStore);
 	}
 
 	private emptyState(destID: string, destType: DBObjectType, userID: string): State {

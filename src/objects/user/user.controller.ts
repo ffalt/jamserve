@@ -8,20 +8,19 @@ import {formatUser} from './user.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
-import {SearchQueryUser, UserStore} from './user.store';
+import {SearchQueryUser} from './user.store';
 import {UserService} from './user.service';
 import {User} from './user.model';
 
 export class UserController extends BaseController<JamParameters.ID, JamParameters.IDs, {}, SearchQueryUser, JamParameters.UserSearch, User, Jam.User> {
 
 	constructor(
-		private userStore: UserStore,
 		private userService: UserService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(userStore, DBObjectType.user, stateService, imageService, downloadService);
+		super(userService, stateService, imageService, downloadService);
 	}
 
 	defaultSort(items: Array<User>): Array<User> {

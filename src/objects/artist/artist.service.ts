@@ -3,16 +3,17 @@ import {TrackStore} from '../track/track.store';
 import {FolderService} from '../folder/folder.service';
 import {Artist} from './artist.model';
 import {FolderType} from '../../types';
-import {ArtistStore} from './artist.store';
+import {ArtistStore, SearchQueryArtist} from './artist.store';
 import {Folder} from '../folder/folder.model';
+import {BaseListService} from '../base/base.list.service';
+import {StateService} from '../state/state.service';
 
-export class ArtistService {
+export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 
 
-	constructor(public artistStore: ArtistStore, private trackStore: TrackStore, private folderService: FolderService) {
-
+	constructor(public artistStore: ArtistStore, private trackStore: TrackStore, private folderService: FolderService, stateService: StateService) {
+		super(artistStore, stateService);
 	}
-
 
 	async getArtistFolder(artist: Artist): Promise<Folder | undefined> {
 		if (artist.trackIDs.length === 0) {

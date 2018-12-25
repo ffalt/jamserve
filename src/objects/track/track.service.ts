@@ -1,13 +1,15 @@
 import {Track} from './track.model';
 import {IApiBinaryResult} from '../../typings';
-import {TrackStore} from './track.store';
+import {SearchQueryTrack, TrackStore} from './track.store';
 import {FolderService} from '../folder/folder.service';
 import {Folder} from '../folder/folder.model';
+import {BaseListService} from '../base/base.list.service';
+import {StateService} from '../state/state.service';
 
-export class TrackService {
+export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 
-	constructor(public trackStore: TrackStore, private folderService: FolderService) {
-
+	constructor(public trackStore: TrackStore, private folderService: FolderService, stateService: StateService) {
+		super(trackStore, stateService);
 	}
 
 	async getTrackFolder(track: Track): Promise<Folder | undefined> {

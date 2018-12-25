@@ -8,7 +8,7 @@ import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {formatTrack} from './track.format';
-import {SearchQueryTrack, TrackStore} from './track.store';
+import {SearchQueryTrack} from './track.store';
 import {AudioModule} from '../../engine/audio/audio.module';
 import {BookmarkService} from '../bookmark/bookmark.service';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
@@ -16,16 +16,16 @@ import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
-import {ListService} from '../../engine/list/list.service';
 import {Track} from './track.model';
 import {User} from '../user/user.model';
 import {IoService} from '../../engine/io/io.service';
 import {StreamController} from '../../engine/stream/stream.controller';
+import {TrackService} from './track.service';
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
 	constructor(
-		private trackStore: TrackStore,
+		private trackService: TrackService,
 		private audioModule: AudioModule,
 		private bookmarkService: BookmarkService,
 		private metaService: MetaDataService,
@@ -33,10 +33,9 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		private ioService: IoService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
-		protected downloadService: DownloadService,
-		protected listService: ListService
+		protected downloadService: DownloadService
 	) {
-		super(trackStore, DBObjectType.track, stateService, imageService, downloadService, listService);
+		super(trackService, stateService, imageService, downloadService);
 	}
 
 	defaultSort(tracks: Array<Track>): Array<Track> {

@@ -10,29 +10,28 @@ import {formatArtist, formatArtistInfo} from './artist.format';
 import {formatState} from '../state/state.format';
 import {formatArtistIndex} from '../../engine/index/index.format';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
-import {ArtistStore, SearchQueryArtist} from './artist.store';
+import {SearchQueryArtist} from './artist.store';
 import {IndexService} from '../../engine/index/index.service';
 import {DownloadService} from '../../engine/download/download.service';
 import {ImageService} from '../../engine/image/image.service';
 import {StateService} from '../state/state.service';
-import {ListService} from '../../engine/list/list.service';
 import {Artist} from './artist.model';
 import {User} from '../user/user.model';
+import {ArtistService} from './artist.service';
 
 export class ArtistController extends BaseListController<JamParameters.Artist, JamParameters.Artists, JamParameters.IncludesArtist, SearchQueryArtist, JamParameters.ArtistSearch, Artist, Jam.Artist> {
 
 	constructor(
-		private artistStore: ArtistStore,
+		private artistService: ArtistService,
 		private trackController: TrackController,
 		private albumController: AlbumController,
 		private metaDataService: MetaDataService,
 		private indexService: IndexService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
-		protected downloadService: DownloadService,
-		protected listService: ListService
+		protected downloadService: DownloadService
 	) {
-		super(artistStore, DBObjectType.artist, stateService, imageService, downloadService, listService);
+		super(artistService, stateService, imageService, downloadService);
 	}
 
 	defaultSort(items: Array<Artist>): Array<Artist> {

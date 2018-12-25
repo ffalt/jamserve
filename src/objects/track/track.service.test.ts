@@ -7,14 +7,16 @@ import {FolderTypesAlbum} from '../../types';
 import {mockImage} from '../../engine/image/image.module.spec';
 import path from 'path';
 import fse from 'fs-extra';
+import {StateService} from '../state/state.service';
 
 describe('TrackService', () => {
 	let trackService: TrackService;
 	let folderService: FolderService;
 	testService(
 		(storeTest, imageModuleTest) => {
-			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, imageModuleTest.imageModule);
-			trackService = new TrackService(storeTest.store.trackStore, folderService);
+			const stateService = new StateService(storeTest.store.stateStore);
+			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, stateService, imageModuleTest.imageModule);
+			trackService = new TrackService(storeTest.store.trackStore, folderService, stateService);
 		},
 		() => {
 			it('should return the track folder', async () => {

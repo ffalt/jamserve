@@ -18,10 +18,7 @@ import {Episode} from '../../objects/episode/episode.model';
 import {State} from '../../objects/state/state.model';
 import {Podcast} from '../../objects/podcast/podcast.model';
 import {Bookmark} from '../../objects/bookmark/bookmark.model';
-import {SearchQueryFolder} from '../../objects/folder/folder.store';
-import {SearchQueryAlbum} from '../../objects/album/album.store';
 import {SearchQueryTrack} from '../../objects/track/track.store';
-import {SearchQueryArtist} from '../../objects/artist/artist.store';
 import {hexDecode} from '../../utils/hex';
 
 /*
@@ -323,19 +320,19 @@ export class SubsonicApi {
 				folders = await this.engine.store.folderStore.search({types: FolderTypesAlbum, offset, amount, sorts: [{field: 'album', descending: false}]});
 				break;
 			case 'starred':
-				ids = await this.engine.listService.getFaved<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
+				ids = await this.engine.folderService.getFavedIDs({types: FolderTypesAlbum}, req.user);
 				folders = await this.engine.store.folderStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'frequent':
-				ids = await this.engine.listService.getFrequentlyPlayed<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
+				ids = await this.engine.folderService.getFrequentlyPlayedIDs({types: FolderTypesAlbum}, req.user);
 				folders = await this.engine.store.folderStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'recent':
-				ids = await this.engine.listService.getRecentlyPlayed<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
+				ids = await this.engine.folderService.getRecentlyPlayedIDs({types: FolderTypesAlbum}, req.user);
 				folders = await this.engine.store.folderStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'highest':
-				ids = await this.engine.listService.getHighestRated<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum}, req.user, this.engine.store.folderStore);
+				ids = await this.engine.folderService.getHighestRatedIDs({types: FolderTypesAlbum}, req.user);
 				folders = await this.engine.store.folderStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'byGenre':
@@ -396,19 +393,19 @@ export class SubsonicApi {
 				albums = await this.engine.store.albumStore.search({rootID, offset, amount, sorts: [{field: 'name', descending: false}]});
 				break;
 			case 'starred':
-				ids = await this.engine.listService.getFaved<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+				ids = await this.engine.albumService.getFavedIDs({rootID}, req.user);
 				albums = await this.engine.store.albumStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'frequent':
-				ids = await this.engine.listService.getFrequentlyPlayed<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+				ids = await this.engine.albumService.getFrequentlyPlayedIDs({rootID}, req.user);
 				albums = await this.engine.store.albumStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'recent':
-				ids = await this.engine.listService.getRecentlyPlayed<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+				ids = await this.engine.albumService.getRecentlyPlayedIDs({rootID}, req.user);
 				albums = await this.engine.store.albumStore.byIds(paginate(ids, amount, offset));
 				break;
 			case 'highest':
-				ids = await this.engine.listService.getHighestRated<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+				ids = await this.engine.albumService.getHighestRatedIDs({rootID}, req.user);
 				albums = await this.engine.store.albumStore.byIds(paginate(ids, amount, offset));
 				break;
 			default:
@@ -1317,17 +1314,17 @@ export class SubsonicApi {
 		 */
 		const rootID = (req.query.musicFolderId !== undefined ? req.query.musicFolderId.toString() : undefined);
 		const starred: Subsonic.Starred = {};
-		const trackIDs = await this.engine.listService.getFaved<SearchQueryTrack>(DBObjectType.track, {rootID}, req.user, this.engine.store.trackStore);
+		const trackIDs = await this.engine.trackService.getFavedIDs({rootID}, req.user);
 		if (trackIDs.length > 0) {
 			const tracks = await this.engine.store.trackStore.byIds(trackIDs);
 			starred.song = await this.prepareTracks(tracks, req.user);
 		}
-		const artistFolderIDs = await this.engine.listService.getFaved<SearchQueryFolder>(DBObjectType.folder, {types: [FolderType.artist], rootID}, req.user, this.engine.store.folderStore);
+		const artistFolderIDs = await this.engine.folderService.getFavedIDs({types: [FolderType.artist], rootID}, req.user);
 		if (artistFolderIDs.length > 0) {
 			const folders = await this.engine.store.folderStore.byIds(artistFolderIDs);
 			starred.artist = await this.prepareFolderArtists(folders, req.user);
 		}
-		const albumFolderIDs = await this.engine.listService.getFaved<SearchQueryFolder>(DBObjectType.folder, {types: FolderTypesAlbum, rootID}, req.user, this.engine.store.folderStore);
+		const albumFolderIDs = await this.engine.folderService.getFavedIDs({types: FolderTypesAlbum, rootID}, req.user);
 		if (albumFolderIDs.length > 0) {
 			const folders = await this.engine.store.folderStore.byIds(albumFolderIDs);
 			starred.album = await this.prepareFolders(folders, req.user);
@@ -1352,17 +1349,17 @@ export class SubsonicApi {
 		 */
 		const rootID = (req.query.musicFolderId !== undefined ? req.query.musicFolderId.toString() : undefined);
 		const starred2: Subsonic.Starred2 = {};
-		const trackIDs = await this.engine.listService.getFaved<SearchQueryTrack>(DBObjectType.track, {rootID}, req.user, this.engine.store.trackStore);
+		const trackIDs = await this.engine.trackService.getFavedIDs({rootID}, req.user);
 		if (trackIDs.length > 0) {
 			const tracks = await this.engine.store.trackStore.byIds(trackIDs);
 			starred2.song = await this.prepareTracks(tracks, req.user);
 		}
-		const albumIDs = await this.engine.listService.getFaved<SearchQueryAlbum>(DBObjectType.album, {rootID}, req.user, this.engine.store.albumStore);
+		const albumIDs = await this.engine.albumService.getFavedIDs({rootID}, req.user);
 		if (albumIDs.length > 0) {
 			const albums = await this.engine.store.albumStore.byIds(albumIDs);
 			starred2.album = await this.prepareAlbums(albums, req.user);
 		}
-		const artistIDs = await this.engine.listService.getFaved<SearchQueryArtist>(DBObjectType.artist, {rootID}, req.user, this.engine.store.artistStore);
+		const artistIDs = await this.engine.artistService.getFavedIDs({rootID}, req.user);
 		if (artistIDs.length > 0) {
 			const artists = await this.engine.store.artistStore.byIds(artistIDs);
 			starred2.artist = await this.prepareArtists(artists, req.user);

@@ -1,6 +1,5 @@
 import {JamParameters} from '../../model/jam-rest-params-0.1.0';
-import {BaseStore, SearchQuery} from './base.store';
-import {DBObjectType} from '../../types';
+import {SearchQuery} from './base.store';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {IApiBinaryResult} from '../../typings';
@@ -11,12 +10,12 @@ import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
 import {DBObject} from './base.model';
 import {User} from '../user/user.model';
+import {BaseStoreService} from './base.service';
 
 export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLUDE, OBJLISTREQUEST extends JamParameters.IDs | INCLUDE, INCLUDE, JAMQUERY extends SearchQuery, S extends JamParameters.SearchQuery | INCLUDE, DBOBJECT extends DBObject, RESULTOBJ extends { id: string }> {
 
 	protected constructor(
-		protected objstore: BaseStore<DBOBJECT, SearchQuery>,
-		protected type: DBObjectType,
+		protected service: BaseStoreService<DBOBJECT, JAMQUERY>,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
@@ -33,7 +32,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		if (!id) {
 			return Promise.reject(InvalidParamError());
 		}
-		const obj = await this.objstore.byId(id);
+		const obj = await this.service.store.byId(id);
 		if (!obj) {
 			return Promise.reject(NotFoundError());
 		}
@@ -44,7 +43,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		if (!ids) {
 			return Promise.reject(InvalidParamError());
 		}
-		return await this.objstore.byIds(ids);
+		return await this.service.store.byIds(ids);
 	}
 
 	async prepareList(items: Array<DBOBJECT>, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
@@ -57,7 +56,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 	}
 
 	async prepareListByIDs(ids: Array<string>, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
-		const list = await this.objstore.byIds(ids);
+		const list = await this.service.store.byIds(ids);
 		const result = await this.prepareList(list, includes, user);
 		return result.sort((a, b) => {
 			return ids.indexOf(a.id) - ids.indexOf(b.id);
@@ -70,7 +69,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 	}
 
 	async prepareByQuery(query: JAMQUERY, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
-		const list = await this.objstore.search(query);
+		const list = await this.service.store.search(query);
 		return this.prepareList(this.defaultSort(list), includes, user);
 	}
 
@@ -85,19 +84,19 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 
 	async state(req: JamRequest<JamParameters.ID>): Promise<Jam.State> {
 		const item = await this.byID(req.query.id);
-		const state = await this.stateService.findOrCreate(item.id, req.user.id, this.type);
+		const state = await this.stateService.findOrCreate(item.id, req.user.id, this.service.store.type);
 		return formatState(state);
 	}
 
 	async states(req: JamRequest<JamParameters.IDs>): Promise<Jam.States> {
 		const items = await this.byIDs(req.query.ids);
-		const states = await this.stateService.findOrCreateMany(items.map(item => item.id), req.user.id, this.type);
+		const states = await this.stateService.findOrCreateMany(items.map(item => item.id), req.user.id, this.service.store.type);
 		return formatStates(states);
 	}
 
 	async favUpdate(req: JamRequest<JamParameters.Fav>): Promise<Jam.State> {
 		const item = await this.byID(req.query.id);
-		const state = await this.stateService.fav(item.id, this.type, req.user.id, req.query.remove ? req.query.remove : false);
+		const state = await this.stateService.fav(item.id, this.service.store.type, req.user.id, req.query.remove ? req.query.remove : false);
 		return formatState(state);
 	}
 
@@ -107,12 +106,12 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 			return Promise.reject(InvalidParamError());
 		}
 		const item = await this.byID(req.query.id);
-		const state = await this.stateService.rate(item.id, this.type, req.user.id, rating);
+		const state = await this.stateService.rate(item.id, this.service.store.type, req.user.id, rating);
 		return formatState(state);
 	}
 
 	async search(req: JamRequest<S>): Promise<Array<RESULTOBJ>> {
-		const list = await this.objstore.search(this.translateQuery(req.query, req.user));
+		const list = await this.service.store.search(this.translateQuery(req.query, req.user));
 		return this.prepareList(list, <INCLUDE>req.query, req.user);
 	}
 

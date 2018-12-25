@@ -9,7 +9,7 @@ import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
-import {EpisodeStore, SearchQueryEpisode} from './episode.store';
+import {SearchQueryEpisode} from './episode.store';
 import {Episode} from './episode.model';
 import {User} from '../user/user.model';
 import {EpisodeService} from './episode.service';
@@ -18,14 +18,13 @@ import {StreamController} from '../../engine/stream/stream.controller';
 export class EpisodeController extends BaseController<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, SearchQueryEpisode, JamParameters.EpisodeSearch, Episode, Jam.PodcastEpisode> {
 
 	constructor(
-		private episodeStore: EpisodeStore,
 		private episodeService: EpisodeService,
 		private streamController: StreamController,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(episodeStore, DBObjectType.episode, stateService, imageService, downloadService);
+		super(episodeService, stateService, imageService, downloadService);
 	}
 
 	defaultSort(items: Array<Episode>): Array<Episode> {

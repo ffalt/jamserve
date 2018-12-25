@@ -3,7 +3,7 @@ import {JamParameters} from '../../model/jam-rest-params-0.1.0';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {DBObjectType} from '../../types';
 import {JamRequest} from '../../api/jam/api';
-import {RootStore, SearchQueryRoot} from './root.store';
+import {SearchQueryRoot} from './root.store';
 import {RootService} from './root.service';
 import {formatRoot} from './root.format';
 import {StateService} from '../state/state.service';
@@ -16,14 +16,13 @@ import {IoService} from '../../engine/io/io.service';
 export class RootController extends BaseController<JamParameters.ID, JamParameters.IDs, {}, SearchQueryRoot, JamParameters.RootSearch, Root, Jam.Root> {
 
 	constructor(
-		public rootStore: RootStore,
 		private rootService: RootService,
 		private ioService: IoService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(rootStore, DBObjectType.root, stateService, imageService, downloadService);
+		super(rootService, stateService, imageService, downloadService);
 	}
 
 	defaultSort(items: Array<Root>): Array<Root> {

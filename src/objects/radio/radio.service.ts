@@ -1,10 +1,12 @@
 import {DBObjectType} from '../../types';
 import {Radio} from './radio.model';
-import {RadioStore} from './radio.store';
+import {RadioStore, SearchQueryRadio} from './radio.store';
+import {BaseStoreService} from '../base/base.service';
 
-export class RadioService {
+export class RadioService extends BaseStoreService<Radio, SearchQueryRadio> {
 
 	constructor(public radioStore: RadioStore) {
+		super(radioStore);
 	}
 
 	async create(name: string, url: string, homepageUrl?: string): Promise<Radio> {

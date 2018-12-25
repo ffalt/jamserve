@@ -1,8 +1,9 @@
 import {DBObjectType} from '../../types';
 import {Playlist} from './playlist.model';
 import {Track} from '../track/track.model';
-import {PlaylistStore} from './playlist.store';
+import {PlaylistStore, SearchQueryPlaylist} from './playlist.store';
 import {TrackStore} from '../track/track.store';
+import {BaseStoreService} from '../base/base.service';
 
 export async function updatePlayListTracks(trackStore: TrackStore, playlist: Playlist): Promise<void> {
 	const tracks = await trackStore.byIds(playlist.trackIDs);
@@ -18,9 +19,10 @@ export async function updatePlayListTracks(trackStore: TrackStore, playlist: Pla
 	});
 }
 
-export class PlaylistService {
+export class PlaylistService extends BaseStoreService<Playlist, SearchQueryPlaylist> {
 
 	constructor(public playlistStore: PlaylistStore, private trackStore: TrackStore) {
+		super(playlistStore);
 	}
 
 	async create(name: string, comment: string | undefined, isPublic: boolean, userID: string, trackIDs: Array<string>): Promise<Playlist> {

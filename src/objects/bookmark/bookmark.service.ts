@@ -1,11 +1,12 @@
 import {DBObjectType} from '../../types';
-import {BookmarkStore} from './bookmark.store';
+import {BookmarkStore, SearchQueryBookmark} from './bookmark.store';
 import {Bookmark} from './bookmark.model';
+import {BaseStoreService} from '../base/base.service';
 
-export class BookmarkService {
+export class BookmarkService extends BaseStoreService<Bookmark, SearchQueryBookmark> {
 
 	constructor(public bookmarkStore: BookmarkStore) {
-
+		super(bookmarkStore);
 	}
 
 	async getAll(userID: string): Promise<Array<Bookmark>> {

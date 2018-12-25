@@ -6,27 +6,26 @@ import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {TrackController} from '../track/track.controller';
 import {formatAlbum, formatAlbumInfo} from './album.format';
-import {AlbumStore, SearchQueryAlbum} from './album.store';
+import {SearchQueryAlbum} from './album.store';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
-import {ListService} from '../../engine/list/list.service';
 import {Album} from './album.model';
 import {User} from '../user/user.model';
+import {AlbumService} from './album.service';
 
 export class AlbumController extends BaseListController<JamParameters.Album, JamParameters.Albums, JamParameters.IncludesAlbum, SearchQueryAlbum, JamParameters.AlbumSearch, Album, Jam.Album> {
 
 	constructor(
-		private albumStore: AlbumStore,
+		private albumService: AlbumService,
 		private trackController: TrackController,
 		private metaDataService: MetaDataService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
-		protected downloadService: DownloadService,
-		protected listService: ListService
+		protected downloadService: DownloadService
 	) {
-		super(albumStore, DBObjectType.album, stateService, imageService, downloadService, listService);
+		super(albumService, stateService, imageService, downloadService);
 	}
 
 	defaultSort(items: Array<Album>): Array<Album> {

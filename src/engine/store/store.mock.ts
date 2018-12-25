@@ -96,7 +96,7 @@ async function writeMockRoot(root: MockRoot): Promise<void> {
 	}
 }
 
-export class StoreTest {
+export class StoreMock {
 	// @ts-ignore
 	dir: SynchrounousResult;
 	// @ts-ignore

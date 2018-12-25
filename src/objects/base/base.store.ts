@@ -18,9 +18,9 @@ export interface SearchQuerySort {
 
 export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 	protected group: DatabaseIndex<T>;
-	type: DBObjectType | undefined;
+	type: DBObjectType;
 
-	protected constructor(type: DBObjectType | undefined, db: Database) {
+	protected constructor(type: DBObjectType, db: Database) {
 		this.group = db.getDBIndex<T>(type);
 		this.type = type;
 	}

@@ -9,20 +9,19 @@ import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
-import {RadioStore, SearchQueryRadio} from './radio.store';
+import {SearchQueryRadio} from './radio.store';
 import {Radio} from './radio.model';
 import {User} from '../user/user.model';
 
 export class RadioController extends BaseController<JamParameters.Radio, JamParameters.Radios, JamParameters.IncludesRadio, SearchQueryRadio, JamParameters.RadioSearch, Radio, Jam.Radio> {
 
 	constructor(
-		private radioStore: RadioStore,
 		private radioService: RadioService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(radioStore, DBObjectType.radio, stateService, imageService, downloadService);
+		super(radioService, stateService, imageService, downloadService);
 	}
 
 	defaultSort(items: Array<Radio>): Array<Radio> {

@@ -8,6 +8,7 @@ import {FolderTypesAlbum} from '../../types';
 import fse from 'fs-extra';
 import path from 'path';
 import {mockImage} from '../../engine/image/image.module.spec';
+import {StateService} from '../state/state.service';
 
 describe('AlbumService', () => {
 	let albumService: AlbumService;
@@ -16,8 +17,9 @@ describe('AlbumService', () => {
 	testService(
 		(storeTest, imageModuleTest) => {
 			trackStore = storeTest.store.trackStore;
-			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, imageModuleTest.imageModule);
-			albumService = new AlbumService(storeTest.store.albumStore, storeTest.store.trackStore, folderService);
+			const stateService = new StateService(storeTest.store.stateStore);
+			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, stateService, imageModuleTest.imageModule);
+			albumService = new AlbumService(storeTest.store.albumStore, storeTest.store.trackStore, folderService, stateService);
 		},
 		() => {
 			it('should return the album folder', async () => {

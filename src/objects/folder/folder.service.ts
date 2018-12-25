@@ -1,5 +1,5 @@
 import {Folder} from './folder.model';
-import {FolderStore} from './folder.store';
+import {FolderStore, SearchQueryFolder} from './folder.store';
 import {cleanFolderSystemChars, fileDeleteIfExists} from '../../utils/fs-utils';
 import {TrackStore} from '../track/track.store';
 import path from 'path';
@@ -8,13 +8,15 @@ import Logger from '../../utils/logger';
 import {IApiBinaryResult} from '../../typings';
 import {FolderTypeImageName} from '../../types';
 import {ImageModule} from '../../engine/image/image.module';
+import {BaseListService} from '../base/base.list.service';
+import {StateService} from '../state/state.service';
 
 const log = Logger('FolderService');
 
-export class FolderService {
+export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 
-	constructor(public folderStore: FolderStore, private trackStore: TrackStore, private imageModule: ImageModule) {
-
+	constructor(public folderStore: FolderStore, private trackStore: TrackStore, stateService: StateService, private imageModule: ImageModule) {
+		super(folderStore, stateService);
 	}
 
 	async renameFolder(folder: Folder, name: string): Promise<void> {

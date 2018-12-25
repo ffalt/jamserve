@@ -10,21 +10,20 @@ import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
-import {PodcastStore, SearchQueryPodcast} from './podcast.store';
+import {SearchQueryPodcast} from './podcast.store';
 import {Podcast} from './podcast.model';
 import {User} from '../user/user.model';
 
 export class PodcastController extends BaseController<JamParameters.Podcast, JamParameters.Podcasts, JamParameters.IncludesPodcast, SearchQueryPodcast, JamParameters.PodcastSearch, Podcast, Jam.Podcast> {
 
 	constructor(
-		private podcastStore: PodcastStore,
 		private podcastService: PodcastService,
 		private episodeController: EpisodeController,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
 	) {
-		super(podcastStore, DBObjectType.podcast, stateService, imageService, downloadService);
+		super(podcastService, stateService, imageService, downloadService);
 	}
 
 	defaultSort(items: Array<Podcast>): Array<Podcast> {

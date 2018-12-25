@@ -8,17 +8,16 @@ import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {TrackController} from '../track/track.controller';
-import {formatFolder, formatAlbumFolderInfo, formatArtistFolderInfo} from './folder.format';
+import {formatAlbumFolderInfo, formatArtistFolderInfo, formatFolder} from './folder.format';
 import {formatState} from '../state/state.format';
 import {formatFolderIndex} from '../../engine/index/index.format';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
-import {FolderStore, SearchQueryFolder} from './folder.store';
+import {SearchQueryFolder} from './folder.store';
 import {SearchQueryTrack} from '../track/track.store';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
 import {IndexService} from '../../engine/index/index.service';
-import {ListService} from '../../engine/list/list.service';
 import {Folder} from './folder.model';
 import {User} from '../user/user.model';
 import {FolderService} from './folder.service';
@@ -26,17 +25,15 @@ import {FolderService} from './folder.service';
 export class FolderController extends BaseListController<JamParameters.Folder, JamParameters.Folders, JamParameters.IncludesFolderChildren, SearchQueryFolder, JamParameters.FolderSearch, Folder, Jam.Folder> {
 
 	constructor(
-		protected folderStore: FolderStore,
 		protected folderService: FolderService,
 		private trackController: TrackController,
 		private metadataService: MetaDataService,
 		private indexService: IndexService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
-		protected downloadService: DownloadService,
-		protected listService: ListService
+		protected downloadService: DownloadService
 	) {
-		super(folderStore, DBObjectType.folder, stateService, imageService, downloadService, listService);
+		super(folderService, stateService, imageService, downloadService);
 	}
 
 	defaultSort(items: Array<Folder>): Array<Folder> {
@@ -49,7 +46,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			result.tracks = await this.trackController.prepareByQuery({parentID: folder.id}, includes, user);
 		}
 		if (includes.folderChildren || includes.folderSubfolders) {
-			const folders = await this.folderStore.search({parentID: folder.id, sorts: [{field: 'name', descending: false}]});
+			const folders = await this.folderService.folderStore.search({parentID: folder.id, sorts: [{field: 'name', descending: false}]});
 			// TODO: introduce children includes?
 			result.folders = await this.prepareList(folders, {folderState: includes.folderState, folderHealth: includes.folderHealth, folderTag: includes.folderTag}, user);
 		}
@@ -113,7 +110,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	/* more folder api */
 
 	async subfolders(req: JamRequest<JamParameters.FolderSubFolders>): Promise<Array<Jam.Folder>> {
-		const list = await this.folderStore.search({parentID: req.query.id});
+		const list = await this.folderService.folderStore.search({parentID: req.query.id});
 		return this.prepareList(list, req.query, req.user);
 	}
 
@@ -124,7 +121,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	}
 
 	async children(req: JamRequest<JamParameters.FolderChildren>): Promise<Jam.FolderChildren> {
-		const folders = await this.folderStore.search({parentID: req.query.id});
+		const folders = await this.folderService.folderStore.search({parentID: req.query.id});
 		const resultTracks = await this.trackController.prepareByQuery({parentID: req.query.id}, req.query, req.user);
 		const resultFolders = await this.prepareList(folders, req.query, req.user);
 		return {folders: resultFolders, tracks: resultTracks};
