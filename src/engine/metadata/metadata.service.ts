@@ -2,7 +2,7 @@ import {FolderType} from '../../types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {shuffle} from '../../utils/random';
 import Logger from '../../utils/logger';
-import {MetaInfo, MetaInfoAlbum, MetaInfoArtist, MetaInfoArtistSimilarArtist, MetaInfoFolderSimilarArtist, MetaInfoSimilarArtist, MetaInfoTopSong, MetaInfoTrack, MetaInfoTrackSimilarSong} from './metadata.model';
+import {MetaInfo, MetaInfoAlbum, MetaInfoArtist, MetaInfoArtistSimilarArtist, MetaInfoFolderSimilarArtist, MetaInfoSimilarArtist, MetaInfoTopSong, MetaInfoTrack, MetaInfoTrackSimilarSong} from '../../modules/audio/metadata.model';
 import {Folder} from '../../objects/folder/folder.model';
 import {Artist} from '../../objects/artist/artist.model';
 import {Album} from '../../objects/album/album.model';

@@ -175,7 +175,7 @@ export class IoService {
 	async refresh(): Promise<void> {
 		await this.refreshInternal();
 		await this.indexService.buildIndexes();
-		await this.genreService.buildGenres();
+		await this.genreService.refresh();
 	}
 
 	async refreshTracks(tracks: Array<Track>): Promise<void> {
@@ -183,19 +183,19 @@ export class IoService {
 		await this.refresh();
 		// await this.rescanTracks(tracks);
 		await this.indexService.buildIndexes();
-		await this.genreService.buildGenres();
+		await this.genreService.refresh();
 	}
 
 	async refreshRoot(root: Root): Promise<void> {
 		await this.rescanRoot(root);
 		await this.indexService.buildIndexes();
-		await this.genreService.buildGenres();
+		await this.genreService.refresh();
 	}
 
 	async clean(): Promise<void> {
 		await this.cleanStore();
 		await this.indexService.buildIndexes();
-		await this.genreService.buildGenres();
+		await this.genreService.refresh();
 	}
 
 }

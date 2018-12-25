@@ -753,7 +753,7 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <genres> element on success.
 		 */
-		const genres = await this.engine.genreService.getGenres(undefined, false);
+		const genres = await this.engine.genreService.getGenres();
 		const list: Array<Subsonic.Genre> = genres.map(genre => FORMAT.packGenre(genre));
 		if (list.length === 0) {
 			const dummy: Subsonic.Genre = {

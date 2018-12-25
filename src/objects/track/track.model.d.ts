@@ -1,5 +1,5 @@
 import {DBObject} from '../base/base.model';
-import {MetaInfoTrack} from '../../engine/metadata/metadata.model';
+import {MetaInfoTrack} from '../../modules/audio/metadata.model';
 
 export interface Track extends DBObject {
 	rootID: string;

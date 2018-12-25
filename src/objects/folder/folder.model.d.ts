@@ -1,6 +1,6 @@
 import {DBObject} from '../base/base.model';
 import {AlbumType, FolderType} from '../../types';
-import {MetaInfo} from '../../engine/metadata/metadata.model';
+import {MetaInfo} from '../../modules/audio/metadata.model';
 
 export interface Folder extends DBObject {
 	rootID: string;

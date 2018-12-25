@@ -11,10 +11,13 @@ import {AudioModule} from '../../modules/audio/audio.module';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import {MetaMerge} from '../io/components/meta';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
+import {randomItem} from '../../utils/random';
+import {Genres} from '../../utils/genres';
 
 interface MockTrack {
 	path: string;
 	number: number;
+	genre: string;
 	artist: string;
 	album: string;
 }
@@ -22,6 +25,7 @@ interface MockTrack {
 interface MockFolder {
 	path: string;
 	name: string;
+	genre: string;
 	folders: Array<MockFolder>;
 	tracks: Array<MockTrack>;
 }
@@ -32,19 +36,21 @@ interface MockRoot {
 	folders: Array<MockFolder>;
 }
 
-function buildRandomTrack(dir: string, name: string, number: number, artist: string, album: string): MockTrack {
+function buildRandomTrack(dir: string, name: string, number: number, artist: string, album: string, genre: string): MockTrack {
 	return {
 		path: path.resolve(dir, number + ' ' + name + '.mp3'),
 		artist,
 		album,
-		number
+		number,
+		genre
 	};
 }
 
-function buildRandomFolder(dir: string, type: string, nr: number): MockFolder {
+function buildRandomFolder(dir: string, type: string, nr: number, genre: string): MockFolder {
 	return {
 		path: path.resolve(dir, type + ' ' + nr),
 		name: type + nr,
+		genre,
 		folders: [],
 		tracks: []
 	};
@@ -55,15 +61,15 @@ function buildMockRoot(dir: string, nr: number): MockRoot {
 	const folders: Array<MockFolder> = [];
 	const amountArtists = 5; // randomInt(1, 25);
 	for (let i = 1; i < amountArtists; i++) {
-		const artist = buildRandomFolder(rootDir, 'artist', i);
+		const artist = buildRandomFolder(rootDir, 'artist', i, '');
 		folders.push(artist);
 		const amountAlbums = i; // randomInt(1, 25);
 		for (let j = 1; j < amountAlbums; j++) {
-			const album = buildRandomFolder(artist.path, 'album', i);
+			const album = buildRandomFolder(artist.path, 'album', i, randomItem(Genres));
 			artist.folders.push(album);
 			const amountTracks = i; // randomInt(1, 25);
 			for (let k = 1; k < amountTracks; k++) {
-				const track = buildRandomTrack(album.path, artist.name + album.name, k, artist.name, album.name);
+				const track = buildRandomTrack(album.path, artist.name + album.name, k, artist.name, album.name, album.genre);
 				album.tracks.push(track);
 			}
 		}
@@ -76,7 +82,7 @@ function buildMockRoot(dir: string, nr: number): MockRoot {
 }
 
 async function writeMockTrack(track: MockTrack): Promise<void> {
-	await writeMP3Track(track.path, track.album, track.artist, track.number);
+	await writeMP3Track(track.path, track.album, track.artist, track.number, track.genre);
 }
 
 async function writeMockFolder(f: MockFolder): Promise<void> {

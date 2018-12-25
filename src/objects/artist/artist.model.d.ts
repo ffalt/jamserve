@@ -1,5 +1,5 @@
 import {DBObject} from '../base/base.model';
-import {MetaInfo} from '../../engine/metadata/metadata.model';
+import {MetaInfo} from '../../modules/audio/metadata.model';
 
 export interface Artist extends DBObject {
 	name: string;

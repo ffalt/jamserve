@@ -10,6 +10,10 @@ export function randomInt(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+export function randomItem<T>(list: Array<T>): T {
+	const i = randomInt(0, list.length - 1);
+	return list[i];
+}
 
 export function randomItems<T>(list: Array<T>, amount?: number): Array<T> {
 	if (amount === undefined || amount < 0 || list.length <= amount) {

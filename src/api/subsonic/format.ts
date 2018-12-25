@@ -10,7 +10,7 @@ import {State, States} from '../../objects/state/state.model';
 import {Folder} from '../../objects/folder/folder.model';
 import {Album} from '../../objects/album/album.model';
 import {Artist} from '../../objects/artist/artist.model';
-import {MetaInfo} from '../../engine/metadata/metadata.model';
+import {MetaInfo} from '../../modules/audio/metadata.model';
 import {Track} from '../../objects/track/track.model';
 import {Episode} from '../../objects/episode/episode.model';
 import {NowPlaying} from '../../engine/nowplaying/nowplaying.model';

@@ -1,7 +1,7 @@
 import {JamParameters} from '../../model/jam-rest-params-0.1.0';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {Album} from './album.model';
-import {MetaInfo} from '../../engine/metadata/metadata.model';
+import {MetaInfo} from '../../modules/audio/metadata.model';
 
 export function formatAlbumInfo(info: MetaInfo): Jam.AlbumInfo {
 	return {

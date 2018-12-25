@@ -11,7 +11,7 @@ import {fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data-0.1.0';
 import {TrackMedia, TrackTag} from '../../objects/track/track.model';
-import {MetaInfoAlbum, MetaInfoArtist, MetaInfoImage, MetaInfoTopSong, MetaInfoTrackSimilarSong} from '../metadata/metadata.model';
+import {MetaInfoAlbum, MetaInfoArtist, MetaInfoImage, MetaInfoTopSong, MetaInfoTrackSimilarSong} from './metadata.model';
 import {Folder} from '../../objects/folder/folder.model';
 import fse from 'fs-extra';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';

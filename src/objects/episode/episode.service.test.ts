@@ -95,7 +95,7 @@ describe('EpisodeService', () => {
 			it('should download an episode file', async () => {
 				const podcastID = 'podcastID4';
 				const file = tmp.fileSync();
-				await writeMP3Track(file.name, 'podcast', 'podcast artist', 1);
+				await writeMP3Track(file.name, 'podcast', 'podcast artist', 1, 'podcast');
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/episode1.mp3')
 					.replyWithFile(200, file.name, {'Content-Type': 'audio/mp3'});
@@ -118,7 +118,7 @@ describe('EpisodeService', () => {
 			it('should report downloading while downloading', async () => {
 				const podcastID = 'podcastID5';
 				const file = tmp.fileSync();
-				await writeMP3Track(file.name, 'podcast', 'podcast artist', 1);
+				await writeMP3Track(file.name, 'podcast', 'podcast artist', 1, 'podcast');
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/episode1.mp3')
 					.delayConnection(1000)
@@ -156,7 +156,7 @@ describe('EpisodeService', () => {
 			it('should block downloading a podcast while download already running', async () => {
 				const podcastID = 'podcastID6';
 				const file = tmp.fileSync();
-				await writeMP3Track(file.name, 'podcast', 'podcast artist', 1);
+				await writeMP3Track(file.name, 'podcast', 'podcast artist', 1, 'podcast');
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/episode1.mp3')
 					.delayConnection(1000)
@@ -177,7 +177,7 @@ describe('EpisodeService', () => {
 			it('should throw a storage error', async () => {
 				const podcastID = 'podcastID7';
 				const file = tmp.fileSync();
-				await writeMP3Track(file.name, 'podcast', 'podcast artist', 1);
+				await writeMP3Track(file.name, 'podcast', 'podcast artist', 1, 'podcast');
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/episode1.mp3')
 					.replyWithFile(200, file.name, {'Content-Type': 'audio/mp3'});
