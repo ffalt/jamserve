@@ -11,7 +11,7 @@ export class GenreController {
 	}
 
 	async list(req: JamRequest<JamParameters.Genres>): Promise<Array<Jam.Genre>> {
-		const genres = await this.genreService.getGenres(req.query.rootID, false);
+		const genres = await this.genreService.getGenres(req.query.rootID);
 		return genres.map(genre => formatGenre(genre));
 	}
 

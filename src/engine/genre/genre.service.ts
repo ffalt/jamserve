@@ -17,7 +17,7 @@ export class GenreService {
 	constructor(private trackStore: TrackStore) {
 	}
 
-	async buildGenres(): Promise<void> {
+	async refresh(): Promise<void> {
 		// logger.info('Build Genres');
 		const genreHash: {
 			[name: string]: {
@@ -65,9 +65,9 @@ export class GenreService {
 		});
 	}
 
-	async getGenres(rootID: string | undefined, forceRebuild: boolean): Promise<Array<Genre>> {
-		if (forceRebuild || this.genres.length === 0) {
-			await this.buildGenres();
+	async getGenres(rootID?: string): Promise<Array<Genre>> {
+		if (this.genres.length === 0) {
+			await this.refresh();
 		}
 		return this.genres.map(g => {
 			const genre = {
