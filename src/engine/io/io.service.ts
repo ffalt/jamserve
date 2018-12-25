@@ -1,5 +1,5 @@
 import {Store} from '../store/store';
-import {AudioModule} from '../audio/audio.module';
+import {AudioModule} from '../../modules/audio/audio.module';
 import Logger from '../../utils/logger';
 import {ScanDir, scanDir} from './components/scan';
 import {MatchDir, matchDir} from './components/match';
@@ -13,7 +13,7 @@ import {Folder} from '../../objects/folder/folder.model';
 import {Track} from '../../objects/track/track.model';
 import {IndexService} from '../index/index.service';
 import {GenreService} from '../genre/genre.service';
-import {ImageModule} from '../image/image.module';
+import {ImageModule} from '../../modules/image/image.module';
 
 const log = Logger('IO');
 

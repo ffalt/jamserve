@@ -7,7 +7,7 @@ import fse from 'fs-extra';
 import Logger from '../../utils/logger';
 import {IApiBinaryResult} from '../../typings';
 import {FolderTypeImageName} from '../../types';
-import {ImageModule} from '../../engine/image/image.module';
+import {ImageModule} from '../../modules/image/image.module';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
 

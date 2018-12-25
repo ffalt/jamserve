@@ -7,7 +7,7 @@ import {TrackStore} from '../track/track.store';
 import {FolderTypesAlbum} from '../../types';
 import fse from 'fs-extra';
 import path from 'path';
-import {mockImage} from '../../engine/image/image.module.spec';
+import {mockImage} from '../../modules/image/image.module.spec';
 import {StateService} from '../state/state.service';
 
 describe('AlbumService', () => {

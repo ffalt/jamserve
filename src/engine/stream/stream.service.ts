@@ -1,5 +1,5 @@
 import {IApiBinaryResult} from '../../typings';
-import {PreTranscoder, Transcoder} from '../audio/transcoder';
+import {PreTranscoder, Transcoder} from '../../modules/audio/transcoder';
 import {fileSuffix} from '../../utils/fs-utils';
 import path from 'path';
 import fse from 'fs-extra';

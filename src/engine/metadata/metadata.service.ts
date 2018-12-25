@@ -1,5 +1,5 @@
 import {FolderType} from '../../types';
-import {AudioModule} from '../audio/audio.module';
+import {AudioModule} from '../../modules/audio/audio.module';
 import {shuffle} from '../../utils/random';
 import Logger from '../../utils/logger';
 import {MetaInfo, MetaInfoAlbum, MetaInfoArtist, MetaInfoArtistSimilarArtist, MetaInfoFolderSimilarArtist, MetaInfoSimilarArtist, MetaInfoTopSong, MetaInfoTrack, MetaInfoTrackSimilarSong} from './metadata.model';

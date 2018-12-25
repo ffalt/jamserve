@@ -7,10 +7,10 @@ import {matchDir, MatchDir} from '../io/components/match';
 import {DBObjectType} from '../../types';
 import {Root} from '../../objects/root/root.model';
 import {MergeChanges, Merger} from '../io/components/merge';
-import {AudioModule} from '../audio/audio.module';
+import {AudioModule} from '../../modules/audio/audio.module';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import {MetaMerge} from '../io/components/meta';
-import {writeMP3Track} from '../audio/audio.mock';
+import {writeMP3Track} from '../../modules/audio/audio.mock';
 
 interface MockTrack {
 	path: string;

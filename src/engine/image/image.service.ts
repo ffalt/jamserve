@@ -1,7 +1,7 @@
 import {IApiBinaryResult} from '../../typings';
 import {DBObjectType, FolderType} from '../../types';
 import path from 'path';
-import {ImageModule} from './image.module';
+import {ImageModule} from '../../modules/image/image.module';
 import {Folder} from '../../objects/folder/folder.model';
 import {Track} from '../../objects/track/track.model';
 import {User} from '../../objects/user/user.model';

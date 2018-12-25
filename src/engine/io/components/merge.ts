@@ -2,7 +2,7 @@ import {Store} from '../../store/store';
 import {MatchDir, MatchFile} from './match';
 import {DBObjectType, FileTyp, FolderType} from '../../../types';
 import path from 'path';
-import {AudioModule} from '../../audio/audio.module';
+import {AudioModule} from '../../../modules/audio/audio.module';
 import {deepCompare} from '../../../utils/deep-compare';
 import Logger from '../../../utils/logger';
 import {fillMatchTags} from './tag';

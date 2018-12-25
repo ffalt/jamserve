@@ -2,7 +2,7 @@ import {fileDeleteIfExists, fileSuffix, pathDeleteIfExists} from '../../utils/fs
 import {SupportedAudioFormat} from '../../utils/filetype';
 import path from 'path';
 import Logger from '../../utils/logger';
-import {AudioModule} from '../../engine/audio/audio.module';
+import {AudioModule} from '../../modules/audio/audio.module';
 import {downloadFile} from '../../utils/download';
 import fse from 'fs-extra';
 import {EpisodeStore, SearchQueryEpisode} from './episode.store';

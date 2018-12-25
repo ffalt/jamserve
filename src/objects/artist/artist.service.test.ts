@@ -4,7 +4,7 @@ import {FolderService} from '../folder/folder.service';
 import {ArtistService} from './artist.service';
 import {testService} from '../base/base.service.spec';
 import {FolderType} from '../../types';
-import {mockImage} from '../../engine/image/image.module.spec';
+import {mockImage} from '../../modules/image/image.module.spec';
 import path from 'path';
 import fse from 'fs-extra';
 import {StateService} from '../state/state.service';

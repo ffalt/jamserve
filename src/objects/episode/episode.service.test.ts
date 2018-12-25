@@ -2,13 +2,13 @@ import {assert, expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {EpisodeService} from './episode.service';
-import {AudioModule} from '../../engine/audio/audio.module';
+import {AudioModule} from '../../modules/audio/audio.module';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import tmp, {SynchrounousResult} from 'tmp';
 import {mockEpisode, mockEpisode2} from './episode.mock';
 import {PodcastStatus} from '../../types';
 import nock from 'nock';
-import {writeMP3Track} from '../../engine/audio/audio.mock';
+import {writeMP3Track} from '../../modules/audio/audio.mock';
 
 describe('EpisodeService', () => {
 	let episodeService: EpisodeService;

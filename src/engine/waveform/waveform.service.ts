@@ -2,7 +2,7 @@ import path from 'path';
 import Logger from '../../utils/logger';
 import {IApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
-import {WaveformGenerator} from '../audio/tools/ffmpeg-waveform';
+import {WaveformGenerator} from '../../modules/audio/tools/ffmpeg-waveform';
 import fse from 'fs-extra';
 import {JamParameters} from '../../model/jam-rest-params-0.1.0';
 import {Track} from '../../objects/track/track.model';

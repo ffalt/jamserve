@@ -5,7 +5,7 @@ import path from 'path';
 import {LastFM} from '../../model/lastfm-rest-data-2.0';
 import {JamRequest} from '../../api/jam/api';
 import {TrackController} from '../../objects/track/track.controller';
-import {AudioModule} from '../audio/audio.module';
+import {AudioModule} from '../../modules/audio/audio.module';
 
 export class MetadataController {
 	private cache: { [key: string]: any } = {};

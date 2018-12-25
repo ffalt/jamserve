@@ -4,7 +4,7 @@ import {testService} from '../base/base.service.spec';
 import {PodcastService} from './podcast.service';
 import {EpisodeService} from '../episode/episode.service';
 import tmp, {SynchrounousResult} from 'tmp';
-import {AudioModule} from '../../engine/audio/audio.module';
+import {AudioModule} from '../../modules/audio/audio.module';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import nock from 'nock';
 import {PodcastStatus} from '../../types';

@@ -9,7 +9,7 @@ import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {formatTrack} from './track.format';
 import {SearchQueryTrack} from './track.store';
-import {AudioModule} from '../../engine/audio/audio.module';
+import {AudioModule} from '../../modules/audio/audio.module';
 import {BookmarkService} from '../bookmark/bookmark.service';
 import {MetaDataService} from '../../engine/metadata/metadata.service';
 import {formatState} from '../state/state.format';

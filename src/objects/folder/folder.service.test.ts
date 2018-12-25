@@ -9,7 +9,7 @@ import {SupportedWriteImageFormat} from '../../utils/filetype';
 import mimeTypes from 'mime-types';
 import {FolderType} from '../../types';
 import {testService} from '../base/base.service.spec';
-import {ImageModuleTest, mockImage} from '../../engine/image/image.module.spec';
+import {ImageModuleTest, mockImage} from '../../modules/image/image.module.spec';
 import {StateService} from '../state/state.service';
 
 describe('FolderService', () => {

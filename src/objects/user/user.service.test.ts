@@ -6,7 +6,7 @@ import tmp, {SynchrounousResult} from 'tmp';
 import path from 'path';
 import {mockUser, mockUser2} from './user.mock';
 import {Md5} from 'md5-typescript';
-import {mockImage} from '../../engine/image/image.module.spec';
+import {mockImage} from '../../modules/image/image.module.spec';
 import fse from 'fs-extra';
 
 function salt(length: number): string {

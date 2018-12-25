@@ -4,7 +4,7 @@ import {testService} from '../base/base.service.spec';
 import {TrackService} from './track.service';
 import {FolderService} from '../folder/folder.service';
 import {FolderTypesAlbum} from '../../types';
-import {mockImage} from '../../engine/image/image.module.spec';
+import {mockImage} from '../../modules/image/image.module.spec';
 import path from 'path';
 import fse from 'fs-extra';
 import {StateService} from '../state/state.service';

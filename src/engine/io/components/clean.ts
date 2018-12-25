@@ -7,7 +7,7 @@ import {Root} from '../../../objects/root/root.model';
 import {Track} from '../../../objects/track/track.model';
 import {Folder} from '../../../objects/folder/folder.model';
 import fse from 'fs-extra';
-import {ImageModule} from '../../image/image.module';
+import {ImageModule} from '../../../modules/image/image.module';
 
 const log = Logger('IO.clean');
 

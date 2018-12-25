@@ -8,7 +8,7 @@ import {PlaylistStore} from '../playlist/playlist.store';
 import {PlayQueueStore} from '../playqueue/playqueue.store';
 import {BookmarkStore} from '../bookmark/bookmark.store';
 import {IApiBinaryResult} from '../../typings';
-import {ImageModule} from '../../engine/image/image.module';
+import {ImageModule} from '../../modules/image/image.module';
 import {BaseStoreService} from '../base/base.service';
 
 export class UserService extends BaseStoreService<User, SearchQueryUser> {
