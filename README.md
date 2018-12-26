@@ -12,15 +12,9 @@ This is the backend development repository. Web-Client, Installation & Usage Scr
 
 Features:
 * API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
-* API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/master/src/model/jam-openapi-0.1.0.json)
+* API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/master/src/model/jam-openapi.json)
 * Enhance Metadata via Musicbrainz, LastFM, Chartlyrics & AcoustID
 * Database Support for NeDB or ElasticSearch
-
-## Big TODOS
-* User passwords are stored in clear text, since Subsonic Api compatibility requires it. This is unacceptable. Either will I drop support for Subsonic Apps or generate less secure passwords with limited rights only for the Subsonic API.  
-* Publish test files repository, so CI can be activated. 
-* Test coverage is still small.
-* API is missing endpoints for administrative activities (e.g. changing options)
 
 ## Installation
 
@@ -43,7 +37,7 @@ module.exports = {
 		/*
 			Root frontend directory
 		*/
-		jamberry: './dist/jamberry/'
+		frontend: './dist/jamberry/'
 	},
 	server: {
 		/*
