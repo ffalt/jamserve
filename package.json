@@ -1,6 +1,6 @@
 {
   "name": "jamserve",
-  "version": "0.1.0-alpha",
+  "version": "0.1.1-alpha",
   "author": "ffalt",
   "license": "MIT",
   "description": "jamserve streaming audio server",
