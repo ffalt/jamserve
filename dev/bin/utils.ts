@@ -126,12 +126,12 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): {
 }
 
 export async function getSubsonicApiCalls(basePath: string): Promise<Array<IApiCall>> {
-	const api = await transformTS2JSONScheme(basePath, 'subsonic-rest-api-1.16.0', 'SubsonicApi');
+	const api = await transformTS2JSONScheme(basePath, 'subsonic-rest-api', 'SubsonicApi');
 	return getApiCalls(api);
 }
 
 export async function getJamApiCalls(basePath: string): Promise<Array<IApiCall>> {
-	const api = await transformTS2JSONScheme(basePath, 'jam-rest-api-0.1.0', 'JamApi');
+	const api = await transformTS2JSONScheme(basePath, 'jam-rest-api', 'JamApi');
 	return getApiCalls(api);
 }
 

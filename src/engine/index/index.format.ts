@@ -1,4 +1,4 @@
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import {ArtistIndex, FolderIndex} from './index.model';
 
 export function formatArtistIndex(index: ArtistIndex): Jam.ArtistIndex {

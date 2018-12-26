@@ -1,5 +1,5 @@
 import {JamRequest} from '../../api/jam/api';
-import {JamParameters} from '../../model/jam-rest-params-0.1.0';
+import {JamParameters} from '../../model/jam-rest-params';
 import {IApiBinaryResult} from '../../typings';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {ImageService} from './image.service';

@@ -1,5 +1,5 @@
 import {Engine} from '../../engine/engine';
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import {EpisodeController} from '../../objects/episode/episode.controller';
 import {PodcastController} from '../../objects/podcast/podcast.controller';
 import {AlbumController} from '../../objects/album/album.controller';
@@ -23,8 +23,7 @@ import {AutocompleteController} from '../../engine/autocomplete/autocomplete.con
 import {BookmarkController} from '../../objects/bookmark/bookmark.controller';
 import {PlayQueueController} from '../../objects/playqueue/playqueue.controller';
 import {RadioController} from '../../objects/radio/radio.controller';
-
-export const APIVERSION = '0.1.0';
+import {JAMAPI_VERSION} from '../../version';
 
 export interface JamRequest<T> {
 	query: T;
@@ -91,14 +90,14 @@ export class JamController {
 	}
 
 	async ping(req: JamRequest<{}>): Promise<Jam.Ping> {
-		return {version: APIVERSION};
+		return {version: JAMAPI_VERSION};
 	}
 
 	async session(req: JamRequest<{}>): Promise<Jam.Session> {
 		if (req.user) {
-			return {version: APIVERSION, allowedCookieDomains: this.engine.config.server.session.allowedCookieDomains, user: formatUser(req.user)};
+			return {version: JAMAPI_VERSION, allowedCookieDomains: this.engine.config.server.session.allowedCookieDomains, user: formatUser(req.user)};
 		} else {
-			return {version: APIVERSION, allowedCookieDomains: this.engine.config.server.session.allowedCookieDomains};
+			return {version: JAMAPI_VERSION, allowedCookieDomains: this.engine.config.server.session.allowedCookieDomains};
 		}
 	}
 

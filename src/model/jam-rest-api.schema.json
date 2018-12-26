@@ -13252,6 +13252,7 @@
 					"description": "format of download stream",
 					"default": "zip",
 					"enum": [
+						"tar",
 						"zip"
 					],
 					"type": "string"

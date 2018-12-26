@@ -1,5 +1,5 @@
-import {SubsonicParameters} from './subsonic-rest-params-1.16.0';
-import {Subsonic} from './subsonic-rest-data-1.16.0';
+import {SubsonicParameters} from './subsonic-rest-params';
+import {Subsonic} from './subsonic-rest-data';
 
 export type SubsonicApiImageTypes = ['image/jpeg', 'image/png'];
 export type SubsonicApiStreamTypes = ['audio/mpeg', 'audio/flac', 'audio/mp4', 'audio/ogg', 'audio/x-flv'];

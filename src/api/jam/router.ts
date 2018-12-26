@@ -4,9 +4,9 @@ import {ApiResponder} from './response';
 import multer from 'multer';
 import path from 'path';
 import Logger from '../../utils/logger';
-import {APIVERSION, JamController} from './api';
+import {JamController} from './api';
 import {Engine} from '../../engine/engine';
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import cors, {CorsOptions} from 'cors';
 import {SessionJSONFileStore} from '../../utils/session-storage';
 import session from 'express-session';
@@ -20,6 +20,7 @@ import {apiCheck} from './check';
 import {getMaxAge} from '../../utils/max-age';
 import {formatUser} from '../../objects/user/user.format';
 import {User} from '../../objects/user/user.model';
+import {JAMAPI_VERSION} from '../../version';
 
 const autoUploadTempReap = require('multer-autoreap'); // TODO: multer-autoreap types
 const rateLimit = require('express-rate-limit');
@@ -57,7 +58,7 @@ function CallSessionLoginHandler(req: UserRequest, res: express.Response, next: 
 				client
 			};
 			const token = jwt.sign(tokenData, req.engine.config.server.jwt.secret);
-			const result: Jam.Session = {version: APIVERSION, allowedCookieDomains: req.engine.config.server.session.allowedCookieDomains, jwt: token, user: formatUser(req.user)};
+			const result: Jam.Session = {version: JAMAPI_VERSION, allowedCookieDomains: req.engine.config.server.session.allowedCookieDomains, jwt: token, user: formatUser(req.user)};
 			ApiResponder.data(res, result);
 		});
 	})(req, res, next);

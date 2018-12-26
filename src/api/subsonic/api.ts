@@ -4,8 +4,8 @@ import {DBObjectType, FolderType, FolderTypesAlbum, PodcastStatus} from '../../t
 import {randomItems} from '../../utils/random';
 import {paginate} from '../../utils/paginate';
 import {FORMAT} from './format';
-import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
-import {SubsonicParameters} from '../../model/subsonic-rest-params-1.16.0';
+import {Subsonic} from '../../model/subsonic-rest-data';
+import {SubsonicParameters} from '../../model/subsonic-rest-params';
 import {BaseStore, SearchQuery} from '../../objects/base/base.store';
 import {User} from '../../objects/user/user.model';
 import {DBObject} from '../../objects/base/base.model';

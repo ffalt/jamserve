@@ -1,4 +1,4 @@
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import {State, States} from './state.model';
 
 export function formatState(state?: State): Jam.State {

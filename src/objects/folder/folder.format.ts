@@ -1,5 +1,5 @@
-import {JamParameters} from '../../model/jam-rest-params-0.1.0';
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {JamParameters} from '../../model/jam-rest-params';
+import {Jam} from '../../model/jam-rest-data';
 import path from 'path';
 import {FolderType} from '../../types';
 import {MetaInfo} from '../../modules/audio/metadata.model';

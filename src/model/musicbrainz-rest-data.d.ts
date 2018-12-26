@@ -1,3 +1,5 @@
+// Musicbrainz API Version 2.0
+
 export declare namespace MusicBrainz {
 
 	export interface Rating {

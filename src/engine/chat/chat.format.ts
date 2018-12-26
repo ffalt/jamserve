@@ -1,4 +1,4 @@
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import {ChatMessage} from './chat.model';
 
 export function formatChatMessage(message: ChatMessage): Jam.ChatMessage {

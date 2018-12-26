@@ -4,7 +4,7 @@ import {IApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {WaveformGenerator} from '../../modules/audio/tools/ffmpeg-waveform';
 import fse from 'fs-extra';
-import {JamParameters} from '../../model/jam-rest-params-0.1.0';
+import {JamParameters} from '../../model/jam-rest-params';
 import {Track} from '../../objects/track/track.model';
 import {Episode} from '../../objects/episode/episode.model';
 import WaveformFormatType = JamParameters.WaveformFormatType;

@@ -1,4 +1,4 @@
-import {JamParameters} from '../../model/jam-rest-params-0.1.0';
+import {JamParameters} from '../../model/jam-rest-params';
 import {InvalidParamError} from '../../api/jam/error';
 import {randomItems} from '../../utils/random';
 import {paginate} from '../../utils/paginate';

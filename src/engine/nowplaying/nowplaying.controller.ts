@@ -1,4 +1,4 @@
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import {JamRequest} from '../../api/jam/api';
 import {NowPlayingService} from './nowplaying.service';
 import {packNowPlaying} from './nowplaying.format';

@@ -6,7 +6,7 @@ import {MatchDir, matchDir} from './components/match';
 import {MergeChanges, Merger} from './components/merge';
 import {MetaMerge} from './components/meta';
 import {clearID3, scanForRemoved} from './components/clean';
-import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
+import {Subsonic} from '../../model/subsonic-rest-data';
 import {WaveformService} from '../waveform/waveform.service';
 import {Root, RootStatus} from '../../objects/root/root.model';
 import {Folder} from '../../objects/folder/folder.model';

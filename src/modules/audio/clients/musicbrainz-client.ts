@@ -1,6 +1,6 @@
 import {WebserviceClient} from '../../../utils/webservice-client';
 import {LookupBrowseTypes, LookupIncludes} from './musicbrainz-client.types';
-import {MusicBrainz} from '../../../model/musicbrainz-rest-data-2.0';
+import {MusicBrainz} from '../../../model/musicbrainz-rest-data';
 import Logger from '../../../utils/logger';
 import {MusicbrainzClientApi} from './musicbrainz-client.interface';
 

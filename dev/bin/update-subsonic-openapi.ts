@@ -1,14 +1,14 @@
-import {OpenAPIObject} from '../../src/model/openapi';
+import {OpenAPIObject} from '../../src/model/openapi-spec';
 import path from 'path';
 import {getSubsonicApiCalls, IApiCall, transformTS2JSONScheme} from './utils';
 import fse from 'fs-extra';
 
 const version = '1.16.0';
 const basePath = path.resolve('../../src/model/');
-const destfile = path.resolve(basePath, 'subsonic-openapi-' + version + '.json');
+const destfile = path.resolve(basePath, 'subsonic-openapi.json');
 
 async function run() {
-	const data = await transformTS2JSONScheme(basePath, 'subsonic-rest-data-' + version, 'Subsonic.Response');
+	const data = await transformTS2JSONScheme(basePath, 'subsonic-rest-data', 'Subsonic.Response');
 	data.definitions = data.definitions || {};
 	data.definitions['Subsonic.ResponseStatus'] = {
 		'enum': [

@@ -1,11 +1,11 @@
-import {OpenAPIObject} from '../../src/model/openapi';
+import {OpenAPIObject} from '../../src/model/openapi-spec';
 import path from 'path';
-import {getJamApiCalls, IApiCall, transformTS2JSONScheme, transformTS2NamespaceJSONScheme} from './utils';
+import {getJamApiCalls, IApiCall, transformTS2NamespaceJSONScheme} from './utils';
 import fse from 'fs-extra';
+import {JAMAPI_VERSION} from '../../src/version';
 
-const version = '0.1.0';
 const basePath = path.resolve('../../src/model/');
-const destfile = path.resolve(basePath, 'jam-openapi-' + version + '.json');
+const destfile = path.resolve(basePath, 'jam-openapi.json');
 
 async function run() {
 
@@ -13,7 +13,7 @@ async function run() {
 		openapi: '3.0.0',
 		info: {
 			description: 'Api for JamServe',
-			version: version,
+			version: JAMAPI_VERSION,
 			title: 'JamApi',
 			license: {
 				name: 'MIT'
@@ -96,7 +96,7 @@ async function run() {
 		return result;
 	}
 
-	const data = await transformTS2NamespaceJSONScheme(basePath, 'jam-rest-data-' + version);
+	const data = await transformTS2NamespaceJSONScheme(basePath, 'jam-rest-data');
 	const apicalls: Array<IApiCall> = await getJamApiCalls(basePath);
 
 	apicalls.forEach(call => {

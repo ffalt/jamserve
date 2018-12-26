@@ -1,15 +1,14 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
-import {Jam} from '../../model/jam-rest-data-0.1.0';
-import {MusicBrainz} from '../../model/musicbrainz-rest-data-2.0';
-import {Acoustid} from '../../model/acoustid-rest-data-2.0';
-import {LastFM} from '../../model/lastfm-rest-data-2.0';
-import {JamParameters} from '../../model/jam-rest-params-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
+import {MusicBrainz} from '../../model/musicbrainz-rest-data';
+import {Acoustid} from '../../model/acoustid-rest-data';
+import {LastFM} from '../../model/lastfm-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {JamController, JamRequest} from './api';
 import {ApiResponder} from './response';
 import express from 'express';
 import {IApiBinaryResult} from '../../typings';
-import {apiCheck} from './check';
 
 export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
 export interface Register {

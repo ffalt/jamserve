@@ -1,8 +1,8 @@
-import {MusicBrainz} from './musicbrainz-rest-data-2.0';
-import {LastFM} from './lastfm-rest-data-2.0';
-import {Acoustid} from './acoustid-rest-data-2.0';
-import {Jam} from './jam-rest-data-0.1.0';
-import {JamParameters} from './jam-rest-params-0.1.0';
+import {MusicBrainz} from './musicbrainz-rest-data';
+import {LastFM} from './lastfm-rest-data';
+import {Acoustid} from './acoustid-rest-data';
+import {Jam} from './jam-rest-data';
+import {JamParameters} from './jam-rest-params';
 
 export interface JamApiErrorUnauthorized {
 	error: 401;

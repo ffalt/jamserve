@@ -5,7 +5,7 @@ import Logger from '../../utils/logger';
 import {FORMAT} from './format';
 import {SubsonicApi} from './api';
 import {Engine} from '../../engine/engine';
-import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
+import {Subsonic} from '../../model/subsonic-rest-data';
 import cors from 'cors';
 import {registerApi, SubsonicRolesHandler} from './routes';
 import {ApiResponder} from './response';

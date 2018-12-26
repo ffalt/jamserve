@@ -1,4 +1,4 @@
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import moment from 'moment';
 import {DBObjectType} from '../../types';
 import {formatTrack} from '../../objects/track/track.format';

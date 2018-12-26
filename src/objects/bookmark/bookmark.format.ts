@@ -1,4 +1,4 @@
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import {Bookmark} from './bookmark.model';
 
 export function formatBookmark(bookmark: Bookmark): Jam.Bookmark {

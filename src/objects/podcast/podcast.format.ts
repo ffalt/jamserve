@@ -1,4 +1,4 @@
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import {Podcast} from './podcast.model';
 
 export function formatPodcast(podcast: Podcast, status: string ): Jam.Podcast {

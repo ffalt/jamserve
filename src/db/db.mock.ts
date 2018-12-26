@@ -31,7 +31,7 @@ export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup:
 	dbs.push(new TestNeDB());
 	dbs.push(new TestElastic());
 	for (const testDB of dbs) {
-		describe(testDB.name, () => {
+		describe('with ' + testDB.name, () => {
 			before(function(done) {
 				this.timeout(40000);
 				testDB.setup().then(() => {

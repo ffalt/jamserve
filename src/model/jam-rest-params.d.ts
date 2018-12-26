@@ -1,4 +1,4 @@
-import {Jam} from './jam-rest-data-0.1.0';
+import {Jam} from './jam-rest-data';
 
 export declare namespace JamParameters {
 

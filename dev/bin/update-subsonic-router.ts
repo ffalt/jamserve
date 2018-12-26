@@ -81,8 +81,8 @@ async function run() {
 
 	const rolesType = 'export interface SubsonicRolesHandler {\n' + roles.map(role => '\t' + role + ': express.RequestHandler;').join('\n') + '\n}';
 
-	const ts = `import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
-import {SubsonicParameters} from '../../model/subsonic-rest-params-1.16.0';
+	const ts = `import {Subsonic} from '../../model/subsonic-rest-data';
+import {SubsonicParameters} from '../../model/subsonic-rest-params';
 import {SubsonicApi, ApiOptions} from './api';
 import {ApiResponder} from './response';
 import express from 'express';

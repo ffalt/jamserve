@@ -1,4 +1,4 @@
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import {Radio} from './radio.model';
 
 export function formatRadio(radio: Radio): Jam.Radio {

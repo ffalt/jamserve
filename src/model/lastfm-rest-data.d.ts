@@ -1,3 +1,5 @@
+// LASTFM API Version 2.0
+
 export declare namespace LastFM {
 
 	export interface Tag {

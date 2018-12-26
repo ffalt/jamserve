@@ -1,4 +1,4 @@
-import {MusicBrainz} from '../../model/musicbrainz-rest-data-2.0';
+import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {Folder} from '../../objects/folder/folder.model';
 import {Artist} from '../../objects/artist/artist.model';
 

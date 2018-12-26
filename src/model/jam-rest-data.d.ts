@@ -1,6 +1,4 @@
-import {MusicBrainz} from './musicbrainz-rest-data-2.0';
-import {LastFM} from './lastfm-rest-data-2.0';
-import {Acoustid} from './acoustid-rest-data-2.0';
+import {MusicBrainz} from './musicbrainz-rest-data';
 import {ID3v2FrameValues} from './id3v2-frame-values';
 
 export declare namespace Jam {

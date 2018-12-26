@@ -1,4 +1,4 @@
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../model/jam-rest-data';
 import {User, UserRoles} from './user.model';
 
 function formatRoles(roles: UserRoles): Jam.Roles {

@@ -1,4 +1,4 @@
-import {OpenAPIObject, OperationObject, ParameterObject, RequestBodyObject, SchemaObject} from '../model/openapi';
+import {OpenAPIObject, OperationObject, ParameterObject, RequestBodyObject, SchemaObject} from '../model/openapi-spec';
 import express from 'express';
 import Logger from './logger';
 import {Definition} from 'typescript-json-schema';

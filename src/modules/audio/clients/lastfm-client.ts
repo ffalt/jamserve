@@ -1,5 +1,5 @@
 import {WebserviceClient} from '../../../utils/webservice-client';
-import {LastFM} from '../../../model/lastfm-rest-data-2.0';
+import {LastFM} from '../../../model/lastfm-rest-data';
 import Logger from '../../../utils/logger';
 import {LastFMClientApi} from './lastfm-client.interface';
 

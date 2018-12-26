@@ -1,5 +1,5 @@
-import {JamParameters} from '../../model/jam-rest-params-0.1.0';
-import {Jam} from '../../model/jam-rest-data-0.1.0';
+import {JamParameters} from '../../model/jam-rest-params';
+import {Jam} from '../../model/jam-rest-data';
 import {DBObjectType} from '../../types';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';

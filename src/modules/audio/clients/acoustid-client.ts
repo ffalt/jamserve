@@ -1,6 +1,6 @@
 import {fpcalc, FPCalcOptions, FPCalcResult} from '../tools/fpcalc';
 import {WebserviceClient} from '../../../utils/webservice-client';
-import {Acoustid} from '../../../model/acoustid-rest-data-2.0';
+import {Acoustid} from '../../../model/acoustid-rest-data';
 import Logger from '../../../utils/logger';
 
 const log = Logger('Acoustid');

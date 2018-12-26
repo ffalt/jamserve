@@ -1,6 +1,6 @@
-import {Subsonic} from '../../model/subsonic-rest-data-1.16.0';
-import {SubsonicParameters} from '../../model/subsonic-rest-params-1.16.0';
-import {SubsonicApi, ApiOptions} from './api';
+import {Subsonic} from '../../model/subsonic-rest-data';
+import {SubsonicParameters} from '../../model/subsonic-rest-params';
+import {ApiOptions, SubsonicApi} from './api';
 import {ApiResponder} from './response';
 import express from 'express';
 import {IApiBinaryResult} from '../../typings';

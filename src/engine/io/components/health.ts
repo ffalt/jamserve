@@ -1,6 +1,6 @@
 import path from 'path';
 import {FolderType} from '../../../types';
-import {Jam} from '../../../model/jam-rest-data-0.1.0';
+import {Jam} from '../../../model/jam-rest-data';
 import {replaceFileSystemChars} from '../../../utils/fs-utils';
 import {Folder, FolderTag} from '../../../objects/folder/folder.model';
 
