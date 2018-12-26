@@ -112,6 +112,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^4.1.0",
+    "deplokay": "0.0.6",
     "mocha": "^5.2.0",
     "nock": "^10.0.5",
     "node-memwatch": "^1.0.1",
