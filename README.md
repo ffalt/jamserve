@@ -16,12 +16,6 @@ Features:
 * Enhance Metadata via Musicbrainz, LastFM, Chartlyrics & AcoustID
 * Database Support for NeDB or ElasticSearch
 
-## Big TODOS
-* User passwords are stored in clear text, since Subsonic Api compatibility requires it. This is unacceptable. Either will I drop support for Subsonic Apps or generate less secure passwords with limited rights only for the Subsonic API.  
-* Publish test files repository, so CI can be activated. 
-* Test coverage is still small.
-* API is missing endpoints for administrative activities (e.g. changing options)
-
 ## Installation
 
 - install [NodeJS](https://nodejs.org/) >= 8.x and [NPM](https://www.npmjs.com/)
