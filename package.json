@@ -145,8 +145,12 @@
     "temp-dir": "./reports/.nyc_output",
     "report-dir": "./reports/coverage",
     "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx"
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "**/*.mock.ts",
+      "**/*.test.ts",
+      "**/*.spec.ts"
     ],
     "extension": [
       ".ts",
