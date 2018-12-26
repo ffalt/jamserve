@@ -37,7 +37,7 @@ function mockupConfig(testPath: string, useDB: string): Config {
 		},
 		paths: {
 			data: testPath,
-			jamberry: '../dist/jamberry'
+			frontend: '../dist/jamberry'
 		},
 		database: {
 			use: useDB,

@@ -37,13 +37,14 @@ export class Server {
 		app.use('/api/v1', initJamRouter(engine));
 		app.use('/rest', initSubsonicRouter(engine));
 
-		// jamberry
+		// frontend (jamberry config file)
 		app.get('/assets/config/config.js', (req, res) => {
 			res.sendFile(path.resolve('./config/jamberry.config.js'));
 		});
-		app.get('/*', express.static(path.resolve(engine.config.paths.jamberry)));
+		// frontend (any)
+		app.get('/*', express.static(path.resolve(engine.config.paths.frontend)));
 		app.get('/*', (req: express.Request, res: express.Response) => {
-			res.sendFile(path.join(path.resolve(engine.config.paths.jamberry), 'index.html'));
+			res.sendFile(path.join(path.resolve(engine.config.paths.frontend), 'index.html'));
 		});
 
 		this.app = app;

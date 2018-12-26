@@ -37,7 +37,7 @@ module.exports = {
 		/*
 			Root frontend directory
 		*/
-		jamberry: './dist/jamberry/'
+		frontend: './dist/jamberry/'
 	},
 	server: {
 		/*

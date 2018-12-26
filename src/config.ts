@@ -10,7 +10,7 @@ export interface BaseConfig {
 	database: DBConfig;
 	paths: {
 		data: string,
-		jamberry: string
+		frontend: string
 	};
 }
 
