@@ -679,11 +679,7 @@ export class SubsonicApi {
 		if (!o) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		} else {
-			const result = await this.engine.downloadService.getObjDownload(o, undefined, req.user);
-			if (!result) {
-				return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
-			}
-			return result;
+			return this.engine.downloadService.getObjDownload(o, undefined, req.user);
 		}
 	}
 

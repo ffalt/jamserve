@@ -6,7 +6,7 @@ export declare namespace JamParameters {
 	export type ImageFormatType = 'bmp' | 'png' | 'jpeg' | 'jpg' | 'tiff';
 	export type WaveformFormatType = 'svg' | 'json' | 'dat';
 	export type AudioFormatType = 'mp3';
-	export type DownloadFormatType = 'zip';
+	export type DownloadFormatType = 'zip' | 'tar';
 
 	export interface ID {
 		/**
