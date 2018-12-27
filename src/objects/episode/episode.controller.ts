@@ -41,7 +41,7 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 						return res;
 					}
 				}
-				return a.name.localeCompare(b.name);
+				return a.date - b.date;
 			}
 		);
 	}
