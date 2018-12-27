@@ -3,6 +3,7 @@ import path from 'path';
 import {getFileType} from '../../../utils/filetype';
 import Logger from '../../../utils/logger';
 import fse from 'fs-extra';
+import {ensureTrailingPathSeparator} from '../../../utils/fs-utils';
 
 const log = Logger('IO.scan');
 
@@ -29,7 +30,7 @@ export interface ScanFile {
 async function scanDirR(dir: string, stat: fse.Stats): Promise<ScanDir> {
 	log.debug('Scanning Directory', dir);
 	const result: ScanDir = {
-		name: dir,
+		name: ensureTrailingPathSeparator(dir),
 		stat: {
 			ctime: stat.ctime.valueOf(),
 			mtime: stat.mtime.valueOf()

@@ -101,7 +101,7 @@ export class Merger {
 			artistID: '',
 			parentID: (parent ? parent.id : ''),
 			name: path.basename(file.name),
-			path: path.dirname(file.name),
+			path: ensureTrailingPathSeparator(path.dirname(file.name)),
 			stat: {
 				created: file.stat.ctime,
 				modified: file.stat.mtime,
