@@ -82,7 +82,6 @@ import {JamController, JamRequest} from './api';
 import {ApiResponder} from './response';
 import express from 'express';
 import {IApiBinaryResult} from '../../typings';
-import {apiCheck} from './check';
 
 export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
 export interface Register {

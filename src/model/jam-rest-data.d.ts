@@ -1,5 +1,7 @@
 import {MusicBrainz} from './musicbrainz-rest-data';
 import {ID3v2FrameValues} from './id3v2-frame-values';
+import {LastFM} from './lastfm-rest-data';
+import {Acoustid} from './acoustid-rest-data';
 
 export declare namespace Jam {
 
@@ -337,6 +339,16 @@ export declare namespace Jam {
 		playlists?: Array<{ id: string; name: string; }>;
 		podcasts?: Array<{ id: string; name: string; }>;
 		episodes?: Array<{ id: string; name: string; }>;
+	}
+
+	export type MusicBrainzResponse = MusicBrainz.Response;
+	export type LastFMResponse = LastFM.Result;
+	export type AcoustidResponse = Acoustid.Result;
+
+	export interface ExternalFormats {
+		musicbrainz: MusicBrainzResponse;
+		lastfm: LastFMResponse;
+		acoustid: AcoustidResponse;
 	}
 
 }

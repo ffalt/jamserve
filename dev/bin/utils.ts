@@ -46,7 +46,7 @@ export async function transformTS2NamespaceJSONScheme(basePath: string, filename
 		return Promise.reject('Typescript generation failed');
 	}
 	const symbols = generator.getUserSymbols();
-	const scheme = generator.getSchemaForSymbols(symbols);
+	const scheme = generator.getSchemaForSymbols(symbols, true);
 	if (scheme) {
 		return scheme;
 	} else {

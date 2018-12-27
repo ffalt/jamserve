@@ -1,6 +1,3 @@
-import {MusicBrainz} from './musicbrainz-rest-data';
-import {LastFM} from './lastfm-rest-data';
-import {Acoustid} from './acoustid-rest-data';
 import {Jam} from './jam-rest-data';
 import {JamParameters} from './jam-rest-params';
 
@@ -55,7 +52,7 @@ export interface JamApi {
 		'lastfm/lookup'?: {
 			operationId: 'metadata.lastfmLookup'
 			params: JamParameters.LastFMLookup;
-			result: LastFM.Result;
+			result: Jam.LastFMResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -64,7 +61,7 @@ export interface JamApi {
 		'acoustid/lookup'?: {
 			operationId: 'metadata.acoustidLookup'
 			params: JamParameters.AcoustidLookup;
-			result: Array<Acoustid.Result>;
+			result: Array<Jam.AcoustidResponse>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -73,7 +70,7 @@ export interface JamApi {
 		'brainz/lookup'?: {
 			operationId: 'metadata.brainzLookup'
 			params: JamParameters.BrainzLookup;
-			result: MusicBrainz.Response;
+			result: Jam.MusicBrainzResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -82,7 +79,7 @@ export interface JamApi {
 		'brainz/search'?: {
 			operationId: 'metadata.brainzSearch'
 			params: JamParameters.BrainzSearch;
-			result: MusicBrainz.Response;
+			result: Jam.MusicBrainzResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 

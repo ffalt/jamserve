@@ -54,15 +54,15 @@ async function run() {
 	function collectSchema(p: any, definitions: any) {
 		if (p.$ref) {
 			const proptype = p.$ref.split('/')[2];
-			p = definitions[proptype];
+			const pr = definitions[proptype];
 			if (openapi.components && openapi.components.schemas && !openapi.components.schemas[proptype]) {
-				openapi.components.schemas[proptype] = p;
-				if (!p) {
-					console.error('Missing property type', proptype);
+				openapi.components.schemas[proptype] = pr;
+				if (!pr) {
+					console.error('Missing property type', proptype, p, pr);
 				}
-				if (p && p.properties) {
-					Object.keys(p.properties).forEach(key => {
-						collectSchema(p.properties[key], definitions);
+				if (pr && pr.properties) {
+					Object.keys(pr.properties).forEach(key => {
+						collectSchema(pr.properties[key], definitions);
 					});
 				}
 			}
