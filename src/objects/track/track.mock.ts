@@ -1,5 +1,5 @@
 import {Track} from './track.model';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 
 export function mockTrack(): Track {
 	return {

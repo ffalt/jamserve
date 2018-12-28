@@ -1,5 +1,5 @@
 import {DBObject} from '../base/base.model';
-import {AlbumType, FolderType} from '../../types';
+import {AlbumType, FolderType} from '../../model/jam-types';
 import {MetaInfo} from '../../modules/audio/metadata.model';
 
 export interface Folder extends DBObject {

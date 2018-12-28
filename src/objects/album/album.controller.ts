@@ -1,6 +1,6 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';

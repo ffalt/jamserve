@@ -7,7 +7,7 @@ import tmp from 'tmp';
 import fse from 'fs-extra';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import mimeTypes from 'mime-types';
-import {FolderType} from '../../types';
+import {FolderType} from '../../model/jam-types';
 import {testService} from '../base/base.service.spec';
 import {ImageModuleTest, mockImage} from '../../modules/image/image.module.spec';
 import {StateService} from '../state/state.service';

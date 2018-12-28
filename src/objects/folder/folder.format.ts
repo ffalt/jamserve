@@ -1,7 +1,7 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import path from 'path';
-import {FolderType} from '../../types';
+import {FolderType} from '../../model/jam-types';
 import {MetaInfo} from '../../modules/audio/metadata.model';
 import {Folder} from './folder.model';
 

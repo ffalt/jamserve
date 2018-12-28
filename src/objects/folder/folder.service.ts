@@ -6,7 +6,7 @@ import path from 'path';
 import fse from 'fs-extra';
 import Logger from '../../utils/logger';
 import {IApiBinaryResult} from '../../typings';
-import {FolderTypeImageName} from '../../types';
+import {FolderTypeImageName} from '../../model/jam-types';
 import {ImageModule} from '../../modules/image/image.module';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';

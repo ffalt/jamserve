@@ -1,6 +1,5 @@
-import {DBObjectType} from '../../types';
-import {BaseStore, SearchQuery} from '../base/base.store';
-import {QueryHelper} from '../base/base.store';
+import {DBObjectType} from '../../model/jam-types';
+import {BaseStore, QueryHelper, SearchQuery} from '../base/base.store';
 import {Bookmark} from './bookmark.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 

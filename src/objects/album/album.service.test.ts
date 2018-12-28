@@ -4,7 +4,7 @@ import {AlbumService} from './album.service';
 import {FolderService} from '../folder/folder.service';
 import {testService} from '../base/base.service.spec';
 import {TrackStore} from '../track/track.store';
-import {FolderTypesAlbum} from '../../types';
+import {FolderTypesAlbum} from '../../model/jam-types';
 import fse from 'fs-extra';
 import path from 'path';
 import {mockImage} from '../../modules/image/image.module.spec';

@@ -7,7 +7,7 @@ import {Store} from '../store/store';
 import {NowPlayingService} from '../nowplaying/nowplaying.service';
 import {DBObject} from '../../objects/base/base.model';
 import {User} from '../../objects/user/user.model';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import {Track} from '../../objects/track/track.model';
 import {Episode} from '../../objects/episode/episode.model';
 

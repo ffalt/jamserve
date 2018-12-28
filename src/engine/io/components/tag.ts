@@ -1,5 +1,5 @@
 import {MatchDir} from './match';
-import {AlbumType, FileTyp, FolderType} from '../../../types';
+import {AlbumType, FileTyp, FolderType} from '../../../model/jam-types';
 import path from 'path';
 import Logger from '../../../utils/logger';
 import {FolderTag} from '../../../objects/folder/folder.model';

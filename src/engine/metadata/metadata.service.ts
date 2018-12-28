@@ -1,4 +1,4 @@
-import {FolderType} from '../../types';
+import {FolderType} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {shuffle} from '../../utils/random';
 import Logger from '../../utils/logger';

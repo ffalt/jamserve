@@ -1,6 +1,6 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType, PodcastStatus} from '../../types';
+import {DBObjectType, PodcastStatus} from '../../model/jam-types';
 import {JamRequest} from '../../api/jam/api';
 import {EpisodeController} from '../episode/episode.controller';
 import {formatPodcast} from './podcast.format';

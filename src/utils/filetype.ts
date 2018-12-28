@@ -1,4 +1,4 @@
-import {FileTyp} from '../types';
+import {FileTyp} from '../model/jam-types';
 import {fileSuffix} from './fs-utils';
 
 export const SupportedReadImageFormat = ['bmp', 'png', 'jpeg', 'jpg', 'gif', 'tiff'];

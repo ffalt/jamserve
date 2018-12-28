@@ -1,4 +1,4 @@
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import {NowPlaying} from './nowplaying.model';
 import {User} from '../../objects/user/user.model';
 import {Episode} from '../../objects/episode/episode.model';

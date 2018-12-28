@@ -1,4 +1,4 @@
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import {SearchQueryState, StateStore} from './state.store';
 import {State, States} from './state.model';
 import {BaseStoreService} from '../base/base.service';

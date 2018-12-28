@@ -1,4 +1,4 @@
-import {DatabaseQuerySortType, DBObjectType} from '../../types';
+import {DatabaseQuerySortType, DBObjectType} from '../../model/jam-types';
 import {DBObject} from './base.model';
 import {Database, DatabaseIndex, DatabaseQuery, DatabaseQuerySort} from '../../db/db.model';
 

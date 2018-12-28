@@ -7,7 +7,7 @@ import tmp, {SynchrounousResult} from 'tmp';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import nock from 'nock';
-import {PodcastStatus} from '../../types';
+import {PodcastStatus} from '../../model/jam-types';
 import {mockPodcastXML} from './podcast.mock';
 import {StateService} from '../state/state.service';
 

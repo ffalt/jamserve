@@ -1,6 +1,6 @@
 import {Store} from '../../store/store';
 import {MatchDir, MatchFile} from './match';
-import {DBObjectType, FileTyp, FolderType} from '../../../types';
+import {DBObjectType, FileTyp, FolderType} from '../../../model/jam-types';
 import path from 'path';
 import {AudioModule} from '../../../modules/audio/audio.module';
 import {deepCompare} from '../../../utils/deep-compare';

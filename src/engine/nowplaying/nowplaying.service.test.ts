@@ -5,7 +5,7 @@ import {testService} from '../../objects/base/base.service.spec';
 import {StateService} from '../../objects/state/state.service';
 import {mockEpisode} from '../../objects/episode/episode.mock';
 import {mockUser} from '../../objects/user/user.mock';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import {mockTrack} from '../../objects/track/track.mock';
 
 describe('NowPlayingService', () => {

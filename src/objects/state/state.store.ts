@@ -1,7 +1,6 @@
-import {DBObjectType} from '../../types';
-import {BaseStore, SearchQuery} from '../base/base.store';
-import {QueryHelper} from '../base/base.store';
-import {State, States} from './state.model';
+import {DBObjectType} from '../../model/jam-types';
+import {BaseStore, QueryHelper, SearchQuery} from '../base/base.store';
+import {State} from './state.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryState extends SearchQuery {

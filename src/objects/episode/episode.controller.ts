@@ -1,6 +1,6 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType, PodcastStatus} from '../../types';
+import {DBObjectType, PodcastStatus} from '../../model/jam-types';
 import {IApiBinaryResult} from '../../typings';
 import {JamRequest} from '../../api/jam/api';
 import {formatEpisode} from './episode.format';

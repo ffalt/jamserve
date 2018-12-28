@@ -1,4 +1,4 @@
-import {FileTyp} from '../../../types';
+import {FileTyp} from '../../../model/jam-types';
 import path from 'path';
 import {getFileType} from '../../../utils/filetype';
 import Logger from '../../../utils/logger';

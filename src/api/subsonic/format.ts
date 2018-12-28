@@ -1,7 +1,7 @@
 import moment from 'moment';
 import path from 'path';
 import {fileSuffix} from '../../utils/fs-utils';
-import {AudioMimeTypes, DBObjectType, PodcastStatus} from '../../types';
+import {AudioMimeTypes, DBObjectType, PodcastStatus} from '../../model/jam-types';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {Root} from '../../objects/root/root.model';
 import {User} from '../../objects/user/user.model';

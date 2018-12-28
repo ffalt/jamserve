@@ -4,7 +4,7 @@ import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
 import {Store} from '../store/store';
 import {WaveformService} from './waveform.service';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import {Track} from '../../objects/track/track.model';
 import {Episode} from '../../objects/episode/episode.model';
 import WaveformFormatType = JamParameters.WaveformFormatType;

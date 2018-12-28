@@ -1,5 +1,5 @@
 import {Root} from './root.model';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 
 export function mockRoot(): Root {
 	return {

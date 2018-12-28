@@ -16,7 +16,7 @@ import {DBObject} from '../../objects/base/base.model';
 import {Database} from '../../db/db.model';
 import {Track} from '../../objects/track/track.model';
 import {Folder} from '../../objects/folder/folder.model';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import {updatePlayListTracks} from '../../objects/playlist/playlist.service';
 import Logger from '../../utils/logger';
 

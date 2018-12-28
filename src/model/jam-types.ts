@@ -14,6 +14,22 @@ export enum DBObjectType {
 	radio
 }
 
+export enum JamObjectType {
+	root = 'root',
+	user = 'user',
+	folder = 'folder',
+	track = 'track',
+	state = 'state',
+	playlist = 'playlist',
+	podcast = 'podcast',
+	episode = 'episode',
+	bookmark = 'bookmark',
+	album = 'album',
+	artist = 'artist',
+	playqueue = 'playqueue',
+	radio = 'radio'
+}
+
 export const AudioMimeTypes: { [ext: string]: string } = {
 	'mp3': 'audio/mpeg',
 	'm4a': 'audio/mp4',

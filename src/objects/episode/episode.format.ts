@@ -2,7 +2,7 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import {formatTrackTag} from '../track/track.format';
 import {Episode} from './episode.model';
-import {PodcastStatus} from '../../types';
+import {PodcastStatus} from '../../model/jam-types';
 
 export function formatEpisode(episode: Episode, includes: JamParameters.IncludesTrack, status: PodcastStatus): Jam.PodcastEpisode {
 	return {

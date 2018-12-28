@@ -2,7 +2,7 @@ import {IApiBinaryResult} from '../../typings';
 import {TrackStore} from '../track/track.store';
 import {FolderService} from '../folder/folder.service';
 import {Artist} from './artist.model';
-import {FolderType} from '../../types';
+import {FolderType} from '../../model/jam-types';
 import {ArtistStore, SearchQueryArtist} from './artist.store';
 import {Folder} from '../folder/folder.model';
 import {BaseListService} from '../base/base.list.service';

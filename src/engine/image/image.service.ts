@@ -1,5 +1,5 @@
 import {IApiBinaryResult} from '../../typings';
-import {DBObjectType, FolderType} from '../../types';
+import {DBObjectType, FolderType} from '../../model/jam-types';
 import path from 'path';
 import {ImageModule} from '../../modules/image/image.module';
 import {Folder} from '../../objects/folder/folder.model';

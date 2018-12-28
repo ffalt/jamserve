@@ -1,5 +1,5 @@
 import {Folder} from './folder.model';
-import {AlbumType, DBObjectType, FolderType} from '../../types';
+import {AlbumType, DBObjectType, FolderType} from '../../model/jam-types';
 
 export function mockFolder(): Folder {
 	return {

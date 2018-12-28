@@ -1,5 +1,5 @@
 import {DBObject} from '../objects/base/base.model';
-import {DatabaseQuerySortType, DBObjectType} from '../types';
+import {DatabaseQuerySortType, DBObjectType} from '../model/jam-types';
 
 export interface Database {
 	open(): Promise<void>;

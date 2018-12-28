@@ -1,7 +1,7 @@
 import path from 'path';
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType, FolderType} from '../../types';
+import {DBObjectType, FolderType} from '../../model/jam-types';
 import {getFolderProblems} from '../../engine/io/components/health';
 import {InvalidParamError} from '../../api/jam/error';
 import {paginate} from '../../utils/paginate';

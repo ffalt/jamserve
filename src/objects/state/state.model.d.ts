@@ -1,5 +1,5 @@
 import {DBObject} from '../base/base.model';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 
 export interface State extends DBObject {
 	userID: string;

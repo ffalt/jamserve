@@ -1,4 +1,4 @@
-import {AlbumType, DBObjectType} from '../../../types';
+import {AlbumType, DBObjectType} from '../../../model/jam-types';
 import {Store} from '../../store/store';
 import Logger from '../../../utils/logger';
 import {MergeChanges, MergeTrackInfo} from './merge';

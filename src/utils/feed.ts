@@ -4,7 +4,7 @@ import stream from 'stream';
 import request from 'request';
 import FeedParser from 'feedparser';
 import iconv from 'iconv-lite';
-import {DBObjectType, PodcastStatus} from '../types';
+import {DBObjectType, PodcastStatus} from '../model/jam-types';
 import {Subsonic} from '../model/subsonic-rest-data';
 import {PodcastTag} from '../objects/podcast/podcast.model';
 import {Episode, PodcastEpisodeChapter} from '../objects/episode/episode.model';

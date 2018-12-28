@@ -1,5 +1,5 @@
 import {DBObject} from '../base/base.model';
-import {PodcastStatus} from '../../types';
+import {PodcastStatus} from '../../model/jam-types';
 
 export interface Podcast extends DBObject {
 	url: string;

@@ -1,6 +1,6 @@
 import {IApiBinaryResult} from '../../typings';
 import {Engine} from '../../engine/engine';
-import {DBObjectType, FolderType, FolderTypesAlbum, PodcastStatus} from '../../types';
+import {DBObjectType, FolderType, FolderTypesAlbum, PodcastStatus} from '../../model/jam-types';
 import {randomItems} from '../../utils/random';
 import {paginate} from '../../utils/paginate';
 import {FORMAT} from './format';

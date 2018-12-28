@@ -2,7 +2,7 @@ import path from 'path';
 import Logger from '../../../utils/logger';
 import {Store} from '../../store/store';
 import {MergeChanges} from './merge';
-import {DBObjectType} from '../../../types';
+import {DBObjectType} from '../../../model/jam-types';
 import {Root} from '../../../objects/root/root.model';
 import {Track} from '../../../objects/track/track.model';
 import {Folder} from '../../../objects/folder/folder.model';

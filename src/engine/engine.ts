@@ -3,7 +3,7 @@ import fse from 'fs-extra';
 import {IoService} from './io/io.service';
 import {Store} from './store/store';
 import {AudioModule} from '../modules/audio/audio.module';
-import {DBObjectType} from '../types';
+import {DBObjectType} from '../model/jam-types';
 import {IndexService} from './index/index.service';
 import {MetaDataService} from './metadata/metadata.service';
 import {UserService} from '../objects/user/user.service';

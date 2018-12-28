@@ -3,7 +3,7 @@ import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {TrackService} from './track.service';
 import {FolderService} from '../folder/folder.service';
-import {FolderTypesAlbum} from '../../types';
+import {FolderTypesAlbum} from '../../model/jam-types';
 import {mockImage} from '../../modules/image/image.module.spec';
 import path from 'path';
 import fse from 'fs-extra';

@@ -1,5 +1,5 @@
 import path from 'path';
-import {FolderType} from '../../../types';
+import {FolderType} from '../../../model/jam-types';
 import {Jam} from '../../../model/jam-rest-data';
 import {replaceFileSystemChars} from '../../../utils/fs-utils';
 import {Folder, FolderTag} from '../../../objects/folder/folder.model';

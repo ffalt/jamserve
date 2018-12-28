@@ -7,7 +7,7 @@ import {downloadFile} from '../../utils/download';
 import fse from 'fs-extra';
 import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 import {Episode} from './episode.model';
-import {PodcastStatus} from '../../types';
+import {PodcastStatus} from '../../model/jam-types';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';

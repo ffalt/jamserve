@@ -1,6 +1,6 @@
 import {DBObject} from '../base/base.model';
 import {TrackMedia, TrackTag} from '../track/track.model';
-import {PodcastStatus} from '../../types';
+import {PodcastStatus} from '../../model/jam-types';
 
 export interface Episode extends DBObject {
 	podcastID: string;

@@ -1,4 +1,4 @@
-import {DatabaseQuerySortType, DBObjectType} from '../../types';
+import {DatabaseQuerySortType, DBObjectType} from '../../model/jam-types';
 import path from 'path';
 import Nedb from 'nedb';
 import {DBObject} from '../../objects/base/base.model';

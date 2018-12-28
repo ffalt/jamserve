@@ -4,7 +4,7 @@ import path from 'path';
 import tmp, {SynchrounousResult} from 'tmp';
 import {scanDir, ScanDir} from '../io/components/scan';
 import {matchDir, MatchDir} from '../io/components/match';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import {Root} from '../../objects/root/root.model';
 import {MergeChanges, Merger} from '../io/components/merge';
 import {AudioModule} from '../../modules/audio/audio.module';

@@ -1,5 +1,5 @@
 import {Bookmark} from './bookmark.model';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 
 export function mockBookmark(): Bookmark {
 	return {

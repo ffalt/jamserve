@@ -1,6 +1,6 @@
 import {Feed} from '../../utils/feed';
 import Logger from '../../utils/logger';
-import {DBObjectType, PodcastStatus} from '../../types';
+import {DBObjectType, PodcastStatus} from '../../model/jam-types';
 import {Podcast} from './podcast.model';
 import {Episode} from '../episode/episode.model';
 import {PodcastStore, SearchQueryPodcast} from './podcast.store';

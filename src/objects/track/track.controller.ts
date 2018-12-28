@@ -1,6 +1,6 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import path from 'path';
 import {NotFoundError} from '../../api/jam/error';
 import {IApiBinaryResult} from '../../typings';

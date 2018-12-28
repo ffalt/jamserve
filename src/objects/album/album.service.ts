@@ -3,7 +3,7 @@ import {IApiBinaryResult} from '../../typings';
 import {TrackStore} from '../track/track.store';
 import {AlbumStore, SearchQueryAlbum} from './album.store';
 import {FolderService} from '../folder/folder.service';
-import {FolderTypesAlbum} from '../../types';
+import {FolderTypesAlbum} from '../../model/jam-types';
 import {Folder} from '../folder/folder.model';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';

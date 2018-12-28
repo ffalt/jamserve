@@ -1,6 +1,6 @@
 import {Jam} from '../../model/jam-rest-data';
 import {Podcast} from './podcast.model';
-import {PodcastStatus} from '../../types';
+import {PodcastStatus} from '../../model/jam-types';
 
 export function formatPodcast(podcast: Podcast, status: PodcastStatus): Jam.Podcast {
 	return {

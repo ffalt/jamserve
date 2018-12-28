@@ -1,7 +1,7 @@
 import {Store} from '../../store/store';
 import {MatchDir, MatchFile} from './match';
 import * as path from 'path';
-import {FileTyp} from '../../../types';
+import {FileTyp} from '../../../model/jam-types';
 import {fillMatchTags} from './tag';
 
 function applyLevel(dir: MatchDir, level: number) {

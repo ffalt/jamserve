@@ -1,7 +1,7 @@
 import {IApiBinaryResult} from '../../typings';
 import path from 'path';
 import {CompressFolderStream, CompressListStream} from '../../utils/compress-stream';
-import {DBObjectType} from '../../types';
+import {DBObjectType} from '../../model/jam-types';
 import {User} from '../../objects/user/user.model';
 import {DBObject} from '../../objects/base/base.model';
 import {Track} from '../../objects/track/track.model';
