@@ -110,7 +110,7 @@ describe('UserService', () => {
 				should().exist(user);
 				expect(user).to.deep.equal(mock);
 				mock.name = oldname;
-				mock.avatar = undefined;
+				delete mock.avatar;
 				await userService.update(mock);
 				const user2 = await userService.getByID(userID);
 				expect(user2).to.deep.equal(mock);
