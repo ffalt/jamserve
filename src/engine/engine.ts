@@ -31,6 +31,8 @@ import {ArtistService} from '../objects/artist/artist.service';
 import {AlbumService} from '../objects/album/album.service';
 import {EpisodeService} from '../objects/episode/episode.service';
 import {ThirdPartyConfig} from '../config/thirdparty.config';
+import {hashSaltPassword} from '../utils/salthash';
+import {randomString} from '../utils/random';
 
 export class Engine {
 	public ioService: IoService;
@@ -96,10 +98,13 @@ export class Engine {
 			const count = await this.store.userStore.count();
 			if (count === 0) {
 				const adminUser = this.config.firstStart.adminUser;
+				const pw = hashSaltPassword(adminUser.pass || '');
 				const user: User = {
 					id: '',
 					name: adminUser.name,
-					pass: adminUser.pass || '',
+					salt: pw.salt,
+					hash: pw.hash,
+					subsonic_pass: randomString(10),
 					email: adminUser.mail || '',
 					type: DBObjectType.user,
 					// ldapAuthenticated: true,

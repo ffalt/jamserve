@@ -2,7 +2,9 @@ import {DBObject} from '../base/base.model';
 
 export interface User extends DBObject {
 	name: string;
-	pass: string;
+	salt: string;
+	hash: string;
+	subsonic_pass: string;
 	email: string;
 	created: number;
 	// ldapAuthenticated: boolean;

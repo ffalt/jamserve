@@ -952,7 +952,7 @@ export class SubsonicApi {
 			u.email = req.query.email;
 		}
 		if (req.query.password) {
-			u.pass = req.query.password;
+			u.subsonic_pass = req.query.password;
 		}
 		if (req.query.musicFolderId) {
 			u.allowedfolder = (Array.isArray(req.query.musicFolderId) ? req.query.musicFolderId : [req.query.musicFolderId]).map(id => id.toString());
@@ -1023,7 +1023,9 @@ export class SubsonicApi {
 		const u: User = {
 			id: '',
 			name: req.query.username || '',
-			pass: req.query.password || 'invalid',
+			salt: '',
+			hash: '',
+			subsonic_pass: req.query.password || 'invalid',
 			email: req.query.email || 'invalid',
 			avatarLastChanged: Date.now(),
 			created: Date.now(),
@@ -1045,8 +1047,8 @@ export class SubsonicApi {
 				// videoConversionRole: getBool(req.query.videoConversionRole, false)
 			}
 		};
-		if (u.pass.indexOf('enc:') === 0) {
-			u.pass = hexDecode(u.pass.slice(4)).trim();
+		if (u.subsonic_pass.indexOf('enc:') === 0) {
+			u.subsonic_pass = hexDecode(u.subsonic_pass.slice(4)).trim();
 		}
 		await this.engine.userService.create(u);
 	}
@@ -1101,9 +1103,9 @@ export class SubsonicApi {
 		if (!u) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
-		u.pass = req.query.password;
-		if (u.pass.indexOf('enc:') === 0) {
-			u.pass = hexDecode(u.pass.slice(4)).trim();
+		u.subsonic_pass = req.query.password;
+		if (u.subsonic_pass.indexOf('enc:') === 0) {
+			u.subsonic_pass = hexDecode(u.subsonic_pass.slice(4)).trim();
 		}
 		await this.engine.userService.update(u);
 	}

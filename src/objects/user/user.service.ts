@@ -10,6 +10,7 @@ import {BookmarkStore} from '../bookmark/bookmark.store';
 import {IApiBinaryResult} from '../../typings';
 import {ImageModule} from '../../modules/image/image.module';
 import {BaseStoreService} from '../base/base.service';
+import {hashSalt} from '../../utils/salthash';
 
 export class UserService extends BaseStoreService<User, SearchQueryUser> {
 	private cached: {
@@ -41,9 +42,6 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 	async create(user: User): Promise<string> {
 		if (!user.name || user.name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));
-		}
-		if (!user.pass || user.pass.trim().length === 0) {
-			return Promise.reject(Error('Invalid Password'));
 		}
 		const existingUser = await this.getByName(user.name);
 		if (existingUser) {
@@ -108,7 +106,8 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		if (!user) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		if (pass !== user.pass) {
+		const hash = hashSalt(pass, user.salt);
+		if (hash !== user.hash) {
 			return Promise.reject(Error('Invalid Password'));
 		}
 		return user;
@@ -125,7 +124,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		if (!user) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const t = Md5.init(user.pass + salt);
+		const t = Md5.init(user.subsonic_pass + salt);
 		if (token !== t) {
 			return Promise.reject(Error('Invalid Token'));
 		}

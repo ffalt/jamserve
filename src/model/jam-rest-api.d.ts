@@ -333,7 +333,7 @@ export interface JamApi {
 		'episode/retrieve'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['admin'];
+			roles: ['podcast'];
 		};
 		/**
 		 * episode: get the user state (fav/rating) by podcast episode id
@@ -404,7 +404,7 @@ export interface JamApi {
 		 * podcast: check all podcast feeds for new episodes
 		 */
 		'podcast/refreshAll'?: {
-			roles: ['admin'];
+			roles: ['podcast'];
 		};
 		/**
 		 * podcast: check podcast feeds for new episodes by podcast id
@@ -412,7 +412,7 @@ export interface JamApi {
 		'podcast/refresh'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['admin'];
+			roles: ['podcast'];
 		};
 		/**
 		 * podcast: get the user state (fav/rating) by podcast id
@@ -986,7 +986,7 @@ export interface JamApi {
 			params: JamParameters.PodcastNew;
 			result: Jam.Podcast;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-			roles: ['admin'];
+			roles: ['podcast'];
 		};
 		'podcast/fav/update'?: {
 			params: JamParameters.Fav;

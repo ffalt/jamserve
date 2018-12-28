@@ -11,6 +11,8 @@ import {DownloadService} from '../../engine/download/download.service';
 import {SearchQueryUser} from './user.store';
 import {UserService} from './user.service';
 import {User} from './user.model';
+import {hashSaltPassword} from '../../utils/salthash';
+import {randomString} from '../../utils/random';
 
 export class UserController extends BaseController<JamParameters.ID, JamParameters.IDs, {}, SearchQueryUser, JamParameters.UserSearch, User, Jam.User> {
 
@@ -43,11 +45,15 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	}
 
 	async create(req: JamRequest<JamParameters.UserNew>): Promise<Jam.User> {
+		const pass = randomString(10);
+		const pw = hashSaltPassword(pass);
 		const u: User = {
 			id: '',
 			name: req.query.name || '',
-			pass: '',
+			salt: pw.salt,
+			hash: pw.hash,
 			email: '',
+			subsonic_pass: randomString(10),
 			type: DBObjectType.user,
 			created: Date.now(),
 			// ldapAuthenticated: false,

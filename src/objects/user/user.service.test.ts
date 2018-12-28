@@ -79,7 +79,7 @@ describe('UserService', () => {
 			});
 			it('should auth the user by token', async function() {
 				const s = salt(6);
-				const token = Md5.init(mock.pass + s);
+				const token = Md5.init(mock.subsonic_pass + s);
 				const user = await userService.authToken(mock.name, token, s);
 				should().exist(user);
 				expect(user).to.deep.equal(mock);
