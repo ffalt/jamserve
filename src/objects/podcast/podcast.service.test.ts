@@ -9,6 +9,7 @@ import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import nock from 'nock';
 import {PodcastStatus} from '../../types';
 import {mockPodcastXML} from './podcast.mock';
+import {StateService} from '../state/state.service';
 
 describe('PodcastService', () => {
 	let podcastService: PodcastService;
@@ -18,8 +19,9 @@ describe('PodcastService', () => {
 		(storeTest, imageModuleTest) => {
 			dir = tmp.dirSync();
 			const audioModule = new AudioModule(ThirdPartyConfig);
-			episodeService = new EpisodeService(dir.name, storeTest.store.episodeStore, audioModule);
-			podcastService = new PodcastService(storeTest.store.podcastStore, episodeService);
+			const stateService = new StateService(storeTest.store.stateStore);
+			episodeService = new EpisodeService(dir.name, storeTest.store.episodeStore, stateService, audioModule);
+			podcastService = new PodcastService(storeTest.store.podcastStore, episodeService, stateService);
 		},
 		() => {
 			it('should create a podcast', async () => {

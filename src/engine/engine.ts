@@ -81,8 +81,8 @@ export class Engine {
 		this.playlistService = new PlaylistService(this.store.playlistStore, this.store.trackStore);
 		this.playQueueService = new PlayQueueService(this.store.playQueueStore);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
-		this.episodeService = new EpisodeService(config.getDataPath(['podcasts']), this.store.episodeStore, this.audioModule);
-		this.podcastService = new PodcastService(this.store.podcastStore, this.episodeService);
+		this.episodeService = new EpisodeService(config.getDataPath(['podcasts']), this.store.episodeStore, this.stateService, this.audioModule);
+		this.podcastService = new PodcastService(this.store.podcastStore, this.episodeService, this.stateService);
 		this.metaDataService = new MetaDataService(this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
 		this.rootService = new RootService(this.store.rootStore);
 		this.radioService = new RadioService(this.store.radioStore);

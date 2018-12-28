@@ -48,9 +48,8 @@ export enum PodcastStatus {
 	completed = 'completed',
 	error = 'error',
 	deleted = 'deleted',
-	skipped = 'skipped'
+	// skipped = 'skipped'
 }
-
 
 export const FolderTypeImageName: { [foldertype: string]: string } = {
 	unknown: 'folder',

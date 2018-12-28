@@ -2,14 +2,15 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import {formatTrackTag} from '../track/track.format';
 import {Episode} from './episode.model';
+import {PodcastStatus} from '../../types';
 
-export function formatEpisode(episode: Episode, includes: JamParameters.IncludesTrack, status: string): Jam.PodcastEpisode {
+export function formatEpisode(episode: Episode, includes: JamParameters.IncludesTrack, status: PodcastStatus): Jam.PodcastEpisode {
 	return {
 		id: episode.id,
 		parentID: '',
 		created: episode.stat ? episode.stat.created : 0,
 		podcastID: episode.podcastID,
-		status: status,
+		status: <Jam.PodcastEpisodeStatusType>status,
 		errorMessage: episode.error,
 		name: episode.name,
 		duration: episode.media ? (episode.media.duration || -1) : -1,

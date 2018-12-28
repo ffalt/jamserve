@@ -1094,6 +1094,7 @@
 					]
 				},
 				"episode/id": {
+					"description": "episode: get a podcast episode by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1126,6 +1127,7 @@
 					]
 				},
 				"episode/ids": {
+					"description": "episode: get podcast episodes by ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1158,6 +1160,7 @@
 					]
 				},
 				"episode/search": {
+					"description": "episode: search podcast episodes",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1190,6 +1193,7 @@
 					]
 				},
 				"episode/retrieve": {
+					"description": "episode: retrieve a podcast episode media file",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1241,6 +1245,7 @@
 					]
 				},
 				"episode/state": {
+					"description": "episode: get the user state (fav/rating) by podcast episode id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1273,6 +1278,7 @@
 					]
 				},
 				"episode/states": {
+					"description": "episode: get the user states (fav/rating) by podcast episode ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1305,6 +1311,7 @@
 					]
 				},
 				"episode/status": {
+					"description": "episode: get the episode state (e.g. downloading, new, etc.) by podcast episode id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1333,7 +1340,41 @@
 						"result"
 					]
 				},
+				"episode/list": {
+					"description": "episode: get a list of episodes by list type",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.PodcastEpisodeList"
+						},
+						"result": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Jam.PodcastEpisode"
+							}
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"podcast/id": {
+					"description": "podcast: get a podcast by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1366,6 +1407,7 @@
 					]
 				},
 				"podcast/ids": {
+					"description": "podcast: get podcasts by ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1398,6 +1440,7 @@
 					]
 				},
 				"podcast/status": {
+					"description": "podcast: get the podcast state (e.g. downloading, new, etc.) by podcast id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1427,6 +1470,7 @@
 					]
 				},
 				"podcast/search": {
+					"description": "podcast: search podcasts",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1459,10 +1503,38 @@
 					]
 				},
 				"podcast/refreshAll": {
+					"description": "podcast: check all podcast feeds for new episodes",
 					"type": "object",
-					"properties": {}
+					"properties": {
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"roles"
+					]
 				},
 				"podcast/refresh": {
+					"description": "podcast: check podcast feeds for new episodes by podcast id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1483,14 +1555,38 @@
 									"$ref": "#/definitions/JamApiErrorNotFound"
 								}
 							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"podcast/state": {
+					"description": "podcast: get the user state (fav/rating) by podcast id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1523,6 +1619,7 @@
 					]
 				},
 				"podcast/states": {
+					"description": "podcast: get the user states (fav/rating) by podcast ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1544,6 +1641,39 @@
 								},
 								{
 									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
+				"podcast/list": {
+					"description": "podcast: get a list of podcasts by list type",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.PodcastList"
+						},
+						"result": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Jam.Podcast"
+							}
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
 								}
 							]
 						}
@@ -11364,7 +11494,7 @@
 					"type": "string"
 				},
 				"status": {
-					"type": "string"
+					"$ref": "#/definitions/Jam.PodcastEpisodeStatusType"
 				},
 				"date": {
 					"type": "number"
@@ -11428,6 +11558,16 @@
 				"podcastID",
 				"status"
 			]
+		},
+		"Jam.PodcastEpisodeStatusType": {
+			"enum": [
+				"completed",
+				"deleted",
+				"downloading",
+				"error",
+				"new"
+			],
+			"type": "string"
 		},
 		"JamParameters.Episodes": {
 			"type": "object",
@@ -11529,11 +11669,79 @@
 			"type": "object",
 			"properties": {
 				"status": {
-					"type": "string"
+					"$ref": "#/definitions/Jam.PodcastEpisodeStatusType"
 				}
 			},
 			"required": [
 				"status"
+			]
+		},
+		"JamParameters.PodcastEpisodeList": {
+			"type": "object",
+			"properties": {
+				"podcastID": {
+					"description": "filter by podcast id",
+					"type": "string"
+				},
+				"name": {
+					"description": "filter by title",
+					"type": "string"
+				},
+				"status": {
+					"description": "filter by status",
+					"type": "string"
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
+				"sortField": {
+					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+					"type": "string"
+				},
+				"sortDescending": {
+					"description": "the sort direction",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackMedia": {
+					"description": "include media informations on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackID3": {
+					"description": "include id3 tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"list": {
+					"$ref": "#/definitions/JamParameters.ListType",
+					"description": "the type of the item list"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"list"
 			]
 		},
 		"JamParameters.Podcast": {
@@ -11585,7 +11793,7 @@
 					"type": "string"
 				},
 				"status": {
-					"type": "string"
+					"$ref": "#/definitions/Jam.PodcastStatusType"
 				},
 				"lastCheck": {
 					"type": "number"
@@ -11622,6 +11830,15 @@
 				"status",
 				"url"
 			]
+		},
+		"Jam.PodcastStatusType": {
+			"enum": [
+				"completed",
+				"downloading",
+				"error",
+				"new"
+			],
+			"type": "string"
 		},
 		"JamParameters.Podcasts": {
 			"type": "object",
@@ -11672,7 +11889,7 @@
 			"type": "object",
 			"properties": {
 				"status": {
-					"type": "string"
+					"$ref": "#/definitions/Jam.PodcastStatusType"
 				},
 				"lastCheck": {
 					"type": "number"
@@ -11752,6 +11969,84 @@
 					"type": "boolean"
 				}
 			}
+		},
+		"JamParameters.PodcastList": {
+			"type": "object",
+			"properties": {
+				"url": {
+					"description": "filter by podcast url",
+					"type": "string"
+				},
+				"title": {
+					"description": "filter by podcast title",
+					"type": "string"
+				},
+				"status": {
+					"description": "filter by podcast status",
+					"type": "string"
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
+				"sortField": {
+					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+					"type": "string"
+				},
+				"sortDescending": {
+					"description": "the sort direction",
+					"default": false,
+					"type": "boolean"
+				},
+				"podcastState": {
+					"description": "include user states (fav,rate) on podcast(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"podcastEpisodes": {
+					"description": "include episodes on podcast(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackMedia": {
+					"description": "include media informations on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackID3": {
+					"description": "include id3 tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"list": {
+					"$ref": "#/definitions/JamParameters.ListType",
+					"description": "the type of the item list"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"list"
+			]
 		},
 		"JamParameters.Radio": {
 			"type": "object",

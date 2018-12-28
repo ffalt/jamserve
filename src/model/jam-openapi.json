@@ -3279,6 +3279,7 @@
 		"/episode/id": {
 			"get": {
 				"operationId": "episodeController.id",
+				"description": "get a podcast episode by id",
 				"tags": [
 					"episode"
 				],
@@ -3362,6 +3363,7 @@
 		"/episode/ids": {
 			"get": {
 				"operationId": "episodeController.ids",
+				"description": "get podcast episodes by ids",
 				"tags": [
 					"episode"
 				],
@@ -3448,6 +3450,7 @@
 		"/episode/search": {
 			"get": {
 				"operationId": "episodeController.search",
+				"description": "search podcast episodes",
 				"tags": [
 					"episode"
 				],
@@ -3598,6 +3601,7 @@
 		"/episode/retrieve": {
 			"get": {
 				"operationId": "episodeController.retrieve",
+				"description": "retrieve a podcast episode media file",
 				"tags": [
 					"episode"
 				],
@@ -3634,6 +3638,7 @@
 		"/episode/state": {
 			"get": {
 				"operationId": "episodeController.state",
+				"description": "get the user state (fav/rating) by podcast episode id",
 				"tags": [
 					"episode"
 				],
@@ -3677,6 +3682,7 @@
 		"/episode/states": {
 			"get": {
 				"operationId": "episodeController.states",
+				"description": "get the user states (fav/rating) by podcast episode ids",
 				"tags": [
 					"episode"
 				],
@@ -3723,6 +3729,7 @@
 		"/episode/status": {
 			"get": {
 				"operationId": "episodeController.status",
+				"description": "get the episode state (e.g. downloading, new, etc.) by podcast episode id",
 				"tags": [
 					"episode"
 				],
@@ -3760,9 +3767,170 @@
 				]
 			}
 		},
+		"/episode/list": {
+			"get": {
+				"operationId": "episodeController.list",
+				"description": "get a list of episodes by list type",
+				"tags": [
+					"episode"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.PodcastEpisode"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "podcastID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by podcast id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by title",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by status",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "the sort direction",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackMedia",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include media informations on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackID3",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include id3 tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "list",
+						"schema": {
+							"$ref": "#/components/schemas/JamParameters.ListType"
+						},
+						"description": "the type of the item list",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
+					}
+				]
+			}
+		},
 		"/podcast/id": {
 			"get": {
 				"operationId": "podcastController.id",
+				"description": "get a podcast by id",
 				"tags": [
 					"podcast"
 				],
@@ -3866,6 +4034,7 @@
 		"/podcast/ids": {
 			"get": {
 				"operationId": "podcastController.ids",
+				"description": "get podcasts by ids",
 				"tags": [
 					"podcast"
 				],
@@ -3972,6 +4141,7 @@
 		"/podcast/status": {
 			"get": {
 				"operationId": "podcastController.status",
+				"description": "get the podcast state (e.g. downloading, new, etc.) by podcast id",
 				"tags": [
 					"podcast"
 				],
@@ -4012,6 +4182,7 @@
 		"/podcast/search": {
 			"get": {
 				"operationId": "podcastController.search",
+				"description": "search podcasts",
 				"tags": [
 					"podcast"
 				],
@@ -4182,6 +4353,7 @@
 		"/podcast/refreshAll": {
 			"get": {
 				"operationId": "podcastController.refreshAll",
+				"description": "check all podcast feeds for new episodes",
 				"tags": [
 					"podcast"
 				],
@@ -4195,6 +4367,7 @@
 		"/podcast/refresh": {
 			"get": {
 				"operationId": "podcastController.refresh",
+				"description": "check podcast feeds for new episodes by podcast id",
 				"tags": [
 					"podcast"
 				],
@@ -4231,6 +4404,7 @@
 		"/podcast/state": {
 			"get": {
 				"operationId": "podcastController.state",
+				"description": "get the user state (fav/rating) by podcast id",
 				"tags": [
 					"podcast"
 				],
@@ -4274,6 +4448,7 @@
 		"/podcast/states": {
 			"get": {
 				"operationId": "podcastController.states",
+				"description": "get the user states (fav/rating) by podcast ids",
 				"tags": [
 					"podcast"
 				],
@@ -4313,6 +4488,186 @@
 						},
 						"description": "array of item ids",
 						"required": true
+					}
+				]
+			}
+		},
+		"/podcast/list": {
+			"get": {
+				"operationId": "podcastController.list",
+				"description": "get a list of podcasts by list type",
+				"tags": [
+					"podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.Podcast"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "url",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by podcast url",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by podcast title",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by podcast status",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "the sort direction",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "podcastState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on podcast(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "podcastEpisodes",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include episodes on podcast(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackMedia",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include media informations on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackID3",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include id3 tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "list",
+						"schema": {
+							"$ref": "#/components/schemas/JamParameters.ListType"
+						},
+						"description": "the type of the item list",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
 					}
 				]
 			}
@@ -15482,7 +15837,7 @@
 						"type": "string"
 					},
 					"status": {
-						"type": "string"
+						"$ref": "#/components/schemas/Jam.PodcastEpisodeStatusType"
 					},
 					"date": {
 						"type": "number"
@@ -15547,11 +15902,21 @@
 					"status"
 				]
 			},
+			"Jam.PodcastEpisodeStatusType": {
+				"enum": [
+					"completed",
+					"deleted",
+					"downloading",
+					"error",
+					"new"
+				],
+				"type": "string"
+			},
 			"Jam.PodcastEpisodeStatus": {
 				"type": "object",
 				"properties": {
 					"status": {
-						"type": "string"
+						"$ref": "#/components/schemas/Jam.PodcastEpisodeStatusType"
 					}
 				},
 				"required": [
@@ -15565,7 +15930,7 @@
 						"type": "string"
 					},
 					"status": {
-						"type": "string"
+						"$ref": "#/components/schemas/Jam.PodcastStatusType"
 					},
 					"lastCheck": {
 						"type": "number"
@@ -15603,11 +15968,20 @@
 					"url"
 				]
 			},
+			"Jam.PodcastStatusType": {
+				"enum": [
+					"completed",
+					"downloading",
+					"error",
+					"new"
+				],
+				"type": "string"
+			},
 			"Jam.PodcastStatus": {
 				"type": "object",
 				"properties": {
 					"status": {
-						"type": "string"
+						"$ref": "#/components/schemas/Jam.PodcastStatusType"
 					},
 					"lastCheck": {
 						"type": "number"

@@ -6,15 +6,16 @@ import {Episode} from '../episode/episode.model';
 import {PodcastStore, SearchQueryPodcast} from './podcast.store';
 import {EpisodeService} from '../episode/episode.service';
 import {DebouncePromises} from '../../utils/debounce-promises';
-import {BaseStoreService} from '../base/base.service';
+import {BaseListService} from '../base/base.list.service';
+import {StateService} from '../state/state.service';
 
 const log = Logger('PodcastService');
 
-export class PodcastService extends BaseStoreService<Podcast, SearchQueryPodcast> {
+export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast> {
 	private podcastRefreshDebounce = new DebouncePromises<void>();
 
-	constructor(public podcastStore: PodcastStore, private episodeService: EpisodeService) {
-		super(podcastStore);
+	constructor(public podcastStore: PodcastStore, private episodeService: EpisodeService, stateService: StateService) {
+		super(podcastStore, stateService);
 	}
 
 	isDownloading(podcastId: string): boolean {

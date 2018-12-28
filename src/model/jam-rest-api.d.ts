@@ -303,78 +303,141 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+		/**
+		 * episode: get a podcast episode by id
+		 */
 		'episode/id'?: {
 			params: JamParameters.Episode;
 			result: Jam.PodcastEpisode;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * episode: get podcast episodes by ids
+		 */
 		'episode/ids'?: {
 			params: JamParameters.Episodes;
 			result: Array<Jam.PodcastEpisode>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * episode: search podcast episodes
+		 */
 		'episode/search'?: {
 			params: JamParameters.EpisodeSearch;
 			result: Array<Jam.PodcastEpisode>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * episode: retrieve a podcast episode media file
+		 */
 		'episode/retrieve'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * episode: get the user state (fav/rating) by podcast episode id
+		 */
 		'episode/state'?: {
 			params: JamParameters.ID;
 			result: Jam.State
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * episode: get the user states (fav/rating) by podcast episode ids
+		 */
 		'episode/states'?: {
 			params: JamParameters.IDs;
 			result: Jam.States;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * episode: get the episode state (e.g. downloading, new, etc.) by podcast episode id
+		 */
 		'episode/status'?: {
 			params: JamParameters.ID;
 			result: Jam.PodcastEpisodeStatus;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * episode: get a list of episodes by list type
+		 */
+		'episode/list'?: {
+			params: JamParameters.PodcastEpisodeList;
+			result: Array<Jam.PodcastEpisode>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
 
+		/**
+		 * podcast: get a podcast by id
+		 */
 		'podcast/id'?: {
 			params: JamParameters.Podcast;
 			result: Jam.Podcast;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * podcast: get podcasts by ids
+		 */
 		'podcast/ids'?: {
 			params: JamParameters.Podcasts;
 			result: Array<Jam.Podcast>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * podcast: get the podcast state (e.g. downloading, new, etc.) by podcast id
+		 */
 		'podcast/status'?: {
 			params: JamParameters.ID;
 			result: Jam.PodcastStatus;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * podcast: search podcasts
+		 */
 		'podcast/search'?: {
 			params: JamParameters.PodcastSearch;
 			result: Array<Jam.Podcast>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
-		'podcast/refreshAll'?: {};
+		/**
+		 * podcast: check all podcast feeds for new episodes
+		 */
+		'podcast/refreshAll'?: {
+			roles: ['admin'];
+		};
+		/**
+		 * podcast: check podcast feeds for new episodes by podcast id
+		 */
 		'podcast/refresh'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
 		};
+		/**
+		 * podcast: get the user state (fav/rating) by podcast id
+		 */
 		'podcast/state'?: {
 			params: JamParameters.ID;
 			result: Jam.State;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * podcast: get the user states (fav/rating) by podcast ids
+		 */
 		'podcast/states'?: {
 			params: JamParameters.IDs;
 			result: Jam.States;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
-
+		/**
+		 * podcast: get a list of podcasts by list type
+		 */
+		'podcast/list'?: {
+			params: JamParameters.PodcastList;
+			result: Array<Jam.Podcast>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
 
 		'radio/id'?: {
 			params: JamParameters.Radio;

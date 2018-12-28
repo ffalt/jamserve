@@ -1,4 +1,3 @@
-import {BaseController} from '../base/base.controller';
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import {DBObjectType, PodcastStatus} from '../../types';
@@ -13,8 +12,9 @@ import {DownloadService} from '../../engine/download/download.service';
 import {SearchQueryPodcast} from './podcast.store';
 import {Podcast} from './podcast.model';
 import {User} from '../user/user.model';
+import {BaseListController} from '../base/base.list.controller';
 
-export class PodcastController extends BaseController<JamParameters.Podcast, JamParameters.Podcasts, JamParameters.IncludesPodcast, SearchQueryPodcast, JamParameters.PodcastSearch, Podcast, Jam.Podcast> {
+export class PodcastController extends BaseListController<JamParameters.Podcast, JamParameters.Podcasts, JamParameters.IncludesPodcast, SearchQueryPodcast, JamParameters.PodcastSearch, Podcast, Jam.Podcast> {
 
 	constructor(
 		private podcastService: PodcastService,
@@ -81,7 +81,12 @@ export class PodcastController extends BaseController<JamParameters.Podcast, Jam
 		const podcast = await this.byID(req.query.id);
 		return {
 			lastCheck: podcast.lastCheck,
-			status: this.podcastService.isDownloading(podcast.id) ? PodcastStatus[PodcastStatus.downloading] : PodcastStatus[podcast.status]
+			status: <Jam.PodcastStatusType>(this.podcastService.isDownloading(podcast.id) ? PodcastStatus[PodcastStatus.downloading] : PodcastStatus[podcast.status])
 		};
 	}
+
+	async list(req: JamRequest<JamParameters.PodcastList>): Promise<Array<Jam.Podcast>> {
+		return this.getList(req.query, req.query, req.query, req.user);
+	}
+
 }

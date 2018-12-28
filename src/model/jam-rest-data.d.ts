@@ -6,6 +6,8 @@ import {Acoustid} from './acoustid-rest-data';
 export declare namespace Jam {
 
 	export type FolderType = 'unknown' | 'artist' | 'multiartist' | 'album' | 'multialbum' | 'extras';
+	export type PodcastStatusType = 'new' | 'downloading' | 'completed' | 'error';
+	export type PodcastEpisodeStatusType = 'new' | 'downloading' | 'completed' | 'error' | 'deleted';
 
 	export interface Ping {
 		version: Version;
@@ -91,7 +93,7 @@ export declare namespace Jam {
 
 	export interface PodcastEpisode extends Track {
 		podcastID: string;
-		status: string;
+		status: PodcastEpisodeStatusType;
 		date: number;
 		summary?: string;
 		guid?: string;
@@ -101,17 +103,17 @@ export declare namespace Jam {
 	}
 
 	export interface PodcastEpisodeStatus {
-		status: string; // TODO: type for Podcast Episode Status
+		status: PodcastEpisodeStatusType;
 	}
 
 	export interface PodcastStatus {
-		status: string; // TODO: type for Podcast Status
+		status: PodcastStatusType;
 		lastCheck?: number;
 	}
 
 	export interface Podcast extends Base {
 		url: string;
-		status: string; // TODO: type for Podcast Status
+		status: PodcastStatusType;
 		lastCheck?: number;
 		errorMessage?: string;
 		description?: string;

@@ -9,15 +9,16 @@ import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 import {Episode} from './episode.model';
 import {PodcastStatus} from '../../types';
 import {DebouncePromises} from '../../utils/debounce-promises';
-import {BaseStoreService} from '../base/base.service';
+import {BaseListService} from '../base/base.list.service';
+import {StateService} from '../state/state.service';
 
 const log = Logger('EpisodeService');
 
-export class EpisodeService extends BaseStoreService<Episode, SearchQueryEpisode> {
+export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode> {
 	private episodeDownloadDebounce = new DebouncePromises<void>();
 
-	constructor(private podcastsPath: string, public episodeStore: EpisodeStore, private audioModule: AudioModule) {
-		super(episodeStore);
+	constructor(private podcastsPath: string, public episodeStore: EpisodeStore, stateService: StateService, private audioModule: AudioModule) {
+		super(episodeStore, stateService);
 	}
 
 	isDownloading(podcastEpisodeId: string): boolean {
@@ -95,7 +96,7 @@ export class EpisodeService extends BaseStoreService<Episode, SearchQueryEpisode
 		episode.path = undefined;
 		episode.stat = undefined;
 		episode.media = undefined;
-		episode.status = PodcastStatus.skipped;
+		episode.status = PodcastStatus.deleted;
 		await this.episodeStore.replace(episode);
 	}
 

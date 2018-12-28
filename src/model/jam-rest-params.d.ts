@@ -632,6 +632,9 @@ export declare namespace JamParameters {
 		status?: string;
 	}
 
+	export interface PodcastEpisodeList extends EpisodeSearchQuery, IncludesEpisode, List {
+	}
+
 	export interface EpisodeSearch extends Paginate, EpisodeSearchQuery, IncludesEpisode {
 	}
 
@@ -653,6 +656,9 @@ export declare namespace JamParameters {
 	}
 
 	export interface Podcasts extends IDs, IncludesPodcast {
+	}
+
+	export interface PodcastList extends PodcastSearchQuery, IncludesPodcast, List {
 	}
 
 	export interface Radio extends ID, IncludesRadio {

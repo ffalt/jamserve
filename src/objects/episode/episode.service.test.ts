@@ -9,6 +9,7 @@ import {mockEpisode, mockEpisode2} from './episode.mock';
 import {PodcastStatus} from '../../types';
 import nock from 'nock';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
+import {StateService} from '../state/state.service';
 
 describe('EpisodeService', () => {
 	let episodeService: EpisodeService;
@@ -17,7 +18,8 @@ describe('EpisodeService', () => {
 		(storeTest, imageModuleTest) => {
 			dir = tmp.dirSync();
 			const audioModule = new AudioModule(ThirdPartyConfig);
-			episodeService = new EpisodeService(dir.name, storeTest.store.episodeStore, audioModule);
+			const stateService = new StateService(storeTest.store.stateStore);
+			episodeService = new EpisodeService(dir.name, storeTest.store.episodeStore, stateService, audioModule);
 		},
 		() => {
 			it('should merge podcast episodes', async () => {

@@ -3,7 +3,6 @@ import {Jam} from '../../model/jam-rest-data';
 import {DBObjectType, PodcastStatus} from '../../types';
 import {IApiBinaryResult} from '../../typings';
 import {JamRequest} from '../../api/jam/api';
-import {BaseController} from '../base/base.controller';
 import {formatEpisode} from './episode.format';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
@@ -14,8 +13,9 @@ import {Episode} from './episode.model';
 import {User} from '../user/user.model';
 import {EpisodeService} from './episode.service';
 import {StreamController} from '../../engine/stream/stream.controller';
+import {BaseListController} from '../base/base.list.controller';
 
-export class EpisodeController extends BaseController<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, SearchQueryEpisode, JamParameters.EpisodeSearch, Episode, Jam.PodcastEpisode> {
+export class EpisodeController extends BaseListController<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, SearchQueryEpisode, JamParameters.EpisodeSearch, Episode, Jam.PodcastEpisode> {
 
 	constructor(
 		private episodeService: EpisodeService,
@@ -88,4 +88,7 @@ export class EpisodeController extends BaseController<JamParameters.Episode, Jam
 		};
 	}
 
+	async list(req: JamRequest<JamParameters.PodcastEpisodeList>): Promise<Array<Jam.PodcastEpisode>> {
+		return this.getList(req.query, req.query, req.query, req.user);
+	}
 }

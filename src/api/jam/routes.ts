@@ -254,6 +254,12 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/episode/list', async (req, res) => {
+		const options: JamRequest<JamParameters.PodcastEpisodeList> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.PodcastEpisode> = await api.episodeController.list(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/podcast/id', async (req, res) => {
 		const options: JamRequest<JamParameters.Podcast> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Podcast = await api.podcastController.id(options);
@@ -278,18 +284,6 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/podcast/refreshAll', async (req, res) => {
-		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		await api.podcastController.refreshAll(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.get('/podcast/refresh', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
-		await api.podcastController.refresh(options);
-		await ApiResponder.ok(res);
-	});
-
 	register.get('/podcast/state', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.State = await api.podcastController.state(options);
@@ -299,6 +293,12 @@ export function registerUserApi(register: Register, api: JamController): void {
 	register.get('/podcast/states', async (req, res) => {
 		const options: JamRequest<JamParameters.IDs> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.States = await api.podcastController.states(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/podcast/list', async (req, res) => {
+		const options: JamRequest<JamParameters.PodcastList> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.Podcast> = await api.podcastController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -823,6 +823,18 @@ export function registerAdminApi(register: Register, api: JamController): void {
 	register.get('/episode/retrieve', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		await api.episodeController.retrieve(options);
+		await ApiResponder.ok(res);
+	});
+
+	register.get('/podcast/refreshAll', async (req, res) => {
+		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
+		await api.podcastController.refreshAll(options);
+		await ApiResponder.ok(res);
+	});
+
+	register.get('/podcast/refresh', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		await api.podcastController.refresh(options);
 		await ApiResponder.ok(res);
 	});
 

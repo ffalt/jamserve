@@ -3149,6 +3149,25 @@
 			],
 			"type": "string"
 		},
+		"Jam.PodcastStatusType": {
+			"enum": [
+				"completed",
+				"downloading",
+				"error",
+				"new"
+			],
+			"type": "string"
+		},
+		"Jam.PodcastEpisodeStatusType": {
+			"enum": [
+				"completed",
+				"deleted",
+				"downloading",
+				"error",
+				"new"
+			],
+			"type": "string"
+		},
 		"Jam.Ping": {
 			"type": "object",
 			"properties": {
@@ -3428,7 +3447,7 @@
 					"type": "string"
 				},
 				"status": {
-					"type": "string"
+					"$ref": "#/definitions/Jam.PodcastEpisodeStatusType"
 				},
 				"date": {
 					"type": "number"
@@ -3497,7 +3516,7 @@
 			"type": "object",
 			"properties": {
 				"status": {
-					"type": "string"
+					"$ref": "#/definitions/Jam.PodcastEpisodeStatusType"
 				}
 			},
 			"required": [
@@ -3508,7 +3527,7 @@
 			"type": "object",
 			"properties": {
 				"status": {
-					"type": "string"
+					"$ref": "#/definitions/Jam.PodcastStatusType"
 				},
 				"lastCheck": {
 					"type": "number"
@@ -3525,7 +3544,7 @@
 					"type": "string"
 				},
 				"status": {
-					"type": "string"
+					"$ref": "#/definitions/Jam.PodcastStatusType"
 				},
 				"lastCheck": {
 					"type": "number"
