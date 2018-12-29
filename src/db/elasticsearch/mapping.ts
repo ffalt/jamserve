@@ -18,17 +18,19 @@ const type_Root = {
 
 const type_UserRoles = {
 	properties: {
-		streamRole: type_bool,
-		uploadRole: type_bool,
-		adminRole: type_bool,
-		podcastRole: type_bool
+		stream: type_bool,
+		upload: type_bool,
+		admin: type_bool,
+		podcast: type_bool
 	}
 };
 
 const type_User = {
 	properties: {
 		name: type_string,
-		pass: type_key,
+		salt: type_key,
+		hash: type_key,
+		subsonic_pass: type_key,
 		email: type_key,
 		created: type_int,
 		scrobblingEnabled: type_bool,
