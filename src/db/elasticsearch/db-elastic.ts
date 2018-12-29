@@ -457,7 +457,7 @@ export class DBElastic implements Database {
 	private async createIndex(type: DBObjectType): Promise<void> {
 		const name = DBObjectType[type];
 		if (!mapping[name]) {
-			return Promise.reject(Promise.reject('Missing Elasticsearch Mapping for type ' + name));
+			return Promise.reject(Error('Missing Elasticsearch Mapping for type ' + name));
 		}
 		const index = this.indexName(name);
 		const m: any = {};
