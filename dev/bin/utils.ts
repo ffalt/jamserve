@@ -80,13 +80,12 @@ export interface IApiCall {
 	paramSchema?: any;
 	bodySchema?: any;
 	resultType?: string;
-	roles?: Array<string>;
+	roles: Array<string>;
 	resultErrors: Array<{ code: number, text: string }>;
 	upload?: string;
 	binaryResult: Array<string> | undefined;
 	resultSchema: any;
 	isPublic: boolean;
-	needsAdmin: boolean;
 	definitions: any;
 	pathParamsSchema: any;
 	pathParams?: {
@@ -238,7 +237,6 @@ export function getApiCalls(api: any): Array<IApiCall> {
 				definitions: api.definitions,
 				resultSchema: resultdef,
 				isPublic: !!apidef.properties.public,
-				needsAdmin: roles.indexOf('admin') >= 0,
 				aliasFor,
 				binaryResult,
 				pathParams: getPathParamsCalls(name, api, pathParams),

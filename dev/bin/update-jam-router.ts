@@ -47,14 +47,17 @@ function generateCode(calls: Array<IApiCall>): string {
 			code += '\n\tawait ApiResponder.data(res, result);';
 		}
 		code = code.replace(/\n/g, '\n\t');
-		const upload = call.upload ? ` '${call.upload}' ,` : '';
+		const upload = call.upload ? ` '${call.upload}',` : '';
 		let method = call.method;
 		if (call.upload) {
 			method = 'upload';
 		}
 		let apicheck = '';
-		if (call.name !== name) {
+		if (call.name !== name || call.roles.length > 0) {
 			apicheck = `, '/${call.name}'`;
+		}
+		if (call.roles.length > 0) {
+			apicheck += `, ${JSON.stringify(call.roles).replace(/"/g, '\'')}`;
 		}
 		const s = `	register.${method}('/${name}',${upload} async (req, res) => {
 		${code}
@@ -68,8 +71,7 @@ function generateCode(calls: Array<IApiCall>): string {
 async function run() {
 	const apicalls: Array<IApiCall> = await getJamApiCalls(basePath);
 	const publicApi = generateCode(apicalls.filter(call => call.isPublic));
-	const adminApi = generateCode(apicalls.filter(call => call.needsAdmin));
-	const userApi = generateCode(apicalls.filter(call => !call.needsAdmin && !call.isPublic));
+	const accessControlApi = generateCode(apicalls.filter(call => !call.isPublic));
 
 	const ts = `// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
@@ -85,21 +87,17 @@ import {IApiBinaryResult} from '../../typings';
 
 export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
 export interface Register {
-	get: (name: string, execute: RegisterCallback, apiCheckName?: string) => void;
-	post: (name: string, execute: RegisterCallback, apiCheckName?: string) => void;
-	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string) => void;
+	get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
+	post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
+	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
 }
 
 export function registerPublicApi(register: Register, api: JamController): void {
 ${publicApi}
 }
 
-export function registerUserApi(register: Register, api: JamController): void {
-${userApi}
-}
-
-export function registerAdminApi(register: Register, api: JamController): void {
-${adminApi}
+export function registerAccessControlApi(register: Register, api: JamController): void {
+${accessControlApi}
 }
 `;
 
