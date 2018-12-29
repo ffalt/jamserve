@@ -4,7 +4,7 @@ import {spawn} from 'child_process';
 export async function spawnToolStream(binName: string, envName: string, args: Array<string>, onData: (buffer: Buffer) => void): Promise<string> {
 	const bin = await getBinPath(binName, envName);
 	if (!bin || bin.length === 0) {
-		return Promise.reject(Promise.reject('Tool binary not found ' + binName));
+		return Promise.reject(Error('Tool binary not found ' + binName));
 	}
 	return new Promise<string>((resolve, reject) => {
 		const child = spawn(bin, args);
@@ -24,7 +24,7 @@ export async function spawnToolStream(binName: string, envName: string, args: Ar
 export async function spawnTool(binName: string, envName: string, args: Array<string>): Promise<string> {
 	const bin = await getBinPath(binName, envName);
 	if (!bin || bin.length === 0) {
-		return Promise.reject('Tool binary not found ' + binName);
+		return Promise.reject(Error('Tool binary not found ' + binName));
 	}
 	return new Promise<string>((resolve, reject) => {
 		const child = spawn(bin, args);
