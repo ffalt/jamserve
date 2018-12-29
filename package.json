@@ -48,6 +48,7 @@
     "archiver": "^3.0.0",
     "body-parser": "^1.18.3",
     "colors": "^1.3.3",
+    "common-password-checker": "^0.1.0",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.5",
     "elasticsearch": "^15.2.0",

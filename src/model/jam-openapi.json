@@ -11925,6 +11925,7 @@
 		"/user/create": {
 			"post": {
 				"operationId": "userController.create",
+				"description": "create a new user",
 				"tags": [
 					"user"
 				],
@@ -11964,6 +11965,7 @@
 		"/user/update": {
 			"post": {
 				"operationId": "userController.update",
+				"description": "update user",
 				"tags": [
 					"user"
 				],
@@ -11996,9 +11998,82 @@
 				}
 			}
 		},
+		"/user/password/update": {
+			"post": {
+				"operationId": "userController.passwordUpdate",
+				"description": "set a password for the user",
+				"tags": [
+					"user"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.UserPasswordUpdate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/email/update": {
+			"post": {
+				"operationId": "userController.emailUpdate",
+				"description": "set an email for an user",
+				"tags": [
+					"user"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.UserEmailUpdate"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/imageUpload/update": {
 			"post": {
 				"operationId": "userController.imageUploadUpdate",
+				"description": "set an avatar image for an user",
 				"tags": [
 					"user"
 				],
@@ -16817,6 +16892,40 @@
 					}
 				},
 				"required": [
+					"id"
+				]
+			},
+			"JamParameters.UserPasswordUpdate": {
+				"type": "object",
+				"properties": {
+					"password": {
+						"description": "new password of user",
+						"type": "string"
+					},
+					"id": {
+						"description": "the item id",
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"password"
+				]
+			},
+			"JamParameters.UserEmailUpdate": {
+				"type": "object",
+				"properties": {
+					"email": {
+						"description": "new email of user",
+						"type": "string"
+					},
+					"id": {
+						"description": "the item id",
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
 					"id"
 				]
 			},

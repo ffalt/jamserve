@@ -1221,7 +1221,7 @@
 								{
 									"type": "string",
 									"enum": [
-										"admin"
+										"podcast"
 									]
 								}
 							],
@@ -1231,7 +1231,7 @@
 									{
 										"type": "string",
 										"enum": [
-											"admin"
+											"podcast"
 										]
 									}
 								]
@@ -1512,7 +1512,7 @@
 								{
 									"type": "string",
 									"enum": [
-										"admin"
+										"podcast"
 									]
 								}
 							],
@@ -1522,7 +1522,7 @@
 									{
 										"type": "string",
 										"enum": [
-											"admin"
+											"podcast"
 										]
 									}
 								]
@@ -1562,7 +1562,7 @@
 								{
 									"type": "string",
 									"enum": [
-										"admin"
+										"podcast"
 									]
 								}
 							],
@@ -1572,7 +1572,7 @@
 									{
 										"type": "string",
 										"enum": [
-											"admin"
+											"podcast"
 										]
 									}
 								]
@@ -3094,12 +3094,35 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"folder/image": {
@@ -3256,12 +3279,35 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"track/download": {
@@ -3319,12 +3365,35 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"track/image": {
@@ -3481,12 +3550,35 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"episode/download": {
@@ -3544,12 +3636,35 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"episode/image": {
@@ -3733,12 +3848,35 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"artist/image": {
@@ -3859,12 +3997,35 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"album/image": {
@@ -3985,12 +4146,35 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"bookmark/list": {
@@ -4147,12 +4331,35 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
-						"params"
+						"params",
+						"roles"
 					]
 				},
 				"user/image": {
@@ -4680,13 +4887,36 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
 						"operationId",
-						"pathParams"
+						"pathParams",
+						"roles"
 					]
 				},
 				"stream/{id}": {
@@ -4745,6 +4975,28 @@
 							"enum": [
 								"stream/{id}.{format}"
 							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
@@ -4752,7 +5004,8 @@
 						"binary",
 						"errors",
 						"operationId",
-						"pathParams"
+						"pathParams",
+						"roles"
 					]
 				},
 				"waveform/{id}.{format}": {
@@ -4829,13 +5082,36 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
 						"operationId",
-						"pathParams"
+						"pathParams",
+						"roles"
 					]
 				},
 				"download/{id}": {
@@ -4893,6 +5169,28 @@
 							"enum": [
 								"download/{id}.{format}"
 							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
@@ -4900,7 +5198,8 @@
 						"binary",
 						"errors",
 						"operationId",
-						"pathParams"
+						"pathParams",
+						"roles"
 					]
 				},
 				"download/{id}.{format}": {
@@ -4964,13 +5263,36 @@
 									}
 								]
 							}
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"stream"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"stream"
+										]
+									}
+								]
+							}
 						}
 					},
 					"required": [
 						"binary",
 						"errors",
 						"operationId",
-						"pathParams"
+						"pathParams",
+						"roles"
 					]
 				}
 			}
@@ -5092,7 +5414,7 @@
 								{
 									"type": "string",
 									"enum": [
-										"admin"
+										"podcast"
 									]
 								}
 							],
@@ -5102,7 +5424,7 @@
 									{
 										"type": "string",
 										"enum": [
-											"admin"
+											"podcast"
 										]
 									}
 								]
@@ -6052,7 +6374,7 @@
 								{
 									"type": "string",
 									"enum": [
-										"admin"
+										"podcast"
 									]
 								}
 							],
@@ -6062,7 +6384,7 @@
 									{
 										"type": "string",
 										"enum": [
-											"admin"
+											"podcast"
 										]
 									}
 								]
@@ -6300,6 +6622,7 @@
 					]
 				},
 				"user/create": {
+					"description": "user: create a new user",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -6352,6 +6675,7 @@
 					]
 				},
 				"user/update": {
+					"description": "user: update user",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -6402,7 +6726,66 @@
 						"roles"
 					]
 				},
+				"user/password/update": {
+					"description": "user: set a password for the user",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.UserPasswordUpdate"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params"
+					]
+				},
+				"user/email/update": {
+					"description": "user: set an email for an user",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.UserEmailUpdate"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params"
+					]
+				},
 				"user/imageUpload/update": {
+					"description": "user: set an avatar image for an user",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -14145,6 +14528,40 @@
 				}
 			},
 			"required": [
+				"id"
+			]
+		},
+		"JamParameters.UserPasswordUpdate": {
+			"type": "object",
+			"properties": {
+				"password": {
+					"description": "new password of user",
+					"type": "string"
+				},
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"password"
+			]
+		},
+		"JamParameters.UserEmailUpdate": {
+			"type": "object",
+			"properties": {
+				"email": {
+					"description": "new email of user",
+					"type": "string"
+				},
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"email",
 				"id"
 			]
 		},

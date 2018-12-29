@@ -968,6 +968,20 @@ export declare namespace JamParameters {
 		roleUpload?: boolean;
 	}
 
+	export interface UserPasswordUpdate extends ID {
+		/**
+		 * new password of user
+		 */
+		password: string;
+	}
+
+	export interface UserEmailUpdate extends ID {
+		/**
+		 * new email of user
+		 */
+		email: string;
+	}
+
 	export interface UserUpdate extends ID {
 		/**
 		 * name of the user

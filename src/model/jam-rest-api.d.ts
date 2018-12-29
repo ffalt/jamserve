@@ -652,6 +652,7 @@ export interface JamApi {
 			params: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDownloadTypes;
+			roles: ['stream'];
 		};
 		'folder/image'?: {
 			params: JamParameters.Image;
@@ -663,11 +664,13 @@ export interface JamApi {
 			params: JamParameters.Stream;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiStreamTypes;
+			roles: ['stream'];
 		};
 		'track/download'?: {
 			params: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDownloadTypes;
+			roles: ['stream'];
 		};
 		'track/image'?: {
 			params: JamParameters.Image;
@@ -679,11 +682,13 @@ export interface JamApi {
 			params: JamParameters.Stream;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiStreamTypes;
+			roles: ['stream'];
 		};
 		'episode/download'?: {
 			params: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDownloadTypes;
+			roles: ['stream'];
 		};
 		'episode/image'?: {
 			params: JamParameters.Image;
@@ -700,6 +705,7 @@ export interface JamApi {
 			params: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDownloadTypes;
+			roles: ['stream'];
 		};
 
 		'artist/image'?: {
@@ -711,6 +717,7 @@ export interface JamApi {
 			params: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDownloadTypes;
+			roles: ['stream'];
 		};
 
 		'album/image'?: {
@@ -722,6 +729,7 @@ export interface JamApi {
 			params: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDownloadTypes;
+			roles: ['stream'];
 		};
 
 		/**
@@ -742,6 +750,7 @@ export interface JamApi {
 			params: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDownloadTypes;
+			roles: ['stream'];
 		};
 
 		'user/image'?: {
@@ -792,6 +801,7 @@ export interface JamApi {
 			pathParams: JamParameters.PathStream;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiStreamTypes;
+			roles: ['stream'];
 		};
 		/**
 		 * media: stream a media file
@@ -802,6 +812,7 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDefaultStreamTypes;
 			aliasFor: 'stream/{id}.{format}';
+			roles: ['stream'];
 		};
 		/**
 		 * media: get peaks waveform data as svg | json | binary
@@ -811,6 +822,7 @@ export interface JamApi {
 			pathParams: JamParameters.Waveform;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiWaveformTypes;
+			roles: ['stream'];
 		};
 
 		'download/{id}'?: {
@@ -819,12 +831,14 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDefaultDownloadTypes;
 			aliasFor: 'download/{id}.{format}';
+			roles: ['stream'];
 		};
 		'download/{id}.{format}'?: {
 			operationId: 'download.download';
 			pathParams: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiDownloadTypes;
+			roles: ['stream'];
 		};
 	};
 
@@ -859,7 +873,7 @@ export interface JamApi {
 		'podcast/delete'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['admin'];
+			roles: ['podcast'];
 		};
 		'chat/delete'?: {
 			params: JamParameters.ChatDelete;
@@ -1030,17 +1044,40 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+		/**
+		 * user: create a new user
+		 */
 		'user/create'?: {
 			params: JamParameters.UserNew;
 			result: Jam.User;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['admin'];
 		};
+		/**
+		 * user: update user
+		 */
 		'user/update'?: {
 			params: JamParameters.UserUpdate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * user: set a password for the user
+		 */
+		'user/password/update'?: {
+			params: JamParameters.UserPasswordUpdate;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * user: set an email for an user
+		 */
+		'user/email/update'?: {
+			params: JamParameters.UserEmailUpdate;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * user: set an avatar image for an user
+		 */
 		'user/imageUpload/update'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
