@@ -15,7 +15,7 @@ import passportJWT from 'passport-jwt';
 import passportLocal from 'passport-local';
 import jwt from 'jsonwebtoken';
 import {NotFoundError, UnauthError} from './error';
-import {Register, registerAdminApi, RegisterCallback, registerPublicApi, registerUserApi} from './routes';
+import {Register, registerAccessControlApi, RegisterCallback, registerPublicApi} from './routes';
 import {apiCheck} from './check';
 import {getMaxAge} from '../../utils/max-age';
 import {formatUser} from '../../objects/user/user.format';
@@ -69,11 +69,13 @@ function CallSessionLogoutHandler(req: UserRequest, res: express.Response, next:
 	ApiResponder.ok(res);
 }
 
-function AdminMiddleWare(req: UserRequest, res: express.Response, next: express.NextFunction) {
-	if (!req.user || !req.user.roles.adminRole) {
-		ApiResponder.error(res, UnauthError());
-	} else {
-		next();
+async function checkRoles(user: User, roles?: Array<string>): Promise<void> {
+	if (roles && roles.length > 0) {
+		for (const role of roles) {
+			if (!user.roles[role]) {
+				return Promise.reject(UnauthError());
+			}
+		}
 	}
 }
 
@@ -185,27 +187,30 @@ export function initJamRouter(engine: Engine): express.Router {
 	}));
 
 	const register: Register = {
-		get: (name: string, execute: RegisterCallback, apiCheckName?: string) => {
+		get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => {
 			router.get(name, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
+					await checkRoles(req.user, roles);
 					await execute(req, res);
 				} catch (e) {
 					await ApiResponder.error(res, e);
 				}
 			});
 		},
-		post: (name: string, execute: RegisterCallback, apiCheckName?: string) => {
+		post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => {
 			router.post(name, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
+					await checkRoles(req.user, roles);
 					await execute(req, res);
 				} catch (e) {
 					await ApiResponder.error(res, e);
 				}
 			});
 		},
-		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string) => {
+		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => {
 			router.post(name, apiCheck(apiCheckName || name), upload.single(field), autoUploadTempReap, async (req, res) => {
 				try {
+					await checkRoles(req.user, roles);
 					await execute(req, res);
 				} catch (e) {
 					await ApiResponder.error(res, e);
@@ -245,11 +250,7 @@ export function initJamRouter(engine: Engine): express.Router {
 
 	router.use(<express.RequestHandler>CheckAuthMiddleWare); // ensure req.user exists for all requests after this
 
-	registerUserApi(register, api);
-
-	router.use(<express.RequestHandler>AdminMiddleWare); // ensure req.user is an admin for all requests after this
-
-	registerAdminApi(register, api);
+	registerAccessControlApi(register, api);
 
 	router.use((req, res, next) => {
 		ApiResponder.error(res, NotFoundError('jam api cmd not found'));

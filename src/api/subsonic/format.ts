@@ -124,18 +124,18 @@ export class FORMAT {
 			avatarLastChanged: user.avatarLastChanged !== undefined ? this.formatSubSonicDate(user.avatarLastChanged) : undefined,
 			folder: user.allowedfolder ? user.allowedfolder.map(s => parseInt(s, 10)) : undefined,
 			scrobblingEnabled: user.scrobblingEnabled,
-			adminRole: user.roles.adminRole,
-			settingsRole: user.roles.adminRole, // user.roles.settingsRole,
-			downloadRole: user.roles.adminRole, // user.roles.downloadRole,
-			uploadRole: user.roles.uploadRole,
-			playlistRole: user.roles.adminRole, // user.roles.playlistRole,
-			coverArtRole: user.roles.adminRole, // user.roles.coverArtRole,
-			commentRole: user.roles.adminRole, // user.roles.commentRole,
-			podcastRole: user.roles.podcastRole,
-			streamRole: user.roles.streamRole,
-			jukeboxRole: user.roles.adminRole, // user.roles.jukeboxRole,
-			shareRole: user.roles.adminRole, // user.roles.shareRole,
-			videoConversionRole: user.roles.adminRole, // user.roles.videoConversionRole
+			adminRole: user.roles.admin,
+			settingsRole: user.roles.admin, // user.roles.settingsRole,
+			downloadRole: user.roles.stream, // user.roles.downloadRole,
+			uploadRole: user.roles.upload,
+			playlistRole: user.roles.admin, // user.roles.playlistRole,
+			coverArtRole: user.roles.admin, // user.roles.coverArtRole,
+			commentRole: user.roles.admin, // user.roles.commentRole,
+			podcastRole: user.roles.podcast,
+			streamRole: user.roles.stream,
+			jukeboxRole: user.roles.admin, // user.roles.jukeboxRole,
+			shareRole: user.roles.admin, // user.roles.shareRole,
+			videoConversionRole: user.roles.admin, // user.roles.videoConversionRole
 		};
 	}
 

@@ -13,14 +13,14 @@ import {ApiResponder} from './response';
 const log = Logger('Subsonic.Api');
 
 export function AdminMiddleWare(req: SubsonicParameterRequest, res: express.Response, next: express.NextFunction) {
-	if (!req.user || !req.user.roles.adminRole) {
+	if (!req.user || !req.user.roles.admin) {
 		ApiResponder.error(req, res, {fail: FORMAT.FAIL.UNAUTH});
 	}
 	next();
 }
 
 export function PodcastAdminMiddleWare(req: SubsonicParameterRequest, res: express.Response, next: express.NextFunction) {
-	if (!req.user || !req.user.roles.podcastRole) {
+	if (!req.user || !req.user.roles.podcast) {
 		ApiResponder.error(req, res, {fail: FORMAT.FAIL.UNAUTH});
 	}
 	next();

@@ -10,7 +10,9 @@ import {BookmarkStore} from '../bookmark/bookmark.store';
 import {IApiBinaryResult} from '../../typings';
 import {ImageModule} from '../../modules/image/image.module';
 import {BaseStoreService} from '../base/base.service';
-import {hashSalt} from '../../utils/salthash';
+import {hashSalt, hashSaltPassword} from '../../utils/salthash';
+
+const commonPassword = require('common-password-checker');
 
 export class UserService extends BaseStoreService<User, SearchQueryUser> {
 	private cached: {
@@ -133,5 +135,35 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 
 	public clearCache() {
 		this.cached = {};
+	}
+
+	async setUserPassword(user: User, pass: string): Promise<void> {
+		await this.testPassword(pass);
+		const pw = hashSaltPassword(pass);
+		user.salt = pw.salt;
+		user.hash = pw.hash;
+		await this.userStore.replace(user);
+		delete this.cached[user.id];
+	}
+
+	async testPassword(password: string): Promise<void> {
+		if ((!password) || (!password.trim().length)) {
+			return Promise.reject(Error('Invalid Password'));
+		}
+		if (password.length < 4) {
+			return Promise.reject(Error('Password is too short'));
+		}
+		if (commonPassword(password)) {
+			return Promise.reject(Error('Your password is found in the most frequently used password list and too easy to guess'));
+		}
+	}
+
+	async setUserEmail(user: User, email: string): Promise<void> {
+		if ((!email) || (!email.trim().length)) {
+			return Promise.reject(Error('Invalid Email'));
+		}
+		user.email = email;
+		await this.userStore.replace(user);
+		delete this.cached[user.id];
 	}
 }

@@ -795,7 +795,7 @@ export class SubsonicApi {
 
 		if ((!req.query.username) || (req.user.name === req.query.username)) {
 			return {user: FORMAT.packUser(req.user)};
-		} else if (!req.user.roles.adminRole) {
+		} else if (!req.user.roles.admin) {
 			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 		} else {
 			const u = await this.engine.userService.getByName(req.query.username);
@@ -965,15 +965,15 @@ export class SubsonicApi {
 		}
 		// u.ldapAuthenticated = getBool(req.query.ldapAuthenticated, u.ldapAuthenticated);
 		// u.scrobblingEnabled = getBool(req.query.scrobblingEnabled, u.scrobblingEnabled);
-		u.roles.adminRole = getBool(req.query.adminRole, u.roles.adminRole);
+		u.roles.admin = getBool(req.query.adminRole, u.roles.admin);
 		// u.roles.settingsRole = getBool(req.query.settingsRole, u.roles.settingsRole);
-		u.roles.streamRole = getBool(req.query.streamRole, u.roles.streamRole);
+		u.roles.stream = getBool(req.query.streamRole, u.roles.stream);
 		// u.roles.jukeboxRole = getBool(req.query.jukeboxRole, u.roles.jukeboxRole);
 		// u.roles.downloadRole = getBool(req.query.downloadRole, u.roles.downloadRole);
-		u.roles.uploadRole = getBool(req.query.uploadRole, u.roles.uploadRole);
+		u.roles.upload = getBool(req.query.uploadRole, u.roles.upload);
 		// u.roles.coverArtRole = getBool(req.query.coverArtRole, u.roles.coverArtRole);
 		// u.roles.commentRole = getBool(req.query.commentRole, u.roles.commentRole);
-		u.roles.podcastRole = getBool(req.query.podcastRole, u.roles.podcastRole);
+		u.roles.podcast = getBool(req.query.podcastRole, u.roles.podcast);
 		// u.roles.playlistRole = getBool(req.query.playlistRole, u.roles.playlistRole);
 		// u.roles.shareRole = getBool(req.query.shareRole, u.roles.shareRole);
 		// u.roles.videoConversionRole = getBool(req.query.videoConversionRole, u.roles.videoConversionRole);
@@ -1033,16 +1033,16 @@ export class SubsonicApi {
 			// ldapAuthenticated: getBool(req.query.ldapAuthenticated, false),
 			scrobblingEnabled: false, // getBool(req.query.scrobblingEnabled, false),
 			roles: {
-				adminRole: getBool(req.query.adminRole, false),
+				admin: getBool(req.query.adminRole, false),
 				// settingsRole: getBool(req.query.settingsRole, true),
-				streamRole: getBool(req.query.streamRole, true),
+				stream: getBool(req.query.streamRole, true),
 				// jukeboxRole: getBool(req.query.jukeboxRole, false),
 				// downloadRole: getBool(req.query.downloadRole, false),
-				uploadRole: getBool(req.query.uploadRole, false),
+				upload: getBool(req.query.uploadRole, false),
 				// playlistRole: getBool(req.query.playlistRole, false),
 				// coverArtRole: getBool(req.query.coverArtRole, false),
 				// commentRole: getBool(req.query.commentRole, false),
-				podcastRole: getBool(req.query.podcastRole, false),
+				podcast: getBool(req.query.podcastRole, false),
 				// shareRole: getBool(req.query.shareRole, false),
 				// videoConversionRole: getBool(req.query.videoConversionRole, false)
 			}
@@ -1095,7 +1095,7 @@ export class SubsonicApi {
 			return Promise.reject({fail: FORMAT.FAIL.PARAMETER});
 		}
 		if (req.query.username !== req.user.name) {
-			if (!req.user.roles.adminRole) {
+			if (!req.user.roles.admin) {
 				return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 			}
 		}
@@ -1158,7 +1158,7 @@ export class SubsonicApi {
 		 */
 		let userID = req.user.id;
 		if ((req.query.username) && (req.query.username !== req.user.name)) {
-			if (!req.user.roles.adminRole) {
+			if (!req.user.roles.admin) {
 				return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 			}
 			const u = await this.engine.userService.getByName(req.query.username);

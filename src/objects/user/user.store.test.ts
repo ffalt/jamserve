@@ -17,7 +17,7 @@ describe('UserStore', () => {
 			{id: mock.id},
 			{ids: [mock.id]},
 			{name: mock.name},
-			{isAdmin: mock.roles.adminRole},
+			{isAdmin: mock.roles.admin},
 			{query: mock.name[0]}
 		];
 		return matches;

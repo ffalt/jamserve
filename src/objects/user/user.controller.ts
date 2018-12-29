@@ -59,10 +59,10 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 			// ldapAuthenticated: false,
 			scrobblingEnabled: false,
 			roles: {
-				adminRole: req.query.roleAdmin !== undefined ? req.query.roleAdmin : false,
-				streamRole: req.query.roleStream !== undefined ? req.query.roleStream : true,
-				uploadRole: req.query.roleUpload !== undefined ? req.query.roleUpload : false,
-				podcastRole: req.query.rolePodcast !== undefined ? req.query.rolePodcast : false,
+				admin: req.query.roleAdmin !== undefined ? req.query.roleAdmin : false,
+				stream: req.query.roleStream !== undefined ? req.query.roleStream : true,
+				upload: req.query.roleUpload !== undefined ? req.query.roleUpload : false,
+				podcast: req.query.rolePodcast !== undefined ? req.query.rolePodcast : false,
 				// settingsRole: false,
 				// jukeboxRole: false,
 				// downloadRole: false,
@@ -93,16 +93,16 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 			u.email = req.query.email.trim();
 		}
 		if (req.query.roleAdmin !== undefined) {
-			u.roles.adminRole = req.query.roleAdmin;
+			u.roles.admin = req.query.roleAdmin;
 		}
 		if (req.query.rolePodcast !== undefined) {
-			u.roles.podcastRole = req.query.rolePodcast;
+			u.roles.podcast = req.query.rolePodcast;
 		}
 		if (req.query.roleStream !== undefined) {
-			u.roles.streamRole = req.query.roleStream;
+			u.roles.stream = req.query.roleStream;
 		}
 		if (req.query.roleUpload !== undefined) {
-			u.roles.uploadRole = req.query.roleUpload;
+			u.roles.upload = req.query.roleUpload;
 		}
 		await this.userService.update(u);
 		return this.prepare(u, {}, req.user);
@@ -118,10 +118,25 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 			return Promise.reject(InvalidParamError('Image upload failed'));
 		}
 		const u = await this.byID(req.query.id);
-		if (u.id !== req.user.id && !req.user.roles.adminRole) {
-			return Promise.reject(UnauthError());
+		if (u.id === req.user.id || req.user.roles.admin) {
+			return await this.userService.setUserImage(u, req.file);
 		}
-		await this.userService.setUserImage(u, req.file);
+		return Promise.reject(UnauthError());
 	}
 
+	async passwordUpdate(req: JamRequest<JamParameters.UserPasswordUpdate>): Promise<void> {
+		const u = await this.byID(req.query.id);
+		if (u.id === req.user.id || req.user.roles.admin) {
+			return await this.userService.setUserPassword(u, req.query.password);
+		}
+		return Promise.reject(UnauthError());
+	}
+
+	async emailUpdate(req: JamRequest<JamParameters.UserEmailUpdate>): Promise<void> {
+		const u = await this.byID(req.query.id);
+		if (u.id === req.user.id || req.user.roles.admin) {
+			return await this.userService.setUserEmail(u, req.query.email);
+		}
+		return Promise.reject(UnauthError());
+	}
 }

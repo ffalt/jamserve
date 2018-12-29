@@ -4,10 +4,10 @@ import {User, UserRoles} from './user.model';
 function formatRoles(roles: UserRoles): Jam.Roles {
 	return {
 		// coverArt: roles.coverArtRole ? true : undefined,
-		stream: roles.streamRole ? true : undefined,
-		upload: roles.uploadRole ? true : undefined,
-		admin: roles.adminRole ? true : undefined,
-		podcast: roles.podcastRole ? true : undefined,
+		stream: roles.stream ? true : undefined,
+		upload: roles.upload ? true : undefined,
+		admin: roles.admin ? true : undefined,
+		podcast: roles.podcast ? true : undefined,
 		// settings: roles.settingsRole ? true : undefined,
 		// download: roles.downloadRole ? true : undefined,
 		// playlist: roles.playlistRole ? true : undefined,

@@ -12,9 +12,9 @@ import {IApiBinaryResult} from '../../typings';
 
 export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
 export interface Register {
-	get: (name: string, execute: RegisterCallback, apiCheckName?: string) => void;
-	post: (name: string, execute: RegisterCallback, apiCheckName?: string) => void;
-	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string) => void;
+	get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
+	post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
+	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
 }
 
 export function registerPublicApi(register: Register, api: JamController): void {
@@ -31,7 +31,7 @@ export function registerPublicApi(register: Register, api: JamController): void 
 	});
 }
 
-export function registerUserApi(register: Register, api: JamController): void {
+export function registerAccessControlApi(register: Register, api: JamController): void {
 	register.get('/lastfm/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.LastFMLookup> = {query: req.query, user: req.user, client: req.client};
 		const result: LastFM.Result = await api.metadataController.lastfmLookup(options);
@@ -236,6 +236,12 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/episode/retrieve', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		await api.episodeController.retrieve(options);
+		await ApiResponder.ok(res);
+	}, '/episode/retrieve', ['podcast']);
+
 	register.get('/episode/state', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.State = await api.episodeController.state(options);
@@ -283,6 +289,18 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const result: Array<Jam.Podcast> = await api.podcastController.search(options);
 		await ApiResponder.data(res, result);
 	});
+
+	register.get('/podcast/refreshAll', async (req, res) => {
+		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
+		await api.podcastController.refreshAll(options);
+		await ApiResponder.ok(res);
+	}, '/podcast/refreshAll', ['podcast']);
+
+	register.get('/podcast/refresh', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		await api.podcastController.refresh(options);
+		await ApiResponder.ok(res);
+	}, '/podcast/refresh', ['podcast']);
 
 	register.get('/podcast/state', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
@@ -476,6 +494,24 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/user/search', async (req, res) => {
+		const options: JamRequest<JamParameters.UserSearch> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.User> = await api.userController.search(options);
+		await ApiResponder.data(res, result);
+	}, '/user/search', ['admin']);
+
+	register.get('/user/id', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.User = await api.userController.id(options);
+		await ApiResponder.data(res, result);
+	}, '/user/id', ['admin']);
+
+	register.get('/user/ids', async (req, res) => {
+		const options: JamRequest<JamParameters.IDs> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.User> = await api.userController.ids(options);
+		await ApiResponder.data(res, result);
+	}, '/user/ids', ['admin']);
+
 	register.get('/playqueue/get', async (req, res) => {
 		const options: JamRequest<JamParameters.PlayQueue> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.PlayQueue = await api.playqueueController.get(options);
@@ -500,6 +536,18 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/root/scan', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		await api.rootController.scan(options);
+		await ApiResponder.ok(res);
+	}, '/root/scan', ['admin']);
+
+	register.get('/root/scanAll', async (req, res) => {
+		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
+		await api.rootController.scanAll(options);
+		await ApiResponder.ok(res);
+	}, '/root/scanAll', ['admin']);
+
 	register.get('/root/status', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.RootStatus = await api.rootController.status(options);
@@ -510,7 +558,7 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.folderController.download(options);
 		await ApiResponder.binary(res, result);
-	});
+	}, '/folder/download', ['stream']);
 
 	register.get('/folder/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
@@ -522,13 +570,13 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.Stream> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.trackController.stream(options);
 		await ApiResponder.binary(res, result);
-	});
+	}, '/track/stream', ['stream']);
 
 	register.get('/track/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.trackController.download(options);
 		await ApiResponder.binary(res, result);
-	});
+	}, '/track/download', ['stream']);
 
 	register.get('/track/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
@@ -540,13 +588,13 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.Stream> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.episodeController.stream(options);
 		await ApiResponder.binary(res, result);
-	});
+	}, '/episode/stream', ['stream']);
 
 	register.get('/episode/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.episodeController.download(options);
 		await ApiResponder.binary(res, result);
-	});
+	}, '/episode/download', ['stream']);
 
 	register.get('/episode/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
@@ -564,7 +612,7 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.podcastController.download(options);
 		await ApiResponder.binary(res, result);
-	});
+	}, '/podcast/download', ['stream']);
 
 	register.get('/artist/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
@@ -576,7 +624,7 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.artistController.download(options);
 		await ApiResponder.binary(res, result);
-	});
+	}, '/artist/download', ['stream']);
 
 	register.get('/album/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
@@ -588,7 +636,7 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.albumController.download(options);
 		await ApiResponder.binary(res, result);
-	});
+	}, '/album/download', ['stream']);
 
 	register.get('/bookmark/list', async (req, res) => {
 		const options: JamRequest<JamParameters.BookmarkList> = {query: req.query, user: req.user, client: req.client};
@@ -606,7 +654,7 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.playlistController.download(options);
 		await ApiResponder.binary(res, result);
-	});
+	}, '/playlist/download', ['stream']);
 
 	register.get('/user/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
@@ -648,37 +696,43 @@ export function registerUserApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.PathStream> = {query: req.params, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.streamController.stream(options);
 		await ApiResponder.binary(res, result);
-	}, '/stream/{id}.{format}');
+	}, '/stream/{id}.{format}', ['stream']);
 
 	register.get('/stream/:id', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.streamController.stream(options);
 		await ApiResponder.binary(res, result);
-	}, '/stream/{id}');
+	}, '/stream/{id}', ['stream']);
 
 	register.get('/waveform/:id.:format', async (req, res) => {
 		const options: JamRequest<JamParameters.Waveform> = {query: req.params, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.waveformController.waveform(options);
 		await ApiResponder.binary(res, result);
-	}, '/waveform/{id}.{format}');
+	}, '/waveform/{id}.{format}', ['stream']);
 
 	register.get('/download/:id', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.downloadController.download(options);
 		await ApiResponder.binary(res, result);
-	}, '/download/{id}');
+	}, '/download/{id}', ['stream']);
 
 	register.get('/download/:id.:format', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.params, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.downloadController.download(options);
 		await ApiResponder.binary(res, result);
-	}, '/download/{id}.{format}');
+	}, '/download/{id}.{format}', ['stream']);
 
 	register.post('/bookmark/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
 		await api.bookmarkController.delete(options);
 		await ApiResponder.ok(res);
 	});
+
+	register.post('/podcast/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.podcastController.delete(options);
+		await ApiResponder.ok(res);
+	}, '/podcast/delete', ['podcast']);
 
 	register.post('/chat/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ChatDelete> = {query: req.body, user: req.user, client: req.client};
@@ -691,6 +745,24 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await api.playlistController.delete(options);
 		await ApiResponder.ok(res);
 	});
+
+	register.post('/user/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.userController.delete(options);
+		await ApiResponder.ok(res);
+	}, '/user/delete', ['admin']);
+
+	register.post('/root/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.rootController.delete(options);
+		await ApiResponder.ok(res);
+	}, '/root/delete', ['admin']);
+
+	register.post('/radio/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.radioController.delete(options);
+		await ApiResponder.ok(res);
+	}, '/radio/delete', ['admin']);
 
 	register.post('/chat/create', async (req, res) => {
 		const options: JamRequest<JamParameters.ChatNew> = {query: req.body, user: req.user, client: req.client};
@@ -709,6 +781,42 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await api.trackController.rateUpdate(options);
 		await ApiResponder.ok(res);
 	});
+
+	register.post('/track/tagID3/update', async (req, res) => {
+		const options: JamRequest<JamParameters.TagID3Update> = {query: req.body, user: req.user, client: req.client};
+		await api.trackController.tagID3Update(options);
+		await ApiResponder.ok(res);
+	}, '/track/tagID3/update', ['admin']);
+
+	register.post('/track/tagID3s/update', async (req, res) => {
+		const options: JamRequest<JamParameters.TagID3sUpdate> = {query: req.body, user: req.user, client: req.client};
+		await api.trackController.tagID3sUpdate(options);
+		await ApiResponder.ok(res);
+	}, '/track/tagID3s/update', ['admin']);
+
+	register.post('/radio/update', async (req, res) => {
+		const options: JamRequest<JamParameters.RadioUpdate> = {query: req.body, user: req.user, client: req.client};
+		await api.radioController.update(options);
+		await ApiResponder.ok(res);
+	}, '/radio/update', ['admin']);
+
+	register.upload('/folder/imageUpload/update', 'image', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined};
+		await api.folderController.imageUploadUpdate(options);
+		await ApiResponder.ok(res);
+	}, '/folder/imageUpload/update', ['admin']);
+
+	register.post('/folder/imageUrl/update', async (req, res) => {
+		const options: JamRequest<JamParameters.FolderEditImg> = {query: req.body, user: req.user, client: req.client};
+		await api.folderController.imageUrlUpdate(options);
+		await ApiResponder.ok(res);
+	}, '/folder/imageUrl/update', ['admin']);
+
+	register.post('/folder/name/update', async (req, res) => {
+		const options: JamRequest<JamParameters.FolderEditName> = {query: req.body, user: req.user, client: req.client};
+		await api.folderController.nameUpdate(options);
+		await ApiResponder.ok(res);
+	}, '/folder/name/update', ['admin']);
 
 	register.post('/folder/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
@@ -764,6 +872,18 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.data(res, result);
 	});
 
+	register.post('/radio/create', async (req, res) => {
+		const options: JamRequest<JamParameters.RadioNew> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.Radio = await api.radioController.create(options);
+		await ApiResponder.data(res, result);
+	}, '/radio/create', ['admin']);
+
+	register.post('/podcast/create', async (req, res) => {
+		const options: JamRequest<JamParameters.PodcastNew> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.Podcast = await api.podcastController.create(options);
+		await ApiResponder.data(res, result);
+	}, '/podcast/create', ['podcast']);
+
 	register.post('/podcast/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
 		await api.podcastController.favUpdate(options);
@@ -812,143 +932,33 @@ export function registerUserApi(register: Register, api: JamController): void {
 		await ApiResponder.ok(res);
 	});
 
-	register.upload('/user/imageUpload/update', 'image' , async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined};
-		await api.userController.imageUploadUpdate(options);
-		await ApiResponder.ok(res);
-	});
-}
-
-export function registerAdminApi(register: Register, api: JamController): void {
-	register.get('/episode/retrieve', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
-		await api.episodeController.retrieve(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.get('/podcast/refreshAll', async (req, res) => {
-		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		await api.podcastController.refreshAll(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.get('/podcast/refresh', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
-		await api.podcastController.refresh(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.get('/user/search', async (req, res) => {
-		const options: JamRequest<JamParameters.UserSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.User> = await api.userController.search(options);
-		await ApiResponder.data(res, result);
-	});
-
-	register.get('/user/id', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.User = await api.userController.id(options);
-		await ApiResponder.data(res, result);
-	});
-
-	register.get('/user/ids', async (req, res) => {
-		const options: JamRequest<JamParameters.IDs> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.User> = await api.userController.ids(options);
-		await ApiResponder.data(res, result);
-	});
-
-	register.get('/root/scan', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
-		await api.rootController.scan(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.get('/root/scanAll', async (req, res) => {
-		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		await api.rootController.scanAll(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/podcast/delete', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.podcastController.delete(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/user/delete', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.userController.delete(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/root/delete', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.rootController.delete(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/radio/delete', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.radioController.delete(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/track/tagID3/update', async (req, res) => {
-		const options: JamRequest<JamParameters.TagID3Update> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.tagID3Update(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/track/tagID3s/update', async (req, res) => {
-		const options: JamRequest<JamParameters.TagID3sUpdate> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.tagID3sUpdate(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/radio/update', async (req, res) => {
-		const options: JamRequest<JamParameters.RadioUpdate> = {query: req.body, user: req.user, client: req.client};
-		await api.radioController.update(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.upload('/folder/imageUpload/update', 'image' , async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined};
-		await api.folderController.imageUploadUpdate(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/folder/imageUrl/update', async (req, res) => {
-		const options: JamRequest<JamParameters.FolderEditImg> = {query: req.body, user: req.user, client: req.client};
-		await api.folderController.imageUrlUpdate(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/folder/name/update', async (req, res) => {
-		const options: JamRequest<JamParameters.FolderEditName> = {query: req.body, user: req.user, client: req.client};
-		await api.folderController.nameUpdate(options);
-		await ApiResponder.ok(res);
-	});
-
-	register.post('/radio/create', async (req, res) => {
-		const options: JamRequest<JamParameters.RadioNew> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.Radio = await api.radioController.create(options);
-		await ApiResponder.data(res, result);
-	});
-
-	register.post('/podcast/create', async (req, res) => {
-		const options: JamRequest<JamParameters.PodcastNew> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.Podcast = await api.podcastController.create(options);
-		await ApiResponder.data(res, result);
-	});
-
 	register.post('/user/create', async (req, res) => {
 		const options: JamRequest<JamParameters.UserNew> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.User = await api.userController.create(options);
 		await ApiResponder.data(res, result);
-	});
+	}, '/user/create', ['admin']);
 
 	register.post('/user/update', async (req, res) => {
 		const options: JamRequest<JamParameters.UserUpdate> = {query: req.body, user: req.user, client: req.client};
 		await api.userController.update(options);
+		await ApiResponder.ok(res);
+	}, '/user/update', ['admin']);
+
+	register.post('/user/password/update', async (req, res) => {
+		const options: JamRequest<JamParameters.UserPasswordUpdate> = {query: req.body, user: req.user, client: req.client};
+		await api.userController.passwordUpdate(options);
+		await ApiResponder.ok(res);
+	});
+
+	register.post('/user/email/update', async (req, res) => {
+		const options: JamRequest<JamParameters.UserEmailUpdate> = {query: req.body, user: req.user, client: req.client};
+		await api.userController.emailUpdate(options);
+		await ApiResponder.ok(res);
+	});
+
+	register.upload('/user/imageUpload/update', 'image', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined};
+		await api.userController.imageUploadUpdate(options);
 		await ApiResponder.ok(res);
 	});
 
@@ -956,11 +966,11 @@ export function registerAdminApi(register: Register, api: JamController): void {
 		const options: JamRequest<JamParameters.RootNew> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.Root = await api.rootController.create(options);
 		await ApiResponder.data(res, result);
-	});
+	}, '/root/create', ['admin']);
 
 	register.post('/root/update', async (req, res) => {
 		const options: JamRequest<JamParameters.RootUpdate> = {query: req.body, user: req.user, client: req.client};
 		await api.rootController.update(options);
 		await ApiResponder.ok(res);
-	});
+	}, '/root/update', ['admin']);
 }

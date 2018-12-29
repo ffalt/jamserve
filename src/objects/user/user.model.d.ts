@@ -17,11 +17,13 @@ export interface User extends DBObject {
 }
 
 export interface UserRoles {
+	[name: string]: boolean;
+
+	stream: boolean;
+	upload: boolean;
+	admin: boolean;
+	podcast: boolean;
 	// coverArtRole: boolean;
-	streamRole: boolean;
-	uploadRole: boolean;
-	adminRole: boolean;
-	podcastRole: boolean;
 	// settingsRole: boolean;
 	// downloadRole: boolean;
 	// playlistRole: boolean;

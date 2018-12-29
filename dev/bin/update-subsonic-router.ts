@@ -83,7 +83,7 @@ async function run() {
 
 	const ts = `import {Subsonic} from '../../model/subsonic-rest-data';
 import {SubsonicParameters} from '../../model/subsonic-rest-params';
-import {SubsonicApi, ApiOptions} from './api';
+import {ApiOptions, SubsonicApi} from './api';
 import {ApiResponder} from './response';
 import express from 'express';
 import {IApiBinaryResult} from '../../typings';
