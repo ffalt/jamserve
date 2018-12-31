@@ -154,6 +154,8 @@ export class StoreMock {
 	}
 
 	async cleanup() {
-		// await fse.remove(this.dir.name);
+		// TODO: orderly delete files to detect trash files
+		await fse.remove(this.dir.name);
+		// this.dir.removeCallback();
 	}
 }

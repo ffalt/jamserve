@@ -5,9 +5,9 @@ import {testService} from '../base/base.service.spec';
 
 describe('BookmarkService', () => {
 	let bookmarkService: BookmarkService;
-	testService(
-		(storeTest, imageModuleTest) => {
-			bookmarkService = new BookmarkService(storeTest.store.bookmarkStore);
+	testService({mockData: false},
+		(store, imageModuleTest) => {
+			bookmarkService = new BookmarkService(store.bookmarkStore);
 		},
 		() => {
 			it('create a bookmark', async () => {

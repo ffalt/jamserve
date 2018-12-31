@@ -57,7 +57,6 @@ export enum FolderType {
 	extras = 'extras',
 }
 
-
 export enum PodcastStatus {
 	'new' = 'new',
 	downloading = 'downloading',

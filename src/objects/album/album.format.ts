@@ -25,6 +25,7 @@ export function formatAlbum(album: Album, includes: JamParameters.IncludesAlbum)
 	return {
 		id: album.id,
 		name: album.name,
+		albumType: album.albumType,
 		created: album.created,
 		artist: album.artist,
 		artistID: album.artistID,

@@ -6,9 +6,9 @@ import {mockRoot} from './root.mock';
 
 describe('RootService', () => {
 	let rootService: RootService;
-	testService(
-		(storeTest, imageModuleTest) => {
-			rootService = new RootService(storeTest.store.rootStore);
+	testService({mockData: true},
+		(store, imageModuleTest) => {
+			rootService = new RootService(store.rootStore);
 		},
 		() => {
 			it('should find roots', async () => {

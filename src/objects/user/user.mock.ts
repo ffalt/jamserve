@@ -1,12 +1,19 @@
 import {User} from './user.model';
 import {DBObjectType} from '../../model/jam-types';
+import {hashSalt} from '../../utils/salthash';
+
+export const mockUserSalt = 'a salt';
+export const mockUserPass = 'a pass';
 
 export function mockUser(): User {
+	const hash = hashSalt(mockUserPass, mockUserSalt);
 	return {
 		id: '',
 		type: DBObjectType.user,
 		name: 'a name',
-		pass: 'a pass',
+		salt: mockUserSalt,
+		hash,
+		subsonic_pass: 'a subsonic password',
 		email: 'a@mail',
 		created: 1543495268,
 		scrobblingEnabled: false,
@@ -15,20 +22,26 @@ export function mockUser(): User {
 		maxBitRate: 10,
 		allowedfolder: [],
 		roles: {
-			adminRole: false,
-			podcastRole: false,
-			streamRole: false,
-			uploadRole: false
+			admin: false,
+			podcast: false,
+			stream: false,
+			upload: false
 		}
 	};
 }
 
+export const mockUserPass2 = 'second pass';
+export const mockUserSalt2 = 'second salt';
+
 export function mockUser2(): User {
+	const hash = hashSalt(mockUserPass2, mockUserSalt2);
 	return {
 		id: '',
 		type: DBObjectType.user,
 		name: 'second name',
-		pass: 'second pass',
+		salt: mockUserSalt2,
+		hash,
+		subsonic_pass: 'second subsonic password',
 		email: 'second@mail',
 		created: 1443495268,
 		scrobblingEnabled: true,
@@ -37,10 +50,10 @@ export function mockUser2(): User {
 		maxBitRate: 20,
 		allowedfolder: [],
 		roles: {
-			adminRole: true,
-			podcastRole: true,
-			streamRole: true,
-			uploadRole: true
+			admin: true,
+			podcast: true,
+			stream: true,
+			upload: true
 		}
 	};
 }

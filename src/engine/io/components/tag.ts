@@ -69,6 +69,9 @@ function getMostUsedTagValue<T>(list: Array<MetaStatValue<T>>, multi?: T): T | u
 	if (cleaned.length > 0) {
 		return cleaned[0].val;
 	}
+	if (multi !== undefined) {
+		return multi;
+	}
 	return list[0].val;
 }
 

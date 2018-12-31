@@ -12611,6 +12611,18 @@
 						}
 					}
 				},
+				"albumTypes": {
+					"type": "array",
+					"items": {
+						"enum": [
+							"album",
+							"audiobook",
+							"mix",
+							"unknown"
+						],
+						"type": "string"
+					}
+				},
 				"tracks": {
 					"type": "array",
 					"items": {
@@ -12653,6 +12665,7 @@
 			},
 			"required": [
 				"albumCount",
+				"albumTypes",
 				"created",
 				"id",
 				"name",
@@ -12667,6 +12680,9 @@
 				},
 				"tag": {
 					"$ref": "#/definitions/Jam.AlbumTag"
+				},
+				"albumType": {
+					"$ref": "#/definitions/Jam.AlbumType"
 				},
 				"trackCount": {
 					"type": "number"
@@ -12703,6 +12719,7 @@
 				}
 			},
 			"required": [
+				"albumType",
 				"artistID",
 				"created",
 				"id",
@@ -12741,6 +12758,15 @@
 				"created",
 				"duration"
 			]
+		},
+		"Jam.AlbumType": {
+			"enum": [
+				"album",
+				"audiobook",
+				"mix",
+				"unknown"
+			],
+			"type": "string"
 		},
 		"Jam.ArtistInfo": {
 			"type": "object",

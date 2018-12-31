@@ -7,10 +7,10 @@ import {TrackStore} from '../track/track.store';
 describe('PlaylistService', () => {
 	let playlistService: PlaylistService;
 	let trackStore: TrackStore;
-	testService(
-		(storeTest, imageModuleTest) => {
-			trackStore = storeTest.store.trackStore;
-			playlistService = new PlaylistService(storeTest.store.playlistStore, storeTest.store.trackStore);
+	testService({mockData: false},
+		(store, imageModuleTest) => {
+			trackStore = store.trackStore;
+			playlistService = new PlaylistService(store.playlistStore, store.trackStore);
 		},
 		() => {
 			it('create an empty playlist', async () => {

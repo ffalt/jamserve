@@ -11,10 +11,10 @@ import {Store} from '../store/store';
 describe('DownloadService', () => {
 	let downloadService: DownloadService;
 	let store: Store;
-	testService(
+	testService({mockData: true},
 		(storeTest, imageModuleTest) => {
-			store = storeTest.store;
-			downloadService = new DownloadService(storeTest.store.trackStore);
+			store = storeTest;
+			downloadService = new DownloadService(store.trackStore);
 		},
 		() => {
 			const user = mockUser();

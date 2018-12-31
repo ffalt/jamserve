@@ -1,10 +1,11 @@
 import {Album} from './album.model';
-import {DBObjectType} from '../../model/jam-types';
+import {AlbumType, DBObjectType} from '../../model/jam-types';
 
 export function mockAlbum(): Album {
 	return {
 		id: '',
 		type: DBObjectType.album,
+		albumType: AlbumType.album,
 		name: 'album name',
 		rootIDs: ['rootID1', 'rootID2'],
 		trackIDs: ['trackID1', 'trackID2'],
@@ -23,6 +24,7 @@ export function mockAlbum2(): Album {
 	return {
 		id: '',
 		type: DBObjectType.album,
+		albumType: AlbumType.mix,
 		name: 'second album name',
 		rootIDs: ['rootID2', 'rootID3'],
 		trackIDs: ['trackID3', 'trackID4'],

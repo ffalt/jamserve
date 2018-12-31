@@ -11,11 +11,11 @@ describe('WaveformService', () => {
 	let waveformService: WaveformService;
 	let dir: SynchrounousResult;
 	let trackStore: TrackStore;
-	testService(
-		(storeTest, imageModuleTest) => {
+	testService({mockData: true},
+		(store, imageModuleTest) => {
 			dir = tmp.dirSync();
 			waveformService = new WaveformService(dir.name);
-			trackStore = storeTest.store.trackStore;
+			trackStore = store.trackStore;
 		},
 		() => {
 			it('should return svg for a track', async () => {

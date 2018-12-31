@@ -8,8 +8,8 @@ describe('ChatService', () => {
 	let chatService: ChatService;
 	const user1 = mockUser();
 	user1.id = 'chatUserID1';
-	testService(
-		(storeTest, imageModuleTest) => {
+	testService({mockData: false},
+		(store, imageModuleTest) => {
 			chatService = new ChatService({
 				maxMsgs: 4,
 				maxAge: {

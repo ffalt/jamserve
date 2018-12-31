@@ -75,6 +75,7 @@ export class MetaMerge {
 				rootIDs: [trackInfo.track.rootID],
 				name: name,
 				nameSort: MetaMerge.getArtistNameSort(trackInfo),
+				albumTypes: [],
 				albumIDs: [],
 				mbArtistID: MetaMerge.getArtistMBArtistID(trackInfo),
 				trackIDs: [trackInfo.track.id],
@@ -136,6 +137,7 @@ export class MetaMerge {
 				id: '',
 				type: DBObjectType.album,
 				name: name,
+				albumType: trackInfo.dir.folder && trackInfo.dir.folder.tag && trackInfo.dir.folder.tag.albumType !== undefined ? trackInfo.dir.folder.tag.albumType : AlbumType.unknown,
 				artist: MetaMerge.getArtistName(trackInfo),
 				artistID: artistID,
 				mbArtistID: MetaMerge.getArtistMBArtistID(trackInfo),
@@ -224,6 +226,7 @@ export class MetaMerge {
 					nameSort: MetaMerge.getArtistNameSort(idtracks[0]),
 					rootIDs: [],
 					albumIDs: [],
+					albumTypes: [],
 					mbArtistID: MetaMerge.getArtistMBArtistID(idtracks[0]),
 					trackIDs: idtracks.map(t => t.track.id),
 					created: Date.now()
@@ -268,18 +271,20 @@ export class MetaMerge {
 					artistidtracks.hasChanged = true;
 					await this.store.albumStore.replace(album);
 				} else {
+					const trackInfo = atracks[0];
 					const a: Album = {
 						id: '',
 						type: DBObjectType.album,
 						name: name,
 						rootIDs: [],
-						artist: MetaMerge.getArtistName(atracks[0]),
+						albumType: trackInfo.dir.folder && trackInfo.dir.folder.tag && trackInfo.dir.folder.tag.albumType !== undefined ? trackInfo.dir.folder.tag.albumType : AlbumType.unknown,
+						artist: MetaMerge.getArtistName(trackInfo),
 						artistID: artistID,
-						mbArtistID: MetaMerge.getArtistMBArtistID(atracks[0]),
-						mbAlbumID: atracks[0].track.tag.mbAlbumID,
-						genre: atracks[0].track.tag.genre,
+						mbArtistID: MetaMerge.getArtistMBArtistID(trackInfo),
+						mbAlbumID: trackInfo.track.tag.mbAlbumID,
+						genre: trackInfo.track.tag.genre,
 						trackIDs: atracks.map(t => t.track.id),
-						year: atracks[0].track.tag.year,
+						year: trackInfo.track.tag.year,
 						duration: atracks.reduce((b, c) => (b + (c && c.track && c.track.media && c.track.media.duration ? c.track.media.duration : 0)), 0),
 						created: Date.now()
 					};

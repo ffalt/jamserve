@@ -15,11 +15,11 @@ import {StateService} from '../state/state.service';
 describe('FolderService', () => {
 	let folderService: FolderService;
 	let imageModuleTest: ImageModuleTest;
-	testService(
-		(storeTest, imageModuleTestPara) => {
+	testService({mockData: true},
+		(store, imageModuleTestPara) => {
 			imageModuleTest = imageModuleTestPara;
-			const stateService = new StateService(storeTest.store.stateStore);
-			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, stateService, imageModuleTest.imageModule);
+			const stateService = new StateService(store.stateStore);
+			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
 		},
 		() => {
 

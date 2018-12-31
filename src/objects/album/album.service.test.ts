@@ -14,12 +14,12 @@ describe('AlbumService', () => {
 	let albumService: AlbumService;
 	let folderService: FolderService;
 	let trackStore: TrackStore;
-	testService(
-		(storeTest, imageModuleTest) => {
-			trackStore = storeTest.store.trackStore;
-			const stateService = new StateService(storeTest.store.stateStore);
-			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, stateService, imageModuleTest.imageModule);
-			albumService = new AlbumService(storeTest.store.albumStore, storeTest.store.trackStore, folderService, stateService);
+	testService({mockData: true},
+		(store, imageModuleTest) => {
+			trackStore = store.trackStore;
+			const stateService = new StateService(store.stateStore);
+			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
+			albumService = new AlbumService(store.albumStore, store.trackStore, folderService, stateService);
 		},
 		() => {
 			it('should return the album folder', async () => {

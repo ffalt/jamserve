@@ -24,6 +24,7 @@ export function formatArtist(artist: Artist, includes: JamParameters.IncludesArt
 		id: artist.id,
 		name: artist.name,
 		albumCount: artist.albumIDs.length,
+		albumTypes: artist.albumTypes,
 		albumIDs: includes.artistAlbumIDs ? artist.albumIDs : undefined,
 		trackIDs: includes.artistTracksIDs ? artist.trackIDs : undefined,
 		trackCount: artist.trackIDs.length,

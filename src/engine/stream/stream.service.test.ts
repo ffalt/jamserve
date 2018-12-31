@@ -14,10 +14,10 @@ describe('StreamService', () => {
 	let trackStore: TrackStore;
 	const user = mockUser();
 	user.id = 'nowPlayingUserID1';
-	testService(
-		(storeTest, imageModuleTest) => {
+	testService({mockData: true},
+		(store, imageModuleTest) => {
 			streamService = new StreamService();
-			trackStore = storeTest.store.trackStore;
+			trackStore = store.trackStore;
 		},
 		() => {
 			it('should stream a track', async () => {

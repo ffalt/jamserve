@@ -13,9 +13,9 @@ describe('NowPlayingService', () => {
 	let stateService: StateService;
 	const user = mockUser();
 	user.id = 'nowPlayingUserID1';
-	testService(
-		(storeTest, imageModuleTest) => {
-			stateService = new StateService(storeTest.store.stateStore);
+	testService({mockData: false},
+		(store, imageModuleTest) => {
+			stateService = new StateService(store.stateStore);
 			nowPlayingService = new NowPlayingService(stateService);
 		},
 		() => {

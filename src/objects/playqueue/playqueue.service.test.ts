@@ -5,9 +5,9 @@ import {PlayQueueService} from './playqueue.service';
 
 describe('PlayQueueService', () => {
 	let playQueueService: PlayQueueService;
-	testService(
-		(storeTest, imageModuleTest) => {
-			playQueueService = new PlayQueueService(storeTest.store.playQueueStore);
+	testService({mockData: false},
+		(store, imageModuleTest) => {
+			playQueueService = new PlayQueueService(store.playQueueStore);
 		},
 		() => {
 			it('should create an empty playqueue', async () => {

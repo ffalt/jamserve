@@ -5,6 +5,7 @@ import {Acoustid} from './acoustid-rest-data';
 
 export declare namespace Jam {
 
+	export type AlbumType = 'unknown' | 'album' | 'mix' | 'audiobook';
 	export type FolderType = 'unknown' | 'artist' | 'multiartist' | 'album' | 'multialbum' | 'extras';
 	export type PodcastStatusType = 'new' | 'downloading' | 'completed' | 'error';
 	export type PodcastEpisodeStatusType = 'new' | 'downloading' | 'completed' | 'error' | 'deleted';
@@ -227,6 +228,7 @@ export declare namespace Jam {
 	export interface Album extends Base {
 		artist?: string;
 		tag?: AlbumTag;
+		albumType: AlbumType;
 		trackCount: number;
 		artistID: string;
 		trackIDs?: Array<string>;
@@ -240,6 +242,7 @@ export declare namespace Jam {
 		musicbrainz?: {
 			artistID?: string;
 		};
+		albumTypes: Array<AlbumType>;
 		tracks?: Array<Track>;
 		trackIDs?: Array<string>;
 		albumIDs?: Array<string>;

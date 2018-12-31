@@ -1,5 +1,5 @@
 import {Artist} from './artist.model';
-import {DBObjectType} from '../../model/jam-types';
+import {AlbumType, DBObjectType} from '../../model/jam-types';
 
 export function mockArtist(): Artist {
 	return {
@@ -8,6 +8,7 @@ export function mockArtist(): Artist {
 		name: 'artist name',
 		rootIDs: ['rootID1', 'rootID2'],
 		trackIDs: ['trackID1', 'trackID2'],
+		albumTypes: [AlbumType.album, AlbumType.mix],
 		albumIDs: ['albumID1', 'albumID2'],
 		mbArtistID: 'mbArtistID1',
 		created: 1543495268
@@ -19,6 +20,7 @@ export function mockArtist2(): Artist {
 		id: '',
 		type: DBObjectType.artist,
 		name: 'second artist name',
+		albumTypes: [AlbumType.mix],
 		rootIDs: ['rootID2'],
 		trackIDs: ['trackID3', 'trackID4'],
 		albumIDs: ['albumID3', 'albumID4'],

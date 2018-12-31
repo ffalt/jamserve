@@ -17,7 +17,7 @@ export class UserStore extends BaseStore<User, SearchQueryUser> {
 	protected transformQuery(query: SearchQueryUser): DatabaseQuery {
 		const q = new QueryHelper();
 		q.term('name', query.name);
-		q.bool('roles.adminRole', query.isAdmin);
+		q.bool('roles.admin', query.isAdmin);
 		q.match('name', query.query);
 		return q.get(query);
 	}

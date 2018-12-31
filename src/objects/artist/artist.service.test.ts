@@ -12,11 +12,11 @@ import {StateService} from '../state/state.service';
 describe('ArtistService', () => {
 	let artistService: ArtistService;
 	let folderService: FolderService;
-	testService(
-		(storeTest, imageModuleTest) => {
-			const stateService = new StateService(storeTest.store.stateStore);
-			folderService = new FolderService(storeTest.store.folderStore, storeTest.store.trackStore, stateService, imageModuleTest.imageModule);
-			artistService = new ArtistService(storeTest.store.artistStore, storeTest.store.trackStore, folderService, stateService);
+	testService({mockData: true},
+		(store, imageModuleTest) => {
+			const stateService = new StateService(store.stateStore);
+			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
+			artistService = new ArtistService(store.artistStore, store.trackStore, folderService, stateService);
 		},
 		() => {
 			it('should return the artist folder', async () => {

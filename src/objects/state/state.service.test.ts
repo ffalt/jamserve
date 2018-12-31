@@ -6,9 +6,9 @@ import {DBObjectType} from '../../model/jam-types';
 
 describe('StateService', () => {
 	let stateService: StateService;
-	testService(
-		(storeTest, imageModuleTest) => {
-			stateService = new StateService(storeTest.store.stateStore);
+	testService({mockData: false},
+		(store, imageModuleTest) => {
+			stateService = new StateService(store.stateStore);
 		},
 		() => {
 			it('should find or create empty states', async () => {

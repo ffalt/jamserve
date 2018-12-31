@@ -5,9 +5,9 @@ import {GenreService} from './genre.service';
 
 describe('GenreService', () => {
 	let genreService: GenreService;
-	testService(
-		(storeTest, imageModuleTest) => {
-			genreService = new GenreService(storeTest.store.trackStore);
+	testService({mockData: true},
+		(store, imageModuleTest) => {
+			genreService = new GenreService(store.trackStore);
 		},
 		() => {
 			it('should return genres', async () => {

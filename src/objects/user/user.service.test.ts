@@ -4,7 +4,7 @@ import {testService} from '../base/base.service.spec';
 import {UserService} from './user.service';
 import tmp, {SynchrounousResult} from 'tmp';
 import path from 'path';
-import {mockUser, mockUser2} from './user.mock';
+import {mockUser, mockUser2, mockUserPass} from './user.mock';
 import {Md5} from 'md5-typescript';
 import {mockImage} from '../../modules/image/image.module.spec';
 import fse from 'fs-extra';
@@ -30,10 +30,10 @@ function salt(length: number): string {
 describe('UserService', () => {
 	let userService: UserService;
 	let dir: SynchrounousResult;
-	testService(
-		(storeTest, imageModuleTest) => {
+	testService({mockData: false},
+		(store, imageModuleTest) => {
 			dir = tmp.dirSync();
-			userService = new UserService(dir.name, storeTest.store.userStore, storeTest.store.stateStore, storeTest.store.playlistStore, storeTest.store.bookmarkStore, storeTest.store.playQueueStore, imageModuleTest.imageModule);
+			userService = new UserService(dir.name, store.userStore, store.stateStore, store.playlistStore, store.bookmarkStore, store.playQueueStore, imageModuleTest.imageModule);
 		},
 		() => {
 			let userID: string;
@@ -42,10 +42,6 @@ describe('UserService', () => {
 			it('should not create invalid user', async function() {
 				const notRight = mockUser2();
 				notRight.name = ' ';
-				notRight.pass = 'something';
-				await userService.create(notRight).should.eventually.be.rejectedWith(Error);
-				notRight.name = 'mock';
-				notRight.pass = ' ';
 				await userService.create(notRight).should.eventually.be.rejectedWith(Error);
 			});
 
@@ -67,13 +63,13 @@ describe('UserService', () => {
 				await userService.create(mock).should.eventually.be.rejectedWith(Error);
 			});
 			it('should auth the user by password', async function() {
-				const user = await userService.auth(mock.name, mock.pass);
+				const user = await userService.auth(mock.name, mockUserPass);
 				should().exist(user);
 				expect(user).to.deep.equal(mock);
 			});
 			it('should not auth the user with the wrong password', async function() {
-				await userService.auth(mock.name, mock.pass + '_wrong').should.eventually.be.rejectedWith(Error);
-				await userService.auth(' ', mock.pass).should.eventually.be.rejectedWith(Error);
+				await userService.auth(mock.name, mockUserPass + '_wrong').should.eventually.be.rejectedWith(Error);
+				await userService.auth(' ', mockUserPass).should.eventually.be.rejectedWith(Error);
 				await userService.auth(mock.name, '').should.eventually.be.rejectedWith(Error);
 				await userService.auth('non-existing', 'something').should.eventually.be.rejectedWith(Error);
 			});

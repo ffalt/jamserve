@@ -15,13 +15,13 @@ describe('PodcastService', () => {
 	let podcastService: PodcastService;
 	let episodeService: EpisodeService;
 	let dir: SynchrounousResult;
-	testService(
-		(storeTest, imageModuleTest) => {
+	testService({mockData: false},
+		(store, imageModuleTest) => {
 			dir = tmp.dirSync();
 			const audioModule = new AudioModule(ThirdPartyConfig);
-			const stateService = new StateService(storeTest.store.stateStore);
-			episodeService = new EpisodeService(dir.name, storeTest.store.episodeStore, stateService, audioModule);
-			podcastService = new PodcastService(storeTest.store.podcastStore, episodeService, stateService);
+			const stateService = new StateService(store.stateStore);
+			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModule);
+			podcastService = new PodcastService(store.podcastStore, episodeService, stateService);
 		},
 		() => {
 			it('should create a podcast', async () => {
