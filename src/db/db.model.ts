@@ -18,6 +18,8 @@ export interface Database {
 export interface DatabaseIndex<T extends DBObject> {
 	type: DBObjectType;
 
+	getNewId(): Promise<string>;
+
 	add(body: T): Promise<string>;
 
 	replace(id: string, body: T): Promise<void>;

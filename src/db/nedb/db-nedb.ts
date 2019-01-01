@@ -35,7 +35,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		this.client = client;
 	}
 
-	private async getNewId(): Promise<string> {
+	async getNewId(): Promise<string> {
 		// TODO: implement real sequence id in nedb
 		globaltempid++;
 		return globaltempid.toString();

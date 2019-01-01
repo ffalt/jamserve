@@ -27,6 +27,10 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 
 	protected abstract transformQuery(query: X): DatabaseQuery;
 
+	async getNewId(): Promise<string> {
+		return await this.group.getNewId();
+	}
+
 	async add(item: T): Promise<string> {
 		return await this.group.add(item);
 	}

@@ -163,6 +163,10 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		await getMoreUntilDone(response);
 	}
 
+	async getNewId(): Promise<string> {
+		return await this.db.getNewId();
+	}
+
 	async add(body: T): Promise<string> {
 		const id = await this.db.getNewId();
 		body.id = id;
