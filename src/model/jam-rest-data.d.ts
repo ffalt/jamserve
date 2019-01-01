@@ -5,7 +5,7 @@ import {Acoustid} from './acoustid-rest-data';
 
 export declare namespace Jam {
 
-	export type AlbumType = 'unknown' | 'album' | 'mix' | 'audiobook';
+	export type AlbumType = 'unknown' | 'album' | 'compilation' | 'audiobook';
 	export type FolderType = 'unknown' | 'artist' | 'multiartist' | 'album' | 'multialbum' | 'extras';
 	export type PodcastStatusType = 'new' | 'downloading' | 'completed' | 'error';
 	export type PodcastEpisodeStatusType = 'new' | 'downloading' | 'completed' | 'error' | 'deleted';

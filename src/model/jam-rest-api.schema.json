@@ -12617,7 +12617,7 @@
 						"enum": [
 							"album",
 							"audiobook",
-							"mix",
+							"compilation",
 							"unknown"
 						],
 						"type": "string"
@@ -12763,7 +12763,7 @@
 			"enum": [
 				"album",
 				"audiobook",
-				"mix",
+				"compilation",
 				"unknown"
 			],
 			"type": "string"

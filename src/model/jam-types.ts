@@ -84,7 +84,7 @@ export enum DatabaseQuerySortType {
 export enum AlbumType {
 	unknown = 'unknown',
 	album = 'album',
-	mix = 'mix',
+	compilation = 'compilation',
 	audiobook = 'audiobook'
 }
 

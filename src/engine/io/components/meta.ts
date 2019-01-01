@@ -15,7 +15,7 @@ export class MetaMerge {
 	}
 
 	private static getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
-		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.mix) {
+		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
 			return;
 		} else {
 			return trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID;
@@ -23,7 +23,7 @@ export class MetaMerge {
 	}
 
 	private static getArtistNameSort(trackInfo: MergeTrackInfo): string | undefined {
-		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.mix) {
+		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
 			return;
 		} else {
 			return trackInfo.track.tag.artistSort;
@@ -31,7 +31,7 @@ export class MetaMerge {
 	}
 
 	private static getArtistName(trackInfo: MergeTrackInfo): string {
-		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.mix) {
+		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
 			return trackInfo.dir.folder.tag.artist || cUnknownArtist;
 		} else {
 			return trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist || cUnknownArtist;
@@ -39,7 +39,7 @@ export class MetaMerge {
 	}
 
 	private static getAlbumName(trackInfo: MergeTrackInfo): string {
-		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.mix) {
+		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
 			return trackInfo.dir.folder.tag.album || cUnknownAlbum;
 		} else {
 			return trackInfo.track.tag.album || cUnknownAlbum;

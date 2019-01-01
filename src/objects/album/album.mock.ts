@@ -24,7 +24,7 @@ export function mockAlbum2(): Album {
 	return {
 		id: '',
 		type: DBObjectType.album,
-		albumType: AlbumType.mix,
+		albumType: AlbumType.compilation,
 		name: 'second album name',
 		rootIDs: ['rootID2', 'rootID3'],
 		trackIDs: ['trackID3', 'trackID4'],

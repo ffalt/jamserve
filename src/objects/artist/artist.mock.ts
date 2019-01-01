@@ -8,7 +8,7 @@ export function mockArtist(): Artist {
 		name: 'artist name',
 		rootIDs: ['rootID1', 'rootID2'],
 		trackIDs: ['trackID1', 'trackID2'],
-		albumTypes: [AlbumType.album, AlbumType.mix],
+		albumTypes: [AlbumType.album, AlbumType.compilation],
 		albumIDs: ['albumID1', 'albumID2'],
 		mbArtistID: 'mbArtistID1',
 		created: 1543495268
@@ -20,7 +20,7 @@ export function mockArtist2(): Artist {
 		id: '',
 		type: DBObjectType.artist,
 		name: 'second artist name',
-		albumTypes: [AlbumType.mix],
+		albumTypes: [AlbumType.compilation],
 		rootIDs: ['rootID2'],
 		trackIDs: ['trackID3', 'trackID4'],
 		albumIDs: ['albumID3', 'albumID4'],

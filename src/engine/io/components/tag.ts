@@ -275,7 +275,7 @@ function createFolderTag(dir: MatchDir): FolderTag {
 		level: dir.level,
 		type: FolderType.unknown,
 		album: metaStat.album,
-		albumType: metaStat.isMultiArtist ? AlbumType.mix : AlbumType.album,
+		albumType: metaStat.isMultiArtist ? AlbumType.compilation : AlbumType.album,
 		artist: metaStat.artist,
 		artistSort: metaStat.artistSort,
 		title: nameSplit.title,
