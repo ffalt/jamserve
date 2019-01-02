@@ -97,13 +97,13 @@ function printTree(match: MatchDir, level: number = 0) {
 
 function logChange(name: string, amount: number) {
 	if (amount > 0) {
-		console.log(name, amount);
+		log.info(name, amount);
 	}
 }
 
 function logChanges(changes: MergeChanges) {
 	const v = moment.utc(changes.end - changes.start).format('HH:mm:ss');
-	console.log('Duration:', v);
+	log.info('Duration:', v);
 	logChange('Added Tracks', changes.newTracks.length);
 	logChange('Updated Tracks', changes.updateTracks.length);
 	logChange('Removed Tracks', changes.removedTracks.length);
@@ -481,7 +481,7 @@ export class Scanner {
 	}
 
 	private async scanDirR(dir: string, stat: fse.Stats, rootID: string): Promise<ScanDir> {
-		log.error('Scanning:', dir);
+		log.info('Scanning:', dir);
 		const result: ScanDir = {
 			name: ensureTrailingPathSeparator(dir),
 			stat: {
@@ -544,7 +544,7 @@ export class Scanner {
 	private async buildTrack(file: MatchFile, parent: Folder): Promise<Track> {
 		// this.scanningCount++;
 		// this.onProgress(this.scanningCount);
-		log.error('Reading Track:', file.name);
+		log.info('Reading Track:', file.name);
 		const data = await this.audioModule.read(file.name);
 		return {
 			id: '',
@@ -912,7 +912,7 @@ export class Scanner {
 	}
 
 	async run(dir: string, rootID: string): Promise<MergeChanges> {
-		log.error('Start:', dir);
+		log.info('Start:', dir);
 
 		const changes: MergeChanges = {
 			newArtists: [],
@@ -939,16 +939,16 @@ export class Scanner {
 		// first, scan the filesystem
 		const scan: ScanDir = await this.scan(dir, rootID);
 
-		log.error('Matching:', dir);
+		log.info('Matching:', dir);
 		// second, match db entries
 		const match: MatchDir = await this.match(scan, changes);
 		// printTree(match);
 
 		// third, merge
-		log.error('Merging:', dir);
+		log.info('Merging:', dir);
 		await this.merge(match, changes);
 
-		log.error('Storing:', dir);
+		log.info('Storing:', dir);
 		// fourth, store
 		await this.store.albumStore.bulk(changes.newAlbums);
 		await this.store.albumStore.upsert(changes.updateAlbums);

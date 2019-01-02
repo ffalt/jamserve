@@ -26,16 +26,13 @@ describe('Scanner', () => {
 			store = storeTest;
 			dir = tmp.dirSync();
 			mockRoot = buildMockRoot(dir.name, 1, 'rootID');
-			console.log(JSON.stringify(mockRoot, null, '\t'));
+			// console.log(JSON.stringify(mockRoot, null, '\t'));
 			await writeMockRoot(mockRoot);
 		},
 		() => {
 			it('should scan', async () => {
 				const scanner = new Scanner(store, audioModule);
 				await scanner.run(mockRoot.path, mockRoot.id);
-				// await scanner.run('/Users/ffalt/Projekte/public/jam/serve/data/library/mu2', 'rootID');
-				// await scanner.run('/Volumes/sync/Backup/dings/var/media/music', 'rootID');
-				// await scanner.run('/Users/ffalt/Projekte/public/jam/serve/data/library/mu4', 'rootID2');
 			});
 		},
 		async () => {
