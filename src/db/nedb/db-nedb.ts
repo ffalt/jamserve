@@ -141,18 +141,25 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 	}
 
 	async add(body: T): Promise<string> {
-		const id = await this.getNewId();
-		body.id = id;
+		if (!body.id || body.id.length === 0) {
+			body.id = await this.getNewId();
+		}
 		return new Promise<string>((resolve, reject) => {
 			this.client.insert(body, (err) => {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(id);
+					resolve(body.id);
 				}
 			});
 		});
 
+	}
+
+	async bulk(bodies: Array<T>): Promise<void> {
+		for (const body of bodies) {
+			await await this.add(body);
+		}
 	}
 
 	async replace(id: string, body: T): Promise<void> {

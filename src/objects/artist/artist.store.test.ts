@@ -18,6 +18,7 @@ describe('ArtistStore', () => {
 				{id: mock.id},
 				{ids: [mock.id]},
 				{name: mock.name},
+				{slug: mock.slug},
 				{names: [mock.name]},
 				{trackIDs: mock.trackIDs},
 				{mbArtistID: mock.mbArtistID},

@@ -44,6 +44,5 @@ export async function spawnTool(binName: string, envName: string, args: Array<st
 
 export async function spawnToolJson<T>(binName: string, envName: string, args: Array<string>): Promise<T> {
 	const data = await spawnTool(binName, envName, args);
-	const result: T = JSON.parse(data);
-	return result;
+	return JSON.parse(data);
 }

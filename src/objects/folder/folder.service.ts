@@ -1,6 +1,6 @@
 import {Folder} from './folder.model';
 import {FolderStore, SearchQueryFolder} from './folder.store';
-import {cleanFolderSystemChars, fileDeleteIfExists} from '../../utils/fs-utils';
+import {cleanFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists} from '../../utils/fs-utils';
 import {TrackStore} from '../track/track.store';
 import path from 'path';
 import fse from 'fs-extra';
@@ -37,16 +37,16 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 			if (rest.length > 0 && rest[0] !== path.sep) {
 				log.error('WRONG inPath MATCH', rest, folder.path, f.path);
 			} else {
-				f.path = newPath + rest;
+				f.path = newPath + ensureTrailingPathSeparator(rest);
 				await this.folderStore.replace(f);
 			}
 		}
 		const tracks = await this.trackStore.search({inPath: folder.path});
 		for (const t of tracks) {
-			t.path = t.path.replace(folder.path, newPath);
+			t.path = t.path.replace(folder.path, ensureTrailingPathSeparator(newPath));
 			await this.trackStore.replace(t);
 		}
-		folder.path = newPath;
+		folder.path = ensureTrailingPathSeparator(newPath);
 	}
 
 	async collectFolderPath(folderId: string | undefined): Promise<Array<Folder>> {

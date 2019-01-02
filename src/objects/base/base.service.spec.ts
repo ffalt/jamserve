@@ -4,7 +4,7 @@ import {Store} from '../../engine/store/store';
 import {StoreMock} from '../../engine/store/store.mock';
 import {ImageModuleTest} from '../../modules/image/image.module.spec';
 
-export function testService(opts: { mockData: boolean }, setup: (store: Store, testImageModule: ImageModuleTest) => void, tests: () => void, cleanup?: () => Promise<void>) {
+export function testService(opts: { mockData: boolean }, setup: (store: Store, testImageModule: ImageModuleTest) => Promise<void>, tests: () => void, cleanup?: () => Promise<void>) {
 	let imageModuleTest: ImageModuleTest;
 	let storeTest: StoreMock;
 	testDatabases(async (testDB) => {
@@ -15,7 +15,7 @@ export function testService(opts: { mockData: boolean }, setup: (store: Store, t
 			storeTest = new StoreMock(store);
 			await storeTest.setup();
 		}
-		setup(store, imageModuleTest);
+		await setup(store, imageModuleTest);
 	}, async () => {
 		await imageModuleTest.cleanup();
 		if (opts.mockData) {

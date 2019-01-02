@@ -11,13 +11,16 @@ import {FolderType} from '../../model/jam-types';
 import {testService} from '../base/base.service.spec';
 import {ImageModuleTest, mockImage} from '../../modules/image/image.module.spec';
 import {StateService} from '../state/state.service';
+import {TrackStore} from '../track/track.store';
 
 describe('FolderService', () => {
+	let trackStore: TrackStore;
 	let folderService: FolderService;
 	let imageModuleTest: ImageModuleTest;
 	testService({mockData: true},
-		(store, imageModuleTestPara) => {
+		async (store, imageModuleTestPara) => {
 			imageModuleTest = imageModuleTestPara;
+			trackStore = store.trackStore;
 			const stateService = new StateService(store.stateStore);
 			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
 		},
@@ -46,6 +49,7 @@ describe('FolderService', () => {
 					const image = path.resolve(folder.path, folder.tag.image || 'invalid-not-existent');
 					expect(await fse.pathExists(image)).to.equal(true, 'folder image file does not exist ' + image);
 					file.removeCallback();
+					await fse.unlink(image);
 					const updatedFolder = await folderService.folderStore.byId(folder.id);
 					should().exist(updatedFolder);
 					if (!updatedFolder) {
@@ -83,6 +87,7 @@ describe('FolderService', () => {
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
 					const filename = path.resolve(folder.path, folder.tag.image || 'invalid-not-existent');
 					expect(await fse.pathExists(filename)).to.equal(true, 'folder image file does not exist ' + filename);
+					await fse.unlink(filename);
 					const updatedFolder = await folderService.folderStore.byId(folder.id);
 					should().exist(updatedFolder);
 					if (!updatedFolder) {
@@ -143,6 +148,7 @@ describe('FolderService', () => {
 							}
 						}
 					}
+					await fse.unlink(filename);
 					await imageModuleTest.imageModule.clearImageCacheByID(folder.id);
 				});
 
@@ -173,6 +179,7 @@ describe('FolderService', () => {
 						if (res.file) {
 							expect(path.extname(res.file.filename)).to.equal('.png');
 							expect(res.file.name).to.equal(folder.id + '.png');
+							await fse.unlink(res.file.filename);
 						}
 					}
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
@@ -196,6 +203,7 @@ describe('FolderService', () => {
 						if (res.file) {
 							expect(path.extname(res.file.filename)).to.equal('.png');
 							expect(res.file.name).to.equal(folder.id + '.png');
+							await fse.unlink(res.file.filename);
 						}
 					}
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
@@ -223,11 +231,17 @@ describe('FolderService', () => {
 						if (!folder) {
 							return;
 						}
-						await folderService.renameFolder(folder, path.basename(folder.path) + '_renamed');
+						const name = path.basename(folder.path);
+						await folderService.renameFolder(folder, name + '_renamed');
 						const all = await folderService.folderStore.all();
 						for (const f of all) {
 							expect(await fse.pathExists(f.path)).to.equal(true, 'path does not exist ' + f.path);
 						}
+						const tracks = await trackStore.all();
+						for (const t of tracks) {
+							expect(await fse.pathExists(t.path + t.name)).to.equal(true, 'file does not exist ' + t.path + t.name);
+						}
+						await folderService.renameFolder(folder, name);
 					}
 				});
 

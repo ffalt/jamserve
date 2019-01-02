@@ -168,16 +168,23 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 	}
 
 	async add(body: T): Promise<string> {
-		const id = await this.db.getNewId();
-		body.id = id;
+		if (!body.id || body.id.length === 0) {
+			body.id = await this.getNewId();
+		}
 		await this.db.client.index({
 			index: this._index,
 			type: this._type,
 			body: this.filterProperties(body),
-			id,
+			id: body.id,
 			refresh: <elasticsearch.Refresh>this.db.indexRefresh
 		});
-		return id;
+		return body.id;
+	}
+
+	async bulk(bodies: Array<T>): Promise<void> {
+		for (const body of bodies) {
+			await await this.add(body);
+		}
 	}
 
 	async replace(id: string, body: T): Promise<void> {

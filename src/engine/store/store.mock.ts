@@ -2,17 +2,15 @@ import {Store} from './store';
 import fse from 'fs-extra';
 import path from 'path';
 import tmp, {SynchrounousResult} from 'tmp';
-import {scanDir, ScanDir} from '../io/components/scan';
-import {matchDir, MatchDir} from '../io/components/match';
 import {DBObjectType} from '../../model/jam-types';
 import {Root} from '../../objects/root/root.model';
-import {MergeChanges, Merger} from '../io/components/merge';
+import {MergeChanges} from '../io/components/merge';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
-import {MetaMerge} from '../io/components/meta';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
 import {randomItem} from '../../utils/random';
 import {Genres} from '../../utils/genres';
+import {Scanner} from '../io/scanner';
 
 interface MockTrack {
 	path: string;
@@ -30,7 +28,8 @@ interface MockFolder {
 	tracks: Array<MockTrack>;
 }
 
-interface MockRoot {
+export interface MockRoot {
+	id: string;
 	path: string;
 	name: string;
 	folders: Array<MockFolder>;
@@ -56,7 +55,7 @@ function buildRandomFolder(dir: string, type: string, nr: number, genre: string)
 	};
 }
 
-function buildMockRoot(dir: string, nr: number): MockRoot {
+export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 	const rootDir = path.resolve(dir, 'root ' + nr);
 	const folders: Array<MockFolder> = [];
 	const amountArtists = 5; // randomInt(1, 25);
@@ -65,7 +64,7 @@ function buildMockRoot(dir: string, nr: number): MockRoot {
 		folders.push(artist);
 		const amountAlbums = i; // randomInt(1, 25);
 		for (let j = 1; j < amountAlbums; j++) {
-			const album = buildRandomFolder(artist.path, 'album', i, randomItem(Genres));
+			const album = buildRandomFolder(artist.path, 'album', j, randomItem(Genres));
 			artist.folders.push(album);
 			const amountTracks = i; // randomInt(1, 25);
 			for (let k = 1; k < amountTracks; k++) {
@@ -75,6 +74,7 @@ function buildMockRoot(dir: string, nr: number): MockRoot {
 		}
 	}
 	return {
+		id,
 		path: rootDir,
 		name: 'root' + nr,
 		folders
@@ -95,11 +95,28 @@ async function writeMockFolder(f: MockFolder): Promise<void> {
 	}
 }
 
-async function writeMockRoot(root: MockRoot): Promise<void> {
+export async function writeMockRoot(root: MockRoot): Promise<void> {
 	await fse.ensureDir(root.path);
 	for (const folder of root.folders) {
 		await writeMockFolder(folder);
 	}
+}
+
+async function removeMockFolder(f: MockFolder): Promise<void> {
+	for (const folder of f.folders) {
+		await removeMockFolder(folder);
+	}
+	for (const track of f.tracks) {
+		await fse.unlink(track.path);
+	}
+	await fse.rmdir(f.path);
+}
+
+export async function removeMockRoot(root: MockRoot): Promise<void> {
+	for (const folder of root.folders) {
+		await removeMockFolder(folder);
+	}
+	await fse.rmdir(root.path);
 }
 
 export class StoreMock {
@@ -113,9 +130,9 @@ export class StoreMock {
 
 	async setup(): Promise<void> {
 		this.dir = tmp.dirSync();
-		this.mockRoot = buildMockRoot(this.dir.name, 1);
-		const audioModule = new AudioModule(ThirdPartyConfig);
+		this.mockRoot = buildMockRoot(this.dir.name, 1, 'rootID1');
 		await writeMockRoot(this.mockRoot);
+		const audioModule = new AudioModule(ThirdPartyConfig);
 		const root: Root = {
 			id: '',
 			type: DBObjectType.root,
@@ -134,8 +151,6 @@ export class StoreMock {
 			removedFolders: [],
 			updateFolders: []
 		};
-		const scan: ScanDir = await scanDir(this.mockRoot.path);
-		const match: MatchDir = await matchDir(scan, this.store, root.id);
 		const oldread = audioModule.read;
 		audioModule.read = async (filename: string) => {
 			const result = await oldread(filename);
@@ -144,18 +159,23 @@ export class StoreMock {
 			}
 			return result;
 		};
-		const merger = new Merger(root.id, this.store, audioModule, (count: number) => {
+		const scanner = new Scanner(this.store, audioModule);
+		await scanner.run(this.mockRoot.path, root.id);
+		/**
+		 const scan: ScanDir = await scanDir(this.mockRoot.path);
+		 const match: MatchDir = await matchDir(scan, this.store, root.id);
+		 const merger = new Merger(root.id, this.store, audioModule, (count: number) => {
 			// this.scanningCount = count;
 		});
-		await await merger.merge(match, changes);
-		const meta = new MetaMerge(this.store);
-		await meta.sync(changes);
-		// console.log(this.dir.name, match, changes);
+		 await await merger.merge(match, changes);
+		 const meta = new MetaMerge(this.store);
+		 await meta.sync(changes);
+		 // console.log(this.dir.name, match, changes);
+		 **/
 	}
 
 	async cleanup() {
-		// TODO: orderly delete files to detect trash files
-		await fse.remove(this.dir.name);
-		// this.dir.removeCallback();
+		await removeMockRoot(this.mockRoot);
+		this.dir.removeCallback();
 	}
 }

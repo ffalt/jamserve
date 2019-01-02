@@ -13,7 +13,7 @@ describe('TrackService', () => {
 	let trackService: TrackService;
 	let folderService: FolderService;
 	testService({mockData: true},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest) => {
 			const stateService = new StateService(store.stateStore);
 			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
 			trackService = new TrackService(store.trackStore, folderService, stateService);
@@ -52,6 +52,7 @@ describe('TrackService', () => {
 							expect(img.file.filename).to.be.equal(filename);
 						}
 					}
+					await fse.unlink(filename);
 				}
 			});
 		},

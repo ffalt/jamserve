@@ -15,7 +15,7 @@ describe('AlbumService', () => {
 	let folderService: FolderService;
 	let trackStore: TrackStore;
 	testService({mockData: true},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest) => {
 			trackStore = store.trackStore;
 			const stateService = new StateService(store.stateStore);
 			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
@@ -55,6 +55,7 @@ describe('AlbumService', () => {
 							expect(img.file.filename).to.be.equal(filename);
 						}
 					}
+					await fse.unlink(filename);
 				}
 			});
 		}

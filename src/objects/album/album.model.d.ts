@@ -3,6 +3,7 @@ import {MetaInfo} from '../../modules/audio/metadata.model';
 import {AlbumType} from '../../model/jam-types';
 
 export interface Album extends DBObject {
+	slug: string;
 	name: string;
 	rootIDs: Array<string>;
 	trackIDs: Array<string>;

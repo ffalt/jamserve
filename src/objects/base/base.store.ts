@@ -35,6 +35,10 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 		return await this.group.add(item);
 	}
 
+	async bulk(items: Array<T>): Promise<void> {
+		return await this.group.bulk(items);
+	}
+
 	async replace(item: T): Promise<void> {
 		return await this.group.replace(item.id, item);
 	}

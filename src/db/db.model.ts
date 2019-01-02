@@ -22,6 +22,8 @@ export interface DatabaseIndex<T extends DBObject> {
 
 	add(body: T): Promise<string>;
 
+	bulk(bodies: Array<T>): Promise<void>;
+
 	replace(id: string, body: T): Promise<void>;
 
 	remove(id: string | Array<string>): Promise<void>;

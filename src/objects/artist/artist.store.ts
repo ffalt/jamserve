@@ -5,6 +5,7 @@ import {Database, DatabaseQuery} from '../../db/db.model';
 
 export interface SearchQueryArtist extends SearchQuery {
 	name?: string;
+	slug?: string;
 	names?: Array<string>;
 	id?: string;
 	ids?: Array<string>;
@@ -33,6 +34,7 @@ export class ArtistStore extends BaseStore<Artist, SearchQueryArtist> {
 		q.term('albumIDs', query.albumID);
 		q.term('trackIDs', query.trackID);
 		q.term('name', query.name);
+		q.term('slug', query.slug);
 		// q.term('genre', query.genre);
 		q.term('mbArtistID', query.mbArtistID);
 		// q.range('year', query.toYear, query.fromYear);

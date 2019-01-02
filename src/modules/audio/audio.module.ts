@@ -15,6 +15,7 @@ import {MetaInfoAlbum, MetaInfoArtist, MetaInfoImage, MetaInfoTopSong, MetaInfoT
 import {Folder} from '../../objects/folder/folder.model';
 import fse from 'fs-extra';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
+import {probe, ProbeResult} from './tools/ffprobe';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -22,7 +23,7 @@ export interface AudioScanResult {
 }
 
 export class FORMAT {
-	static packJamServeMpeg(data?: IMP3.MPEG): TrackMedia {
+	static packJamServeMedia(data?: IMP3.MPEG): TrackMedia {
 		if (!data) {
 			return {};
 		}
@@ -38,6 +39,59 @@ export class FORMAT {
 		};
 	}
 
+	static packProbeJamServeMedia(data: ProbeResult): TrackMedia {
+		if (!data.streams) {
+			return {};
+		}
+		const stream = data.streams.filter(s => s.codec_type === 'audio')[0];
+		if (!stream) {
+			return {};
+		}
+		return {
+			format: data.format.format_name,
+			duration: Number(data.format.duration) * 1000,
+			bitRate: Number(data.format.bit_rate),
+			sampleRate: Number(stream.sample_rate),
+			channels: stream.channels,
+			mode: stream.channel_layout,
+			version: stream.codec_long_name
+		};
+	}
+
+	static packProbeJamServeTag(data: ProbeResult): TrackTag {
+		const simple = data.format.tags;
+		if (!simple) {
+			return {};
+		}
+		const track = Number(simple.track);
+		const year = Number(simple.DATE);
+		const disc = Number(simple.disc);
+		return {
+			artist: simple.ARTIST,
+			title: simple.TITLE,
+			album: simple.ALBUM,
+			year: isNaN(year) ? undefined : year,
+			track: isNaN(track) ? undefined : track,
+			disc: isNaN(disc) ? undefined : disc,
+			genre: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
+			albumArtist: simple.album_artist || simple['ALBUM ARTIST'],
+			albumSort: simple.album_sort_order,
+			albumArtistSort: simple.album_artist_sort || simple.album_artist_sort_order,
+			artistSort: simple.artist_sort,
+			titleSort: simple.title_sort_order,
+			mbTrackID: simple.TRACKID,
+			mbAlbumType: simple.ALBUMTYPE,
+			mbAlbumArtistID: simple.ALBUMARTISTID,
+			mbArtistID: simple.ARTISTID,
+			mbAlbumID: simple.ALBUMID,
+			mbReleaseTrackID: simple.RELEASETRACKID,
+			mbReleaseGroupID: simple.RELEASEGROUPID,
+			mbRecordingID: simple.RECORDINGID,
+			mbAlbumStatus: simple.ALBUMSTATUS,
+			mbReleaseCountry: simple.RELEASECOUNTRY
+		};
+	}
+
 	static packJamServeTag(data?: IID3V2.Tag): TrackTag | undefined {
 		if (!data) {
 			return undefined;
@@ -46,19 +100,19 @@ export class FORMAT {
 		// ? simplifyTag(result.id3v2) : undefined
 		let year: number | undefined = simple.year;
 		if (simple.release_year) {
-			const y = parseInt(simple.release_year, 10);
+			const y = Number(simple.release_year);
 			if (!isNaN(y)) {
 				year = y;
 			}
 		}
 		if (simple.originalyear) {
-			const y = parseInt(simple.originalyear, 10);
+			const y = Number(simple.originalyear);
 			if (!isNaN(y)) {
 				year = y;
 			}
 		}
 		if (simple.original_release_year) {
-			const y = parseInt(simple.original_release_year, 10);
+			const y = Number(simple.original_release_year);
 			if (!isNaN(y)) {
 				year = y;
 			}
@@ -219,12 +273,15 @@ export class AudioModule {
 			if (!result) {
 				return {tag: {}, media: {}};
 			} else {
-				return {tag: FORMAT.packJamServeTag(result.id3v2), media: FORMAT.packJamServeMpeg(result.mpeg)};
+				return {tag: FORMAT.packJamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
 			}
 		} else {
-			// TODO: read other audio file format tags
-			console.log('TODO: read other audio file format tags', filename);
-			return {tag: {}, media: {}};
+			const p = await probe(filename, []);
+			if (!p) {
+				return {tag: {}, media: {}};
+			} else {
+				return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p)};
+			}
 		}
 	}
 

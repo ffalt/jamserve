@@ -3,6 +3,7 @@ import {MetaInfo} from '../../modules/audio/metadata.model';
 import {AlbumType} from '../../model/jam-types';
 
 export interface Artist extends DBObject {
+	slug: string;
 	name: string;
 	nameSort?: string;
 	rootIDs: Array<string>;
