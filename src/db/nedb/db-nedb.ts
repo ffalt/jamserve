@@ -195,7 +195,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				if (err) {
 					reject(err);
 				} else if (count !== ids.length) {
-					reject('Found nr of items ' + count + ' does not match nr. of ids ' + ids.length);
+					reject(Error('Found nr of items ' + count + ' does not match nr. of ids ' + ids.length));
 				} else {
 					resolve();
 				}
