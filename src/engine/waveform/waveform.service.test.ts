@@ -12,7 +12,7 @@ describe('WaveformService', () => {
 	let dir: SynchrounousResult;
 	let trackStore: TrackStore;
 	testService({mockData: true},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest) => {
 			dir = tmp.dirSync();
 			waveformService = new WaveformService(dir.name);
 			trackStore = store.trackStore;

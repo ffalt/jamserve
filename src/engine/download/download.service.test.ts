@@ -12,7 +12,7 @@ describe('DownloadService', () => {
 	let downloadService: DownloadService;
 	let store: Store;
 	testService({mockData: true},
-		(storeTest, imageModuleTest) => {
+		async (storeTest) => {
 			store = storeTest;
 			downloadService = new DownloadService(store.trackStore);
 		},

@@ -4,8 +4,6 @@ import {testService} from '../base/base.service.spec';
 import {PodcastService} from './podcast.service';
 import {EpisodeService} from '../episode/episode.service';
 import tmp, {SynchrounousResult} from 'tmp';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import nock from 'nock';
 import {PodcastStatus} from '../../model/jam-types';
 import {mockPodcastXML} from './podcast.mock';
@@ -16,9 +14,8 @@ describe('PodcastService', () => {
 	let episodeService: EpisodeService;
 	let dir: SynchrounousResult;
 	testService({mockData: false},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest, audioModule) => {
 			dir = tmp.dirSync();
-			const audioModule = new AudioModule(ThirdPartyConfig);
 			const stateService = new StateService(store.stateStore);
 			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModule);
 			podcastService = new PodcastService(store.podcastStore, episodeService, stateService);

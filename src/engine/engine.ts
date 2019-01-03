@@ -33,6 +33,7 @@ import {EpisodeService} from '../objects/episode/episode.service';
 import {ThirdPartyConfig} from '../config/thirdparty.config';
 import {hashSaltPassword} from '../utils/salthash';
 import {randomString} from '../utils/random';
+import {ScanService} from './scan/scan.service';
 
 export class Engine {
 	public ioService: IoService;
@@ -41,6 +42,7 @@ export class Engine {
 	public waveformService: WaveformService;
 	public metaDataService: MetaDataService;
 	public indexService: IndexService;
+	public scanService: ScanService;
 	public userService: UserService;
 	public rootService: RootService;
 	public chatService: ChatService;
@@ -75,7 +77,8 @@ export class Engine {
 		this.imageService = new ImageService(this.imageModule, this.trackService, this.folderService, this.artistService, this.albumService, this.userService);
 		this.genreService = new GenreService(this.store.trackStore);
 		this.indexService = new IndexService(config.app.index, this.store.artistStore, this.store.folderStore, this.store.trackStore);
-		this.ioService = new IoService(this.store, this.audioModule, this.imageModule, this.waveformService, this.indexService, this.genreService);
+		this.scanService = new ScanService(this.store, this.audioModule, this.imageModule, this.waveformService);
+		this.ioService = new IoService(this.store.rootStore, this.scanService, this.indexService, this.genreService);
 		this.downloadService = new DownloadService(this.store.trackStore);
 		this.chatService = new ChatService(config.app.chat);
 		this.nowPlayingService = new NowPlayingService(this.stateService);

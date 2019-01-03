@@ -2,17 +2,17 @@ import {Store} from './store';
 import fse from 'fs-extra';
 import path from 'path';
 import tmp, {SynchrounousResult} from 'tmp';
-import {DBObjectType} from '../../model/jam-types';
+import {AlbumType, DBObjectType, FolderType} from '../../model/jam-types';
 import {Root} from '../../objects/root/root.model';
-import {MergeChanges} from '../io/components/merge';
 import {AudioModule} from '../../modules/audio/audio.module';
-import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
 import {randomItem} from '../../utils/random';
 import {Genres} from '../../utils/genres';
-import {Scanner} from '../io/scanner';
+import {ScanService} from '../scan/scan.service';
+import {ImageModule} from '../../modules/image/image.module';
+import {WaveformServiceTest} from '../waveform/waveform.service.spec';
 
-interface MockTrack {
+export interface MockTrack {
 	path: string;
 	number: number;
 	genre: string;
@@ -20,64 +20,265 @@ interface MockTrack {
 	album: string;
 }
 
-interface MockFolder {
+export interface MockFolder {
 	path: string;
 	name: string;
-	genre: string;
+	genre?: string;
 	folders: Array<MockFolder>;
 	tracks: Array<MockTrack>;
+	expected: {
+		folderType?: FolderType;
+		albumType?: AlbumType;
+	};
 }
 
-export interface MockRoot {
+export interface MockRoot extends MockFolder {
 	id: string;
 	path: string;
 	name: string;
 	folders: Array<MockFolder>;
-}
-
-function buildRandomTrack(dir: string, name: string, number: number, artist: string, album: string, genre: string): MockTrack {
-	return {
-		path: path.resolve(dir, number + ' ' + name + '.mp3'),
-		artist,
-		album,
-		number,
-		genre
-	};
-}
-
-function buildRandomFolder(dir: string, type: string, nr: number, genre: string): MockFolder {
-	return {
-		path: path.resolve(dir, type + ' ' + nr),
-		name: type + nr,
-		genre,
-		folders: [],
-		tracks: []
+	expected: {
+		folders: number;
+		tracks: number;
+		artists: number;
+		albums: number;
+		folderType?: FolderType;
 	};
 }
 
 export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
-	const rootDir = path.resolve(dir, 'root ' + nr);
-	const folders: Array<MockFolder> = [];
-	const amountArtists = 5; // randomInt(1, 25);
-	for (let i = 1; i < amountArtists; i++) {
-		const artist = buildRandomFolder(rootDir, 'artist', i, '');
-		folders.push(artist);
-		const amountAlbums = i; // randomInt(1, 25);
-		for (let j = 1; j < amountAlbums; j++) {
-			const album = buildRandomFolder(artist.path, 'album', j, randomItem(Genres));
-			artist.folders.push(album);
-			const amountTracks = i; // randomInt(1, 25);
-			for (let k = 1; k < amountTracks; k++) {
-				const track = buildRandomTrack(album.path, artist.name + album.name, k, artist.name, album.name, album.genre);
-				album.tracks.push(track);
-			}
-		}
-	}
+	const rootDir = path.join(dir, 'root' + nr);
 	return {
 		id,
 		path: rootDir,
 		name: 'root' + nr,
-		folders
+		folders: [
+			{
+				path: path.join(rootDir, 'artist 1'),
+				name: 'artist 1',
+				genre: '',
+				folders: [
+					{
+						path: path.join(rootDir, 'artist 1', 'album 1'),
+						name: 'album 1',
+						genre: randomItem(Genres),
+						folders: [],
+						tracks: [
+							{
+								path: path.resolve(rootDir, 'artist 1', 'album 1', '1 - title 1 - artist 1.mp3'),
+								artist: 'artist 1',
+								album: 'album 1',
+								number: 1,
+								genre: randomItem(Genres)
+							},
+							{
+								path: path.resolve(rootDir, 'artist 1', 'album 1', '2 - title 2 - artist 1.mp3'),
+								artist: 'artist 1',
+								album: 'album 1',
+								number: 2,
+								genre: randomItem(Genres)
+							},
+							{
+								path: path.resolve(rootDir, 'artist 1', 'album 1', '3 - title 3 - artist 1.mp3'),
+								artist: 'artist 1',
+								album: 'album 1',
+								number: 3,
+								genre: randomItem(Genres)
+							}
+						],
+						expected: {
+							folderType: FolderType.album,
+							albumType: AlbumType.album
+						}
+					},
+					{
+						path: path.join(rootDir, 'artist 1', 'album 2'),
+						name: 'album 2',
+						genre: randomItem(Genres),
+						folders: [],
+						tracks: [
+							{
+								path: path.join(rootDir, 'artist 1', 'album 2', '1 - title 1 - artist 1.mp3'),
+								artist: 'artist 1',
+								album: 'album 2',
+								number: 1,
+								genre: randomItem(Genres)
+							},
+							{
+								path: path.join(rootDir, 'artist 1', 'album 2', '2 - title 2 - artist 1.mp3'),
+								artist: 'artist 1',
+								album: 'album 2',
+								number: 2,
+								genre: randomItem(Genres)
+							},
+							{
+								path: path.join(rootDir, 'artist 1', 'album 2', '3 - title 3 - artist 1 with another artist.mp3'),
+								artist: 'artist 1 with another artist',
+								album: 'album 2',
+								number: 3,
+								genre: randomItem(Genres)
+							}],
+						expected: {
+							folderType: FolderType.album,
+							albumType: AlbumType.album
+						}
+					},
+					{
+						path: path.join(rootDir, 'artist 1', 'album 3'),
+						name: 'album 3',
+						genre: randomItem(Genres),
+						folders: [
+							{
+								path: path.join(rootDir, 'artist 1', 'album 3', 'cd 1'),
+								name: 'cd 1',
+								genre: randomItem(Genres),
+								folders: [],
+								tracks: [
+									{
+										path: path.join(rootDir, 'artist 1', 'album 3', 'cd 1', '1 - cd 1 - title 1 - artist 1.mp3'),
+										artist: 'artist 1',
+										album: 'album 3',
+										number: 1,
+										genre: randomItem(Genres)
+									},
+									{
+										path: path.join(rootDir, 'artist 1', 'album 3', 'cd 1', '2 - cd 1 - title 2 - artist 1.mp3'),
+										artist: 'artist 1',
+										album: 'album 3',
+										number: 2,
+										genre: randomItem(Genres)
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.album
+								}
+							},
+							{
+								path: path.join(rootDir, 'artist 1', 'album 3', 'cd 2'),
+								name: 'cd 2',
+								genre: randomItem(Genres),
+								folders: [],
+								tracks: [
+									{
+										path: path.join(rootDir, 'artist 1', 'album 3', 'cd 2', '1 - cd 2 - title 1 - artist 1.mp3'),
+										artist: 'artist 1',
+										album: 'album 3',
+										number: 1,
+										genre: randomItem(Genres)
+									},
+									{
+										path: path.join(rootDir, 'artist 1', 'album 3', 'cd 2', '2 - cd 2 - title 2 - artist 1.mp3'),
+										artist: 'artist 1',
+										album: 'album 3',
+										number: 2,
+										genre: randomItem(Genres)
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.album
+								}
+							}
+						],
+						tracks: [],
+						expected: {
+							folderType: FolderType.multialbum,
+							albumType: AlbumType.album
+						}
+					}
+				],
+				tracks: [],
+				expected: {
+					folderType: FolderType.artist
+				}
+			},
+			{
+				path: path.join(rootDir, 'artist 2'),
+				name: 'artist 2',
+				genre: '',
+				folders: [
+					{
+						path: path.join(rootDir, 'artist 2', 'album 1'),
+						name: 'album 1',
+						genre: randomItem(Genres),
+						folders: [],
+						tracks: [
+							{
+								path: path.resolve(rootDir, 'artist 2', 'album 1', '1 - title 1 - artist 2.mp3'),
+								artist: 'artist 2',
+								album: 'album 1',
+								number: 1,
+								genre: randomItem(Genres)
+							},
+							{
+								path: path.resolve(rootDir, 'artist 2', 'album 1', '2 - title 2 - artist 2.mp3'),
+								artist: 'artist 2',
+								album: 'album 1',
+								number: 2,
+								genre: randomItem(Genres)
+							},
+							{
+								path: path.resolve(rootDir, 'artist 2', 'album 1', '3 - title 3 - artist 2.mp3'),
+								artist: 'artist 2',
+								album: 'album 1',
+								number: 3,
+								genre: randomItem(Genres)
+							}
+						],
+						expected: {
+							folderType: FolderType.album,
+							albumType: AlbumType.album
+						}
+					}
+				],
+				tracks: [],
+				expected: {
+					folderType: FolderType.artist
+				}
+			},
+			{
+				path: path.join(rootDir, 'compilation 1'),
+				name: 'compilation 1',
+				genre: '',
+				folders: [],
+				tracks: [
+					{
+						path: path.resolve(rootDir, 'compilation 1', '1 - title 1 - artist c1.mp3'),
+						artist: 'artist c1',
+						album: 'compilation 1',
+						number: 1,
+						genre: randomItem(Genres)
+					},
+					{
+						path: path.resolve(rootDir, 'compilation 1', '2 - title 2 - artist c2.mp3'),
+						artist: 'artist c2',
+						album: 'compilation 1',
+						number: 2,
+						genre: randomItem(Genres)
+					},
+					{
+						path: path.resolve(rootDir, 'compilation 1', '3 - title 3 - artist c3.mp3'),
+						artist: 'artist c3',
+						album: 'compilation 1',
+						number: 3,
+						genre: randomItem(Genres)
+					}
+				],
+				expected: {
+					folderType: FolderType.album,
+					albumType: AlbumType.compilation
+				}
+			}
+		],
+		tracks: [],
+		expected: {
+			folders: 10,
+			tracks: 16,
+			artists: 7,
+			albums: 4,
+			folderType: FolderType.multiartist
+		}
 	};
 }
 
@@ -120,6 +321,7 @@ export async function removeMockRoot(root: MockRoot): Promise<void> {
 }
 
 export class StoreMock {
+	waveformServiceTest = new WaveformServiceTest();
 	// @ts-ignore
 	dir: SynchrounousResult;
 	// @ts-ignore
@@ -128,54 +330,26 @@ export class StoreMock {
 	constructor(public store: Store) {
 	}
 
-	async setup(): Promise<void> {
+	async setup(imageModule: ImageModule, audioModule: AudioModule): Promise<void> {
 		this.dir = tmp.dirSync();
+		await this.waveformServiceTest.setup();
 		this.mockRoot = buildMockRoot(this.dir.name, 1, 'rootID1');
 		await writeMockRoot(this.mockRoot);
-		const audioModule = new AudioModule(ThirdPartyConfig);
 		const root: Root = {
-			id: '',
+			id: this.mockRoot.id,
 			type: DBObjectType.root,
 			name: this.mockRoot.name,
 			path: this.mockRoot.path,
 			created: Date.now()
 		};
-		root.id = await this.store.rootStore.add(root);
-		const changes: MergeChanges = {
-			newTracks: [],
-			unchangedTracks: [],
-			unchangedFolders: [],
-			removedTracks: [],
-			updateTracks: [],
-			newFolders: [],
-			removedFolders: [],
-			updateFolders: []
-		};
-		const oldread = audioModule.read;
-		audioModule.read = async (filename: string) => {
-			const result = await oldread(filename);
-			if (result && result.media) {
-				result.media.duration = 1;
-			}
-			return result;
-		};
-		const scanner = new Scanner(this.store, audioModule);
-		await scanner.run(this.mockRoot.path, root.id);
-		/**
-		 const scan: ScanDir = await scanDir(this.mockRoot.path);
-		 const match: MatchDir = await matchDir(scan, this.store, root.id);
-		 const merger = new Merger(root.id, this.store, audioModule, (count: number) => {
-			// this.scanningCount = count;
-		});
-		 await await merger.merge(match, changes);
-		 const meta = new MetaMerge(this.store);
-		 await meta.sync(changes);
-		 // console.log(this.dir.name, match, changes);
-		 **/
+		await this.store.rootStore.add(root);
+		const scanService = new ScanService(this.store, audioModule, imageModule, this.waveformServiceTest.waveformService);
+		await scanService.run(root.path, root.id);
 	}
 
 	async cleanup() {
 		await removeMockRoot(this.mockRoot);
+		await this.waveformServiceTest.cleanup();
 		this.dir.removeCallback();
 	}
 }

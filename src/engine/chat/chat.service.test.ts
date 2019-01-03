@@ -9,7 +9,7 @@ describe('ChatService', () => {
 	const user1 = mockUser();
 	user1.id = 'chatUserID1';
 	testService({mockData: false},
-		(store, imageModuleTest) => {
+		async () => {
 			chatService = new ChatService({
 				maxMsgs: 4,
 				maxAge: {

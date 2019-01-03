@@ -1,19 +1,26 @@
+import {Store} from '../store/store';
+import {AudioModule} from '../../modules/audio/audio.module';
+import Logger from '../../utils/logger';
+import {WaveformService} from '../waveform/waveform.service';
+import {Track} from '../../objects/track/track.model';
+import {ImageModule} from '../../modules/image/image.module';
+import {deepCompare} from '../../utils/deep-compare';
 import {AlbumType, DBObjectType, FileTyp, FolderType} from '../../model/jam-types';
+import path from 'path';
 import fse from 'fs-extra';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
-import path from 'path';
 import {getFileType} from '../../utils/filetype';
-import {Store} from '../store/store';
 import {Folder, FolderTag} from '../../objects/folder/folder.model';
-import {Track} from '../../objects/track/track.model';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {deepCompare} from '../../utils/deep-compare';
 import {Artist} from '../../objects/artist/artist.model';
 import {Album} from '../../objects/album/album.model';
+import {updatePlayListTracks} from '../../objects/playlist/playlist.service';
 import moment from 'moment';
-import Logger from '../../utils/logger';
 
-const log = Logger('Scanner');
+const log = Logger('IO');
+
+/**
+ * Handles file system reading / db syncing
+ */
 
 export interface ScanDir {
 	name: string;
@@ -90,9 +97,9 @@ function printTree(match: MatchDir, level: number = 0) {
 	for (const sub of match.directories) {
 		printTree(sub, level + 1);
 	}
-	// for (const f of match.files) {
-	// 	console.log(prefix + ' 🎧 ' + path.basename(f.name), f.track ? '' : '[new]');
-	// }
+	for (const f of match.files) {
+		console.log(prefix + ' 🎧 ' + path.basename(f.name), f.track ? '' : '[new]');
+	}
 }
 
 function logChange(name: string, amount: number) {
@@ -101,7 +108,7 @@ function logChange(name: string, amount: number) {
 	}
 }
 
-function logChanges(changes: MergeChanges) {
+export function logChanges(changes: MergeChanges) {
 	const v = moment.utc(changes.end - changes.start).format('HH:mm:ss');
 	log.info('Duration:', v);
 	logChange('Added Tracks', changes.newTracks.length);
@@ -188,7 +195,7 @@ function getMostUsedTagValue<T>(list: Array<MetaStatValue<T>>, multi?: T): T | u
 	return list[0].val;
 }
 
-export function splitDirectoryName(name: string): { title: string; year?: number; } {
+function splitDirectoryName(name: string): { title: string; year?: number; } {
 	const result: { title: string; year?: number; } = {title: path.basename(name).trim()};
 	// year title | year - title | (year) title | [year] title
 	const parts = result.title.split(' ');
@@ -207,70 +214,69 @@ export function splitDirectoryName(name: string): { title: string; year?: number
 	return result;
 }
 
-export class Scanner {
+function folderHasChanged(dir: MatchDir): boolean {
+	return (!dir.folder) ||
+		(dir.stat.mtime !== dir.folder.stat.modified) ||
+		(dir.stat.ctime !== dir.folder.stat.created) ||
+		(!deepCompare(dir.folder.tag, dir.tag));
+}
+
+function trackHasChanged(file: MatchFile): boolean {
+	return (!file.track) ||
+		(file.stat.mtime !== file.track.stat.modified) ||
+		(file.stat.ctime !== file.track.stat.created) ||
+		(file.stat.size !== file.track.stat.size);
+}
+
+function getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
+		return;
+	} else {
+		return trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID;
+	}
+}
+
+function getArtistNameSort(trackInfo: MergeTrackInfo): string | undefined {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
+		return;
+	} else {
+		return trackInfo.track.tag.artistSort;
+	}
+}
+
+function getArtistName(trackInfo: MergeTrackInfo): string {
+	// if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
+	// 	return trackInfo.dir.folder.tag.artist || cUnknownArtist;
+	// } else {
+	return trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist || cUnknownArtist;
+	// }
+}
+
+function slugify(s: string): string {
+	return s.replace(/[\[\]\. -]/g, '').toLowerCase();
+}
+
+function getArtistSlug(trackInfo: MergeTrackInfo): string {
+	return slugify(getArtistName(trackInfo));
+}
+
+function getAlbumName(trackInfo: MergeTrackInfo): string {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
+		return trackInfo.dir.folder.tag.album || cUnknownAlbum;
+	} else {
+		return trackInfo.track.tag.album || cUnknownAlbum;
+	}
+}
+
+function getAlbumSlug(trackInfo: MergeTrackInfo): string {
+	return slugify(getAlbumName(trackInfo));
+}
+
+export class ScanService {
 	private artistCache: Array<Artist> = [];
 	private albumCache: Array<Album> = [];
 
-	constructor(private store: Store, private audioModule: AudioModule) {
-
-	}
-
-	private static folderHasChanged(dir: MatchDir): boolean {
-		return (!dir.folder) ||
-			(dir.stat.mtime !== dir.folder.stat.modified) ||
-			(dir.stat.ctime !== dir.folder.stat.created) ||
-			(!deepCompare(dir.folder.tag, dir.tag));
-	}
-
-	private static trackHasChanged(file: MatchFile): boolean {
-		return (!file.track) ||
-			(file.stat.mtime !== file.track.stat.modified) ||
-			(file.stat.ctime !== file.track.stat.created) ||
-			(file.stat.size !== file.track.stat.size);
-	}
-
-	private static getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
-		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
-			return;
-		} else {
-			return trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID;
-		}
-	}
-
-	private static getArtistNameSort(trackInfo: MergeTrackInfo): string | undefined {
-		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
-			return;
-		} else {
-			return trackInfo.track.tag.artistSort;
-		}
-	}
-
-	private static getArtistName(trackInfo: MergeTrackInfo): string {
-		// if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
-		// 	return trackInfo.dir.folder.tag.artist || cUnknownArtist;
-		// } else {
-		return trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist || cUnknownArtist;
-		// }
-	}
-
-	private static slugify(s: string): string {
-		return s.replace(/[\[\]\. -]/g, '').toLowerCase();
-	}
-
-	private static getArtistSlug(trackInfo: MergeTrackInfo): string {
-		return this.slugify(this.getArtistName(trackInfo));
-	}
-
-	private static getAlbumName(trackInfo: MergeTrackInfo): string {
-		if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
-			return trackInfo.dir.folder.tag.album || cUnknownAlbum;
-		} else {
-			return trackInfo.track.tag.album || cUnknownAlbum;
-		}
-	}
-
-	private static getAlbumSlug(trackInfo: MergeTrackInfo): string {
-		return this.slugify(this.getAlbumName(trackInfo));
+	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
 	}
 
 	private getMetaStat(dir: MatchDir): MetaStat {
@@ -301,22 +307,22 @@ export class Scanner {
 			if (file.track && file.track.tag) {
 				const tracktag = file.track.tag;
 				if (tracktag.artist) {
-					const slug = Scanner.slugify(tracktag.artist);
+					const slug = slugify(tracktag.artist);
 					stats.artist[slug] = stats.artist[slug] || {count: 0, val: tracktag.artist};
 					stats.artist[slug].count += 1;
 				}
 				if (tracktag.artistSort) {
-					const slug = Scanner.slugify(tracktag.artistSort);
+					const slug = slugify(tracktag.artistSort);
 					stats.artistSort[slug] = stats.artistSort[slug] || {count: 0, val: tracktag.artistSort};
 					stats.artistSort[slug].count += 1;
 				}
 				if (tracktag.album) {
-					const slug = Scanner.slugify(tracktag.album);
+					const slug = slugify(tracktag.album);
 					stats.album[slug] = stats.album[slug] || {count: 0, val: tracktag.album};
 					stats.album[slug].count += 1;
 				}
 				if (tracktag.genre) {
-					const slug = Scanner.slugify(tracktag.genre);
+					const slug = slugify(tracktag.genre);
 					stats.genre[slug] = stats.genre[slug] || {count: 0, val: tracktag.genre};
 					stats.genre[slug].count += 1;
 				}
@@ -343,22 +349,22 @@ export class Scanner {
 			if (sub.folder && sub.tag) {
 				const subtag = sub.tag;
 				if (subtag.artist) {
-					const slug = Scanner.slugify(subtag.artist);
+					const slug = slugify(subtag.artist);
 					stats.artist[slug] = stats.artist[slug] || {count: 0, val: subtag.artist};
 					stats.artist[slug].count += 1;
 				}
 				if (subtag.artistSort) {
-					const slug = Scanner.slugify(subtag.artistSort);
+					const slug = slugify(subtag.artistSort);
 					stats.artistSort[slug] = stats.artistSort[slug] || {count: 0, val: subtag.artistSort};
 					stats.artistSort[slug].count += 1;
 				}
 				if (subtag.album) {
-					const slug = Scanner.slugify(subtag.album);
+					const slug = slugify(subtag.album);
 					stats.album[slug] = stats.album[slug] || {count: 0, val: subtag.album};
 					stats.album[slug].count += 1;
 				}
 				if (subtag.genre) {
-					const slug = Scanner.slugify(subtag.genre);
+					const slug = slugify(subtag.genre);
 					stats.genre[slug] = stats.genre[slug] || {count: 0, val: subtag.genre};
 					stats.genre[slug].count += 1;
 				}
@@ -429,7 +435,7 @@ export class Scanner {
 		};
 	}
 
-	private async match(dir: ScanDir, changes: MergeChanges): Promise<MatchDir> {
+	private async match(dir: ScanDir): Promise<MatchDir> {
 		const result: MatchDir = this.cloneScanDir(dir, undefined, 0);
 		result.folder = await this.store.folderStore.searchOne({path: dir.name});
 		await this.matchDirR(result);
@@ -588,7 +594,7 @@ export class Scanner {
 					track.id = await this.store.trackStore.getNewId();
 					file.track = track;
 					changes.newTracks.push({track, dir});
-				} else if (Scanner.trackHasChanged(file)) {
+				} else if (trackHasChanged(file)) {
 					const old = file.track;
 					if (!old) {
 						return;
@@ -607,7 +613,7 @@ export class Scanner {
 
 	private async mergeR(dir: MatchDir, changes: MergeChanges): Promise<void> {
 		if (dir.folder) {
-			if (Scanner.folderHasChanged(dir)) {
+			if (folderHasChanged(dir)) {
 				const folder: Folder = {
 					id: dir.folder.id,
 					rootID: dir.folder.rootID,
@@ -698,7 +704,7 @@ export class Scanner {
 			} else {
 				result = FolderType.multialbum;
 			}
-		} else {
+		} else if (dir.directories.length > 0) {
 			if (metaStat.isMultiArtist) {
 				result = FolderType.multialbum;
 			} else {
@@ -709,12 +715,17 @@ export class Scanner {
 					}
 				});
 			}
+		} else if (dir.directories.length === 0 && dir.files.filter(f => f.type === FileTyp.AUDIO).length === 0) {
+			result = FolderType.extras;
+		} else {
+			result = FolderType.album;
 		}
 		if (result === FolderType.multialbum) {
 			const a = dir.directories.find(d => {
 				return (!!d.tag && d.tag.type === FolderType.artist);
 			});
 			if (a) {
+				console.log('multiartist', dir.name);
 				result = FolderType.multiartist;
 			}
 		}
@@ -743,7 +754,7 @@ export class Scanner {
 				return artist;
 			}
 		}
-		return this.store.artistStore.searchOne({slug: Scanner.getArtistSlug(trackInfo)});
+		return this.store.artistStore.searchOne({slug: getArtistSlug(trackInfo)});
 	}
 
 	private async findArtistInCache(trackInfo: MergeTrackInfo): Promise<Artist | undefined> {
@@ -754,7 +765,7 @@ export class Scanner {
 				return artist;
 			}
 		}
-		const name = Scanner.getArtistName(trackInfo);
+		const name = getArtistName(trackInfo);
 		return this.artistCache.find(a => a.name === name);
 	}
 
@@ -763,12 +774,12 @@ export class Scanner {
 			id: await this.store.artistStore.getNewId(),
 			type: DBObjectType.artist,
 			rootIDs: [],
-			slug: Scanner.getArtistSlug(trackInfo),
-			name: Scanner.getArtistName(trackInfo),
-			nameSort: Scanner.getArtistNameSort(trackInfo),
+			slug: getArtistSlug(trackInfo),
+			name: getArtistName(trackInfo),
+			nameSort: getArtistNameSort(trackInfo),
 			albumTypes: [],
 			albumIDs: [],
-			mbArtistID: Scanner.getArtistMBArtistID(trackInfo),
+			mbArtistID: getArtistMBArtistID(trackInfo),
 			trackIDs: [],
 			created: Date.now()
 		};
@@ -791,7 +802,7 @@ export class Scanner {
 	}
 
 	private async findOrCreateCompilationArtist(changes: MergeChanges): Promise<Artist> {
-		const slug = Scanner.slugify(cVariousArtist);
+		const slug = slugify(cVariousArtist);
 		let artist = await this.artistCache.find(a => a.slug === slug);
 		if (artist) {
 			return artist;
@@ -824,7 +835,7 @@ export class Scanner {
 				return album;
 			}
 		}
-		return this.store.albumStore.searchOne({slug: Scanner.getAlbumSlug(trackInfo), artistID});
+		return this.store.albumStore.searchOne({slug: getAlbumSlug(trackInfo), artistID});
 	}
 
 	private async findAlbumInCache(trackInfo: MergeTrackInfo, artistID: string): Promise<Album | undefined> {
@@ -834,7 +845,7 @@ export class Scanner {
 				return album;
 			}
 		}
-		const name = Scanner.getAlbumName(trackInfo);
+		const name = getAlbumName(trackInfo);
 		return this.albumCache.find(a => a.name === name);
 	}
 
@@ -842,12 +853,12 @@ export class Scanner {
 		return {
 			id: await this.store.albumStore.getNewId(),
 			type: DBObjectType.album,
-			slug: Scanner.getAlbumSlug(trackInfo),
-			name: Scanner.getAlbumName(trackInfo),
+			slug: getAlbumSlug(trackInfo),
+			name: getAlbumName(trackInfo),
 			albumType: trackInfo.dir.folder && trackInfo.dir.folder.tag && trackInfo.dir.folder.tag.albumType !== undefined ? trackInfo.dir.folder.tag.albumType : AlbumType.unknown,
-			artist: Scanner.getArtistName(trackInfo),
+			artist: getArtistName(trackInfo),
 			artistID: artistID,
-			mbArtistID: Scanner.getArtistMBArtistID(trackInfo),
+			mbArtistID: getArtistMBArtistID(trackInfo),
 			mbAlbumID: trackInfo.track.tag.mbAlbumID,
 			genre: trackInfo.track.tag.genre,
 			trackIDs: [],
@@ -911,8 +922,56 @@ export class Scanner {
 		}
 	}
 
-	async run(dir: string, rootID: string): Promise<MergeChanges> {
+	private async clean(changes: MergeChanges): Promise<void> {
+		let ids: Array<string> = [];
+		if (changes.removedFolders.length > 0) {
+			log.debug('Cleaning folders', changes.removedFolders.length);
+			const folderIDs = changes.removedFolders.map(folder => folder.id);
+			await this.store.folderStore.remove(folderIDs);
+			await this.store.stateStore.removeByQuery({destIDs: folderIDs, type: DBObjectType.folder});
+			ids = folderIDs;
+		}
+		if (changes.removedTracks.length > 0) {
+			log.debug('Cleaning tracks', changes.removedTracks.length);
+			const trackIDs = changes.removedTracks.map(track => track.id);
+			ids = ids.concat(trackIDs);
+			await this.store.trackStore.remove(trackIDs);
+			await this.store.stateStore.removeByQuery({destIDs: trackIDs, type: DBObjectType.track});
+			await this.store.bookmarkStore.removeByQuery({destIDs: trackIDs});
+			const playlists = await this.store.playlistStore.search({trackIDs: trackIDs});
+			if (playlists.length > 0) {
+				for (const playlist of playlists) {
+					playlist.trackIDs = playlist.trackIDs.filter(id => trackIDs.indexOf(id) < 0);
+					if (playlist.trackIDs.length === 0) {
+						await this.store.playlistStore.remove(playlist.id);
+					} else {
+						await updatePlayListTracks(this.store.trackStore, playlist);
+						await this.store.playlistStore.replace(playlist);
+					}
+				}
+
+			}
+		}
+		if (ids.length > 0) {
+			await this.imageModule.clearImageCacheByIDs(ids);
+			await this.waveformService.clearWaveformCacheByIDs(ids);
+		}
+		// await clearID3(this.store, this.imageModule, removeTracks);
+		// await clearID3(this.store, this.imageModule, changes.removedTracks);
+	}
+
+	public async run(dir: string, rootID: string): Promise<MergeChanges> {
 		log.info('Start:', dir);
+		/*
+ 	Processing:
+
+ 	* read folders and files stats into tree
+ 	* build new folder/files objs into tree
+ 	* build Album and Artist meta data
+ 	* store data in db
+ 	* clean db for removed folders and files
+
+		 */
 
 		const changes: MergeChanges = {
 			newArtists: [],
@@ -941,7 +1000,7 @@ export class Scanner {
 
 		log.info('Matching:', dir);
 		// second, match db entries
-		const match: MatchDir = await this.match(scan, changes);
+		const match: MatchDir = await this.match(scan);
 		// printTree(match);
 
 		// third, merge
@@ -960,7 +1019,8 @@ export class Scanner {
 		await this.store.folderStore.upsert(changes.updateFolders);
 		changes.end = Date.now();
 		// printTree(match);
-		logChanges(changes);
+		// logChanges(changes);
+		await this.clean(changes);
 		return changes;
 	}
 

@@ -2,8 +2,6 @@ import {assert, expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {EpisodeService} from './episode.service';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import tmp, {SynchrounousResult} from 'tmp';
 import {mockEpisode, mockEpisode2} from './episode.mock';
 import {PodcastStatus} from '../../model/jam-types';
@@ -15,9 +13,8 @@ describe('EpisodeService', () => {
 	let episodeService: EpisodeService;
 	let dir: SynchrounousResult;
 	testService({mockData: false},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest, audioModule) => {
 			dir = tmp.dirSync();
-			const audioModule = new AudioModule(ThirdPartyConfig);
 			const stateService = new StateService(store.stateStore);
 			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModule);
 		},

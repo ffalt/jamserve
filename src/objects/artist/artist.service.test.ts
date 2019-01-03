@@ -3,7 +3,7 @@ import {after, before, beforeEach, describe, it} from 'mocha';
 import {FolderService} from '../folder/folder.service';
 import {ArtistService} from './artist.service';
 import {testService} from '../base/base.service.spec';
-import {FolderType} from '../../model/jam-types';
+import {AlbumType, FolderType} from '../../model/jam-types';
 import {mockImage} from '../../modules/image/image.module.spec';
 import path from 'path';
 import fse from 'fs-extra';
@@ -26,7 +26,10 @@ describe('ArtistService', () => {
 					const folder = await artistService.getArtistFolder(artist);
 					should().exist(folder);
 					if (folder) {
-						expect(folder.tag.type).to.be.equal(FolderType.artist);
+						expect(
+							(folder.tag.type === FolderType.artist) ||
+							(folder.tag.type === FolderType.album && folder.tag.albumType === AlbumType.compilation)
+						).to.be.equal(true, folder.path + ' is not an artist/compilation folder');
 					}
 				}
 			});

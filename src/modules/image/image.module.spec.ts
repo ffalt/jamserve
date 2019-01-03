@@ -30,5 +30,4 @@ export class ImageModuleTest {
 		this.dir.removeCallback();
 	}
 
-
 }
