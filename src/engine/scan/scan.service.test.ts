@@ -8,6 +8,7 @@ import moment from 'moment';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import {MergeChanges, ScanService} from './scan.service';
 import {WaveformServiceTest} from '../waveform/waveform.service.spec';
+import fse from 'fs-extra';
 
 function logChange(name: string, amount: number) {
 	if (amount > 0) {
@@ -56,6 +57,14 @@ describe('ScanService', () => {
 				expect(changes.newFolders.length).to.equal(mockRoot.expected.folders, 'New Folder count doesnt match');
 				expect(changes.newArtists.length).to.equal(mockRoot.expected.artists, 'New Artist count doesnt match');
 				expect(changes.newAlbums.length).to.equal(mockRoot.expected.albums, 'New Album count doesnt match');
+				expect(changes.updateTracks.length).to.equal(0, 'Update Track count doesnt match');
+				expect(changes.removedTracks.length).to.equal(0, 'Removed Tracks count doesnt match');
+				expect(changes.updateFolders.length).to.equal(0, 'Update Folder count doesnt match');
+				expect(changes.removedFolders.length).to.equal(0, 'Removed Folders count doesnt match');
+				expect(changes.updateArtists.length).to.equal(0, 'Update Artist count doesnt match');
+				expect(changes.removedArtists.length).to.equal(0, 'Removed Artists count doesnt match');
+				expect(changes.updateAlbums.length).to.equal(0, 'Update Album count doesnt match');
+				expect(changes.removedAlbums.length).to.equal(0, 'Removed Album count doesnt match');
 
 				async function validate(mockFolder: MockFolder) {
 					const folder = await store.folderStore.searchOne({path: ensureTrailingPathSeparator(mockFolder.path)});
@@ -82,18 +91,40 @@ describe('ScanService', () => {
 				const changes = await scanService.run(mockRoot.path, mockRoot.id);
 				expect(changes.newTracks.length).to.equal(0, 'New Track count doesnt match');
 				expect(changes.updateTracks.length).to.equal(0, 'Update Track count doesnt match');
+				expect(changes.removedTracks.length).to.equal(0, 'Removed Tracks count doesnt match');
 				expect(changes.newFolders.length).to.equal(0, 'New Folder count doesnt match');
 				expect(changes.updateFolders.length).to.equal(0, 'Update Folder count doesnt match');
+				expect(changes.removedFolders.length).to.equal(0, 'Removed Folders count doesnt match');
 				expect(changes.newArtists.length).to.equal(0, 'New Artist count doesnt match');
 				expect(changes.updateArtists.length).to.equal(0, 'Update Artist count doesnt match');
+				expect(changes.removedArtists.length).to.equal(0, 'Removed Artists count doesnt match');
 				expect(changes.newAlbums.length).to.equal(0, 'New Album count doesnt match');
 				expect(changes.updateAlbums.length).to.equal(0, 'Update Album count doesnt match');
+				expect(changes.removedAlbums.length).to.equal(0, 'Removed Album count doesnt match');
+				// logChanges(changes);
+			});
+			it('should remove everything in the root', async () => {
+				await removeMockRoot(mockRoot);
+				await fse.ensureDir(mockRoot.path);
+				const changes = await scanService.run(mockRoot.path, mockRoot.id);
+				await fse.rmdir(mockRoot.path);
+				expect(changes.newTracks.length).to.equal(0, 'New Track count doesnt match');
+				expect(changes.updateTracks.length).to.equal(0, 'Update Track count doesnt match');
+				expect(changes.removedTracks.length).to.equal(mockRoot.expected.tracks, 'Removed Tracks count doesnt match');
+				expect(changes.newFolders.length).to.equal(0, 'New Folder count doesnt match');
+				expect(changes.updateFolders.length).to.equal(1, 'Update Folder count doesnt match');
+				expect(changes.removedFolders.length).to.equal(mockRoot.expected.folders - 1, 'Removed Folders count doesnt match');
+				expect(changes.newArtists.length).to.equal(0, 'New Artist count doesnt match');
+				expect(changes.updateArtists.length).to.equal(0, 'Update Artist count doesnt match');
+				expect(changes.removedArtists.length).to.equal(mockRoot.expected.artists, 'Removed Artists count doesnt match');
+				expect(changes.newAlbums.length).to.equal(0, 'New Album count doesnt match');
+				expect(changes.updateAlbums.length).to.equal(0, 'Update Album count doesnt match');
+				expect(changes.removedAlbums.length).to.equal(mockRoot.expected.albums, 'Removed Album count doesnt match');
 				// logChanges(changes);
 			});
 		},
 		async () => {
 			await waveformServiceTest.cleanup();
-			await removeMockRoot(mockRoot);
 			dir.removeCallback();
 		}
 	);
