@@ -777,8 +777,8 @@ export class ScanService {
 				return artist;
 			}
 		}
-		const name = getArtistName(trackInfo);
-		return this.artistCache.find(a => a.name === name);
+		const slug = getArtistSlug(trackInfo);
+		return this.artistCache.find(a => a.slug === slug);
 	}
 
 	private async buildArtist(trackInfo: MergeTrackInfo): Promise<Artist> {
@@ -831,7 +831,7 @@ export class ScanService {
 				rootIDs: [],
 				slug: slugify(cVariousArtist),
 				name: cVariousArtist,
-				albumTypes: [AlbumType.compilation],
+				albumTypes: [AlbumType.compilation, AlbumType.album],
 				albumIDs: [],
 				trackIDs: [],
 				created: Date.now()
@@ -983,7 +983,7 @@ export class ScanService {
 				trackInfo.track.artistID = artist.id;
 				let album: Album;
 				if (trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
-				 	if (!compilationArtist) {
+					if (!compilationArtist) {
 						compilationArtist = await this.findOrCreateCompilationArtist(changes);
 					}
 					if (compilationArtist !== artist) {
@@ -999,7 +999,11 @@ export class ScanService {
 						}
 					}
 					album = await this.findOrCreateAlbum(trackInfo, compilationArtist.id, changes);
+					album.artist = compilationArtist.name;
 					album.albumType = AlbumType.compilation;
+					if (compilationArtist.albumIDs.indexOf(album.id) < 0) {
+						compilationArtist.albumIDs.push(album.id);
+					}
 				} else {
 					album = await this.findOrCreateAlbum(trackInfo, artist.id, changes);
 					album.albumType = (trackInfo.dir.folder.tag.albumType === undefined) ? AlbumType.unknown : trackInfo.dir.folder.tag.albumType;
