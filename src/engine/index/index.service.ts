@@ -5,6 +5,7 @@ import {Folder} from '../../objects/folder/folder.model';
 import {ArtistStore} from '../../objects/artist/artist.store';
 import {FolderStore} from '../../objects/folder/folder.store';
 import {TrackStore} from '../../objects/track/track.store';
+import {AlbumType} from '../../model/jam-types';
 
 export class IndexTreeBuilder {
 	private ignore: string;
@@ -30,7 +31,7 @@ export class IndexTreeBuilder {
 
 	async buildArtistIndex(): Promise<ArtistIndex> {
 		const result: ArtistIndex = {groups: [], lastModified: Date.now()};
-		const artists = await this.artistStore.all();
+		const artists = await this.artistStore.search({albumType: AlbumType.album});
 		artists.forEach(artist => {
 			const entry: ArtistIndexEntry = {artist};
 			const indexChar = this.getIndexChar(artist.name, artist.nameSort);
