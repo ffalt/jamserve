@@ -9,7 +9,7 @@ export function mockArtist(): Artist {
 		slug: 'artistname',
 		rootIDs: ['rootID1', 'rootID2'],
 		trackIDs: ['trackID1', 'trackID2'],
-		albumTypes: [AlbumType.album, AlbumType.compilation],
+		albumTypes: [AlbumType.album, AlbumType.audiobook],
 		albumIDs: ['albumID1', 'albumID2'],
 		mbArtistID: 'mbArtistID1',
 		created: 1543495268

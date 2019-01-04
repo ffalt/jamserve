@@ -21,6 +21,8 @@ describe('AlbumStore', () => {
 				{artistID: mock.artistID},
 				{mbAlbumID: mock.mbAlbumID},
 				{mbArtistID: mock.mbArtistID},
+				{albumType: mock.albumType},
+				{albumTypes: [mock.albumType]},
 				{slug: mock.slug},
 				{genre: mock.genre},
 				{trackIDs: mock.trackIDs},

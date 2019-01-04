@@ -11,6 +11,8 @@ export interface SearchQueryAlbum extends SearchQuery {
 	artistID?: string;
 	trackID?: string;
 	trackIDs?: Array<string>;
+	albumType?: string;
+	albumTypes?: Array<string>;
 	mbAlbumID?: string;
 	mbArtistID?: string;
 	genre?: string;
@@ -33,6 +35,8 @@ export class AlbumStore extends BaseStore<Album, SearchQueryAlbum> {
 		q.term('mbAlbumID', query.mbAlbumID);
 		q.term('mbArtistID', query.mbArtistID);
 		q.term('trackIDs', query.trackID);
+		q.term('albumType', query.albumType);
+		q.terms('albumType', query.albumTypes);
 		q.terms('trackIDs', query.trackIDs);
 		q.term('artist', query.artist);
 		q.term('name', query.name);
