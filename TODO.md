@@ -9,3 +9,5 @@
 * get mood & genre data via https://acousticbrainz.org/api/v1/MUSICBRAINZRELEASETRACKID/high-level
 
 * api endpoint for generated subsonic password (get/refresh)
+
+* db schema update on data of older jamserve version
