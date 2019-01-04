@@ -450,6 +450,7 @@ const type_Track = {
 
 const type_Album = {
 	properties: {
+		slug: type_key,
 		name: type_string,
 		rootIDs: type_key,
 		trackIDs: type_key,
@@ -470,6 +471,7 @@ const type_Album = {
 
 const type_Artist = {
 	properties: {
+		slug: type_key,
 		name: type_string,
 		nameSort: type_key,
 		rootIDs: type_key,
