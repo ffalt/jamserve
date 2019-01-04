@@ -49,7 +49,7 @@ export class FORMAT {
 		}
 		return {
 			format: data.format.format_name,
-			duration: Number(data.format.duration) * 1000,
+			duration: Number(data.format.duration),
 			bitRate: Number(data.format.bit_rate),
 			sampleRate: Number(stream.sample_rate),
 			channels: stream.channels,
