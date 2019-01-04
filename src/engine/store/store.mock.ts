@@ -286,7 +286,7 @@ async function writeMockTrack(track: MockTrack): Promise<void> {
 	await writeMP3Track(track.path, track.album, track.artist, track.number, track.genre);
 }
 
-async function writeMockFolder(f: MockFolder): Promise<void> {
+export async function writeMockFolder(f: MockFolder): Promise<void> {
 	await fse.ensureDir(f.path);
 	for (const folder of f.folders) {
 		await writeMockFolder(folder);

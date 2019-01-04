@@ -983,14 +983,19 @@ export class ScanService {
 				trackInfo.track.artistID = artist.id;
 				let album: Album;
 				if (trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
-					if (!compilationArtist) {
+				 	if (!compilationArtist) {
 						compilationArtist = await this.findOrCreateCompilationArtist(changes);
-
 					}
 					if (compilationArtist !== artist) {
 						compilationArtist.trackIDs.push(trackInfo.track.id);
 						if (compilationArtist.rootIDs.indexOf(trackInfo.dir.rootID) < 0) {
 							compilationArtist.rootIDs.push(trackInfo.dir.rootID);
+						}
+						if (changes.newArtists.indexOf(compilationArtist) < 0 && changes.updateArtists.indexOf(compilationArtist) < 0) {
+							changes.updateArtists.push(compilationArtist);
+						}
+						if (this.artistCache.indexOf(compilationArtist) < 0) {
+							this.artistCache.push(compilationArtist);
 						}
 					}
 					album = await this.findOrCreateAlbum(trackInfo, compilationArtist.id, changes);
@@ -1122,6 +1127,18 @@ export class ScanService {
 
 	private async clean(changes: MergeChanges): Promise<void> {
 		let ids: Array<string> = [];
+		if (changes.removedAlbums.length > 0) {
+			log.debug('Cleaning albums', changes.removedAlbums.length);
+			const albumIDs = changes.removedAlbums.map(a => a.id);
+			await this.store.albumStore.remove(albumIDs);
+			await this.store.stateStore.removeByQuery({destIDs: albumIDs, type: DBObjectType.album});
+		}
+		if (changes.removedArtists.length > 0) {
+			log.debug('Cleaning artists', changes.removedArtists.length);
+			const artistIDs = changes.removedArtists.map(a => a.id);
+			await this.store.artistStore.remove(artistIDs);
+			await this.store.stateStore.removeByQuery({destIDs: artistIDs, type: DBObjectType.artist});
+		}
 		if (changes.removedFolders.length > 0) {
 			log.debug('Cleaning folders', changes.removedFolders.length);
 			const folderIDs = changes.removedFolders.map(folder => folder.id);
