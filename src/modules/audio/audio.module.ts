@@ -1,4 +1,4 @@
-import {ID3v2, IID3V2, IMP3, MP3, simplifyTag} from 'jamp3';
+import {ID3v1, ID3v2, IID3V1, IID3V2, IMP3, MP3, simplifyTag} from 'jamp3';
 import {ChartLyricsClient, ChartLyricsResult} from './clients/chartlyrics-client';
 import {AcoustidClient} from './clients/acoustid-client';
 import {LastFMClient} from './clients/lastfm-client';
@@ -16,6 +16,7 @@ import {Folder} from '../../objects/folder/folder.model';
 import fse from 'fs-extra';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
 import {probe, ProbeResult} from './tools/ffprobe';
+import {ID3v1_GENRES} from 'jamp3/dist/lib/id3v1/id3v1_consts';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -92,7 +93,22 @@ export class FORMAT {
 		};
 	}
 
-	static packJamServeTag(data?: IID3V2.Tag): TrackTag | undefined {
+	static packID3v1JamServeTag(data?: IID3V1.Tag): TrackTag | undefined {
+		if (!data) {
+			return undefined;
+		}
+		const simple = data.value;
+		return {
+			artist: simple.artist,
+			title: simple.title,
+			album: simple.album,
+			year: isNaN(Number(simple.year)) ? undefined : Number(simple.year),
+			track: simple.track,
+			genre: (simple.genreIndex !== undefined && !!ID3v1_GENRES[simple.genreIndex]) ? ID3v1_GENRES[simple.genreIndex] : undefined,
+		};
+	}
+
+	static packID3v2JamServeTag(data?: IID3V2.Tag): TrackTag | undefined {
 		if (!data) {
 			return undefined;
 		}
@@ -273,7 +289,12 @@ export class AudioModule {
 			if (!result) {
 				return {tag: {}, media: {}};
 			} else {
-				return {tag: FORMAT.packJamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
+				if (result.id3v2) {
+					return {tag: FORMAT.packID3v2JamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
+				}
+				const id3v1 = new ID3v1();
+				const v1 = await id3v1.read(filename);
+				return {tag: FORMAT.packID3v1JamServeTag(v1), media: FORMAT.packJamServeMedia(result.mpeg)};
 			}
 		} else {
 			const p = await probe(filename, []);
