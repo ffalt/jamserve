@@ -570,6 +570,10 @@ export class ScanService {
 		// this.onProgress(this.scanningCount);
 		log.info('Reading Track:', file.name);
 		const data = await this.audioModule.read(file.name);
+		const tag = data.tag || {};
+		if (!tag.title) {
+			tag.title = path.basename(file.name);
+		}
 		return {
 			id: '',
 			rootID: file.rootID,
@@ -584,7 +588,7 @@ export class ScanService {
 				size: file.stat.size
 			},
 			media: data.media || {},
-			tag: data.tag || {},
+			tag,
 			type: DBObjectType.track
 		};
 	}
