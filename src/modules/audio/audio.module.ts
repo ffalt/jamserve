@@ -294,6 +294,9 @@ export class AudioModule {
 				}
 				const id3v1 = new ID3v1();
 				const v1 = await id3v1.read(filename);
+				if (!v1) {
+					return {tag: {}, media: FORMAT.packJamServeMedia(result.mpeg)};
+				}
 				return {tag: FORMAT.packID3v1JamServeTag(v1), media: FORMAT.packJamServeMedia(result.mpeg)};
 			}
 		} else {
@@ -304,55 +307,6 @@ export class AudioModule {
 				return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p)};
 			}
 		}
-	}
-
-	async write(filename: string, tag: TrackTag): Promise<void> {
-		return Promise.reject(Error('not implemented'));
-		/*
-		 // logger.verbose('Writing Tag', filename);
-		 let dest = filename + '.temp.mp3';
-		 fs.copyFile(filename, dest, (err) => {
-			if (err) {
-				throw err;
-			}
-			let frames = [];
-			Object.keys(tag).forEach(key => {
-				if (simpleMapReverse[key]) {
-					frames.push({id: simpleMapReverse[key], text: tag[key]});
-				} else if (key.indexOf('T:') === 0) {
-					frames.push({id: 'TXXX', description: key.slice(2), text: tag[key]});
-				}
-			});
-			tagio.write({
-				path: dest,
-				configuration: {
-					configurationReadable: true,
-					audioPropertiesReadable: true,
-					id3v1Readable: true,
-					id3v1Writable: true,
-					id3v1Encoding: tagio.Encoding.UTF8,
-					id3v2Readable: true,
-					id3v2Writable: true,
-					apeReadable: false,
-					apeWritable: false
-				},
-				id3v1: {
-					'title': tag.title || '',
-					'album': tag.album || '',
-					'artist': tag.artist || '',
-					'track': parseInt(tag.track, 10),
-					'year': parseInt(tag.year || tag.date || 0, 10),
-					'genre': tag.genre || '',
-					'comment': ''
-				},
-				id3v2: frames
-			}).then((res) => {
-				cb(null, res);
-			}).catch((err) => {
-				cb(err);
-			});
-		});
-		 **/
 	}
 
 	async saveID3v2(filename: string, tag: Jam.ID3Tag): Promise<void> {
