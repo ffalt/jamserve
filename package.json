@@ -1,6 +1,6 @@
 {
 	"name": "jamserve",
-	"version": "0.1.2-alpha",
+	"version": "0.1.3-alpha",
 	"author": "ffalt",
 	"license": "MIT",
 	"description": "jamserve streaming audio server",
@@ -48,6 +48,7 @@
 		"archiver": "^3.0.0",
 		"body-parser": "^1.18.3",
 		"colors": "^1.3.3",
+		"common-password-checker": "^0.1.0",
 		"cookie-parser": "^1.4.3",
 		"cors": "^2.8.5",
 		"elasticsearch": "^15.2.0",
@@ -72,6 +73,7 @@
 		"passport-jwt": "^4.0.0",
 		"passport-local": "^1.0.0",
 		"request": "^2.88.0",
+		"seedrandom": "^2.4.4",
 		"svgo": "^1.1.1",
 		"tmp": "0.0.33",
 		"waveform-data": "^2.1.2",
