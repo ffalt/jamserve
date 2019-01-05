@@ -8,7 +8,7 @@ describe('PlaylistService', () => {
 	let playlistService: PlaylistService;
 	let trackStore: TrackStore;
 	testService({mockData: false},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest) => {
 			trackStore = store.trackStore;
 			playlistService = new PlaylistService(store.playlistStore, store.trackStore);
 		},

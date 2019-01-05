@@ -7,7 +7,7 @@ import {mockRoot} from './root.mock';
 describe('RootService', () => {
 	let rootService: RootService;
 	testService({mockData: true},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest) => {
 			rootService = new RootService(store.rootStore);
 		},
 		() => {

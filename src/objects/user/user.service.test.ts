@@ -31,7 +31,7 @@ describe('UserService', () => {
 	let userService: UserService;
 	let dir: SynchrounousResult;
 	testService({mockData: false},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest) => {
 			dir = tmp.dirSync();
 			userService = new UserService(dir.name, store.userStore, store.stateStore, store.playlistStore, store.bookmarkStore, store.playQueueStore, imageModuleTest.imageModule);
 		},

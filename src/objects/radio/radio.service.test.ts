@@ -6,7 +6,7 @@ import {RadioService} from './radio.service';
 describe('RadioService', () => {
 	let radioService: RadioService;
 	testService({mockData: false},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest) => {
 			radioService = new RadioService(store.radioStore);
 		},
 		() => {

@@ -7,7 +7,7 @@ import {DBObjectType} from '../../model/jam-types';
 describe('StateService', () => {
 	let stateService: StateService;
 	testService({mockData: false},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest) => {
 			stateService = new StateService(store.stateStore);
 		},
 		() => {

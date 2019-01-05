@@ -15,7 +15,7 @@ describe('StreamService', () => {
 	const user = mockUser();
 	user.id = 'nowPlayingUserID1';
 	testService({mockData: true},
-		(store, imageModuleTest) => {
+		async (store, imageModuleTest) => {
 			streamService = new StreamService();
 			trackStore = store.trackStore;
 		},
