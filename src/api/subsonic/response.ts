@@ -12,6 +12,7 @@ export class ApiResponder {
 	}
 
 	private static send(req: express.Request, res: express.Response, data: any) {
+		res.setHeader('Access-Control-Allow-Origin', '*');
 		const params = (<SubsonicParameterRequest>req).parameters;
 		if ((params.format === 'jsonp') && (params.callback)) {
 			res.status(200).send(params.callback + '(' + JSON.stringify(data) + ');');
@@ -42,8 +43,10 @@ export class ApiResponder {
 			res.set('Content-Type', data.buffer.contentType);
 			res.set('Content-Length', data.buffer.buffer.length.toString());
 // 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
+			res.setHeader('Access-Control-Allow-Origin', '*');
 			res.status(200).send(data.buffer.buffer);
 		} else if (data.file) {
+			res.setHeader('Access-Control-Allow-Origin', '*');
 			res.sendFile(data.file.filename, data.file.name || path.basename(data.file.filename));
 		}
 	}

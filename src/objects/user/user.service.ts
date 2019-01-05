@@ -115,6 +115,20 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		return user;
 	}
 
+	async authSubsonic(name: string, pass: string): Promise<User> {
+		if ((!pass) || (!pass.length)) {
+			return Promise.reject(Error('Invalid Password'));
+		}
+		const user = await this.getByName(name);
+		if (!user) {
+			return Promise.reject(Error('Invalid Username'));
+		}
+		if (pass !== user.subsonic_pass) {
+			return Promise.reject(Error('Invalid Password'));
+		}
+		return user;
+	}
+
 	async authToken(name: string, token: string, salt: string): Promise<User> {
 		if (!name || name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));

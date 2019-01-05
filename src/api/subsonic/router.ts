@@ -50,7 +50,7 @@ export function initSubsonicRouter(engine: Engine): express.Router {
 	};
 
 	const router = express.Router();
-	router.options('*', cors());
+	// router.options('*', cors());
 	router.use((req, res, next) => {
 		log.info(req.method, req.originalUrl);
 		next();
