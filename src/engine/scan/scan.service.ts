@@ -109,7 +109,7 @@ function logChange(name: string, amount: number) {
 }
 
 export function logChanges(changes: MergeChanges) {
-	const v = moment.utc(changes.end - changes.start).format('HH:mm:ss');
+	const v = moment.utc(changes.end - changes.start).format('HH:mm:ss.SSS');
 	log.info('Duration:', v);
 	logChange('Added Tracks', changes.newTracks.length);
 	logChange('Updated Tracks', changes.updateTracks.length);
