@@ -41,7 +41,7 @@
     "test:stores": "mocha --recursive src/**/*.store.test.ts",
     "test": "mocha --recursive ./src/**/**.test.ts",
     "coverage": "nyc mocha --recursive ./src/**/*.test.ts",
-    "release": "deplokay -c ./.deplokay.json"
+    "release": "deplokay -c ./deplokay.json"
   },
   "dependencies": {
     "ajv": "^6.6.2",
