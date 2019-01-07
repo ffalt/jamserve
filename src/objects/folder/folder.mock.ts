@@ -1,12 +1,13 @@
 import {Folder} from './folder.model';
 import {AlbumType, DBObjectType, FolderType} from '../../model/jam-types';
+import {mockPath} from '../../utils/testutils.spec';
 
 export function mockFolder(): Folder {
 	return {
 		id: '',
 		type: DBObjectType.folder,
 		rootID: 'rootID1',
-		path: '/tmp/null/folder name',
+		path: mockPath('folder name'),
 		parentID: 'folderID2',
 		stat: {
 			created: 1543495268,
@@ -35,7 +36,7 @@ export function mockFolder2(): Folder {
 		id: '',
 		type: DBObjectType.folder,
 		rootID: 'rootID2',
-		path: '/tmp/null/folder name/second folder name',
+		path: mockPath('second folder name'),
 		parentID: 'folderID3',
 		stat: {
 			created: 1443495268,

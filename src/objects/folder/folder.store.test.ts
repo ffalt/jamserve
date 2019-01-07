@@ -5,6 +5,7 @@ import {Folder} from './folder.model';
 import path from 'path';
 import {testStore} from '../base/base.store.spec';
 import {mockFolder, mockFolder2} from './folder.mock';
+import {mockPath} from '../../utils/testutils.spec';
 
 describe('FolderStore', () => {
 	let folderStore: FolderStore;
@@ -42,10 +43,10 @@ describe('FolderStore', () => {
 		() => {
 			it('should match the right inPath', async () => {
 				const folder1 = mockFolder();
-				folder1.path = '/tmp/null/folder 10/';
+				folder1.path = mockPath('folder 10');
 				folder1.id = await folderStore.add(folder1);
 				const folder2 = mockFolder2();
-				folder2.path = '/tmp/null/folder 1/';
+				folder1.path = mockPath('folder 1');
 				folder2.id = await folderStore.add(folder2);
 				const list = await folderStore.search({inPath: '/tmp/null/folder 1'});
 				expect(list.length).to.equal(1);

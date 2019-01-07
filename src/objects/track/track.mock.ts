@@ -1,5 +1,6 @@
 import {Track} from './track.model';
 import {DBObjectType} from '../../model/jam-types';
+import {mockPath} from '../../utils/testutils.spec';
 
 export function mockTrack(): Track {
 	return {
@@ -10,7 +11,7 @@ export function mockTrack(): Track {
 		albumID: 'albumID1',
 		artistID: 'artistID1',
 		name: 'a folder name',
-		path: '/var/media/root name/folder name',
+		path: mockPath('folder name'),
 		stat: {
 			created: 1543495268,
 			modified: 1543495268,
@@ -62,7 +63,7 @@ export function mockTrack2(): Track {
 		albumID: 'albumID2',
 		artistID: 'artistID2',
 		name: 'second folder name',
-		path: '/var/media/root name/second folder name',
+		path: mockPath('second folder name'),
 		stat: {
 			created: 1443495268,
 			modified: 1443495268,

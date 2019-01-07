@@ -2,7 +2,7 @@ import path from 'path';
 import {NodeDataCallback} from '../typings';
 import fse from 'fs-extra';
 
-const isWindows = process && (process.platform === 'win32' || /^(msys|cygwin)$/.test(process.env.OSTYPE || ''));
+export const isWindows = process && (process.platform === 'win32' || /^(msys|cygwin)$/.test(process.env.OSTYPE || ''));
 
 const cache: { [name: string]: string; } = {};
 
