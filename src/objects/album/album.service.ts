@@ -14,13 +14,6 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 		super(albumStore, stateService);
 	}
 
-	async getAlbumImage(album: Album, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
-		const folder = await this.getAlbumFolder(album);
-		if (folder) {
-			return this.folderService.getFolderImage(folder, size, format);
-		}
-	}
-
 	async getAlbumFolder(album: Album): Promise<Folder | undefined> {
 		if (album.trackIDs.length === 0) {
 			return;
@@ -45,4 +38,13 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 		return folder;
 	}
 
+	async getAlbumImage(album: Album, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+		const folder = await this.getAlbumFolder(album);
+		if (folder) {
+			if (!folder.tag.image && album.info && album.info.album.image && album.info.album.image.large) {
+				await this.folderService.downloadFolderImage(folder, album.info.album.image.large);
+			}
+			return this.folderService.getFolderImage(folder, size, format);
+		}
+	}
 }

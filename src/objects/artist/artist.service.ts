@@ -37,6 +37,9 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
 		const folder = await this.getArtistFolder(artist);
 		if (folder) {
+			if (!folder.tag.image && artist.info && artist.info.artist.image && artist.info.artist.image.large) {
+				await this.folderService.downloadFolderImage(folder, artist.info.artist.image.large);
+			}
 			return this.folderService.getFolderImage(folder, size, format);
 		}
 	}
