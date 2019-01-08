@@ -82,7 +82,6 @@ async function run() {
 	const result = `/** generated api */
 
 import {Injectable} from '@angular/core';
-import {App} from '../app/app.service';
 import {HttpEvent} from '@angular/common/http';
 import {NotificationService} from '../notification/notification.service';
 import {Observable} from 'rxjs';
@@ -98,8 +97,8 @@ import {JamServiceBase} from './jam.service.base';
 @Injectable()
 export class JamService extends JamServiceBase {
 
-	constructor(http: HttpService, app: App, notify: NotificationService, auth: AuthService) {
-		super(http, app, notify, auth);
+	constructor(http: HttpService, notify: NotificationService, auth: AuthService) {
+		super(http, notify, auth);
 	}
 
 ${resultAPI.join('\n\n')}
