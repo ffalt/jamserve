@@ -208,7 +208,7 @@ export function initJamRouter(engine: Engine): express.Router {
 			});
 		},
 		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => {
-			router.post(name, apiCheck(apiCheckName || name), upload.single(field), autoUploadTempReap, async (req, res) => {
+			router.post(name, upload.single(field), apiCheck(apiCheckName || name), autoUploadTempReap, async (req, res) => {
 				try {
 					await checkRoles(req.user, roles);
 					await execute(req, res);
