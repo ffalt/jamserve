@@ -18,7 +18,7 @@ export declare namespace Jam {
 
 	export interface Session {
 		version: Version;
-		user?: Jam.User;
+		user?: SessionUser;
 		jwt?: string;
 		allowedCookieDomains: Array<string>;
 	}
@@ -306,6 +306,10 @@ export declare namespace Jam {
 		// jukebox?: boolean;
 		// share?: boolean;
 		// videoConversion?: boolean;
+	}
+
+	export interface SessionUser extends Base {
+		roles: Roles;
 	}
 
 	export interface User extends Base {

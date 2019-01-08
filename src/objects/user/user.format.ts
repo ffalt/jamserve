@@ -28,3 +28,13 @@ export function formatUser(user: User): Jam.User {
 	};
 }
 
+
+export function formatSessionUser(user: User): Jam.SessionUser {
+	return {
+		id: user.id,
+		created: user.created,
+		name: user.name,
+		roles: formatRoles(user.roles)
+	};
+}
+

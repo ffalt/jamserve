@@ -12213,7 +12213,7 @@
 						"type": "string"
 					},
 					"user": {
-						"$ref": "#/components/schemas/Jam.User"
+						"$ref": "#/components/schemas/Jam.SessionUser"
 					},
 					"jwt": {
 						"type": "string"
@@ -12230,12 +12230,9 @@
 					"version"
 				]
 			},
-			"Jam.User": {
+			"Jam.SessionUser": {
 				"type": "object",
 				"properties": {
-					"email": {
-						"type": "string"
-					},
 					"roles": {
 						"$ref": "#/components/schemas/Jam.Roles"
 					},
@@ -12254,7 +12251,6 @@
 				},
 				"required": [
 					"created",
-					"email",
 					"id",
 					"name",
 					"roles"
@@ -16409,6 +16405,36 @@
 					"name",
 					"trackCount",
 					"userID"
+				]
+			},
+			"Jam.User": {
+				"type": "object",
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"roles": {
+						"$ref": "#/components/schemas/Jam.Roles"
+					},
+					"id": {
+						"type": "string"
+					},
+					"state": {
+						"$ref": "#/components/schemas/Jam.State"
+					},
+					"name": {
+						"type": "string"
+					},
+					"created": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"created",
+					"email",
+					"id",
+					"name",
+					"roles"
 				]
 			},
 			"Jam.PlayQueue": {

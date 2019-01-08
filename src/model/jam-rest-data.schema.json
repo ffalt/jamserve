@@ -3198,7 +3198,7 @@
 					"type": "string"
 				},
 				"user": {
-					"$ref": "#/definitions/Jam.User"
+					"$ref": "#/definitions/Jam.SessionUser"
 				},
 				"jwt": {
 					"type": "string"
@@ -4285,6 +4285,32 @@
 					"type": "boolean"
 				}
 			}
+		},
+		"Jam.SessionUser": {
+			"type": "object",
+			"properties": {
+				"roles": {
+					"$ref": "#/definitions/Jam.Roles"
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"id",
+				"name",
+				"roles"
+			]
 		},
 		"Jam.User": {
 			"type": "object",

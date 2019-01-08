@@ -6949,7 +6949,7 @@
 					"type": "string"
 				},
 				"user": {
-					"$ref": "#/definitions/Jam.User"
+					"$ref": "#/definitions/Jam.SessionUser"
 				},
 				"jwt": {
 					"type": "string"
@@ -6966,12 +6966,9 @@
 				"version"
 			]
 		},
-		"Jam.User": {
+		"Jam.SessionUser": {
 			"type": "object",
 			"properties": {
-				"email": {
-					"type": "string"
-				},
 				"roles": {
 					"$ref": "#/definitions/Jam.Roles"
 				},
@@ -6990,7 +6987,6 @@
 			},
 			"required": [
 				"created",
-				"email",
 				"id",
 				"name",
 				"roles"
@@ -13804,6 +13800,36 @@
 					"type": "boolean"
 				}
 			}
+		},
+		"Jam.User": {
+			"type": "object",
+			"properties": {
+				"email": {
+					"type": "string"
+				},
+				"roles": {
+					"$ref": "#/definitions/Jam.Roles"
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"email",
+				"id",
+				"name",
+				"roles"
+			]
 		},
 		"JamParameters.PlayQueue": {
 			"type": "object",

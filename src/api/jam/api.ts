@@ -12,7 +12,7 @@ import {UserController} from '../../objects/user/user.controller';
 import {ChatController} from '../../engine/chat/chat.controller';
 import {MetadataController} from '../../engine/metadata/metadata.controller';
 import {StreamController} from '../../engine/stream/stream.controller';
-import {formatUser} from '../../objects/user/user.format';
+import {formatSessionUser} from '../../objects/user/user.format';
 import {GenreController} from '../../engine/genre/genre.controller';
 import {NowPlayingController} from '../../engine/nowplaying/nowplaying.controller';
 import {ImageController} from '../../engine/image/image.controller';
@@ -94,11 +94,7 @@ export class JamController {
 	}
 
 	async session(req: JamRequest<{}>): Promise<Jam.Session> {
-		if (req.user) {
-			return {version: JAMAPI_VERSION, allowedCookieDomains: this.engine.config.server.session.allowedCookieDomains, user: formatUser(req.user)};
-		} else {
-			return {version: JAMAPI_VERSION, allowedCookieDomains: this.engine.config.server.session.allowedCookieDomains};
-		}
+		return {version: JAMAPI_VERSION, allowedCookieDomains: this.engine.config.server.session.allowedCookieDomains, user: req.user ? formatSessionUser(req.user) : undefined};
 	}
 
 
