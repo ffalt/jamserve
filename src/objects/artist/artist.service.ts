@@ -7,6 +7,7 @@ import {ArtistStore, SearchQueryArtist} from './artist.store';
 import {Folder} from '../folder/folder.model';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
+import {cVariousArtist} from '../../engine/scan/scan.service';
 
 export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 
@@ -35,6 +36,9 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 	}
 
 	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+		if (artist.name === cVariousArtist) {
+			return this.folderService.imageModule.paint(cVariousArtist, size, format);
+		}
 		const folder = await this.getArtistFolder(artist);
 		if (folder) {
 			if (!folder.tag.image && artist.info && artist.info.artist.image && artist.info.artist.image.large) {

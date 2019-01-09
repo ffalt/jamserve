@@ -15,7 +15,7 @@ const log = Logger('FolderService');
 
 export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 
-	constructor(public folderStore: FolderStore, private trackStore: TrackStore, stateService: StateService, private imageModule: ImageModule) {
+	constructor(public folderStore: FolderStore, private trackStore: TrackStore, stateService: StateService, public imageModule: ImageModule) {
 		super(folderStore, stateService);
 	}
 

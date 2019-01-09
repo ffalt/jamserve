@@ -37,7 +37,7 @@ export class ImageModule {
 		return filename;
 	}
 
-	async paint(text: string, size: number, format: string | undefined): Promise<IApiBinaryResult> {
+	async paint(text: string, size: number | undefined, format: string | undefined): Promise<IApiBinaryResult> {
 		size = size || 320;
 		const image = new Jimp(360, 360, '#282828');
 		if (!this.font) {

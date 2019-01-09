@@ -11,6 +11,7 @@ import {ArtistStore} from '../../objects/artist/artist.store';
 import {AlbumStore} from '../../objects/album/album.store';
 import {TrackStore} from '../../objects/track/track.store';
 import {FolderStore} from '../../objects/folder/folder.store';
+import {cVariousArtist} from '../scan/scan.service';
 
 const log = Logger('MetaDataService');
 
@@ -30,7 +31,11 @@ export class MetaDataService {
 
 		async function checkAlbumByNameAndArtist(): Promise<MetaInfoAlbum | undefined> {
 			if (artistName && albumName) {
-				return audio.mediaInfoAlbumInfo(albumName, artistName);
+				if (artistName === cVariousArtist) {
+					return audio.mediaInfoAlbumInfo(albumName, '');
+				} else {
+					return audio.mediaInfoAlbumInfo(albumName, artistName);
+				}
 			}
 		}
 
@@ -45,7 +50,7 @@ export class MetaDataService {
 		async function checkArtist(): Promise<MetaInfoArtist | undefined> {
 			if (artistId) {
 				return audio.mediaInfoArtistInfoByArtistID(artistId);
-			} else if (artistName) {
+			} else if (artistName && artistName !== cVariousArtist) {
 				return audio.mediaInfoArtistInfo(artistName);
 			}
 		}
