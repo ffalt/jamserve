@@ -212,9 +212,9 @@ export namespace ID3v2FrameValues {
 		'TBPM'?: Array<Text>;
 		'TCM'?: Array<Text>;
 		'TCMP'?: Array<Bool>;
-		'TCO'?: Array<TextList>;
+		'TCO'?: Array<Text>;
 		'TCOM'?: Array<Text>;
-		'TCON'?: Array<TextList>;
+		'TCON'?: Array<Text>;
 		'TCOP'?: Array<Text>;
 		'TCP'?: Array<Bool>;
 		'TCR'?: Array<Text>;
@@ -263,13 +263,13 @@ export namespace ID3v2FrameValues {
 		'TORY'?: Array<Text>;
 		'TOT'?: Array<Text>;
 		'TOWN'?: Array<Text>;
-		'TP1'?: Array<TextList>;
+		'TP1'?: Array<Text>;
 		'TP2'?: Array<Text>;
 		'TP3'?: Array<Text>;
 		'TP4'?: Array<Text>;
 		'TPA'?: Array<Text>;
 		'TPB'?: Array<Text>;
-		'TPE1'?: Array<TextList>;
+		'TPE1'?: Array<Text>;
 		'TPE2'?: Array<Text>;
 		'TPE3'?: Array<Text>;
 		'TPE4'?: Array<Text>;
