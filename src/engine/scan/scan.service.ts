@@ -5,7 +5,7 @@ import {WaveformService} from '../waveform/waveform.service';
 import {Track} from '../../objects/track/track.model';
 import {ImageModule} from '../../modules/image/image.module';
 import {deepCompare} from '../../utils/deep-compare';
-import {AlbumType, DBObjectType, FileTyp, FolderType} from '../../model/jam-types';
+import {AlbumType, DBObjectType, FileTyp, FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import path from 'path';
 import fse from 'fs-extra';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
@@ -90,7 +90,7 @@ export interface MergeChanges {
 function printTree(match: MatchDir, level: number = 0) {
 	const prefix = ' '.repeat(level);
 	if (match.folder) {
-		console.log(prefix + '📁 ' + path.basename(match.name), '[' + match.folder.tag.type + ']'); // , FolderTypesAlbum.indexOf(match.folder.tag.type) >= 0 ? '[' + match.folder.tag.albumType + ']' : '');
+		console.log(prefix + '📁 ' + path.basename(match.name), '[' + match.folder.tag.type + ']', FolderTypesAlbum.indexOf(match.folder.tag.type) >= 0 ? '[' + match.folder.tag.albumType + ']' : '');
 	} else {
 		console.log(prefix + '📁 ' + path.basename(match.name), '[new]');
 	}
@@ -98,7 +98,9 @@ function printTree(match: MatchDir, level: number = 0) {
 		printTree(sub, level + 1);
 	}
 	for (const f of match.files) {
-		console.log(prefix + ' 🎧 ' + path.basename(f.name), f.track ? '' : '[new]');
+		if (f.type === FileTyp.AUDIO) {
+			console.log(prefix + ' 🎧 ' + path.basename(f.name), f.track ? '' : '[new]');
+		}
 	}
 }
 
@@ -125,7 +127,7 @@ export function logChanges(changes: MergeChanges) {
 	logChange('Removed Albums', changes.removedAlbums.length);
 }
 
-export const cVariousArtist = '[Various Artists]';
+export const cVariousArtist = 'Various Artists';
 export const cUnknownArtist = '[Unknown Artist]';
 export const cUnknownAlbum = '[Unknown Album]';
 
@@ -178,6 +180,9 @@ function getMostUsedTagValue<T>(list: Array<MetaStatValue<T>>, multi?: T): T | u
 	}
 	if (list.length === 1) {
 		return list[0].val;
+	}
+	if (list.length > 3 && multi !== undefined) {
+		return multi;
 	}
 	list = list.sort((a, b) => a.count - b.count);
 	const cleaned = list.filter((o) => {
