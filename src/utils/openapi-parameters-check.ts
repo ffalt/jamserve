@@ -2,7 +2,7 @@ import {OpenAPIObject, OperationObject, ParameterObject, RequestBodyObject, Sche
 import express from 'express';
 import Logger from './logger';
 import {Definition} from 'typescript-json-schema';
-import {validate} from './validate-json';
+import {validateJSON, jsonValidator, JSONValidator} from './validate-json';
 
 const log = Logger('CheckApiParameters');
 
@@ -10,7 +10,7 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 	if (!query) {
 		return 'Missing parameter collection ' + param.name;
 	}
-	const schema = <SchemaObject> param.schema;
+	const schema = <SchemaObject>param.schema;
 	let value = query[param.name];
 	// set default values
 	if (value === undefined) {
@@ -105,6 +105,12 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 	return null;
 }
 
+function createJSONValidator(def: any, apiSchema: any): JSONValidator {
+	const specialSchema = Object.assign({}, def);
+	specialSchema.definitions = apiSchema.definitions;
+	return jsonValidator(specialSchema);
+}
+
 async function checkAORequestBody(cmd: OperationObject, apiSchema: any, body: any): Promise<void> {
 	if (!cmd.requestBody || !(<RequestBodyObject>cmd.requestBody).content || !(<RequestBodyObject>cmd.requestBody).content['application/json']) {
 		return;
@@ -120,7 +126,10 @@ async function checkAORequestBody(cmd: OperationObject, apiSchema: any, body: an
 	if (!def) {
 		return Promise.reject(Error('Unknown POST schema' + schema.$ref));
 	}
-	const result = await validate(body, def);
+	if (!def.validator) {
+		def.validator = createJSONValidator(def, apiSchema);
+	}
+	const result = await validateJSON(body, def.validator);
 	if (result.errors.length > 0) {
 		console.error(def, body, result.errors);
 		return Promise.reject(Error(JSON.stringify(result.errors)));
