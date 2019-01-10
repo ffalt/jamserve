@@ -3,7 +3,7 @@ import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../../objects/base/base.service.spec';
 import {Store} from '../store/store';
 import tmp, {SynchrounousResult} from 'tmp';
-import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from '../store/store.mock';
+import {buildMockRoot, MockFolder, MockRoot, removeMockRoot, writeMockRoot} from '../store/store.mock';
 import moment from 'moment';
 import {MergeChanges, ScanService} from './scan.service';
 import {WaveformServiceTest} from '../waveform/waveform.service.spec';
@@ -11,6 +11,8 @@ import path from 'path';
 import {randomItem} from '../../utils/random';
 import {Genres} from '../../utils/genres';
 import {AlbumType, FolderType} from '../../model/jam-types';
+import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import fse from 'fs-extra';
 
 function logChange(name: string, amount: number) {
 	if (amount > 0) {
@@ -53,8 +55,7 @@ describe('ScanService', () => {
 			await writeMockRoot(mockRoot);
 		},
 		() => {
-			/**
-			 it('should scan', async () => {
+			it('should scan', async () => {
 				const changes = await scanService.run(mockRoot.path, mockRoot.id);
 				expect(changes.newTracks.length).to.equal(mockRoot.expected.tracks, 'New Track count doesnt match');
 				expect(changes.newFolders.length).to.equal(mockRoot.expected.folders, 'New Folder count doesnt match');
@@ -90,7 +91,7 @@ describe('ScanService', () => {
 
 				// logChanges(changes);
 			});
-			 it('should rescan', async () => {
+			it('should rescan', async () => {
 				const changes = await scanService.run(mockRoot.path, mockRoot.id);
 				expect(changes.newTracks.length).to.equal(0, 'New Track count doesnt match');
 				expect(changes.updateTracks.length).to.equal(0, 'Update Track count doesnt match');
@@ -106,7 +107,7 @@ describe('ScanService', () => {
 				expect(changes.removedAlbums.length).to.equal(0, 'Removed Album count doesnt match');
 				// logChanges(changes);
 			});
-			 it('should remove missing in the root', async () => {
+			it('should remove missing in the root', async () => {
 				await removeMockRoot(mockRoot);
 				await fse.ensureDir(mockRoot.path);
 				const changes = await scanService.run(mockRoot.path, mockRoot.id);
@@ -128,7 +129,7 @@ describe('ScanService', () => {
 				expect(await store.albumStore.count()).to.equal(0);
 				expect(await store.artistStore.count()).to.equal(0);
 			});
-			 it('should scan added in the root', async () => {
+			it('should scan added in the root', async () => {
 				await writeMockRoot(mockRoot);
 				const changes = await scanService.run(mockRoot.path, mockRoot.id);
 				expect(changes.newTracks.length).to.equal(mockRoot.expected.tracks, 'New Track count doesnt match');
@@ -144,7 +145,7 @@ describe('ScanService', () => {
 				expect(changes.updateAlbums.length).to.equal(0, 'Update Album count doesnt match');
 				expect(changes.removedAlbums.length).to.equal(0, 'Removed Album count doesnt match');
 			});
-			 it('should combine/remove artists and albums from different roots', async () => {
+			it('should combine/remove artists and albums from different roots', async () => {
 				const dir2 = tmp.dirSync();
 				const mockRoot2 = buildMockRoot(dir2.name, 2, 'rootID2');
 				await writeMockRoot(mockRoot2);
@@ -180,7 +181,7 @@ describe('ScanService', () => {
 				expect(changes.updateArtists.length).to.equal(mockRoot.expected.artists, 'Update Artist count doesnt match');
 			});
 
-			 it('should combine/remove artists and albums from different roots', async () => {
+			it('should combine/remove artists and albums from different roots', async () => {
 				const dir2 = tmp.dirSync();
 				const mockRoot2 = buildMockRoot(dir2.name, 2, 'rootID2');
 				await writeMockRoot(mockRoot2);
@@ -216,8 +217,6 @@ describe('ScanService', () => {
 				expect(changes.updateAlbums.length).to.equal(mockRoot.expected.albums, 'Update Album count doesnt match');
 				expect(changes.updateArtists.length).to.equal(mockRoot.expected.artists, 'Update Artist count doesnt match');
 			});
-
-			 **/
 
 			it('should combine close enough artist names', async () => {
 				const dir2 = tmp.dirSync();

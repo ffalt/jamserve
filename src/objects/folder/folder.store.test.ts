@@ -6,6 +6,7 @@ import path from 'path';
 import {testStore} from '../base/base.store.spec';
 import {mockFolder, mockFolder2} from './folder.mock';
 import {mockPath} from '../../utils/testutils.spec';
+import {removeTrailingPathSeparator} from '../../utils/fs-utils';
 
 describe('FolderStore', () => {
 	let folderStore: FolderStore;
@@ -46,9 +47,11 @@ describe('FolderStore', () => {
 				folder1.path = mockPath('folder 10');
 				folder1.id = await folderStore.add(folder1);
 				const folder2 = mockFolder2();
-				folder1.path = mockPath('folder 1');
+				folder2.path = mockPath('folder 1');
 				folder2.id = await folderStore.add(folder2);
-				const list = await folderStore.search({inPath: '/tmp/null/folder 1'});
+				let list = await folderStore.search({inPath: removeTrailingPathSeparator(folder2.path)});
+				expect(list.length).to.equal(1);
+				list = await folderStore.search({inPath: removeTrailingPathSeparator(folder1.path)});
 				expect(list.length).to.equal(1);
 			});
 		});

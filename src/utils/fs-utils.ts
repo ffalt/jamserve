@@ -37,3 +37,10 @@ export function ensureTrailingPathSeparator(s: string): string {
 	}
 	return s;
 }
+
+export function removeTrailingPathSeparator(s: string): string {
+	if (s.length > 0 && s[s.length - 1] === path.sep) {
+		return s.slice(0, s.length - 1);
+	}
+	return s;
+}
