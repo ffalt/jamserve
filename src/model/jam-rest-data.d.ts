@@ -167,7 +167,9 @@ export declare namespace Jam {
 
 	export interface FolderTag {
 		album?: string;
+		albumType?: AlbumType;
 		artist?: string;
+		artistSort?: string;
 		genre?: string;
 		year?: number;
 		musicbrainz?: {

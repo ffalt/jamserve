@@ -36,7 +36,9 @@ function formatFolderTag(folder: Folder): Jam.FolderTag {
 	}
 	return {
 		artist: folder.tag.artist,
+		artistSort: folder.tag.artistSort,
 		album: folder.tag.album,
+		albumType: folder.tag.albumType,
 		genre: folder.tag.genre,
 		year: folder.tag.year,
 		musicbrainz: mbz

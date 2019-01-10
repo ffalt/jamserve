@@ -14337,7 +14337,7 @@
 					"TCO": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.TextList"
+							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
 						}
 					},
 					"TCOM": {
@@ -14349,7 +14349,7 @@
 					"TCON": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.TextList"
+							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
 						}
 					},
 					"TCOP": {
@@ -14643,7 +14643,7 @@
 					"TP1": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.TextList"
+							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
 						}
 					},
 					"TP2": {
@@ -14679,7 +14679,7 @@
 					"TPE1": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.TextList"
+							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
 						}
 					},
 					"TPE2": {
@@ -15720,7 +15720,19 @@
 					"album": {
 						"type": "string"
 					},
+					"albumType": {
+						"enum": [
+							"album",
+							"audiobook",
+							"compilation",
+							"unknown"
+						],
+						"type": "string"
+					},
 					"artist": {
+						"type": "string"
+					},
+					"artistSort": {
 						"type": "string"
 					},
 					"genre": {
