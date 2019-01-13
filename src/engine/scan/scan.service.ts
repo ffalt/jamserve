@@ -510,7 +510,7 @@ export class ScanService {
 	}
 
 	private async scanDirR(dir: string, stat: fse.Stats, rootID: string): Promise<ScanDir> {
-		log.info('Scanning:', dir);
+		log.debug('Scanning:', dir);
 		const result: ScanDir = {
 			name: ensureTrailingPathSeparator(dir),
 			stat: {
@@ -746,7 +746,6 @@ export class ScanService {
 				return (!!d.tag && d.tag.type === FolderType.artist);
 			});
 			if (a) {
-				console.log('multiartist', dir.name);
 				result = FolderType.multiartist;
 			}
 		}
