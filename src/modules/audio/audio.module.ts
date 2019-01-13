@@ -273,6 +273,7 @@ export class AudioModule {
 	acoustid: AcoustidClient;
 	lastFM: LastFMClient;
 	chartLyrics: ChartLyricsClient;
+	private isSaving: { [filename: string]: boolean } = {};
 
 	constructor(tools: ThirdpartyToolsConfig) {
 		this.musicbrainz = new MusicbrainzClient({userAgent: tools.musicbrainz.userAgent, retryOn: true});
@@ -285,19 +286,24 @@ export class AudioModule {
 		const suffix = fileSuffix(filename);
 		if (suffix === 'mp3') {
 			const mp3 = new MP3();
-			const result = await mp3.read({filename, mpegQuick: true, mpeg: true, id3v2: true});
-			if (!result) {
+			try {
+				const result = await mp3.read({filename, mpegQuick: true, mpeg: true, id3v2: true});
+				if (!result) {
+					return {tag: {}, media: {}};
+				} else {
+					if (result.id3v2) {
+						return {tag: FORMAT.packID3v2JamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
+					}
+					const id3v1 = new ID3v1();
+					const v1 = await id3v1.read(filename);
+					if (!v1) {
+						return {tag: {}, media: FORMAT.packJamServeMedia(result.mpeg)};
+					}
+					return {tag: FORMAT.packID3v1JamServeTag(v1), media: FORMAT.packJamServeMedia(result.mpeg)};
+				}
+			} catch (e) {
+				console.error(e);
 				return {tag: {}, media: {}};
-			} else {
-				if (result.id3v2) {
-					return {tag: FORMAT.packID3v2JamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
-				}
-				const id3v1 = new ID3v1();
-				const v1 = await id3v1.read(filename);
-				if (!v1) {
-					return {tag: {}, media: FORMAT.packJamServeMedia(result.mpeg)};
-				}
-				return {tag: FORMAT.packID3v1JamServeTag(v1), media: FORMAT.packJamServeMedia(result.mpeg)};
 			}
 		} else {
 			const p = await probe(filename, []);
@@ -310,32 +316,43 @@ export class AudioModule {
 	}
 
 	async saveID3v2(filename: string, tag: Jam.ID3Tag): Promise<void> {
-		const exists = await fse.pathExists(filename + '.bak.org');
-		if (exists) {
-			await fse.copy(filename, filename + '.bak.org');
+		if (this.isSaving[filename]) {
+			console.error('Another save is in progress', filename);
+			return Promise.reject(Error('Another save is in progress'));
 		}
-		const frames: Array<IID3V2.Frame> = [];
-		Object.keys(tag.frames).map(id => {
-			const f = tag.frames[id] || [];
-			f.forEach(value => {
-				frames.push({id, head: {statusFlags: {}, formatFlags: {}, size: 0}, value});
+		this.isSaving[filename] = true;
+		try {
+			const exists = await fse.pathExists(filename + '.bak.org');
+			if (!exists) {
+				await fse.copy(filename, filename + '.bak.org');
+			}
+			const frames: Array<IID3V2.Frame> = [];
+			Object.keys(tag.frames).map(id => {
+				const f = tag.frames[id] || [];
+				f.forEach(value => {
+					frames.push({id, head: {statusFlags: {}, formatFlags: {}, size: 0}, value});
+				});
+				return;
 			});
-			return;
-		});
-		const t: IID3V2.Tag = {
-			id: 'ID3v2',
-			head: {
-				ver: tag.version,
-				rev: 0,
-				size: 0,
-				valid: true
-			},
-			start: 0,
-			end: 0,
-			frames
-		};
-		const id3v2 = new ID3v2();
-		await id3v2.write(filename, t, tag.version, 0);
+			const t: IID3V2.Tag = {
+				id: 'ID3v2',
+				head: {
+					ver: tag.version,
+					rev: 0,
+					size: 0,
+					valid: true
+				},
+				start: 0,
+				end: 0,
+				frames
+			};
+			const id3v2 = new ID3v2();
+			await id3v2.write(filename, t, tag.version, 0);
+			delete this.isSaving[filename];
+		} catch (e) {
+			delete this.isSaving[filename];
+			return Promise.reject(e);
+		}
 	}
 
 	async readID3v2(filename: string): Promise<Jam.ID3Tag> {
