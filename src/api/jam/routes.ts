@@ -788,12 +788,6 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.ok(res);
 	}, '/track/tagID3/update', ['admin']);
 
-	register.post('/track/tagID3s/update', async (req, res) => {
-		const options: JamRequest<JamParameters.TagID3sUpdate> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.tagID3sUpdate(options);
-		await ApiResponder.ok(res);
-	}, '/track/tagID3s/update', ['admin']);
-
 	register.post('/radio/update', async (req, res) => {
 		const options: JamRequest<JamParameters.RadioUpdate> = {query: req.body, user: req.user, client: req.client};
 		await api.radioController.update(options);

@@ -104,19 +104,19 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		this.ioService.refreshTracks([track]); // do not wait
 	}
 
-	async tagID3sUpdate(req: JamRequest<JamParameters.TagID3sUpdate>): Promise<void> {
-		const tracks = await this.byIDs(req.query.tagID3s.map(tagID3 => tagID3.id));
-		const list: Array<{ track?: Track; tag: Jam.ID3Tag }> = req.query.tagID3s.map(tagID3 => {
-			return {track: tracks.find(t => t.id === tagID3.id), tag: tagID3.tag};
-		});
-		for (const item of list) {
-			if (!item.track) {
-				return Promise.reject(NotFoundError());
-			}
-			await this.audioModule.saveID3v2(path.join(item.track.path, item.track.name), item.tag);
-		}
-		this.ioService.refreshTracks(tracks); // do not wait
-	}
+	// async tagID3sUpdate(req: JamRequest<JamParameters.TagID3sUpdate>): Promise<void> {
+	// 	const tracks = await this.byIDs(req.query.tagID3s.map(tagID3 => tagID3.id));
+	// 	const list: Array<{ track?: Track; tag: Jam.ID3Tag }> = req.query.tagID3s.map(tagID3 => {
+	// 		return {track: tracks.find(t => t.id === tagID3.id), tag: tagID3.tag};
+	// 	});
+	// 	for (const item of list) {
+	// 		if (!item.track) {
+	// 			return Promise.reject(NotFoundError());
+	// 		}
+	// 		await this.audioModule.saveID3v2(path.join(item.track.path, item.track.name), item.tag);
+	// 	}
+	// 	this.ioService.refreshTracks(tracks); // do not wait
+	// }
 
 	async stream(req: JamRequest<JamParameters.Stream>): Promise<IApiBinaryResult> {
 		const track = await this.byID(req.query.id);
