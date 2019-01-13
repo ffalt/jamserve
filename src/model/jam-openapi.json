@@ -14851,6 +14851,12 @@
 							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
 						}
 					},
+					"TSST": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+						}
+					},
 					"TSP": {
 						"type": "array",
 						"items": {

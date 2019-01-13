@@ -2193,6 +2193,12 @@
 						"$ref": "#/definitions/ID3v2FrameValues.Text"
 					}
 				},
+				"TSST": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
 				"TSP": {
 					"type": "array",
 					"items": {

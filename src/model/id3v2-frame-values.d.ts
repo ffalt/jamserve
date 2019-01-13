@@ -293,6 +293,7 @@ export namespace ID3v2FrameValues {
 		'TSOC'?: Array<Text>;
 		'TSOP'?: Array<Text>;
 		'TSOT'?: Array<Text>;
+		'TSST'?: Array<Text>;
 		'TSP'?: Array<Text>;
 		'TSRC'?: Array<Text>;
 		'TSS'?: Array<Text>;
