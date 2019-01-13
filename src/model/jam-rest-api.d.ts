@@ -917,11 +917,6 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
-		'track/tagID3s/update'?: {
-			params: JamParameters.TagID3sUpdate;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['admin'];
-		};
 		'radio/update'?: {
 			params: JamParameters.RadioUpdate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;

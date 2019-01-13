@@ -5778,57 +5778,6 @@
 						"roles"
 					]
 				},
-				"track/tagID3s/update": {
-					"type": "object",
-					"properties": {
-						"params": {
-							"$ref": "#/definitions/JamParameters.TagID3sUpdate"
-						},
-						"errors": {
-							"anyOf": [
-								{
-									"$ref": "#/definitions/JamApiErrorUnauthorized"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorGeneric"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorParameters"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorNotFound"
-								}
-							]
-						},
-						"roles": {
-							"type": "array",
-							"items": [
-								{
-									"type": "string",
-									"enum": [
-										"admin"
-									]
-								}
-							],
-							"minItems": 1,
-							"additionalItems": {
-								"anyOf": [
-									{
-										"type": "string",
-										"enum": [
-											"admin"
-										]
-									}
-								]
-							}
-						}
-					},
-					"required": [
-						"errors",
-						"params",
-						"roles"
-					]
-				},
 				"radio/update": {
 					"type": "object",
 					"properties": {
@@ -13397,6 +13346,29 @@
 					"description": "filter by genre",
 					"type": "string"
 				},
+				"albumType": {
+					"description": "filter by album type",
+					"enum": [
+						"album",
+						"audiobook",
+						"compilation",
+						"unknown"
+					],
+					"type": "string"
+				},
+				"albumTypes": {
+					"description": "filter by album types",
+					"type": "array",
+					"items": {
+						"enum": [
+							"album",
+							"audiobook",
+							"compilation",
+							"unknown"
+						],
+						"type": "string"
+					}
+				},
 				"newerThan": {
 					"description": "filter by creation date (unix time)",
 					"minimum": 0,
@@ -13479,6 +13451,29 @@
 				"genre": {
 					"description": "filter by genre",
 					"type": "string"
+				},
+				"albumType": {
+					"description": "filter by album type",
+					"enum": [
+						"album",
+						"audiobook",
+						"compilation",
+						"unknown"
+					],
+					"type": "string"
+				},
+				"albumTypes": {
+					"description": "filter by album types",
+					"type": "array",
+					"items": {
+						"enum": [
+							"album",
+							"audiobook",
+							"compilation",
+							"unknown"
+						],
+						"type": "string"
+					}
 				},
 				"newerThan": {
 					"description": "filter by creation date (unix time)",
@@ -14310,21 +14305,6 @@
 			"required": [
 				"id",
 				"tag"
-			]
-		},
-		"JamParameters.TagID3sUpdate": {
-			"type": "object",
-			"properties": {
-				"tagID3s": {
-					"description": "array of id3 tag updates",
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/JamParameters.TagID3Update"
-					}
-				}
-			},
-			"required": [
-				"tagID3s"
 			]
 		},
 		"JamParameters.RadioUpdate": {

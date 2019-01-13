@@ -57,6 +57,8 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 			trackID: query.trackID,
 			mbAlbumID: query.mbAlbumID,
 			mbArtistID: query.mbArtistID,
+			albumType: query.albumType,
+			albumTypes: query.albumTypes,
 			genre: query.genre,
 			newerThan: query.newerThan,
 			fromYear: query.fromYear,

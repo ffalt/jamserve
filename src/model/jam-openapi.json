@@ -6876,6 +6876,39 @@
 					},
 					{
 						"in": "query",
+						"name": "albumType",
+						"schema": {
+							"enum": [
+								"album",
+								"audiobook",
+								"compilation",
+								"unknown"
+							],
+							"type": "string"
+						},
+						"description": "filter by album type",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTypes",
+						"schema": {
+							"type": "array",
+							"items": {
+								"enum": [
+									"album",
+									"audiobook",
+									"compilation",
+									"unknown"
+								],
+								"type": "string"
+							}
+						},
+						"description": "filter by album types",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
@@ -7066,6 +7099,39 @@
 							"type": "string"
 						},
 						"description": "filter by genre",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumType",
+						"schema": {
+							"enum": [
+								"album",
+								"audiobook",
+								"compilation",
+								"unknown"
+							],
+							"type": "string"
+						},
+						"description": "filter by album type",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTypes",
+						"schema": {
+							"type": "array",
+							"items": {
+								"enum": [
+									"album",
+									"audiobook",
+									"compilation",
+									"unknown"
+								],
+								"type": "string"
+							}
+						},
+						"description": "filter by album types",
 						"required": false
 					},
 					{
@@ -11053,41 +11119,6 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.TagID3Update"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/track/tagID3s/update": {
-			"post": {
-				"operationId": "trackController.tagID3sUpdate",
-				"tags": [
-					"track"
-				],
-				"responses": {
-					"200": {
-						"description": "ok"
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.TagID3sUpdate"
 							}
 						}
 					}
@@ -16674,21 +16705,6 @@
 				"required": [
 					"id",
 					"tag"
-				]
-			},
-			"JamParameters.TagID3sUpdate": {
-				"type": "object",
-				"properties": {
-					"tagID3s": {
-						"description": "array of id3 tag updates",
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/JamParameters.TagID3Update"
-						}
-					}
-				},
-				"required": [
-					"tagID3s"
 				]
 			},
 			"JamParameters.RadioUpdate": {

@@ -781,6 +781,14 @@ export declare namespace JamParameters {
 		 */
 		genre?: string;
 		/**
+		 * filter by album type
+		 */
+		albumType?: Jam.AlbumType;
+		/**
+		 * filter by album types
+		 */
+		albumTypes?: Array<Jam.AlbumType>;
+		/**
 		 * filter by creation date (unix time)
 		 *
 		 * @minimum 0
@@ -1170,13 +1178,13 @@ export declare namespace JamParameters {
 		 */
 		tag: Jam.ID3Tag;
 	}
-
-	export interface TagID3sUpdate {
-		/**
-		 * array of id3 tag updates
-		 */
-		tagID3s: Array<TagID3Update>;
-	}
+	//
+	// export interface TagID3sUpdate {
+	// 	/**
+	// 	 * array of id3 tag updates
+	// 	 */
+	// 	tagID3s: Array<TagID3Update>;
+	// }
 
 	export interface AutoComplete {
 		/**
