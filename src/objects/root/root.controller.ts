@@ -65,7 +65,7 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const root = await this.byID(req.query.id);
 		await this.rootService.remove(root);
-		await this.ioService.refresh();
+		await this.ioService.removeRoot(root);
 	}
 
 	async scanAll(req: JamRequest<{}>): Promise<void> {
