@@ -1,5 +1,5 @@
 import {JamParameters} from '../../model/jam-rest-params';
-import {DBObjectType, FolderType} from '../../model/jam-types';
+import {DBObjectType, FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import {InvalidParamError} from '../../api/jam/error';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
@@ -78,7 +78,7 @@ const ProblemDefs: { [id: string]: ProblemCheck; } = {
 	ALBUM_NAME_NONCONFORM: {
 		name: 'Album folder name is not "[Year] Album-Name"',
 		check: async (folder) => {
-			if (folder.tag && (folder.tag.type === FolderType.album) &&
+			if (folder.tag && (FolderTypesAlbum.indexOf(folder.tag.type) > 0) &&
 				(folder.tag.album) && (folder.tag.year) && (folder.tag.year > 0)) {
 				const name = path.basename(folder.path).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
 				const nicename = getNiceFolderName(folder.tag).replace(/[_:!?\/ ]/g, '').toLowerCase();

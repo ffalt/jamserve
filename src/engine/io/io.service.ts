@@ -80,4 +80,7 @@ export class IoService {
 		await this.stop();
 	}
 
+	async removeRoot(root: Root): Promise<void> {
+		await this.scanService.removeRoot(root.id);
+	}
 }

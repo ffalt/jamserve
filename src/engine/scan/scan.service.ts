@@ -149,6 +149,7 @@ interface MetaStat {
 	genre?: string;
 	mbArtistID?: string;
 	mbAlbumID?: string;
+	mbAlbumType?: string;
 	year?: number;
 	images: Array<string>;
 	image?: string;
@@ -156,6 +157,7 @@ interface MetaStat {
 	isMultiArtist: boolean;
 	isMultiAlbum: boolean;
 	trackCount: number;
+	albumType: AlbumType;
 }
 
 function convert2Numlist(o: { [key: string]: { count: number, val: string }; }): Array<MetaStatNumber> {
@@ -293,6 +295,7 @@ export class ScanService {
 			genre: { [key: string]: { count: number, val: string }; };
 			mbArtistID: { [key: string]: { count: number, val: string }; };
 			mbAlbumID: { [key: string]: { count: number, val: string }; };
+			mbAlbumType: { [key: string]: { count: number, val: string }; };
 			year: { [key: string]: { count: number, val: string }; };
 		} = {
 			artist: {},
@@ -302,6 +305,7 @@ export class ScanService {
 			year: {},
 			mbArtistID: {},
 			mbAlbumID: {},
+			mbAlbumType: {}
 		};
 		const images: Array<string> = [];
 		let trackCount = 0;
@@ -315,6 +319,12 @@ export class ScanService {
 					const slug = slugify(tracktag.artist);
 					stats.artist[slug] = stats.artist[slug] || {count: 0, val: tracktag.artist};
 					stats.artist[slug].count += 1;
+				}
+				// MusicBrainz Album Type
+				if (tracktag.mbAlbumType) {
+					const slug = tracktag.mbAlbumType;
+					stats.mbAlbumType[slug] = stats.mbAlbumType[slug] || {count: 0, val: tracktag.mbAlbumType};
+					stats.mbAlbumType[slug].count += 1;
 				}
 				if (tracktag.artistSort) {
 					const slug = slugify(tracktag.artistSort);
@@ -397,11 +407,13 @@ export class ScanService {
 		const years = convert2Numlist(stats.year);
 		const mbArtistIDs = convert2list(stats.mbArtistID);
 		const mbAlbumIDs = convert2list(stats.mbAlbumID);
+		const mbAlbumTypes = convert2list(stats.mbAlbumType);
 		const album = getMostUsedTagValue<string>(albums, path.basename(dir.name));
 		const artist = getMostUsedTagValue<string>(artists, cVariousArtist);
 		const artistSort = getMostUsedTagValue<string>(artistSorts);
 		const genre = getMostUsedTagValue<string>(genres);
 		const mbAlbumID = getMostUsedTagValue<string>(mbAlbumIDs);
+		const mbAlbumType = getMostUsedTagValue<string>(mbAlbumTypes);
 		const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs);
 		const year = getMostUsedTagValue<number>(years);
 		const isMultiArtist = artist === cVariousArtist;
@@ -423,11 +435,21 @@ export class ScanService {
 				}
 			}
 		}
+		if (mbAlbumType) {
+			console.log(dir.name, mbAlbumType, mbAlbumTypes);
+		}
+		let albumType = AlbumType.unknown;
+		if (isMultiArtist || (mbAlbumType || '').toLowerCase().indexOf('compilation') >= 0) {
+			albumType = AlbumType.compilation;
+		} else {
+			albumType = AlbumType.album;
+		}
 		return {
 			trackCount,
 			images,
 			image,
 			multiArtists: artists.map(a => a.val),
+			albumType,
 			isMultiArtist,
 			isMultiAlbum,
 			album,
@@ -435,6 +457,7 @@ export class ScanService {
 			artistSort,
 			genre,
 			mbAlbumID,
+			mbAlbumType,
 			mbArtistID,
 			year
 		};
@@ -685,13 +708,14 @@ export class ScanService {
 			level: dir.level,
 			type: FolderType.unknown,
 			album: metaStat.album,
-			albumType: metaStat.isMultiArtist ? AlbumType.compilation : AlbumType.album,
+			albumType: metaStat.albumType,
 			artist: metaStat.artist,
 			artistSort: metaStat.artistSort,
 			title: nameSplit.title,
 			image: metaStat.image,
 			genre: metaStat.genre,
 			mbAlbumID: metaStat.mbAlbumID,
+			mbAlbumType: metaStat.mbAlbumType,
 			mbArtistID: metaStat.mbArtistID,
 			year: (nameSplit.year !== undefined) ? nameSplit.year : metaStat.year
 		};
@@ -1255,4 +1279,48 @@ export class ScanService {
 		return changes;
 	}
 
+	async removeRoot(rootID: string) {
+		const updateArtists = [];
+		const removeArtists: Array<string> = [];
+		const removeAlbums: Array<string> = [];
+		const updateAlbums = [];
+		const trackIDs = await this.store.trackStore.searchIDs({rootID});
+		const folderIDs = await this.store.folderStore.searchIDs({rootID});
+		const artists = await this.store.artistStore.search({rootID});
+		for (const artist of artists) {
+			artist.rootIDs = artist.rootIDs.filter(r => r !== rootID);
+			if (artist.rootIDs.length === 0) {
+				removeArtists.push(artist.id);
+			} else {
+				artist.trackIDs = artist.trackIDs.filter(trackID => trackIDs.indexOf(trackID) < 0);
+				if (artist.trackIDs.length === 0) {
+					removeArtists.push(artist.id);
+				} else {
+					updateArtists.push(artist);
+				}
+			}
+		}
+		const albums = await this.store.albumStore.search({rootID});
+		for (const album of albums) {
+			album.rootIDs = album.rootIDs.filter(r => r !== rootID);
+			if (album.rootIDs.length === 0) {
+				removeAlbums.push(album.id);
+			} else {
+				album.trackIDs = album.trackIDs.filter(trackID => trackIDs.indexOf(trackID) < 0);
+				if (album.trackIDs.length === 0) {
+					removeAlbums.push(album.id);
+				} else {
+					updateAlbums.push(album);
+				}
+			}
+		}
+		await this.store.trackStore.removeByQuery({rootID});
+		await this.store.folderStore.removeByQuery({rootID});
+		await this.store.stateStore.removeByQuery({destIDs: trackIDs});
+		await this.store.stateStore.removeByQuery({destIDs: folderIDs});
+		await this.store.albumStore.remove(removeAlbums);
+		await this.store.artistStore.remove(removeArtists);
+		await this.store.albumStore.upsert(updateAlbums);
+		await this.store.artistStore.upsert(updateArtists);
+	}
 }
