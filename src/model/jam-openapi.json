@@ -700,6 +700,16 @@
 					},
 					{
 						"in": "query",
+						"name": "folderCounts",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include information about children (trackCount/folderCount) on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "folderHealth",
 						"schema": {
 							"default": false,
@@ -873,6 +883,16 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderCounts",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include information about children (trackCount/folderCount) on folder(s)",
 						"required": false
 					},
 					{
@@ -1091,6 +1111,16 @@
 					},
 					{
 						"in": "query",
+						"name": "folderCounts",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include information about children (trackCount/folderCount) on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "folderHealth",
 						"schema": {
 							"default": false,
@@ -1298,6 +1328,16 @@
 					},
 					{
 						"in": "query",
+						"name": "folderCounts",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include information about children (trackCount/folderCount) on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "folderHealth",
 						"schema": {
 							"default": false,
@@ -1401,6 +1441,16 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderCounts",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include information about children (trackCount/folderCount) on folder(s)",
 						"required": false
 					},
 					{
@@ -1826,6 +1876,16 @@
 					},
 					{
 						"in": "query",
+						"name": "folderCounts",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include information about children (trackCount/folderCount) on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "folderHealth",
 						"schema": {
 							"default": false,
@@ -2196,6 +2256,16 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderCounts",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include information about children (trackCount/folderCount) on folder(s)",
 						"required": false
 					},
 					{
@@ -15777,6 +15847,12 @@
 					},
 					"type": {
 						"$ref": "#/components/schemas/Jam.FolderType"
+					},
+					"trackCount": {
+						"type": "number"
+					},
+					"folderCount": {
+						"type": "number"
 					},
 					"tag": {
 						"$ref": "#/components/schemas/Jam.FolderTag"

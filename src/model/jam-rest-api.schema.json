@@ -10676,6 +10676,11 @@
 					"default": false,
 					"type": "boolean"
 				},
+				"folderCounts": {
+					"description": "include information about children (trackCount/folderCount) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
 				"folderHealth": {
 					"description": "include information about the meta data quality on folder(s)",
 					"default": false,
@@ -10747,6 +10752,12 @@
 				},
 				"type": {
 					"$ref": "#/definitions/Jam.FolderType"
+				},
+				"trackCount": {
+					"type": "number"
+				},
+				"folderCount": {
+					"type": "number"
 				},
 				"tag": {
 					"$ref": "#/definitions/Jam.FolderTag"
@@ -10963,6 +10974,11 @@
 					"default": false,
 					"type": "boolean"
 				},
+				"folderCounts": {
+					"description": "include information about children (trackCount/folderCount) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
 				"folderHealth": {
 					"description": "include information about the meta data quality on folder(s)",
 					"default": false,
@@ -11057,6 +11073,11 @@
 				},
 				"folderState": {
 					"description": "include user states (fav,rate) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderCounts": {
+					"description": "include information about children (trackCount/folderCount) on folder(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -11156,6 +11177,11 @@
 				},
 				"folderState": {
 					"description": "include user states (fav,rate) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderCounts": {
+					"description": "include information about children (trackCount/folderCount) on folder(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -11333,6 +11359,11 @@
 				},
 				"folderState": {
 					"description": "include user states (fav,rate) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderCounts": {
+					"description": "include information about children (trackCount/folderCount) on folder(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -11526,6 +11557,11 @@
 				},
 				"folderState": {
 					"description": "include user states (fav,rate) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderCounts": {
+					"description": "include information about children (trackCount/folderCount) on folder(s)",
 					"default": false,
 					"type": "boolean"
 				},

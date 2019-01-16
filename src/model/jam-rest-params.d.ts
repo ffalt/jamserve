@@ -97,6 +97,12 @@ export declare namespace JamParameters {
 		 */
 		folderState?: boolean;
 		/**
+		 * include information about children (trackCount/folderCount) on folder(s)
+		 *
+		 * @default false
+		 */
+		folderCounts?: boolean;
+		/**
 		 * include information about the meta data quality on folder(s)
 		 *
 		 * @default false

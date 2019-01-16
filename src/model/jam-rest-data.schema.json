@@ -3686,6 +3686,12 @@
 				"type": {
 					"$ref": "#/definitions/Jam.FolderType"
 				},
+				"trackCount": {
+					"type": "number"
+				},
+				"folderCount": {
+					"type": "number"
+				},
 				"tag": {
 					"$ref": "#/definitions/Jam.FolderTag"
 				},

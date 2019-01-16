@@ -589,6 +589,15 @@ export class ScanService {
 		return this.scanDirR(dir, stat, rootID);
 	}
 
+	private buildDefaultTag(dir: MatchDir): FolderTag {
+		return {
+			level: dir.level,
+			type: FolderType.unknown,
+			trackCount: dir.files.filter(t => t.type === FileTyp.AUDIO).length,
+			folderCount: dir.directories.length,
+		};
+	}
+
 	private async buildFolder(dir: MatchDir): Promise<Folder> {
 		return {
 			id: '',
@@ -599,7 +608,7 @@ export class ScanService {
 				created: dir.stat.ctime,
 				modified: dir.stat.mtime
 			},
-			tag: dir.tag || {tracks: dir.files.length, level: dir.level, type: FolderType.unknown},
+			tag: dir.tag || this.buildDefaultTag(dir),
 			type: DBObjectType.folder
 		};
 	}
@@ -678,7 +687,7 @@ export class ScanService {
 						created: dir.stat.ctime,
 						modified: dir.stat.mtime
 					},
-					tag: dir.tag || {tracks: dir.files.length, level: dir.level, type: FolderType.unknown},
+					tag: dir.tag || this.buildDefaultTag(dir),
 					type: DBObjectType.folder,
 					info: dir.folder.info
 				};
@@ -715,7 +724,8 @@ export class ScanService {
 		}
 		const nameSplit = splitDirectoryName(dir.name);
 		const tag: FolderTag = {
-			tracks: dir.files.filter(f => f.type === FileTyp.AUDIO).length,
+			trackCount: dir.files.filter(t => t.type === FileTyp.AUDIO).length,
+			folderCount: dir.directories.length,
 			level: dir.level,
 			type: FolderType.unknown,
 			album: metaStat.album,

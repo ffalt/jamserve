@@ -53,7 +53,9 @@ export function formatFolder(folder: Folder, includes: JamParameters.IncludesFol
 		parentID: folder.parentID,
 		name: path.basename(folder.path),
 		created: folder.stat.created,
-		type: <Jam.FolderType>(folder.tag && (folder.tag.type !== undefined) ? (FolderType[folder.tag.type] || 'unknown') : 'unknown'),
+		trackCount: includes.folderCounts ? folder.tag.trackCount : undefined,
+		folderCount: includes.folderCounts ? folder.tag.folderCount : undefined,
+		type: <Jam.FolderType>((folder.tag.type !== undefined) ? (FolderType[folder.tag.type] || 'unknown') : 'unknown'),
 		tag: includes.folderTag ? formatFolderTag(folder) : undefined
 	};
 }

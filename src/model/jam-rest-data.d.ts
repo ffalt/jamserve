@@ -152,6 +152,8 @@ export declare namespace Jam {
 		parentID?: string;
 		level: number;
 		type: FolderType;
+		trackCount?: number;
+		folderCount?: number;
 		tag?: FolderTag;
 		health?: FolderHealth;
 		artistInfo?: ArtistFolderInfo;

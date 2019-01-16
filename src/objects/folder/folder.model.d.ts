@@ -15,8 +15,9 @@ export interface Folder extends DBObject {
 }
 
 export interface FolderTag {
-	tracks: number;
 	level: number;
+	trackCount: number;
+	folderCount: number;
 	type: FolderType;
 	genre?: string;
 	album?: string;
