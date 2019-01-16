@@ -49,6 +49,7 @@ export function formatFolder(folder: Folder, includes: JamParameters.IncludesFol
 	includes = includes || {};
 	return {
 		id: folder.id,
+		level: folder.tag ? folder.tag.level : -1,
 		parentID: folder.parentID,
 		name: path.basename(folder.path),
 		created: folder.stat.created,

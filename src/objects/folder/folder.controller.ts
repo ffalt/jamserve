@@ -216,6 +216,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			title: query.title,
 			album: query.album,
 			genre: query.genre,
+			level: query.level,
 			newerThan: query.newerThan,
 			fromYear: query.fromYear,
 			toYear: query.toYear,

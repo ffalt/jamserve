@@ -58,6 +58,7 @@ const type_FolderTag = {
 		image: type_key,
 		year: type_int,
 		mbAlbumID: type_key,
+		mbAlbumType: type_key,
 		mbArtistID: type_key
 	}
 };

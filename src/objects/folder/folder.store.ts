@@ -25,7 +25,7 @@ export interface SearchQueryFolder extends SearchQuery {
 
 export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 	fieldMap: { [name: string]: string } = {
-		'parentID': 'parent',
+		'parentID': 'parentID',
 		'rootID': 'rootID',
 		'artist': 'tag.artist',
 		'title': 'tag.title',
