@@ -279,12 +279,25 @@ function getAlbumSlug(trackInfo: MergeTrackInfo): string {
 	return slugify(getAlbumName(trackInfo));
 }
 
+function extractAlbumName(name: string): string {
+	const result = name
+		.replace(/\(((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))\)/gi, '')
+		.replace(/\[((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))\]/gi, '')
+		.trim()
+	;
+	if (result.length === 0) {
+		return name.trim();
+	}
+	return result;
+}
+
 export class ScanService {
 	private artistCache: Array<Artist> = [];
 	private albumCache: Array<Album> = [];
 
 	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
 	}
+
 
 	private getMetaStat(dir: MatchDir): MetaStat {
 		// combine meta frames from child tracks and folders
@@ -333,7 +346,7 @@ export class ScanService {
 				}
 				if (tracktag.album) {
 					const slug = slugify(tracktag.album);
-					stats.album[slug] = stats.album[slug] || {count: 0, val: tracktag.album};
+					stats.album[slug] = stats.album[slug] || {count: 0, val: extractAlbumName(tracktag.album)};
 					stats.album[slug].count += 1;
 				}
 				if (tracktag.genre) {
@@ -375,7 +388,7 @@ export class ScanService {
 				}
 				if (subtag.album) {
 					const slug = slugify(subtag.album);
-					stats.album[slug] = stats.album[slug] || {count: 0, val: subtag.album};
+					stats.album[slug] = stats.album[slug] || {count: 0, val: extractAlbumName(subtag.album)};
 					stats.album[slug].count += 1;
 				}
 				if (subtag.genre) {
@@ -408,7 +421,7 @@ export class ScanService {
 		const mbArtistIDs = convert2list(stats.mbArtistID);
 		const mbAlbumIDs = convert2list(stats.mbAlbumID);
 		const mbAlbumTypes = convert2list(stats.mbAlbumType);
-		const album = getMostUsedTagValue<string>(albums, path.basename(dir.name));
+		const album = getMostUsedTagValue<string>(albums, extractAlbumName(path.basename(dir.name)));
 		const artist = getMostUsedTagValue<string>(artists, cVariousArtist);
 		const artistSort = getMostUsedTagValue<string>(artistSorts);
 		const genre = getMostUsedTagValue<string>(genres);
@@ -434,9 +447,6 @@ export class ScanService {
 					image = path.basename(images[0]);
 				}
 			}
-		}
-		if (mbAlbumType) {
-			console.log(dir.name, mbAlbumType, mbAlbumTypes);
 		}
 		let albumType = AlbumType.unknown;
 		if (isMultiArtist || (mbAlbumType || '').toLowerCase().indexOf('compilation') >= 0) {
@@ -508,6 +518,7 @@ export class ScanService {
 	}
 
 	private async matchDirR(dir: MatchDir, changes: MergeChanges): Promise<void> {
+		log.debug('Comparing:', dir.name);
 		const tracks = await this.store.trackStore.search({path: dir.name});
 		tracks.forEach(track => {
 			const filename = path.join(track.path, track.name);
@@ -1279,24 +1290,39 @@ export class ScanService {
 		return changes;
 	}
 
-	async removeRoot(rootID: string) {
-		const updateArtists = [];
-		const removeArtists: Array<string> = [];
-		const removeAlbums: Array<string> = [];
-		const updateAlbums = [];
+	async removeRoot(rootID: string): Promise<MergeChanges> {
+		const changes: MergeChanges = {
+			newArtists: [],
+			updateArtists: [],
+			removedArtists: [],
+
+			newAlbums: [],
+			updateAlbums: [],
+			removedAlbums: [],
+
+			newTracks: [],
+			updateTracks: [],
+			removedTracks: [],
+
+			newFolders: [],
+			updateFolders: [],
+			removedFolders: [],
+			start: Date.now(),
+			end: 0,
+		};
 		const trackIDs = await this.store.trackStore.searchIDs({rootID});
 		const folderIDs = await this.store.folderStore.searchIDs({rootID});
 		const artists = await this.store.artistStore.search({rootID});
 		for (const artist of artists) {
 			artist.rootIDs = artist.rootIDs.filter(r => r !== rootID);
 			if (artist.rootIDs.length === 0) {
-				removeArtists.push(artist.id);
+				changes.removedArtists.push(artist);
 			} else {
 				artist.trackIDs = artist.trackIDs.filter(trackID => trackIDs.indexOf(trackID) < 0);
 				if (artist.trackIDs.length === 0) {
-					removeArtists.push(artist.id);
+					changes.removedArtists.push(artist);
 				} else {
-					updateArtists.push(artist);
+					changes.updateArtists.push(artist);
 				}
 			}
 		}
@@ -1304,13 +1330,13 @@ export class ScanService {
 		for (const album of albums) {
 			album.rootIDs = album.rootIDs.filter(r => r !== rootID);
 			if (album.rootIDs.length === 0) {
-				removeAlbums.push(album.id);
+				changes.removedAlbums.push(album);
 			} else {
 				album.trackIDs = album.trackIDs.filter(trackID => trackIDs.indexOf(trackID) < 0);
 				if (album.trackIDs.length === 0) {
-					removeAlbums.push(album.id);
+					changes.removedAlbums.push(album);
 				} else {
-					updateAlbums.push(album);
+					changes.updateAlbums.push(album);
 				}
 			}
 		}
@@ -1318,9 +1344,11 @@ export class ScanService {
 		await this.store.folderStore.removeByQuery({rootID});
 		await this.store.stateStore.removeByQuery({destIDs: trackIDs});
 		await this.store.stateStore.removeByQuery({destIDs: folderIDs});
-		await this.store.albumStore.remove(removeAlbums);
-		await this.store.artistStore.remove(removeArtists);
-		await this.store.albumStore.upsert(updateAlbums);
-		await this.store.artistStore.upsert(updateArtists);
+		await this.store.albumStore.remove(changes.removedAlbums.map(a => a.id));
+		await this.store.artistStore.remove(changes.removedArtists.map(a => a.id));
+		await this.store.albumStore.upsert(changes.updateAlbums);
+		await this.store.artistStore.upsert(changes.updateArtists);
+		await this.store.rootStore.remove(rootID);
+		return changes;
 	}
 }
