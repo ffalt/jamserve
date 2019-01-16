@@ -34,6 +34,7 @@ import {ThirdPartyConfig} from '../config/thirdparty.config';
 import {hashSaltPassword} from '../utils/salthash';
 import {randomString} from '../utils/random';
 import {ScanService} from './scan/scan.service';
+import {StatsService} from './stats/stats.service';
 
 export class Engine {
 	public ioService: IoService;
@@ -62,6 +63,7 @@ export class Engine {
 	public trackService: TrackService;
 	public artistService: ArtistService;
 	public albumService: AlbumService;
+	public statsService: StatsService;
 
 	constructor(public config: Config, public store: Store) {
 		this.audioModule = new AudioModule(ThirdPartyConfig);
@@ -78,7 +80,8 @@ export class Engine {
 		this.genreService = new GenreService(this.store.trackStore);
 		this.indexService = new IndexService(config.app.index, this.store.artistStore, this.store.folderStore, this.store.trackStore);
 		this.scanService = new ScanService(this.store, this.audioModule, this.imageModule, this.waveformService);
-		this.ioService = new IoService(this.store.rootStore, this.scanService, this.indexService, this.genreService);
+		this.statsService = new StatsService(this.store);
+		this.ioService = new IoService(this.store.rootStore, this.scanService, this.indexService, this.genreService, this.statsService);
 		this.downloadService = new DownloadService(this.store.trackStore);
 		this.chatService = new ChatService(config.app.chat);
 		this.nowPlayingService = new NowPlayingService(this.stateService);

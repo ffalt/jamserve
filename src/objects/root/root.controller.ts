@@ -69,12 +69,12 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 	}
 
 	async scanAll(req: JamRequest<{}>): Promise<void> {
-		this.ioService.refresh(); // do not wait
+		this.ioService.refresh();
 	}
 
 	async scan(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const root = await this.byID(req.query.id);
-		this.ioService.refreshRoot(root); // do not wait
+		this.ioService.refreshRoot(root);
 	}
 
 	async status(req: JamRequest<JamParameters.ID>): Promise<Jam.RootStatus> {
