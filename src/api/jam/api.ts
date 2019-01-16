@@ -24,6 +24,7 @@ import {BookmarkController} from '../../objects/bookmark/bookmark.controller';
 import {PlayQueueController} from '../../objects/playqueue/playqueue.controller';
 import {RadioController} from '../../objects/radio/radio.controller';
 import {JAMAPI_VERSION} from '../../version';
+import {StatsController} from '../../engine/stats/stats.controller';
 
 export interface JamRequest<T> {
 	query: T;
@@ -54,11 +55,13 @@ export class JamController {
 	trackController: TrackController;
 	userController: UserController;
 	waveformController: WaveformController;
+	statsController: StatsController;
 
 	constructor(private engine: Engine) {
 		this.streamController = new StreamController(this.engine.streamService, this.engine.nowPlayingService, this.engine.store);
 		this.chatController = new ChatController(this.engine.chatService);
 		this.genreController = new GenreController(engine.genreService);
+		this.statsController = new StatsController(engine.statsService);
 		this.nowPlayingController = new NowPlayingController(engine.nowPlayingService);
 		this.imageController = new ImageController(this.engine.store, this.engine.imageService);
 		this.downloadController = new DownloadController(this.engine.store, this.engine.downloadService);
