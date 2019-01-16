@@ -540,6 +540,10 @@ export declare namespace JamParameters {
 		 */
 		genre?: string;
 		/**
+		 * filter by level
+		 */
+		level?: number;
+		/**
 		 * filter by creation date (unix time)
 		 *
 		 * @minimum 0
@@ -1039,6 +1043,13 @@ export declare namespace JamParameters {
 	}
 
 	export interface Genres {
+		/**
+		 * filter by root id
+		 */
+		rootID?: string;
+	}
+
+	export interface Stats {
 		/**
 		 * filter by root id
 		 */

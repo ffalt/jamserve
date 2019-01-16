@@ -3680,6 +3680,9 @@
 				"parentID": {
 					"type": "string"
 				},
+				"level": {
+					"type": "number"
+				},
 				"type": {
 					"$ref": "#/definitions/Jam.FolderType"
 				},
@@ -3729,6 +3732,7 @@
 			"required": [
 				"created",
 				"id",
+				"level",
 				"name",
 				"type"
 			]
@@ -4285,6 +4289,32 @@
 			"required": [
 				"groups",
 				"lastModified"
+			]
+		},
+		"Jam.Stats": {
+			"type": "object",
+			"properties": {
+				"rootID": {
+					"type": "string"
+				},
+				"trackCount": {
+					"type": "number"
+				},
+				"folderCount": {
+					"type": "number"
+				},
+				"artistCount": {
+					"type": "number"
+				},
+				"albumCount": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"albumCount",
+				"artistCount",
+				"folderCount",
+				"trackCount"
 			]
 		},
 		"Jam.Roles": {

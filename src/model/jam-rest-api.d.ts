@@ -101,6 +101,15 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
+		 * various: get count stats for folders/tracks/albums/...
+		 */
+		'stats'?: {
+			operationId: 'stats.get'
+			params: JamParameters.Stats;
+			result: Jam.Stats;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
 		 * various: get list of tracks played by all users
 		 */
 		'nowPlaying/list'?: {

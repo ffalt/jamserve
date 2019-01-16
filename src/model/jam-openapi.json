@@ -480,6 +480,47 @@
 				]
 			}
 		},
+		"/stats": {
+			"get": {
+				"operationId": "statsController.get",
+				"description": "get count stats for folders/tracks/albums/...",
+				"tags": [
+					"various"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Stats"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "rootID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by root id",
+						"required": false
+					}
+				]
+			}
+		},
 		"/nowPlaying/list": {
 			"get": {
 				"operationId": "nowPlayingController.list",
@@ -1661,6 +1702,15 @@
 					},
 					{
 						"in": "query",
+						"name": "level",
+						"schema": {
+							"type": "number"
+						},
+						"description": "filter by level",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
@@ -1952,6 +2002,15 @@
 							"type": "string"
 						},
 						"description": "filter by genre",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "level",
+						"schema": {
+							"type": "number"
+						},
+						"description": "filter by level",
 						"required": false
 					},
 					{
@@ -13874,6 +13933,32 @@
 					"trackCount"
 				]
 			},
+			"Jam.Stats": {
+				"type": "object",
+				"properties": {
+					"rootID": {
+						"type": "string"
+					},
+					"trackCount": {
+						"type": "number"
+					},
+					"folderCount": {
+						"type": "number"
+					},
+					"artistCount": {
+						"type": "number"
+					},
+					"albumCount": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"albumCount",
+					"artistCount",
+					"folderCount",
+					"trackCount"
+				]
+			},
 			"Jam.NowPlaying": {
 				"type": "object",
 				"properties": {
@@ -15687,6 +15772,9 @@
 					"parentID": {
 						"type": "string"
 					},
+					"level": {
+						"type": "number"
+					},
 					"type": {
 						"$ref": "#/components/schemas/Jam.FolderType"
 					},
@@ -15736,6 +15824,7 @@
 				"required": [
 					"created",
 					"id",
+					"level",
 					"name",
 					"type"
 				]

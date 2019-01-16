@@ -266,6 +266,43 @@
 						"result"
 					]
 				},
+				"stats": {
+					"description": "various: get count stats for folders/tracks/albums/...",
+					"type": "object",
+					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"stats.get"
+							]
+						},
+						"params": {
+							"$ref": "#/definitions/JamParameters.Stats"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.Stats"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"operationId",
+						"params",
+						"result"
+					]
+				},
 				"nowPlaying/list": {
 					"description": "various: get list of tracks played by all users",
 					"type": "object",
@@ -8761,6 +8798,41 @@
 				"trackCount"
 			]
 		},
+		"JamParameters.Stats": {
+			"type": "object",
+			"properties": {
+				"rootID": {
+					"description": "filter by root id",
+					"type": "string"
+				}
+			}
+		},
+		"Jam.Stats": {
+			"type": "object",
+			"properties": {
+				"rootID": {
+					"type": "string"
+				},
+				"trackCount": {
+					"type": "number"
+				},
+				"folderCount": {
+					"type": "number"
+				},
+				"artistCount": {
+					"type": "number"
+				},
+				"albumCount": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"albumCount",
+				"artistCount",
+				"folderCount",
+				"trackCount"
+			]
+		},
 		"Jam.NowPlaying": {
 			"type": "object",
 			"properties": {
@@ -10670,6 +10742,9 @@
 				"parentID": {
 					"type": "string"
 				},
+				"level": {
+					"type": "number"
+				},
 				"type": {
 					"$ref": "#/definitions/Jam.FolderType"
 				},
@@ -10719,6 +10794,7 @@
 			"required": [
 				"created",
 				"id",
+				"level",
 				"name",
 				"type"
 			]
@@ -11191,6 +11267,10 @@
 					"description": "filter by genre",
 					"type": "string"
 				},
+				"level": {
+					"description": "filter by level",
+					"type": "number"
+				},
 				"newerThan": {
 					"description": "filter by creation date (unix time)",
 					"minimum": 0,
@@ -11344,6 +11424,10 @@
 				"genre": {
 					"description": "filter by genre",
 					"type": "string"
+				},
+				"level": {
+					"description": "filter by level",
+					"type": "number"
 				},
 				"newerThan": {
 					"description": "filter by creation date (unix time)",

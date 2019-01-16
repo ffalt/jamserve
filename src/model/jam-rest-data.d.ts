@@ -150,6 +150,7 @@ export declare namespace Jam {
 
 	export interface Folder extends Base {
 		parentID?: string;
+		level: number;
 		type: FolderType;
 		tag?: FolderTag;
 		health?: FolderHealth;
@@ -293,6 +294,14 @@ export declare namespace Jam {
 	export interface ArtistIndex {
 		lastModified: number;
 		groups: Array<ArtistIndexGroup>;
+	}
+
+	export interface Stats {
+		rootID?: string;
+		trackCount: number;
+		folderCount: number;
+		artistCount: number;
+		albumCount: number;
 	}
 
 	export interface Roles {
