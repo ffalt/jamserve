@@ -1778,7 +1778,7 @@ export class SubsonicApi {
 
 		Returns a <subsonic-response> element with a nested <scanStatus> element on success.
 		 */
-		this.engine.ioService.refresh(); // do not wait
+		this.engine.ioService.refresh();
 	}
 
 	async getArtist(req: ApiOptions<SubsonicParameters.ID>): Promise<{ artist: Subsonic.ArtistWithAlbumsID3 }> {
