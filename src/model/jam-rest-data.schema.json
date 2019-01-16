@@ -3302,10 +3302,13 @@
 				"releaseTrackID": {
 					"type": "string"
 				},
-				"artistID": {
+				"releaseGroupID": {
 					"type": "string"
 				},
-				"albumID": {
+				"releaseID": {
+					"type": "string"
+				},
+				"artistID": {
 					"type": "string"
 				}
 			}
@@ -3758,6 +3761,20 @@
 				"name"
 			]
 		},
+		"Jam.FolderMBTag": {
+			"type": "object",
+			"properties": {
+				"artistID": {
+					"type": "string"
+				},
+				"releaseID": {
+					"type": "string"
+				},
+				"releaseGroupID": {
+					"type": "string"
+				}
+			}
+		},
 		"Jam.FolderTag": {
 			"type": "object",
 			"properties": {
@@ -3786,15 +3803,7 @@
 					"type": "number"
 				},
 				"musicbrainz": {
-					"type": "object",
-					"properties": {
-						"artistID": {
-							"type": "string"
-						},
-						"albumID": {
-							"type": "string"
-						}
-					}
+					"$ref": "#/definitions/Jam.FolderMBTag"
 				}
 			}
 		},

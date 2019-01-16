@@ -45,8 +45,9 @@ export declare namespace Jam {
 		trackID?: string;
 		recordingID?: string;
 		releaseTrackID?: string;
+		releaseGroupID?: string;
+		releaseID?: string;
 		artistID?: string;
-		albumID?: string;
 	}
 
 	export interface TrackTag {
@@ -168,6 +169,12 @@ export declare namespace Jam {
 		name: string;
 	}
 
+	export interface FolderMBTag {
+		artistID?: string;
+		releaseID?: string;
+		releaseGroupID?: string;
+	}
+
 	export interface FolderTag {
 		album?: string;
 		albumType?: AlbumType;
@@ -175,10 +182,7 @@ export declare namespace Jam {
 		artistSort?: string;
 		genre?: string;
 		year?: number;
-		musicbrainz?: {
-			artistID?: string;
-			albumID?: string;
-		};
+		musicbrainz?: FolderMBTag;
 	}
 
 	export interface FolderProblem {

@@ -46,8 +46,9 @@ const type_User = {
 
 const type_FolderTag = {
 	properties: {
-		tracks: type_int,
 		level: type_int,
+		trackCount: type_int,
+		folderCount: type_int,
 		type: type_key,
 		genre: type_key,
 		album: type_key,
@@ -58,6 +59,7 @@ const type_FolderTag = {
 		image: type_key,
 		year: type_int,
 		mbAlbumID: type_key,
+		mbReleaseGroupID: type_key,
 		mbAlbumType: type_key,
 		mbArtistID: type_key
 	}

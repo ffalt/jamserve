@@ -14130,10 +14130,13 @@
 					"releaseTrackID": {
 						"type": "string"
 					},
-					"artistID": {
+					"releaseGroupID": {
 						"type": "string"
 					},
-					"albumID": {
+					"releaseID": {
+						"type": "string"
+					},
+					"artistID": {
 						"type": "string"
 					}
 				}
@@ -15944,15 +15947,21 @@
 						"type": "number"
 					},
 					"musicbrainz": {
-						"type": "object",
-						"properties": {
-							"artistID": {
-								"type": "string"
-							},
-							"albumID": {
-								"type": "string"
-							}
-						}
+						"$ref": "#/components/schemas/Jam.FolderMBTag"
+					}
+				}
+			},
+			"Jam.FolderMBTag": {
+				"type": "object",
+				"properties": {
+					"artistID": {
+						"type": "string"
+					},
+					"releaseID": {
+						"type": "string"
+					},
+					"releaseGroupID": {
+						"type": "string"
 					}
 				}
 			},

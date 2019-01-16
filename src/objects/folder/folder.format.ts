@@ -27,11 +27,12 @@ export function formatAlbumFolderInfo(info: MetaInfo): Jam.AlbumFolderInfo {
 }
 
 function formatFolderTag(folder: Folder): Jam.FolderTag {
-	let mbz: any = {
+	let mbz: Jam.FolderMBTag | undefined = {
 		artistID: folder.tag.mbArtistID,
-		albumID: folder.tag.mbAlbumID
+		releaseID: folder.tag.mbAlbumID,
+		releaseGroupID: folder.tag.mbReleaseGroupID
 	};
-	if (!Object.keys(mbz).find(key => !!mbz[key])) {
+	if (!Object.keys(mbz).find(key => !!(<any>mbz)[key])) {
 		mbz = undefined;
 	}
 	return {

@@ -149,6 +149,7 @@ interface MetaStat {
 	genre?: string;
 	mbArtistID?: string;
 	mbAlbumID?: string;
+	mbReleaseGroupID?: string;
 	mbAlbumType?: string;
 	year?: number;
 	images: Array<string>;
@@ -308,6 +309,7 @@ export class ScanService {
 			genre: { [key: string]: { count: number, val: string }; };
 			mbArtistID: { [key: string]: { count: number, val: string }; };
 			mbAlbumID: { [key: string]: { count: number, val: string }; };
+			mbReleaseGroupID: { [key: string]: { count: number, val: string }; };
 			mbAlbumType: { [key: string]: { count: number, val: string }; };
 			year: { [key: string]: { count: number, val: string }; };
 		} = {
@@ -317,6 +319,7 @@ export class ScanService {
 			genre: {},
 			year: {},
 			mbArtistID: {},
+			mbReleaseGroupID: {},
 			mbAlbumID: {},
 			mbAlbumType: {}
 		};
@@ -369,6 +372,11 @@ export class ScanService {
 					stats.mbAlbumID[slug] = stats.mbAlbumID[slug] || {count: 0, val: slug};
 					stats.mbAlbumID[slug].count += 1;
 				}
+				if (tracktag.mbReleaseGroupID) {
+					const slug = tracktag.mbReleaseGroupID.split(' ')[0];
+					stats.mbReleaseGroupID[slug] = stats.mbReleaseGroupID[slug] || {count: 0, val: slug};
+					stats.mbReleaseGroupID[slug].count += 1;
+				}
 			} else if (file.type === FileTyp.IMAGE) {
 				images.push(file.name);
 			}
@@ -420,12 +428,14 @@ export class ScanService {
 		const years = convert2Numlist(stats.year);
 		const mbArtistIDs = convert2list(stats.mbArtistID);
 		const mbAlbumIDs = convert2list(stats.mbAlbumID);
+		const mbReleaseGroupIDs = convert2list(stats.mbReleaseGroupID);
 		const mbAlbumTypes = convert2list(stats.mbAlbumType);
 		const album = getMostUsedTagValue<string>(albums, extractAlbumName(path.basename(dir.name)));
 		const artist = getMostUsedTagValue<string>(artists, cVariousArtist);
 		const artistSort = getMostUsedTagValue<string>(artistSorts);
 		const genre = getMostUsedTagValue<string>(genres);
 		const mbAlbumID = getMostUsedTagValue<string>(mbAlbumIDs);
+		const mbReleaseGroupID = getMostUsedTagValue<string>(mbReleaseGroupIDs);
 		const mbAlbumType = getMostUsedTagValue<string>(mbAlbumTypes);
 		const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs);
 		const year = getMostUsedTagValue<number>(years);
@@ -467,6 +477,7 @@ export class ScanService {
 			artistSort,
 			genre,
 			mbAlbumID,
+			mbReleaseGroupID,
 			mbAlbumType,
 			mbArtistID,
 			year
@@ -736,6 +747,7 @@ export class ScanService {
 			image: metaStat.image,
 			genre: metaStat.genre,
 			mbAlbumID: metaStat.mbAlbumID,
+			mbReleaseGroupID: metaStat.mbReleaseGroupID,
 			mbAlbumType: metaStat.mbAlbumType,
 			mbArtistID: metaStat.mbArtistID,
 			year: (nameSplit.year !== undefined) ? nameSplit.year : metaStat.year

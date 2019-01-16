@@ -28,6 +28,7 @@ export interface FolderTag {
 	image?: string;
 	year?: number;
 	mbAlbumID?: string;
+	mbReleaseGroupID?: string;
 	mbAlbumType?: string;
 	mbArtistID?: string;
 }

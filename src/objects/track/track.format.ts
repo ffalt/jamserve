@@ -6,9 +6,10 @@ export function formatTrackTag(tag: TrackTag): Jam.TrackTag {
 	let mbz: Jam.TrackMBTag | undefined = {
 		recordingID: tag.mbRecordingID,
 		releaseTrackID: tag.mbReleaseTrackID,
+		releaseGroupID: tag.mbReleaseGroupID,
 		trackID: tag.mbTrackID,
 		artistID: tag.mbArtistID,
-		albumID: tag.mbAlbumID
+		releaseID: tag.mbAlbumID
 	};
 	if (!Object.keys(mbz).find(key => !!(<any>mbz)[key])) {
 		mbz = undefined;
