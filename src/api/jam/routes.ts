@@ -68,6 +68,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/stats', async (req, res) => {
+		const options: JamRequest<JamParameters.Stats> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.Stats = await api.statsController.get(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/nowPlaying/list', async (req, res) => {
 		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
 		const result: Array<Jam.NowPlaying> = await api.nowPlayingController.list(options);
