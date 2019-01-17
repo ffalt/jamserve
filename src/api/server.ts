@@ -23,8 +23,8 @@ export class Server {
 		this.engine = engine;
 		const app: express.Application = express();
 		app.use(bodyParser.urlencoded({extended: true, limit: '10mb'}));
-		app.use(bodyParser.json({}));
-		app.use(bodyParser.json({type: 'application/vnd.api+json'}));
+		app.use(bodyParser.json({limit: '10mb'}));
+		app.use(bodyParser.json({type: 'application/vnd.api+json', limit: '10mb'}));
 
 		app.use(helmet());
 
