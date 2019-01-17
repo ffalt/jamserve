@@ -349,6 +349,12 @@
 					"items": {
 						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
 					}
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Tag"
+					}
 				}
 			},
 			"required": [
@@ -409,6 +415,12 @@
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
+					}
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Tag"
 					}
 				}
 			},
@@ -523,6 +535,21 @@
 				"label"
 			]
 		},
+		"MusicBrainz.Tag": {
+			"type": "object",
+			"properties": {
+				"count": {
+					"type": "number"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"count",
+				"name"
+			]
+		},
 		"MusicBrainz.ReleaseBase": {
 			"type": "object",
 			"properties": {
@@ -604,19 +631,7 @@
 				"tags": {
 					"type": "array",
 					"items": {
-						"type": "object",
-						"properties": {
-							"count": {
-								"type": "number"
-							},
-							"name": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"count",
-							"name"
-						]
+						"$ref": "#/definitions/MusicBrainz.Tag"
 					}
 				},
 				"releaseEvents": {
@@ -661,7 +676,6 @@
 				"releaseGroup",
 				"sortName",
 				"status",
-				"tags",
 				"textRepresentation",
 				"title",
 				"trackCount"
@@ -760,19 +774,7 @@
 				"tags": {
 					"type": "array",
 					"items": {
-						"type": "object",
-						"properties": {
-							"count": {
-								"type": "number"
-							},
-							"name": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"count",
-							"name"
-						]
+						"$ref": "#/definitions/MusicBrainz.Tag"
 					}
 				},
 				"releaseEvents": {
@@ -818,7 +820,6 @@
 				"releaseGroup",
 				"sortName",
 				"status",
-				"tags",
 				"textRepresentation",
 				"title",
 				"trackCount"
@@ -1774,6 +1775,12 @@
 					}
 				},
 				"TDR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDEN": {
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/ID3v2FrameValues.Text"

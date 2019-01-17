@@ -151,6 +151,13 @@ const type_MusicBrainz_ReleaseMedia = {
 	}
 };
 
+const type_MusicBrainz_Tag = {
+	properties: {
+		count: type_int,
+		name: type_string
+	}
+};
+
 const type_MusicBrainz_ReleaseGroupBase = {
 	properties: {
 		id: type_key,
@@ -162,7 +169,8 @@ const type_MusicBrainz_ReleaseGroupBase = {
 		secondaryTypes: type_key,
 		secondaryTypeIds: type_key,
 		rating: type_MusicBrainz_Rating,
-		artistCredit: type_MusicBrainz_ArtistCredit
+		artistCredit: type_MusicBrainz_ArtistCredit,
+		tags: type_MusicBrainz_Tag
 	}
 };
 
@@ -232,12 +240,7 @@ const type_MusicBrainz_Release = {
 		artistCredit: type_MusicBrainz_ArtistCredit,
 		releaseGroup: type_MusicBrainz_ReleaseGroupBase,
 		labelInfo: type_MusicBrainz_Label,
-		tags: {
-			properties: {
-				count: type_int,
-				name: type_string
-			}
-		},
+		tags: type_MusicBrainz_Tag,
 		releaseEvents: type_MusicBrainz_ReleaseEvent,
 		coverArtArchive: {
 			properties: {

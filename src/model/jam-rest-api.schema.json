@@ -7942,19 +7942,7 @@
 				"tags": {
 					"type": "array",
 					"items": {
-						"type": "object",
-						"properties": {
-							"count": {
-								"type": "number"
-							},
-							"name": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"count",
-							"name"
-						]
+						"$ref": "#/definitions/MusicBrainz.Tag"
 					}
 				},
 				"releaseEvents": {
@@ -8000,7 +7988,6 @@
 				"releaseGroup",
 				"sortName",
 				"status",
-				"tags",
 				"textRepresentation",
 				"title",
 				"trackCount"
@@ -8299,12 +8286,33 @@
 					"items": {
 						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
 					}
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Tag"
+					}
 				}
 			},
 			"required": [
 				"id",
 				"primaryType",
 				"title"
+			]
+		},
+		"MusicBrainz.Tag": {
+			"type": "object",
+			"properties": {
+				"count": {
+					"type": "number"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"count",
+				"name"
 			]
 		},
 		"MusicBrainz.Label": {
@@ -8459,6 +8467,12 @@
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
+					}
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Tag"
 					}
 				}
 			},
@@ -9394,6 +9408,12 @@
 					}
 				},
 				"TDR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2FrameValues.Text"
+					}
+				},
+				"TDEN": {
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/ID3v2FrameValues.Text"

@@ -88,6 +88,8 @@ export declare namespace MusicBrainz {
 		secondaryTypeIds?: Array<string>;
 		rating?: Rating;
 		artistCredit?: Array<ArtistCredit>;
+		tags?: Array<Tag>;
+
 	}
 
 	export interface ReleaseGroup extends ReleaseGroupBase {
@@ -124,6 +126,11 @@ export declare namespace MusicBrainz {
 		}>;
 	}
 
+	export interface Tag {
+		count: number;
+		name: string;
+	}
+
 	export interface ReleaseBase {
 		id: string;
 		title: string;
@@ -147,10 +154,7 @@ export declare namespace MusicBrainz {
 		artistCredit: Array<ArtistCredit>;
 		releaseGroup: ReleaseGroupBase;
 		labelInfo: Array<Label>;
-		tags: Array<{
-			count: number;
-			name: string;
-		}>;
+		tags?: Array<Tag>;
 		releaseEvents: Array<ReleaseEvent>;
 		coverArtArchive?: {
 			front: boolean;
