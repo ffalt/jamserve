@@ -224,6 +224,7 @@ export namespace ID3v2FrameValues {
 		'TDLY'?: Array<Text>;
 		'TDOR'?: Array<Text>;
 		'TDR'?: Array<Text>;
+		'TDEN'?: Array<Text>;
 		'TDRC'?: Array<Text>;
 		'TDRL'?: Array<Text>;
 		'TDS'?: Array<Text>;
