@@ -1062,7 +1062,7 @@ export declare namespace JamParameters {
 		rootID?: string;
 	}
 
-	export interface BrainzSearch {
+	export interface MusicBrainzSearch {
 		/**
 		 * search by musicbrainz type
 		 */
@@ -1091,7 +1091,14 @@ export declare namespace JamParameters {
 		tracks?: number;
 	}
 
-	export interface BrainzLookup extends ID {
+	export interface AcousticBrainzLookup extends ID {
+		/**
+		 * page parameter if more than one acousticbrainz info is available
+		 */
+		nr?: number;
+	}
+
+	export interface MusicBrainzLookup extends ID {
 		/**
 		 * lookup by musicbrainz type
 		 */
@@ -1195,6 +1202,7 @@ export declare namespace JamParameters {
 		 */
 		tag: Jam.ID3Tag;
 	}
+
 	//
 	// export interface TagID3sUpdate {
 	// 	/**

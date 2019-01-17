@@ -119,18 +119,18 @@
 						"result"
 					]
 				},
-				"brainz/lookup": {
+				"musicbrainz/lookup": {
 					"description": "metadata: lookup musicbrainz data",
 					"type": "object",
 					"properties": {
 						"operationId": {
 							"type": "string",
 							"enum": [
-								"metadata.brainzLookup"
+								"metadata.musicbrainzLookup"
 							]
 						},
 						"params": {
-							"$ref": "#/definitions/JamParameters.BrainzLookup"
+							"$ref": "#/definitions/JamParameters.MusicBrainzLookup"
 						},
 						"result": {
 							"$ref": "#/definitions/MusicBrainz.Response"
@@ -156,21 +156,58 @@
 						"result"
 					]
 				},
-				"brainz/search": {
+				"musicbrainz/search": {
 					"description": "metadata: search musicbrainz data",
 					"type": "object",
 					"properties": {
 						"operationId": {
 							"type": "string",
 							"enum": [
-								"metadata.brainzSearch"
+								"metadata.musicbrainzSearch"
 							]
 						},
 						"params": {
-							"$ref": "#/definitions/JamParameters.BrainzSearch"
+							"$ref": "#/definitions/JamParameters.MusicBrainzSearch"
 						},
 						"result": {
 							"$ref": "#/definitions/MusicBrainz.Response"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"operationId",
+						"params",
+						"result"
+					]
+				},
+				"acousticbrainz/lookup": {
+					"description": "metadata: lookup acousticbrainz data",
+					"type": "object",
+					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"metadata.acousticbrainzLookup"
+							]
+						},
+						"params": {
+							"$ref": "#/definitions/JamParameters.AcousticBrainzLookup"
+						},
+						"result": {
+							"$ref": "#/definitions/AcousticBrainz.Response"
 						},
 						"errors": {
 							"anyOf": [
@@ -7787,7 +7824,7 @@
 				"year"
 			]
 		},
-		"JamParameters.BrainzLookup": {
+		"JamParameters.MusicBrainzLookup": {
 			"type": "object",
 			"properties": {
 				"type": {
@@ -8542,7 +8579,7 @@
 				"video"
 			]
 		},
-		"JamParameters.BrainzSearch": {
+		"JamParameters.MusicBrainzSearch": {
 			"type": "object",
 			"properties": {
 				"type": {
@@ -8572,6 +8609,33 @@
 			},
 			"required": [
 				"type"
+			]
+		},
+		"JamParameters.AcousticBrainzLookup": {
+			"type": "object",
+			"properties": {
+				"nr": {
+					"description": "page parameter if more than one acousticbrainz info is available",
+					"type": "number"
+				},
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"AcousticBrainz.Response": {
+			"type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"status"
 			]
 		},
 		"JamParameters.AutoComplete": {

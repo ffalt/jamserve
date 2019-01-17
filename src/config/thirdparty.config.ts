@@ -16,6 +16,9 @@ export interface ThirdpartyToolsConfig {
 	musicbrainz: {
 		userAgent: string;
 	};
+	acousticbrainz: {
+		userAgent: string;
+	};
 	chartlyrics: {
 		userAgent: string;
 	};
@@ -42,6 +45,12 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		open music encyclopedia
 	 */
 	musicbrainz: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
+	/*
+		AcousticBrainz
+		https://acousticbrainz.org/
+		crowd sourced acoustic information
+ 	*/
+	acousticbrainz: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
 	/*
 		Chart Lyrics
 		http://www.chartlyrics.com/

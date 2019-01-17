@@ -17,6 +17,8 @@ import fse from 'fs-extra';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
 import {probe, ProbeResult} from './tools/ffprobe';
 import {ID3v1_GENRES} from 'jamp3/dist/lib/id3v1/id3v1_consts';
+import {AcousticbrainzClient} from './clients/acousticbrainz-client';
+import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -273,10 +275,12 @@ export class AudioModule {
 	acoustid: AcoustidClient;
 	lastFM: LastFMClient;
 	chartLyrics: ChartLyricsClient;
+	acousticbrainz: AcousticbrainzClient;
 	private isSaving: { [filename: string]: boolean } = {};
 
 	constructor(tools: ThirdpartyToolsConfig) {
 		this.musicbrainz = new MusicbrainzClient({userAgent: tools.musicbrainz.userAgent, retryOn: true});
+		this.acousticbrainz = new AcousticbrainzClient({userAgent: tools.acousticbrainz.userAgent, retryOn: true});
 		this.lastFM = new LastFMClient({key: tools.lastfm.apiKey, userAgent: tools.lastfm.userAgent});
 		this.acoustid = new AcoustidClient({key: tools.acoustid.apiKey, userAgent: tools.acoustid.userAgent});
 		this.chartLyrics = new ChartLyricsClient(tools.chartlyrics.userAgent);
@@ -457,6 +461,10 @@ export class AudioModule {
 
 	async musicbrainzLookup(type: string, id: string, inc: string | undefined): Promise<MusicBrainz.Response> {
 		return this.musicbrainz.lookup({type: type, id, inc});
+	}
+
+	async acousticbrainzLookup(id: string, nr: number | undefined): Promise<AcousticBrainz.Response> {
+		return this.acousticbrainz.highLevel(id, nr);
 	}
 
 	async musicbrainzAlbumByFolder(folder: Folder): Promise<MusicBrainz.Response> {

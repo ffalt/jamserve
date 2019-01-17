@@ -170,9 +170,9 @@
 				]
 			}
 		},
-		"/brainz/lookup": {
+		"/musicbrainz/lookup": {
 			"get": {
-				"operationId": "metadataController.brainzLookup",
+				"operationId": "metadataController.musicbrainzLookup",
 				"description": "lookup musicbrainz data",
 				"tags": [
 					"metadata"
@@ -229,9 +229,9 @@
 				]
 			}
 		},
-		"/brainz/search": {
+		"/musicbrainz/search": {
 			"get": {
-				"operationId": "metadataController.brainzSearch",
+				"operationId": "metadataController.musicbrainzSearch",
 				"description": "search musicbrainz data",
 				"tags": [
 					"metadata"
@@ -311,6 +311,56 @@
 						},
 						"description": "search by number of release tracks",
 						"required": false
+					}
+				]
+			}
+		},
+		"/acousticbrainz/lookup": {
+			"get": {
+				"operationId": "metadataController.acousticbrainzLookup",
+				"description": "lookup acousticbrainz data",
+				"tags": [
+					"metadata"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AcousticBrainz.Response"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "nr",
+						"schema": {
+							"type": "number"
+						},
+						"description": "page parameter if more than one acousticbrainz info is available",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
 					}
 				]
 			}
@@ -13861,6 +13911,17 @@
 					"length",
 					"title",
 					"video"
+				]
+			},
+			"AcousticBrainz.Response": {
+				"type": "object",
+				"properties": {
+					"status": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"status"
 				]
 			},
 			"Jam.AutoComplete": {

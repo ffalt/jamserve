@@ -90,6 +90,7 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {LastFM} from '../../model/lastfm-rest-data';
 import {Acoustid} from '../../model/acoustid-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
+import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {AuthService} from '../auth/auth.service';
 import {HttpService} from '../http/http.service';
 import {JamServiceBase} from './jam.service.base';

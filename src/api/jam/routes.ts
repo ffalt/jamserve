@@ -3,6 +3,7 @@
 import {Jam} from '../../model/jam-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {Acoustid} from '../../model/acoustid-rest-data';
+import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {LastFM} from '../../model/lastfm-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {JamController, JamRequest} from './api';
@@ -44,15 +45,21 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/brainz/lookup', async (req, res) => {
-		const options: JamRequest<JamParameters.BrainzLookup> = {query: req.query, user: req.user, client: req.client};
-		const result: MusicBrainz.Response = await api.metadataController.brainzLookup(options);
+	register.get('/musicbrainz/lookup', async (req, res) => {
+		const options: JamRequest<JamParameters.MusicBrainzLookup> = {query: req.query, user: req.user, client: req.client};
+		const result: MusicBrainz.Response = await api.metadataController.musicbrainzLookup(options);
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/brainz/search', async (req, res) => {
-		const options: JamRequest<JamParameters.BrainzSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: MusicBrainz.Response = await api.metadataController.brainzSearch(options);
+	register.get('/musicbrainz/search', async (req, res) => {
+		const options: JamRequest<JamParameters.MusicBrainzSearch> = {query: req.query, user: req.user, client: req.client};
+		const result: MusicBrainz.Response = await api.metadataController.musicbrainzSearch(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/acousticbrainz/lookup', async (req, res) => {
+		const options: JamRequest<JamParameters.AcousticBrainzLookup> = {query: req.query, user: req.user, client: req.client};
+		const result: AcousticBrainz.Response = await api.metadataController.acousticbrainzLookup(options);
 		await ApiResponder.data(res, result);
 	});
 

@@ -67,19 +67,28 @@ export interface JamApi {
 		/**
 		 * metadata: lookup musicbrainz data
 		 */
-		'brainz/lookup'?: {
-			operationId: 'metadata.brainzLookup'
-			params: JamParameters.BrainzLookup;
+		'musicbrainz/lookup'?: {
+			operationId: 'metadata.musicbrainzLookup'
+			params: JamParameters.MusicBrainzLookup;
 			result: Jam.MusicBrainzResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
 		 * metadata: search musicbrainz data
 		 */
-		'brainz/search'?: {
-			operationId: 'metadata.brainzSearch'
-			params: JamParameters.BrainzSearch;
+		'musicbrainz/search'?: {
+			operationId: 'metadata.musicbrainzSearch'
+			params: JamParameters.MusicBrainzSearch;
 			result: Jam.MusicBrainzResponse;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
+		 * metadata: lookup acousticbrainz data
+		 */
+		'acousticbrainz/lookup'?: {
+			operationId: 'metadata.acousticbrainzLookup'
+			params: JamParameters.AcousticBrainzLookup;
+			result: Jam.AcousticBrainzResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 

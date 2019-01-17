@@ -3151,6 +3151,17 @@
 				"status"
 			]
 		},
+		"AcousticBrainz.Response": {
+			"type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"status"
+			]
+		},
 		"Jam.AlbumType": {
 			"enum": [
 				"album",
@@ -4622,6 +4633,17 @@
 				}
 			}
 		},
+		"Jam.AcousticBrainzResponse": {
+			"type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"status"
+			]
+		},
 		"Jam.MusicBrainzResponse": {
 			"type": "object",
 			"properties": {
@@ -4708,6 +4730,9 @@
 		"Jam.ExternalFormats": {
 			"type": "object",
 			"properties": {
+				"acousticbrainz": {
+					"$ref": "#/definitions/AcousticBrainz.Response"
+				},
 				"musicbrainz": {
 					"$ref": "#/definitions/MusicBrainz.Response"
 				},
@@ -4719,6 +4744,7 @@
 				}
 			},
 			"required": [
+				"acousticbrainz",
 				"acoustid",
 				"lastfm",
 				"musicbrainz"
