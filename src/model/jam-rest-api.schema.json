@@ -8630,12 +8630,459 @@
 		"AcousticBrainz.Response": {
 			"type": "object",
 			"properties": {
-				"status": {
+				"highlevel": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevel"
+				},
+				"metadata": {
+					"$ref": "#/definitions/AcousticBrainz.MetaData"
+				}
+			}
+		},
+		"AcousticBrainz.HighLevel": {
+			"type": "object",
+			"additionalProperties": {
+				"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+			}
+		},
+		"AcousticBrainz.HighLevelSection": {
+			"type": "object",
+			"properties": {
+				"all": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "number"
+					}
+				},
+				"probability": {
+					"type": "number"
+				},
+				"value": {
+					"type": "string"
+				},
+				"version": {
+					"$ref": "#/definitions/AcousticBrainz.Version"
+				}
+			},
+			"required": [
+				"all",
+				"probability",
+				"value",
+				"version"
+			]
+		},
+		"AcousticBrainz.Version": {
+			"type": "object",
+			"properties": {
+				"essentia": {
+					"type": "string"
+				},
+				"essentia_build_sha": {
+					"type": "string"
+				},
+				"essentia_git_sha": {
+					"type": "string"
+				},
+				"extractor": {
+					"type": "string"
+				},
+				"gaia": {
+					"type": "string"
+				},
+				"gaia_git_sha": {
+					"type": "string"
+				},
+				"models_essentia_git_sha": {
 					"type": "string"
 				}
 			},
 			"required": [
-				"status"
+				"essentia",
+				"essentia_build_sha",
+				"essentia_git_sha",
+				"extractor",
+				"gaia",
+				"gaia_git_sha",
+				"models_essentia_git_sha"
+			]
+		},
+		"AcousticBrainz.MetaData": {
+			"type": "object",
+			"properties": {
+				"audio_properties": {
+					"type": "object",
+					"properties": {
+						"analysis_sample_rate": {
+							"type": "number"
+						},
+						"bit_rate": {
+							"type": "number"
+						},
+						"codec": {
+							"type": "string"
+						},
+						"downmix": {
+							"type": "string"
+						},
+						"equal_loudness": {
+							"type": "number"
+						},
+						"length": {
+							"type": "number"
+						},
+						"lossless": {
+							"type": "number"
+						},
+						"md5_encoded": {
+							"type": "string"
+						},
+						"replay_gain": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"analysis_sample_rate",
+						"bit_rate",
+						"codec",
+						"downmix",
+						"equal_loudness",
+						"length",
+						"lossless",
+						"md5_encoded",
+						"replay_gain"
+					]
+				},
+				"tags": {
+					"type": "object",
+					"properties": {
+						"acoustid_id": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"album": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"albumartist": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"albumartistsort": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"artist": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"artists": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"artistsort": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"asin": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"barcode": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"catalognumber": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"composer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"composersort": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"date": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"discnumber": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"discsubtitle": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"disctotal": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"engineer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"file_name": {
+							"type": "string"
+						},
+						"isrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"label": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"language": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"lyricist": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"media": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"mixer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_albumartistid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_albumid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_artistid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_recordingid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_releasegroupid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_releasetrackid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_workid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"originaldate": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"performer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"producer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"releasecountry": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"releasestatus": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"releasetype": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"script": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"title": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"totaldiscs": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"totaltracks": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"tracknumber": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"tracktotal": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"work": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": [
+						"acoustid_id",
+						"album",
+						"albumartist",
+						"albumartistsort",
+						"artist",
+						"artists",
+						"artistsort",
+						"asin",
+						"barcode",
+						"catalognumber",
+						"composer",
+						"composersort",
+						"date",
+						"discnumber",
+						"discsubtitle",
+						"disctotal",
+						"engineer",
+						"file_name",
+						"isrc",
+						"label",
+						"language",
+						"lyricist",
+						"media",
+						"mixer",
+						"musicbrainz_albumartistid",
+						"musicbrainz_albumid",
+						"musicbrainz_artistid",
+						"musicbrainz_recordingid",
+						"musicbrainz_releasegroupid",
+						"musicbrainz_releasetrackid",
+						"musicbrainz_workid",
+						"originaldate",
+						"performer",
+						"producer",
+						"releasecountry",
+						"releasestatus",
+						"releasetype",
+						"script",
+						"title",
+						"totaldiscs",
+						"totaltracks",
+						"tracknumber",
+						"tracktotal",
+						"work"
+					]
+				},
+				"version": {
+					"type": "object",
+					"properties": {
+						"highlevel": {
+							"$ref": "#/definitions/AcousticBrainz.Version"
+						},
+						"lowlevel": {
+							"$ref": "#/definitions/AcousticBrainz.Version"
+						}
+					},
+					"required": [
+						"highlevel",
+						"lowlevel"
+					]
+				}
+			},
+			"required": [
+				"audio_properties",
+				"tags",
+				"version"
 			]
 		},
 		"JamParameters.AutoComplete": {
