@@ -21,13 +21,13 @@ export function fileSuffix(filename: string): string {
 
 export function replaceFileSystemChars(s: string, replace: string): string {
 	return s.toString()
-		.replace(/:/g, ' - ').replace(/  /g, ' ')
+		.replace(/:/g, ' - ')
 		.replace(/[\?\/!\\]/g, replace);
 }
 
 export function cleanFolderSystemChars(s: string, replace: string): string {
 	return s.toString()
-		.replace(/:/g, ' - ').replace(/  /g, ' ')
+		.replace(/:/g, ' -')
 		.replace(/[\.\*\?\/!\\]/g, replace);
 }
 
