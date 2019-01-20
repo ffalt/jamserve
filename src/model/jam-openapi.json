@@ -10919,222 +10919,52 @@
 				}
 			}
 		},
+		"/bookmark/create": {
+			"post": {
+				"operationId": "bookmarkController.create",
+				"description": "create a bookmark",
+				"tags": [
+					"bookmark"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Bookmark"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.BookmarkCreate"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/bookmark/delete": {
 			"post": {
 				"operationId": "bookmarkController.delete",
 				"description": "delete a bookmark",
 				"tags": [
 					"bookmark"
-				],
-				"responses": {
-					"200": {
-						"description": "ok"
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ID"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/podcast/delete": {
-			"post": {
-				"operationId": "podcastController.delete",
-				"tags": [
-					"podcast"
-				],
-				"responses": {
-					"200": {
-						"description": "ok"
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ID"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/chat/delete": {
-			"post": {
-				"operationId": "chatController.delete",
-				"tags": [
-					"chat"
-				],
-				"responses": {
-					"200": {
-						"description": "ok"
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ChatDelete"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/playlist/delete": {
-			"post": {
-				"operationId": "playlistController.delete",
-				"tags": [
-					"playlist"
-				],
-				"responses": {
-					"200": {
-						"description": "ok"
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ID"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/user/delete": {
-			"post": {
-				"operationId": "userController.delete",
-				"tags": [
-					"user"
-				],
-				"responses": {
-					"200": {
-						"description": "ok"
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ID"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/root/delete": {
-			"post": {
-				"operationId": "rootController.delete",
-				"tags": [
-					"root"
-				],
-				"responses": {
-					"200": {
-						"description": "ok"
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ID"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/radio/delete": {
-			"post": {
-				"operationId": "radioController.delete",
-				"tags": [
-					"radio"
 				],
 				"responses": {
 					"200": {
@@ -11191,6 +11021,150 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.ChatNew"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/chat/delete": {
+			"post": {
+				"operationId": "chatController.delete",
+				"tags": [
+					"chat"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ChatDelete"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/radio/create": {
+			"post": {
+				"operationId": "radioController.create",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Radio"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.RadioNew"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/radio/update": {
+			"post": {
+				"operationId": "radioController.update",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.RadioUpdate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/radio/delete": {
+			"post": {
+				"operationId": "radioController.delete",
+				"tags": [
+					"radio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
 							}
 						}
 					}
@@ -11304,11 +11278,11 @@
 				}
 			}
 		},
-		"/radio/update": {
+		"/track/name/update": {
 			"post": {
-				"operationId": "radioController.update",
+				"operationId": "trackController.nameUpdate",
 				"tags": [
-					"radio"
+					"track"
 				],
 				"responses": {
 					"200": {
@@ -11328,11 +11302,12 @@
 					}
 				},
 				"requestBody": {
+					"description": "Rename a track file",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/JamParameters.RadioUpdate"
+								"$ref": "#/components/schemas/JamParameters.TrackEditName"
 							}
 						}
 					}
@@ -11734,85 +11709,6 @@
 				}
 			}
 		},
-		"/bookmark/create": {
-			"post": {
-				"operationId": "bookmarkController.create",
-				"description": "create a bookmark",
-				"tags": [
-					"bookmark"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.Bookmark"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.BookmarkCreate"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/radio/create": {
-			"post": {
-				"operationId": "radioController.create",
-				"tags": [
-					"radio"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.Radio"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.RadioNew"
-							}
-						}
-					}
-				}
-			}
-		},
 		"/podcast/create": {
 			"post": {
 				"operationId": "podcastController.create",
@@ -11918,6 +11814,41 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.Rate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/podcast/delete": {
+			"post": {
+				"operationId": "podcastController.delete",
+				"tags": [
+					"podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
 							}
 						}
 					}
@@ -12064,6 +11995,41 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.Rate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/playlist/delete": {
+			"post": {
+				"operationId": "playlistController.delete",
+				"tags": [
+					"playlist"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
 							}
 						}
 					}
@@ -12316,6 +12282,41 @@
 				}
 			}
 		},
+		"/user/delete": {
+			"post": {
+				"operationId": "userController.delete",
+				"tags": [
+					"user"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/root/create": {
 			"post": {
 				"operationId": "rootController.create",
@@ -12384,6 +12385,41 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.RootUpdate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/root/delete": {
+			"post": {
+				"operationId": "rootController.delete",
+				"tags": [
+					"root"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
 							}
 						}
 					}
@@ -17262,6 +17298,27 @@
 					"username"
 				]
 			},
+			"JamParameters.BookmarkCreate": {
+				"type": "object",
+				"properties": {
+					"trackID": {
+						"description": "a track id",
+						"type": "string"
+					},
+					"comment": {
+						"description": "a comment",
+						"type": "string"
+					},
+					"position": {
+						"description": "the position of the bookmark (in ms)",
+						"minimum": 0,
+						"type": "integer"
+					}
+				},
+				"required": [
+					"position"
+				]
+			},
 			"JamParameters.ID": {
 				"type": "object",
 				"properties": {
@@ -17272,6 +17329,18 @@
 				},
 				"required": [
 					"id"
+				]
+			},
+			"JamParameters.ChatNew": {
+				"type": "object",
+				"properties": {
+					"message": {
+						"description": "the chat message",
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
 				]
 			},
 			"JamParameters.ChatDelete": {
@@ -17287,16 +17356,49 @@
 					"time"
 				]
 			},
-			"JamParameters.ChatNew": {
+			"JamParameters.RadioNew": {
 				"type": "object",
 				"properties": {
-					"message": {
-						"description": "the chat message",
+					"name": {
+						"description": "radio name",
+						"type": "string"
+					},
+					"url": {
+						"description": "radio stream url",
+						"type": "string"
+					},
+					"homepage": {
+						"description": "radio homepage url",
 						"type": "string"
 					}
 				},
 				"required": [
-					"message"
+					"name",
+					"url"
+				]
+			},
+			"JamParameters.RadioUpdate": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "radio name",
+						"type": "string"
+					},
+					"url": {
+						"description": "radio stream url",
+						"type": "string"
+					},
+					"homepage": {
+						"description": "radio homepage url",
+						"type": "string"
+					},
+					"id": {
+						"description": "the item id",
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
 				]
 			},
 			"JamParameters.Fav": {
@@ -17354,19 +17456,12 @@
 					"tag"
 				]
 			},
-			"JamParameters.RadioUpdate": {
+			"JamParameters.TrackEditName": {
+				"description": "Rename a track file",
 				"type": "object",
 				"properties": {
 					"name": {
-						"description": "radio name",
-						"type": "string"
-					},
-					"url": {
-						"description": "radio stream url",
-						"type": "string"
-					},
-					"homepage": {
-						"description": "radio homepage url",
+						"description": "the new track file name",
 						"type": "string"
 					},
 					"id": {
@@ -17375,7 +17470,8 @@
 					}
 				},
 				"required": [
-					"id"
+					"id",
+					"name"
 				]
 			},
 			"JamParameters.FolderEditImg": {
@@ -17412,48 +17508,6 @@
 				"required": [
 					"id",
 					"name"
-				]
-			},
-			"JamParameters.BookmarkCreate": {
-				"type": "object",
-				"properties": {
-					"trackID": {
-						"description": "a track id",
-						"type": "string"
-					},
-					"comment": {
-						"description": "a comment",
-						"type": "string"
-					},
-					"position": {
-						"description": "the position of the bookmark (in ms)",
-						"minimum": 0,
-						"type": "integer"
-					}
-				},
-				"required": [
-					"position"
-				]
-			},
-			"JamParameters.RadioNew": {
-				"type": "object",
-				"properties": {
-					"name": {
-						"description": "radio name",
-						"type": "string"
-					},
-					"url": {
-						"description": "radio stream url",
-						"type": "string"
-					},
-					"homepage": {
-						"description": "radio homepage url",
-						"type": "string"
-					}
-				},
-				"required": [
-					"name",
-					"url"
 				]
 			},
 			"JamParameters.PodcastNew": {

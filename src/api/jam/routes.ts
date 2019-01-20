@@ -735,17 +735,23 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.binary(res, result);
 	}, '/download/{id}.{format}', ['stream']);
 
+	register.post('/bookmark/create', async (req, res) => {
+		const options: JamRequest<JamParameters.BookmarkCreate> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.Bookmark = await api.bookmarkController.create(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.post('/bookmark/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
 		await api.bookmarkController.delete(options);
 		await ApiResponder.ok(res);
 	});
 
-	register.post('/podcast/delete', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.podcastController.delete(options);
+	register.post('/chat/create', async (req, res) => {
+		const options: JamRequest<JamParameters.ChatNew> = {query: req.body, user: req.user, client: req.client};
+		await api.chatController.create(options);
 		await ApiResponder.ok(res);
-	}, '/podcast/delete', ['podcast']);
+	});
 
 	register.post('/chat/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ChatDelete> = {query: req.body, user: req.user, client: req.client};
@@ -753,35 +759,23 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.ok(res);
 	});
 
-	register.post('/playlist/delete', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.playlistController.delete(options);
-		await ApiResponder.ok(res);
-	});
+	register.post('/radio/create', async (req, res) => {
+		const options: JamRequest<JamParameters.RadioNew> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.Radio = await api.radioController.create(options);
+		await ApiResponder.data(res, result);
+	}, '/radio/create', ['admin']);
 
-	register.post('/user/delete', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.userController.delete(options);
+	register.post('/radio/update', async (req, res) => {
+		const options: JamRequest<JamParameters.RadioUpdate> = {query: req.body, user: req.user, client: req.client};
+		await api.radioController.update(options);
 		await ApiResponder.ok(res);
-	}, '/user/delete', ['admin']);
-
-	register.post('/root/delete', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.rootController.delete(options);
-		await ApiResponder.ok(res);
-	}, '/root/delete', ['admin']);
+	}, '/radio/update', ['admin']);
 
 	register.post('/radio/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
 		await api.radioController.delete(options);
 		await ApiResponder.ok(res);
 	}, '/radio/delete', ['admin']);
-
-	register.post('/chat/create', async (req, res) => {
-		const options: JamRequest<JamParameters.ChatNew> = {query: req.body, user: req.user, client: req.client};
-		await api.chatController.create(options);
-		await ApiResponder.ok(res);
-	});
 
 	register.post('/track/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
@@ -801,11 +795,11 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.ok(res);
 	}, '/track/tagID3/update', ['admin']);
 
-	register.post('/radio/update', async (req, res) => {
-		const options: JamRequest<JamParameters.RadioUpdate> = {query: req.body, user: req.user, client: req.client};
-		await api.radioController.update(options);
+	register.post('/track/name/update', async (req, res) => {
+		const options: JamRequest<JamParameters.TrackEditName> = {query: req.body, user: req.user, client: req.client};
+		await api.trackController.nameUpdate(options);
 		await ApiResponder.ok(res);
-	}, '/radio/update', ['admin']);
+	}, '/track/name/update', ['admin']);
 
 	register.upload('/folder/imageUpload/update', 'image', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined};
@@ -873,18 +867,6 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.ok(res);
 	});
 
-	register.post('/bookmark/create', async (req, res) => {
-		const options: JamRequest<JamParameters.BookmarkCreate> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.Bookmark = await api.bookmarkController.create(options);
-		await ApiResponder.data(res, result);
-	});
-
-	register.post('/radio/create', async (req, res) => {
-		const options: JamRequest<JamParameters.RadioNew> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.Radio = await api.radioController.create(options);
-		await ApiResponder.data(res, result);
-	}, '/radio/create', ['admin']);
-
 	register.post('/podcast/create', async (req, res) => {
 		const options: JamRequest<JamParameters.PodcastNew> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.Podcast = await api.podcastController.create(options);
@@ -902,6 +884,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await api.podcastController.rateUpdate(options);
 		await ApiResponder.ok(res);
 	});
+
+	register.post('/podcast/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.podcastController.delete(options);
+		await ApiResponder.ok(res);
+	}, '/podcast/delete', ['podcast']);
 
 	register.post('/playlist/create', async (req, res) => {
 		const options: JamRequest<JamParameters.PlaylistNew> = {query: req.body, user: req.user, client: req.client};
@@ -924,6 +912,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 	register.post('/playlist/rate/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
 		await api.playlistController.rateUpdate(options);
+		await ApiResponder.ok(res);
+	});
+
+	register.post('/playlist/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.playlistController.delete(options);
 		await ApiResponder.ok(res);
 	});
 
@@ -969,6 +963,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.ok(res);
 	});
 
+	register.post('/user/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.userController.delete(options);
+		await ApiResponder.ok(res);
+	}, '/user/delete', ['admin']);
+
 	register.post('/root/create', async (req, res) => {
 		const options: JamRequest<JamParameters.RootNew> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.Root = await api.rootController.create(options);
@@ -980,4 +980,10 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await api.rootController.update(options);
 		await ApiResponder.ok(res);
 	}, '/root/update', ['admin']);
+
+	register.post('/root/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.rootController.delete(options);
+		await ApiResponder.ok(res);
+	}, '/root/delete', ['admin']);
 }

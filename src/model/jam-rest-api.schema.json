@@ -5431,6 +5431,36 @@
 						"errors"
 					]
 				},
+				"bookmark/create": {
+					"description": "bookmark: create a bookmark",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.BookmarkCreate"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.Bookmark"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"bookmark/delete": {
 					"description": "bookmark: delete a bookmark",
 					"type": "object",
@@ -5460,11 +5490,11 @@
 						"params"
 					]
 				},
-				"podcast/delete": {
+				"chat/create": {
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.ID"
+							"$ref": "#/definitions/JamParameters.ChatNew"
 						},
 						"errors": {
 							"anyOf": [
@@ -5476,39 +5506,13 @@
 								},
 								{
 									"$ref": "#/definitions/JamApiErrorParameters"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorNotFound"
 								}
 							]
-						},
-						"roles": {
-							"type": "array",
-							"items": [
-								{
-									"type": "string",
-									"enum": [
-										"podcast"
-									]
-								}
-							],
-							"minItems": 1,
-							"additionalItems": {
-								"anyOf": [
-									{
-										"type": "string",
-										"enum": [
-											"podcast"
-										]
-									}
-								]
-							}
 						}
 					},
 					"required": [
 						"errors",
-						"params",
-						"roles"
+						"params"
 					]
 				},
 				"chat/delete": {
@@ -5539,11 +5543,14 @@
 						"params"
 					]
 				},
-				"playlist/delete": {
+				"radio/create": {
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.ID"
+							"$ref": "#/definitions/JamParameters.RadioNew"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.Radio"
 						},
 						"errors": {
 							"anyOf": [
@@ -5555,37 +5562,6 @@
 								},
 								{
 									"$ref": "#/definitions/JamApiErrorParameters"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorNotFound"
-								}
-							]
-						}
-					},
-					"required": [
-						"errors",
-						"params"
-					]
-				},
-				"user/delete": {
-					"type": "object",
-					"properties": {
-						"params": {
-							"$ref": "#/definitions/JamParameters.ID"
-						},
-						"errors": {
-							"anyOf": [
-								{
-									"$ref": "#/definitions/JamApiErrorUnauthorized"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorGeneric"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorParameters"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorNotFound"
 								}
 							]
 						},
@@ -5615,14 +5591,15 @@
 					"required": [
 						"errors",
 						"params",
+						"result",
 						"roles"
 					]
 				},
-				"root/delete": {
+				"radio/update": {
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.ID"
+							"$ref": "#/definitions/JamParameters.RadioUpdate"
 						},
 						"errors": {
 							"anyOf": [
@@ -5718,31 +5695,6 @@
 						"errors",
 						"params",
 						"roles"
-					]
-				},
-				"chat/create": {
-					"type": "object",
-					"properties": {
-						"params": {
-							"$ref": "#/definitions/JamParameters.ChatNew"
-						},
-						"errors": {
-							"anyOf": [
-								{
-									"$ref": "#/definitions/JamApiErrorUnauthorized"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorGeneric"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorParameters"
-								}
-							]
-						}
-					},
-					"required": [
-						"errors",
-						"params"
 					]
 				},
 				"track/fav/update": {
@@ -5852,11 +5804,11 @@
 						"roles"
 					]
 				},
-				"radio/update": {
+				"track/name/update": {
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.RadioUpdate"
+							"$ref": "#/definitions/JamParameters.TrackEditName"
 						},
 						"errors": {
 							"anyOf": [
@@ -6287,88 +6239,6 @@
 						"params"
 					]
 				},
-				"bookmark/create": {
-					"description": "bookmark: create a bookmark",
-					"type": "object",
-					"properties": {
-						"params": {
-							"$ref": "#/definitions/JamParameters.BookmarkCreate"
-						},
-						"result": {
-							"$ref": "#/definitions/Jam.Bookmark"
-						},
-						"errors": {
-							"anyOf": [
-								{
-									"$ref": "#/definitions/JamApiErrorUnauthorized"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorGeneric"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorParameters"
-								}
-							]
-						}
-					},
-					"required": [
-						"errors",
-						"params",
-						"result"
-					]
-				},
-				"radio/create": {
-					"type": "object",
-					"properties": {
-						"params": {
-							"$ref": "#/definitions/JamParameters.RadioNew"
-						},
-						"result": {
-							"$ref": "#/definitions/Jam.Radio"
-						},
-						"errors": {
-							"anyOf": [
-								{
-									"$ref": "#/definitions/JamApiErrorUnauthorized"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorGeneric"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorParameters"
-								}
-							]
-						},
-						"roles": {
-							"type": "array",
-							"items": [
-								{
-									"type": "string",
-									"enum": [
-										"admin"
-									]
-								}
-							],
-							"minItems": 1,
-							"additionalItems": {
-								"anyOf": [
-									{
-										"type": "string",
-										"enum": [
-											"admin"
-										]
-									}
-								]
-							}
-						}
-					},
-					"required": [
-						"errors",
-						"params",
-						"result",
-						"roles"
-					]
-				},
 				"podcast/create": {
 					"type": "object",
 					"properties": {
@@ -6477,6 +6347,57 @@
 						"params"
 					]
 				},
+				"podcast/delete": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"podcast"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"podcast"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"roles"
+					]
+				},
 				"playlist/create": {
 					"type": "object",
 					"properties": {
@@ -6567,6 +6488,34 @@
 					"properties": {
 						"params": {
 							"$ref": "#/definitions/JamParameters.Rate"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params"
+					]
+				},
+				"playlist/delete": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
 						},
 						"errors": {
 							"anyOf": [
@@ -6843,6 +6792,57 @@
 						"upload"
 					]
 				},
+				"user/delete": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"roles"
+					]
+				},
 				"root/create": {
 					"type": "object",
 					"properties": {
@@ -6900,6 +6900,57 @@
 					"properties": {
 						"params": {
 							"$ref": "#/definitions/JamParameters.RootUpdate"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"roles"
+					]
+				},
+				"root/delete": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
 						},
 						"errors": {
 							"anyOf": [
@@ -14893,6 +14944,39 @@
 				"username"
 			]
 		},
+		"JamParameters.BookmarkCreate": {
+			"type": "object",
+			"properties": {
+				"trackID": {
+					"description": "a track id",
+					"type": "string"
+				},
+				"comment": {
+					"description": "a comment",
+					"type": "string"
+				},
+				"position": {
+					"description": "the position of the bookmark (in ms)",
+					"minimum": 0,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"position"
+			]
+		},
+		"JamParameters.ChatNew": {
+			"type": "object",
+			"properties": {
+				"message": {
+					"description": "the chat message",
+					"type": "string"
+				}
+			},
+			"required": [
+				"message"
+			]
+		},
 		"JamParameters.ChatDelete": {
 			"type": "object",
 			"properties": {
@@ -14906,16 +14990,49 @@
 				"time"
 			]
 		},
-		"JamParameters.ChatNew": {
+		"JamParameters.RadioNew": {
 			"type": "object",
 			"properties": {
-				"message": {
-					"description": "the chat message",
+				"name": {
+					"description": "radio name",
+					"type": "string"
+				},
+				"url": {
+					"description": "radio stream url",
+					"type": "string"
+				},
+				"homepage": {
+					"description": "radio homepage url",
 					"type": "string"
 				}
 			},
 			"required": [
-				"message"
+				"name",
+				"url"
+			]
+		},
+		"JamParameters.RadioUpdate": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"description": "radio name",
+					"type": "string"
+				},
+				"url": {
+					"description": "radio stream url",
+					"type": "string"
+				},
+				"homepage": {
+					"description": "radio homepage url",
+					"type": "string"
+				},
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
 			]
 		},
 		"JamParameters.Fav": {
@@ -14973,19 +15090,12 @@
 				"tag"
 			]
 		},
-		"JamParameters.RadioUpdate": {
+		"JamParameters.TrackEditName": {
+			"description": "Rename a track file",
 			"type": "object",
 			"properties": {
 				"name": {
-					"description": "radio name",
-					"type": "string"
-				},
-				"url": {
-					"description": "radio stream url",
-					"type": "string"
-				},
-				"homepage": {
-					"description": "radio homepage url",
+					"description": "the new track file name",
 					"type": "string"
 				},
 				"id": {
@@ -14994,7 +15104,8 @@
 				}
 			},
 			"required": [
-				"id"
+				"id",
+				"name"
 			]
 		},
 		"JamParameters.FolderEditImg": {
@@ -15031,48 +15142,6 @@
 			"required": [
 				"id",
 				"name"
-			]
-		},
-		"JamParameters.BookmarkCreate": {
-			"type": "object",
-			"properties": {
-				"trackID": {
-					"description": "a track id",
-					"type": "string"
-				},
-				"comment": {
-					"description": "a comment",
-					"type": "string"
-				},
-				"position": {
-					"description": "the position of the bookmark (in ms)",
-					"minimum": 0,
-					"type": "integer"
-				}
-			},
-			"required": [
-				"position"
-			]
-		},
-		"JamParameters.RadioNew": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"description": "radio name",
-					"type": "string"
-				},
-				"url": {
-					"description": "radio stream url",
-					"type": "string"
-				},
-				"homepage": {
-					"description": "radio homepage url",
-					"type": "string"
-				}
-			},
-			"required": [
-				"name",
-				"url"
 			]
 		},
 		"JamParameters.PodcastNew": {

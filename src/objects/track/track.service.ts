@@ -5,6 +5,9 @@ import {FolderService} from '../folder/folder.service';
 import {Folder} from '../folder/folder.model';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
+import {cleanFolderSystemChars} from '../../utils/fs-utils';
+import path from 'path';
+import fse from 'fs-extra';
 
 export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 
@@ -23,4 +26,23 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 		}
 	}
 
+	async renameTrack(track: Track, name: string): Promise<void> {
+		name = cleanFolderSystemChars(name, '').trim();
+		if (name.length === 0) {
+			return Promise.reject(Error('Invalid Name'));
+		}
+		const ext = path.extname(name).toLowerCase();
+		const ext2 = path.extname(track.name).toLowerCase();
+		if (ext !== ext2) {
+			return Promise.reject(Error('Changing File extension not supported'));
+		}
+		const newPath = path.join(track.path, name);
+		const exists = await fse.pathExists(newPath);
+		if (exists) {
+			return Promise.reject(Error('File already exists'));
+		}
+		await fse.rename(path.join(track.path, track.name), path.join(track.path, name));
+		track.name = name;
+		await this.trackStore.upsert([track]);
+	}
 }

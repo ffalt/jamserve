@@ -133,4 +133,8 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		return this.getList(req.query, req.query, req.query, req.user);
 	}
 
+	async nameUpdate(req: JamRequest<JamParameters.TrackEditName>): Promise<void> {
+		const track = await this.byID(req.query.id);
+		await this.trackService.renameTrack(track, req.query.name);
+	}
 }

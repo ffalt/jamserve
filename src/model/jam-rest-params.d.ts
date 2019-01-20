@@ -618,6 +618,16 @@ export declare namespace JamParameters {
 		name: string;
 	}
 
+	/**
+	 * Rename a track file
+	 */
+	export interface TrackEditName extends ID {
+		/**
+		 * the new track file name
+		 */
+		name: string;
+	}
+
 	export interface FolderSearch extends Paginate, FolderSearchQuery, IncludesFolderChildren {
 	}
 
