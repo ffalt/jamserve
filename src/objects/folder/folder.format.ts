@@ -1,7 +1,7 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import path from 'path';
-import {FolderType} from '../../model/jam-types';
+import {FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import {MetaInfo} from '../../modules/audio/metadata.model';
 import {Folder} from './folder.model';
 
@@ -27,10 +27,12 @@ export function formatAlbumFolderInfo(info: MetaInfo): Jam.AlbumFolderInfo {
 }
 
 function formatFolderTag(folder: Folder): Jam.FolderTag {
+	const isAlbum = FolderTypesAlbum.indexOf(folder.tag.type) >= 0;
+	const isArtist = folder.tag.type === FolderType.artist;
 	let mbz: Jam.FolderMBTag | undefined = {
-		artistID: folder.tag.mbArtistID,
-		releaseID: folder.tag.mbAlbumID,
-		releaseGroupID: folder.tag.mbReleaseGroupID
+		artistID: isArtist || isAlbum ? folder.tag.mbArtistID : undefined,
+		releaseID: isAlbum ? folder.tag.mbAlbumID : undefined,
+		releaseGroupID: isAlbum ? folder.tag.mbReleaseGroupID : undefined
 	};
 	if (!Object.keys(mbz).find(key => !!(<any>mbz)[key])) {
 		mbz = undefined;
@@ -38,10 +40,10 @@ function formatFolderTag(folder: Folder): Jam.FolderTag {
 	return {
 		artist: folder.tag.artist,
 		artistSort: folder.tag.artistSort,
-		album: folder.tag.album,
-		albumType: folder.tag.albumType,
+		album: isAlbum ? folder.tag.album : undefined,
+		albumType: isAlbum ? folder.tag.albumType : undefined,
 		genre: folder.tag.genre,
-		year: folder.tag.year,
+		year: isAlbum ? folder.tag.year : undefined,
 		musicbrainz: mbz
 	};
 }
