@@ -100,7 +100,7 @@
 						"in": "query",
 						"name": "type",
 						"schema": {
-							"type": "string"
+							"$ref": "#/components/schemas/JamParameters.LastFMLookupType"
 						},
 						"description": "lookup by lastfm type",
 						"required": true
@@ -203,7 +203,7 @@
 						"in": "query",
 						"name": "type",
 						"schema": {
-							"type": "string"
+							"$ref": "#/components/schemas/JamParameters.MusicBrainzLookupType"
 						},
 						"description": "lookup by musicbrainz type",
 						"required": true
@@ -262,7 +262,7 @@
 						"in": "query",
 						"name": "type",
 						"schema": {
-							"type": "string"
+							"$ref": "#/components/schemas/JamParameters.MusicBrainzSearchType"
 						},
 						"description": "search by musicbrainz type",
 						"required": true
@@ -12967,6 +12967,17 @@
 					"summary"
 				]
 			},
+			"JamParameters.LastFMLookupType": {
+				"enum": [
+					"album",
+					"album-toptracks",
+					"artist",
+					"artist-toptracks",
+					"track",
+					"track-similar"
+				],
+				"type": "string"
+			},
 			"Acoustid.Result": {
 				"type": "object",
 				"properties": {
@@ -13948,6 +13959,36 @@
 					"title",
 					"video"
 				]
+			},
+			"JamParameters.MusicBrainzLookupType": {
+				"enum": [
+					"area",
+					"artist",
+					"collection",
+					"event",
+					"instrument",
+					"label",
+					"place",
+					"recording",
+					"release",
+					"release-group",
+					"series",
+					"url",
+					"work"
+				],
+				"type": "string"
+			},
+			"JamParameters.MusicBrainzSearchType": {
+				"enum": [
+					"area",
+					"artist",
+					"label",
+					"recording",
+					"release",
+					"release-group",
+					"work"
+				],
+				"type": "string"
 			},
 			"AcousticBrainz.Response": {
 				"type": "object",

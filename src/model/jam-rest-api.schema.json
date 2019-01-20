@@ -7104,8 +7104,8 @@
 			"type": "object",
 			"properties": {
 				"type": {
-					"description": "lookup by lastfm type",
-					"type": "string"
+					"$ref": "#/definitions/JamParameters.LastFMLookupType",
+					"description": "lookup by lastfm type"
 				},
 				"id": {
 					"description": "the item id",
@@ -7116,6 +7116,17 @@
 				"id",
 				"type"
 			]
+		},
+		"JamParameters.LastFMLookupType": {
+			"enum": [
+				"album",
+				"album-toptracks",
+				"artist",
+				"artist-toptracks",
+				"track",
+				"track-similar"
+			],
+			"type": "string"
 		},
 		"LastFM.Result": {
 			"type": "object",
@@ -7879,8 +7890,8 @@
 			"type": "object",
 			"properties": {
 				"type": {
-					"description": "lookup by musicbrainz type",
-					"type": "string"
+					"$ref": "#/definitions/JamParameters.MusicBrainzLookupType",
+					"description": "lookup by musicbrainz type"
 				},
 				"inc": {
 					"description": "comma-separated musicbrainz includes",
@@ -7895,6 +7906,24 @@
 				"id",
 				"type"
 			]
+		},
+		"JamParameters.MusicBrainzLookupType": {
+			"enum": [
+				"area",
+				"artist",
+				"collection",
+				"event",
+				"instrument",
+				"label",
+				"place",
+				"recording",
+				"release",
+				"release-group",
+				"series",
+				"url",
+				"work"
+			],
+			"type": "string"
 		},
 		"MusicBrainz.Response": {
 			"type": "object",
@@ -8634,8 +8663,8 @@
 			"type": "object",
 			"properties": {
 				"type": {
-					"description": "search by musicbrainz type",
-					"type": "string"
+					"$ref": "#/definitions/JamParameters.MusicBrainzSearchType",
+					"description": "search by musicbrainz type"
 				},
 				"recording": {
 					"description": "search by recording name",
@@ -8661,6 +8690,18 @@
 			"required": [
 				"type"
 			]
+		},
+		"JamParameters.MusicBrainzSearchType": {
+			"enum": [
+				"area",
+				"artist",
+				"label",
+				"recording",
+				"release",
+				"release-group",
+				"work"
+			],
+			"type": "string"
 		},
 		"JamParameters.AcousticBrainzLookup": {
 			"type": "object",

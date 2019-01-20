@@ -7,6 +7,9 @@ export declare namespace JamParameters {
 	export type WaveformFormatType = 'svg' | 'json' | 'dat';
 	export type AudioFormatType = 'mp3';
 	export type DownloadFormatType = 'zip' | 'tar';
+	export type LastFMLookupType = 'album' | 'album-toptracks' | 'artist' | 'track' | 'track-similar' | 'artist-toptracks';
+	export type MusicBrainzLookupType = 'area' | 'artist' | 'collection' | 'event' | 'instrument' | 'label' | 'place' | 'recording' | 'release' | 'release-group' | 'series' | 'work' | 'url';
+	export type MusicBrainzSearchType = 'area' | 'artist' | 'label' | 'recording' | 'release' | 'release-group' | 'work';
 
 	export interface ID {
 		/**
@@ -350,13 +353,11 @@ export declare namespace JamParameters {
 	export interface BookmarkList extends IncludesBookmark {
 	}
 
-
 	export interface Bookmark extends ID, IncludesBookmark {
 	}
 
 	export interface Bookmarks extends IDs, IncludesBookmark {
 	}
-
 
 	export interface ArtistInfo extends ID {
 		/**
@@ -760,7 +761,6 @@ export declare namespace JamParameters {
 	export interface RadioSearch extends Paginate, RadioSearchQuery, IncludesRadio {
 	}
 
-
 	export interface Album extends ID, IncludesAlbum {
 	}
 
@@ -1076,7 +1076,7 @@ export declare namespace JamParameters {
 		/**
 		 * search by musicbrainz type
 		 */
-		type: string;  // TODO: typescript-type the musicbrainz search type
+		type: MusicBrainzSearchType;
 		/**
 		 * search by recording name
 		 */
@@ -1112,7 +1112,7 @@ export declare namespace JamParameters {
 		/**
 		 * lookup by musicbrainz type
 		 */
-		type: string;  // TODO: typescript-type the musicbrainz lookup type
+		type: MusicBrainzLookupType;
 		/**
 		 * comma-separated musicbrainz includes
 		 */
@@ -1123,7 +1123,7 @@ export declare namespace JamParameters {
 		/**
 		 * lookup by lastfm type
 		 */
-		type: string; // TODO: typescript-type the lastfm lookup includes
+		type: LastFMLookupType;
 	}
 
 	export interface AcoustidLookup extends ID {

@@ -1,3 +1,4 @@
+
 export enum DBObjectType {
 	root,
 	user,
@@ -95,4 +96,39 @@ export enum FileTyp {
 	TAG = 'tag',
 	BACKUP = 'backup',
 	OTHER = 'other'
+}
+
+export enum LastFMLookupType {
+	album = 'album',
+	albumToptracks = 'album-toptracks',
+	artist = 'artist',
+	track = 'track',
+	trackSimilar = 'track-similar',
+	artistToptracks = 'artist-toptracks'
+}
+
+export const enum MusicBrainzLookupType {
+	area = 'area',
+	artist = 'artist',
+	collection = 'collection',
+	event = 'event',
+	instrument = 'instrument',
+	label = 'label',
+	place = 'place',
+	recording = 'recording',
+	release = 'release',
+	releaseGroup = 'release-group',
+	series = 'series',
+	work = 'work',
+	url = 'url'
+}
+
+export const enum MusicBrainzSearchType {
+	artist = 'artist',
+	label = 'label',
+	recording = 'recording',
+	release = 'release',
+	releaseGroup = 'release-group',
+	work = 'work',
+	area = 'area'
 }
