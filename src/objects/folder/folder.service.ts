@@ -1,6 +1,6 @@
 import {Folder} from './folder.model';
 import {FolderStore, SearchQueryFolder} from './folder.store';
-import {cleanFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists} from '../../utils/fs-utils';
+import {replaceFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists} from '../../utils/fs-utils';
 import {TrackStore} from '../track/track.store';
 import path from 'path';
 import fse from 'fs-extra';
@@ -20,7 +20,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 	}
 
 	async renameFolder(folder: Folder, name: string): Promise<void> {
-		name = cleanFolderSystemChars(name, '').trim();
+		name = replaceFolderSystemChars(name, '').trim();
 		if (name.length === 0) {
 			return Promise.reject(Error('Invalid Name'));
 		}

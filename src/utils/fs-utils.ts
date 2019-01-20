@@ -25,7 +25,7 @@ export function replaceFileSystemChars(s: string, replace: string): string {
 		.replace(/[\?\/!\\]/g, replace);
 }
 
-export function cleanFolderSystemChars(s: string, replace: string): string {
+export function replaceFolderSystemChars(s: string, replace: string): string {
 	return s.toString()
 		.replace(/:/g, ' -')
 		.replace(/[\.\*\?\/!\\]/g, replace);

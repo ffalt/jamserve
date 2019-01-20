@@ -19,7 +19,7 @@ import {User} from '../user/user.model';
 import {FolderService} from './folder.service';
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
-import {replaceFileSystemChars} from '../../utils/fs-utils';
+import {replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Folder, FolderTag} from './folder.model';
 
 interface ProblemCheck {
@@ -30,7 +30,7 @@ interface ProblemCheck {
 
 function getNiceFolderName(tag: FolderTag): string {
 	const year = tag.year ? tag.year.toString() : '';
-	const s = (year.length > 0 ? '[' + year + '] ' : '') + replaceFileSystemChars(tag.album || '', '_');
+	const s = (year.length > 0 ? '[' + replaceFolderSystemChars(year, '_') + '] ' : '') + replaceFolderSystemChars(tag.album || '', '_');
 	return s.trim();
 }
 
@@ -62,23 +62,22 @@ const ProblemDefs: { [id: string]: ProblemCheck; } = {
 				&& !folder.tag.image;
 		}
 	},
-	ALBUM_IMAGE_NAME_NONCONFORM: {
-		name: 'Album Image Name is not cover.[ext]',
-		check: async (folder) => {
-			return !!folder.tag &&
-				(
-					(folder.tag.type === FolderType.album) ||
-					(folder.tag.type === FolderType.multialbum)
-				)
-				&& !!folder.tag.image &&
-				folder.tag.image.indexOf('cover.') !== 0;
-		}
-
-	},
+	// ALBUM_IMAGE_NAME_NONCONFORM: {
+	// 	name: 'Album Image Name is not cover.[ext]',
+	// 	check: async (folder) => {
+	// 		return !!folder.tag &&
+	// 			(
+	// 				(folder.tag.type === FolderType.album) ||
+	// 				(folder.tag.type === FolderType.multialbum)
+	// 			)
+	// 			&& !!folder.tag.image &&
+	// 			folder.tag.image.indexOf('cover.') !== 0;
+	// 	}
+	// },
 	ALBUM_NAME_NONCONFORM: {
 		name: 'Album folder name is not "[Year] Album-Name"',
 		check: async (folder) => {
-			if (folder.tag && (FolderTypesAlbum.indexOf(folder.tag.type) > 0) &&
+			if (folder.tag && (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) &&
 				(folder.tag.album) && (folder.tag.year) && (folder.tag.year > 0)) {
 				const name = path.basename(folder.path).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
 				const nicename = getNiceFolderName(folder.tag).replace(/[_:!?\/ ]/g, '').toLowerCase();
@@ -86,22 +85,28 @@ const ProblemDefs: { [id: string]: ProblemCheck; } = {
 			}
 			return false;
 		}
-
 	},
 	ALBUM_GENRE_MISSING: {
 		name: 'Album genre is missing',
 		check: async (folder) => {
-			return (folder.tag && (!folder.tag.genre || folder.tag.genre.length === 0));
+			return (folder.tag && (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) && (!folder.tag.genre || folder.tag.genre.length === 0));
 		}
-
 	},
 	ALBUM_ID_MISSING: {
 		name: 'Missing musicbrainz album id',
 		check: async (folder) => {
-			return folder.tag && (
-				(folder.tag.type === FolderType.album) ||
-				(folder.tag.type === FolderType.multialbum)
-			) && !folder.tag.mbAlbumID;
+			return folder.tag && (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) && !folder.tag.mbAlbumID;
+		}
+	},
+	ARTIST_NAME_NONCONFORM: {
+		name: 'Artist folder name is not "Artist Name"',
+		check: async (folder) => {
+			if (!folder.tag.artist || (folder.tag.type !== FolderType.artist)) {
+				return false;
+			}
+			const name = path.basename(folder.path);
+			const artistName = replaceFolderSystemChars(folder.tag.artist, '_');
+			return name.localeCompare(artistName) !== 0;
 		}
 	},
 	ARTIST_IMAGE_NAME_NONCONFORM: {
@@ -113,16 +118,11 @@ const ProblemDefs: { [id: string]: ProblemCheck; } = {
 					(folder.tag.type === FolderType.multiartist)
 				) && (!!folder.tag.image) && folder.tag.image.indexOf('artist.') !== 0;
 		}
-
 	},
 	ARTIST_IMAGE_MISSING: {
 		name: 'Missing artist image',
 		check: async (folder) => {
-			return !!folder.tag && (
-					(folder.tag.type === FolderType.artist) ||
-					(folder.tag.type === FolderType.multiartist)
-				)
-				&& !folder.tag.image;
+			return !!folder.tag && (folder.tag.type === FolderType.artist) && !folder.tag.image;
 		}
 	}
 };
