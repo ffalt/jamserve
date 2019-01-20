@@ -334,6 +334,10 @@ export class AudioModule {
 			Object.keys(tag.frames).map(id => {
 				const f = tag.frames[id] || [];
 				f.forEach(value => {
+					if (value && value.hasOwnProperty('bin')) {
+						const binValue = <any>value;
+						binValue.bin =  Buffer.from(binValue.bin, 'base64');
+					}
 					frames.push({id, head: {statusFlags: {}, formatFlags: {}, size: 0}, value});
 				});
 				return;
