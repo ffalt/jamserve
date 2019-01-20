@@ -154,7 +154,6 @@ interface MetaStat {
 	year?: number;
 	images: Array<string>;
 	image?: string;
-	multiArtists: Array<string>;
 	isMultiArtist: boolean;
 	isMultiAlbum: boolean;
 	trackCount: number;
@@ -184,10 +183,13 @@ function getMostUsedTagValue<T>(list: Array<MetaStatValue<T>>, multi?: T): T | u
 	if (list.length === 1) {
 		return list[0].val;
 	}
+	list = list.sort((a, b) => b.count - a.count);
+	if (list[0].count - list[1].count > 4) {
+		return list[0].val;
+	}
 	if (list.length > 3 && multi !== undefined) {
 		return multi;
 	}
-	list = list.sort((a, b) => a.count - b.count);
 	const cleaned = list.filter((o) => {
 		return o.count > 1;
 	});
@@ -459,7 +461,13 @@ export class ScanService {
 			}
 		}
 		let albumType = AlbumType.unknown;
-		if (isMultiArtist || (mbAlbumType || '').toLowerCase().indexOf('compilation') >= 0) {
+		if (mbAlbumType) {
+			if (mbAlbumType.toLowerCase().indexOf('compilation') >= 0) {
+				albumType = AlbumType.compilation;
+			} else {
+				albumType = AlbumType.album;
+			}
+		} else if (isMultiArtist) {
 			albumType = AlbumType.compilation;
 		} else {
 			albumType = AlbumType.album;
@@ -468,7 +476,6 @@ export class ScanService {
 			trackCount,
 			images,
 			image,
-			multiArtists: artists.map(a => a.val),
 			albumType,
 			isMultiArtist,
 			isMultiAlbum,
@@ -1332,8 +1339,9 @@ export class ScanService {
 			start: Date.now(),
 			end: 0,
 		};
-		const trackIDs = await this.store.trackStore.searchIDs({rootID});
-		const folderIDs = await this.store.folderStore.searchIDs({rootID});
+		changes.removedTracks = await this.store.trackStore.search({rootID});
+		changes.removedFolders = await this.store.folderStore.search({rootID});
+		const trackIDs = changes.removedTracks.map(t => t.id);
 		const artists = await this.store.artistStore.search({rootID});
 		for (const artist of artists) {
 			artist.rootIDs = artist.rootIDs.filter(r => r !== rootID);
@@ -1362,14 +1370,9 @@ export class ScanService {
 				}
 			}
 		}
-		await this.store.trackStore.removeByQuery({rootID});
-		await this.store.folderStore.removeByQuery({rootID});
-		await this.store.stateStore.removeByQuery({destIDs: trackIDs});
-		await this.store.stateStore.removeByQuery({destIDs: folderIDs});
-		await this.store.albumStore.remove(changes.removedAlbums.map(a => a.id));
-		await this.store.artistStore.remove(changes.removedArtists.map(a => a.id));
 		await this.store.albumStore.upsert(changes.updateAlbums);
 		await this.store.artistStore.upsert(changes.updateArtists);
+		await this.clean(changes);
 		await this.store.rootStore.remove(rootID);
 		return changes;
 	}
