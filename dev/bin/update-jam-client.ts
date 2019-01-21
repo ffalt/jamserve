@@ -79,7 +79,7 @@ async function run() {
 			resultAPI.push(s);
 		}
 	});
-	const result = `/** generated api */
+	const result = `// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
 import {Injectable} from '@angular/core';
 import {HttpEvent} from '@angular/common/http';
@@ -88,6 +88,7 @@ import {Observable} from 'rxjs';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {LastFM} from '../../model/lastfm-rest-data';
+import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {Acoustid} from '../../model/acoustid-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';

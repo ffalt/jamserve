@@ -1,10 +1,10 @@
 import {WebserviceClient} from '../../../utils/webservice-client';
 import Logger from '../../../utils/logger';
-import {AcousticBrainz} from '../../../model/acousticbrainz-rest-data';
+import {CoverArtArchive} from '../../../model/coverartarchive-rest-data';
 
-const log = Logger('AcousticBrainz');
+const log = Logger('CoverArtArchive');
 
-declare namespace AcousticbrainzClientApi {
+declare namespace CoverArtArchiveClientApi {
 
 	export interface Request {
 		path: string;
@@ -24,35 +24,46 @@ declare namespace AcousticbrainzClientApi {
 
 }
 
-export class AcousticbrainzClient extends WebserviceClient {
+export class CoverArtArchiveClient extends WebserviceClient {
 	options = {
-		host: 'https://acousticbrainz.org',
+		host: 'https://coverartarchive.org',
 		port: 80,
-		basePath: '/api/v1/',
+		basePath: '/',
 		userAgent: '',
+		limit: 25,
 		retryOn: false,
 		retryDelay: 3000,
 		retryCount: 3
 	};
 
-	constructor(options: AcousticbrainzClientApi.Options) {
-		// unknown rate limit, using same from musicbrainz https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting "Currently that rate is (on average) 1 request per second. (per ip)"
-		super(1, 1000, options.userAgent);
+	constructor(options: CoverArtArchiveClientApi.Options) {
+		// https://musicbrainz.org/doc/Cover_Art_Archive/API#Rate_limiting_rules
+		// there are currently no rate limiting rules in place at http://coverartarchive.org.
+
+		// nevertheless, we limit this to 10 per second
+		super(10, 1000, options.userAgent);
 		this.options = Object.assign({}, this.options, options);
 	}
 
-	async highLevel(mbid: string, nr?: number): Promise<AcousticBrainz.Response> {
+	async releaseImages(mbid: string): Promise<CoverArtArchive.Response> {
 		const data = await this.get({
-			path: this.options.basePath + mbid + '/high-level',
-			query: {
-				n: (nr !== undefined ? nr.toString() : undefined)
-			},
+			path: this.options.basePath + 'release/' + mbid,
+			query: {},
 			retry: 0
 		});
 		return data;
 	}
 
-	private async get(req: AcousticbrainzClientApi.Request): Promise<any> {
+	async releaseGroupImages(mbid: string): Promise<CoverArtArchive.Response> {
+		const data = await this.get({
+			path: this.options.basePath + 'release-group/' + mbid,
+			query: {},
+			retry: 0
+		});
+		return data;
+	}
+
+	private async get(req: CoverArtArchiveClientApi.Request): Promise<any> {
 		const q = Object.keys(req.query)
 			.filter(key => (req.query[key] !== undefined && req.query[key] !== null))
 			.map(key => key + '=' + req.query[key]);
@@ -60,7 +71,6 @@ export class AcousticbrainzClient extends WebserviceClient {
 
 		const isRateLimitError = (body: any): boolean => {
 			return (body && body.error && body.error.indexOf('allowable rate limit') >= 0);
-			// "error":"Your requests are exceeding the allowable rate limit. Please see http://wiki.musicbrainz.org/XMLWebService for more information."
 		};
 		const options = this.options;
 		const get = this.get;

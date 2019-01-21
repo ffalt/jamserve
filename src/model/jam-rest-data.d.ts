@@ -3,6 +3,7 @@ import {ID3v2FrameValues} from './id3v2-frame-values';
 import {LastFM} from './lastfm-rest-data';
 import {Acoustid} from './acoustid-rest-data';
 import {AcousticBrainz} from './acousticbrainz-rest-data';
+import {CoverArtArchive} from './coverartarchive-rest-data';
 
 export declare namespace Jam {
 
@@ -368,12 +369,14 @@ export declare namespace Jam {
 		episodes?: Array<{ id: string; name: string; }>;
 	}
 
+	export type CoverArtArchiveResponse = CoverArtArchive.Response;
 	export type AcousticBrainzResponse = AcousticBrainz.Response;
 	export type MusicBrainzResponse = MusicBrainz.Response;
 	export type LastFMResponse = LastFM.Result;
 	export type AcoustidResponse = Acoustid.Result;
 
 	export interface ExternalFormats {
+		coverartarchive: CoverArtArchiveResponse;
 		acousticbrainz: AcousticBrainzResponse;
 		musicbrainz: MusicBrainzResponse;
 		lastfm: LastFMResponse;

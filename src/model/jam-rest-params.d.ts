@@ -10,6 +10,7 @@ export declare namespace JamParameters {
 	export type LastFMLookupType = 'album' | 'album-toptracks' | 'artist' | 'track' | 'track-similar' | 'artist-toptracks';
 	export type MusicBrainzLookupType = 'area' | 'artist' | 'collection' | 'event' | 'instrument' | 'label' | 'place' | 'recording' | 'release' | 'release-group' | 'series' | 'work' | 'url';
 	export type MusicBrainzSearchType = 'area' | 'artist' | 'label' | 'recording' | 'release' | 'release-group' | 'work';
+	export type CoverArtArchiveLookupType = 'release' | 'release-group';
 
 	export interface ID {
 		/**
@@ -1106,6 +1107,13 @@ export declare namespace JamParameters {
 		 * page parameter if more than one acousticbrainz info is available
 		 */
 		nr?: number;
+	}
+
+	export interface CoverArtArchiveLookup extends ID {
+		/**
+		 * lookup by musicbrainz type
+		 */
+		type: CoverArtArchiveLookupType;
 	}
 
 	export interface MusicBrainzLookup extends ID {

@@ -2629,7 +2629,7 @@
 		"LastFM.Streamable": {
 			"type": "object",
 			"properties": {
-				"url": {
+				"sample": {
 					"type": "string"
 				},
 				"fulltrack": {
@@ -2638,7 +2638,7 @@
 			},
 			"required": [
 				"fulltrack",
-				"url"
+				"sample"
 			]
 		},
 		"LastFM.TopTrack": {
@@ -3607,6 +3607,130 @@
 				"audio_properties",
 				"tags",
 				"version"
+			]
+		},
+		"CoverArtArchive.Response": {
+			"type": "object",
+			"properties": {
+				"images": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/CoverArtArchive.Image"
+					}
+				},
+				"release": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"images"
+			]
+		},
+		"CoverArtArchive.ImageTypes": {
+			"enum": [
+				"Back",
+				"Booklet",
+				"Front",
+				"Liner",
+				"Medium",
+				"Obi",
+				"Other",
+				"Poster",
+				"Raw",
+				"Spine",
+				"Sticker",
+				"Track",
+				"Tray",
+				"Unedited",
+				"Watermark"
+			],
+			"type": "string"
+		},
+		"CoverArtArchive.Image": {
+			"type": "object",
+			"properties": {
+				"types": {
+					"type": "array",
+					"items": {
+						"enum": [
+							"Back",
+							"Booklet",
+							"Front",
+							"Liner",
+							"Medium",
+							"Obi",
+							"Other",
+							"Poster",
+							"Raw",
+							"Spine",
+							"Sticker",
+							"Track",
+							"Tray",
+							"Unedited",
+							"Watermark"
+						],
+						"type": "string"
+					}
+				},
+				"front": {
+					"type": "boolean"
+				},
+				"back": {
+					"type": "boolean"
+				},
+				"edit": {
+					"type": "number"
+				},
+				"image": {
+					"type": "string"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"approved": {
+					"type": "boolean"
+				},
+				"id": {
+					"type": "string"
+				},
+				"thumbnails": {
+					"type": "object",
+					"properties": {
+						"250": {
+							"type": "string"
+						},
+						"500": {
+							"type": "string"
+						},
+						"1200": {
+							"type": "string"
+						},
+						"small": {
+							"type": "string"
+						},
+						"large": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"1200",
+						"250",
+						"500",
+						"large",
+						"small"
+					]
+				}
+			},
+			"required": [
+				"approved",
+				"back",
+				"comment",
+				"edit",
+				"front",
+				"id",
+				"image",
+				"thumbnails",
+				"types"
 			]
 		},
 		"Jam.AlbumType": {
@@ -5080,6 +5204,23 @@
 				}
 			}
 		},
+		"Jam.CoverArtArchiveResponse": {
+			"type": "object",
+			"properties": {
+				"images": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/CoverArtArchive.Image"
+					}
+				},
+				"release": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"images"
+			]
+		},
 		"Jam.AcousticBrainzResponse": {
 			"type": "object",
 			"properties": {
@@ -5177,6 +5318,9 @@
 		"Jam.ExternalFormats": {
 			"type": "object",
 			"properties": {
+				"coverartarchive": {
+					"$ref": "#/definitions/CoverArtArchive.Response"
+				},
 				"acousticbrainz": {
 					"$ref": "#/definitions/AcousticBrainz.Response"
 				},
@@ -5193,6 +5337,7 @@
 			"required": [
 				"acousticbrainz",
 				"acoustid",
+				"coverartarchive",
 				"lastfm",
 				"musicbrainz"
 			]

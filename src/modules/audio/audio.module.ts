@@ -12,13 +12,15 @@ import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data';
 import {TrackMedia, TrackTag} from '../../objects/track/track.model';
 import {MetaInfoAlbum, MetaInfoArtist, MetaInfoImage, MetaInfoTopSong, MetaInfoTrackSimilarSong} from './metadata.model';
-import {Folder} from '../../objects/folder/folder.model';
 import fse from 'fs-extra';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
 import {probe, ProbeResult} from './tools/ffprobe';
 import {ID3v1_GENRES} from 'jamp3/dist/lib/id3v1/id3v1_consts';
 import {AcousticbrainzClient} from './clients/acousticbrainz-client';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
+import {CoverArtArchiveClient} from './clients/coverartarchive-client';
+import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
+import {CoverArtArchiveLookupType} from '../../model/jam-types';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -276,6 +278,7 @@ export class AudioModule {
 	lastFM: LastFMClient;
 	chartLyrics: ChartLyricsClient;
 	acousticbrainz: AcousticbrainzClient;
+	coverArtArchive: CoverArtArchiveClient;
 	private isSaving: { [filename: string]: boolean } = {};
 
 	constructor(tools: ThirdpartyToolsConfig) {
@@ -284,6 +287,7 @@ export class AudioModule {
 		this.lastFM = new LastFMClient({key: tools.lastfm.apiKey, userAgent: tools.lastfm.userAgent});
 		this.acoustid = new AcoustidClient({key: tools.acoustid.apiKey, userAgent: tools.acoustid.userAgent});
 		this.chartLyrics = new ChartLyricsClient(tools.chartlyrics.userAgent);
+		this.coverArtArchive = new CoverArtArchiveClient({userAgent: tools.coverartarchive.userAgent, retryOn: true});
 	}
 
 	async read(filename: string): Promise<AudioScanResult> {
@@ -336,7 +340,7 @@ export class AudioModule {
 				f.forEach(value => {
 					if (value && value.hasOwnProperty('bin')) {
 						const binValue = <any>value;
-						binValue.bin =  Buffer.from(binValue.bin, 'base64');
+						binValue.bin = Buffer.from(binValue.bin, 'base64');
 					}
 					frames.push({id, head: {statusFlags: {}, formatFlags: {}, size: 0}, value});
 				});
@@ -471,14 +475,25 @@ export class AudioModule {
 		return this.acousticbrainz.highLevel(id, nr);
 	}
 
-	async musicbrainzAlbumByFolder(folder: Folder): Promise<MusicBrainz.Response> {
-		const query: MusicbrainzClientApi.SearchQueryRelease = {
-			arid: folder.tag.mbArtistID,
-			artist: folder.tag.artist,
-			release: folder.tag.album || folder.tag.title
-		};
-		return this.musicbrainz.search({type: 'release', query});
+	async coverartarchiveLookup(type: string, id: string): Promise<CoverArtArchive.Response> {
+		if (type === CoverArtArchiveLookupType.release) {
+			return this.coverArtArchive.releaseImages(id);
+		} else if (type === CoverArtArchiveLookupType.releaseGroup) {
+			return this.coverArtArchive.releaseGroupImages(id);
+		} else {
+			return Promise.reject(Error('Invalid CoverArtArchive Lookup Type'));
+		}
 	}
+
+	//
+	// async musicbrainzAlbumByFolder(folder: Folder): Promise<MusicBrainz.Response> {
+	// 	const query: MusicbrainzClientApi.SearchQueryRelease = {
+	// 		arid: folder.tag.mbArtistID,
+	// 		artist: folder.tag.artist,
+	// 		release: folder.tag.album || folder.tag.title
+	// 	};
+	// 	return this.musicbrainz.search({type: 'release', query});
+	// }
 
 	async lastFMLookup(type: string, id: string): Promise<LastFM.Result> {
 		// TODO: get more than 50

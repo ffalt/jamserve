@@ -5,6 +5,7 @@ import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {Acoustid} from '../../model/acoustid-rest-data';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {LastFM} from '../../model/lastfm-rest-data';
+import {CoverArtArchive} from '../../model/coverartarchive-rest.data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {JamController, JamRequest} from './api';
 import {ApiResponder} from './response';
@@ -60,6 +61,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 	register.get('/acousticbrainz/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.AcousticBrainzLookup> = {query: req.query, user: req.user, client: req.client};
 		const result: AcousticBrainz.Response = await api.metadataController.acousticbrainzLookup(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/coverartarchive/lookup', async (req, res) => {
+		const options: JamRequest<JamParameters.CoverArtArchiveLookup> = {query: req.query, user: req.user, client: req.client};
+		const result: CoverArtArchive.Response = await api.metadataController.coverartarchiveLookup(options);
 		await ApiResponder.data(res, result);
 	});
 

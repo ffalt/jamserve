@@ -91,6 +91,15 @@ export interface JamApi {
 			result: Jam.AcousticBrainzResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * metadata: lookup coverartarchive data
+		 */
+		'coverartarchive/lookup'?: {
+			operationId: 'metadata.coverartarchiveLookup'
+			params: JamParameters.CoverArtArchiveLookup;
+			result: Jam.CoverArtArchiveResponse;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
 
 		/**
 		 * various: autocomplete

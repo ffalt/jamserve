@@ -7,6 +7,10 @@ import {JamRequest} from '../../api/jam/api';
 import {TrackController} from '../../objects/track/track.controller';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
+import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
+import Logger from '../../utils/logger';
+
+const log = Logger('MetaDataController');
 
 export class MetadataController {
 	private cache: { [key: string]: any } = {};
@@ -19,7 +23,7 @@ export class MetadataController {
 		delete query.type;
 		const key = 'search-' + req.query.type + JSON.stringify(query);
 		if (this.cache[key]) {
-			console.log('serving from cache search');
+			log.debug('serving from cache', key);
 			return this.cache[key];
 		}
 		const brainz = await this.audioModule.musicbrainzSearch(req.query.type, query);
@@ -30,7 +34,7 @@ export class MetadataController {
 	async acoustidLookup(req: JamRequest<JamParameters.AcoustidLookup>): Promise<Array<Acoustid.Result>> {
 		const key = 'acoustid-' + req.query.id + req.query.inc;
 		if (this.cache[key]) {
-			console.log('serving from cache acoustid');
+			log.debug('serving from cache', key);
 			return this.cache[key];
 		}
 		const track = await this.trackController.byID(req.query.id);
@@ -42,7 +46,7 @@ export class MetadataController {
 	async lastfmLookup(req: JamRequest<JamParameters.LastFMLookup>): Promise<LastFM.Result> {
 		const key = 'lastfm-' + req.query.type + req.query.id;
 		if (this.cache[key]) {
-			console.log('serving from cache lastfm');
+			log.debug('serving from cache', key);
 			return this.cache[key];
 		}
 		const lastfm = await this.audioModule.lastFMLookup(req.query.type, req.query.id);
@@ -53,7 +57,7 @@ export class MetadataController {
 	async acousticbrainzLookup(req: JamRequest<JamParameters.AcousticBrainzLookup>): Promise<AcousticBrainz.Response> {
 		const key = 'acousticbrainz-lookup-' + req.query.id + req.query.nr;
 		if (this.cache[key]) {
-			console.log('serving from cache lookup');
+			log.debug('serving from cache', key);
 			return this.cache[key];
 		}
 		const abrainz = await this.audioModule.acousticbrainzLookup(req.query.id, req.query.nr);
@@ -61,10 +65,21 @@ export class MetadataController {
 		return abrainz;
 	}
 
+	async coverartarchiveLookup(req: JamRequest<JamParameters.CoverArtArchiveLookup>): Promise<CoverArtArchive.Response> {
+		const key = 'coverartarchive-lookup-' + req.query.type + req.query.id;
+		if (this.cache[key]) {
+			log.debug('serving from cache', key);
+			return this.cache[key];
+		}
+		const caa = await this.audioModule.coverartarchiveLookup(req.query.type, req.query.id);
+		this.cache[key] = caa;
+		return caa;
+	}
+
 	async musicbrainzLookup(req: JamRequest<JamParameters.MusicBrainzLookup>): Promise<MusicBrainz.Response> {
 		const key = 'lookup-' + req.query.type + req.query.id + req.query.inc;
 		if (this.cache[key]) {
-			console.log('serving from cache lookup');
+			log.debug('serving from cache', key);
 			return this.cache[key];
 		}
 		const brainz = await this.audioModule.musicbrainzLookup(req.query.type, req.query.id, req.query.inc);

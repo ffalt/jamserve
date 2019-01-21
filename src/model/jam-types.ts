@@ -1,4 +1,3 @@
-
 export enum DBObjectType {
 	root,
 	user,
@@ -131,4 +130,9 @@ export const enum MusicBrainzSearchType {
 	releaseGroup = 'release-group',
 	work = 'work',
 	area = 'area'
+}
+
+export const enum CoverArtArchiveLookupType {
+	release = 'release',
+	releaseGroup = 'release-group'
 }

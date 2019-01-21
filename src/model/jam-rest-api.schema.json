@@ -230,6 +230,43 @@
 						"result"
 					]
 				},
+				"coverartarchive/lookup": {
+					"description": "metadata: lookup coverartarchive data",
+					"type": "object",
+					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"metadata.coverartarchiveLookup"
+							]
+						},
+						"params": {
+							"$ref": "#/definitions/JamParameters.CoverArtArchiveLookup"
+						},
+						"result": {
+							"$ref": "#/definitions/CoverArtArchive.Response"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"operationId",
+						"params",
+						"result"
+					]
+				},
 				"autocomplete": {
 					"description": "various: autocomplete",
 					"type": "object",
@@ -7219,7 +7256,7 @@
 		"LastFM.Streamable": {
 			"type": "object",
 			"properties": {
-				"url": {
+				"sample": {
 					"type": "string"
 				},
 				"fulltrack": {
@@ -7228,7 +7265,7 @@
 			},
 			"required": [
 				"fulltrack",
-				"url"
+				"sample"
 			]
 		},
 		"LastFM.ArtistInfo": {
@@ -9175,6 +9212,134 @@
 				"audio_properties",
 				"tags",
 				"version"
+			]
+		},
+		"JamParameters.CoverArtArchiveLookup": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"$ref": "#/definitions/JamParameters.CoverArtArchiveLookupType",
+					"description": "lookup by musicbrainz type"
+				},
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"type"
+			]
+		},
+		"JamParameters.CoverArtArchiveLookupType": {
+			"enum": [
+				"release",
+				"release-group"
+			],
+			"type": "string"
+		},
+		"CoverArtArchive.Response": {
+			"type": "object",
+			"properties": {
+				"images": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/CoverArtArchive.Image"
+					}
+				},
+				"release": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"images"
+			]
+		},
+		"CoverArtArchive.Image": {
+			"type": "object",
+			"properties": {
+				"types": {
+					"type": "array",
+					"items": {
+						"enum": [
+							"Back",
+							"Booklet",
+							"Front",
+							"Liner",
+							"Medium",
+							"Obi",
+							"Other",
+							"Poster",
+							"Raw",
+							"Spine",
+							"Sticker",
+							"Track",
+							"Tray",
+							"Unedited",
+							"Watermark"
+						],
+						"type": "string"
+					}
+				},
+				"front": {
+					"type": "boolean"
+				},
+				"back": {
+					"type": "boolean"
+				},
+				"edit": {
+					"type": "number"
+				},
+				"image": {
+					"type": "string"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"approved": {
+					"type": "boolean"
+				},
+				"id": {
+					"type": "string"
+				},
+				"thumbnails": {
+					"type": "object",
+					"properties": {
+						"250": {
+							"type": "string"
+						},
+						"500": {
+							"type": "string"
+						},
+						"1200": {
+							"type": "string"
+						},
+						"small": {
+							"type": "string"
+						},
+						"large": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"1200",
+						"250",
+						"500",
+						"large",
+						"small"
+					]
+				}
+			},
+			"required": [
+				"approved",
+				"back",
+				"comment",
+				"edit",
+				"front",
+				"id",
+				"image",
+				"thumbnails",
+				"types"
 			]
 		},
 		"JamParameters.AutoComplete": {

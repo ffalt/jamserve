@@ -365,6 +365,56 @@
 				]
 			}
 		},
+		"/coverartarchive/lookup": {
+			"get": {
+				"operationId": "metadataController.coverartarchiveLookup",
+				"description": "lookup coverartarchive data",
+				"tags": [
+					"metadata"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CoverArtArchive.Response"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "type",
+						"schema": {
+							"$ref": "#/components/schemas/JamParameters.CoverArtArchiveLookupType"
+						},
+						"description": "lookup by musicbrainz type",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
 		"/autocomplete": {
 			"get": {
 				"operationId": "autocompleteController.autocomplete",
@@ -12627,7 +12677,7 @@
 			"LastFM.Streamable": {
 				"type": "object",
 				"properties": {
-					"url": {
+					"sample": {
 						"type": "string"
 					},
 					"fulltrack": {
@@ -12636,7 +12686,7 @@
 				},
 				"required": [
 					"fulltrack",
-					"url"
+					"sample"
 				]
 			},
 			"LastFM.ArtistInfo": {
@@ -14386,6 +14436,117 @@
 					"tags",
 					"version"
 				]
+			},
+			"CoverArtArchive.Response": {
+				"type": "object",
+				"properties": {
+					"images": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CoverArtArchive.Image"
+						}
+					},
+					"release": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"images"
+				]
+			},
+			"CoverArtArchive.Image": {
+				"type": "object",
+				"properties": {
+					"types": {
+						"type": "array",
+						"items": {
+							"enum": [
+								"Back",
+								"Booklet",
+								"Front",
+								"Liner",
+								"Medium",
+								"Obi",
+								"Other",
+								"Poster",
+								"Raw",
+								"Spine",
+								"Sticker",
+								"Track",
+								"Tray",
+								"Unedited",
+								"Watermark"
+							],
+							"type": "string"
+						}
+					},
+					"front": {
+						"type": "boolean"
+					},
+					"back": {
+						"type": "boolean"
+					},
+					"edit": {
+						"type": "number"
+					},
+					"image": {
+						"type": "string"
+					},
+					"comment": {
+						"type": "string"
+					},
+					"approved": {
+						"type": "boolean"
+					},
+					"id": {
+						"type": "string"
+					},
+					"thumbnails": {
+						"type": "object",
+						"properties": {
+							"250": {
+								"type": "string"
+							},
+							"500": {
+								"type": "string"
+							},
+							"1200": {
+								"type": "string"
+							},
+							"small": {
+								"type": "string"
+							},
+							"large": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"1200",
+							"250",
+							"500",
+							"large",
+							"small"
+						]
+					}
+				},
+				"required": [
+					"approved",
+					"back",
+					"comment",
+					"edit",
+					"front",
+					"id",
+					"image",
+					"thumbnails",
+					"types"
+				]
+			},
+			"JamParameters.CoverArtArchiveLookupType": {
+				"enum": [
+					"release",
+					"release-group"
+				],
+				"type": "string"
 			},
 			"Jam.AutoComplete": {
 				"type": "object",

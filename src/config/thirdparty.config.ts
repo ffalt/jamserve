@@ -19,6 +19,9 @@ export interface ThirdpartyToolsConfig {
 	acousticbrainz: {
 		userAgent: string;
 	};
+	coverartarchive: {
+		userAgent: string;
+	};
 	chartlyrics: {
 		userAgent: string;
 	};
@@ -51,6 +54,12 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		crowd sourced acoustic information
  	*/
 	acousticbrainz: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
+	/*
+		CoverArtArchive
+		https://coverartarchive.org/
+		cover art from Internet Archive (archive.org) via musicbrainz ids
+ 	*/
+	coverartarchive: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
 	/*
 		Chart Lyrics
 		http://www.chartlyrics.com/
