@@ -47,7 +47,7 @@ export class CoverArtArchiveClient extends WebserviceClient {
 
 	async releaseImages(mbid: string): Promise<CoverArtArchive.Response> {
 		const data = await this.get({
-			path: this.options.basePath + 'release/' + mbid,
+			path: this.options.basePath + 'release/' + mbid + '/',
 			query: {},
 			retry: 0
 		});
@@ -56,14 +56,14 @@ export class CoverArtArchiveClient extends WebserviceClient {
 
 	async releaseGroupImages(mbid: string): Promise<CoverArtArchive.Response> {
 		const data = await this.get({
-			path: this.options.basePath + 'release-group/' + mbid,
+			path: this.options.basePath + 'release-group/' + mbid + '/',
 			query: {},
 			retry: 0
 		});
 		return data;
 	}
 
-	private async get(req: CoverArtArchiveClientApi.Request): Promise<any> {
+	private async get(req: CoverArtArchiveClientApi.Request): Promise<CoverArtArchive.Response> {
 		const q = Object.keys(req.query)
 			.filter(key => (req.query[key] !== undefined && req.query[key] !== null))
 			.map(key => key + '=' + req.query[key]);
@@ -97,6 +97,15 @@ export class CoverArtArchiveClient extends WebserviceClient {
 			}
 			return data;
 		} catch (e) {
+			if (e instanceof SyntaxError) {
+				// coverartarchive response is html on empty data
+				// <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+				// <title>404 Not Found</title>
+				// <h1>Not Found</h1>
+				// <p>No cover art found for release {{mbid}}</p>
+				// */
+				return Promise.resolve({images: []});
+			}
 			const statusCode = e.statusCode;
 			if (statusCode === 502 || statusCode === 503) {
 				return retry(e);
