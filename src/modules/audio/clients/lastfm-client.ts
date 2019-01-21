@@ -46,6 +46,22 @@ export class LastFMClient extends WebserviceClient {
 							} else {
 								result[key] = sub;
 							}
+						} else if (key === 'streamable') {
+							result[key] = {
+								sample: sub['#text'],
+								fulltrack: sub['fulltrack'],
+							};
+							if (sub.tag) {
+								if (!Array.isArray(sub.tag)) {
+									sub.tag = [sub.tag];
+								}
+								result[key] = sub.tag;
+							} else {
+								result[key] = sub;
+							}
+						} else if (key === 'image') {
+							const images = Array.isArray(sub) ? sub : [sub];
+							result[key] = images.filter(img => img.url && img.url.length > 0);
 						} else if (key === 'tracks') {
 							if (sub.track) {
 								if (!Array.isArray(sub.track)) {
@@ -86,6 +102,8 @@ export class LastFMClient extends WebserviceClient {
 		sorted_params['api_key'] = this.options.key;
 		sorted_params['format'] = 'json';
 		const data = await this.getJson('http://ws.audioscrobbler.com/2.0/', sorted_params);
+		// console.log(JSON.stringify(data, null, '\t'));
+		// console.log(JSON.stringify(this.beautify(data), null, '\t'));
 		return <LastFM.Result>this.beautify(data);
 	}
 

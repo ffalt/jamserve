@@ -55,7 +55,7 @@ export declare namespace LastFM {
 	}
 
 	export interface Streamable {
-		url: string;
+		sample: string;
 		fulltrack: string;
 	}
 
