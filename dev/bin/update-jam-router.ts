@@ -80,7 +80,7 @@ import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {Acoustid} from '../../model/acoustid-rest-data';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {LastFM} from '../../model/lastfm-rest-data';
-import {CoverArtArchive} from '../../model/coverartarchive-rest.data';
+import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {JamController, JamRequest} from './api';
 import {ApiResponder} from './response';
