@@ -1,6 +1,7 @@
 import request from 'request';
 import fs from 'fs';
 import * as http from 'http';
+import {fileDeleteIfExists} from './fs-utils';
 
 export function downloadFile(url: string, filename: string): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
@@ -10,7 +11,11 @@ export function downloadFile(url: string, filename: string): Promise<void> {
 			})
 			.on('complete', (res: { statusCode: number }) => {
 				if (res.statusCode !== 200) {
-					reject(new Error(http.STATUS_CODES[res.statusCode]));
+					fileDeleteIfExists(filename).then(() => {
+						reject(new Error(http.STATUS_CODES[res.statusCode]));
+					}).catch(e => {
+						reject(new Error(http.STATUS_CODES[res.statusCode]));
+					});
 				} else {
 					resolve();
 				}
