@@ -907,6 +907,42 @@
 						"result"
 					]
 				},
+				"folder/artworks": {
+					"description": "folder: get the artwork list by folder id",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"result": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Jam.ArtworkImage"
+							}
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"track/id": {
 					"description": "track: get a track by id",
 					"type": "object",
@@ -3237,6 +3273,69 @@
 					]
 				},
 				"folder/image": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.Image"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"binary": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"image/jpeg"
+									]
+								},
+								{
+									"type": "string",
+									"enum": [
+										"image/png"
+									]
+								}
+							],
+							"minItems": 2,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"image/jpeg"
+										]
+									},
+									{
+										"type": "string",
+										"enum": [
+											"image/png"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"binary",
+						"errors",
+						"params"
+					]
+				},
+				"folder/artwork/image": {
 					"type": "object",
 					"properties": {
 						"params": {
@@ -5950,11 +6049,62 @@
 						"upload"
 					]
 				},
-				"folder/imageUrl/update": {
+				"folder/artwork/create": {
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.FolderEditImg"
+							"$ref": "#/definitions/JamParameters.FolderArtworkNew"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"roles"
+					]
+				},
+				"folder/artwork/delete": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
 						},
 						"errors": {
 							"anyOf": [
@@ -11488,7 +11638,12 @@
 					"type": "boolean"
 				},
 				"folderInfoSimilar": {
-					"description": "include similar folders list  on folder(s)",
+					"description": "include similar folders list on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderArtworks": {
+					"description": "include artwork images list on folder(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -11580,6 +11735,12 @@
 						"$ref": "#/definitions/Jam.FolderParent"
 					}
 				},
+				"artworks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.ArtworkImage"
+					}
+				},
 				"id": {
 					"type": "string"
 				},
@@ -11605,9 +11766,9 @@
 			"enum": [
 				"album",
 				"artist",
+				"collection",
 				"extras",
 				"multialbum",
-				"multiartist",
 				"unknown"
 			],
 			"type": "string"
@@ -11751,6 +11912,42 @@
 				"name"
 			]
 		},
+		"Jam.ArtworkImage": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"types": {
+					"type": "array",
+					"items": {
+						"enum": [
+							"artist",
+							"back",
+							"booklet",
+							"front",
+							"liner",
+							"medium",
+							"obi",
+							"other",
+							"poster",
+							"raw",
+							"spine",
+							"sticker",
+							"track",
+							"tray",
+							"unedited",
+							"watermark"
+						],
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"types"
+			]
+		},
 		"JamParameters.Folders": {
 			"type": "object",
 			"properties": {
@@ -11792,7 +11989,12 @@
 					"type": "boolean"
 				},
 				"folderInfoSimilar": {
-					"description": "include similar folders list  on folder(s)",
+					"description": "include similar folders list on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderArtworks": {
+					"description": "include artwork images list on folder(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -11894,7 +12096,12 @@
 					"type": "boolean"
 				},
 				"folderInfoSimilar": {
-					"description": "include similar folders list  on folder(s)",
+					"description": "include similar folders list on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderArtworks": {
+					"description": "include artwork images list on folder(s)",
 					"default": false,
 					"type": "boolean"
 				}
@@ -11998,7 +12205,12 @@
 					"type": "boolean"
 				},
 				"folderInfoSimilar": {
-					"description": "include similar folders list  on folder(s)",
+					"description": "include similar folders list on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderArtworks": {
+					"description": "include artwork images list on folder(s)",
 					"default": false,
 					"type": "boolean"
 				}
@@ -12114,9 +12326,9 @@
 					"enum": [
 						"album",
 						"artist",
+						"collection",
 						"extras",
 						"multialbum",
-						"multiartist",
 						"unknown"
 					],
 					"type": "string"
@@ -12128,9 +12340,9 @@
 						"enum": [
 							"album",
 							"artist",
+							"collection",
 							"extras",
 							"multialbum",
-							"multiartist",
 							"unknown"
 						],
 						"type": "string"
@@ -12180,7 +12392,12 @@
 					"type": "boolean"
 				},
 				"folderInfoSimilar": {
-					"description": "include similar folders list  on folder(s)",
+					"description": "include similar folders list on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderArtworks": {
+					"description": "include artwork images list on folder(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -12277,9 +12494,9 @@
 					"enum": [
 						"album",
 						"artist",
+						"collection",
 						"extras",
 						"multialbum",
-						"multiartist",
 						"unknown"
 					],
 					"type": "string"
@@ -12291,9 +12508,9 @@
 						"enum": [
 							"album",
 							"artist",
+							"collection",
 							"extras",
 							"multialbum",
-							"multiartist",
 							"unknown"
 						],
 						"type": "string"
@@ -12378,7 +12595,12 @@
 					"type": "boolean"
 				},
 				"folderInfoSimilar": {
-					"description": "include similar folders list  on folder(s)",
+					"description": "include similar folders list on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderArtworks": {
+					"description": "include artwork images list on folder(s)",
 					"default": false,
 					"type": "boolean"
 				}
@@ -15314,13 +15536,38 @@
 				"name"
 			]
 		},
-		"JamParameters.FolderEditImg": {
-			"description": "Set the image of a folder by url",
+		"JamParameters.FolderArtworkNew": {
+			"description": "Add an artwork to a folder by url",
 			"type": "object",
 			"properties": {
 				"url": {
 					"description": "url of an image",
 					"type": "string"
+				},
+				"types": {
+					"description": "types of the image",
+					"type": "array",
+					"items": {
+						"enum": [
+							"artist",
+							"back",
+							"booklet",
+							"front",
+							"liner",
+							"medium",
+							"obi",
+							"other",
+							"poster",
+							"raw",
+							"spine",
+							"sticker",
+							"track",
+							"tray",
+							"unedited",
+							"watermark"
+						],
+						"type": "string"
+					}
 				},
 				"id": {
 					"description": "the item id",
@@ -15329,6 +15576,7 @@
 			},
 			"required": [
 				"id",
+				"types",
 				"url"
 			]
 		},

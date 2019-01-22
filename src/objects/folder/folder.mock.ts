@@ -14,7 +14,8 @@ export function mockFolder(): Folder {
 			modified: 1543495269
 		},
 		tag: {
-			tracks: 10,
+			trackCount: 10,
+			folderCount: 10,
 			level: 1,
 			type: FolderType.artist,
 			genre: 'a genre',
@@ -43,7 +44,8 @@ export function mockFolder2(): Folder {
 			modified: 1443495269
 		},
 		tag: {
-			tracks: 2,
+			trackCount: 2,
+			folderCount: 0,
 			level: 2,
 			type: FolderType.album,
 			genre: 'second genre',

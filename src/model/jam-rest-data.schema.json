@@ -3746,9 +3746,9 @@
 			"enum": [
 				"album",
 				"artist",
+				"collection",
 				"extras",
 				"multialbum",
-				"multiartist",
 				"unknown"
 			],
 			"type": "string"
@@ -3769,6 +3769,27 @@
 				"downloading",
 				"error",
 				"new"
+			],
+			"type": "string"
+		},
+		"Jam.ArtworkImageType": {
+			"enum": [
+				"artist",
+				"back",
+				"booklet",
+				"front",
+				"liner",
+				"medium",
+				"obi",
+				"other",
+				"poster",
+				"raw",
+				"spine",
+				"sticker",
+				"track",
+				"tray",
+				"unedited",
+				"watermark"
 			],
 			"type": "string"
 		},
@@ -4314,6 +4335,12 @@
 						"$ref": "#/definitions/Jam.FolderParent"
 					}
 				},
+				"artworks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.ArtworkImage"
+					}
+				},
 				"id": {
 					"type": "string"
 				},
@@ -4348,6 +4375,42 @@
 			"required": [
 				"id",
 				"name"
+			]
+		},
+		"Jam.ArtworkImage": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"types": {
+					"type": "array",
+					"items": {
+						"enum": [
+							"artist",
+							"back",
+							"booklet",
+							"front",
+							"liner",
+							"medium",
+							"obi",
+							"other",
+							"poster",
+							"raw",
+							"spine",
+							"sticker",
+							"track",
+							"tray",
+							"unedited",
+							"watermark"
+						],
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"types"
 			]
 		},
 		"Jam.FolderMBTag": {

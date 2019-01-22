@@ -125,11 +125,17 @@ export declare namespace JamParameters {
 		 */
 		folderInfo?: boolean;
 		/**
-		 * include similar folders list  on folder(s)
+		 * include similar folders list on folder(s)
 		 *
 		 * @default false
 		 */
 		folderInfoSimilar?: boolean;
+		/**
+		 * include artwork images list on folder(s)
+		 *
+		 * @default false
+		 */
+		folderArtworks?: boolean;
 	}
 
 	export interface IncludesBookmark extends IncludesTrack {
@@ -601,13 +607,17 @@ export declare namespace JamParameters {
 	}
 
 	/**
-	 * Set the image of a folder by url
+	 * Add an artwork to a folder by url
 	 */
-	export interface FolderEditImg extends ID {
+	export interface FolderArtworkNew extends ID {
 		/**
 		 * url of an image
 		 */
 		url: string;
+		/**
+		 * types of the image
+		 */
+		types: Array<Jam.ArtworkImageType>;
 	}
 
 	/**

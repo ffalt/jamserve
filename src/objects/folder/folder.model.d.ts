@@ -1,5 +1,5 @@
 import {DBObject} from '../base/base.model';
-import {AlbumType, FolderType} from '../../model/jam-types';
+import {AlbumType, ArtworkImageType, FolderType} from '../../model/jam-types';
 import {MetaInfo} from '../../modules/audio/metadata.model';
 
 export interface Folder extends DBObject {
@@ -14,6 +14,12 @@ export interface Folder extends DBObject {
 	info?: MetaInfo;
 }
 
+export interface Artwork {
+	id: string;
+	name: string;
+	types: Array<ArtworkImageType>;
+}
+
 export interface FolderTag {
 	level: number;
 	trackCount: number;
@@ -25,10 +31,11 @@ export interface FolderTag {
 	artistSort?: string;
 	albumType?: AlbumType;
 	title?: string;
-	image?: string;
 	year?: number;
 	mbAlbumID?: string;
 	mbReleaseGroupID?: string;
 	mbAlbumType?: string;
 	mbArtistID?: string;
+	image?: string;
+	artworks?: Array<Artwork>;
 }

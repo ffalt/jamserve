@@ -31,8 +31,14 @@ export class ImageModule {
 		if (imageext.length === 0) {
 			return Promise.reject(Error('Invalid Image Url'));
 		}
-		const filename = name + imageext;
+		let filename = name + imageext;
+		let nr = 2;
+		while (await fse.pathExists(path.join(filepath, filename))) {
+			filename = name + '-' + nr + imageext;
+			nr++;
+		}
 		await downloadFile(imageUrl, path.join(filepath, filename));
+		console.log('image downloaded', filename);
 		log.info('image downloaded', filename);
 		return filename;
 	}

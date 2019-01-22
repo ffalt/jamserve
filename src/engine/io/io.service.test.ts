@@ -9,6 +9,7 @@ import {IndexService} from '../index/index.service';
 import {GenreService} from '../genre/genre.service';
 import {ScanService} from '../scan/scan.service';
 import {WaveformServiceTest} from '../waveform/waveform.service.spec';
+import {StatsService} from '../stats/stats.service';
 
 describe('IOService', () => {
 	let store: Store;
@@ -23,10 +24,11 @@ describe('IOService', () => {
 			dir = tmp.dirSync();
 			await waveFormServiceTest.setup();
 			mockRoot = buildMockRoot(dir.name, 1, 'rootID');
+			const statsService = new StatsService(store);
 			const indexService = new IndexService({ignore: []}, store.artistStore, store.folderStore, store.trackStore);
 			const genreService = new GenreService(store.trackStore);
 			const scanService = new ScanService(store, audioModule, imageModuleTest.imageModule, waveFormServiceTest.waveformService);
-			ioService = new IoService(store.rootStore, scanService, indexService, genreService);
+			ioService = new IoService(store.rootStore, scanService, indexService, genreService, statsService);
 			await writeMockRoot(mockRoot);
 		},
 		() => {

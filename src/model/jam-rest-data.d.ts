@@ -8,9 +8,10 @@ import {CoverArtArchive} from './coverartarchive-rest-data';
 export declare namespace Jam {
 
 	export type AlbumType = 'unknown' | 'album' | 'compilation' | 'audiobook';
-	export type FolderType = 'unknown' | 'artist' | 'multiartist' | 'album' | 'multialbum' | 'extras';
+	export type FolderType = 'unknown' | 'artist' | 'collection' | 'album' | 'multialbum' | 'extras';
 	export type PodcastStatusType = 'new' | 'downloading' | 'completed' | 'error';
 	export type PodcastEpisodeStatusType = 'new' | 'downloading' | 'completed' | 'error' | 'deleted';
+	export type ArtworkImageType = 'front' | 'back' | 'booklet' | 'medium' | 'tray' | 'obi' | 'spine' | 'track' | 'liner' | 'sticker' | 'poster' | 'watermark' | 'raw' | 'unedited' | 'other' | 'artist';
 
 	export interface Ping {
 		version: Version;
@@ -164,11 +165,17 @@ export declare namespace Jam {
 		folders?: Array<Folder>;
 		tracks?: Array<Track>;
 		parents?: Array<FolderParent>;
+		artworks?: Array<ArtworkImage>;
 	}
 
 	export interface FolderParent {
 		id: string;
 		name: string;
+	}
+
+	export interface ArtworkImage {
+		id: string;
+		types: Array<ArtworkImageType>;
 	}
 
 	export interface FolderMBTag {

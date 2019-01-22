@@ -256,6 +256,14 @@ export interface JamApi {
 			result: Array<Jam.Track>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * folder: get the artwork list by folder id
+		 */
+		'folder/artworks'?: {
+			params: JamParameters.ID;
+			result: Array<Jam.ArtworkImage>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
 
 		/**
 		 * track: get a track by id
@@ -686,6 +694,11 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiImageTypes;
 		};
+		'folder/artwork/image'?: {
+			params: JamParameters.Image;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiImageTypes;
+		};
 
 		'track/stream'?: {
 			params: JamParameters.Stream;
@@ -958,11 +971,18 @@ export interface JamApi {
 			roles: ['admin'];
 			upload: 'image'
 		};
-		'folder/imageUrl/update'?: {
-			params: JamParameters.FolderEditImg;
+
+		'folder/artwork/create'?: {
+			params: JamParameters.FolderArtworkNew;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		'folder/artwork/delete'?: {
+			params: JamParameters.ID;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+
 		'folder/name/update'?: {
 			params: JamParameters.FolderEditName;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;

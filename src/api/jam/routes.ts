@@ -184,6 +184,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/folder/artworks', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.ArtworkImage> = await api.folderController.artworks(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/track/id', async (req, res) => {
 		const options: JamRequest<JamParameters.Track> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Track = await api.trackController.id(options);
@@ -586,6 +592,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.binary(res, result);
 	});
 
+	register.get('/folder/artwork/image', async (req, res) => {
+		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
+		const result: IApiBinaryResult = await api.folderController.artworkImage(options);
+		await ApiResponder.binary(res, result);
+	});
+
 	register.get('/track/stream', async (req, res) => {
 		const options: JamRequest<JamParameters.Stream> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.trackController.stream(options);
@@ -814,11 +826,17 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.ok(res);
 	}, '/folder/imageUpload/update', ['admin']);
 
-	register.post('/folder/imageUrl/update', async (req, res) => {
-		const options: JamRequest<JamParameters.FolderEditImg> = {query: req.body, user: req.user, client: req.client};
-		await api.folderController.imageUrlUpdate(options);
+	register.post('/folder/artwork/create', async (req, res) => {
+		const options: JamRequest<JamParameters.FolderArtworkNew> = {query: req.body, user: req.user, client: req.client};
+		await api.folderController.artworkCreate(options);
 		await ApiResponder.ok(res);
-	}, '/folder/imageUrl/update', ['admin']);
+	}, '/folder/artwork/create', ['admin']);
+
+	register.post('/folder/artwork/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.folderController.artworkDelete(options);
+		await ApiResponder.ok(res);
+	}, '/folder/artwork/delete', ['admin']);
 
 	register.post('/folder/name/update', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderEditName> = {query: req.body, user: req.user, client: req.client};

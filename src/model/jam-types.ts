@@ -51,7 +51,7 @@ export const VideoMimeTypes: { [ext: string]: string } = {
 export enum FolderType {
 	unknown = 'unknown',
 	artist = 'artist',
-	multiartist = 'multiartist',
+	collection = 'collection',
 	album = 'album',
 	multialbum = 'multialbum',
 	extras = 'extras',
@@ -69,11 +69,30 @@ export enum PodcastStatus {
 export const FolderTypeImageName: { [foldertype: string]: string } = {
 	unknown: 'folder',
 	artist: 'artist',
-	multiartist: 'folder',
+	collection: 'folder',
 	album: 'cover',
 	multialbum: 'cover',
 	extras: 'folder'
 };
+
+export enum ArtworkImageType {
+	front = 'front',
+	back = 'back',
+	booklet = 'booklet',
+	medium = 'medium',
+	tray = 'tray',
+	obi = 'obi',
+	spine = 'spine',
+	track = 'track',
+	liner = 'liner',
+	sticker = 'sticker',
+	poster = 'poster',
+	watermark = 'watermark',
+	raw = 'raw',
+	unedited = 'unedited',
+	other = 'other',
+	artist = 'artist'
+}
 
 export const FolderTypesAlbum = [FolderType.album, FolderType.multialbum];
 

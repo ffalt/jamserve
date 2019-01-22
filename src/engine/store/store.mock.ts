@@ -277,7 +277,7 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 			tracks: 16,
 			artists: 7,
 			albums: 4,
-			folderType: FolderType.multiartist
+			folderType: FolderType.collection
 		}
 	};
 }

@@ -3,7 +3,7 @@ import {Jam} from '../../model/jam-rest-data';
 import path from 'path';
 import {FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import {MetaInfo} from '../../modules/audio/metadata.model';
-import {Folder} from './folder.model';
+import {Artwork, Folder} from './folder.model';
 
 export function formatArtistFolderInfo(info: MetaInfo): Jam.ArtistFolderInfo {
 	return {
@@ -24,6 +24,20 @@ export function formatAlbumFolderInfo(info: MetaInfo): Jam.AlbumFolderInfo {
 		mediumImageUrl: info.album.image && info.album.image.medium ? info.album.image.medium : undefined,
 		largeImageUrl: info.album.image && info.album.image.large ? info.album.image.large : undefined
 	};
+}
+
+export function formatFolderArtwork(artwork: Artwork): Jam.ArtworkImage {
+	return {
+		id: artwork.id,
+		types: artwork.types
+	};
+}
+
+export function formatFolderArtworks(folder: Folder): Array<Jam.ArtworkImage> {
+	if (!folder.tag.artworks) {
+		return [];
+	}
+	return folder.tag.artworks.map(artwork => formatFolderArtwork(artwork));
 }
 
 function formatFolderTag(folder: Folder): Jam.FolderTag {
@@ -59,6 +73,7 @@ export function formatFolder(folder: Folder, includes: JamParameters.IncludesFol
 		trackCount: includes.folderCounts ? folder.tag.trackCount : undefined,
 		folderCount: includes.folderCounts ? folder.tag.folderCount : undefined,
 		type: <Jam.FolderType>((folder.tag.type !== undefined) ? (FolderType[folder.tag.type] || 'unknown') : 'unknown'),
-		tag: includes.folderTag ? formatFolderTag(folder) : undefined
+		tag: includes.folderTag ? formatFolderTag(folder) : undefined,
+		artworks: includes.folderArtworks ? formatFolderArtworks(folder) : undefined
 	};
 }

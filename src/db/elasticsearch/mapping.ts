@@ -44,6 +44,14 @@ const type_User = {
 	}
 };
 
+const type_Artwork = {
+	properties: {
+		id: type_key,
+		name: type_string,
+		types: type_key
+	}
+};
+
 const type_FolderTag = {
 	properties: {
 		level: type_int,
@@ -56,12 +64,13 @@ const type_FolderTag = {
 		artistSort: type_key,
 		albumType: type_key,
 		title: type_string,
-		image: type_key,
 		year: type_int,
 		mbAlbumID: type_key,
 		mbReleaseGroupID: type_key,
 		mbAlbumType: type_key,
-		mbArtistID: type_key
+		mbArtistID: type_key,
+		image: type_key,
+		artworks: type_Artwork
 	}
 };
 

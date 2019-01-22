@@ -5,16 +5,17 @@ import {WaveformService} from '../waveform/waveform.service';
 import {Track} from '../../objects/track/track.model';
 import {ImageModule} from '../../modules/image/image.module';
 import {deepCompare} from '../../utils/deep-compare';
-import {AlbumType, DBObjectType, FileTyp, FolderType, FolderTypesAlbum} from '../../model/jam-types';
+import {AlbumType, ArtworkImageType, DBObjectType, FileTyp, FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import path from 'path';
 import fse from 'fs-extra';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import {getFileType} from '../../utils/filetype';
-import {Folder, FolderTag} from '../../objects/folder/folder.model';
+import {Folder, Artwork, FolderTag} from '../../objects/folder/folder.model';
 import {Artist} from '../../objects/artist/artist.model';
 import {Album} from '../../objects/album/album.model';
 import {updatePlayListTracks} from '../../objects/playlist/playlist.service';
 import moment from 'moment';
+import {md5string} from '../../utils/md5';
 
 const log = Logger('IO');
 
@@ -51,8 +52,6 @@ export interface MatchDir extends ScanDir {
 	folder?: Folder;
 	files: Array<MatchFile>;
 	directories: Array<MatchDir>;
-	// removedTracks: Array<Track>;
-	// removedFolders: Array<Folder>;
 	metaStat?: MetaStat;
 }
 
@@ -104,27 +103,28 @@ function printTree(match: MatchDir, level: number = 0) {
 	}
 }
 
-function logChange(name: string, amount: number) {
-	if (amount > 0) {
-		log.info(name, amount);
+function logChange(name: string, list: Array<any>) {
+	if (list.length > 0) {
+		log.info(name, list.length);
+		log.debug(name, JSON.stringify(list));
 	}
 }
 
 export function logChanges(changes: MergeChanges) {
 	const v = moment.utc(changes.end - changes.start).format('HH:mm:ss.SSS');
 	log.info('Duration:', v);
-	logChange('Added Tracks', changes.newTracks.length);
-	logChange('Updated Tracks', changes.updateTracks.length);
-	logChange('Removed Tracks', changes.removedTracks.length);
-	logChange('Added Folders', changes.newFolders.length);
-	logChange('Updated Folders', changes.updateFolders.length);
-	logChange('Removed Folders', changes.removedFolders.length);
-	logChange('Added Artists', changes.newArtists.length);
-	logChange('Updated Artists', changes.updateArtists.length);
-	logChange('Removed Artists', changes.removedArtists.length);
-	logChange('Added Albums', changes.newAlbums.length);
-	logChange('Updated Albums', changes.updateAlbums.length);
-	logChange('Removed Albums', changes.removedAlbums.length);
+	logChange('Added Tracks', changes.newTracks);
+	logChange('Updated Tracks', changes.updateTracks);
+	logChange('Removed Tracks', changes.removedTracks);
+	logChange('Added Folders', changes.newFolders);
+	logChange('Updated Folders', changes.updateFolders);
+	logChange('Removed Folders', changes.removedFolders);
+	logChange('Added Artists', changes.newArtists);
+	logChange('Updated Artists', changes.updateArtists);
+	logChange('Removed Artists', changes.removedArtists);
+	logChange('Added Albums', changes.newAlbums);
+	logChange('Updated Albums', changes.updateAlbums);
+	logChange('Removed Albums', changes.removedAlbums);
 }
 
 export const cVariousArtist = 'Various Artists';
@@ -152,8 +152,6 @@ interface MetaStat {
 	mbReleaseGroupID?: string;
 	mbAlbumType?: string;
 	year?: number;
-	images: Array<string>;
-	image?: string;
 	isMultiArtist: boolean;
 	isMultiAlbum: boolean;
 	trackCount: number;
@@ -239,7 +237,7 @@ function trackHasChanged(file: MatchFile): boolean {
 }
 
 function getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
-	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === cVariousArtist) {
 		return;
 	} else {
 		return trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID;
@@ -247,7 +245,7 @@ function getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
 }
 
 function getArtistNameSort(trackInfo: MergeTrackInfo): string | undefined {
-	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === cVariousArtist) {
 		return;
 	} else {
 		return trackInfo.track.tag.artistSort;
@@ -255,11 +253,7 @@ function getArtistNameSort(trackInfo: MergeTrackInfo): string | undefined {
 }
 
 function getArtistName(trackInfo: MergeTrackInfo): string {
-	// if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
-	// 	return trackInfo.dir.folder.tag.artist || cUnknownArtist;
-	// } else {
 	return trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist || cUnknownArtist;
-	// }
 }
 
 function slugify(s: string): string {
@@ -294,6 +288,11 @@ function extractAlbumName(name: string): string {
 	return result;
 }
 
+export function generateArtworkId(folderID: string, filename: string): string {
+	const id = folderID + '-' + md5string(filename + filename);
+	return id;
+}
+
 export class ScanService {
 	private artistCache: Array<Artist> = [];
 	private albumCache: Array<Album> = [];
@@ -325,7 +324,6 @@ export class ScanService {
 			mbAlbumID: {},
 			mbAlbumType: {}
 		};
-		const images: Array<string> = [];
 		let trackCount = 0;
 		dir.files.forEach((file) => {
 			if (file.type === FileTyp.AUDIO) {
@@ -379,8 +377,6 @@ export class ScanService {
 					stats.mbReleaseGroupID[slug] = stats.mbReleaseGroupID[slug] || {count: 0, val: slug};
 					stats.mbReleaseGroupID[slug].count += 1;
 				}
-			} else if (file.type === FileTyp.IMAGE) {
-				images.push(file.name);
 			}
 		});
 		dir.directories.forEach((sub) => {
@@ -442,24 +438,7 @@ export class ScanService {
 		const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs);
 		const year = getMostUsedTagValue<number>(years);
 		const isMultiArtist = artist === cVariousArtist;
-		const isMultiAlbum = albums.length > 0;
-		let image: string | undefined;
-		// check folder image
-		if (images.length > 0) {
-			if (images.length === 1) {
-				image = path.basename(images[0]);
-			} else {
-				images.forEach((img) => {
-					const typ = path.basename(img, path.extname(img)).toLowerCase();
-					if (['folder', 'cover', 'front'].indexOf(typ) >= 0) {
-						image = path.basename(img);
-					}
-				});
-				if (image === undefined) {
-					image = path.basename(images[0]);
-				}
-			}
-		}
+		const isMultiAlbum = getMostUsedTagValue<string>(albums, cVariousArtist) !== cVariousArtist;
 		let albumType = AlbumType.unknown;
 		if (mbAlbumType) {
 			if (mbAlbumType.toLowerCase().indexOf('compilation') >= 0) {
@@ -474,8 +453,6 @@ export class ScanService {
 		}
 		return {
 			trackCount,
-			images,
-			image,
 			albumType,
 			isMultiArtist,
 			isMultiAlbum,
@@ -735,12 +712,50 @@ export class ScanService {
 		await this.mergeMeta(changes);
 	}
 
-	private createFolderTag(dir: MatchDir): FolderTag {
+	private collectFolderImages(dir: MatchDir): Array<Artwork> {
+		if (!dir.folder) {
+			log.error('folder obj must has been created at this point');
+			return [];
+		}
+		const folderID = dir.folder.id;
+		return dir.files.filter(file => file.type === FileTyp.IMAGE).map(file => {
+			const name = path.basename(file.name);
+			const lname = name.toLowerCase();
+			const types: Array<ArtworkImageType> = [];
+			for (const t in ArtworkImageType) {
+				if (!Number(t)) {
+					if (lname.indexOf(t) >= 0) {
+						types.push(<ArtworkImageType>t);
+					}
+				}
+			}
+			if ((types.indexOf(ArtworkImageType.front) < 0) && (lname.indexOf('cover') >= 0 || lname.indexOf('folder') >= 0)) {
+				types.push(ArtworkImageType.front);
+			}
+			if (types.length === 0) {
+				types.push(ArtworkImageType.other);
+			}
+			types.sort((a, b) => a.localeCompare(b));
+			const id = generateArtworkId(folderID, name);
+			return {id, name, types};
+		});
+	}
+
+	private buildFolderTag(dir: MatchDir): FolderTag {
 		const metaStat = dir.metaStat;
 		if (!metaStat) {
 			throw Error('internal error, metastat must exists');
 		}
 		const nameSplit = splitDirectoryName(dir.name);
+		const images = this.collectFolderImages(dir);
+		let imageName: string | undefined;
+		let image = images.find(i => i.types.length === 1 && (i.types.indexOf(ArtworkImageType.front) >= 0));
+		if (!image) {
+			image = images.find(i => i.types.length === 1 && (i.types.indexOf(ArtworkImageType.artist) >= 0));
+		}
+		if (image) {
+			imageName = image.name;
+		}
 		const tag: FolderTag = {
 			trackCount: dir.files.filter(t => t.type === FileTyp.AUDIO).length,
 			folderCount: dir.directories.length,
@@ -751,7 +766,8 @@ export class ScanService {
 			artist: metaStat.artist,
 			artistSort: metaStat.artistSort,
 			title: nameSplit.title,
-			image: metaStat.image,
+			image: imageName,
+			artworks: images,
 			genre: metaStat.genre,
 			mbAlbumID: metaStat.mbAlbumID,
 			mbReleaseGroupID: metaStat.mbReleaseGroupID,
@@ -779,7 +795,7 @@ export class ScanService {
 		const name = path.basename(dir.name).toLowerCase();
 		let result: FolderType = FolderType.unknown;
 		if (dir.level === 0) {
-			result = FolderType.multiartist;
+			result = FolderType.collection;
 		} else if (name.match(/\[(extra|various)\]/) || name.match(/^(extra|various)$/)) {
 			result = FolderType.extras;
 		} else if (metaStat.trackCount > 0) {
@@ -791,7 +807,12 @@ export class ScanService {
 			}
 		} else if (dir.directories.length > 0) {
 			if (metaStat.isMultiArtist) {
-				result = FolderType.multialbum;
+				if (metaStat.isMultiAlbum) {
+					result = FolderType.multialbum;
+				} else {
+					result = FolderType.collection;
+				}
+				// console.log(dir.name, metaStat);
 			} else {
 				result = FolderType.artist;
 				dir.directories.forEach(d => {
@@ -810,7 +831,7 @@ export class ScanService {
 				return (!!d.tag && d.tag.type === FolderType.artist);
 			});
 			if (a) {
-				result = FolderType.multiartist;
+				result = FolderType.collection;
 			}
 		}
 		dir.tag.type = result;
@@ -825,7 +846,7 @@ export class ScanService {
 		}
 		if (dir.folder) {
 			dir.metaStat = this.getMetaStat(dir);
-			dir.tag = this.createFolderTag(dir);
+			dir.tag = this.buildFolderTag(dir);
 		}
 		this.applyFolderTagType(dir);
 	}
@@ -1054,7 +1075,7 @@ export class ScanService {
 				}
 				trackInfo.track.artistID = artist.id;
 				let album: Album;
-				if (trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
+				if (trackInfo.dir.folder.tag.artist === cVariousArtist) {
 					if (!compilationArtist) {
 						compilationArtist = await this.findOrCreateCompilationArtist(changes);
 					}
@@ -1309,9 +1330,6 @@ export class ScanService {
 		await this.store.albumStore.upsert(changes.updateAlbums);
 		await this.store.artistStore.bulk(changes.newArtists);
 		await this.store.artistStore.upsert(changes.updateArtists);
-
-
-		// for (let artist of changes.updateArtists)
 
 		changes.end = Date.now();
 		// printTree(match);

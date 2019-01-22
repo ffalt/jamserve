@@ -845,7 +845,17 @@
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include similar folders list  on folder(s)",
+						"description": "include similar folders list on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderArtworks",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include artwork images list on folder(s)",
 						"required": false
 					},
 					{
@@ -1032,7 +1042,17 @@
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include similar folders list  on folder(s)",
+						"description": "include similar folders list on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderArtworks",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include artwork images list on folder(s)",
 						"required": false
 					},
 					{
@@ -1256,7 +1276,17 @@
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include similar folders list  on folder(s)",
+						"description": "include similar folders list on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderArtworks",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include artwork images list on folder(s)",
 						"required": false
 					}
 				]
@@ -1473,7 +1503,17 @@
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include similar folders list  on folder(s)",
+						"description": "include similar folders list on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderArtworks",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include artwork images list on folder(s)",
 						"required": false
 					}
 				]
@@ -1590,7 +1630,17 @@
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include similar folders list  on folder(s)",
+						"description": "include similar folders list on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderArtworks",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include artwork images list on folder(s)",
 						"required": false
 					},
 					{
@@ -1896,9 +1946,9 @@
 							"enum": [
 								"album",
 								"artist",
+								"collection",
 								"extras",
 								"multialbum",
-								"multiartist",
 								"unknown"
 							],
 							"type": "string"
@@ -1915,9 +1965,9 @@
 								"enum": [
 									"album",
 									"artist",
+									"collection",
 									"extras",
 									"multialbum",
-									"multiartist",
 									"unknown"
 								],
 								"type": "string"
@@ -2021,7 +2071,17 @@
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include similar folders list  on folder(s)",
+						"description": "include similar folders list on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderArtworks",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include artwork images list on folder(s)",
 						"required": false
 					},
 					{
@@ -2210,9 +2270,9 @@
 							"enum": [
 								"album",
 								"artist",
+								"collection",
 								"extras",
 								"multialbum",
-								"multiartist",
 								"unknown"
 							],
 							"type": "string"
@@ -2229,9 +2289,9 @@
 								"enum": [
 									"album",
 									"artist",
+									"collection",
 									"extras",
 									"multialbum",
-									"multiartist",
 									"unknown"
 								],
 								"type": "string"
@@ -2405,7 +2465,17 @@
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include similar folders list  on folder(s)",
+						"description": "include similar folders list on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderArtworks",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include artwork images list on folder(s)",
 						"required": false
 					}
 				]
@@ -2606,6 +2676,53 @@
 						},
 						"description": "get back number of items",
 						"required": false
+					}
+				]
+			}
+		},
+		"/folder/artworks": {
+			"get": {
+				"operationId": "folderController.artworks",
+				"description": "get the artwork list by folder id",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.ArtworkImage"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
 					}
 				]
 			}
@@ -9058,6 +9175,84 @@
 				]
 			}
 		},
+		"/folder/artwork/image": {
+			"get": {
+				"operationId": "folderController.artworkImage",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"image/jpeg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/png": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "format",
+						"schema": {
+							"default": "png",
+							"enum": [
+								"bmp",
+								"jpeg",
+								"jpg",
+								"png",
+								"tiff"
+							],
+							"type": "string"
+						},
+						"description": "format of the image",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "size",
+						"schema": {
+							"minimum": 16,
+							"maximum": 1024,
+							"type": "integer"
+						},
+						"description": "size of the image",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
 		"/track/stream": {
 			"get": {
 				"operationId": "trackController.stream",
@@ -11399,9 +11594,9 @@
 				}
 			}
 		},
-		"/folder/imageUrl/update": {
+		"/folder/artwork/create": {
 			"post": {
-				"operationId": "folderController.imageUrlUpdate",
+				"operationId": "folderController.artworkCreate",
 				"tags": [
 					"folder"
 				],
@@ -11423,12 +11618,47 @@
 					}
 				},
 				"requestBody": {
-					"description": "Set the image of a folder by url",
+					"description": "Add an artwork to a folder by url",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/JamParameters.FolderEditImg"
+								"$ref": "#/components/schemas/JamParameters.FolderArtworkNew"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/folder/artwork/delete": {
+			"post": {
+				"operationId": "folderController.artworkDelete",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
 							}
 						}
 					}
@@ -16592,6 +16822,12 @@
 							"$ref": "#/components/schemas/Jam.FolderParent"
 						}
 					},
+					"artworks": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.ArtworkImage"
+						}
+					},
 					"id": {
 						"type": "string"
 					},
@@ -16617,9 +16853,9 @@
 				"enum": [
 					"album",
 					"artist",
+					"collection",
 					"extras",
 					"multialbum",
-					"multiartist",
 					"unknown"
 				],
 				"type": "string"
@@ -16761,6 +16997,42 @@
 				"required": [
 					"id",
 					"name"
+				]
+			},
+			"Jam.ArtworkImage": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"types": {
+						"type": "array",
+						"items": {
+							"enum": [
+								"artist",
+								"back",
+								"booklet",
+								"front",
+								"liner",
+								"medium",
+								"obi",
+								"other",
+								"poster",
+								"raw",
+								"spine",
+								"sticker",
+								"track",
+								"tray",
+								"unedited",
+								"watermark"
+							],
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"types"
 				]
 			},
 			"Jam.FolderChildren": {
@@ -17676,13 +17948,38 @@
 					"name"
 				]
 			},
-			"JamParameters.FolderEditImg": {
-				"description": "Set the image of a folder by url",
+			"JamParameters.FolderArtworkNew": {
+				"description": "Add an artwork to a folder by url",
 				"type": "object",
 				"properties": {
 					"url": {
 						"description": "url of an image",
 						"type": "string"
+					},
+					"types": {
+						"description": "types of the image",
+						"type": "array",
+						"items": {
+							"enum": [
+								"artist",
+								"back",
+								"booklet",
+								"front",
+								"liner",
+								"medium",
+								"obi",
+								"other",
+								"poster",
+								"raw",
+								"spine",
+								"sticker",
+								"track",
+								"tray",
+								"unedited",
+								"watermark"
+							],
+							"type": "string"
+						}
 					},
 					"id": {
 						"description": "the item id",
@@ -17691,6 +17988,7 @@
 				},
 				"required": [
 					"id",
+					"types",
 					"url"
 				]
 			},

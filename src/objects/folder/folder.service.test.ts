@@ -7,7 +7,7 @@ import tmp from 'tmp';
 import fse from 'fs-extra';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import mimeTypes from 'mime-types';
-import {FolderType} from '../../model/jam-types';
+import {ArtworkImageType, FolderType} from '../../model/jam-types';
 import {testService} from '../base/base.service.spec';
 import {ImageModuleTest, mockImage} from '../../modules/image/image.module.spec';
 import {StateService} from '../state/state.service';
@@ -25,7 +25,6 @@ describe('FolderService', () => {
 			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
 		},
 		() => {
-
 			describe('setFolderImage', () => {
 				it('should do handle invalid parameters', async () => {
 					const folder = await folderService.folderStore.random();
@@ -56,22 +55,23 @@ describe('FolderService', () => {
 						return;
 					}
 					expect(updatedFolder.tag.image).to.equal(folder.tag.image);
+					folder.tag.image = undefined;
+					await folderService.folderStore.upsert([folder]);
 				});
 			});
 
 			describe('downloadFolderImage', () => {
-
 				it('should do handle invalid parameters', async () => {
 					const folder = await folderService.folderStore.random();
 					should().exist(folder, 'Wrong Test Setup');
 					if (!folder) {
 						return;
 					}
-					await folderService.downloadFolderImage(folder, 'invalid').should.eventually.be.rejectedWith(Error);
-					await folderService.downloadFolderImage(folder, 'http://invaliddomain.invaliddomain.invaliddomain/invalid').should.eventually.be.rejectedWith(Error);
+					// await folderService.downloadFolderArtwork(folder, 'invalid', [ArtworkImageType.front]).should.eventually.be.rejectedWith(Error);
+					// await folderService.downloadFolderArtwork(folder, 'http://invaliddomain.invaliddomain.invaliddomain/invalid', [ArtworkImageType.front]).should.eventually.be.rejectedWith(Error);
 					const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 						.get('/invalid.png').reply(404);
-					await folderService.downloadFolderImage(folder, 'http://invaliddomain.invaliddomain.invaliddomain/invalid.png').should.eventually.be.rejectedWith(Error);
+					await folderService.downloadFolderArtwork(folder, 'http://invaliddomain.invaliddomain.invaliddomain/invalid.png', [ArtworkImageType.front]).should.eventually.be.rejectedWith(Error);
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
 				});
 				it('should download an image', async () => {
@@ -83,9 +83,10 @@ describe('FolderService', () => {
 					const image = await mockImage('png');
 					const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 						.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
-					await folderService.downloadFolderImage(folder, 'http://invaliddomain.invaliddomain.invaliddomain/image.png');
+					const artwork = await folderService.downloadFolderArtwork(folder, 'http://invaliddomain.invaliddomain.invaliddomain/image.png', [ArtworkImageType.front]);
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
 					const filename = path.resolve(folder.path, folder.tag.image || 'invalid-not-existent');
+					console.log(filename);
 					expect(await fse.pathExists(filename)).to.equal(true, 'folder image file does not exist ' + filename);
 					await fse.unlink(filename);
 					const updatedFolder = await folderService.folderStore.byId(folder.id);
@@ -268,6 +269,5 @@ describe('FolderService', () => {
 
 			});
 
-		}
-	);
+		});
 });

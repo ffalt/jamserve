@@ -277,7 +277,7 @@ describe('ScanService', () => {
 						tracks: 3,
 						artists: 1,
 						albums: 1,
-						folderType: FolderType.multiartist
+						folderType: FolderType.collection
 					}
 				};
 				await writeMockRoot(mockRoot2);

@@ -1,11 +1,11 @@
 import {JamParameters} from '../../model/jam-rest-params';
-import {DBObjectType, FolderType, FolderTypesAlbum} from '../../model/jam-types';
-import {InvalidParamError} from '../../api/jam/error';
+import {ArtworkImageType, DBObjectType, FolderType, FolderTypesAlbum} from '../../model/jam-types';
+import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {TrackController} from '../track/track.controller';
-import {formatAlbumFolderInfo, formatArtistFolderInfo, formatFolder} from './folder.format';
+import {formatAlbumFolderInfo, formatArtistFolderInfo, formatFolder, formatFolderArtwork, formatFolderArtworks} from './folder.format';
 import {formatState} from '../state/state.format';
 import {formatFolderIndex} from '../../engine/index/index.format';
 import {StateService} from '../state/state.service';
@@ -20,7 +20,8 @@ import {FolderService} from './folder.service';
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
 import {replaceFolderSystemChars} from '../../utils/fs-utils';
-import {Folder, FolderTag} from './folder.model';
+import {Artwork, Folder, FolderTag} from './folder.model';
+import {IApiBinaryResult} from '../../typings';
 
 interface ProblemCheck {
 	name: string;
@@ -77,7 +78,14 @@ const ProblemDefs: { [id: string]: ProblemCheck; } = {
 	ALBUM_NAME_NONCONFORM: {
 		name: 'Album folder name is not "[Year] Album-Name"',
 		check: async (folder) => {
-			if (folder.tag && (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) &&
+			if (folder.tag && (folder.tag.type === FolderType.album) &&
+				(folder.tag.album) && (folder.tag.year) && (folder.tag.year > 0)) {
+				const name = path.basename(folder.path).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
+				const nicename = getNiceFolderName(folder.tag).replace(/[_:!?\/ ]/g, '').toLowerCase();
+				return name.localeCompare(nicename) !== 0;
+			}
+
+			if (folder.tag && (folder.tag.type === FolderType.multialbum && folder.tag.trackCount === 0) &&
 				(folder.tag.album) && (folder.tag.year) && (folder.tag.year > 0)) {
 				const name = path.basename(folder.path).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
 				const nicename = getNiceFolderName(folder.tag).replace(/[_:!?\/ ]/g, '').toLowerCase();
@@ -115,7 +123,7 @@ const ProblemDefs: { [id: string]: ProblemCheck; } = {
 			return (!!folder.tag) &&
 				(
 					(folder.tag.type === FolderType.artist) ||
-					(folder.tag.type === FolderType.multiartist)
+					(folder.tag.type === FolderType.collection)
 				) && (!!folder.tag.image) && folder.tag.image.indexOf('artist.') !== 0;
 		}
 	},
@@ -247,11 +255,6 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return {folders: resultFolders, tracks: resultTracks};
 	}
 
-	async imageUrlUpdate(req: JamRequest<JamParameters.FolderEditImg>): Promise<void> {
-		const folder = await this.byID(req.query.id);
-		await this.folderService.downloadFolderImage(folder, req.query.url);
-	}
-
 	async imageUploadUpdate(req: JamRequest<JamParameters.ID>): Promise<void> {
 		if (!req.file) {
 			return Promise.reject(InvalidParamError('Image upload failed'));
@@ -304,4 +307,34 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return formatFolderIndex(this.indexService.filterFolderIndex(req.query.rootID, folderIndex));
 	}
 
+	async artworks(req: JamRequest<JamParameters.ID>): Promise<Array<Jam.ArtworkImage>> {
+		const folder = await this.byID(req.query.id);
+		return formatFolderArtworks(folder);
+	}
+
+	private async artworkByID(id: string): Promise<{ artwork: Artwork, folder: Folder }> {
+		const folderID = id.split('-')[0];
+		const folder = await this.byID(folderID);
+		const artwork = (folder.tag.artworks || []).find(art => art.id === id);
+		if (!artwork) {
+			return Promise.reject(NotFoundError());
+		}
+		return {folder, artwork};
+	}
+
+	async artworkImage(req: JamRequest<JamParameters.Image>): Promise<IApiBinaryResult> {
+		const {folder, artwork} = await this.artworkByID(req.query.id);
+		return await this.folderService.getArtworkImage(folder, artwork, req.query.size, req.query.format);
+	}
+
+	async artworkCreate(req: JamRequest<JamParameters.FolderArtworkNew>): Promise<Jam.ArtworkImage> {
+		const folder = await this.byID(req.query.id);
+		const artwork = await this.folderService.downloadFolderArtwork(folder, req.query.url, <Array<ArtworkImageType>>req.query.types);
+		return formatFolderArtwork(artwork);
+	}
+
+	async artworkDelete(req: JamRequest<JamParameters.ID>): Promise<void> {
+		const {folder, artwork} = await this.artworkByID(req.query.id);
+		return await this.folderService.removeArtworkImage(folder, artwork);
+	}
 }

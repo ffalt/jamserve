@@ -2,7 +2,7 @@ import {IApiBinaryResult} from '../../typings';
 import {TrackStore} from '../track/track.store';
 import {FolderService} from '../folder/folder.service';
 import {Artist} from './artist.model';
-import {FolderType} from '../../model/jam-types';
+import {ArtworkImageType, FolderType} from '../../model/jam-types';
 import {ArtistStore, SearchQueryArtist} from './artist.store';
 import {Folder} from '../folder/folder.model';
 import {BaseListService} from '../base/base.list.service';
@@ -42,7 +42,7 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 		const folder = await this.getArtistFolder(artist);
 		if (folder) {
 			if (!folder.tag.image && artist.info && artist.info.artist.image && artist.info.artist.image.large) {
-				await this.folderService.downloadFolderImage(folder, artist.info.artist.image.large);
+				await this.folderService.downloadFolderArtwork(folder, artist.info.artist.image.large, [ArtworkImageType.front]);
 			}
 			return this.folderService.getFolderImage(folder, size, format);
 		}
