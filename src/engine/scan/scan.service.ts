@@ -45,17 +45,29 @@ export interface ScanFile {
 }
 
 export interface MatchDir extends ScanDir {
-	level: number;
+	name: string;
 	rootID: string;
+	stat: {
+		ctime: number,
+		mtime: number,
+	};
+	directories: Array<MatchDir>;
+	files: Array<MatchFile>;
+	level: number;
 	tag?: FolderTag;
 	parent?: MatchDir;
 	folder?: Folder;
-	files: Array<MatchFile>;
-	directories: Array<MatchDir>;
 	metaStat?: MetaStat;
 }
 
 export interface MatchFile extends ScanFile {
+	name: string;
+	type: FileTyp;
+	stat: {
+		ctime: number,
+		mtime: number,
+		size: number
+	};
 	rootID: string;
 	track?: Track;
 }
@@ -93,20 +105,22 @@ function printTree(match: MatchDir, level: number = 0) {
 	} else {
 		console.log(prefix + '📁 ' + path.basename(match.name), '[new]');
 	}
+	// console.log(prefix + JSON.stringify(match.tag));
 	for (const sub of match.directories) {
 		printTree(sub, level + 1);
 	}
-	for (const f of match.files) {
-		if (f.type === FileTyp.AUDIO) {
-			console.log(prefix + ' 🎧 ' + path.basename(f.name), f.track ? '' : '[new]');
-		}
-	}
+	// if (wFiles) {
+	// 	for (const f of match.files) {
+	// 		if (f.type === FileTyp.AUDIO) {
+	// 			console.log(prefix + ' 🎧 ' + path.basename(f.name), f.track ? '' : '[new]');
+	// 		}
+	// 	}
+	// }
 }
 
 function logChange(name: string, list: Array<any>) {
 	if (list.length > 0) {
 		log.info(name, list.length);
-		log.debug(name, JSON.stringify(list));
 	}
 }
 
@@ -280,6 +294,7 @@ function extractAlbumName(name: string): string {
 	const result = name
 		.replace(/\(((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))\)/gi, '')
 		.replace(/\[((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))\]/gi, '')
+		.replace(/-? cd\d*/gi, '')
 		.trim()
 	;
 	if (result.length === 0) {
@@ -300,9 +315,7 @@ export class ScanService {
 	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
 	}
 
-
-	private getMetaStat(dir: MatchDir): MetaStat {
-		// combine meta frames from child tracks and folders
+	private buildMetaStat(dir: MatchDir): MetaStat {
 		const stats: {
 			artist: { [key: string]: { count: number, val: string }; };
 			artistSort: { [key: string]: { count: number, val: string }; };
@@ -380,7 +393,7 @@ export class ScanService {
 			}
 		});
 		dir.directories.forEach((sub) => {
-			if (sub.folder && sub.tag) {
+			if (sub.folder && sub.tag && (sub.tag.type !== FolderType.extras)) {
 				const subtag = sub.tag;
 				if (subtag.artist) {
 					const slug = slugify(subtag.artist);
@@ -393,8 +406,9 @@ export class ScanService {
 					stats.artistSort[slug].count += 1;
 				}
 				if (subtag.album) {
-					const slug = slugify(subtag.album);
-					stats.album[slug] = stats.album[slug] || {count: 0, val: extractAlbumName(subtag.album)};
+					const val = extractAlbumName(subtag.album);
+					const slug = slugify(val);
+					stats.album[slug] = stats.album[slug] || {count: 0, val};
 					stats.album[slug].count += 1;
 				}
 				if (subtag.genre) {
@@ -430,15 +444,18 @@ export class ScanService {
 		const mbAlbumTypes = convert2list(stats.mbAlbumType);
 		const album = getMostUsedTagValue<string>(albums, extractAlbumName(path.basename(dir.name)));
 		const artist = getMostUsedTagValue<string>(artists, cVariousArtist);
-		const artistSort = getMostUsedTagValue<string>(artistSorts);
+		let artistSort = getMostUsedTagValue<string>(artistSorts);
 		const genre = getMostUsedTagValue<string>(genres);
-		const mbAlbumID = getMostUsedTagValue<string>(mbAlbumIDs);
-		const mbReleaseGroupID = getMostUsedTagValue<string>(mbReleaseGroupIDs);
-		const mbAlbumType = getMostUsedTagValue<string>(mbAlbumTypes);
-		const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs);
+		const mbAlbumID = getMostUsedTagValue<string>(mbAlbumIDs, '');
+		const mbReleaseGroupID = getMostUsedTagValue<string>(mbReleaseGroupIDs, '');
+		const mbAlbumType = getMostUsedTagValue<string>(mbAlbumTypes, '');
+		const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs, '');
 		const year = getMostUsedTagValue<number>(years);
 		const isMultiArtist = artist === cVariousArtist;
 		const isMultiAlbum = getMostUsedTagValue<string>(albums, cVariousArtist) !== cVariousArtist;
+		if (isMultiArtist) {
+			artistSort = undefined;
+		}
 		let albumType = AlbumType.unknown;
 		if (mbAlbumType) {
 			if (mbAlbumType.toLowerCase().indexOf('compilation') >= 0) {
@@ -451,7 +468,7 @@ export class ScanService {
 		} else {
 			albumType = AlbumType.album;
 		}
-		return {
+		const result: MetaStat = {
 			trackCount,
 			albumType,
 			isMultiArtist,
@@ -466,6 +483,8 @@ export class ScanService {
 			mbArtistID,
 			year
 		};
+		// console.log(stats, result);
+		return result;
 	}
 
 	private async match(dir: ScanDir, changes: MergeChanges): Promise<MatchDir> {
@@ -593,7 +612,7 @@ export class ScanService {
 		};
 	}
 
-	private async buildFolder(dir: MatchDir): Promise<Folder> {
+	private buildFolder(dir: MatchDir): Folder {
 		return {
 			id: '',
 			rootID: dir.rootID,
@@ -638,7 +657,7 @@ export class ScanService {
 
 	private async buildMerge(dir: MatchDir, changes: MergeChanges): Promise<void> {
 		if (!dir.folder) {
-			const folder = await this.buildFolder(dir);
+			const folder = this.buildFolder(dir);
 			folder.id = await this.store.trackStore.getNewId();
 			dir.folder = folder;
 			changes.newFolders.push(folder);
@@ -673,19 +692,9 @@ export class ScanService {
 	private async mergeR(dir: MatchDir, changes: MergeChanges): Promise<void> {
 		if (dir.folder) {
 			if (folderHasChanged(dir)) {
-				const folder: Folder = {
-					id: dir.folder.id,
-					rootID: dir.folder.rootID,
-					path: ensureTrailingPathSeparator(dir.name),
-					parentID: (dir.parent && dir.parent.folder ? dir.parent.folder.id : undefined),
-					stat: {
-						created: dir.stat.ctime,
-						modified: dir.stat.mtime
-					},
-					tag: dir.tag || this.buildDefaultTag(dir),
-					type: DBObjectType.folder,
-					info: dir.folder.info
-				};
+				const folder = this.buildFolder(dir);
+				folder.id = dir.folder.id;
+				folder.info = dir.folder.info;
 				dir.folder = folder;
 				const newFolder = changes.newFolders.find(f => f.id === folder.id);
 				if (!newFolder) {
@@ -694,7 +703,7 @@ export class ScanService {
 					changes.newFolders = changes.newFolders.filter(f => f.id !== folder.id);
 					changes.newFolders.push(folder);
 				}
-			} else {
+				// } else {
 				// changes.unchangedFolders.push(dir.folder);
 			}
 			for (const d of dir.directories) {
@@ -737,7 +746,7 @@ export class ScanService {
 			}
 			types.sort((a, b) => a.localeCompare(b));
 			const id = generateArtworkId(folderID, name);
-			return {id, name, types};
+			return {id, name, types, stat: {created: file.stat.ctime, modified: file.stat.mtime, size: file.stat.size}};
 		});
 	}
 
@@ -779,8 +788,8 @@ export class ScanService {
 	}
 
 	private markMultiAlbumChilds(dir: MatchDir) {
-		if (dir.tag) {
-			dir.tag.type = FolderType.multialbum;
+		if (dir.tag && dir.tag.type !== FolderType.extras) {
+			this.setTagType(dir.tag, FolderType.multialbum);
 		}
 		dir.directories.forEach(d => {
 			this.markMultiAlbumChilds(d);
@@ -812,7 +821,6 @@ export class ScanService {
 				} else {
 					result = FolderType.collection;
 				}
-				// console.log(dir.name, metaStat);
 			} else {
 				result = FolderType.artist;
 				dir.directories.forEach(d => {
@@ -834,9 +842,36 @@ export class ScanService {
 				result = FolderType.collection;
 			}
 		}
-		dir.tag.type = result;
+		this.setTagType(dir.tag, result);
 		if (result === FolderType.multialbum) {
 			this.markMultiAlbumChilds(dir);
+		}
+	}
+
+	private setTagType(tag: FolderTag, type: FolderType) {
+		tag.type = type;
+		switch (type) {
+			case FolderType.collection:
+				tag.albumType = undefined;
+				tag.genre = undefined;
+				tag.mbArtistID = undefined;
+				tag.mbAlbumID = undefined;
+				tag.mbAlbumType = undefined;
+				tag.mbReleaseGroupID = undefined;
+				tag.artist = undefined;
+				tag.artistSort = undefined;
+				tag.album = undefined;
+				tag.year = undefined;
+				return;
+			case FolderType.artist:
+				tag.albumType = undefined;
+				tag.genre = undefined;
+				tag.mbAlbumID = undefined;
+				tag.mbAlbumType = undefined;
+				tag.mbReleaseGroupID = undefined;
+				tag.album = undefined;
+				tag.year = undefined;
+				return;
 		}
 	}
 
@@ -845,7 +880,7 @@ export class ScanService {
 			await this.buildMergeTags(sub);
 		}
 		if (dir.folder) {
-			dir.metaStat = this.getMetaStat(dir);
+			dir.metaStat = this.buildMetaStat(dir);
 			dir.tag = this.buildFolderTag(dir);
 		}
 		this.applyFolderTagType(dir);
@@ -931,7 +966,10 @@ export class ScanService {
 			};
 			changes.newArtists.push(artist);
 			this.artistCache.push(artist);
-		} else {
+			return artist;
+		}
+		const artistID = artist.id;
+		if (!changes.newArtists.find(a => a.id === artistID)) {
 			changes.updateArtists.push(artist);
 			this.artistCache.push(artist);
 		}
@@ -1272,7 +1310,42 @@ export class ScanService {
 		// await clearID3(this.store, this.imageModule, changes.removedTracks);
 	}
 
-	public async run(dir: string, rootID: string): Promise<MergeChanges> {
+	private emptyChanges(): MergeChanges {
+		const changes: MergeChanges = {
+			newArtists: [],
+			updateArtists: [],
+			removedArtists: [],
+
+			newAlbums: [],
+			updateAlbums: [],
+			removedAlbums: [],
+
+			newTracks: [],
+			updateTracks: [],
+			removedTracks: [],
+
+			newFolders: [],
+			updateFolders: [],
+			removedFolders: [],
+			start: Date.now(),
+			end: 0,
+		};
+		return changes;
+	}
+
+	private async storeChanges(changes: MergeChanges): Promise<void> {
+		await this.store.trackStore.bulk(changes.newTracks.map(t => t.track));
+		await this.store.trackStore.upsert(changes.updateTracks.map(t => t.track));
+		await this.store.folderStore.bulk(changes.newFolders);
+		await this.store.folderStore.upsert(changes.updateFolders);
+
+		await this.store.albumStore.bulk(changes.newAlbums);
+		await this.store.albumStore.upsert(changes.updateAlbums);
+		await this.store.artistStore.bulk(changes.newArtists);
+		await this.store.artistStore.upsert(changes.updateArtists);
+	}
+
+	async run(dir: string, rootID: string): Promise<MergeChanges> {
 		log.info('Start:', dir);
 		/*
  	Processing:
@@ -1285,78 +1358,34 @@ export class ScanService {
 
 		 */
 
-		const changes: MergeChanges = {
-			newArtists: [],
-			updateArtists: [],
-			removedArtists: [],
-
-			newAlbums: [],
-			updateAlbums: [],
-			removedAlbums: [],
-
-			newTracks: [],
-			updateTracks: [],
-			removedTracks: [],
-
-			newFolders: [],
-			updateFolders: [],
-			removedFolders: [],
-			start: Date.now(),
-			end: 0,
-		};
+		const changes = this.emptyChanges();
 		this.artistCache = [];
 		this.albumCache = [];
 
 		// first, scan the filesystem
 		const scan: ScanDir = await this.scan(dir, rootID);
 
-		log.info('Matching:', dir);
 		// second, match db entries
+		log.info('Matching:', dir);
 		const match: MatchDir = await this.match(scan, changes);
-		// printTree(match);
-
 		// third, merge
 		log.info('Merging:', dir);
 		await this.merge(match, changes);
+		// printTree(match);
 
-		log.info('Storing:', dir);
 		// fourth, store
-		await this.store.trackStore.bulk(changes.newTracks.map(t => t.track));
-		await this.store.trackStore.upsert(changes.updateTracks.map(t => t.track));
-		await this.store.folderStore.bulk(changes.newFolders);
-		await this.store.folderStore.upsert(changes.updateFolders);
+		log.info('Storing:', dir);
+		await this.storeChanges(changes);
 
-		await this.store.albumStore.bulk(changes.newAlbums);
-		await this.store.albumStore.upsert(changes.updateAlbums);
-		await this.store.artistStore.bulk(changes.newArtists);
-		await this.store.artistStore.upsert(changes.updateArtists);
+		// fifth, clean
+		await this.clean(changes);
 
 		changes.end = Date.now();
-		// printTree(match);
-		await this.clean(changes);
 		return changes;
 	}
 
 	async removeRoot(rootID: string): Promise<MergeChanges> {
-		const changes: MergeChanges = {
-			newArtists: [],
-			updateArtists: [],
-			removedArtists: [],
-
-			newAlbums: [],
-			updateAlbums: [],
-			removedAlbums: [],
-
-			newTracks: [],
-			updateTracks: [],
-			removedTracks: [],
-
-			newFolders: [],
-			updateFolders: [],
-			removedFolders: [],
-			start: Date.now(),
-			end: 0,
-		};
+		const changes = this.emptyChanges();
 		changes.removedTracks = await this.store.trackStore.search({rootID});
 		changes.removedFolders = await this.store.folderStore.search({rootID});
 		const trackIDs = changes.removedTracks.map(t => t.id);
@@ -1393,5 +1422,106 @@ export class ScanService {
 		await this.clean(changes);
 		await this.store.rootStore.remove(rootID);
 		return changes;
+	}
+
+	async buildMatchFileFromDB(track: Track): Promise<MatchFile> {
+		const match: MatchFile = {
+			rootID: track.rootID,
+			track,
+			name: path.join(track.path, track.name),
+			type: FileTyp.AUDIO,
+			stat: {
+				ctime: track.stat.created,
+				mtime: track.stat.modified,
+				size: track.stat.size
+			}
+		};
+		return match;
+	}
+
+	async buildMatchDirFromDBData(folder: Folder, data: { folders: Array<Folder>, tracks: Array<Track> }, parent?: MatchDir): Promise<MatchDir> {
+		const match: MatchDir = {
+			name: folder.path,
+			level: folder.tag.level,
+			rootID: folder.rootID,
+			tag: folder.tag,
+			stat: {ctime: folder.stat.created, mtime: folder.stat.modified},
+			parent,
+			folder: folder,
+			files: [],
+			directories: [],
+			metaStat: undefined
+		};
+		const folders = data.folders.filter(f => f.parentID === folder.id);
+		for (const f of folders) {
+			match.directories.push(await this.buildMatchDirFromDBData(f, data, match));
+		}
+		const tracks = data.tracks.filter(t => t.parentID === folder.id);
+		for (const t of tracks) {
+			match.files.push(await this.buildMatchFileFromDB(t));
+		}
+		if (folder.tag.artworks) {
+			for (const art of folder.tag.artworks) {
+				const matchFile: MatchFile = {
+					rootID: folder.rootID,
+					name: path.join(folder.path, art.name),
+					type: FileTyp.IMAGE,
+					stat: {
+						ctime: art.stat.created,
+						mtime: art.stat.modified,
+						size: art.stat.size
+					}
+				};
+				match.files.push(matchFile);
+			}
+		}
+		return match;
+	}
+
+	async refreshTracks(rootID: string, trackIDs: Array<string>) {
+		const changes = this.emptyChanges();
+
+		const folders = await this.store.folderStore.search({rootID});
+		const tracks = await this.store.trackStore.search({rootID});
+
+		const folder = folders.find(f => f.tag.level === 0);
+		if (!folder) {
+			return Promise.reject(Error('Root folder not found'));
+		}
+
+		const match: MatchDir = await this.buildMatchDirFromDBData(folder, {folders, tracks});
+
+		const changedFiles: Array<{ file: MatchFile, dir: MatchDir }> = [];
+
+		function collectR(dir: MatchDir) {
+			for (const file of dir.files) {
+				if (file.track && trackIDs.indexOf(file.track.id) >= 0) {
+					changedFiles.push({file, dir});
+				}
+			}
+			for (const sub of dir.directories) {
+				collectR(sub);
+			}
+		}
+
+		collectR(match);
+
+		for (const entry of changedFiles) {
+			const old = entry.file.track;
+			if (entry.dir && entry.dir.folder && old) {
+				const track = await this.buildTrack(entry.file, entry.dir.folder);
+				track.id = old.id;
+				entry.file.track = track;
+				changes.updateTracks.push({track, dir: entry.dir});
+			}
+		}
+
+		await this.merge(match, changes);
+		// printTree(match);
+		await this.storeChanges(changes);
+		await this.clean(changes);
+		changes.end = Date.now();
+		return changes;
+
 	}
 }
