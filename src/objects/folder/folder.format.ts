@@ -29,7 +29,8 @@ export function formatAlbumFolderInfo(info: MetaInfo): Jam.AlbumFolderInfo {
 export function formatFolderArtwork(artwork: Artwork): Jam.ArtworkImage {
 	return {
 		id: artwork.id,
-		types: artwork.types
+		types: artwork.types,
+		size: artwork.stat.size
 	};
 }
 

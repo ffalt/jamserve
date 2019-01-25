@@ -17052,10 +17052,14 @@
 							],
 							"type": "string"
 						}
+					},
+					"size": {
+						"type": "number"
 					}
 				},
 				"required": [
 					"id",
+					"size",
 					"types"
 				]
 			},
