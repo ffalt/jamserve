@@ -18,6 +18,11 @@ export interface Artwork {
 	id: string;
 	name: string;
 	types: Array<ArtworkImageType>;
+	stat: {
+		created: number;
+		modified: number;
+		size: number;
+	};
 }
 
 export interface FolderTag {

@@ -48,7 +48,14 @@ const type_Artwork = {
 	properties: {
 		id: type_key,
 		name: type_string,
-		types: type_key
+		types: type_key,
+		stat: {
+			properties: {
+				created: type_int,
+				modified: type_int,
+				size: type_int
+			}
+		}
 	}
 };
 
