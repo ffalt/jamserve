@@ -695,6 +695,8 @@ export class ScanService {
 				const folder = this.buildFolder(dir);
 				folder.id = dir.folder.id;
 				folder.info = dir.folder.info;
+				console.log('old', dir.folder);
+				console.log('new', folder);
 				dir.folder = folder;
 				const newFolder = changes.newFolders.find(f => f.id === folder.id);
 				if (!newFolder) {
@@ -1491,12 +1493,16 @@ export class ScanService {
 
 		const match: MatchDir = await this.buildMatchDirFromDBData(folder, {folders, tracks});
 
-		const changedFiles: Array<{ file: MatchFile, dir: MatchDir }> = [];
+		const changedDirs: Array<MatchDir> = [];
+		const changedFiles: Array<MatchFile> = [];
 
 		function collectR(dir: MatchDir) {
 			for (const file of dir.files) {
 				if (file.track && trackIDs.indexOf(file.track.id) >= 0) {
-					changedFiles.push({file, dir});
+					changedFiles.push(file);
+					if (changedDirs.indexOf(dir) < 0) {
+						changedDirs.push(dir);
+					}
 				}
 			}
 			for (const sub of dir.directories) {
@@ -1506,14 +1512,20 @@ export class ScanService {
 
 		collectR(match);
 
-		for (const entry of changedFiles) {
-			const old = entry.file.track;
-			if (entry.dir && entry.dir.folder && old) {
-				const track = await this.buildTrack(entry.file, entry.dir.folder);
-				track.id = old.id;
-				entry.file.track = track;
-				changes.updateTracks.push({track, dir: entry.dir});
-			}
+		for (const file of changedFiles) {
+			const stat = await fse.stat(file.name);
+			file.stat = {
+				ctime: stat.ctime.valueOf(),
+				mtime: stat.mtime.valueOf(),
+				size: stat.size
+			};
+		}
+		for (const dir of changedDirs) {
+			const stat = await fse.stat(dir.name);
+			dir.stat = {
+				ctime: stat.ctime.valueOf(),
+				mtime: stat.mtime.valueOf()
+			};
 		}
 
 		await this.merge(match, changes);
