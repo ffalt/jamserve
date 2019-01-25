@@ -796,6 +796,15 @@ export class ScanService {
 		});
 	}
 
+	private markArtistChilds(dir: MatchDir) {
+		if (dir.tag && dir.tag.type === FolderType.artist) {
+			this.setTagType(dir.tag, FolderType.collection);
+		}
+		dir.directories.forEach(d => {
+			this.markArtistChilds(d);
+		});
+	}
+
 	private applyFolderTagType(dir: MatchDir) {
 		if (!dir.tag || !dir.metaStat) {
 			return;
@@ -823,11 +832,6 @@ export class ScanService {
 				}
 			} else {
 				result = FolderType.artist;
-				dir.directories.forEach(d => {
-					if (d.tag && d.tag.type === FolderType.artist) {
-						this.markMultiAlbumChilds(d);
-					}
-				});
 			}
 		} else if (dir.directories.length === 0 && dir.files.filter(f => f.type === FileTyp.AUDIO).length === 0) {
 			result = FolderType.extras;
@@ -845,6 +849,10 @@ export class ScanService {
 		this.setTagType(dir.tag, result);
 		if (result === FolderType.multialbum) {
 			this.markMultiAlbumChilds(dir);
+		} else if (result === FolderType.artist) {
+			for (const sub of dir.directories) {
+				this.markArtistChilds(sub);
+			}
 		}
 	}
 
