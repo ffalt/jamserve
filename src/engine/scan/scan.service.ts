@@ -695,8 +695,6 @@ export class ScanService {
 				const folder = this.buildFolder(dir);
 				folder.id = dir.folder.id;
 				folder.info = dir.folder.info;
-				console.log('old', dir.folder);
-				console.log('new', folder);
 				dir.folder = folder;
 				const newFolder = changes.newFolders.find(f => f.id === folder.id);
 				if (!newFolder) {
