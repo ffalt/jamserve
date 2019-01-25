@@ -435,6 +435,10 @@ export declare namespace JamParameters {
 		 */
 		parentID?: string;
 		/**
+		 * filter by parent folder ids
+		 */
+		parentIDs?: Array<string>;
+		/**
 		 * filter by root id
 		 */
 		rootID?: string;

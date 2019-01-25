@@ -3068,6 +3068,18 @@
 					},
 					{
 						"in": "query",
+						"name": "parentIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by parent folder ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "rootID",
 						"schema": {
 							"type": "string"
@@ -3348,6 +3360,18 @@
 							"type": "string"
 						},
 						"description": "filter by parent folder id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "parentIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by parent folder ids",
 						"required": false
 					},
 					{

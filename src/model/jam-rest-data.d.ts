@@ -176,6 +176,7 @@ export declare namespace Jam {
 	export interface ArtworkImage {
 		id: string;
 		types: Array<ArtworkImageType>;
+		size: number;
 	}
 
 	export interface FolderMBTag {

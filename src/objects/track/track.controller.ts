@@ -68,6 +68,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 			query: query.query,
 			rootID: query.rootID,
 			parentID: query.parentID,
+			parentIDs: query.parentIDs,
 			artist: query.artist,
 			title: query.title,
 			album: query.album,
@@ -101,7 +102,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 	async tagID3Update(req: JamRequest<JamParameters.TagID3Update>): Promise<void> {
 		const track = await this.byID(req.query.id);
 		await this.audioModule.saveID3v2(path.join(track.path, track.name), req.query.tag);
-		this.ioService.refreshTracks([track]);
+		this.ioService.refreshTrack(track);
 	}
 
 	// async tagID3sUpdate(req: JamRequest<JamParameters.TagID3sUpdate>): Promise<void> {

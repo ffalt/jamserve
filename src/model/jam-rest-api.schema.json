@@ -12781,6 +12781,13 @@
 					"description": "filter by parent folder id",
 					"type": "string"
 				},
+				"parentIDs": {
+					"description": "filter by parent folder ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
@@ -12858,6 +12865,13 @@
 				"parentID": {
 					"description": "filter by parent folder id",
 					"type": "string"
+				},
+				"parentIDs": {
+					"description": "filter by parent folder ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"rootID": {
 					"description": "filter by root id",
