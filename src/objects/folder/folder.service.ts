@@ -86,7 +86,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 	async downloadFolderArtwork(folder: Folder, imageUrl: string, types: Array<ArtworkImageType>): Promise<Artwork> {
 		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
 		const filename = await this.imageModule.storeImage(folder.path, name, imageUrl);
-		const stat = await fse.stat(filename);
+		const stat = await fse.stat(path.join(folder.path, filename));
 		const artwork = {
 			id: generateArtworkId(folder.id, filename),
 			name: filename,
