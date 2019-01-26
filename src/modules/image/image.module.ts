@@ -38,7 +38,6 @@ export class ImageModule {
 			nr++;
 		}
 		await downloadFile(imageUrl, path.join(filepath, filename));
-		console.log('image downloaded', filename);
 		log.info('image downloaded', filename);
 		return filename;
 	}
