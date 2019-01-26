@@ -166,8 +166,8 @@ interface MetaStat {
 	mbReleaseGroupID?: string;
 	mbAlbumType?: string;
 	year?: number;
-	isMultiArtist: boolean;
-	isMultiAlbum: boolean;
+	hasMultipleArtists: boolean;
+	hasMultipleAlbums: boolean;
 	trackCount: number;
 	albumType: AlbumType;
 }
@@ -295,8 +295,7 @@ function extractAlbumName(name: string): string {
 		.replace(/\(((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))\)/gi, '')
 		.replace(/\[((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))\]/gi, '')
 		.replace(/-? cd\d*/gi, '')
-		.trim()
-	;
+		.trim();
 	if (result.length === 0) {
 		return name.trim();
 	}
@@ -344,9 +343,10 @@ export class ScanService {
 			}
 			if (file.track && file.track.tag) {
 				const tracktag = file.track.tag;
-				if (tracktag.artist) {
-					const slug = slugify(tracktag.artist);
-					stats.artist[slug] = stats.artist[slug] || {count: 0, val: tracktag.artist};
+				const artistName = tracktag.albumArtist || tracktag.artist;
+				if (artistName) {
+					const slug = slugify(artistName);
+					stats.artist[slug] = stats.artist[slug] || {count: 0, val: artistName};
 					stats.artist[slug].count += 1;
 				}
 				// MusicBrainz Album Type
@@ -451,9 +451,9 @@ export class ScanService {
 		const mbAlbumType = getMostUsedTagValue<string>(mbAlbumTypes, '');
 		const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs, '');
 		const year = getMostUsedTagValue<number>(years);
-		const isMultiArtist = artist === cVariousArtist;
-		const isMultiAlbum = getMostUsedTagValue<string>(albums, cVariousArtist) !== cVariousArtist;
-		if (isMultiArtist) {
+		const hasMultipleArtists = artist === cVariousArtist;
+		const hasMultipleAlbums = albums.length > 1;
+		if (hasMultipleArtists) {
 			artistSort = undefined;
 		}
 		let albumType = AlbumType.unknown;
@@ -463,7 +463,7 @@ export class ScanService {
 			} else {
 				albumType = AlbumType.album;
 			}
-		} else if (isMultiArtist) {
+		} else if (hasMultipleArtists) {
 			albumType = AlbumType.compilation;
 		} else {
 			albumType = AlbumType.album;
@@ -471,8 +471,8 @@ export class ScanService {
 		const result: MetaStat = {
 			trackCount,
 			albumType,
-			isMultiArtist,
-			isMultiAlbum,
+			hasMultipleArtists,
+			hasMultipleAlbums,
 			album,
 			artist,
 			artistSort,
@@ -483,7 +483,7 @@ export class ScanService {
 			mbArtistID,
 			year
 		};
-		// console.log(stats, result);
+		// console.log(dir.name, result);
 		return result;
 	}
 
@@ -523,9 +523,7 @@ export class ScanService {
 			files: dir.files.map(file => {
 				return {name: file.name, type: file.type, stat: file.stat, rootID: dir.rootID};
 			}),
-			directories: [],
-			// removedTracks: [],
-			// removedFolders: []
+			directories: []
 		};
 		result.directories = dir.directories.map(sub => this.cloneScanDir(sub, result, level + 1));
 		return result;
@@ -628,8 +626,6 @@ export class ScanService {
 	}
 
 	private async buildTrack(file: MatchFile, parent: Folder): Promise<Track> {
-		// this.scanningCount++;
-		// this.onProgress(this.scanningCount);
 		log.info('Reading Track:', file.name);
 		const data = await this.audioModule.read(file.name);
 		const tag = data.tag || {};
@@ -682,8 +678,6 @@ export class ScanService {
 					track.info = old.info;
 					file.track = track;
 					changes.updateTracks.push({track, dir});
-				} else {
-					// changes.unchangedTracks.push({track: file.track, dir});
 				}
 			}
 		}
@@ -703,8 +697,6 @@ export class ScanService {
 					changes.newFolders = changes.newFolders.filter(f => f.id !== folder.id);
 					changes.newFolders.push(folder);
 				}
-				// } else {
-				// changes.unchangedFolders.push(dir.folder);
 			}
 			for (const d of dir.directories) {
 				await this.mergeR(d, changes);
@@ -809,7 +801,7 @@ export class ScanService {
 		if (!dir.tag || !dir.metaStat) {
 			return;
 		}
-		const metaStat = dir.metaStat; // this.getMetaStat(dir);
+		const metaStat = dir.metaStat;
 		const name = path.basename(dir.name).toLowerCase();
 		let result: FolderType = FolderType.unknown;
 		if (dir.level === 0) {
@@ -824,14 +816,16 @@ export class ScanService {
 				result = FolderType.multialbum;
 			}
 		} else if (dir.directories.length > 0) {
-			if (metaStat.isMultiArtist) {
-				if (metaStat.isMultiAlbum) {
-					result = FolderType.multialbum;
-				} else {
+			if (metaStat.hasMultipleAlbums) {
+				if (metaStat.hasMultipleArtists) {
 					result = FolderType.collection;
+				} else {
+					result = FolderType.artist;
 				}
-			} else {
+			} else if (dir.directories.length === 1) {
 				result = FolderType.artist;
+			} else {
+				result = FolderType.multialbum;
 			}
 		} else if (dir.directories.length === 0 && dir.files.filter(f => f.type === FileTyp.AUDIO).length === 0) {
 			result = FolderType.extras;
