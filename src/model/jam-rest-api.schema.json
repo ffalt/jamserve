@@ -11838,6 +11838,9 @@
 				},
 				"name": {
 					"type": "string"
+				},
+				"details": {
+					"type": "string"
 				}
 			},
 			"required": [

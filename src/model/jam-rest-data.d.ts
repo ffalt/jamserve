@@ -198,6 +198,7 @@ export declare namespace Jam {
 	export interface FolderProblem {
 		id: string;
 		name: string;
+		details?: string;
 	}
 
 	export interface FolderHealth {

@@ -20,7 +20,7 @@ import {AcousticbrainzClient} from './clients/acousticbrainz-client';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {CoverArtArchiveClient} from './clients/coverartarchive-client';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
-import {CoverArtArchiveLookupType} from '../../model/jam-types';
+import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType, TrackTagID3v2FormatTypes} from '../../model/jam-types';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -33,7 +33,7 @@ export class FORMAT {
 			return {};
 		}
 		return {
-			format: 'mp3',
+			format: AudioFormatType.mp3,
 			duration: data.durationEstimate,
 			bitRate: data.bitRate,
 			sampleRate: data.sampleRate,
@@ -53,7 +53,7 @@ export class FORMAT {
 			return {};
 		}
 		return {
-			format: data.format.format_name,
+			format: <AudioFormatType>data.format.format_name,
 			duration: Number(data.format.duration),
 			bitRate: Number(data.format.bit_rate),
 			sampleRate: Number(stream.sample_rate),
@@ -66,12 +66,13 @@ export class FORMAT {
 	static packProbeJamServeTag(data: ProbeResult): TrackTag {
 		const simple = data.format.tags;
 		if (!simple) {
-			return {};
+			return {format: TrackTagFormatType.none};
 		}
 		const track = Number(simple.track);
 		const year = Number(simple.DATE);
 		const disc = Number(simple.disc);
 		return {
+			format: TrackTagFormatType.ffmpeg,
 			artist: simple.ARTIST,
 			title: simple.TITLE,
 			album: simple.ALBUM,
@@ -103,6 +104,7 @@ export class FORMAT {
 		}
 		const simple = data.value;
 		return {
+			format: TrackTagFormatType.id3v1,
 			artist: simple.artist,
 			title: simple.title,
 			album: simple.album,
@@ -143,7 +145,9 @@ export class FORMAT {
 				year = y;
 			}
 		}
+		const format = TrackTagID3v2FormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
 		return {
+			format,
 			album: simple.album,
 			albumSort: simple.album_sort_order,
 			albumArtist: simple.album_artist,
@@ -292,12 +296,12 @@ export class AudioModule {
 
 	async read(filename: string): Promise<AudioScanResult> {
 		const suffix = fileSuffix(filename);
-		if (suffix === 'mp3') {
+		if (suffix === AudioFormatType.mp3) {
 			const mp3 = new MP3();
 			try {
 				const result = await mp3.read({filename, mpegQuick: true, mpeg: true, id3v2: true});
 				if (!result) {
-					return {tag: {}, media: {}};
+					return {tag: {format: TrackTagFormatType.none}, media: {}};
 				} else {
 					if (result.id3v2) {
 						return {tag: FORMAT.packID3v2JamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
@@ -305,18 +309,18 @@ export class AudioModule {
 					const id3v1 = new ID3v1();
 					const v1 = await id3v1.read(filename);
 					if (!v1) {
-						return {tag: {}, media: FORMAT.packJamServeMedia(result.mpeg)};
+						return {tag: {format: TrackTagFormatType.none}, media: FORMAT.packJamServeMedia(result.mpeg)};
 					}
 					return {tag: FORMAT.packID3v1JamServeTag(v1), media: FORMAT.packJamServeMedia(result.mpeg)};
 				}
 			} catch (e) {
 				console.error(e);
-				return {tag: {}, media: {}};
+				return {tag: {format: TrackTagFormatType.none}, media: {}};
 			}
 		} else {
 			const p = await probe(filename, []);
 			if (!p) {
-				return {tag: {}, media: {}};
+				return {tag: {format: TrackTagFormatType.none}, media: {}};
 			} else {
 				return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p)};
 			}

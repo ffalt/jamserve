@@ -35,10 +35,23 @@ export const AudioMimeTypes: { [ext: string]: string } = {
 	'm4a': 'audio/mp4',
 	'ogg': 'audio/ogg',
 	'oga': 'audio/ogg',
+	'flv': 'aaudio/x-flv',
+	'flac': 'audio/flac',
 	'webma': 'audio/webm',
 	'webm': 'audio/webm',
 	'wav': 'audio/wav'
 };
+
+export enum AudioFormatType {
+	mp3 = 'mp3',
+	m4a = 'm4a',
+	ogg = 'ogg',
+	oga = 'oga',
+	flv = 'flv',
+	flac = 'flac',
+	webma = 'webma',
+	wav = 'wav'
+}
 
 export const VideoMimeTypes: { [ext: string]: string } = {
 	'mp4': 'audio/mp4',
@@ -155,3 +168,16 @@ export const enum CoverArtArchiveLookupType {
 	release = 'release',
 	releaseGroup = 'release-group'
 }
+
+export const enum TrackTagFormatType {
+	none = 'none',
+	ffmpeg = 'ffmpeg',
+	id3v20 = 'id3v20',
+	id3v21 = 'id3v21',
+	id3v22 = 'id3v22',
+	id3v23 = 'id3v23',
+	id3v24 = 'id3v24',
+	id3v1 = 'id3v1'
+}
+
+export const TrackTagID3v2FormatTypes = [TrackTagFormatType.id3v20, TrackTagFormatType.id3v21, TrackTagFormatType.id3v22, TrackTagFormatType.id3v23, TrackTagFormatType.id3v24];

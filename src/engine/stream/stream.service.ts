@@ -7,6 +7,7 @@ import {GenericError} from '../../api/jam/error';
 import {User} from '../../objects/user/user.model';
 import {Track} from '../../objects/track/track.model';
 import {Episode} from '../../objects/episode/episode.model';
+import {AudioFormatType} from '../../model/jam-types';
 
 export class StreamService {
 
@@ -19,13 +20,13 @@ export class StreamService {
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
 		}
-		destFormat = destFormat || 'mp3';
+		destFormat = destFormat || AudioFormatType.mp3;
 		if (destFormat[0] === '.') {
 			destFormat = destFormat.slice(1);
 		}
 		const bitRate = maxBitRate || 0;
 		if (destFormat !== 'raw' && Transcoder.needsTranscoding(sourceFormat || fileSuffix(filename), destFormat, bitRate)) {
-			if (!Transcoder.validTranscoding(destFormat)) {
+			if (!Transcoder.validTranscoding(<AudioFormatType>destFormat)) {
 				return Promise.reject(Error('Unsupported transcoding format'));
 			}
 			return {pipe: new PreTranscoder(filename, destFormat, bitRate)};

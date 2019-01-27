@@ -1,5 +1,5 @@
 import {Track} from './track.model';
-import {DBObjectType} from '../../model/jam-types';
+import {AudioFormatType, DBObjectType, TrackTagFormatType} from '../../model/jam-types';
 import {mockPath} from '../../utils/testutils.spec';
 
 export function mockTrack(): Track {
@@ -18,6 +18,7 @@ export function mockTrack(): Track {
 			size: 9001
 		},
 		tag: {
+			format: TrackTagFormatType.id3v23,
 			album: 'an album name',
 			albumSort: 'album sort name, an',
 			albumArtist: 'an album artist name',
@@ -44,7 +45,7 @@ export function mockTrack(): Track {
 		media: {
 			duration: 12345,
 			bitRate: 56000,
-			format: 'mp3',
+			format: AudioFormatType.mp3,
 			sampleRate: 44000,
 			channels: 2,
 			encoded: 'VBR',
@@ -70,6 +71,7 @@ export function mockTrack2(): Track {
 			size: 1001
 		},
 		tag: {
+			format: TrackTagFormatType.id3v24,
 			album: 'second album name',
 			albumSort: 'album sort name, second',
 			albumArtist: 'second album artist name',
@@ -96,7 +98,7 @@ export function mockTrack2(): Track {
 		media: {
 			duration: 54321,
 			bitRate: 128000,
-			format: 'mp3',
+			format: AudioFormatType.mp3,
 			sampleRate: 22000,
 			channels: 1,
 			encoded: 'CBR',

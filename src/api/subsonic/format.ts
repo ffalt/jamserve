@@ -1,7 +1,7 @@
 import moment from 'moment';
 import path from 'path';
 import {fileSuffix} from '../../utils/fs-utils';
-import {AudioMimeTypes, DBObjectType, PodcastStatus} from '../../model/jam-types';
+import {AudioFormatType, AudioMimeTypes, DBObjectType, PodcastStatus} from '../../model/jam-types';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {Root} from '../../objects/root/root.model';
 import {User} from '../../objects/user/user.model';
@@ -370,8 +370,8 @@ export class FORMAT {
 			// "averageRating": track.state.avgrated,
 			// "bookmarkPosition": track.state.bookmark,
 		};
-		if (suffix !== 'mp3') {
-			result.transcodedSuffix = 'mp3';
+		if (suffix !== AudioFormatType.mp3) {
+			result.transcodedSuffix = AudioFormatType.mp3;
 			result.transcodedContentType = AudioMimeTypes[result.transcodedSuffix];
 		}
 		return result;
@@ -471,8 +471,8 @@ export class FORMAT {
 		};
 		if (episode.path) {
 			result.suffix = fileSuffix(episode.path);
-			if (result.suffix !== 'mp3') {
-				result.transcodedSuffix = 'mp3';
+			if (result.suffix !== AudioFormatType.mp3) {
+				result.transcodedSuffix = AudioFormatType.mp3;
 				result.transcodedContentType = AudioMimeTypes[result.transcodedSuffix];
 			}
 			result.contentType = AudioMimeTypes[result.suffix];

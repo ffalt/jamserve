@@ -7,7 +7,7 @@ import {downloadFile} from '../../utils/download';
 import fse from 'fs-extra';
 import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 import {Episode} from './episode.model';
-import {PodcastStatus} from '../../model/jam-types';
+import {AudioFormatType, PodcastStatus} from '../../model/jam-types';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
@@ -32,13 +32,13 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		} else {
 			throw new Error('No podcast episode url found');
 		}
-		const ext = fileSuffix(url);
-		if (SupportedAudioFormat.indexOf(ext) < 0) {
+		const suffix = fileSuffix(url);
+		if (SupportedAudioFormat.indexOf(<AudioFormatType>suffix) < 0) {
 			throw new Error('Unsupported Podcast audio format');
 		}
 		const p = path.resolve(this.podcastsPath, episode.podcastID);
 		await fse.ensureDir(p);
-		const filename = path.join(p, episode.id + '.' + ext);
+		const filename = path.join(p, episode.id + '.' + suffix);
 		log.info('retrieving file', url);
 		await downloadFile(url, filename);
 		return filename;

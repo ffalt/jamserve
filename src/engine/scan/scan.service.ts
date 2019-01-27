@@ -2,10 +2,10 @@ import {Store} from '../store/store';
 import {AudioModule} from '../../modules/audio/audio.module';
 import Logger from '../../utils/logger';
 import {WaveformService} from '../waveform/waveform.service';
-import {Track} from '../../objects/track/track.model';
+import {Track, TrackTag} from '../../objects/track/track.model';
 import {ImageModule} from '../../modules/image/image.module';
 import {deepCompare} from '../../utils/deep-compare';
-import {AlbumType, ArtworkImageType, DBObjectType, FileTyp, FolderType, FolderTypesAlbum} from '../../model/jam-types';
+import {AlbumType, ArtworkImageType, DBObjectType, FileTyp, FolderType, FolderTypesAlbum, TrackTagFormatType} from '../../model/jam-types';
 import path from 'path';
 import fse from 'fs-extra';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
@@ -628,7 +628,7 @@ export class ScanService {
 	private async buildTrack(file: MatchFile, parent: Folder): Promise<Track> {
 		log.info('Reading Track:', file.name);
 		const data = await this.audioModule.read(file.name);
-		const tag = data.tag || {};
+		const tag: TrackTag = data.tag || {format: TrackTagFormatType.none};
 		if (!tag.title) {
 			tag.title = path.basename(file.name);
 		}

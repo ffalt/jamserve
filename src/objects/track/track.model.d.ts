@@ -1,5 +1,6 @@
 import {DBObject} from '../base/base.model';
 import {MetaInfoTrack} from '../../modules/audio/metadata.model';
+import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
 
 export interface Track extends DBObject {
 	rootID: string;
@@ -19,6 +20,7 @@ export interface Track extends DBObject {
 }
 
 export interface TrackTag {
+	format: TrackTagFormatType;
 	album?: string;
 	albumSort?: string;
 	albumArtist?: string;
@@ -46,7 +48,7 @@ export interface TrackTag {
 export interface TrackMedia {
 	duration?: number;
 	bitRate?: number;
-	format?: string;
+	format?: AudioFormatType;
 	sampleRate?: number;
 	channels?: number;
 	encoded?: string; // VBR || CBR || ''

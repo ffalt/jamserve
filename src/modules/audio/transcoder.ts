@@ -5,6 +5,7 @@ import {IStreamData} from '../../typings';
 import Logger from '../../utils/logger';
 import * as fs from 'fs';
 import {SupportedTranscodeAudioFormat} from '../../utils/filetype';
+import {AudioFormatType} from '../../model/jam-types';
 
 const log = Logger('audio.transcoder');
 
@@ -24,11 +25,11 @@ export class Transcoder implements IStreamData {
 		}
 	}
 
-	static needsTranscoding(mediaFormat: string, format: string, maxBitRate: number) {
+	static needsTranscoding(mediaFormat: string, format: string, maxBitRate: number): boolean {
 		return (format !== mediaFormat) || (maxBitRate > 0);
 	}
 
-	static validTranscoding(format: string) {
+	static validTranscoding(format: AudioFormatType): boolean {
 		return SupportedTranscodeAudioFormat.indexOf(format) >= 0;
 	}
 
@@ -64,7 +65,7 @@ export class Transcoder implements IStreamData {
 	pipe(stream: express.Response) {
 		log.info('Start transcode streaming', this.format, this.maxBitRate);
 		const proc = ffmpeg(<ffmpeg.FfmpegCommandOptions>{source: this.filename, nolog: true});
-		if (this.format === 'mp3') {
+		if (this.format === AudioFormatType.mp3) {
 			proc.withAudioCodec('libmp3lame');
 		}
 		proc.withNoVideo()
@@ -103,7 +104,7 @@ export class PreTranscoder implements IStreamData {
 				throw err;
 			}
 			const proc = ffmpeg(<ffmpeg.FfmpegCommandOptions>{source: this.filename, nolog: true});
-			if (this.format === 'mp3') {
+			if (this.format === AudioFormatType.mp3) {
 				proc.withAudioCodec('libmp3lame');
 			}
 			proc.withNoVideo()

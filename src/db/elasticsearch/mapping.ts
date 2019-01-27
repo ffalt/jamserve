@@ -386,6 +386,7 @@ const type_PlayQueue = {
 
 const type_TrackTag = {
 	properties: {
+		format: type_key,
 		album: type_key,
 		albumSort: type_key,
 		albumArtist: type_key,

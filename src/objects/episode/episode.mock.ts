@@ -1,5 +1,5 @@
 import {Episode} from './episode.model';
-import {DBObjectType, PodcastStatus} from '../../model/jam-types';
+import {AudioFormatType, DBObjectType, PodcastStatus} from '../../model/jam-types';
 
 export function mockEpisode(): Episode {
 	return {
@@ -55,7 +55,7 @@ export function mockEpisode(): Episode {
 		media: {
 			duration: 12345,
 			bitRate: 56000,
-			format: 'mp3',
+			format: AudioFormatType.mp3,
 			sampleRate: 44000,
 			channels: 2,
 			encoded: 'VBR',
@@ -119,7 +119,7 @@ export function mockEpisode2(): Episode {
 		media: {
 			duration: 55555,
 			bitRate: 128000,
-			format: 'mp3',
+			format: AudioFormatType.mp3,
 			sampleRate: 22000,
 			channels: 1,
 			encoded: 'CBR',
