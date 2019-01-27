@@ -1,5 +1,5 @@
 import {Episode} from './episode.model';
-import {AudioFormatType, DBObjectType, PodcastStatus} from '../../model/jam-types';
+import {AudioFormatType, DBObjectType, PodcastStatus, TrackTagFormatType} from '../../model/jam-types';
 
 export function mockEpisode(): Episode {
 	return {
@@ -29,6 +29,7 @@ export function mockEpisode(): Episode {
 			size: 9001
 		},
 		tag: {
+			format: TrackTagFormatType.id3v20,
 			album: 'an album name',
 			albumSort: 'album sort name, an',
 			albumArtist: 'an album artist name',
@@ -93,6 +94,7 @@ export function mockEpisode2(): Episode {
 			size: 1001
 		},
 		tag: {
+			format: TrackTagFormatType.id3v24,
 			album: 'second album name',
 			albumSort: 'album sort name, second',
 			albumArtist: 'second album artist name',
