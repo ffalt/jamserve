@@ -6,8 +6,17 @@ import {Store} from './engine/store/store';
 import {DBElastic} from './db/elasticsearch/db-elastic';
 import {DBNedb} from './db/nedb/db-nedb';
 import {Database} from './db/db.model';
+import program from 'commander';
 
-const config = loadConfig();
+const pack = require('../package.json');
+program
+	.version(pack.version, '-v, --version')
+	.usage('[options]')
+	.option('-r, --reset', 'reset the db')
+	.option('-c, --config <folder>', 'config file folder')
+	.parse(process.argv);
+
+const config = loadConfig(program.config);
 
 configureLogger(config.log.level);
 
@@ -49,7 +58,7 @@ async function runClearDB(): Promise<void> {
 	await engine.store.close();
 }
 
-if (process.argv.indexOf('--cleardb') > 0) {
+if (program.reset) {
 	runClearDB().then(() => {
 		console.log('done.');
 	}).catch(e => {
@@ -58,9 +67,13 @@ if (process.argv.indexOf('--cleardb') > 0) {
 } else {
 
 	process.on('SIGTERM', () => {
-		stop();
+		stop().catch(e => {
+			console.error(e);
+		});
 	});
 
-	run();
+	run().catch(e => {
+		console.error(e);
+	});
 }
 

@@ -85,8 +85,19 @@ export function extendConfig(config: BaseConfig): Config {
 	return result;
 }
 
-export function loadConfig(): Config {
-	const config: Config = require('../config/config.js');
-	config.firstStart = require('../config/firststart.config.js');
+declare var __non_webpack_require__: any;
+
+export function loadConfig(configPath?: string): Config {
+	configPath = configPath && configPath.length > 0 ? configPath : path.join(process.cwd(), 'config');
+	const configFile = path.join(configPath, 'config.js');
+	const configFirstStartFile = path.join(configPath, 'firststart.config.js');
+	let config: Config;
+	if (__non_webpack_require__) {
+		config = __non_webpack_require__(configFile);
+		config.firstStart = __non_webpack_require__(configFirstStartFile);
+	} else {
+		config = require(configFile);
+		config.firstStart = require(configFirstStartFile);
+	}
 	return extendConfig(config);
 }
