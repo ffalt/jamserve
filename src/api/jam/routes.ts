@@ -166,6 +166,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/folder/health', async (req, res) => {
+		const options: JamRequest<JamParameters.FolderHealth> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.Folder> = await api.folderController.health(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/folder/state', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.State = await api.folderController.state(options);

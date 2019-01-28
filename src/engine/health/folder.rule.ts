@@ -143,8 +143,8 @@ export class FolderRulesChecker {
 		this.rules.push(new FolderArtistNameRule());
 	}
 
-	async run(folder: Folder): Promise<Array<Jam.FolderProblem>> {
-		const result: Array<Jam.FolderProblem> = [];
+	async run(folder: Folder): Promise<Array<Jam.Problem>> {
+		const result: Array<Jam.Problem> = [];
 		for (const rule of this.rules) {
 			const match = await rule.run(folder);
 			if (match) {

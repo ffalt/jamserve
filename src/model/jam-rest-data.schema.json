@@ -4309,7 +4309,10 @@
 					"$ref": "#/definitions/Jam.FolderTag"
 				},
 				"health": {
-					"$ref": "#/definitions/Jam.FolderHealth"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Problem"
+					}
 				},
 				"artistInfo": {
 					"$ref": "#/definitions/Jam.ArtistFolderInfo"
@@ -4463,7 +4466,7 @@
 				}
 			}
 		},
-		"Jam.FolderProblem": {
+		"Jam.Problem": {
 			"type": "object",
 			"properties": {
 				"id": {
@@ -4480,17 +4483,6 @@
 				"id",
 				"name"
 			]
-		},
-		"Jam.FolderHealth": {
-			"type": "object",
-			"properties": {
-				"problems": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Jam.FolderProblem"
-					}
-				}
-			}
 		},
 		"Jam.FolderChildren": {
 			"type": "object",

@@ -647,6 +647,9 @@ export declare namespace JamParameters {
 	export interface FolderSearch extends Paginate, FolderSearchQuery, IncludesFolderChildren {
 	}
 
+	export interface FolderHealth extends FolderSearchQuery, IncludesFolder {
+	}
+
 	export interface Episode extends ID, IncludesEpisode {
 	}
 

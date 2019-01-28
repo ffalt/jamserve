@@ -805,6 +805,39 @@
 						"result"
 					]
 				},
+				"folder/health": {
+					"description": "folder: list of folders with health issues",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.FolderHealth"
+						},
+						"result": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Jam.Folder"
+							}
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"folder/state": {
 					"description": "folder: get the user state (fav/rating) by folder id",
 					"type": "object",
@@ -11709,7 +11742,10 @@
 					"$ref": "#/definitions/Jam.FolderTag"
 				},
 				"health": {
-					"$ref": "#/definitions/Jam.FolderHealth"
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Problem"
+					}
 				},
 				"artistInfo": {
 					"$ref": "#/definitions/Jam.ArtistFolderInfo"
@@ -11819,18 +11855,7 @@
 				}
 			}
 		},
-		"Jam.FolderHealth": {
-			"type": "object",
-			"properties": {
-				"problems": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Jam.FolderProblem"
-					}
-				}
-			}
-		},
-		"Jam.FolderProblem": {
+		"Jam.Problem": {
 			"type": "object",
 			"properties": {
 				"id": {
@@ -12568,6 +12593,134 @@
 				},
 				"trackState": {
 					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderTag": {
+					"description": "include tag on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderState": {
+					"description": "include user states (fav,rate) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderCounts": {
+					"description": "include information about children (trackCount/folderCount) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderHealth": {
+					"description": "include information about the meta data quality on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderParents": {
+					"description": "include a list of all parent folder ids on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderInfo": {
+					"description": "include extended meta data on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderInfoSimilar": {
+					"description": "include similar folders list on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderArtworks": {
+					"description": "include artwork images list on folder(s)",
+					"default": false,
+					"type": "boolean"
+				}
+			}
+		},
+		"JamParameters.FolderHealth": {
+			"type": "object",
+			"properties": {
+				"rootID": {
+					"description": "filter by root id",
+					"type": "string"
+				},
+				"parentID": {
+					"description": "filter by parent folder id",
+					"type": "string"
+				},
+				"artist": {
+					"description": "filter by artist name",
+					"type": "string"
+				},
+				"title": {
+					"description": "filter by title",
+					"type": "string"
+				},
+				"album": {
+					"description": "filter by album name",
+					"type": "string"
+				},
+				"genre": {
+					"description": "filter by genre",
+					"type": "string"
+				},
+				"level": {
+					"description": "filter by level",
+					"type": "number"
+				},
+				"newerThan": {
+					"description": "filter by creation date (unix time)",
+					"minimum": 0,
+					"type": "integer"
+				},
+				"fromYear": {
+					"description": "filter by year",
+					"minimum": 0,
+					"type": "integer"
+				},
+				"toYear": {
+					"description": "filter by year",
+					"minimum": 0,
+					"type": "integer"
+				},
+				"type": {
+					"description": "filter by folder type",
+					"enum": [
+						"album",
+						"artist",
+						"collection",
+						"extras",
+						"multialbum",
+						"unknown"
+					],
+					"type": "string"
+				},
+				"types": {
+					"description": "filter by folder types",
+					"type": "array",
+					"items": {
+						"enum": [
+							"album",
+							"artist",
+							"collection",
+							"extras",
+							"multialbum",
+							"unknown"
+						],
+						"type": "string"
+					}
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
+				"sortField": {
+					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+					"type": "string"
+				},
+				"sortDescending": {
+					"description": "the sort direction",
 					"default": false,
 					"type": "boolean"
 				},

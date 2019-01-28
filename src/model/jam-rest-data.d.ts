@@ -159,7 +159,7 @@ export declare namespace Jam {
 		trackCount?: number;
 		folderCount?: number;
 		tag?: FolderTag;
-		health?: FolderHealth;
+		health?: Array<Problem>;
 		artistInfo?: ArtistFolderInfo;
 		albumInfo?: AlbumInfo;
 		folders?: Array<Folder>;
@@ -195,14 +195,10 @@ export declare namespace Jam {
 		musicbrainz?: FolderMBTag;
 	}
 
-	export interface FolderProblem {
+	export interface Problem {
 		id: string;
 		name: string;
 		details?: string;
-	}
-
-	export interface FolderHealth {
-		problems?: Array<FolderProblem>;
 	}
 
 	export interface FolderChildren {

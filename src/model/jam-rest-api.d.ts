@@ -233,6 +233,14 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
+		 * folder: list of folders with health issues
+		 */
+		'folder/health'?: {
+			params: JamParameters.FolderHealth;
+			result: Array<Jam.Folder>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
 		 * folder: get the user state (fav/rating) by folder id
 		 */
 		'folder/state'?: {

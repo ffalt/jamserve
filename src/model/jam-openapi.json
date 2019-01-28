@@ -2481,6 +2481,279 @@
 				]
 			}
 		},
+		"/folder/health": {
+			"get": {
+				"operationId": "folderController.health",
+				"description": "list of folders with health issues",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.Folder"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "rootID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "parentID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by parent folder id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by artist name",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by title",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "album",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by album name",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by genre",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "level",
+						"schema": {
+							"type": "number"
+						},
+						"description": "filter by level",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "newerThan",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by creation date (unix time)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "fromYear",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "toYear",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "type",
+						"schema": {
+							"enum": [
+								"album",
+								"artist",
+								"collection",
+								"extras",
+								"multialbum",
+								"unknown"
+							],
+							"type": "string"
+						},
+						"description": "filter by folder type",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "types",
+						"schema": {
+							"type": "array",
+							"items": {
+								"enum": [
+									"album",
+									"artist",
+									"collection",
+									"extras",
+									"multialbum",
+									"unknown"
+								],
+								"type": "string"
+							}
+						},
+						"description": "filter by folder types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "the sort direction",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderCounts",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include information about children (trackCount/folderCount) on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderHealth",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include information about the meta data quality on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderParents",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include a list of all parent folder ids on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderInfo",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include extended meta data on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderInfoSimilar",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include similar folders list on folder(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "folderArtworks",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include artwork images list on folder(s)",
+						"required": false
+					}
+				]
+			}
+		},
 		"/folder/state": {
 			"get": {
 				"operationId": "folderController.state",
@@ -16820,7 +17093,10 @@
 						"$ref": "#/components/schemas/Jam.FolderTag"
 					},
 					"health": {
-						"$ref": "#/components/schemas/Jam.FolderHealth"
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Problem"
+						}
 					},
 					"artistInfo": {
 						"$ref": "#/components/schemas/Jam.ArtistFolderInfo"
@@ -16930,18 +17206,7 @@
 					}
 				}
 			},
-			"Jam.FolderHealth": {
-				"type": "object",
-				"properties": {
-					"problems": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/Jam.FolderProblem"
-						}
-					}
-				}
-			},
-			"Jam.FolderProblem": {
+			"Jam.Problem": {
 				"type": "object",
 				"properties": {
 					"id": {

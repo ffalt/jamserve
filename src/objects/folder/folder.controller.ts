@@ -75,8 +75,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			}
 		}
 		if (includes.folderHealth) {
-			const problems = await this.checker.run(folder);
-			result.health = {problems};
+			result.health = await this.checker.run(folder);
 		}
 		if (includes.folderParents) {
 			const parents = await this.folderService.collectFolderPath(folder.parentID);
@@ -211,5 +210,12 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	async artworkDelete(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const {folder, artwork} = await this.artworkByID(req.query.id);
 		return await this.folderService.removeArtworkImage(folder, artwork);
+	}
+
+	async health(req: JamRequest<JamParameters.FolderHealth>): Promise<Array<Jam.Folder>> {
+		const list = await this.service.store.search(this.translateQuery(req.query, req.user));
+		req.query.folderHealth = true;
+		const folders = await this.prepareList(list, req.query, req.user);
+		return folders.filter(f => f.health && f.health.length > 0);
 	}
 }
