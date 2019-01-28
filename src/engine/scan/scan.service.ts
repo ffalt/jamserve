@@ -945,11 +945,15 @@ export class ScanService {
 
 	private async findCompilationArtist(changes: MergeChanges): Promise<Artist | undefined> {
 		const slug = slugify(cVariousArtist);
-		const artist = await this.artistCache.find(a => a.slug === slug);
+		let artist = await this.artistCache.find(a => a.slug === slug);
 		if (artist) {
 			return artist;
 		}
-		return await this.store.artistStore.searchOne({slug});
+		artist = await this.store.artistStore.searchOne({slug});
+		if (artist) {
+			this.artistCache.push(artist);
+		}
+		return artist;
 	}
 
 	private async findOrCreateCompilationArtist(changes: MergeChanges): Promise<Artist> {
@@ -969,11 +973,6 @@ export class ScanService {
 			changes.newArtists.push(artist);
 			this.artistCache.push(artist);
 			return artist;
-		}
-		const artistID = artist.id;
-		if (!changes.newArtists.find(a => a.id === artistID)) {
-			changes.updateArtists.push(artist);
-			this.artistCache.push(artist);
 		}
 		return artist;
 	}
@@ -1113,10 +1112,7 @@ export class ScanService {
 			trackInfo.track.artistID = artist.id;
 			let album: Album;
 			if (trackInfo.dir.folder.tag.artist === cVariousArtist) {
-				// let compilationArtist = await this.findCompilationArtist(changes);
-				// if (!compilationArtist) {
 				const compilationArtist = await this.findOrCreateCompilationArtist(changes);
-				// }
 				if (compilationArtist !== artist) {
 					compilationArtist.trackIDs.push(trackInfo.track.id);
 					if (compilationArtist.rootIDs.indexOf(trackInfo.dir.rootID) < 0) {
@@ -1124,9 +1120,6 @@ export class ScanService {
 					}
 					if (changes.newArtists.indexOf(compilationArtist) < 0 && changes.updateArtists.indexOf(compilationArtist) < 0) {
 						changes.updateArtists.push(compilationArtist);
-					}
-					if (this.artistCache.indexOf(compilationArtist) < 0) {
-						this.artistCache.push(compilationArtist);
 					}
 				}
 				album = await this.findOrCreateAlbum(trackInfo, compilationArtist.id, changes);
@@ -1168,23 +1161,23 @@ export class ScanService {
 			if (changes.newArtists.indexOf(compilationArtist) < 0 && changes.updateArtists.indexOf(compilationArtist) < 0) {
 				changes.updateArtists.push(compilationArtist);
 			}
-			if (this.artistCache.indexOf(compilationArtist) < 0) {
-				this.artistCache.push(compilationArtist);
-			}
 		}
 	}
 
 	private async mergeMeta(changes: MergeChanges): Promise<void> {
 		// merge new
+		log.debug('merge meta tracks new', changes.newTracks.length);
 		for (const trackInfo of changes.newTracks) {
 			await this.addMeta(trackInfo, changes);
 		}
 		const compilationArtist = await this.findCompilationArtist(changes);
 		// remove missing
+		log.debug('merge meta tracks remove', changes.removedTracks.length);
 		for (const track of changes.removedTracks) {
 			await this.removeMeta(track, compilationArtist, changes);
 		}
 		// update updated
+		log.debug('merge meta tracks update', changes.updateTracks.length);
 		for (const trackInfo of changes.updateTracks) {
 			await this.removeMeta(trackInfo.track, compilationArtist, changes);
 			await this.addMeta(trackInfo, changes);
@@ -1193,6 +1186,7 @@ export class ScanService {
 		changes.updateArtists = changes.updateArtists.filter(a => a.trackIDs.length > 0);
 		changes.removedAlbums = changes.updateAlbums.filter(a => a.trackIDs.length === 0);
 		changes.updateAlbums = changes.updateAlbums.filter(a => a.trackIDs.length > 0);
+		log.debug('refresh albums', changes.updateAlbums.length);
 		for (const album of changes.updateAlbums) {
 			const rootIDs: Array<string> = [];
 			let duration = 0;
@@ -1206,6 +1200,7 @@ export class ScanService {
 			album.rootIDs = rootIDs;
 			album.duration = duration;
 		}
+		log.debug('refresh artists', changes.updateArtists.length);
 		for (const artist of changes.updateArtists) {
 			const rootIDs: Array<string> = [];
 			const albumTypes: Array<AlbumType> = [];
@@ -1394,6 +1389,7 @@ export class ScanService {
 		await this.storeChanges(changes);
 
 		// fifth, clean
+		log.info('Cleaning:', dir);
 		await this.clean(changes);
 
 		changes.end = Date.now();
