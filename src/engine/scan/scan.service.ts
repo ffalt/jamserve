@@ -1103,77 +1103,91 @@ export class ScanService {
 		return result;
 	}
 
-	private async mergeMeta(changes: MergeChanges): Promise<void> {
-		let compilationArtist = await this.findCompilationArtist(changes);
-		// merge new
-		for (const trackInfo of changes.newTracks) {
-			if (trackInfo.dir.folder) {
-				const artist = await this.findOrCreateArtist(trackInfo, changes);
-				artist.trackIDs.push(trackInfo.track.id);
-				if (artist.rootIDs.indexOf(trackInfo.dir.rootID) < 0) {
-					artist.rootIDs.push(trackInfo.dir.rootID);
-				}
-				trackInfo.track.artistID = artist.id;
-				let album: Album;
-				if (trackInfo.dir.folder.tag.artist === cVariousArtist) {
-					if (!compilationArtist) {
-						compilationArtist = await this.findOrCreateCompilationArtist(changes);
+	private async addMeta(trackInfo: MergeTrackInfo, changes: MergeChanges): Promise<void> {
+		if (trackInfo.dir.folder) {
+			const artist = await this.findOrCreateArtist(trackInfo, changes);
+			artist.trackIDs.push(trackInfo.track.id);
+			if (artist.rootIDs.indexOf(trackInfo.dir.rootID) < 0) {
+				artist.rootIDs.push(trackInfo.dir.rootID);
+			}
+			trackInfo.track.artistID = artist.id;
+			let album: Album;
+			if (trackInfo.dir.folder.tag.artist === cVariousArtist) {
+				// let compilationArtist = await this.findCompilationArtist(changes);
+				// if (!compilationArtist) {
+				const compilationArtist = await this.findOrCreateCompilationArtist(changes);
+				// }
+				if (compilationArtist !== artist) {
+					compilationArtist.trackIDs.push(trackInfo.track.id);
+					if (compilationArtist.rootIDs.indexOf(trackInfo.dir.rootID) < 0) {
+						compilationArtist.rootIDs.push(trackInfo.dir.rootID);
 					}
-					if (compilationArtist !== artist) {
-						compilationArtist.trackIDs.push(trackInfo.track.id);
-						if (compilationArtist.rootIDs.indexOf(trackInfo.dir.rootID) < 0) {
-							compilationArtist.rootIDs.push(trackInfo.dir.rootID);
-						}
-						if (changes.newArtists.indexOf(compilationArtist) < 0 && changes.updateArtists.indexOf(compilationArtist) < 0) {
-							changes.updateArtists.push(compilationArtist);
-						}
-						if (this.artistCache.indexOf(compilationArtist) < 0) {
-							this.artistCache.push(compilationArtist);
-						}
+					if (changes.newArtists.indexOf(compilationArtist) < 0 && changes.updateArtists.indexOf(compilationArtist) < 0) {
+						changes.updateArtists.push(compilationArtist);
 					}
-					album = await this.findOrCreateAlbum(trackInfo, compilationArtist.id, changes);
-					album.artist = compilationArtist.name;
-					album.albumType = AlbumType.compilation;
-					if (compilationArtist.albumIDs.indexOf(album.id) < 0) {
-						compilationArtist.albumIDs.push(album.id);
+					if (this.artistCache.indexOf(compilationArtist) < 0) {
+						this.artistCache.push(compilationArtist);
 					}
-				} else {
-					album = await this.findOrCreateAlbum(trackInfo, artist.id, changes);
-					album.albumType = (trackInfo.dir.folder.tag.albumType === undefined) ? AlbumType.unknown : trackInfo.dir.folder.tag.albumType;
 				}
-				album.trackIDs.push(trackInfo.track.id);
-				trackInfo.track.albumID = album.id;
-				album.duration += (trackInfo.track.media.duration || 0);
-				if (album.rootIDs.indexOf(trackInfo.dir.rootID) < 0) {
-					album.rootIDs.push(trackInfo.dir.rootID);
+				album = await this.findOrCreateAlbum(trackInfo, compilationArtist.id, changes);
+				album.artist = compilationArtist.name;
+				album.albumType = AlbumType.compilation;
+				if (compilationArtist.albumIDs.indexOf(album.id) < 0) {
+					compilationArtist.albumIDs.push(album.id);
 				}
-				if (artist.albumTypes.indexOf(album.albumType) < 0) {
-					artist.albumTypes.push(album.albumType);
-				}
-				if (artist.albumIDs.indexOf(album.id) < 0) {
-					artist.albumIDs.push(album.id);
-				}
+			} else {
+				album = await this.findOrCreateAlbum(trackInfo, artist.id, changes);
+				album.albumType = (trackInfo.dir.folder.tag.albumType === undefined) ? AlbumType.unknown : trackInfo.dir.folder.tag.albumType;
+			}
+			album.trackIDs.push(trackInfo.track.id);
+			trackInfo.track.albumID = album.id;
+			album.duration += (trackInfo.track.media.duration || 0);
+			if (album.rootIDs.indexOf(trackInfo.dir.rootID) < 0) {
+				album.rootIDs.push(trackInfo.dir.rootID);
+			}
+			if (artist.albumTypes.indexOf(album.albumType) < 0) {
+				artist.albumTypes.push(album.albumType);
+			}
+			if (artist.albumIDs.indexOf(album.id) < 0) {
+				artist.albumIDs.push(album.id);
 			}
 		}
+	}
+
+	private async removeMeta(track: Track, compilationArtist: Artist | undefined, changes: MergeChanges): Promise<void> {
+		const album = await this.getAlbumByID(track.albumID, changes);
+		if (album) {
+			album.trackIDs = album.trackIDs.filter(id => id !== track.id);
+		}
+		const artist = await this.getArtistByID(track.artistID, changes);
+		if (artist) {
+			artist.trackIDs = artist.trackIDs.filter(id => id !== track.id);
+		}
+		if (compilationArtist && compilationArtist.trackIDs.indexOf(track.id) >= 0) {
+			compilationArtist.trackIDs = compilationArtist.trackIDs.filter(id => id !== track.id);
+			if (changes.newArtists.indexOf(compilationArtist) < 0 && changes.updateArtists.indexOf(compilationArtist) < 0) {
+				changes.updateArtists.push(compilationArtist);
+			}
+			if (this.artistCache.indexOf(compilationArtist) < 0) {
+				this.artistCache.push(compilationArtist);
+			}
+		}
+	}
+
+	private async mergeMeta(changes: MergeChanges): Promise<void> {
+		// merge new
+		for (const trackInfo of changes.newTracks) {
+			await this.addMeta(trackInfo, changes);
+		}
+		const compilationArtist = await this.findCompilationArtist(changes);
 		// remove missing
 		for (const track of changes.removedTracks) {
-			const album = await this.getAlbumByID(track.albumID, changes);
-			if (album) {
-				album.trackIDs = album.trackIDs.filter(id => id !== track.id);
-			}
-			const artist = await this.getArtistByID(track.artistID, changes);
-			if (artist) {
-				artist.trackIDs = artist.trackIDs.filter(id => id !== track.id);
-			}
-			if (compilationArtist && compilationArtist.trackIDs.indexOf(track.id) >= 0) {
-				compilationArtist.trackIDs = compilationArtist.trackIDs.filter(id => id !== track.id);
-				if (changes.newArtists.indexOf(compilationArtist) < 0 && changes.updateArtists.indexOf(compilationArtist) < 0) {
-					changes.updateArtists.push(compilationArtist);
-				}
-				if (this.artistCache.indexOf(compilationArtist) < 0) {
-					this.artistCache.push(compilationArtist);
-				}
-			}
+			await this.removeMeta(track, compilationArtist, changes);
+		}
+		// update updated
+		for (const trackInfo of changes.updateTracks) {
+			await this.removeMeta(trackInfo.track, compilationArtist, changes);
+			await this.addMeta(trackInfo, changes);
 		}
 		changes.removedArtists = changes.updateArtists.filter(a => a.trackIDs.length === 0);
 		changes.updateArtists = changes.updateArtists.filter(a => a.trackIDs.length > 0);
