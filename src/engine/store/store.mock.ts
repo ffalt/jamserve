@@ -17,6 +17,7 @@ export interface MockTrack {
 	number: number;
 	genre: string;
 	artist: string;
+	albumArtist?: string;
 	album: string;
 }
 
@@ -114,6 +115,7 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 							{
 								path: path.join(rootDir, 'artist 1', 'album 2', '3 - title 3 - artist 1 with another artist.mp3'),
 								artist: 'artist 1 with another artist',
+								albumArtist: 'artist 1',
 								album: 'album 2',
 								number: 3,
 								genre: randomItem(Genres)
@@ -275,15 +277,15 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 		expected: {
 			folders: 10,
 			tracks: 16,
-			artists: 7,
-			albums: 4,
+			artists: 6,
+			albums: 5,
 			folderType: FolderType.collection
 		}
 	};
 }
 
 async function writeMockTrack(track: MockTrack): Promise<void> {
-	await writeMP3Track(track.path, track.album, track.artist, track.number, track.genre);
+	await writeMP3Track(track.path, track.album, track.artist, track.number, track.genre, track.albumArtist);
 }
 
 export async function writeMockFolder(f: MockFolder): Promise<void> {
@@ -303,7 +305,7 @@ export async function writeMockRoot(root: MockRoot): Promise<void> {
 	}
 }
 
-async function removeMockFolder(f: MockFolder): Promise<void> {
+export async function removeMockFolder(f: MockFolder): Promise<void> {
 	for (const folder of f.folders) {
 		await removeMockFolder(folder);
 	}

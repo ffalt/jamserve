@@ -77,6 +77,10 @@ export interface MergeTrackInfo {
 	dir: MatchDir;
 }
 
+export interface UpdateMergeTrackInfo extends MergeTrackInfo {
+	oldTrack: Track;
+}
+
 export interface MergeChanges {
 	newArtists: Array<Artist>;
 	updateArtists: Array<Artist>;
@@ -87,7 +91,7 @@ export interface MergeChanges {
 	removedAlbums: Array<Album>;
 
 	newTracks: Array<MergeTrackInfo>;
-	updateTracks: Array<MergeTrackInfo>;
+	updateTracks: Array<UpdateMergeTrackInfo>;
 	removedTracks: Array<Track>;
 
 	newFolders: Array<Folder>;
@@ -677,7 +681,7 @@ export class ScanService {
 					track.id = old.id;
 					track.info = old.info;
 					file.track = track;
-					changes.updateTracks.push({track, dir});
+					changes.updateTracks.push({track, dir, oldTrack: old});
 				}
 			}
 		}
@@ -995,7 +999,7 @@ export class ScanService {
 			}
 		}
 		const name = getAlbumName(trackInfo);
-		return this.albumCache.find(a => a.name === name);
+		return this.albumCache.find(a => (a.name === name) && (a.artistID === artistID));
 	}
 
 	private async buildAlbum(trackInfo: MergeTrackInfo, artistID: string): Promise<Album> {
@@ -1034,7 +1038,7 @@ export class ScanService {
 		return album;
 	}
 
-	private async getAlbumByID(id: string, changes: MergeChanges): Promise<Album | undefined> {
+	private async getAlbumByID(id: string, changes?: MergeChanges): Promise<Album | undefined> {
 		let album = this.albumCache.find(a => a.id === id);
 		if (album) {
 			return album;
@@ -1042,7 +1046,9 @@ export class ScanService {
 		album = await this.store.albumStore.byId(id);
 		if (album) {
 			this.albumCache.push(album);
-			changes.updateAlbums.push(album);
+			if (changes) {
+				changes.updateAlbums.push(album);
+			}
 		}
 		return album;
 	}
@@ -1091,7 +1097,7 @@ export class ScanService {
 		return await this.store.albumStore.byId(id);
 	}
 
-	private async getAlbumsById(ids: Array<string>, changes: MergeChanges): Promise<Array<Album>> {
+	private async getAlbumsById(ids: Array<string>, changes?: MergeChanges): Promise<Array<Album>> {
 		const result: Array<Album> = [];
 		for (const id of ids) {
 			const track = await this.getAlbumByID(id, changes);
@@ -1179,13 +1185,13 @@ export class ScanService {
 		// update updated
 		log.debug('merge meta tracks update', changes.updateTracks.length);
 		for (const trackInfo of changes.updateTracks) {
-			await this.removeMeta(trackInfo.track, compilationArtist, changes);
+			await this.removeMeta(trackInfo.oldTrack, compilationArtist, changes);
 			await this.addMeta(trackInfo, changes);
 		}
 		changes.removedArtists = changes.updateArtists.filter(a => a.trackIDs.length === 0);
-		changes.updateArtists = changes.updateArtists.filter(a => a.trackIDs.length > 0);
+		changes.updateArtists = changes.updateArtists.filter(a => changes.removedArtists.indexOf(a) < 0 && changes.newArtists.indexOf(a) < 0);
 		changes.removedAlbums = changes.updateAlbums.filter(a => a.trackIDs.length === 0);
-		changes.updateAlbums = changes.updateAlbums.filter(a => a.trackIDs.length > 0);
+		changes.updateAlbums = changes.updateAlbums.filter(a => changes.removedAlbums.indexOf(a) < 0 && changes.newAlbums.indexOf(a) < 0);
 		log.debug('refresh albums', changes.updateAlbums.length);
 		for (const album of changes.updateAlbums) {
 			const rootIDs: Array<string> = [];
@@ -1210,7 +1216,7 @@ export class ScanService {
 					rootIDs.push(track.rootID);
 				}
 			}
-			const albums = await this.getAlbumsById(artist.albumIDs, changes);
+			const albums = await this.getAlbumsById(artist.albumIDs);
 			for (const album of albums) {
 				if (albumTypes.indexOf(album.albumType) < 0) {
 					albumTypes.push(album.albumType);
@@ -1322,6 +1328,8 @@ export class ScanService {
 	}
 
 	private emptyChanges(): MergeChanges {
+		this.artistCache = [];
+		this.albumCache = [];
 		const changes: MergeChanges = {
 			newArtists: [],
 			updateArtists: [],
@@ -1370,8 +1378,6 @@ export class ScanService {
 		 */
 
 		const changes = this.emptyChanges();
-		this.artistCache = [];
-		this.albumCache = [];
 
 		// first, scan the filesystem
 		const scan: ScanDir = await this.scan(dir, rootID);
