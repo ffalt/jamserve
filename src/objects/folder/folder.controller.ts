@@ -1,5 +1,5 @@
 import {JamParameters} from '../../model/jam-rest-params';
-import {ArtworkImageType, DBObjectType, FolderType, FolderTypesAlbum} from '../../model/jam-types';
+import {ArtworkImageType, FolderType} from '../../model/jam-types';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
@@ -13,7 +13,7 @@ import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
 import {SearchQueryFolder} from './folder.store';
 import {SearchQueryTrack} from '../track/track.store';
-import {MetaDataService} from '../../engine/metadata/metadata.service';
+import {MetaDataService} from '../metadata/metadata.service';
 import {IndexService} from '../../engine/index/index.service';
 import {User} from '../user/user.model';
 import {FolderService} from './folder.service';
@@ -22,6 +22,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {Artwork, Folder} from './folder.model';
 import {IApiBinaryResult} from '../../typings';
 import {FolderRulesChecker} from '../../engine/health/folder.rule';
+import {DBObjectType} from '../../db/db.types';
 
 export class FolderController extends BaseListController<JamParameters.Folder, JamParameters.Folders, JamParameters.IncludesFolderChildren, SearchQueryFolder, JamParameters.FolderSearch, Folder, Jam.Folder> {
 	checker = new FolderRulesChecker();

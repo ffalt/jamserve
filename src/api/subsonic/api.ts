@@ -1,6 +1,6 @@
 import {IApiBinaryResult} from '../../typings';
 import {Engine} from '../../engine/engine';
-import {DBObjectType, FolderType, FolderTypesAlbum, PodcastStatus} from '../../model/jam-types';
+import {FolderType, FolderTypesAlbum, PodcastStatus} from '../../model/jam-types';
 import {randomItems} from '../../utils/random';
 import {paginate} from '../../utils/paginate';
 import {FORMAT} from './format';
@@ -20,6 +20,7 @@ import {Podcast} from '../../objects/podcast/podcast.model';
 import {Bookmark} from '../../objects/bookmark/bookmark.model';
 import {SearchQueryTrack} from '../../objects/track/track.store';
 import {hexDecode} from '../../utils/hex';
+import {DBObjectType} from '../../db/db.types';
 
 /*
 	http://www.subsonic.org/pages/api.jsp

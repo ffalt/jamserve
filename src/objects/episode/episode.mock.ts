@@ -1,5 +1,6 @@
 import {Episode} from './episode.model';
-import {AudioFormatType, DBObjectType, PodcastStatus, TrackTagFormatType} from '../../model/jam-types';
+import {AudioFormatType, PodcastStatus, TrackTagFormatType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 
 export function mockEpisode(): Episode {
 	return {

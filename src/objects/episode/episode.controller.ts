@@ -1,6 +1,6 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType, PodcastStatus} from '../../model/jam-types';
+import {PodcastStatus} from '../../model/jam-types';
 import {IApiBinaryResult} from '../../typings';
 import {JamRequest} from '../../api/jam/api';
 import {formatEpisode} from './episode.format';
@@ -14,6 +14,7 @@ import {User} from '../user/user.model';
 import {EpisodeService} from './episode.service';
 import {StreamController} from '../../engine/stream/stream.controller';
 import {BaseListController} from '../base/base.list.controller';
+import {DBObjectType} from '../../db/db.types';
 
 export class EpisodeController extends BaseListController<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, SearchQueryEpisode, JamParameters.EpisodeSearch, Episode, Jam.PodcastEpisode> {
 

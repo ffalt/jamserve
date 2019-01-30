@@ -1,4 +1,4 @@
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {BookmarkStore, SearchQueryBookmark} from './bookmark.store';
 import {Bookmark} from './bookmark.model';
 import {BaseStoreService} from '../base/base.service';

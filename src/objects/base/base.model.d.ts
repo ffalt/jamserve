@@ -1,4 +1,4 @@
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 
 export interface DBObject {
 	id: string;

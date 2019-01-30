@@ -1,6 +1,7 @@
-import {DatabaseQuerySortType, DBObjectType} from '../../model/jam-types';
+import {DatabaseQuerySortType} from '../../model/jam-types';
 import {DBObject} from './base.model';
 import {Database, DatabaseIndex, DatabaseQuery, DatabaseQuerySort} from '../../db/db.model';
+import {DBObjectType} from '../../db/db.types';
 
 export interface SearchQuery {
 	id?: string;

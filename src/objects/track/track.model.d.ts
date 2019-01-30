@@ -1,5 +1,5 @@
 import {DBObject} from '../base/base.model';
-import {MetaInfoTrack} from '../../modules/audio/metadata.model';
+import {MetaInfoTrack} from '../metadata/metadata.model';
 import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
 
 export interface Track extends DBObject {

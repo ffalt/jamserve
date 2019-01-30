@@ -1,5 +1,5 @@
 import {Radio} from './radio.model';
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 
 export function mockRadio(): Radio {
 	return {

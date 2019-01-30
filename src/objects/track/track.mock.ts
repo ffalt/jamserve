@@ -1,6 +1,7 @@
 import {Track} from './track.model';
-import {AudioFormatType, DBObjectType, TrackTagFormatType} from '../../model/jam-types';
+import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
 import {mockPath} from '../../utils/testutils.spec';
+import {DBObjectType} from '../../db/db.types';
 
 export function mockTrack(): Track {
 	return {

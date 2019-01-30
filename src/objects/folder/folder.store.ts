@@ -1,4 +1,4 @@
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {BaseStore, QueryHelper, SearchQuery} from '../base/base.store';
 import {Folder} from './folder.model';
 import {Database, DatabaseQuery} from '../../db/db.model';

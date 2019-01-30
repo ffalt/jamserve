@@ -1,6 +1,6 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType, PodcastStatus} from '../../model/jam-types';
+import {PodcastStatus} from '../../model/jam-types';
 import {JamRequest} from '../../api/jam/api';
 import {EpisodeController} from '../episode/episode.controller';
 import {formatPodcast} from './podcast.format';
@@ -13,6 +13,7 @@ import {SearchQueryPodcast} from './podcast.store';
 import {Podcast} from './podcast.model';
 import {User} from '../user/user.model';
 import {BaseListController} from '../base/base.list.controller';
+import {DBObjectType} from '../../db/db.types';
 
 export class PodcastController extends BaseListController<JamParameters.Podcast, JamParameters.Podcasts, JamParameters.IncludesPodcast, SearchQueryPodcast, JamParameters.PodcastSearch, Podcast, Jam.Podcast> {
 

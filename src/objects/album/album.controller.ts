@@ -1,13 +1,13 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {TrackController} from '../track/track.controller';
 import {formatAlbum, formatAlbumInfo} from './album.format';
 import {SearchQueryAlbum} from './album.store';
-import {MetaDataService} from '../../engine/metadata/metadata.service';
+import {MetaDataService} from '../metadata/metadata.service';
 import {StateService} from '../state/state.service';
 import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';

@@ -2,7 +2,7 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import path from 'path';
 import {FolderType, FolderTypesAlbum} from '../../model/jam-types';
-import {MetaInfo} from '../../modules/audio/metadata.model';
+import {MetaInfo} from '../metadata/metadata.model';
 import {Artwork, Folder} from './folder.model';
 
 export function formatArtistFolderInfo(info: MetaInfo): Jam.ArtistFolderInfo {

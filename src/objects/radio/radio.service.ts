@@ -1,4 +1,4 @@
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {Radio} from './radio.model';
 import {RadioStore, SearchQueryRadio} from './radio.store';
 import {BaseStoreService} from '../base/base.service';

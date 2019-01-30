@@ -1,5 +1,5 @@
 import {DBObject} from '../base/base.model';
-import {MetaInfo} from '../../modules/audio/metadata.model';
+import {MetaInfo} from '../metadata/metadata.model';
 import {AlbumType} from '../../model/jam-types';
 
 export interface Album extends DBObject {

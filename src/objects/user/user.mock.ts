@@ -1,5 +1,5 @@
 import {User} from './user.model';
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {hashSalt} from '../../utils/salthash';
 
 export const mockUserSalt = 'a salt';

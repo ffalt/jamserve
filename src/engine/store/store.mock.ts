@@ -2,7 +2,7 @@ import {Store} from './store';
 import fse from 'fs-extra';
 import path from 'path';
 import tmp, {SynchrounousResult} from 'tmp';
-import {AlbumType, DBObjectType, FolderType} from '../../model/jam-types';
+import {AlbumType, FolderType} from '../../model/jam-types';
 import {Root} from '../../objects/root/root.model';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
@@ -11,6 +11,7 @@ import {Genres} from '../../utils/genres';
 import {ScanService} from '../scan/scan.service';
 import {ImageModule} from '../../modules/image/image.module';
 import {WaveformServiceTest} from '../waveform/waveform.service.spec';
+import {DBObjectType} from '../../db/db.types';
 
 export interface MockTrack {
 	path: string;

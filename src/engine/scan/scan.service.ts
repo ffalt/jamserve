@@ -5,17 +5,18 @@ import {WaveformService} from '../waveform/waveform.service';
 import {Track, TrackTag} from '../../objects/track/track.model';
 import {ImageModule} from '../../modules/image/image.module';
 import {deepCompare} from '../../utils/deep-compare';
-import {AlbumType, ArtworkImageType, DBObjectType, FileTyp, FolderType, FolderTypesAlbum, TrackTagFormatType} from '../../model/jam-types';
+import {AlbumType, ArtworkImageType, FileTyp, FolderType, FolderTypesAlbum, TrackTagFormatType} from '../../model/jam-types';
 import path from 'path';
 import fse from 'fs-extra';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import {getFileType} from '../../utils/filetype';
-import {Folder, Artwork, FolderTag} from '../../objects/folder/folder.model';
+import {Artwork, Folder, FolderTag} from '../../objects/folder/folder.model';
 import {Artist} from '../../objects/artist/artist.model';
 import {Album} from '../../objects/album/album.model';
 import {updatePlayListTracks} from '../../objects/playlist/playlist.service';
 import moment from 'moment';
 import {md5string} from '../../utils/md5';
+import {DBObjectType} from '../../db/db.types';
 
 const log = Logger('IO');
 

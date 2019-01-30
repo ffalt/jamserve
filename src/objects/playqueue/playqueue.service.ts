@@ -1,4 +1,4 @@
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {PlayQueue} from './playqueue.model';
 import {PlayQueueStore, SearchQueryPlayQueue} from './playqueue.store';
 import {BaseStoreService} from '../base/base.service';

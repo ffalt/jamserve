@@ -1,79 +1,121 @@
-import {FolderType} from '../../model/jam-types';
+import {FolderType, LastFMLookupType, MusicBrainzLookupType} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {shuffle} from '../../utils/random';
 import Logger from '../../utils/logger';
-import {MetaInfo, MetaInfoAlbum, MetaInfoArtist, MetaInfoArtistSimilarArtist, MetaInfoFolderSimilarArtist, MetaInfoSimilarArtist, MetaInfoTopSong, MetaInfoTrack, MetaInfoTrackSimilarSong} from '../../modules/audio/metadata.model';
-import {Folder} from '../../objects/folder/folder.model';
-import {Artist} from '../../objects/artist/artist.model';
-import {Album} from '../../objects/album/album.model';
-import {Track} from '../../objects/track/track.model';
-import {ArtistStore} from '../../objects/artist/artist.store';
-import {AlbumStore} from '../../objects/album/album.store';
-import {TrackStore} from '../../objects/track/track.store';
-import {FolderStore} from '../../objects/folder/folder.store';
-import {cVariousArtist} from '../scan/scan.service';
+import {MetaData, MetaInfo, MetaInfoAlbum, MetaInfoArtist, MetaInfoArtistSimilarArtist, MetaInfoFolderSimilarArtist, MetaInfoSimilarArtist, MetaInfoTopSong, MetaInfoTrack, MetaInfoTrackSimilarSong} from './metadata.model';
+import {Folder} from '../folder/folder.model';
+import {Artist} from '../artist/artist.model';
+import {Album} from '../album/album.model';
+import {Track} from '../track/track.model';
+import {ArtistStore} from '../artist/artist.store';
+import {AlbumStore} from '../album/album.store';
+import {TrackStore} from '../track/track.store';
+import {FolderStore} from '../folder/folder.store';
+import {cVariousArtist} from '../../engine/scan/scan.service';
+import {BaseStoreService} from '../base/base.service';
+import {MetaDataStore, SearchQueryMetaData} from './metadata.store';
+import {MusicbrainzClientApi} from '../../modules/audio/clients/musicbrainz-client.interface';
+import {MusicBrainz} from '../../model/musicbrainz-rest-data';
+import {MetaDataType} from './metadata.types';
+import {DBObjectType} from '../../db/db.types';
+import {Acoustid} from '../../model/acoustid-rest-data';
+import path from 'path';
+import {LastFM} from '../../model/lastfm-rest-data';
+import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
+import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
+import {FORMAT} from './metadata.format';
+import {JamParameters} from '../../model/jam-rest-params';
+import MusicBrainzLookup = JamParameters.MusicBrainzLookup;
 
 const log = Logger('MetaDataService');
 
-export class MetaDataService {
 
-	constructor(private folderStore: FolderStore, private trackStore: TrackStore, private albumStore: AlbumStore, private artistStore: ArtistStore, private audioModule: AudioModule) {
+export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaData> {
+
+	constructor(private metadataStore: MetaDataStore, private folderStore: FolderStore, private trackStore: TrackStore, private albumStore: AlbumStore, private artistStore: ArtistStore, private audioModule: AudioModule) {
+		super(metadataStore);
+	}
+
+	async mediaInfoArtistInfo(artistName: string): Promise<MetaInfoArtist | undefined> {
+		const data = await this.audioModule.lastFM.artist(artistName);
+		return FORMAT.packMediaInfoArtist(data);
+	}
+
+	async mediaInfoArtistInfoByArtistID(artistID: string): Promise<MetaInfoArtist | undefined> {
+		const data = await this.lastFMLookup(LastFMLookupType.artist, artistID);
+		if (data) {
+			return FORMAT.packMediaInfoArtist(data.artist);
+		}
+	}
+
+	async mediaInfoAlbumInfo(albumName: string, artistName: string): Promise<MetaInfoAlbum | undefined> {
+		const data = await this.audioModule.lastFM.album(albumName, artistName);
+		const result = FORMAT.packMediaInfoAlbum(data);
+		if (result && result.mbid) {
+			const mb = await this.musicbrainzLookup(MusicBrainzLookupType.release, result.mbid);
+			result.releases = mb.releases;
+		}
+		return result;
+	}
+
+	async mediaInfoAlbumInfoByAlbumID(albumID: string): Promise<MetaInfoAlbum | undefined> {
+		let result: MetaInfoAlbum | undefined;
+		const data = await this.lastFMLookup(LastFMLookupType.album, albumID);
+		if (data && data.album) {
+			result = FORMAT.packMediaInfoAlbum(data.album);
+		}
+		if (result) {
+			const mb = await this.musicbrainzLookup(MusicBrainzLookupType.release, albumID);
+			result.releases = mb.releases;
+		}
+		return result;
+	}
+
+	async mediaInfoSimilarTrack(title: string, artist: string): Promise<Array<MetaInfoTrackSimilarSong>> {
+		const data = await this.audioModule.lastFM.similarTrack(title, artist);
+		return FORMAT.packMediaInfoSimilarSong(data);
+	}
+
+	async mediaInfoSimilarTrackByMBTrackID(trackID: string): Promise<Array<MetaInfoTrackSimilarSong>> {
+		const data = await this.audioModule.lastFM.similarTrackID(trackID);
+		return FORMAT.packMediaInfoSimilarSong(data);
+	}
+
+	async mediaInfoTopSongs(artistName: string): Promise<Array<MetaInfoTopSong>> {
+		// TODO: get more than 50
+		const data = await this.audioModule.lastFM.topArtistSongs(artistName);
+		return FORMAT.packMediaInfoTopSongs(data);
+	}
+
+	async mediaInfoTopSongsByArtistID(artistID: string): Promise<Array<MetaInfoTopSong>> {
+		// TODO: get more than 50
+		const data = await this.audioModule.lastFM.topArtistSongsID(artistID);
+		return FORMAT.packMediaInfoTopSongs(data);
 	}
 
 	private async getInfo(isArtist: boolean, artistId: string | undefined, artistName: string | undefined, albumId: string | undefined, albumName: string | undefined): Promise<MetaInfo> {
-		const audio = this.audioModule;
-
-		async function checkAlbumById(): Promise<MetaInfoAlbum | undefined> {
-			if (albumId) {
-				return audio.mediaInfoAlbumInfoByAlbumID(albumId);
-			}
-		}
-
-		async function checkAlbumByNameAndArtist(): Promise<MetaInfoAlbum | undefined> {
-			if (artistName && albumName) {
-				if (artistName === cVariousArtist) {
-					return audio.mediaInfoAlbumInfo(albumName, '');
-				} else {
-					return audio.mediaInfoAlbumInfo(albumName, artistName);
-				}
-			}
-		}
-
-		async function checkAlbum(): Promise<MetaInfoAlbum | undefined> {
-			const data = await checkAlbumById();
-			if (data) {
-				return data;
-			}
-			return checkAlbumByNameAndArtist();
-		}
-
-		async function checkArtist(): Promise<MetaInfoArtist | undefined> {
-			if (artistId) {
-				return audio.mediaInfoArtistInfoByArtistID(artistId);
-			} else if (artistName && artistName !== cVariousArtist) {
-				return audio.mediaInfoArtistInfo(artistName);
-			}
-		}
-
-		async function checkTopSongs(): Promise<Array<MetaInfoTopSong> | undefined> {
-			if (artistId) {
-				return audio.mediaInfoTopSongsByArtistID(artistId);
-			} else if (artistName) {
-				return audio.mediaInfoTopSongs(artistName);
-			}
-		}
-
-
 		if (isArtist) {
-			const artist = await checkArtist();
-			const topSongs = await checkTopSongs();
+			let artist: MetaInfoArtist | undefined;
+			let topSongs: Array<MetaInfoTopSong> = [];
+			if (artistId) {
+				artist = await this.mediaInfoArtistInfoByArtistID(artistId);
+				topSongs = await this.mediaInfoTopSongsByArtistID(artistId);
+			} else if (artistName && artistName !== cVariousArtist) {
+				artist = await this.mediaInfoArtistInfo(artistName);
+				topSongs = await this.mediaInfoTopSongs(artistName);
+			}
 			return {
 				artist: artist || {},
 				topSongs: topSongs || [],
 				album: {}
 			};
 		} else {
-			const album = await checkAlbum();
+			let album: MetaInfoAlbum | undefined;
+			if (albumId) {
+				album = await this.mediaInfoAlbumInfoByAlbumID(albumId);
+			} else if (artistName && albumName) {
+				album = await this.mediaInfoAlbumInfo(albumName, artistName);
+			}
 			return {
 				artist: {},
 				topSongs: [],
@@ -110,12 +152,12 @@ export class MetaDataService {
 			return {similar: []};
 		}
 		if (track.tag.mbTrackID) {
-			const tracks = await this.audioModule.mediaInfoSimilarTrackByMBTrackID(track.tag.mbTrackID);
+			const tracks = await this.mediaInfoSimilarTrackByMBTrackID(track.tag.mbTrackID);
 			if (tracks) {
 				return {similar: tracks};
 			}
 		} else if (track.tag.artist && track.tag.title) {
-			const tracks = await this.audioModule.mediaInfoSimilarTrack(track.tag.title, track.tag.artist);
+			const tracks = await this.mediaInfoSimilarTrack(track.tag.title, track.tag.artist);
 			if (tracks) {
 				return {similar: tracks};
 			}
@@ -179,20 +221,18 @@ export class MetaDataService {
 		return info;
 	}
 
-	private async getSimilarSongs(similar: Array<MetaInfoSimilarArtist>): Promise<Array<MetaInfoTrackSimilarSong>> {
-		const audio = this.audioModule;
-
-		async function checkTopSongs(artist: MetaInfoSimilarArtist): Promise<Array<MetaInfoTopSong> | void> {
-			if (artist.mbid) {
-				return audio.mediaInfoTopSongsByArtistID(artist.mbid);
-			} else if (artist.name) {
-				return audio.mediaInfoTopSongs(artist.name);
-			}
+	private async checkTopSongs(artist: MetaInfoSimilarArtist): Promise<Array<MetaInfoTopSong> | void> {
+		if (artist.mbid) {
+			return this.mediaInfoTopSongsByArtistID(artist.mbid);
+		} else if (artist.name) {
+			return this.mediaInfoTopSongs(artist.name);
 		}
+	}
 
+	private async getSimilarSongs(similar: Array<MetaInfoSimilarArtist>): Promise<Array<MetaInfoTrackSimilarSong>> {
 		let tracks: Array<MetaInfoTrackSimilarSong> = [];
 		for (const artist of similar) {
-			const songs = await checkTopSongs(artist);
+			const songs = await this.checkTopSongs(artist);
 			if (songs) {
 				tracks = tracks.concat(songs.map(song => {
 					return {
@@ -479,4 +519,73 @@ export class MetaDataService {
 		return result;
 	}
 
+// async musicbrainzAlbumByFolder(folder: Folder): Promise<MusicBrainz.Response> {
+// 	const query: MusicbrainzClientApi.SearchQueryRelease = {
+// 		arid: folder.tag.mbArtistID,
+// 		artist: folder.tag.artist,
+// 		release: folder.tag.album || folder.tag.title
+// 	};
+// 	return this.musicbrainz.search({type: 'release', query});
+// }
+
+	async musicbrainzSearch(type: string, query: MusicbrainzClientApi.SearchQuery): Promise<MusicBrainz.Response> {
+		const name = 'search-' + type + JSON.stringify(query);
+		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.musicbrainz});
+		if (result) {
+			return result.data;
+		}
+		const brainz = await this.audioModule.musicbrainzSearch(type, query);
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.musicbrainz, data: brainz});
+		return brainz;
+	}
+
+	async acoustidLookupTrack(track: Track, includes: string | undefined): Promise<Array<Acoustid.Result>> {
+		const acoustid = await this.audioModule.acoustidLookup(path.join(track.path, track.name), includes);
+		return acoustid;
+	}
+
+	async lastFMLookup(type: string, mbid: string): Promise<LastFM.Result> {
+		const name = 'lookup-' + type + mbid;
+		// TODO: get more than 50
+		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.lastfm});
+		if (result) {
+			return result.data;
+		}
+		const lastfm = await this.audioModule.lastFMLookup(type, mbid);
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm});
+		return lastfm;
+	}
+
+	async acousticbrainzLookup(mbid: string, nr: number | undefined): Promise<AcousticBrainz.Response> {
+		const name = 'lookup-' + mbid + (nr !== undefined) ? '-' + nr : '';
+		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.acousticbrainz});
+		if (result) {
+			return result.data;
+		}
+		const abrainz = await this.audioModule.acousticbrainzLookup(mbid, nr);
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.acousticbrainz, data: abrainz});
+		return abrainz;
+	}
+
+	async coverartarchiveLookup(type: string, mbid: string): Promise<CoverArtArchive.Response> {
+		const name = 'lookup-' + type + mbid;
+		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.coverartarchive});
+		if (result) {
+			return result.data;
+		}
+		const caa = await this.audioModule.coverartarchiveLookup(type, mbid);
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.coverartarchive, data: caa});
+		return caa;
+	}
+
+	async musicbrainzLookup(type: string, mbid: string, inc?: string): Promise<MusicBrainz.Response> {
+		const name = 'lookup-' + type + mbid + (inc ? inc : '');
+		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.musicbrainz});
+		if (result) {
+			return result.data;
+		}
+		const brainz = await this.audioModule.musicbrainzLookup(type, mbid, inc);
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.musicbrainz, data: brainz});
+		return brainz;
+	}
 }

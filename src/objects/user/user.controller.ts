@@ -1,7 +1,7 @@
 import {BaseController} from '../base/base.controller';
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {GenericError, InvalidParamError, UnauthError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
 import {formatUser} from './user.format';

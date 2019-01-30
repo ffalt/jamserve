@@ -1,5 +1,6 @@
 import {Album} from './album.model';
-import {AlbumType, DBObjectType} from '../../model/jam-types';
+import {AlbumType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 
 export function mockAlbum(): Album {
 	return {

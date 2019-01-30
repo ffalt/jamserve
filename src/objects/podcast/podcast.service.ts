@@ -1,6 +1,6 @@
 import {Feed} from '../../utils/feed';
 import Logger from '../../utils/logger';
-import {DBObjectType, PodcastStatus} from '../../model/jam-types';
+import {PodcastStatus} from '../../model/jam-types';
 import {Podcast} from './podcast.model';
 import {Episode} from '../episode/episode.model';
 import {PodcastStore, SearchQueryPodcast} from './podcast.store';
@@ -8,6 +8,7 @@ import {EpisodeService} from '../episode/episode.service';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
+import {DBObjectType} from '../../db/db.types';
 
 const log = Logger('PodcastService');
 

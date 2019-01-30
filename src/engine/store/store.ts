@@ -15,6 +15,7 @@ import {BaseStore, SearchQuery} from '../../objects/base/base.store';
 import {DBObject} from '../../objects/base/base.model';
 import {Database} from '../../db/db.model';
 import Logger from '../../utils/logger';
+import {MetaDataStore} from '../../objects/metadata/metadata.store';
 
 const log = Logger('Store');
 
@@ -32,6 +33,7 @@ export class Store {
 	public albumStore: AlbumStore;
 	public playQueueStore: PlayQueueStore;
 	public radioStore: RadioStore;
+	public metaStore: MetaDataStore;
 
 	constructor(public db: Database) {
 		this.trackStore = new TrackStore(this.db);
@@ -47,6 +49,7 @@ export class Store {
 		this.playQueueStore = new PlayQueueStore(this.db);
 		this.radioStore = new RadioStore(this.db);
 		this.rootStore = new RootStore(this.db);
+		this.metaStore = new MetaDataStore(this.db);
 	}
 
 	async reset(): Promise<void> {

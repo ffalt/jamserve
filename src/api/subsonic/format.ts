@@ -1,7 +1,7 @@
 import moment from 'moment';
 import path from 'path';
 import {fileSuffix} from '../../utils/fs-utils';
-import {AudioFormatType, AudioMimeTypes, DBObjectType, PodcastStatus} from '../../model/jam-types';
+import {AudioFormatType, AudioMimeTypes, PodcastStatus} from '../../model/jam-types';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {Root} from '../../objects/root/root.model';
 import {User} from '../../objects/user/user.model';
@@ -10,7 +10,7 @@ import {State, States} from '../../objects/state/state.model';
 import {Folder} from '../../objects/folder/folder.model';
 import {Album} from '../../objects/album/album.model';
 import {Artist} from '../../objects/artist/artist.model';
-import {MetaInfo} from '../../modules/audio/metadata.model';
+import {MetaInfo} from '../../objects/metadata/metadata.model';
 import {Track} from '../../objects/track/track.model';
 import {Episode} from '../../objects/episode/episode.model';
 import {NowPlaying} from '../../engine/nowplaying/nowplaying.model';
@@ -21,6 +21,7 @@ import {PlayQueue} from '../../objects/playqueue/playqueue.model';
 import {Radio} from '../../objects/radio/radio.model';
 import {ChatMessage} from '../../engine/chat/chat.model';
 import {Genre} from '../../engine/genre/genre.model';
+import {DBObjectType} from '../../db/db.types';
 
 
 export interface SubsonicExtResponse extends Subsonic.Response {

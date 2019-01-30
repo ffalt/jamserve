@@ -1,5 +1,5 @@
 import {State} from './state.model';
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 
 export function mockState(): State {
 	return {

@@ -1,5 +1,6 @@
 import {Podcast} from './podcast.model';
-import {DBObjectType, PodcastStatus} from '../../model/jam-types';
+import {PodcastStatus} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 
 export function mockPodcast(): Podcast {
 	return {

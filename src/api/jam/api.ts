@@ -10,7 +10,7 @@ import {FolderController} from '../../objects/folder/folder.controller';
 import {RootController} from '../../objects/root/root.controller';
 import {UserController} from '../../objects/user/user.controller';
 import {ChatController} from '../../engine/chat/chat.controller';
-import {MetadataController} from '../../engine/metadata/metadata.controller';
+import {MetadataController} from '../../objects/metadata/metadata.controller';
 import {StreamController} from '../../engine/stream/stream.controller';
 import {formatSessionUser} from '../../objects/user/user.format';
 import {GenreController} from '../../engine/genre/genre.controller';
@@ -89,7 +89,7 @@ export class JamController {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.bookmarkController = new BookmarkController(this.engine.bookmarkService, this.trackController);
 		this.playqueueController = new PlayQueueController(this.engine.playQueueService, this.trackController);
-		this.metadataController = new MetadataController(this.engine.audioModule, this.trackController);
+		this.metadataController = new MetadataController(this.engine.metaDataService, this.trackController);
 	}
 
 	async ping(req: JamRequest<{}>): Promise<Jam.Ping> {

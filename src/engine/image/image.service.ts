@@ -1,5 +1,5 @@
 import {IApiBinaryResult} from '../../typings';
-import {DBObjectType, FolderType} from '../../model/jam-types';
+import {FolderType} from '../../model/jam-types';
 import path from 'path';
 import {ImageModule} from '../../modules/image/image.module';
 import {Folder} from '../../objects/folder/folder.model';
@@ -17,7 +17,7 @@ import {ArtistService} from '../../objects/artist/artist.service';
 import {AlbumService} from '../../objects/album/album.service';
 import {UserService} from '../../objects/user/user.service';
 import {Jam} from '../../model/jam-rest-data';
-import ArtworkImage = Jam.ArtworkImage;
+import {DBObjectType} from '../../db/db.types';
 
 export class ImageService {
 

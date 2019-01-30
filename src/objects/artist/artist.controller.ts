@@ -1,6 +1,6 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
@@ -9,7 +9,7 @@ import {AlbumController} from '../album/album.controller';
 import {formatArtist, formatArtistInfo} from './artist.format';
 import {formatState} from '../state/state.format';
 import {formatArtistIndex} from '../../engine/index/index.format';
-import {MetaDataService} from '../../engine/metadata/metadata.service';
+import {MetaDataService} from '../metadata/metadata.service';
 import {SearchQueryArtist} from './artist.store';
 import {IndexService} from '../../engine/index/index.service';
 import {DownloadService} from '../../engine/download/download.service';

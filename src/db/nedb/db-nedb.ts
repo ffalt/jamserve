@@ -1,9 +1,10 @@
-import {DatabaseQuerySortType, DBObjectType} from '../../model/jam-types';
+import {DatabaseQuerySortType} from '../../model/jam-types';
 import path from 'path';
 import Nedb from 'nedb';
 import {DBObject} from '../../objects/base/base.model';
 import {Database, DatabaseIndex, DatabaseQuery} from '../db.model';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
+import {DBObjectType} from '../db.types';
 
 let globaltempid = Date.now();
 

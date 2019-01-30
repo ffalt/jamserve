@@ -3,9 +3,9 @@ import fse from 'fs-extra';
 import {IoService} from './io/io.service';
 import {Store} from './store/store';
 import {AudioModule} from '../modules/audio/audio.module';
-import {DBObjectType} from '../model/jam-types';
+import {DBObjectType} from '../db/db.types';
 import {IndexService} from './index/index.service';
-import {MetaDataService} from './metadata/metadata.service';
+import {MetaDataService} from '../objects/metadata/metadata.service';
 import {UserService} from '../objects/user/user.service';
 import {ChatService} from './chat/chat.service';
 import {GenreService} from './genre/genre.service';
@@ -91,7 +91,7 @@ export class Engine {
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
 		this.episodeService = new EpisodeService(config.getDataPath(['podcasts']), this.store.episodeStore, this.stateService, this.audioModule);
 		this.podcastService = new PodcastService(this.store.podcastStore, this.episodeService, this.stateService);
-		this.metaDataService = new MetaDataService(this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
+		this.metaDataService = new MetaDataService(this.store.metaStore, this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
 		this.rootService = new RootService(this.store.rootStore);
 		this.radioService = new RadioService(this.store.radioStore);
 	}

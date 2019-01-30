@@ -11,7 +11,6 @@ import {fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data';
 import {TrackMedia, TrackTag} from '../../objects/track/track.model';
-import {MetaInfoAlbum, MetaInfoArtist, MetaInfoImage, MetaInfoTopSong, MetaInfoTrackSimilarSong} from './metadata.model';
 import fse from 'fs-extra';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
 import {probe, ProbeResult} from './tools/ffprobe';
@@ -27,7 +26,7 @@ export interface AudioScanResult {
 	tag?: TrackTag;
 }
 
-export class FORMAT {
+class FORMAT {
 	static packJamServeMedia(data?: IMP3.MPEG): TrackMedia {
 		if (!data) {
 			return {};
@@ -173,107 +172,6 @@ export class FORMAT {
 		};
 	}
 
-	static packMediaInfoImage(images: Array<LastFM.Image>): MetaInfoImage {
-		let small: string | undefined;
-		let medium: string | undefined;
-		let large: string | undefined;
-		let image = (images || []).find(img => img.size === 'small');
-		if (image && image.url && image.url.length > 0) {
-			small = image.url;
-		}
-		image = (images || []).find(img => img.size === 'medium');
-		if (image && image.url && image.url.length > 0) {
-			medium = image.url;
-		}
-		image = (images || []).find(img => img.size === 'large');
-		if (image && image.url && image.url.length > 0) {
-			large = image.url;
-		}
-		return {
-			small: small,
-			medium: medium,
-			large: large
-		};
-	}
-
-	static packMediaInfoArtist(data?: LastFM.Artist): MetaInfoArtist | undefined {
-		if (!data) {
-			return;
-		}
-		if (!data.mbid) {
-			return;
-		}
-		return {
-			name: data.name,
-			mbid: data.mbid,
-			url: data.url,
-			image: this.packMediaInfoImage(data.image),
-			tags: data.tags,
-			description: data.bio ? data.bio.content : undefined,
-			similar: data.similar && data.similar.artist ? data.similar.artist.map(artist => {
-				return {
-					name: artist.name,
-					url: artist.url,
-					image: this.packMediaInfoImage(artist.image)
-				};
-			}) : undefined
-		};
-	}
-
-	static packMediaInfoSimilarSong(data?: LastFM.SimilarTracks): Array<MetaInfoTrackSimilarSong> {
-		if (!data || !data.track || data.track.length === 0) {
-			return [];
-		}
-		return data.track.map(t => {
-			return {
-				name: t.name,
-				mbid: t.mbid,
-				url: t.url,
-				duration: parseFloat(t.duration),
-				artist: {
-					name: t.artist.name,
-					mbid: t.artist.mbid,
-					url: t.artist.name
-				},
-				image: this.packMediaInfoImage(t.image)
-			};
-		});
-	}
-
-	static packMediaInfoAlbum(data?: LastFM.Album): MetaInfoAlbum | undefined {
-		if (!data) {
-			return;
-		}
-		return {
-			name: data.name,
-			artist: data.artist,
-			mbid: data.mbid,
-			url: data.url,
-			image: this.packMediaInfoImage(data.image),
-			tags: data.tags,
-			description: data.wiki ? data.wiki.content : undefined
-		};
-	}
-
-	static packMediaInfoTopSongs(data?: LastFM.TopTracks): Array<MetaInfoTopSong> {
-		if (!data || !data.track || data.track.length === 0) {
-			return [];
-		}
-		return data.track.map(t => {
-			return {
-				name: t.name,
-				mbid: t.mbid,
-				url: t.url,
-				rank: t.rank,
-				artist: {
-					name: t.artist.name,
-					mbid: t.artist.mbid,
-					url: t.artist.name
-				},
-				image: this.packMediaInfoImage(t.image)
-			};
-		});
-	}
 }
 
 export class AudioModule {
@@ -411,57 +309,6 @@ export class AudioModule {
 		return {buffer: (<IID3V2.FrameValue.Pic>frame.value).bin, mimeType: (<IID3V2.FrameValue.Pic>frame.value).mimeType};
 	}
 
-	async mediaInfoArtistInfo(artistName: string): Promise<MetaInfoArtist | undefined> {
-		const data = await this.lastFM.artist(artistName);
-		return FORMAT.packMediaInfoArtist(data);
-	}
-
-	async mediaInfoArtistInfoByArtistID(artistID: string): Promise<MetaInfoArtist | undefined> {
-		const data = await this.lastFM.artistID(artistID);
-		return FORMAT.packMediaInfoArtist(data);
-	}
-
-	async mediaInfoAlbumInfo(albumName: string, artistName: string): Promise<MetaInfoAlbum | undefined> {
-		const data = await this.lastFM.album(albumName, artistName);
-		const result = FORMAT.packMediaInfoAlbum(data);
-		if (result && result.mbid) {
-			const mb = await this.musicbrainz.lookup({id: result.mbid, type: 'release', inc: 'labels'});
-			result.releases = mb.releases;
-		}
-		return result;
-	}
-
-	async mediaInfoAlbumInfoByAlbumID(albumID: string): Promise<MetaInfoAlbum | undefined> {
-		const data = await this.lastFM.albumID(albumID);
-		const result = FORMAT.packMediaInfoAlbum(data);
-		if (result) {
-			const mb = await this.musicbrainz.lookup({id: albumID, type: 'release', inc: 'labels'});
-			result.releases = mb.releases;
-		}
-		return result;
-	}
-
-	async mediaInfoSimilarTrack(title: string, artist: string): Promise<Array<MetaInfoTrackSimilarSong>> {
-		const data = await this.lastFM.similarTrack(title, artist);
-		return FORMAT.packMediaInfoSimilarSong(data);
-	}
-
-	async mediaInfoSimilarTrackByMBTrackID(trackID: string): Promise<Array<MetaInfoTrackSimilarSong>> {
-		const data = await this.lastFM.similarTrackID(trackID);
-		return FORMAT.packMediaInfoSimilarSong(data);
-	}
-
-	async mediaInfoTopSongs(artistName: string): Promise<Array<MetaInfoTopSong>> {
-		// TODO: get more than 50
-		const data = await this.lastFM.topArtistSongs(artistName);
-		return FORMAT.packMediaInfoTopSongs(data);
-	}
-
-	async mediaInfoTopSongsByArtistID(artistID: string): Promise<Array<MetaInfoTopSong>> {
-		// TODO: get more than 50
-		const data = await this.lastFM.topArtistSongsID(artistID);
-		return FORMAT.packMediaInfoTopSongs(data);
-	}
 
 	async acoustidLookup(filename: string, includes: string | undefined): Promise<Array<Acoustid.Result>> {
 		return this.acoustid.acoustid(filename, includes);
@@ -488,16 +335,6 @@ export class AudioModule {
 			return Promise.reject(Error('Invalid CoverArtArchive Lookup Type'));
 		}
 	}
-
-	//
-	// async musicbrainzAlbumByFolder(folder: Folder): Promise<MusicBrainz.Response> {
-	// 	const query: MusicbrainzClientApi.SearchQueryRelease = {
-	// 		arid: folder.tag.mbArtistID,
-	// 		artist: folder.tag.artist,
-	// 		release: folder.tag.album || folder.tag.title
-	// 	};
-	// 	return this.musicbrainz.search({type: 'release', query});
-	// }
 
 	async lastFMLookup(type: string, id: string): Promise<LastFM.Result> {
 		// TODO: get more than 50

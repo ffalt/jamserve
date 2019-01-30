@@ -1,4 +1,4 @@
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {Playlist} from './playlist.model';
 import {Track} from '../track/track.model';
 import {PlaylistStore, SearchQueryPlaylist} from './playlist.store';

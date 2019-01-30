@@ -1,5 +1,5 @@
 import elasticsearch from 'elasticsearch';
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../db.types';
 import {ESSequence} from './es-sequence';
 import Logger from '../../utils/logger';
 import {mapping} from './mapping';

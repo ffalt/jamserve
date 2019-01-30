@@ -1,5 +1,5 @@
 import {PlayQueue} from './playqueue.model';
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 
 export function mockPlayQueue(): PlayQueue {
 	return {

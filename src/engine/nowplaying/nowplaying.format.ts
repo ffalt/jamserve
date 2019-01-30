@@ -1,6 +1,6 @@
 import {Jam} from '../../model/jam-rest-data';
 import moment from 'moment';
-import {DBObjectType} from '../../model/jam-types';
+import {DBObjectType} from '../../db/db.types';
 import {formatTrack} from '../../objects/track/track.format';
 import {formatEpisode} from '../../objects/episode/episode.format';
 import {NowPlaying} from './nowplaying.model';
