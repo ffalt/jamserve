@@ -1821,7 +1821,7 @@
 		"/folder/artist/info": {
 			"get": {
 				"operationId": "folderController.artistInfo",
-				"description": "get extended artist meta data of a folder by id",
+				"description": "get external artist description of a folder by id",
 				"tags": [
 					"folder"
 				],
@@ -1865,7 +1865,7 @@
 		"/folder/album/info": {
 			"get": {
 				"operationId": "folderController.albumInfo",
-				"description": "get extended album meta data of a folder by id",
+				"description": "get external album description of a folder by id",
 				"tags": [
 					"folder"
 				],
@@ -2940,7 +2940,7 @@
 		"/folder/artist/similar/tracks": {
 			"get": {
 				"operationId": "folderController.artistSimilarTracks",
-				"description": "get similar tracks of a by artist folder id",
+				"description": "get similar tracks of a/by artist folder id",
 				"tags": [
 					"folder"
 				],
@@ -5410,6 +5410,7 @@
 		"/radio/id": {
 			"get": {
 				"operationId": "radioController.id",
+				"description": "get a radio by id",
 				"tags": [
 					"radio"
 				],
@@ -5463,6 +5464,7 @@
 		"/radio/ids": {
 			"get": {
 				"operationId": "radioController.ids",
+				"description": "get radios by ids",
 				"tags": [
 					"radio"
 				],
@@ -5519,6 +5521,7 @@
 		"/radio/search": {
 			"get": {
 				"operationId": "radioController.search",
+				"description": "search radios",
 				"tags": [
 					"radio"
 				],
@@ -5575,6 +5578,7 @@
 		"/radio/state": {
 			"get": {
 				"operationId": "radioController.state",
+				"description": "get the user state (fav/rating) by radio id",
 				"tags": [
 					"radio"
 				],
@@ -5618,6 +5622,7 @@
 		"/radio/states": {
 			"get": {
 				"operationId": "radioController.states",
+				"description": "get the user states (fav/rating) by radio ids",
 				"tags": [
 					"radio"
 				],
@@ -5664,6 +5669,7 @@
 		"/artist/id": {
 			"get": {
 				"operationId": "artistController.id",
+				"description": "get an artist by id",
 				"tags": [
 					"artist"
 				],
@@ -5866,6 +5872,7 @@
 		"/artist/ids": {
 			"get": {
 				"operationId": "artistController.ids",
+				"description": "get artists by ids",
 				"tags": [
 					"artist"
 				],
@@ -6062,6 +6069,7 @@
 		"/artist/search": {
 			"get": {
 				"operationId": "artistController.search",
+				"description": "search artists",
 				"tags": [
 					"artist"
 				],
@@ -6341,6 +6349,7 @@
 		"/artist/state": {
 			"get": {
 				"operationId": "artistController.state",
+				"description": "get the user state (fav/rating) by artist id",
 				"tags": [
 					"artist"
 				],
@@ -6384,6 +6393,7 @@
 		"/artist/states": {
 			"get": {
 				"operationId": "artistController.states",
+				"description": "get the user states (fav/rating) by artist ids",
 				"tags": [
 					"artist"
 				],
@@ -6430,6 +6440,7 @@
 		"/artist/list": {
 			"get": {
 				"operationId": "artistController.list",
+				"description": "get a artist list by artist list type",
 				"tags": [
 					"artist"
 				],
@@ -6718,6 +6729,7 @@
 		"/artist/similar/tracks": {
 			"get": {
 				"operationId": "artistController.similarTracks",
+				"description": "get similar tracks of an artist by artist id",
 				"tags": [
 					"artist"
 				],
@@ -6825,6 +6837,7 @@
 		"/artist/similar": {
 			"get": {
 				"operationId": "artistController.similar",
+				"description": "get similar artists of an artist by artist id",
 				"tags": [
 					"artist"
 				],
@@ -7030,6 +7043,7 @@
 		"/artist/index": {
 			"get": {
 				"operationId": "artistController.index",
+				"description": "get the navigation index for artists",
 				"tags": [
 					"artist"
 				],
@@ -7070,8 +7084,9 @@
 		"/artist/tracks": {
 			"get": {
 				"operationId": "artistController.tracks",
+				"description": "get tracks of an artist by artist id",
 				"tags": [
-					"artist"
+					"album"
 				],
 				"responses": {
 					"200": {
@@ -7156,9 +7171,54 @@
 				]
 			}
 		},
+		"/artist/info": {
+			"get": {
+				"operationId": "artistController.info",
+				"description": "get external artist description by id",
+				"tags": [
+					"artist"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Info"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
 		"/album/id": {
 			"get": {
 				"operationId": "albumController.id",
+				"description": "get an album by id",
 				"tags": [
 					"album"
 				],
@@ -7282,6 +7342,7 @@
 		"/album/ids": {
 			"get": {
 				"operationId": "albumController.ids",
+				"description": "get albums by ids",
 				"tags": [
 					"album"
 				],
@@ -7408,6 +7469,7 @@
 		"/album/list": {
 			"get": {
 				"operationId": "albumController.list",
+				"description": "get a artist list by album list type",
 				"tags": [
 					"album"
 				],
@@ -7715,6 +7777,7 @@
 		"/album/search": {
 			"get": {
 				"operationId": "albumController.search",
+				"description": "search albums",
 				"tags": [
 					"album"
 				],
@@ -8013,6 +8076,7 @@
 		"/album/state": {
 			"get": {
 				"operationId": "albumController.state",
+				"description": "get the user state (fav/rating) by album id",
 				"tags": [
 					"album"
 				],
@@ -8056,6 +8120,7 @@
 		"/album/states": {
 			"get": {
 				"operationId": "albumController.states",
+				"description": "get the user states (fav/rating) by album ids",
 				"tags": [
 					"album"
 				],
@@ -8102,6 +8167,7 @@
 		"/album/similar/tracks": {
 			"get": {
 				"operationId": "albumController.similarTracks",
+				"description": "get similar tracks of an artist by album id",
 				"tags": [
 					"album"
 				],
@@ -8209,6 +8275,7 @@
 		"/album/tracks": {
 			"get": {
 				"operationId": "albumController.tracks",
+				"description": "get tracks of an album by album id",
 				"tags": [
 					"album"
 				],
@@ -8295,9 +8362,54 @@
 				]
 			}
 		},
+		"/album/info": {
+			"get": {
+				"operationId": "albumController.info",
+				"description": "get external album description by id",
+				"tags": [
+					"album"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Info"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
 		"/playlist/id": {
 			"get": {
 				"operationId": "playlistController.id",
+				"description": "get a playlist by id",
 				"tags": [
 					"playlist"
 				],
@@ -8411,6 +8523,7 @@
 		"/playlist/ids": {
 			"get": {
 				"operationId": "playlistController.ids",
+				"description": "get playlists by ids",
 				"tags": [
 					"playlist"
 				],
@@ -8527,6 +8640,7 @@
 		"/playlist/search": {
 			"get": {
 				"operationId": "playlistController.search",
+				"description": "search playlists",
 				"tags": [
 					"playlist"
 				],
@@ -8698,6 +8812,7 @@
 		"/playlist/state": {
 			"get": {
 				"operationId": "playlistController.state",
+				"description": "get the user state (fav/rating) by playlist id",
 				"tags": [
 					"playlist"
 				],
@@ -8741,6 +8856,7 @@
 		"/playlist/states": {
 			"get": {
 				"operationId": "playlistController.states",
+				"description": "get the user states (fav/rating) by playlist ids",
 				"tags": [
 					"playlist"
 				],
@@ -8873,9 +8989,101 @@
 				]
 			}
 		},
+		"/user/id": {
+			"get": {
+				"operationId": "userController.id",
+				"description": "get an user by id",
+				"tags": [
+					"user"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.User"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
+		"/user/ids": {
+			"get": {
+				"operationId": "userController.ids",
+				"description": "get users by ids",
+				"tags": [
+					"user"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.User"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "array of item ids",
+						"required": true
+					}
+				]
+			}
+		},
 		"/user/search": {
 			"get": {
 				"operationId": "userController.search",
+				"description": "search users",
 				"tags": [
 					"user"
 				],
@@ -8974,95 +9182,6 @@
 				]
 			}
 		},
-		"/user/id": {
-			"get": {
-				"operationId": "userController.id",
-				"tags": [
-					"user"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.User"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"parameters": [
-					{
-						"in": "query",
-						"name": "id",
-						"schema": {
-							"type": "string"
-						},
-						"description": "the item id",
-						"required": true
-					}
-				]
-			}
-		},
-		"/user/ids": {
-			"get": {
-				"operationId": "userController.ids",
-				"tags": [
-					"user"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.User"
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"parameters": [
-					{
-						"in": "query",
-						"name": "ids",
-						"schema": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"description": "array of item ids",
-						"required": true
-					}
-				]
-			}
-		},
 		"/playqueue/get": {
 			"get": {
 				"operationId": "playqueueController.get",
@@ -9155,9 +9274,189 @@
 				]
 			}
 		},
+		"/bookmark/list": {
+			"get": {
+				"operationId": "bookmarkController.list",
+				"description": "get a bookmarks list for the calling user",
+				"tags": [
+					"bookmark"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.Bookmark"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "bookmarkTrack",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include the track of the bookmark",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackMedia",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include media informations on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackID3",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include id3 tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					}
+				]
+			}
+		},
+		"/root/id": {
+			"get": {
+				"operationId": "rootController.id",
+				"description": "get a root by id",
+				"tags": [
+					"root"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Root"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
+			}
+		},
+		"/root/ids": {
+			"get": {
+				"operationId": "rootController.ids",
+				"description": "get roots by ids",
+				"tags": [
+					"root"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.Root"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "array of item ids",
+						"required": true
+					}
+				]
+			}
+		},
 		"/root/search": {
 			"get": {
 				"operationId": "rootController.search",
+				"description": "search roots",
 				"tags": [
 					"root"
 				],
@@ -9238,98 +9537,10 @@
 				]
 			}
 		},
-		"/root/id": {
-			"get": {
-				"operationId": "rootController.id",
-				"tags": [
-					"root"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.Root"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"parameters": [
-					{
-						"in": "query",
-						"name": "id",
-						"schema": {
-							"type": "string"
-						},
-						"description": "the item id",
-						"required": true
-					}
-				]
-			}
-		},
-		"/root/ids": {
-			"get": {
-				"operationId": "rootController.ids",
-				"tags": [
-					"root"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Root"
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"parameters": [
-					{
-						"in": "query",
-						"name": "ids",
-						"schema": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"description": "array of item ids",
-						"required": true
-					}
-				]
-			}
-		},
 		"/root/scan": {
 			"get": {
 				"operationId": "rootController.scan",
+				"description": "start a root scan by root id",
 				"tags": [
 					"root"
 				],
@@ -9366,6 +9577,7 @@
 		"/root/scanAll": {
 			"get": {
 				"operationId": "rootController.scanAll",
+				"description": "start scan of all roots",
 				"tags": [
 					"root"
 				],
@@ -9385,6 +9597,7 @@
 		"/root/status": {
 			"get": {
 				"operationId": "rootController.status",
+				"description": "scanning status of a root scan by root id",
 				"tags": [
 					"root"
 				],
@@ -9425,6 +9638,7 @@
 		"/folder/download": {
 			"get": {
 				"operationId": "folderController.download",
+				"description": "download folder as binary archive",
 				"tags": [
 					"folder"
 				],
@@ -9489,6 +9703,7 @@
 		"/folder/image": {
 			"get": {
 				"operationId": "folderController.image",
+				"description": "download default image as binary",
 				"tags": [
 					"folder"
 				],
@@ -9567,6 +9782,7 @@
 		"/folder/artwork/image": {
 			"get": {
 				"operationId": "folderController.artworkImage",
+				"description": "download artwork image as binary",
 				"tags": [
 					"folder"
 				],
@@ -9645,6 +9861,7 @@
 		"/track/stream": {
 			"get": {
 				"operationId": "trackController.stream",
+				"description": "download track media as binary",
 				"tags": [
 					"track"
 				],
@@ -9736,6 +9953,7 @@
 		"/track/download": {
 			"get": {
 				"operationId": "trackController.download",
+				"description": "download track media as binary archive",
 				"tags": [
 					"track"
 				],
@@ -9800,6 +10018,7 @@
 		"/track/image": {
 			"get": {
 				"operationId": "trackController.image",
+				"description": "download default image as binary",
 				"tags": [
 					"track"
 				],
@@ -9878,6 +10097,7 @@
 		"/episode/stream": {
 			"get": {
 				"operationId": "episodeController.stream",
+				"description": "download episode media as binary",
 				"tags": [
 					"episode"
 				],
@@ -9969,6 +10189,7 @@
 		"/episode/download": {
 			"get": {
 				"operationId": "episodeController.download",
+				"description": "download episode media as binary archive",
 				"tags": [
 					"episode"
 				],
@@ -10033,6 +10254,7 @@
 		"/episode/image": {
 			"get": {
 				"operationId": "episodeController.image",
+				"description": "download default image as binary",
 				"tags": [
 					"episode"
 				],
@@ -10111,6 +10333,7 @@
 		"/podcast/image": {
 			"get": {
 				"operationId": "podcastController.image",
+				"description": "download default image as binary",
 				"tags": [
 					"podcast"
 				],
@@ -10189,6 +10412,7 @@
 		"/podcast/download": {
 			"get": {
 				"operationId": "podcastController.download",
+				"description": "download podcast episodes as binary archive",
 				"tags": [
 					"podcast"
 				],
@@ -10253,6 +10477,7 @@
 		"/artist/image": {
 			"get": {
 				"operationId": "artistController.image",
+				"description": "download default image as binary",
 				"tags": [
 					"artist"
 				],
@@ -10331,6 +10556,7 @@
 		"/artist/download": {
 			"get": {
 				"operationId": "artistController.download",
+				"description": "download artist tracks as binary archive",
 				"tags": [
 					"artist"
 				],
@@ -10395,6 +10621,7 @@
 		"/album/image": {
 			"get": {
 				"operationId": "albumController.image",
+				"description": "download default image as binary",
 				"tags": [
 					"album"
 				],
@@ -10473,6 +10700,7 @@
 		"/album/download": {
 			"get": {
 				"operationId": "albumController.download",
+				"description": "download album tracks as binary archive",
 				"tags": [
 					"album"
 				],
@@ -10534,97 +10762,10 @@
 				]
 			}
 		},
-		"/bookmark/list": {
-			"get": {
-				"operationId": "bookmarkController.list",
-				"description": "get a bookmarks list for the calling user",
-				"tags": [
-					"bookmark"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Bookmark"
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"parameters": [
-					{
-						"in": "query",
-						"name": "bookmarkTrack",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include the track of the bookmark",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackMedia",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include media informations on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackID3",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include id3 tag on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackState",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include user states (fav,rate) on track(s)",
-						"required": false
-					}
-				]
-			}
-		},
 		"/playlist/image": {
 			"get": {
 				"operationId": "playlistController.image",
+				"description": "download default image as binary",
 				"tags": [
 					"playlist"
 				],
@@ -10703,6 +10844,7 @@
 		"/playlist/download": {
 			"get": {
 				"operationId": "playlistController.download",
+				"description": "download playlist tracks as binary archive",
 				"tags": [
 					"playlist"
 				],
@@ -10767,6 +10909,7 @@
 		"/user/image": {
 			"get": {
 				"operationId": "userController.image",
+				"description": "download default image as binary",
 				"tags": [
 					"user"
 				],
@@ -10845,6 +10988,7 @@
 		"/root/image": {
 			"get": {
 				"operationId": "rootController.image",
+				"description": "download default image as binary",
 				"tags": [
 					"root"
 				],
@@ -10923,6 +11067,7 @@
 		"/image/{id}-{size}.{format}": {
 			"get": {
 				"operationId": "imageController.image",
+				"description": "download image for object as binary by id",
 				"tags": [
 					"image"
 				],
@@ -11001,6 +11146,7 @@
 		"/image/{id}-{size}": {
 			"get": {
 				"operationId": "imageController.image",
+				"description": "download image for object as binary by id",
 				"tags": [
 					"image"
 				],
@@ -11062,6 +11208,7 @@
 		"/image/{id}.{format}": {
 			"get": {
 				"operationId": "imageController.image",
+				"description": "download image for object as binary by id",
 				"tags": [
 					"image"
 				],
@@ -11129,6 +11276,7 @@
 		"/image/{id}": {
 			"get": {
 				"operationId": "imageController.image",
+				"description": "download image for object as binary by id",
 				"tags": [
 					"image"
 				],
@@ -11378,6 +11526,7 @@
 		"/download/{id}": {
 			"get": {
 				"operationId": "downloadController.download",
+				"description": "download object as binary archive by id",
 				"tags": [
 					"download"
 				],
@@ -11422,6 +11571,7 @@
 		"/download/{id}.{format}": {
 			"get": {
 				"operationId": "downloadController.download",
+				"description": "download object as binary archive by id",
 				"tags": [
 					"download"
 				],
@@ -18478,6 +18628,39 @@
 					"changedBy"
 				]
 			},
+			"Jam.Bookmark": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"track": {
+						"$ref": "#/components/schemas/Jam.Track"
+					},
+					"trackID": {
+						"type": "string"
+					},
+					"position": {
+						"type": "number"
+					},
+					"comment": {
+						"type": "string"
+					},
+					"created": {
+						"type": "number"
+					},
+					"changed": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"changed",
+					"created",
+					"id",
+					"position",
+					"trackID"
+				]
+			},
 			"Jam.Root": {
 				"type": "object",
 				"properties": {
@@ -18523,39 +18706,6 @@
 				},
 				"required": [
 					"lastScan"
-				]
-			},
-			"Jam.Bookmark": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"track": {
-						"$ref": "#/components/schemas/Jam.Track"
-					},
-					"trackID": {
-						"type": "string"
-					},
-					"position": {
-						"type": "number"
-					},
-					"comment": {
-						"type": "string"
-					},
-					"created": {
-						"type": "number"
-					},
-					"changed": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"changed",
-					"created",
-					"id",
-					"position",
-					"trackID"
 				]
 			},
 			"JamParameters.Login": {

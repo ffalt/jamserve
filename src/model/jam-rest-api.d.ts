@@ -109,7 +109,7 @@ export interface JamApi {
 			result: Jam.WikipediaResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
-	/**
+		/**
 		 * metadata: wikipedia summary
 		 */
 		'wikidata/summary'?: {
@@ -219,7 +219,7 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
-		 * folder: get extended artist meta data of a folder by id
+		 * folder: get external artist description of a folder by id
 		 */
 		'folder/artist/info'?: {
 			params: JamParameters.ID;
@@ -227,7 +227,7 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
-		 * folder: get extended album meta data of a folder by id
+		 * folder: get external album description of a folder by id
 		 */
 		'folder/album/info'?: {
 			params: JamParameters.ID;
@@ -275,7 +275,7 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
-		 * folder: get similar tracks of a by artist folder id
+		 * folder: get similar tracks of a/by artist folder id
 		 */
 		'folder/artist/similar/tracks'?: {
 			params: JamParameters.SimilarTracks;
@@ -500,144 +500,244 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 
+		/**
+		 * radio: get a radio by id
+		 */
 		'radio/id'?: {
 			params: JamParameters.Radio;
 			result: Jam.Radio;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * radio: get radios by ids
+		 */
 		'radio/ids'?: {
 			params: JamParameters.Radios;
 			result: Array<Jam.Radio>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * radio: search radios
+		 */
 		'radio/search'?: {
 			params: JamParameters.Radios;
 			result: Array<Jam.Radio>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * radio: get the user state (fav/rating) by radio id
+		 */
 		'radio/state'?: {
 			params: JamParameters.ID;
 			result: Jam.State
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * radio: get the user states (fav/rating) by radio ids
+		 */
 		'radio/states'?: {
 			params: JamParameters.IDs;
 			result: Jam.States;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+		/**
+		 * artist: get an artist by id
+		 */
 		'artist/id'?: {
 			params: JamParameters.Artist;
 			result: Jam.Artist;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * artist: get artists by ids
+		 */
 		'artist/ids'?: {
 			params: JamParameters.Artists;
 			result: Array<Jam.Artist>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * artist: search artists
+		 */
 		'artist/search'?: {
 			params: JamParameters.ArtistSearch;
 			result: Array<Jam.Artist>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * artist: get the user state (fav/rating) by artist id
+		 */
 		'artist/state'?: {
 			params: JamParameters.ID;
 			result: Jam.State;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * artist: get the user states (fav/rating) by artist ids
+		 */
 		'artist/states'?: {
 			params: JamParameters.IDs;
 			result: Jam.States;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * artist: get a artist list by artist list type
+		 */
 		'artist/list'?: {
 			params: JamParameters.ArtistList;
 			result: Array<Jam.Artist>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * artist: get similar tracks of an artist by artist id
+		 */
 		'artist/similar/tracks'?: {
 			params: JamParameters.SimilarTracks;
 			result: Array<Jam.Track>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * artist: get similar artists of an artist by artist id
+		 */
 		'artist/similar'?: {
 			params: JamParameters.Artist;
 			result: Array<Jam.Artist>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * artist: get the navigation index for artists
+		 */
 		'artist/index'?: {
 			params: JamParameters.Index;
 			result: Jam.ArtistIndex
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * album: get tracks of an artist by artist id
+		 */
 		'artist/tracks'?: {
 			params: JamParameters.Tracks;
 			result: Array<Jam.Track>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * artist: get external artist description by id
+		 */
+		'artist/info'?: {
+			params: JamParameters.ID;
+			result: Jam.Info;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
 
+		/**
+		 * album: get an album by id
+		 */
 		'album/id'?: {
 			params: JamParameters.Album;
 			result: Jam.Album;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * album: get albums by ids
+		 */
 		'album/ids'?: {
 			params: JamParameters.Albums;
 			result: Array<Jam.Album>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * album: get a artist list by album list type
+		 */
 		'album/list'?: {
 			params: JamParameters.AlbumList;
 			result: Array<Jam.Album>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * album: search albums
+		 */
 		'album/search'?: {
 			params: JamParameters.AlbumSearch;
 			result: Array<Jam.Album>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * album: get the user state (fav/rating) by album id
+		 */
 		'album/state'?: {
 			params: JamParameters.ID;
 			result: Jam.State;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * album: get the user states (fav/rating) by album ids
+		 */
 		'album/states'?: {
 			params: JamParameters.IDs;
 			result: Jam.States;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * album: get similar tracks of an artist by album id
+		 */
 		'album/similar/tracks'?: {
 			params: JamParameters.SimilarTracks;
 			result: Array<Jam.Track>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * album: get tracks of an album by album id
+		 */
 		'album/tracks'?: {
 			params: JamParameters.Tracks;
 			result: Array<Jam.Track>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * album: get external album description by id
+		 */
+		'album/info'?: {
+			params: JamParameters.ID;
+			result: Jam.Info;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
 
+		/**
+		 * playlist: get a playlist by id
+		 */
 		'playlist/id'?: {
 			params: JamParameters.Playlist;
 			result: Jam.Playlist;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * playlist: get playlists by ids
+		 */
 		'playlist/ids'?: {
 			params: JamParameters.Playlists;
 			result: Array<Jam.Playlist>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * playlist: search playlists
+		 */
 		'playlist/search'?: {
 			params: JamParameters.PlaylistSearch;
 			result: Array<Jam.Playlist>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * playlist: get the user state (fav/rating) by playlist id
+		 */
 		'playlist/state'?: {
 			params: JamParameters.ID;
 			result: Jam.State;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * playlist: get the user states (fav/rating) by playlist ids
+		 */
 		'playlist/states'?: {
 			params: JamParameters.IDs;
 			result: Jam.States;
@@ -649,20 +749,29 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
-		'user/search'?: {
-			params: JamParameters.UserSearch;
-			result: Array<Jam.User>;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-			roles: ['admin'];
-		};
+		/**
+		 * user: get an user by id
+		 */
 		'user/id'?: {
 			params: JamParameters.ID;
 			result: Jam.User;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * user: get users by ids
+		 */
 		'user/ids'?: {
 			params: JamParameters.IDs;
+			result: Array<Jam.User>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+			roles: ['admin'];
+		};
+		/**
+		 * user: search users
+		 */
+		'user/search'?: {
+			params: JamParameters.UserSearch;
 			result: Array<Jam.User>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['admin'];
@@ -677,127 +786,6 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 
-		'root/search'?: {
-			params: JamParameters.RootSearch;
-			result: Array<Jam.Root>;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-		};
-		'root/id'?: {
-			params: JamParameters.ID;
-			result: Jam.Root;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-		};
-		'root/ids'?: {
-			params: JamParameters.IDs;
-			result: Array<Jam.Root>;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-		};
-		'root/scan'?: {
-			params: JamParameters.ID;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['admin'];
-		};
-		'root/scanAll'?: {
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
-			roles: ['admin'];
-		};
-		'root/status'?: {
-			params: JamParameters.ID;
-			result: Jam.RootStatus;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-		};
-
-		// binary
-
-		'folder/download'?: {
-			params: JamParameters.Download;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiDownloadTypes;
-			roles: ['stream'];
-		};
-		'folder/image'?: {
-			params: JamParameters.Image;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiImageTypes;
-		};
-		'folder/artwork/image'?: {
-			params: JamParameters.Image;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiImageTypes;
-		};
-
-		'track/stream'?: {
-			params: JamParameters.Stream;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiStreamTypes;
-			roles: ['stream'];
-		};
-		'track/download'?: {
-			params: JamParameters.Download;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiDownloadTypes;
-			roles: ['stream'];
-		};
-		'track/image'?: {
-			params: JamParameters.Image;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiImageTypes;
-		};
-
-		'episode/stream'?: {
-			params: JamParameters.Stream;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiStreamTypes;
-			roles: ['stream'];
-		};
-		'episode/download'?: {
-			params: JamParameters.Download;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiDownloadTypes;
-			roles: ['stream'];
-		};
-		'episode/image'?: {
-			params: JamParameters.Image;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiImageTypes;
-		};
-
-		'podcast/image'?: {
-			params: JamParameters.Image;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiImageTypes;
-		};
-		'podcast/download'?: {
-			params: JamParameters.Download;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiDownloadTypes;
-			roles: ['stream'];
-		};
-
-		'artist/image'?: {
-			params: JamParameters.Image;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiImageTypes;
-		};
-		'artist/download'?: {
-			params: JamParameters.Download;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiDownloadTypes;
-			roles: ['stream'];
-		};
-
-		'album/image'?: {
-			params: JamParameters.Image;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiImageTypes;
-		};
-		'album/download'?: {
-			params: JamParameters.Download;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiDownloadTypes;
-			roles: ['stream'];
-		};
-
 		/**
 		 * bookmark: get a bookmarks list for the calling user
 		 */
@@ -807,11 +795,201 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+		/**
+		 * root: get a root by id
+		 */
+		'root/id'?: {
+			params: JamParameters.ID;
+			result: Jam.Root;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * root: get roots by ids
+		 */
+		'root/ids'?: {
+			params: JamParameters.IDs;
+			result: Array<Jam.Root>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
+		 * root: search roots
+		 */
+		'root/search'?: {
+			params: JamParameters.RootSearch;
+			result: Array<Jam.Root>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
+		 * root: start a root scan by root id
+		 */
+		'root/scan'?: {
+			params: JamParameters.ID;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		/**
+		 * root: start scan of all roots
+		 */
+		'root/scanAll'?: {
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
+			roles: ['admin'];
+		};
+		/**
+		 * root: scanning status of a root scan by root id
+		 */
+		'root/status'?: {
+			params: JamParameters.ID;
+			result: Jam.RootStatus;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+
+		// binary
+
+		/**
+		 * folder: download folder as binary archive
+		 */
+		'folder/download'?: {
+			params: JamParameters.Download;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiDownloadTypes;
+			roles: ['stream'];
+		};
+		/**
+		 * folder: download default image as binary
+		 */
+		'folder/image'?: {
+			params: JamParameters.Image;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiImageTypes;
+		};
+		/**
+		 * folder: download artwork image as binary
+		 */
+		'folder/artwork/image'?: {
+			params: JamParameters.Image;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiImageTypes;
+		};
+
+		/**
+		 * track: download track media as binary
+		 */
+		'track/stream'?: {
+			params: JamParameters.Stream;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiStreamTypes;
+			roles: ['stream'];
+		};
+		/**
+		 * track: download track media as binary archive
+		 */
+		'track/download'?: {
+			params: JamParameters.Download;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiDownloadTypes;
+			roles: ['stream'];
+		};
+		/**
+		 * track: download default image as binary
+		 */
+		'track/image'?: {
+			params: JamParameters.Image;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiImageTypes;
+		};
+
+		/**
+		 * episode: download episode media as binary
+		 */
+		'episode/stream'?: {
+			params: JamParameters.Stream;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiStreamTypes;
+			roles: ['stream'];
+		};
+		/**
+		 * episode: download episode media as binary archive
+		 */
+		'episode/download'?: {
+			params: JamParameters.Download;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiDownloadTypes;
+			roles: ['stream'];
+		};
+		/**
+		 * episode: download default image as binary
+		 */
+		'episode/image'?: {
+			params: JamParameters.Image;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiImageTypes;
+		};
+
+		/**
+		 * podcast: download default image as binary
+		 */
+		'podcast/image'?: {
+			params: JamParameters.Image;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiImageTypes;
+		};
+		/**
+		 * podcast: download podcast episodes as binary archive
+		 */
+		'podcast/download'?: {
+			params: JamParameters.Download;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiDownloadTypes;
+			roles: ['stream'];
+		};
+
+		/**
+		 * artist: download default image as binary
+		 */
+		'artist/image'?: {
+			params: JamParameters.Image;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiImageTypes;
+		};
+		/**
+		 * artist: download artist tracks as binary archive
+		 */
+		'artist/download'?: {
+			params: JamParameters.Download;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiDownloadTypes;
+			roles: ['stream'];
+		};
+
+		/**
+		 * album: download default image as binary
+		 */
+		'album/image'?: {
+			params: JamParameters.Image;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiImageTypes;
+		};
+		/**
+		 * album: download album tracks as binary archive
+		 */
+		'album/download'?: {
+			params: JamParameters.Download;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiDownloadTypes;
+			roles: ['stream'];
+		};
+
+		/**
+		 * playlist: download default image as binary
+		 */
 		'playlist/image'?: {
 			params: JamParameters.Image;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiImageTypes;
 		};
+		/**
+		 * playlist: download playlist tracks as binary archive
+		 */
 		'playlist/download'?: {
 			params: JamParameters.Download;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
@@ -819,24 +997,36 @@ export interface JamApi {
 			roles: ['stream'];
 		};
 
+		/**
+		 * user: download default image as binary
+		 */
 		'user/image'?: {
 			params: JamParameters.Image;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiImageTypes;
 		};
 
+		/**
+		 * root: download default image as binary
+		 */
 		'root/image'?: {
 			params: JamParameters.Image;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiImageTypes;
 		};
 
+		/**
+		 * image: download image for object as binary by id
+		 */
 		'image/{id}-{size}.{format}'?: {
 			operationId: 'image.image';
 			pathParams: JamParameters.Image;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			binary: JamApiImageTypes;
 		};
+		/**
+		 * image: download image for object as binary by id
+		 */
 		'image/{id}-{size}'?: {
 			operationId: 'image.image';
 			pathParams: JamParameters.PathImageSize;
@@ -844,6 +1034,9 @@ export interface JamApi {
 			binary: JamApiImageTypes;
 			aliasFor: 'image/{id}-{size}.{format}';
 		};
+		/**
+		 * image: download image for object as binary by id
+		 */
 		'image/{id}.{format}'?: {
 			operationId: 'image.image';
 			pathParams: JamParameters.PathImageFormat;
@@ -851,6 +1044,9 @@ export interface JamApi {
 			binary: JamApiImageTypes;
 			aliasFor: 'image/{id}-{size}.{format}';
 		};
+		/**
+		 * image: download image for object as binary by id
+		 */
 		'image/{id}'?: {
 			operationId: 'image.image';
 			pathParams: JamParameters.ID;
@@ -891,6 +1087,9 @@ export interface JamApi {
 			roles: ['stream'];
 		};
 
+		/**
+		 * download: download object as binary archive by id
+		 */
 		'download/{id}'?: {
 			operationId: 'download.download';
 			pathParams: JamParameters.ID;
@@ -899,6 +1098,9 @@ export interface JamApi {
 			aliasFor: 'download/{id}.{format}';
 			roles: ['stream'];
 		};
+		/**
+		 * download: download object as binary archive by id
+		 */
 		'download/{id}.{format}'?: {
 			operationId: 'download.download';
 			pathParams: JamParameters.Download;

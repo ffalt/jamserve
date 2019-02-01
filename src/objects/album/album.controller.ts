@@ -87,4 +87,9 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 		return this.trackController.prepareListByIDs(trackIDs, req.query, req.user);
 	}
 
+	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
+		const album = await this.byID(req.query.id);
+		return {info: await this.metaDataService.getAlbumInfo(album)};
+	}
+
 }

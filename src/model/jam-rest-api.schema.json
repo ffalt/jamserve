@@ -748,7 +748,7 @@
 					]
 				},
 				"folder/artist/info": {
-					"description": "folder: get extended artist meta data of a folder by id",
+					"description": "folder: get external artist description of a folder by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -781,7 +781,7 @@
 					]
 				},
 				"folder/album/info": {
-					"description": "folder: get extended album meta data of a folder by id",
+					"description": "folder: get external album description of a folder by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -979,7 +979,7 @@
 					]
 				},
 				"folder/artist/similar/tracks": {
-					"description": "folder: get similar tracks of a by artist folder id",
+					"description": "folder: get similar tracks of a/by artist folder id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1939,6 +1939,7 @@
 					]
 				},
 				"radio/id": {
+					"description": "radio: get a radio by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -1971,6 +1972,7 @@
 					]
 				},
 				"radio/ids": {
+					"description": "radio: get radios by ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2003,6 +2005,7 @@
 					]
 				},
 				"radio/search": {
+					"description": "radio: search radios",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2035,6 +2038,7 @@
 					]
 				},
 				"radio/state": {
+					"description": "radio: get the user state (fav/rating) by radio id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2067,6 +2071,7 @@
 					]
 				},
 				"radio/states": {
+					"description": "radio: get the user states (fav/rating) by radio ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2099,6 +2104,7 @@
 					]
 				},
 				"artist/id": {
+					"description": "artist: get an artist by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2131,6 +2137,7 @@
 					]
 				},
 				"artist/ids": {
+					"description": "artist: get artists by ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2163,6 +2170,7 @@
 					]
 				},
 				"artist/search": {
+					"description": "artist: search artists",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2195,6 +2203,7 @@
 					]
 				},
 				"artist/state": {
+					"description": "artist: get the user state (fav/rating) by artist id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2227,6 +2236,7 @@
 					]
 				},
 				"artist/states": {
+					"description": "artist: get the user states (fav/rating) by artist ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2259,6 +2269,7 @@
 					]
 				},
 				"artist/list": {
+					"description": "artist: get a artist list by artist list type",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2291,6 +2302,7 @@
 					]
 				},
 				"artist/similar/tracks": {
+					"description": "artist: get similar tracks of an artist by artist id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2326,6 +2338,7 @@
 					]
 				},
 				"artist/similar": {
+					"description": "artist: get similar artists of an artist by artist id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2361,6 +2374,7 @@
 					]
 				},
 				"artist/index": {
+					"description": "artist: get the navigation index for artists",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2390,6 +2404,7 @@
 					]
 				},
 				"artist/tracks": {
+					"description": "album: get tracks of an artist by artist id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2424,7 +2439,41 @@
 						"result"
 					]
 				},
+				"artist/info": {
+					"description": "artist: get external artist description by id",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.Info"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"album/id": {
+					"description": "album: get an album by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2457,6 +2506,7 @@
 					]
 				},
 				"album/ids": {
+					"description": "album: get albums by ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2489,6 +2539,7 @@
 					]
 				},
 				"album/list": {
+					"description": "album: get a artist list by album list type",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2521,6 +2572,7 @@
 					]
 				},
 				"album/search": {
+					"description": "album: search albums",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2553,6 +2605,7 @@
 					]
 				},
 				"album/state": {
+					"description": "album: get the user state (fav/rating) by album id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2585,6 +2638,7 @@
 					]
 				},
 				"album/states": {
+					"description": "album: get the user states (fav/rating) by album ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2617,6 +2671,7 @@
 					]
 				},
 				"album/similar/tracks": {
+					"description": "album: get similar tracks of an artist by album id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2652,6 +2707,7 @@
 					]
 				},
 				"album/tracks": {
+					"description": "album: get tracks of an album by album id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2686,7 +2742,41 @@
 						"result"
 					]
 				},
+				"album/info": {
+					"description": "album: get external album description by id",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.Info"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"playlist/id": {
+					"description": "playlist: get a playlist by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2719,6 +2809,7 @@
 					]
 				},
 				"playlist/ids": {
+					"description": "playlist: get playlists by ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2751,6 +2842,7 @@
 					]
 				},
 				"playlist/search": {
+					"description": "playlist: search playlists",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2783,6 +2875,7 @@
 					]
 				},
 				"playlist/state": {
+					"description": "playlist: get the user state (fav/rating) by playlist id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2815,6 +2908,7 @@
 					]
 				},
 				"playlist/states": {
+					"description": "playlist: get the user states (fav/rating) by playlist ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2881,62 +2975,8 @@
 						"result"
 					]
 				},
-				"user/search": {
-					"type": "object",
-					"properties": {
-						"params": {
-							"$ref": "#/definitions/JamParameters.UserSearch"
-						},
-						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.User"
-							}
-						},
-						"errors": {
-							"anyOf": [
-								{
-									"$ref": "#/definitions/JamApiErrorUnauthorized"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorGeneric"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorParameters"
-								}
-							]
-						},
-						"roles": {
-							"type": "array",
-							"items": [
-								{
-									"type": "string",
-									"enum": [
-										"admin"
-									]
-								}
-							],
-							"minItems": 1,
-							"additionalItems": {
-								"anyOf": [
-									{
-										"type": "string",
-										"enum": [
-											"admin"
-										]
-									}
-								]
-							}
-						}
-					},
-					"required": [
-						"errors",
-						"params",
-						"result",
-						"roles"
-					]
-				},
 				"user/id": {
+					"description": "user: get an user by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -2992,10 +3032,67 @@
 					]
 				},
 				"user/ids": {
+					"description": "user: get users by ids",
 					"type": "object",
 					"properties": {
 						"params": {
 							"$ref": "#/definitions/JamParameters.IDs"
+						},
+						"result": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Jam.User"
+							}
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result",
+						"roles"
+					]
+				},
+				"user/search": {
+					"description": "user: search users",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.UserSearch"
 						},
 						"result": {
 							"type": "array",
@@ -3076,16 +3173,17 @@
 						"result"
 					]
 				},
-				"root/search": {
+				"bookmark/list": {
+					"description": "bookmark: get a bookmarks list for the calling user",
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.RootSearch"
+							"$ref": "#/definitions/JamParameters.BookmarkList"
 						},
 						"result": {
 							"type": "array",
 							"items": {
-								"$ref": "#/definitions/Jam.Root"
+								"$ref": "#/definitions/Jam.Bookmark"
 							}
 						},
 						"errors": {
@@ -3098,6 +3196,9 @@
 								},
 								{
 									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
 								}
 							]
 						}
@@ -3109,6 +3210,7 @@
 					]
 				},
 				"root/id": {
+					"description": "root: get a root by id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3141,6 +3243,7 @@
 					]
 				},
 				"root/ids": {
+					"description": "root: get roots by ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3172,7 +3275,41 @@
 						"result"
 					]
 				},
+				"root/search": {
+					"description": "root: search roots",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.RootSearch"
+						},
+						"result": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Jam.Root"
+							}
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"root/scan": {
+					"description": "root: start a root scan by root id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3224,6 +3361,7 @@
 					]
 				},
 				"root/scanAll": {
+					"description": "root: start scan of all roots",
 					"type": "object",
 					"properties": {
 						"errors": {
@@ -3265,6 +3403,7 @@
 					]
 				},
 				"root/status": {
+					"description": "root: scanning status of a root scan by root id",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3294,6 +3433,7 @@
 					]
 				},
 				"folder/download": {
+					"description": "folder: download folder as binary archive",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3380,6 +3520,7 @@
 					]
 				},
 				"folder/image": {
+					"description": "folder: download default image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3443,6 +3584,7 @@
 					]
 				},
 				"folder/artwork/image": {
+					"description": "folder: download artwork image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3506,6 +3648,7 @@
 					]
 				},
 				"track/stream": {
+					"description": "track: download track media as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3628,6 +3771,7 @@
 					]
 				},
 				"track/download": {
+					"description": "track: download track media as binary archive",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3714,6 +3858,7 @@
 					]
 				},
 				"track/image": {
+					"description": "track: download default image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3777,6 +3922,7 @@
 					]
 				},
 				"episode/stream": {
+					"description": "episode: download episode media as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3899,6 +4045,7 @@
 					]
 				},
 				"episode/download": {
+					"description": "episode: download episode media as binary archive",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3985,6 +4132,7 @@
 					]
 				},
 				"episode/image": {
+					"description": "episode: download default image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4048,6 +4196,7 @@
 					]
 				},
 				"podcast/image": {
+					"description": "podcast: download default image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4111,6 +4260,7 @@
 					]
 				},
 				"podcast/download": {
+					"description": "podcast: download podcast episodes as binary archive",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4197,6 +4347,7 @@
 					]
 				},
 				"artist/image": {
+					"description": "artist: download default image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4260,6 +4411,7 @@
 					]
 				},
 				"artist/download": {
+					"description": "artist: download artist tracks as binary archive",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4346,6 +4498,7 @@
 					]
 				},
 				"album/image": {
+					"description": "album: download default image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4409,6 +4562,7 @@
 					]
 				},
 				"album/download": {
+					"description": "album: download album tracks as binary archive",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4494,43 +4648,8 @@
 						"roles"
 					]
 				},
-				"bookmark/list": {
-					"description": "bookmark: get a bookmarks list for the calling user",
-					"type": "object",
-					"properties": {
-						"params": {
-							"$ref": "#/definitions/JamParameters.BookmarkList"
-						},
-						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Bookmark"
-							}
-						},
-						"errors": {
-							"anyOf": [
-								{
-									"$ref": "#/definitions/JamApiErrorUnauthorized"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorGeneric"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorParameters"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorNotFound"
-								}
-							]
-						}
-					},
-					"required": [
-						"errors",
-						"params",
-						"result"
-					]
-				},
 				"playlist/image": {
+					"description": "playlist: download default image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4594,6 +4713,7 @@
 					]
 				},
 				"playlist/download": {
+					"description": "playlist: download playlist tracks as binary archive",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4680,6 +4800,7 @@
 					]
 				},
 				"user/image": {
+					"description": "user: download default image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4743,6 +4864,7 @@
 					]
 				},
 				"root/image": {
+					"description": "root: download default image as binary",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -4806,6 +4928,7 @@
 					]
 				},
 				"image/{id}-{size}.{format}": {
+					"description": "image: download image for object as binary by id",
 					"type": "object",
 					"properties": {
 						"operationId": {
@@ -4876,6 +4999,7 @@
 					]
 				},
 				"image/{id}-{size}": {
+					"description": "image: download image for object as binary by id",
 					"type": "object",
 					"properties": {
 						"operationId": {
@@ -4953,6 +5077,7 @@
 					]
 				},
 				"image/{id}.{format}": {
+					"description": "image: download image for object as binary by id",
 					"type": "object",
 					"properties": {
 						"operationId": {
@@ -5030,6 +5155,7 @@
 					]
 				},
 				"image/{id}": {
+					"description": "image: download image for object as binary by id",
 					"type": "object",
 					"properties": {
 						"operationId": {
@@ -5432,6 +5558,7 @@
 					]
 				},
 				"download/{id}": {
+					"description": "download: download object as binary archive by id",
 					"type": "object",
 					"properties": {
 						"operationId": {
@@ -5520,6 +5647,7 @@
 					]
 				},
 				"download/{id}.{format}": {
+					"description": "download: download object as binary archive by id",
 					"type": "object",
 					"properties": {
 						"operationId": {
@@ -15588,6 +15716,36 @@
 				}
 			}
 		},
+		"Jam.User": {
+			"type": "object",
+			"properties": {
+				"email": {
+					"type": "string"
+				},
+				"roles": {
+					"$ref": "#/definitions/Jam.Roles"
+				},
+				"id": {
+					"type": "string"
+				},
+				"state": {
+					"$ref": "#/definitions/Jam.State"
+				},
+				"name": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"created",
+				"email",
+				"id",
+				"name",
+				"roles"
+			]
+		},
 		"JamParameters.UserSearch": {
 			"type": "object",
 			"properties": {
@@ -15624,36 +15782,6 @@
 					"type": "boolean"
 				}
 			}
-		},
-		"Jam.User": {
-			"type": "object",
-			"properties": {
-				"email": {
-					"type": "string"
-				},
-				"roles": {
-					"$ref": "#/definitions/Jam.Roles"
-				},
-				"id": {
-					"type": "string"
-				},
-				"state": {
-					"$ref": "#/definitions/Jam.State"
-				},
-				"name": {
-					"type": "string"
-				},
-				"created": {
-					"type": "number"
-				}
-			},
-			"required": [
-				"created",
-				"email",
-				"id",
-				"name",
-				"roles"
-			]
 		},
 		"JamParameters.PlayQueue": {
 			"type": "object",
@@ -15723,34 +15851,68 @@
 				"changedBy"
 			]
 		},
-		"JamParameters.RootSearch": {
+		"JamParameters.BookmarkList": {
 			"type": "object",
 			"properties": {
-				"offset": {
-					"description": "get back items from position",
-					"default": 0,
-					"minimum": 0,
-					"type": "integer"
+				"bookmarkTrack": {
+					"description": "include the track of the bookmark",
+					"default": false,
+					"type": "boolean"
 				},
-				"amount": {
-					"description": "get back number of items",
-					"minimum": 1,
-					"type": "integer"
+				"trackMedia": {
+					"description": "include media informations on track(s)",
+					"default": false,
+					"type": "boolean"
 				},
-				"query": {
-					"description": "search query",
-					"type": "string"
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
+				"trackID3": {
+					"description": "include id3 tag on track(s)",
+					"default": false,
+					"type": "boolean"
 				},
-				"sortDescending": {
-					"description": "the sort direction",
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
 					"default": false,
 					"type": "boolean"
 				}
 			}
+		},
+		"Jam.Bookmark": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"track": {
+					"$ref": "#/definitions/Jam.Track"
+				},
+				"trackID": {
+					"type": "string"
+				},
+				"position": {
+					"type": "number"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				},
+				"changed": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"changed",
+				"created",
+				"id",
+				"position",
+				"trackID"
+			]
 		},
 		"Jam.Root": {
 			"type": "object",
@@ -15798,6 +15960,35 @@
 			"required": [
 				"lastScan"
 			]
+		},
+		"JamParameters.RootSearch": {
+			"type": "object",
+			"properties": {
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
+				"sortField": {
+					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+					"type": "string"
+				},
+				"sortDescending": {
+					"description": "the sort direction",
+					"default": false,
+					"type": "boolean"
+				}
+			}
 		},
 		"JamParameters.Download": {
 			"type": "object",
@@ -15873,69 +16064,6 @@
 			},
 			"required": [
 				"id"
-			]
-		},
-		"JamParameters.BookmarkList": {
-			"type": "object",
-			"properties": {
-				"bookmarkTrack": {
-					"description": "include the track of the bookmark",
-					"default": false,
-					"type": "boolean"
-				},
-				"trackMedia": {
-					"description": "include media informations on track(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"trackTag": {
-					"description": "include tag on track(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"trackState": {
-					"description": "include user states (fav,rate) on track(s)",
-					"default": false,
-					"type": "boolean"
-				}
-			}
-		},
-		"Jam.Bookmark": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"type": "string"
-				},
-				"track": {
-					"$ref": "#/definitions/Jam.Track"
-				},
-				"trackID": {
-					"type": "string"
-				},
-				"position": {
-					"type": "number"
-				},
-				"comment": {
-					"type": "string"
-				},
-				"created": {
-					"type": "number"
-				},
-				"changed": {
-					"type": "number"
-				}
-			},
-			"required": [
-				"changed",
-				"created",
-				"id",
-				"position",
-				"trackID"
 			]
 		},
 		"JamParameters.PathImageSize": {

@@ -106,4 +106,8 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 		return this.trackController.prepareListByIDs(trackIDs, req.query, req.user);
 	}
 
+	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
+		const artist = await this.byID(req.query.id);
+		return {info: await this.metaDataService.getArtistInfo(artist)};
+	}
 }

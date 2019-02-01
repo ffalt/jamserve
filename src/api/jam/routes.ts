@@ -454,6 +454,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/artist/info', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.Info = await api.artistController.info(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/album/id', async (req, res) => {
 		const options: JamRequest<JamParameters.Album> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Album = await api.albumController.id(options);
@@ -502,6 +508,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/album/info', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.Info = await api.albumController.info(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/playlist/id', async (req, res) => {
 		const options: JamRequest<JamParameters.Playlist> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Playlist = await api.playlistController.id(options);
@@ -538,12 +550,6 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/user/search', async (req, res) => {
-		const options: JamRequest<JamParameters.UserSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.User> = await api.userController.search(options);
-		await ApiResponder.data(res, result);
-	}, '/user/search', ['admin']);
-
 	register.get('/user/id', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.User = await api.userController.id(options);
@@ -556,15 +562,21 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	}, '/user/ids', ['admin']);
 
+	register.get('/user/search', async (req, res) => {
+		const options: JamRequest<JamParameters.UserSearch> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.User> = await api.userController.search(options);
+		await ApiResponder.data(res, result);
+	}, '/user/search', ['admin']);
+
 	register.get('/playqueue/get', async (req, res) => {
 		const options: JamRequest<JamParameters.PlayQueue> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.PlayQueue = await api.playqueueController.get(options);
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/root/search', async (req, res) => {
-		const options: JamRequest<JamParameters.RootSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Root> = await api.rootController.search(options);
+	register.get('/bookmark/list', async (req, res) => {
+		const options: JamRequest<JamParameters.BookmarkList> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.Bookmark> = await api.bookmarkController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -577,6 +589,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 	register.get('/root/ids', async (req, res) => {
 		const options: JamRequest<JamParameters.IDs> = {query: req.query, user: req.user, client: req.client};
 		const result: Array<Jam.Root> = await api.rootController.ids(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/root/search', async (req, res) => {
+		const options: JamRequest<JamParameters.RootSearch> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.Root> = await api.rootController.search(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -687,12 +705,6 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		const result: IApiBinaryResult = await api.albumController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/album/download', ['stream']);
-
-	register.get('/bookmark/list', async (req, res) => {
-		const options: JamRequest<JamParameters.BookmarkList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Bookmark> = await api.bookmarkController.list(options);
-		await ApiResponder.data(res, result);
-	});
 
 	register.get('/playlist/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
