@@ -93,7 +93,6 @@
 				}
 			},
 			"required": [
-				"disambiguation",
 				"id",
 				"length",
 				"title",
@@ -153,7 +152,6 @@
 				}
 			},
 			"required": [
-				"disambiguation",
 				"id",
 				"length",
 				"title",
@@ -350,6 +348,12 @@
 						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
 					}
 				},
+				"aliases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Alias"
+					}
+				},
 				"tags": {
 					"type": "array",
 					"items": {
@@ -417,6 +421,12 @@
 						"$ref": "#/definitions/MusicBrainz.ArtistCredit"
 					}
 				},
+				"aliases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Alias"
+					}
+				},
 				"tags": {
 					"type": "array",
 					"items": {
@@ -430,6 +440,320 @@
 				"title"
 			]
 		},
+		"MusicBrainz.ArtistBase": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"sortName": {
+					"type": "string"
+				},
+				"disambiguation": {
+					"type": "string"
+				},
+				"aliases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Alias"
+					}
+				}
+			},
+			"required": [
+				"aliases",
+				"disambiguation",
+				"id",
+				"name",
+				"sortName"
+			]
+		},
+		"MusicBrainz.Work": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"disambiguation": {
+					"type": "string"
+				},
+				"language": {
+					"type": "string"
+				},
+				"languages": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"iswcs": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"attributes": {
+					"type": "array",
+					"items": {}
+				},
+				"aliases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Alias"
+					}
+				}
+			},
+			"required": [
+				"aliases",
+				"attributes",
+				"disambiguation",
+				"id",
+				"iswcs",
+				"language",
+				"languages",
+				"title"
+			]
+		},
+		"MusicBrainz.Area": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"sortName": {
+					"type": "string"
+				},
+				"disambiguation": {
+					"type": "string"
+				},
+				"iso31661Codes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"disambiguation",
+				"id",
+				"name",
+				"sortName"
+			]
+		},
+		"MusicBrainz.Url": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"resource": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"resource"
+			]
+		},
+		"MusicBrainz.Relation": {
+			"type": "object",
+			"properties": {
+				"direction": {
+					"type": "string"
+				},
+				"attributeValues": {
+					"type": "object",
+					"properties": {}
+				},
+				"targetCredit": {
+					"type": "string"
+				},
+				"targetType": {
+					"type": "string"
+				},
+				"sourceCredit": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string"
+				},
+				"typeId": {
+					"type": "string"
+				},
+				"ended": {
+					"type": "boolean"
+				},
+				"attributes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"end": {
+					"type": "string"
+				},
+				"attributeIds": {
+					"type": "object",
+					"properties": {
+						"original": {
+							"type": "string"
+						}
+					}
+				},
+				"url": {
+					"$ref": "#/definitions/MusicBrainz.Url"
+				},
+				"artist": {
+					"$ref": "#/definitions/MusicBrainz.ArtistBase"
+				},
+				"begin": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"begin",
+				"direction",
+				"ended",
+				"targetType",
+				"type",
+				"typeId"
+			]
+		},
+		"MusicBrainz.Artist": {
+			"type": "object",
+			"properties": {
+				"country": {
+					"type": "string"
+				},
+				"gender": {
+					"type": "string"
+				},
+				"genderId": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string"
+				},
+				"typeId": {
+					"type": "string"
+				},
+				"lifeSpan": {
+					"type": "object",
+					"properties": {
+						"begin": {
+							"type": "string"
+						},
+						"ended": {
+							"type": "boolean"
+						},
+						"end": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"begin",
+						"ended"
+					]
+				},
+				"releaseGroups": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ReleaseGroupBase"
+					}
+				},
+				"recordings": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.RecordingBase"
+					}
+				},
+				"releases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.ReleaseBase"
+					}
+				},
+				"relations": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Relation"
+					}
+				},
+				"begin_area": {
+					"$ref": "#/definitions/MusicBrainz.Area"
+				},
+				"area": {
+					"$ref": "#/definitions/MusicBrainz.Area"
+				},
+				"rating": {
+					"$ref": "#/definitions/MusicBrainz.Rating"
+				},
+				"ipis": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"isnis": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"works": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Work"
+					}
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Tag"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"sortName": {
+					"type": "string"
+				},
+				"disambiguation": {
+					"type": "string"
+				},
+				"aliases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Alias"
+					}
+				}
+			},
+			"required": [
+				"aliases",
+				"area",
+				"begin_area",
+				"disambiguation",
+				"id",
+				"ipis",
+				"isnis",
+				"lifeSpan",
+				"name",
+				"sortName",
+				"type",
+				"typeId"
+			]
+		},
 		"MusicBrainz.ArtistCredit": {
 			"type": "object",
 			"properties": {
@@ -440,34 +764,7 @@
 					"type": "string"
 				},
 				"artist": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"name": {
-							"type": "string"
-						},
-						"sortName": {
-							"type": "string"
-						},
-						"disambiguation": {
-							"type": "string"
-						},
-						"aliases": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/MusicBrainz.Alias"
-							}
-						}
-					},
-					"required": [
-						"aliases",
-						"disambiguation",
-						"id",
-						"name",
-						"sortName"
-					]
+					"$ref": "#/definitions/MusicBrainz.ArtistBase"
 				}
 			},
 			"required": [
@@ -640,6 +937,12 @@
 						"$ref": "#/definitions/MusicBrainz.ReleaseEvent"
 					}
 				},
+				"relations": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Relation"
+					}
+				},
 				"coverArtArchive": {
 					"type": "object",
 					"properties": {
@@ -783,6 +1086,12 @@
 						"$ref": "#/definitions/MusicBrainz.ReleaseEvent"
 					}
 				},
+				"relations": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Relation"
+					}
+				},
 				"coverArtArchive": {
 					"type": "object",
 					"properties": {
@@ -828,6 +1137,15 @@
 		"MusicBrainz.Response": {
 			"type": "object",
 			"properties": {
+				"artist": {
+					"$ref": "#/definitions/MusicBrainz.Artist"
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Artist"
+					}
+				},
 				"release": {
 					"$ref": "#/definitions/MusicBrainz.Release"
 				},
@@ -2802,6 +3120,9 @@
 				"name": {
 					"type": "string"
 				},
+				"mbid": {
+					"type": "string"
+				},
 				"url": {
 					"type": "string"
 				},
@@ -2814,6 +3135,7 @@
 			},
 			"required": [
 				"image",
+				"mbid",
 				"name",
 				"url"
 			]
@@ -4314,11 +4636,8 @@
 						"$ref": "#/definitions/Jam.Problem"
 					}
 				},
-				"artistInfo": {
-					"$ref": "#/definitions/Jam.ArtistFolderInfo"
-				},
-				"albumInfo": {
-					"$ref": "#/definitions/Jam.AlbumInfo"
+				"info": {
+					"$ref": "#/definitions/Jam.ExtendedInfo"
 				},
 				"folders": {
 					"type": "array",
@@ -4342,6 +4661,12 @@
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/Jam.ArtworkImage"
+					}
+				},
+				"similar": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Folder"
 					}
 				},
 				"id": {
@@ -4539,121 +4864,32 @@
 				"description": {
 					"type": "string"
 				},
-				"lastFmUrl": {
+				"source": {
 					"type": "string"
 				},
-				"smallImageUrl": {
+				"license": {
 					"type": "string"
 				},
-				"mediumImageUrl": {
+				"url": {
 					"type": "string"
 				},
-				"largeImageUrl": {
+				"licenseUrl": {
 					"type": "string"
 				}
-			}
+			},
+			"required": [
+				"description",
+				"license",
+				"licenseUrl",
+				"source",
+				"url"
+			]
 		},
-		"Jam.ArtistFolderInfo": {
+		"Jam.Info": {
 			"type": "object",
 			"properties": {
-				"similar": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Jam.Folder"
-					}
-				},
-				"description": {
-					"type": "string"
-				},
-				"lastFmUrl": {
-					"type": "string"
-				},
-				"smallImageUrl": {
-					"type": "string"
-				},
-				"mediumImageUrl": {
-					"type": "string"
-				},
-				"largeImageUrl": {
-					"type": "string"
-				}
-			}
-		},
-		"Jam.AlbumFolderInfo": {
-			"type": "object",
-			"properties": {
-				"releases": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/MusicBrainz.Release"
-					}
-				},
-				"description": {
-					"type": "string"
-				},
-				"lastFmUrl": {
-					"type": "string"
-				},
-				"smallImageUrl": {
-					"type": "string"
-				},
-				"mediumImageUrl": {
-					"type": "string"
-				},
-				"largeImageUrl": {
-					"type": "string"
-				}
-			}
-		},
-		"Jam.ArtistInfo": {
-			"type": "object",
-			"properties": {
-				"similar": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Jam.Artist"
-					}
-				},
-				"description": {
-					"type": "string"
-				},
-				"lastFmUrl": {
-					"type": "string"
-				},
-				"smallImageUrl": {
-					"type": "string"
-				},
-				"mediumImageUrl": {
-					"type": "string"
-				},
-				"largeImageUrl": {
-					"type": "string"
-				}
-			}
-		},
-		"Jam.AlbumInfo": {
-			"type": "object",
-			"properties": {
-				"releases": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/MusicBrainz.Release"
-					}
-				},
-				"description": {
-					"type": "string"
-				},
-				"lastFmUrl": {
-					"type": "string"
-				},
-				"smallImageUrl": {
-					"type": "string"
-				},
-				"mediumImageUrl": {
-					"type": "string"
-				},
-				"largeImageUrl": {
-					"type": "string"
+				"info": {
+					"$ref": "#/definitions/Jam.ExtendedInfo"
 				}
 			}
 		},
@@ -4688,7 +4924,7 @@
 					}
 				},
 				"info": {
-					"$ref": "#/definitions/Jam.AlbumInfo"
+					"$ref": "#/definitions/Jam.ExtendedInfo"
 				},
 				"id": {
 					"type": "string"
@@ -4765,8 +5001,14 @@
 						"$ref": "#/definitions/Jam.Album"
 					}
 				},
+				"similar": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Artist"
+					}
+				},
 				"info": {
-					"$ref": "#/definitions/Jam.ArtistInfo"
+					"$ref": "#/definitions/Jam.ExtendedInfo"
 				},
 				"id": {
 					"type": "string"
@@ -5297,6 +5539,15 @@
 		"Jam.MusicBrainzResponse": {
 			"type": "object",
 			"properties": {
+				"artist": {
+					"$ref": "#/definitions/MusicBrainz.Artist"
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/MusicBrainz.Artist"
+					}
+				},
 				"release": {
 					"$ref": "#/definitions/MusicBrainz.Release"
 				},
@@ -5332,6 +5583,33 @@
 				},
 				"created": {
 					"type": "string"
+				}
+			}
+		},
+		"Jam.WikipediaSummary": {
+			"type": "object",
+			"properties": {
+				"title": {
+					"type": "string"
+				},
+				"summary": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"summary",
+				"title",
+				"url"
+			]
+		},
+		"Jam.WikipediaResponse": {
+			"type": "object",
+			"properties": {
+				"summary": {
+					"$ref": "#/definitions/Jam.WikipediaSummary"
 				}
 			}
 		},

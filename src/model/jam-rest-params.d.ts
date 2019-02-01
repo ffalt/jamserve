@@ -125,11 +125,11 @@ export declare namespace JamParameters {
 		 */
 		folderInfo?: boolean;
 		/**
-		 * include similar folders list on folder(s)
+		 * include similar folders list on folder(s) - only for folders of type artist
 		 *
 		 * @default false
 		 */
-		folderInfoSimilar?: boolean;
+		folderSimilar?: boolean;
 		/**
 		 * include artwork images list on folder(s)
 		 *
@@ -291,7 +291,7 @@ export declare namespace JamParameters {
 		 *
 		 * @default false
 		 */
-		artistInfoSimilar?: boolean;
+		artistSimilar?: boolean;
 	}
 
 	export interface IncludesFolderChildren extends IncludesTrack, IncludesFolder {
@@ -364,18 +364,6 @@ export declare namespace JamParameters {
 	}
 
 	export interface Bookmarks extends IDs, IncludesBookmark {
-	}
-
-	export interface ArtistInfo extends ID {
-		/**
-		 * include similar artists
-		 *
-		 * @default false
-		 */
-		similar: boolean;
-	}
-
-	export interface AlbumInfo extends ID {
 	}
 
 	export interface Image extends ID {
@@ -1131,6 +1119,30 @@ export declare namespace JamParameters {
 		 * lookup by musicbrainz type
 		 */
 		type: CoverArtArchiveLookupType;
+	}
+
+	export interface WikipediaSummary {
+		/**
+		 * lookup by page title
+		 */
+		title: string;
+		/**
+		 * wikipedia language
+		 * @default en
+		 */
+		lang?: string;
+	}
+
+	export interface WikidataSummary {
+		/**
+		 * lookup by wikidata id
+		 */
+		id: string;
+		/**
+		 * get summary of wikipedia language
+		 * @default en
+		 */
+		lang?: string;
 	}
 
 	export interface MusicBrainzLookup extends ID {

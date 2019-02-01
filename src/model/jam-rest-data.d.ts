@@ -160,12 +160,12 @@ export declare namespace Jam {
 		folderCount?: number;
 		tag?: FolderTag;
 		health?: Array<Problem>;
-		artistInfo?: ArtistFolderInfo;
-		albumInfo?: AlbumInfo;
+		info?: ExtendedInfo;
 		folders?: Array<Folder>;
 		tracks?: Array<Track>;
 		parents?: Array<FolderParent>;
 		artworks?: Array<ArtworkImage>;
+		similar?: Array<Folder>;
 	}
 
 	export interface FolderParent {
@@ -218,27 +218,15 @@ export declare namespace Jam {
 	}
 
 	export interface ExtendedInfo {
-		description?: string;
-		lastFmUrl?: string;
-		smallImageUrl?: string;
-		mediumImageUrl?: string;
-		largeImageUrl?: string;
+		description: string;
+		source: string;
+		license: string;
+		url: string;
+		licenseUrl: string;
 	}
 
-	export interface ArtistFolderInfo extends ExtendedInfo {
-		similar?: Array<Folder>;
-	}
-
-	export interface AlbumFolderInfo extends ExtendedInfo {
-		releases?: Array<MusicBrainz.Release>;
-	}
-
-	export interface ArtistInfo extends ExtendedInfo {
-		similar?: Array<Artist>;
-	}
-
-	export interface AlbumInfo extends ExtendedInfo {
-		releases?: Array<MusicBrainz.Release>;
+	export interface Info {
+		info?: ExtendedInfo;
 	}
 
 	export interface Album extends Base {
@@ -249,7 +237,7 @@ export declare namespace Jam {
 		artistID: string;
 		trackIDs?: Array<string>;
 		tracks?: Array<Track>;
-		info?: AlbumInfo;
+		info?: ExtendedInfo;
 	}
 
 	export interface Artist extends Base {
@@ -263,7 +251,8 @@ export declare namespace Jam {
 		trackIDs?: Array<string>;
 		albumIDs?: Array<string>;
 		albums?: Array<Album>;
-		info?: ArtistInfo;
+		similar?: Array<Artist>;
+		info?: ExtendedInfo;
 	}
 
 	export interface Playlist extends Base {
@@ -377,6 +366,17 @@ export declare namespace Jam {
 	export type CoverArtArchiveResponse = CoverArtArchive.Response;
 	export type AcousticBrainzResponse = AcousticBrainz.Response;
 	export type MusicBrainzResponse = MusicBrainz.Response;
+
+	export interface WikipediaSummary {
+		title: string;
+		summary: string;
+		url: string;
+	}
+
+	export interface WikipediaResponse {
+		summary?: WikipediaSummary;
+	}
+
 	export type LastFMResponse = LastFM.Result;
 	export type AcoustidResponse = Acoustid.Result;
 

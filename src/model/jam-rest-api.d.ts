@@ -100,6 +100,24 @@ export interface JamApi {
 			result: Jam.CoverArtArchiveResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * metadata: wikipedia summary
+		 */
+		'wikipedia/summary'?: {
+			operationId: 'metadata.wikipediaSummary'
+			params: JamParameters.WikipediaSummary;
+			result: Jam.WikipediaResponse;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+	/**
+		 * metadata: wikipedia summary
+		 */
+		'wikidata/summary'?: {
+			operationId: 'metadata.wikidataSummary'
+			params: JamParameters.WikidataSummary;
+			result: Jam.WikipediaResponse;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
 
 		/**
 		 * various: autocomplete
@@ -204,16 +222,16 @@ export interface JamApi {
 		 * folder: get extended artist meta data of a folder by id
 		 */
 		'folder/artist/info'?: {
-			params: JamParameters.ArtistInfo;
-			result: Jam.ArtistFolderInfo;
+			params: JamParameters.ID;
+			result: Jam.Info;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
 		 * folder: get extended album meta data of a folder by id
 		 */
 		'folder/album/info'?: {
-			params: JamParameters.AlbumInfo;
-			result: Jam.AlbumFolderInfo;
+			params: JamParameters.ID;
+			result: Jam.Info;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**

@@ -104,6 +104,7 @@ export declare namespace LastFM {
 
 	export interface SimilarArtist {
 		name: string;
+		mbid: string;
 		url: string;
 		image: Array<Image>;
 	}

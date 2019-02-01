@@ -22,7 +22,7 @@ export declare namespace MusicBrainz {
 	export interface RecordingBase {
 		id: string;
 		title: string;
-		disambiguation: string;
+		disambiguation?: string;
 		length: number;
 		video: boolean;
 		rating?: Rating;
@@ -30,6 +30,7 @@ export declare namespace MusicBrainz {
 		artistCredit?: Array<ArtistCredit>;
 		isrcs?: Array<string>;
 	}
+
 
 	export interface Recording extends RecordingBase {
 		releases?: Array<Release>;
@@ -77,6 +78,7 @@ export declare namespace MusicBrainz {
 		};
 	}
 
+
 	export interface ReleaseGroupBase {
 		id: string;
 		title: string;
@@ -88,8 +90,8 @@ export declare namespace MusicBrainz {
 		secondaryTypeIds?: Array<string>;
 		rating?: Rating;
 		artistCredit?: Array<ArtistCredit>;
+		aliases?: Array<Alias>;
 		tags?: Array<Tag>;
-
 	}
 
 	export interface ReleaseGroup extends ReleaseGroupBase {
@@ -98,16 +100,85 @@ export declare namespace MusicBrainz {
 		count?: number;
 	}
 
+	export interface ArtistBase {
+		id: string;
+		name: string;
+		sortName: string;
+		disambiguation: string;
+		aliases: Array<Alias>;
+	}
+
+	export interface Work {
+		id: string;
+		title: string;
+		disambiguation: string;
+		language: string;
+		languages: Array<string>;
+		iswcs: Array<string>;
+		attributes: Array<any>;
+		aliases: Array<Alias>;
+	}
+
+	export interface Area {
+		id: string;
+		name: string;
+		sortName: string;
+		disambiguation: string;
+		iso31661Codes?: Array<string>;
+	}
+
+	export interface Url {
+		id: string;
+		resource: string;
+	}
+
+	export interface Relation {
+		direction: string;
+		attributeValues?: {};
+		targetCredit?: string;
+		targetType: string;
+		sourceCredit?: string;
+		type: string;
+		typeId: string;
+		ended: boolean;
+		attributes?: Array<string>;
+		end?: string;
+		attributeIds?: {
+			original?: string;
+		};
+		url?: Url;
+		artist?: ArtistBase;
+		begin: string;
+	}
+
+	export interface Artist extends ArtistBase {
+		country?: string;
+		gender?: string;
+		genderId?: string;
+		type: string;
+		typeId: string;
+		lifeSpan: {
+			begin: string;
+			ended: boolean;
+			end?: string;
+		};
+		releaseGroups?: Array<ReleaseGroupBase>;
+		recordings?: Array<RecordingBase>;
+		releases?: Array<ReleaseBase>;
+		relations?: Array<Relation>;
+		begin_area: Area;
+		area: Area;
+		rating?: Rating;
+		ipis: Array<string>;
+		isnis: Array<string>;
+		works?: Array<Work>;
+		tags?: Array<Tag>;
+	}
+
 	export interface ArtistCredit {
 		name: string;
 		joinphrase: string;
-		artist: {
-			id: string;
-			name: string;
-			sortName: string;
-			disambiguation: string;
-			aliases: Array<Alias>;
-		};
+		artist: ArtistBase;
 	}
 
 	export interface Label {
@@ -156,6 +227,7 @@ export declare namespace MusicBrainz {
 		labelInfo: Array<Label>;
 		tags?: Array<Tag>;
 		releaseEvents: Array<ReleaseEvent>;
+		relations?: Array<Relation>;
 		coverArtArchive?: {
 			front: boolean;
 			back: boolean;
@@ -172,6 +244,8 @@ export declare namespace MusicBrainz {
 	}
 
 	export interface Response {
+		artist?: Artist;
+		artists?: Array<Artist>;
 		release?: Release;
 		releases?: Array<Release>;
 		releaseGroup?: ReleaseGroup;
