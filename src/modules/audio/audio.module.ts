@@ -20,6 +20,7 @@ import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {CoverArtArchiveClient} from './clients/coverartarchive-client';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType, TrackTagID3v2FormatTypes} from '../../model/jam-types';
+import {WikiData, WikipediaClient} from './clients/wikipedia-client';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -181,6 +182,7 @@ export class AudioModule {
 	chartLyrics: ChartLyricsClient;
 	acousticbrainz: AcousticbrainzClient;
 	coverArtArchive: CoverArtArchiveClient;
+	wikipedia: WikipediaClient;
 	private isSaving: { [filename: string]: boolean } = {};
 
 	constructor(tools: ThirdpartyToolsConfig) {
@@ -189,6 +191,7 @@ export class AudioModule {
 		this.lastFM = new LastFMClient({key: tools.lastfm.apiKey, userAgent: tools.lastfm.userAgent});
 		this.acoustid = new AcoustidClient({key: tools.acoustid.apiKey, userAgent: tools.acoustid.userAgent});
 		this.chartLyrics = new ChartLyricsClient(tools.chartlyrics.userAgent);
+		this.wikipedia = new WikipediaClient(tools.wikipedia.userAgent);
 		this.coverArtArchive = new CoverArtArchiveClient({userAgent: tools.coverartarchive.userAgent, retryOn: true});
 	}
 
@@ -309,7 +312,6 @@ export class AudioModule {
 		return {buffer: (<IID3V2.FrameValue.Pic>frame.value).bin, mimeType: (<IID3V2.FrameValue.Pic>frame.value).mimeType};
 	}
 
-
 	async acoustidLookup(filename: string, includes: string | undefined): Promise<Array<Acoustid.Result>> {
 		return this.acoustid.acoustid(filename, includes);
 	}
@@ -345,5 +347,11 @@ export class AudioModule {
 		return this.chartLyrics.search(artist, song);
 	}
 
+	async wikipediaSummary(title: string, lang: string | undefined): Promise<{ title: string, url: string, summary: string } | undefined> {
+		return await this.wikipedia.summary(title, lang);
+	}
 
+	async wikidataID(id: string): Promise<WikiData.Entity | undefined> {
+		return await this.wikipedia.wikidata(id);
+	}
 }

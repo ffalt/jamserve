@@ -25,6 +25,9 @@ export interface ThirdpartyToolsConfig {
 	chartlyrics: {
 		userAgent: string;
 	};
+	wikipedia: {
+		userAgent: string;
+	};
 }
 
 export const userAgent = 'JamServe/' + JAMSERVE_VERSION;
@@ -60,6 +63,11 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		cover art from Internet Archive (archive.org) via musicbrainz ids
  	*/
 	coverartarchive: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
+	/*
+		Wikipedia
+		https://en.wikipedia.org/api/rest_v1/#/
+ 	*/
+	wikipedia: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
 	/*
 		Chart Lyrics
 		http://www.chartlyrics.com/
