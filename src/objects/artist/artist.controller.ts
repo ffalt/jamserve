@@ -6,7 +6,7 @@ import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {TrackController} from '../track/track.controller';
 import {AlbumController} from '../album/album.controller';
-import {formatArtist, formatArtistInfo} from './artist.format';
+import {formatArtist} from './artist.format';
 import {formatState} from '../state/state.format';
 import {formatArtistIndex} from '../../engine/index/index.format';
 import {MetaDataService} from '../metadata/metadata.service';
@@ -45,17 +45,10 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 			result.state = formatState(state);
 		}
 		if (includes.artistInfo) {
-			const infos = await this.metaDataService.getArtistInfos(artist, false, !!includes.artistInfoSimilar);
-			result.info = formatArtistInfo(infos.info);
-			if (includes.artistInfoSimilar) {
-				const similar: Array<Jam.Artist> = [];
-				(infos.similar || []).forEach(sim => {
-					if (sim.artist) {
-						similar.push(formatArtist(sim.artist, includes));
-					}
-				});
-				result.info.similar = similar;
-			}
+			result.info = await this.metaDataService.getArtistInfo(artist);
+		}
+		if (includes.artistSimilar) {
+			result.similar = await this.prepareList(await this.metaDataService.getSimilarArtists(artist), {}, user);
 		}
 		if (includes.artistTracks) {
 			result.tracks = await this.trackController.prepareListByIDs(artist.trackIDs, includes, user);
@@ -85,8 +78,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 
 	async similar(req: JamRequest<JamParameters.Artist>): Promise<Array<Jam.Artist>> {
 		const artist = await this.byID(req.query.id);
-		const artistInfo = await this.metaDataService.getArtistInfos(artist, false, true);
-		const list = (artistInfo.similar || []).filter(s => !!s.artist).map(s => <Artist>s.artist);
+		const list = await this.metaDataService.getSimilarArtists(artist);
 		return this.prepareList(list, req.query, req.user);
 	}
 

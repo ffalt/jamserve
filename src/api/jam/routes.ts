@@ -70,6 +70,18 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/wikipedia/summary', async (req, res) => {
+		const options: JamRequest<JamParameters.WikipediaSummary> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.WikipediaResponse = await api.metadataController.wikipediaSummary(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/wikidata/summary', async (req, res) => {
+		const options: JamRequest<JamParameters.WikidataSummary> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.WikipediaResponse = await api.metadataController.wikidataSummary(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/autocomplete', async (req, res) => {
 		const options: JamRequest<JamParameters.AutoComplete> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.AutoComplete = await api.autocompleteController.autocomplete(options);
@@ -143,14 +155,14 @@ export function registerAccessControlApi(register: Register, api: JamController)
 	});
 
 	register.get('/folder/artist/info', async (req, res) => {
-		const options: JamRequest<JamParameters.ArtistInfo> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.ArtistFolderInfo = await api.folderController.artistInfo(options);
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.Info = await api.folderController.artistInfo(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/folder/album/info', async (req, res) => {
-		const options: JamRequest<JamParameters.AlbumInfo> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.AlbumFolderInfo = await api.folderController.albumInfo(options);
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.Info = await api.folderController.albumInfo(options);
 		await ApiResponder.data(res, result);
 	});
 

@@ -71,11 +71,6 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 
 	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
 		if (!folder.tag.image) {
-			if (folder.info && folder.info.album.image && folder.info.album.image.large) {
-				await this.downloadFolderArtwork(folder, folder.info.album.image.large, [ArtworkImageType.front]);
-			} else if (folder.info && folder.info.artist.image && folder.info.artist.image.large) {
-				await this.downloadFolderArtwork(folder, folder.info.artist.image.large, [ArtworkImageType.front]);
-			}
 			if (!folder.tag.image) {
 				return;
 			}

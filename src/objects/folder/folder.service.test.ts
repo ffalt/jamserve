@@ -106,7 +106,6 @@ describe('FolderService', () => {
 						return;
 					}
 					folder.tag.image = undefined;
-					folder.info = undefined;
 					const res = await folderService.getFolderImage(folder);
 					should().not.exist(res);
 				});
@@ -116,7 +115,6 @@ describe('FolderService', () => {
 					if (!folder) {
 						return;
 					}
-					folder.info = undefined;
 					const image = await mockImage('png');
 					const filename = path.resolve(folder.path, 'dummy.png');
 					await fse.writeFile(filename, image.buffer);
@@ -153,62 +151,6 @@ describe('FolderService', () => {
 					await imageModuleTest.imageModule.clearImageCacheByID(folder.id);
 				});
 
-				it('should deliver remote images', async () => {
-					const folder = await folderService.folderStore.random();
-					should().exist(folder, 'Wrong Test Setup');
-					if (!folder) {
-						return;
-					}
-					folder.tag.image = undefined;
-					folder.tag.type = FolderType.album;
-					folder.info = {
-						album: {
-							image: {
-								large: 'http://invaliddomain.invaliddomain.invaliddomain/image.png'
-							}
-						},
-						artist: {},
-						topSongs: []
-					};
-					const image = await mockImage('png');
-					let scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
-						.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
-					let res = await folderService.getFolderImage(folder);
-					should().exist(res);
-					if (res) {
-						expect(!!res.buffer || !!res.file).to.equal(true);
-						if (res.file) {
-							expect(path.extname(res.file.filename)).to.equal('.png');
-							expect(res.file.name).to.equal(folder.id + '.png');
-							await fse.unlink(res.file.filename);
-						}
-					}
-					expect(scope.isDone()).to.equal(true, 'no request has been made');
-					folder.tag.image = undefined;
-					folder.tag.type = FolderType.artist;
-					folder.info = {
-						artist: {
-							image: {
-								large: 'http://invaliddomain.invaliddomain.invaliddomain/image.png'
-							}
-						},
-						album: {},
-						topSongs: []
-					};
-					scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
-						.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
-					res = await folderService.getFolderImage(folder);
-					should().exist(res);
-					if (res) {
-						expect(!!res.buffer || !!res.file).to.equal(true);
-						if (res.file) {
-							expect(path.extname(res.file.filename)).to.equal('.png');
-							expect(res.file.name).to.equal(folder.id + '.png');
-							await fse.unlink(res.file.filename);
-						}
-					}
-					expect(scope.isDone()).to.equal(true, 'no request has been made');
-				});
 			});
 
 			describe('renameFolder', function() {

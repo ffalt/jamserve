@@ -1,6 +1,6 @@
 import {IApiBinaryResult} from '../../typings';
 import {Engine} from '../../engine/engine';
-import {FolderType, FolderTypesAlbum, PodcastStatus} from '../../model/jam-types';
+import {FolderType, FolderTypesAlbum, LastFMLookupType, PodcastStatus} from '../../model/jam-types';
 import {randomItems} from '../../utils/random';
 import {paginate} from '../../utils/paginate';
 import {FORMAT} from './format';
@@ -470,14 +470,23 @@ export class SubsonicApi {
 		 Returns a <subsonic-response> element with a nested <albumInfo> element on success.
 		 */
 		const folder = await this.engine.store.folderStore.byId(req.query.id);
-		if (!folder) {
-			return {albumInfo: {}};
+		if (folder) {
+			if (folder.tag.mbAlbumID) {
+				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.album, folder.tag.mbAlbumID);
+				if (lastfm && lastfm.album) {
+					return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
+				}
+			} else if (folder.tag.album && folder.tag.artist) {
+				const al = await this.engine.metaDataService.lastFMAlbumSearch(folder.tag.album, folder.tag.artist);
+				if (al && al.album) {
+					const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.album, al.album.mbid);
+					if (lastfm && lastfm.album) {
+						return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
+					}
+				}
+			}
 		}
-		const info = await this.engine.metaDataService.getFolderInfo(folder);
-		if (!info) {
-			return {albumInfo: {}};
-		}
-		return {albumInfo: FORMAT.packAlbumInfo(info)};
+		return {albumInfo: {}};
 	}
 
 	async getAlbumInfo2(req: ApiOptions<SubsonicParameters.ID>): Promise<{ albumInfo: Subsonic.AlbumInfo }> {
@@ -493,12 +502,23 @@ export class SubsonicApi {
 		Returns a <subsonic-response> element with a nested <albumInfo> element on success.
 		 */
 		const album = await this.engine.store.albumStore.byId(req.query.id);
-		if (!album) {
-			return {albumInfo: {}};
-		} else {
-			const info = await this.engine.metaDataService.getAlbumInfo(album);
-			return {albumInfo: FORMAT.packAlbumInfo(info)};
+		if (album) {
+			if (album.mbAlbumID) {
+				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.album, album.mbAlbumID);
+				if (lastfm && lastfm.album) {
+					return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
+				}
+			} else if (album.name && album.artist) {
+				const al = await this.engine.metaDataService.lastFMAlbumSearch(album.name, album.artist);
+				if (al && al.album) {
+					const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.album, al.album.mbid);
+					if (lastfm && lastfm.album) {
+						return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
+					}
+				}
+			}
 		}
+		return {albumInfo: {}};
 	}
 
 	async getArtistInfo(req: ApiOptions<SubsonicParameters.ArtistInfo>): Promise<{ artistInfo: Subsonic.ArtistInfo }> {
@@ -513,42 +533,56 @@ export class SubsonicApi {
 
 		Returns a <subsonic-response> element with a nested <artistInfo> element on success.
 		 */
+		// TODO: repair subsonic artistinfo similar
+		// let includeNotPresent = false;
+		// if (req.query.includeNotPresent !== undefined) {
+		// 	includeNotPresent = req.query.includeNotPresent;
+		// }
+		// const limitCount = req.query.count || 20;
 
-		let includeNotPresent = false;
-		if (req.query.includeNotPresent !== undefined) {
-			includeNotPresent = req.query.includeNotPresent;
-		}
-		const limitCount = req.query.count || 20;
-		const folder = await this.byID<Folder>(req.query.id, this.engine.store.folderStore);
-		const artistInfo = await this.engine.metaDataService.getFolderArtistInfo(folder, includeNotPresent, true);
-		if (!artistInfo) {
-			return {artistInfo: {}};
-		}
-		let similar = artistInfo.similar || [];
-		similar = paginate(similar, limitCount, 0);
-		const folders: Array<Folder> = similar.filter(s => !!s.folder).map(s => <Folder>s.folder);
-		const children = await this.prepareFolders(folders, req.user);
-		const artists: Array<Subsonic.Artist> = similar.map(s => {
-			let child: Subsonic.Child | undefined;
-			if (s.folder) {
-				const f = s.folder;
-				child = children.find(c => c.id === f.id);
+		// let similar = artistInfo.similar || [];
+		// similar = paginate(similar, limitCount, 0);
+		// const folders: Array<Folder> = similar.filter(s => !!s.folder).map(s => <Folder>s.folder);
+		// const children = await this.prepareFolders(folders, req.user);
+		// const artists: Array<Subsonic.Artist> = similar.map(s => {
+		// 	let child: Subsonic.Child | undefined;
+		// 	if (s.folder) {
+		// 		const f = s.folder;
+		// 		child = children.find(c => c.id === f.id);
+		// 	}
+		// 	if (child) {
+		// 		return {
+		// 			id: child.id,
+		// 			name: s.name,
+		// 			starred: child.starred,
+		// 			userRating: child.userRating,
+		// 			averageRating: child.averageRating
+		// 		};
+		// 	}
+		// 	return {
+		// 		id: '-1', // report an invalid id (as does subsonic/airsonic)
+		// 		name: s.name
+		// 	};
+		// });
+
+		const folder = await this.engine.store.folderStore.byId(req.query.id);
+		if (folder) {
+			if (folder.tag.mbArtistID) {
+				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.artist, folder.tag.mbArtistID);
+				if (lastfm && lastfm.artist) {
+					return {artistInfo: FORMAT.packArtistInfo(lastfm.artist)};
+				}
+			} else if (folder.tag.artist) {
+				const al = await this.engine.metaDataService.lastFMArtistSearch(folder.tag.artist);
+				if (al && al.artist) {
+					const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.artist, al.artist.mbid);
+					if (lastfm && lastfm.artist) {
+						return {artistInfo: FORMAT.packArtistInfo(lastfm.artist)};
+					}
+				}
 			}
-			if (child) {
-				return {
-					id: child.id,
-					name: s.name,
-					starred: child.starred,
-					userRating: child.userRating,
-					averageRating: child.averageRating
-				};
-			}
-			return {
-				id: '-1', // report an invalid id (as does subsonic/airsonic)
-				name: s.name
-			};
-		});
-		return {artistInfo: FORMAT.packArtistInfo(artistInfo.info, artists)};
+		}
+		return {artistInfo: {}};
 	}
 
 	async getArtistInfo2(req: ApiOptions<SubsonicParameters.ArtistInfo>): Promise<{ artistInfo2: Subsonic.ArtistInfo2 }> {
@@ -564,31 +598,43 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <artistInfo2> element on success.
 		*/
-
-		let includeNotPresent = false;
-		if (req.query.includeNotPresent !== undefined) {
-			includeNotPresent = req.query.includeNotPresent;
-		}
-		const artist = await this.engine.store.artistStore.byId(req.query.id);
-		if (!artist) {
-			return {artistInfo2: {}};
-		}
-		const infos = await this.engine.metaDataService.getArtistInfos(artist, includeNotPresent, true);
-		const ids = (infos.similar || []).filter(sim => !!sim.artist).map(sim => (<Artist>sim.artist).id);
-		const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.artist);
-		const result: Array<Subsonic.ArtistID3> = [];
-		(infos.similar || []).forEach(sim => {
-			if (sim.artist) {
-				result.push(FORMAT.packArtist(sim.artist, states[sim.artist.id]));
-			} else if (includeNotPresent) {
-				result.push({
-					id: '-1', // report an invalid id (as does subsonic/airsonic)
-					name: sim.name,
-					albumCount: 0
-				});
+		// TODO: repair subsonic artistinfo similar
+		// let includeNotPresent = false;
+		// if (req.query.includeNotPresent !== undefined) {
+		// 	includeNotPresent = req.query.includeNotPresent;
+		// }
+		// const ids = (infos.similar || []).filter(sim => !!sim.artist).map(sim => (<Artist>sim.artist).id);
+		// const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.artist);
+		// const result: Array<Subsonic.ArtistID3> = [];
+		// (infos.similar || []).forEach(sim => {
+		// 	if (sim.artist) {
+		// 		result.push(FORMAT.packArtist(sim.artist, states[sim.artist.id]));
+		// 	} else if (includeNotPresent) {
+		// 		result.push({
+		// 			id: '-1', // report an invalid id (as does subsonic/airsonic)
+		// 			name: sim.name,
+		// 			albumCount: 0
+		// 		});
+		// 	}
+		// });
+		const artist = await this.engine.store.folderStore.byId(req.query.id);
+		if (artist) {
+			if (artist.tag.mbArtistID) {
+				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.artist, artist.tag.mbArtistID);
+				if (lastfm && lastfm.artist) {
+					return {artistInfo2: FORMAT.packArtistInfo2(lastfm.artist)};
+				}
+			} else if (artist.tag.artist) {
+				const al = await this.engine.metaDataService.lastFMArtistSearch(artist.tag.artist);
+				if (al && al.artist) {
+					const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.artist, al.artist.mbid);
+					if (lastfm && lastfm.artist) {
+						return {artistInfo2: FORMAT.packArtistInfo2(lastfm.artist)};
+					}
+				}
 			}
-		});
-		return {artistInfo2: FORMAT.packArtistInfo2(infos.info, result)};
+		}
+		return {artistInfo2: {}};
 	}
 
 	async getTopSongs(req: ApiOptions<SubsonicParameters.TopSongs>): Promise<{ topSongs: Subsonic.TopSongs }> {
@@ -603,7 +649,8 @@ export class SubsonicApi {
 		Returns a <subsonic-response> element with a nested <topSongs> element on success.
 		 */
 		const limitCount = req.query.count || 50;
-		const tracks = await this.engine.metaDataService.getTopTracks(req.query.artist, limitCount);
+		let tracks = await this.engine.metaDataService.getTopTracks(req.query.artist);
+		tracks = tracks.slice(0, limitCount);
 		const childs = await this.prepareTracks(tracks, req.user);
 		return {topSongs: {song: childs}};
 	}

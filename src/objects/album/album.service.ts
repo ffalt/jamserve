@@ -41,9 +41,6 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 	async getAlbumImage(album: Album, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
 		const folder = await this.getAlbumFolder(album);
 		if (folder) {
-			if (!folder.tag.image && album.info && album.info.album.image && album.info.album.image.large) {
-				await this.folderService.downloadFolderArtwork(folder, album.info.album.image.large, [ArtworkImageType.front]);
-			}
 			return this.folderService.getFolderImage(folder, size, format);
 		}
 	}

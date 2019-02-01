@@ -1,11 +1,11 @@
 import {JamParameters} from '../../model/jam-rest-params';
-import {ArtworkImageType, FolderType} from '../../model/jam-types';
+import {ArtworkImageType, FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {TrackController} from '../track/track.controller';
-import {formatAlbumFolderInfo, formatArtistFolderInfo, formatFolder, formatFolderArtwork, formatFolderArtworks} from './folder.format';
+import {formatFolder, formatFolderArtwork, formatFolderArtworks} from './folder.format';
 import {formatState} from '../state/state.format';
 import {formatFolderIndex} from '../../engine/index/index.format';
 import {StateService} from '../state/state.service';
@@ -51,7 +51,9 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		if (includes.folderChildren || includes.folderSubfolders) {
 			const folders = await this.folderService.folderStore.search({parentID: folder.id, sorts: [{field: 'name', descending: false}]});
 			// TODO: introduce children includes?
-			result.folders = await this.prepareList(folders, {folderState: includes.folderState, folderHealth: includes.folderHealth, folderCounts: includes.folderCounts, folderTag: includes.folderTag}, user);
+			result.folders = await this.prepareList(folders,
+				{folderState: includes.folderState, folderHealth: includes.folderHealth, folderCounts: includes.folderCounts, folderTag: includes.folderTag}
+				, user);
 		}
 		if (includes.folderState) {
 			const state = await this.stateService.findOrCreate(folder.id, user.id, DBObjectType.folder);
@@ -59,20 +61,17 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		}
 		if (includes.folderInfo) {
 			if (folder.tag.type === FolderType.artist) {
-				const infos = await this.metadataService.getFolderArtistInfo(folder, false, !!includes.folderInfoSimilar);
-				result.artistInfo = formatArtistFolderInfo(infos.info);
-				if (includes.folderInfoSimilar) {
-					const similar: Array<Jam.Folder> = [];
-					(infos.similar || []).forEach(sim => {
-						if (sim.folder) {
-							similar.push(formatFolder(sim.folder, includes));
-						}
-					});
-					result.artistInfo.similar = similar;
-				}
-			} else {
-				const info = await this.metadataService.getFolderInfo(folder);
-				result.albumInfo = formatAlbumFolderInfo(info);
+				result.info = await this.metadataService.getFolderArtistInfo(folder);
+			} else if (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) {
+				result.info = await this.metadataService.getFolderAlbumInfo(folder);
+			}
+		}
+		if (includes.folderSimilar) {
+			if (folder.tag.type === FolderType.artist) {
+				// TODO: introduce children includes?
+				result.similar = await this.prepareList(await this.metadataService.getSimilarArtistFolders(folder),
+					{folderState: includes.folderState, folderCounts: includes.folderCounts, folderTag: includes.folderTag}
+					, user);
 			}
 		}
 		if (includes.folderHealth) {
@@ -143,28 +142,20 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		await this.folderService.renameFolder(folder, req.query.name);
 	}
 
-	async artistInfo(req: JamRequest<JamParameters.ArtistInfo>): Promise<Jam.ArtistFolderInfo> {
+	async artistInfo(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
 		const folder = await this.byID(req.query.id);
-		const artistInfo = await this.metadataService.getFolderArtistInfo(folder, false, req.query.similar);
-		const result = formatArtistFolderInfo(artistInfo.info);
-		if (req.query.similar) {
-			const list = (artistInfo.similar || []).filter(s => !!s.folder).map(s => <Folder>s.folder);
-			result.similar = await this.prepareList(list, {}, req.user);
-		}
-		return result;
+		return {info: await this.metadataService.getFolderArtistInfo(folder)};
 	}
 
 	async artistSimilar(req: JamRequest<JamParameters.Folder>): Promise<Array<Jam.Folder>> {
 		const folder = await this.byID(req.query.id);
-		const artistInfo = await this.metadataService.getFolderArtistInfo(folder, false, true);
-		const list = (artistInfo.similar || []).filter(s => !!s.folder).map(s => <Folder>s.folder);
+		const list = await this.metadataService.getSimilarArtistFolders(folder);
 		return this.prepareList(list, req.query, req.user);
 	}
 
-	async albumInfo(req: JamRequest<JamParameters.AlbumInfo>): Promise<Jam.AlbumFolderInfo> {
+	async albumInfo(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
 		const folder = await this.byID(req.query.id);
-		const info = await this.metadataService.getFolderInfo(folder);
-		return formatAlbumFolderInfo(info);
+		return {info: await this.metadataService.getFolderAlbumInfo(folder)};
 	}
 
 	async artistSimilarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<Array<Jam.Track>> {

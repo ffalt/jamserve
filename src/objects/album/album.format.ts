@@ -1,18 +1,6 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import {Album} from './album.model';
-import {MetaInfo} from '../metadata/metadata.model';
-
-export function formatAlbumInfo(info: MetaInfo): Jam.AlbumInfo {
-	return {
-		description: info.album.description,
-		lastFmUrl: info.album.url,
-		releases: info.album.releases,
-		smallImageUrl: info.album.image && info.album.image.small ? info.album.image.small : undefined,
-		mediumImageUrl: info.album.image && info.album.image.medium ? info.album.image.medium : undefined,
-		largeImageUrl: info.album.image && info.album.image.large ? info.album.image.large : undefined
-	};
-}
 
 export function formatAlbum(album: Album, includes: JamParameters.IncludesAlbum): Jam.Album {
 	let mbz: any = {

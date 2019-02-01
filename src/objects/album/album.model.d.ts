@@ -1,5 +1,4 @@
 import {DBObject} from '../base/base.model';
-import {MetaInfo} from '../metadata/metadata.model';
 import {AlbumType} from '../../model/jam-types';
 
 export interface Album extends DBObject {
@@ -16,5 +15,4 @@ export interface Album extends DBObject {
 	created: number;
 	mbArtistID?: string;
 	mbAlbumID?: string;
-	info?: MetaInfo;
 }

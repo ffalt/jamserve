@@ -7,6 +7,7 @@ import {TrackController} from '../track/track.controller';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {MetaDataService} from './metadata.service';
+import {Jam} from '../../model/jam-rest-data';
 
 export class MetadataController {
 
@@ -38,5 +39,13 @@ export class MetadataController {
 
 	async musicbrainzLookup(req: JamRequest<JamParameters.MusicBrainzLookup>): Promise<MusicBrainz.Response> {
 		return await this.metadataService.musicbrainzLookup(req.query.type, req.query.id, req.query.inc);
+	}
+
+	async wikipediaSummary(req: JamRequest<JamParameters.WikipediaSummary>): Promise<Jam.WikipediaResponse> {
+		return await this.metadataService.wikipediaSummary(req.query.title, req.query.lang);
+	}
+
+	async wikidataSummary(req: JamRequest<JamParameters.WikidataSummary>): Promise<Jam.WikipediaResponse> {
+		return await this.metadataService.wikidataSummary(req.query.id, req.query.lang);
 	}
 }

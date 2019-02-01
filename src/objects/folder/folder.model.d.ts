@@ -1,6 +1,5 @@
 import {DBObject} from '../base/base.model';
 import {AlbumType, ArtworkImageType, FolderType} from '../../model/jam-types';
-import {MetaInfo} from '../metadata/metadata.model';
 
 export interface Folder extends DBObject {
 	rootID: string;
@@ -11,7 +10,6 @@ export interface Folder extends DBObject {
 		modified: number;
 	};
 	tag: FolderTag;
-	info?: MetaInfo;
 }
 
 export interface Artwork {

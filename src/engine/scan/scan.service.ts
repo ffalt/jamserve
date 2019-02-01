@@ -680,7 +680,6 @@ export class ScanService {
 					}
 					const track = await this.buildTrack(file, dir.folder);
 					track.id = old.id;
-					track.info = old.info;
 					file.track = track;
 					changes.updateTracks.push({track, dir, oldTrack: old});
 				}
@@ -693,7 +692,6 @@ export class ScanService {
 			if (folderHasChanged(dir)) {
 				const folder = this.buildFolder(dir);
 				folder.id = dir.folder.id;
-				folder.info = dir.folder.info;
 				dir.folder = folder;
 				const newFolder = changes.newFolders.find(f => f.id === folder.id);
 				if (!newFolder) {

@@ -16,15 +16,15 @@ export const LookupBrowseTypes: { [type: string]: Array<string> } = {
 
 export const LookupIncludes: { [type: string]: Array<string> } = {
 	area: [],
-	artist: ['recordings', 'releases', 'release-groups', 'works', 'aliases'],
+	artist: ['recordings', 'releases', 'release-groups', 'works', 'aliases', 'artist-rels', 'url-rels', 'tags', 'ratings'],
 	collection: ['user-collections'],
 	event: [],
 	instrument: [],
 	label: ['releases'],
 	place: [],
 	recording: ['artists', 'releases', 'artist-credits', 'aliases', 'tags', 'ratings', 'annotation'],
-	release: ['artists', 'collections', 'labels', 'recordings', 'release-groups', 'discids', 'media', 'isrcs', 'artist-credits', 'aliases', 'tags', 'annotation'],
-	'release-group': ['artists', 'releases', 'media', 'artist-credits', 'aliases', 'tags', 'ratings', 'annotation'],
+	release: ['artists', 'collections', 'labels', 'recordings', 'release-groups', 'discids', 'media', 'isrcs', 'artist-credits', 'aliases', 'tags', 'url-rels', 'annotation'],
+	'release-group': ['artists', 'releases', 'media', 'artist-credits', 'aliases', 'tags', 'ratings', 'url-rels', 'annotation'],
 	series: [],
 	work: [],
 	url: []

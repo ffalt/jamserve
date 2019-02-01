@@ -10,7 +10,6 @@ import {State, States} from '../../objects/state/state.model';
 import {Folder} from '../../objects/folder/folder.model';
 import {Album} from '../../objects/album/album.model';
 import {Artist} from '../../objects/artist/artist.model';
-import {MetaInfo} from '../../objects/metadata/metadata.model';
 import {Track} from '../../objects/track/track.model';
 import {Episode} from '../../objects/episode/episode.model';
 import {NowPlaying} from '../../engine/nowplaying/nowplaying.model';
@@ -22,7 +21,7 @@ import {Radio} from '../../objects/radio/radio.model';
 import {ChatMessage} from '../../engine/chat/chat.model';
 import {Genre} from '../../engine/genre/genre.model';
 import {DBObjectType} from '../../db/db.types';
-
+import {LastFM} from '../../model/lastfm-rest-data';
 
 export interface SubsonicExtResponse extends Subsonic.Response {
 	[name: string]: any;
@@ -269,39 +268,60 @@ export class FORMAT {
 		};
 	}
 
-	static packAlbumInfo(info: MetaInfo): Subsonic.AlbumInfo {
-		return {
-			notes: info.album.description,
-			musicBrainzId: info.album.mbid,
-			lastFmUrl: info.album.url,
-			smallImageUrl: info.album.image && info.album.image.small ? info.album.image.small : undefined,
-			mediumImageUrl: info.album.image && info.album.image.medium ? info.album.image.medium : undefined,
-			largeImageUrl: info.album.image && info.album.image.large ? info.album.image.large : undefined
+	static packAlbumInfo(info: LastFM.Album): Subsonic.AlbumInfo {
+		const result: Subsonic.AlbumInfo = {
+			notes: info.wiki ? info.wiki.content : undefined,
+			musicBrainzId: info.mbid,
+			lastFmUrl: info.url
 		};
+		(info.image || []).forEach(i => {
+			if (i.size === 'small') {
+				result.smallImageUrl = i.url;
+			} else if (i.size === 'medium') {
+				result.mediumImageUrl = i.url;
+			} else if (i.size === 'large') {
+				result.largeImageUrl = i.url;
+			}
+		});
+		return result;
 	}
 
-	static packArtistInfo(info: MetaInfo, similar?: Array<Subsonic.Artist>): Subsonic.ArtistInfo {
-		return {
-			biography: info.artist.description,
-			musicBrainzId: info.artist.mbid,
-			lastFmUrl: info.artist.url,
-			smallImageUrl: info.artist.image && info.artist.image.small ? info.artist.image.small : undefined,
-			mediumImageUrl: info.artist.image && info.artist.image.medium ? info.artist.image.medium : undefined,
-			largeImageUrl: info.artist.image && info.artist.image.large ? info.artist.image.large : undefined,
+	static packArtistInfo(info: LastFM.Artist, similar?: Array<Subsonic.Artist>): Subsonic.ArtistInfo {
+		const result: Subsonic.ArtistInfo = {
+			biography: info.bio ? info.bio.content : undefined,
+			musicBrainzId: info.mbid,
+			lastFmUrl: info.url,
 			similarArtist: similar
 		};
+		(info.image || []).forEach(i => {
+			if (i.size === 'small') {
+				result.smallImageUrl = i.url;
+			} else if (i.size === 'medium') {
+				result.mediumImageUrl = i.url;
+			} else if (i.size === 'large') {
+				result.largeImageUrl = i.url;
+			}
+		});
+		return result;
 	}
 
-	static packArtistInfo2(info: MetaInfo, similar?: Array<Subsonic.ArtistID3>): Subsonic.ArtistInfo2 {
-		return {
-			biography: info.artist.description,
-			musicBrainzId: info.artist.mbid,
-			lastFmUrl: info.artist.url,
-			smallImageUrl: info.artist.image && info.artist.image.small ? info.artist.image.small : undefined,
-			mediumImageUrl: info.artist.image && info.artist.image.medium ? info.artist.image.medium : undefined,
-			largeImageUrl: info.artist.image && info.artist.image.large ? info.artist.image.large : undefined,
+	static packArtistInfo2(info: LastFM.Artist, similar?: Array<Subsonic.ArtistID3>): Subsonic.ArtistInfo2 {
+		const result: Subsonic.ArtistInfo2 = {
+			biography: info.bio ? info.bio.content : undefined,
+			musicBrainzId: info.mbid,
+			lastFmUrl: info.url,
 			similarArtist: similar
 		};
+		(info.image || []).forEach(i => {
+			if (i.size === 'small') {
+				result.smallImageUrl = i.url;
+			} else if (i.size === 'medium') {
+				result.mediumImageUrl = i.url;
+			} else if (i.size === 'large') {
+				result.largeImageUrl = i.url;
+			}
+		});
+		return result;
 	}
 
 	static packTrack(track: Track, state: State): Subsonic.Child {

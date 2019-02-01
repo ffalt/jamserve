@@ -5,7 +5,7 @@ import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
 import {TrackController} from '../track/track.controller';
-import {formatAlbum, formatAlbumInfo} from './album.format';
+import {formatAlbum} from './album.format';
 import {SearchQueryAlbum} from './album.store';
 import {MetaDataService} from '../metadata/metadata.service';
 import {StateService} from '../state/state.service';
@@ -38,8 +38,7 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 			result.state = await this.stateService.findOrCreate(album.id, user.id, DBObjectType.album);
 		}
 		if (includes.albumInfo) {
-			const info = await this.metaDataService.getAlbumInfo(album);
-			result.info = formatAlbumInfo(info);
+			result.info = await this.metaDataService.getAlbumInfo(album);
 		}
 		if (includes.albumTracks) {
 			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user);

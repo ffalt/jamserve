@@ -2,29 +2,7 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import path from 'path';
 import {FolderType, FolderTypesAlbum} from '../../model/jam-types';
-import {MetaInfo} from '../metadata/metadata.model';
 import {Artwork, Folder} from './folder.model';
-
-export function formatArtistFolderInfo(info: MetaInfo): Jam.ArtistFolderInfo {
-	return {
-		description: info.artist.description,
-		lastFmUrl: info.album.url,
-		smallImageUrl: info.album.image && info.album.image.small ? info.album.image.small : undefined,
-		mediumImageUrl: info.album.image && info.album.image.medium ? info.album.image.medium : undefined,
-		largeImageUrl: info.album.image && info.album.image.large ? info.album.image.large : undefined
-	};
-}
-
-export function formatAlbumFolderInfo(info: MetaInfo): Jam.AlbumFolderInfo {
-	return {
-		description: info.album.description,
-		lastFmUrl: info.album.url,
-		releases: info.album.releases,
-		smallImageUrl: info.album.image && info.album.image.small ? info.album.image.small : undefined,
-		mediumImageUrl: info.album.image && info.album.image.medium ? info.album.image.medium : undefined,
-		largeImageUrl: info.album.image && info.album.image.large ? info.album.image.large : undefined
-	};
-}
 
 export function formatFolderArtwork(artwork: Artwork): Jam.ArtworkImage {
 	return {

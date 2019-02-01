@@ -81,278 +81,6 @@ const type_FolderTag = {
 	}
 };
 
-const type_MusicBrainz_Rating = {
-	properties: {
-		votesCount: type_int,
-		value: type_int
-	}
-};
-
-const type_MusicBrainz_Alias = {
-	properties: {
-		name: type_string,
-		sortName: type_key,
-		locale: type_key,
-		type: type_key,
-		typeId: type_key,
-		primary: type_key,
-		beginDate: type_key,
-		endDate: type_key,
-		ended: type_bool
-	}
-};
-
-const type_MusicBrainz_ArtistCredit = {
-	properties: {
-		name: type_string,
-		joinphrase: type_key,
-		artist: {
-			properties: {
-				id: type_key,
-				name: type_string,
-				sortName: type_key,
-				disambiguation: type_key,
-				aliases: type_MusicBrainz_Alias
-			}
-		}
-	}
-};
-
-const type_MusicBrainz_RecordingBase = {
-	properties: {
-		id: type_key,
-		title: type_string,
-		disambiguation: type_key,
-		length: type_int,
-		video: type_bool,
-		rating: type_MusicBrainz_Rating,
-		aliases: type_MusicBrainz_Alias,
-		artistCredit: type_MusicBrainz_ArtistCredit,
-		isrcs: type_key
-	}
-};
-
-const type_MusicBrainz_ReleaseTrack = {
-	properties: {
-		id: type_key,
-		title: type_string,
-		position: type_int,
-		length: type_int,
-		number: type_key,
-		recording: type_MusicBrainz_RecordingBase,
-		artistCredit: type_MusicBrainz_ArtistCredit
-	}
-};
-
-const type_MusicBrainz_Disc = {
-	properties: {
-		id: type_key,
-		sectors: type_int,
-		offsetCount: type_int,
-		offsets: type_int
-	}
-};
-
-const type_MusicBrainz_ReleaseMedia = {
-	properties: {
-		format: type_key,
-		formatId: type_key,
-		title: type_string,
-		discCount: type_int,
-		trackCount: type_int,
-		position: type_int,
-		trackOffset: type_int,
-		tracks: type_MusicBrainz_ReleaseTrack,
-		discs: type_MusicBrainz_Disc
-	}
-};
-
-const type_MusicBrainz_Tag = {
-	properties: {
-		count: type_int,
-		name: type_string
-	}
-};
-
-const type_MusicBrainz_ReleaseGroupBase = {
-	properties: {
-		id: type_key,
-		title: type_string,
-		disambiguation: type_key,
-		firstReleaseDate: type_key,
-		primaryType: type_key,
-		primaryTypeId: type_key,
-		secondaryTypes: type_key,
-		secondaryTypeIds: type_key,
-		rating: type_MusicBrainz_Rating,
-		artistCredit: type_MusicBrainz_ArtistCredit,
-		tags: type_MusicBrainz_Tag
-	}
-};
-
-const type_MusicBrainz_Label = {
-	properties: {
-		catalogNumber: type_key,
-		label: {
-			properties: {
-				id: type_key,
-				name: type_string,
-				disambiguation: type_key,
-				labelCode: type_key,
-				sortName: type_key
-			}
-		},
-		aliases: {
-			properties: {
-				name: type_string,
-				sortName: type_key,
-				ended: type_bool
-			}
-		}
-	}
-};
-
-const type_MusicBrainz_ReleaseEvent = {
-	properties: {
-		date: type_key,
-		area: {
-			properties: {
-				id: type_key,
-				name: type_string,
-				sortName: type_key,
-				disambiguation: type_key,
-				iso31661Codes: type_key
-			}
-		}
-	}
-};
-
-const type_MusicBrainz_Release = {
-	properties: {
-		media: type_MusicBrainz_ReleaseMedia,
-		score: type_int,
-		count: type_int,
-		id: type_key,
-		title: type_string,
-		sortName: type_key,
-		status: type_key,
-		statusId: type_key,
-		date: type_key,
-		country: type_key,
-		packaging: type_key,
-		packagingId: type_key,
-		disambiguation: type_key,
-		annotation: type_key,
-		quality: type_key,
-		barcode: type_key,
-		asin: type_key,
-		textRepresentation: {
-			properties: {
-				language: type_key,
-				script: type_key
-			}
-		},
-		trackCount: type_int,
-		artistCredit: type_MusicBrainz_ArtistCredit,
-		releaseGroup: type_MusicBrainz_ReleaseGroupBase,
-		labelInfo: type_MusicBrainz_Label,
-		tags: type_MusicBrainz_Tag,
-		releaseEvents: type_MusicBrainz_ReleaseEvent,
-		coverArtArchive: {
-			properties: {
-				front: type_bool,
-				back: type_bool,
-				darkened: type_bool,
-				artwork: type_bool,
-				count: type_int
-			}
-		}
-	}
-};
-
-const type_MetaInfoAlbum = {
-	properties: {
-		name: type_string,
-		artist: type_key,
-		mbid: type_key,
-		url: type_key,
-		image: {
-			properties: {
-				small: type_key,
-				medium: type_key,
-				large: type_key
-			}
-		},
-		tags: {
-			properties: {
-				name: type_string,
-				url: type_key
-			}
-		},
-		description: type_key,
-		releases: type_MusicBrainz_Release
-	}
-};
-
-const type_MetaInfoImage = {
-	properties: {
-		small: type_key,
-		medium: type_key,
-		large: type_key
-	}
-};
-
-const type_MetaInfoSimilarArtist = {
-	properties: {
-		name: type_string,
-		url: type_key,
-		mbid: type_key,
-		image: type_MetaInfoImage
-	}
-};
-
-const type_MetaInfoArtist = {
-	properties: {
-		name: type_string,
-		mbid: type_key,
-		url: type_key,
-		image: type_MetaInfoImage,
-		tags: {
-			properties: {
-				name: type_string,
-				url: type_key
-			}
-		},
-		description: type_key,
-		similar: type_MetaInfoSimilarArtist
-	}
-};
-
-const type_MetaInfoTopSong = {
-	properties: {
-		name: type_string,
-		artist: {
-			properties: {
-				name: type_string,
-				mbid: type_key,
-				url: type_key
-			}
-		},
-		mbid: type_key,
-		url: type_key,
-		rank: type_key,
-		image: type_MetaInfoImage
-	}
-};
-
-const type_MetaInfo = {
-	properties: {
-		album: type_MetaInfoAlbum,
-		artist: type_MetaInfoArtist,
-		topSongs: type_MetaInfoTopSong
-	}
-};
-
 const type_Folder = {
 	properties: {
 		rootID: type_key,
@@ -365,7 +93,6 @@ const type_Folder = {
 			}
 		},
 		tag: type_FolderTag,
-		info: type_MetaInfo,
 		id: type_key,
 		type: type_int
 	}
@@ -425,29 +152,6 @@ const type_TrackMedia = {
 	}
 };
 
-const type_MetaInfoTrackSimilarSong = {
-	properties: {
-		name: type_string,
-		mbid: type_key,
-		url: type_key,
-		duration: type_int,
-		artist: {
-			properties: {
-				name: type_string,
-				mbid: type_key,
-				url: type_key
-			}
-		},
-		image: type_MetaInfoImage
-	}
-};
-
-const type_MetaInfoTrack = {
-	properties: {
-		similar: type_MetaInfoTrackSimilarSong
-	}
-};
-
 const type_Track = {
 	properties: {
 		rootID: type_key,
@@ -465,7 +169,6 @@ const type_Track = {
 		artistID: type_key,
 		tag: type_TrackTag,
 		media: type_TrackMedia,
-		info: type_MetaInfoTrack,
 		id: type_key,
 		type: type_int
 	}
@@ -486,7 +189,6 @@ const type_Album = {
 		created: type_int,
 		mbArtistID: type_key,
 		mbAlbumID: type_key,
-		info: type_MetaInfo,
 		id: type_key,
 		type: type_int
 	}
@@ -502,7 +204,6 @@ const type_Artist = {
 		albumIDs: type_key,
 		albumTypes: type_key,
 		mbArtistID: type_key,
-		info: type_MetaInfo,
 		created: type_int,
 		id: type_key,
 		type: type_int
