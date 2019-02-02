@@ -89,11 +89,19 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return result;
 	}
 
-	translateQuery(query: JamParameters.FolderSearch, user: User): SearchQueryFolder {
+	async translateQuery(query: JamParameters.FolderSearch, user: User): Promise<SearchQueryFolder> {
+		let inPath: string | undefined;
+		if (query.childOfID) {
+			const folder = await this.folderService.folderStore.byId(query.childOfID);
+			if (folder) {
+				inPath = folder.path;
+			}
+		}
 		return {
 			query: query.query,
 			rootID: query.rootID,
 			parentID: query.parentID,
+			inPath,
 			artist: query.artist,
 			title: query.title,
 			album: query.album,
@@ -205,7 +213,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	}
 
 	async health(req: JamRequest<JamParameters.FolderHealth>): Promise<Array<Jam.Folder>> {
-		const list = await this.service.store.search(this.translateQuery(req.query, req.user));
+		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
 		req.query.folderHealth = true;
 		const folders = await this.prepareList(list, req.query, req.user);
 		return folders.filter(f => f.health && f.health.length > 0);

@@ -7,6 +7,7 @@ import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 export interface SearchQueryFolder extends SearchQuery {
 	rootID?: string;
 	parentID?: string;
+	parentIDs?: Array<string>;
 	path?: string;
 	inPath?: string;
 	artist?: string;
@@ -26,6 +27,7 @@ export interface SearchQueryFolder extends SearchQuery {
 export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 	fieldMap: { [name: string]: string } = {
 		'parentID': 'parentID',
+		'parentIDs': 'parentID',
 		'rootID': 'rootID',
 		'artist': 'tag.artist',
 		'title': 'tag.title',
@@ -53,6 +55,7 @@ export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 		q.term('tag.album', query.album);
 		q.term('rootID', query.rootID);
 		q.term('parentID', query.parentID);
+		q.terms('parentID', query.parentIDs);
 		q.term('tag.level', query.level);
 		q.term('tag.artist', query.artist);
 		q.terms('tag.artist', query.artists);

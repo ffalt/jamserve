@@ -20,11 +20,13 @@ import {User} from '../user/user.model';
 import {IoService} from '../../engine/io/io.service';
 import {StreamController} from '../../engine/stream/stream.controller';
 import {TrackService} from './track.service';
+import {FolderService} from '../folder/folder.service';
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
 	constructor(
 		private trackService: TrackService,
+		private folderService: FolderService,
 		private audioModule: AudioModule,
 		private bookmarkService: BookmarkService,
 		private metaService: MetaDataService,
@@ -62,12 +64,20 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		return result;
 	}
 
-	translateQuery(query: JamParameters.TrackSearch, user: User): SearchQueryTrack {
+	async translateQuery(query: JamParameters.TrackSearch, user: User): Promise<SearchQueryTrack> {
+		let inPath: string | undefined;
+		if (query.childOfID) {
+			const folder = await this.folderService.folderStore.byId(query.childOfID);
+			if (folder) {
+				inPath = folder.path;
+			}
+		}
 		return {
 			query: query.query,
 			rootID: query.rootID,
 			parentID: query.parentID,
 			parentIDs: query.parentIDs,
+			inPath,
 			artist: query.artist,
 			title: query.title,
 			album: query.album,

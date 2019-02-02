@@ -1958,6 +1958,15 @@
 					},
 					{
 						"in": "query",
+						"name": "childOfID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter if folder is in folder id (or its subfolders)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "artist",
 						"schema": {
 							"type": "string"
@@ -2278,6 +2287,15 @@
 							"type": "string"
 						},
 						"description": "filter by parent folder id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "childOfID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter if folder is in folder id (or its subfolders)",
 						"required": false
 					},
 					{
@@ -2621,6 +2639,15 @@
 							"type": "string"
 						},
 						"description": "filter by parent folder id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "childOfID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter if folder is in folder id (or its subfolders)",
 						"required": false
 					},
 					{
@@ -3445,6 +3472,15 @@
 					},
 					{
 						"in": "query",
+						"name": "childOfID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter if track is in folder id (or its subfolders)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "rootID",
 						"schema": {
 							"type": "string"
@@ -3737,6 +3773,15 @@
 							}
 						},
 						"description": "filter by parent folder ids",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "childOfID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter if track is in folder id (or its subfolders)",
 						"required": false
 					},
 					{

@@ -37,7 +37,7 @@ export class RadioController extends BaseController<JamParameters.Radio, JamPara
 		return result;
 	}
 
-	translateQuery(query: JamParameters.RadioSearch, user: User): SearchQueryRadio {
+	async translateQuery(query: JamParameters.RadioSearch, user: User): Promise<SearchQueryRadio> {
 		return {
 			query: query.query,
 			url: query.url,

@@ -427,6 +427,10 @@ export declare namespace JamParameters {
 		 */
 		parentIDs?: Array<string>;
 		/**
+		 * filter if track is in folder id (or its subfolders)
+		 */
+		childOfID?: string;
+		/**
 		 * filter by root id
 		 */
 		rootID?: string;
@@ -529,6 +533,10 @@ export declare namespace JamParameters {
 		 * filter by parent folder id
 		 */
 		parentID?: string;
+		/**
+		 * filter if folder is in folder id (or its subfolders)
+		 */
+		childOfID?: string;
 		/**
 		 * filter by artist name
 		 */

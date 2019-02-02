@@ -24,7 +24,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 
 	abstract async prepare(item: DBOBJECT, includes: INCLUDE, user: User): Promise<RESULTOBJ>;
 
-	abstract translateQuery(query: S, user: User): JAMQUERY;
+	abstract translateQuery(query: S, user: User): Promise<JAMQUERY>;
 
 	abstract defaultSort(items: Array<DBOBJECT>): Array<DBOBJECT>;
 
@@ -111,7 +111,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 	}
 
 	async search(req: JamRequest<S>): Promise<Array<RESULTOBJ>> {
-		const list = await this.service.store.search(this.translateQuery(req.query, req.user));
+		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
 		return this.prepareList(list, <INCLUDE>req.query, req.user);
 	}
 

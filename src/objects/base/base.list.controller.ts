@@ -23,7 +23,7 @@ export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | I
 	}
 
 	async getList(listQuery: JamParameters.List, jamquery: S, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
-		const query = this.translateQuery(jamquery, user);
+		const query = await this.translateQuery(jamquery, user);
 		let ids: Array<string> = [];
 		switch (listQuery.list) {
 			case 'random':

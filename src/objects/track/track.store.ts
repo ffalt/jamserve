@@ -15,6 +15,7 @@ export interface SearchQueryTrack extends SearchQuery {
 	mbTrackID?: string;
 	mbTrackIDs?: Array<string>;
 	rootID?: string;
+	rootIDs?: Array<string>;
 	title?: string;
 	album?: string;
 	genre?: string;
@@ -29,6 +30,7 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 		'parentID': 'parentID',
 		'parentIDs': 'parentID',
 		'rootID': 'rootID',
+		'rootIDs': 'rootID',
 		'artistID': 'artistID',
 		'artist': 'tag.artist',
 		'mbTrackID': 'tag.mbTrackID',
@@ -51,6 +53,7 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 		q.startsWith('path', query.inPath ? ensureTrailingPathSeparator(query.inPath) : undefined);
 		q.term('tag.genre', query.genre);
 		q.term('rootID', query.rootID);
+		q.terms('rootID', query.rootIDs);
 		q.term('parentID', query.parentID);
 		q.term('tag.mbTrackID', query.mbTrackID);
 		q.terms('tag.mbTrackID', query.mbTrackIDs);

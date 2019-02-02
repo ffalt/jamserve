@@ -45,7 +45,7 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 		return result;
 	}
 
-	translateQuery(query: JamParameters.PlaylistSearch, user: User): SearchQueryPlaylist {
+	async translateQuery(query: JamParameters.PlaylistSearch, user: User): Promise<SearchQueryPlaylist> {
 		return {
 			query: query.query,
 			name: query.name,

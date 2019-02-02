@@ -33,7 +33,7 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 		return formatRoot(root, this.ioService.getRootStatus(root.id));
 	}
 
-	translateQuery(query: JamParameters.RootSearch, user: User): SearchQueryRoot {
+	async translateQuery(query: JamParameters.RootSearch, user: User): Promise<SearchQueryRoot> {
 		return {
 			query: query.query,
 			offset: query.offset,

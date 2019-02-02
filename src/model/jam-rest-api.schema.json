@@ -12976,6 +12976,10 @@
 					"description": "filter by parent folder id",
 					"type": "string"
 				},
+				"childOfID": {
+					"description": "filter if folder is in folder id (or its subfolders)",
+					"type": "string"
+				},
 				"artist": {
 					"description": "filter by artist name",
 					"type": "string"
@@ -13144,6 +13148,10 @@
 					"description": "filter by parent folder id",
 					"type": "string"
 				},
+				"childOfID": {
+					"description": "filter if folder is in folder id (or its subfolders)",
+					"type": "string"
+				},
 				"artist": {
 					"description": "filter by artist name",
 					"type": "string"
@@ -13305,6 +13313,10 @@
 				},
 				"parentID": {
 					"description": "filter by parent folder id",
+					"type": "string"
+				},
+				"childOfID": {
+					"description": "filter if folder is in folder id (or its subfolders)",
 					"type": "string"
 				},
 				"artist": {
@@ -13594,6 +13606,10 @@
 						"type": "string"
 					}
 				},
+				"childOfID": {
+					"description": "filter if track is in folder id (or its subfolders)",
+					"type": "string"
+				},
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
@@ -13678,6 +13694,10 @@
 					"items": {
 						"type": "string"
 					}
+				},
+				"childOfID": {
+					"description": "filter if track is in folder id (or its subfolders)",
+					"type": "string"
 				},
 				"rootID": {
 					"description": "filter by root id",

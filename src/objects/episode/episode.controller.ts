@@ -58,7 +58,7 @@ export class EpisodeController extends BaseListController<JamParameters.Episode,
 		return result;
 	}
 
-	translateQuery(query: JamParameters.EpisodeSearch, user: User): SearchQueryEpisode {
+	async translateQuery(query: JamParameters.EpisodeSearch, user: User): Promise<SearchQueryEpisode> {
 		return {
 			query: query.query,
 			name: query.name,

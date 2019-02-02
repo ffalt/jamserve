@@ -46,7 +46,7 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 		return result;
 	}
 
-	translateQuery(query: JamParameters.AlbumSearch, user: User): SearchQueryAlbum {
+	async translateQuery(query: JamParameters.AlbumSearch, user: User): Promise<SearchQueryAlbum> {
 		return {
 			query: query.query,
 			name: query.name,
