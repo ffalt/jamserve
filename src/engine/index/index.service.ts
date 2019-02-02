@@ -1,5 +1,4 @@
 import path from 'path';
-import {IndexConfig} from '../../config';
 import {ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry, Indexes} from './index.model';
 import {Folder} from '../../objects/folder/folder.model';
 import {ArtistStore} from '../../objects/artist/artist.store';
@@ -7,16 +6,15 @@ import {FolderStore} from '../../objects/folder/folder.store';
 import {TrackStore} from '../../objects/track/track.store';
 import {AlbumType} from '../../model/jam-types';
 import {DebouncePromises} from '../../utils/debounce-promises';
-import {IApiBinaryResult} from '../../typings';
-import fse from 'fs-extra';
 import Logger from '../../utils/logger';
+import {Jam} from '../../model/jam-rest-data';
 
 const log = Logger('IndexService');
 
 export class IndexTreeBuilder {
 	private ignore: string;
 
-	constructor(indexConfig: IndexConfig, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
+	constructor(indexConfig: Jam.AdminSettingsIndex, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
 		this.ignore = indexConfig.ignore.join('|');
 	}
 
@@ -103,8 +101,16 @@ export class IndexTreeBuilder {
 export class IndexService {
 	private cached?: Indexes;
 	private indexCacheDebounce = new DebouncePromises<Indexes>();
+	public indexConfig: Jam.AdminSettingsIndex = {ignore: []};
 
-	constructor(public indexConfig: IndexConfig, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
+	constructor(private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
+	}
+
+	public setSettings(indexConfig: Jam.AdminSettingsIndex) {
+		this.indexConfig = indexConfig;
+		if (this.cached) {
+			this.cached = undefined;
+		}
 	}
 
 	async buildIndexes(): Promise<Indexes> {

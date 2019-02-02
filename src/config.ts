@@ -1,5 +1,4 @@
 import path from 'path';
-import {AppConfig} from './config/app.config';
 import {ElasticsearchConfig} from './db/elasticsearch/config-elastic';
 
 type LogLevel = 'error' | 'warn' | 'info' | 'debug';
@@ -12,18 +11,6 @@ export interface BaseConfig {
 		data: string,
 		frontend: string
 	};
-}
-
-export interface ChatConfig {
-	maxMsgs: number;
-	maxAge: {
-		value: number;
-		unit: string;
-	};
-}
-
-export interface IndexConfig {
-	ignore: Array<string>;
 }
 
 export interface DBConfig {
@@ -58,12 +45,7 @@ export interface ServerConfig {
 	};
 }
 
-
 export interface Config extends BaseConfig {
-	app: {
-		chat: ChatConfig;
-		index: IndexConfig;
-	};
 	firstStart?: {
 		adminUser?: {
 			name: string;
@@ -78,7 +60,6 @@ export interface Config extends BaseConfig {
 
 export function extendConfig(config: BaseConfig): Config {
 	const result = <Config>config;
-	result.app = AppConfig;
 	result.getDataPath = (parts: Array<string>): string => {
 		return path.resolve(config.paths.data, ...parts);
 	};

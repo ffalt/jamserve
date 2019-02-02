@@ -363,6 +363,28 @@ export declare namespace Jam {
 		episodes?: Array<{ id: string; name: string; }>;
 	}
 
+	export interface AdminSettingsChat {
+		maxMessages: number;
+		maxAge: {
+			value: number;
+			unit: string;
+		};
+	}
+
+	export interface AdminSettingsIndex {
+		ignore: Array<string>;
+	}
+
+	export interface AdminSettingsLibrary {
+		scanAtStart: boolean;
+	}
+
+	export interface AdminSettings {
+		chat: AdminSettingsChat;
+		index: AdminSettingsIndex;
+		library: AdminSettingsLibrary;
+	}
+
 	export type CoverArtArchiveResponse = CoverArtArchive.Response;
 	export type AcousticBrainzResponse = AcousticBrainz.Response;
 	export type MusicBrainzResponse = MusicBrainz.Response;

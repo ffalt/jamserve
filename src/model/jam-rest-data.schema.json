@@ -5508,6 +5508,77 @@
 				}
 			}
 		},
+		"Jam.AdminSettingsChat": {
+			"type": "object",
+			"properties": {
+				"maxMessages": {
+					"type": "number"
+				},
+				"maxAge": {
+					"type": "object",
+					"properties": {
+						"value": {
+							"type": "number"
+						},
+						"unit": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"unit",
+						"value"
+					]
+				}
+			},
+			"required": [
+				"maxAge",
+				"maxMessages"
+			]
+		},
+		"Jam.AdminSettingsIndex": {
+			"type": "object",
+			"properties": {
+				"ignore": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"ignore"
+			]
+		},
+		"Jam.AdminSettingsLibrary": {
+			"type": "object",
+			"properties": {
+				"scanAtStart": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"scanAtStart"
+			]
+		},
+		"Jam.AdminSettings": {
+			"type": "object",
+			"properties": {
+				"chat": {
+					"$ref": "#/definitions/Jam.AdminSettingsChat"
+				},
+				"index": {
+					"$ref": "#/definitions/Jam.AdminSettingsIndex"
+				},
+				"library": {
+					"$ref": "#/definitions/Jam.AdminSettingsLibrary"
+				}
+			},
+			"required": [
+				"chat",
+				"index",
+				"library"
+			]
+		},
 		"Jam.CoverArtArchiveResponse": {
 			"type": "object",
 			"properties": {

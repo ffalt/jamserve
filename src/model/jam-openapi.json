@@ -9680,6 +9680,33 @@
 				]
 			}
 		},
+		"/settings/admin": {
+			"get": {
+				"operationId": "settingsController.admin",
+				"description": "get admin settings for the server",
+				"tags": [
+					"settings"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminSettings"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				}
+			}
+		},
 		"/folder/download": {
 			"get": {
 				"operationId": "folderController.download",
@@ -13284,6 +13311,41 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.ID"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/settings/admin/update": {
+			"post": {
+				"operationId": "settingsController.adminUpdate",
+				"tags": [
+					"settings"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Jam.AdminSettings"
 							}
 						}
 					}
@@ -18751,6 +18813,77 @@
 				},
 				"required": [
 					"lastScan"
+				]
+			},
+			"Jam.AdminSettings": {
+				"type": "object",
+				"properties": {
+					"chat": {
+						"$ref": "#/components/schemas/Jam.AdminSettingsChat"
+					},
+					"index": {
+						"$ref": "#/components/schemas/Jam.AdminSettingsIndex"
+					},
+					"library": {
+						"$ref": "#/components/schemas/Jam.AdminSettingsLibrary"
+					}
+				},
+				"required": [
+					"chat",
+					"index",
+					"library"
+				]
+			},
+			"Jam.AdminSettingsChat": {
+				"type": "object",
+				"properties": {
+					"maxMessages": {
+						"type": "number"
+					},
+					"maxAge": {
+						"type": "object",
+						"properties": {
+							"value": {
+								"type": "number"
+							},
+							"unit": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"unit",
+							"value"
+						]
+					}
+				},
+				"required": [
+					"maxAge",
+					"maxMessages"
+				]
+			},
+			"Jam.AdminSettingsIndex": {
+				"type": "object",
+				"properties": {
+					"ignore": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"ignore"
+				]
+			},
+			"Jam.AdminSettingsLibrary": {
+				"type": "object",
+				"properties": {
+					"scanAtStart": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"scanAtStart"
 				]
 			},
 			"JamParameters.Login": {

@@ -16,10 +16,12 @@ import {DBObject} from '../../objects/base/base.model';
 import {Database} from '../../db/db.model';
 import Logger from '../../utils/logger';
 import {MetaDataStore} from '../../objects/metadata/metadata.store';
+import {SettingsStore} from '../../objects/settings/settings.store';
 
 const log = Logger('Store');
 
 export class Store {
+	public settingsStore: SettingsStore;
 	public trackStore: TrackStore;
 	public folderStore: FolderStore;
 	public userStore: UserStore;
@@ -36,6 +38,7 @@ export class Store {
 	public metaStore: MetaDataStore;
 
 	constructor(public db: Database) {
+		this.settingsStore = new SettingsStore(this.db);
 		this.trackStore = new TrackStore(this.db);
 		this.folderStore = new FolderStore(this.db);
 		this.userStore = new UserStore(this.db);

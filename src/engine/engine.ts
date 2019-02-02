@@ -35,6 +35,7 @@ import {hashSaltPassword} from '../utils/salthash';
 import {randomString} from '../utils/random';
 import {ScanService} from './scan/scan.service';
 import {StatsService} from './stats/stats.service';
+import {SettingsService} from '../objects/settings/settings.service';
 
 export class Engine {
 	public ioService: IoService;
@@ -64,26 +65,28 @@ export class Engine {
 	public artistService: ArtistService;
 	public albumService: AlbumService;
 	public statsService: StatsService;
+	public settingsService: SettingsService;
 
-	constructor(public config: Config, public store: Store) {
+	constructor(public config: Config, public store: Store, public version: string) {
+		this.chatService = new ChatService();
 		this.audioModule = new AudioModule(ThirdPartyConfig);
 		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
 		this.imageModule = new ImageModule(config.getDataPath(['cache', 'images']));
 		this.stateService = new StateService(this.store.stateStore);
 		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.stateService, this.imageModule);
 		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.stateService);
+		this.indexService = new IndexService(this.store.artistStore, this.store.folderStore, this.store.trackStore);
+		this.settingsService = new SettingsService(store.settingsStore, this.chatService, this.indexService, version);
 		this.artistService = new ArtistService(this.store.artistStore, this.store.trackStore, this.folderService, this.stateService);
 		this.albumService = new AlbumService(this.store.albumStore, this.store.trackStore, this.folderService, this.stateService);
 		this.userService = new UserService(this.config.getDataPath(['images']), this.store.userStore, this.store.stateStore, this.store.playlistStore,
 			this.store.bookmarkStore, this.store.playQueueStore, this.imageModule);
 		this.imageService = new ImageService(this.imageModule, this.trackService, this.folderService, this.artistService, this.albumService, this.userService);
 		this.genreService = new GenreService(this.store.trackStore);
-		this.indexService = new IndexService(config.app.index, this.store.artistStore, this.store.folderStore, this.store.trackStore);
 		this.scanService = new ScanService(this.store, this.audioModule, this.imageModule, this.waveformService);
 		this.statsService = new StatsService(this.store);
 		this.ioService = new IoService(this.store.rootStore, this.scanService, this.indexService, this.genreService, this.statsService);
 		this.downloadService = new DownloadService(this.store.trackStore);
-		this.chatService = new ChatService(config.app.chat);
 		this.nowPlayingService = new NowPlayingService(this.stateService);
 		this.streamService = new StreamService();
 		this.playlistService = new PlaylistService(this.store.playlistStore, this.store.trackStore);
@@ -167,6 +170,8 @@ export class Engine {
 		await this.checkDataPaths();
 		// open store
 		await this.store.open();
+		// load settings
+		await this.settingsService.loadSettings();
 		// first start?
 		await this.checkFirstStart();
 	}

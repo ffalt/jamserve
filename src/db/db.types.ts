@@ -12,5 +12,6 @@ export enum DBObjectType {
 	artist,
 	playqueue,
 	radio,
-	metadata
+	metadata,
+	settings
 }

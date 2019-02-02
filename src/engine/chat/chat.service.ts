@@ -1,13 +1,18 @@
 import moment from 'moment';
-import {ChatConfig} from '../../config';
 import {ChatMessage} from './chat.model';
 import {User} from '../../objects/user/user.model';
+import {Jam} from '../../model/jam-rest-data';
 
 export class ChatService {
 	private messages: Array<ChatMessage> = [];
-	private duration: moment.Duration;
+	private duration: moment.Duration = moment.duration(0, 's');
+	private chatConfig: Jam.AdminSettingsChat = {maxMessages: 0, maxAge: {value: 0, unit: 's'}};
 
-	constructor(private chatConfig: ChatConfig) {
+	constructor() {
+	}
+
+	setSettings(chatConfig: Jam.AdminSettingsChat) {
+		this.chatConfig = chatConfig;
 		this.duration = moment.duration(this.chatConfig.maxAge.value, <moment.unitOfTime.Base>this.chatConfig.maxAge.unit);
 	}
 
@@ -42,7 +47,7 @@ export class ChatService {
 			userID: user.id
 		};
 		this.messages.push(c);
-		if (this.messages.length > this.chatConfig.maxMsgs) {
+		if (this.messages.length > this.chatConfig.maxMessages) {
 			this.messages.shift();
 		}
 		return c;

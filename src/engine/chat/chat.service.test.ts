@@ -10,8 +10,9 @@ describe('ChatService', () => {
 	user1.id = 'chatUserID1';
 	testService({mockData: false},
 		async () => {
-			chatService = new ChatService({
-				maxMsgs: 4,
+			chatService = new ChatService();
+			chatService.setSettings({
+				maxMessages: 4,
 				maxAge: {
 					value: 1000,
 					unit: 's'

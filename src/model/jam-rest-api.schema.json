@@ -3432,6 +3432,52 @@
 						"result"
 					]
 				},
+				"settings/admin": {
+					"description": "settings: get admin settings for the server",
+					"type": "object",
+					"properties": {
+						"result": {
+							"$ref": "#/definitions/Jam.AdminSettings"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"result",
+						"roles"
+					]
+				},
 				"folder/download": {
 					"description": "folder: download folder as binary archive",
 					"type": "object",
@@ -7373,6 +7419,57 @@
 					"properties": {
 						"params": {
 							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"roles"
+					]
+				},
+				"settings/admin/update": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/Jam.AdminSettings"
 						},
 						"errors": {
 							"anyOf": [
@@ -16009,6 +16106,77 @@
 					"type": "boolean"
 				}
 			}
+		},
+		"Jam.AdminSettings": {
+			"type": "object",
+			"properties": {
+				"chat": {
+					"$ref": "#/definitions/Jam.AdminSettingsChat"
+				},
+				"index": {
+					"$ref": "#/definitions/Jam.AdminSettingsIndex"
+				},
+				"library": {
+					"$ref": "#/definitions/Jam.AdminSettingsLibrary"
+				}
+			},
+			"required": [
+				"chat",
+				"index",
+				"library"
+			]
+		},
+		"Jam.AdminSettingsChat": {
+			"type": "object",
+			"properties": {
+				"maxMessages": {
+					"type": "number"
+				},
+				"maxAge": {
+					"type": "object",
+					"properties": {
+						"value": {
+							"type": "number"
+						},
+						"unit": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"unit",
+						"value"
+					]
+				}
+			},
+			"required": [
+				"maxAge",
+				"maxMessages"
+			]
+		},
+		"Jam.AdminSettingsIndex": {
+			"type": "object",
+			"properties": {
+				"ignore": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"ignore"
+			]
+		},
+		"Jam.AdminSettingsLibrary": {
+			"type": "object",
+			"properties": {
+				"scanAtStart": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"scanAtStart"
+			]
 		},
 		"JamParameters.Download": {
 			"type": "object",

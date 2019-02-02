@@ -25,7 +25,7 @@ describe('IOService', () => {
 			await waveFormServiceTest.setup();
 			mockRoot = buildMockRoot(dir.name, 1, 'rootID');
 			const statsService = new StatsService(store);
-			const indexService = new IndexService({ignore: []}, store.artistStore, store.folderStore, store.trackStore);
+			const indexService = new IndexService(store.artistStore, store.folderStore, store.trackStore);
 			const genreService = new GenreService(store.trackStore);
 			const scanService = new ScanService(store, audioModule, imageModuleTest.imageModule, waveFormServiceTest.waveformService);
 			ioService = new IoService(store.rootStore, scanService, indexService, genreService, statsService);

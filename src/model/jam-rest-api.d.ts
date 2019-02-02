@@ -843,6 +843,15 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 
+		/**
+		 * settings: get admin settings for the server
+		 */
+		'settings/admin'?: {
+			result: Jam.AdminSettings;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
+			roles: ['admin'];
+		};
+
 		// binary
 
 		/**
@@ -1366,6 +1375,12 @@ export interface JamApi {
 		};
 		'root/delete'?: {
 			params: JamParameters.ID;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+
+		'settings/admin/update'?: {
+			params: Jam.AdminSettings;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};

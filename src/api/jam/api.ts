@@ -25,6 +25,7 @@ import {PlayQueueController} from '../../objects/playqueue/playqueue.controller'
 import {RadioController} from '../../objects/radio/radio.controller';
 import {JAMAPI_VERSION} from '../../version';
 import {StatsController} from '../../engine/stats/stats.controller';
+import {SettingsController} from '../../objects/settings/settings.controller';
 
 export interface JamRequest<T> {
 	query: T;
@@ -50,6 +51,7 @@ export class JamController {
 	playqueueController: PlayQueueController;
 	podcastController: PodcastController;
 	radioController: RadioController;
+	settingsController: SettingsController;
 	rootController: RootController;
 	streamController: StreamController;
 	trackController: TrackController;
@@ -58,6 +60,7 @@ export class JamController {
 	statsController: StatsController;
 
 	constructor(private engine: Engine) {
+		this.settingsController = new SettingsController(this.engine.settingsService);
 		this.streamController = new StreamController(this.engine.streamService, this.engine.nowPlayingService, this.engine.store);
 		this.chatController = new ChatController(this.engine.chatService);
 		this.genreController = new GenreController(engine.genreService);

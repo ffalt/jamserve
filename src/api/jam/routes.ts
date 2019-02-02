@@ -616,6 +616,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/settings/admin', async (req, res) => {
+		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.AdminSettings = await api.settingsController.admin(options);
+		await ApiResponder.data(res, result);
+	}, '/settings/admin', ['admin']);
+
 	register.get('/folder/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
 		const result: IApiBinaryResult = await api.folderController.download(options);
@@ -1041,4 +1047,10 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await api.rootController.delete(options);
 		await ApiResponder.ok(res);
 	}, '/root/delete', ['admin']);
+
+	register.post('/settings/admin/update', async (req, res) => {
+		const options: JamRequest<Jam.AdminSettings> = {query: req.body, user: req.user, client: req.client};
+		await api.settingsController.adminUpdate(options);
+		await ApiResponder.ok(res);
+	}, '/settings/admin/update', ['admin']);
 }

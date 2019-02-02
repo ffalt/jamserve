@@ -27,18 +27,20 @@ if (config.database.use === 'elasticsearch') {
 	db = new DBNedb(config.getDataPath(['nedb']));
 }
 const store = new Store(db);
-const engine = new Engine(config, store);
+const engine = new Engine(config, store, pack.version);
 const server = new Server(engine);
 
 async function run(): Promise<void> {
 	try {
 		await engine.start();
 		await server.start();
+		if (engine.settingsService.settings.library.scanAtStart) {
+			engine.ioService.refresh();
+		}
 	} catch (e) {
 		console.error('Error on startup', e);
 		return;
 	}
-	// engine.ioService.refresh();
 }
 
 async function stop(): Promise<void> {
