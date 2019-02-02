@@ -38,7 +38,7 @@ async function run(): Promise<void> {
 		console.error('Error on startup', e);
 		return;
 	}
-	engine.ioService.refresh();
+	// engine.ioService.refresh();
 }
 
 async function stop(): Promise<void> {

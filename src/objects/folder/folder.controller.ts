@@ -169,7 +169,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	}
 
 	async index(req: JamRequest<JamParameters.Index>): Promise<Jam.FolderIndex> {
-		const folderIndex = await this.indexService.getFolderIndex(false);
+		const folderIndex = await this.indexService.getFolderIndex();
 		return formatFolderIndex(this.indexService.filterFolderIndex(req.query.rootID, folderIndex));
 	}
 

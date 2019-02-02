@@ -6,6 +6,12 @@ import {ArtistStore} from '../../objects/artist/artist.store';
 import {FolderStore} from '../../objects/folder/folder.store';
 import {TrackStore} from '../../objects/track/track.store';
 import {AlbumType} from '../../model/jam-types';
+import {DebouncePromises} from '../../utils/debounce-promises';
+import {IApiBinaryResult} from '../../typings';
+import fse from 'fs-extra';
+import Logger from '../../utils/logger';
+
+const log = Logger('IndexService');
 
 export class IndexTreeBuilder {
 	private ignore: string;
@@ -96,29 +102,44 @@ export class IndexTreeBuilder {
 
 export class IndexService {
 	private cached?: Indexes;
+	private indexCacheDebounce = new DebouncePromises<Indexes>();
 
 	constructor(public indexConfig: IndexConfig, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
 	}
 
-	async buildIndexes(): Promise<void> {
+	async buildIndexes(): Promise<Indexes> {
+		log.debug('Building Indexes');
 		const builder = new IndexTreeBuilder(this.indexConfig, this.artistStore, this.folderStore, this.trackStore);
 		this.cached = await builder.buildIndexes();
+		return this.cached;
 	}
 
-	async getIndexes(forceRebuild: boolean): Promise<Indexes> {
-		if (forceRebuild || !this.cached) {
-			await this.buildIndexes();
+	async getIndexes(): Promise<Indexes> {
+		if (this.cached) {
+			return this.cached;
 		}
-		return <Indexes>this.cached;
+		const cacheID = 'index';
+		if (this.indexCacheDebounce.isPending(cacheID)) {
+			return this.indexCacheDebounce.append(cacheID);
+		}
+		this.indexCacheDebounce.setPending(cacheID);
+		try {
+			const result = await this.buildIndexes();
+			await this.indexCacheDebounce.resolve(cacheID, result);
+			return result;
+		} catch (e) {
+			await this.indexCacheDebounce.reject(cacheID, e);
+			return Promise.reject(e);
+		}
 	}
 
-	async getFolderIndex(forceRebuild: boolean): Promise<FolderIndex> {
-		const indexes = await this.getIndexes(forceRebuild);
+	async getFolderIndex(): Promise<FolderIndex> {
+		const indexes = await this.getIndexes();
 		return indexes.folderIndex;
 	}
 
-	async getArtistIndex(forceRebuild: boolean): Promise<ArtistIndex> {
-		const indexes = await this.getIndexes(forceRebuild);
+	async getArtistIndex(): Promise<ArtistIndex> {
+		const indexes = await this.getIndexes();
 		return indexes.artistIndex;
 	}
 

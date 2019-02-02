@@ -93,7 +93,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 	}
 
 	async index(req: JamRequest<JamParameters.Index>): Promise<Jam.ArtistIndex> {
-		const artistIndex = await this.indexService.getArtistIndex(false);
+		const artistIndex = await this.indexService.getArtistIndex();
 		return formatArtistIndex(this.indexService.filterArtistIndex(req.query.rootID, artistIndex));
 	}
 

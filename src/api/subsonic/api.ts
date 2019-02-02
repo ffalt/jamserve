@@ -230,7 +230,7 @@ export class SubsonicApi {
 		 Returns a <subsonic-response> element with a nested <indexes> element on success.
 		 */
 
-		const folderIndex = await this.engine.indexService.getFolderIndex(this.engine.ioService.scanning);
+		const folderIndex = await this.engine.indexService.getFolderIndex();
 		if (req.query.ifModifiedSince && req.query.ifModifiedSince > 0 && (folderIndex.lastModified <= req.query.ifModifiedSince)) {
 			const empty: any = {};
 			return empty;
@@ -267,7 +267,7 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <artists> element on success.
 		 */
-		const artistIndex = await this.engine.indexService.getArtistIndex(this.engine.ioService.scanning);
+		const artistIndex = await this.engine.indexService.getArtistIndex();
 		const index = this.engine.indexService.filterArtistIndex(req.query.musicFolderId ? req.query.musicFolderId.toString() : undefined, artistIndex);
 		let ids: Array<string> = [];
 		index.groups.forEach(entry => {
