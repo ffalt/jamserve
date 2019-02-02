@@ -25,10 +25,25 @@ export function replaceFileSystemChars(s: string, replace: string): string {
 		.replace(/[\?\/!\\]/g, replace);
 }
 
+export function containsFolderSystemChars(s: string): boolean {
+	const rx = /[<>:"\/\\|?*\x00-\x1F]|^(?:aux|con|clock\$|nul|prn|com[1-9]|lpt[1-9])$/i;
+	return rx.test(s);
+}
 export function replaceFolderSystemChars(s: string, replace: string): string {
+	/*
+< (less than)
+> (greater than)
+: (colon)
+" (double quote)
+/ (forward slash)
+\ (backslash)
+| (vertical bar or pipe)
+? (question mark)
+* (asterisk)
+	 */
 	return s.toString()
 		.replace(/:/g, ' -')
-		.replace(/[\.\*\?\/!\\]/g, replace);
+		.replace(/[|\*\?\/!\\<>]/g, replace);
 }
 
 export function ensureTrailingPathSeparator(s: string): string {
