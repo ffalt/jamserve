@@ -463,7 +463,9 @@ export class ScanService {
 		}
 		let albumType = AlbumType.unknown;
 		if (mbAlbumType) {
-			if (mbAlbumType.toLowerCase().indexOf('compilation') >= 0) {
+			if (mbAlbumType.toLowerCase().indexOf('audiobook') >= 0) {
+				albumType = AlbumType.audiobook;
+			} else if (mbAlbumType.toLowerCase().indexOf('compilation') >= 0) {
 				albumType = AlbumType.compilation;
 			} else {
 				albumType = AlbumType.album;
