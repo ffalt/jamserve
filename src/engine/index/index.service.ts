@@ -15,7 +15,7 @@ export class IndexTreeBuilder {
 	private ignore: string;
 
 	constructor(indexConfig: Jam.AdminSettingsIndex, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
-		this.ignore = indexConfig.ignore.join('|');
+		this.ignore = indexConfig.ignoreArticles.join('|');
 	}
 
 	removeArticles(name: string): string {
@@ -101,7 +101,7 @@ export class IndexTreeBuilder {
 export class IndexService {
 	private cached?: Indexes;
 	private indexCacheDebounce = new DebouncePromises<Indexes>();
-	public indexConfig: Jam.AdminSettingsIndex = {ignore: []};
+	public indexConfig: Jam.AdminSettingsIndex = {ignoreArticles: []};
 
 	constructor(private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
 	}

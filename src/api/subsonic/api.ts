@@ -244,7 +244,7 @@ export class SubsonicApi {
 			return {
 				indexes: {
 					lastModified: index.lastModified,
-					ignoredArticles: (this.engine.indexService.indexConfig.ignore || []).join(' '),
+					ignoredArticles: (this.engine.indexService.indexConfig.ignoreArticles || []).join(' '),
 					index: FORMAT.packFolderIndex(index, states),
 					// shortcut?: Artist[]; use unknown, there is no api to add/remove shortcuts
 					// child?: Child[]; use unknown
@@ -276,7 +276,7 @@ export class SubsonicApi {
 		const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.artist);
 		return {
 			artists: {
-				ignoredArticles: (this.engine.indexService.indexConfig.ignore || []).join(' '),
+				ignoredArticles: (this.engine.indexService.indexConfig.ignoreArticles || []).join(' '),
 				index: FORMAT.packArtistIndex(index, states)
 			}
 		};

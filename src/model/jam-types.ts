@@ -172,3 +172,25 @@ export const enum TrackTagFormatType {
 }
 
 export const TrackTagID3v2FormatTypes = [TrackTagFormatType.id3v20, TrackTagFormatType.id3v21, TrackTagFormatType.id3v22, TrackTagFormatType.id3v23, TrackTagFormatType.id3v24];
+
+
+export const enum MusicBrainzAlbumPrimaryType {
+	album = 'Album',
+	single = 'Single',
+	ep = 'EP',
+	broadcast = 'Broadcast',
+	other = 'Other',
+}
+
+export const enum MusicBrainzAlbumSecondaryType {
+	compilation = 'Compilation',
+	soundtrack = 'Soundtrack',
+	spokenword = 'Spokenword',
+	interview = 'Interview',
+	audiobook = 'Audiobook',
+	audiodrama = 'Audio drama',
+	live = 'Live',
+	remix = 'Remix',
+	djmix = 'DJ-mix',
+	mixtape = 'Mixtape'
+}

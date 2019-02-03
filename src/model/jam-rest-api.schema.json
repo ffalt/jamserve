@@ -16169,7 +16169,7 @@
 		"Jam.AdminSettingsIndex": {
 			"type": "object",
 			"properties": {
-				"ignore": {
+				"ignoreArticles": {
 					"type": "array",
 					"items": {
 						"type": "string"
@@ -16177,7 +16177,7 @@
 				}
 			},
 			"required": [
-				"ignore"
+				"ignoreArticles"
 			]
 		},
 		"Jam.AdminSettingsLibrary": {

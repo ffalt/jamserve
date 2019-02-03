@@ -374,7 +374,7 @@ export declare namespace Jam {
 	}
 
 	export interface AdminSettingsIndex {
-		ignore: Array<string>;
+		ignoreArticles: Array<string>;
 	}
 
 	export interface AdminSettingsLibrary {

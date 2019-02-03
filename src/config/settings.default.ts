@@ -6,7 +6,7 @@ export const defaultSettings: Jam.AdminSettings = {
 		maxAge: {value: 1, unit: 'day'}
 	},
 	index: {
-		ignore: ['The', 'El', 'La', 'Los', 'Las', 'Le', 'Les', 'Die']
+		ignoreArticles: ['The', 'El', 'La', 'Los', 'Las', 'Le', 'Les', 'Die']
 	},
 	library: {
 		scanAtStart: true
