@@ -464,17 +464,29 @@ export class ScanService {
 		}
 		let albumType = AlbumType.unknown;
 		if (mbAlbumType) {
-			if (mbAlbumType.toLowerCase().indexOf('audiobook') >= 0) {
+			const t = mbAlbumType.toLowerCase();
+			if (t.indexOf('audiobook') >= 0) {
 				albumType = AlbumType.audiobook;
-			} else if (mbAlbumType.toLowerCase().indexOf('compilation') >= 0) {
+			} else if (t.indexOf('compilation') >= 0) {
 				albumType = AlbumType.compilation;
-			} else {
+			} else if (t.indexOf('album') >= 0) {
 				albumType = AlbumType.album;
 			}
-		} else if (hasMultipleArtists) {
-			albumType = AlbumType.compilation;
-		} else {
-			albumType = AlbumType.album;
+		}
+		if (albumType === AlbumType.unknown) {
+			if (this.strategy === RootScanStrategy.audiobook) {
+				albumType = AlbumType.audiobook;
+			} else if (this.strategy === RootScanStrategy.compilation) {
+				albumType = AlbumType.compilation;
+			} else if (this.strategy === RootScanStrategy.artistalbum) {
+				albumType = AlbumType.album;
+			} else {
+				if (hasMultipleArtists) {
+					albumType = AlbumType.compilation;
+				} else {
+					albumType = AlbumType.album;
+				}
+			}
 		}
 		const result: MetaStat = {
 			trackCount,
