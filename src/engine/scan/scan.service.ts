@@ -5,7 +5,7 @@ import {WaveformService} from '../waveform/waveform.service';
 import {Track, TrackTag} from '../../objects/track/track.model';
 import {ImageModule} from '../../modules/image/image.module';
 import {deepCompare} from '../../utils/deep-compare';
-import {AlbumType, ArtworkImageType, FileTyp, FolderType, FolderTypesAlbum, TrackTagFormatType} from '../../model/jam-types';
+import {AlbumType, ArtworkImageType, FileTyp, FolderType, FolderTypesAlbum, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
 import path from 'path';
 import fse from 'fs-extra';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
@@ -315,6 +315,7 @@ export function generateArtworkId(folderID: string, filename: string): string {
 export class ScanService {
 	private artistCache: Array<Artist> = [];
 	private albumCache: Array<Album> = [];
+	private strategy = RootScanStrategy.auto;
 
 	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
 	}
@@ -1365,7 +1366,8 @@ export class ScanService {
 		await this.store.artistStore.upsert(changes.updateArtists);
 	}
 
-	async run(dir: string, rootID: string): Promise<MergeChanges> {
+	async run(dir: string, rootID: string, strategy: RootScanStrategy): Promise<MergeChanges> {
+		this.strategy = strategy || RootScanStrategy.auto;
 		log.info('Start:', dir);
 		/*
  	Processing:
@@ -1497,7 +1499,8 @@ export class ScanService {
 		return match;
 	}
 
-	async refreshTracks(rootID: string, trackIDs: Array<string>) {
+	async refreshTracks(rootID: string, trackIDs: Array<string>, strategy: RootScanStrategy) {
+		this.strategy = strategy || RootScanStrategy.auto;
 		const changes = this.emptyChanges();
 
 		const folders = await this.store.folderStore.search({rootID});

@@ -7,6 +7,7 @@ export function formatRoot(root: Root, rootState: RootStatus): Jam.Root {
 		name: root.name,
 		created: root.created,
 		path: root.path,
-		status: rootState
+		status: rootState,
+		strategy: root.strategy
 	};
 }

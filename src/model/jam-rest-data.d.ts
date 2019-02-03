@@ -12,6 +12,7 @@ export declare namespace Jam {
 	export type PodcastStatusType = 'new' | 'downloading' | 'completed' | 'error';
 	export type PodcastEpisodeStatusType = 'new' | 'downloading' | 'completed' | 'error' | 'deleted';
 	export type ArtworkImageType = 'front' | 'back' | 'booklet' | 'medium' | 'tray' | 'obi' | 'spine' | 'track' | 'liner' | 'sticker' | 'poster' | 'watermark' | 'raw' | 'unedited' | 'other' | 'artist';
+	export type RootScanStrategy = 'auto' | 'artistalbum' | 'compilation' | 'audiobook';
 
 	export interface Ping {
 		version: Version;
@@ -42,6 +43,7 @@ export declare namespace Jam {
 	export interface Root extends Base {
 		path: string;
 		status: RootStatus;
+		strategy: RootScanStrategy;
 	}
 
 	export interface TrackMBTag {

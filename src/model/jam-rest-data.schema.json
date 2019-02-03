@@ -4115,6 +4115,15 @@
 			],
 			"type": "string"
 		},
+		"Jam.RootScanStrategy": {
+			"enum": [
+				"artistalbum",
+				"audiobook",
+				"auto",
+				"compilation"
+			],
+			"type": "string"
+		},
 		"Jam.Ping": {
 			"type": "object",
 			"properties": {
@@ -4201,6 +4210,9 @@
 				"status": {
 					"$ref": "#/definitions/Jam.RootStatus"
 				},
+				"strategy": {
+					"$ref": "#/definitions/Jam.RootScanStrategy"
+				},
 				"id": {
 					"type": "string"
 				},
@@ -4219,7 +4231,8 @@
 				"id",
 				"name",
 				"path",
-				"status"
+				"status",
+				"strategy"
 			]
 		},
 		"Jam.TrackMBTag": {

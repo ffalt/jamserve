@@ -33,7 +33,7 @@ export class ScanRequestRefreshRoot implements ScanRequest {
 	async run(): Promise<void> {
 		log.info('Scanning Root', this.root.path);
 		try {
-			const changes = await this.scanService.run(this.root.path, this.root.id);
+			const changes = await this.scanService.run(this.root.path, this.root.id, this.root.strategy);
 			logChanges(changes);
 		} catch (e) {
 			log.error('Scanning Error', this.root.path, e.toString());
@@ -80,7 +80,7 @@ export class ScanRequestRefreshTracks implements ScanRequest {
 	async run(): Promise<void> {
 		log.info('Refresh Tracks in Root', this.root.path);
 		try {
-			const changes = await this.scanService.refreshTracks(this.root.id, this.trackIDs);
+			const changes = await this.scanService.refreshTracks(this.root.id, this.trackIDs, this.root.strategy);
 			logChanges(changes);
 		} catch (e) {
 			log.error('Refresh Tracks Error', this.root.path, e.toString());
@@ -98,7 +98,7 @@ export class IoService {
 	private scanningCount: undefined | number;
 	private rootstatus: { [id: string]: RootStatus } = {};
 	private queue: Array<ScanRequest> = [];
-	private delayedTrackRefresh: { [rootID: string]: { request: ScanRequestRefreshTracks, timeout?:  NodeJS.Timeout } } = {};
+	private delayedTrackRefresh: { [rootID: string]: { request: ScanRequestRefreshTracks, timeout?: NodeJS.Timeout } } = {};
 
 	constructor(private rootStore: RootStore, private scanService: ScanService, private indexService: IndexService, private genreService: GenreService, private statsService: StatsService) {
 	}
@@ -195,9 +195,12 @@ export class IoService {
 	}
 
 	refreshRoot(root: Root): void {
-		if (!this.findRequest(root, ScanRequestMode.refreshRoot)) {
+		const oldRequest = this.findRequest(root, ScanRequestMode.refreshRoot);
+		if (!oldRequest) {
 			this.queue.push(new ScanRequestRefreshRoot(root, this.scanService));
 			this.run();
+		} else {
+			oldRequest.root = root; // in case of scan strategy change
 		}
 	}
 

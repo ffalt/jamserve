@@ -16040,6 +16040,9 @@
 				"status": {
 					"$ref": "#/definitions/Jam.RootStatus"
 				},
+				"strategy": {
+					"$ref": "#/definitions/Jam.RootScanStrategy"
+				},
 				"id": {
 					"type": "string"
 				},
@@ -16058,7 +16061,8 @@
 				"id",
 				"name",
 				"path",
-				"status"
+				"status",
+				"strategy"
 			]
 		},
 		"Jam.RootStatus": {
@@ -16077,6 +16081,15 @@
 			"required": [
 				"lastScan"
 			]
+		},
+		"Jam.RootScanStrategy": {
+			"enum": [
+				"artistalbum",
+				"audiobook",
+				"auto",
+				"compilation"
+			],
+			"type": "string"
 		},
 		"JamParameters.RootSearch": {
 			"type": "object",
@@ -16796,11 +16809,16 @@
 				"path": {
 					"description": "absolute path of the root",
 					"type": "string"
+				},
+				"strategy": {
+					"$ref": "#/definitions/Jam.RootScanStrategy",
+					"description": "the scan strategy for the root"
 				}
 			},
 			"required": [
 				"name",
-				"path"
+				"path",
+				"strategy"
 			]
 		},
 		"JamParameters.RootUpdate": {
@@ -16814,6 +16832,10 @@
 					"description": "absolute path of the root",
 					"type": "string"
 				},
+				"strategy": {
+					"$ref": "#/definitions/Jam.RootScanStrategy",
+					"description": "the scan strategy for the root"
+				},
 				"id": {
 					"description": "the item id",
 					"type": "string"
@@ -16822,7 +16844,8 @@
 			"required": [
 				"id",
 				"name",
-				"path"
+				"path",
+				"strategy"
 			]
 		}
 	},

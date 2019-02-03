@@ -962,6 +962,10 @@ export declare namespace JamParameters {
 		 * absolute path of the root
 		 */
 		path: string;
+		/**
+		 * the scan strategy for the root
+		 */
+		strategy: Jam.RootScanStrategy;
 	}
 
 	export interface RootUpdate extends ID {
@@ -973,6 +977,10 @@ export declare namespace JamParameters {
 		 * absolute path of the root
 		 */
 		path: string;
+		/**
+		 * the scan strategy for the root
+		 */
+		strategy: Jam.RootScanStrategy;
 	}
 
 	export interface UserNew {

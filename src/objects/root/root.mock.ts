@@ -1,6 +1,7 @@
 import {Root} from './root.model';
 import {DBObjectType} from '../../db/db.types';
 import {mockPath} from '../../utils/testutils.spec';
+import {RootScanStrategy} from '../../model/jam-types';
 
 export function mockRoot(): Root {
 	return {
@@ -8,7 +9,8 @@ export function mockRoot(): Root {
 		type: DBObjectType.root,
 		name: 'a name',
 		path: mockPath('root name'),
-		created: 1543495268
+		created: 1543495268,
+		strategy: RootScanStrategy.auto
 	};
 }
 
@@ -18,6 +20,7 @@ export function mockRoot2(): Root {
 		type: DBObjectType.root,
 		name: 'second name',
 		path: mockPath('secondroot name'),
-		created: 1443495268
+		created: 1443495268,
+		strategy: RootScanStrategy.auto
 	};
 }

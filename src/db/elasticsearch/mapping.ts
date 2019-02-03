@@ -11,6 +11,7 @@ const type_Root = {
 		name: type_string,
 		path: type_key,
 		created: type_int,
+		strategy: type_key,
 		id: type_key,
 		type: type_int
 	}

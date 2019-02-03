@@ -36,6 +36,7 @@ import {randomString} from '../utils/random';
 import {ScanService} from './scan/scan.service';
 import {StatsService} from './stats/stats.service';
 import {SettingsService} from '../objects/settings/settings.service';
+import {RootScanStrategy} from '../model/jam-types';
 
 export class Engine {
 	public ioService: IoService;
@@ -147,7 +148,8 @@ export class Engine {
 						created: Date.now(),
 						type: DBObjectType.root,
 						name: first.name,
-						path: first.path
+						path: first.path,
+						strategy: RootScanStrategy.auto
 					};
 					await this.store.rootStore.add(root);
 				}

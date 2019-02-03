@@ -12,6 +12,7 @@ import {DownloadService} from '../../engine/download/download.service';
 import {Root} from './root.model';
 import {User} from '../user/user.model';
 import {IoService} from '../../engine/io/io.service';
+import {RootScanStrategy} from '../../model/jam-types';
 
 export class RootController extends BaseController<JamParameters.ID, JamParameters.IDs, {}, SearchQueryRoot, JamParameters.RootSearch, Root, Jam.Root> {
 
@@ -48,7 +49,8 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 			created: Date.now(),
 			type: DBObjectType.root,
 			name: req.query.name,
-			path: req.query.path
+			path: req.query.path,
+			strategy: <RootScanStrategy>req.query.strategy
 		};
 		root.id = await this.rootService.create(root);
 		return this.prepare(root, {}, req.user);
@@ -58,6 +60,7 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 		const root = await this.byID(req.query.id);
 		root.name = req.query.name;
 		root.path = req.query.path;
+		root.strategy = <RootScanStrategy>req.query.strategy;
 		await this.rootService.update(root);
 		return this.prepare(root, {}, req.user);
 	}

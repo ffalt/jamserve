@@ -14,6 +14,13 @@ export enum JamObjectType {
 	radio = 'radio'
 }
 
+export enum RootScanStrategy {
+	auto = 'auto',
+	artistalbum = 'artistalbum',
+	compilation = 'compilation',
+	audiobook = 'audiobook'
+}
+
 export const AudioMimeTypes: { [ext: string]: string } = {
 	'mp3': 'audio/mpeg',
 	'm4a': 'audio/mp4',
