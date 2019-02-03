@@ -17,6 +17,7 @@ import {updatePlayListTracks} from '../../objects/playlist/playlist.service';
 import moment from 'moment';
 import {md5string} from '../../utils/md5';
 import {DBObjectType} from '../../db/db.types';
+import {Jam} from '../../model/jam-rest-data';
 
 const log = Logger('IO');
 
@@ -316,6 +317,10 @@ export class ScanService {
 	private artistCache: Array<Artist> = [];
 	private albumCache: Array<Album> = [];
 	private strategy = RootScanStrategy.auto;
+	private settings: Jam.AdminSettingsLibrary = {
+		scanAtStart: true,
+		audioBookGenreNames: []
+	};
 
 	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
 	}
@@ -471,6 +476,13 @@ export class ScanService {
 				albumType = AlbumType.compilation;
 			} else if (t.indexOf('album') >= 0) {
 				albumType = AlbumType.album;
+			}
+		}
+		if (genre && albumType === AlbumType.unknown) {
+			const g = genre.toLowerCase();
+			const audioBook = this.settings.audioBookGenreNames.find(a => a.toLowerCase().localeCompare(g) === 0);
+			if (audioBook) {
+				albumType = AlbumType.audiobook;
 			}
 		}
 		if (albumType === AlbumType.unknown) {
@@ -1567,5 +1579,9 @@ export class ScanService {
 		changes.end = Date.now();
 		return changes;
 
+	}
+
+	public setSettings(settings: Jam.AdminSettingsLibrary) {
+		this.settings = settings;
 	}
 }

@@ -9,6 +9,7 @@ export const defaultSettings: Jam.AdminSettings = {
 		ignoreArticles: ['The', 'El', 'La', 'Los', 'Las', 'Le', 'Les', 'Die']
 	},
 	library: {
-		scanAtStart: true
+		scanAtStart: true,
+		audioBookGenreNames: ['audiobook', 'audio book', 'audiobooks', 'audio books', 'hörspiel', 'hörspiele', 'hörbuch', 'hörbucher']
 	}
 };

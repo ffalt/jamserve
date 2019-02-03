@@ -379,6 +379,7 @@ export declare namespace Jam {
 
 	export interface AdminSettingsLibrary {
 		scanAtStart: boolean;
+		audioBookGenreNames: Array<string>;
 	}
 
 	export interface AdminSettings {
