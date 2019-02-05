@@ -221,7 +221,7 @@ export declare namespace MusicBrainz {
 			language: string;
 			script: string;
 		};
-		trackCount: number;
+		// trackCount: number;
 		artistCredit: Array<ArtistCredit>;
 		releaseGroup: ReleaseGroupBase;
 		labelInfo: Array<Label>;

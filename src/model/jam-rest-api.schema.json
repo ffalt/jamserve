@@ -8908,9 +8908,6 @@
 						"script"
 					]
 				},
-				"trackCount": {
-					"type": "number"
-				},
 				"artistCredit": {
 					"type": "array",
 					"items": {
@@ -8981,8 +8978,7 @@
 				"sortName",
 				"status",
 				"textRepresentation",
-				"title",
-				"trackCount"
+				"title"
 			]
 		},
 		"MusicBrainz.Label": {
@@ -9314,9 +9310,6 @@
 						"script"
 					]
 				},
-				"trackCount": {
-					"type": "number"
-				},
 				"artistCredit": {
 					"type": "array",
 					"items": {
@@ -9388,8 +9381,7 @@
 				"sortName",
 				"status",
 				"textRepresentation",
-				"title",
-				"trackCount"
+				"title"
 			]
 		},
 		"MusicBrainz.ReleaseMedia": {
@@ -16185,9 +16177,16 @@
 			"properties": {
 				"scanAtStart": {
 					"type": "boolean"
+				},
+				"audioBookGenreNames": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				}
 			},
 			"required": [
+				"audioBookGenreNames",
 				"scanAtStart"
 			]
 		},
