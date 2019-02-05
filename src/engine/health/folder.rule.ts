@@ -37,6 +37,10 @@ export class FolderAlbumTagsRule extends FolderRule {
 			}
 			if (!folder.tag.mbAlbumID) {
 				missing.push('musicbrainz album id');
+			} else {
+				if (!folder.tag.mbAlbumType) {
+					missing.push('musicbrainz album type');
+				}
 			}
 			if (missing.length > 0) {
 				return {details: missing.join(',')};
@@ -54,7 +58,11 @@ export class FolderAlbumNameRule extends FolderRule {
 
 	getNiceFolderName(tag: FolderTag): string {
 		const year = tag.year ? tag.year.toString() : '';
-		const s = (year.length > 0 ? '[' + replaceFolderSystemChars(year, '_') + '] ' : '') + replaceFolderSystemChars(tag.album || '', '_');
+		let name = (tag.album || '')
+			.replace(/[!?]/g, '')
+			.replace(/[\//]/g, '-');
+		name = replaceFolderSystemChars(name, '_');
+		const s = (year.length > 0 ? '[' + replaceFolderSystemChars(year, '_') + '] ' : '') + name;
 		return s.trim();
 	}
 

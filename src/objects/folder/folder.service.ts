@@ -81,29 +81,6 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		return await this.imageModule.get(folder.id, path.join(folder.path, folder.tag.image), size, format);
 	}
 
-	async downloadFolderArtwork(folder: Folder, imageUrl: string, types: Array<ArtworkImageType>): Promise<Artwork> {
-		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
-		const filename = await this.imageModule.storeImage(folder.path, name, imageUrl);
-		const stat = await fse.stat(path.join(folder.path, filename));
-		const artwork = {
-			id: generateArtworkId(folder.id, filename),
-			name: filename,
-			types,
-			stat: {
-				created: stat.ctime.valueOf(),
-				modified: stat.mtime.valueOf(),
-				size: stat.size
-			}
-		};
-		folder.tag.artworks = folder.tag.artworks || [];
-		folder.tag.artworks.push(artwork);
-		if (!folder.tag.image && types.indexOf(ArtworkImageType.front) >= 0) {
-			folder.tag.image = artwork.name;
-		}
-		await this.folderStore.replace(folder);
-		return artwork;
-	}
-
 	async setFolderImage(folder: Folder, filename: string): Promise<void> {
 		const destFileName = FolderTypeImageName[folder.tag.type] + path.extname(filename);
 		const destName = path.join(folder.path, destFileName);
@@ -115,6 +92,19 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 
 	async getArtworkImage(folder: Folder, artwork: Artwork, size?: number, format?: string): Promise<IApiBinaryResult> {
 		return await this.imageModule.get(artwork.id, path.join(folder.path, artwork.name), size, format);
+	}
+
+	async setFrontArtworkImage(folder: Folder): Promise<void> {
+		if (folder.tag.image) {
+			return;
+		}
+		if (folder.tag.artworks) {
+			const artwork = folder.tag.artworks.find(a => a.types.indexOf(ArtworkImageType.front) >= 0);
+			if (artwork) {
+				folder.tag.image = artwork.name;
+				await this.folderStore.replace(folder);
+			}
+		}
 	}
 
 	async removeArtworkImage(folder: Folder, artwork: Artwork): Promise<void> {
@@ -131,6 +121,30 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		await this.folderStore.replace(folder);
 		const destName = path.join(folder.path, artwork.name);
 		await fileDeleteIfExists(destName);
+		console.log(clearID);
 		await this.imageModule.clearImageCacheByIDs(clearID);
+		await this.setFrontArtworkImage(folder);
 	}
+
+	async downloadFolderArtwork(folder: Folder, imageUrl: string, types: Array<ArtworkImageType>): Promise<Artwork> {
+		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
+		const filename = await this.imageModule.storeImage(folder.path, name, imageUrl);
+		const stat = await fse.stat(path.join(folder.path, filename));
+		const artwork = {
+			id: generateArtworkId(folder.id, filename),
+			name: filename,
+			types,
+			stat: {
+				created: stat.ctime.valueOf(),
+				modified: stat.mtime.valueOf(),
+				size: stat.size
+			}
+		};
+		folder.tag.artworks = folder.tag.artworks || [];
+		folder.tag.artworks.push(artwork);
+		await this.folderStore.replace(folder);
+		await this.setFrontArtworkImage(folder);
+		return artwork;
+	}
+
 }
