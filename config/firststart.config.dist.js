@@ -11,11 +11,16 @@ module.exports = {
 	},
 	/*
 		Default Media folders
+		Scan strategies:
+		'auto' -- try to figure it out
+		'artistalbum' -- artist/album folder structure
+		'compilation' -- bunch of compilation folders
+		'audiobook' -- bunch of audiobook folders
 	 */
 	roots: [
-		{name: 'Music', path: 'path/to/music'},
-		{name: 'Compilations', path: 'path/to/compilations'},
-		{name: 'Soundtracks', path: 'path/to/soundtracks'},
-		{name: 'Audiobooks', path: 'path/to/audiobooks'}
+		{name: 'Music', path: 'path/to/music', strategy: 'auto'},
+		{name: 'Compilations', path: 'path/to/compilations', strategy: 'compilation'},
+		{name: 'Soundtracks', path: 'path/to/soundtracks', strategy: 'compilation'},
+		{name: 'Audiobooks', path: 'path/to/audiobooks', strategy: 'audiobook'}
 	]
 };

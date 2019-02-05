@@ -26,14 +26,14 @@ export interface ScanRequest {
 export class ScanRequestRefreshRoot implements ScanRequest {
 	mode = ScanRequestMode.refreshRoot;
 
-	constructor(public root: Root, public scanService: ScanService) {
+	constructor(public root: Root, public forceMetaRefresh: boolean, public scanService: ScanService) {
 
 	}
 
 	async run(): Promise<void> {
 		log.info('Scanning Root', this.root.path);
 		try {
-			const changes = await this.scanService.run(this.root.path, this.root.id, this.root.strategy);
+			const changes = await this.scanService.run(this.root.path, this.root.id, this.root.strategy, this.forceMetaRefresh);
 			logChanges(changes);
 		} catch (e) {
 			log.error('Scanning Error', this.root.path, e.toString());
@@ -160,7 +160,7 @@ export class IoService {
 			.then((roots) => {
 					for (const root of roots) {
 						if (!this.findRequest(root, ScanRequestMode.refreshRoot)) {
-							this.queue.push(new ScanRequestRefreshRoot(root, this.scanService));
+							this.queue.push(new ScanRequestRefreshRoot(root, false, this.scanService));
 						}
 					}
 					this.run();
@@ -194,13 +194,14 @@ export class IoService {
 		});
 	}
 
-	refreshRoot(root: Root): void {
+	refreshRoot(root: Root, forceMetaRefresh: boolean): void {
 		const oldRequest = this.findRequest(root, ScanRequestMode.refreshRoot);
 		if (!oldRequest) {
-			this.queue.push(new ScanRequestRefreshRoot(root, this.scanService));
+			this.queue.push(new ScanRequestRefreshRoot(root, forceMetaRefresh, this.scanService));
 			this.run();
-		} else {
-			oldRequest.root = root; // in case of scan strategy change
+		} else if (forceMetaRefresh) {
+			(<ScanRequestRefreshRoot>oldRequest).forceMetaRefresh = true;
+			oldRequest.root = root;
 		}
 	}
 

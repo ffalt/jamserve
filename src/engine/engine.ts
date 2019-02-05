@@ -149,7 +149,7 @@ export class Engine {
 						type: DBObjectType.root,
 						name: first.name,
 						path: first.path,
-						strategy: RootScanStrategy.auto
+						strategy: <RootScanStrategy>first.strategy || RootScanStrategy.auto
 					};
 					await this.store.rootStore.add(root);
 				}

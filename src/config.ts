@@ -52,7 +52,7 @@ export interface Config extends BaseConfig {
 			pass: string;
 			mail: string;
 		};
-		roots?: Array<{ name: string; path: string; }>;
+		roots?: Array<{ name: string; path: string; strategy?: string }>;
 	};
 
 	getDataPath(parts: Array<string>): string;

@@ -60,8 +60,10 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 		const root = await this.byID(req.query.id);
 		root.name = req.query.name;
 		root.path = req.query.path;
+		const forceRefreshMeta = root.strategy !== req.query.strategy;
 		root.strategy = <RootScanStrategy>req.query.strategy;
 		await this.rootService.update(root);
+		this.ioService.refreshRoot(root, forceRefreshMeta);
 		return this.prepare(root, {}, req.user);
 	}
 
@@ -76,7 +78,7 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 
 	async scan(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const root = await this.byID(req.query.id);
-		this.ioService.refreshRoot(root);
+		this.ioService.refreshRoot(root, false);
 	}
 
 	async status(req: JamRequest<JamParameters.ID>): Promise<Jam.RootStatus> {

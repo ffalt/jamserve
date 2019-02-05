@@ -736,11 +736,11 @@ export class ScanService {
 		}
 	}
 
-	private async merge(dir: MatchDir, changes: MergeChanges): Promise<void> {
+	private async merge(dir: MatchDir, forceMetaRefresh: boolean, rootID: string, changes: MergeChanges): Promise<void> {
 		await this.buildMerge(dir, changes);
 		await this.buildMergeTags(dir);
 		await this.mergeR(dir, changes);
-		await this.mergeMeta(changes);
+		await this.mergeMeta(forceMetaRefresh, rootID, changes);
 	}
 
 	private collectFolderImages(dir: MatchDir): Array<Artwork> {
@@ -1196,7 +1196,7 @@ export class ScanService {
 		}
 	}
 
-	private async mergeMeta(changes: MergeChanges): Promise<void> {
+	private async mergeMeta(forceMetaRefresh: boolean, rootID: string, changes: MergeChanges): Promise<void> {
 		// merge new
 		log.debug('merge meta tracks new', changes.newTracks.length);
 		for (const trackInfo of changes.newTracks) {
@@ -1214,6 +1214,19 @@ export class ScanService {
 			await this.removeMeta(trackInfo.oldTrack, compilationArtist, changes);
 			await this.addMeta(trackInfo, changes);
 		}
+
+		if (forceMetaRefresh) {
+			const allArtistIDs = await this.store.artistStore.searchIDs({rootID});
+			for (const id of allArtistIDs) {
+				await this.getArtistByID(id, changes);
+			}
+			const allAlbumIDs = await this.store.albumStore.searchIDs({rootID});
+			for (const id of allAlbumIDs) {
+				await this.getAlbumByID(id, changes);
+			}
+		}
+
+
 		changes.removedArtists = changes.updateArtists.filter(a => a.trackIDs.length === 0);
 		changes.updateArtists = changes.updateArtists.filter(a => changes.removedArtists.indexOf(a) < 0 && changes.newArtists.indexOf(a) < 0);
 		changes.removedAlbums = changes.updateAlbums.filter(a => a.trackIDs.length === 0);
@@ -1390,7 +1403,7 @@ export class ScanService {
 		await this.store.artistStore.upsert(changes.updateArtists);
 	}
 
-	async run(dir: string, rootID: string, strategy: RootScanStrategy): Promise<MergeChanges> {
+	async run(dir: string, rootID: string, strategy: RootScanStrategy, forceMetaRefresh: boolean): Promise<MergeChanges> {
 		this.strategy = strategy || RootScanStrategy.auto;
 		log.info('Start:', dir);
 		/*
@@ -1412,9 +1425,10 @@ export class ScanService {
 		// second, match db entries
 		log.info('Matching:', dir);
 		const match: MatchDir = await this.match(scan, changes);
+
 		// third, merge
 		log.info('Merging:', dir);
-		await this.merge(match, changes);
+		await this.merge(match, forceMetaRefresh, rootID, changes);
 		// printTree(match);
 
 		// fourth, store
@@ -1572,7 +1586,7 @@ export class ScanService {
 			};
 		}
 
-		await this.merge(match, changes);
+		await this.merge(match, false, rootID, changes);
 		// printTree(match);
 		await this.storeChanges(changes);
 		await this.clean(changes);
