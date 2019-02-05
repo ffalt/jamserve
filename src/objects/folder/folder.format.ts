@@ -7,6 +7,7 @@ import {Artwork, Folder} from './folder.model';
 export function formatFolderArtwork(artwork: Artwork): Jam.ArtworkImage {
 	return {
 		id: artwork.id,
+		name: artwork.name,
 		types: artwork.types,
 		size: artwork.stat.size
 	};

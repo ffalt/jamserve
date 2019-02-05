@@ -12729,6 +12729,9 @@
 				"id": {
 					"type": "string"
 				},
+				"name": {
+					"type": "string"
+				},
 				"types": {
 					"type": "array",
 					"items": {
@@ -12759,6 +12762,7 @@
 			},
 			"required": [
 				"id",
+				"name",
 				"size",
 				"types"
 			]
