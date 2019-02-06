@@ -16,6 +16,7 @@ export function formatTrackTag(tag: TrackTag): Jam.TrackTag {
 	}
 	return {
 		trackNr: tag.track,
+		disc: tag.disc,
 		year: tag.year,
 		title: tag.title,
 		artist: tag.artist,

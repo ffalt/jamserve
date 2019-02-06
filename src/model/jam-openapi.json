@@ -16160,6 +16160,9 @@
 					"trackNr": {
 						"type": "number"
 					},
+					"disc": {
+						"type": "number"
+					},
 					"musicbrainz": {
 						"$ref": "#/components/schemas/Jam.TrackMBTag"
 					}

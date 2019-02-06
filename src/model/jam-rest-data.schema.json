@@ -4271,6 +4271,9 @@
 				"trackNr": {
 					"type": "number"
 				},
+				"disc": {
+					"type": "number"
+				},
 				"musicbrainz": {
 					"$ref": "#/definitions/Jam.TrackMBTag"
 				}

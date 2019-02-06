@@ -62,6 +62,7 @@ export declare namespace Jam {
 		genre?: string;
 		year?: number;
 		trackNr?: number;
+		disc?: number;
 		musicbrainz?: TrackMBTag;
 	}
 
