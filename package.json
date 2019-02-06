@@ -60,7 +60,7 @@
     "fluent-ffmpeg": "^2.0.1",
     "fs-extra": "^7.0.1",
     "helmet": "^3.15.0",
-    "jamp3": "^0.1.9",
+    "jamp3": "^0.1.10",
     "jimp": "^0.6.0",
     "jsonwebtoken": "^8.4.0",
     "limiter": "^1.1.4",
