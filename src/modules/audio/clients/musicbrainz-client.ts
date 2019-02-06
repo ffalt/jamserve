@@ -108,6 +108,7 @@ export class MusicbrainzClient extends WebserviceClient {
 			if (statusCode === 502 || statusCode === 503) {
 				return retry(e);
 			} else {
+				log.error(e);
 				return Promise.reject(e);
 			}
 		}

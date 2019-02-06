@@ -101,10 +101,13 @@ export class LastFMClient extends WebserviceClient {
 		});
 		sorted_params['api_key'] = this.options.key;
 		sorted_params['format'] = 'json';
-		const data = await this.getJson('http://ws.audioscrobbler.com/2.0/', sorted_params);
-		// console.log(JSON.stringify(data, null, '\t'));
-		// console.log(JSON.stringify(this.beautify(data), null, '\t'));
-		return <LastFM.Result>this.beautify(data);
+		try {
+			const data = await this.getJson('http://ws.audioscrobbler.com/2.0/', sorted_params);
+			return <LastFM.Result>this.beautify(data);
+		} catch (e) {
+			log.error(e);
+			return Promise.reject(e);
+		}
 	}
 
 	async artist(artist: string): Promise<LastFM.Artist | undefined> {
