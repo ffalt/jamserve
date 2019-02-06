@@ -814,6 +814,10 @@ export class ScanService {
 			this.setTagType(dir.tag, FolderType.multialbum);
 		}
 		dir.directories.forEach(d => {
+			if (dir.tag && d.tag && d.tag.type !== FolderType.extras) {
+				// parent multialbum gets same album type as child multialbum folder
+				dir.tag.albumType = d.tag.albumType;
+			}
 			this.markMultiAlbumChilds(d);
 		});
 	}
@@ -995,7 +999,7 @@ export class ScanService {
 				rootIDs: [],
 				slug: slugify(cVariousArtist),
 				name: cVariousArtist,
-				albumTypes: [AlbumType.compilation, AlbumType.album],
+				albumTypes: [AlbumType.compilation, AlbumType.album, AlbumType.audiobook],
 				albumIDs: [],
 				trackIDs: [],
 				created: Date.now()
