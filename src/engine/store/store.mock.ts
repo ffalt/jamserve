@@ -2,7 +2,7 @@ import {Store} from './store';
 import fse from 'fs-extra';
 import path from 'path';
 import tmp, {SynchrounousResult} from 'tmp';
-import {AlbumType, FolderType} from '../../model/jam-types';
+import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
 import {Root} from '../../objects/root/root.model';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
@@ -343,11 +343,12 @@ export class StoreMock {
 			type: DBObjectType.root,
 			name: this.mockRoot.name,
 			path: this.mockRoot.path,
-			created: Date.now()
+			created: Date.now(),
+			strategy: RootScanStrategy.auto
 		};
 		await this.store.rootStore.add(root);
 		const scanService = new ScanService(this.store, audioModule, imageModule, this.waveformServiceTest.waveformService);
-		await scanService.run(root.path, root.id);
+		await scanService.run(root.path, root.id, RootScanStrategy.auto, false);
 	}
 
 	async cleanup() {

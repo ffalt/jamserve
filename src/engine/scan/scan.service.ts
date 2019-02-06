@@ -327,6 +327,7 @@ export class ScanService {
 
 	private buildMetaStat(dir: MatchDir): MetaStat {
 		const stats: {
+			[name: string]: { [key: string]: { count: number, val: string }; };
 			artist: { [key: string]: { count: number, val: string }; };
 			artistSort: { [key: string]: { count: number, val: string }; };
 			album: { [key: string]: { count: number, val: string }; };
@@ -348,102 +349,64 @@ export class ScanService {
 			mbAlbumType: {}
 		};
 		let trackCount = 0;
-		dir.files.forEach((file) => {
+
+		function statID(name: string, val?: string) {
+			if (val && val.trim().length > 0) {
+				const slug = val.split(' ')[0];
+				stats[name][slug] = stats[name][val] || {count: 0, val: slug};
+				stats[name][slug].count += 1;
+			}
+		}
+
+		function statNumber(name: string, val?: number) {
+			if (val !== undefined) {
+				const slug = val.toString();
+				stats[name][slug] = stats[name][slug] || {count: 0, val: val};
+				stats[name][slug].count += 1;
+			}
+		}
+
+		function statSlugValue(name: string, val?: string) {
+			if (val && val.trim().length > 0) {
+				const slug = slugify(val);
+				stats[name][slug] = stats[name][slug] || {count: 0, val: val};
+				stats[name][slug].count += 1;
+			}
+		}
+
+		for (const file of dir.files) {
 			if (file.type === FileTyp.AUDIO) {
 				trackCount++;
-			}
-			if (file.track && file.track.tag) {
-				const tracktag = file.track.tag;
-				const artistName = tracktag.albumArtist || tracktag.artist;
-				if (artistName) {
-					const slug = slugify(artistName);
-					stats.artist[slug] = stats.artist[slug] || {count: 0, val: artistName};
-					stats.artist[slug].count += 1;
-				}
-				// MusicBrainz Album Type
-				if (tracktag.mbAlbumType) {
-					const slug = tracktag.mbAlbumType;
-					stats.mbAlbumType[slug] = stats.mbAlbumType[slug] || {count: 0, val: tracktag.mbAlbumType};
-					stats.mbAlbumType[slug].count += 1;
-				}
-				if (tracktag.artistSort) {
-					const slug = slugify(tracktag.artistSort);
-					stats.artistSort[slug] = stats.artistSort[slug] || {count: 0, val: tracktag.artistSort};
-					stats.artistSort[slug].count += 1;
-				}
-				if (tracktag.album) {
-					const slug = slugify(tracktag.album);
-					stats.album[slug] = stats.album[slug] || {count: 0, val: extractAlbumName(tracktag.album)};
-					stats.album[slug].count += 1;
-				}
-				if (tracktag.genre) {
-					const slug = slugify(tracktag.genre);
-					stats.genre[slug] = stats.genre[slug] || {count: 0, val: tracktag.genre};
-					stats.genre[slug].count += 1;
-				}
-				if (tracktag.year !== undefined) {
-					const slug = tracktag.year.toString();
-					stats.year[slug] = stats.year[slug] || {count: 0, val: tracktag.year};
-					stats.year[slug].count += 1;
-				}
-				if (tracktag.mbArtistID) {
-					const slug = tracktag.mbArtistID.split(' ')[0];
-					stats.mbArtistID[slug] = stats.mbArtistID[slug] || {count: 0, val: slug};
-					stats.mbArtistID[slug].count += 1;
-				}
-				if (tracktag.mbAlbumID) {
-					const slug = tracktag.mbAlbumID.split(' ')[0];
-					stats.mbAlbumID[slug] = stats.mbAlbumID[slug] || {count: 0, val: slug};
-					stats.mbAlbumID[slug].count += 1;
-				}
-				if (tracktag.mbReleaseGroupID) {
-					const slug = tracktag.mbReleaseGroupID.split(' ')[0];
-					stats.mbReleaseGroupID[slug] = stats.mbReleaseGroupID[slug] || {count: 0, val: slug};
-					stats.mbReleaseGroupID[slug].count += 1;
+				if (file.track && file.track.tag) {
+					const tracktag = file.track.tag;
+					statSlugValue('artist', tracktag.albumArtist || tracktag.artist);
+					statSlugValue('artistSort', tracktag.albumArtistSort || tracktag.artistSort);
+					statSlugValue('genre', tracktag.genre);
+					statSlugValue('album', tracktag.album ? extractAlbumName(tracktag.album) : undefined);
+					statNumber('year', tracktag.year);
+					statSlugValue('mbAlbumType', tracktag.mbAlbumType);
+					statID('mbArtistID', tracktag.mbArtistID);
+					statID('mbAlbumID', tracktag.mbAlbumID);
+					statID('mbReleaseGroupID', tracktag.mbReleaseGroupID);
 				}
 			}
-		});
-		dir.directories.forEach((sub) => {
+		}
+		for (const sub of dir.directories) {
 			if (sub.folder && sub.tag && (sub.tag.type !== FolderType.extras)) {
 				const subtag = sub.tag;
-				if (subtag.artist) {
-					const slug = slugify(subtag.artist);
-					stats.artist[slug] = stats.artist[slug] || {count: 0, val: subtag.artist};
-					stats.artist[slug].count += 1;
-				}
-				if (subtag.artistSort) {
-					const slug = slugify(subtag.artistSort);
-					stats.artistSort[slug] = stats.artistSort[slug] || {count: 0, val: subtag.artistSort};
-					stats.artistSort[slug].count += 1;
-				}
-				if (subtag.album) {
-					const val = extractAlbumName(subtag.album);
-					const slug = slugify(val);
-					stats.album[slug] = stats.album[slug] || {count: 0, val};
-					stats.album[slug].count += 1;
-				}
-				if (subtag.genre) {
-					const slug = slugify(subtag.genre);
-					stats.genre[slug] = stats.genre[slug] || {count: 0, val: subtag.genre};
-					stats.genre[slug].count += 1;
-				}
-				if (subtag.year) {
-					const slug = subtag.year.toString();
-					stats.year[slug] = stats.year[slug] || {count: 0, val: subtag.year};
-					stats.year[slug].count += 1;
-				}
-				if (subtag.mbArtistID) {
-					const slug = subtag.mbArtistID.split(' ')[0];
-					stats.mbArtistID[slug] = stats.mbArtistID[slug] || {count: 0, val: slug};
-					stats.mbArtistID[slug].count += 1;
-				}
-				if (subtag.mbAlbumID) {
-					const slug = subtag.mbAlbumID.split(' ')[0];
-					stats.mbAlbumID[slug] = stats.mbAlbumID[slug] || {count: 0, val: slug};
-					stats.mbAlbumID[slug].count += 1;
-				}
+				statSlugValue('artist', subtag.artist);
+				statSlugValue('artistSort', subtag.artistSort);
+				statSlugValue('album', subtag.album ? extractAlbumName(subtag.album) : undefined);
+				statSlugValue('genre', subtag.genre);
+				statNumber('year', subtag.year);
+				statSlugValue('mbAlbumType', subtag.mbAlbumType);
+				statID('mbArtistID', subtag.mbArtistID);
+				statID('mbAlbumID', subtag.mbAlbumID);
+				statID('mbReleaseGroupID', subtag.mbReleaseGroupID);
 			}
-		});
+		}
+
+		// to easy to process lists
 		const artists = convert2list(stats.artist);
 		const artistSorts = convert2list(stats.artistSort);
 		const albums = convert2list(stats.album);
@@ -453,6 +416,8 @@ export class ScanService {
 		const mbAlbumIDs = convert2list(stats.mbAlbumID);
 		const mbReleaseGroupIDs = convert2list(stats.mbReleaseGroupID);
 		const mbAlbumTypes = convert2list(stats.mbAlbumType);
+
+		// heuristically most used values
 		const album = getMostUsedTagValue<string>(albums, extractAlbumName(path.basename(dir.name)));
 		const artist = getMostUsedTagValue<string>(artists, cVariousArtist);
 		let artistSort = getMostUsedTagValue<string>(artistSorts);
@@ -462,6 +427,8 @@ export class ScanService {
 		const mbAlbumType = getMostUsedTagValue<string>(mbAlbumTypes, '');
 		const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs, '');
 		const year = getMostUsedTagValue<number>(years);
+
+		// determinate album type
 		const hasMultipleArtists = artist === cVariousArtist;
 		const hasMultipleAlbums = albums.length > 1;
 		if (hasMultipleArtists) {
@@ -500,7 +467,8 @@ export class ScanService {
 				}
 			}
 		}
-		const result: MetaStat = {
+
+		return {
 			trackCount,
 			albumType,
 			hasMultipleArtists,
@@ -515,8 +483,6 @@ export class ScanService {
 			mbArtistID,
 			year
 		};
-		// console.log(dir.name, result);
-		return result;
 	}
 
 	private async match(dir: ScanDir, changes: MergeChanges): Promise<MatchDir> {
@@ -787,7 +753,7 @@ export class ScanService {
 		if (image) {
 			imageName = image.name;
 		}
-		const tag: FolderTag = {
+		return {
 			trackCount: dir.files.filter(t => t.type === FileTyp.AUDIO).length,
 			folderCount: dir.directories.length,
 			level: dir.level,
@@ -806,7 +772,6 @@ export class ScanService {
 			mbArtistID: metaStat.mbArtistID,
 			year: (nameSplit.year !== undefined) ? nameSplit.year : metaStat.year
 		};
-		return tag;
 	}
 
 	private markMultiAlbumChilds(dir: MatchDir) {
@@ -841,6 +806,7 @@ export class ScanService {
 		if (dir.level === 0) {
 			result = FolderType.collection;
 		} else if (name.match(/\[(extra|various)\]/) || name.match(/^(extra|various)$/)) {
+			// TODO: generalise extra folder detection
 			result = FolderType.extras;
 		} else if (metaStat.trackCount > 0) {
 			const dirCount = dir.directories.filter(d => !!d.tag && d.tag.type !== FolderType.extras).length;
