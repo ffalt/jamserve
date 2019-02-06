@@ -27,9 +27,11 @@ export interface TrackTag {
 	artistSort?: string;
 	genre?: string;
 	disc?: number;
+	discTotal?: number;
 	title?: string;
 	titleSort?: string;
 	track?: number;
+	trackTotal?: number;
 	year?: number;
 	mbTrackID?: string;
 	mbAlbumType?: string;

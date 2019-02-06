@@ -16,7 +16,7 @@ export function formatTrackTag(tag: TrackTag): Jam.TrackTag {
 	}
 	return {
 		trackNr: tag.track,
-		disc: tag.disc,
+		disc: tag.discTotal !== undefined && tag.discTotal > 1 ? tag.disc : undefined,
 		year: tag.year,
 		title: tag.title,
 		artist: tag.artist,
