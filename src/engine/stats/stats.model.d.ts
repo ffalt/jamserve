@@ -1,7 +1,12 @@
 export interface Stats {
 	rootID?: string;
-	trackCount: number;
-	folderCount: number;
-	artistCount: number;
-	albumCount: number;
+	track: number;
+	folder: number;
+	artist: number;
+	album: number;
+	albumTypes: {
+		album: number;
+		compilation: number;
+		audiobook: number;
+	};
 }

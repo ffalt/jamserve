@@ -4,9 +4,14 @@ import {Stats} from './stats.model';
 export function formatStats(stats: Stats): Jam.Stats {
 	return {
 		rootID: stats.rootID,
-		trackCount: stats.trackCount,
-		albumCount: stats.albumCount,
-		artistCount: stats.artistCount,
-		folderCount: stats.folderCount
+		album: stats.album,
+		albumTypes: {
+			album: stats.albumTypes.album,
+			compilation: stats.albumTypes.compilation,
+			audiobook: stats.albumTypes.audiobook
+		},
+		artist: stats.artist,
+		folder: stats.folder,
+		track: stats.track
 	};
 }

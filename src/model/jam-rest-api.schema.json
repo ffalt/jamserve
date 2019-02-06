@@ -10583,24 +10583,44 @@
 				"rootID": {
 					"type": "string"
 				},
-				"trackCount": {
+				"track": {
 					"type": "number"
 				},
-				"folderCount": {
+				"folder": {
 					"type": "number"
 				},
-				"artistCount": {
+				"artist": {
 					"type": "number"
 				},
-				"albumCount": {
+				"album": {
 					"type": "number"
+				},
+				"albumTypes": {
+					"type": "object",
+					"properties": {
+						"album": {
+							"type": "number"
+						},
+						"compilation": {
+							"type": "number"
+						},
+						"audiobook": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"album",
+						"audiobook",
+						"compilation"
+					]
 				}
 			},
 			"required": [
-				"albumCount",
-				"artistCount",
-				"folderCount",
-				"trackCount"
+				"album",
+				"albumTypes",
+				"artist",
+				"folder",
+				"track"
 			]
 		},
 		"Jam.NowPlaying": {
