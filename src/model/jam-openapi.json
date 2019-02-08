@@ -15401,9 +15401,123 @@
 			},
 			"AcousticBrainz.HighLevel": {
 				"type": "object",
-				"additionalProperties": {
-					"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+				"properties": {
+					"danceability": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"gender": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"genre_dortmund": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"genre_electronic": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"genre_rosamerica": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"genre_tzanetakis": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"ismir04_rhythm": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"mood_acoustic": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"mood_aggressive": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"mood_electronic": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"mood_happy": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"mood_party": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"mood_relaxed": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"mood_sad": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"moods_mirex": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"timbre": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"tonal_atonal": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					},
+					"voice_instrumental": {
+						"$ref": "#/components/schemas/AcousticBrainz.HighLevelSection"
+					}
 				}
+			},
+			"AcousticBrainz.HighLevelSection": {
+				"type": "object",
+				"properties": {
+					"all": {
+						"type": "object",
+						"additionalProperties": {
+							"type": "number"
+						}
+					},
+					"probability": {
+						"type": "number"
+					},
+					"value": {
+						"type": "string"
+					},
+					"version": {
+						"$ref": "#/components/schemas/AcousticBrainz.Version"
+					}
+				},
+				"required": [
+					"all",
+					"probability",
+					"value",
+					"version"
+				]
+			},
+			"AcousticBrainz.Version": {
+				"type": "object",
+				"properties": {
+					"essentia": {
+						"type": "string"
+					},
+					"essentia_build_sha": {
+						"type": "string"
+					},
+					"essentia_git_sha": {
+						"type": "string"
+					},
+					"extractor": {
+						"type": "string"
+					},
+					"gaia": {
+						"type": "string"
+					},
+					"gaia_git_sha": {
+						"type": "string"
+					},
+					"models_essentia_git_sha": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"essentia",
+					"essentia_build_sha",
+					"essentia_git_sha",
+					"extractor",
+					"gaia",
+					"gaia_git_sha",
+					"models_essentia_git_sha"
+				]
 			},
 			"AcousticBrainz.MetaData": {
 				"type": "object",

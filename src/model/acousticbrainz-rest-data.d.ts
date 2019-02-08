@@ -30,7 +30,24 @@ export declare namespace AcousticBrainz {
 	}
 
 	export interface HighLevel {
-		[section: string]: HighLevelSection;
+		danceability?: HighLevelSection;
+		gender?: HighLevelSection;
+		genre_dortmund?: HighLevelSection;
+		genre_electronic?: HighLevelSection;
+		genre_rosamerica?: HighLevelSection;
+		genre_tzanetakis?: HighLevelSection;
+		ismir04_rhythm?: HighLevelSection;
+		mood_acoustic?: HighLevelSection;
+		mood_aggressive?: HighLevelSection;
+		mood_electronic?: HighLevelSection;
+		mood_happy?: HighLevelSection;
+		mood_party?: HighLevelSection;
+		mood_relaxed?: HighLevelSection;
+		mood_sad?: HighLevelSection;
+		moods_mirex?: HighLevelSection;
+		timbre?: HighLevelSection;
+		tonal_atonal?: HighLevelSection;
+		voice_instrumental?: HighLevelSection;
 	}
 
 	export interface MetaData {
