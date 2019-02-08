@@ -1,5 +1,6 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 
 const app = {
 	entry: './src/index.ts',
@@ -17,6 +18,12 @@ const app = {
 		filename: 'bundle.js',
 		path: path.resolve(__dirname, 'dist')
 	},
+	plugins: [
+		// webpack is warning about require(dynamicConfigFilePerParameter) usage
+		new FilterWarningsPlugin({
+			exclude: /Critical dependency: the request of a dependency is an expression/i
+		})
+	],
 	module: {
 		rules: [
 			{
