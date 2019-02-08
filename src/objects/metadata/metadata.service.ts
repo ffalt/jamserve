@@ -123,7 +123,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		if (result && result.artist && result.artist.bio && result.artist.bio.content) {
 			const info: Jam.ExtendedInfo = {
 				url: result.artist.url,
-				description: result.artist.bio.content,
+				description: stripInlineLastFM(result.artist.bio.content),
 				source: 'LastFM',
 				license: 'Creative Commons BY-SA license',
 				licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
