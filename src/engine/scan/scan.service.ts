@@ -706,7 +706,7 @@ export class ScanService {
 		await this.buildMerge(dir, changes);
 		await this.buildMergeTags(dir);
 		await this.mergeR(dir, changes);
-		await this.mergeMeta(forceMetaRefresh, rootID, changes);
+		await this.mergeMeta(dir, forceMetaRefresh, rootID, changes);
 	}
 
 	private collectFolderImages(dir: MatchDir): Array<Artwork> {
@@ -911,6 +911,13 @@ export class ScanService {
 		return this.artistCache.find(a => a.slug === slug);
 	}
 
+	private updateArtist(artist: Artist, trackInfo: MergeTrackInfo) {
+		artist.slug = getArtistSlug(trackInfo);
+		artist.name = getArtistName(trackInfo);
+		artist.nameSort = getArtistNameSort(trackInfo);
+		artist.mbArtistID = getArtistMBArtistID(trackInfo);
+	}
+
 	private async buildArtist(trackInfo: MergeTrackInfo): Promise<Artist> {
 		return {
 			id: await this.store.artistStore.getNewId(),
@@ -919,9 +926,9 @@ export class ScanService {
 			slug: getArtistSlug(trackInfo),
 			name: getArtistName(trackInfo),
 			nameSort: getArtistNameSort(trackInfo),
+			mbArtistID: getArtistMBArtistID(trackInfo),
 			albumTypes: [],
 			albumIDs: [],
-			mbArtistID: getArtistMBArtistID(trackInfo),
 			trackIDs: [],
 			created: Date.now()
 		};
@@ -937,6 +944,7 @@ export class ScanService {
 			artist = await this.buildArtist(trackInfo);
 			changes.newArtists.push(artist);
 		} else {
+			this.updateArtist(artist, trackInfo);
 			changes.updateArtists.push(artist);
 		}
 		this.artistCache.push(artist);
@@ -998,6 +1006,16 @@ export class ScanService {
 		return this.albumCache.find(a => (a.name === name) && (a.artistID === artistID));
 	}
 
+	private updateAlbum(album: Album, trackInfo: MergeTrackInfo) {
+		album.albumType = trackInfo.dir.folder && trackInfo.dir.folder.tag && trackInfo.dir.folder.tag.albumType !== undefined ? trackInfo.dir.folder.tag.albumType : AlbumType.unknown;
+		album.name = getAlbumName(trackInfo);
+		album.artist = getArtistName(trackInfo);
+		album.mbArtistID = getArtistMBArtistID(trackInfo);
+		album.mbAlbumID = trackInfo.track.tag.mbAlbumID;
+		album.genre = trackInfo.track.tag.genre;
+		album.year = trackInfo.track.tag.year;
+	}
+
 	private async buildAlbum(trackInfo: MergeTrackInfo, artistID: string): Promise<Album> {
 		return {
 			id: await this.store.albumStore.getNewId(),
@@ -1028,6 +1046,7 @@ export class ScanService {
 			album = await this.buildAlbum(trackInfo, artistID);
 			changes.newAlbums.push(album);
 		} else {
+			this.updateAlbum(album, trackInfo);
 			changes.updateAlbums.push(album);
 		}
 		this.albumCache.push(album);
@@ -1166,7 +1185,20 @@ export class ScanService {
 		}
 	}
 
-	private async mergeMeta(forceMetaRefresh: boolean, rootID: string, changes: MergeChanges): Promise<void> {
+	private collectMergeTracks(dir: MatchDir): Array<MergeTrackInfo> {
+		let result = dir.files.filter(file => !!file.track).map(p => {
+			return {
+				track: <Track>p.track,
+				dir
+			};
+		});
+		for (const sub of dir.directories) {
+			result = result.concat(this.collectMergeTracks(sub));
+		}
+		return result;
+	}
+
+	private async mergeMeta(dir: MatchDir, forceMetaRefresh: boolean, rootID: string, changes: MergeChanges): Promise<void> {
 		// merge new
 		log.debug('merge meta tracks new', changes.newTracks.length);
 		for (const trackInfo of changes.newTracks) {
@@ -1196,21 +1228,24 @@ export class ScanService {
 			}
 		}
 
-
 		changes.removedArtists = changes.updateArtists.filter(a => a.trackIDs.length === 0);
 		changes.updateArtists = changes.updateArtists.filter(a => changes.removedArtists.indexOf(a) < 0 && changes.newArtists.indexOf(a) < 0);
 		changes.removedAlbums = changes.updateAlbums.filter(a => a.trackIDs.length === 0);
 		changes.updateAlbums = changes.updateAlbums.filter(a => changes.removedAlbums.indexOf(a) < 0 && changes.newAlbums.indexOf(a) < 0);
 		log.debug('refresh albums', changes.updateAlbums.length);
+		const flatTracks = this.collectMergeTracks(dir);
 		for (const album of changes.updateAlbums) {
 			const rootIDs: Array<string> = [];
 			let duration = 0;
-			const tracks = await this.getTracksByID(album.trackIDs, changes);
-			for (const track of tracks) {
-				if (rootIDs.indexOf(track.rootID) < 0) {
-					rootIDs.push(track.rootID);
+			const trackInfos = flatTracks.filter(t => t.track && album.trackIDs.indexOf(t.track.id) >= 0);
+			for (const trackInfo of trackInfos) {
+				if (trackInfo.track) {
+					if (rootIDs.indexOf(trackInfo.track.rootID) < 0) {
+						rootIDs.push(trackInfo.track.rootID);
+					}
+					duration += (trackInfo.track.media.duration || 0);
+					this.updateAlbum(album, trackInfo);
 				}
-				duration += (track.media.duration || 0);
 			}
 			album.rootIDs = rootIDs;
 			album.duration = duration;
@@ -1219,11 +1254,14 @@ export class ScanService {
 		for (const artist of changes.updateArtists) {
 			const rootIDs: Array<string> = [];
 			const albumTypes: Array<AlbumType> = [];
-			const tracks = await this.getTracksByID(artist.trackIDs, changes);
-			for (const track of tracks) {
-				if (rootIDs.indexOf(track.rootID) < 0) {
-					rootIDs.push(track.rootID);
+			const trackInfos = flatTracks.filter(t => t.track && artist.trackIDs.indexOf(t.track.id) >= 0);
+			for (const trackInfo of trackInfos) {
+				if (trackInfo.track) {
+					if (rootIDs.indexOf(trackInfo.track.rootID) < 0) {
+						rootIDs.push(trackInfo.track.rootID);
+					}
 				}
+				this.updateArtist(artist, trackInfo);
 			}
 			const albums = await this.getAlbumsById(artist.albumIDs);
 			for (const album of albums) {
