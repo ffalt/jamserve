@@ -5226,6 +5226,25 @@
 				"artist": {
 					"type": "number"
 				},
+				"artistTypes": {
+					"type": "object",
+					"properties": {
+						"album": {
+							"type": "number"
+						},
+						"compilation": {
+							"type": "number"
+						},
+						"audiobook": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"album",
+						"audiobook",
+						"compilation"
+					]
+				},
 				"album": {
 					"type": "number"
 				},
@@ -5253,6 +5272,7 @@
 				"album",
 				"albumTypes",
 				"artist",
+				"artistTypes",
 				"folder",
 				"track"
 			]

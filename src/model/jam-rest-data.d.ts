@@ -307,6 +307,11 @@ export declare namespace Jam {
 		track: number;
 		folder: number;
 		artist: number;
+		artistTypes: {
+			album: number;
+			compilation: number;
+			audiobook: number;
+		};
 		album: number;
 		albumTypes: {
 			album: number;

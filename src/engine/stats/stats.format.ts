@@ -10,6 +10,11 @@ export function formatStats(stats: Stats): Jam.Stats {
 			compilation: stats.albumTypes.compilation,
 			audiobook: stats.albumTypes.audiobook
 		},
+		artistTypes: {
+			album: stats.artistTypes.album,
+			compilation: stats.artistTypes.compilation,
+			audiobook: stats.artistTypes.audiobook
+		},
 		artist: stats.artist,
 		folder: stats.folder,
 		track: stats.track

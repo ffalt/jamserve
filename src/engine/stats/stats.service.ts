@@ -24,6 +24,11 @@ export class StatsService {
 					audiobook: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.audiobook}),
 				},
 				artist: await this.store.artistStore.searchCount({rootID}),
+				artistTypes: {
+					album: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.album}),
+					compilation: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation}),
+					audiobook: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.audiobook}),
+				},
 				folder: await this.store.folderStore.searchCount({rootID}),
 				track: await this.store.trackStore.searchCount({rootID})
 			};
