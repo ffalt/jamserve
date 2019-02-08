@@ -14,6 +14,7 @@ import {DownloadService} from '../../engine/download/download.service';
 import {Album} from './album.model';
 import {User} from '../user/user.model';
 import {AlbumService} from './album.service';
+import {Track} from '../track/track.model';
 
 export class AlbumController extends BaseListController<JamParameters.Album, JamParameters.Albums, JamParameters.IncludesAlbum, SearchQueryAlbum, JamParameters.AlbumSearch, Album, Jam.Album> {
 
@@ -32,6 +33,14 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 		return items.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
+	sortAlbumTracks(a: Track, b: Track): number {
+		let res = (b.tag.disc || 0) - (a.tag.disc || 0);
+		if (res === 0) {
+			res = (b.tag.track || 0) - (a.tag.track || 0);
+		}
+		return res;
+	}
+
 	async prepare(album: Album, includes: JamParameters.IncludesAlbum, user: User): Promise<Jam.Album> {
 		const result = formatAlbum(album, includes);
 		if (includes.albumState) {
@@ -41,7 +50,7 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 			result.info = await this.metaDataService.getAlbumInfo(album);
 		}
 		if (includes.albumTracks) {
-			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user);
+			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user, this.sortAlbumTracks);
 		}
 		return result;
 	}
@@ -84,7 +93,7 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 		albums.forEach(album => {
 			trackIDs = trackIDs.concat(album.trackIDs);
 		});
-		return this.trackController.prepareListByIDs(trackIDs, req.query, req.user);
+		return this.trackController.prepareListByIDs(trackIDs, req.query, req.user, this.sortAlbumTracks);
 	}
 
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {

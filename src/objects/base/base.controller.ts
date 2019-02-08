@@ -46,8 +46,11 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		return await this.service.store.byIds(ids);
 	}
 
-	async prepareList(items: Array<DBOBJECT>, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
+	async prepareList(items: Array<DBOBJECT>, includes: INCLUDE, user: User, sort?: (a: DBOBJECT, b: DBOBJECT) => number): Promise<Array<RESULTOBJ>> {
 		const result: Array<RESULTOBJ> = [];
+		if (sort) {
+			items = items.sort(sort);
+		}
 		for (const item of items) {
 			const r = await this.prepare(item, includes, user);
 			result.push(r);
@@ -55,9 +58,12 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		return result;
 	}
 
-	async prepareListByIDs(ids: Array<string>, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
+	async prepareListByIDs(ids: Array<string>, includes: INCLUDE, user: User, sort?: (a: DBOBJECT, b: DBOBJECT) => number): Promise<Array<RESULTOBJ>> {
 		const list = await this.service.store.byIds(ids);
-		const result = await this.prepareList(list, includes, user);
+		const result = await this.prepareList(list, includes, user, sort);
+		if (sort) {
+			return result;
+		}
 		return result.sort((a, b) => {
 			return ids.indexOf(a.id) - ids.indexOf(b.id);
 		});

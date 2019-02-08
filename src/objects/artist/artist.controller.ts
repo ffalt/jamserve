@@ -18,6 +18,8 @@ import {StateService} from '../state/state.service';
 import {Artist} from './artist.model';
 import {User} from '../user/user.model';
 import {ArtistService} from './artist.service';
+import {Album} from '../album/album.model';
+import {Track} from '../track/track.model';
 
 export class ArtistController extends BaseListController<JamParameters.Artist, JamParameters.Artists, JamParameters.IncludesArtist, SearchQueryArtist, JamParameters.ArtistSearch, Artist, Jam.Artist> {
 
@@ -38,6 +40,25 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 		return items.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
+	sortArtistAlbums(a: Album, b: Album): number {
+		let res = a.albumType.localeCompare(b.albumType);
+		if (res === 0) {
+			res = (b.year || 0) - (a.year || 0);
+		}
+		return res;
+	}
+
+	sortArtistTracks(a: Track, b: Track): number {
+		let res = a.parentID.localeCompare(b.parentID);
+		if (res === 0) {
+			res = (b.tag.disc || 0) - (a.tag.disc || 0);
+		}
+		if (res === 0) {
+			res = (b.tag.track || 0) - (a.tag.track || 0);
+		}
+		return res;
+	}
+
 	async prepare(artist: Artist, includes: JamParameters.IncludesArtist, user: User): Promise<Jam.Artist> {
 		const result = formatArtist(artist, includes);
 		if (includes.artistState) {
@@ -51,10 +72,10 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 			result.similar = await this.prepareList(await this.metaDataService.getSimilarArtists(artist), {}, user);
 		}
 		if (includes.artistTracks) {
-			result.tracks = await this.trackController.prepareListByIDs(artist.trackIDs, includes, user);
+			result.tracks = await this.trackController.prepareListByIDs(artist.trackIDs, includes, user, this.sortArtistTracks);
 		}
 		if (includes.artistAlbums) {
-			result.albums = await this.albumController.prepareListByIDs(artist.albumIDs, includes, user);
+			result.albums = await this.albumController.prepareListByIDs(artist.albumIDs, includes, user, this.sortArtistAlbums);
 		}
 		return result;
 	}
@@ -103,7 +124,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 		artists.forEach(artist => {
 			trackIDs = trackIDs.concat(artist.trackIDs);
 		});
-		return this.trackController.prepareListByIDs(trackIDs, req.query, req.user);
+		return this.trackController.prepareListByIDs(trackIDs, req.query, req.user, this.sortArtistTracks);
 	}
 
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
