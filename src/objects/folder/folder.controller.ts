@@ -99,6 +99,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		}
 		return {
 			query: query.query,
+			id: query.id,
 			rootID: query.rootID,
 			parentID: query.parentID,
 			inPath,

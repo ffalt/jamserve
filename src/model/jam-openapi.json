@@ -1940,6 +1940,15 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by id",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "rootID",
 						"schema": {
 							"type": "string"
@@ -2269,6 +2278,15 @@
 							"type": "integer"
 						},
 						"description": "get back number of items",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by id",
 						"required": false
 					},
 					{
@@ -2623,6 +2641,15 @@
 					}
 				},
 				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by id",
+						"required": false
+					},
 					{
 						"in": "query",
 						"name": "rootID",

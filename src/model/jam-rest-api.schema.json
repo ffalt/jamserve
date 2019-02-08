@@ -13084,6 +13084,10 @@
 		"JamParameters.FolderList": {
 			"type": "object",
 			"properties": {
+				"id": {
+					"description": "filter by id",
+					"type": "string"
+				},
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
@@ -13256,6 +13260,10 @@
 					"minimum": 1,
 					"type": "integer"
 				},
+				"id": {
+					"description": "filter by id",
+					"type": "string"
+				},
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
@@ -13423,6 +13431,10 @@
 		"JamParameters.FolderHealth": {
 			"type": "object",
 			"properties": {
+				"id": {
+					"description": "filter by id",
+					"type": "string"
+				},
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
