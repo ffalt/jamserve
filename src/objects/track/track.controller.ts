@@ -21,6 +21,8 @@ import {IoService} from '../../engine/io/io.service';
 import {StreamController} from '../../engine/stream/stream.controller';
 import {TrackService} from './track.service';
 import {FolderService} from '../folder/folder.service';
+import {AudioFormatType} from '../../model/jam-types';
+import {ID3v2FrameValues} from '../../model/id3v2-frame-values';
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
@@ -55,7 +57,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
 		const result = formatTrack(track, includes);
 		if (includes.trackID3) {
-			result.tagID3 = await this.audioModule.readID3v2(path.join(track.path, track.name));
+			result.tagID3 = await this.getID3(track);
 		}
 		if (includes.trackState) {
 			const state = await this.stateService.findOrCreate(track.id, user.id, DBObjectType.track);
@@ -93,9 +95,42 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	// more track api
 
+	async getID3(track: Track): Promise<Jam.ID3Tag | undefined> {
+		if (track.media.format === AudioFormatType.mp3) {
+			try {
+				return await this.audioModule.readID3v2(path.join(track.path, track.name));
+			} catch (e) {
+				const frames: ID3v2FrameValues.Frames = {};
+				if (track.tag.album) {
+					frames['TALB'] = [{text: track.tag.album}];
+				}
+				if (track.tag.artist) {
+					frames['TPE1'] = [{text: track.tag.artist}];
+				}
+				if (track.tag.title) {
+					frames['TIT2'] = [{text: track.tag.title}];
+				}
+				if (track.tag.year) {
+					frames['TDRC'] = [{text: track.tag.year.toString()}];
+				}
+				if (track.tag.track) {
+					frames['TRCK'] = [{text: track.tag.track.toString()}];
+				}
+				if (track.tag.genre) {
+					frames['TCON'] = [{text: track.tag.genre}];
+				}
+				return {version: 4, frames};
+			}
+		}
+	}
+
 	async tagID3(req: JamRequest<JamParameters.ID>): Promise<Jam.ID3Tag> {
 		const track = await this.byID(req.query.id);
-		return this.audioModule.readID3v2(path.join(track.path, track.name));
+		const result = await this.getID3(track);
+		if (!result) {
+			return Promise.reject(Error('Not a mp3 file'));
+		}
+		return result;
 	}
 
 	async tagID3s(req: JamRequest<JamParameters.IDs>): Promise<Jam.ID3Tags> {
@@ -103,7 +138,10 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		tracks = this.defaultSort(tracks);
 		const result: Jam.ID3Tags = {};
 		for (const track of tracks) {
-			result[track.id] = await this.audioModule.readID3v2(path.join(track.path, track.name));
+			const tag = await this.getID3(track);
+			if (tag) {
+				result[track.id] = tag;
+			}
 		}
 		return result;
 	}
