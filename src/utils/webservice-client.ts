@@ -15,7 +15,7 @@ export class WebserviceClient {
 			url,
 			headers: {'User-Agent': this.userAgent},
 			qs: parameters,
-			timeout: 5000
+			timeout: 20000
 		};
 		const limiter = this.limiter;
 		return new Promise<T>((resolve, reject) => {

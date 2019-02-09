@@ -80,21 +80,20 @@ export class MusicbrainzClient extends WebserviceClient {
 			// "error":"Your requests are exceeding the allowable rate limit. Please see http://wiki.musicbrainz.org/XMLWebService for more information."
 		};
 		const options = this.options;
-		const get = this.get;
 
-		async function retry(error: Error): Promise<any> {
+		const retry = async (error: Error): Promise<any> => {
 			if (options.retryOn && req.retry < options.retryCount) {
 				req.retry++;
 				log.info('rate limit hit, retrying in ' + options.retryDelay + 'ms');
 				return new Promise<any>((resolve, reject) => {
 					setTimeout(() => {
-						get(req).then(resolve).catch(reject);
+						this.get(req).then(resolve).catch(reject);
 					}, options.retryDelay);
 				});
 			} else {
 				return Promise.reject(error);
 			}
-		}
+		};
 
 		log.info('requesting', JSON.stringify(req));
 		try {

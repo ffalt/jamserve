@@ -73,21 +73,20 @@ export class CoverArtArchiveClient extends WebserviceClient {
 			return (body && body.error && body.error.indexOf('allowable rate limit') >= 0);
 		};
 		const options = this.options;
-		const get = this.get;
 
-		async function retry(error: Error): Promise<any> {
+		const retry = async (error: Error): Promise<any> => {
 			if (options.retryOn && req.retry < options.retryCount) {
 				req.retry++;
 				log.info('rate limit hit, retrying in ' + options.retryDelay + 'ms');
 				return new Promise<any>((resolve, reject) => {
 					setTimeout(() => {
-						get(req).then(resolve).catch(reject);
+						this.get(req).then(resolve).catch(reject);
 					}, options.retryDelay);
 				});
 			} else {
 				return Promise.reject(error);
 			}
-		}
+		};
 
 		log.info('requesting', JSON.stringify(req));
 		try {
