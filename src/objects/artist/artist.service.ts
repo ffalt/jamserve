@@ -2,12 +2,11 @@ import {IApiBinaryResult} from '../../typings';
 import {TrackStore} from '../track/track.store';
 import {FolderService} from '../folder/folder.service';
 import {Artist} from './artist.model';
-import {ArtworkImageType, FolderType} from '../../model/jam-types';
+import {FolderType, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
 import {ArtistStore, SearchQueryArtist} from './artist.store';
 import {Folder} from '../folder/folder.model';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
-import {cVariousArtist} from '../../engine/scan/scan.service';
 
 export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 
@@ -36,8 +35,8 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 	}
 
 	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
-		if (artist.name === cVariousArtist) {
-			return this.folderService.imageModule.paint(cVariousArtist, size, format);
+		if (artist.name === MusicBrainz_VARIOUS_ARTISTS_NAME) {
+			return this.folderService.imageModule.paint(MusicBrainz_VARIOUS_ARTISTS_NAME, size, format);
 		}
 		const folder = await this.getArtistFolder(artist);
 		if (folder) {
