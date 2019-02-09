@@ -29,7 +29,7 @@ export interface TestDB {
 export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup: () => Promise<void>, tests: () => void) {
 	const dbs: Array<TestDB> = [];
 	dbs.push(new TestNeDB());
-	// dbs.push(new TestElastic());
+	dbs.push(new TestElastic());
 	for (const testDB of dbs) {
 		describe('with ' + testDB.name, () => {
 			before(function(done) {
