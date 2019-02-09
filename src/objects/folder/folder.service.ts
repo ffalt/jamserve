@@ -6,7 +6,7 @@ import path from 'path';
 import fse from 'fs-extra';
 import Logger from '../../utils/logger';
 import {IApiBinaryResult} from '../../typings';
-import {ArtworkImageType, FolderTypeImageName} from '../../model/jam-types';
+import {ArtworkImageType, FolderType, FolderTypeImageName} from '../../model/jam-types';
 import {ImageModule} from '../../modules/image/image.module';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
@@ -94,12 +94,18 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		return await this.imageModule.get(artwork.id, path.join(folder.path, artwork.name), size, format);
 	}
 
-	async setFrontArtworkImage(folder: Folder): Promise<void> {
+	async setCurrentArtworkImage(folder: Folder): Promise<void> {
 		if (folder.tag.image) {
 			return;
 		}
 		if (folder.tag.artworks) {
-			const artwork = folder.tag.artworks.find(a => a.types.indexOf(ArtworkImageType.front) >= 0);
+			let artwork: Artwork | undefined;
+			if (folder.tag.type === FolderType.artist) {
+				artwork = folder.tag.artworks.find(a => a.types.indexOf(ArtworkImageType.artist) >= 0);
+			}
+			if (!artwork) {
+				artwork = folder.tag.artworks.find(a => a.types.indexOf(ArtworkImageType.front) >= 0);
+			}
 			if (artwork) {
 				folder.tag.image = artwork.name;
 				await this.folderStore.replace(folder);
@@ -123,7 +129,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		await fileDeleteIfExists(destName);
 		console.log(clearID);
 		await this.imageModule.clearImageCacheByIDs(clearID);
-		await this.setFrontArtworkImage(folder);
+		await this.setCurrentArtworkImage(folder);
 	}
 
 	async downloadFolderArtwork(folder: Folder, imageUrl: string, types: Array<ArtworkImageType>): Promise<Artwork> {
@@ -143,7 +149,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		folder.tag.artworks = folder.tag.artworks || [];
 		folder.tag.artworks.push(artwork);
 		await this.folderStore.replace(folder);
-		await this.setFrontArtworkImage(folder);
+		await this.setCurrentArtworkImage(folder);
 		return artwork;
 	}
 
