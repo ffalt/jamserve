@@ -49,14 +49,7 @@ const type_Artwork = {
 	properties: {
 		id: type_key,
 		name: type_string,
-		types: type_key,
-		stat: {
-			properties: {
-				created: type_int,
-				modified: type_int,
-				size: type_int
-			}
-		}
+		types: type_key
 	}
 };
 
@@ -87,12 +80,6 @@ const type_Folder = {
 		rootID: type_key,
 		path: type_key,
 		parentID: type_key,
-		stat: {
-			properties: {
-				created: type_int,
-				modified: type_int
-			}
-		},
 		tag: type_FolderTag,
 		id: type_key,
 		type: type_int
@@ -161,13 +148,6 @@ const type_Track = {
 		parentID: type_key,
 		name: type_string,
 		path: type_key,
-		stat: {
-			properties: {
-				created: type_int,
-				modified: type_int,
-				size: type_int
-			}
-		},
 		albumID: type_key,
 		artistID: type_key,
 		tag: type_TrackTag,
@@ -311,13 +291,6 @@ const type_Episode = {
 		author: type_key,
 		chapters: type_PodcastEpisodeChapter,
 		enclosures: type_PodcastEpisodeEnclosure,
-		stat: {
-			properties: {
-				created: type_int,
-				modified: type_int,
-				size: type_int
-			}
-		},
 		tag: type_TrackTag,
 		media: type_TrackMedia,
 		id: type_key,
@@ -338,6 +311,24 @@ const type_Bookmark = {
 	}
 };
 
+const type_MetaData = {
+	properties: {
+		name: type_string,
+		dataType: type_int,
+		id: type_key,
+		type: type_int
+	}
+};
+
+const type_Settings = {
+	properties: {
+		section: type_key,
+		version: type_key,
+		id: type_key,
+		type: type_int
+	}
+};
+
 export const mapping: any = {
 	root: type_Root,
 	user: type_User,
@@ -351,5 +342,7 @@ export const mapping: any = {
 	playlist: type_Playlist,
 	podcast: type_Podcast,
 	episode: type_Episode,
-	bookmark: type_Bookmark
+	bookmark: type_Bookmark,
+	metadata: type_MetaData,
+	settings: type_Settings
 };

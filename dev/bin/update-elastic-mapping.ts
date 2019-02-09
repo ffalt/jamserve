@@ -81,7 +81,10 @@ async function run(): Promise<void> {
 		const properties: any = {};
 		Object.keys(props).forEach(key => {
 			const prop = props[key];
-			properties[key] = transformProperty(key, symbol, prop, definitions, paths.concat([key]));
+			const val = transformProperty(key, symbol, prop, definitions, paths.concat([key]));
+			if (val && val.length > 0) {
+				properties[key] = val;
+			}
 		});
 		if (symbol.length > 0 && done.indexOf(symbol) < 0) {
 			done.push(symbol);
@@ -93,7 +96,7 @@ async function run(): Promise<void> {
 		}
 	}
 
-	const symbols = ['Root', 'User', 'Folder', 'PlayQueue', 'Track', 'Album', 'Artist', 'Radio', 'State', 'Playlist', 'Podcast', 'Episode', 'Bookmark'];
+	const symbols = ['Root', 'User', 'Folder', 'PlayQueue', 'Track', 'Album', 'Artist', 'Radio', 'State', 'Playlist', 'Podcast', 'Episode', 'Bookmark', 'MetaData', 'Settings'];
 	const result: any = {};
 	strings.push('const type_bool = {type: \'boolean\'};\n');
 	strings.push('const type_int = {type: \'long\'};\n');
