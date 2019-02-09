@@ -912,10 +912,12 @@ export class ScanService {
 	}
 
 	private updateArtist(artist: Artist, trackInfo: MergeTrackInfo) {
-		artist.slug = getArtistSlug(trackInfo);
-		artist.name = getArtistName(trackInfo);
-		artist.nameSort = getArtistNameSort(trackInfo);
-		artist.mbArtistID = getArtistMBArtistID(trackInfo);
+		if (artist.name !== cVariousArtist) {
+			artist.slug = getArtistSlug(trackInfo);
+			artist.name = getArtistName(trackInfo);
+			artist.nameSort = getArtistNameSort(trackInfo);
+			artist.mbArtistID = getArtistMBArtistID(trackInfo);
+		}
 	}
 
 	private async buildArtist(trackInfo: MergeTrackInfo): Promise<Artist> {
@@ -1228,7 +1230,7 @@ export class ScanService {
 			}
 		}
 
-		changes.removedArtists = changes.updateArtists.filter(a => a.trackIDs.length === 0);
+		changes.removedArtists = changes.updateArtists.filter(a => a.trackIDs.length === 0 || a.rootIDs.length === 0);
 		changes.updateArtists = changes.updateArtists.filter(a => changes.removedArtists.indexOf(a) < 0 && changes.newArtists.indexOf(a) < 0);
 		changes.removedAlbums = changes.updateAlbums.filter(a => a.trackIDs.length === 0);
 		changes.updateAlbums = changes.updateAlbums.filter(a => changes.removedAlbums.indexOf(a) < 0 && changes.newAlbums.indexOf(a) < 0);
@@ -1238,6 +1240,17 @@ export class ScanService {
 			const rootIDs: Array<string> = [];
 			let duration = 0;
 			const trackInfos = flatTracks.filter(t => t.track && album.trackIDs.indexOf(t.track.id) >= 0);
+			const trackIDsFromOtherRoots = album.trackIDs.filter(id => !trackInfos.find(t => t.track.id === id));
+			const tracksFromOtherRoots = await this.store.trackStore.byIds(trackIDsFromOtherRoots);
+			if (trackInfos.length + tracksFromOtherRoots.length !== album.trackIDs.length) {
+				log.warn('Not all album tracks are scanned', album.name);
+			}
+			for (const track of tracksFromOtherRoots) {
+				if (rootIDs.indexOf(track.rootID) < 0) {
+					rootIDs.push(track.rootID);
+				}
+				duration += (track.media.duration || 0);
+			}
 			for (const trackInfo of trackInfos) {
 				if (trackInfo.track) {
 					if (rootIDs.indexOf(trackInfo.track.rootID) < 0) {
@@ -1255,6 +1268,16 @@ export class ScanService {
 			const rootIDs: Array<string> = [];
 			const albumTypes: Array<AlbumType> = [];
 			const trackInfos = flatTracks.filter(t => t.track && artist.trackIDs.indexOf(t.track.id) >= 0);
+			const trackIDsFromOtherRoots = artist.trackIDs.filter(id => !trackInfos.find(t => t.track.id === id));
+			const tracksFromOtherRoots = await this.store.trackStore.byIds(trackIDsFromOtherRoots);
+			if (trackInfos.length + tracksFromOtherRoots.length !== artist.trackIDs.length) {
+				log.warn('Not all artist tracks are scanned', artist.name);
+			}
+			for (const track of tracksFromOtherRoots) {
+				if (rootIDs.indexOf(track.rootID) < 0) {
+					rootIDs.push(track.rootID);
+				}
+			}
 			for (const trackInfo of trackInfos) {
 				if (trackInfo.track) {
 					if (rootIDs.indexOf(trackInfo.track.rootID) < 0) {

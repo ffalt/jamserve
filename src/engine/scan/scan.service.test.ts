@@ -72,7 +72,6 @@ describe('ScanService', () => {
 			await writeMockRoot(mockRoot);
 		},
 		() => {
-
 			it('should scan', async () => {
 				const changes = await scanService.run(mockRoot.path, mockRoot.id, RootScanStrategy.auto, false);
 				expect(changes.newTracks.length).to.equal(mockRoot.expected.tracks, 'New Track count doesnt match');
@@ -89,6 +88,7 @@ describe('ScanService', () => {
 				expect(changes.removedAlbums.length).to.equal(0, 'Removed Album count doesnt match');
 				await validate(mockRoot, store);
 			});
+
 			it('should rescan', async () => {
 				const changes = await scanService.run(mockRoot.path, mockRoot.id, RootScanStrategy.auto, false);
 				expect(changes.newTracks.length).to.equal(0, 'New Track count doesnt match');
@@ -127,6 +127,7 @@ describe('ScanService', () => {
 				expect(await store.albumStore.count()).to.equal(0);
 				expect(await store.artistStore.count()).to.equal(0);
 			});
+
 			it('should scan added in the root', async () => {
 				await writeMockRoot(mockRoot);
 				const changes = await scanService.run(mockRoot.path, mockRoot.id, RootScanStrategy.auto, false);
@@ -172,13 +173,13 @@ describe('ScanService', () => {
 				expect(changes.newArtists.length).to.equal(0, 'New Artist count doesnt match');
 				expect(changes.newAlbums.length).to.equal(0, 'New Album count doesnt match');
 				expect(changes.updateTracks.length).to.equal(0, 'Update Track count doesnt match');
-				expect(changes.removedTracks.length).to.equal(mockRoot.expected.tracks, 'Removed Tracks count doesnt match');
+				expect(changes.removedTracks.length).to.equal(mockRoot2.expected.tracks, 'Removed Tracks count doesnt match');
 				expect(changes.updateFolders.length).to.equal(1, 'Update Folder count doesnt match');
-				expect(changes.removedFolders.length).to.equal(mockRoot.expected.folders - 1, 'Removed Folders count doesnt match');
+				expect(changes.removedFolders.length).to.equal(mockRoot2.expected.folders - 1, 'Removed Folders count doesnt match');
 				expect(changes.removedArtists.length).to.equal(0, 'Removed Artists count doesnt match');
 				expect(changes.removedAlbums.length).to.equal(0, 'Removed Album count doesnt match');
-				expect(changes.updateAlbums.length).to.equal(mockRoot.expected.albums, 'Update Album count doesnt match');
-				expect(changes.updateArtists.length).to.equal(mockRoot.expected.artists, 'Update Artist count doesnt match');
+				expect(changes.updateAlbums.length).to.equal(mockRoot2.expected.albums, 'Update Album count doesnt match');
+				expect(changes.updateArtists.length).to.equal(mockRoot2.expected.artists, 'Update Artist count doesnt match');
 			});
 			it('should combine close enough artist names', async () => {
 				const dir2 = tmp.dirSync();

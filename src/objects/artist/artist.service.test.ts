@@ -33,7 +33,7 @@ describe('ArtistService', () => {
 					}
 				}
 			});
-			it('should return an album image', async () => {
+			it('should return an artist image', async () => {
 				const artist = await artistService.artistStore.random();
 				should().exist(artist, 'Wrong Test Setup');
 				if (!artist) {
@@ -50,7 +50,7 @@ describe('ArtistService', () => {
 					const img = await artistService.getArtistImage(artist);
 					should().exist(img, 'Image not found');
 					if (img) {
-						should().exist(img.file, 'Image response not valid');
+						should().exist(img.file || img.buffer, 'Image response not valid');
 						if (img.file) {
 							expect(img.file.filename).to.be.equal(filename);
 						}
