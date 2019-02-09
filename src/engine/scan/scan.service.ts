@@ -975,7 +975,7 @@ export class ScanService {
 				slug: slugify(MusicBrainz_VARIOUS_ARTISTS_NAME),
 				name: MusicBrainz_VARIOUS_ARTISTS_NAME,
 				mbArtistID: MusicBrainz_VARIOUS_ARTISTS_ID,
-				albumTypes: [AlbumType.compilation, AlbumType.album, AlbumType.audiobook],
+				albumTypes: [AlbumType.compilation],
 				albumIDs: [],
 				trackIDs: [],
 				created: Date.now()
