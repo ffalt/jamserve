@@ -5,7 +5,7 @@ import {WaveformService} from '../waveform/waveform.service';
 import {Track, TrackTag} from '../../objects/track/track.model';
 import {ImageModule} from '../../modules/image/image.module';
 import {deepCompare} from '../../utils/deep-compare';
-import {AlbumType, ArtworkImageType, FileTyp, FolderType, FolderTypesAlbum, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
+import {AlbumType, ArtworkImageType, FileTyp, FolderType, FolderTypesAlbum, MusicBrainz_VARIOUS_ARTISTS_ID, MusicBrainz_VARIOUS_ARTISTS_NAME, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
 import path from 'path';
 import fse from 'fs-extra';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
@@ -147,7 +147,6 @@ export function logChanges(changes: MergeChanges) {
 	logChange('Removed Albums', changes.removedAlbums);
 }
 
-export const cVariousArtist = 'Various Artists';
 export const cUnknownArtist = '[Unknown Artist]';
 export const cUnknownAlbum = '[Unknown Album]';
 
@@ -257,7 +256,7 @@ function trackHasChanged(file: MatchFile): boolean {
 }
 
 function getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
-	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === cVariousArtist) {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
 		return;
 	} else {
 		return trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID;
@@ -265,7 +264,7 @@ function getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
 }
 
 function getArtistNameSort(trackInfo: MergeTrackInfo): string | undefined {
-	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === cVariousArtist) {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
 		return;
 	} else {
 		return trackInfo.track.tag.artistSort;
@@ -419,7 +418,7 @@ export class ScanService {
 
 		// heuristically most used values
 		const album = getMostUsedTagValue<string>(albums, extractAlbumName(path.basename(dir.name)));
-		const artist = getMostUsedTagValue<string>(artists, cVariousArtist);
+		const artist = getMostUsedTagValue<string>(artists, MusicBrainz_VARIOUS_ARTISTS_NAME);
 		let artistSort = getMostUsedTagValue<string>(artistSorts);
 		const genre = getMostUsedTagValue<string>(genres);
 		const mbAlbumID = getMostUsedTagValue<string>(mbAlbumIDs, '');
@@ -429,7 +428,7 @@ export class ScanService {
 		const year = getMostUsedTagValue<number>(years);
 
 		// determinate album type
-		const hasMultipleArtists = artist === cVariousArtist;
+		const hasMultipleArtists = artist === MusicBrainz_VARIOUS_ARTISTS_NAME;
 		const hasMultipleAlbums = albums.length > 1;
 		if (hasMultipleArtists) {
 			artistSort = undefined;
@@ -912,7 +911,7 @@ export class ScanService {
 	}
 
 	private updateArtist(artist: Artist, trackInfo: MergeTrackInfo) {
-		if (artist.name !== cVariousArtist) {
+		if (artist.name !== MusicBrainz_VARIOUS_ARTISTS_NAME) {
 			artist.slug = getArtistSlug(trackInfo);
 			artist.name = getArtistName(trackInfo);
 			artist.nameSort = getArtistNameSort(trackInfo);
@@ -954,7 +953,7 @@ export class ScanService {
 	}
 
 	private async findCompilationArtist(changes: MergeChanges): Promise<Artist | undefined> {
-		const slug = slugify(cVariousArtist);
+		const slug = slugify(MusicBrainz_VARIOUS_ARTISTS_NAME);
 		let artist = await this.artistCache.find(a => a.slug === slug);
 		if (artist) {
 			return artist;
@@ -973,8 +972,9 @@ export class ScanService {
 				id: await this.store.artistStore.getNewId(),
 				type: DBObjectType.artist,
 				rootIDs: [],
-				slug: slugify(cVariousArtist),
-				name: cVariousArtist,
+				slug: slugify(MusicBrainz_VARIOUS_ARTISTS_NAME),
+				name: MusicBrainz_VARIOUS_ARTISTS_NAME,
+				mbArtistID: MusicBrainz_VARIOUS_ARTISTS_ID,
 				albumTypes: [AlbumType.compilation, AlbumType.album, AlbumType.audiobook],
 				albumIDs: [],
 				trackIDs: [],
@@ -1134,7 +1134,7 @@ export class ScanService {
 			}
 			trackInfo.track.artistID = artist.id;
 			let album: Album;
-			if (trackInfo.dir.folder.tag.artist === cVariousArtist) {
+			if (trackInfo.dir.folder.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
 				const compilationArtist = await this.findOrCreateCompilationArtist(changes);
 				if (compilationArtist !== artist) {
 					compilationArtist.trackIDs.push(trackInfo.track.id);
