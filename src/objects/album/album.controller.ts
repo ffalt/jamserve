@@ -34,9 +34,9 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 	}
 
 	sortAlbumTracks(a: Track, b: Track): number {
-		let res = (b.tag.disc || 0) - (a.tag.disc || 0);
+		let res = (a.tag.disc || 0) - (b.tag.disc || 0);
 		if (res === 0) {
-			res = (b.tag.track || 0) - (a.tag.track || 0);
+			res = (a.tag.track || 0) - (b.tag.track || 0);
 		}
 		return res;
 	}
