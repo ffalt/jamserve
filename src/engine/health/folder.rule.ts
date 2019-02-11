@@ -94,8 +94,13 @@ export class FolderAlbumImageRule extends FolderRule {
 	}
 
 	async run(folder: Folder): Promise<RuleResult | undefined> {
-		if ((FolderTypesAlbum.indexOf(folder.tag.type) >= 0) && (!folder.tag.image)) {
-			return {};
+		if (!folder.tag.image) {
+			if (folder.tag.type === FolderType.album) {
+				return {};
+			}
+			if (folder.tag.type === FolderType.multialbum && folder.tag.folderCount > 0) {
+				return {};
+			}
 		}
 	}
 
