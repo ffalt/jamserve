@@ -287,7 +287,7 @@ function getAlbumName(trackInfo: MergeTrackInfo): string {
 	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
 		return trackInfo.dir.folder.tag.album || cUnknownAlbum;
 	} else {
-		return trackInfo.track.tag.album || cUnknownAlbum;
+		return extractAlbumName(trackInfo.track.tag.album || cUnknownAlbum);
 	}
 }
 

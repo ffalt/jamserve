@@ -8,6 +8,7 @@ import mimeTypes from 'mime-types';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import fse from 'fs-extra';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
+import {AvatarGenerator} from './avatar-generator/avatar-generator';
 
 type JimpFont = any;
 
@@ -191,6 +192,15 @@ export class ImageModule {
 		await this.resizeImage(filename, filename + '.new', 64);
 		await fileDeleteIfExists(destination);
 		await fse.rename(filename + '.new', destination);
+	}
+
+	async generateAvatar(seed: string, destination: string): Promise<void> {
+		console.log(__dirname);
+		const avatarGenerator = new AvatarGenerator({
+			partsLocation: path.join(__dirname, 'static', 'avatar', 'parts')
+		});
+		const avatar = await avatarGenerator.generate(seed);
+		await fse.writeFile(destination, avatar);
 	}
 
 }

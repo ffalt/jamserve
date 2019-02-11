@@ -25,9 +25,23 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 	}
 
 	async getUserImage(user: User, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+		if (!user.avatar) {
+			await this.generateAvatar(user);
+		}
 		if (user.avatar) {
 			return this.imageModule.get(user.id, path.join(this.userAvatarPath, user.avatar), size, format);
 		}
+	}
+
+	async generateAvatar(user: User): Promise<void> {
+		const destFileName = 'avatar-' + user.id + '.png';
+		const destName = path.join(this.userAvatarPath, destFileName);
+		await fileDeleteIfExists(destName);
+		await this.imageModule.clearImageCacheByID(user.id);
+		await this.imageModule.generateAvatar(user.name, destName);
+		user.avatar = destFileName;
+		user.avatarLastChanged = Date.now();
+		await this.update(user);
 	}
 
 	async setUserImage(user: User, filename: string): Promise<void> {
