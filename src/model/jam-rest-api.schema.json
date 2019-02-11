@@ -9696,8 +9696,61 @@
 		},
 		"AcousticBrainz.HighLevel": {
 			"type": "object",
-			"additionalProperties": {
-				"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+			"properties": {
+				"danceability": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"gender": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"genre_dortmund": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"genre_electronic": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"genre_rosamerica": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"genre_tzanetakis": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"ismir04_rhythm": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_acoustic": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_aggressive": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_electronic": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_happy": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_party": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_relaxed": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_sad": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"moods_mirex": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"timbre": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"tonal_atonal": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"voice_instrumental": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				}
 			}
 		},
 		"AcousticBrainz.HighLevelSection": {
