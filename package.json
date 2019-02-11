@@ -51,6 +51,7 @@
     "commander": "^2.19.0",
     "common-password-checker": "^0.1.0",
     "cookie-parser": "^1.4.3",
+    "copy-webpack-plugin": "^4.6.0",
     "cors": "^2.8.5",
     "elasticsearch": "^15.4.1",
     "express": "^4.16.4",
