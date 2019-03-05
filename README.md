@@ -73,6 +73,10 @@ module.exports = {
 				 */
 				secure: false,
 				/*
+					If true, server trusts first reverse proxy like nginx
+				 */
+				proxy: false,
+				/*
 					Max Age for a valid session cookie (set 0 for no expiration)
 				 */
 				maxAge: {

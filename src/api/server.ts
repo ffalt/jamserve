@@ -28,6 +28,11 @@ export class Server {
 
 		app.use(helmet());
 
+
+		if (engine.config.server.session.cookie.proxy) {
+			app.enable('trust proxy'); // trust first proxy
+		}
+
 		function EngineMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction) {
 			(<EngineRequest>req).engine = engine;
 			next();

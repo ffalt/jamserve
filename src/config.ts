@@ -29,7 +29,8 @@ export interface ServerConfig {
 		secret: string;
 		cookie: {
 			name: string;
-			secure: boolean
+			secure: boolean;
+			proxy: boolean;
 			maxAge: {
 				value: number;
 				unit: string;

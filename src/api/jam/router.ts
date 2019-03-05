@@ -87,16 +87,13 @@ export function initJamRouter(engine: Engine): express.Router {
 
 	const router = express.Router();
 
-	// if (router.get('env') === 'production') {
-	// 	router.set('trust proxy', 1) // trust first proxy
-	// 	sess.cookie.secure = true // serve secure cookies
-	// }
 	const maxAge = getMaxAge(engine.config.server.session.cookie.maxAge);
 	router.use(session({
 		name: engine.config.server.session.cookie.name,
 		secret: engine.config.server.session.secret,
 		store: new SessionJSONFileStore(engine.config.getDataPath(['session', 'sessions.json'])),
 		resave: false,
+		proxy: engine.config.server.session.cookie.proxy,
 		saveUninitialized: false,
 		cookie: {
 			secure: engine.config.server.session.cookie.secure,
