@@ -1,25 +1,25 @@
 import {getBinPath} from './which';
 import {spawn} from 'child_process';
 
-export async function spawnToolStream(binName: string, envName: string, args: Array<string>, onData: (buffer: Buffer) => void): Promise<string> {
-	const bin = await getBinPath(binName, envName);
-	if (!bin || bin.length === 0) {
-		return Promise.reject(Error('Tool binary not found ' + binName));
-	}
-	return new Promise<string>((resolve, reject) => {
-		const child = spawn(bin, args);
-		let stderr = '';
-		child.stdout.on('data', (data: Buffer) => {
-			onData(data);
-		});
-		child.stderr.on('data', (data: Buffer) => {
-			stderr += data.toString();
-		});
-		child.on('close', (code: number) => {
-			resolve(stderr);
-		});
-	});
-}
+// export async function spawnToolStream(binName: string, envName: string, args: Array<string>, onData: (buffer: Buffer) => void): Promise<string> {
+// 	const bin = await getBinPath(binName, envName);
+// 	if (!bin || bin.length === 0) {
+// 		return Promise.reject(Error('Tool binary not found ' + binName));
+// 	}
+// 	return new Promise<string>((resolve, reject) => {
+// 		const child = spawn(bin, args);
+// 		let stderr = '';
+// 		child.stdout.on('data', (data: Buffer) => {
+// 			onData(data);
+// 		});
+// 		child.stderr.on('data', (data: Buffer) => {
+// 			stderr += data.toString();
+// 		});
+// 		child.on('close', (code: number) => {
+// 			resolve(stderr);
+// 		});
+// 	});
+// }
 
 export async function spawnTool(binName: string, envName: string, args: Array<string>): Promise<string> {
 	const bin = await getBinPath(binName, envName);
@@ -28,6 +28,9 @@ export async function spawnTool(binName: string, envName: string, args: Array<st
 	}
 	return new Promise<string>((resolve, reject) => {
 		const child = spawn(bin, args);
+		if (!child.stdout || !child.stderr) {
+			return reject(Error('Unsupported std out'));
+		}
 		let result = '';
 		let error = '';
 		child.stdout.on('data', (data: Buffer) => {
