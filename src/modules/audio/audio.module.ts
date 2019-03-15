@@ -237,10 +237,10 @@ export class AudioModule {
 		}
 		this.isSaving[filename] = true;
 		try {
-			const exists = await fse.pathExists(filename + '.bak.org');
-			if (!exists) {
-				await fse.copy(filename, filename + '.bak.org');
-			}
+			// const exists = await fse.pathExists(filename + '.bak.org');
+			// if (!exists) {
+			// 	await fse.copy(filename, filename + '.bak.org');
+			// }
 			const frames: Array<IID3V2.Frame> = [];
 			Object.keys(tag.frames).map(id => {
 				const f = tag.frames[id] || [];
