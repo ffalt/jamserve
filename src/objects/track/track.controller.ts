@@ -43,6 +43,12 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	defaultSort(tracks: Array<Track>): Array<Track> {
 		return tracks.sort((a, b) => {
+				if (a.tag.disc !== undefined && b.tag.disc !== undefined) {
+					const res = a.tag.disc - b.tag.disc;
+					if (res !== 0) {
+						return res;
+					}
+				}
 				if (a.tag.track !== undefined && b.tag.track !== undefined) {
 					const res = a.tag.track - b.tag.track;
 					if (res !== 0) {
