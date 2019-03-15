@@ -377,6 +377,14 @@ export class ScanService {
 			}
 		}
 
+		function statTrackCount(name: string, trackTotal?: number, disc?: number) {
+			if (trackTotal !== undefined) {
+				const slug = (disc !== undefined ? disc : 1).toString() + '-' + trackTotal.toString();
+				stats[name][slug] = stats[name][slug] || {count: 0, val: trackTotal};
+				stats[name][slug].count += 1;
+			}
+		}
+
 		for (const file of dir.files) {
 			if (file.type === FileTyp.AUDIO) {
 				trackCount++;
@@ -387,13 +395,18 @@ export class ScanService {
 					statSlugValue('genre', tracktag.genre);
 					statSlugValue('album', tracktag.album ? extractAlbumName(tracktag.album) : undefined);
 					statNumber('year', tracktag.year);
-					statNumber('albumTrackCount', tracktag.trackTotal);
+					statTrackCount('albumTrackCount', tracktag.trackTotal, tracktag.disc);
 					statSlugValue('mbAlbumType', tracktag.mbAlbumType);
 					statID('mbArtistID', tracktag.mbArtistID);
 					statID('mbAlbumID', tracktag.mbAlbumID);
 					statID('mbReleaseGroupID', tracktag.mbReleaseGroupID);
 				}
 			}
+		}
+		const albumTrackCounts = convert2Numlist(stats.albumTrackCounts);
+		let albumTrackCount = 0;
+		for (const atcount of albumTrackCounts) {
+			albumTrackCount += atcount.val;
 		}
 		for (const sub of dir.directories) {
 			if (sub.folder && sub.tag && (sub.tag.type !== FolderType.extras)) {
@@ -403,11 +416,13 @@ export class ScanService {
 				statSlugValue('album', subtag.album ? extractAlbumName(subtag.album) : undefined);
 				statSlugValue('genre', subtag.genre);
 				statNumber('year', subtag.year);
-				statNumber('albumTrackCount', subtag.albumTrackCount);
 				statSlugValue('mbAlbumType', subtag.mbAlbumType);
 				statID('mbArtistID', subtag.mbArtistID);
 				statID('mbAlbumID', subtag.mbAlbumID);
 				statID('mbReleaseGroupID', subtag.mbReleaseGroupID);
+				if (subtag.albumTrackCount !== undefined) {
+					albumTrackCount += subtag.albumTrackCount;
+				}
 			}
 		}
 
@@ -417,7 +432,6 @@ export class ScanService {
 		const albums = convert2list(stats.album);
 		const genres = convert2list(stats.genre);
 		const years = convert2Numlist(stats.year);
-		const albumTrackCounts = convert2Numlist(stats.albumTrackCount);
 		const mbArtistIDs = convert2list(stats.mbArtistID);
 		const mbAlbumIDs = convert2list(stats.mbAlbumID);
 		const mbReleaseGroupIDs = convert2list(stats.mbReleaseGroupID);
@@ -433,10 +447,6 @@ export class ScanService {
 		const mbAlbumType = getMostUsedTagValue<string>(mbAlbumTypes, '');
 		const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs, '');
 		const year = getMostUsedTagValue<number>(years);
-		let albumTrackCount = 0;
-		for (const atcount of albumTrackCounts) {
-			albumTrackCount += atcount.count;
-		}
 		// determinate album type
 		const hasMultipleArtists = artist === MusicBrainz_VARIOUS_ARTISTS_NAME;
 		const hasMultipleAlbums = albums.length > 1;
