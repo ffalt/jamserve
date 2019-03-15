@@ -108,7 +108,15 @@ export class IoService {
 	}
 
 	getRootStatus(id: string): RootStatus {
-		return this.rootstatus[id];
+		let status = this.rootstatus[id];
+		if (!status) {
+			status = {lastScan: Date.now()};
+		}
+		if (!status.scanning) {
+			const cmd = this.queue.find(c => c.root && c.root.id === id);
+			status.scanning = !!cmd;
+		}
+		return status;
 	}
 
 	private async runRequest(cmd: ScanRequest): Promise<void> {
@@ -186,7 +194,7 @@ export class IoService {
 				delayedCmd = {request: new ScanRequestRefreshTracks(root, this.scanService, [track.id]), timeout: undefined};
 				this.delayedTrackRefresh[track.rootID] = delayedCmd;
 			}
-			const command = <ScanRequestRefreshTracks>this.queue.find(cmd => cmd.mode === ScanRequestMode.refreshTracks && cmd.root.id === root.id);
+			const command = <ScanRequestRefreshTracks>this.findRequest(root, ScanRequestMode.refreshTracks);
 			if (command) {
 				if (command.trackIDs.indexOf(track.id) < 0) {
 					command.trackIDs.push(track.id);
