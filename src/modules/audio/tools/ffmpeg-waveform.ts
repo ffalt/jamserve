@@ -80,11 +80,11 @@ class WaveformStream extends Transform {
 		while (data && data.length > 0) {
 			i = 0;
 			if (oddByte != null) {
-				value = ((data.readInt8(0, true) << 8) | oddByte);
+				value = ((data.readInt8(0) << 8) | oddByte);
 				oddByte = null;
 				i = 1;
 			} else {
-				value = data.readInt16LE(0, true);
+				value = data.readInt16LE(0);
 				i = 2;
 			}
 			this.readResults(value, i, data);
@@ -107,7 +107,7 @@ class WaveformStream extends Transform {
 			if (pos >= dataLen) {
 				break;
 			}
-			value = data.readInt16LE(pos, true);
+			value = data.readInt16LE(pos);
 			pos += 2;
 		}
 	}
