@@ -404,8 +404,8 @@ export class ScanService {
 			}
 		}
 		let albumTrackCount = 0;
-		if (stats.albumTrackCounts) {
-			const albumTrackCounts = convert2Numlist(stats.albumTrackCounts);
+		if (stats.albumTrackCount) {
+			const albumTrackCounts = convert2Numlist(stats.albumTrackCount);
 			for (const atcount of albumTrackCounts) {
 				albumTrackCount += atcount.val;
 			}
@@ -422,9 +422,6 @@ export class ScanService {
 				statID('mbArtistID', subtag.mbArtistID);
 				statID('mbAlbumID', subtag.mbAlbumID);
 				statID('mbReleaseGroupID', subtag.mbReleaseGroupID);
-				if (subtag.albumTrackCount !== undefined) {
-					albumTrackCount += subtag.albumTrackCount;
-				}
 			}
 		}
 
