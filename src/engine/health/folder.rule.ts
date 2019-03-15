@@ -35,6 +35,9 @@ export class FolderAlbumTagsRule extends FolderRule {
 			if (!folder.tag.genre) {
 				missing.push('genre');
 			}
+			if (!folder.tag.albumTrackCount) {
+				missing.push('album total track count');
+			}
 			if (!folder.tag.mbAlbumID) {
 				missing.push('musicbrainz album id');
 			} else {
@@ -45,6 +48,23 @@ export class FolderAlbumTagsRule extends FolderRule {
 			if (missing.length > 0) {
 				return {details: missing.join(',')};
 			}
+		}
+	}
+
+}
+
+export class FolderAlbumCompleteRule extends FolderRule {
+
+	constructor() {
+		super('folder.album.tracks.complete', 'Album folder seems to be incomplete');
+	}
+
+	async run(folder: Folder): Promise<RuleResult | undefined> {
+		if (
+			(folder.tag.type === FolderType.album)  &&
+			(folder.tag.albumTrackCount) && (folder.tag.albumTrackCount !== folder.tag.trackCount)
+		) {
+			return {details: 'should: ' + folder.tag.albumTrackCount + ', found: ' + folder.tag.trackCount};
 		}
 	}
 
@@ -151,6 +171,7 @@ export class FolderRulesChecker {
 	constructor() {
 		this.rules.push(new FolderAlbumTagsRule());
 		this.rules.push(new FolderAlbumNameRule());
+		this.rules.push(new FolderAlbumCompleteRule());
 		this.rules.push(new FolderAlbumImageRule());
 		this.rules.push(new FolderArtistImageRule());
 		this.rules.push(new FolderArtistNameRule());

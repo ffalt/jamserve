@@ -86,7 +86,6 @@ describe('FolderService', () => {
 					const artwork = await folderService.downloadFolderArtwork(folder, 'http://invaliddomain.invaliddomain.invaliddomain/image.png', [ArtworkImageType.front]);
 					expect(scope.isDone()).to.equal(true, 'no request has been made');
 					const filename = path.resolve(folder.path, folder.tag.image || 'invalid-not-existent');
-					console.log(filename);
 					expect(await fse.pathExists(filename)).to.equal(true, 'folder image file does not exist ' + filename);
 					await fse.unlink(filename);
 					const updatedFolder = await folderService.folderStore.byId(folder.id);

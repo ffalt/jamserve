@@ -18,6 +18,7 @@ import moment from 'moment';
 import {md5string} from '../../utils/md5';
 import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
+import {wait} from '../../utils/wait';
 
 const log = Logger('IO');
 
@@ -173,6 +174,7 @@ interface MetaStat {
 	year?: number;
 	hasMultipleArtists: boolean;
 	hasMultipleAlbums: boolean;
+	albumTrackCount?: number;
 	trackCount: number;
 	albumType: AlbumType;
 }
@@ -336,12 +338,14 @@ export class ScanService {
 			mbReleaseGroupID: { [key: string]: { count: number, val: string }; };
 			mbAlbumType: { [key: string]: { count: number, val: string }; };
 			year: { [key: string]: { count: number, val: string }; };
+			albumTrackCount: { [key: string]: { count: number, val: string }; };
 		} = {
 			artist: {},
 			artistSort: {},
 			album: {},
 			genre: {},
 			year: {},
+			albumTrackCount: {},
 			mbArtistID: {},
 			mbReleaseGroupID: {},
 			mbAlbumID: {},
@@ -383,6 +387,7 @@ export class ScanService {
 					statSlugValue('genre', tracktag.genre);
 					statSlugValue('album', tracktag.album ? extractAlbumName(tracktag.album) : undefined);
 					statNumber('year', tracktag.year);
+					statNumber('albumTrackCount', tracktag.trackTotal);
 					statSlugValue('mbAlbumType', tracktag.mbAlbumType);
 					statID('mbArtistID', tracktag.mbArtistID);
 					statID('mbAlbumID', tracktag.mbAlbumID);
@@ -398,6 +403,7 @@ export class ScanService {
 				statSlugValue('album', subtag.album ? extractAlbumName(subtag.album) : undefined);
 				statSlugValue('genre', subtag.genre);
 				statNumber('year', subtag.year);
+				statNumber('albumTrackCount', subtag.albumTrackCount);
 				statSlugValue('mbAlbumType', subtag.mbAlbumType);
 				statID('mbArtistID', subtag.mbArtistID);
 				statID('mbAlbumID', subtag.mbAlbumID);
@@ -411,6 +417,7 @@ export class ScanService {
 		const albums = convert2list(stats.album);
 		const genres = convert2list(stats.genre);
 		const years = convert2Numlist(stats.year);
+		const albumTrackCounts = convert2Numlist(stats.albumTrackCount);
 		const mbArtistIDs = convert2list(stats.mbArtistID);
 		const mbAlbumIDs = convert2list(stats.mbAlbumID);
 		const mbReleaseGroupIDs = convert2list(stats.mbReleaseGroupID);
@@ -426,7 +433,10 @@ export class ScanService {
 		const mbAlbumType = getMostUsedTagValue<string>(mbAlbumTypes, '');
 		const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs, '');
 		const year = getMostUsedTagValue<number>(years);
-
+		let albumTrackCount = 0;
+		for (const atcount of albumTrackCounts) {
+			albumTrackCount += atcount.count;
+		}
 		// determinate album type
 		const hasMultipleArtists = artist === MusicBrainz_VARIOUS_ARTISTS_NAME;
 		const hasMultipleAlbums = albums.length > 1;
@@ -480,7 +490,8 @@ export class ScanService {
 			mbReleaseGroupID,
 			mbAlbumType,
 			mbArtistID,
-			year
+			year,
+			albumTrackCount: albumTrackCount > 0 ? albumTrackCount : undefined
 		};
 	}
 
@@ -753,12 +764,13 @@ export class ScanService {
 			imageName = image.name;
 		}
 		return {
-			trackCount: dir.files.filter(t => t.type === FileTyp.AUDIO).length,
+			trackCount: metaStat.trackCount,
 			folderCount: dir.directories.length,
 			level: dir.level,
 			type: FolderType.unknown,
 			album: metaStat.album,
 			albumType: metaStat.albumType,
+			albumTrackCount: metaStat.albumTrackCount,
 			artist: metaStat.artist,
 			artistSort: metaStat.artistSort,
 			title: nameSplit.title,
@@ -1573,7 +1585,9 @@ export class ScanService {
 		const changes = this.emptyChanges();
 
 		const folders = await this.store.folderStore.search({rootID});
+		await wait(400);
 		const tracks = await this.store.trackStore.search({rootID});
+		await wait(400);
 
 		const folder = folders.find(f => f.tag.level === 0);
 		if (!folder) {
@@ -1581,6 +1595,7 @@ export class ScanService {
 		}
 
 		const match: MatchDir = await this.buildMatchDirFromDBData(folder, {folders, tracks});
+		await wait(400);
 
 		const changedDirs: Array<MatchDir> = [];
 		const changedFiles: Array<MatchFile> = [];
@@ -1616,6 +1631,7 @@ export class ScanService {
 				mtime: stat.mtime.valueOf()
 			};
 		}
+		await wait(400);
 
 		await this.merge(match, false, rootID, changes);
 		// printTree(match);

@@ -127,7 +127,6 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		await this.folderStore.replace(folder);
 		const destName = path.join(folder.path, artwork.name);
 		await fileDeleteIfExists(destName);
-		console.log(clearID);
 		await this.imageModule.clearImageCacheByIDs(clearID);
 		await this.setCurrentArtworkImage(folder);
 	}

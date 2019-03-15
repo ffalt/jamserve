@@ -33,6 +33,7 @@ export interface FolderTag {
 	artist?: string;
 	artistSort?: string;
 	albumType?: AlbumType;
+	albumTrackCount?: number;
 	title?: string;
 	year?: number;
 	mbAlbumID?: string;
