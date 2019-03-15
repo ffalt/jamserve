@@ -216,7 +216,9 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	async health(req: JamRequest<JamParameters.FolderHealth>): Promise<Array<Jam.Folder>> {
 		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
 		req.query.folderHealth = true;
-		const folders = await this.prepareList(list, req.query, req.user);
+		const folders = await this.prepareList(list, req.query, req.user, (a, b) => {
+			return a.path.localeCompare(b.path);
+		});
 		return folders.filter(f => f.health && f.health.length > 0);
 	}
 }
