@@ -403,10 +403,12 @@ export class ScanService {
 				}
 			}
 		}
-		const albumTrackCounts = convert2Numlist(stats.albumTrackCounts);
 		let albumTrackCount = 0;
-		for (const atcount of albumTrackCounts) {
-			albumTrackCount += atcount.val;
+		if (stats.albumTrackCounts) {
+			const albumTrackCounts = convert2Numlist(stats.albumTrackCounts);
+			for (const atcount of albumTrackCounts) {
+				albumTrackCount += atcount.val;
+			}
 		}
 		for (const sub of dir.directories) {
 			if (sub.folder && sub.tag && (sub.tag.type !== FolderType.extras)) {
