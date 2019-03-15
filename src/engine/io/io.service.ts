@@ -186,6 +186,13 @@ export class IoService {
 				delayedCmd = {request: new ScanRequestRefreshTracks(root, this.scanService, [track.id]), timeout: undefined};
 				this.delayedTrackRefresh[track.rootID] = delayedCmd;
 			}
+			const command = <ScanRequestRefreshTracks>this.queue.find(cmd => cmd.mode === ScanRequestMode.refreshTracks && cmd.root.id === root.id);
+			if (command) {
+				if (command.trackIDs.indexOf(track.id) < 0) {
+					command.trackIDs.push(track.id);
+				}
+				return;
+			}
 			delayedCmd.timeout = setTimeout(() => {
 				delete this.delayedTrackRefresh[track.rootID];
 				this.queue.push(delayedCmd.request);
