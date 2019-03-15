@@ -195,7 +195,6 @@ export class ImageModule {
 	}
 
 	async generateAvatar(seed: string, destination: string): Promise<void> {
-		console.log(__dirname);
 		const avatarGenerator = new AvatarGenerator({
 			partsLocation: path.join(__dirname, 'static', 'avatar', 'parts')
 		});
