@@ -127,6 +127,7 @@ export class IoService {
 		} catch (e) {
 			this.rootstatus[cmd.root.id] = {lastScan: Date.now(), error: e.toString()};
 		}
+		log.info('Refresh Indexes & Stats');
 		await this.indexService.buildIndexes();
 		await this.genreService.refresh();
 		await this.statsService.refresh();
