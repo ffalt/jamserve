@@ -422,6 +422,9 @@ export class ScanService {
 				statID('mbArtistID', subtag.mbArtistID);
 				statID('mbAlbumID', subtag.mbAlbumID);
 				statID('mbReleaseGroupID', subtag.mbReleaseGroupID);
+				if (subtag.albumTrackCount !== undefined) {
+					albumTrackCount += subtag.albumTrackCount;
+				}
 			}
 		}
 
@@ -721,9 +724,9 @@ export class ScanService {
 		}
 	}
 
-	private async merge(dir: MatchDir, forceMetaRefresh: boolean, rootID: string, changes: MergeChanges): Promise<void> {
+	private async merge(dir: MatchDir, forceMetaRefresh: boolean, rootID: string, rebuildTag: (dir: MatchDir) => boolean, changes: MergeChanges): Promise<void> {
 		await this.buildMerge(dir, changes);
-		await this.buildMergeTags(dir);
+		await this.buildMergeTags(dir, rebuildTag);
 		await this.mergeR(dir, changes);
 		await this.mergeMeta(dir, forceMetaRefresh, rootID, changes);
 	}
@@ -897,11 +900,11 @@ export class ScanService {
 		}
 	}
 
-	private async buildMergeTags(dir: MatchDir): Promise<void> {
+	private async buildMergeTags(dir: MatchDir, rebuildTag: (dir: MatchDir) => boolean): Promise<void> {
 		for (const sub of dir.directories) {
-			await this.buildMergeTags(sub);
+			await this.buildMergeTags(sub, rebuildTag);
 		}
-		if (dir.folder) {
+		if (dir.folder && rebuildTag(dir)) {
 			dir.metaStat = this.buildMetaStat(dir);
 			dir.tag = this.buildFolderTag(dir);
 		}
@@ -1480,7 +1483,7 @@ export class ScanService {
 
 		// third, merge
 		log.info('Merging:', dir);
-		await this.merge(match, forceMetaRefresh, rootID, changes);
+		await this.merge(match, forceMetaRefresh, rootID, () => true, changes);
 		// printTree(match);
 
 		// fourth, store
@@ -1550,24 +1553,20 @@ export class ScanService {
 		return match;
 	}
 
-	async buildMatchDirFromDBData(folder: Folder, data: { folders: Array<Folder>, tracks: Array<Track> }, parent?: MatchDir): Promise<MatchDir> {
+	async buildMatchDirDBData(folder: Folder): Promise<MatchDir> {
 		const match: MatchDir = {
 			name: folder.path,
 			level: folder.tag.level,
 			rootID: folder.rootID,
 			tag: folder.tag,
 			stat: {ctime: folder.stat.created, mtime: folder.stat.modified},
-			parent,
+			parent: undefined,
 			folder: folder,
 			files: [],
 			directories: [],
 			metaStat: undefined
 		};
-		const folders = data.folders.filter(f => f.parentID === folder.id);
-		for (const f of folders) {
-			match.directories.push(await this.buildMatchDirFromDBData(f, data, match));
-		}
-		const tracks = data.tracks.filter(t => t.parentID === folder.id);
+		const tracks = await this.store.trackStore.search({parentID: folder.id});
 		for (const t of tracks) {
 			match.files.push(await this.buildMatchFileFromDB(t));
 		}
@@ -1589,42 +1588,94 @@ export class ScanService {
 		return match;
 	}
 
+	async buildMatchDirParentsFromDBData(match: MatchDir, loadedMatches: Array<MatchDir>): Promise<MatchDir | undefined> {
+		const folder = match.folder;
+		if (!folder || !folder.parentID) {
+			return undefined;
+		}
+		let parentMatch = loadedMatches.find(m => !!m.folder && m.folder.id === folder.parentID);
+		if (parentMatch) {
+			return parentMatch;
+		}
+		const parent = await this.store.folderStore.byId(folder.parentID);
+		if (!parent) {
+			return undefined;
+		}
+		parentMatch = await this.buildMatchDirDBData(parent);
+		parentMatch.directories.push(match);
+		if (match.level > 1) {
+			const folders = await this.store.folderStore.search({parentID: parent.id});
+			for (const f of folders) {
+				if (f.id !== folder.id) {
+					let c = loadedMatches.find(m => !!m.folder && m.folder.id === f.id);
+					if (!c) {
+						c = await this.buildMatchDirDBData(f);
+						loadedMatches.push(c);
+					}
+					c.parent = parentMatch;
+					parentMatch.directories.push(c);
+				}
+			}
+		}
+		loadedMatches.push(parentMatch);
+		parentMatch.parent = await this.buildMatchDirParentsFromDBData(parentMatch, loadedMatches);
+		return parentMatch;
+	}
+
+	async loadChildsFromDBData(match: MatchDir, loadedMatches: Array<MatchDir>): Promise<void> {
+		const folder = match.folder;
+		if (!folder) {
+			return;
+		}
+		if (!match.directories || match.directories.length === 0) {
+			const folders = await this.store.folderStore.search({parentID: folder.id});
+			for (const f of folders) {
+				const c = await this.buildMatchDirDBData(f);
+				c.parent = match;
+				loadedMatches.push(match);
+				match.directories.push(c);
+				await this.loadChildsFromDBData(c, loadedMatches);
+			}
+		}
+	}
+
 	async refreshTracks(rootID: string, trackIDs: Array<string>, strategy: RootScanStrategy) {
 		this.strategy = strategy || RootScanStrategy.auto;
 		const changes = this.emptyChanges();
-
-		const folders = await this.store.folderStore.search({rootID});
-		await wait(400);
-		const tracks = await this.store.trackStore.search({rootID});
-		await wait(400);
-
-		const folder = folders.find(f => f.tag.level === 0);
-		if (!folder) {
-			return Promise.reject(Error('Root folder not found'));
+		const tracks = await this.store.trackStore.byIds(trackIDs);
+		const folderIDs: Array<string> = [];
+		for (const track of tracks) {
+			if (folderIDs.indexOf(track.parentID) < 0) {
+				folderIDs.push(track.parentID);
+			}
 		}
-
-		const match: MatchDir = await this.buildMatchDirFromDBData(folder, {folders, tracks});
-		await wait(400);
-
+		const folders = await this.store.folderStore.byIds(folderIDs);
+		const loadedMatches: Array<MatchDir> = [];
 		const changedDirs: Array<MatchDir> = [];
 		const changedFiles: Array<MatchFile> = [];
-
-		function collectR(dir: MatchDir) {
-			for (const file of dir.files) {
+		for (const folder of folders) {
+			let match = loadedMatches.find(m => !!m.folder && m.folder.id === folder.id);
+			if (!match) {
+				match = await this.buildMatchDirDBData(folder);
+				loadedMatches.push(match);
+			}
+			match.parent = await this.buildMatchDirParentsFromDBData(match, loadedMatches);
+			await this.loadChildsFromDBData(match, loadedMatches);
+			for (const file of match.files) {
 				if (file.track && trackIDs.indexOf(file.track.id) >= 0) {
 					changedFiles.push(file);
-					if (changedDirs.indexOf(dir) < 0) {
-						changedDirs.push(dir);
-					}
 				}
 			}
-			for (const sub of dir.directories) {
-				collectR(sub);
+			loadedMatches.push(match);
+			changedDirs.push(match);
+			let p = match.parent;
+			while (p) {
+				if (p.level > 0 && changedDirs.indexOf(p) < 0) {
+					changedDirs.push(p);
+				}
+				p = p.parent;
 			}
 		}
-
-		collectR(match);
-
 		for (const file of changedFiles) {
 			const stat = await fse.stat(file.name);
 			file.stat = {
@@ -1640,15 +1691,17 @@ export class ScanService {
 				mtime: stat.mtime.valueOf()
 			};
 		}
-		await wait(400);
-
-		await this.merge(match, false, rootID, changes);
-		// printTree(match);
-		await this.storeChanges(changes);
-		await this.clean(changes);
+		const rootMatch = loadedMatches.find(m => m.level === 0);
+		if (rootMatch) {
+			printTree(rootMatch);
+			await this.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+			await this.storeChanges(changes);
+			await this.clean(changes);
+		} else {
+			log.error('rootMatch not found');
+		}
 		changes.end = Date.now();
 		return changes;
-
 	}
 
 	public setSettings(settings: Jam.AdminSettingsLibrary) {
