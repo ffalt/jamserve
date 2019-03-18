@@ -1595,6 +1595,10 @@ export class ScanService {
 		}
 		let parentMatch = loadedMatches.find(m => !!m.folder && m.folder.id === folder.parentID);
 		if (parentMatch) {
+			if (parentMatch.directories.indexOf(match) < 0) {
+				parentMatch.directories.push(match);
+			}
+			match.parent = parentMatch;
 			return parentMatch;
 		}
 		const parent = await this.store.folderStore.byId(folder.parentID);
