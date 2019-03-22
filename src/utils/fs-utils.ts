@@ -43,7 +43,7 @@ export function replaceFolderSystemChars(s: string, replace: string): string {
 	 */
 	return s.toString()
 		.replace(/:/g, ' -')
-		.replace(/[|\*\?\/!\\<>]/g, replace);
+		.replace(/[|\*\?\/!\\<>"]/g, replace);
 }
 
 export function ensureTrailingPathSeparator(s: string): string {
