@@ -168,11 +168,11 @@ export const enum TrackTagFormatType {
 	id3v22 = 'id3v22',
 	id3v23 = 'id3v23',
 	id3v24 = 'id3v24',
-	id3v1 = 'id3v1'
+	id3v1 = 'id3v1',
+	vorbis = 'vorbis'
 }
 
-export const TrackTagID3v2FormatTypes = [TrackTagFormatType.id3v20, TrackTagFormatType.id3v21, TrackTagFormatType.id3v22, TrackTagFormatType.id3v23, TrackTagFormatType.id3v24];
-
+export const TrackTagRawFormatTypes = [TrackTagFormatType.id3v20, TrackTagFormatType.id3v21, TrackTagFormatType.id3v22, TrackTagFormatType.id3v23, TrackTagFormatType.id3v24, TrackTagFormatType.vorbis];
 
 export const enum MusicBrainzAlbumPrimaryType {
 	album = 'Album',

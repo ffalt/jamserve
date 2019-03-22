@@ -23,6 +23,7 @@ import {TrackService} from './track.service';
 import {FolderService} from '../folder/folder.service';
 import {AudioFormatType} from '../../model/jam-types';
 import {ID3v2FrameValues} from '../../model/id3v2-frame-values';
+import {NotFoundError} from '../../api/jam/error';
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
@@ -62,8 +63,8 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
 		const result = formatTrack(track, includes);
-		if (includes.trackID3) {
-			result.tagID3 = await this.getID3(track);
+		if (includes.trackRawTag) {
+			result.tagRaw = await this.getRawTag(track);
 		}
 		if (includes.trackState) {
 			const state = await this.stateService.findOrCreate(track.id, user.id, DBObjectType.track);
@@ -101,50 +102,56 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	// more track api
 
-	async getID3(track: Track): Promise<Jam.ID3Tag | undefined> {
+	private async getDefaultRawTag(track: Track): Promise<Jam.RawTag | undefined> {
+		const frames: ID3v2FrameValues.Frames = {};
+		if (track.tag.album) {
+			frames['TALB'] = [{text: track.tag.album}];
+		}
+		if (track.tag.artist) {
+			frames['TPE1'] = [{text: track.tag.artist}];
+		}
+		if (track.tag.title) {
+			frames['TIT2'] = [{text: track.tag.title}];
+		}
+		if (track.tag.year) {
+			frames['TDRC'] = [{text: track.tag.year.toString()}];
+		}
+		if (track.tag.track) {
+			frames['TRCK'] = [{text: track.tag.track.toString()}];
+		}
+		if (track.tag.genre) {
+			frames['TCON'] = [{text: track.tag.genre}];
+		}
+		return {version: 4, frames};
+	}
+
+	private async getRawTag(track: Track): Promise<Jam.RawTag | undefined> {
 		if (track.media.format === AudioFormatType.mp3) {
 			try {
 				return await this.audioModule.readID3v2(path.join(track.path, track.name));
 			} catch (e) {
-				const frames: ID3v2FrameValues.Frames = {};
-				if (track.tag.album) {
-					frames['TALB'] = [{text: track.tag.album}];
-				}
-				if (track.tag.artist) {
-					frames['TPE1'] = [{text: track.tag.artist}];
-				}
-				if (track.tag.title) {
-					frames['TIT2'] = [{text: track.tag.title}];
-				}
-				if (track.tag.year) {
-					frames['TDRC'] = [{text: track.tag.year.toString()}];
-				}
-				if (track.tag.track) {
-					frames['TRCK'] = [{text: track.tag.track.toString()}];
-				}
-				if (track.tag.genre) {
-					frames['TCON'] = [{text: track.tag.genre}];
-				}
-				return {version: 4, frames};
+				return await this.getDefaultRawTag(track);
 			}
+		} else {
+			return await this.getDefaultRawTag(track);
 		}
 	}
 
-	async tagID3(req: JamRequest<JamParameters.ID>): Promise<Jam.ID3Tag> {
+	async rawTag(req: JamRequest<JamParameters.ID>): Promise<Jam.RawTag> {
 		const track = await this.byID(req.query.id);
-		const result = await this.getID3(track);
+		const result = await this.getRawTag(track);
 		if (!result) {
-			return Promise.reject(Error('Not a mp3 file'));
+			return Promise.reject(Error('Unsupported audio file'));
 		}
 		return result;
 	}
 
-	async tagID3s(req: JamRequest<JamParameters.IDs>): Promise<Jam.ID3Tags> {
+	async rawTags(req: JamRequest<JamParameters.IDs>): Promise<Jam.RawTags> {
 		let tracks = await this.byIDs(req.query.ids);
 		tracks = this.defaultSort(tracks);
-		const result: Jam.ID3Tags = {};
+		const result: Jam.RawTags = {};
 		for (const track of tracks) {
-			const tag = await this.getID3(track);
+			const tag = await this.getRawTag(track);
 			if (tag) {
 				result[track.id] = tag;
 			}
@@ -152,25 +159,11 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		return result;
 	}
 
-	async tagID3Update(req: JamRequest<JamParameters.TagID3Update>): Promise<void> {
+	async rawTagUpdate(req: JamRequest<JamParameters.RawTagUpdate>): Promise<void> {
 		const track = await this.byID(req.query.id);
-		await this.audioModule.saveID3v2(path.join(track.path, track.name), req.query.tag);
+		await this.audioModule.saveRawTag(path.join(track.path, track.name), req.query.tag);
 		this.ioService.refreshTrack(track);
 	}
-
-	// async tagID3sUpdate(req: JamRequest<JamParameters.TagID3sUpdate>): Promise<void> {
-	// 	const tracks = await this.byIDs(req.query.tagID3s.map(tagID3 => tagID3.id));
-	// 	const list: Array<{ track?: Track; tag: Jam.ID3Tag }> = req.query.tagID3s.map(tagID3 => {
-	// 		return {track: tracks.find(t => t.id === tagID3.id), tag: tagID3.tag};
-	// 	});
-	// 	for (const item of list) {
-	// 		if (!item.track) {
-	// 			return Promise.reject(NotFoundError());
-	// 		}
-	// 		await this.audioModule.saveID3v2(path.join(item.track.path, item.track.name), item.tag);
-	// 	}
-	// 	this.ioService.refreshTracks(tracks);
-	// }
 
 	async stream(req: JamRequest<JamParameters.Stream>): Promise<IApiBinaryResult> {
 		const track = await this.byID(req.query.id);
@@ -190,5 +183,26 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 	async nameUpdate(req: JamRequest<JamParameters.TrackEditName>): Promise<void> {
 		const track = await this.byID(req.query.id);
 		await this.trackService.renameTrack(track, req.query.name);
+	}
+
+	async parentUpdate(req: JamRequest<JamParameters.TrackMoveParent>): Promise<void> {
+		const folder = await this.folderService.store.byId(req.query.folderID);
+		if (!folder) {
+			return Promise.reject(NotFoundError());
+		}
+		const refreshFolders = [{folderIDs: [folder.id], rootID: folder.rootID}];
+		const tracks = await this.byIDs(req.query.ids);
+		for (const track of tracks) {
+			const f = refreshFolders.find(refreshFolder => refreshFolder.rootID === track.rootID);
+			if (!f) {
+				refreshFolders.push({folderIDs: [track.parentID], rootID: track.rootID});
+			} else if (f.folderIDs.indexOf(track.parentID) < 0) {
+				f.folderIDs.push(track.parentID);
+			}
+		}
+		await this.trackService.moveTracks(tracks, folder);
+		for (const f of refreshFolders) {
+			this.ioService.refreshFolders(f.folderIDs, f.rootID);
+		}
 	}
 }

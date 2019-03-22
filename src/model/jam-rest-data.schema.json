@@ -4415,8 +4415,8 @@
 				"tag": {
 					"$ref": "#/definitions/Jam.TrackTag"
 				},
-				"tagID3": {
-					"$ref": "#/definitions/Jam.ID3Tag"
+				"tagRaw": {
+					"$ref": "#/definitions/Jam.RawTag"
 				},
 				"media": {
 					"$ref": "#/definitions/Jam.TrackMedia"
@@ -4484,8 +4484,8 @@
 				"tag": {
 					"$ref": "#/definitions/Jam.TrackTag"
 				},
-				"tagID3": {
-					"$ref": "#/definitions/Jam.ID3Tag"
+				"tagRaw": {
+					"$ref": "#/definitions/Jam.RawTag"
 				},
 				"media": {
 					"$ref": "#/definitions/Jam.TrackMedia"
@@ -4626,7 +4626,7 @@
 				"url"
 			]
 		},
-		"Jam.ID3Tag": {
+		"Jam.RawTag": {
 			"type": "object",
 			"properties": {
 				"version": {
@@ -4664,10 +4664,10 @@
 				"$ref": "#/definitions/Jam.State"
 			}
 		},
-		"Jam.ID3Tags": {
+		"Jam.RawTags": {
 			"type": "object",
 			"additionalProperties": {
-				"$ref": "#/definitions/Jam.ID3Tag"
+				"$ref": "#/definitions/Jam.RawTag"
 			}
 		},
 		"Jam.Folder": {

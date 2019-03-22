@@ -5,7 +5,7 @@ import {FolderService} from '../folder/folder.service';
 import {Folder} from '../folder/folder.model';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
-import {replaceFileSystemChars} from '../../utils/fs-utils';
+import {ensureTrailingPathSeparator, replaceFileSystemChars} from '../../utils/fs-utils';
 import path from 'path';
 import fse from 'fs-extra';
 
@@ -43,6 +43,17 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 		}
 		await fse.rename(path.join(track.path, track.name), path.join(track.path, name));
 		track.name = name;
-		await this.trackStore.upsert([track]);
+		await this.trackStore.replace(track);
 	}
+
+	async moveTracks(tracks: Array<Track>, folder: Folder) {
+		for (const track of tracks) {
+			await fse.move(path.join(track.path, track.name), path.join(folder.path, track.name));
+			track.path = ensureTrailingPathSeparator(folder.path);
+			track.rootID = folder.rootID;
+			track.parentID = folder.id;
+			await this.trackStore.replace(track);
+		}
+	}
+
 }

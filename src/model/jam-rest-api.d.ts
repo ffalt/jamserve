@@ -308,19 +308,19 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
-		 * track: get an id3 tag by track id
+		 * track: get an raw tag (eg. id3/vorbis) by track id
 		 */
-		'track/tagID3'?: {
+		'track/rawTag'?: {
 			params: JamParameters.ID;
-			result: Jam.ID3Tag;
+			result: Jam.RawTag;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
-		 * track: get id3 tags by track ids
+		 * track: get raw tags (eg. id3/vorbis) by track ids
 		 */
-		'track/tagID3s'?: {
+		'track/rawTags'?: {
 			params: JamParameters.IDs;
-			result: Jam.ID3Tags;
+			result: Jam.RawTags;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -1140,7 +1140,6 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 		};
 
-
 		/**
 		 * bookmark: create a bookmark
 		 */
@@ -1191,13 +1190,18 @@ export interface JamApi {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
-		'track/tagID3/update'?: {
-			params: JamParameters.TagID3Update;
+		'track/rawTag/update'?: {
+			params: JamParameters.RawTagUpdate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
 		'track/name/update'?: {
 			params: JamParameters.TrackEditName;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		'track/parent/update'?: {
+			params: JamParameters.TrackMoveParent;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1208,9 +1212,9 @@ export interface JamApi {
 			roles: ['admin'];
 			upload: 'image'
 		};
-
 		'folder/artwork/create'?: {
 			params: JamParameters.FolderArtworkNew;
+			result: Jam.ArtworkImage;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1219,7 +1223,12 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
-
+		'folder/artwork/update'?: {
+			params: JamParameters.FolderArtworkUpdate;
+			result: Jam.ArtworkImage;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
 		'folder/name/update'?: {
 			params: JamParameters.FolderEditName;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
@@ -1232,6 +1241,11 @@ export interface JamApi {
 		'folder/rate/update'?: {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		'folder/parent/update'?: {
+			params: JamParameters.FolderMoveParent;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
 		};
 
 		'album/fav/update'?: {

@@ -11,6 +11,7 @@ import {ImageModule} from '../../modules/image/image.module';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
 import {generateArtworkId} from '../../engine/scan/scan.service';
+import {artWorkImageNameToType} from './folder.format';
 
 const log = Logger('FolderService');
 
@@ -113,6 +114,38 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		}
 	}
 
+	async updateArtworkImage(folder: Folder, artwork: Artwork, name: string): Promise<Artwork> {
+		if (containsFolderSystemChars(name)) {
+			return Promise.reject(Error('Invalid Image File Name'));
+		}
+		name = replaceFolderSystemChars(name, '').trim();
+		if (name.length === 0) {
+			return Promise.reject(Error('Invalid Image File Name'));
+		}
+		const ext = path.extname(artwork.name).toLowerCase();
+		const newName = name + ext;
+		await fse.rename(path.join(folder.path, artwork.name), path.join(folder.path, newName));
+		await this.imageModule.clearImageCacheByIDs([artwork.id]);
+		if (folder.tag.image === artwork.name) {
+			folder.tag.image = newName;
+		}
+		const stat = await fse.stat(path.join(folder.path, newName));
+		folder.tag.artworks = (folder.tag.artworks || []).filter(a => a.id !== artwork.id);
+		folder.tag.artworks.push({
+			id: generateArtworkId(folder.id, newName),
+			name: newName,
+			types: artWorkImageNameToType(name),
+			stat: {
+				created: stat.ctime.valueOf(),
+				modified: stat.mtime.valueOf(),
+				size: stat.size
+			}
+		});
+		await this.folderStore.replace(folder);
+		await this.setCurrentArtworkImage(folder);
+		return artwork;
+	}
+
 	async removeArtworkImage(folder: Folder, artwork: Artwork): Promise<void> {
 		if (!folder.tag.artworks) {
 			return;
@@ -135,7 +168,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
 		const filename = await this.imageModule.storeImage(folder.path, name, imageUrl);
 		const stat = await fse.stat(path.join(folder.path, filename));
-		const artwork = {
+		const artwork: Artwork = {
 			id: generateArtworkId(folder.id, filename),
 			name: filename,
 			types,
@@ -150,6 +183,32 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		await this.folderStore.replace(folder);
 		await this.setCurrentArtworkImage(folder);
 		return artwork;
+	}
+
+	async updateFolderParentChange(folder: Folder, destPath: string, parentID: string, rootID: string) {
+		folder.path = ensureTrailingPathSeparator(destPath);
+		folder.rootID = rootID;
+		folder.parentID = parentID;
+		await this.folderStore.replace(folder);
+		const tracks = await this.trackStore.search({parentID: folder.id});
+		for (const track of tracks) {
+			track.path = folder.path;
+			track.rootID = folder.rootID;
+		}
+		await this.trackStore.replaceMany(tracks);
+		const folders = await this.folderStore.search({parentID: folder.id});
+		for (const subfolder of folders) {
+			const dest = path.join(destPath, path.basename(subfolder.path));
+			await this.updateFolderParentChange(subfolder, dest, folder.id, folder.rootID);
+		}
+	}
+
+	async moveFolders(folders: Array<Folder>, destFolder: Folder) {
+		for (const folder of folders) {
+			const dest = path.join(destFolder.path, path.basename(folder.path));
+			await fse.move(folder.path, dest);
+			await this.updateFolderParentChange(folder, dest, destFolder.id, destFolder.rootID);
+		}
 	}
 
 }

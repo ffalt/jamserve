@@ -11,7 +11,6 @@ import {fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data';
 import {TrackMedia, TrackTag} from '../../objects/track/track.model';
-import fse from 'fs-extra';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
 import {probe, ProbeResult} from './tools/ffprobe';
 import {ID3v1_GENRES} from 'jamp3/dist/lib/id3v1/id3v1_consts';
@@ -19,7 +18,7 @@ import {AcousticbrainzClient} from './clients/acousticbrainz-client';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {CoverArtArchiveClient} from './clients/coverartarchive-client';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
-import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType, TrackTagID3v2FormatTypes} from '../../model/jam-types';
+import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType, TrackTagRawFormatTypes} from '../../model/jam-types';
 import {WikiData, WikipediaClient} from './clients/wikipedia-client';
 
 export interface AudioScanResult {
@@ -44,7 +43,7 @@ class FORMAT {
 		};
 	}
 
-	static packProbeJamServeMedia(data: ProbeResult): TrackMedia {
+	static packProbeJamServeMedia(data: ProbeResult, format: AudioFormatType): TrackMedia {
 		if (!data.streams) {
 			return {};
 		}
@@ -53,7 +52,7 @@ class FORMAT {
 			return {};
 		}
 		return {
-			format: <AudioFormatType>data.format.format_name,
+			format,
 			duration: Number(data.format.duration),
 			bitRate: Number(data.format.bit_rate),
 			sampleRate: Number(stream.sample_rate),
@@ -64,13 +63,16 @@ class FORMAT {
 	}
 
 	static packProbeJamServeTag(data: ProbeResult): TrackTag {
-		const simple = data.format.tags;
+		const simple: { [name: string]: string } = {};
+		Object.keys(data.format.tags).forEach(key => {
+			simple[key.toUpperCase().replace(/ /g, '_')] = data.format.tags[key];
+		});
 		if (!simple) {
 			return {format: TrackTagFormatType.none};
 		}
-		const track = Number(simple.track);
+		const track = Number(simple.TRACK);
 		const year = Number(simple.DATE);
-		const disc = Number(simple.disc);
+		const disc = Number(simple.DISC);
 		return {
 			format: TrackTagFormatType.ffmpeg,
 			artist: simple.ARTIST,
@@ -80,11 +82,11 @@ class FORMAT {
 			track: isNaN(track) ? undefined : track,
 			disc: isNaN(disc) ? undefined : disc,
 			genre: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
-			albumArtist: simple.album_artist || simple['ALBUM ARTIST'],
-			albumSort: simple.album_sort_order,
-			albumArtistSort: simple.album_artist_sort || simple.album_artist_sort_order,
-			artistSort: simple.artist_sort,
-			titleSort: simple.title_sort_order,
+			albumArtist: simple.ALBUM_ARTIST,
+			albumSort: simple.ALBUM_SORT || simple.ALBUM_SORT_ORDER,
+			albumArtistSort: simple.ALBUM_ARTIST_SORT || simple.ALBUM_ARTIST_SORT_ORDER,
+			artistSort: simple.ARTIST_SORT || simple.ARTIST_SORT_ORDER,
+			titleSort: simple.TITLE_SORT || simple.TITLE_SORT_ORDER,
 			mbTrackID: simple.TRACKID,
 			mbAlbumType: simple.ALBUMTYPE,
 			mbAlbumArtistID: simple.ALBUMARTISTID,
@@ -145,7 +147,7 @@ class FORMAT {
 				year = y;
 			}
 		}
-		const format = TrackTagID3v2FormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
+		const format = TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
 		return {
 			format,
 			album: simple.album,
@@ -155,7 +157,7 @@ class FORMAT {
 			artist: simple.artist,
 			artistSort: simple.artist_sort,
 			genre: simple.genre ? cleanGenre(simple.genre) : undefined,
-			disc:  simple.disc,
+			disc: simple.disc,
 			discTotal: simple.disc_total,
 			title: simple.title,
 			titleSort: simple.title_sort_order,
@@ -225,12 +227,12 @@ export class AudioModule {
 			if (!p) {
 				return {tag: {format: TrackTagFormatType.none}, media: {}};
 			} else {
-				return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p)};
+				return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p, <AudioFormatType>suffix)};
 			}
 		}
 	}
 
-	async saveID3v2(filename: string, tag: Jam.ID3Tag): Promise<void> {
+	async saveRawTag(filename: string, tag: Jam.RawTag): Promise<void> {
 		if (this.isSaving[filename]) {
 			console.error('Another save is in progress', filename);
 			return Promise.reject(Error('Another save is in progress'));
@@ -274,13 +276,13 @@ export class AudioModule {
 		}
 	}
 
-	async readID3v2(filename: string): Promise<Jam.ID3Tag> {
+	async readID3v2(filename: string): Promise<Jam.RawTag> {
 		const id3v2 = new ID3v2();
 		const id3v2tag = await id3v2.read(filename);
 		if (!id3v2tag || !id3v2tag.head) {
 			return Promise.reject(Error('No ID3v2 Tag found'));
 		}
-		const tag: Jam.ID3Tag = {
+		const tag: Jam.RawTag = {
 			version: id3v2tag.head.ver,
 			frames: {}
 		};

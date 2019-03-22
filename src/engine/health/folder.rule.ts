@@ -80,7 +80,8 @@ export class FolderAlbumNameRule extends FolderRule {
 		const year = tag.year ? tag.year.toString() : '';
 		let name = (tag.album || '')
 			.replace(/[!?]/g, '')
-			.replace(/[\//]/g, '-');
+			.replace(/[\//]/g, '-')
+			.replace(/\.\.\./g, '…');
 		name = replaceFolderSystemChars(name, '_');
 		const s = (year.length > 0 ? '[' + replaceFolderSystemChars(year, '_') + '] ' : '') + name;
 		return s.trim();

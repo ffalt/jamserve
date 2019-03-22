@@ -19,6 +19,7 @@ import {md5string} from '../../utils/md5';
 import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {wait} from '../../utils/wait';
+import {artWorkImageNameToType} from '../../objects/folder/folder.format';
 
 const log = Logger('IO');
 
@@ -739,22 +740,7 @@ export class ScanService {
 		const folderID = dir.folder.id;
 		return dir.files.filter(file => file.type === FileTyp.IMAGE).map(file => {
 			const name = path.basename(file.name);
-			const lname = name.toLowerCase();
-			const types: Array<ArtworkImageType> = [];
-			for (const t in ArtworkImageType) {
-				if (!Number(t)) {
-					if (lname.indexOf(t) >= 0) {
-						types.push(<ArtworkImageType>t);
-					}
-				}
-			}
-			if ((types.indexOf(ArtworkImageType.front) < 0) && (lname.indexOf('cover') >= 0 || lname.indexOf('folder') >= 0)) {
-				types.push(ArtworkImageType.front);
-			}
-			if (types.length === 0) {
-				types.push(ArtworkImageType.other);
-			}
-			types.sort((a, b) => a.localeCompare(b));
+			const types: Array<ArtworkImageType> = artWorkImageNameToType(name);
 			const id = generateArtworkId(folderID, name);
 			return {id, name, types, stat: {created: file.stat.ctime, modified: file.stat.mtime, size: file.stat.size}};
 		});
@@ -1458,7 +1444,116 @@ export class ScanService {
 		await this.store.artistStore.upsert(changes.updateArtists);
 	}
 
-	async run(dir: string, rootID: string, strategy: RootScanStrategy, forceMetaRefresh: boolean): Promise<MergeChanges> {
+	private async buildMatchFileFromDB(track: Track): Promise<MatchFile> {
+		const match: MatchFile = {
+			rootID: track.rootID,
+			track,
+			name: path.join(track.path, track.name),
+			type: FileTyp.AUDIO,
+			stat: {
+				ctime: track.stat.created,
+				mtime: track.stat.modified,
+				size: track.stat.size
+			}
+		};
+		return match;
+	}
+
+	private async buildMatchDirDBData(folder: Folder): Promise<MatchDir> {
+		const match: MatchDir = {
+			name: folder.path,
+			level: folder.tag.level,
+			rootID: folder.rootID,
+			tag: folder.tag,
+			stat: {ctime: folder.stat.created, mtime: folder.stat.modified},
+			parent: undefined,
+			folder: folder,
+			files: [],
+			directories: [],
+			metaStat: undefined
+		};
+		const tracks = await this.store.trackStore.search({parentID: folder.id});
+		for (const t of tracks) {
+			match.files.push(await this.buildMatchFileFromDB(t));
+		}
+		if (folder.tag.artworks) {
+			for (const art of folder.tag.artworks) {
+				const matchFile: MatchFile = {
+					rootID: folder.rootID,
+					name: path.join(folder.path, art.name),
+					type: FileTyp.IMAGE,
+					stat: {
+						ctime: art.stat.created,
+						mtime: art.stat.modified,
+						size: art.stat.size
+					}
+				};
+				match.files.push(matchFile);
+			}
+		}
+		return match;
+	}
+
+	private async buildMatchDirParentsFromDBData(match: MatchDir, loadedMatches: Array<MatchDir>): Promise<MatchDir | undefined> {
+		const folder = match.folder;
+		if (!folder || !folder.parentID) {
+			return undefined;
+		}
+		let parentMatch = loadedMatches.find(m => !!m.folder && m.folder.id === folder.parentID);
+		if (parentMatch) {
+			if (parentMatch.directories.indexOf(match) < 0) {
+				parentMatch.directories.push(match);
+			}
+			match.parent = parentMatch;
+			return parentMatch;
+		}
+		const parent = await this.store.folderStore.byId(folder.parentID);
+		if (!parent) {
+			return undefined;
+		}
+		parentMatch = await this.buildMatchDirDBData(parent);
+		parentMatch.directories.push(match);
+		if (match.level > 1) {
+			const folders = await this.store.folderStore.search({parentID: parent.id});
+			for (const f of folders) {
+				if (f.id !== folder.id) {
+					let c = loadedMatches.find(m => !!m.folder && m.folder.id === f.id);
+					if (!c) {
+						c = await this.buildMatchDirDBData(f);
+						loadedMatches.push(c);
+					}
+					c.parent = parentMatch;
+					parentMatch.directories.push(c);
+				}
+			}
+		}
+		loadedMatches.push(parentMatch);
+		parentMatch.parent = await this.buildMatchDirParentsFromDBData(parentMatch, loadedMatches);
+		return parentMatch;
+	}
+
+	private async loadChildsFromDBData(match: MatchDir, loadedMatches: Array<MatchDir>): Promise<void> {
+		const folder = match.folder;
+		if (!folder) {
+			return;
+		}
+		if (!match.directories || match.directories.length === 0) {
+			const folders = await this.store.folderStore.search({parentID: folder.id});
+			for (const f of folders) {
+				const c = await this.buildMatchDirDBData(f);
+				c.parent = match;
+				loadedMatches.push(match);
+				match.directories.push(c);
+				await this.loadChildsFromDBData(c, loadedMatches);
+			}
+		}
+	}
+
+	public setSettings(settings: Jam.AdminSettingsLibrary) {
+		this.settings = settings;
+	}
+
+	async scanRoot(dir: string, rootID: string, strategy: RootScanStrategy, forceMetaRefresh: boolean): Promise<MergeChanges> {
 		this.strategy = strategy || RootScanStrategy.auto;
 		log.info('Start:', dir);
 		/*
@@ -1538,112 +1633,7 @@ export class ScanService {
 		return changes;
 	}
 
-	async buildMatchFileFromDB(track: Track): Promise<MatchFile> {
-		const match: MatchFile = {
-			rootID: track.rootID,
-			track,
-			name: path.join(track.path, track.name),
-			type: FileTyp.AUDIO,
-			stat: {
-				ctime: track.stat.created,
-				mtime: track.stat.modified,
-				size: track.stat.size
-			}
-		};
-		return match;
-	}
-
-	async buildMatchDirDBData(folder: Folder): Promise<MatchDir> {
-		const match: MatchDir = {
-			name: folder.path,
-			level: folder.tag.level,
-			rootID: folder.rootID,
-			tag: folder.tag,
-			stat: {ctime: folder.stat.created, mtime: folder.stat.modified},
-			parent: undefined,
-			folder: folder,
-			files: [],
-			directories: [],
-			metaStat: undefined
-		};
-		const tracks = await this.store.trackStore.search({parentID: folder.id});
-		for (const t of tracks) {
-			match.files.push(await this.buildMatchFileFromDB(t));
-		}
-		if (folder.tag.artworks) {
-			for (const art of folder.tag.artworks) {
-				const matchFile: MatchFile = {
-					rootID: folder.rootID,
-					name: path.join(folder.path, art.name),
-					type: FileTyp.IMAGE,
-					stat: {
-						ctime: art.stat.created,
-						mtime: art.stat.modified,
-						size: art.stat.size
-					}
-				};
-				match.files.push(matchFile);
-			}
-		}
-		return match;
-	}
-
-	async buildMatchDirParentsFromDBData(match: MatchDir, loadedMatches: Array<MatchDir>): Promise<MatchDir | undefined> {
-		const folder = match.folder;
-		if (!folder || !folder.parentID) {
-			return undefined;
-		}
-		let parentMatch = loadedMatches.find(m => !!m.folder && m.folder.id === folder.parentID);
-		if (parentMatch) {
-			if (parentMatch.directories.indexOf(match) < 0) {
-				parentMatch.directories.push(match);
-			}
-			match.parent = parentMatch;
-			return parentMatch;
-		}
-		const parent = await this.store.folderStore.byId(folder.parentID);
-		if (!parent) {
-			return undefined;
-		}
-		parentMatch = await this.buildMatchDirDBData(parent);
-		parentMatch.directories.push(match);
-		if (match.level > 1) {
-			const folders = await this.store.folderStore.search({parentID: parent.id});
-			for (const f of folders) {
-				if (f.id !== folder.id) {
-					let c = loadedMatches.find(m => !!m.folder && m.folder.id === f.id);
-					if (!c) {
-						c = await this.buildMatchDirDBData(f);
-						loadedMatches.push(c);
-					}
-					c.parent = parentMatch;
-					parentMatch.directories.push(c);
-				}
-			}
-		}
-		loadedMatches.push(parentMatch);
-		parentMatch.parent = await this.buildMatchDirParentsFromDBData(parentMatch, loadedMatches);
-		return parentMatch;
-	}
-
-	async loadChildsFromDBData(match: MatchDir, loadedMatches: Array<MatchDir>): Promise<void> {
-		const folder = match.folder;
-		if (!folder) {
-			return;
-		}
-		if (!match.directories || match.directories.length === 0) {
-			const folders = await this.store.folderStore.search({parentID: folder.id});
-			for (const f of folders) {
-				const c = await this.buildMatchDirDBData(f);
-				c.parent = match;
-				loadedMatches.push(match);
-				match.directories.push(c);
-				await this.loadChildsFromDBData(c, loadedMatches);
-			}
-		}
-	}
-
-	async refreshTracks(rootID: string, trackIDs: Array<string>, strategy: RootScanStrategy) {
+	async refreshTracks(rootID: string, trackIDs: Array<string>, strategy: RootScanStrategy): Promise<MergeChanges> {
 		this.strategy = strategy || RootScanStrategy.auto;
 		const changes = this.emptyChanges();
 		const tracks = await this.store.trackStore.byIds(trackIDs);
@@ -1708,7 +1698,46 @@ export class ScanService {
 		return changes;
 	}
 
-	public setSettings(settings: Jam.AdminSettingsLibrary) {
-		this.settings = settings;
+	async refreshFolders(rootID: string, strategy: RootScanStrategy, folderIDs: Array<string>): Promise<MergeChanges> {
+		const changes = this.emptyChanges();
+		const folders = await this.store.folderStore.byIds(folderIDs);
+		const loadedMatches: Array<MatchDir> = [];
+		const changedDirs: Array<MatchDir> = [];
+		for (const folder of folders) {
+			let match = loadedMatches.find(m => !!m.folder && m.folder.id === folder.id);
+			if (!match) {
+				match = await this.buildMatchDirDBData(folder);
+				loadedMatches.push(match);
+			}
+			match.parent = await this.buildMatchDirParentsFromDBData(match, loadedMatches);
+			await this.loadChildsFromDBData(match, loadedMatches);
+			loadedMatches.push(match);
+			changedDirs.push(match);
+			let p = match.parent;
+			while (p) {
+				if (p.level > 0 && changedDirs.indexOf(p) < 0) {
+					changedDirs.push(p);
+				}
+				p = p.parent;
+			}
+		}
+		for (const dir of changedDirs) {
+			const stat = await fse.stat(dir.name);
+			dir.stat = {
+				ctime: stat.ctime.valueOf(),
+				mtime: stat.mtime.valueOf()
+			};
+		}
+		const rootMatch = loadedMatches.find(m => m.level === 0);
+		if (rootMatch) {
+			printTree(rootMatch);
+			await this.merge(rootMatch, true, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+			await this.storeChanges(changes);
+			await this.clean(changes);
+		} else {
+			log.error('rootMatch not found');
+		}
+		changes.end = Date.now();
+		return changes;
 	}
 }

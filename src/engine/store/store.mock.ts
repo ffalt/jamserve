@@ -348,7 +348,7 @@ export class StoreMock {
 		};
 		await this.store.rootStore.add(root);
 		const scanService = new ScanService(this.store, audioModule, imageModule, this.waveformServiceTest.waveformService);
-		await scanService.run(root.path, root.id, RootScanStrategy.auto, false);
+		await scanService.scanRoot(root.path, root.id, RootScanStrategy.auto, false);
 	}
 
 	async cleanup() {

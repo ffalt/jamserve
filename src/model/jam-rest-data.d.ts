@@ -92,7 +92,7 @@ export declare namespace Jam {
 	export interface Track extends Base {
 		duration: number;
 		tag?: TrackTag;
-		tagID3?: ID3Tag;
+		tagRaw?: RawTag;
 		media?: TrackMedia;
 		parentID: string;
 		artistID?: string;
@@ -135,7 +135,7 @@ export declare namespace Jam {
 		changed: number;
 	}
 
-	export interface ID3Tag {
+	export interface RawTag {
 		version: number;
 		frames: ID3v2FrameValues.Frames;
 	}
@@ -151,8 +151,8 @@ export declare namespace Jam {
 		[id: string]: State;
 	}
 
-	export interface ID3Tags {
-		[trackID: string]: ID3Tag;
+	export interface RawTags {
+		[trackID: string]: RawTag;
 	}
 
 	export interface Folder extends Base {

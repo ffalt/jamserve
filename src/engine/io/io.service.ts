@@ -13,7 +13,8 @@ const log = Logger('IO');
 export enum ScanRequestMode {
 	refreshRoot,
 	refreshTracks,
-	removeRoot
+	removeRoot,
+	refreshFolders
 }
 
 export interface ScanRequest {
@@ -33,7 +34,31 @@ export class ScanRequestRefreshRoot implements ScanRequest {
 	async run(): Promise<void> {
 		log.info('Scanning Root', this.root.path);
 		try {
-			const changes = await this.scanService.run(this.root.path, this.root.id, this.root.strategy, this.forceMetaRefresh);
+			const changes = await this.scanService.scanRoot(this.root.path, this.root.id, this.root.strategy, this.forceMetaRefresh);
+			logChanges(changes);
+		} catch (e) {
+			log.error('Scanning Error', this.root.path, e.toString());
+			if (['EACCES', 'ENOENT'].indexOf((<any>e).code) >= 0) {
+				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
+			} else {
+				return Promise.reject(e);
+			}
+		}
+	}
+
+}
+
+export class ScanRequestRefreshFolders implements ScanRequest {
+	mode = ScanRequestMode.refreshFolders;
+
+	constructor(public root: Root, public scanService: ScanService, public folderIDs: Array<string>) {
+
+	}
+
+	async run(): Promise<void> {
+		log.info('Refreshing Folders in', this.root.path);
+		try {
+			const changes = await this.scanService.refreshFolders(this.root.id, this.root.strategy, this.folderIDs);
 			logChanges(changes);
 		} catch (e) {
 			log.error('Scanning Error', this.root.path, e.toString());
@@ -211,12 +236,12 @@ export class IoService {
 	}
 
 	refreshRoot(root: Root, forceMetaRefresh: boolean): void {
-		const oldRequest = this.findRequest(root, ScanRequestMode.refreshRoot);
+		const oldRequest = <ScanRequestRefreshRoot>this.findRequest(root, ScanRequestMode.refreshRoot);
 		if (!oldRequest) {
 			this.queue.push(new ScanRequestRefreshRoot(root, forceMetaRefresh, this.scanService));
 			this.run();
 		} else if (forceMetaRefresh) {
-			(<ScanRequestRefreshRoot>oldRequest).forceMetaRefresh = true;
+			oldRequest.forceMetaRefresh = true;
 			oldRequest.root = root;
 		}
 	}
@@ -227,4 +252,25 @@ export class IoService {
 			this.run();
 		}
 	}
+
+	refreshFolders(folderIDs: Array<string>, rootID: string) {
+		this.rootStore.byId(rootID).then((root) => {
+			if (!root) {
+				log.error(Error('Track root not found: ' + rootID));
+				return;
+			}
+			const oldRequest = <ScanRequestRefreshFolders>this.findRequest(root, ScanRequestMode.refreshFolders);
+			if (oldRequest) {
+				for (const id of folderIDs) {
+					if (oldRequest.folderIDs.indexOf(id) < 0) {
+						oldRequest.folderIDs.push(id);
+					}
+				}
+				return;
+			}
+			this.queue.push(new ScanRequestRefreshFolders(root, this.scanService, folderIDs));
+			this.run();
+		});
+	}
+
 }

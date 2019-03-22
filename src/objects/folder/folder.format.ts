@@ -1,7 +1,7 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import path from 'path';
-import {FolderType, FolderTypesAlbum} from '../../model/jam-types';
+import {ArtworkImageType, FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import {Artwork, Folder} from './folder.model';
 
 export function formatFolderArtwork(artwork: Artwork): Jam.ArtworkImage {
@@ -56,4 +56,22 @@ export function formatFolder(folder: Folder, includes: JamParameters.IncludesFol
 		tag: includes.folderTag ? formatFolderTag(folder) : undefined,
 		artworks: includes.folderArtworks ? formatFolderArtworks(folder) : undefined
 	};
+}
+
+export function artWorkImageNameToType(name: string): Array<ArtworkImageType> {
+	const lname = name.toLowerCase();
+	const types: Array<ArtworkImageType> = [];
+	for (const t in ArtworkImageType) {
+		if (!Number(t) && lname.indexOf(t) >= 0) {
+			types.push(<ArtworkImageType>t);
+		}
+	}
+	if ((types.indexOf(ArtworkImageType.front) < 0) && (lname.indexOf('cover') >= 0 || lname.indexOf('folder') >= 0)) {
+		types.push(ArtworkImageType.front);
+	}
+	if (types.length === 0) {
+		types.push(ArtworkImageType.other);
+	}
+	types.sort((a, b) => a.localeCompare(b));
+	return types;
 }

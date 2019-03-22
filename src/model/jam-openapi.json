@@ -1012,12 +1012,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -1209,12 +1209,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -1293,12 +1293,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -1473,12 +1473,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -1797,12 +1797,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -2508,12 +2508,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -3057,12 +3057,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -3209,12 +3209,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -3296,12 +3296,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -3317,10 +3317,10 @@
 				]
 			}
 		},
-		"/track/tagID3": {
+		"/track/rawTag": {
 			"get": {
-				"operationId": "trackController.tagID3",
-				"description": "get an id3 tag by track id",
+				"operationId": "trackController.rawTag",
+				"description": "get an raw tag (eg. id3/vorbis) by track id",
 				"tags": [
 					"track"
 				],
@@ -3330,7 +3330,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.ID3Tag"
+									"$ref": "#/components/schemas/Jam.RawTag"
 								}
 							}
 						}
@@ -3361,10 +3361,10 @@
 				]
 			}
 		},
-		"/track/tagID3s": {
+		"/track/rawTags": {
 			"get": {
-				"operationId": "trackController.tagID3s",
-				"description": "get id3 tags by track ids",
+				"operationId": "trackController.rawTags",
+				"description": "get raw tags (eg. id3/vorbis) by track ids",
 				"tags": [
 					"track"
 				],
@@ -3374,7 +3374,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.ID3Tags"
+									"$ref": "#/components/schemas/Jam.RawTags"
 								}
 							}
 						}
@@ -3619,12 +3619,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -3924,12 +3924,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -4041,12 +4041,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -4146,12 +4146,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -4233,12 +4233,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -4384,12 +4384,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -4683,12 +4683,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -4817,12 +4817,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -4924,12 +4924,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -5136,12 +5136,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -5428,12 +5428,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -5920,12 +5920,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -6117,12 +6117,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -6397,12 +6397,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -6747,12 +6747,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -6864,12 +6864,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -7091,12 +7091,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -7222,12 +7222,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -7390,12 +7390,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -7517,12 +7517,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -7653,12 +7653,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -8124,12 +8124,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -8302,12 +8302,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -8413,12 +8413,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -8571,12 +8571,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -8688,12 +8688,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -8860,12 +8860,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -9040,12 +9040,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -9325,12 +9325,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -9413,12 +9413,12 @@
 					},
 					{
 						"in": "query",
-						"name": "trackID3",
+						"name": "trackRawTag",
 						"schema": {
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include id3 tag on track(s)",
+						"description": "include raw tag on track(s)",
 						"required": false
 					},
 					{
@@ -12126,9 +12126,9 @@
 				}
 			}
 		},
-		"/track/tagID3/update": {
+		"/track/rawTag/update": {
 			"post": {
-				"operationId": "trackController.tagID3Update",
+				"operationId": "trackController.rawTagUpdate",
 				"tags": [
 					"track"
 				],
@@ -12154,7 +12154,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/JamParameters.TagID3Update"
+								"$ref": "#/components/schemas/JamParameters.RawTagUpdate"
 							}
 						}
 					}
@@ -12191,6 +12191,42 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.TrackEditName"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/track/parent/update": {
+			"post": {
+				"operationId": "trackController.parentUpdate",
+				"tags": [
+					"track"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"description": "Move track file(s) to new folder parent",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.TrackMoveParent"
 							}
 						}
 					}
@@ -12240,7 +12276,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.ArtworkImage"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "parameter is missing or invalid"
@@ -12297,6 +12340,49 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.ID"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/folder/artwork/update": {
+			"post": {
+				"operationId": "folderController.artworkUpdate",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.ArtworkImage"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"description": "Update an artwork in a folder",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.FolderArtworkUpdate"
 							}
 						}
 					}
@@ -12405,6 +12491,42 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.Rate"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/folder/parent/update": {
+			"post": {
+				"operationId": "folderController.parentUpdate",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"description": "Move track folders(s) to new folder parent",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.FolderMoveParent"
 							}
 						}
 					}
@@ -16284,8 +16406,8 @@
 					"tag": {
 						"$ref": "#/components/schemas/Jam.TrackTag"
 					},
-					"tagID3": {
-						"$ref": "#/components/schemas/Jam.ID3Tag"
+					"tagRaw": {
+						"$ref": "#/components/schemas/Jam.RawTag"
 					},
 					"media": {
 						"$ref": "#/components/schemas/Jam.TrackMedia"
@@ -16372,7 +16494,7 @@
 					}
 				}
 			},
-			"Jam.ID3Tag": {
+			"Jam.RawTag": {
 				"type": "object",
 				"properties": {
 					"version": {
@@ -18360,10 +18482,10 @@
 					"$ref": "#/components/schemas/Jam.State"
 				}
 			},
-			"Jam.ID3Tags": {
+			"Jam.RawTags": {
 				"type": "object",
 				"additionalProperties": {
-					"$ref": "#/components/schemas/Jam.ID3Tag"
+					"$ref": "#/components/schemas/Jam.RawTag"
 				}
 			},
 			"Jam.PodcastEpisode": {
@@ -18399,8 +18521,8 @@
 					"tag": {
 						"$ref": "#/components/schemas/Jam.TrackTag"
 					},
-					"tagID3": {
-						"$ref": "#/components/schemas/Jam.ID3Tag"
+					"tagRaw": {
+						"$ref": "#/components/schemas/Jam.RawTag"
 					},
 					"media": {
 						"$ref": "#/components/schemas/Jam.TrackMedia"
@@ -19249,7 +19371,7 @@
 					"rating"
 				]
 			},
-			"JamParameters.TagID3Update": {
+			"JamParameters.RawTagUpdate": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -19257,8 +19379,8 @@
 						"type": "string"
 					},
 					"tag": {
-						"$ref": "#/components/schemas/Jam.ID3Tag",
-						"description": "the id3 tag to store in the track"
+						"$ref": "#/components/schemas/Jam.RawTag",
+						"description": "the raw tag to store in the track (e.g. id3v2/vorbis)"
 					}
 				},
 				"required": [
@@ -19282,6 +19404,27 @@
 				"required": [
 					"id",
 					"name"
+				]
+			},
+			"JamParameters.TrackMoveParent": {
+				"description": "Move track file(s) to new folder parent",
+				"type": "object",
+				"properties": {
+					"folderID": {
+						"description": "the id of another folder",
+						"type": "string"
+					},
+					"ids": {
+						"description": "array of item ids",
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"folderID",
+					"ids"
 				]
 			},
 			"JamParameters.FolderArtworkNew": {
@@ -19328,6 +19471,24 @@
 					"url"
 				]
 			},
+			"JamParameters.FolderArtworkUpdate": {
+				"description": "Update an artwork in a folder",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "name of an image",
+						"type": "string"
+					},
+					"id": {
+						"description": "the item id",
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name"
+				]
+			},
 			"JamParameters.FolderEditName": {
 				"description": "Rename the folder",
 				"type": "object",
@@ -19344,6 +19505,27 @@
 				"required": [
 					"id",
 					"name"
+				]
+			},
+			"JamParameters.FolderMoveParent": {
+				"description": "Move track folders(s) to new folder parent",
+				"type": "object",
+				"properties": {
+					"folderID": {
+						"description": "the id of another folder",
+						"type": "string"
+					},
+					"ids": {
+						"description": "array of item ids",
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"folderID",
+					"ids"
 				]
 			},
 			"JamParameters.PodcastNew": {

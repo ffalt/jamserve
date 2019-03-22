@@ -74,11 +74,11 @@ export declare namespace JamParameters {
 		 */
 		trackTag?: boolean;
 		/**
-		 * include id3 tag on track(s)
+		 * include raw tag on track(s)
 		 *
 		 * @default false
 		 */
-		trackID3?: boolean;
+		trackRawTag?: boolean;
 		/**
 		 * include user states (fav,rate) on track(s)
 		 *
@@ -625,6 +625,16 @@ export declare namespace JamParameters {
 	}
 
 	/**
+	 * Update an artwork in a folder
+	 */
+	export interface FolderArtworkUpdate extends ID {
+		/**
+		 * name of an image
+		 */
+		name: string;
+	}
+
+	/**
 	 * Rename the folder
 	 */
 	export interface FolderEditName extends ID {
@@ -642,6 +652,26 @@ export declare namespace JamParameters {
 		 * the new track file name
 		 */
 		name: string;
+	}
+
+	/**
+	 * Move track file(s) to new folder parent
+	 */
+	export interface TrackMoveParent extends IDs {
+		/**
+		 * the id of another folder
+		 */
+		folderID: string;
+	}
+
+	/**
+	 * Move track folders(s) to new folder parent
+	 */
+	export interface FolderMoveParent extends IDs {
+		/**
+		 * the id of another folder
+		 */
+		folderID: string;
 	}
 
 	export interface FolderSearch extends Paginate, FolderSearchQuery, IncludesFolderChildren {
@@ -1259,24 +1289,16 @@ export declare namespace JamParameters {
 		client: string;
 	}
 
-	export interface TagID3Update {
+	export interface RawTagUpdate {
 		/**
 		 * the id of the track
 		 */
 		id: string;
 		/**
-		 * the id3 tag to store in the track
+		 * the raw tag to store in the track (e.g. id3v2/vorbis)
 		 */
-		tag: Jam.ID3Tag;
+		tag: Jam.RawTag;
 	}
-
-	//
-	// export interface TagID3sUpdate {
-	// 	/**
-	// 	 * array of id3 tag updates
-	// 	 */
-	// 	tagID3s: Array<TagID3Update>;
-	// }
 
 	export interface AutoComplete {
 		/**

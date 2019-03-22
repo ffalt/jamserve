@@ -1,6 +1,6 @@
 import {Track} from '../../objects/track/track.model';
 import {Rule, RuleResult} from './rule.model';
-import {AudioFormatType, TrackTagID3v2FormatTypes} from '../../model/jam-types';
+import {AudioFormatType, TrackTagRawFormatTypes} from '../../model/jam-types';
 
 export abstract class TrackRule implements Rule<Track> {
 
@@ -18,7 +18,7 @@ export class TrackID3v2Rule extends TrackRule {
 	}
 
 	async run(track: Track): Promise<RuleResult | undefined> {
-		if (track.media && track.media.format === AudioFormatType.mp3 && (TrackTagID3v2FormatTypes.indexOf(track.tag.format) >= 0)) {
+		if (track.media && track.media.format === AudioFormatType.mp3 && (TrackTagRawFormatTypes.indexOf(track.tag.format) >= 0)) {
 			return {};
 		}
 		return;

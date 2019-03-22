@@ -220,15 +220,15 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/track/tagID3', async (req, res) => {
+	register.get('/track/rawTag', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.ID3Tag = await api.trackController.tagID3(options);
+		const result: Jam.RawTag = await api.trackController.rawTag(options);
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/track/tagID3s', async (req, res) => {
+	register.get('/track/rawTags', async (req, res) => {
 		const options: JamRequest<JamParameters.IDs> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.ID3Tags = await api.trackController.tagID3s(options);
+		const result: Jam.RawTags = await api.trackController.rawTags(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -844,17 +844,23 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.ok(res);
 	});
 
-	register.post('/track/tagID3/update', async (req, res) => {
-		const options: JamRequest<JamParameters.TagID3Update> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.tagID3Update(options);
+	register.post('/track/rawTag/update', async (req, res) => {
+		const options: JamRequest<JamParameters.RawTagUpdate> = {query: req.body, user: req.user, client: req.client};
+		await api.trackController.rawTagUpdate(options);
 		await ApiResponder.ok(res);
-	}, '/track/tagID3/update', ['admin']);
+	}, '/track/rawTag/update', ['admin']);
 
 	register.post('/track/name/update', async (req, res) => {
 		const options: JamRequest<JamParameters.TrackEditName> = {query: req.body, user: req.user, client: req.client};
 		await api.trackController.nameUpdate(options);
 		await ApiResponder.ok(res);
 	}, '/track/name/update', ['admin']);
+
+	register.post('/track/parent/update', async (req, res) => {
+		const options: JamRequest<JamParameters.TrackMoveParent> = {query: req.body, user: req.user, client: req.client};
+		await api.trackController.parentUpdate(options);
+		await ApiResponder.ok(res);
+	}, '/track/parent/update', ['admin']);
 
 	register.upload('/folder/imageUpload/update', 'image', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined};
@@ -864,8 +870,8 @@ export function registerAccessControlApi(register: Register, api: JamController)
 
 	register.post('/folder/artwork/create', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderArtworkNew> = {query: req.body, user: req.user, client: req.client};
-		await api.folderController.artworkCreate(options);
-		await ApiResponder.ok(res);
+		const result: Jam.ArtworkImage = await api.folderController.artworkCreate(options);
+		await ApiResponder.data(res, result);
 	}, '/folder/artwork/create', ['admin']);
 
 	register.post('/folder/artwork/delete', async (req, res) => {
@@ -873,6 +879,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await api.folderController.artworkDelete(options);
 		await ApiResponder.ok(res);
 	}, '/folder/artwork/delete', ['admin']);
+
+	register.post('/folder/artwork/update', async (req, res) => {
+		const options: JamRequest<JamParameters.FolderArtworkUpdate> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.ArtworkImage = await api.folderController.artworkUpdate(options);
+		await ApiResponder.data(res, result);
+	}, '/folder/artwork/update', ['admin']);
 
 	register.post('/folder/name/update', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderEditName> = {query: req.body, user: req.user, client: req.client};
@@ -891,6 +903,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await api.folderController.rateUpdate(options);
 		await ApiResponder.ok(res);
 	});
+
+	register.post('/folder/parent/update', async (req, res) => {
+		const options: JamRequest<JamParameters.FolderMoveParent> = {query: req.body, user: req.user, client: req.client};
+		await api.folderController.parentUpdate(options);
+		await ApiResponder.ok(res);
+	}, '/folder/parent/update', ['admin']);
 
 	register.post('/album/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};

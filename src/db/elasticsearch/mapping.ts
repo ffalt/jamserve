@@ -64,6 +64,7 @@ const type_FolderTag = {
 		artist: type_key,
 		artistSort: type_key,
 		albumType: type_key,
+		albumTrackCount: type_int,
 		title: type_string,
 		year: type_int,
 		mbAlbumID: type_key,

@@ -23,6 +23,7 @@ import {Artwork, Folder} from './folder.model';
 import {IApiBinaryResult} from '../../typings';
 import {FolderRulesChecker} from '../../engine/health/folder.rule';
 import {DBObjectType} from '../../db/db.types';
+import {IoService} from '../../engine/io/io.service';
 
 export class FolderController extends BaseListController<JamParameters.Folder, JamParameters.Folders, JamParameters.IncludesFolderChildren, SearchQueryFolder, JamParameters.FolderSearch, Folder, Jam.Folder> {
 	checker = new FolderRulesChecker();
@@ -34,7 +35,8 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		private indexService: IndexService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
-		protected downloadService: DownloadService
+		protected downloadService: DownloadService,
+		protected ioService: IoService
 	) {
 		super(folderService, stateService, imageService, downloadService);
 	}
@@ -208,6 +210,12 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return formatFolderArtwork(artwork);
 	}
 
+	async artworkUpdate(req: JamRequest<JamParameters.FolderArtworkUpdate>): Promise<Jam.ArtworkImage> {
+		const {folder, artwork} = await this.artworkByID(req.query.id);
+		const result = await this.folderService.updateArtworkImage(folder, artwork, req.query.name);
+		return formatFolderArtwork(result);
+	}
+
 	async artworkDelete(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const {folder, artwork} = await this.artworkByID(req.query.id);
 		return await this.folderService.removeArtworkImage(folder, artwork);
@@ -221,4 +229,34 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		});
 		return folders.filter(f => f.health && f.health.length > 0);
 	}
+
+	async parentUpdate(req: JamRequest<JamParameters.FolderMoveParent>) {
+		const destFolder = await this.folderService.store.byId(req.query.folderID);
+		if (!destFolder) {
+			return Promise.reject(InvalidParamError('Folder cannot be moved to itself'));
+		}
+		if (req.query.ids.indexOf(destFolder.id) >= 0) {
+			return Promise.reject(NotFoundError());
+		}
+		const refreshFolders = [{folderIDs: [destFolder.id], rootID: destFolder.rootID}];
+		const folders = await this.byIDs(req.query.ids);
+		for (const folder of folders) {
+			if (folder.parentID) {
+				if (folder.parentID === destFolder.id) {
+					return Promise.reject(InvalidParamError('Folder is already in destination'));
+				}
+				const f = refreshFolders.find(refreshFolder => refreshFolder.rootID === folder.rootID);
+				if (!f) {
+					refreshFolders.push({folderIDs: [folder.parentID], rootID: folder.rootID});
+				} else if (f.folderIDs.indexOf(folder.parentID) < 0) {
+					f.folderIDs.push(folder.parentID);
+				}
+			}
+		}
+		await this.folderService.moveFolders(folders, destFolder);
+		for (const f of refreshFolders) {
+			this.ioService.refreshFolders(f.folderIDs, f.rootID);
+		}
+	}
+
 }

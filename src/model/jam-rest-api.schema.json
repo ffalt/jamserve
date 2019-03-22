@@ -1116,15 +1116,15 @@
 						"result"
 					]
 				},
-				"track/tagID3": {
-					"description": "track: get an id3 tag by track id",
+				"track/rawTag": {
+					"description": "track: get an raw tag (eg. id3/vorbis) by track id",
 					"type": "object",
 					"properties": {
 						"params": {
 							"$ref": "#/definitions/JamParameters.ID"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.ID3Tag"
+							"$ref": "#/definitions/Jam.RawTag"
 						},
 						"errors": {
 							"anyOf": [
@@ -1149,15 +1149,15 @@
 						"result"
 					]
 				},
-				"track/tagID3s": {
-					"description": "track: get id3 tags by track ids",
+				"track/rawTags": {
+					"description": "track: get raw tags (eg. id3/vorbis) by track ids",
 					"type": "object",
 					"properties": {
 						"params": {
 							"$ref": "#/definitions/JamParameters.IDs"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.ID3Tags"
+							"$ref": "#/definitions/Jam.RawTags"
 						},
 						"errors": {
 							"anyOf": [
@@ -6170,11 +6170,11 @@
 						"params"
 					]
 				},
-				"track/tagID3/update": {
+				"track/rawTag/update": {
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.TagID3Update"
+							"$ref": "#/definitions/JamParameters.RawTagUpdate"
 						},
 						"errors": {
 							"anyOf": [
@@ -6226,6 +6226,57 @@
 					"properties": {
 						"params": {
 							"$ref": "#/definitions/JamParameters.TrackEditName"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"roles"
+					]
+				},
+				"track/parent/update": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.TrackMoveParent"
 						},
 						"errors": {
 							"anyOf": [
@@ -6336,6 +6387,9 @@
 						"params": {
 							"$ref": "#/definitions/JamParameters.FolderArtworkNew"
 						},
+						"result": {
+							"$ref": "#/definitions/Jam.ArtworkImage"
+						},
 						"errors": {
 							"anyOf": [
 								{
@@ -6378,6 +6432,7 @@
 					"required": [
 						"errors",
 						"params",
+						"result",
 						"roles"
 					]
 				},
@@ -6429,6 +6484,61 @@
 					"required": [
 						"errors",
 						"params",
+						"roles"
+					]
+				},
+				"folder/artwork/update": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.FolderArtworkUpdate"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.ArtworkImage"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result",
 						"roles"
 					]
 				},
@@ -6537,6 +6647,57 @@
 					"required": [
 						"errors",
 						"params"
+					]
+				},
+				"folder/parent/update": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.FolderMoveParent"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"roles"
 					]
 				},
 				"album/fav/update": {
@@ -10723,8 +10884,8 @@
 				"tag": {
 					"$ref": "#/definitions/Jam.TrackTag"
 				},
-				"tagID3": {
-					"$ref": "#/definitions/Jam.ID3Tag"
+				"tagRaw": {
+					"$ref": "#/definitions/Jam.RawTag"
 				},
 				"media": {
 					"$ref": "#/definitions/Jam.TrackMedia"
@@ -10811,7 +10972,7 @@
 				}
 			}
 		},
-		"Jam.ID3Tag": {
+		"Jam.RawTag": {
 			"type": "object",
 			"properties": {
 				"version": {
@@ -12606,8 +12767,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -12938,8 +13099,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -12970,8 +13131,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -13067,8 +13228,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -13449,8 +13610,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -13675,8 +13836,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -13718,8 +13879,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -13753,8 +13914,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -13768,10 +13929,10 @@
 				"ids"
 			]
 		},
-		"Jam.ID3Tags": {
+		"Jam.RawTags": {
 			"type": "object",
 			"additionalProperties": {
-				"$ref": "#/definitions/Jam.ID3Tag"
+				"$ref": "#/definitions/Jam.RawTag"
 			}
 		},
 		"JamParameters.TrackSearch": {
@@ -13862,8 +14023,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -13951,8 +14112,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -13998,8 +14159,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14046,8 +14207,8 @@
 				"tag": {
 					"$ref": "#/definitions/Jam.TrackTag"
 				},
-				"tagID3": {
-					"$ref": "#/definitions/Jam.ID3Tag"
+				"tagRaw": {
+					"$ref": "#/definitions/Jam.RawTag"
 				},
 				"media": {
 					"$ref": "#/definitions/Jam.TrackMedia"
@@ -14115,8 +14276,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14179,8 +14340,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14240,8 +14401,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14297,8 +14458,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14396,8 +14557,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14484,8 +14645,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14544,8 +14705,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14722,8 +14883,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14992,8 +15153,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15120,8 +15281,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15234,8 +15395,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15356,8 +15517,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15411,8 +15572,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15470,8 +15631,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15699,8 +15860,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15743,8 +15904,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15850,8 +16011,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15925,8 +16086,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -16027,8 +16188,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -16090,8 +16251,8 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"trackID3": {
-					"description": "include id3 tag on track(s)",
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
 					"default": false,
 					"type": "boolean"
 				},
@@ -16613,7 +16774,7 @@
 				"rating"
 			]
 		},
-		"JamParameters.TagID3Update": {
+		"JamParameters.RawTagUpdate": {
 			"type": "object",
 			"properties": {
 				"id": {
@@ -16621,8 +16782,8 @@
 					"type": "string"
 				},
 				"tag": {
-					"$ref": "#/definitions/Jam.ID3Tag",
-					"description": "the id3 tag to store in the track"
+					"$ref": "#/definitions/Jam.RawTag",
+					"description": "the raw tag to store in the track (e.g. id3v2/vorbis)"
 				}
 			},
 			"required": [
@@ -16646,6 +16807,27 @@
 			"required": [
 				"id",
 				"name"
+			]
+		},
+		"JamParameters.TrackMoveParent": {
+			"description": "Move track file(s) to new folder parent",
+			"type": "object",
+			"properties": {
+				"folderID": {
+					"description": "the id of another folder",
+					"type": "string"
+				},
+				"ids": {
+					"description": "array of item ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"folderID",
+				"ids"
 			]
 		},
 		"JamParameters.FolderArtworkNew": {
@@ -16692,6 +16874,24 @@
 				"url"
 			]
 		},
+		"JamParameters.FolderArtworkUpdate": {
+			"description": "Update an artwork in a folder",
+			"type": "object",
+			"properties": {
+				"name": {
+					"description": "name of an image",
+					"type": "string"
+				},
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"name"
+			]
+		},
 		"JamParameters.FolderEditName": {
 			"description": "Rename the folder",
 			"type": "object",
@@ -16708,6 +16908,27 @@
 			"required": [
 				"id",
 				"name"
+			]
+		},
+		"JamParameters.FolderMoveParent": {
+			"description": "Move track folders(s) to new folder parent",
+			"type": "object",
+			"properties": {
+				"folderID": {
+					"description": "the id of another folder",
+					"type": "string"
+				},
+				"ids": {
+					"description": "array of item ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"folderID",
+				"ids"
 			]
 		},
 		"JamParameters.PodcastNew": {
