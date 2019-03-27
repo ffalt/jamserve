@@ -67,7 +67,13 @@ export class Server {
 	async stop(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 				if (this.server) {
-					this.server.close(resolve);
+					this.server.close((err) => {
+						if (err) {
+							reject(err);
+						} else {
+							resolve();
+						}
+					});
 					// this.server.unref();
 				} else {
 					resolve();
