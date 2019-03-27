@@ -70,9 +70,9 @@ export class Engine {
 
 	constructor(public config: Config, public store: Store, public version: string) {
 		this.chatService = new ChatService();
-		this.audioModule = new AudioModule(ThirdPartyConfig);
-		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
 		this.imageModule = new ImageModule(config.getDataPath(['cache', 'images']));
+		this.audioModule = new AudioModule(ThirdPartyConfig, this.imageModule);
+		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
 		this.stateService = new StateService(this.store.stateStore);
 		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.stateService, this.imageModule);
 		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.stateService);

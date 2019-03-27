@@ -21,9 +21,8 @@ import {IoService} from '../../engine/io/io.service';
 import {StreamController} from '../../engine/stream/stream.controller';
 import {TrackService} from './track.service';
 import {FolderService} from '../folder/folder.service';
-import {AudioFormatType} from '../../model/jam-types';
-import {ID3v2FrameValues} from '../../model/id3v2-frame-values';
 import {NotFoundError} from '../../api/jam/error';
+import {trackTagToRawTag} from '../../modules/audio/metadata';
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
@@ -102,38 +101,15 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	// more track api
 
-	private async getDefaultRawTag(track: Track): Promise<Jam.RawTag | undefined> {
-		const frames: ID3v2FrameValues.Frames = {};
-		if (track.tag.album) {
-			frames['TALB'] = [{text: track.tag.album}];
-		}
-		if (track.tag.artist) {
-			frames['TPE1'] = [{text: track.tag.artist}];
-		}
-		if (track.tag.title) {
-			frames['TIT2'] = [{text: track.tag.title}];
-		}
-		if (track.tag.year) {
-			frames['TDRC'] = [{text: track.tag.year.toString()}];
-		}
-		if (track.tag.track) {
-			frames['TRCK'] = [{text: track.tag.track.toString()}];
-		}
-		if (track.tag.genre) {
-			frames['TCON'] = [{text: track.tag.genre}];
-		}
-		return {version: 4, frames};
-	}
-
 	private async getRawTag(track: Track): Promise<Jam.RawTag | undefined> {
-		if (track.media.format === AudioFormatType.mp3) {
-			try {
-				return await this.audioModule.readID3v2(path.join(track.path, track.name));
-			} catch (e) {
-				return await this.getDefaultRawTag(track);
+		try {
+			const result = await this.audioModule.readRawTag(path.join(track.path, track.name));
+			if (!result) {
+				return trackTagToRawTag(track.tag);
 			}
-		} else {
-			return await this.getDefaultRawTag(track);
+			return result;
+		} catch (e) {
+			return trackTagToRawTag(track.tag);
 		}
 	}
 
@@ -161,7 +137,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	async rawTagUpdate(req: JamRequest<JamParameters.RawTagUpdate>): Promise<void> {
 		const track = await this.byID(req.query.id);
-		await this.audioModule.saveRawTag(path.join(track.path, track.name), req.query.tag);
+		await this.audioModule.writeRawTag(path.join(track.path, track.name), req.query.tag);
 		this.ioService.refreshTrack(track);
 	}
 

@@ -16501,7 +16501,7 @@
 						"type": "number"
 					},
 					"frames": {
-						"$ref": "#/components/schemas/ID3v2FrameValues.Frames"
+						"$ref": "#/components/schemas/ID3v2Frames.Frames"
 					}
 				},
 				"required": [
@@ -16509,1592 +16509,2015 @@
 					"version"
 				]
 			},
-			"ID3v2FrameValues.Frames": {
+			"ID3v2Frames.Frames": {
 				"type": "object",
 				"additionalProperties": {
 					"type": "array",
-					"items": {}
+					"items": {
+						"$ref": "#/components/schemas/ID3v2Frames.Frame"
+					}
 				},
 				"properties": {
 					"AENC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.AudioEncryption"
+							"$ref": "#/components/schemas/ID3v2Frames.AudioEncryption"
 						}
 					},
 					"APIC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Pic"
+							"$ref": "#/components/schemas/ID3v2Frames.Pic"
 						}
 					},
 					"ASPI": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"BUF": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"CDM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"CHAP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Chapter"
+							"$ref": "#/components/schemas/ID3v2Frames.Chapter"
 						}
 					},
 					"CM1": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"CNT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Number"
+							"$ref": "#/components/schemas/ID3v2Frames.Number"
 						}
 					},
 					"COM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.LangDescText"
+							"$ref": "#/components/schemas/ID3v2Frames.LangDescText"
 						}
 					},
 					"COMM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.LangDescText"
+							"$ref": "#/components/schemas/ID3v2Frames.LangDescText"
 						}
 					},
 					"COMR": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"CRA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.AudioEncryption"
+							"$ref": "#/components/schemas/ID3v2Frames.AudioEncryption"
 						}
 					},
 					"CRM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"CTOC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.ChapterToc"
+							"$ref": "#/components/schemas/ID3v2Frames.ChapterToc"
 						}
 					},
 					"ENCR": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"EQU": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"EQUA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"ETC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.EventTimingCodes"
+							"$ref": "#/components/schemas/ID3v2Frames.EventTimingCodes"
 						}
 					},
 					"ETCO": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.EventTimingCodes"
+							"$ref": "#/components/schemas/ID3v2Frames.EventTimingCodes"
 						}
 					},
 					"GEO": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.GEOB"
+							"$ref": "#/components/schemas/ID3v2Frames.GEOB"
 						}
 					},
 					"GEOB": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.GEOB"
+							"$ref": "#/components/schemas/ID3v2Frames.GEOB"
 						}
 					},
 					"GRID": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
+						}
+					},
+					"GRP1": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"IPL": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.TextList"
+							"$ref": "#/components/schemas/ID3v2Frames.TextList"
 						}
 					},
 					"IPLS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.TextList"
+							"$ref": "#/components/schemas/ID3v2Frames.TextList"
 						}
 					},
 					"LINK": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Link"
+							"$ref": "#/components/schemas/ID3v2Frames.Link"
 						}
 					},
 					"LNK": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Link"
+							"$ref": "#/components/schemas/ID3v2Frames.Link"
 						}
 					},
 					"MCDI": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"MLL": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"MLLT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
+						}
+					},
+					"MVNM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
+						}
+					},
+					"MVIN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"NCO": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"NCON": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"OWNE": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"PCNT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Number"
+							"$ref": "#/components/schemas/ID3v2Frames.Number"
 						}
 					},
 					"PCS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Number"
+							"$ref": "#/components/schemas/ID3v2Frames.Number"
 						}
 					},
 					"PCST": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Number"
+							"$ref": "#/components/schemas/ID3v2Frames.Number"
 						}
 					},
 					"PIC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Pic"
+							"$ref": "#/components/schemas/ID3v2Frames.Pic"
 						}
 					},
 					"POP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Popularimeter"
+							"$ref": "#/components/schemas/ID3v2Frames.Popularimeter"
 						}
 					},
 					"POPM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Popularimeter"
+							"$ref": "#/components/schemas/ID3v2Frames.Popularimeter"
 						}
 					},
 					"POSS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"PRI": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.IdBin"
+							"$ref": "#/components/schemas/ID3v2Frames.IdBin"
 						}
 					},
 					"PRIV": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.IdBin"
+							"$ref": "#/components/schemas/ID3v2Frames.IdBin"
 						}
 					},
 					"RBUF": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"REV": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"RGAD": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.ReplayGainAdjustment"
+							"$ref": "#/components/schemas/ID3v2Frames.ReplayGainAdjustment"
 						}
 					},
 					"RVA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.RVA"
+							"$ref": "#/components/schemas/ID3v2Frames.RVA"
 						}
 					},
 					"RVA2": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.RVA2"
+							"$ref": "#/components/schemas/ID3v2Frames.RVA2"
 						}
 					},
 					"RVAD": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.RVA"
+							"$ref": "#/components/schemas/ID3v2Frames.RVA"
 						}
 					},
 					"RVRB": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"SEEK": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"SIGN": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"SLT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.SynchronisedLyricsEvent"
+							"$ref": "#/components/schemas/ID3v2Frames.SynchronisedLyricsEvent"
 						}
 					},
 					"STC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"SYLT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.SynchronisedLyrics"
+							"$ref": "#/components/schemas/ID3v2Frames.SynchronisedLyrics"
 						}
 					},
 					"SYTC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"TAL": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TALB": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TBP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TBPM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TCM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TCMP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bool"
+							"$ref": "#/components/schemas/ID3v2Frames.Bool"
 						}
 					},
 					"TCO": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TCOM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TCON": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TCOP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TCP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bool"
+							"$ref": "#/components/schemas/ID3v2Frames.Bool"
 						}
 					},
 					"TCR": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDAT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDES": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDLY": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDOR": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDR": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDEN": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDRC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDRL": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDTG": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TDY": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TEN": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TENC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TEXT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TFLT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TGID": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TID": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TIM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TIME": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TIPL": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.TextList"
+							"$ref": "#/components/schemas/ID3v2Frames.TextList"
 						}
 					},
 					"TIT1": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TIT2": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TIT3": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TKE": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TKEY": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TKWD": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"TLA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TLAN": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TLE": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TLEN": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TMCL": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.TextList"
+							"$ref": "#/components/schemas/ID3v2Frames.TextList"
 						}
 					},
 					"TMED": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TMOO": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TMT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOAL": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOF": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOFN": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOL": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOLY": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOPE": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOR": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TORY": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TOWN": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TP1": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TP2": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TP3": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TP4": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TPA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TPB": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TPE1": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TPE2": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TPE3": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TPE4": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TPOS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TPRO": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TPUB": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TRC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TRCK": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TRD": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TRDA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TRK": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TRSN": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TRSO": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TS2": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSI": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSIZ": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSO2": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSOA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSOC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSOP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSOT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSST": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSRC": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TSSE": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TST": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TT1": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TT2": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TT3": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TXT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TXX": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.IdText"
+							"$ref": "#/components/schemas/ID3v2Frames.IdText"
 						}
 					},
 					"TXXX": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.IdText"
+							"$ref": "#/components/schemas/ID3v2Frames.IdText"
 						}
 					},
 					"TYE": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"TYER": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"UFI": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.IdAscii"
+							"$ref": "#/components/schemas/ID3v2Frames.IdAscii"
 						}
 					},
 					"UFID": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.IdAscii"
+							"$ref": "#/components/schemas/ID3v2Frames.IdAscii"
 						}
 					},
 					"ULT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.LangDescText"
+							"$ref": "#/components/schemas/ID3v2Frames.LangDescText"
 						}
 					},
 					"USER": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"USLT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.LangDescText"
+							"$ref": "#/components/schemas/ID3v2Frames.LangDescText"
 						}
 					},
 					"WAF": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WAR": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WAS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WCM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WCOM": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WCOP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WCP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WFD": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"WFED": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"WOAF": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WOAR": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WOAS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WORS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WPAY": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WPB": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WPUB": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Ascii"
+							"$ref": "#/components/schemas/ID3v2Frames.Ascii"
 						}
 					},
 					"WXX": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.IdText"
+							"$ref": "#/components/schemas/ID3v2Frames.IdText"
 						}
 					},
 					"WXXX": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.IdText"
+							"$ref": "#/components/schemas/ID3v2Frames.IdText"
 						}
 					},
 					"XDOR": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"XHD3": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Bin"
+							"$ref": "#/components/schemas/ID3v2Frames.Bin"
 						}
 					},
 					"XSOA": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"XSOP": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					},
 					"XSOT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.Text"
+							"$ref": "#/components/schemas/ID3v2Frames.Text"
 						}
 					}
 				}
 			},
-			"ID3v2FrameValues.AudioEncryption": {
+			"ID3v2Frames.AudioEncryption": {
 				"type": "object",
 				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"previewStart": {
-						"type": "number"
-					},
-					"previewLength": {
-						"type": "number"
-					},
-					"bin": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"bin",
-					"id",
-					"previewLength",
-					"previewStart"
-				]
-			},
-			"ID3v2FrameValues.Pic": {
-				"type": "object",
-				"properties": {
-					"description": {
-						"type": "string"
-					},
-					"pictureType": {
-						"type": "number"
-					},
-					"url": {
-						"type": "string"
-					},
-					"bin": {
-						"type": "string"
-					},
-					"mimeType": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"description",
-					"pictureType"
-				]
-			},
-			"ID3v2FrameValues.Bin": {
-				"type": "object",
-				"properties": {
-					"bin": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"bin"
-				]
-			},
-			"ID3v2FrameValues.Chapter": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"start": {
-						"type": "number"
-					},
-					"end": {
-						"type": "number"
-					},
-					"offset": {
-						"type": "number"
-					},
-					"offsetEnd": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"end",
-					"id",
-					"offset",
-					"offsetEnd",
-					"start"
-				]
-			},
-			"ID3v2FrameValues.Text": {
-				"type": "object",
-				"properties": {
-					"text": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"text"
-				]
-			},
-			"ID3v2FrameValues.Number": {
-				"type": "object",
-				"properties": {
-					"num": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"num"
-				]
-			},
-			"ID3v2FrameValues.LangDescText": {
-				"type": "object",
-				"properties": {
-					"language": {
-						"type": "string"
+					"value": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"previewStart": {
+								"type": "number"
+							},
+							"previewLength": {
+								"type": "number"
+							},
+							"bin": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"bin",
+							"id",
+							"previewLength",
+							"previewStart"
+						]
 					},
 					"id": {
 						"type": "string"
 					},
-					"text": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"language",
-					"text"
-				]
-			},
-			"ID3v2FrameValues.ChapterToc": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"ordered": {
-						"type": "boolean"
-					},
-					"topLevel": {
-						"type": "boolean"
-					},
-					"children": {
+					"subframes": {
 						"type": "array",
 						"items": {
-							"type": "string"
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
 						}
 					}
 				},
 				"required": [
-					"children",
 					"id",
-					"ordered",
-					"topLevel"
+					"value"
 				]
 			},
-			"ID3v2FrameValues.EventTimingCodes": {
+			"ID3v2Frames.Frame": {
 				"type": "object",
 				"properties": {
-					"format": {
-						"type": "number"
+					"id": {
+						"type": "string"
 					},
-					"events": {
+					"value": {
+						"type": "object",
+						"properties": {}
+					},
+					"subframes": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.EventTimingCodesEvent"
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
 						}
 					}
 				},
 				"required": [
-					"events",
-					"format"
+					"id",
+					"value"
 				]
 			},
-			"ID3v2FrameValues.EventTimingCodesEvent": {
+			"ID3v2Frames.Pic": {
 				"type": "object",
 				"properties": {
-					"type": {
-						"type": "number"
+					"value": {
+						"type": "object",
+						"properties": {
+							"description": {
+								"type": "string"
+							},
+							"pictureType": {
+								"type": "number"
+							},
+							"url": {
+								"type": "string"
+							},
+							"bin": {
+								"type": "string"
+							},
+							"mimeType": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"description",
+							"pictureType"
+						]
 					},
-					"timestamp": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"timestamp",
-					"type"
-				]
-			},
-			"ID3v2FrameValues.GEOB": {
-				"type": "object",
-				"properties": {
-					"filename": {
+					"id": {
 						"type": "string"
 					},
-					"mimeType": {
-						"type": "string"
-					},
-					"contentDescription": {
-						"type": "string"
-					},
-					"bin": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"bin",
-					"contentDescription",
-					"filename",
-					"mimeType"
-				]
-			},
-			"ID3v2FrameValues.TextList": {
-				"type": "object",
-				"properties": {
-					"list": {
+					"subframes": {
 						"type": "array",
 						"items": {
-							"type": "string"
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
 						}
 					}
 				},
 				"required": [
-					"list"
+					"id",
+					"value"
 				]
 			},
-			"ID3v2FrameValues.Link": {
+			"ID3v2Frames.Bin": {
 				"type": "object",
 				"properties": {
-					"url": {
-						"type": "string"
+					"value": {
+						"type": "object",
+						"properties": {
+							"bin": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"bin"
+						]
 					},
 					"id": {
 						"type": "string"
 					},
-					"additional": {
+					"subframes": {
 						"type": "array",
 						"items": {
-							"type": "string"
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
 						}
 					}
 				},
 				"required": [
-					"additional",
 					"id",
-					"url"
+					"value"
 				]
 			},
-			"ID3v2FrameValues.Popularimeter": {
+			"ID3v2Frames.Chapter": {
 				"type": "object",
 				"properties": {
-					"rating": {
-						"type": "number"
+					"value": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"start": {
+								"type": "number"
+							},
+							"end": {
+								"type": "number"
+							},
+							"offset": {
+								"type": "number"
+							},
+							"offsetEnd": {
+								"type": "number"
+							}
+						},
+						"required": [
+							"end",
+							"id",
+							"offset",
+							"offsetEnd",
+							"start"
+						]
 					},
-					"count": {
-						"type": "number"
-					},
-					"email": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"count",
-					"email",
-					"rating"
-				]
-			},
-			"ID3v2FrameValues.IdBin": {
-				"type": "object",
-				"properties": {
 					"id": {
 						"type": "string"
 					},
-					"bin": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"bin",
-					"id"
-				]
-			},
-			"ID3v2FrameValues.ReplayGainAdjustment": {
-				"type": "object",
-				"properties": {
-					"peak": {
-						"type": "number"
-					},
-					"radioAdjustment": {
-						"type": "number"
-					},
-					"audiophileAdjustment": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"audiophileAdjustment",
-					"peak",
-					"radioAdjustment"
-				]
-			},
-			"ID3v2FrameValues.RVA": {
-				"type": "object",
-				"properties": {
-					"right": {
-						"type": "number"
-					},
-					"left": {
-						"type": "number"
-					},
-					"peakRight": {
-						"type": "number"
-					},
-					"peakLeft": {
-						"type": "number"
-					},
-					"rightBack": {
-						"type": "number"
-					},
-					"leftBack": {
-						"type": "number"
-					},
-					"peakRightBack": {
-						"type": "number"
-					},
-					"peakLeftBack": {
-						"type": "number"
-					},
-					"center": {
-						"type": "number"
-					},
-					"peakCenter": {
-						"type": "number"
-					},
-					"bass": {
-						"type": "number"
-					},
-					"peakBass": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"left",
-					"right"
-				]
-			},
-			"ID3v2FrameValues.RVA2": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"channels": {
+					"subframes": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.RVA2Channel"
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
 						}
 					}
 				},
 				"required": [
-					"channels",
-					"id"
+					"id",
+					"value"
 				]
 			},
-			"ID3v2FrameValues.RVA2Channel": {
+			"ID3v2Frames.Text": {
 				"type": "object",
 				"properties": {
-					"type": {
-						"type": "number"
+					"value": {
+						"type": "object",
+						"properties": {
+							"text": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"text"
+						]
 					},
-					"adjustment": {
-						"type": "number"
-					},
-					"peak": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"adjustment",
-					"type"
-				]
-			},
-			"ID3v2FrameValues.SynchronisedLyricsEvent": {
-				"type": "object",
-				"properties": {
-					"timestamp": {
-						"type": "number"
-					},
-					"text": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"text",
-					"timestamp"
-				]
-			},
-			"ID3v2FrameValues.SynchronisedLyrics": {
-				"type": "object",
-				"properties": {
 					"id": {
 						"type": "string"
 					},
-					"language": {
-						"type": "string"
-					},
-					"timestampFormat": {
-						"type": "number"
-					},
-					"contentType": {
-						"type": "number"
-					},
-					"events": {
+					"subframes": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2FrameValues.SynchronisedLyricsEvent"
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
 						}
 					}
 				},
 				"required": [
-					"contentType",
-					"events",
 					"id",
-					"language",
-					"timestampFormat"
+					"value"
 				]
 			},
-			"ID3v2FrameValues.Bool": {
+			"ID3v2Frames.Number": {
 				"type": "object",
 				"properties": {
-					"bool": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"bool"
-				]
-			},
-			"ID3v2FrameValues.IdText": {
-				"type": "object",
-				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"num": {
+								"type": "number"
+							}
+						},
+						"required": [
+							"num"
+						]
+					},
 					"id": {
 						"type": "string"
 					},
-					"text": {
-						"type": "string"
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
 					}
 				},
 				"required": [
 					"id",
-					"text"
+					"value"
 				]
 			},
-			"ID3v2FrameValues.IdAscii": {
+			"ID3v2Frames.LangDescText": {
 				"type": "object",
 				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"language": {
+								"type": "string"
+							},
+							"id": {
+								"type": "string"
+							},
+							"text": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"language",
+							"text"
+						]
+					},
 					"id": {
 						"type": "string"
 					},
-					"text": {
-						"type": "string"
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
 					}
 				},
 				"required": [
 					"id",
-					"text"
+					"value"
 				]
 			},
-			"ID3v2FrameValues.Ascii": {
+			"ID3v2Frames.ChapterToc": {
 				"type": "object",
 				"properties": {
-					"text": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"ordered": {
+								"type": "boolean"
+							},
+							"topLevel": {
+								"type": "boolean"
+							},
+							"children": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						},
+						"required": [
+							"children",
+							"id",
+							"ordered",
+							"topLevel"
+						]
+					},
+					"id": {
 						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
 					}
 				},
 				"required": [
-					"text"
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.EventTimingCodes": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"format": {
+								"type": "number"
+							},
+							"events": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/ID3v2Frames.EventTimingCodesEvent"
+								}
+							}
+						},
+						"required": [
+							"events",
+							"format"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.GEOB": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"filename": {
+								"type": "string"
+							},
+							"mimeType": {
+								"type": "string"
+							},
+							"contentDescription": {
+								"type": "string"
+							},
+							"bin": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"bin",
+							"contentDescription",
+							"filename",
+							"mimeType"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.TextList": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"list": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						},
+						"required": [
+							"list"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.Link": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"url": {
+								"type": "string"
+							},
+							"id": {
+								"type": "string"
+							},
+							"additional": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						},
+						"required": [
+							"additional",
+							"id",
+							"url"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.Popularimeter": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"rating": {
+								"type": "number"
+							},
+							"count": {
+								"type": "number"
+							},
+							"email": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"count",
+							"email",
+							"rating"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.IdBin": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"bin": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"bin",
+							"id"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.ReplayGainAdjustment": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"peak": {
+								"type": "number"
+							},
+							"radioAdjustment": {
+								"type": "number"
+							},
+							"audiophileAdjustment": {
+								"type": "number"
+							}
+						},
+						"required": [
+							"audiophileAdjustment",
+							"peak",
+							"radioAdjustment"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.RVA": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"right": {
+								"type": "number"
+							},
+							"left": {
+								"type": "number"
+							},
+							"peakRight": {
+								"type": "number"
+							},
+							"peakLeft": {
+								"type": "number"
+							},
+							"rightBack": {
+								"type": "number"
+							},
+							"leftBack": {
+								"type": "number"
+							},
+							"peakRightBack": {
+								"type": "number"
+							},
+							"peakLeftBack": {
+								"type": "number"
+							},
+							"center": {
+								"type": "number"
+							},
+							"peakCenter": {
+								"type": "number"
+							},
+							"bass": {
+								"type": "number"
+							},
+							"peakBass": {
+								"type": "number"
+							}
+						},
+						"required": [
+							"left",
+							"right"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.RVA2": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"channels": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/ID3v2Frames.RVA2Channel"
+								}
+							}
+						},
+						"required": [
+							"channels",
+							"id"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.SynchronisedLyricsEvent": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"timestamp": {
+								"type": "number"
+							},
+							"text": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"text",
+							"timestamp"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.SynchronisedLyrics": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"language": {
+								"type": "string"
+							},
+							"timestampFormat": {
+								"type": "number"
+							},
+							"contentType": {
+								"type": "number"
+							},
+							"events": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/ID3v2Frames.SynchronisedLyricsEvent"
+								}
+							}
+						},
+						"required": [
+							"contentType",
+							"events",
+							"id",
+							"language",
+							"timestampFormat"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.Bool": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"bool": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"bool"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.IdText": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"text": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"text"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.IdAscii": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"text": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id",
+							"text"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
+				]
+			},
+			"ID3v2Frames.Ascii": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "object",
+						"properties": {
+							"text": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"text"
+						]
+					},
+					"id": {
+						"type": "string"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID3v2Frames.Frame"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"value"
 				]
 			},
 			"Jam.TrackMedia": {

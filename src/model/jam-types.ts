@@ -172,8 +172,6 @@ export const enum TrackTagFormatType {
 	vorbis = 'vorbis'
 }
 
-export const TrackTagRawFormatTypes = [TrackTagFormatType.id3v20, TrackTagFormatType.id3v21, TrackTagFormatType.id3v22, TrackTagFormatType.id3v23, TrackTagFormatType.id3v24, TrackTagFormatType.vorbis];
-
 export const enum MusicBrainzAlbumPrimaryType {
 	album = 'Album',
 	single = 'Single',

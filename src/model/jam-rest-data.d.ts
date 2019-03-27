@@ -1,9 +1,9 @@
 import {MusicBrainz} from './musicbrainz-rest-data';
-import {ID3v2FrameValues} from './id3v2-frame-values';
 import {LastFM} from './lastfm-rest-data';
 import {Acoustid} from './acoustid-rest-data';
 import {AcousticBrainz} from './acousticbrainz-rest-data';
 import {CoverArtArchive} from './coverartarchive-rest-data';
+import {ID3v2Frames} from './id3v2-frames';
 
 export declare namespace Jam {
 
@@ -137,7 +137,7 @@ export declare namespace Jam {
 
 	export interface RawTag {
 		version: number;
-		frames: ID3v2FrameValues.Frames;
+		frames: ID3v2Frames.Frames;
 	}
 
 	export interface State {

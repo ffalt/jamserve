@@ -1,4 +1,4 @@
-import {ID3v1, ID3v2, IID3V1, IID3V2, IMP3, MP3, simplifyTag} from 'jamp3';
+import {ID3v1, ID3v2, IID3V1, IID3V2, IMP3, MP3, ID3V24TagBuilder, simplifyTag} from 'jamp3';
 import {ChartLyricsClient, ChartLyricsResult} from './clients/chartlyrics-client';
 import {AcoustidClient} from './clients/acoustid-client';
 import {LastFMClient} from './clients/lastfm-client';
@@ -18,13 +18,19 @@ import {AcousticbrainzClient} from './clients/acousticbrainz-client';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {CoverArtArchiveClient} from './clients/coverartarchive-client';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
-import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType, TrackTagRawFormatTypes} from '../../model/jam-types';
+import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType} from '../../model/jam-types';
 import {WikiData, WikipediaClient} from './clients/wikipedia-client';
+import {Flac, FlacComment, FlacMedia} from './formats/flac/flac';
+import {MetaWriteableDataBlock} from './formats/flac/lib/block';
+import {ImageModule} from '../image/image.module';
+import {flacToRawTag, id3v2ToFlacMetaData, id3v2ToRawTag, rawTagToID3v2} from './metadata';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
 	tag?: TrackTag;
 }
+
+export const ID3TrackTagRawFormatTypes = [TrackTagFormatType.id3v20, TrackTagFormatType.id3v21, TrackTagFormatType.id3v22, TrackTagFormatType.id3v23, TrackTagFormatType.id3v24];
 
 class FORMAT {
 	static packJamServeMedia(data?: IMP3.MPEG): TrackMedia {
@@ -60,6 +66,42 @@ class FORMAT {
 			mode: stream.channel_layout,
 			version: stream.codec_long_name
 		};
+	}
+
+	static packFlacMediaInfoJamServeMedia(media?: FlacMedia): TrackMedia {
+		if (!media) {
+			return {};
+		}
+		return {
+			format: AudioFormatType.flac,
+			duration: media.duration,
+			sampleRate: media.sampleRate,
+			encoded: 'VBR',
+			channels: media.channels
+		};
+	}
+
+	static parseNum(s: string | undefined): number | undefined {
+		if (s !== undefined) {
+			const n = Number(s.trim());
+			if (isNaN(n)) {
+				return;
+			}
+			return n;
+		}
+	}
+
+	static parseYear(s: string | undefined): number | undefined {
+		if (s !== undefined) {
+			s = s.slice(0, 4).trim();
+			if (s.length === 4) {
+				const n = Number(s);
+				if (isNaN(n)) {
+					return;
+				}
+				return n;
+			}
+		}
 	}
 
 	static packProbeJamServeTag(data: ProbeResult): TrackTag {
@@ -121,60 +163,69 @@ class FORMAT {
 			return undefined;
 		}
 		const simple = simplifyTag(data);
-		// ? simplifyTag(result.id3v2) : undefined
-		let year: number | undefined = simple.year;
-		if (simple.release_year) {
-			const y = Number(simple.release_year);
-			if (!isNaN(y)) {
-				year = y;
-			}
-		}
-		if (simple.originalyear) {
-			const y = Number(simple.originalyear);
-			if (!isNaN(y)) {
-				year = y;
-			}
-		}
-		if (simple.original_release_year) {
-			const y = Number(simple.original_release_year);
-			if (!isNaN(y)) {
-				year = y;
-			}
-		}
-		if (simple.release_date) {
-			const y = parseInt(simple.release_date.slice(0, 4), 10);
-			if (!isNaN(y)) {
-				year = y;
-			}
-		}
-		const format = TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
+		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
 		return {
 			format,
-			album: simple.album,
-			albumSort: simple.album_sort_order,
-			albumArtist: simple.album_artist,
-			albumArtistSort: simple.album_artist_sort || simple.album_artist_sort_order,
-			artist: simple.artist,
-			artistSort: simple.artist_sort,
-			genre: simple.genre ? cleanGenre(simple.genre) : undefined,
-			disc: simple.disc,
-			discTotal: simple.disc_total,
-			title: simple.title,
-			titleSort: simple.title_sort_order,
-			track: simple.track,
-			trackTotal: simple.track_total,
-			year: year,
-			mbTrackID: simple.TRACKID,
-			mbAlbumType: simple.ALBUMTYPE,
-			mbAlbumArtistID: simple.ALBUMARTISTID,
-			mbArtistID: simple.ARTISTID,
-			mbAlbumID: simple.ALBUMID,
-			mbReleaseTrackID: simple.RELEASETRACKID,
-			mbReleaseGroupID: simple.RELEASEGROUPID,
-			mbRecordingID: simple.RECORDINGID,
-			mbAlbumStatus: simple.ALBUMSTATUS,
+			album: simple.ALBUM,
+			albumSort: simple.ALBUMSORT,
+			albumArtist: simple.ALBUMARTIST,
+			albumArtistSort: simple.ALBUMARTISTSORT,
+			artist: simple.ARTIST,
+			artistSort: simple.ARTISTSORT,
+			title: simple.TITLE,
+			titleSort: simple.TITLESORT,
+			genre: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
+			disc: this.parseNum(simple.DISCNUMBER),
+			discTotal: this.parseNum(simple.DISCTOTAL),
+			track: this.parseNum(simple.TRACKNUMBER),
+			trackTotal: this.parseNum(simple.TRACKTOTAL),
+			year: this.parseYear(simple.ORIGINALDATE) || this.parseYear(simple.DATE) || this.parseYear(simple.RELEASETIME),
+			mbTrackID: simple.MUSICBRAINZ_TRACKID,
+			mbAlbumType: simple.RELEASETYPE,
+			mbAlbumArtistID: simple.MUSICBRAINZ_ALBUMARTISTID,
+			mbArtistID: simple.MUSICBRAINZ_ARTISTID,
+			mbAlbumID: simple.MUSICBRAINZ_ALBUMID,
+			mbReleaseTrackID: simple.MUSICBRAINZ_RELEASETRACKID,
+			mbReleaseGroupID: simple.MUSICBRAINZ_RELEASEGROUPID,
+			mbRecordingID: simple.MUSICBRAINZ_RELEASETRACKID,
+			mbAlbumStatus: simple.RELEASESTATUS,
 			mbReleaseCountry: simple.RELEASECOUNTRY
 		};
+	}
+
+	static packFlacVorbisCommentJamServeTag(comment?: FlacComment): TrackTag | undefined {
+		if (!comment || !comment.tag) {
+			return undefined;
+		}
+		const simple: { [key: string]: string | undefined } = comment.tag;
+		return {
+			format: TrackTagFormatType.vorbis,
+			album: simple.ALBUM,
+			albumSort: simple.ALBUMSORT,
+			albumArtist: simple.ALBUMARTIST,
+			albumArtistSort: simple.ALBUMARTISTSORT,
+			artist: simple.ARTIST,
+			artistSort: simple.ARTISTSORT,
+			genre: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
+			disc: this.parseNum(simple.DISCNUMBER),
+			discTotal: this.parseNum(simple.DISCTOTAL) || this.parseNum(simple.TOTALDISCS),
+			title: simple.TITLE,
+			titleSort: simple.TITLESORT,
+			track: this.parseNum(simple.TRACKNUMBER) || this.parseNum(simple.TRACK),
+			trackTotal: this.parseNum(simple.TRACKTOTAL) || this.parseNum(simple.TOTALTRACKS),
+			year: this.parseYear(simple.ORIGINALYEAR) || this.parseYear(simple.DATE),
+			mbTrackID: simple.MUSICBRAINZ_TRACKID,
+			mbAlbumType: simple.RELEASETYPE,
+			mbAlbumArtistID: simple.MUSICBRAINZ_ALBUMARTISTID,
+			mbArtistID: simple.MUSICBRAINZ_ARTISTID,
+			mbAlbumID: simple.MUSICBRAINZ_ALBUMID,
+			mbReleaseTrackID: simple.MUSICBRAINZ_RELEASETRACKID,
+			mbReleaseGroupID: simple.MUSICBRAINZ_RELEASEGROUPID,
+			mbRecordingID: simple.MUSICBRAINZ_RELEASETRACKID,
+			mbAlbumStatus: simple.RELEASESTATUS,
+			mbReleaseCountry: simple.RELEASECOUNTRY
+		};
+
 	}
 
 }
@@ -189,7 +240,7 @@ export class AudioModule {
 	wikipedia: WikipediaClient;
 	private isSaving: { [filename: string]: boolean } = {};
 
-	constructor(tools: ThirdpartyToolsConfig) {
+	constructor(tools: ThirdpartyToolsConfig, public imageModule: ImageModule) {
 		this.musicbrainz = new MusicbrainzClient({userAgent: tools.musicbrainz.userAgent, retryOn: true});
 		this.acousticbrainz = new AcousticbrainzClient({userAgent: tools.acousticbrainz.userAgent, retryOn: true});
 		this.lastFM = new LastFMClient({key: tools.lastfm.apiKey, userAgent: tools.lastfm.userAgent});
@@ -222,6 +273,15 @@ export class AudioModule {
 				console.error(e);
 				return {tag: {format: TrackTagFormatType.none}, media: {}};
 			}
+		} else if (suffix === AudioFormatType.flac) {
+			const flac = new Flac();
+			try {
+				const result = await flac.read(filename);
+				return {tag: FORMAT.packFlacVorbisCommentJamServeTag(result.comment), media: FORMAT.packFlacMediaInfoJamServeMedia(result.media)};
+			} catch (e) {
+				console.error(e);
+				return {tag: {format: TrackTagFormatType.none}, media: {}};
+			}
 		} else {
 			const p = await probe(filename, []);
 			if (!p) {
@@ -232,43 +292,22 @@ export class AudioModule {
 		}
 	}
 
-	async saveRawTag(filename: string, tag: Jam.RawTag): Promise<void> {
+	async writeRawTag(filename: string, tag: Jam.RawTag): Promise<void> {
 		if (this.isSaving[filename]) {
 			console.error('Another save is in progress', filename);
 			return Promise.reject(Error('Another save is in progress'));
 		}
 		this.isSaving[filename] = true;
+		const suffix = fileSuffix(filename);
 		try {
-			// const exists = await fse.pathExists(filename + '.bak.org');
-			// if (!exists) {
-			// 	await fse.copy(filename, filename + '.bak.org');
-			// }
-			const frames: Array<IID3V2.Frame> = [];
-			Object.keys(tag.frames).map(id => {
-				const f = tag.frames[id] || [];
-				f.forEach(value => {
-					if (value && value.hasOwnProperty('bin')) {
-						const binValue = <any>value;
-						binValue.bin = Buffer.from(binValue.bin, 'base64');
-					}
-					frames.push({id, head: {statusFlags: {}, formatFlags: {}, size: 0}, value});
-				});
-				return;
-			});
-			const t: IID3V2.Tag = {
-				id: 'ID3v2',
-				head: {
-					ver: tag.version,
-					rev: 0,
-					size: 0,
-					valid: true
-				},
-				start: 0,
-				end: 0,
-				frames
-			};
-			const id3v2 = new ID3v2();
-			await id3v2.write(filename, t, tag.version, 0);
+			if (suffix === AudioFormatType.mp3) {
+				await this.writeMP3Tag(filename, tag);
+			} else if (suffix === AudioFormatType.flac) {
+				return this.writeFlacTag(filename, tag);
+			} else {
+				delete this.isSaving[filename];
+				return Promise.reject(new Error('Writing to fileformat ' + suffix + ' is currently not supported'));
+			}
 			delete this.isSaving[filename];
 		} catch (e) {
 			delete this.isSaving[filename];
@@ -276,29 +315,47 @@ export class AudioModule {
 		}
 	}
 
-	async readID3v2(filename: string): Promise<Jam.RawTag> {
-		const id3v2 = new ID3v2();
-		const id3v2tag = await id3v2.read(filename);
-		if (!id3v2tag || !id3v2tag.head) {
-			return Promise.reject(Error('No ID3v2 Tag found'));
+	async readRawTag(filename: string): Promise<Jam.RawTag | undefined> {
+		const suffix = fileSuffix(filename);
+		if (suffix === AudioFormatType.mp3) {
+			return this.readMP3RawTag(filename);
+		} else if (suffix === AudioFormatType.flac) {
+			return this.readFlacRawTag(filename);
 		}
-		const tag: Jam.RawTag = {
-			version: id3v2tag.head.ver,
-			frames: {}
-		};
-		id3v2tag.frames.forEach(frame => {
-			const f = tag.frames[frame.id] || [];
-			if (frame.value && frame.value.hasOwnProperty('bin')) {
-				const binValue = <any>frame.value;
-				binValue.bin = binValue.bin.toString('base64');
-			}
-			f.push(frame.value);
-			tag.frames[frame.id] = f;
-		});
-		return tag;
 	}
 
-	async readID3v2Image(filename: string, type: number): Promise<{ buffer?: Buffer, mimeType?: string }> {
+	private async readFlacRawTag(filename: string): Promise<Jam.RawTag | undefined> {
+		const flac = new Flac();
+		const result = await flac.read(filename);
+		if (!result || !result.comment) {
+			return Promise.reject(Error('No Flac Vorbis Comment found'));
+		}
+		return flacToRawTag(result);
+	}
+
+	private async readMP3RawTag(filename: string): Promise<Jam.RawTag | undefined> {
+		const id3v2 = new ID3v2();
+		const result = await id3v2.read(filename);
+		if (!result || !result.head) {
+			return Promise.reject(Error('No ID3v2 Tag found'));
+		}
+		return id3v2ToRawTag(result);
+	}
+
+	private async writeMP3Tag(filename: string, tag: Jam.RawTag) {
+		const id3 = rawTagToID3v2(tag);
+		const id3v2 = new ID3v2();
+		await id3v2.write(filename, id3, id3.head ? id3.head.ver : 4, id3.head ? id3.head.rev : 0);
+	}
+
+	private async writeFlacTag(filename: string, tag: Jam.RawTag) {
+		const id3 = rawTagToID3v2(tag);
+		const flacBlocks: Array<MetaWriteableDataBlock> = await id3v2ToFlacMetaData(id3, this.imageModule);
+		const flac = new Flac();
+		await flac.write(filename, flacBlocks);
+	}
+
+	async readMP3Image(filename: string, type: number): Promise<{ buffer?: Buffer, mimeType?: string }> {
 		const id3v2 = new ID3v2();
 		const tag = await id3v2.read(filename);
 		if (!tag) {
@@ -358,4 +415,5 @@ export class AudioModule {
 	async wikidataID(id: string): Promise<WikiData.Entity | undefined> {
 		return await this.wikipedia.wikidata(id);
 	}
+
 }

@@ -202,4 +202,14 @@ export class ImageModule {
 		await fse.writeFile(destination, avatar);
 	}
 
+	async getImageInfo(bin: Buffer, mimeType: string | undefined): Promise<{ width: number, height: number, colorDepth: number, colors: number }> {
+		const image = await Jimp.read(bin);
+		// TODO get color palette count (if indexed)/color depth via jimp
+		return {
+			width: image.getWidth(),
+			height: image.getHeight(),
+			colorDepth: 0,
+			colors: 0
+		};
+	}
 }
