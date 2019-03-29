@@ -105,13 +105,13 @@ class FORMAT {
 	}
 
 	static packProbeJamServeTag(data: ProbeResult): TrackTag {
+		if (!data || !data.format || !data.format.tags) {
+			return {format: TrackTagFormatType.none};
+		}
 		const simple: { [name: string]: string } = {};
 		Object.keys(data.format.tags).forEach(key => {
 			simple[key.toUpperCase().replace(/ /g, '_')] = data.format.tags[key];
 		});
-		if (!simple) {
-			return {format: TrackTagFormatType.none};
-		}
 		const track = Number(simple.TRACK);
 		const year = Number(simple.DATE);
 		const disc = Number(simple.DISC);
