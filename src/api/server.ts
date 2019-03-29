@@ -61,7 +61,7 @@ export class Server {
 
 	async start(): Promise<void> {
 		this.server = this.app.listen(this.engine.config.server.port, this.engine.config.server.listen);
-		log.info('Listening ' + this.getURL());
+		log.info('Version ' + this.engine.version + ' listening ' + this.getURL());
 	}
 
 	async stop(): Promise<void> {
