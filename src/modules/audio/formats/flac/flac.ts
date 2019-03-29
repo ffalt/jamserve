@@ -41,6 +41,7 @@ export interface FlacInfo {
 	media?: FlacMedia;
 	comment?: FlacComment;
 	pictures?: Array<FlacPicture>;
+	id3?: Buffer;
 }
 
 export class Flac {
@@ -49,7 +50,7 @@ export class Flac {
 		const result: FlacInfo = {};
 		return new Promise<FlacInfo>((resolve, reject) => {
 			const reader = fs.createReadStream(filename);
-			const processor = new FlacProcessorStream();
+			const processor = new FlacProcessorStream(true, true);
 			processor.on('postprocess', (mdb: MetaDataBlock) => {
 				if (mdb.type === MDB_TYPE_STREAMINFO) {
 					result.media = this.formatMediaBlock(<MetaDataBlockStreamInfo>mdb);
@@ -62,20 +63,30 @@ export class Flac {
 					}
 				}
 			});
+			processor.on('id3', (buffer: Buffer) => {
+				result.id3 = buffer;
+			});
 			processor.on('done', () => {
 				resolve(result);
 			});
 			processor.on('error', (e: Error) => {
 				reject(e);
 			});
-			reader.pipe(processor);
+			reader.on('error', (e: Error) => {
+				reject(e);
+			});
+			try {
+				reader.pipe(processor);
+			} catch (e) {
+				reject(e);
+			}
 		});
 	}
 
-	private async streamWrite(filename: string, destination: string, flacBlocks: Array<MetaWriteableDataBlock>): Promise<void> {
+	async writeTo(filename: string, destination: string, flacBlocks: Array<MetaWriteableDataBlock>): Promise<void> {
 		const reader = fs.createReadStream(filename);
 		const writer = fs.createWriteStream(destination);
-		const processor = new FlacProcessorStream();
+		const processor = new FlacProcessorStream(false, false);
 		return new Promise<void>((resolve, reject) => {
 			processor.on('preprocess', (mdb) => {
 				if (mdb.type === MDB_TYPE_VORBIS_COMMENT || mdb.type === MDB_TYPE_PICTURE) {
@@ -89,6 +100,12 @@ export class Flac {
 					flacBlocks = [];
 				}
 			});
+			reader.on('error', (e: Error) => {
+				reject(e);
+			});
+			processor.on('error', (e: Error) => {
+				reject(e);
+			});
 			writer.on('error', (e: Error) => {
 				reject(e);
 			});
@@ -101,7 +118,7 @@ export class Flac {
 
 	async write(filename: string, flacBlocks: Array<MetaWriteableDataBlock>): Promise<void> {
 		try {
-			await this.streamWrite(filename, filename + '.tmp', flacBlocks);
+			await this.writeTo(filename, filename + '.tmp', flacBlocks);
 			await fileDeleteIfExists(filename);
 			await fse.move(filename + '.tmp', filename);
 		} catch (e) {

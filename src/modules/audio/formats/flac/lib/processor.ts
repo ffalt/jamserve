@@ -1,7 +1,7 @@
 /**
  based on https://github.com/claus/flac-metadata
  License: MIT
-**/
+ **/
 import {Transform, TransformCallback, TransformOptions} from 'stream';
 import {MetaDataBlockStreamInfo} from './block.streaminfo';
 import {BlockVorbiscomment} from './block.vorbiscomment';
@@ -13,6 +13,7 @@ const STATE_MARKER = 1;
 const STATE_MDB_HEADER = 2;
 const STATE_MDB = 3;
 const STATE_PASS_THROUGH = 4;
+const STATE_SCAN_MARKER = 5;
 
 export const MDB_TYPE_STREAMINFO = 0;
 export const MDB_TYPE_PADDING = 1;
@@ -25,6 +26,8 @@ export const MDB_TYPE_INVALID = 127;
 
 export class FlacProcessorStream extends Transform {
 	state = STATE_IDLE;
+	hasError = false;
+	hasID3 = false;
 	isFlac = false;
 	buf?: Buffer;
 	bufPos = 0;
@@ -36,9 +39,12 @@ export class FlacProcessorStream extends Transform {
 	mdbLastWritten = false;
 
 	parseMetaDataBlocks = true;
+	reportID3 = true;
 
-	constructor(options?: TransformOptions) {
+	constructor(reportID3: boolean = false, parseMetaDataBlocks: boolean = false, options?: TransformOptions) {
 		super(options);
+		this.reportID3 = !!reportID3;
+		this.parseMetaDataBlocks = !!parseMetaDataBlocks;
 	}
 
 
@@ -46,6 +52,33 @@ export class FlacProcessorStream extends Transform {
 		let chunkPos = 0;
 		const chunkLen = chunk.length;
 		let isChunkProcessed = false;
+
+		const scan = () => {
+			for (let i = chunkPos; i < chunkLen; i++) {
+				const slice = chunk.slice(i, i + 4).toString('utf8', 0);
+				if (slice === 'fLaC') {
+					if (this.reportID3) {
+						let rest = chunk.slice(0, i);
+						if (this.buf) {
+							rest = Buffer.concat([this.buf, rest]);
+						}
+						this.emit('id3', rest);
+					}
+					this.isFlac = true;
+					chunkPos = i;
+					this.bufPos = 0;
+					this.buf = undefined;
+					return;
+				}
+			}
+			if (this.reportID3) {
+				if (!this.buf) {
+					this.buf = chunk;
+				} else {
+					this.buf = Buffer.concat([this.buf, chunk]);
+				}
+			}
+		};
 
 		const safePush = (minCapacity: number, persist: boolean, validate?: (slice: Buffer, isDone: boolean) => boolean) => {
 			let slice;
@@ -99,10 +132,22 @@ export class FlacProcessorStream extends Transform {
 				case STATE_IDLE:
 					this.state = STATE_MARKER;
 					break;
+				case STATE_SCAN_MARKER:
+					scan();
+					if (this.isFlac) {
+						this.state = STATE_MARKER;
+					} else {
+						isChunkProcessed = true;
+					}
+					break;
 				case STATE_MARKER:
 					if (safePush(4, true, this._validateMarker.bind(this))) {
-						this.state = this.isFlac ? STATE_MDB_HEADER : STATE_PASS_THROUGH;
+						if (!this.isFlac && this.hasID3) {
+							this.state = STATE_SCAN_MARKER;
 						} else {
+							this.state = this.isFlac ? STATE_MDB_HEADER : STATE_PASS_THROUGH;
+						}
+					} else {
 						isChunkProcessed = true;
 					}
 					break;
@@ -132,13 +177,28 @@ export class FlacProcessorStream extends Transform {
 					break;
 			}
 		}
-		this.emit('done');
+		if (!this.hasError) {
+			this.emit('done');
+		}
 		callback();
+	}
+
+	_validateScanMarker(slice: Buffer, isDone: boolean): boolean {
+		console.log('_validateScanMarker', slice.toString('utf8', 0));
+		this.isFlac = (slice.toString('utf8', 0) === 'fLaC');
+		return false;
 	}
 
 	_validateMarker(slice: Buffer, isDone: boolean): boolean {
 		this.isFlac = (slice.toString('utf8', 0) === 'fLaC');
-		// TODO: completely bail out if file is not a FLAC?
+		if (!this.isFlac) {
+			this.hasID3 = slice.slice(0, 3).toString('utf8', 0) === 'ID3';
+			if (!this.hasID3) {
+				this.hasError = true;
+				this.destroy(new Error('Not supported file format'));
+			}
+			return false;
+		}
 		return true;
 	}
 
@@ -206,6 +266,7 @@ export class FlacProcessorStream extends Transform {
 		// Clean up
 		this.state = STATE_IDLE;
 		this.mdbLastWritten = false;
+		this.hasID3 = false;
 		this.isFlac = false;
 		this.bufPos = 0;
 		this.buf = undefined;
