@@ -85,7 +85,7 @@ export class JamController {
 		this.artistController = new ArtistController(this.engine.artistService, this.trackController, this.albumController, this.engine.metaDataService, this.engine.indexService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.folderController = new FolderController(this.engine.folderService, this.trackController, this.engine.metaDataService, this.engine.indexService,
-			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.ioService);
+			this.engine.rootService, this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.ioService);
 		this.userController = new UserController(this.engine.userService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.playlistController = new PlaylistController(this.engine.playlistService, this.trackController,

@@ -13,6 +13,7 @@ export interface Track extends DBObject {
 	};
 	albumID: string;
 	artistID: string;
+	albumArtistID: string;
 	tag: TrackTag;
 	media: TrackMedia;
 }

@@ -169,7 +169,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				if (err) {
 					reject(err);
 				} else if (numReplaced !== 1) {
-					return reject('Could not find ' + this._type + ' doc with id ' + id);
+					return reject(Error('Could not find ' + this._type + ' doc with id ' + id));
 				} else {
 					resolve();
 				}
@@ -235,6 +235,9 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 	}
 
 	async byIds(ids: Array<string>): Promise<Array<T>> {
+		if (ids.length === 0) {
+			return [];
+		}
 		return new Promise<Array<T>>((resolve, reject) => {
 			this.client.find<T>({id: {$in: ids}}, (err, docs) => {
 				if (err) {
@@ -402,15 +405,15 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		});
 	}
 
-	async distinct(fieldname: string): Promise<Array<string>> {
+	async distinct(query: DatabaseQuery, field: string): Promise<Array<string>> {
 		return new Promise<Array<string>>((resolve, reject) => {
-			this.client.find<T>({}, (err, docs) => {
+			this.client.find<T>(this.translateQuery(query), (err, docs) => {
 				if (err) {
 					reject(err);
 				} else {
 					const list: Array<string> = [];
 					docs.forEach(doc => {
-						const vals = this.getDotFieldValues(fieldname, doc);
+						const vals = this.getDotFieldValues(field, doc);
 						vals.forEach(val => {
 							if (list.indexOf(val) < 0) {
 								list.push(val);

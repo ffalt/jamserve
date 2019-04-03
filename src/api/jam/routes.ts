@@ -180,9 +180,9 @@ export function registerAccessControlApi(register: Register, api: JamController)
 
 	register.get('/folder/health', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderHealth> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Folder> = await api.folderController.health(options);
+		const result: Array<Jam.FolderHealth> = await api.folderController.health(options);
 		await ApiResponder.data(res, result);
-	});
+	}, '/folder/health', ['admin']);
 
 	register.get('/folder/state', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
@@ -858,9 +858,15 @@ export function registerAccessControlApi(register: Register, api: JamController)
 
 	register.post('/track/parent/update', async (req, res) => {
 		const options: JamRequest<JamParameters.TrackMoveParent> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.parentUpdate(options);
-		await ApiResponder.ok(res);
+		const result: Jam.ChangeQueueInfo = await api.trackController.parentUpdate(options);
+		await ApiResponder.data(res, result);
 	}, '/track/parent/update', ['admin']);
+
+	register.post('/track/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.ChangeQueueInfo = await api.trackController.delete(options);
+		await ApiResponder.data(res, result);
+	}, '/track/delete', ['admin']);
 
 	register.upload('/folder/imageUpload/update', 'image', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined};
@@ -906,9 +912,21 @@ export function registerAccessControlApi(register: Register, api: JamController)
 
 	register.post('/folder/parent/update', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderMoveParent> = {query: req.body, user: req.user, client: req.client};
-		await api.folderController.parentUpdate(options);
-		await ApiResponder.ok(res);
+		const result: Jam.ChangeQueueInfo = await api.folderController.parentUpdate(options);
+		await ApiResponder.data(res, result);
 	}, '/folder/parent/update', ['admin']);
+
+	register.post('/folder/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.ChangeQueueInfo = await api.folderController.delete(options);
+		await ApiResponder.data(res, result);
+	}, '/folder/delete', ['admin']);
+
+	register.post('/folder/create', async (req, res) => {
+		const options: JamRequest<JamParameters.FolderCreate> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.Folder = await api.folderController.create(options);
+		await ApiResponder.data(res, result);
+	}, '/folder/create', ['admin']);
 
 	register.post('/album/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};

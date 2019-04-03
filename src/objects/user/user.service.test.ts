@@ -1,8 +1,8 @@
-import {assert, expect, should, use} from 'chai';
+import {expect, should} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {UserService} from './user.service';
-import tmp, {SynchrounousResult} from 'tmp';
+import tmp from 'tmp';
 import path from 'path';
 import {mockUser, mockUser2, mockUserPass} from './user.mock';
 import {Md5} from 'md5-typescript';
@@ -29,7 +29,7 @@ function salt(length: number): string {
 
 describe('UserService', () => {
 	let userService: UserService;
-	let dir: SynchrounousResult;
+	let dir: tmp.DirResult;
 	testService({mockData: false},
 		async (store, imageModuleTest) => {
 			dir = tmp.dirSync();
@@ -111,11 +111,11 @@ describe('UserService', () => {
 				const user2 = await userService.getByID(userID);
 				expect(user2).to.deep.equal(mock);
 			});
-			it('should return no image if not set', async function() {
+			it('should return a generated avatar image, even if not set', async function() {
 				mock.avatar = undefined;
 				await userService.update(mock);
 				const res = await userService.getUserImage(mock);
-				should().not.exist(res);
+				should().exist(res);
 			});
 			it('should return an avatar image', async function() {
 				mock.avatar = 'testget-' + mock.id + '.png';

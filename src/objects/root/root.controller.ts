@@ -17,7 +17,7 @@ import {RootScanStrategy} from '../../model/jam-types';
 export class RootController extends BaseController<JamParameters.ID, JamParameters.IDs, {}, SearchQueryRoot, JamParameters.RootSearch, Root, Jam.Root> {
 
 	constructor(
-		private rootService: RootService,
+		public rootService: RootService,
 		private ioService: IoService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
@@ -63,22 +63,22 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 		const forceRefreshMeta = root.strategy !== req.query.strategy;
 		root.strategy = <RootScanStrategy>req.query.strategy;
 		await this.rootService.update(root);
-		this.ioService.refreshRoot(root, forceRefreshMeta);
+		this.ioService.refreshRoot(root.id, forceRefreshMeta);
 		return this.prepare(root, {}, req.user);
 	}
 
 	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const root = await this.byID(req.query.id);
-		await this.ioService.removeRoot(root);
+		await this.ioService.removeRoot(root.id);
 	}
 
-	async scanAll(req: JamRequest<{}>): Promise<void> {
-		this.ioService.refresh();
+	async scanAll(req: JamRequest<{}>): Promise<Array<Jam.ChangeQueueInfo>> {
+		return await this.ioService.refresh();
 	}
 
-	async scan(req: JamRequest<JamParameters.ID>): Promise<void> {
+	async scan(req: JamRequest<JamParameters.ID>): Promise<Jam.ChangeQueueInfo> {
 		const root = await this.byID(req.query.id);
-		this.ioService.refreshRoot(root, false);
+		return await this.ioService.refreshRoot(root.id, false);
 	}
 
 	async status(req: JamRequest<JamParameters.ID>): Promise<Jam.RootStatus> {

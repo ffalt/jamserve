@@ -1,4 +1,4 @@
-import tmp, {SynchrounousResult} from 'tmp';
+import tmp from 'tmp';
 import {WaveformService} from './waveform.service';
 
 
@@ -6,7 +6,7 @@ export class WaveformServiceTest {
 	// @ts-ignore
 	waveformService: WaveformService;
 	// @ts-ignore
-	dir: SynchrounousResult;
+	dir: tmp.DirResult;
 
 	async setup() {
 		this.dir = tmp.dirSync();

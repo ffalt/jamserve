@@ -10,6 +10,9 @@ export interface SearchQueryTrack extends SearchQuery {
 	inPaths?: Array<string>;
 	artist?: string;
 	artistID?: string;
+	artistIDs?: Array<string>;
+	albumArtistID?: string;
+	albumArtistIDs?: Array<string>;
 	parentID?: string;
 	parentIDs?: Array<string>;
 	mbTrackID?: string;
@@ -18,6 +21,8 @@ export interface SearchQueryTrack extends SearchQuery {
 	rootIDs?: Array<string>;
 	title?: string;
 	album?: string;
+	albumID?: string;
+	albumIDs?: Array<string>;
 	genre?: string;
 	newerThan?: number;
 	fromYear?: number;
@@ -32,6 +37,11 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 		'rootID': 'rootID',
 		'rootIDs': 'rootID',
 		'artistID': 'artistID',
+		'artistIDs': 'artistID',
+		'albumArtistID': 'albumArtistID',
+		'albumArtistIDs': 'albumArtistID',
+		'albumID': 'albumID',
+		'albumIDs': 'albumID',
 		'artist': 'tag.artist',
 		'mbTrackID': 'tag.mbTrackID',
 		'title': 'tag.title',
@@ -62,6 +72,11 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 		q.match('tag.title', query.query);
 		q.term('tag.album', query.album);
 		q.term('artistID', query.artistID);
+		q.terms('artistID', query.artistIDs);
+		q.term('albumArtistID', query.albumArtistID);
+		q.terms('albumArtistID', query.albumArtistIDs);
+		q.term('albumID', query.albumID);
+		q.terms('albumID', query.albumIDs);
 		q.range('tag.year', query.toYear, query.fromYear);
 		q.range('stat.created', undefined, query.newerThan);
 		return q.get(query, this.fieldMap);

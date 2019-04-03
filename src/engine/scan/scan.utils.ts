@@ -1,0 +1,96 @@
+import path from 'path';
+import {deepCompare} from '../../utils/deep-compare';
+import {AlbumType, cUnknownAlbum, cUnknownArtist, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
+import {md5string} from '../../utils/md5';
+import {MatchDir, MatchFile} from './scan.match-dir';
+import {MergeTrackInfo} from './scan.changes';
+
+export function slugify(s: string): string {
+	return s.replace(/[\[\]\. -]/g, '').toLowerCase();
+}
+
+export function splitDirectoryName(name: string): { title: string; year?: number; } {
+	const result: { title: string; year?: number; } = {title: path.basename(name).trim()};
+	// year title | year - title | (year) title | [year] title
+	const parts = result.title.split(' ');
+	const s = parts[0].replace(/[^\w\s]/gi, '');
+	if (s.length === 4) {
+		const y = Number(s);
+		if (!isNaN(y)) {
+			result.year = y;
+			parts.shift();
+			if (parts[0] === '-') {
+				parts.shift();
+			}
+			result.title = parts.join(' ');
+		}
+	}
+	return result;
+}
+
+export function folderHasChanged(dir: MatchDir): boolean {
+	return (!dir.folder) ||
+		(dir.stat.mtime !== dir.folder.stat.modified) ||
+		(dir.stat.ctime !== dir.folder.stat.created) ||
+		(!deepCompare(dir.folder.tag, dir.tag));
+}
+
+export function trackHasChanged(file: MatchFile): boolean {
+	return (!file.track) ||
+		(file.stat.mtime !== file.track.stat.modified) ||
+		(file.stat.ctime !== file.track.stat.created) ||
+		(file.stat.size !== file.track.stat.size);
+}
+
+export function getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
+		return;
+	} else {
+		return trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID;
+	}
+}
+
+export function getArtistNameSort(trackInfo: MergeTrackInfo): string | undefined {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
+		return;
+	} else {
+		return trackInfo.track.tag.artistSort;
+	}
+}
+
+export function getArtistName(trackInfo: MergeTrackInfo): string {
+	return trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist || cUnknownArtist;
+}
+
+export function getArtistSlug(trackInfo: MergeTrackInfo): string {
+	return slugify(getArtistName(trackInfo));
+}
+
+export function getAlbumName(trackInfo: MergeTrackInfo): string {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
+		return trackInfo.dir.folder.tag.album || cUnknownAlbum;
+	} else {
+		return extractAlbumName(trackInfo.track.tag.album || cUnknownAlbum);
+	}
+}
+
+export function getAlbumSlug(trackInfo: MergeTrackInfo): string {
+	return slugify(getAlbumName(trackInfo));
+}
+
+export function generateArtworkId(folderID: string, filename: string): string {
+	const id = folderID + '-' + md5string(filename + filename);
+	return id;
+}
+
+export function extractAlbumName(name: string): string {
+	const result = name
+		.replace(/\(((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))\)/gi, '')
+		.replace(/\[((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))\]/gi, '')
+		.replace(/-? cd\d*/gi, '')
+		.trim();
+	if (result.length === 0) {
+		return name.trim();
+	}
+	return result;
+}

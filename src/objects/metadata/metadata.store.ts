@@ -7,6 +7,7 @@ import {MetaDataType} from './metadata.types';
 export interface SearchQueryMetaData extends SearchQuery {
 	name?: string;
 	dataType?: MetaDataType;
+	olderThan?: number;
 }
 
 export class MetaDataStore extends BaseStore<MetaData, SearchQueryMetaData> {
@@ -19,6 +20,7 @@ export class MetaDataStore extends BaseStore<MetaData, SearchQueryMetaData> {
 		const q = new QueryHelper();
 		q.term('name', query.name);
 		q.term('dataType', query.dataType);
+		q.range('date', query.olderThan, undefined);
 		return q.get(query);
 	}
 

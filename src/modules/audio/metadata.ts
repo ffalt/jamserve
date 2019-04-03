@@ -6,7 +6,7 @@ import {ImageModule} from '../image/image.module';
 import {Jam} from '../../model/jam-rest-data';
 import {FlacInfo} from './formats/flac/flac';
 import {TrackTag} from '../../objects/track/track.model';
-import moment = require('moment');
+import moment from 'moment';
 
 export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | undefined> {
 	if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {

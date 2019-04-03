@@ -49,7 +49,7 @@ export interface DatabaseIndex<T extends DBObject> {
 
 	aggregate(query: DatabaseQuery, field: string): Promise<number>;
 
-	distinct(fieldname: string): Promise<Array<string>>;
+	distinct(query: DatabaseQuery, field: string): Promise<Array<string>>;
 
 }
 

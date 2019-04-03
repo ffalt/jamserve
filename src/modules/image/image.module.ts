@@ -22,8 +22,10 @@ export class ImageModule {
 	private format = 'png';
 	private font: JimpFont | undefined;
 	private imageCacheDebounce = new DebouncePromises<IApiBinaryResult>();
+	private avatarPartsLocation: string;
 
-	constructor(private imageCachePath: string) {
+	constructor(private imageCachePath: string, avatarPartsLocation?: string) {
+		this.avatarPartsLocation = avatarPartsLocation || path.join(__dirname, 'static', 'avatar', 'parts');
 	}
 
 	async storeImage(filepath: string, name: string, imageUrl: string): Promise<string> {
@@ -195,9 +197,7 @@ export class ImageModule {
 	}
 
 	async generateAvatar(seed: string, destination: string): Promise<void> {
-		const avatarGenerator = new AvatarGenerator({
-			partsLocation: path.join(__dirname, 'static', 'avatar', 'parts')
-		});
+		const avatarGenerator = new AvatarGenerator({partsLocation: this.avatarPartsLocation});
 		const avatar = await avatarGenerator.generate(seed);
 		await fse.writeFile(destination, avatar);
 	}

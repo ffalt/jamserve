@@ -362,13 +362,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			type: this._type,
 			body: {
 				query: this.translateElasticQuery(query),
-				'aggs': {
-					'_count': {
-						'cardinality': {
-							'field': field
-						}
-					}
-				}
+				aggs: {_count: {cardinality: {field}}}
 			}
 		});
 		return response.aggregations._count.value;
@@ -386,11 +380,14 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		return response.hits.total;
 	}
 
-	async distinct(fieldname: string): Promise<Array<string>> {
+	async distinct(query: DatabaseQuery, field: string): Promise<Array<string>> {
 		const response = await this.db.client.search({
 			index: this._index,
 			type: this._type,
-			body: {'aggs': {'distinct': {'terms': {'field': fieldname}}}}
+			body: {
+				query: this.translateElasticQuery(query),
+				aggs: {distinct: {terms: {field}}}
+			}
 		});
 		return response.aggregations.distinct.buckets.map((hit: any) => hit.key);
 	}

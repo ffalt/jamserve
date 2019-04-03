@@ -1,5 +1,4 @@
 import {DBNedb} from './db-nedb';
-import {SynchrounousResult} from 'tmp';
 import tmp from 'tmp';
 
 export class TestNeDB {
@@ -7,7 +6,7 @@ export class TestNeDB {
 	// @ts-ignore
 	database: DBNedb;
 	// @ts-ignore
-	dir: SynchrounousResult;
+	dir: tmp.DirResult;
 
 	constructor() {
 	}

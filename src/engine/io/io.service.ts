@@ -1,12 +1,12 @@
 import Logger from '../../utils/logger';
 import {Subsonic} from '../../model/subsonic-rest-data';
-import {Root, RootStatus} from '../../objects/root/root.model';
+import {RootStatus} from '../../objects/root/root.model';
 import {Track} from '../../objects/track/track.model';
-import {IndexService} from '../index/index.service';
-import {GenreService} from '../genre/genre.service';
-import {logChanges, ScanService} from '../scan/scan.service';
+import {ScanService} from '../scan/scan.service';
 import {RootStore} from '../../objects/root/root.store';
-import {StatsService} from '../stats/stats.service';
+import {Jam} from '../../model/jam-rest-data';
+import ChangeQueueInfo = Jam.ChangeQueueInfo;
+import {logChanges, MergeChanges} from '../scan/scan.changes';
 
 const log = Logger('IO');
 
@@ -14,78 +14,26 @@ export enum ScanRequestMode {
 	refreshRoot,
 	refreshTracks,
 	removeRoot,
-	refreshFolders
+	refreshFolders,
+	removeTracks,
+	deleteFolders,
+	moveFolders,
+	moveTracks
 }
 
-export interface ScanRequest {
-	root: Root;
-	mode: ScanRequestMode;
-
-	run(): Promise<void>;
-}
-
-export class ScanRequestRefreshRoot implements ScanRequest {
-	mode = ScanRequestMode.refreshRoot;
-
-	constructor(public root: Root, public forceMetaRefresh: boolean, public scanService: ScanService) {
+export abstract class ScanRequest {
+	protected constructor(public id: string, public rootID: string, public mode: ScanRequestMode) {
 
 	}
+
+	abstract execute(): Promise<MergeChanges>;
 
 	async run(): Promise<void> {
-		log.info('Scanning Root', this.root.path);
 		try {
-			const changes = await this.scanService.scanRoot(this.root.path, this.root.id, this.root.strategy, this.forceMetaRefresh);
+			const changes = await this.execute();
 			logChanges(changes);
 		} catch (e) {
-			log.error('Scanning Error', this.root.path, e.toString());
-			if (['EACCES', 'ENOENT'].indexOf((<any>e).code) >= 0) {
-				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
-			} else {
-				return Promise.reject(e);
-			}
-		}
-	}
-
-}
-
-export class ScanRequestRefreshFolders implements ScanRequest {
-	mode = ScanRequestMode.refreshFolders;
-
-	constructor(public root: Root, public scanService: ScanService, public folderIDs: Array<string>) {
-
-	}
-
-	async run(): Promise<void> {
-		log.info('Refreshing Folders in', this.root.path);
-		try {
-			const changes = await this.scanService.refreshFolders(this.root.id, this.root.strategy, this.folderIDs);
-			logChanges(changes);
-		} catch (e) {
-			log.error('Scanning Error', this.root.path, e.toString());
-			if (['EACCES', 'ENOENT'].indexOf((<any>e).code) >= 0) {
-				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
-			} else {
-				return Promise.reject(e);
-			}
-		}
-	}
-
-}
-
-export class ScanRequestRemoveRoot implements ScanRequest {
-	mode = ScanRequestMode.removeRoot;
-
-	constructor(public root: Root, public scanService: ScanService) {
-
-	}
-
-	async run(): Promise<void> {
-		log.info('Removing Root', this.root.path);
-		try {
-			const changes = await this.scanService.removeRoot(this.root.id);
-			logChanges(changes);
-		} catch (e) {
-			log.error('Removing Error', this.root.path, e.toString());
+			log.error('Scanning Error', this.rootID, e.toString());
 			if (['EACCES', 'ENOENT'].indexOf((<any>e).code) >= 0) {
 				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
 			} else {
@@ -95,26 +43,94 @@ export class ScanRequestRemoveRoot implements ScanRequest {
 	}
 }
 
-export class ScanRequestRefreshTracks implements ScanRequest {
-	mode = ScanRequestMode.refreshTracks;
+export class ScanRequestMoveTracks extends ScanRequest {
 
-	constructor(public root: Root, public scanService: ScanService, public trackIDs: Array<string>) {
-
+	constructor(public id: string, public rootID: string, public trackIDs: Array<string>, public newParentID: string, public scanService: ScanService) {
+		super(id, rootID, ScanRequestMode.moveTracks);
 	}
 
-	async run(): Promise<void> {
-		log.info('Refresh Tracks in Root', this.root.path);
-		try {
-			const changes = await this.scanService.refreshTracks(this.root.id, this.trackIDs, this.root.strategy);
-			logChanges(changes);
-		} catch (e) {
-			log.error('Refresh Tracks Error', this.root.path, e.toString());
-			if (['EACCES', 'ENOENT'].indexOf((<any>e).code) >= 0) {
-				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
-			} else {
-				return Promise.reject(e);
-			}
-		}
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.moveTracks(this.rootID, this.trackIDs, this.newParentID);
+	}
+
+}
+
+export class ScanRequestRefreshRoot extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public forceMetaRefresh: boolean, public scanService: ScanService) {
+		super(id, rootID, ScanRequestMode.refreshRoot);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.scanRoot(this.rootID, this.forceMetaRefresh);
+	}
+
+}
+
+export class ScanRequestRefreshFolders extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public folderIDs: Array<string>) {
+		super(id, rootID, ScanRequestMode.refreshFolders);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.refreshFolders(this.rootID, this.folderIDs);
+	}
+
+}
+
+export class ScanRequestMoveFolders extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public newParentID: string, public folderIDs: Array<string>) {
+		super(id, rootID, ScanRequestMode.moveFolders);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.moveFolders(this.rootID, this.newParentID, this.folderIDs);
+	}
+}
+
+export class ScanRequestRemoveRoot extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService) {
+		super(id, rootID, ScanRequestMode.removeRoot);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.removeRoot(this.rootID);
+	}
+}
+
+export class ScanRequestRefreshTracks extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public trackIDs: Array<string>) {
+		super(id, rootID, ScanRequestMode.refreshTracks);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.refreshTracks(this.rootID, this.trackIDs);
+	}
+}
+
+export class ScanRequestRemoveTracks extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public trackIDs: Array<string>) {
+		super(id, rootID, ScanRequestMode.removeTracks);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.deleteTracks(this.rootID, this.trackIDs);
+	}
+}
+
+export class ScanRequestDeleteFolders extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public folderIDs: Array<string>) {
+		super(id, rootID, ScanRequestMode.deleteFolders);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.deleteFolders(this.rootID, this.folderIDs);
 	}
 }
 
@@ -124,8 +140,14 @@ export class IoService {
 	private rootstatus: { [id: string]: RootStatus } = {};
 	private queue: Array<ScanRequest> = [];
 	private delayedTrackRefresh: { [rootID: string]: { request: ScanRequestRefreshTracks, timeout?: NodeJS.Timeout } } = {};
+	private nextID: number = Date.now();
 
-	constructor(private rootStore: RootStore, private scanService: ScanService, private indexService: IndexService, private genreService: GenreService, private statsService: StatsService) {
+	constructor(private rootStore: RootStore, private scanService: ScanService, private onRefresh: () => Promise<void>) {
+	}
+
+	getScanID(): string {
+		this.nextID += 1;
+		return this.nextID.toString();
 	}
 
 	getScanStatus(): Subsonic.ScanStatus {
@@ -138,28 +160,27 @@ export class IoService {
 			status = {lastScan: Date.now()};
 		}
 		if (!status.scanning) {
-			const cmd = this.queue.find(c => c.root && c.root.id === id);
+			const cmd = this.queue.find(c => c.rootID === id);
 			status.scanning = !!cmd;
 		}
 		return status;
 	}
 
 	private async runRequest(cmd: ScanRequest): Promise<void> {
-		this.rootstatus[cmd.root.id] = {lastScan: Date.now(), scanning: true};
+		this.rootstatus[cmd.rootID] = {lastScan: Date.now(), scanning: true};
 		try {
 			await cmd.run();
-			this.rootstatus[cmd.root.id] = {lastScan: Date.now()};
+			this.rootstatus[cmd.rootID] = {lastScan: Date.now()};
 		} catch (e) {
-			this.rootstatus[cmd.root.id] = {lastScan: Date.now(), error: e.toString()};
+			this.rootstatus[cmd.rootID] = {lastScan: Date.now(), error: e.toString()};
 		}
-		log.info('Refresh Indexes & Stats');
-		await this.indexService.buildIndexes();
-		await this.genreService.refresh();
-		await this.statsService.refresh();
+		if (this.queue.length === 0) {
+			await this.onRefresh();
+		}
 	}
 
-	private findRequest(root: Root, mode: ScanRequestMode): ScanRequest | undefined {
-		return this.queue.find(c => !!c.root && (c.root.id === root.id && c.mode === mode));
+	private findRequest(rootID: string, mode: ScanRequestMode): ScanRequest | undefined {
+		return this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === mode));
 	}
 
 	private async next(): Promise<void> {
@@ -189,88 +210,138 @@ export class IoService {
 
 	}
 
-	refresh(): void {
-		this.rootStore.all()
-			.then((roots) => {
-					for (const root of roots) {
-						if (!this.findRequest(root, ScanRequestMode.refreshRoot)) {
-							this.queue.push(new ScanRequestRefreshRoot(root, false, this.scanService));
-						}
-					}
-					this.run();
-				}
-			);
+	async refresh(): Promise<Array<Jam.ChangeQueueInfo>> {
+		const rootIDs = await this.rootStore.allIds();
+		const result = [];
+		for (const rootID of rootIDs) {
+			result.push(await this.refreshRoot(rootID, false));
+		}
+		return result;
 	}
 
-	refreshTrack(track: Track): void {
-		this.rootStore.byId(track.rootID).then((root) => {
-			if (!root) {
-				log.error(Error('Track root not found: ' + track.rootID));
-				return;
-			}
-			let delayedCmd = this.delayedTrackRefresh[track.rootID];
-			if (delayedCmd) {
-				if (delayedCmd.timeout) {
-					clearTimeout(delayedCmd.timeout);
-				}
-				if (delayedCmd.request.trackIDs.indexOf(track.id) < 0) {
-					delayedCmd.request.trackIDs.push(track.id);
-				}
-			} else {
-				delayedCmd = {request: new ScanRequestRefreshTracks(root, this.scanService, [track.id]), timeout: undefined};
-				this.delayedTrackRefresh[track.rootID] = delayedCmd;
-			}
-			const command = <ScanRequestRefreshTracks>this.findRequest(root, ScanRequestMode.refreshTracks);
-			if (command) {
-				if (command.trackIDs.indexOf(track.id) < 0) {
-					command.trackIDs.push(track.id);
-				}
-				return;
-			}
-			delayedCmd.timeout = setTimeout(() => {
-				delete this.delayedTrackRefresh[track.rootID];
-				this.queue.push(delayedCmd.request);
-				this.run();
-			}, 10000);
-		});
+	private addRequest(req: ScanRequest): ChangeQueueInfo {
+		this.queue.push(req);
+		this.run();
+		return {id: req.id, pos: this.queue.indexOf(req)};
 	}
 
-	refreshRoot(root: Root, forceMetaRefresh: boolean): void {
-		const oldRequest = <ScanRequestRefreshRoot>this.findRequest(root, ScanRequestMode.refreshRoot);
-		if (!oldRequest) {
-			this.queue.push(new ScanRequestRefreshRoot(root, forceMetaRefresh, this.scanService));
+	private getRequestInfo(req: ScanRequest): ChangeQueueInfo {
+		return {id: req.id, pos: this.queue.indexOf(req)};
+	}
+
+	refreshTrack(track: Track): ChangeQueueInfo {
+		const oldRequest = <ScanRequestRefreshTracks>this.findRequest(track.rootID, ScanRequestMode.refreshTracks);
+		if (oldRequest) {
+			if (oldRequest.trackIDs.indexOf(track.id) < 0) {
+				oldRequest.trackIDs.push(track.id);
+			}
+			return this.getRequestInfo(oldRequest);
+		}
+		let delayedCmd = this.delayedTrackRefresh[track.rootID];
+		if (delayedCmd) {
+			if (delayedCmd.timeout) {
+				clearTimeout(delayedCmd.timeout);
+			}
+			if (delayedCmd.request.trackIDs.indexOf(track.id) < 0) {
+				delayedCmd.request.trackIDs.push(track.id);
+			}
+			return this.getRequestInfo(delayedCmd.request);
+		} else {
+			delayedCmd = {request: new ScanRequestRefreshTracks(this.getScanID(), track.rootID, this.scanService, [track.id]), timeout: undefined};
+			this.delayedTrackRefresh[track.rootID] = delayedCmd;
+		}
+		delayedCmd.timeout = setTimeout(() => {
+			delete this.delayedTrackRefresh[track.rootID];
+			this.queue.push(delayedCmd.request);
 			this.run();
-		} else if (forceMetaRefresh) {
-			oldRequest.forceMetaRefresh = true;
-			oldRequest.root = root;
+		}, 10000);
+		return this.getRequestInfo(delayedCmd.request);
+	}
+
+	refreshRoot(rootID: string, forceMetaRefresh: boolean): ChangeQueueInfo {
+		const oldRequest = <ScanRequestRefreshRoot>this.findRequest(rootID, ScanRequestMode.refreshRoot);
+		if (oldRequest) {
+			if (forceMetaRefresh) {
+				oldRequest.forceMetaRefresh = true;
+			}
+			return this.getRequestInfo(oldRequest);
+		} else {
+			return this.addRequest(new ScanRequestRefreshRoot(this.getScanID(), rootID, forceMetaRefresh, this.scanService));
 		}
 	}
 
-	removeRoot(root: Root): void {
-		if (!this.findRequest(root, ScanRequestMode.removeRoot)) {
-			this.queue.push(new ScanRequestRemoveRoot(root, this.scanService));
-			this.run();
+	removeRoot(rootID: string): ChangeQueueInfo {
+		const oldRequest = this.findRequest(rootID, ScanRequestMode.removeRoot);
+		if (oldRequest) {
+			return this.getRequestInfo(oldRequest);
+		} else {
+			return this.addRequest(new ScanRequestRemoveRoot(this.getScanID(), rootID, this.scanService));
 		}
 	}
 
-	refreshFolders(folderIDs: Array<string>, rootID: string) {
-		this.rootStore.byId(rootID).then((root) => {
-			if (!root) {
-				log.error(Error('Track root not found: ' + rootID));
-				return;
-			}
-			const oldRequest = <ScanRequestRefreshFolders>this.findRequest(root, ScanRequestMode.refreshFolders);
-			if (oldRequest) {
-				for (const id of folderIDs) {
-					if (oldRequest.folderIDs.indexOf(id) < 0) {
-						oldRequest.folderIDs.push(id);
-					}
+	moveFolders(folderIDs: Array<string>, newParentID: string, rootID: string): ChangeQueueInfo {
+		const oldRequest = <ScanRequestMoveFolders>this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveFolders && (<ScanRequestMoveFolders>c).newParentID === newParentID));
+		if (oldRequest) {
+			for (const id of folderIDs) {
+				if (oldRequest.folderIDs.indexOf(id) < 0) {
+					oldRequest.folderIDs.push(id);
 				}
-				return;
 			}
-			this.queue.push(new ScanRequestRefreshFolders(root, this.scanService, folderIDs));
-			this.run();
-		});
+			return this.getRequestInfo(oldRequest);
+		} else {
+			return this.addRequest(new ScanRequestMoveFolders(this.getScanID(), rootID, this.scanService, newParentID, folderIDs));
+		}
 	}
 
+	refreshFolders(folderIDs: Array<string>, rootID: string): ChangeQueueInfo {
+		const oldRequest = <ScanRequestRefreshFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
+		if (oldRequest) {
+			for (const id of folderIDs) {
+				if (oldRequest.folderIDs.indexOf(id) < 0) {
+					oldRequest.folderIDs.push(id);
+				}
+			}
+			return this.getRequestInfo(oldRequest);
+		} else {
+			return this.addRequest(new ScanRequestRefreshFolders(this.getScanID(), rootID, this.scanService, folderIDs));
+		}
+	}
+
+	deleteFolder(id: string, rootID: string): ChangeQueueInfo {
+		const oldRequest = <ScanRequestDeleteFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
+		if (oldRequest) {
+			if (oldRequest.folderIDs.indexOf(id) < 0) {
+				oldRequest.folderIDs.push(id);
+			}
+			return this.getRequestInfo(oldRequest);
+		} else {
+			return this.addRequest(new ScanRequestDeleteFolders(this.getScanID(), rootID, this.scanService, [id]));
+		}
+	}
+
+	removeTrack(id: string, rootID: string): ChangeQueueInfo {
+		const oldRequest = <ScanRequestRemoveTracks>this.findRequest(rootID, ScanRequestMode.removeTracks);
+		if (oldRequest) {
+			if (oldRequest.trackIDs.indexOf(id) < 0) {
+				oldRequest.trackIDs.push(id);
+			}
+			return this.getRequestInfo(oldRequest);
+		} else {
+			return this.addRequest(new ScanRequestRemoveTracks(this.getScanID(), rootID, this.scanService, [id]));
+		}
+	}
+
+	moveTracks(trackIDs: Array<string>, newParentID: string, rootID: string): ChangeQueueInfo {
+		const oldRequest = <ScanRequestMoveTracks>this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveTracks && (<ScanRequestMoveTracks>c).newParentID === newParentID));
+		if (oldRequest) {
+			for (const id of trackIDs) {
+				if (oldRequest.trackIDs.indexOf(id) < 0) {
+					oldRequest.trackIDs.push(id);
+				}
+			}
+			return this.getRequestInfo(oldRequest);
+		} else {
+			return this.addRequest(new ScanRequestMoveTracks(this.getScanID(), rootID, trackIDs, newParentID, this.scanService));
+		}
+	}
 }

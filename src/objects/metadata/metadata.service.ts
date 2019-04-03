@@ -22,6 +22,10 @@ import {LastFM} from '../../model/lastfm-rest-data';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {Jam} from '../../model/jam-rest-data';
+import moment from 'moment';
+import Logger from '../../utils/logger';
+
+const log = Logger('Metadata');
 
 function stripInlineLastFM(content: string): string {
 	return (content || '').replace(/<a href=".*">Read more on Last\.fm<\/a>\.?/g, '')
@@ -454,7 +458,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const brainz = await this.audioModule.musicbrainzSearch(type, query);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.musicbrainz, data: brainz});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.musicbrainz, data: brainz, date: Date.now()});
 		return brainz;
 	}
 
@@ -470,7 +474,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = await this.audioModule.lastFMLookup(type, mbid);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
 		return lastfm;
 	}
 
@@ -481,7 +485,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {album: await this.audioModule.lastFM.album(album, artist)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
 		return lastfm;
 	}
 
@@ -492,7 +496,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {artist: await this.audioModule.lastFM.artist(artist)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
 		return lastfm;
 	}
 
@@ -503,7 +507,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {toptracks: await this.audioModule.lastFM.topArtistSongs(artist)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
 		return lastfm;
 	}
 
@@ -514,7 +518,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {toptracks: await this.audioModule.lastFM.topArtistSongsID(mbid)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
 		return lastfm;
 	}
 
@@ -525,7 +529,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {similartracks: await this.audioModule.lastFM.similarTrackID(mbid)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
 		return lastfm;
 	}
 
@@ -536,7 +540,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const abrainz = await this.audioModule.acousticbrainzLookup(mbid, nr);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.acousticbrainz, data: abrainz});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.acousticbrainz, data: abrainz, date: Date.now()});
 		return abrainz;
 	}
 
@@ -547,7 +551,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const caa = await this.audioModule.coverartarchiveLookup(type, mbid);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.coverartarchive, data: caa});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.coverartarchive, data: caa, date: Date.now()});
 		return caa;
 	}
 
@@ -558,7 +562,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const brainz = await this.audioModule.musicbrainzLookup(type, mbid, inc);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.musicbrainz, data: brainz});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.musicbrainz, data: brainz, date: Date.now()});
 		return brainz;
 	}
 
@@ -570,7 +574,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const pedia = {summary: await this.audioModule.wikipediaSummary(title, lang)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.wikipedia, data: pedia});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.wikipedia, data: pedia, date: Date.now()});
 		return pedia;
 	}
 
@@ -582,7 +586,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			if (!entity) {
 				return {};
 			}
-			result = {id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity};
+			result = {id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now()};
 			await this.metadataStore.add(result);
 		}
 		lang = lang || 'en';
@@ -595,6 +599,14 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return await this.wikipediaSummary(langSite.title, lang);
 		}
 		return {};
+	}
+
+	async cleanUp() {
+		const olderThan = Date.now() - moment.duration(1, 'd').asMilliseconds();
+		const removed = await this.metadataStore.removeByQuery({olderThan});
+		if (removed > 0) {
+			log.info(`Removed meta data cache entries: ${removed} `);
+		}
 	}
 
 }

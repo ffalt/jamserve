@@ -4,6 +4,7 @@ import {FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import path from 'path';
 import {replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Jam} from '../../model/jam-rest-data';
+import {Root} from '../../objects/root/root.model';
 
 export abstract class FolderRule implements Rule<Folder> {
 
@@ -11,7 +12,7 @@ export abstract class FolderRule implements Rule<Folder> {
 
 	}
 
-	abstract run(folder: Folder): Promise<RuleResult | undefined>;
+	abstract run(folder: Folder, parents: Array<Folder>, root: Root): Promise<RuleResult | undefined>;
 }
 
 export class FolderAlbumTagsRule extends FolderRule {
@@ -38,6 +39,23 @@ export class FolderAlbumTagsRule extends FolderRule {
 			if (!folder.tag.albumTrackCount) {
 				missing.push('album total track count');
 			}
+			if (missing.length > 0) {
+				return {details: missing.join(',')};
+			}
+		}
+	}
+
+}
+
+export class FolderAlbumMusicBrainzRule extends FolderRule {
+
+	constructor() {
+		super('folder.album.mbid.exists', 'Album folder musicbrainz id are missing');
+	}
+
+	async run(folder: Folder): Promise<RuleResult | undefined> {
+		if (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) {
+			const missing = [];
 			if (!folder.tag.mbAlbumID) {
 				missing.push('musicbrainz album id');
 			} else {
@@ -61,7 +79,7 @@ export class FolderAlbumCompleteRule extends FolderRule {
 
 	async run(folder: Folder): Promise<RuleResult | undefined> {
 		if (
-			(folder.tag.type === FolderType.album)  &&
+			(folder.tag.type === FolderType.album) &&
 			(folder.tag.albumTrackCount) && (folder.tag.albumTrackCount !== folder.tag.trackCount)
 		) {
 			return {details: 'should: ' + folder.tag.albumTrackCount + ', found: ' + folder.tag.trackCount};
@@ -76,7 +94,20 @@ export class FolderAlbumNameRule extends FolderRule {
 		super('folder.album.name.conform', 'Album folder name is not conform');
 	}
 
-	getNiceFolderName(tag: FolderTag): string {
+	getNiceOtherFolderName(tag: FolderTag): string {
+		let name = (tag.album || '')
+			.replace(/[!?]/g, '')
+			.replace(/< >/g, ' - ')
+			.replace(/<>/g, ' - ')
+			.replace(/[\//]/g, '-')
+			.replace(/\.\.\./g, '…')
+			.replace(/  /g, ' ')
+			.trim();
+		name = replaceFolderSystemChars(name, '_');
+		return name.trim();
+	}
+
+	getNiceAlbumFolderName(tag: FolderTag): string {
 		const year = tag.year ? tag.year.toString() : '';
 		let name = (tag.album || '')
 			.replace(/[!?]/g, '')
@@ -91,10 +122,10 @@ export class FolderAlbumNameRule extends FolderRule {
 		return s.trim();
 	}
 
-	checkName(folder: Folder): RuleResult | undefined {
+	checkArtistAlbumFolderName(folder: Folder): RuleResult | undefined {
 		if ((folder.tag.album) && (folder.tag.year) && (folder.tag.year > 0)) {
 			const nameSlug = path.basename(folder.path).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
-			const nicename = this.getNiceFolderName(folder.tag);
+			const nicename = this.getNiceAlbumFolderName(folder.tag);
 			const nicenameSlug = nicename.replace(/[_:!?\/ ]/g, '').toLowerCase();
 			if (nameSlug.localeCompare(nicenameSlug) !== 0) {
 				return {details: nicename};
@@ -102,11 +133,31 @@ export class FolderAlbumNameRule extends FolderRule {
 		}
 	}
 
-	async run(folder: Folder): Promise<RuleResult | undefined> {
+	checkOtherFolderName(folder: Folder): RuleResult | undefined {
+		if ((folder.tag.album)) {
+			const nameSlug = path.basename(folder.path).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
+			const nicename = this.getNiceOtherFolderName(folder.tag);
+			const nicenameSlug = nicename.replace(/[_:!?\/ ]/g, '').toLowerCase();
+			if (nameSlug.localeCompare(nicenameSlug) !== 0) {
+				return {details: nicename};
+			}
+		}
+	}
+
+	checkName(folder: Folder, parents: Array<Folder>): RuleResult | undefined {
+		const hasArtist = parents.find(p => p.tag.type === FolderType.artist);
+		if (hasArtist) {
+			return this.checkArtistAlbumFolderName(folder);
+		} else {
+			return this.checkOtherFolderName(folder);
+		}
+	}
+
+	async run(folder: Folder, parents: Array<Folder>, root: Root): Promise<RuleResult | undefined> {
 		if (folder.tag.type === FolderType.album) {
-			return this.checkName(folder);
+			return this.checkName(folder, parents);
 		} else if ((folder.tag.type === FolderType.multialbum) && (folder.tag.trackCount === 0)) {
-			return this.checkName(folder);
+			return this.checkName(folder, parents);
 		}
 	}
 
@@ -175,6 +226,7 @@ export class FolderRulesChecker {
 
 	constructor() {
 		this.rules.push(new FolderAlbumTagsRule());
+		this.rules.push(new FolderAlbumMusicBrainzRule());
 		this.rules.push(new FolderAlbumNameRule());
 		this.rules.push(new FolderAlbumCompleteRule());
 		this.rules.push(new FolderAlbumImageRule());
@@ -182,10 +234,10 @@ export class FolderRulesChecker {
 		this.rules.push(new FolderArtistNameRule());
 	}
 
-	async run(folder: Folder): Promise<Array<Jam.Problem>> {
-		const result: Array<Jam.Problem> = [];
+	async run(folder: Folder, parents: Array<Folder>, root: Root): Promise<Array<Jam.HealthHint>> {
+		const result: Array<Jam.HealthHint> = [];
 		for (const rule of this.rules) {
-			const match = await rule.run(folder);
+			const match = await rule.run(folder, parents, root);
 			if (match) {
 				result.push({
 					id: rule.id,

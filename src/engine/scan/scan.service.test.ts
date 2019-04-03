@@ -1,11 +1,11 @@
-import {assert, expect, should, use} from 'chai';
+import {expect, should} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../../objects/base/base.service.spec';
 import {Store} from '../store/store';
-import tmp, {SynchrounousResult} from 'tmp';
+import tmp from 'tmp';
 import {buildMockRoot, MockFolder, MockRoot, removeMockFolder, removeMockRoot, writeMockFolder, writeMockRoot} from '../store/store.mock';
 import moment from 'moment';
-import {MergeChanges, ScanService} from './scan.service';
+import {ScanService} from './scan.service';
 import {WaveformServiceTest} from '../waveform/waveform.service.spec';
 import path from 'path';
 import {randomItem} from '../../utils/random';
@@ -13,6 +13,8 @@ import {Genres} from '../../utils/genres';
 import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import fse from 'fs-extra';
+import {MergeChanges} from './scan.changes';
+import {DBObjectType} from '../../db/db.types';
 
 function logChange(name: string, amount: number) {
 	if (amount > 0) {
@@ -57,7 +59,7 @@ async function validate(mockFolder: MockFolder, store: Store) {
 
 describe('ScanService', () => {
 	let store: Store;
-	let dir: SynchrounousResult;
+	let dir: tmp.DirResult;
 	let mockRoot: MockRoot;
 	let scanService: ScanService;
 	const waveformServiceTest = new WaveformServiceTest();
@@ -70,10 +72,11 @@ describe('ScanService', () => {
 			await waveformServiceTest.setup();
 			scanService = new ScanService(store, audioModule, imageModuleTest.imageModule, waveformServiceTest.waveformService);
 			await writeMockRoot(mockRoot);
+			mockRoot.id = await store.rootStore.add({id: '', path: mockRoot.path, type: DBObjectType.root, name: mockRoot.name, strategy: RootScanStrategy.auto, created: Date.now()});
 		},
 		() => {
 			it('should scan', async () => {
-				const changes = await scanService.scanRoot(mockRoot.path, mockRoot.id, RootScanStrategy.auto, false);
+				const changes = await scanService.scanRoot(mockRoot.id, false);
 				expect(changes.newTracks.length).to.equal(mockRoot.expected.tracks, 'New Track count doesnt match');
 				expect(changes.newFolders.length).to.equal(mockRoot.expected.folders, 'New Folder count doesnt match');
 				expect(changes.newArtists.length).to.equal(mockRoot.expected.artists, 'New Artist count doesnt match');
@@ -88,9 +91,8 @@ describe('ScanService', () => {
 				expect(changes.removedAlbums.length).to.equal(0, 'Removed Album count doesnt match');
 				await validate(mockRoot, store);
 			});
-
 			it('should rescan', async () => {
-				const changes = await scanService.scanRoot(mockRoot.path, mockRoot.id, RootScanStrategy.auto, false);
+				const changes = await scanService.scanRoot(mockRoot.id, false);
 				expect(changes.newTracks.length).to.equal(0, 'New Track count doesnt match');
 				expect(changes.updateTracks.length).to.equal(0, 'Update Track count doesnt match');
 				expect(changes.removedTracks.length).to.equal(0, 'Removed Tracks count doesnt match');
@@ -105,10 +107,11 @@ describe('ScanService', () => {
 				expect(changes.removedAlbums.length).to.equal(0, 'Removed Album count doesnt match');
 				await validate(mockRoot, store);
 			});
+
 			it('should remove missing in the root', async () => {
 				await removeMockRoot(mockRoot);
 				await fse.ensureDir(mockRoot.path);
-				const changes = await scanService.scanRoot(mockRoot.path, mockRoot.id, RootScanStrategy.auto, false);
+				const changes = await scanService.scanRoot(mockRoot.id, false);
 				await fse.rmdir(mockRoot.path);
 				expect(changes.newTracks.length).to.equal(0, 'New Track count doesnt match');
 				expect(changes.updateTracks.length).to.equal(0, 'Update Track count doesnt match');
@@ -130,7 +133,7 @@ describe('ScanService', () => {
 
 			it('should scan added in the root', async () => {
 				await writeMockRoot(mockRoot);
-				const changes = await scanService.scanRoot(mockRoot.path, mockRoot.id, RootScanStrategy.auto, false);
+				const changes = await scanService.scanRoot(mockRoot.id, false);
 				expect(changes.newTracks.length).to.equal(mockRoot.expected.tracks, 'New Track count doesnt match');
 				expect(changes.updateFolders.length).to.equal(1, 'Update Folder count doesnt match');
 				expect(changes.newFolders.length).to.equal(mockRoot.expected.folders - 1, 'New Folder count doesnt match');
@@ -148,8 +151,9 @@ describe('ScanService', () => {
 			it('should combine/remove artists and albums from different roots', async () => {
 				const dir2 = tmp.dirSync();
 				const mockRoot2 = buildMockRoot(dir2.name, 2, 'rootID2');
+				mockRoot2.id = await store.rootStore.add({id: '', path: mockRoot2.path, type: DBObjectType.root, name: mockRoot2.name, strategy: RootScanStrategy.auto, created: Date.now()});
 				await writeMockRoot(mockRoot2);
-				let changes = await scanService.scanRoot(mockRoot2.path, mockRoot2.id, RootScanStrategy.auto, false);
+				let changes = await scanService.scanRoot(mockRoot2.id, false);
 				expect(changes.newTracks.length).to.equal(mockRoot.expected.tracks, 'New Track count doesnt match');
 				expect(changes.newFolders.length).to.equal(mockRoot.expected.folders, 'New Folder count doesnt match');
 				expect(changes.newArtists.length).to.equal(0, 'New Artist count doesnt match');
@@ -166,7 +170,7 @@ describe('ScanService', () => {
 				await removeMockRoot(mockRoot2);
 
 				await fse.ensureDir(mockRoot2.path);
-				changes = await scanService.scanRoot(mockRoot2.path, mockRoot2.id, RootScanStrategy.auto, false);
+				changes = await scanService.scanRoot(mockRoot2.id, false);
 				await fse.rmdir(mockRoot2.path);
 				expect(changes.newTracks.length).to.equal(0, 'New Track count doesnt match');
 				expect(changes.newFolders.length).to.equal(0, 'New Folder count doesnt match');
@@ -243,8 +247,9 @@ describe('ScanService', () => {
 						folderType: FolderType.collection
 					}
 				};
+				mockRoot2.id = await store.rootStore.add({id: '', path: mockRoot2.path, type: DBObjectType.root, name: mockRoot2.name, strategy: RootScanStrategy.auto, created: Date.now()});
 				await writeMockRoot(mockRoot2);
-				const changes = await scanService.scanRoot(mockRoot2.path, mockRoot2.id, RootScanStrategy.auto, false);
+				const changes = await scanService.scanRoot(mockRoot2.id, false);
 				expect(changes.newTracks.length).to.equal(mockRoot2.expected.tracks, 'New Track count doesnt match');
 				expect(changes.newFolders.length).to.equal(mockRoot2.expected.folders, 'New Folder count doesnt match');
 				expect(changes.newArtists.length).to.equal(mockRoot2.expected.artists, 'New Artist count doesnt match');
@@ -343,7 +348,8 @@ describe('ScanService', () => {
 					}
 				};
 				await writeMockRoot(mockRoot2);
-				let changes = await scanService.scanRoot(mockRoot2.path, mockRoot2.id, RootScanStrategy.auto, false);
+				mockRoot2.id = await store.rootStore.add({id: '', path: mockRoot2.path, type: DBObjectType.root, name: mockRoot2.name, strategy: RootScanStrategy.auto, created: Date.now()});
+				let changes = await scanService.scanRoot(mockRoot2.id, false);
 				expect(changes.newTracks.length).to.equal(mockRoot2.expected.tracks, 'New Track count doesnt match');
 				expect(changes.newFolders.length).to.equal(mockRoot2.expected.folders, 'New Folder count doesnt match');
 				expect(changes.newArtists.length).to.equal(mockRoot2.expected.artists, 'New Artist count doesnt match');
@@ -359,6 +365,7 @@ describe('ScanService', () => {
 				await validate(mockRoot2, store);
 
 				await removeMockFolder(mockRoot2.folders[0].folders[1]);
+				// now, update Artist B to Artist A
 				mockRoot2.folders[0].folders[1] = {
 					path: path.join(rootDir, 'collection', 'album 2'),
 					name: 'album 2',
@@ -387,20 +394,28 @@ describe('ScanService', () => {
 				};
 				mockRoot2.folders[0].expected.folderType = FolderType.artist;
 				await writeMockFolder(mockRoot2.folders[0].folders[1]);
-				changes = await scanService.scanRoot(mockRoot2.path, mockRoot2.id, RootScanStrategy.auto, false);
 
+				// rescan and expect:
+				// (Artist B) and (Album 2 by Artist B) must be removed
+				changes = await scanService.scanRoot(mockRoot2.id, false);
 				expect(changes.newTracks.length).to.equal(0, 'New Track count doesnt match');
 				expect(changes.newFolders.length).to.equal(0, 'New Folder count doesnt match');
 				expect(changes.newArtists.length).to.equal(0, 'New Artist count doesnt match');
 				expect(changes.removedTracks.length).to.equal(0, 'Removed Tracks count doesnt match');
 				expect(changes.removedFolders.length).to.equal(0, 'Removed Folders count doesnt match');
-				expect(changes.updateArtists.length).to.equal(1, 'Update Artist count doesnt match');
 				expect(changes.updateAlbums.length).to.equal(0, 'Update Album count doesnt match');
+				// 2 Tracks must be updated
 				expect(changes.updateTracks.length).to.equal(2, 'Update Track count doesnt match');
+				// Album Folder & Artist Folder must be updated
 				expect(changes.updateFolders.length).to.equal(2, 'Update Folder count doesnt match');
-				expect(changes.removedArtists.length).to.equal(1, 'Removed Artists count doesnt match');
-				expect(changes.newAlbums.length).to.equal(1, 'New Album count doesnt match');
+				// (Album 2 by Artist B) must be removed
 				expect(changes.removedAlbums.length).to.equal(1, 'Removed Album count doesnt match');
+				// (Album 2 by Artist A) must be added
+				expect(changes.newAlbums.length).to.equal(1, 'New Album count doesnt match');
+				// Artist B must be removed
+				expect(changes.removedArtists.length).to.equal(1, 'Removed Artists count doesnt match');
+				// Artist A must be updated
+				expect(changes.updateArtists.length).to.equal(1, 'Update Artist count doesnt match');
 				await validate(mockRoot2, store);
 
 				await removeMockRoot(mockRoot2);

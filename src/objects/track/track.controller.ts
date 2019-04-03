@@ -23,11 +23,13 @@ import {TrackService} from './track.service';
 import {FolderService} from '../folder/folder.service';
 import {NotFoundError} from '../../api/jam/error';
 import {trackTagToRawTag} from '../../modules/audio/metadata';
+import fse from 'fs-extra';
+import ChangeQueueInfo = Jam.ChangeQueueInfo;
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
 	constructor(
-		private trackService: TrackService,
+		public trackService: TrackService,
 		private folderService: FolderService,
 		private audioModule: AudioModule,
 		private bookmarkService: BookmarkService,
@@ -161,24 +163,16 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		await this.trackService.renameTrack(track, req.query.name);
 	}
 
-	async parentUpdate(req: JamRequest<JamParameters.TrackMoveParent>): Promise<void> {
+	async parentUpdate(req: JamRequest<JamParameters.TrackMoveParent>): Promise<Jam.ChangeQueueInfo> {
 		const folder = await this.folderService.store.byId(req.query.folderID);
 		if (!folder) {
 			return Promise.reject(NotFoundError());
 		}
-		const refreshFolders = [{folderIDs: [folder.id], rootID: folder.rootID}];
-		const tracks = await this.byIDs(req.query.ids);
-		for (const track of tracks) {
-			const f = refreshFolders.find(refreshFolder => refreshFolder.rootID === track.rootID);
-			if (!f) {
-				refreshFolders.push({folderIDs: [track.parentID], rootID: track.rootID});
-			} else if (f.folderIDs.indexOf(track.parentID) < 0) {
-				f.folderIDs.push(track.parentID);
-			}
-		}
-		await this.trackService.moveTracks(tracks, folder);
-		for (const f of refreshFolders) {
-			this.ioService.refreshFolders(f.folderIDs, f.rootID);
-		}
+		return this.ioService.moveTracks(req.query.ids, folder.id, folder.rootID);
+	}
+
+	async delete(req: JamRequest<JamParameters.ID>): Promise<Jam.ChangeQueueInfo> {
+		const track = await this.byID(req.query.id);
+		return this.ioService.removeTrack(track.id, track.rootID);
 	}
 }

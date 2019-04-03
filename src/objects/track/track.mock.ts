@@ -11,6 +11,7 @@ export function mockTrack(): Track {
 		parentID: 'folderID1',
 		albumID: 'albumID1',
 		artistID: 'artistID1',
+		albumArtistID: 'albumArtistID1',
 		name: 'a folder name',
 		path: mockPath('folder name'),
 		stat: {
@@ -64,6 +65,7 @@ export function mockTrack2(): Track {
 		parentID: 'folderID2',
 		albumID: 'albumID2',
 		artistID: 'artistID2',
+		albumArtistID: 'albumArtistID2',
 		name: 'second folder name',
 		path: mockPath('second folder name'),
 		stat: {

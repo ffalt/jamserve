@@ -10,8 +10,9 @@ import {ArtworkImageType, FolderType, FolderTypeImageName} from '../../model/jam
 import {ImageModule} from '../../modules/image/image.module';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
-import {generateArtworkId} from '../../engine/scan/scan.service';
 import {artWorkImageNameToType} from './folder.format';
+import {DBObjectType} from '../../db/db.types';
+import {generateArtworkId} from '../../engine/scan/scan.utils';
 
 const log = Logger('FolderService');
 
@@ -23,11 +24,11 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 
 	async renameFolder(folder: Folder, name: string): Promise<void> {
 		if (containsFolderSystemChars(name)) {
-			return Promise.reject(Error('Invalid Folder Name'));
+			return Promise.reject(Error('Invalid Directory Name'));
 		}
 		name = replaceFolderSystemChars(name, '').trim();
 		if (name.length === 0 || ['.', '..'].indexOf(name) >= 0) {
-			return Promise.reject(Error('Invalid Folder Name'));
+			return Promise.reject(Error('Invalid Directory Name'));
 		}
 		const p = path.dirname(folder.path);
 		const newPath = path.join(p, name);
@@ -185,30 +186,39 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		return artwork;
 	}
 
-	async updateFolderParentChange(folder: Folder, destPath: string, parentID: string, rootID: string) {
-		folder.path = ensureTrailingPathSeparator(destPath);
-		folder.rootID = rootID;
-		folder.parentID = parentID;
-		await this.folderStore.replace(folder);
-		const tracks = await this.trackStore.search({parentID: folder.id});
-		for (const track of tracks) {
-			track.path = folder.path;
-			track.rootID = folder.rootID;
+	async newFolder(folder: Folder, name: string): Promise<Folder> {
+		if (containsFolderSystemChars(name)) {
+			return Promise.reject(Error('Invalid Directory Name'));
 		}
-		await this.trackStore.replaceMany(tracks);
-		const folders = await this.folderStore.search({parentID: folder.id});
-		for (const subfolder of folders) {
-			const dest = path.join(destPath, path.basename(subfolder.path));
-			await this.updateFolderParentChange(subfolder, dest, folder.id, folder.rootID);
+		name = replaceFolderSystemChars(name, '').trim();
+		if (name.length === 0 || ['.', '..'].indexOf(name) >= 0) {
+			return Promise.reject(Error('Invalid Directory Name'));
 		}
+		const destination = path.join(folder.path, name);
+		const exists = await fse.pathExists(destination);
+		if (exists) {
+			return Promise.reject(Error('Directory already exists'));
+		}
+		await fse.mkdir(destination);
+		const stat = await fse.stat(destination);
+		const result: Folder = {
+			id: '',
+			type: DBObjectType.folder,
+			rootID: folder.rootID,
+			path: ensureTrailingPathSeparator(destination),
+			parentID: folder.id,
+			stat: {
+				created: stat.ctime.valueOf(),
+				modified: stat.mtime.valueOf()
+			},
+			tag: {
+				level: folder.tag.level + 1,
+				trackCount: 0,
+				folderCount: 0,
+				type: FolderType.extras
+			}
+		};
+		result.id = await this.store.add(result);
+		return result;
 	}
-
-	async moveFolders(folders: Array<Folder>, destFolder: Folder) {
-		for (const folder of folders) {
-			const dest = path.join(destFolder.path, path.basename(folder.path));
-			await fse.move(folder.path, dest);
-			await this.updateFolderParentChange(folder, dest, destFolder.id, destFolder.rootID);
-		}
-	}
-
 }

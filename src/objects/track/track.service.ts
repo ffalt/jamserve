@@ -46,14 +46,4 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 		await this.trackStore.replace(track);
 	}
 
-	async moveTracks(tracks: Array<Track>, folder: Folder) {
-		for (const track of tracks) {
-			await fse.move(path.join(track.path, track.name), path.join(folder.path, track.name));
-			track.path = ensureTrailingPathSeparator(folder.path);
-			track.rootID = folder.rootID;
-			track.parentID = folder.id;
-			await this.trackStore.replace(track);
-		}
-	}
-
 }

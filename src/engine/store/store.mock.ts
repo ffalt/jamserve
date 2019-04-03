@@ -1,7 +1,7 @@
 import {Store} from './store';
 import fse from 'fs-extra';
 import path from 'path';
-import tmp, {SynchrounousResult} from 'tmp';
+import tmp from 'tmp';
 import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
 import {Root} from '../../objects/root/root.model';
 import {AudioModule} from '../../modules/audio/audio.module';
@@ -326,7 +326,7 @@ export async function removeMockRoot(root: MockRoot): Promise<void> {
 export class StoreMock {
 	waveformServiceTest = new WaveformServiceTest();
 	// @ts-ignore
-	dir: SynchrounousResult;
+	dir: tmp.DirResult;
 	// @ts-ignore
 	mockRoot: MockRoot;
 
@@ -348,7 +348,7 @@ export class StoreMock {
 		};
 		await this.store.rootStore.add(root);
 		const scanService = new ScanService(this.store, audioModule, imageModule, this.waveformServiceTest.waveformService);
-		await scanService.scanRoot(root.path, root.id, RootScanStrategy.auto, false);
+		await scanService.scanRoot(root.id, false);
 	}
 
 	async cleanup() {

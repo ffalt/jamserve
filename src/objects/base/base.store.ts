@@ -108,6 +108,10 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 		return await this.group.count(this.transformQuery(query));
 	}
 
+	async searchDistinct(query: X, field: string): Promise<Array<string>> {
+		return await this.group.distinct(this.transformQuery(query), field);
+	}
+
 }
 
 export class QueryHelper {

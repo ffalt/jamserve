@@ -151,6 +151,7 @@ const type_Track = {
 		path: type_key,
 		albumID: type_key,
 		artistID: type_key,
+		albumArtistID: type_key,
 		tag: type_TrackTag,
 		media: type_TrackMedia,
 		id: type_key,
@@ -314,6 +315,7 @@ const type_Bookmark = {
 
 const type_MetaData = {
 	properties: {
+		date: type_int,
 		name: type_string,
 		dataType: type_int,
 		id: type_key,

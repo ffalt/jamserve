@@ -1,7 +1,7 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import path from 'path';
-import {ArtworkImageType, FolderType, FolderTypesAlbum} from '../../model/jam-types';
+import {ArtworkImageType, cUnknownAlbum, cUnknownArtist, FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import {Artwork, Folder} from './folder.model';
 
 export function formatFolderArtwork(artwork: Artwork): Jam.ArtworkImage {
@@ -32,9 +32,9 @@ function formatFolderTag(folder: Folder): Jam.FolderTag {
 		mbz = undefined;
 	}
 	return {
-		artist: folder.tag.artist,
-		artistSort: folder.tag.artistSort,
-		album: isAlbum ? folder.tag.album : undefined,
+		artist: isAlbum || isArtist ? (folder.tag.artist || cUnknownArtist) : undefined,
+		artistSort: isAlbum || isArtist ? folder.tag.artistSort : undefined,
+		album: isAlbum ? (folder.tag.album || cUnknownAlbum) : undefined,
 		albumType: isAlbum ? folder.tag.albumType : undefined,
 		genre: folder.tag.genre,
 		year: isAlbum ? folder.tag.year : undefined,

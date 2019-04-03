@@ -24,6 +24,9 @@ import {IApiBinaryResult} from '../../typings';
 import {FolderRulesChecker} from '../../engine/health/folder.rule';
 import {DBObjectType} from '../../db/db.types';
 import {IoService} from '../../engine/io/io.service';
+import {Root} from '../root/root.model';
+import {RootService} from '../root/root.service';
+import fse from 'fs-extra';
 
 export class FolderController extends BaseListController<JamParameters.Folder, JamParameters.Folders, JamParameters.IncludesFolderChildren, SearchQueryFolder, JamParameters.FolderSearch, Folder, Jam.Folder> {
 	checker = new FolderRulesChecker();
@@ -33,6 +36,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		private trackController: TrackController,
 		private metadataService: MetaDataService,
 		private indexService: IndexService,
+		protected rootService: RootService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService,
@@ -54,7 +58,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			const folders = await this.folderService.folderStore.search({parentID: folder.id, sorts: [{field: 'name', descending: false}]});
 			// TODO: introduce children includes?
 			result.folders = await this.prepareList(folders,
-				{folderState: includes.folderState, folderHealth: includes.folderHealth, folderCounts: includes.folderCounts, folderTag: includes.folderTag}
+				{folderState: includes.folderState, folderCounts: includes.folderCounts, folderTag: includes.folderTag}
 				, user);
 		}
 		if (includes.folderState) {
@@ -75,9 +79,6 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 					{folderState: includes.folderState, folderCounts: includes.folderCounts, folderTag: includes.folderTag}
 					, user);
 			}
-		}
-		if (includes.folderHealth) {
-			result.health = await this.checker.run(folder);
 		}
 		if (includes.folderParents) {
 			const parents = await this.folderService.collectFolderPath(folder.parentID);
@@ -221,42 +222,56 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return await this.folderService.removeArtworkImage(folder, artwork);
 	}
 
-	async health(req: JamRequest<JamParameters.FolderHealth>): Promise<Array<Jam.Folder>> {
-		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		req.query.folderHealth = true;
-		const folders = await this.prepareList(list, req.query, req.user, (a, b) => {
+	async health(req: JamRequest<JamParameters.FolderHealth>): Promise<Array<Jam.FolderHealth>> {
+		let list = await this.service.store.search(await this.translateQuery(req.query, req.user));
+		list = list.sort((a, b) => {
 			return a.path.localeCompare(b.path);
 		});
-		return folders.filter(f => f.health && f.health.length > 0);
-	}
-
-	async parentUpdate(req: JamRequest<JamParameters.FolderMoveParent>) {
-		const destFolder = await this.folderService.store.byId(req.query.folderID);
-		if (!destFolder) {
-			return Promise.reject(InvalidParamError('Folder cannot be moved to itself'));
-		}
-		if (req.query.ids.indexOf(destFolder.id) >= 0) {
-			return Promise.reject(NotFoundError());
-		}
-		const refreshFolders = [{folderIDs: [destFolder.id], rootID: destFolder.rootID}];
-		const folders = await this.byIDs(req.query.ids);
-		for (const folder of folders) {
-			if (folder.parentID) {
-				if (folder.parentID === destFolder.id) {
-					return Promise.reject(InvalidParamError('Folder is already in destination'));
-				}
-				const f = refreshFolders.find(refreshFolder => refreshFolder.rootID === folder.rootID);
-				if (!f) {
-					refreshFolders.push({folderIDs: [folder.parentID], rootID: folder.rootID});
-				} else if (f.folderIDs.indexOf(folder.parentID) < 0) {
-					f.folderIDs.push(folder.parentID);
+		const result: Array<Jam.FolderHealth> = [];
+		const roots: Array<Root> = [];
+		for (const folder of list) {
+			let root = roots.find(r => r.id === folder.rootID);
+			if (!root) {
+				root = await this.rootService.rootStore.byId(folder.rootID);
+				if (root) {
+					roots.push(root);
 				}
 			}
+			if (root) {
+				// TODO: speed this up & cache parents
+				const parents = await this.folderService.collectFolderPath(folder.parentID);
+				const health = await this.checker.run(folder, parents, root);
+				if (health && health.length > 0) {
+					result.push({
+						folder: await this.prepare(folder, req.query, req.user),
+						health
+					});
+				}
+			}
+
 		}
-		await this.folderService.moveFolders(folders, destFolder);
-		for (const f of refreshFolders) {
-			this.ioService.refreshFolders(f.folderIDs, f.rootID);
-		}
+		return result;
 	}
 
+	async parentUpdate(req: JamRequest<JamParameters.FolderMoveParent>): Promise<Jam.ChangeQueueInfo> {
+		const destFolder = await this.folderService.store.byId(req.query.folderID);
+		if (!destFolder) {
+			return Promise.reject(NotFoundError());
+		}
+		return this.ioService.moveFolders(req.query.ids, destFolder.id, destFolder.rootID);
+	}
+
+	async delete(req: JamRequest<JamParameters.ID>): Promise<Jam.ChangeQueueInfo> {
+		const folder = await this.byID(req.query.id);
+		if (folder.tag.level === 0) {
+			return Promise.reject(Error('Root folder cannot be deleted'));
+		}
+		return this.ioService.deleteFolder(folder.id, folder.rootID);
+	}
+
+	async create(req: JamRequest<JamParameters.FolderCreate>): Promise<Jam.Folder> {
+		const folder = await this.byID(req.query.id);
+		const newFolder = await this.folderService.newFolder(folder, req.query.name);
+		return this.prepare(newFolder, {}, req.user);
+	}
 }

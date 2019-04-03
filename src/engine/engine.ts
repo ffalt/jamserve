@@ -37,6 +37,9 @@ import {ScanService} from './scan/scan.service';
 import {StatsService} from './stats/stats.service';
 import {SettingsService} from '../objects/settings/settings.service';
 import {RootScanStrategy} from '../model/jam-types';
+import Logger from '../utils/logger';
+
+const log = Logger('Engine');
 
 export class Engine {
 	public ioService: IoService;
@@ -76,17 +79,19 @@ export class Engine {
 		this.stateService = new StateService(this.store.stateStore);
 		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.stateService, this.imageModule);
 		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.stateService);
+		this.albumService = new AlbumService(this.store.albumStore, this.store.trackStore, this.folderService, this.stateService);
 		this.indexService = new IndexService(this.store.artistStore, this.store.folderStore, this.store.trackStore);
 		this.scanService = new ScanService(this.store, this.audioModule, this.imageModule, this.waveformService);
 		this.settingsService = new SettingsService(store.settingsStore, this.chatService, this.indexService, this.scanService, version);
 		this.artistService = new ArtistService(this.store.artistStore, this.store.trackStore, this.folderService, this.stateService);
-		this.albumService = new AlbumService(this.store.albumStore, this.store.trackStore, this.folderService, this.stateService);
 		this.userService = new UserService(this.config.getDataPath(['images']), this.store.userStore, this.store.stateStore, this.store.playlistStore,
 			this.store.bookmarkStore, this.store.playQueueStore, this.imageModule);
 		this.imageService = new ImageService(this.imageModule, this.trackService, this.folderService, this.artistService, this.albumService, this.userService);
 		this.genreService = new GenreService(this.store.trackStore);
 		this.statsService = new StatsService(this.store);
-		this.ioService = new IoService(this.store.rootStore, this.scanService, this.indexService, this.genreService, this.statsService);
+		this.ioService = new IoService(this.store.rootStore, this.scanService, async () => {
+			await this.refresh();
+		});
 		this.downloadService = new DownloadService(this.store.trackStore);
 		this.nowPlayingService = new NowPlayingService(this.stateService);
 		this.streamService = new StreamService();
@@ -100,6 +105,13 @@ export class Engine {
 		this.radioService = new RadioService(this.store.radioStore);
 	}
 
+	private async refresh(): Promise<void> {
+		log.info('Refresh Indexes & Stats');
+		await this.indexService.buildIndexes();
+		await this.genreService.refresh();
+		await this.statsService.refresh();
+		await this.metaDataService.cleanUp();
+	}
 	private async checkFirstStart(): Promise<void> {
 		if (!this.config.firstStart) {
 			return;
@@ -181,7 +193,6 @@ export class Engine {
 	async stop(): Promise<void> {
 		await this.store.close();
 	}
-
 
 }
 

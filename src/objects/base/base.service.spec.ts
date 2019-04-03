@@ -13,7 +13,7 @@ export function testService(opts: { mockData: boolean }, setup: (store: Store, t
 		const store = new Store(testDB.database);
 		imageModuleTest = new ImageModuleTest();
 		await imageModuleTest.setup();
-		const audioModule = new AudioModule(ThirdPartyConfig);
+		const audioModule = new AudioModule(ThirdPartyConfig, imageModuleTest.imageModule);
 		const oldread = audioModule.read;
 		audioModule.read = async (filename: string) => {
 			const result = await oldread(filename);

@@ -1,15 +1,15 @@
-import {assert, expect, should, use} from 'chai';
+import {expect, should} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../../objects/base/base.service.spec';
 import {WaveformService} from './waveform.service';
-import tmp, {SynchrounousResult} from 'tmp';
+import tmp from 'tmp';
 import path from 'path';
 import {TrackStore} from '../../objects/track/track.store';
 import {mockEpisode} from '../../objects/episode/episode.mock';
 
 describe('WaveformService', () => {
 	let waveformService: WaveformService;
-	let dir: SynchrounousResult;
+	let dir: tmp.DirResult;
 	let trackStore: TrackStore;
 	testService({mockData: true},
 		async (store, imageModuleTest) => {

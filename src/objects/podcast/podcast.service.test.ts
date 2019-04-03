@@ -1,9 +1,9 @@
-import {assert, expect, should, use} from 'chai';
+import {expect, should} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {PodcastService} from './podcast.service';
 import {EpisodeService} from '../episode/episode.service';
-import tmp, {SynchrounousResult} from 'tmp';
+import tmp from 'tmp';
 import nock from 'nock';
 import {PodcastStatus} from '../../model/jam-types';
 import {mockPodcastXML} from './podcast.mock';
@@ -12,7 +12,7 @@ import {StateService} from '../state/state.service';
 describe('PodcastService', () => {
 	let podcastService: PodcastService;
 	let episodeService: EpisodeService;
-	let dir: SynchrounousResult;
+	let dir: tmp.DirResult;
 	testService({mockData: false},
 		async (store, imageModuleTest, audioModule) => {
 			dir = tmp.dirSync();
