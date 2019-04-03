@@ -195,3 +195,6 @@ export const enum MusicBrainzAlbumSecondaryType {
 
 export const MusicBrainz_VARIOUS_ARTISTS_ID = '89ad4ac3-39f7-470e-963a-56509c546377';
 export const MusicBrainz_VARIOUS_ARTISTS_NAME = 'Various Artists';
+
+export const cUnknownArtist = '[Unknown Artist]';
+export const cUnknownAlbum = '[Unknown Album]';

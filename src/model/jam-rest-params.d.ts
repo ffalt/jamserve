@@ -107,12 +107,6 @@ export declare namespace JamParameters {
 		 */
 		folderCounts?: boolean;
 		/**
-		 * include information about the meta data quality on folder(s)
-		 *
-		 * @default false
-		 */
-		folderHealth?: boolean;
-		/**
 		 * include a list of all parent folder ids on folder(s)
 		 *
 		 * @default false
@@ -640,6 +634,16 @@ export declare namespace JamParameters {
 	export interface FolderEditName extends ID {
 		/**
 		 * the new folder name
+		 */
+		name: string;
+	}
+
+	/**
+	 * Create a subfolder
+	 */
+	export interface FolderCreate extends ID {
+		/**
+		 * the new subfolder name
 		 */
 		name: string;
 	}

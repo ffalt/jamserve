@@ -912,16 +912,6 @@
 					},
 					{
 						"in": "query",
-						"name": "folderHealth",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include information about the meta data quality on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "folderParents",
 						"schema": {
 							"default": false,
@@ -1105,16 +1095,6 @@
 							"type": "boolean"
 						},
 						"description": "include information about children (trackCount/folderCount) on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderHealth",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include information about the meta data quality on folder(s)",
 						"required": false
 					},
 					{
@@ -1343,16 +1323,6 @@
 					},
 					{
 						"in": "query",
-						"name": "folderHealth",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include information about the meta data quality on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "folderParents",
 						"schema": {
 							"default": false,
@@ -1570,16 +1540,6 @@
 					},
 					{
 						"in": "query",
-						"name": "folderHealth",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include information about the meta data quality on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "folderParents",
 						"schema": {
 							"default": false,
@@ -1693,16 +1653,6 @@
 							"type": "boolean"
 						},
 						"description": "include information about children (trackCount/folderCount) on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderHealth",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include information about the meta data quality on folder(s)",
 						"required": false
 					},
 					{
@@ -2146,16 +2096,6 @@
 					},
 					{
 						"in": "query",
-						"name": "folderHealth",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include information about the meta data quality on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "folderParents",
 						"schema": {
 							"default": false,
@@ -2558,16 +2498,6 @@
 					},
 					{
 						"in": "query",
-						"name": "folderHealth",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include information about the meta data quality on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "folderParents",
 						"schema": {
 							"default": false,
@@ -2624,7 +2554,7 @@
 								"schema": {
 									"type": "array",
 									"items": {
-										"$ref": "#/components/schemas/Jam.Folder"
+										"$ref": "#/components/schemas/Jam.FolderHealth"
 									}
 								}
 							}
@@ -2845,16 +2775,6 @@
 							"type": "boolean"
 						},
 						"description": "include information about children (trackCount/folderCount) on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderHealth",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include information about the meta data quality on folder(s)",
 						"required": false
 					},
 					{
@@ -12205,7 +12125,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.ChangeQueueInfo"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "parameter is missing or invalid"
@@ -12227,6 +12154,48 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.TrackMoveParent"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/track/delete": {
+			"post": {
+				"operationId": "trackController.delete",
+				"tags": [
+					"track"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.ChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
 							}
 						}
 					}
@@ -12505,7 +12474,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.ChangeQueueInfo"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "parameter is missing or invalid"
@@ -12527,6 +12503,91 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/JamParameters.FolderMoveParent"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/folder/delete": {
+			"post": {
+				"operationId": "folderController.delete",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.ChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/folder/create": {
+			"post": {
+				"operationId": "folderController.create",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Folder"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"description": "Create a subfolder",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.FolderCreate"
 							}
 						}
 					}
@@ -18642,12 +18703,6 @@
 					"tag": {
 						"$ref": "#/components/schemas/Jam.FolderTag"
 					},
-					"health": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/Jam.Problem"
-						}
-					},
 					"info": {
 						"$ref": "#/components/schemas/Jam.ExtendedInfo"
 					},
@@ -18758,24 +18813,6 @@
 						"type": "string"
 					}
 				}
-			},
-			"Jam.Problem": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"details": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"name"
-				]
 			},
 			"Jam.ExtendedInfo": {
 				"type": "object",
@@ -18898,6 +18935,42 @@
 					"recent"
 				],
 				"type": "string"
+			},
+			"Jam.FolderHealth": {
+				"type": "object",
+				"properties": {
+					"folder": {
+						"$ref": "#/components/schemas/Jam.Folder"
+					},
+					"health": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.HealthHint"
+						}
+					}
+				},
+				"required": [
+					"folder",
+					"health"
+				]
+			},
+			"Jam.HealthHint": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"details": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name"
+				]
 			},
 			"Jam.States": {
 				"type": "object",
@@ -19829,6 +19902,21 @@
 					"name"
 				]
 			},
+			"Jam.ChangeQueueInfo": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"pos": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"id",
+					"pos"
+				]
+			},
 			"JamParameters.TrackMoveParent": {
 				"description": "Move track file(s) to new folder parent",
 				"type": "object",
@@ -19949,6 +20037,24 @@
 				"required": [
 					"folderID",
 					"ids"
+				]
+			},
+			"JamParameters.FolderCreate": {
+				"description": "Create a subfolder",
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "the new subfolder name",
+						"type": "string"
+					},
+					"id": {
+						"description": "the item id",
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name"
 				]
 			},
 			"JamParameters.PodcastNew": {

@@ -5183,12 +5183,6 @@
 				"tag": {
 					"$ref": "#/definitions/Jam.FolderTag"
 				},
-				"health": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Jam.Problem"
-					}
-				},
 				"info": {
 					"$ref": "#/definitions/Jam.ExtendedInfo"
 				},
@@ -5241,6 +5235,24 @@
 				"level",
 				"name",
 				"type"
+			]
+		},
+		"Jam.FolderHealth": {
+			"type": "object",
+			"properties": {
+				"folder": {
+					"$ref": "#/definitions/Jam.Folder"
+				},
+				"health": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.HealthHint"
+					}
+				}
+			},
+			"required": [
+				"folder",
+				"health"
 			]
 		},
 		"Jam.FolderParent": {
@@ -5348,7 +5360,7 @@
 				}
 			}
 		},
-		"Jam.Problem": {
+		"Jam.HealthHint": {
 			"type": "object",
 			"properties": {
 				"id": {
@@ -6181,6 +6193,21 @@
 				"chat",
 				"index",
 				"library"
+			]
+		},
+		"Jam.ChangeQueueInfo": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"pos": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"id",
+				"pos"
 			]
 		},
 		"Jam.CoverArtArchiveResponse": {

@@ -255,8 +255,9 @@ export interface JamApi {
 		 */
 		'folder/health'?: {
 			params: JamParameters.FolderHealth;
-			result: Array<Jam.Folder>;
+			result: Array<Jam.FolderHealth>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+			roles: ['admin'];
 		};
 		/**
 		 * folder: get the user state (fav/rating) by folder id
@@ -1202,6 +1203,13 @@ export interface JamApi {
 		};
 		'track/parent/update'?: {
 			params: JamParameters.TrackMoveParent;
+			result: Jam.ChangeQueueInfo,
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		'track/delete'?: {
+			params: JamParameters.ID;
+			result: Jam.ChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1244,6 +1252,19 @@ export interface JamApi {
 		};
 		'folder/parent/update'?: {
 			params: JamParameters.FolderMoveParent;
+			result: Jam.ChangeQueueInfo,
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		'folder/delete'?: {
+			params: JamParameters.ID;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			result: Jam.ChangeQueueInfo,
+			roles: ['admin'];
+		};
+		'folder/create'?: {
+			params: JamParameters.FolderCreate;
+			result: Jam.Folder;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};

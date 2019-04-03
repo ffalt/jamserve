@@ -162,13 +162,17 @@ export declare namespace Jam {
 		trackCount?: number;
 		folderCount?: number;
 		tag?: FolderTag;
-		health?: Array<Problem>;
 		info?: ExtendedInfo;
 		folders?: Array<Folder>;
 		tracks?: Array<Track>;
 		parents?: Array<FolderParent>;
 		artworks?: Array<ArtworkImage>;
 		similar?: Array<Folder>;
+	}
+
+	export interface FolderHealth {
+		folder: Folder;
+		health: Array<HealthHint>;
 	}
 
 	export interface FolderParent {
@@ -199,7 +203,7 @@ export declare namespace Jam {
 		musicbrainz?: FolderMBTag;
 	}
 
-	export interface Problem {
+	export interface HealthHint {
 		id: string;
 		name: string;
 		details?: string;
@@ -398,6 +402,11 @@ export declare namespace Jam {
 		chat: AdminSettingsChat;
 		index: AdminSettingsIndex;
 		library: AdminSettingsLibrary;
+	}
+
+	export interface ChangeQueueInfo {
+		id: string;
+		pos: number;
 	}
 
 	export type CoverArtArchiveResponse = CoverArtArchive.Response;
