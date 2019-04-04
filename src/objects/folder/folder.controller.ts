@@ -253,7 +253,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return result;
 	}
 
-	async parentUpdate(req: JamRequest<JamParameters.FolderMoveParent>): Promise<Jam.ChangeQueueInfo> {
+	async parentUpdate(req: JamRequest<JamParameters.FolderMoveParent>): Promise<Jam.AdminChangeQueueInfo> {
 		const destFolder = await this.folderService.store.byId(req.query.folderID);
 		if (!destFolder) {
 			return Promise.reject(NotFoundError());
@@ -261,7 +261,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return this.ioService.moveFolders(req.query.ids, destFolder.id, destFolder.rootID);
 	}
 
-	async delete(req: JamRequest<JamParameters.ID>): Promise<Jam.ChangeQueueInfo> {
+	async delete(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
 		const folder = await this.byID(req.query.id);
 		if (folder.tag.level === 0) {
 			return Promise.reject(Error('Root folder cannot be deleted'));

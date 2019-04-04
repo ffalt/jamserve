@@ -5,7 +5,6 @@ import {Track} from '../../objects/track/track.model';
 import {ScanService} from '../scan/scan.service';
 import {RootStore} from '../../objects/root/root.store';
 import {Jam} from '../../model/jam-rest-data';
-import ChangeQueueInfo = Jam.ChangeQueueInfo;
 import {logChanges, MergeChanges} from '../scan/scan.changes';
 
 const log = Logger('IO');
@@ -28,10 +27,11 @@ export abstract class ScanRequest {
 
 	abstract execute(): Promise<MergeChanges>;
 
-	async run(): Promise<void> {
+	async run(): Promise<MergeChanges> {
 		try {
 			const changes = await this.execute();
 			logChanges(changes);
+			return changes;
 		} catch (e) {
 			log.error('Scanning Error', this.rootID, e.toString());
 			if (['EACCES', 'ENOENT'].indexOf((<any>e).code) >= 0) {
@@ -138,9 +138,15 @@ export class IoService {
 	public scanning = false;
 	private scanningCount: undefined | number;
 	private rootstatus: { [id: string]: RootStatus } = {};
+	private current: ScanRequest | undefined;
 	private queue: Array<ScanRequest> = [];
 	private delayedTrackRefresh: { [rootID: string]: { request: ScanRequestRefreshTracks, timeout?: NodeJS.Timeout } } = {};
 	private nextID: number = Date.now();
+	private history: Array<{
+		id: string;
+		error?: string;
+		date: number;
+	}> = [];
 
 	constructor(private rootStore: RootStore, private scanService: ScanService, private onRefresh: () => Promise<void>) {
 	}
@@ -152,6 +158,21 @@ export class IoService {
 
 	getScanStatus(): Subsonic.ScanStatus {
 		return {scanning: this.scanning, count: this.scanningCount};
+	}
+
+	getScanActionStatus(id: string): Jam.AdminChangeQueueInfo {
+		if (this.current && this.current.id === id) {
+			return {id};
+		}
+		const cmd = this.queue.find(c => c.id === id);
+		if (cmd) {
+			return {id, pos: this.queue.indexOf(cmd)};
+		}
+		const done = this.history.find(c => c.id === id);
+		if (done) {
+			return {id, error: done.error, done: done.date};
+		}
+		return {id, error: 'ID not found', done: Date.now()};
 	}
 
 	getRootStatus(id: string): RootStatus {
@@ -171,8 +192,11 @@ export class IoService {
 		try {
 			await cmd.run();
 			this.rootstatus[cmd.rootID] = {lastScan: Date.now()};
+			this.history.push({id: cmd.id, date: Date.now()});
+
 		} catch (e) {
 			this.rootstatus[cmd.rootID] = {lastScan: Date.now(), error: e.toString()};
+			this.history.push({id: cmd.id, error: e.toString(), date: Date.now()});
 		}
 		if (this.queue.length === 0) {
 			await this.onRefresh();
@@ -210,7 +234,7 @@ export class IoService {
 
 	}
 
-	async refresh(): Promise<Array<Jam.ChangeQueueInfo>> {
+	async refresh(): Promise<Array<Jam.AdminChangeQueueInfo>> {
 		const rootIDs = await this.rootStore.allIds();
 		const result = [];
 		for (const rootID of rootIDs) {
@@ -219,17 +243,17 @@ export class IoService {
 		return result;
 	}
 
-	private addRequest(req: ScanRequest): ChangeQueueInfo {
+	private addRequest(req: ScanRequest): Jam.AdminChangeQueueInfo {
 		this.queue.push(req);
 		this.run();
 		return {id: req.id, pos: this.queue.indexOf(req)};
 	}
 
-	private getRequestInfo(req: ScanRequest): ChangeQueueInfo {
+	private getRequestInfo(req: ScanRequest): Jam.AdminChangeQueueInfo {
 		return {id: req.id, pos: this.queue.indexOf(req)};
 	}
 
-	refreshTrack(track: Track): ChangeQueueInfo {
+	refreshTrack(track: Track): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestRefreshTracks>this.findRequest(track.rootID, ScanRequestMode.refreshTracks);
 		if (oldRequest) {
 			if (oldRequest.trackIDs.indexOf(track.id) < 0) {
@@ -258,7 +282,7 @@ export class IoService {
 		return this.getRequestInfo(delayedCmd.request);
 	}
 
-	refreshRoot(rootID: string, forceMetaRefresh: boolean): ChangeQueueInfo {
+	refreshRoot(rootID: string, forceMetaRefresh: boolean): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestRefreshRoot>this.findRequest(rootID, ScanRequestMode.refreshRoot);
 		if (oldRequest) {
 			if (forceMetaRefresh) {
@@ -270,7 +294,7 @@ export class IoService {
 		}
 	}
 
-	removeRoot(rootID: string): ChangeQueueInfo {
+	removeRoot(rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = this.findRequest(rootID, ScanRequestMode.removeRoot);
 		if (oldRequest) {
 			return this.getRequestInfo(oldRequest);
@@ -279,7 +303,7 @@ export class IoService {
 		}
 	}
 
-	moveFolders(folderIDs: Array<string>, newParentID: string, rootID: string): ChangeQueueInfo {
+	moveFolders(folderIDs: Array<string>, newParentID: string, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestMoveFolders>this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveFolders && (<ScanRequestMoveFolders>c).newParentID === newParentID));
 		if (oldRequest) {
 			for (const id of folderIDs) {
@@ -293,7 +317,7 @@ export class IoService {
 		}
 	}
 
-	refreshFolders(folderIDs: Array<string>, rootID: string): ChangeQueueInfo {
+	refreshFolders(folderIDs: Array<string>, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestRefreshFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
 		if (oldRequest) {
 			for (const id of folderIDs) {
@@ -307,7 +331,7 @@ export class IoService {
 		}
 	}
 
-	deleteFolder(id: string, rootID: string): ChangeQueueInfo {
+	deleteFolder(id: string, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestDeleteFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
 		if (oldRequest) {
 			if (oldRequest.folderIDs.indexOf(id) < 0) {
@@ -319,7 +343,7 @@ export class IoService {
 		}
 	}
 
-	removeTrack(id: string, rootID: string): ChangeQueueInfo {
+	removeTrack(id: string, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestRemoveTracks>this.findRequest(rootID, ScanRequestMode.removeTracks);
 		if (oldRequest) {
 			if (oldRequest.trackIDs.indexOf(id) < 0) {
@@ -331,7 +355,7 @@ export class IoService {
 		}
 	}
 
-	moveTracks(trackIDs: Array<string>, newParentID: string, rootID: string): ChangeQueueInfo {
+	moveTracks(trackIDs: Array<string>, newParentID: string, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestMoveTracks>this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveTracks && (<ScanRequestMoveTracks>c).newParentID === newParentID));
 		if (oldRequest) {
 			for (const id of trackIDs) {

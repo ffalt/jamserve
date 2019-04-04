@@ -23,8 +23,6 @@ import {TrackService} from './track.service';
 import {FolderService} from '../folder/folder.service';
 import {NotFoundError} from '../../api/jam/error';
 import {trackTagToRawTag} from '../../modules/audio/metadata';
-import fse from 'fs-extra';
-import ChangeQueueInfo = Jam.ChangeQueueInfo;
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 
@@ -163,7 +161,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		await this.trackService.renameTrack(track, req.query.name);
 	}
 
-	async parentUpdate(req: JamRequest<JamParameters.TrackMoveParent>): Promise<Jam.ChangeQueueInfo> {
+	async parentUpdate(req: JamRequest<JamParameters.TrackMoveParent>): Promise<Jam.AdminChangeQueueInfo> {
 		const folder = await this.folderService.store.byId(req.query.folderID);
 		if (!folder) {
 			return Promise.reject(NotFoundError());
@@ -171,7 +169,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		return this.ioService.moveTracks(req.query.ids, folder.id, folder.rootID);
 	}
 
-	async delete(req: JamRequest<JamParameters.ID>): Promise<Jam.ChangeQueueInfo> {
+	async delete(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
 		const track = await this.byID(req.query.id);
 		return this.ioService.removeTrack(track.id, track.rootID);
 	}

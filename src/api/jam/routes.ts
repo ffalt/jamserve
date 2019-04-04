@@ -616,11 +616,17 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/settings/admin', async (req, res) => {
+	register.get('/admin/settings', async (req, res) => {
 		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.AdminSettings = await api.settingsController.admin(options);
 		await ApiResponder.data(res, result);
-	}, '/settings/admin', ['admin']);
+	}, '/admin/settings', ['admin']);
+
+	register.get('/admin/queue/id', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.AdminChangeQueueInfo = await api.rootController.queueId(options);
+		await ApiResponder.data(res, result);
+	}, '/admin/queue/id', ['admin']);
 
 	register.get('/folder/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
@@ -858,13 +864,13 @@ export function registerAccessControlApi(register: Register, api: JamController)
 
 	register.post('/track/parent/update', async (req, res) => {
 		const options: JamRequest<JamParameters.TrackMoveParent> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.ChangeQueueInfo = await api.trackController.parentUpdate(options);
+		const result: Jam.AdminChangeQueueInfo = await api.trackController.parentUpdate(options);
 		await ApiResponder.data(res, result);
 	}, '/track/parent/update', ['admin']);
 
 	register.post('/track/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.ChangeQueueInfo = await api.trackController.delete(options);
+		const result: Jam.AdminChangeQueueInfo = await api.trackController.delete(options);
 		await ApiResponder.data(res, result);
 	}, '/track/delete', ['admin']);
 
@@ -912,13 +918,13 @@ export function registerAccessControlApi(register: Register, api: JamController)
 
 	register.post('/folder/parent/update', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderMoveParent> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.ChangeQueueInfo = await api.folderController.parentUpdate(options);
+		const result: Jam.AdminChangeQueueInfo = await api.folderController.parentUpdate(options);
 		await ApiResponder.data(res, result);
 	}, '/folder/parent/update', ['admin']);
 
 	register.post('/folder/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.ChangeQueueInfo = await api.folderController.delete(options);
+		const result: Jam.AdminChangeQueueInfo = await api.folderController.delete(options);
 		await ApiResponder.data(res, result);
 	}, '/folder/delete', ['admin']);
 
@@ -1084,9 +1090,9 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.ok(res);
 	}, '/root/delete', ['admin']);
 
-	register.post('/settings/admin/update', async (req, res) => {
+	register.post('/admin/settings/update', async (req, res) => {
 		const options: JamRequest<Jam.AdminSettings> = {query: req.body, user: req.user, client: req.client};
 		await api.settingsController.adminUpdate(options);
 		await ApiResponder.ok(res);
-	}, '/settings/admin/update', ['admin']);
+	}, '/admin/settings/update', ['admin']);
 }

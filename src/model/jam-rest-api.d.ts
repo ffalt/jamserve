@@ -845,12 +845,23 @@ export interface JamApi {
 		};
 
 		/**
-		 * settings: get admin settings for the server
+		 * admin: get admin settings for the server
 		 */
-		'settings/admin'?: {
+		'admin/settings'?: {
 			result: Jam.AdminSettings;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 			roles: ['admin'];
+			operationId: 'settings.admin'
+		};
+		/**
+		 * admin: get admin change request status
+		 */
+		'admin/queue/id'?: {
+			params: JamParameters.ID;
+			result: Jam.AdminChangeQueueInfo;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
+			roles: ['admin'];
+			operationId: 'root.queue.id'
 		};
 
 		// binary
@@ -1203,13 +1214,13 @@ export interface JamApi {
 		};
 		'track/parent/update'?: {
 			params: JamParameters.TrackMoveParent;
-			result: Jam.ChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
 		'track/delete'?: {
 			params: JamParameters.ID;
-			result: Jam.ChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1252,14 +1263,14 @@ export interface JamApi {
 		};
 		'folder/parent/update'?: {
 			params: JamParameters.FolderMoveParent;
-			result: Jam.ChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
 		'folder/delete'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			result: Jam.ChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo,
 			roles: ['admin'];
 		};
 		'folder/create'?: {
@@ -1414,10 +1425,14 @@ export interface JamApi {
 			roles: ['admin'];
 		};
 
-		'settings/admin/update'?: {
+		/**
+		 * admin: update admin settings for the server
+		 */
+		'admin/settings/update'?: {
 			params: Jam.AdminSettings;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
+			operationId: 'settings.admin.update'
 		};
 
 	};

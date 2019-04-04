@@ -7,7 +7,7 @@ import {DBObjectType} from '../../db/db.types';
 import {MatchDir, MatchFile} from './scan.match-dir';
 import Logger from '../../utils/logger';
 import {AudioModule} from '../../modules/audio/audio.module';
-import {folderHasChanged, generateArtworkId, logfolderHasChanged, splitDirectoryName, trackHasChanged} from './scan.utils';
+import {folderHasChanged, generateArtworkId, splitDirectoryName, trackHasChanged} from './scan.utils';
 import {MergeChanges} from './scan.changes';
 import {Store} from '../store/store';
 import {buildMetaStat} from './scan.metastats';

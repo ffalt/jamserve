@@ -404,9 +404,11 @@ export declare namespace Jam {
 		library: AdminSettingsLibrary;
 	}
 
-	export interface ChangeQueueInfo {
+	export interface AdminChangeQueueInfo {
 		id: string;
-		pos: number;
+		pos?: number;
+		error?: string;
+		done?: number;
 	}
 
 	export type CoverArtArchiveResponse = CoverArtArchive.Response;

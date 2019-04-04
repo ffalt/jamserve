@@ -248,6 +248,14 @@ export class ScanService {
 		if (!newParent) {
 			return Promise.reject(Error('Destination Folder not found'));
 		}
+		for (const track of tracks) {
+			if (track.parentID === newParentID) {
+				return Promise.reject(Error('File is already in folder'));
+			}
+			if (await fse.pathExists(path.join(newParent.path, track.name))) {
+				return Promise.reject(Error('File name is already used in folder'));
+			}
+		}
 		const updateFolderIDs: Array<string> = [newParent.id];
 		const updateTrackIDs: Array<string> = [];
 		for (const track of tracks) {

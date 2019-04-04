@@ -72,11 +72,11 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 		await this.ioService.removeRoot(root.id);
 	}
 
-	async scanAll(req: JamRequest<{}>): Promise<Array<Jam.ChangeQueueInfo>> {
+	async scanAll(req: JamRequest<{}>): Promise<Array<Jam.AdminChangeQueueInfo>> {
 		return await this.ioService.refresh();
 	}
 
-	async scan(req: JamRequest<JamParameters.ID>): Promise<Jam.ChangeQueueInfo> {
+	async scan(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
 		const root = await this.byID(req.query.id);
 		return await this.ioService.refreshRoot(root.id, false);
 	}
@@ -84,6 +84,10 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 	async status(req: JamRequest<JamParameters.ID>): Promise<Jam.RootStatus> {
 		const root = await this.byID(req.query.id);
 		return this.ioService.getRootStatus(root.id);
+	}
+
+	async queueId(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
+		return this.ioService.getScanActionStatus(req.query.id);
 	}
 
 }

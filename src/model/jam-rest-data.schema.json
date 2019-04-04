@@ -6195,7 +6195,7 @@
 				"library"
 			]
 		},
-		"Jam.ChangeQueueInfo": {
+		"Jam.AdminChangeQueueInfo": {
 			"type": "object",
 			"properties": {
 				"id": {
@@ -6203,11 +6203,16 @@
 				},
 				"pos": {
 					"type": "number"
+				},
+				"error": {
+					"type": "string"
+				},
+				"done": {
+					"type": "number"
 				}
 			},
 			"required": [
-				"id",
-				"pos"
+				"id"
 			]
 		},
 		"Jam.CoverArtArchiveResponse": {

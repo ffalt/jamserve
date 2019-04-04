@@ -3455,8 +3455,8 @@
 						"result"
 					]
 				},
-				"settings/admin": {
-					"description": "settings: get admin settings for the server",
+				"admin/settings": {
+					"description": "admin: get admin settings for the server",
 					"type": "object",
 					"properties": {
 						"result": {
@@ -3493,10 +3493,74 @@
 									}
 								]
 							}
+						},
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"settings.admin"
+							]
 						}
 					},
 					"required": [
 						"errors",
+						"operationId",
+						"result",
+						"roles"
+					]
+				},
+				"admin/queue/id": {
+					"description": "admin: get admin change request status",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						},
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"root.queue.id"
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"operationId",
+						"params",
 						"result",
 						"roles"
 					]
@@ -6302,7 +6366,7 @@
 							"$ref": "#/definitions/JamParameters.TrackMoveParent"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.ChangeQueueInfo"
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
 						},
 						"errors": {
 							"anyOf": [
@@ -6357,7 +6421,7 @@
 							"$ref": "#/definitions/JamParameters.ID"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.ChangeQueueInfo"
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
 						},
 						"errors": {
 							"anyOf": [
@@ -6738,7 +6802,7 @@
 							"$ref": "#/definitions/JamParameters.FolderMoveParent"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.ChangeQueueInfo"
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
 						},
 						"errors": {
 							"anyOf": [
@@ -6809,7 +6873,7 @@
 							]
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.ChangeQueueInfo"
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
 						},
 						"roles": {
 							"type": "array",
@@ -7822,7 +7886,8 @@
 						"roles"
 					]
 				},
-				"settings/admin/update": {
+				"admin/settings/update": {
+					"description": "admin: update admin settings for the server",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -7865,10 +7930,17 @@
 									}
 								]
 							}
+						},
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"settings.admin.update"
+							]
 						}
 					},
 					"required": [
 						"errors",
+						"operationId",
 						"params",
 						"roles"
 					]
@@ -17128,6 +17200,26 @@
 				"scanAtStart"
 			]
 		},
+		"Jam.AdminChangeQueueInfo": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"pos": {
+					"type": "number"
+				},
+				"error": {
+					"type": "string"
+				},
+				"done": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
 		"JamParameters.Download": {
 			"type": "object",
 			"properties": {
@@ -17493,21 +17585,6 @@
 			"required": [
 				"folderID",
 				"ids"
-			]
-		},
-		"Jam.ChangeQueueInfo": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"type": "string"
-				},
-				"pos": {
-					"type": "number"
-				}
-			},
-			"required": [
-				"id",
-				"pos"
 			]
 		},
 		"JamParameters.FolderArtworkNew": {

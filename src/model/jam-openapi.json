@@ -9627,12 +9627,12 @@
 				]
 			}
 		},
-		"/settings/admin": {
+		"/admin/settings": {
 			"get": {
 				"operationId": "settingsController.admin",
 				"description": "get admin settings for the server",
 				"tags": [
-					"settings"
+					"admin"
 				],
 				"responses": {
 					"200": {
@@ -9652,6 +9652,44 @@
 						"description": "internal server error"
 					}
 				}
+			}
+		},
+		"/admin/queue/id": {
+			"get": {
+				"operationId": "rootController.queueId",
+				"description": "get admin change request status",
+				"tags": [
+					"admin"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					}
+				]
 			}
 		},
 		"/folder/download": {
@@ -12129,7 +12167,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.ChangeQueueInfo"
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
 								}
 							}
 						}
@@ -12172,7 +12210,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.ChangeQueueInfo"
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
 								}
 							}
 						}
@@ -12478,7 +12516,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.ChangeQueueInfo"
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
 								}
 							}
 						}
@@ -12521,7 +12559,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.ChangeQueueInfo"
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
 								}
 							}
 						}
@@ -13527,11 +13565,12 @@
 				}
 			}
 		},
-		"/settings/admin/update": {
+		"/admin/settings/update": {
 			"post": {
 				"operationId": "settingsController.adminUpdate",
+				"description": "update admin settings for the server",
 				"tags": [
-					"settings"
+					"admin"
 				],
 				"responses": {
 					"200": {
@@ -19704,6 +19743,26 @@
 					"scanAtStart"
 				]
 			},
+			"Jam.AdminChangeQueueInfo": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"pos": {
+						"type": "number"
+					},
+					"error": {
+						"type": "string"
+					},
+					"done": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
 			"JamParameters.Login": {
 				"type": "object",
 				"properties": {
@@ -19900,21 +19959,6 @@
 				"required": [
 					"id",
 					"name"
-				]
-			},
-			"Jam.ChangeQueueInfo": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"pos": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"id",
-					"pos"
 				]
 			},
 			"JamParameters.TrackMoveParent": {
