@@ -1,13 +1,13 @@
 import {Artwork, Folder, FolderTag} from '../../objects/folder/folder.model';
 import {Track, TrackTag} from '../../objects/track/track.model';
-import {AlbumType, ArtworkImageType, FileTyp, FolderType, MusicBrainz_VARIOUS_ARTISTS_NAME, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
+import {ArtworkImageType, FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
 import path from 'path';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import {DBObjectType} from '../../db/db.types';
 import {MatchDir, MatchFile} from './scan.match-dir';
 import Logger from '../../utils/logger';
 import {AudioModule} from '../../modules/audio/audio.module';
-import {folderHasChanged, generateArtworkId, splitDirectoryName, trackHasChanged} from './scan.utils';
+import {folderHasChanged, generateArtworkId, logfolderHasChanged, splitDirectoryName, trackHasChanged} from './scan.utils';
 import {MergeChanges} from './scan.changes';
 import {Store} from '../store/store';
 import {buildMetaStat} from './scan.metastats';
@@ -298,7 +298,7 @@ export class ScanMerger {
 	}
 
 	async merge(dir: MatchDir, forceMetaRefresh: boolean, rootID: string, rebuildTag: (dir: MatchDir) => boolean, changes: MergeChanges): Promise<void> {
-		log.info('Merging:', dir);
+		log.info('Merging:', dir.name);
 		await this.buildMerge(dir, changes);
 		await this.buildMergeTags(dir, rebuildTag);
 		await this.mergeR(dir, changes);

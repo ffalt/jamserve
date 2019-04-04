@@ -126,15 +126,21 @@ export class ScanService {
 
 	async deleteFolders(rootID: string, folderIDs: Array<string>): Promise<MergeChanges> {
 		const {root, changes} = await this.start(rootID);
-		changes.removedFolders = await this.store.folderStore.byIds(folderIDs);
+		const folders = await this.store.folderStore.byIds(folderIDs);
+		for (const folder of folders) {
+			if (folder.tag.level === 0) {
+				return Promise.reject(Error('Root folder can not be deleted'));
+			}
+		}
+		const inPaths = folders.map(f => f.path);
+		changes.removedFolders = await this.store.folderStore.search({inPaths});
 		const trashPath = path.join(root.path, '.trash');
-		for (const folder of changes.removedFolders) {
+		for (const folder of folders) {
 			await fse.move(folder.path, path.join(trashPath, Date.now() + '_' + path.basename(folder.path)));
 		}
-		const inPaths = changes.removedFolders.map(f => f.path);
 		changes.removedTracks = await this.store.trackStore.search({inPaths});
 		const parentIDs = [];
-		for (const folder of changes.removedFolders) {
+		for (const folder of folders) {
 			if (folder.parentID && parentIDs.indexOf(folder.parentID) < 0) {
 				parentIDs.push(folder.parentID);
 			}
@@ -175,18 +181,33 @@ export class ScanService {
 		if (updateFolderIDs.indexOf(newParent.id) < 0) {
 			updateFolderIDs.push(newParent.id);
 		}
+		const usedPathAfterMove: Array<string> = [];
 		for (const folder of folders) {
 			if (folder.parentID === newParentID) {
-				return Promise.reject(Error('Folder already in Destination'));
+				return Promise.reject(Error('Folder is already in Destination'));
 			}
 			const dest = path.join(newParent.path, path.basename(folder.path));
+			const exists = await fse.pathExists(dest);
+			if (exists) {
+				return Promise.reject(Error('Folder name already used in Destination'));
+			}
+			if (usedPathAfterMove.indexOf(dest) >= 0) {
+				return Promise.reject(Error('Folder name will be already used in Destination after previous folder is moved'));
+			}
+			usedPathAfterMove.push(dest);
+		}
+		for (const folder of folders) {
+			const dest = ensureTrailingPathSeparator(path.join(newParent.path, path.basename(folder.path)));
 			await fse.move(folder.path, dest);
+			if (updateFolderIDs.indexOf(folder.id) < 0) {
+				updateFolderIDs.push(folder.id);
+			}
 			if (updateFolderIDs.indexOf(folder.parentID) < 0) {
 				updateFolderIDs.push(folder.parentID);
 			}
 			const tracks = await this.store.trackStore.search({inPath: folder.path});
 			for (const track of tracks) {
-				track.path = folder.path.replace(folder.path, dest);
+				track.path = track.path.replace(folder.path, dest);
 				track.rootID = newParent.rootID;
 				if (updateTrackIDs.indexOf(track.id) < 0) {
 					updateTrackIDs.push(track.id);
@@ -213,7 +234,9 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(updateFolderIDs, updateTrackIDs);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, false, rootID, (dir) => {
+			return changedDirs.indexOf(dir) >= 0;
+		}, changes);
 
 		return await this.finish(changes, rootID, false);
 	}

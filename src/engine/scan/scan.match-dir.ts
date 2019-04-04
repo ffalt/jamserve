@@ -88,7 +88,7 @@ export class ScanMatcher {
 	}
 
 	async match(dir: ScanDir, changes: MergeChanges): Promise<MatchDir> {
-		log.info('Matching:', dir);
+		log.info('Matching:', dir.name);
 		const result: MatchDir = this.cloneScanDir(dir, undefined, 0);
 		result.folder = await this.store.folderStore.searchOne({path: dir.name});
 		await this.matchDirR(result, changes);
@@ -244,7 +244,9 @@ export class DBMatcher {
 				}
 			}
 			loadedMatches.push(match);
-			changedDirs.push(match);
+			if (changedDirs.indexOf(match) < 0) {
+				changedDirs.push(match);
+			}
 			let p = match.parent;
 			while (p) {
 				if (p.level > 0 && changedDirs.indexOf(p) < 0) {

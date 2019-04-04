@@ -63,7 +63,7 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 					{
 						path: path.join(rootDir, 'artist 1', 'album 1'),
 						name: 'album 1',
-						genre: randomItem(Genres),
+						genre: 'Genre 1',
 						folders: [],
 						tracks: [
 							{
@@ -71,21 +71,21 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 								artist: 'artist 1',
 								album: 'album 1',
 								number: 1,
-								genre: randomItem(Genres)
+								genre: 'Genre 1'
 							},
 							{
 								path: path.resolve(rootDir, 'artist 1', 'album 1', '2 - title 2 - artist 1.mp3'),
 								artist: 'artist 1',
 								album: 'album 1',
 								number: 2,
-								genre: randomItem(Genres)
+								genre: 'Genre 1'
 							},
 							{
 								path: path.resolve(rootDir, 'artist 1', 'album 1', '3 - title 3 - artist 1.mp3'),
 								artist: 'artist 1',
 								album: 'album 1',
 								number: 3,
-								genre: randomItem(Genres)
+								genre: 'Genre 1'
 							}
 						],
 						expected: {
@@ -96,7 +96,7 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 					{
 						path: path.join(rootDir, 'artist 1', 'album 2'),
 						name: 'album 2',
-						genre: randomItem(Genres),
+						genre: 'Genre 1',
 						folders: [],
 						tracks: [
 							{
@@ -104,14 +104,14 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 								artist: 'artist 1',
 								album: 'album 2',
 								number: 1,
-								genre: randomItem(Genres)
+								genre: 'Genre 1'
 							},
 							{
 								path: path.join(rootDir, 'artist 1', 'album 2', '2 - title 2 - artist 1.mp3'),
 								artist: 'artist 1',
 								album: 'album 2',
 								number: 2,
-								genre: randomItem(Genres)
+								genre: 'Genre 1'
 							},
 							{
 								path: path.join(rootDir, 'artist 1', 'album 2', '3 - title 3 - artist 1 with another artist.mp3'),
@@ -119,7 +119,7 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 								albumArtist: 'artist 1',
 								album: 'album 2',
 								number: 3,
-								genre: randomItem(Genres)
+								genre: 'Genre 2'
 							}],
 						expected: {
 							folderType: FolderType.album,
@@ -129,12 +129,12 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 					{
 						path: path.join(rootDir, 'artist 1', 'album 3'),
 						name: 'album 3',
-						genre: randomItem(Genres),
+						genre: 'Genre 3',
 						folders: [
 							{
 								path: path.join(rootDir, 'artist 1', 'album 3', 'cd 1'),
 								name: 'cd 1',
-								genre: randomItem(Genres),
+								genre: 'Genre 3',
 								folders: [],
 								tracks: [
 									{
@@ -142,14 +142,14 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 										artist: 'artist 1',
 										album: 'album 3',
 										number: 1,
-										genre: randomItem(Genres)
+										genre: 'Genre 3'
 									},
 									{
 										path: path.join(rootDir, 'artist 1', 'album 3', 'cd 1', '2 - cd 1 - title 2 - artist 1.mp3'),
 										artist: 'artist 1',
 										album: 'album 3',
 										number: 2,
-										genre: randomItem(Genres)
+										genre: 'Genre 3'
 									}
 								],
 								expected: {
@@ -160,7 +160,7 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 							{
 								path: path.join(rootDir, 'artist 1', 'album 3', 'cd 2'),
 								name: 'cd 2',
-								genre: randomItem(Genres),
+								genre: 'Genre 3',
 								folders: [],
 								tracks: [
 									{
@@ -168,14 +168,14 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 										artist: 'artist 1',
 										album: 'album 3',
 										number: 1,
-										genre: randomItem(Genres)
+										genre: 'Genre 3'
 									},
 									{
 										path: path.join(rootDir, 'artist 1', 'album 3', 'cd 2', '2 - cd 2 - title 2 - artist 1.mp3'),
 										artist: 'artist 1',
 										album: 'album 3',
 										number: 2,
-										genre: randomItem(Genres)
+										genre: 'Genre 3'
 									}
 								],
 								expected: {
@@ -204,7 +204,7 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 					{
 						path: path.join(rootDir, 'artist 2', 'album 1'),
 						name: 'album 1',
-						genre: randomItem(Genres),
+						genre: 'Genre 1',
 						folders: [],
 						tracks: [
 							{
@@ -212,21 +212,21 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 								artist: 'artist 2',
 								album: 'album 1',
 								number: 1,
-								genre: randomItem(Genres)
+								genre: 'Genre 1'
 							},
 							{
 								path: path.resolve(rootDir, 'artist 2', 'album 1', '2 - title 2 - artist 2.mp3'),
 								artist: 'artist 2',
 								album: 'album 1',
 								number: 2,
-								genre: randomItem(Genres)
+								genre: 'Genre 1'
 							},
 							{
 								path: path.resolve(rootDir, 'artist 2', 'album 1', '3 - title 3 - artist 2.mp3'),
 								artist: 'artist 2',
 								album: 'album 1',
 								number: 3,
-								genre: randomItem(Genres)
+								genre: 'Genre 2'
 							}
 						],
 						expected: {
@@ -251,21 +251,21 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 						artist: 'artist c1',
 						album: 'compilation 1',
 						number: 1,
-						genre: randomItem(Genres)
+						genre: 'Genre 1'
 					},
 					{
 						path: path.resolve(rootDir, 'compilation 1', '2 - title 2 - artist c2.mp3'),
 						artist: 'artist c2',
 						album: 'compilation 1',
 						number: 2,
-						genre: randomItem(Genres)
+						genre: 'Genre 2'
 					},
 					{
 						path: path.resolve(rootDir, 'compilation 1', '3 - title 3 - artist c3.mp3'),
 						artist: 'artist c3',
 						album: 'compilation 1',
 						number: 3,
-						genre: randomItem(Genres)
+						genre: 'Genre 3'
 					}
 				],
 				expected: {
@@ -311,12 +311,20 @@ export async function removeMockFolder(f: MockFolder): Promise<void> {
 		await removeMockFolder(folder);
 	}
 	for (const track of f.tracks) {
-		await fse.unlink(track.path);
+		try {
+			await fse.unlink(track.path);
+		} catch (e) {
+			// ignore not existing files (may be deleted by test
+		}
 	}
 	await fse.rmdir(f.path);
 }
 
 export async function removeMockRoot(root: MockRoot): Promise<void> {
+	const exists = await fse.pathExists(path.join(root.path, '.trash'));
+	if (exists) {
+		await fse.remove(path.join(root.path, '.trash'));
+	}
 	for (const folder of root.folders) {
 		await removeMockFolder(folder);
 	}

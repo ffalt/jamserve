@@ -196,15 +196,15 @@ export class IoService {
 			return;
 		}
 		this.scanning = true;
-		log.info('Start Scanning');
+		log.info('Start Processing');
 		this.next()
 			.then(() => {
 				this.scanning = false;
-				log.info('Stop Scanning');
+				log.info('Stop Processing');
 			})
 			.catch(e => {
 				this.scanning = false;
-				log.info('Stop Scanning');
+				log.info('Stop Processing');
 				log.error(e);
 			});
 
