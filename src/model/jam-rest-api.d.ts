@@ -1204,11 +1204,13 @@ export interface JamApi {
 		};
 		'track/rawTag/update'?: {
 			params: JamParameters.RawTagUpdate;
+			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
 		'track/name/update'?: {
 			params: JamParameters.TrackEditName;
+			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1251,6 +1253,7 @@ export interface JamApi {
 		'folder/name/update'?: {
 			params: JamParameters.FolderEditName;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			result: Jam.AdminChangeQueueInfo,
 			roles: ['admin'];
 		};
 		'folder/fav/update'?: {

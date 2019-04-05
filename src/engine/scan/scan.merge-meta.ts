@@ -1,15 +1,28 @@
 import Logger from '../../utils/logger';
 import {MergeChanges, MergeTrackInfo} from './scan.changes';
 import {Album} from '../../objects/album/album.model';
-import {AlbumType, MusicBrainz_VARIOUS_ARTISTS_ID, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
+import {AlbumType, cUnknownAlbum, cUnknownArtist, MusicBrainz_VARIOUS_ARTISTS_ID, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
 import {Track} from '../../objects/track/track.model';
-import {MatchDir, MatchFile} from './scan.match-dir';
 import {Artist} from '../../objects/artist/artist.model';
-import {getAlbumName, getAlbumSlug, getArtistMBArtistID, getArtistName, getArtistNameSort, getArtistSlug, slugify} from './scan.utils';
 import {Store} from '../store/store';
 import {DBObjectType} from '../../db/db.types';
+import {extractAlbumName, slugify} from './scan.utils';
+import {MetaStatBuilder} from './scan.metastats';
 
 const log = Logger('Scan.MetaMerge');
+
+
+export function getAlbumName(trackInfo: MergeTrackInfo): string {
+	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
+		return trackInfo.dir.folder.tag.album || cUnknownAlbum;
+	} else {
+		return extractAlbumName(trackInfo.track.tag.album || cUnknownAlbum);
+	}
+}
+
+export function getAlbumSlug(trackInfo: MergeTrackInfo): string {
+	return slugify(getAlbumName(trackInfo));
+}
 
 export class ScanMetaMerger {
 	private artistCache: Array<Artist> = [];
@@ -40,16 +53,6 @@ export class ScanMetaMerger {
 		return this.albumCache.find(a => (a.name === name) && (a.artistID === artistID));
 	}
 
-	private updateAlbum(album: Album, trackInfo: MergeTrackInfo) {
-		album.albumType = trackInfo.dir.folder && trackInfo.dir.folder.tag && trackInfo.dir.folder.tag.albumType !== undefined ? trackInfo.dir.folder.tag.albumType : AlbumType.unknown;
-		album.name = getAlbumName(trackInfo);
-		album.artist = getArtistName(trackInfo);
-		album.mbArtistID = getArtistMBArtistID(trackInfo);
-		album.mbAlbumID = trackInfo.track.tag.mbAlbumID;
-		album.genre = trackInfo.track.tag.genre;
-		album.year = trackInfo.track.tag.year;
-	}
-
 	private async buildAlbum(trackInfo: MergeTrackInfo, artistID: string): Promise<Album> {
 		return {
 			id: await this.store.albumStore.getNewId(),
@@ -57,9 +60,9 @@ export class ScanMetaMerger {
 			slug: getAlbumSlug(trackInfo),
 			name: getAlbumName(trackInfo),
 			albumType: trackInfo.dir.folder && trackInfo.dir.folder.tag && trackInfo.dir.folder.tag.albumType !== undefined ? trackInfo.dir.folder.tag.albumType : AlbumType.unknown,
-			artist: getArtistName(trackInfo),
+			artist: trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist || cUnknownArtist,
 			artistID: artistID,
-			mbArtistID: getArtistMBArtistID(trackInfo),
+			mbArtistID: trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID,
 			mbAlbumID: trackInfo.track.tag.mbAlbumID,
 			genre: trackInfo.track.tag.genre,
 			trackIDs: [],
@@ -70,26 +73,27 @@ export class ScanMetaMerger {
 		};
 	}
 
-	private async findArtistInDB(trackInfo: MergeTrackInfo): Promise<Artist | undefined> {
-		const mbArtistID = trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID;
+	private async findArtistInDB(trackInfo: MergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
+		const mbArtistID = albumArtist ? (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID) : trackInfo.track.tag.mbArtistID;
 		if (mbArtistID) {
 			const artist = await this.store.artistStore.searchOne({mbArtistID});
 			if (artist) {
 				return artist;
 			}
 		}
-		return this.store.artistStore.searchOne({slug: getArtistSlug(trackInfo)});
+		const slug = slugify((albumArtist ? (trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist) : trackInfo.track.tag.artist) || cUnknownArtist);
+		return this.store.artistStore.searchOne({slug});
 	}
 
-	private async findArtistInCache(trackInfo: MergeTrackInfo): Promise<Artist | undefined> {
-		const mbArtistID = trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID;
+	private async findArtistInCache(trackInfo: MergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
+		const mbArtistID = albumArtist ? (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID) : trackInfo.track.tag.mbArtistID;
 		if (mbArtistID) {
 			const artist = this.artistCache.find(a => a.mbArtistID === mbArtistID);
 			if (artist) {
 				return artist;
 			}
 		}
-		const slug = getArtistSlug(trackInfo);
+		const slug = slugify((albumArtist ? (trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist) : trackInfo.track.tag.artist) || cUnknownArtist);
 		return this.artistCache.find(a => a.slug === slug);
 	}
 
@@ -103,7 +107,6 @@ export class ScanMetaMerger {
 			album = await this.buildAlbum(trackInfo, artistID);
 			changes.newAlbums.push(album);
 		} else {
-			this.updateAlbum(album, trackInfo);
 			changes.updateAlbums.push(album);
 		}
 		this.albumCache.push(album);
@@ -138,41 +141,43 @@ export class ScanMetaMerger {
 		return artist;
 	}
 
-	private async findOrCreateArtist(trackInfo: MergeTrackInfo, changes: MergeChanges): Promise<Artist> {
-		let artist = await this.findArtistInCache(trackInfo);
-		if (artist) {
-			return artist;
-		}
-		artist = await this.findArtistInDB(trackInfo);
-		if (!artist) {
-			artist = await this.buildArtist(trackInfo);
-			changes.newArtists.push(artist);
-		} else {
-			this.updateArtist(artist, trackInfo);
-			changes.updateArtists.push(artist);
-		}
-		this.artistCache.push(artist);
-		return artist;
-	}
+	// private updateArtist(artist: Artist, trackInfo: MergeTrackInfo) {
+	// 	if (artist.name !== MusicBrainz_VARIOUS_ARTISTS_NAME) {
+	// 		artist.slug = getArtistSlug(trackInfo);
+	// 		artist.name = getArtistName(trackInfo);
+	// 		artist.nameSort = getArtistNameSort(trackInfo);
+	// 		artist.mbArtistID = getArtistMBArtistID(trackInfo);
+	// 	}
+	// }
+// 	album.albumType = (trackInfo.dir.folder.tag.albumType === undefined) ? AlbumType.unknown : trackInfo.dir.folder.tag.albumType;
+// 	let album: Album;
+// 	if (trackInfo.dir.folder.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
+// 	const compilationArtist = await this.findOrCreateCompilationArtist(changes);
+// 	if (compilationArtist !== artist && changes.newArtists.indexOf(compilationArtist) < 0 && changes.updateArtists.indexOf(compilationArtist) < 0) {
+// 	changes.updateArtists.push(compilationArtist);
+// }
+// album = await this.findOrCreateAlbum(trackInfo, compilationArtist.id, changes);
+// album.artist = compilationArtist.name;
+// album.albumType = AlbumType.compilation;
+// trackInfo.track.albumArtistID = compilationArtist.id;
+// } else {
+// 	album = await this.findOrCreateAlbum(trackInfo, artist.id, changes);
+// 	album.albumType = (trackInfo.dir.folder.tag.albumType === undefined) ? AlbumType.unknown : trackInfo.dir.folder.tag.albumType;
+// 	trackInfo.track.albumArtistID = artist.id;
+// }
 
-	private updateArtist(artist: Artist, trackInfo: MergeTrackInfo) {
-		if (artist.name !== MusicBrainz_VARIOUS_ARTISTS_NAME) {
-			artist.slug = getArtistSlug(trackInfo);
-			artist.name = getArtistName(trackInfo);
-			artist.nameSort = getArtistNameSort(trackInfo);
-			artist.mbArtistID = getArtistMBArtistID(trackInfo);
-		}
-	}
-
-	private async buildArtist(trackInfo: MergeTrackInfo): Promise<Artist> {
+	private async buildArtist(trackInfo: MergeTrackInfo, albumArtist: boolean): Promise<Artist> {
+		const name = (albumArtist ? (trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist) : trackInfo.track.tag.artist) || cUnknownArtist;
+		const nameSort = albumArtist ? (trackInfo.track.tag.albumArtistSort || trackInfo.track.tag.artistSort) : trackInfo.track.tag.artistSort;
+		const mbArtistID = albumArtist ? (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID) : trackInfo.track.tag.mbArtistID;
 		return {
 			id: await this.store.artistStore.getNewId(),
 			type: DBObjectType.artist,
 			rootIDs: [],
-			slug: getArtistSlug(trackInfo),
-			name: getArtistName(trackInfo),
-			nameSort: getArtistNameSort(trackInfo),
-			mbArtistID: getArtistMBArtistID(trackInfo),
+			slug: slugify(name),
+			name,
+			nameSort,
+			mbArtistID,
 			albumTypes: [],
 			albumIDs: [],
 			trackIDs: [],
@@ -183,12 +188,12 @@ export class ScanMetaMerger {
 	private async findCompilationArtist(changes: MergeChanges): Promise<Artist | undefined> {
 		const slug = slugify(MusicBrainz_VARIOUS_ARTISTS_NAME);
 		let artist = await this.artistCache.find(a => a.slug === slug);
-		if (artist) {
-			return artist;
-		}
-		artist = await this.store.artistStore.searchOne({slug});
-		if (artist) {
-			this.artistCache.push(artist);
+		if (!artist) {
+			artist = await this.store.artistStore.searchOne({slug});
+			if (artist) {
+				changes.updateArtists.push(artist);
+				this.artistCache.push(artist);
+			}
 		}
 		return artist;
 	}
@@ -215,25 +220,38 @@ export class ScanMetaMerger {
 		return artist;
 	}
 
+	private async findOrCreateArtist(trackInfo: MergeTrackInfo, albumArtist: boolean, changes: MergeChanges): Promise<Artist> {
+		let artist = await this.findArtistInCache(trackInfo, albumArtist);
+		if (artist) {
+			return artist;
+		}
+		artist = await this.findArtistInDB(trackInfo, albumArtist);
+		if (!artist) {
+			const name = (albumArtist ? (trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist) : trackInfo.track.tag.artist) || cUnknownArtist;
+			if (name === MusicBrainz_VARIOUS_ARTISTS_NAME) {
+				return this.findOrCreateCompilationArtist(changes);
+			}
+			artist = await this.buildArtist(trackInfo, albumArtist);
+			changes.newArtists.push(artist);
+		} else {
+			changes.updateArtists.push(artist);
+		}
+		this.artistCache.push(artist);
+		return artist;
+	}
+
 	private async addMeta(trackInfo: MergeTrackInfo, changes: MergeChanges): Promise<void> {
 		if (trackInfo.dir.folder) {
-			const artist = await this.findOrCreateArtist(trackInfo, changes);
+			const artist = await this.findOrCreateArtist(trackInfo, false, changes);
 			trackInfo.track.artistID = artist.id;
-			let album: Album;
+			let albumArtist: Artist;
 			if (trackInfo.dir.folder.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
-				const compilationArtist = await this.findOrCreateCompilationArtist(changes);
-				if (compilationArtist !== artist && changes.newArtists.indexOf(compilationArtist) < 0 && changes.updateArtists.indexOf(compilationArtist) < 0) {
-					changes.updateArtists.push(compilationArtist);
-				}
-				album = await this.findOrCreateAlbum(trackInfo, compilationArtist.id, changes);
-				album.artist = compilationArtist.name;
-				album.albumType = AlbumType.compilation;
-				trackInfo.track.albumArtistID = compilationArtist.id;
+				albumArtist = await this.findOrCreateCompilationArtist(changes);
 			} else {
-				album = await this.findOrCreateAlbum(trackInfo, artist.id, changes);
-				album.albumType = (trackInfo.dir.folder.tag.albumType === undefined) ? AlbumType.unknown : trackInfo.dir.folder.tag.albumType;
-				trackInfo.track.albumArtistID = artist.id;
+				albumArtist = await this.findOrCreateArtist(trackInfo, true, changes);
 			}
+			trackInfo.track.albumArtistID = albumArtist.id;
+			const album = await this.findOrCreateAlbum(trackInfo, albumArtist.id, changes);
 			trackInfo.track.albumID = album.id;
 		}
 	}
@@ -312,27 +330,40 @@ export class ScanMetaMerger {
 				let duration = 0;
 				album.rootIDs = [];
 				album.trackIDs = [];
+				const metaStatBuilder = new MetaStatBuilder();
 				const tracks = await this.store.trackStore.byIds(tracksIDs);
-				for (const track of tracks) {
+
+				function statTrack(track: Track) {
 					if (album.rootIDs.indexOf(track.rootID) < 0) {
 						album.rootIDs.push(track.rootID);
 					}
 					if (album.trackIDs.indexOf(track.id) < 0) {
 						album.trackIDs.push(track.id);
 					}
+					metaStatBuilder.statSlugValue('artist', track.tag.albumArtist || track.tag.artist);
+					metaStatBuilder.statID('mbArtistID', track.tag.mbAlbumArtistID || track.tag.mbArtistID);
+					metaStatBuilder.statID('mbAlbumID', track.tag.mbAlbumID);
+					metaStatBuilder.statSlugValue('genre', track.tag.genre);
+					metaStatBuilder.statNumber('year', track.tag.year);
 					duration += (track.media.duration || 0);
 				}
-				for (const trackInfo of refreshedTracks) {
-					if (album.rootIDs.indexOf(trackInfo.track.rootID) < 0) {
-						album.rootIDs.push(trackInfo.track.rootID);
-					}
-					if (album.trackIDs.indexOf(trackInfo.track.id) < 0) {
-						album.trackIDs.push(trackInfo.track.id);
-					}
-					// TODO: update most used values, not with the last
-					this.updateAlbum(album, trackInfo);
-					duration += (trackInfo.track.media.duration || 0);
+
+				for (const track of tracks) {
+					statTrack(track);
+					metaStatBuilder.statSlugValue('name', track.tag.album);
 				}
+				for (const trackInfo of refreshedTracks) {
+					statTrack(trackInfo.track);
+					metaStatBuilder.statSlugValue('name', getAlbumName(trackInfo));
+					metaStatBuilder.statID('albumType', trackInfo.dir.folder && trackInfo.dir.folder.tag && trackInfo.dir.folder.tag.albumType !== undefined ? trackInfo.dir.folder.tag.albumType : undefined);
+				}
+				album.artist = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
+				album.name = metaStatBuilder.mostUsed('name') || cUnknownAlbum;
+				album.mbArtistID = metaStatBuilder.mostUsed('mbArtistID');
+				album.mbAlbumID = metaStatBuilder.mostUsed('mbAlbumID');
+				album.genre = metaStatBuilder.mostUsed('genre');
+				album.year = metaStatBuilder.mostUsedNumber('year');
+				album.albumType = <AlbumType>metaStatBuilder.mostUsed('albumType') || AlbumType.unknown;
 				album.duration = duration;
 				if (changes.newAlbums.indexOf(album) < 0) {
 					changes.updateAlbums.push(album);
@@ -374,8 +405,12 @@ export class ScanMetaMerger {
 				artist.albumIDs = [];
 				artist.albumTypes = [];
 				artist.rootIDs = [];
+				const metaStatBuilder = new MetaStatBuilder();
 				const tracks = await this.store.trackStore.byIds(tracksIDs);
-				for (const track of tracks) {
+
+				function statTrack(track: Track) {
+					metaStatBuilder.statSlugValue('artist', track.tag.artist);
+					metaStatBuilder.statSlugValue('artistSort', track.tag.artistSort);
 					if (artist.rootIDs.indexOf(track.rootID) < 0) {
 						artist.rootIDs.push(track.rootID);
 					}
@@ -383,15 +418,19 @@ export class ScanMetaMerger {
 						artist.trackIDs.push(track.id);
 					}
 				}
-				for (const trackInfo of refreshedTracks) {
-					if (artist.rootIDs.indexOf(trackInfo.track.rootID) < 0) {
-						artist.rootIDs.push(trackInfo.track.rootID);
-					}
-					if (artist.trackIDs.indexOf(trackInfo.track.id) < 0) {
-						artist.trackIDs.push(trackInfo.track.id);
-					}
-				}
 
+				for (const track of tracks) {
+					statTrack(track);
+				}
+				for (const trackInfo of refreshedTracks) {
+					statTrack(trackInfo.track);
+				}
+				if (artist.name !== MusicBrainz_VARIOUS_ARTISTS_NAME) {
+					const artistName = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
+					artist.name = artistName;
+					artist.slug = slugify(artistName);
+					artist.nameSort = metaStatBuilder.mostUsed('artistSort');
+				}
 				let albumIDs = await this.store.albumStore.searchIDs({artistID: artist.id});
 				albumIDs = albumIDs.filter(id => !!changes.removedAlbums.find(a => a.id === id));
 				const refreshedAlbums = changes.updateAlbums.filter(a => a.artistID === artist.id)

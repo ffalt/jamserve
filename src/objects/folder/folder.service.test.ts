@@ -152,43 +152,6 @@ describe('FolderService', () => {
 
 			});
 
-			describe('renameFolder', function() {
-				this.timeout(40000);
-				it('should do handle invalid parameters', async () => {
-					const folder = await folderService.folderStore.random();
-					should().exist(folder, 'Wrong Test Setup');
-					if (!folder) {
-						return;
-					}
-					await folderService.renameFolder(folder, '').should.eventually.be.rejectedWith(Error);
-					await folderService.renameFolder(folder, '.').should.eventually.be.rejectedWith(Error);
-					await folderService.renameFolder(folder, '//..*\.').should.eventually.be.rejectedWith(Error);
-					await folderService.renameFolder(folder, path.basename(folder.path)).should.eventually.be.rejectedWith(Error);
-				});
-				it('should rename and update all folder & track paths', async () => {
-					const folderIds = await folderService.folderStore.allIds();
-					for (const id of folderIds) {
-						const folder = await folderService.folderStore.byId(id);
-						should().exist(folder);
-						if (!folder) {
-							return;
-						}
-						const name = path.basename(folder.path);
-						await folderService.renameFolder(folder, name + '_renamed');
-						const all = await folderService.folderStore.all();
-						for (const f of all) {
-							expect(await fse.pathExists(f.path)).to.equal(true, 'path does not exist ' + f.path);
-						}
-						const tracks = await trackStore.all();
-						for (const t of tracks) {
-							expect(await fse.pathExists(t.path + t.name)).to.equal(true, 'file does not exist ' + t.path + t.name);
-						}
-						await folderService.renameFolder(folder, name);
-					}
-				});
-
-			});
-
 			describe('collectFolderPath', () => {
 				it('should do handle invalid parameters', async () => {
 					let list = await folderService.collectFolderPath(undefined);

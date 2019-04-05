@@ -77,132 +77,121 @@ function getMostUsedTagValue<T>(list: Array<MetaStatValue<T>>, multi?: T): T | u
 	return list[0].val;
 }
 
-export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary, strategy: RootScanStrategy): MetaStat {
-	const stats: {
+export class MetaStatBuilder {
+	stats: {
 		[name: string]: { [key: string]: { count: number, val: string }; };
-		artist: { [key: string]: { count: number, val: string }; };
-		artistSort: { [key: string]: { count: number, val: string }; };
-		album: { [key: string]: { count: number, val: string }; };
-		genre: { [key: string]: { count: number, val: string }; };
-		mbArtistID: { [key: string]: { count: number, val: string }; };
-		mbAlbumID: { [key: string]: { count: number, val: string }; };
-		mbReleaseGroupID: { [key: string]: { count: number, val: string }; };
-		mbAlbumType: { [key: string]: { count: number, val: string }; };
-		year: { [key: string]: { count: number, val: string }; };
-		albumTrackCount: { [key: string]: { count: number, val: string }; };
-	} = {
-		artist: {},
-		artistSort: {},
-		album: {},
-		genre: {},
-		year: {},
-		albumTrackCount: {},
-		mbArtistID: {},
-		mbReleaseGroupID: {},
-		mbAlbumID: {},
-		mbAlbumType: {}
-	};
-	let trackCount = 0;
+	} = {};
 
-	function statID(name: string, val?: string) {
+	statID(name: string, val?: string) {
 		if (val && val.trim().length > 0) {
 			const slug = val.split(' ')[0];
-			stats[name][slug] = stats[name][val] || {count: 0, val: slug};
-			stats[name][slug].count += 1;
+			this.stats[name] = this.stats[name] || {};
+			this.stats[name][slug] = this.stats[name][val] || {count: 0, val: slug};
+			this.stats[name][slug].count += 1;
 		}
 	}
 
-	function statNumber(name: string, val?: number) {
+	statNumber(name: string, val?: number) {
 		if (val !== undefined) {
 			const slug = val.toString();
-			stats[name][slug] = stats[name][slug] || {count: 0, val: val};
-			stats[name][slug].count += 1;
+			this.stats[name] = this.stats[name] || {};
+			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val: val};
+			this.stats[name][slug].count += 1;
 		}
 	}
 
-	function statSlugValue(name: string, val?: string) {
+	statSlugValue(name: string, val?: string) {
 		if (val && val.trim().length > 0) {
 			const slug = slugify(val);
-			stats[name][slug] = stats[name][slug] || {count: 0, val: val};
-			stats[name][slug].count += 1;
+			this.stats[name] = this.stats[name] || {};
+			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val: val};
+			this.stats[name][slug].count += 1;
 		}
 	}
 
-	function statTrackCount(name: string, trackTotal?: number, disc?: number) {
+	statTrackCount(name: string, trackTotal?: number, disc?: number) {
 		if (trackTotal !== undefined) {
 			const slug = (disc !== undefined ? disc : 1).toString() + '-' + trackTotal.toString();
-			stats[name][slug] = stats[name][slug] || {count: 0, val: trackTotal};
-			stats[name][slug].count += 1;
+			this.stats[name] = this.stats[name] || {};
+			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val: trackTotal};
+			this.stats[name][slug].count += 1;
 		}
 	}
+
+	asList(name: string): Array<MetaStatString> {
+		return convert2list(this.stats[name] || {});
+	}
+
+	asNumberList(name: string): Array<MetaStatNumber> {
+		return convert2Numlist(this.stats[name] || {});
+	}
+
+	mostUsed(name: string, multi?: string): undefined | string {
+		const list = this.asList(name);
+		return getMostUsedTagValue<string>(list, multi);
+	}
+
+	mostUsedNumber(name: string): undefined | number {
+		const list = this.asNumberList(name);
+		return getMostUsedTagValue<number>(list);
+	}
+
+}
+
+export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary, strategy: RootScanStrategy): MetaStat {
+	let trackCount = 0;
+
+	const builder = new MetaStatBuilder();
 
 	for (const file of dir.files) {
 		if (file.type === FileTyp.AUDIO) {
 			trackCount++;
 			if (file.track && file.track.tag) {
 				const tracktag = file.track.tag;
-				statSlugValue('artist', tracktag.albumArtist || tracktag.artist);
-				statSlugValue('artistSort', tracktag.albumArtistSort || tracktag.artistSort);
-				statSlugValue('genre', tracktag.genre);
-				statSlugValue('album', tracktag.album ? extractAlbumName(tracktag.album) : undefined);
-				statNumber('year', tracktag.year);
-				statTrackCount('albumTrackCount', tracktag.trackTotal, tracktag.disc);
-				statSlugValue('mbAlbumType', tracktag.mbAlbumType);
-				statID('mbArtistID', tracktag.mbArtistID);
-				statID('mbAlbumID', tracktag.mbAlbumID);
-				statID('mbReleaseGroupID', tracktag.mbReleaseGroupID);
+				builder.statSlugValue('artist', tracktag.albumArtist || tracktag.artist);
+				builder.statSlugValue('artistSort', tracktag.albumArtistSort || tracktag.artistSort);
+				builder.statSlugValue('genre', tracktag.genre);
+				builder.statSlugValue('album', tracktag.album ? extractAlbumName(tracktag.album) : undefined);
+				builder.statNumber('year', tracktag.year);
+				builder.statTrackCount('albumTrackCount', tracktag.trackTotal, tracktag.disc);
+				builder.statSlugValue('mbAlbumType', tracktag.mbAlbumType);
+				builder.statID('mbArtistID', tracktag.mbArtistID);
+				builder.statID('mbAlbumID', tracktag.mbAlbumID);
+				builder.statID('mbReleaseGroupID', tracktag.mbReleaseGroupID);
 			}
 		}
 	}
 	let albumTrackCount = 0;
-	if (stats.albumTrackCount) {
-		const albumTrackCounts = convert2Numlist(stats.albumTrackCount);
-		for (const atcount of albumTrackCounts) {
-			albumTrackCount += atcount.val;
-		}
+	const albumTrackCounts = builder.asNumberList('albumTrackCount');
+	for (const atcount of albumTrackCounts) {
+		albumTrackCount += atcount.val;
 	}
 	for (const sub of dir.directories) {
 		if (sub.folder && sub.tag && (sub.tag.type !== FolderType.extras)) {
 			const subtag = sub.tag;
-			statSlugValue('artist', subtag.artist);
-			statSlugValue('artistSort', subtag.artistSort);
-			statSlugValue('album', subtag.album ? extractAlbumName(subtag.album) : undefined);
-			statSlugValue('genre', subtag.genre);
-			statNumber('year', subtag.year);
-			statSlugValue('mbAlbumType', subtag.mbAlbumType);
-			statID('mbArtistID', subtag.mbArtistID);
-			statID('mbAlbumID', subtag.mbAlbumID);
-			statID('mbReleaseGroupID', subtag.mbReleaseGroupID);
+			builder.statSlugValue('artist', subtag.artist);
+			builder.statSlugValue('artistSort', subtag.artistSort);
+			builder.statSlugValue('album', subtag.album ? extractAlbumName(subtag.album) : undefined);
+			builder.statSlugValue('genre', subtag.genre);
+			builder.statNumber('year', subtag.year);
+			builder.statSlugValue('mbAlbumType', subtag.mbAlbumType);
+			builder.statID('mbArtistID', subtag.mbArtistID);
+			builder.statID('mbAlbumID', subtag.mbAlbumID);
+			builder.statID('mbReleaseGroupID', subtag.mbReleaseGroupID);
 			if (subtag.albumTrackCount !== undefined) {
 				albumTrackCount += subtag.albumTrackCount;
 			}
 		}
 	}
 
-	// to easy to process lists
-	const artists = convert2list(stats.artist);
-	const artistSorts = convert2list(stats.artistSort);
-	const albums = convert2list(stats.album);
-	const genres = convert2list(stats.genre);
-	const years = convert2Numlist(stats.year);
-	const mbArtistIDs = convert2list(stats.mbArtistID);
-	const mbAlbumIDs = convert2list(stats.mbAlbumID);
-	const mbReleaseGroupIDs = convert2list(stats.mbReleaseGroupID);
-	const mbAlbumTypes = convert2list(stats.mbAlbumType);
-
 	// heuristically most used values
-	const album = getMostUsedTagValue<string>(albums, extractAlbumName(path.basename(dir.name)));
-	const artist = getMostUsedTagValue<string>(artists, MusicBrainz_VARIOUS_ARTISTS_NAME);
-	let artistSort = getMostUsedTagValue<string>(artistSorts);
-	const genre = getMostUsedTagValue<string>(genres);
-	const mbAlbumID = getMostUsedTagValue<string>(mbAlbumIDs, '');
-	const mbReleaseGroupID = getMostUsedTagValue<string>(mbReleaseGroupIDs, '');
-	const mbAlbumType = getMostUsedTagValue<string>(mbAlbumTypes, '');
-	const mbArtistID = getMostUsedTagValue<string>(mbArtistIDs, '');
-	const year = getMostUsedTagValue<number>(years);
+	const artist = builder.mostUsed('artist', MusicBrainz_VARIOUS_ARTISTS_NAME);
+	let artistSort = builder.mostUsed('artistSort');
+	const genre = builder.mostUsed('genre');
+	const mbAlbumType = builder.mostUsed('mbAlbumType', '');
 	// determinate album type
 	const hasMultipleArtists = artist === MusicBrainz_VARIOUS_ARTISTS_NAME;
-	const hasMultipleAlbums = albums.length > 1;
+	const hasMultipleAlbums = builder.asList('album').length > 1;
 	if (hasMultipleArtists) {
 		artistSort = undefined;
 	}
@@ -245,15 +234,15 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 		albumType,
 		hasMultipleArtists,
 		hasMultipleAlbums,
-		album,
+		album: builder.mostUsed('album', extractAlbumName(path.basename(dir.name))),
 		artist,
 		artistSort,
 		genre,
-		mbAlbumID,
-		mbReleaseGroupID,
+		mbAlbumID: builder.mostUsed('mbAlbumID', ''),
+		mbReleaseGroupID: builder.mostUsed('mbReleaseGroupID', ''),
 		mbAlbumType,
-		mbArtistID,
-		year,
+		mbArtistID: builder.mostUsed('mbArtistID', ''),
+		year: builder.mostUsedNumber('year'),
 		albumTrackCount: albumTrackCount > 0 ? albumTrackCount : undefined
 	};
 }

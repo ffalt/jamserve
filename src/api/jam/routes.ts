@@ -852,14 +852,14 @@ export function registerAccessControlApi(register: Register, api: JamController)
 
 	register.post('/track/rawTag/update', async (req, res) => {
 		const options: JamRequest<JamParameters.RawTagUpdate> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.rawTagUpdate(options);
-		await ApiResponder.ok(res);
+		const result: Jam.AdminChangeQueueInfo = await api.trackController.rawTagUpdate(options);
+		await ApiResponder.data(res, result);
 	}, '/track/rawTag/update', ['admin']);
 
 	register.post('/track/name/update', async (req, res) => {
 		const options: JamRequest<JamParameters.TrackEditName> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.nameUpdate(options);
-		await ApiResponder.ok(res);
+		const result: Jam.AdminChangeQueueInfo = await api.trackController.nameUpdate(options);
+		await ApiResponder.data(res, result);
 	}, '/track/name/update', ['admin']);
 
 	register.post('/track/parent/update', async (req, res) => {
@@ -900,8 +900,8 @@ export function registerAccessControlApi(register: Register, api: JamController)
 
 	register.post('/folder/name/update', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderEditName> = {query: req.body, user: req.user, client: req.client};
-		await api.folderController.nameUpdate(options);
-		await ApiResponder.ok(res);
+		const result: Jam.AdminChangeQueueInfo = await api.folderController.nameUpdate(options);
+		await ApiResponder.data(res, result);
 	}, '/folder/name/update', ['admin']);
 
 	register.post('/folder/fav/update', async (req, res) => {

@@ -12092,7 +12092,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "parameter is missing or invalid"
@@ -12127,7 +12134,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "parameter is missing or invalid"
@@ -12404,7 +12418,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "parameter is missing or invalid"

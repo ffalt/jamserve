@@ -32,9 +32,21 @@ function logChanges(changes: MergeChanges) {
 	logChange('Updated Folders', changes.updateFolders.length);
 	logChange('Removed Folders', changes.removedFolders.length);
 	logChange('Added Artists', changes.newArtists.length);
+	if (changes.newArtists.length) {
+		console.log(changes.newArtists.map(a => JSON.stringify(a)).join('\n'));
+	}
 	logChange('Updated Artists', changes.updateArtists.length);
+	if (changes.updateArtists.length) {
+		console.log(changes.updateArtists.map(a => JSON.stringify(a)).join('\n'));
+	}
 	logChange('Removed Artists', changes.removedArtists.length);
+	if (changes.removedArtists.length) {
+		console.log(changes.removedArtists.map(a => JSON.stringify(a)).join('\n'));
+	}
 	logChange('Added Albums', changes.newAlbums.length);
+	if (changes.newAlbums.length) {
+		console.log(changes.newAlbums.map(a => JSON.stringify(a)).join('\n'));
+	}
 	logChange('Updated Albums', changes.updateAlbums.length);
 	logChange('Removed Albums', changes.removedAlbums.length);
 }
@@ -455,7 +467,7 @@ describe('ScanService', () => {
 				expect(changes.removedFolders.length).to.equal(removedFolderCount, 'Removed Folders count doesnt match');
 				expect(changes.newArtists.length).to.equal(0, 'New Artist count doesnt match');
 				expect(changes.updateArtists.length).to.equal(0, 'Update Artist count doesnt match');
-				expect(changes.removedArtists.length).to.equal(1, 'Removed Artists count doesnt match');
+				expect(changes.removedArtists.length).to.equal(2, 'Removed Artists count doesnt match');
 				expect(changes.newAlbums.length).to.equal(0, 'New Album count doesnt match');
 				expect(changes.updateAlbums.length).to.equal(0, 'Update Album count doesnt match');
 				expect(changes.removedAlbums.length).to.equal(removedAlbumCount, 'Removed Album count doesnt match');
@@ -576,6 +588,43 @@ describe('ScanService', () => {
 				expect(changes.newAlbums.length).to.equal(1, 'New Album count doesnt match');
 				expect(changes.removedAlbums.length).to.equal(1, 'Removed Album count doesnt match');
 				await validate(mockRoot, store);
+			});
+
+			describe('renameFolder', function() {
+				this.timeout(40000);
+				it('should do handle invalid parameters', async () => {
+					const folder = await store.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
+					await scanService.renameFolder(folder.rootID, folder.id, '').should.eventually.be.rejectedWith(Error);
+					await scanService.renameFolder(folder.rootID, folder.id, '.').should.eventually.be.rejectedWith(Error);
+					await scanService.renameFolder(folder.rootID, folder.id, '//..*\.').should.eventually.be.rejectedWith(Error);
+					await scanService.renameFolder(folder.rootID, folder.id, path.basename(folder.path)).should.eventually.be.rejectedWith(Error);
+				});
+				it('should rename and update all folder & track paths', async () => {
+					const folderIds = await store.folderStore.searchIDs({rootID: mockRoot.id});
+					for (const id of folderIds) {
+						const folder = await store.folderStore.byId(id);
+						should().exist(folder);
+						if (!folder) {
+							return;
+						}
+						const name = path.basename(folder.path);
+						let changes = await scanService.renameFolder(folder.rootID, folder.id, name + '_renamed');
+						const all = await store.folderStore.search({inPath: folder.path});
+						for (const f of all) {
+							expect(await fse.pathExists(f.path)).to.equal(true, 'path does not exist ' + f.path);
+						}
+						const tracks = await store.trackStore.search({inPath: folder.path});
+						for (const t of tracks) {
+							expect(await fse.pathExists(t.path + t.name)).to.equal(true, 'file does not exist ' + t.path + t.name);
+						}
+						changes = await scanService.renameFolder(folder.rootID, folder.id, name);
+					}
+				});
+
 			});
 		},
 		async () => {

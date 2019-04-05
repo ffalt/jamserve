@@ -3,7 +3,6 @@ import {deepCompare} from '../../utils/deep-compare';
 import {AlbumType, cUnknownAlbum, cUnknownArtist, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
 import {md5string} from '../../utils/md5';
 import {MatchDir, MatchFile} from './scan.match-dir';
-import {MergeTrackInfo} from './scan.changes';
 
 export function slugify(s: string): string {
 	return s.replace(/[\[\]\. -]/g, '').toLowerCase();
@@ -40,42 +39,6 @@ export function trackHasChanged(file: MatchFile): boolean {
 		(file.stat.mtime !== file.track.stat.modified) ||
 		(file.stat.ctime !== file.track.stat.created) ||
 		(file.stat.size !== file.track.stat.size);
-}
-
-export function getArtistMBArtistID(trackInfo: MergeTrackInfo): string | undefined {
-	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
-		return;
-	} else {
-		return trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID;
-	}
-}
-
-export function getArtistNameSort(trackInfo: MergeTrackInfo): string | undefined {
-	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
-		return;
-	} else {
-		return trackInfo.track.tag.artistSort;
-	}
-}
-
-export function getArtistName(trackInfo: MergeTrackInfo): string {
-	return trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist || cUnknownArtist;
-}
-
-export function getArtistSlug(trackInfo: MergeTrackInfo): string {
-	return slugify(getArtistName(trackInfo));
-}
-
-export function getAlbumName(trackInfo: MergeTrackInfo): string {
-	if (trackInfo.dir.folder && trackInfo.dir.folder.tag.albumType === AlbumType.compilation) {
-		return trackInfo.dir.folder.tag.album || cUnknownAlbum;
-	} else {
-		return extractAlbumName(trackInfo.track.tag.album || cUnknownAlbum);
-	}
-}
-
-export function getAlbumSlug(trackInfo: MergeTrackInfo): string {
-	return slugify(getAlbumName(trackInfo));
 }
 
 export function generateArtworkId(folderID: string, filename: string): string {

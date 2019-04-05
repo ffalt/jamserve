@@ -6,6 +6,7 @@ import {ScanService} from '../scan/scan.service';
 import {RootStore} from '../../objects/root/root.store';
 import {Jam} from '../../model/jam-rest-data';
 import {logChanges, MergeChanges} from '../scan/scan.changes';
+import path from 'path';
 
 const log = Logger('IO');
 
@@ -17,7 +18,10 @@ export enum ScanRequestMode {
 	removeTracks,
 	deleteFolders,
 	moveFolders,
-	moveTracks
+	moveTracks,
+	renameTrack,
+	renameFolder,
+	writeRawTags
 }
 
 export abstract class ScanRequest {
@@ -33,6 +37,7 @@ export abstract class ScanRequest {
 			logChanges(changes);
 			return changes;
 		} catch (e) {
+			console.log(e.stack);
 			log.error('Scanning Error', this.rootID, e.toString());
 			if (['EACCES', 'ENOENT'].indexOf((<any>e).code) >= 0) {
 				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
@@ -51,6 +56,44 @@ export class ScanRequestMoveTracks extends ScanRequest {
 
 	async execute(): Promise<MergeChanges> {
 		return await this.scanService.moveTracks(this.rootID, this.trackIDs, this.newParentID);
+	}
+
+}
+
+export class ScanRequestRenameTrack extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public trackID: string, public newName: string, public scanService: ScanService) {
+		super(id, rootID, ScanRequestMode.renameTrack);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.renameTrack(this.rootID, this.trackID, this.newName);
+	}
+
+}
+
+export class ScanRequestRenameFolder extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public folderID: string, public newName: string, public scanService: ScanService) {
+		super(id, rootID, ScanRequestMode.renameFolder);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.renameFolder(this.rootID, this.folderID, this.newName);
+	}
+
+}
+
+export class ScanRequestWriteRawTags extends ScanRequest {
+	tags: Array<{ trackID: string, tag: Jam.RawTag }> = [];
+
+	constructor(public id: string, public rootID: string, public trackID: string, public tag: Jam.RawTag, public scanService: ScanService) {
+		super(id, rootID, ScanRequestMode.writeRawTags);
+		this.tags.push({trackID, tag});
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.writeTrackTags(this.rootID, this.tags);
 	}
 
 }
@@ -367,5 +410,23 @@ export class IoService {
 		} else {
 			return this.addRequest(new ScanRequestMoveTracks(this.getScanID(), rootID, trackIDs, newParentID, this.scanService));
 		}
+	}
+
+	renameTrack(trackID: string, name: string, rootID: string) {
+		return this.addRequest(new ScanRequestRenameTrack(this.getScanID(), rootID, trackID, name, this.scanService));
+	}
+
+	writeRawTag(trackID: string, tag: Jam.RawTag, rootID: string) {
+		const oldRequest = <ScanRequestWriteRawTags>this.findRequest(rootID, ScanRequestMode.writeRawTags);
+		if (oldRequest) {
+			oldRequest.tags.push({trackID, tag});
+			return this.getRequestInfo(oldRequest);
+		} else {
+			return this.addRequest(new ScanRequestWriteRawTags(this.getScanID(), rootID, trackID, tag, this.scanService));
+		}
+	}
+
+	public renameFolder(folderID: string, name: string, rootID: string) {
+		return this.addRequest(new ScanRequestRenameFolder(this.getScanID(), rootID, folderID, name, this.scanService));
 	}
 }

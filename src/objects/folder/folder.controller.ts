@@ -149,9 +149,9 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		await this.folderService.setFolderImage(folder, req.file);
 	}
 
-	async nameUpdate(req: JamRequest<JamParameters.FolderEditName>): Promise<void> {
+	async nameUpdate(req: JamRequest<JamParameters.FolderEditName>): Promise<Jam.AdminChangeQueueInfo> {
 		const folder = await this.byID(req.query.id);
-		await this.folderService.renameFolder(folder, req.query.name);
+		return await this.ioService.renameFolder(folder.id, req.query.name, folder.rootID);
 	}
 
 	async artistInfo(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {

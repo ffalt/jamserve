@@ -6263,6 +6263,9 @@
 						"params": {
 							"$ref": "#/definitions/JamParameters.RawTagUpdate"
 						},
+						"result": {
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
+						},
 						"errors": {
 							"anyOf": [
 								{
@@ -6305,6 +6308,7 @@
 					"required": [
 						"errors",
 						"params",
+						"result",
 						"roles"
 					]
 				},
@@ -6314,6 +6318,9 @@
 						"params": {
 							"$ref": "#/definitions/JamParameters.TrackEditName"
 						},
+						"result": {
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
+						},
 						"errors": {
 							"anyOf": [
 								{
@@ -6356,6 +6363,7 @@
 					"required": [
 						"errors",
 						"params",
+						"result",
 						"roles"
 					]
 				},
@@ -6710,6 +6718,9 @@
 								}
 							]
 						},
+						"result": {
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
+						},
 						"roles": {
 							"type": "array",
 							"items": [
@@ -6736,6 +6747,7 @@
 					"required": [
 						"errors",
 						"params",
+						"result",
 						"roles"
 					]
 				},

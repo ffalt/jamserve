@@ -6,7 +6,7 @@ import {ImageModule} from '../../modules/image/image.module';
 import {RootScanStrategy} from '../../model/jam-types';
 import path from 'path';
 import fse from 'fs-extra';
-import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Jam} from '../../model/jam-rest-data';
 import {DirScanner, ScanDir} from './scan.scan-dir';
 import {MatchDir, ScanMatcher, DBMatcher, debugPrintTree} from './scan.match-dir';
@@ -16,6 +16,7 @@ import {ScanCleaner} from './scan.clean';
 import {ScanStorer} from './scan.store';
 import {ScanMetaMerger} from './scan.merge-meta';
 import {Root} from '../../objects/root/root.model';
+import {Folder} from '../../objects/folder/folder.model';
 
 const log = Logger('Scan.Service');
 
@@ -277,5 +278,103 @@ export class ScanService {
 		await scanMerger.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
 		return await this.finish(changes, rootID, false);
+	}
+
+	async renameTrack(rootID: string, trackID: string, newName: string): Promise<MergeChanges> {
+		const {changes} = await this.start(rootID);
+		const name = replaceFileSystemChars(newName, '').trim();
+		if (name.length === 0) {
+			return Promise.reject(Error('Invalid Name'));
+		}
+		const track = await this.store.trackStore.byId(trackID);
+		if (!track) {
+			return Promise.reject(Error('Track not found'));
+		}
+		const ext = path.extname(name).toLowerCase();
+		const ext2 = path.extname(track.name).toLowerCase();
+		if (ext !== ext2) {
+			return Promise.reject(Error('Changing File extension not supported ' + ext + '=>' + ext2));
+		}
+		const newPath = path.join(track.path, name);
+		const exists = await fse.pathExists(newPath);
+		if (exists) {
+			return Promise.reject(Error('File already exists'));
+		}
+		await fse.rename(path.join(track.path, track.name), path.join(track.path, name));
+		track.name = name;
+		await this.store.trackStore.replace(track);
+		// TODO: fill real {dir:MatchDir to this log object), even if it's not used outside scanner atm
+		changes.updateTracks.push(<any>{track: track, oldTrack: track});
+		return changes;
+	}
+
+	async renameFolder(rootID: string, folderID: string, newName: string): Promise<MergeChanges> {
+		const {root, changes} = await this.start(rootID);
+
+		if (containsFolderSystemChars(newName)) {
+			return Promise.reject(Error('Invalid Directory Name'));
+		}
+		const folder = await this.store.folderStore.byId(folderID);
+		if (!folder) {
+			return Promise.reject(Error('Folder not found'));
+		}
+		const name = replaceFolderSystemChars(newName, '').trim();
+		if (name.length === 0 || ['.', '..'].indexOf(name) >= 0) {
+			return Promise.reject(Error('Invalid Directory Name'));
+		}
+		const p = path.dirname(folder.path);
+		const newPath = path.join(p, name);
+		const exists = await fse.pathExists(newPath);
+		if (exists) {
+			return Promise.reject(Error('Directory already exists'));
+		}
+		await fse.rename(folder.path, newPath);
+		const folders = await this.store.folderStore.search({inPath: folder.path});
+		for (const f of folders) {
+			const rest = f.path.slice(folder.path.length - 1);
+			if (rest.length > 0 && rest[0] !== path.sep) {
+				log.error('WRONG inPath MATCH', rest, folder.path, f.path);
+			} else {
+				f.path = newPath + ensureTrailingPathSeparator(rest);
+			}
+		}
+		await this.store.folderStore.replaceMany(folders);
+		const tracks = await this.store.trackStore.search({inPath: folder.path});
+		for (const t of tracks) {
+			t.path = t.path.replace(folder.path, ensureTrailingPathSeparator(newPath));
+		}
+		await this.store.trackStore.replaceMany(tracks);
+		folder.path = ensureTrailingPathSeparator(newPath);
+		// TODO: log changes?
+		return await this.finish(changes, rootID, false);
+	}
+
+	async writeTrackTags(rootID: string, tags: Array<{ trackID: string; tag: Jam.RawTag }>) {
+		const {root, changes} = await this.start(rootID);
+		const trackIDs = tags.map(t => t.trackID);
+		const tracks = await this.store.trackStore.byIds(trackIDs);
+		const folderIDs: Array<string> = [];
+		log.info('Writing Tags in Root', root.path);
+
+		for (const track of tracks) {
+			const tag = tags.find(t => t.trackID === track.id);
+			if (tag) {
+				await this.audioModule.writeRawTag(path.join(track.path, track.name), tag.tag);
+				if (folderIDs.indexOf(track.parentID) < 0) {
+					folderIDs.push(track.parentID);
+				}
+			}
+		}
+
+		log.info('Refresh Tracks in Root', root.path);
+
+		const dbMatcher = new DBMatcher(this.store);
+		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, trackIDs);
+
+		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
+		await scanMerger.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+
+		return await this.finish(changes, rootID, false);
+
 	}
 }

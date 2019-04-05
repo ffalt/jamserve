@@ -135,10 +135,9 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		return result;
 	}
 
-	async rawTagUpdate(req: JamRequest<JamParameters.RawTagUpdate>): Promise<void> {
+	async rawTagUpdate(req: JamRequest<JamParameters.RawTagUpdate>): Promise<Jam.AdminChangeQueueInfo> {
 		const track = await this.byID(req.query.id);
-		await this.audioModule.writeRawTag(path.join(track.path, track.name), req.query.tag);
-		this.ioService.refreshTrack(track);
+		return await this.ioService.writeRawTag(track.id, req.query.tag, track.rootID);
 	}
 
 	async stream(req: JamRequest<JamParameters.Stream>): Promise<IApiBinaryResult> {
@@ -156,9 +155,9 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		return this.getList(req.query, req.query, req.query, req.user);
 	}
 
-	async nameUpdate(req: JamRequest<JamParameters.TrackEditName>): Promise<void> {
+	async nameUpdate(req: JamRequest<JamParameters.TrackEditName>): Promise<Jam.AdminChangeQueueInfo> {
 		const track = await this.byID(req.query.id);
-		await this.trackService.renameTrack(track, req.query.name);
+		return this.ioService.renameTrack(track.id, req.query.name, track.rootID);
 	}
 
 	async parentUpdate(req: JamRequest<JamParameters.TrackMoveParent>): Promise<Jam.AdminChangeQueueInfo> {

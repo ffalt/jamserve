@@ -22,39 +22,6 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		super(folderStore, stateService);
 	}
 
-	async renameFolder(folder: Folder, name: string): Promise<void> {
-		if (containsFolderSystemChars(name)) {
-			return Promise.reject(Error('Invalid Directory Name'));
-		}
-		name = replaceFolderSystemChars(name, '').trim();
-		if (name.length === 0 || ['.', '..'].indexOf(name) >= 0) {
-			return Promise.reject(Error('Invalid Directory Name'));
-		}
-		const p = path.dirname(folder.path);
-		const newPath = path.join(p, name);
-		const exists = await fse.pathExists(newPath);
-		if (exists) {
-			return Promise.reject(Error('Directory already exists'));
-		}
-		await fse.rename(folder.path, newPath);
-		const folders = await this.folderStore.search({inPath: folder.path});
-		for (const f of folders) {
-			const rest = f.path.slice(folder.path.length - 1);
-			if (rest.length > 0 && rest[0] !== path.sep) {
-				log.error('WRONG inPath MATCH', rest, folder.path, f.path);
-			} else {
-				f.path = newPath + ensureTrailingPathSeparator(rest);
-				await this.folderStore.replace(f);
-			}
-		}
-		const tracks = await this.trackStore.search({inPath: folder.path});
-		for (const t of tracks) {
-			t.path = t.path.replace(folder.path, ensureTrailingPathSeparator(newPath));
-			await this.trackStore.replace(t);
-		}
-		folder.path = ensureTrailingPathSeparator(newPath);
-	}
-
 	async collectFolderPath(folderId: string | undefined): Promise<Array<Folder>> {
 		const result: Array<Folder> = [];
 		const store = this.folderStore;
@@ -84,6 +51,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 	}
 
 	async setFolderImage(folder: Folder, filename: string): Promise<void> {
+		// TODO: move this ioService=>scanService
 		const destFileName = FolderTypeImageName[folder.tag.type] + path.extname(filename);
 		const destName = path.join(folder.path, destFileName);
 		await fileDeleteIfExists(destName);
@@ -116,6 +84,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 	}
 
 	async updateArtworkImage(folder: Folder, artwork: Artwork, name: string): Promise<Artwork> {
+		// TODO: move this ioService=>scanService
 		if (containsFolderSystemChars(name)) {
 			return Promise.reject(Error('Invalid Image File Name'));
 		}
@@ -148,6 +117,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 	}
 
 	async removeArtworkImage(folder: Folder, artwork: Artwork): Promise<void> {
+		// TODO: move this ioService=>scanService
 		if (!folder.tag.artworks) {
 			return;
 		}
@@ -166,6 +136,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 	}
 
 	async downloadFolderArtwork(folder: Folder, imageUrl: string, types: Array<ArtworkImageType>): Promise<Artwork> {
+		// TODO: move this ioService=>scanService
 		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
 		const filename = await this.imageModule.storeImage(folder.path, name, imageUrl);
 		const stat = await fse.stat(path.join(folder.path, filename));
