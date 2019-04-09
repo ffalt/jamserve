@@ -22,7 +22,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		super(folderStore, stateService);
 	}
 
-	async collectFolderPath(folderId: string | undefined): Promise<Array<Folder>> {
+	async collectFolderPath(folderId: string | undefined, cachedFolders?: Array<Folder>): Promise<Array<Folder>> {
 		const result: Array<Folder> = [];
 		const store = this.folderStore;
 
@@ -30,7 +30,16 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 			if (!id) {
 				return;
 			}
-			const folder = await store.byId(id);
+			let folder: Folder | undefined;
+			if (cachedFolders) {
+				folder = cachedFolders.find(f => f.id == id);
+			}
+			if (!folder) {
+				folder = await store.byId(id);
+				if (cachedFolders && folder) {
+					cachedFolders.push(folder);
+				}
+			}
 			if (folder) {
 				result.unshift(folder);
 				await collect(folder.parentID);

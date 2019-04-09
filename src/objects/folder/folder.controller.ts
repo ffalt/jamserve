@@ -229,6 +229,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		});
 		const result: Array<Jam.FolderHealth> = [];
 		const roots: Array<Root> = [];
+		const cachedFolders = list.slice(0);
 		for (const folder of list) {
 			let root = roots.find(r => r.id === folder.rootID);
 			if (!root) {
@@ -238,8 +239,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 				}
 			}
 			if (root) {
-				// TODO: speed this up & cache parents
-				const parents = await this.folderService.collectFolderPath(folder.parentID);
+				const parents = await this.folderService.collectFolderPath(folder.parentID, cachedFolders);
 				const health = await this.checker.run(folder, parents, root);
 				if (health && health.length > 0) {
 					result.push({
