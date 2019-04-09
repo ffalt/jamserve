@@ -9,7 +9,7 @@ import {FileTyp, FolderTypesAlbum} from '../../model/jam-types';
 import {MergeChanges} from './scan.changes';
 import fse from 'fs-extra';
 
-const log = Logger('Scan.MatchDir');
+const log = Logger('IO.MatchDir');
 
 export interface MatchDir {
 	name: string;

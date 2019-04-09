@@ -17,7 +17,7 @@ import {ScanStorer} from './scan.store';
 import {ScanMetaMerger} from './scan.merge-meta';
 import {Root} from '../../objects/root/root.model';
 
-const log = Logger('Scan.Service');
+const log = Logger('IO.Service');
 
 export class ScanService {
 	private settings: Jam.AdminSettingsLibrary = {
@@ -64,7 +64,7 @@ export class ScanService {
 		const matchRoot: MatchDir = await scanMatcher.match(scan, changes);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(matchRoot, forceMetaRefresh, rootID, () => true, changes);
+		await scanMerger.merge(matchRoot, rootID, () => true, changes);
 
 		return await this.finish(changes, rootID, forceMetaRefresh);
 	}
@@ -94,7 +94,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, trackIDs);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
 		return await this.finish(changes, rootID, false);
 	}
@@ -119,7 +119,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, []);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
 		return await this.finish(changes, rootID, false);
 	}
@@ -149,7 +149,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(parentIDs, []);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
 		return await this.finish(changes, rootID, false);
 	}
@@ -161,7 +161,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, []);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
 		return await this.finish(changes, rootID, false);
 	}
@@ -234,7 +234,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(updateFolderIDs, updateTrackIDs);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, false, rootID, (dir) => {
+		await scanMerger.merge(rootMatch, rootID, (dir) => {
 			return changedDirs.indexOf(dir) >= 0;
 		}, changes);
 
@@ -274,7 +274,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(updateFolderIDs, updateTrackIDs);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
 		return await this.finish(changes, rootID, false);
 	}
@@ -371,7 +371,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, trackIDs);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, false, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
 		return await this.finish(changes, rootID, false);
 

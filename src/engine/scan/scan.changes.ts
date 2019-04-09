@@ -1,16 +1,15 @@
 import {Track} from '../../objects/track/track.model';
-import {MatchDir} from './scan.match-dir';
 import {Artist} from '../../objects/artist/artist.model';
 import {Album} from '../../objects/album/album.model';
 import {Folder} from '../../objects/folder/folder.model';
 import Logger from '../../utils/logger';
 import moment from 'moment';
 
-const log = Logger('Scan.MergeChanges');
+const log = Logger('IO.MergeChanges');
 
 export interface MergeTrackInfo {
 	track: Track;
-	dir: MatchDir;
+	parent: Folder;
 }
 
 export interface UpdateMergeTrackInfo extends MergeTrackInfo {

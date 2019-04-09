@@ -6,7 +6,7 @@ import {Store} from '../store/store';
 import {ImageModule} from '../../modules/image/image.module';
 import {WaveformService} from '../waveform/waveform.service';
 
-const log = Logger('Scan.Clean');
+const log = Logger('IO.Clean');
 
 export class ScanCleaner {
 

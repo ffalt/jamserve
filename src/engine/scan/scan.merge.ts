@@ -14,7 +14,7 @@ import {buildMetaStat} from './scan.metastats';
 import {artWorkImageNameToType} from '../../objects/folder/folder.format';
 import {Jam} from '../../model/jam-rest-data';
 
-const log = Logger('Scan.Merge');
+const log = Logger('IO.Merge');
 
 export class ScanMerger {
 
@@ -62,7 +62,7 @@ export class ScanMerger {
 					const track = await this.buildTrack(file, dir.folder);
 					track.id = await this.store.trackStore.getNewId();
 					file.track = track;
-					changes.newTracks.push({track, dir});
+					changes.newTracks.push({track, parent: dir.folder});
 				} else if (trackHasChanged(file)) {
 					const old = file.track;
 					if (!old) {
@@ -71,7 +71,7 @@ export class ScanMerger {
 					const track = await this.buildTrack(file, dir.folder);
 					track.id = old.id;
 					file.track = track;
-					changes.updateTracks.push({track, dir, oldTrack: old});
+					changes.updateTracks.push({track, parent: dir.folder, oldTrack: old});
 				}
 			}
 		}
@@ -297,7 +297,7 @@ export class ScanMerger {
 		this.applyFolderTagType(dir);
 	}
 
-	async merge(dir: MatchDir, forceMetaRefresh: boolean, rootID: string, rebuildTag: (dir: MatchDir) => boolean, changes: MergeChanges): Promise<void> {
+	async merge(dir: MatchDir, rootID: string, rebuildTag: (dir: MatchDir) => boolean, changes: MergeChanges): Promise<void> {
 		log.info('Merging:', dir.name);
 		await this.buildMerge(dir, changes);
 		await this.buildMergeTags(dir, rebuildTag);
