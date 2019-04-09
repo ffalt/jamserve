@@ -6,7 +6,6 @@ import {ScanService} from '../scan/scan.service';
 import {RootStore} from '../../objects/root/root.store';
 import {Jam} from '../../model/jam-rest-data';
 import {logChanges, MergeChanges} from '../scan/scan.changes';
-import path from 'path';
 
 const log = Logger('IO');
 
@@ -184,6 +183,7 @@ export class IoService {
 	private current: ScanRequest | undefined;
 	private queue: Array<ScanRequest> = [];
 	private delayedTrackRefresh: { [rootID: string]: { request: ScanRequestRefreshTracks, timeout?: NodeJS.Timeout } } = {};
+	private delayedTrackTagWrite: { [rootID: string]: { request: ScanRequestWriteRawTags, timeout?: NodeJS.Timeout } } = {};
 	private nextID: number = Date.now();
 	private history: Array<{
 		id: string;
@@ -277,11 +277,11 @@ export class IoService {
 
 	}
 
-	async refresh(): Promise<Array<Jam.AdminChangeQueueInfo>> {
+	async refresh(forceMetaRefresh?: boolean): Promise<Array<Jam.AdminChangeQueueInfo>> {
 		const rootIDs = await this.rootStore.allIds();
 		const result = [];
 		for (const rootID of rootIDs) {
-			result.push(await this.refreshRoot(rootID, false));
+			result.push(await this.refreshRoot(rootID, forceMetaRefresh));
 		}
 		return result;
 	}
@@ -325,7 +325,7 @@ export class IoService {
 		return this.getRequestInfo(delayedCmd.request);
 	}
 
-	refreshRoot(rootID: string, forceMetaRefresh: boolean): Jam.AdminChangeQueueInfo {
+	refreshRoot(rootID: string, forceMetaRefresh?: boolean): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestRefreshRoot>this.findRequest(rootID, ScanRequestMode.refreshRoot);
 		if (oldRequest) {
 			if (forceMetaRefresh) {
@@ -333,7 +333,7 @@ export class IoService {
 			}
 			return this.getRequestInfo(oldRequest);
 		} else {
-			return this.addRequest(new ScanRequestRefreshRoot(this.getScanID(), rootID, forceMetaRefresh, this.scanService));
+			return this.addRequest(new ScanRequestRefreshRoot(this.getScanID(), rootID, forceMetaRefresh === true, this.scanService));
 		}
 	}
 
@@ -421,9 +421,23 @@ export class IoService {
 		if (oldRequest) {
 			oldRequest.tags.push({trackID, tag});
 			return this.getRequestInfo(oldRequest);
-		} else {
-			return this.addRequest(new ScanRequestWriteRawTags(this.getScanID(), rootID, trackID, tag, this.scanService));
 		}
+		let delayedCmd = this.delayedTrackTagWrite[rootID];
+		if (delayedCmd) {
+			if (delayedCmd.timeout) {
+				clearTimeout(delayedCmd.timeout);
+			}
+			delayedCmd.request.tags.push({trackID: trackID, tag});
+		} else {
+			delayedCmd = {request: new ScanRequestWriteRawTags(this.getScanID(), rootID, trackID, tag, this.scanService), timeout: undefined};
+			this.delayedTrackTagWrite[rootID] = delayedCmd;
+		}
+		delayedCmd.timeout = setTimeout(() => {
+			delete this.delayedTrackRefresh[rootID];
+			this.queue.push(delayedCmd.request);
+			this.run();
+		}, 10000);
+		return this.getRequestInfo(delayedCmd.request);
 	}
 
 	public renameFolder(folderID: string, name: string, rootID: string) {
