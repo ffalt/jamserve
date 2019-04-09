@@ -35,7 +35,9 @@ async function run(): Promise<void> {
 		await engine.start();
 		await server.start();
 		if (engine.settingsService.settings.library.scanAtStart) {
-			engine.ioService.refresh();
+			engine.ioService.refresh(false).catch(e => {
+				console.error('Error on startup scanning', e);
+			});
 		}
 	} catch (e) {
 		console.error('Error on startup', e);
