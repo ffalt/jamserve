@@ -98,7 +98,7 @@ export class PreTranscoder implements IStreamData {
 	}
 
 	pipe(stream: express.Response) {
-		log.info('Start transcode first and stream after', this.format, this.maxBitRate);
+		log.info('Start transcoding first and stream after', this.format, this.maxBitRate);
 		tmp.file((err, filename, fd, cleanupCallback) => {
 			if (err) {
 				throw err;
@@ -111,14 +111,15 @@ export class PreTranscoder implements IStreamData {
 				.toFormat(this.format)
 				.withAudioBitrate(this.maxBitRate + 'k')
 				.on('end', () => {
-					log.info('file has been transcoded successfully, sending it now');
+					log.info('transcoding ended, sending file now');
 					stream.contentType(this.format);
 					stream.setHeader('Content-Length', fs.statSync(filename).size);
 					const rs = fs.createReadStream(filename, {autoClose: true});
 					rs.on('end', () => {
 						cleanupCallback();
 					});
-					rs.on('error', () => {
+					rs.on('error', (msg) => {
+						log.error(msg);
 						cleanupCallback();
 					});
 					rs.pipe(stream);
