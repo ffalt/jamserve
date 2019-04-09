@@ -255,7 +255,7 @@ export class AudioModule {
 		if (suffix === AudioFormatType.mp3) {
 			const mp3 = new MP3();
 			try {
-				const result = await mp3.read({filename, mpegQuick: true, mpeg: true, id3v2: true});
+				const result = await mp3.read(filename, {mpegQuick: true, mpeg: true, id3v2: true});
 				if (!result) {
 					return {tag: {format: TrackTagFormatType.none}, media: {}};
 				} else {
