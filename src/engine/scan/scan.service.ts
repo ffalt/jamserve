@@ -9,14 +9,13 @@ import fse from 'fs-extra';
 import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Jam} from '../../model/jam-rest-data';
 import {DirScanner, ScanDir} from './scan.scan-dir';
-import {MatchDir, ScanMatcher, DBMatcher, debugPrintTree} from './scan.match-dir';
+import {MatchDir, ScanMatcher, DBMatcher} from './scan.match-dir';
 import {emptyChanges, MergeChanges} from './scan.changes';
 import {ScanMerger} from './scan.merge';
 import {ScanCleaner} from './scan.clean';
 import {ScanStorer} from './scan.store';
 import {ScanMetaMerger} from './scan.merge-meta';
 import {Root} from '../../objects/root/root.model';
-import {Folder} from '../../objects/folder/folder.model';
 
 const log = Logger('Scan.Service');
 

@@ -5,7 +5,7 @@ import path from 'path';
 import {getFileType} from '../../utils/filetype';
 import Logger from '../../utils/logger';
 
-const log = Logger('DirScanner');
+const log = Logger('Scan.DirScanner');
 
 export interface ScanDir {
 	name: string;
