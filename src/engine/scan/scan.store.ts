@@ -10,7 +10,7 @@ export class ScanStorer {
 
 	async storeChanges(changes: MergeChanges): Promise<void> {
 		log.info('Storing');
-		await this.store.trackStore.bulk(changes.newTracks.map(t => t.track));
+		await this.store.trackStore.bulk(changes.newTracks);
 		await this.store.trackStore.upsert(changes.updateTracks.map(t => t.track));
 		await this.store.folderStore.bulk(changes.newFolders);
 		await this.store.folderStore.upsert(changes.updateFolders);

@@ -62,7 +62,7 @@ export class ScanMerger {
 					const track = await this.buildTrack(file, dir.folder);
 					track.id = await this.store.trackStore.getNewId();
 					file.track = track;
-					changes.newTracks.push({track, parent: dir.folder});
+					changes.newTracks.push(track);
 				} else if (trackHasChanged(file)) {
 					const old = file.track;
 					if (!old) {
@@ -71,7 +71,7 @@ export class ScanMerger {
 					const track = await this.buildTrack(file, dir.folder);
 					track.id = old.id;
 					file.track = track;
-					changes.updateTracks.push({track, parent: dir.folder, oldTrack: old});
+					changes.updateTracks.push({track, oldTrack: old});
 				}
 			}
 		}
@@ -260,6 +260,8 @@ export class ScanMerger {
 				} else {
 					result = FolderType.artist;
 				}
+			} else if (!metaStat.hasMultipleArtists && dir.directories.filter(d => d.tag && d.tag.type === FolderType.artist).length > 0) {
+				result = FolderType.artist;
 			} else {
 				result = FolderType.multialbum;
 			}

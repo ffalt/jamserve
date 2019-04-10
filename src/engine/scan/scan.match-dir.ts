@@ -74,7 +74,8 @@ export class ScanMatcher {
 			}
 		});
 		if (dir.folder) {
-			const folders = await this.store.folderStore.search({parentID: dir.folder.id});
+			let folders = await this.store.folderStore.search({parentID: dir.folder.id});
+			folders = folders.sort((a, b) => a.path.localeCompare(b.path));
 			for (const subFolder of folders) {
 				const subDir = dir.directories.find(sd => sd.name === subFolder.path);
 				if (!subDir) {

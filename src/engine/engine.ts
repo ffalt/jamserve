@@ -90,7 +90,9 @@ export class Engine {
 		this.genreService = new GenreService(this.store.trackStore);
 		this.statsService = new StatsService(this.store);
 		this.ioService = new IoService(this.store.rootStore, this.scanService, async () => {
-			await this.refresh();
+			this.refresh().catch(e => {
+				log.error('Error on Refresh Indexes & Stats', e);
+			});
 		});
 		this.downloadService = new DownloadService(this.store.trackStore);
 		this.nowPlayingService = new NowPlayingService(this.stateService);
@@ -112,6 +114,7 @@ export class Engine {
 		await this.statsService.refresh();
 		await this.metaDataService.cleanUp();
 	}
+
 	private async checkFirstStart(): Promise<void> {
 		if (!this.config.firstStart) {
 			return;

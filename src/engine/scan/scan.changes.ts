@@ -7,12 +7,8 @@ import moment from 'moment';
 
 const log = Logger('IO.MergeChanges');
 
-export interface MergeTrackInfo {
+export interface MergeChangesTrackInfo {
 	track: Track;
-	parent: Folder;
-}
-
-export interface UpdateMergeTrackInfo extends MergeTrackInfo {
 	oldTrack: Track;
 }
 
@@ -25,8 +21,8 @@ export interface MergeChanges {
 	updateAlbums: Array<Album>;
 	removedAlbums: Array<Album>;
 
-	newTracks: Array<MergeTrackInfo>;
-	updateTracks: Array<UpdateMergeTrackInfo>;
+	newTracks: Array<Track>;
+	updateTracks: Array<MergeChangesTrackInfo>;
 	removedTracks: Array<Track>;
 
 	newFolders: Array<Folder>;

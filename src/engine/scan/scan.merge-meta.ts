@@ -1,5 +1,5 @@
 import Logger from '../../utils/logger';
-import {MergeChanges, MergeTrackInfo} from './scan.changes';
+import {MergeChanges} from './scan.changes';
 import {Album} from '../../objects/album/album.model';
 import {AlbumType, cUnknownAlbum, cUnknownArtist, MusicBrainz_VARIOUS_ARTISTS_ID, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
 import {Track} from '../../objects/track/track.model';
@@ -8,11 +8,20 @@ import {Store} from '../store/store';
 import {DBObjectType} from '../../db/db.types';
 import {extractAlbumName, slugify} from './scan.utils';
 import {MetaStatBuilder} from './scan.metastats';
+import {Folder} from '../../objects/folder/folder.model';
 
 const log = Logger('IO.MetaMerge');
 
+export interface MetaMergeTrackInfo {
+	track: Track;
+	parent: Folder;
+}
 
-export function getAlbumName(trackInfo: MergeTrackInfo): string {
+export interface UpdateMetaMergeTrackInfo extends MetaMergeTrackInfo {
+	oldTrack: Track;
+}
+
+export function getAlbumName(trackInfo: MetaMergeTrackInfo): string {
 	if (trackInfo.parent && trackInfo.parent.tag.albumType === AlbumType.compilation) {
 		return trackInfo.parent.tag.album || cUnknownAlbum;
 	} else {
@@ -20,19 +29,20 @@ export function getAlbumName(trackInfo: MergeTrackInfo): string {
 	}
 }
 
-export function getAlbumSlug(trackInfo: MergeTrackInfo): string {
+export function getAlbumSlug(trackInfo: MetaMergeTrackInfo): string {
 	return slugify(getAlbumName(trackInfo));
 }
 
 export class ScanMetaMerger {
 	private artistCache: Array<Artist> = [];
 	private albumCache: Array<Album> = [];
+	private folderCache: Array<Folder> = [];
 
 	constructor(private store: Store) {
 
 	}
 
-	private async findAlbumInDB(trackInfo: MergeTrackInfo, artistID: string): Promise<Album | undefined> {
+	private async findAlbumInDB(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Album | undefined> {
 		if (trackInfo.track.tag.mbAlbumID) {
 			const album = await this.store.albumStore.searchOne({mbAlbumID: trackInfo.track.tag.mbAlbumID});
 			if (album) {
@@ -42,7 +52,7 @@ export class ScanMetaMerger {
 		return this.store.albumStore.searchOne({slug: getAlbumSlug(trackInfo), artistID});
 	}
 
-	private async findAlbumInCache(trackInfo: MergeTrackInfo, artistID: string): Promise<Album | undefined> {
+	private async findAlbumInCache(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Album | undefined> {
 		if (trackInfo.track.tag.mbAlbumID) {
 			const album = await this.albumCache.find(a => a.mbAlbumID === trackInfo.track.tag.mbAlbumID);
 			if (album) {
@@ -53,7 +63,7 @@ export class ScanMetaMerger {
 		return this.albumCache.find(a => (a.name === name) && (a.artistID === artistID));
 	}
 
-	private async buildAlbum(trackInfo: MergeTrackInfo, artistID: string): Promise<Album> {
+	private async buildAlbum(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Album> {
 		return {
 			id: await this.store.albumStore.getNewId(),
 			type: DBObjectType.album,
@@ -73,7 +83,7 @@ export class ScanMetaMerger {
 		};
 	}
 
-	private async findArtistInDB(trackInfo: MergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
+	private async findArtistInDB(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
 		const mbArtistID = albumArtist ? (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID) : trackInfo.track.tag.mbArtistID;
 		if (mbArtistID) {
 			const artist = await this.store.artistStore.searchOne({mbArtistID});
@@ -85,7 +95,7 @@ export class ScanMetaMerger {
 		return this.store.artistStore.searchOne({slug});
 	}
 
-	private async findArtistInCache(trackInfo: MergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
+	private async findArtistInCache(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
 		const mbArtistID = albumArtist ? (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID) : trackInfo.track.tag.mbArtistID;
 		if (mbArtistID) {
 			const artist = this.artistCache.find(a => a.mbArtistID === mbArtistID);
@@ -97,7 +107,7 @@ export class ScanMetaMerger {
 		return this.artistCache.find(a => a.slug === slug);
 	}
 
-	private async findOrCreateAlbum(trackInfo: MergeTrackInfo, artistID: string, changes: MergeChanges): Promise<Album> {
+	private async findOrCreateAlbum(trackInfo: MetaMergeTrackInfo, artistID: string, changes: MergeChanges): Promise<Album> {
 		let album = await this.findAlbumInCache(trackInfo, artistID);
 		if (album) {
 			return album;
@@ -141,7 +151,7 @@ export class ScanMetaMerger {
 		return artist;
 	}
 
-	private async buildArtist(trackInfo: MergeTrackInfo, albumArtist: boolean): Promise<Artist> {
+	private async buildArtist(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist> {
 		const name = (albumArtist ? (trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist) : trackInfo.track.tag.artist) || cUnknownArtist;
 		const nameSort = albumArtist ? (trackInfo.track.tag.albumArtistSort || trackInfo.track.tag.artistSort) : trackInfo.track.tag.artistSort;
 		const mbArtistID = albumArtist ? (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID) : trackInfo.track.tag.mbArtistID;
@@ -195,7 +205,7 @@ export class ScanMetaMerger {
 		return artist;
 	}
 
-	private async findOrCreateArtist(trackInfo: MergeTrackInfo, albumArtist: boolean, changes: MergeChanges): Promise<Artist> {
+	private async findOrCreateArtist(trackInfo: MetaMergeTrackInfo, albumArtist: boolean, changes: MergeChanges): Promise<Artist> {
 		let artist = await this.findArtistInCache(trackInfo, albumArtist);
 		if (artist) {
 			return artist;
@@ -215,7 +225,7 @@ export class ScanMetaMerger {
 		return artist;
 	}
 
-	private async addMeta(trackInfo: MergeTrackInfo, changes: MergeChanges): Promise<void> {
+	private async addMeta(trackInfo: MetaMergeTrackInfo, changes: MergeChanges): Promise<void> {
 		if (trackInfo.parent) {
 			const artist = await this.findOrCreateArtist(trackInfo, false, changes);
 			trackInfo.track.artistID = artist.id;
@@ -248,10 +258,42 @@ export class ScanMetaMerger {
 		}
 	}
 
+	async findFolder(id: string, changes: MergeChanges): Promise<Folder | undefined> {
+		let folder = changes.newFolders.find(f => f.id === id);
+		if (!folder) {
+			folder = changes.updateFolders.find(f => f.id === id);
+		}
+		if (!folder) {
+			folder = this.folderCache.find(f => f.id === id);
+		}
+		if (!folder) {
+			folder = await this.store.folderStore.byId(id);
+			if (folder) {
+				this.folderCache.push(folder);
+			}
+		}
+		return folder;
+	}
+
 	async mergeMeta(forceMetaRefresh: boolean, rootID: string, changes: MergeChanges): Promise<void> {
 		// merge new
-		log.debug('merge meta tracks new', changes.newTracks.length);
-		for (const trackInfo of changes.newTracks) {
+		const newTracks: Array<MetaMergeTrackInfo> = [];
+		const updateTracks: Array<UpdateMetaMergeTrackInfo> = [];
+		for (const track of changes.newTracks) {
+			const parent = await this.findFolder(track.parentID, changes);
+			if (parent) {
+				newTracks.push({track, parent});
+			}
+		}
+		for (const trackInfo of changes.updateTracks) {
+			const parent = await this.findFolder(trackInfo.track.parentID, changes);
+			if (parent) {
+				updateTracks.push({track: trackInfo.track, oldTrack: trackInfo.oldTrack, parent});
+			}
+		}
+
+		log.debug('merge meta tracks new', newTracks.length);
+		for (const trackInfo of newTracks) {
 			await this.addMeta(trackInfo, changes);
 		}
 		// remove missing
@@ -260,8 +302,8 @@ export class ScanMetaMerger {
 			await this.removeMeta(track, changes);
 		}
 		// update updated
-		log.debug('merge meta tracks update', changes.updateTracks.length);
-		for (const trackInfo of changes.updateTracks) {
+		log.debug('merge meta tracks update', updateTracks.length);
+		for (const trackInfo of updateTracks) {
 			await this.removeMeta(trackInfo.oldTrack, changes);
 			await this.addMeta(trackInfo, changes);
 		}
@@ -290,12 +332,12 @@ export class ScanMetaMerger {
 			// filter out removed tracks
 			tracksIDs = tracksIDs.filter(t => removedTrackIDs.indexOf(t) < 0);
 			// filter out updated tracks which are no longer part of the album
-			const removedFromAlbum = changes.updateTracks.filter(t => (t.oldTrack.albumID === album.id && t.track.albumID !== album.id)).map(t => t.track.id);
+			const removedFromAlbum = updateTracks.filter(t => (t.oldTrack.albumID === album.id && t.track.albumID !== album.id)).map(t => t.track.id);
 			tracksIDs = tracksIDs.filter(t => removedFromAlbum.indexOf(t) < 0);
 			// rest tracksIDs are untouched tracks
 			// get all new and updated tracks which are part of the album
-			const refreshedTracks: Array<MergeTrackInfo> = (<Array<MergeTrackInfo>>changes.updateTracks.filter(t => t.track && t.track.albumID === album.id))
-				.concat(changes.newTracks.filter(t => t.track.albumID === album.id));
+			const refreshedTracks: Array<MetaMergeTrackInfo> = (<Array<MetaMergeTrackInfo>>updateTracks.filter(t => t.track && t.track.albumID === album.id))
+				.concat(newTracks.filter(t => t.track.albumID === album.id));
 			if (refreshedTracks.length + tracksIDs.length === 0) {
 				if (changes.removedAlbums.indexOf(album) < 0) {
 					changes.removedAlbums.push(album);
@@ -309,14 +351,7 @@ export class ScanMetaMerger {
 				const metaStatBuilder = new MetaStatBuilder();
 				const tracks = await this.store.trackStore.byIds(tracksIDs);
 				for (const track of tracks) {
-					let folder = changes.updateFolders.find(f => f.id === track.parentID);
-					const cachedFolderInTrack = refreshedTracks.find(t => t.parent.id === track.parentID);
-					if (cachedFolderInTrack) {
-						folder = cachedFolderInTrack.parent;
-					}
-					if (!folder) {
-						folder = await this.store.folderStore.byId(track.parentID);
-					}
+					const folder = await this.findFolder(track.parentID, changes);
 					if (folder) {
 						refreshedTracks.push({track, parent: folder});
 					}
@@ -369,14 +404,14 @@ export class ScanMetaMerger {
 			// filter out removed tracks
 			tracksIDs = tracksIDs.filter(t => removedTrackIDs.indexOf(t) < 0);
 			// filter out updated tracks which are no longer part of the artist
-			let removedFromArtist = changes.updateTracks.filter(t => (t.oldTrack.artistID === artist.id && t.track.artistID !== artist.id)).map(t => t.track.id);
+			let removedFromArtist = updateTracks.filter(t => (t.oldTrack.artistID === artist.id && t.track.artistID !== artist.id)).map(t => t.track.id);
 			tracksIDs = tracksIDs.filter(t => removedFromArtist.indexOf(t) < 0);
 			// filter out updated tracks which are no longer part of the album artist
-			removedFromArtist = changes.updateTracks.filter(t => (t.oldTrack.albumArtistID === artist.id && t.track.albumArtistID !== artist.id)).map(t => t.track.id);
+			removedFromArtist = updateTracks.filter(t => (t.oldTrack.albumArtistID === artist.id && t.track.albumArtistID !== artist.id)).map(t => t.track.id);
 			tracksIDs = tracksIDs.filter(t => removedFromArtist.indexOf(t) < 0);
 			// get all new and updated tracks which are part of the artist
-			const refreshedTracks: Array<MergeTrackInfo> = (<Array<MergeTrackInfo>>changes.updateTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id))
-				.concat(changes.newTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id));
+			const refreshedTracks: Array<MetaMergeTrackInfo> = (<Array<MetaMergeTrackInfo>>updateTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id))
+				.concat(newTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id));
 			if (refreshedTracks.length + tracksIDs.length === 0) {
 				if (changes.newArtists.indexOf(artist) < 0) {
 					changes.removedArtists.push(artist);
