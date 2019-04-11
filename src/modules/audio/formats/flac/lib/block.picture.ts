@@ -14,7 +14,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 		super(isLast, 6);
 	}
 
-	public static createPictureBlock(pictureType: number, mimeType: string, description: string, width: number, height: number, bitsPerPixel: number, colors: number, pictureData?: Buffer) {
+	public static createPictureBlock(pictureType: number, mimeType: string, description: string, width: number, height: number, bitsPerPixel: number, colors: number, pictureData: Buffer): MetaDataBlockPicture {
 		const mdb = new MetaDataBlockPicture(false);
 		mdb.pictureType = pictureType;
 		mdb.mimeType = mimeType;
