@@ -1,4 +1,5 @@
-import {ID3v1, ID3v2, IID3V1, IID3V2, IMP3, MP3, ID3V24TagBuilder, simplifyTag} from 'jamp3';
+import fse from 'fs-extra';
+import {ID3v1, ID3v2, IID3V1, IID3V2, IMP3, MP3, simplifyTag} from 'jamp3';
 import {ChartLyricsClient, ChartLyricsResult} from './clients/chartlyrics-client';
 import {AcoustidClient} from './clients/acoustid-client';
 import {LastFMClient} from './clients/lastfm-client';
@@ -352,6 +353,11 @@ export class AudioModule {
 		const id3 = rawTagToID3v2(tag);
 		const flacBlocks: Array<MetaWriteableDataBlock> = await id3v2ToFlacMetaData(id3, this.imageModule);
 		const flac = new Flac();
+		// TODO: add tests for flac writing, make backup copy as long it is not well tested
+		const exits = await fse.pathExists(filename + '.bak');
+		if (!exits) {
+			await fse.copy(filename, filename + '.bak');
+		}
 		await flac.write(filename, flacBlocks);
 	}
 
