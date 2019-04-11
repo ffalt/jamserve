@@ -4,7 +4,6 @@ import {MetaDataBlock, MetaWriteableDataBlock} from './lib/block';
 import {MetaDataBlockStreamInfo} from './lib/block.streaminfo';
 import {BlockVorbiscomment} from './lib/block.vorbiscomment';
 import {MetaDataBlockPicture} from './lib/block.picture';
-import {fileDeleteIfExists} from '../../../../utils/fs-utils';
 import fse from 'fs-extra';
 
 export interface FlacComment {
@@ -84,6 +83,10 @@ export class Flac {
 	}
 
 	async writeTo(filename: string, destination: string, flacBlocks: Array<MetaWriteableDataBlock>): Promise<void> {
+		if (flacBlocks.length === 0) {
+			return Promise.reject(Error('Must write minimum 1 MetaDataBlock'));
+		}
+		flacBlocks[flacBlocks.length - 1].isLast = true;
 		const reader = fs.createReadStream(filename);
 		const writer = fs.createWriteStream(destination);
 		const processor = new FlacProcessorStream(false, false);
@@ -92,8 +95,8 @@ export class Flac {
 				if (mdb.type === MDB_TYPE_VORBIS_COMMENT || mdb.type === MDB_TYPE_PICTURE) {
 					mdb.remove();
 				}
-				if ((mdb.removed || mdb.isLast) && flacBlocks.length > 0) {
-					flacBlocks[flacBlocks.length - 1].isLast = mdb.isLast;
+				if (mdb.isLast) {
+					mdb.isLast = false;
 					for (const block of flacBlocks) {
 						processor.push(block.publish());
 					}
@@ -119,10 +122,16 @@ export class Flac {
 	async write(filename: string, flacBlocks: Array<MetaWriteableDataBlock>): Promise<void> {
 		try {
 			await this.writeTo(filename, filename + '.tmp', flacBlocks);
-			await fileDeleteIfExists(filename);
+			const exists = await fse.pathExists(filename);
+			if (exists) {
+				await fse.remove(filename);
+			}
 			await fse.move(filename + '.tmp', filename);
 		} catch (e) {
-			await fileDeleteIfExists(filename + '.tmp');
+			const exists = await fse.pathExists(filename) + '.tmp';
+			if (exists) {
+				await fse.remove(filename + '.tmp');
+			}
 			return Promise.reject(e);
 		}
 	}

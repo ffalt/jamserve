@@ -8,7 +8,7 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 		super(isLast, 4);
 	}
 
-	public static createVorbisCommentBlock(vendor: string, comments: Array<string>) {
+	public static createVorbisCommentBlock(vendor: string, comments: Array<string>): BlockVorbiscomment {
 		const mdb = new BlockVorbiscomment(false);
 		mdb.vendor = vendor;
 		mdb.comments = comments;
