@@ -68,6 +68,10 @@ async function run() {
 			}
 		} else if (p.items) {
 			collectSchema(p.items, definitions);
+		} else if (p.properties) {
+			Object.keys(p.properties).forEach(key => {
+				collectSchema(p.properties[key], definitions);
+			});
 		}
 	}
 
