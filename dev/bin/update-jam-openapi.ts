@@ -98,10 +98,18 @@ async function run() {
 
 	const data = await transformTS2NamespaceJSONScheme(basePath, 'jam-rest-data');
 	const apicalls: Array<IApiCall> = await getJamApiCalls(basePath);
+	const usedIDs: { [name: string]: boolean } = {};
 
 	apicalls.forEach(call => {
+		let s = call.operationId;
+		let nr = 1;
+		while (usedIDs[s]) {
+			nr++;
+			s = call.operationId + nr.toString();
+		}
+		usedIDs[s] = true;
 		const cmd: any = {
-			operationId: call.operationId,
+			operationId: s,
 			description: call.description,
 			tags: [call.tag],
 			responses: {}

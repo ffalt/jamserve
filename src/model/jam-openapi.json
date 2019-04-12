@@ -11202,7 +11202,7 @@
 		},
 		"/image/{id}-{size}": {
 			"get": {
-				"operationId": "imageController.image",
+				"operationId": "imageController.image2",
 				"description": "download image for object as binary by id",
 				"tags": [
 					"image"
@@ -11264,7 +11264,7 @@
 		},
 		"/image/{id}.{format}": {
 			"get": {
-				"operationId": "imageController.image",
+				"operationId": "imageController.image3",
 				"description": "download image for object as binary by id",
 				"tags": [
 					"image"
@@ -11332,7 +11332,7 @@
 		},
 		"/image/{id}": {
 			"get": {
-				"operationId": "imageController.image",
+				"operationId": "imageController.image4",
 				"description": "download image for object as binary by id",
 				"tags": [
 					"image"
@@ -11465,7 +11465,7 @@
 		},
 		"/stream/{id}": {
 			"get": {
-				"operationId": "streamController.stream",
+				"operationId": "streamController.stream2",
 				"description": "stream a media file",
 				"tags": [
 					"media"
@@ -11627,7 +11627,7 @@
 		},
 		"/download/{id}.{format}": {
 			"get": {
-				"operationId": "downloadController.download",
+				"operationId": "downloadController.download2",
 				"description": "download object as binary archive by id",
 				"tags": [
 					"download"
