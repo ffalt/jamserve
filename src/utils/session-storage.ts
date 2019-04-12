@@ -15,7 +15,7 @@ export class SessionJSONFileStore extends Store {
 		super();
 		this.filename = path.resolve(filename || 'sessions.json');
 		this.init().catch(e => {
-			console.log('SessionJSONFileStore', e);
+			console.error('SessionJSONFileStore', e);
 		});
 	}
 
