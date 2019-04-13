@@ -182,7 +182,7 @@ export class IoService {
 	private rootstatus: { [id: string]: RootStatus } = {};
 	private current: ScanRequest | undefined;
 	private queue: Array<ScanRequest> = [];
-	private delayedTrackRefresh: { [rootID: string]: { request: ScanRequestRefreshTracks, timeout?: NodeJS.Timeout } } = {};
+	// private delayedTrackRefresh: { [rootID: string]: { request: ScanRequestRefreshTracks, timeout?: NodeJS.Timeout } } = {};
 	private delayedTrackTagWrite: { [rootID: string]: { request: ScanRequestWriteRawTags, timeout?: NodeJS.Timeout } } = {};
 	private nextID: number = Date.now();
 	private history: Array<{
@@ -295,7 +295,7 @@ export class IoService {
 	private getRequestInfo(req: ScanRequest): Jam.AdminChangeQueueInfo {
 		return {id: req.id, pos: this.queue.indexOf(req)};
 	}
-
+/*
 	refreshTrack(track: Track): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestRefreshTracks>this.findRequest(track.rootID, ScanRequestMode.refreshTracks);
 		if (oldRequest) {
@@ -324,7 +324,7 @@ export class IoService {
 		}, 10000);
 		return this.getRequestInfo(delayedCmd.request);
 	}
-
+*/
 	refreshRoot(rootID: string, forceMetaRefresh?: boolean): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestRefreshRoot>this.findRequest(rootID, ScanRequestMode.refreshRoot);
 		if (oldRequest) {
@@ -359,7 +359,7 @@ export class IoService {
 			return this.addRequest(new ScanRequestMoveFolders(this.getScanID(), rootID, this.scanService, newParentID, folderIDs));
 		}
 	}
-
+/*
 	refreshFolders(folderIDs: Array<string>, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestRefreshFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
 		if (oldRequest) {
@@ -373,7 +373,7 @@ export class IoService {
 			return this.addRequest(new ScanRequestRefreshFolders(this.getScanID(), rootID, this.scanService, folderIDs));
 		}
 	}
-
+*/
 	deleteFolder(id: string, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestDeleteFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
 		if (oldRequest) {
@@ -433,7 +433,7 @@ export class IoService {
 			this.delayedTrackTagWrite[rootID] = delayedCmd;
 		}
 		delayedCmd.timeout = setTimeout(() => {
-			delete this.delayedTrackRefresh[rootID];
+			delete this.delayedTrackTagWrite[rootID];
 			this.queue.push(delayedCmd.request);
 			this.run();
 		}, 10000);
