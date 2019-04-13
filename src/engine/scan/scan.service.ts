@@ -358,7 +358,9 @@ export class ScanService {
 		for (const track of tracks) {
 			const tag = tags.find(t => t.trackID === track.id);
 			if (tag) {
-				await this.audioModule.writeRawTag(path.join(track.path, track.name), tag.tag);
+				const filename = path.join(track.path, track.name);
+				log.info('Writing Tag', filename);
+				await this.audioModule.writeRawTag(filename, tag.tag);
 				if (folderIDs.indexOf(track.parentID) < 0) {
 					folderIDs.push(track.parentID);
 				}
