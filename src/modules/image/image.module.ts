@@ -9,6 +9,7 @@ import {DebouncePromises} from '../../utils/debounce-promises';
 import fse from 'fs-extra';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import {AvatarGenerator} from './avatar-generator/avatar-generator';
+import sizeOfImage from 'image-size';
 
 type JimpFont = any;
 
@@ -203,13 +204,23 @@ export class ImageModule {
 	}
 
 	async getImageInfo(bin: Buffer, mimeType: string | undefined): Promise<{ width: number, height: number, colorDepth: number, colors: number }> {
-		const image = await Jimp.read(bin);
-		// TODO get color palette count (if indexed)/color depth via jimp
-		return {
-			width: image.getWidth(),
-			height: image.getHeight(),
-			colorDepth: 0,
-			colors: 0
-		};
+		try {
+			const dims = sizeOfImage(bin);
+			// TODO: get colorDepth/colors
+			return {
+				width: dims.width,
+				height: dims.height,
+				colorDepth: 0,
+				colors: 0
+			};
+		} catch (e) {
+			log.error('Error reading image dimensions from Buffer', e);
+			return {
+				width: 0,
+				height: 0,
+				colorDepth: 0,
+				colors: 0
+			};
+		}
 	}
 }
