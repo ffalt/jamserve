@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import {FlacProcessorStream, MDB_TYPE_PICTURE, MDB_TYPE_STREAMINFO, MDB_TYPE_VORBIS_COMMENT} from './lib/processor';
+import {FlacProcessorStream, MDB_TYPE_PADDING, MDB_TYPE_PICTURE, MDB_TYPE_STREAMINFO, MDB_TYPE_VORBIS_COMMENT} from './lib/processor';
 import {MetaDataBlock, MetaWriteableDataBlock} from './lib/block';
 import {MetaDataBlockStreamInfo} from './lib/block.streaminfo';
 import {BlockVorbiscomment} from './lib/block.vorbiscomment';
@@ -86,17 +86,21 @@ export class Flac {
 		if (flacBlocks.length === 0) {
 			return Promise.reject(Error('Must write minimum 1 MetaDataBlock'));
 		}
-		flacBlocks[flacBlocks.length - 1].isLast = true;
+		flacBlocks.forEach(flacBlock => {
+			flacBlock.isLast = false;
+		});
 		const reader = fs.createReadStream(filename);
 		const writer = fs.createWriteStream(destination);
 		const processor = new FlacProcessorStream(false, false);
 		return new Promise<void>((resolve, reject) => {
 			processor.on('preprocess', (mdb) => {
-				if (mdb.type === MDB_TYPE_VORBIS_COMMENT || mdb.type === MDB_TYPE_PICTURE) {
+				if (mdb.type === MDB_TYPE_VORBIS_COMMENT || mdb.type === MDB_TYPE_PICTURE || mdb.type === MDB_TYPE_PADDING) {
 					mdb.remove();
 				}
 				if (mdb.isLast) {
-					mdb.isLast = false;
+					if (mdb.remove) {
+						flacBlocks[flacBlocks.length - 1].isLast = true;
+					}
 					for (const block of flacBlocks) {
 						processor.push(block.publish());
 					}

@@ -21,7 +21,7 @@ import {CoverArtArchiveClient} from './clients/coverartarchive-client';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType} from '../../model/jam-types';
 import {WikiData, WikipediaClient} from './clients/wikipedia-client';
-import {Flac, FlacComment, FlacMedia} from './formats/flac/flac';
+import {Flac, FlacComment, FlacMedia} from './formats/flac';
 import {MetaWriteableDataBlock} from './formats/flac/lib/block';
 import {ImageModule} from '../image/image.module';
 import {flacToRawTag, id3v2ToFlacMetaData, id3v2ToRawTag, rawTagToID3v2} from './metadata';

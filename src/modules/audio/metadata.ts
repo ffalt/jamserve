@@ -4,7 +4,7 @@ import {BlockVorbiscomment} from './formats/flac/lib/block.vorbiscomment';
 import {MetaDataBlockPicture} from './formats/flac/lib/block.picture';
 import {ImageModule} from '../image/image.module';
 import {Jam} from '../../model/jam-rest-data';
-import {FlacInfo} from './formats/flac/flac';
+import {FlacInfo} from './formats/flac';
 import {TrackTag} from '../../objects/track/track.model';
 import moment from 'moment';
 

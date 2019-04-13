@@ -183,12 +183,6 @@ export class FlacProcessorStream extends Transform {
 		callback();
 	}
 
-	_validateScanMarker(slice: Buffer, isDone: boolean): boolean {
-		console.log('_validateScanMarker', slice.toString('utf8', 0));
-		this.isFlac = (slice.toString('utf8', 0) === 'fLaC');
-		return false;
-	}
-
 	_validateMarker(slice: Buffer, isDone: boolean): boolean {
 		this.isFlac = (slice.toString('utf8', 0) === 'fLaC');
 		if (!this.isFlac) {
@@ -241,7 +235,7 @@ export class FlacProcessorStream extends Transform {
 			// The consumer may change the MDB's isLast flag in the preprocess handler.
 			// Here that flag is updated in the MDB header.
 			if (this.mdbLast !== this.mdb.isLast) {
-				if (this.mdb.isLast) {
+					if (this.mdb.isLast) {
 					header |= 0x80000000;
 				} else {
 					header &= 0x7fffffff;
