@@ -6379,16 +6379,12 @@
 				},
 				"acoustid": {
 					"$ref": "#/definitions/Acoustid.Result"
-				},
-				"id3frames": {
-					"$ref": "#/definitions/ID3v2Frames.Frames"
 				}
 			},
 			"required": [
 				"acousticbrainz",
 				"acoustid",
 				"coverartarchive",
-				"id3frames",
 				"lastfm",
 				"musicbrainz"
 			]

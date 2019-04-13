@@ -62,7 +62,7 @@ export declare namespace JamParameters {
 
 	export interface IncludesTrack {
 		/**
-		 * include media informations on track(s)
+		 * include media information on track(s)
 		 *
 		 * @default false
 		 */
