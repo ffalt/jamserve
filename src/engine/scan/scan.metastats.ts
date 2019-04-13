@@ -84,7 +84,7 @@ export class MetaStatBuilder {
 
 	statID(name: string, val?: string) {
 		if (val && val.trim().length > 0) {
-			const slug = val.split(' ')[0];
+			const slug = val.split(' ')[0].trim();
 			this.stats[name] = this.stats[name] || {};
 			this.stats[name][slug] = this.stats[name][val] || {count: 0, val: slug};
 			this.stats[name][slug].count += 1;
@@ -104,7 +104,7 @@ export class MetaStatBuilder {
 		if (val && val.trim().length > 0) {
 			const slug = slugify(val);
 			this.stats[name] = this.stats[name] || {};
-			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val: val};
+			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val: val.trim()};
 			this.stats[name][slug].count += 1;
 		}
 	}
