@@ -8,8 +8,8 @@ import mimeTypes from 'mime-types';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import fse from 'fs-extra';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
-import {AvatarGenerator} from './avatar-generator/avatar-generator';
-import sizeOfImage from 'image-size';
+import {AvatarGen} from './avatar-generator/avatar-generator';
+import sharp from 'sharp';
 
 type JimpFont = any;
 
@@ -26,7 +26,7 @@ export class ImageModule {
 	private avatarPartsLocation: string;
 
 	constructor(private imageCachePath: string, avatarPartsLocation?: string) {
-		this.avatarPartsLocation = avatarPartsLocation || path.join(__dirname, 'static', 'avatar', 'parts');
+		this.avatarPartsLocation = avatarPartsLocation || path.join(__dirname, 'static', 'avatar');
 	}
 
 	async storeImage(filepath: string, name: string, imageUrl: string): Promise<string> {
@@ -57,7 +57,6 @@ export class ImageModule {
 			alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
 			alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE
 		}, 340, 340);
-		// image.greyscale();
 		image.resize(size, size);
 		const mime = mimeTypes.lookup(format ? format : this.format);
 		if (!mime) {
@@ -90,23 +89,35 @@ export class ImageModule {
 			return Promise.reject(Error('File not found'));
 		}
 		if (size || (fileFormat !== format)) {
-			const image = await Jimp.read(filename);
 			const mime = mimeTypes.lookup(format);
 			if (!mime) {
 				return Promise.reject('Unknown Image Format Request');
 			}
 			if (size) {
-				image.crop(1, 1, image.getWidth() - 2, image.getHeight() - 2);
-				// image.autocrop({cropOnlyFrames: false, tolerance: 0.0004, cropSymmetric: true});
-				image.contain(size, size);
+				const buffer = await sharp(filename)
+					.resize(size, size,
+						{
+							fit: sharp.fit.cover,
+							position: sharp.strategy.entropy
+						}).toFormat(format)
+					.toBuffer();
+				return {
+					buffer: {
+						buffer: buffer,
+						contentType: mime
+					}
+				};
+			} else {
+				const buffer = await sharp(filename)
+					.toFormat(format)
+					.toBuffer();
+				return {
+					buffer: {
+						buffer: buffer,
+						contentType: mime
+					}
+				};
 			}
-			const buffer = await image.getBufferAsync(mime);
-			return {
-				buffer: {
-					buffer: buffer,
-					contentType: mime
-				}
-			};
 		} else {
 			return {file: {filename, name}};
 		}
@@ -154,9 +165,13 @@ export class ImageModule {
 	}
 
 	async resizeImage(filename: string, destination: string, size: number): Promise<void> {
-		const image = await Jimp.read(filename);
-		image.contain(size, size);
-		await image.writeAsync(destination);
+		await sharp(filename)
+			.resize(size, size,
+				{
+					fit: sharp.fit.cover,
+					position: sharp.strategy.entropy
+				})
+			.toFile(filename);
 	}
 
 	async clearImageCacheByIDs(ids: Array<string>): Promise<void> {
@@ -198,19 +213,18 @@ export class ImageModule {
 	}
 
 	async generateAvatar(seed: string, destination: string): Promise<void> {
-		const avatarGenerator = new AvatarGenerator({partsLocation: this.avatarPartsLocation});
+		const avatarGenerator = new AvatarGen(this.avatarPartsLocation);
 		const avatar = await avatarGenerator.generate(seed);
 		await fse.writeFile(destination, avatar);
 	}
 
 	async getImageInfo(bin: Buffer, mimeType: string | undefined): Promise<{ width: number, height: number, colorDepth: number, colors: number }> {
 		try {
-			const dims = sizeOfImage(bin);
-			// TODO: get colorDepth/colors
+			const metadata = await sharp(bin).metadata();
 			return {
-				width: dims.width,
-				height: dims.height,
-				colorDepth: 0,
+				width: metadata.width || 0,
+				height: metadata.height || 0,
+				colorDepth: metadata.density || 0,
 				colors: 0
 			};
 		} catch (e) {

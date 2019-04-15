@@ -6,14 +6,12 @@
  * Licensed under the MIT license.
  */
 
-/*
-  Modified to work with jimp instead of sharp and a queer image collection
- */
+/* This is included because jamserve uses a newer version of sharp */
 
 import path from 'path';
-import fse from 'fs-extra';
+import fs from 'fs';
+import sharp from 'sharp';
 import seedrandom from 'seedrandom';
-import Jimp = require('jimp');
 
 export type AvatarPart =
 	| 'background'
@@ -32,70 +30,135 @@ export interface AvatarGenearatorSettings {
 
 const defaultSettings: AvatarGenearatorSettings = {
 	parts: ['background', 'face', 'clothes', 'head', 'hair', 'eye', 'mouth'],
-	partsLocation: path.join(__dirname, './img'),
+	partsLocation: path.join(__dirname),
 	imageExtension: '.png'
 };
 
 type PartsMap = { [key in AvatarPart]: string[] };
 
-export class AvatarGenerator {
-	private variantParts?: PartsMap;
-	private _cfg: AvatarGenearatorSettings;
+interface VariantsMap {
+	[key: string]: PartsMap;
+}
+
+class AvatarGenerator {
+	private _variants: VariantsMap;
+	private _parts: Array<AvatarPart>;
 
 	constructor(settings: Partial<AvatarGenearatorSettings> = {}) {
-		this._cfg = {
+		const cfg = {
 			...defaultSettings,
 			...settings
 		};
+		this._variants = AvatarGenerator.BuildVariantsMap(cfg);
+		this._parts = cfg.parts;
 	}
 
-	private async buildPartsMap(): Promise<PartsMap> {
-		const fileRegex = new RegExp(`(${this._cfg.parts.join('|')})(\\d+)${this._cfg.imageExtension}`);
-		const dir = path.resolve(this._cfg.partsLocation);
-		const files = (await fse.readdir(dir)).map(filename => path.join(dir, filename));
-		files.sort((a, b) => a.localeCompare(b));
-		const result: PartsMap = {} as PartsMap;
-		for (const filename of files) {
-			const match = fileRegex.exec(path.basename(filename));
-			if (match) {
-				const part = match[1] as AvatarPart;
-				if (!result[part]) {
-					result[part] = [];
-				}
-				result[part].push(filename);
-			}
-		}
-		return result;
+	get variants() {
+		return Object.keys(this._variants);
 	}
 
-	private async getParts(id: string): Promise<Array<string>> {
-		if (!this.variantParts) {
-			this.variantParts = await this.buildPartsMap();
-		}
-		const variantParts = this.variantParts;
-		const rng = seedrandom(id);
-		return this._cfg.parts.map((partName: AvatarPart): string => {
-				const partVariants = variantParts[partName];
-				return (
-					partVariants &&
-					partVariants[Math.floor(rng() * partVariants.length)]
+	private static BuildVariantsMap({
+										parts,
+										partsLocation,
+										imageExtension
+									}: AvatarGenearatorSettings) {
+		const fileRegex = new RegExp(`(${parts.join('|')})(\\d+)${imageExtension}`);
+		const discriminators = fs
+			.readdirSync(partsLocation)
+			.filter((partsDir) =>
+				fs.statSync(path.join(partsLocation, partsDir)).isDirectory()
+			);
+
+		return discriminators.reduce(
+			(variants, discriminator) => {
+				const dir = path.join(partsLocation, discriminator);
+				variants[discriminator] = fs.readdirSync(dir).reduce((ps, fileName) => {
+						const match = fileRegex.exec(fileName);
+						if (match) {
+							const part = match[1] as AvatarPart;
+							if (!ps[part]) {
+								ps[part] = [];
+							}
+							ps[part][Number(match[2])] = path.join(dir, fileName);
+						}
+						return ps;
+					},
+					{} as PartsMap
 				);
+				return variants;
+			},
+			{} as VariantsMap
+		);
+	}
+
+	private getParts(id: string, variant: string) {
+		const variantParts = this._variants[variant];
+		if (!variantParts) {
+			throw new Error(
+				`variant '${variant}' is not supported. Supported variants: ${Object.keys(
+					this._variants
+				)}`
+			);
+		}
+		const rng = seedrandom(id);
+		return this._parts
+			.map(
+				(partName: AvatarPart): string => {
+					const partVariants = variantParts[partName];
+					return (
+						partVariants &&
+						partVariants[Math.floor(rng() * partVariants.length)]
+					);
+				}
+			)
+			.filter(Boolean);
+	}
+
+	public async generate(id: string, variant: string): Promise<sharp.Sharp> {
+		const parts = this.getParts(id, variant);
+		if (!parts.length) {
+			throw new Error(`variant '${variant}'does not contain any parts`);
+		}
+		const {width, height} = await sharp(parts[0]).metadata();
+		if (width === undefined || height === undefined) {
+			throw new Error(`Invalid part file found`);
+		}
+		const options = {
+			raw: {
+				width: width,
+				height: height,
+				channels: 4 as 4
 			}
-		).filter(Boolean);
+		};
+		const overlays = parts.map((part) =>
+			sharp(part).raw().toBuffer()
+		);
+		let composite = overlays.shift();
+		if (composite) {
+			for (const overlay of overlays) {
+				const [compoisteData, overlayData]: Array<Buffer> = await Promise.all([composite, overlay]);
+				composite = sharp(compoisteData, options)
+					.composite([{input: overlayData}])
+					.raw().toBuffer();
+			}
+		}
+		return sharp(await composite, options);
+	}
+}
+
+export class AvatarGen {
+	avatar: AvatarGenerator;
+
+	constructor(avatarPartsLocation?: string) {
+		if (avatarPartsLocation) {
+			defaultSettings.partsLocation = avatarPartsLocation;
+		}
+		this.avatar = new AvatarGenerator(defaultSettings);
 	}
 
 	public async generate(id: string): Promise<Buffer> {
-		const parts = await this.getParts(id);
-		if (!parts.length) {
-			throw new Error(`no parts`);
-		}
-		const promises = parts.map(filename => Jimp.read(filename));
-		const images = await Promise.all(promises);
-		let result: Jimp = images[0];
-		images.shift();
-		for (const image of images) {
-			result = await result.composite(image, 0, 0);
-		}
-		return result.getBufferAsync(Jimp.MIME_PNG);
+		const image = await this.avatar.generate(id, 'parts');
+		return await image.png().toBuffer();
 	}
 }
+

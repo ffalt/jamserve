@@ -16,7 +16,6 @@ import {TrackService} from '../../objects/track/track.service';
 import {ArtistService} from '../../objects/artist/artist.service';
 import {AlbumService} from '../../objects/album/album.service';
 import {UserService} from '../../objects/user/user.service';
-import {Jam} from '../../model/jam-rest-data';
 import {DBObjectType} from '../../db/db.types';
 
 export class ImageService {
