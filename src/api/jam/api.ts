@@ -74,7 +74,7 @@ export class JamController {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.rootController = new RootController(this.engine.rootService, this.engine.ioService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.trackController = new TrackController(this.engine.trackService, this.engine.folderService, this.engine.audioModule, this.engine.bookmarkService, this.engine.metaDataService, this.streamController, this.engine.ioService,
+		this.trackController = new TrackController(this.engine.trackService, this.engine.folderService, this.engine.audioModule, this.engine.bookmarkService, this.engine.metaDataService, this.streamController, this.engine.ioService, this.engine.rootService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.episodeController = new EpisodeController(this.engine.episodeService, this.streamController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);

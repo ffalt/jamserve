@@ -5255,6 +5255,24 @@
 				"health"
 			]
 		},
+		"Jam.TrackHealth": {
+			"type": "object",
+			"properties": {
+				"track": {
+					"$ref": "#/definitions/Jam.Track"
+				},
+				"health": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.HealthHint"
+					}
+				}
+			},
+			"required": [
+				"health",
+				"track"
+			]
+		},
 		"Jam.FolderParent": {
 			"type": "object",
 			"properties": {
@@ -5370,7 +5388,24 @@
 					"type": "string"
 				},
 				"details": {
-					"type": "string"
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"reason": {
+								"type": "string"
+							},
+							"expected": {
+								"type": "string"
+							},
+							"actual": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"reason"
+						]
+					}
 				}
 			},
 			"required": [

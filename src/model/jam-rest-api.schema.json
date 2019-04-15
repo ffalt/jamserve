@@ -1370,6 +1370,62 @@
 						"result"
 					]
 				},
+				"track/health": {
+					"description": "track: list of tracks with health issues",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.TrackHealth"
+						},
+						"result": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Jam.TrackHealth"
+							}
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result",
+						"roles"
+					]
+				},
 				"episode/id": {
 					"description": "episode: get a podcast episode by id",
 					"type": "object",
@@ -14539,7 +14595,24 @@
 					"type": "string"
 				},
 				"details": {
-					"type": "string"
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"reason": {
+								"type": "string"
+							},
+							"expected": {
+								"type": "string"
+							},
+							"actual": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"reason"
+						]
+					}
 				}
 			},
 			"required": [
@@ -14889,6 +14962,113 @@
 			},
 			"required": [
 				"list"
+			]
+		},
+		"JamParameters.TrackHealth": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"description": "filter by artist name",
+					"type": "string"
+				},
+				"artistID": {
+					"description": "filter by artist id",
+					"type": "string"
+				},
+				"parentID": {
+					"description": "filter by parent folder id",
+					"type": "string"
+				},
+				"parentIDs": {
+					"description": "filter by parent folder ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"childOfID": {
+					"description": "filter if track is in folder id (or its subfolders)",
+					"type": "string"
+				},
+				"rootID": {
+					"description": "filter by root id",
+					"type": "string"
+				},
+				"title": {
+					"description": "filter by title",
+					"type": "string"
+				},
+				"album": {
+					"description": "filter by album",
+					"type": "string"
+				},
+				"genre": {
+					"description": "filter by genre",
+					"type": "string"
+				},
+				"newerThan": {
+					"description": "filter by creation date",
+					"type": "integer"
+				},
+				"fromYear": {
+					"description": "filter by year",
+					"type": "integer"
+				},
+				"toYear": {
+					"description": "filter by year",
+					"type": "integer"
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
+				"sortField": {
+					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+					"type": "string"
+				},
+				"sortDescending": {
+					"description": "the sort direction",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				}
+			}
+		},
+		"Jam.TrackHealth": {
+			"type": "object",
+			"properties": {
+				"track": {
+					"$ref": "#/definitions/Jam.Track"
+				},
+				"health": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.HealthHint"
+					}
+				}
+			},
+			"required": [
+				"health",
+				"track"
 			]
 		},
 		"JamParameters.Episode": {

@@ -364,6 +364,15 @@ export interface JamApi {
 			result: Array<Jam.Track>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * track: list of tracks with health issues
+		 */
+		'track/health'?: {
+			params: JamParameters.TrackHealth;
+			result: Array<Jam.TrackHealth>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+			roles: ['admin'];
+		};
 
 		/**
 		 * episode: get a podcast episode by id

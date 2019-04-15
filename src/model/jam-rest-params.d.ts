@@ -668,6 +668,9 @@ export declare namespace JamParameters {
 		folderID: string;
 	}
 
+	export interface TrackHealth extends TrackSearchQuery, IncludesTrack {
+	}
+
 	/**
 	 * Move track folders(s) to new folder parent
 	 */

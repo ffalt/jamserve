@@ -175,6 +175,11 @@ export declare namespace Jam {
 		health: Array<HealthHint>;
 	}
 
+	export interface TrackHealth {
+		track: Track;
+		health: Array<HealthHint>;
+	}
+
 	export interface FolderParent {
 		id: string;
 		name: string;
@@ -206,7 +211,7 @@ export declare namespace Jam {
 	export interface HealthHint {
 		id: string;
 		name: string;
-		details?: string;
+		details?: Array<{ reason: string, expected?: string, actual?: string }>;
 	}
 
 	export interface FolderChildren {

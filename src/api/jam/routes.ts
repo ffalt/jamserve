@@ -262,6 +262,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/track/health', async (req, res) => {
+		const options: JamRequest<JamParameters.TrackHealth> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.TrackHealth> = await api.trackController.health(options);
+		await ApiResponder.data(res, result);
+	}, '/track/health', ['admin']);
+
 	register.get('/episode/id', async (req, res) => {
 		const options: JamRequest<JamParameters.Episode> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.PodcastEpisode = await api.episodeController.id(options);

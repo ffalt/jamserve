@@ -4003,6 +4003,220 @@
 				]
 			}
 		},
+		"/track/health": {
+			"get": {
+				"operationId": "trackController.health",
+				"description": "list of tracks with health issues",
+				"tags": [
+					"track"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.TrackHealth"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by artist name",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artistID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by artist id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "parentID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by parent folder id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "parentIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by parent folder ids",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "childOfID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter if track is in folder id (or its subfolders)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by title",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "album",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by album",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by genre",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "newerThan",
+						"schema": {
+							"type": "integer"
+						},
+						"description": "filter by creation date",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "fromYear",
+						"schema": {
+							"type": "integer"
+						},
+						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "toYear",
+						"schema": {
+							"type": "integer"
+						},
+						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "the sort direction",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackMedia",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include media information on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackRawTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include raw tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					}
+				]
+			}
+		},
 		"/episode/id": {
 			"get": {
 				"operationId": "episodeController.id",
@@ -19093,7 +19307,24 @@
 						"type": "string"
 					},
 					"details": {
-						"type": "string"
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"reason": {
+									"type": "string"
+								},
+								"expected": {
+									"type": "string"
+								},
+								"actual": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"reason"
+							]
+						}
 					}
 				},
 				"required": [
@@ -19112,6 +19343,24 @@
 				"additionalProperties": {
 					"$ref": "#/components/schemas/Jam.RawTag"
 				}
+			},
+			"Jam.TrackHealth": {
+				"type": "object",
+				"properties": {
+					"track": {
+						"$ref": "#/components/schemas/Jam.Track"
+					},
+					"health": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.HealthHint"
+						}
+					}
+				},
+				"required": [
+					"health",
+					"track"
+				]
 			},
 			"Jam.PodcastEpisode": {
 				"type": "object",
