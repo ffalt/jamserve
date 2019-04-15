@@ -1,4 +1,4 @@
-import {ID3V24TagBuilder, IID3V2, simplifyTag} from '../../../../jamp3/src/';
+import {ID3V24TagBuilder, IID3V2, simplifyTag} from 'jamp3';
 import {MetaWriteableDataBlock} from './formats/flac/lib/block';
 import {BlockVorbiscomment} from './formats/flac/lib/block.vorbiscomment';
 import {MetaDataBlockPicture} from './formats/flac/lib/block.picture';
