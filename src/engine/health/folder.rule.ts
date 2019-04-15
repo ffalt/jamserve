@@ -1,4 +1,4 @@
-import {Rule, RuleResult} from './rule.model';
+import {RuleResult} from './rule.model';
 import {Folder, FolderTag} from '../../objects/folder/folder.model';
 import {FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import path from 'path';
@@ -6,7 +6,7 @@ import {replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Jam} from '../../model/jam-rest-data';
 import {Root} from '../../objects/root/root.model';
 
-export abstract class FolderRule implements Rule<Folder> {
+export abstract class FolderRule {
 
 	protected constructor(public id: string, public name: string) {
 
@@ -40,7 +40,11 @@ export class FolderAlbumTagsRule extends FolderRule {
 				missing.push('album total track count');
 			}
 			if (missing.length > 0) {
-				return {details: missing.join(',')};
+				return {
+					details: missing.map(m => {
+						return {reason: 'value empty', expected: m};
+					})
+				};
 			}
 		}
 	}
@@ -64,7 +68,11 @@ export class FolderAlbumMusicBrainzRule extends FolderRule {
 				}
 			}
 			if (missing.length > 0) {
-				return {details: missing.join(',')};
+				return {
+					details: missing.map(m => {
+						return {reason: 'value empty', expected: m};
+					})
+				};
 			}
 		}
 	}
@@ -82,10 +90,13 @@ export class FolderAlbumCompleteRule extends FolderRule {
 			(folder.tag.type === FolderType.album) &&
 			(folder.tag.albumTrackCount) && (folder.tag.albumTrackCount !== folder.tag.trackCount)
 		) {
-			return {details: 'should: ' + folder.tag.albumTrackCount + ', found: ' + folder.tag.trackCount};
+			return {
+				details: [
+					{reason: 'not equal', expected: folder.tag.albumTrackCount.toString(), actual: folder.tag.trackCount.toString()}
+				]
+			};
 		}
 	}
-
 }
 
 export class FolderAlbumNameRule extends FolderRule {
@@ -128,7 +139,7 @@ export class FolderAlbumNameRule extends FolderRule {
 			const nicename = this.getNiceAlbumFolderName(folder.tag);
 			const nicenameSlug = nicename.replace(/[_:!?\/ ]/g, '').toLowerCase();
 			if (nameSlug.localeCompare(nicenameSlug) !== 0) {
-				return {details: nicename};
+				return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: nicename}]};
 			}
 		}
 	}
@@ -139,7 +150,7 @@ export class FolderAlbumNameRule extends FolderRule {
 			const nicename = this.getNiceOtherFolderName(folder.tag);
 			const nicenameSlug = nicename.replace(/[_:!?\/ ]/g, '').toLowerCase();
 			if (nameSlug.localeCompare(nicenameSlug) !== 0) {
-				return {details: nicename};
+				return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: nicename}]};
 			}
 		}
 	}
@@ -208,7 +219,7 @@ export class FolderArtistNameRule extends FolderRule {
 			const artistName = replaceFolderSystemChars(folder.tag.artist, '_');
 			const artistNameSlug = artistName.replace(/[_:!?\/ ]/g, '').toLowerCase();
 			if (nameSlug.localeCompare(artistNameSlug) !== 0) {
-				return {details: artistName};
+				return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: artistName}]};
 			}
 		}
 	}

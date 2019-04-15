@@ -23,8 +23,13 @@ import {TrackService} from './track.service';
 import {FolderService} from '../folder/folder.service';
 import {NotFoundError} from '../../api/jam/error';
 import {trackTagToRawTag} from '../../modules/audio/metadata';
+import {TrackRulesChecker} from '../../engine/health/track.rule';
+import {Root} from '../root/root.model';
+import {RootService} from '../root/root.service';
+import {Folder} from '../folder/folder.model';
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
+	checker = new TrackRulesChecker();
 
 	constructor(
 		public trackService: TrackService,
@@ -34,6 +39,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		private metaService: MetaDataService,
 		private streamController: StreamController,
 		private ioService: IoService,
+		private rootService: RootService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
@@ -172,4 +178,45 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		const track = await this.byID(req.query.id);
 		return this.ioService.removeTrack(track.id, track.rootID);
 	}
+
+
+	async health(req: JamRequest<JamParameters.TrackHealth>): Promise<Array<Jam.TrackHealth>> {
+		let list = await this.service.store.search(await this.translateQuery(req.query, req.user));
+		list = list.sort((a, b) => {
+			return a.path.localeCompare(b.path);
+		});
+		const result: Array<Jam.TrackHealth> = [];
+		const roots: Array<Root> = [];
+		const folders: Array<Folder> = [];
+		for (const track of list) {
+			let root = roots.find(r => r.id === track.rootID);
+			if (!root) {
+				root = await this.rootService.rootStore.byId(track.rootID);
+				if (root) {
+					roots.push(root);
+				}
+			}
+			if (root) {
+				let folder = folders.find(f => f.id === track.parentID);
+				if (!folder) {
+					folder = await this.folderService.folderStore.byId(track.parentID);
+					if (folder) {
+						folders.push(folder);
+					}
+
+				}
+				if (folder) {
+					const health = await this.checker.run(track, folder, root);
+					if (folder && health && health.length > 0) {
+						result.push({
+							track: await this.prepare(track, req.query, req.user),
+							health
+						});
+					}
+				}
+			}
+		}
+		return result;
+	}
+
 }

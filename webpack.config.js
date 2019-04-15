@@ -28,7 +28,7 @@ const app = {
 		new FilterWarningsPlugin({
 			exclude: /Critical dependency: the request of a dependency is an expression/i
 		}),
-		new CopyWebpackPlugin([ { from: './src/modules/image/avatar-generator/img', to: './static/avatar/parts' } ])
+		new CopyWebpackPlugin([ { from: './src/modules/image/avatar-generator/parts', to: './static/avatar/parts' } ])
 	],
 	module: {
 		rules: [
