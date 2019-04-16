@@ -72,9 +72,15 @@ export class ImageModule {
 	}
 
 	private async getImage(filename: string, size: number | undefined, name: string): Promise<IApiBinaryResult> {
+		if (!size) {
+			return {file: {filename, name}};
+		}
 		let fileFormat = path.extname(filename);
 		if (fileFormat[0] === '.') {
 			fileFormat = fileFormat.slice(1);
+		}
+		if (SupportedWriteImageFormat.indexOf(fileFormat) < 0) {
+			fileFormat = this.format;
 		}
 		return this.getImageAs(filename, fileFormat, size, name);
 	}

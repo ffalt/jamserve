@@ -363,8 +363,6 @@ export declare namespace JamParameters {
 	export interface Image extends ID {
 		/**
 		 * format of the image
-		 *
-		 * @default png
 		 */
 		format?: ImageFormatType;
 		/**
@@ -391,8 +389,6 @@ export declare namespace JamParameters {
 	export interface PathImageFormat extends ID {
 		/**
 		 * format of the image
-		 *
-		 * @default png
 		 */
 		format?: ImageFormatType;
 	}

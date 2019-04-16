@@ -17525,7 +17525,6 @@
 			"properties": {
 				"format": {
 					"description": "format of the image",
-					"default": "png",
 					"enum": [
 						"bmp",
 						"jpeg",
@@ -17598,7 +17597,6 @@
 			"properties": {
 				"format": {
 					"description": "format of the image",
-					"default": "png",
 					"enum": [
 						"bmp",
 						"jpeg",
