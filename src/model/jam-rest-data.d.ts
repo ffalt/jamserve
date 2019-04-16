@@ -321,12 +321,16 @@ export declare namespace Jam {
 			album: number;
 			compilation: number;
 			audiobook: number;
+			soundtrack: number;
+			bootleg: number;
 		};
 		album: number;
 		albumTypes: {
 			album: number;
 			compilation: number;
 			audiobook: number;
+			soundtrack: number;
+			bootleg: number;
 		};
 	}
 

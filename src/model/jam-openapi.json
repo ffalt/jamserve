@@ -16755,12 +16755,20 @@
 							},
 							"audiobook": {
 								"type": "number"
+							},
+							"soundtrack": {
+								"type": "number"
+							},
+							"bootleg": {
+								"type": "number"
 							}
 						},
 						"required": [
 							"album",
 							"audiobook",
-							"compilation"
+							"bootleg",
+							"compilation",
+							"soundtrack"
 						]
 					},
 					"album": {
@@ -16777,12 +16785,20 @@
 							},
 							"audiobook": {
 								"type": "number"
+							},
+							"soundtrack": {
+								"type": "number"
+							},
+							"bootleg": {
+								"type": "number"
 							}
 						},
 						"required": [
 							"album",
 							"audiobook",
-							"compilation"
+							"bootleg",
+							"compilation",
+							"soundtrack"
 						]
 					}
 				},
