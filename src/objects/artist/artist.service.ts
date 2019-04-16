@@ -40,7 +40,10 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 		}
 		const folder = await this.getArtistFolder(artist);
 		if (folder) {
-			return this.folderService.getFolderImage(folder, size, format);
+			if (folder.tag.mbArtistID === artist.mbArtistID || folder.tag.artist === artist.name) {
+				return this.folderService.getFolderImage(folder, size, format);
+			}
+			return this.folderService.imageModule.paint(artist.name, size, format);
 		}
 	}
 

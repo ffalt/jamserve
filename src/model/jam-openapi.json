@@ -3398,6 +3398,15 @@
 					},
 					{
 						"in": "query",
+						"name": "albumArtistID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by album artist id",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "parentID",
 						"schema": {
 							"type": "string"
@@ -3699,6 +3708,15 @@
 							"type": "string"
 						},
 						"description": "filter by artist id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumArtistID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by album artist id",
 						"required": false
 					},
 					{
@@ -4051,6 +4069,15 @@
 							"type": "string"
 						},
 						"description": "filter by artist id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumArtistID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by album artist id",
 						"required": false
 					},
 					{
@@ -6354,6 +6381,27 @@
 					},
 					{
 						"in": "query",
+						"name": "albumTypes",
+						"schema": {
+							"type": "array",
+							"items": {
+								"enum": [
+									"album",
+									"audiobook",
+									"bootleg",
+									"compilation",
+									"live",
+									"soundtrack",
+									"unknown"
+								],
+								"type": "string"
+							}
+						},
+						"description": "filter by album types",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "mbArtistID",
 						"schema": {
 							"type": "string"
@@ -6700,6 +6748,27 @@
 							"type": "string"
 						},
 						"description": "filter by album id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTypes",
+						"schema": {
+							"type": "array",
+							"items": {
+								"enum": [
+									"album",
+									"audiobook",
+									"bootleg",
+									"compilation",
+									"live",
+									"soundtrack",
+									"unknown"
+								],
+								"type": "string"
+							}
+						},
+						"description": "filter by album types",
 						"required": false
 					},
 					{
@@ -7884,7 +7953,10 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"bootleg",
 								"compilation",
+								"live",
+								"soundtrack",
 								"unknown"
 							],
 							"type": "string"
@@ -7901,7 +7973,10 @@
 								"enum": [
 									"album",
 									"audiobook",
+									"bootleg",
 									"compilation",
+									"live",
+									"soundtrack",
 									"unknown"
 								],
 								"type": "string"
@@ -8112,7 +8187,10 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"bootleg",
 								"compilation",
+								"live",
+								"soundtrack",
 								"unknown"
 							],
 							"type": "string"
@@ -8129,7 +8207,10 @@
 								"enum": [
 									"album",
 									"audiobook",
+									"bootleg",
 									"compilation",
+									"live",
+									"soundtrack",
 									"unknown"
 								],
 								"type": "string"
@@ -16753,6 +16834,9 @@
 					"artistID": {
 						"type": "string"
 					},
+					"albumArtistID": {
+						"type": "string"
+					},
 					"albumID": {
 						"type": "string"
 					},
@@ -19121,7 +19205,10 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"bootleg",
 							"compilation",
+							"live",
+							"soundtrack",
 							"unknown"
 						],
 						"type": "string"
@@ -19407,6 +19494,9 @@
 					"artistID": {
 						"type": "string"
 					},
+					"albumArtistID": {
+						"type": "string"
+					},
 					"albumID": {
 						"type": "string"
 					},
@@ -19579,7 +19669,10 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"bootleg",
 								"compilation",
+								"live",
+								"soundtrack",
 								"unknown"
 							],
 							"type": "string"
@@ -19731,7 +19824,10 @@
 				"enum": [
 					"album",
 					"audiobook",
+					"bootleg",
 					"compilation",
+					"live",
+					"soundtrack",
 					"unknown"
 				],
 				"type": "string"

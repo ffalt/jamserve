@@ -22,12 +22,16 @@ export class StatsService {
 					album: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.album}),
 					compilation: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation}),
 					audiobook: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.audiobook}),
+					soundtrack: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.soundtrack}),
+					bootleg: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.bootleg})
 				},
 				artist: await this.store.artistStore.searchCount({rootID}),
 				artistTypes: {
 					album: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.album}),
 					compilation: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation}),
 					audiobook: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.audiobook}),
+					soundtrack: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.soundtrack}),
+					bootleg: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.bootleg})
 				},
 				folder: await this.store.folderStore.searchCount({rootID}),
 				track: await this.store.trackStore.searchCount({rootID})

@@ -32,6 +32,7 @@ export function formatTrack(track: Track, includes: JamParameters.IncludesTrack)
 		id: track.id,
 		parentID: track.parentID,
 		artistID: track.artistID,
+		albumArtistID: track.albumArtistID,
 		albumID: track.albumID,
 		name: track.name,
 		created: track.stat.created,

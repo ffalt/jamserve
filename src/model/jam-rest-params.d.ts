@@ -413,6 +413,10 @@ export declare namespace JamParameters {
 		 */
 		artistID?: string;
 		/**
+		 * filter by album artist id
+		 */
+		albumArtistID?: string;
+		/**
 		 * filter by parent folder id
 		 */
 		parentID?: string;
@@ -975,6 +979,10 @@ export declare namespace JamParameters {
 		 * filter by album id
 		 */
 		albumID?: string;
+		/**
+		 * filter by album types
+		 */
+		albumTypes?: Array<Jam.AlbumType>;
 		/**
 		 * filter by musicbrainz album id
 		 */

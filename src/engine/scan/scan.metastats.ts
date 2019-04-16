@@ -200,8 +200,14 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 		const t = mbAlbumType.toLowerCase();
 		if (t.indexOf('audiobook') >= 0) {
 			albumType = AlbumType.audiobook;
+		} else if (t.indexOf('bootleg') >= 0) {
+			albumType = AlbumType.bootleg;
 		} else if (t.indexOf('compilation') >= 0) {
 			albumType = AlbumType.compilation;
+		} else if (t.indexOf('live') >= 0) {
+			albumType = AlbumType.live;
+		} else if (t.indexOf('soundtrack') >= 0) {
+			albumType = AlbumType.soundtrack;
 		} else if (t.indexOf('album') >= 0) {
 			albumType = AlbumType.album;
 		}

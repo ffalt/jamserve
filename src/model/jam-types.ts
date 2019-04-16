@@ -108,6 +108,9 @@ export enum AlbumType {
 	unknown = 'unknown',
 	album = 'album',
 	compilation = 'compilation',
+	live = 'live',
+	bootleg = 'bootleg',
+	soundtrack = 'soundtrack',
 	audiobook = 'audiobook'
 }
 

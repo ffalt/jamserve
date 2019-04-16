@@ -95,6 +95,8 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 			artist: query.artist,
 			title: query.title,
 			album: query.album,
+			artistID: query.artistID,
+			albumArtistID: query.albumArtistID,
 			genre: query.genre,
 			newerThan: query.newerThan,
 			fromYear: query.fromYear,

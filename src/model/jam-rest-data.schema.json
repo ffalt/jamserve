@@ -4596,7 +4596,10 @@
 			"enum": [
 				"album",
 				"audiobook",
+				"bootleg",
 				"compilation",
+				"live",
+				"soundtrack",
 				"unknown"
 			],
 			"type": "string"
@@ -4919,6 +4922,9 @@
 				"artistID": {
 					"type": "string"
 				},
+				"albumArtistID": {
+					"type": "string"
+				},
 				"albumID": {
 					"type": "string"
 				},
@@ -4986,6 +4992,9 @@
 					"type": "string"
 				},
 				"artistID": {
+					"type": "string"
+				},
+				"albumArtistID": {
 					"type": "string"
 				},
 				"albumID": {
@@ -5356,7 +5365,10 @@
 					"enum": [
 						"album",
 						"audiobook",
+						"bootleg",
 						"compilation",
+						"live",
+						"soundtrack",
 						"unknown"
 					],
 					"type": "string"
@@ -5575,7 +5587,10 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"bootleg",
 							"compilation",
+							"live",
+							"soundtrack",
 							"unknown"
 						],
 						"type": "string"
