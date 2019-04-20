@@ -7,7 +7,7 @@ import {ID3v2Frames} from './id3v2-frames';
 
 export declare namespace Jam {
 
-	export type AlbumType = 'unknown' | 'album' | 'compilation' | 'live' | 'bootleg' | 'soundtrack' | 'audiobook';
+	export type AlbumType = 'unknown' | 'album' | 'compilation' | 'live' | 'bootleg' | 'soundtrack' | 'audiobook' | 'ep' | 'single';
 	export type FolderType = 'unknown' | 'artist' | 'collection' | 'album' | 'multialbum' | 'extras';
 	export type PodcastStatusType = 'new' | 'downloading' | 'completed' | 'error';
 	export type PodcastEpisodeStatusType = 'new' | 'downloading' | 'completed' | 'error' | 'deleted';

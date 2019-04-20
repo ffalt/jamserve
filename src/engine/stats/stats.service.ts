@@ -23,7 +23,9 @@ export class StatsService {
 					compilation: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation}),
 					audiobook: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.audiobook}),
 					soundtrack: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.soundtrack}),
-					bootleg: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.bootleg})
+					bootleg: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.bootleg}),
+					ep: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.ep}),
+					single: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.single})
 				},
 				artist: await this.store.artistStore.searchCount({rootID}),
 				artistTypes: {
@@ -31,7 +33,9 @@ export class StatsService {
 					compilation: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation}),
 					audiobook: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.audiobook}),
 					soundtrack: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.soundtrack}),
-					bootleg: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.bootleg})
+					bootleg: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.bootleg}),
+					ep: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.ep}),
+					single: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.single})
 				},
 				folder: await this.store.folderStore.searchCount({rootID}),
 				track: await this.store.trackStore.searchCount({rootID})

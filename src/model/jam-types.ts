@@ -111,7 +111,9 @@ export enum AlbumType {
 	live = 'live',
 	bootleg = 'bootleg',
 	soundtrack = 'soundtrack',
-	audiobook = 'audiobook'
+	audiobook = 'audiobook',
+	ep = 'ep',
+	single = 'single'
 }
 
 export enum FileTyp {

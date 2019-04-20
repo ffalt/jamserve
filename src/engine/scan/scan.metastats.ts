@@ -208,6 +208,10 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 			albumType = AlbumType.live;
 		} else if (t.indexOf('soundtrack') >= 0) {
 			albumType = AlbumType.soundtrack;
+		} else if (t.indexOf('ep') >= 0) {
+			albumType = AlbumType.ep;
+		} else if (t.indexOf('single') >= 0) {
+			albumType = AlbumType.single;
 		} else if (t.indexOf('album') >= 0) {
 			albumType = AlbumType.album;
 		}

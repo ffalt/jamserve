@@ -4598,7 +4598,9 @@
 				"audiobook",
 				"bootleg",
 				"compilation",
+				"ep",
 				"live",
+				"single",
 				"soundtrack",
 				"unknown"
 			],
@@ -5367,7 +5369,9 @@
 						"audiobook",
 						"bootleg",
 						"compilation",
+						"ep",
 						"live",
+						"single",
 						"soundtrack",
 						"unknown"
 					],
@@ -5589,7 +5593,9 @@
 							"audiobook",
 							"bootleg",
 							"compilation",
+							"ep",
 							"live",
+							"single",
 							"soundtrack",
 							"unknown"
 						],

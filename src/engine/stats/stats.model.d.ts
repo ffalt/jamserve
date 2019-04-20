@@ -4,6 +4,8 @@ export interface AlbumTypeStats {
 	audiobook: number;
 	soundtrack: number;
 	bootleg: number;
+	ep: number;
+	single: number;
 }
 
 export interface Stats {
