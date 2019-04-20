@@ -177,7 +177,7 @@ export class ImageModule {
 					fit: sharp.fit.cover,
 					position: sharp.strategy.entropy
 				})
-			.toFile(filename);
+			.toFile(destination);
 	}
 
 	async clearImageCacheByIDs(ids: Array<string>): Promise<void> {
