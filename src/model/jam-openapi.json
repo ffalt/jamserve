@@ -4055,6 +4055,15 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "media",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "check the file media for errors",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "artist",
 						"schema": {
 							"type": "string"

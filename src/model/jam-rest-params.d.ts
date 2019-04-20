@@ -668,7 +668,14 @@ export declare namespace JamParameters {
 		folderID: string;
 	}
 
+	/**
+	 * Check track file(s) for tag/media hints
+	 */
 	export interface TrackHealth extends TrackSearchQuery, IncludesTrack {
+		/**
+		 * check the file media for errors
+		 */
+		media?: boolean;
 	}
 
 	/**

@@ -208,7 +208,7 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 				}
 				if (folder) {
-					const health = await this.checker.run(track, folder, root);
+					const health = await this.checker.run(track, folder, root, !!req.query.media);
 					if (folder && health && health.length > 0) {
 						result.push({
 							track: await this.prepare(track, req.query, req.user),

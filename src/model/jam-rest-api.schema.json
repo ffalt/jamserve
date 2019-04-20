@@ -14995,8 +14995,13 @@
 			]
 		},
 		"JamParameters.TrackHealth": {
+			"description": "Check track file(s) for tag/media hints",
 			"type": "object",
 			"properties": {
+				"media": {
+					"description": "check the file media for errors",
+					"type": "boolean"
+				},
 				"artist": {
 					"description": "filter by artist name",
 					"type": "string"
