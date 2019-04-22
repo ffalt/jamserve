@@ -2,7 +2,7 @@ import {IApiBinaryResult} from '../../typings';
 import {TrackStore} from '../track/track.store';
 import {FolderService} from '../folder/folder.service';
 import {Artist} from './artist.model';
-import {FolderType, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
+import {FolderType, MusicBrainz_VARIOUS_ARTISTS_ID, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
 import {ArtistStore, SearchQueryArtist} from './artist.store';
 import {Folder} from '../folder/folder.model';
 import {BaseListService} from '../base/base.list.service';
@@ -11,9 +11,12 @@ import {slugify} from '../../engine/scan/scan.utils';
 
 export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 
-
 	constructor(public artistStore: ArtistStore, private trackStore: TrackStore, private folderService: FolderService, stateService: StateService) {
 		super(artistStore, stateService);
+	}
+
+	canHaveArtistImage(artist: Artist): boolean {
+		return (artist.albumTypes.length > 0 && artist.mbArtistID !== MusicBrainz_VARIOUS_ARTISTS_ID);
 	}
 
 	async getArtistFolder(artist: Artist): Promise<Folder | undefined> {
@@ -39,12 +42,11 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 	}
 
 	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
-		if (artist.name === MusicBrainz_VARIOUS_ARTISTS_NAME) {
-			return this.folderService.imageModule.paint(MusicBrainz_VARIOUS_ARTISTS_NAME, size, format);
-		}
-		const folder = await this.getArtistFolder(artist);
-		if (folder) {
-			return this.folderService.getFolderImage(folder, size, format);
+		if (this.canHaveArtistImage(artist)) {
+			const folder = await this.getArtistFolder(artist);
+			if (folder) {
+				return this.folderService.getFolderImage(folder, size, format);
+			}
 		}
 		return this.folderService.imageModule.paint(artist.name, size, format);
 	}

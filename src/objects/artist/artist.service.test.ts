@@ -3,7 +3,7 @@ import {after, before, beforeEach, describe, it} from 'mocha';
 import {FolderService} from '../folder/folder.service';
 import {ArtistService} from './artist.service';
 import {testService} from '../base/base.service.spec';
-import {AlbumType, FolderType} from '../../model/jam-types';
+import {AlbumType, FolderType, MusicBrainz_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
 import {mockImage} from '../../modules/image/image.module.spec';
 import path from 'path';
 import fse from 'fs-extra';
@@ -23,39 +23,44 @@ describe('ArtistService', () => {
 				const artists = await artistService.artistStore.all();
 				expect(artists.length > 0).to.be.equal(true, 'Wrong Test Setup');
 				for (const artist of artists) {
-					const folder = await artistService.getArtistFolder(artist);
-					should().exist(folder);
-					if (folder) {
-						expect(
-							(folder.tag.type === FolderType.artist) ||
-							(folder.tag.type === FolderType.album && folder.tag.albumType === AlbumType.compilation)
-						).to.be.equal(true, folder.path + ' is not an artist/compilation folder');
+					if (artistService.canHaveArtistImage(artist)) {
+						const folder = await artistService.getArtistFolder(artist);
+						if (!folder) {
+							console.log(artist);
+						}
+						should().exist(folder);
+						if (folder) {
+							expect(
+								(folder.tag.type === FolderType.artist)
+							).to.be.equal(true, folder.path + ' is not an artist folder');
+						}
 					}
 				}
 			});
 			it('should return an artist image', async () => {
-				const artist = await artistService.artistStore.random();
-				should().exist(artist, 'Wrong Test Setup');
-				if (!artist) {
-					return;
-				}
-				const folder = await artistService.getArtistFolder(artist);
-				should().exist(folder);
-				if (folder) {
-					folder.tag.image = 'dummy.png';
-					const image = await mockImage('png');
-					const filename = path.resolve(folder.path, folder.tag.image);
-					await fse.writeFile(filename, image.buffer);
-					await folderService.folderStore.replace(folder);
-					const img = await artistService.getArtistImage(artist);
-					should().exist(img, 'Image not found');
-					if (img) {
-						should().exist(img.file || img.buffer, 'Image response not valid');
-						if (img.file) {
-							expect(img.file.filename).to.be.equal(filename);
+				const artists = await artistService.artistStore.all();
+				expect(artists.length > 0).to.be.equal(true, 'Wrong Test Setup');
+				for (const artist of artists) {
+					if (artistService.canHaveArtistImage(artist)) {
+						const folder = await artistService.getArtistFolder(artist);
+						should().exist(folder);
+						if (folder) {
+							folder.tag.image = 'dummy.png';
+							const image = await mockImage('png');
+							const filename = path.resolve(folder.path, folder.tag.image);
+							await fse.writeFile(filename, image.buffer);
+							await folderService.folderStore.replace(folder);
+							const img = await artistService.getArtistImage(artist);
+							should().exist(img, 'Image not found');
+							if (img) {
+								should().exist(img.file || img.buffer, 'Image response not valid');
+								if (img.file) {
+									expect(img.file.filename).to.be.equal(filename);
+								}
+							}
+							await fse.unlink(filename);
 						}
 					}
-					await fse.unlink(filename);
 				}
 			});
 		}
