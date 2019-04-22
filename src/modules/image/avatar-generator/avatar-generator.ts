@@ -130,19 +130,14 @@ class AvatarGenerator {
 				channels: 4 as 4
 			}
 		};
-		const overlays = parts.map((part) =>
-			sharp(part).raw().toBuffer()
-		);
-		let composite = overlays.shift();
-		if (composite) {
-			for (const overlay of overlays) {
-				const [compoisteData, overlayData]: Array<Buffer> = await Promise.all([composite, overlay]);
-				composite = sharp(compoisteData, options)
-					.composite([{input: overlayData}])
-					.raw().toBuffer();
-			}
+		const composite = parts.shift();
+		if (!composite) {
+			throw new Error(`variant '${variant}'does not contain any parts`);
 		}
-		return sharp(await composite, options);
+		return await sharp(composite, options)
+			.composite(parts.map(p => {
+				return {input: p};
+			}));
 	}
 }
 
