@@ -7,6 +7,7 @@ export interface Artist extends DBObject {
 	nameSort?: string;
 	rootIDs: Array<string>;
 	trackIDs: Array<string>;
+	folderIDs: Array<string>;
 	albumIDs: Array<string>;
 	albumTypes: Array<AlbumType>;
 	mbArtistID?: string;

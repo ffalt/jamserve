@@ -6,6 +6,7 @@ export interface Album extends DBObject {
 	name: string;
 	rootIDs: Array<string>;
 	trackIDs: Array<string>;
+	folderIDs: Array<string>;
 	albumType: AlbumType;
 	artistID: string;
 	artist?: string;

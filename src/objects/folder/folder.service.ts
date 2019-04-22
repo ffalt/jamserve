@@ -52,9 +52,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 
 	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
 		if (!folder.tag.image) {
-			if (!folder.tag.image) {
-				return;
-			}
+			return;
 		}
 		return await this.imageModule.get(folder.id, path.join(folder.path, folder.tag.image), size, format);
 	}

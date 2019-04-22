@@ -7,6 +7,7 @@ import {ArtistStore, SearchQueryArtist} from './artist.store';
 import {Folder} from '../folder/folder.model';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
+import {slugify} from '../../engine/scan/scan.utils';
 
 export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 
@@ -16,22 +17,25 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 	}
 
 	async getArtistFolder(artist: Artist): Promise<Folder | undefined> {
-		if (artist.trackIDs.length === 0) {
+		if (artist.folderIDs.length === 0) {
 			return;
 		}
-		const track = await this.trackStore.byId(artist.trackIDs[0]);
-		if (!track) {
-			return;
+		const cachedFolders: Array<Folder> = [];
+		const tryFolderID: (folderID: string) => Promise<Folder | undefined> = async (folderID) => {
+			const folders = await this.folderService.collectFolderPath(folderID, cachedFolders);
+			if (folders.length === 0) {
+				return;
+			}
+			return folders.find(f => f.tag.type === FolderType.artist);
+		};
+		for (const folderID of artist.folderIDs) {
+			const folder = await tryFolderID(folderID);
+			if (folder && (
+				(folder.tag.mbArtistID && folder.tag.mbArtistID === artist.mbArtistID) || (folder.tag.artist && slugify(folder.tag.artist) === artist.slug))
+			) {
+				return folder;
+			}
 		}
-		const folders = await this.folderService.collectFolderPath(track.parentID);
-		if (folders.length === 0) {
-			return;
-		}
-		let folder = folders.find(f => f.tag.type === FolderType.artist);
-		if (!folder) {
-			folder = folders[folders.length - 1];
-		}
-		return folder;
 	}
 
 	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
@@ -40,11 +44,9 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 		}
 		const folder = await this.getArtistFolder(artist);
 		if (folder) {
-			if (folder.tag.mbArtistID === artist.mbArtistID || folder.tag.artist === artist.name) {
-				return this.folderService.getFolderImage(folder, size, format);
-			}
-			return this.folderService.imageModule.paint(artist.name, size, format);
+			return this.folderService.getFolderImage(folder, size, format);
 		}
+		return this.folderService.imageModule.paint(artist.name, size, format);
 	}
 
 }

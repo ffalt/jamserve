@@ -75,6 +75,7 @@ export class ScanMetaMerger {
 			mbArtistID: trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID,
 			mbAlbumID: trackInfo.track.tag.mbAlbumID,
 			genre: trackInfo.track.tag.genre,
+			folderIDs: [],
 			trackIDs: [],
 			rootIDs: [],
 			year: trackInfo.track.tag.year,
@@ -175,6 +176,7 @@ export class ScanMetaMerger {
 			mbArtistID,
 			albumTypes: [],
 			albumIDs: [],
+			folderIDs: [],
 			trackIDs: [],
 			created: Date.now()
 		};
@@ -204,6 +206,7 @@ export class ScanMetaMerger {
 				name: MusicBrainz_VARIOUS_ARTISTS_NAME,
 				mbArtistID: MusicBrainz_VARIOUS_ARTISTS_ID,
 				albumTypes: [AlbumType.compilation],
+				folderIDs: [],
 				albumIDs: [],
 				trackIDs: [],
 				created: Date.now()
@@ -358,6 +361,7 @@ export class ScanMetaMerger {
 				let duration = 0;
 				album.rootIDs = [];
 				album.trackIDs = [];
+				album.folderIDs = [];
 				const metaStatBuilder = new MetaStatBuilder();
 				const tracks = await this.store.trackStore.byIds(tracksIDs);
 				for (const track of tracks) {
@@ -371,6 +375,9 @@ export class ScanMetaMerger {
 					const track = trackInfo.track;
 					if (album.rootIDs.indexOf(track.rootID) < 0) {
 						album.rootIDs.push(track.rootID);
+					}
+					if (album.folderIDs.indexOf(track.parentID) < 0) {
+						album.folderIDs.push(track.parentID);
 					}
 					if (album.trackIDs.indexOf(track.id) < 0) {
 						album.trackIDs.push(track.id);
@@ -430,6 +437,7 @@ export class ScanMetaMerger {
 				}
 			} else {
 				artist.trackIDs = [];
+				artist.folderIDs = [];
 				artist.albumIDs = [];
 				artist.albumTypes = [];
 				artist.rootIDs = [];
@@ -447,6 +455,9 @@ export class ScanMetaMerger {
 					}
 					if (artist.rootIDs.indexOf(track.rootID) < 0) {
 						artist.rootIDs.push(track.rootID);
+					}
+					if (artist.folderIDs.indexOf(track.parentID) < 0) {
+						artist.folderIDs.push(track.parentID);
 					}
 					if (artist.trackIDs.indexOf(track.id) < 0) {
 						artist.trackIDs.push(track.id);

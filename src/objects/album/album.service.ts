@@ -15,27 +15,39 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 	}
 
 	async getAlbumFolder(album: Album): Promise<Folder | undefined> {
-		if (album.trackIDs.length === 0) {
+		if (album.folderIDs.length === 0) {
 			return;
 		}
-		const track = await this.trackStore.byId(album.trackIDs[0]);
-		if (!track) {
-			return;
+		if (album.folderIDs.length === 1) {
+			return this.folderService.folderStore.byId(album.folderIDs[0]);
 		}
-		let folders = await this.folderService.collectFolderPath(track.parentID);
-		if (folders.length === 0) {
-			return;
-		}
-		folders = folders.sort((a, b) => b.tag.level - a.tag.level);
-		let folder = folders[0];
-		for (const f of folders) {
-			if (FolderTypesAlbum.indexOf(f.tag.type) >= 0) {
-				folder = f;
-			} else {
-				break;
+
+		const cachedFolders: Array<Folder> = [];
+
+		const tryFolderID: (folderID: string) => Promise<Folder | undefined> = async (folderID) => {
+			let folders = await this.folderService.collectFolderPath(folderID, cachedFolders);
+			if (folders.length === 0) {
+				return;
+			}
+			folders = folders.sort((a, b) => b.tag.level - a.tag.level);
+			let folder = folders[0];
+			for (const f of folders) {
+				if (FolderTypesAlbum.indexOf(f.tag.type) >= 0) {
+					folder = f;
+				} else {
+					break;
+				}
+			}
+			if (folder && (FolderTypesAlbum.indexOf(folder.tag.type) >= 0)) {
+				return folder;
+			}
+		};
+		for (const folderID of album.folderIDs) {
+			const folder = await tryFolderID(folderID);
+			if (folder) {
+				return folder;
 			}
 		}
-		return folder;
 	}
 
 	async getAlbumImage(album: Album, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
