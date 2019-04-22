@@ -24,7 +24,7 @@ export class ImageModuleTest {
 
 	async setup() {
 		this.dir = tmp.dirSync();
-		this.imageModule = new ImageModule(this.dir.name, path.join(__dirname, 'avatar-generator', 'img'));
+		this.imageModule = new ImageModule(this.dir.name, path.join(__dirname, 'avatar-generator'));
 	}
 
 	async cleanup() {
