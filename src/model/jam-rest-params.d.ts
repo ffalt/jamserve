@@ -595,9 +595,9 @@ export declare namespace JamParameters {
 	export interface FolderChildren extends ID, IncludesTrack, IncludesFolder {
 	}
 
-	export interface FolderTracks extends Tracks {
+	export interface FolderTracks extends IDs, IncludesTrack {
 		/**
-		 * include tracks of a sub folders
+		 * include tracks of sub folders
 		 *
 		 * @default false
 		 */

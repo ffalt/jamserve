@@ -1406,7 +1406,7 @@
 							"default": false,
 							"type": "boolean"
 						},
-						"description": "include tracks of a sub folders",
+						"description": "include tracks of sub folders",
 						"required": false
 					},
 					{

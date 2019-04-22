@@ -14020,7 +14020,7 @@
 			"type": "object",
 			"properties": {
 				"recursive": {
-					"description": "include tracks of a sub folders",
+					"description": "include tracks of sub folders",
 					"default": false,
 					"type": "boolean"
 				},
