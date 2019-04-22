@@ -38,6 +38,7 @@ import {StatsService} from './stats/stats.service';
 import {SettingsService} from '../objects/settings/settings.service';
 import {RootScanStrategy} from '../model/jam-types';
 import Logger from '../utils/logger';
+import {pathDeleteIfExists} from '../utils/fs-utils';
 
 const log = Logger('Engine');
 
@@ -172,14 +173,23 @@ export class Engine {
 		}
 	}
 
+	private resolveCachePaths(): Array<string> {
+		return [
+			path.resolve(this.config.paths.data, 'cache', 'waveforms'),
+			path.resolve(this.config.paths.data, 'cache', 'uploads'),
+			path.resolve(this.config.paths.data, 'cache', 'images'),
+			path.resolve(this.config.paths.data, 'images'),
+			path.resolve(this.config.paths.data, 'session'),
+			path.resolve(this.config.paths.data, 'podcasts')
+		];
+	}
+
 	private async checkDataPaths(): Promise<void> {
 		await fse.ensureDir(path.resolve(this.config.paths.data));
-		await fse.ensureDir(path.resolve(this.config.paths.data, 'cache', 'waveforms'));
-		await fse.ensureDir(path.resolve(this.config.paths.data, 'cache', 'uploads'));
-		await fse.ensureDir(path.resolve(this.config.paths.data, 'cache', 'images'));
-		await fse.ensureDir(path.resolve(this.config.paths.data, 'images'));
-		await fse.ensureDir(path.resolve(this.config.paths.data, 'session'));
-		await fse.ensureDir(path.resolve(this.config.paths.data, 'podcasts'));
+		const paths = this.resolveCachePaths();
+		for (const p of paths) {
+			await fse.ensureDir(p);
+		}
 	}
 
 	async start(): Promise<void> {
@@ -197,5 +207,11 @@ export class Engine {
 		await this.store.close();
 	}
 
+	async clearLocalFiles() {
+		const paths = this.resolveCachePaths();
+		for (const p of paths) {
+			await pathDeleteIfExists(p);
+		}
+	}
 }
 

@@ -1,5 +1,5 @@
 import {Engine} from './engine/engine';
-import {configureLogger} from './utils/logger';
+import Logger, {configureLogger} from './utils/logger';
 import {Server} from './api/server';
 import {loadConfig} from './config';
 import {Store} from './engine/store/store';
@@ -29,9 +29,11 @@ if (config.database.use === 'elasticsearch') {
 const store = new Store(db);
 const engine = new Engine(config, store, pack.version);
 const server = new Server(engine);
+const log = Logger('JamServe');
 
 async function run(): Promise<void> {
 	try {
+		log.info(`Jamserve ${engine.version} starting`);
 		await engine.start();
 		await server.start();
 		if (engine.settingsService.settings.library.scanAtStart) {
@@ -51,14 +53,17 @@ async function stop(): Promise<void> {
 		await engine.stop();
 		process.exit();
 	} catch (e) {
-		console.error('Error on startdown', e);
+		console.error('Error on server stop', e);
 		process.exit(1);
 	}
 }
 
 async function runClearDB(): Promise<void> {
+	log.info(`Jamserve ${engine.version} cleaning DB`);
 	await engine.store.open();
 	await engine.store.reset();
+	log.info(`Jamserve ${engine.version} removing cache files`);
+	await engine.clearLocalFiles();
 	await engine.store.close();
 }
 
