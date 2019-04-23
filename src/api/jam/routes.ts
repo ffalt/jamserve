@@ -113,7 +113,7 @@ export function registerAccessControlApi(register: Register, api: JamController)
 	});
 
 	register.get('/folder/index', async (req, res) => {
-		const options: JamRequest<JamParameters.Index> = {query: req.query, user: req.user, client: req.client};
+		const options: JamRequest<JamParameters.FolderIndex> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.FolderIndex = await api.folderController.index(options);
 		await ApiResponder.data(res, result);
 	});
@@ -449,7 +449,7 @@ export function registerAccessControlApi(register: Register, api: JamController)
 	});
 
 	register.get('/artist/index', async (req, res) => {
-		const options: JamRequest<JamParameters.Index> = {query: req.query, user: req.user, client: req.client};
+		const options: JamRequest<JamParameters.ArtistIndex> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.ArtistIndex = await api.artistController.index(options);
 		await ApiResponder.data(res, result);
 	});
@@ -487,6 +487,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 	register.get('/album/search', async (req, res) => {
 		const options: JamRequest<JamParameters.AlbumSearch> = {query: req.query, user: req.user, client: req.client};
 		const result: Array<Jam.Album> = await api.albumController.search(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/album/index', async (req, res) => {
+		const options: JamRequest<JamParameters.AlbumIndex> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.AlbumIndex = await api.albumController.index(options);
 		await ApiResponder.data(res, result);
 	});
 

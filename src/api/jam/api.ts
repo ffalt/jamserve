@@ -80,7 +80,7 @@ export class JamController {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.podcastController = new PodcastController(this.engine.podcastService, this.episodeController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.albumController = new AlbumController(this.engine.albumService, this.trackController, this.engine.metaDataService,
+		this.albumController = new AlbumController(this.engine.albumService, this.trackController, this.engine.metaDataService, this.engine.indexService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.artistController = new ArtistController(this.engine.artistService, this.trackController, this.albumController, this.engine.metaDataService, this.engine.indexService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);

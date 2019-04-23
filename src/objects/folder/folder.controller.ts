@@ -180,9 +180,8 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return this.getList(req.query, req.query, req.query, req.user);
 	}
 
-	async index(req: JamRequest<JamParameters.Index>): Promise<Jam.FolderIndex> {
-		const folderIndex = await this.indexService.getFolderIndex();
-		return formatFolderIndex(this.indexService.filterFolderIndex(req.query.rootID, folderIndex));
+	async index(req: JamRequest<JamParameters.FolderSearch>): Promise<Jam.FolderIndex> {
+		return formatFolderIndex(await this.indexService.getFolderIndex(await this.translateQuery(req.query, req.user)));
 	}
 
 	async artworks(req: JamRequest<JamParameters.ID>): Promise<Array<Jam.ArtworkImage>> {

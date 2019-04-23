@@ -829,11 +829,178 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by id",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "rootID",
 						"schema": {
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "parentID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by parent folder id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "childOfID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter if folder is in folder id (or its subfolders)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by artist name",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by title",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "album",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by album name",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by genre",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "level",
+						"schema": {
+							"type": "number"
+						},
+						"description": "filter by level",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "newerThan",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by creation date (unix time)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "fromYear",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "toYear",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "type",
+						"schema": {
+							"enum": [
+								"album",
+								"artist",
+								"collection",
+								"extras",
+								"multialbum",
+								"unknown"
+							],
+							"type": "string"
+						},
+						"description": "filter by folder type",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "types",
+						"schema": {
+							"type": "array",
+							"items": {
+								"enum": [
+									"album",
+									"artist",
+									"collection",
+									"extras",
+									"multialbum",
+									"unknown"
+								],
+								"type": "string"
+							}
+						},
+						"description": "filter by folder types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "the sort direction",
 						"required": false
 					}
 				]
@@ -6390,6 +6557,26 @@
 					},
 					{
 						"in": "query",
+						"name": "albumType",
+						"schema": {
+							"enum": [
+								"album",
+								"audiobook",
+								"bootleg",
+								"compilation",
+								"ep",
+								"live",
+								"single",
+								"soundtrack",
+								"unknown"
+							],
+							"type": "string"
+						},
+						"description": "filter by album type",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "albumTypes",
 						"schema": {
 							"type": "array",
@@ -6759,6 +6946,26 @@
 							"type": "string"
 						},
 						"description": "filter by album id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumType",
+						"schema": {
+							"enum": [
+								"album",
+								"audiobook",
+								"bootleg",
+								"compilation",
+								"ep",
+								"live",
+								"single",
+								"soundtrack",
+								"unknown"
+							],
+							"type": "string"
+						},
+						"description": "filter by album type",
 						"required": false
 					},
 					{
@@ -7359,11 +7566,119 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "name",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by name",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "rootID",
 						"schema": {
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by album id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumType",
+						"schema": {
+							"enum": [
+								"album",
+								"audiobook",
+								"bootleg",
+								"compilation",
+								"ep",
+								"live",
+								"single",
+								"soundtrack",
+								"unknown"
+							],
+							"type": "string"
+						},
+						"description": "filter by album type",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTypes",
+						"schema": {
+							"type": "array",
+							"items": {
+								"enum": [
+									"album",
+									"audiobook",
+									"bootleg",
+									"compilation",
+									"ep",
+									"live",
+									"single",
+									"soundtrack",
+									"unknown"
+								],
+								"type": "string"
+							}
+						},
+						"description": "filter by album types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "mbArtistID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by musicbrainz album id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "newerThan",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by creation date (unix time)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "the sort direction",
 						"required": false
 					}
 				]
@@ -8376,6 +8691,211 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					}
+				]
+			}
+		},
+		"/album/index": {
+			"get": {
+				"operationId": "albumController.index",
+				"description": "get the navigation index for albums",
+				"tags": [
+					"album"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AlbumIndex"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "name",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by name",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by artist name",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artistID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by artist id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by track id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "mbAlbumID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by album id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "mbArtistID",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by artist id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by genre",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumType",
+						"schema": {
+							"enum": [
+								"album",
+								"audiobook",
+								"bootleg",
+								"compilation",
+								"ep",
+								"live",
+								"single",
+								"soundtrack",
+								"unknown"
+							],
+							"type": "string"
+						},
+						"description": "filter by album type",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTypes",
+						"schema": {
+							"type": "array",
+							"items": {
+								"enum": [
+									"album",
+									"audiobook",
+									"bootleg",
+									"compilation",
+									"ep",
+									"live",
+									"single",
+									"soundtrack",
+									"unknown"
+								],
+								"type": "string"
+							}
+						},
+						"description": "filter by album types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "newerThan",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by creation date (unix time)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "fromYear",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "toYear",
+						"schema": {
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "the sort direction",
 						"required": false
 					}
 				]
@@ -19914,6 +20434,69 @@
 				},
 				"required": [
 					"artistID",
+					"name",
+					"trackCount"
+				]
+			},
+			"Jam.AlbumIndex": {
+				"type": "object",
+				"properties": {
+					"lastModified": {
+						"type": "number"
+					},
+					"groups": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.AlbumIndexGroup"
+						}
+					}
+				},
+				"required": [
+					"groups",
+					"lastModified"
+				]
+			},
+			"Jam.AlbumIndexGroup": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"entries": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.AlbumIndexEntry"
+						}
+					}
+				},
+				"required": [
+					"entries",
+					"name"
+				]
+			},
+			"Jam.AlbumIndexEntry": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"artistID": {
+						"type": "string"
+					},
+					"trackCount": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"artist",
+					"artistID",
+					"id",
 					"name",
 					"trackCount"
 				]

@@ -166,7 +166,7 @@ export interface JamApi {
 		 * folder: get the navigation index for folders
 		 */
 		'folder/index'?: {
-			params: JamParameters.Index;
+			params: JamParameters.FolderIndex;
 			result: Jam.FolderIndex;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
@@ -619,7 +619,7 @@ export interface JamApi {
 		 * artist: get the navigation index for artists
 		 */
 		'artist/index'?: {
-			params: JamParameters.Index;
+			params: JamParameters.ArtistIndex;
 			result: Jam.ArtistIndex
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
@@ -670,6 +670,14 @@ export interface JamApi {
 		'album/search'?: {
 			params: JamParameters.AlbumSearch;
 			result: Array<Jam.Album>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
+		 * album: get the navigation index for albums
+		 */
+		'album/index'?: {
+			params: JamParameters.AlbumIndex;
+			result: Jam.AlbumIndex;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**

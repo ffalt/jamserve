@@ -230,22 +230,21 @@ export class SubsonicApi {
 		 Returns a <subsonic-response> element with a nested <indexes> element on success.
 		 */
 
-		const folderIndex = await this.engine.indexService.getFolderIndex();
+		const folderIndex = await this.engine.indexService.getFolderIndex({rootID: req.query.musicFolderId ? req.query.musicFolderId.toString() : undefined});
 		if (req.query.ifModifiedSince && req.query.ifModifiedSince > 0 && (folderIndex.lastModified <= req.query.ifModifiedSince)) {
 			const empty: any = {};
 			return empty;
 		} else {
-			const index = this.engine.indexService.filterFolderIndex(req.query.musicFolderId ? req.query.musicFolderId.toString() : undefined, folderIndex);
 			let ids: Array<string> = [];
-			index.groups.forEach(entry => {
+			folderIndex.groups.forEach(entry => {
 				ids = ids.concat(entry.entries.map(e => e.folder.id));
 			});
 			const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.folder);
 			return {
 				indexes: {
-					lastModified: index.lastModified,
+					lastModified: folderIndex.lastModified,
 					ignoredArticles: (this.engine.indexService.indexConfig.ignoreArticles || []).join(' '),
-					index: FORMAT.packFolderIndex(index, states),
+					index: FORMAT.packFolderIndex(folderIndex, states),
 					// shortcut?: Artist[]; use unknown, there is no api to add/remove shortcuts
 					// child?: Child[]; use unknown
 				}
@@ -267,17 +266,16 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <artists> element on success.
 		 */
-		const artistIndex = await this.engine.indexService.getArtistIndex();
-		const index = this.engine.indexService.filterArtistIndex(req.query.musicFolderId ? req.query.musicFolderId.toString() : undefined, artistIndex);
+		const artistIndex = await this.engine.indexService.getArtistIndex({rootID: req.query.musicFolderId ? req.query.musicFolderId.toString() : undefined});
 		let ids: Array<string> = [];
-		index.groups.forEach(entry => {
+		artistIndex.groups.forEach(entry => {
 			ids = ids.concat(entry.entries.map(e => e.artist.id));
 		});
 		const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.artist);
 		return {
 			artists: {
 				ignoredArticles: (this.engine.indexService.indexConfig.ignoreArticles || []).join(' '),
-				index: FORMAT.packArtistIndex(index, states)
+				index: FORMAT.packArtistIndex(artistIndex, states)
 			}
 		};
 	}

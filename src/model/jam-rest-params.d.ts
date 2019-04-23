@@ -44,13 +44,6 @@ export declare namespace JamParameters {
 		amount?: number;
 	}
 
-	export interface Index {
-		/**
-		 * filter by root id
-		 */
-		rootID?: string;
-	}
-
 	export interface IncludesRadio {
 		/**
 		 * include user states (fav,rate) on radio(s)
@@ -691,6 +684,9 @@ export declare namespace JamParameters {
 	export interface FolderSearch extends Paginate, FolderSearchQuery, IncludesFolderChildren {
 	}
 
+	export interface FolderIndex extends FolderSearchQuery {
+	}
+
 	export interface FolderHealth extends FolderSearchQuery, IncludesFolder {
 	}
 
@@ -899,6 +895,9 @@ export declare namespace JamParameters {
 	export interface AlbumSearch extends Paginate, AlbumSearchQuery, IncludesAlbum {
 	}
 
+	export interface AlbumIndex extends AlbumSearchQuery {
+	}
+
 	export interface Playlist extends ID, IncludesPlaylist {
 
 	}
@@ -983,6 +982,10 @@ export declare namespace JamParameters {
 		 */
 		albumID?: string;
 		/**
+		 * filter by album type
+		 */
+		albumType?: Jam.AlbumType;
+		/**
 		 * filter by album types
 		 */
 		albumTypes?: Array<Jam.AlbumType>;
@@ -1003,6 +1006,9 @@ export declare namespace JamParameters {
 	}
 
 	export interface ArtistSearch extends Paginate, ArtistSearchQuery, IncludesArtist {
+	}
+
+	export interface ArtistIndex extends ArtistSearchQuery {
 	}
 
 	export interface RootNew {

@@ -1,20 +1,21 @@
 import path from 'path';
-import {ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry, Indexes} from './index.model';
+import {ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry, AlbumIndex, AlbumIndexEntry} from './index.model';
 import {Folder} from '../../objects/folder/folder.model';
-import {ArtistStore} from '../../objects/artist/artist.store';
-import {FolderStore} from '../../objects/folder/folder.store';
+import {ArtistStore, SearchQueryArtist} from '../../objects/artist/artist.store';
+import {FolderStore, SearchQueryFolder} from '../../objects/folder/folder.store';
 import {TrackStore} from '../../objects/track/track.store';
-import {AlbumType} from '../../model/jam-types';
+import {AlbumType, FolderType} from '../../model/jam-types';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import Logger from '../../utils/logger';
 import {Jam} from '../../model/jam-rest-data';
+import {AlbumStore, SearchQueryAlbum} from '../../objects/album/album.store';
 
 const log = Logger('IndexService');
 
 export class IndexTreeBuilder {
 	private ignore: string;
 
-	constructor(indexConfig: Jam.AdminSettingsIndex, private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
+	constructor(indexConfig: Jam.AdminSettingsIndex) {
 		this.ignore = indexConfig.ignoreArticles.join('|');
 	}
 
@@ -32,38 +33,20 @@ export class IndexTreeBuilder {
 		}
 		return '#';
 	}
+}
 
-	async buildArtistIndex(): Promise<ArtistIndex> {
-		const result: ArtistIndex = {groups: [], lastModified: Date.now()};
-		const artists = await this.artistStore.search({albumType: AlbumType.album});
-		artists.forEach(artist => {
-			const entry: ArtistIndexEntry = {artist};
-			const indexChar = this.getIndexChar(artist.name, artist.nameSort);
-			let group = result.groups.find(g => g.name === indexChar);
-			if (!group) {
-				group = {name: indexChar, entries: []};
-				result.groups.push(group);
-			}
-			group.entries.push(entry);
-		});
-		result.groups.forEach(group => {
-			group.entries.sort((a, b) => {
-				return a.artist.name.localeCompare(b.artist.name);
-			});
-		});
-		result.groups.sort((a, b) => {
-			return a.name.localeCompare(b.name);
-		});
-		return result;
+export class IndexFolderTreeBuilder extends IndexTreeBuilder {
+	constructor(indexConfig: Jam.AdminSettingsIndex, private folderStore: FolderStore, private trackStore: TrackStore) {
+		super(indexConfig);
 	}
 
 	private async getTotalTrackCount(folder: Folder): Promise<number> {
 		return this.trackStore.searchCount({inPath: folder.path});
 	}
 
-	async buildFolderIndex(): Promise<FolderIndex> {
+	async buildFolderIndex(query: SearchQueryFolder): Promise<FolderIndex> {
 		const result: FolderIndex = {groups: [], lastModified: Date.now()};
-		const folders = await this.folderStore.search({level: 1});
+		const folders = await this.folderStore.search(query);
 		for (const folder of folders) {
 			const trackCount = await this.getTotalTrackCount(folder);
 			const entry: FolderIndexEntry = {
@@ -90,93 +73,170 @@ export class IndexTreeBuilder {
 		});
 		return result;
 	}
+}
 
-	async buildIndexes(): Promise<Indexes> {
-		const folderIndex = await this.buildFolderIndex();
-		const artistIndex = await this.buildArtistIndex();
-		return {folderIndex, artistIndex};
+export class IndexArtistTreeBuilder extends IndexTreeBuilder {
+	constructor(indexConfig: Jam.AdminSettingsIndex, private artistStore: ArtistStore) {
+		super(indexConfig);
 	}
+
+	async buildArtistIndex(query: SearchQueryArtist): Promise<ArtistIndex> {
+		const result: ArtistIndex = {groups: [], lastModified: Date.now()};
+		const artists = await this.artistStore.search(query);
+		artists.forEach(artist => {
+			const entry: ArtistIndexEntry = {artist};
+			const indexChar = this.getIndexChar(artist.name, artist.nameSort);
+			let group = result.groups.find(g => g.name === indexChar);
+			if (!group) {
+				group = {name: indexChar, entries: []};
+				result.groups.push(group);
+			}
+			group.entries.push(entry);
+		});
+		result.groups.forEach(group => {
+			group.entries.sort((a, b) => {
+				return a.artist.name.localeCompare(b.artist.name);
+			});
+		});
+		result.groups.sort((a, b) => {
+			return a.name.localeCompare(b.name);
+		});
+		return result;
+	}
+
+}
+
+export class IndexAlbumTreeBuilder extends IndexTreeBuilder {
+	constructor(indexConfig: Jam.AdminSettingsIndex, private albumStore: AlbumStore) {
+		super(indexConfig);
+	}
+
+	async buildAlbumIndex(query: SearchQueryAlbum): Promise<AlbumIndex> {
+		const result: AlbumIndex = {groups: [], lastModified: Date.now()};
+		const albums = await this.albumStore.search(query);
+		albums.forEach(album => {
+			const entry: AlbumIndexEntry = {album};
+			const indexChar = this.getIndexChar(album.name);
+			let group = result.groups.find(g => g.name === indexChar);
+			if (!group) {
+				group = {name: indexChar, entries: []};
+				result.groups.push(group);
+			}
+			group.entries.push(entry);
+		});
+		result.groups.forEach(group => {
+			group.entries.sort((a, b) => {
+				return a.album.name.localeCompare(b.album.name);
+			});
+		});
+		result.groups.sort((a, b) => {
+			return a.name.localeCompare(b.name);
+		});
+		return result;
+	}
+
 }
 
 export class IndexService {
-	private cached?: Indexes;
-	private indexCacheDebounce = new DebouncePromises<Indexes>();
+	private cached: {
+		folder: {
+			[id: string]: FolderIndex;
+		};
+		artist: {
+			[id: string]: ArtistIndex;
+		};
+		album: {
+			[id: string]: AlbumIndex;
+		};
+	} = {
+		folder: {},
+		artist: {},
+		album: {}
+	};
+	private indexCacheFolderDebounce = new DebouncePromises<FolderIndex>();
+	private indexCacheArtistDebounce = new DebouncePromises<ArtistIndex>();
+	private indexCacheAlbumDebounce = new DebouncePromises<AlbumIndex>();
 	public indexConfig: Jam.AdminSettingsIndex = {ignoreArticles: []};
 
-	constructor(private artistStore: ArtistStore, private folderStore: FolderStore, private trackStore: TrackStore) {
+	constructor(private artistStore: ArtistStore, private albumStore: AlbumStore, private folderStore: FolderStore, private trackStore: TrackStore) {
+	}
+
+	public clearCache() {
+		this.cached = {
+			folder: {},
+			artist: {},
+			album: {}
+		};
 	}
 
 	public setSettings(indexConfig: Jam.AdminSettingsIndex) {
 		this.indexConfig = indexConfig;
-		if (this.cached) {
-			this.cached = undefined;
-		}
+		this.clearCache();
 	}
 
-	async buildIndexes(): Promise<Indexes> {
-		log.debug('Building Indexes');
-		const builder = new IndexTreeBuilder(this.indexConfig, this.artistStore, this.folderStore, this.trackStore);
-		this.cached = await builder.buildIndexes();
-		return this.cached;
-	}
-
-	async getIndexes(): Promise<Indexes> {
-		if (this.cached) {
-			return this.cached;
+	async getFolderIndex(query: SearchQueryFolder): Promise<FolderIndex> {
+		const id = JSON.stringify(query);
+		if (this.cached.folder[id]) {
+			return this.cached.folder[id];
 		}
-		const cacheID = 'index';
-		if (this.indexCacheDebounce.isPending(cacheID)) {
-			return this.indexCacheDebounce.append(cacheID);
+		if (this.indexCacheFolderDebounce.isPending(id)) {
+			return this.indexCacheFolderDebounce.append(id);
 		}
-		this.indexCacheDebounce.setPending(cacheID);
+		this.indexCacheFolderDebounce.setPending(id);
 		try {
-			const result = await this.buildIndexes();
-			await this.indexCacheDebounce.resolve(cacheID, result);
+			const builder = new IndexFolderTreeBuilder(this.indexConfig, this.folderStore, this.trackStore);
+			const result = await builder.buildFolderIndex(query);
+			await this.indexCacheFolderDebounce.resolve(id, result);
 			return result;
 		} catch (e) {
-			await this.indexCacheDebounce.reject(cacheID, e);
+			await this.indexCacheFolderDebounce.reject(id, e);
 			return Promise.reject(e);
 		}
 	}
 
-	async getFolderIndex(): Promise<FolderIndex> {
-		const indexes = await this.getIndexes();
-		return indexes.folderIndex;
-	}
-
-	async getArtistIndex(): Promise<ArtistIndex> {
-		const indexes = await this.getIndexes();
-		return indexes.artistIndex;
-	}
-
-	filterFolderIndex(rootID: string | undefined, folderIndex: FolderIndex): FolderIndex {
-		if (!rootID) {
-			return folderIndex;
+	async getArtistIndex(query: SearchQueryArtist): Promise<ArtistIndex> {
+		const id = JSON.stringify(query);
+		if (this.cached.artist[id]) {
+			return this.cached.artist[id];
 		}
-		return {
-			lastModified: folderIndex.lastModified,
-			groups: folderIndex.groups.map(group => {
-				return {
-					name: group.name,
-					entries: group.entries.filter(entry => entry.folder.rootID === rootID)
-				};
-			}).filter(group => group.entries.length > 0)
-		};
-	}
-
-	filterArtistIndex(rootID: string | undefined, artistIndex: ArtistIndex): ArtistIndex {
-		if (!rootID) {
-			return artistIndex;
+		if (this.indexCacheArtistDebounce.isPending(id)) {
+			return this.indexCacheArtistDebounce.append(id);
 		}
-		return {
-			lastModified: artistIndex.lastModified,
-			groups: artistIndex.groups.map(group => {
-				return {
-					name: group.name,
-					entries: group.entries.filter(entry => entry.artist.rootIDs.indexOf(rootID) >= 0)
-				};
-			}).filter(group => group.entries.length > 0)
-		};
+		this.indexCacheArtistDebounce.setPending(id);
+		try {
+			const builder = new IndexArtistTreeBuilder(this.indexConfig, this.artistStore);
+			const result = await builder.buildArtistIndex(query);
+			await this.indexCacheArtistDebounce.resolve(id, result);
+			return result;
+		} catch (e) {
+			await this.indexCacheArtistDebounce.reject(id, e);
+			return Promise.reject(e);
+		}
 	}
 
+	async getAlbumIndex(query: SearchQueryAlbum): Promise<AlbumIndex> {
+		const id = JSON.stringify(query);
+		if (this.cached.album[id]) {
+			return this.cached.album[id];
+		}
+		if (this.indexCacheAlbumDebounce.isPending(id)) {
+			return this.indexCacheAlbumDebounce.append(id);
+		}
+		this.indexCacheAlbumDebounce.setPending(id);
+		try {
+			const builder = new IndexAlbumTreeBuilder(this.indexConfig, this.albumStore);
+			const result = await builder.buildAlbumIndex(query);
+			await this.indexCacheAlbumDebounce.resolve(id, result);
+			return result;
+		} catch (e) {
+			await this.indexCacheAlbumDebounce.reject(id, e);
+			return Promise.reject(e);
+		}
+	}
+
+	async buildDefaultIndexes() {
+		this.clearCache();
+		await this.getFolderIndex({level: 1});
+		await this.getArtistIndex({albumType: AlbumType.album});
+	}
 }

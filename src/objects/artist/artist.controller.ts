@@ -87,6 +87,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 			rootID: query.rootID,
 			albumID: query.albumID,
 			mbArtistID: query.mbArtistID,
+			albumType: query.albumType,
 			albumTypes: query.albumTypes,
 			newerThan: query.newerThan,
 			// genre: query.genre,
@@ -114,9 +115,8 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 		return this.getList(req.query, req.query, req.query, req.user);
 	}
 
-	async index(req: JamRequest<JamParameters.Index>): Promise<Jam.ArtistIndex> {
-		const artistIndex = await this.indexService.getArtistIndex();
-		return formatArtistIndex(this.indexService.filterArtistIndex(req.query.rootID, artistIndex));
+	async index(req: JamRequest<JamParameters.ArtistSearchQuery>): Promise<Jam.ArtistIndex> {
+		return formatArtistIndex(await this.indexService.getArtistIndex(await this.translateQuery(req.query, req.user)));
 	}
 
 	async tracks(req: JamRequest<JamParameters.Tracks>): Promise<Array<Jam.Track>> {

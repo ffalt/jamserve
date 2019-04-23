@@ -15,6 +15,8 @@ import {Album} from './album.model';
 import {User} from '../user/user.model';
 import {AlbumService} from './album.service';
 import {Track} from '../track/track.model';
+import {formatAlbumIndex, formatArtistIndex} from '../../engine/index/index.format';
+import {IndexService} from '../../engine/index/index.service';
 
 export class AlbumController extends BaseListController<JamParameters.Album, JamParameters.Albums, JamParameters.IncludesAlbum, SearchQueryAlbum, JamParameters.AlbumSearch, Album, Jam.Album> {
 
@@ -22,6 +24,7 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 		private albumService: AlbumService,
 		private trackController: TrackController,
 		private metaDataService: MetaDataService,
+		protected indexService: IndexService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
 		protected downloadService: DownloadService
@@ -99,6 +102,10 @@ export class AlbumController extends BaseListController<JamParameters.Album, Jam
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
 		const album = await this.byID(req.query.id);
 		return {info: await this.metaDataService.getAlbumInfo(album)};
+	}
+
+	async index(req: JamRequest<JamParameters.AlbumSearch>): Promise<Jam.AlbumIndex> {
+		return formatAlbumIndex(await this.indexService.getAlbumIndex(await this.translateQuery(req.query, req.user)));
 	}
 
 }

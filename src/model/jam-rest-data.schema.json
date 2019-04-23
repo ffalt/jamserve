@@ -5824,6 +5824,69 @@
 				"lastModified"
 			]
 		},
+		"Jam.AlbumIndexEntry": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"artistID": {
+					"type": "string"
+				},
+				"trackCount": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"artist",
+				"artistID",
+				"id",
+				"name",
+				"trackCount"
+			]
+		},
+		"Jam.AlbumIndexGroup": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"entries": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.AlbumIndexEntry"
+					}
+				}
+			},
+			"required": [
+				"entries",
+				"name"
+			]
+		},
+		"Jam.AlbumIndex": {
+			"type": "object",
+			"properties": {
+				"lastModified": {
+					"type": "number"
+				},
+				"groups": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.AlbumIndexGroup"
+					}
+				}
+			},
+			"required": [
+				"groups",
+				"lastModified"
+			]
+		},
 		"Jam.Stats": {
 			"type": "object",
 			"properties": {

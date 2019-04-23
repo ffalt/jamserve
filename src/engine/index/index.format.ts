@@ -1,5 +1,5 @@
 import {Jam} from '../../model/jam-rest-data';
-import {ArtistIndex, FolderIndex} from './index.model';
+import {AlbumIndex, ArtistIndex, FolderIndex} from './index.model';
 
 export function formatArtistIndex(index: ArtistIndex): Jam.ArtistIndex {
 	return {
@@ -28,6 +28,24 @@ export function formatFolderIndex(index: FolderIndex): Jam.FolderIndex {
 					name: e.name,
 					trackCount: e.trackCount,
 					folderID: e.folder.id
+				};
+			})
+		}))
+	};
+}
+
+export function formatAlbumIndex(index: AlbumIndex): Jam.AlbumIndex {
+	return {
+		lastModified: index.lastModified,
+		groups: index.groups.map(i => ({
+			name: i.name,
+			entries: i.entries.map(e => {
+				return {
+					id: e.album.id,
+					name: e.album.name,
+					artist: e.album.artist || '',
+					artistID: e.album.artistID,
+					trackCount: e.album.trackIDs.length
 				};
 			})
 		}))

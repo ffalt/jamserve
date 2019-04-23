@@ -312,6 +312,24 @@ export declare namespace Jam {
 		groups: Array<ArtistIndexGroup>;
 	}
 
+	export interface AlbumIndexEntry {
+		id: string;
+		name: string;
+		artist: string;
+		artistID: string;
+		trackCount: number;
+	}
+
+	export interface AlbumIndexGroup {
+		name: string;
+		entries: Array<AlbumIndexEntry>;
+	}
+
+	export interface AlbumIndex {
+		lastModified: number;
+		groups: Array<AlbumIndexGroup>;
+	}
+
 	export interface Stats {
 		rootID?: string;
 		track: number;
