@@ -6,13 +6,15 @@ import {Folder} from '../../objects/folder/folder.model';
 import {Root} from '../../objects/root/root.model';
 import {Jam} from '../../model/jam-rest-data';
 import {flac_test} from '../../modules/audio/tools/flac';
-import {MP3Analyzer} from './mp3_analyzer';
+import {IMP3Warning, MP3Analyzer} from './mp3_analyzer';
 import {IID3V2} from 'jamp3/src/lib/id3v2/id3v2__types';
 import {ID3v2, IID3V1} from 'jamp3';
 
-interface TagCache {
+interface MediaCache {
 	id3v2?: IID3V2.Tag;
 	id3v1?: IID3V1.Tag;
+	mp3Warnings?: Array<IMP3Warning>;
+	flacWarnings?: string;
 }
 
 export abstract class TrackRule {
@@ -20,7 +22,7 @@ export abstract class TrackRule {
 	protected constructor(public id: string, public name: string) {
 	}
 
-	abstract run(track: Track, parent: Folder, root: Root, tagCache: TagCache, checkMedia: boolean): Promise<RuleResult | undefined>;
+	abstract run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined>;
 }
 
 
@@ -96,28 +98,35 @@ export class TrackValidMediaRule extends TrackRule {
 		super('track.media.valid', 'Track Media is invalid');
 	}
 
-	async run(track: Track, parent: Folder, root: Root, tagCache: TagCache, checkMedia: boolean): Promise<RuleResult | undefined> {
-		if (!checkMedia) {
-			if (isMP3(track)) {
-				const id3v2 = new ID3v2();
-				tagCache.id3v2 = await id3v2.read(track.path + track.name);
-			}
-		} else if (isMP3(track)) {
-			const mp3ana = new MP3Analyzer();
-			const result = await mp3ana.read(track.path + track.name, {id3v1: false, id3v2: true, mpeg: true, xing: true, ignoreOneOfErrorXingCount: true});
-			tagCache.id3v1 = result.tags.id3v1;
-			tagCache.id3v2 = result.tags.id3v2;
-			if (result.msgs && result.msgs.length > 0) {
-				return {
-					details: result.msgs.map(m => {
-						return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
-					})
-				};
-			}
-		} else if (isFlac(track)) {
-			const errMsg = await flac_test(track.path + track.name);
-			if (errMsg) {
-				return {details: [{reason: errMsg}]};
+	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
+		if (isMP3(track) && tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
+			return {
+				details: tagCache.mp3Warnings.filter(m => {
+					return m.msg !== 'XING: VBR detected, but no VBR head frame found';
+				}).map(m => {
+					return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
+				})
+			};
+		} else if (isFlac(track) && tagCache.flacWarnings) {
+			return {details: [{reason: tagCache.flacWarnings}]};
+		}
+	}
+
+}
+
+export class TrackMissingVBRHeaderRule extends TrackRule {
+
+	constructor() {
+		super('track.mp3.vbr.header.missing', 'MP3 File is missing a VBR Header');
+	}
+
+	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
+		if (isMP3(track) && tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
+			const warning = tagCache.mp3Warnings.find(m => {
+				return m.msg === 'XING: VBR detected, but no VBR head frame found';
+			});
+			if (warning) {
+				return {};
 			}
 		}
 	}
@@ -136,9 +145,9 @@ export class TrackID3v2GarbageRule extends TrackRule {
 		super('track.id3v2.garbage.frames', 'Track ID3v2 has garbage frames');
 	}
 
-	async run(track: Track, parent: Folder, root: Root, tagCache: TagCache): Promise<RuleResult | undefined> {
-		if (tagCache.id3v2) {
-			const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.indexOf(frame.id) >= 0);
+	async run(track: Track, parent: Folder, root: Root, mediaCache: MediaCache): Promise<RuleResult | undefined> {
+		if (mediaCache.id3v2) {
+			const frames = mediaCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.indexOf(frame.id) >= 0);
 			if (frames.length > 0) {
 				const ids: Array<string> = [];
 				frames.forEach(frame => {
@@ -164,14 +173,31 @@ export class TrackRulesChecker {
 		this.rules.push(new TrackID3v2Rule());
 		this.rules.push(new TrackTagValuesRule());
 		this.rules.push(new TrackValidMediaRule());
+		this.rules.push(new TrackMissingVBRHeaderRule());
 		this.rules.push(new TrackID3v2GarbageRule());
 	}
 
 	async run(track: Track, parent: Folder, root: Root, checkMedia: boolean): Promise<Array<Jam.HealthHint>> {
 		const result: Array<Jam.HealthHint> = [];
-		const tagCache = {};
+		const mediaCache: MediaCache = {};
 		for (const rule of this.rules) {
-			const match = await rule.run(track, parent, root, tagCache, checkMedia);
+			if (checkMedia) {
+				if (isMP3(track)) {
+					const mp3ana = new MP3Analyzer();
+					const ana = await mp3ana.read(track.path + track.name, {id3v1: false, id3v2: true, mpeg: true, xing: true, ignoreOneOfErrorXingCount: true});
+					mediaCache.id3v1 = ana.tags.id3v1;
+					mediaCache.id3v2 = ana.tags.id3v2;
+					mediaCache.mp3Warnings = ana.msgs;
+				} else {
+					mediaCache.flacWarnings = await flac_test(track.path + track.name);
+				}
+			} else {
+				if (isMP3(track)) {
+					const id3v2 = new ID3v2();
+					mediaCache.id3v2 = await id3v2.read(track.path + track.name);
+				}
+			}
+			const match = await rule.run(track, parent, root, mediaCache);
 			if (match) {
 				result.push({
 					id: rule.id,

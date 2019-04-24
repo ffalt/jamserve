@@ -13078,6 +13078,48 @@
 				}
 			}
 		},
+		"/track/fix": {
+			"post": {
+				"operationId": "trackController.fix",
+				"tags": [
+					"track"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/folder/imageUpload/update": {
 			"post": {
 				"operationId": "folderController.imageUploadUpdate",

@@ -886,6 +886,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	}, '/track/delete', ['admin']);
 
+	register.post('/track/fix', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.AdminChangeQueueInfo = await api.trackController.fix(options);
+		await ApiResponder.data(res, result);
+	}, '/track/fix', ['admin']);
+
 	register.upload('/folder/imageUpload/update', 'image', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined};
 		await api.folderController.imageUploadUpdate(options);

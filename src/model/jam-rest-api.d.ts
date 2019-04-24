@@ -1243,6 +1243,12 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		'track/fix'?: {
+			params: JamParameters.ID;
+			result: Jam.AdminChangeQueueInfo,
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
 
 		'folder/imageUpload/update'?: {
 			params: JamParameters.ID;

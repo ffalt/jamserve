@@ -1,7 +1,6 @@
 import Logger from '../../utils/logger';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {RootStatus} from '../../objects/root/root.model';
-import {Track} from '../../objects/track/track.model';
 import {ScanService} from '../scan/scan.service';
 import {RootStore} from '../../objects/root/root.store';
 import {Jam} from '../../model/jam-rest-data';
@@ -20,7 +19,8 @@ export enum ScanRequestMode {
 	moveTracks,
 	renameTrack,
 	renameFolder,
-	writeRawTags
+	writeRawTags,
+	fixTrack
 }
 
 export abstract class ScanRequest {
@@ -71,6 +71,17 @@ export class ScanRequestRenameTrack extends ScanRequest {
 
 }
 
+export class ScanRequestFixTrack extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public trackID: string, public scanService: ScanService) {
+		super(id, rootID, ScanRequestMode.fixTrack);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return await this.scanService.fixTrack(this.rootID, this.trackID);
+	}
+
+}
 export class ScanRequestRenameFolder extends ScanRequest {
 
 	constructor(public id: string, public rootID: string, public folderID: string, public newName: string, public scanService: ScanService) {
@@ -440,7 +451,13 @@ export class IoService {
 		return this.getRequestInfo(delayedCmd.request);
 	}
 
+
+	public fixTrack(trackID: string, rootID: string) {
+		return this.addRequest(new ScanRequestFixTrack(this.getScanID(), rootID, trackID, this.scanService));
+	}
+
 	public renameFolder(folderID: string, name: string, rootID: string) {
 		return this.addRequest(new ScanRequestRenameFolder(this.getScanID(), rootID, folderID, name, this.scanService));
 	}
+
 }

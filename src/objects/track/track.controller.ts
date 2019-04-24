@@ -181,6 +181,10 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		return this.ioService.removeTrack(track.id, track.rootID);
 	}
 
+	async fix(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
+		const track = await this.byID(req.query.id);
+		return this.ioService.fixTrack(track.id, track.rootID);
+	}
 
 	async health(req: JamRequest<JamParameters.TrackHealth>): Promise<Array<Jam.TrackHealth>> {
 		let list = await this.service.store.search(await this.translateQuery(req.query, req.user));

@@ -8,7 +8,7 @@ import {MusicbrainzClientApi} from './clients/musicbrainz-client.interface';
 import {LastFM} from '../../model/lastfm-rest-data';
 import {Acoustid} from '../../model/acoustid-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
-import {fileSuffix} from '../../utils/fs-utils';
+import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data';
 import {TrackMedia, TrackTag} from '../../objects/track/track.model';
@@ -25,6 +25,7 @@ import {Flac, FlacComment, FlacMedia} from './formats/flac';
 import {MetaWriteableDataBlock} from './formats/flac/lib/block';
 import {ImageModule} from '../image/image.module';
 import {flacToRawTag, id3v2ToFlacMetaData, id3v2ToRawTag, rawTagToID3v2} from './metadata';
+import {rewriteWriteFFmpeg} from './tools/ffmpeg-rewrite';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -359,6 +360,22 @@ export class AudioModule {
 			await fse.copy(filename, filename + '.bak');
 		}
 		await flac.write(filename, flacBlocks);
+	}
+
+	async rewriteAudio(filename: string): Promise<void> {
+		try {
+			await rewriteWriteFFmpeg(filename, filename + '.tmp');
+			const exits = await fse.pathExists(filename + '.bak');
+			if (exits) {
+				await fileDeleteIfExists(filename);
+			} else {
+				await fse.copy(filename, filename + '.bak');
+			}
+			await fse.rename(filename + '.tmp', filename);
+		} catch (e) {
+			await fileDeleteIfExists(filename + '.tmp');
+			return Promise.reject(e);
+		}
 	}
 
 	async readMP3Image(filename: string, type: number): Promise<{ buffer?: Buffer, mimeType?: string }> {

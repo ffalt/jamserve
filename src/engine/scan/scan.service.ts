@@ -307,6 +307,24 @@ export class ScanService {
 		return changes;
 	}
 
+	async fixTrack(rootID: string, trackID: string) {
+		const {root, changes} = await this.start(rootID);
+		const track = await this.store.trackStore.byId(trackID);
+		if (!track) {
+			return Promise.reject(Error('Track not found'));
+		}
+		await this.audioModule.rewriteAudio(path.join(track.path, track.name));
+
+		const dbMatcher = new DBMatcher(this.store);
+		const {rootMatch, changedDirs} = await dbMatcher.match([track.parentID], [track.id]);
+
+		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+
+		return await this.finish(changes, rootID, false);
+
+	}
+
 	async renameFolder(rootID: string, folderID: string, newName: string): Promise<MergeChanges> {
 		const {root, changes} = await this.start(rootID);
 
@@ -378,4 +396,5 @@ export class ScanService {
 		return await this.finish(changes, rootID, false);
 
 	}
+
 }
