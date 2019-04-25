@@ -4951,6 +4951,21 @@
 				"parentID"
 			]
 		},
+		"Jam.PodcastEpisodeChapter": {
+			"type": "object",
+			"properties": {
+				"start": {
+					"type": "number"
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"start",
+				"title"
+			]
+		},
 		"Jam.PodcastEpisode": {
 			"type": "object",
 			"properties": {
@@ -4977,6 +4992,12 @@
 				},
 				"errorMessage": {
 					"type": "string"
+				},
+				"chapters": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.PodcastEpisodeChapter"
+					}
 				},
 				"duration": {
 					"type": "number"

@@ -1,8 +1,17 @@
 import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
 import {formatTrackTag} from '../track/track.format';
-import {Episode} from './episode.model';
+import {Episode, PodcastEpisodeChapter} from './episode.model';
 import {PodcastStatus} from '../../model/jam-types';
+
+export function formatChapters(chapters: Array<PodcastEpisodeChapter>): Array<Jam.PodcastEpisodeChapter> {
+	return chapters.map(chap => {
+		return {
+			start: chap.start,
+			title: chap.title
+		};
+	});
+}
 
 export function formatEpisode(episode: Episode, includes: JamParameters.IncludesTrack, status: PodcastStatus): Jam.PodcastEpisode {
 	return {
@@ -13,7 +22,7 @@ export function formatEpisode(episode: Episode, includes: JamParameters.Includes
 		status: <Jam.PodcastEpisodeStatusType>status,
 		errorMessage: episode.error,
 		name: episode.name,
-		duration: episode.media ? (episode.media.duration || -1) : -1,
+		duration: episode.media ? (episode.media.duration || -1) : (episode.duration ? episode.duration : -1),
 		date: episode.date,
 		summary: episode.summary,
 		guid: episode.guid,
@@ -25,6 +34,7 @@ export function formatEpisode(episode: Episode, includes: JamParameters.Includes
 			channels: episode.media.channels || -1,
 			sampleRate: episode.media.sampleRate || -1
 		} : undefined,
-		tag: includes.trackTag && episode.tag ? formatTrackTag(episode.tag) : undefined
+		tag: includes.trackTag && episode.tag ? formatTrackTag(episode.tag) : undefined,
+		chapters: episode.chapters && episode.chapters.length > 0 ? formatChapters(episode.chapters) : undefined
 	};
 }

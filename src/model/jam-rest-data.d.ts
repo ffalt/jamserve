@@ -100,6 +100,11 @@ export declare namespace Jam {
 		albumID?: string;
 	}
 
+	export interface PodcastEpisodeChapter {
+		start: number;
+		title: string;
+	}
+
 	export interface PodcastEpisode extends Track {
 		podcastID: string;
 		status: PodcastEpisodeStatusType;
@@ -109,6 +114,7 @@ export declare namespace Jam {
 		author?: string;
 		link?: string;
 		errorMessage?: string;
+		chapters?: Array<PodcastEpisodeChapter>;
 	}
 
 	export interface PodcastEpisodeStatus {

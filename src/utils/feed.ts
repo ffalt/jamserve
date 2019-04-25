@@ -9,6 +9,19 @@ import {Subsonic} from '../model/subsonic-rest-data';
 import {PodcastTag} from '../objects/podcast/podcast.model';
 import {Episode, PodcastEpisodeChapter} from '../objects/episode/episode.model';
 import {DBObjectType} from '../db/db.types';
+import moment from 'moment';
+
+function parseDurationMilliseconds(s: string): number {
+	return moment.duration(s).as('milliseconds');
+}
+
+function parseItunesDurationSeconds(s: string): number {
+	const num = Number(s);
+	if (s.indexOf(':') < 0 && !isNaN(num)) {
+		return num;
+	}
+	return moment.duration(s).as('seconds');
+}
 
 export class Feed {
 
@@ -129,11 +142,18 @@ export class Feed {
 		const episodes: Array<Episode> = data.posts.map(post => {
 			let chapters: Array<PodcastEpisodeChapter> = [];
 
-			const pscChaps: any = (<any>post)['psc:chapters'];
+			const anypost = <any>post;
+			let duration: number | undefined;
+			if (anypost['itunes:duration'] && anypost['itunes:duration']['#']) {
+				duration = parseItunesDurationSeconds(anypost['itunes:duration']['#']);
+			}
+			const pscChaps: any = anypost['psc:chapters'];
 			if (pscChaps) {
 				const pscChap: Array<any> = pscChaps['psc:chapter'];
 				if (pscChap) {
-					chapters = pscChap.map(item => item['@']);
+					chapters = pscChap.map(item => {
+						return {start: parseDurationMilliseconds(item['@']['start']), title: item['@']['title']};
+					}).sort((a, b) => a.start - b.start);
 				}
 			}
 			return {
@@ -148,6 +168,7 @@ export class Feed {
 				enclosures: <any>post.enclosures, // TODO: validate podcast enclosures (wrong interface description?)
 				date: post.date ? post.date.valueOf() : 0,
 				name: post.title,
+				duration,
 				chapters: chapters
 			};
 		});

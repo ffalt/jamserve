@@ -18,6 +18,12 @@ export interface Track extends DBObject {
 	media: TrackMedia;
 }
 
+export interface TrackTagChapter {
+	start: number;
+	end: number;
+	title?: string;
+}
+
 export interface TrackTag {
 	format: TrackTagFormatType;
 	album?: string;
@@ -44,6 +50,7 @@ export interface TrackTag {
 	mbRecordingID?: string;
 	mbAlbumStatus?: string;
 	mbReleaseCountry?: string;
+	chapters?: Array<TrackTagChapter>;
 }
 
 export interface TrackMedia {

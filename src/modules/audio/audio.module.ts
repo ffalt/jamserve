@@ -11,7 +11,7 @@ import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data';
-import {TrackMedia, TrackTag} from '../../objects/track/track.model';
+import {TrackMedia, TrackTag, TrackTagChapter} from '../../objects/track/track.model';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
 import {probe, ProbeResult} from './tools/ffprobe';
 import {ID3v1_GENRES} from 'jamp3/dist/lib/id3v1/id3v1_consts';
@@ -26,6 +26,8 @@ import {MetaWriteableDataBlock} from './formats/flac/lib/block';
 import {ImageModule} from '../image/image.module';
 import {flacToRawTag, id3v2ToFlacMetaData, id3v2ToRawTag, rawTagToID3v2} from './metadata';
 import {rewriteWriteFFmpeg} from './tools/ffmpeg-rewrite';
+import {ID3v2Frames} from '../../model/id3v2-frames';
+import Chapter = ID3v2Frames.Chapter;
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -164,7 +166,17 @@ class FORMAT {
 		if (!data) {
 			return undefined;
 		}
-		const simple = simplifyTag(data);
+		// const chapters: Array<TrackTagChapter> = data.frames.filter(frame => frame.id === 'CHAP').map(c => {
+		// 	const chapter = <Chapter>c;
+		// 	const chapterTag = simplifyTag({id: data.id, start: 0, end: 0, head: data.head, frames: c.subframes || []});
+		// 	return {
+		// 		id: chapter.id,
+		// 		start: chapter.value.start,
+		// 		end: chapter.value.end,
+		// 		title: chapterTag.TITLE
+		// 	};
+		// });
+		const simple = simplifyTag(data, ['CHAP']);
 		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
 		return {
 			format,
@@ -192,6 +204,7 @@ class FORMAT {
 			mbRecordingID: simple.MUSICBRAINZ_RELEASETRACKID,
 			mbAlbumStatus: simple.RELEASESTATUS,
 			mbReleaseCountry: simple.RELEASECOUNTRY
+			// chapters: chapters.length > 0 ? chapters : undefined
 		};
 	}
 

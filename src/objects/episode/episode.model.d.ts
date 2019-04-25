@@ -10,6 +10,7 @@ export interface Episode extends DBObject {
 	link?: string;
 	summary: string;
 	date: number;
+	duration?: number;
 	name: string;
 	guid?: string;
 	author?: string;

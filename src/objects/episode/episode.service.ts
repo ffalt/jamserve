@@ -6,7 +6,7 @@ import {AudioModule} from '../../modules/audio/audio.module';
 import {downloadFile} from '../../utils/download';
 import fse from 'fs-extra';
 import {EpisodeStore, SearchQueryEpisode} from './episode.store';
-import {Episode} from './episode.model';
+import {Episode, PodcastEpisodeChapter, PodcastEpisodeEnclosure} from './episode.model';
 import {AudioFormatType, PodcastStatus} from '../../model/jam-types';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {BaseListService} from '../base/base.list.service';
@@ -102,10 +102,25 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		if ((!episodes) || (!episodes.length)) {
 			return [];
 		}
-		const epi = await this.episodeStore.search({podcastID});
-		const links = epi.map(e => e.link);
-		episodes = episodes.filter(e => links.indexOf(e.link) < 0);
-		await this.episodeStore.upsert(episodes);
+		const storeEpisodes: Array<Episode> = [];
+		const oldEpisodes = await this.episodeStore.search({podcastID});
+		for (const epi of episodes) {
+			const update = oldEpisodes.find(e => e.link === epi.link);
+			if (update) {
+				update.duration = epi.duration;
+				update.chapters = epi.chapters;
+				update.date = epi.date;
+				update.summary = epi.summary;
+				update.name = epi.name;
+				update.guid = epi.guid;
+				update.author = epi.author;
+				update.enclosures = epi.enclosures;
+				storeEpisodes.push(update);
+			} else {
+				storeEpisodes.push(epi);
+			}
+		}
+		await this.episodeStore.upsert(storeEpisodes);
 		return episodes;
 	}
 

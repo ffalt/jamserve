@@ -100,6 +100,14 @@ const type_PlayQueue = {
 	}
 };
 
+const type_TrackTagChapter = {
+	properties: {
+		start: type_int,
+		end: type_int,
+		title: type_string
+	}
+};
+
 const type_TrackTag = {
 	properties: {
 		format: type_key,
@@ -126,7 +134,8 @@ const type_TrackTag = {
 		mbReleaseGroupID: type_key,
 		mbRecordingID: type_key,
 		mbAlbumStatus: type_key,
-		mbReleaseCountry: type_key
+		mbReleaseCountry: type_key,
+		chapters: type_TrackTagChapter
 	}
 };
 
@@ -259,6 +268,7 @@ const type_Podcast = {
 		created: type_int,
 		lastCheck: type_int,
 		status: type_key,
+		image: type_key,
 		errorMessage: type_key,
 		tag: type_PodcastTag,
 		id: type_key,
