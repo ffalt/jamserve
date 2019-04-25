@@ -84,8 +84,6 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 				await fileDeleteIfExists(episode.path);
 			}
 		}
-		const p = path.resolve(this.podcastsPath, podcastID);
-		await pathDeleteIfExists(p);
 	}
 
 	async deleteEpisode(episode: Episode): Promise<void> {

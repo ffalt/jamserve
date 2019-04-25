@@ -87,7 +87,6 @@ export class Engine {
 		this.artistService = new ArtistService(this.store.artistStore, this.store.trackStore, this.folderService, this.stateService);
 		this.userService = new UserService(this.config.getDataPath(['images']), this.store.userStore, this.store.stateStore, this.store.playlistStore,
 			this.store.bookmarkStore, this.store.playQueueStore, this.imageModule);
-		this.imageService = new ImageService(this.imageModule, this.trackService, this.folderService, this.artistService, this.albumService, this.userService);
 		this.genreService = new GenreService(this.store.trackStore);
 		this.statsService = new StatsService(this.store);
 		this.ioService = new IoService(this.store.rootStore, this.scanService, async () => {
@@ -102,7 +101,8 @@ export class Engine {
 		this.playQueueService = new PlayQueueService(this.store.playQueueStore);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
 		this.episodeService = new EpisodeService(config.getDataPath(['podcasts']), this.store.episodeStore, this.stateService, this.audioModule);
-		this.podcastService = new PodcastService(this.store.podcastStore, this.episodeService, this.stateService);
+		this.podcastService = new PodcastService(config.getDataPath(['podcasts']), this.store.podcastStore, this.episodeService, this.imageModule, this.stateService);
+		this.imageService = new ImageService(this.imageModule, this.trackService, this.folderService, this.artistService, this.albumService, this.userService, this.podcastService);
 		this.metaDataService = new MetaDataService(this.store.metaStore, this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
 		this.rootService = new RootService(this.store.rootStore);
 		this.radioService = new RadioService(this.store.radioStore);

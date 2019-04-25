@@ -17,12 +17,14 @@ import {ArtistService} from '../../objects/artist/artist.service';
 import {AlbumService} from '../../objects/album/album.service';
 import {UserService} from '../../objects/user/user.service';
 import {DBObjectType} from '../../db/db.types';
+import {PodcastService} from '../../objects/podcast/podcast.service';
 
 export class ImageService {
 
 	constructor(private imageModule: ImageModule, private trackService: TrackService,
 				private folderService: FolderService, private artistService: ArtistService,
-				private albumService: AlbumService, private userService: UserService) {
+				private albumService: AlbumService, private userService: UserService,
+				private podcastService: PodcastService) {
 	}
 
 	async getObjImage(o: DBObject, size?: number, format?: string): Promise<IApiBinaryResult> {
@@ -47,6 +49,10 @@ export class ImageService {
 			case DBObjectType.user:
 				const user = <User>o;
 				result = await this.userService.getUserImage(user, size, format);
+				break;
+			case DBObjectType.podcast:
+				const podcast = <Podcast>o;
+				result = await this.podcastService.getPodcastImage(podcast, size, format);
 				break;
 			default:
 				break;

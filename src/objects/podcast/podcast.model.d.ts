@@ -6,6 +6,7 @@ export interface Podcast extends DBObject {
 	created: number;
 	lastCheck: number;
 	status: PodcastStatus;
+	image?: string;
 	errorMessage?: string;
 	tag?: PodcastTag;
 }

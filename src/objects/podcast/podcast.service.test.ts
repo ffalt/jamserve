@@ -18,7 +18,7 @@ describe('PodcastService', () => {
 			dir = tmp.dirSync();
 			const stateService = new StateService(store.stateStore);
 			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModule);
-			podcastService = new PodcastService(store.podcastStore, episodeService, stateService);
+			podcastService = new PodcastService(dir.name, store.podcastStore, episodeService, imageModuleTest.imageModule, stateService);
 		},
 		() => {
 			it('should create a podcast', async () => {

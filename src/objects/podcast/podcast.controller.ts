@@ -70,6 +70,7 @@ export class PodcastController extends BaseListController<JamParameters.Podcast,
 
 	async create(req: JamRequest<JamParameters.PodcastNew>): Promise<Jam.Podcast> {
 		const podcast = await this.podcastService.create(req.query.url);
+		this.podcastService.refresh(podcast); // do not wait
 		return this.prepare(podcast, {}, req.user);
 	}
 
