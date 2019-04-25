@@ -4,7 +4,7 @@ import {Folder} from '../../objects/folder/folder.model';
 import {ArtistStore, SearchQueryArtist} from '../../objects/artist/artist.store';
 import {FolderStore, SearchQueryFolder} from '../../objects/folder/folder.store';
 import {TrackStore} from '../../objects/track/track.store';
-import {AlbumType, FolderType} from '../../model/jam-types';
+import {AlbumType} from '../../model/jam-types';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import Logger from '../../utils/logger';
 import {Jam} from '../../model/jam-rest-data';
@@ -26,10 +26,14 @@ export class IndexTreeBuilder {
 	}
 
 	getIndexChar(name: string, sortname?: string): string {
-		const c = (sortname || this.removeArticles(name) || '').trim().toUpperCase().charAt(0);
+		const s = (sortname || this.removeArticles(name) || '').replace(/¿…‘“«/g, '');
+		const c = s.trim().charAt(0).toUpperCase();
 		const regex_symbols = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#\d]/;
 		if (c.match(regex_symbols) === null) {
 			return c;
+		}
+		if (!isNaN(Number(c))) {
+			return '№';
 		}
 		return '#';
 	}
@@ -94,11 +98,11 @@ export class IndexArtistTreeBuilder extends IndexTreeBuilder {
 			group.entries.push(entry);
 		});
 		result.groups.forEach(group => {
-			group.entries.sort((a, b) => {
-				return a.artist.name.localeCompare(b.artist.name);
+			group.entries = group.entries.sort((a, b) => {
+				return (a.artist.nameSort || this.removeArticles(a.artist.name)).localeCompare(b.artist.nameSort || this.removeArticles(b.artist.name));
 			});
 		});
-		result.groups.sort((a, b) => {
+		result.groups = result.groups.sort((a, b) => {
 			return a.name.localeCompare(b.name);
 		});
 		return result;
