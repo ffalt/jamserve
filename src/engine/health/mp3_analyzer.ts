@@ -37,6 +37,17 @@ export interface IMP3Report {
 
 export class MP3Analyzer {
 
+	analyseID3v2(id3v2: IID3V2.Tag): Array<IMP3Warning> {
+		const result: Array<IMP3Warning> = [];
+		id3v2.frames.forEach(frame => {
+			const def = findId3v2FrameDef(frame.id);
+			if (def && id3v2.head && def.versions.indexOf(id3v2.head.ver) < 0) {
+				result.push({msg: 'ID3v2: invalid version for frame ' + frame.id, expected: def.versions.join(','), actual: id3v2.head.ver});
+			}
+		});
+		return result;
+	}
+
 	async read(filename: string, options: IMP3AnalyzerOptions): Promise<IMP3Report> {
 		const mp3 = new MP3();
 		const data = await mp3.read(filename, {id3v1: true, id3v2: true, mpeg: true, raw: true});
@@ -81,7 +92,9 @@ export class MP3Analyzer {
 					}
 				}
 				if (data.mpeg.audioBytes !== data.mpeg.audioBytesDeclared) {
-					info.msgs.push({msg: 'XING: Wrong number of data bytes declared in ' + head.mode + ' Header', expected: data.mpeg.audioBytesDeclared, actual: data.mpeg.audioBytes});
+					if (!options.ignoreOneOfErrorXingCount || data.mpeg.audioBytes + head.header.size - data.mpeg.audioBytesDeclared === 0) {
+						info.msgs.push({msg: 'XING: Wrong number of data bytes declared in ' + head.mode + ' Header', expected: data.mpeg.audioBytesDeclared, actual: data.mpeg.audioBytes});
+					}
 				}
 			}
 		}
@@ -124,13 +137,7 @@ export class MP3Analyzer {
 			}
 		}
 		if (options.id3v2 && data.id3v2) {
-			const id3v2 = data.id3v2;
-			id3v2.frames.forEach(frame => {
-				const def = findId3v2FrameDef(frame.id);
-				if (def && id3v2.head && def.versions.indexOf(id3v2.head.ver) < 0) {
-					info.msgs.push({msg: 'ID3v2: invalid version for frame ' + frame.id, expected: def.versions.join(','), actual: id3v2.head.ver});
-				}
-			});
+			info.msgs = info.msgs.concat(this.analyseID3v2(data.id3v2));
 		}
 		return info;
 	}
