@@ -47,23 +47,28 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		super(trackService, stateService, imageService, downloadService);
 	}
 
-	defaultSort(tracks: Array<Track>): Array<Track> {
-		return tracks.sort((a, b) => {
-				if (a.tag.disc !== undefined && b.tag.disc !== undefined) {
-					const res = a.tag.disc - b.tag.disc;
-					if (res !== 0) {
-						return res;
-					}
-				}
-				if (a.tag.track !== undefined && b.tag.track !== undefined) {
-					const res = a.tag.track - b.tag.track;
-					if (res !== 0) {
-						return res;
-					}
-				}
-				return a.name.localeCompare(b.name);
+	defaultCompare(a: Track, b: Track): number {
+		let res = a.path.localeCompare(b.path);
+		if (res !== 0) {
+			return res;
+		}
+		if (a.tag.disc !== undefined && b.tag.disc !== undefined) {
+			res = a.tag.disc - b.tag.disc;
+			if (res !== 0) {
+				return res;
 			}
-		);
+		}
+		if (a.tag.track !== undefined && b.tag.track !== undefined) {
+			res = a.tag.track - b.tag.track;
+			if (res !== 0) {
+				return res;
+			}
+		}
+		return a.name.localeCompare(b.name);
+	}
+
+	defaultSort(tracks: Array<Track>): Array<Track> {
+		return tracks.sort(this.defaultCompare);
 	}
 
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
@@ -181,16 +186,14 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		return this.ioService.removeTrack(track.id, track.rootID);
 	}
 
-	async fix(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
+	async fix(req: JamRequest<JamParameters.TrackFix>): Promise<Jam.AdminChangeQueueInfo> {
 		const track = await this.byID(req.query.id);
-		return this.ioService.fixTrack(track.id, track.rootID);
+		return this.ioService.fixTrack(track.id, req.query.fixID, track.rootID);
 	}
 
 	async health(req: JamRequest<JamParameters.TrackHealth>): Promise<Array<Jam.TrackHealth>> {
 		let list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		list = list.sort((a, b) => {
-			return a.path.localeCompare(b.path);
-		});
+		list = list.sort(this.defaultCompare);
 		const result: Array<Jam.TrackHealth> = [];
 		const roots: Array<Root> = [];
 		const folders: Array<Folder> = [];

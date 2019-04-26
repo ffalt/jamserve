@@ -13113,7 +13113,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ID"
+								"$ref": "#/components/schemas/JamParameters.TrackFix"
 							}
 						}
 					}
@@ -21092,6 +21092,23 @@
 				"required": [
 					"folderID",
 					"ids"
+				]
+			},
+			"JamParameters.TrackFix": {
+				"type": "object",
+				"properties": {
+					"fixID": {
+						"description": "which issue to fix with the track",
+						"type": "string"
+					},
+					"id": {
+						"description": "the item id",
+						"type": "string"
+					}
+				},
+				"required": [
+					"fixID",
+					"id"
 				]
 			},
 			"JamParameters.FolderArtworkNew": {

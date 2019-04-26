@@ -887,7 +887,7 @@ export function registerAccessControlApi(register: Register, api: JamController)
 	}, '/track/delete', ['admin']);
 
 	register.post('/track/fix', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		const options: JamRequest<JamParameters.TrackFix> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.AdminChangeQueueInfo = await api.trackController.fix(options);
 		await ApiResponder.data(res, result);
 	}, '/track/fix', ['admin']);

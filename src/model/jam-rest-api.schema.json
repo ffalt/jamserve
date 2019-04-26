@@ -6567,7 +6567,7 @@
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.ID"
+							"$ref": "#/definitions/JamParameters.TrackFix"
 						},
 						"result": {
 							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
@@ -18341,6 +18341,23 @@
 			"required": [
 				"folderID",
 				"ids"
+			]
+		},
+		"JamParameters.TrackFix": {
+			"type": "object",
+			"properties": {
+				"fixID": {
+					"description": "which issue to fix with the track",
+					"type": "string"
+				},
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"fixID",
+				"id"
 			]
 		},
 		"JamParameters.FolderArtworkNew": {

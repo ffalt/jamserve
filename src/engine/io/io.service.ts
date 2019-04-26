@@ -73,15 +73,16 @@ export class ScanRequestRenameTrack extends ScanRequest {
 
 export class ScanRequestFixTrack extends ScanRequest {
 
-	constructor(public id: string, public rootID: string, public trackID: string, public scanService: ScanService) {
+	constructor(public id: string, public rootID: string, public trackID: string, public fixID: string, public scanService: ScanService) {
 		super(id, rootID, ScanRequestMode.fixTrack);
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.fixTrack(this.rootID, this.trackID);
+		return await this.scanService.fixTrack(this.rootID, this.trackID, this.fixID);
 	}
 
 }
+
 export class ScanRequestRenameFolder extends ScanRequest {
 
 	constructor(public id: string, public rootID: string, public folderID: string, public newName: string, public scanService: ScanService) {
@@ -220,11 +221,16 @@ export class IoService {
 		}
 		const cmd = this.queue.find(c => c.id === id);
 		if (cmd) {
-			return {id, pos: this.queue.indexOf(cmd)};
+			const pos = this.queue.indexOf(cmd);
+			return {id, pos: pos >= 0 ? pos : undefined};
 		}
 		const done = this.history.find(c => c.id === id);
 		if (done) {
 			return {id, error: done.error, done: done.date};
+		}
+		const k = Object.keys(this.delayedTrackTagWrite).find(key => this.delayedTrackTagWrite[key].request.id === id);
+		if (k) {
+			return {id};
 		}
 		return {id, error: 'ID not found', done: Date.now()};
 	}
@@ -244,11 +250,13 @@ export class IoService {
 	private async runRequest(cmd: ScanRequest): Promise<void> {
 		this.rootstatus[cmd.rootID] = {lastScan: Date.now(), scanning: true};
 		try {
+			this.current = cmd;
 			await cmd.run();
 			this.rootstatus[cmd.rootID] = {lastScan: Date.now()};
 			this.history.push({id: cmd.id, date: Date.now()});
-
+			this.current = undefined;
 		} catch (e) {
+			this.current = undefined;
 			this.rootstatus[cmd.rootID] = {lastScan: Date.now(), error: e.toString()};
 			this.history.push({id: cmd.id, error: e.toString(), date: Date.now()});
 		}
@@ -300,42 +308,44 @@ export class IoService {
 	private addRequest(req: ScanRequest): Jam.AdminChangeQueueInfo {
 		this.queue.push(req);
 		this.run();
-		return {id: req.id, pos: this.queue.indexOf(req)};
+		return this.getRequestInfo(req);
 	}
 
 	private getRequestInfo(req: ScanRequest): Jam.AdminChangeQueueInfo {
-		return {id: req.id, pos: this.queue.indexOf(req)};
+		const pos = this.queue.indexOf(req);
+		return {id: req.id, pos: pos >= 0 ? pos : undefined};
 	}
-/*
-	refreshTrack(track: Track): Jam.AdminChangeQueueInfo {
-		const oldRequest = <ScanRequestRefreshTracks>this.findRequest(track.rootID, ScanRequestMode.refreshTracks);
-		if (oldRequest) {
-			if (oldRequest.trackIDs.indexOf(track.id) < 0) {
-				oldRequest.trackIDs.push(track.id);
+
+	/*
+		refreshTrack(track: Track): Jam.AdminChangeQueueInfo {
+			const oldRequest = <ScanRequestRefreshTracks>this.findRequest(track.rootID, ScanRequestMode.refreshTracks);
+			if (oldRequest) {
+				if (oldRequest.trackIDs.indexOf(track.id) < 0) {
+					oldRequest.trackIDs.push(track.id);
+				}
+				return this.getRequestInfo(oldRequest);
 			}
-			return this.getRequestInfo(oldRequest);
-		}
-		let delayedCmd = this.delayedTrackRefresh[track.rootID];
-		if (delayedCmd) {
-			if (delayedCmd.timeout) {
-				clearTimeout(delayedCmd.timeout);
+			let delayedCmd = this.delayedTrackRefresh[track.rootID];
+			if (delayedCmd) {
+				if (delayedCmd.timeout) {
+					clearTimeout(delayedCmd.timeout);
+				}
+				if (delayedCmd.request.trackIDs.indexOf(track.id) < 0) {
+					delayedCmd.request.trackIDs.push(track.id);
+				}
+				return this.getRequestInfo(delayedCmd.request);
+			} else {
+				delayedCmd = {request: new ScanRequestRefreshTracks(this.getScanID(), track.rootID, this.scanService, [track.id]), timeout: undefined};
+				this.delayedTrackRefresh[track.rootID] = delayedCmd;
 			}
-			if (delayedCmd.request.trackIDs.indexOf(track.id) < 0) {
-				delayedCmd.request.trackIDs.push(track.id);
-			}
+			delayedCmd.timeout = setTimeout(() => {
+				delete this.delayedTrackRefresh[track.rootID];
+				this.queue.push(delayedCmd.request);
+				this.run();
+			}, 10000);
 			return this.getRequestInfo(delayedCmd.request);
-		} else {
-			delayedCmd = {request: new ScanRequestRefreshTracks(this.getScanID(), track.rootID, this.scanService, [track.id]), timeout: undefined};
-			this.delayedTrackRefresh[track.rootID] = delayedCmd;
 		}
-		delayedCmd.timeout = setTimeout(() => {
-			delete this.delayedTrackRefresh[track.rootID];
-			this.queue.push(delayedCmd.request);
-			this.run();
-		}, 10000);
-		return this.getRequestInfo(delayedCmd.request);
-	}
-*/
+	*/
 	refreshRoot(rootID: string, forceMetaRefresh?: boolean): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestRefreshRoot>this.findRequest(rootID, ScanRequestMode.refreshRoot);
 		if (oldRequest) {
@@ -370,21 +380,22 @@ export class IoService {
 			return this.addRequest(new ScanRequestMoveFolders(this.getScanID(), rootID, this.scanService, newParentID, folderIDs));
 		}
 	}
-/*
-	refreshFolders(folderIDs: Array<string>, rootID: string): Jam.AdminChangeQueueInfo {
-		const oldRequest = <ScanRequestRefreshFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
-		if (oldRequest) {
-			for (const id of folderIDs) {
-				if (oldRequest.folderIDs.indexOf(id) < 0) {
-					oldRequest.folderIDs.push(id);
+
+	/*
+		refreshFolders(folderIDs: Array<string>, rootID: string): Jam.AdminChangeQueueInfo {
+			const oldRequest = <ScanRequestRefreshFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
+			if (oldRequest) {
+				for (const id of folderIDs) {
+					if (oldRequest.folderIDs.indexOf(id) < 0) {
+						oldRequest.folderIDs.push(id);
+					}
 				}
+				return this.getRequestInfo(oldRequest);
+			} else {
+				return this.addRequest(new ScanRequestRefreshFolders(this.getScanID(), rootID, this.scanService, folderIDs));
 			}
-			return this.getRequestInfo(oldRequest);
-		} else {
-			return this.addRequest(new ScanRequestRefreshFolders(this.getScanID(), rootID, this.scanService, folderIDs));
 		}
-	}
-*/
+	*/
 	deleteFolder(id: string, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = <ScanRequestDeleteFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
 		if (oldRequest) {
@@ -452,8 +463,8 @@ export class IoService {
 	}
 
 
-	public fixTrack(trackID: string, rootID: string) {
-		return this.addRequest(new ScanRequestFixTrack(this.getScanID(), rootID, trackID, this.scanService));
+	public fixTrack(trackID: string, fixID: string, rootID: string) {
+		return this.addRequest(new ScanRequestFixTrack(this.getScanID(), rootID, trackID, fixID, this.scanService));
 	}
 
 	public renameFolder(folderID: string, name: string, rootID: string) {

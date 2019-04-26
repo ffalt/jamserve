@@ -300,6 +300,7 @@ const type_Episode = {
 		link: type_key,
 		summary: type_key,
 		date: type_int,
+		duration: type_int,
 		name: type_string,
 		guid: type_key,
 		author: type_key,

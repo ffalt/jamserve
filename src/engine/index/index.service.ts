@@ -32,9 +32,9 @@ export class IndexTreeBuilder {
 		if (c.match(regex_symbols) === null) {
 			return c;
 		}
-		if (!isNaN(Number(c))) {
-			return '№';
-		}
+		// if (!isNaN(Number(c))) {
+		// 	return '№';
+		// }
 		return '#';
 	}
 }

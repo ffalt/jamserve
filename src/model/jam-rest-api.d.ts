@@ -1244,7 +1244,7 @@ export interface JamApi {
 			roles: ['admin'];
 		};
 		'track/fix'?: {
-			params: JamParameters.ID;
+			params: JamParameters.TrackFix;
 			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];

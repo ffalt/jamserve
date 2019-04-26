@@ -307,7 +307,7 @@ export class ScanService {
 		return changes;
 	}
 
-	async fixTrack(rootID: string, trackID: string) {
+	async fixTrack(rootID: string, trackID: string, fixID: string) {
 		const {root, changes} = await this.start(rootID);
 		const track = await this.store.trackStore.byId(trackID);
 		if (!track) {
@@ -322,7 +322,6 @@ export class ScanService {
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
 		return await this.finish(changes, rootID, false);
-
 	}
 
 	async renameFolder(rootID: string, folderID: string, newName: string): Promise<MergeChanges> {

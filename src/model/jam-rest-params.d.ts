@@ -392,6 +392,13 @@ export declare namespace JamParameters {
 	export interface Tracks extends IDs, IncludesTrack {
 	}
 
+	export interface TrackFix extends ID {
+		/**
+		 * which issue to fix with the track
+		 */
+		fixID: string;
+	}
+
 	export interface TrackSearchQuery extends SearchQuery {
 		/**
 		 * filter by artist name
