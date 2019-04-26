@@ -11,7 +11,7 @@ import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {cleanGenre} from '../../utils/genres';
 import {Jam} from '../../model/jam-rest-data';
-import {TrackMedia, TrackTag, TrackTagChapter} from '../../objects/track/track.model';
+import {TrackMedia, TrackTag} from '../../objects/track/track.model';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
 import {probe, ProbeResult} from './tools/ffprobe';
 import {ID3v1_GENRES} from 'jamp3/dist/lib/id3v1/id3v1_consts';
@@ -26,8 +26,6 @@ import {MetaWriteableDataBlock} from './formats/flac/lib/block';
 import {ImageModule} from '../image/image.module';
 import {flacToRawTag, id3v2ToFlacMetaData, id3v2ToRawTag, rawTagToID3v2} from './metadata';
 import {rewriteWriteFFmpeg} from './tools/ffmpeg-rewrite';
-import {ID3v2Frames} from '../../model/id3v2-frames';
-import Chapter = ID3v2Frames.Chapter;
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -377,12 +375,21 @@ export class AudioModule {
 
 	async rewriteAudio(filename: string): Promise<void> {
 		try {
+			const suffix = fileSuffix(filename);
+			const id3v2 = new ID3v2();
+			let tag: IID3V2.Tag | undefined;
+			if (suffix === AudioFormatType.mp3) {
+				tag = await id3v2.read(filename);
+			}
 			await rewriteWriteFFmpeg(filename, filename + '.tmp');
 			const exits = await fse.pathExists(filename + '.bak');
 			if (exits) {
 				await fileDeleteIfExists(filename);
 			} else {
 				await fse.copy(filename, filename + '.bak');
+			}
+			if (tag) {
+				await id3v2.write(filename + '.tmp', tag, 4, 0);
 			}
 			await fse.rename(filename + '.tmp', filename);
 		} catch (e) {
