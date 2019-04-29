@@ -26,7 +26,6 @@ import {DBObjectType} from '../../db/db.types';
 import {IoService} from '../../engine/io/io.service';
 import {Root} from '../root/root.model';
 import {RootService} from '../root/root.service';
-import fse from 'fs-extra';
 
 export class FolderController extends BaseListController<JamParameters.Folder, JamParameters.Folders, JamParameters.IncludesFolderChildren, SearchQueryFolder, JamParameters.FolderSearch, Folder, Jam.Folder> {
 	checker = new FolderRulesChecker();
@@ -103,6 +102,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return {
 			query: query.query,
 			id: query.id,
+			ids: query.ids,
 			rootID: query.rootID,
 			parentID: query.parentID,
 			inPath,

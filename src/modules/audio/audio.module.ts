@@ -110,9 +110,9 @@ class FORMAT {
 		if (!data || !data.format || !data.format.tags) {
 			return {format: TrackTagFormatType.none};
 		}
-		const simple: { [name: string]: string } = {};
+		const simple: { [name: string]: string | undefined } = {};
 		Object.keys(data.format.tags).forEach(key => {
-			simple[key.toUpperCase().replace(/ /g, '_')] = data.format.tags[key];
+			simple[key.toUpperCase().replace(/ /g, '_')] = FORMAT.cleanText(data.format.tags[key]);
 		});
 		const track = Number(simple.TRACK);
 		const year = Number(simple.DATE);
@@ -151,9 +151,9 @@ class FORMAT {
 		const simple = data.value;
 		return {
 			format: TrackTagFormatType.id3v1,
-			artist: simple.artist,
-			title: simple.title,
-			album: simple.album,
+			artist: FORMAT.cleanText(simple.artist),
+			title: FORMAT.cleanText(simple.title),
+			album: FORMAT.cleanText(simple.album),
 			year: isNaN(Number(simple.year)) ? undefined : Number(simple.year),
 			track: simple.track,
 			genre: (simple.genreIndex !== undefined && !!ID3v1_GENRES[simple.genreIndex]) ? ID3v1_GENRES[simple.genreIndex] : undefined,
@@ -178,14 +178,14 @@ class FORMAT {
 		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
 		return {
 			format,
-			album: simple.ALBUM,
-			albumSort: simple.ALBUMSORT,
-			albumArtist: simple.ALBUMARTIST,
-			albumArtistSort: simple.ALBUMARTISTSORT,
-			artist: simple.ARTIST,
-			artistSort: simple.ARTISTSORT,
-			title: simple.TITLE,
-			titleSort: simple.TITLESORT,
+			album: FORMAT.cleanText(simple.ALBUM),
+			albumSort: FORMAT.cleanText(simple.ALBUMSORT),
+			albumArtist: FORMAT.cleanText(simple.ALBUMARTIST),
+			albumArtistSort: FORMAT.cleanText(simple.ALBUMARTISTSORT),
+			artist: FORMAT.cleanText(simple.ARTIST),
+			artistSort: FORMAT.cleanText(simple.ARTISTSORT),
+			title: FORMAT.cleanText(simple.TITLE),
+			titleSort: FORMAT.cleanText(simple.TITLESORT),
 			genre: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
 			disc: this.parseNum(simple.DISCNUMBER),
 			discTotal: this.parseNum(simple.DISCTOTAL),
@@ -204,6 +204,10 @@ class FORMAT {
 			mbReleaseCountry: simple.RELEASECOUNTRY
 			// chapters: chapters.length > 0 ? chapters : undefined
 		};
+	}
+
+	private static cleanText(s: string | undefined) {
+		return s !== undefined ? s.replace(/  /g, ' ').trim() : undefined;
 	}
 
 	static packFlacVorbisCommentJamServeTag(comment?: FlacComment): TrackTag | undefined {

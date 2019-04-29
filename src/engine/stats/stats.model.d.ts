@@ -2,6 +2,7 @@ export interface AlbumTypeStats {
 	album: number;
 	compilation: number;
 	audiobook: number;
+	audiodrama: number;
 	soundtrack: number;
 	bootleg: number;
 	ep: number;

@@ -208,6 +208,8 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 			albumType = AlbumType.live;
 		} else if (t.indexOf('soundtrack') >= 0) {
 			albumType = AlbumType.soundtrack;
+		} else if (t.indexOf('audiodrama') >= 0 || t.indexOf('audio drama') >= 0) {
+			albumType = AlbumType.audiodrama;
 		} else if (t.indexOf('ep') >= 0) {
 			albumType = AlbumType.ep;
 		} else if (t.indexOf('single') >= 0) {
@@ -216,11 +218,14 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 			albumType = AlbumType.album;
 		}
 	}
-	if (genre && albumType === AlbumType.unknown) {
+	if (genre) {
 		const g = genre.toLowerCase();
-		const audioBook = settings.audioBookGenreNames.find(a => a.toLowerCase().localeCompare(g) === 0);
-		if (audioBook) {
+		if (g === 'audiobook') {
 			albumType = AlbumType.audiobook;
+		} else if (g === 'audio theater') {
+			albumType = AlbumType.audiodrama;
+		} else if (g === 'soundtrack') {
+			albumType = AlbumType.soundtrack;
 		}
 	}
 	if (albumType === AlbumType.unknown) {

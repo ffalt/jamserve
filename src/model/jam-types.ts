@@ -113,7 +113,8 @@ export enum AlbumType {
 	soundtrack = 'soundtrack',
 	audiobook = 'audiobook',
 	ep = 'ep',
-	single = 'single'
+	single = 'single',
+	audiodrama = 'audiodrama'
 }
 
 export enum FileTyp {

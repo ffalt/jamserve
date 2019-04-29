@@ -21,8 +21,7 @@ const log = Logger('IO.Service');
 
 export class ScanService {
 	private settings: Jam.AdminSettingsLibrary = {
-		scanAtStart: true,
-		audioBookGenreNames: []
+		scanAtStart: true
 	};
 
 	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
