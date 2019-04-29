@@ -11239,6 +11239,9 @@
 						"audiobook": {
 							"type": "number"
 						},
+						"audiodrama": {
+							"type": "number"
+						},
 						"soundtrack": {
 							"type": "number"
 						},
@@ -11249,6 +11252,7 @@
 					"required": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"soundtrack"
@@ -11269,6 +11273,9 @@
 						"audiobook": {
 							"type": "number"
 						},
+						"audiodrama": {
+							"type": "number"
+						},
 						"soundtrack": {
 							"type": "number"
 						},
@@ -11279,6 +11286,7 @@
 					"required": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"soundtrack"
@@ -13566,10 +13574,6 @@
 		"JamParameters.FolderIndex": {
 			"type": "object",
 			"properties": {
-				"id": {
-					"description": "filter by id",
-					"type": "string"
-				},
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
@@ -13641,6 +13645,17 @@
 							"multialbum",
 							"unknown"
 						],
+						"type": "string"
+					}
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
 						"type": "string"
 					}
 				},
@@ -13892,6 +13907,7 @@
 					"enum": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"ep",
@@ -14298,10 +14314,6 @@
 		"JamParameters.FolderList": {
 			"type": "object",
 			"properties": {
-				"id": {
-					"description": "filter by id",
-					"type": "string"
-				},
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
@@ -14373,6 +14385,17 @@
 							"multialbum",
 							"unknown"
 						],
+						"type": "string"
+					}
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
 						"type": "string"
 					}
 				},
@@ -14469,10 +14492,6 @@
 					"minimum": 1,
 					"type": "integer"
 				},
-				"id": {
-					"description": "filter by id",
-					"type": "string"
-				},
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
@@ -14544,6 +14563,17 @@
 							"multialbum",
 							"unknown"
 						],
+						"type": "string"
+					}
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
 						"type": "string"
 					}
 				},
@@ -14635,10 +14665,6 @@
 		"JamParameters.FolderHealth": {
 			"type": "object",
 			"properties": {
-				"id": {
-					"description": "filter by id",
-					"type": "string"
-				},
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
@@ -14710,6 +14736,17 @@
 							"multialbum",
 							"unknown"
 						],
+						"type": "string"
+					}
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
 						"type": "string"
 					}
 				},
@@ -15022,6 +15059,17 @@
 					"description": "filter by year",
 					"type": "integer"
 				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"query": {
 					"description": "search query",
 					"type": "string"
@@ -15114,6 +15162,17 @@
 				"toYear": {
 					"description": "filter by year",
 					"type": "integer"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -15230,6 +15289,17 @@
 				"toYear": {
 					"description": "filter by year",
 					"type": "integer"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -15483,6 +15553,17 @@
 					"description": "filter by status",
 					"type": "string"
 				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"query": {
 					"description": "search query",
 					"type": "string"
@@ -15543,6 +15624,17 @@
 				"status": {
 					"description": "filter by status",
 					"type": "string"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -15778,6 +15870,17 @@
 					"description": "filter by podcast status",
 					"type": "string"
 				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"query": {
 					"description": "search query",
 					"type": "string"
@@ -15837,6 +15940,17 @@
 				"status": {
 					"description": "filter by podcast status",
 					"type": "string"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -16087,6 +16201,7 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
@@ -16244,6 +16359,7 @@
 			"enum": [
 				"album",
 				"audiobook",
+				"audiodrama",
 				"bootleg",
 				"compilation",
 				"ep",
@@ -16375,6 +16491,7 @@
 					"enum": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"ep",
@@ -16392,6 +16509,7 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
@@ -16411,6 +16529,17 @@
 					"description": "filter by creation date (unix time)",
 					"minimum": 0,
 					"type": "integer"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -16522,6 +16651,7 @@
 					"enum": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"ep",
@@ -16539,6 +16669,7 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
@@ -16558,6 +16689,17 @@
 					"description": "filter by creation date (unix time)",
 					"minimum": 0,
 					"type": "integer"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -16687,6 +16829,7 @@
 					"enum": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"ep",
@@ -16704,6 +16847,7 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
@@ -16723,6 +16867,17 @@
 					"description": "filter by creation date (unix time)",
 					"minimum": 0,
 					"type": "integer"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -16992,6 +17147,7 @@
 					"enum": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"ep",
@@ -17009,6 +17165,7 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
@@ -17034,6 +17191,17 @@
 					"description": "filter by year",
 					"minimum": 0,
 					"type": "integer"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -17108,6 +17276,7 @@
 					"enum": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"ep",
@@ -17125,6 +17294,7 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
@@ -17150,6 +17320,17 @@
 					"description": "filter by year",
 					"minimum": 0,
 					"type": "integer"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -17246,6 +17427,7 @@
 					"enum": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"ep",
@@ -17263,6 +17445,7 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
@@ -17288,6 +17471,17 @@
 					"description": "filter by year",
 					"minimum": 0,
 					"type": "integer"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -17543,6 +17737,17 @@
 					"description": "filter by public state",
 					"type": "boolean"
 				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"query": {
 					"description": "search query",
 					"type": "string"
@@ -17644,6 +17849,17 @@
 				"isAdmin": {
 					"description": "filter by user admin role",
 					"type": "boolean"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"query": {
 					"description": "search query",
@@ -17865,6 +18081,17 @@
 					"minimum": 1,
 					"type": "integer"
 				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"query": {
 					"description": "search query",
 					"type": "string"
@@ -17945,16 +18172,9 @@
 			"properties": {
 				"scanAtStart": {
 					"type": "boolean"
-				},
-				"audioBookGenreNames": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
 				}
 			},
 			"required": [
-				"audioBookGenreNames",
 				"scanAtStart"
 			]
 		},

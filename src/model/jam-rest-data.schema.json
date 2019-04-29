@@ -4596,6 +4596,7 @@
 			"enum": [
 				"album",
 				"audiobook",
+				"audiodrama",
 				"bootleg",
 				"compilation",
 				"ep",
@@ -5388,6 +5389,7 @@
 					"enum": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"ep",
@@ -5612,6 +5614,7 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
@@ -5935,6 +5938,9 @@
 						"audiobook": {
 							"type": "number"
 						},
+						"audiodrama": {
+							"type": "number"
+						},
 						"soundtrack": {
 							"type": "number"
 						},
@@ -5945,6 +5951,7 @@
 					"required": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"soundtrack"
@@ -5965,6 +5972,9 @@
 						"audiobook": {
 							"type": "number"
 						},
+						"audiodrama": {
+							"type": "number"
+						},
 						"soundtrack": {
 							"type": "number"
 						},
@@ -5975,6 +5985,7 @@
 					"required": [
 						"album",
 						"audiobook",
+						"audiodrama",
 						"bootleg",
 						"compilation",
 						"soundtrack"
@@ -6319,16 +6330,9 @@
 			"properties": {
 				"scanAtStart": {
 					"type": "boolean"
-				},
-				"audioBookGenreNames": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
 				}
 			},
 			"required": [
-				"audioBookGenreNames",
 				"scanAtStart"
 			]
 		},

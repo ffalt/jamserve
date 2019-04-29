@@ -304,6 +304,14 @@ export declare namespace JamParameters {
 
 	export interface SearchQuery {
 		/**
+		 * search by id
+		 */
+		id?: string;
+		/**
+		 * search by ids
+		 */
+		ids?: Array<string>;
+		/**
 		 * search query
 		 */
 		query?: string;
@@ -519,10 +527,6 @@ export declare namespace JamParameters {
 	}
 
 	export interface FolderSearchQuery extends SearchQuery {
-		/**
-		 * filter by id
-		 */
-		id?: string;
 		/**
 		 * filter by root id
 		 */

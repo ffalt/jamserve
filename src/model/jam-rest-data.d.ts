@@ -7,7 +7,7 @@ import {ID3v2Frames} from './id3v2-frames';
 
 export declare namespace Jam {
 
-	export type AlbumType = 'unknown' | 'album' | 'compilation' | 'live' | 'bootleg' | 'soundtrack' | 'audiobook' | 'ep' | 'single';
+	export type AlbumType = 'unknown' | 'album' | 'compilation' | 'live' | 'bootleg' | 'soundtrack' | 'audiobook' | 'ep' | 'single' | 'audiodrama';
 	export type FolderType = 'unknown' | 'artist' | 'collection' | 'album' | 'multialbum' | 'extras';
 	export type PodcastStatusType = 'new' | 'downloading' | 'completed' | 'error';
 	export type PodcastEpisodeStatusType = 'new' | 'downloading' | 'completed' | 'error' | 'deleted';
@@ -345,6 +345,7 @@ export declare namespace Jam {
 			album: number;
 			compilation: number;
 			audiobook: number;
+			audiodrama: number;
 			soundtrack: number;
 			bootleg: number;
 		};
@@ -353,6 +354,7 @@ export declare namespace Jam {
 			album: number;
 			compilation: number;
 			audiobook: number;
+			audiodrama: number;
 			soundtrack: number;
 			bootleg: number;
 		};
@@ -429,7 +431,6 @@ export declare namespace Jam {
 
 	export interface AdminSettingsLibrary {
 		scanAtStart: boolean;
-		audioBookGenreNames: Array<string>;
 	}
 
 	export interface AdminSettings {

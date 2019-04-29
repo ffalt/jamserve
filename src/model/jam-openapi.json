@@ -829,15 +829,6 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "id",
-						"schema": {
-							"type": "string"
-						},
-						"description": "filter by id",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "rootID",
 						"schema": {
 							"type": "string"
@@ -973,6 +964,27 @@
 							}
 						},
 						"description": "filter by folder types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -2057,15 +2069,6 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "id",
-						"schema": {
-							"type": "string"
-						},
-						"description": "filter by id",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "rootID",
 						"schema": {
 							"type": "string"
@@ -2201,6 +2204,27 @@
 							}
 						},
 						"description": "filter by folder types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -2389,15 +2413,6 @@
 					},
 					{
 						"in": "query",
-						"name": "id",
-						"schema": {
-							"type": "string"
-						},
-						"description": "filter by id",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "rootID",
 						"schema": {
 							"type": "string"
@@ -2533,6 +2548,27 @@
 							}
 						},
 						"description": "filter by folder types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -2740,15 +2776,6 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "id",
-						"schema": {
-							"type": "string"
-						},
-						"description": "filter by id",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "rootID",
 						"schema": {
 							"type": "string"
@@ -2884,6 +2911,27 @@
 							}
 						},
 						"description": "filter by folder types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -3667,6 +3715,27 @@
 					},
 					{
 						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "query",
 						"schema": {
 							"type": "string"
@@ -3977,6 +4046,27 @@
 							"type": "integer"
 						},
 						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -4351,6 +4441,27 @@
 					},
 					{
 						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "query",
 						"schema": {
 							"type": "string"
@@ -4673,6 +4784,27 @@
 					},
 					{
 						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "query",
 						"schema": {
 							"type": "string"
@@ -4968,6 +5100,27 @@
 							"type": "string"
 						},
 						"description": "filter by status",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -5405,6 +5558,27 @@
 					},
 					{
 						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "query",
 						"schema": {
 							"type": "string"
@@ -5693,6 +5867,27 @@
 							"type": "string"
 						},
 						"description": "filter by podcast status",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -6562,6 +6757,7 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
@@ -6584,6 +6780,7 @@
 								"enum": [
 									"album",
 									"audiobook",
+									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
@@ -6615,6 +6812,27 @@
 							"type": "integer"
 						},
 						"description": "filter by creation date (unix time)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -6955,6 +7173,7 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
@@ -6977,6 +7196,7 @@
 								"enum": [
 									"album",
 									"audiobook",
+									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
@@ -7008,6 +7228,27 @@
 							"type": "integer"
 						},
 						"description": "filter by creation date (unix time)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -7598,6 +7839,7 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
@@ -7620,6 +7862,7 @@
 								"enum": [
 									"album",
 									"audiobook",
+									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
@@ -7651,6 +7894,27 @@
 							"type": "integer"
 						},
 						"description": "filter by creation date (unix time)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -8281,6 +8545,7 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
@@ -8303,6 +8568,7 @@
 								"enum": [
 									"album",
 									"audiobook",
+									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
@@ -8345,6 +8611,27 @@
 							"type": "integer"
 						},
 						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -8519,6 +8806,7 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
@@ -8541,6 +8829,7 @@
 								"enum": [
 									"album",
 									"audiobook",
+									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
@@ -8583,6 +8872,27 @@
 							"type": "integer"
 						},
 						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -8804,6 +9114,7 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
@@ -8826,6 +9137,7 @@
 								"enum": [
 									"album",
 									"audiobook",
+									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
@@ -8868,6 +9180,27 @@
 							"type": "integer"
 						},
 						"description": "filter by year",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -9538,6 +9871,27 @@
 					},
 					{
 						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "query",
 						"schema": {
 							"type": "string"
@@ -9981,6 +10335,27 @@
 					},
 					{
 						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "query",
 						"schema": {
 							"type": "string"
@@ -10332,6 +10707,27 @@
 							"type": "integer"
 						},
 						"description": "get back number of items",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
 						"required": false
 					},
 					{
@@ -17327,6 +17723,9 @@
 							"audiobook": {
 								"type": "number"
 							},
+							"audiodrama": {
+								"type": "number"
+							},
 							"soundtrack": {
 								"type": "number"
 							},
@@ -17337,6 +17736,7 @@
 						"required": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"soundtrack"
@@ -17357,6 +17757,9 @@
 							"audiobook": {
 								"type": "number"
 							},
+							"audiodrama": {
+								"type": "number"
+							},
 							"soundtrack": {
 								"type": "number"
 							},
@@ -17367,6 +17770,7 @@
 						"required": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"soundtrack"
@@ -19792,6 +20196,7 @@
 						"enum": [
 							"album",
 							"audiobook",
+							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
@@ -20279,6 +20684,7 @@
 							"enum": [
 								"album",
 								"audiobook",
+								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
@@ -20436,6 +20842,7 @@
 				"enum": [
 					"album",
 					"audiobook",
+					"audiodrama",
 					"bootleg",
 					"compilation",
 					"ep",
@@ -20842,16 +21249,9 @@
 				"properties": {
 					"scanAtStart": {
 						"type": "boolean"
-					},
-					"audioBookGenreNames": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
 					}
 				},
 				"required": [
-					"audioBookGenreNames",
 					"scanAtStart"
 				]
 			},
