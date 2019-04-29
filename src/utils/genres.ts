@@ -242,6 +242,7 @@ export const Genres: Array<string> = [
 	'Asian Underground',
 	'Atlanta Hip Hop',
 	'Audio Theatre',
+	'Audio Drama',
 	'Audiobook',
 	'Australian Country Music',
 	'Australian Hip Hop',
