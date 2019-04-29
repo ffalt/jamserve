@@ -46,6 +46,8 @@ export class PodcastController extends BaseListController<JamParameters.Podcast,
 	async translateQuery(query: JamParameters.PodcastSearch, user: User): Promise<SearchQueryPodcast> {
 		return {
 			query: query.query,
+			id: query.id,
+			ids: query.ids,
 			url: query.url,
 			title: query.title,
 			status: query.status,

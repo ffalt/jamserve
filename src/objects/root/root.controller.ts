@@ -37,6 +37,8 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 	async translateQuery(query: JamParameters.RootSearch, user: User): Promise<SearchQueryRoot> {
 		return {
 			query: query.query,
+			id: query.id,
+			ids: query.ids,
 			offset: query.offset,
 			amount: query.amount,
 			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] : undefined

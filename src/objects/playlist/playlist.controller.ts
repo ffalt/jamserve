@@ -48,6 +48,8 @@ export class PlaylistController extends BaseController<JamParameters.Playlist, J
 	async translateQuery(query: JamParameters.PlaylistSearch, user: User): Promise<SearchQueryPlaylist> {
 		return {
 			query: query.query,
+			id: query.id,
+			ids: query.ids,
 			name: query.name,
 			userID: user.id,
 			isPublic: query.isPublic,

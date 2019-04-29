@@ -83,6 +83,8 @@ export class ArtistController extends BaseListController<JamParameters.Artist, J
 	async translateQuery(query: JamParameters.ArtistSearch, user: User): Promise<SearchQueryArtist> {
 		return {
 			query: query.query,
+			id: query.id,
+			ids: query.ids,
 			name: query.name,
 			rootID: query.rootID,
 			albumID: query.albumID,

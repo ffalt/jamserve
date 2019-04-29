@@ -36,6 +36,8 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	async translateQuery(query: JamParameters.UserSearch, user: User): Promise<SearchQueryUser> {
 		return {
 			query: query.query,
+			id: query.id,
+			ids: query.ids,
 			name: query.name,
 			isAdmin: query.isAdmin,
 			offset: query.offset,

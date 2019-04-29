@@ -62,6 +62,8 @@ export class EpisodeController extends BaseListController<JamParameters.Episode,
 		return {
 			query: query.query,
 			name: query.name,
+			id: query.id,
+			ids: query.ids,
 			podcastID: query.podcastID,
 			status: query.status,
 			offset: query.offset,

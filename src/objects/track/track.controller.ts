@@ -93,6 +93,8 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 		}
 		return {
 			query: query.query,
+			id: query.id,
+			ids: query.ids,
 			rootID: query.rootID,
 			parentID: query.parentID,
 			parentIDs: query.parentIDs,
