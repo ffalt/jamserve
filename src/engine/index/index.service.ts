@@ -191,6 +191,7 @@ export class IndexService {
 			const builder = new IndexFolderTreeBuilder(this.indexConfig, this.folderStore, this.trackStore);
 			const result = await builder.buildFolderIndex(query);
 			await this.indexCacheFolderDebounce.resolve(id, result);
+			this.cached.folder[id] = result;
 			return result;
 		} catch (e) {
 			await this.indexCacheFolderDebounce.reject(id, e);
@@ -211,6 +212,7 @@ export class IndexService {
 			const builder = new IndexArtistTreeBuilder(this.indexConfig, this.artistStore);
 			const result = await builder.buildArtistIndex(query);
 			await this.indexCacheArtistDebounce.resolve(id, result);
+			this.cached.artist[id] = result;
 			return result;
 		} catch (e) {
 			await this.indexCacheArtistDebounce.reject(id, e);
@@ -231,6 +233,7 @@ export class IndexService {
 			const builder = new IndexAlbumTreeBuilder(this.indexConfig, this.albumStore);
 			const result = await builder.buildAlbumIndex(query);
 			await this.indexCacheAlbumDebounce.resolve(id, result);
+			this.cached.album[id] = result;
 			return result;
 		} catch (e) {
 			await this.indexCacheAlbumDebounce.reject(id, e);
