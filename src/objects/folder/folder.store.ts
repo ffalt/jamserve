@@ -1,8 +1,9 @@
 import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery} from '../base/base.store';
+import {BaseStore, QueryHelper, SearchQuery, SearchQuerySort} from '../base/base.store';
 import {Folder} from './folder.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {JamParameters} from '../../model/jam-rest-params';
 
 export interface SearchQueryFolder extends SearchQuery {
 	rootID?: string;
@@ -23,23 +24,20 @@ export interface SearchQueryFolder extends SearchQuery {
 	mbAlbumID?: string;
 	mbArtistID?: string;
 	types?: Array<string>;
+	sorts?: Array<SearchQuerySort<JamParameters.FolderSortField>>;
 }
 
+const sortFieldMap: { [name in JamParameters.FolderSortField]: string } = {
+	'artist': 'tag.artist',
+	'album': 'tag.album',
+	'genre': 'tag.genre',
+	'created': 'stat.created',
+	'parent': 'parentID',
+	'title': 'tag.title',
+	'year': 'tag.year'
+};
+
 export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
-	fieldMap: { [name: string]: string } = {
-		'parentID': 'parentID',
-		'parentIDs': 'parentID',
-		'rootID': 'rootID',
-		'artist': 'tag.artist',
-		'title': 'tag.title',
-		'type': 'tag.type',
-		'year': 'tag.year',
-		'created': 'stat.created',
-		'album': 'tag.album',
-		'path': 'path',
-		'level': 'tag.level',
-		'genre': 'tag.genre'
-	};
 
 	constructor(db: Database) {
 		super(DBObjectType.folder, db);
@@ -65,7 +63,7 @@ export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 		q.range('tag.year', query.toYear, query.fromYear);
 		q.range('stat.created', undefined, query.newerThan);
 		q.match('tag.title', query.query);
-		return q.get(query, this.fieldMap);
+		return q.get(query, sortFieldMap);
 	}
 
 }

@@ -54,7 +54,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			result.tracks = await this.trackController.prepareByQuery({parentID: folder.id}, includes, user);
 		}
 		if (includes.folderChildren || includes.folderSubfolders) {
-			const folders = await this.folderService.folderStore.search({parentID: folder.id, sorts: [{field: 'name', descending: false}]});
+			const folders = await this.folderService.folderStore.search({parentID: folder.id, sorts: [{field: 'title', descending: false}]});
 			// TODO: introduce children includes?
 			result.folders = await this.prepareList(folders,
 				{folderState: includes.folderState, folderCounts: includes.folderCounts, folderTag: includes.folderTag}

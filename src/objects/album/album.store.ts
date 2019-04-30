@@ -1,7 +1,8 @@
 import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery} from '../base/base.store';
+import {BaseStore, QueryHelper, SearchQuery, SearchQuerySort} from '../base/base.store';
 import {Album} from './album.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
+import {JamParameters} from '../../model/jam-rest-params';
 
 export interface SearchQueryAlbum extends SearchQuery {
 	name?: string;
@@ -19,7 +20,16 @@ export interface SearchQueryAlbum extends SearchQuery {
 	newerThan?: number;
 	fromYear?: number;
 	toYear?: number;
+	sorts?: Array<SearchQuerySort<JamParameters.AlbumSortField>>;
 }
+
+const fieldMap: { [name in JamParameters.AlbumSortField]: string } = {
+	'name': 'name',
+	'artist': 'artist',
+	'genre': 'genre',
+	'year': 'year',
+	'created': 'created'
+};
 
 export class AlbumStore extends BaseStore<Album, SearchQueryAlbum> {
 
@@ -44,7 +54,7 @@ export class AlbumStore extends BaseStore<Album, SearchQueryAlbum> {
 		q.range('year', query.toYear, query.fromYear);
 		q.range('created', undefined, query.newerThan);
 		q.match('name', query.query);
-		return q.get(query);
+		return q.get(query, fieldMap);
 	}
 
 }

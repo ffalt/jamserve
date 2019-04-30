@@ -1,7 +1,8 @@
 import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery} from '../base/base.store';
+import {BaseStore, QueryHelper, SearchQuery, SearchQuerySort} from '../base/base.store';
 import {Episode} from './episode.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
+import {JamParameters} from '../../model/jam-rest-params';
 
 export interface SearchQueryEpisode extends SearchQuery {
 	podcastID?: string;
@@ -9,17 +10,17 @@ export interface SearchQueryEpisode extends SearchQuery {
 	name?: string;
 	status?: string;
 	newerThan?: number;
+	sorts?: Array<SearchQuerySort<JamParameters.EpisodeSortField>>;
 }
 
+const fieldMap: { [name in JamParameters.EpisodeSortField]: string } = {
+	'podcast': 'podcastID',
+	'date': 'date',
+	'name': 'name',
+	'created': 'created'
+};
+
 export class EpisodeStore extends BaseStore<Episode, SearchQueryEpisode> {
-	fieldMap: { [name: string]: string } = {
-		'podcastIDs': 'podcastID',
-		'podcastID': 'podcastID',
-		'status': 'status',
-		'date': 'date',
-		'name': 'name',
-		'created': 'stat.created'
-	};
 
 	constructor(db: Database) {
 		super(DBObjectType.episode, db);
@@ -33,7 +34,7 @@ export class EpisodeStore extends BaseStore<Episode, SearchQueryEpisode> {
 		q.term('name', query.name);
 		q.range('date', undefined, query.newerThan);
 		q.match('name', query.query);
-		return q.get(query, this.fieldMap);
+		return q.get(query, fieldMap);
 	}
 
 }

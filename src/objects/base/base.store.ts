@@ -9,11 +9,11 @@ export interface SearchQuery {
 	query?: string;
 	offset?: number;
 	amount?: number;
-	sorts?: Array<SearchQuerySort>;
+	sorts?: Array<SearchQuerySort<any>>;
 }
 
-export interface SearchQuerySort {
-	field: string;
+export interface SearchQuerySort<T> {
+	field: T;
 	descending: boolean;
 }
 
@@ -179,10 +179,10 @@ export class QueryHelper {
 		if (Object.keys(this.q).length === 0) {
 			this.q.all = true;
 		}
-		if (query.sorts) {
+		if (query.sorts && query.sorts.length > 0) {
 			const sorts: DatabaseQuerySort = {};
 			query.sorts.forEach(sort => {
-				const field = fieldMap ? fieldMap[sort.field] : sort.field;
+				const field = fieldMap ? fieldMap[sort.field] : undefined;
 				if (field) {
 					sorts[field] = sort.descending ? DatabaseQuerySortType.descending : DatabaseQuerySortType.ascending;
 				}

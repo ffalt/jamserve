@@ -13648,6 +13648,19 @@
 						"type": "string"
 					}
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"album",
+						"artist",
+						"created",
+						"genre",
+						"parent",
+						"title",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -13663,12 +13676,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				}
@@ -14388,6 +14397,19 @@
 						"type": "string"
 					}
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"album",
+						"artist",
+						"created",
+						"genre",
+						"parent",
+						"title",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -14403,12 +14425,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14566,6 +14584,19 @@
 						"type": "string"
 					}
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"album",
+						"artist",
+						"created",
+						"genre",
+						"parent",
+						"title",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -14581,12 +14612,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -14739,6 +14766,19 @@
 						"type": "string"
 					}
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"album",
+						"artist",
+						"created",
+						"genre",
+						"parent",
+						"title",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -14754,12 +14794,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15059,6 +15095,20 @@
 					"description": "filter by year",
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"album",
+						"albumartist",
+						"artist",
+						"created",
+						"genre",
+						"parent",
+						"title",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -15074,12 +15124,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15163,6 +15209,20 @@
 					"description": "filter by year",
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"album",
+						"albumartist",
+						"artist",
+						"created",
+						"genre",
+						"parent",
+						"title",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -15178,12 +15238,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15290,6 +15346,20 @@
 					"description": "filter by year",
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"album",
+						"albumartist",
+						"artist",
+						"created",
+						"genre",
+						"parent",
+						"title",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -15305,12 +15375,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15553,6 +15619,16 @@
 					"description": "filter by status",
 					"type": "string"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"date",
+						"name",
+						"podcast"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -15568,12 +15644,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15625,6 +15697,16 @@
 					"description": "filter by status",
 					"type": "string"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"date",
+						"name",
+						"podcast"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -15640,12 +15722,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15870,6 +15948,14 @@
 					"description": "filter by podcast status",
 					"type": "string"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"title"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -15885,12 +15971,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -15941,6 +16023,14 @@
 					"description": "filter by podcast status",
 					"type": "string"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"title"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -15956,12 +16046,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -16530,6 +16616,14 @@
 					"minimum": 0,
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"name"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -16545,12 +16639,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -16690,6 +16780,14 @@
 					"minimum": 0,
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"name"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -16705,12 +16803,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -16868,6 +16962,14 @@
 					"minimum": 0,
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"name"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -16883,12 +16985,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				}
@@ -17192,6 +17290,17 @@
 					"minimum": 0,
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"artist",
+						"created",
+						"genre",
+						"name",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -17207,12 +17316,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -17321,6 +17426,17 @@
 					"minimum": 0,
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"artist",
+						"created",
+						"genre",
+						"name",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -17336,12 +17452,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -17472,6 +17584,17 @@
 					"minimum": 0,
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"artist",
+						"created",
+						"genre",
+						"name",
+						"year"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -17487,12 +17610,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				}
@@ -17737,6 +17856,14 @@
 					"description": "filter by public state",
 					"type": "boolean"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"name"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -17752,12 +17879,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				},
@@ -17850,6 +17973,14 @@
 					"description": "filter by user admin role",
 					"type": "boolean"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"name"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -17865,12 +17996,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				}
@@ -18081,6 +18208,14 @@
 					"minimum": 1,
 					"type": "integer"
 				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"name"
+					],
+					"type": "string"
+				},
 				"id": {
 					"description": "search by id",
 					"type": "string"
@@ -18096,12 +18231,8 @@
 					"description": "search query",
 					"type": "string"
 				},
-				"sortField": {
-					"description": "the obj property name to sort on (e.g. 'artist', 'creation')",
-					"type": "string"
-				},
 				"sortDescending": {
-					"description": "the sort direction",
+					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
 				}

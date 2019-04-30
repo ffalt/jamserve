@@ -12,6 +12,18 @@ export declare namespace JamParameters {
 	export type MusicBrainzSearchType = 'area' | 'artist' | 'label' | 'recording' | 'release' | 'release-group' | 'work';
 	export type CoverArtArchiveLookupType = 'release' | 'release-group';
 
+	export type TrackSortField = 'artist' | 'album' | 'albumartist' | 'genre' | 'parent' | 'title' | 'year' | 'created';
+	export type FolderSortField = 'artist' | 'album' | 'genre' | 'parent' | 'title' | 'year' | 'created' ;
+	export type EpisodeSortField = 'podcast' | 'name' | 'date' | 'created';
+	export type BookmarkSortField = 'created';
+	export type RadioSortField = 'name' | 'created';
+	export type PlaylistSortField = 'name' | 'created' ;
+	export type PodcastSortField = 'title' | 'created' ;
+	export type AlbumSortField = 'name' | 'artist' | 'genre' | 'year' | 'created';
+	export type ArtistSortField = 'name' | 'created';
+	export type UserSortField = 'name' | 'created';
+	export type RootSortField = 'name' | 'created';
+
 	export interface ID {
 		/**
 		 * the item id
@@ -316,11 +328,7 @@ export declare namespace JamParameters {
 		 */
 		query?: string;
 		/**
-		 * the obj property name to sort on (e.g. 'artist', 'creation')
-		 */
-		sortField?: string; // TODO: typescript-type the sort fields for the different items
-		/**
-		 * the sort direction
+		 * sort direction
 		 *
 		 * @default false
 		 */
@@ -466,6 +474,10 @@ export declare namespace JamParameters {
 		 * @TJS-type integer
 		 */
 		toYear?: number;
+		/**
+		 * sort the result by
+		 */
+		sortField?: TrackSortField;
 	}
 
 	export interface TrackList extends TrackSearchQuery, IncludesTrack, List {
@@ -588,6 +600,10 @@ export declare namespace JamParameters {
 		 * filter by folder types
 		 */
 		types?: Array<Jam.FolderType>;
+		/**
+		 * sort the result by
+		 */
+		sortField?: FolderSortField;
 	}
 
 	export interface FolderList extends FolderSearchQuery, IncludesFolder, List {
@@ -720,6 +736,10 @@ export declare namespace JamParameters {
 		 * filter by status
 		 */
 		status?: string;
+		/**
+		 * sort the result by
+		 */
+		sortField?: EpisodeSortField;
 	}
 
 	export interface PodcastEpisodeList extends EpisodeSearchQuery, IncludesEpisode, List {
@@ -737,6 +757,10 @@ export declare namespace JamParameters {
 		 * filter by user id
 		 */
 		userID?: string;
+		/**
+		 * sort the result by
+		 */
+		sortField?: BookmarkSortField;
 	}
 
 	export interface BookmarkSearch extends Paginate, BookmarkSearchQuery, IncludesBookmark {
@@ -800,6 +824,10 @@ export declare namespace JamParameters {
 		 * filter by radio name
 		 */
 		name?: string;
+		/**
+		 * sort the result by
+		 */
+		sortField?: RadioSortField;
 	}
 
 	export interface PodcastSearchQuery extends SearchQuery {
@@ -815,6 +843,10 @@ export declare namespace JamParameters {
 		 * filter by podcast status
 		 */
 		status?: string;
+		/**
+		 * sort the result by
+		 */
+		sortField?: PodcastSortField;
 	}
 
 	export interface PodcastNew {
@@ -898,6 +930,10 @@ export declare namespace JamParameters {
 		 * @TJS-type integer
 		 */
 		toYear?: number;
+		/**
+		 * sort the result by
+		 */
+		sortField?: AlbumSortField;
 	}
 
 	export interface AlbumList extends Paginate, IncludesAlbum, AlbumSearchQuery, List {
@@ -926,6 +962,10 @@ export declare namespace JamParameters {
 		 * filter by public state
 		 */
 		isPublic?: boolean;
+		/**
+		 * sort the result by
+		 */
+		sortField?: PlaylistSortField;
 	}
 
 	export interface PlaylistSearch extends Paginate, PlaylistSearchQuery, IncludesPlaylist {
@@ -1011,6 +1051,10 @@ export declare namespace JamParameters {
 		 * @TJS-type integer
 		 */
 		newerThan?: number;
+		/**
+		 * sort the result by
+		 */
+		sortField?: ArtistSortField;
 	}
 
 	export interface ArtistList extends ArtistSearchQuery, IncludesArtist, List {
@@ -1141,9 +1185,21 @@ export declare namespace JamParameters {
 		 * filter by user admin role
 		 */
 		isAdmin?: boolean;
+		/**
+		 * sort the result by
+		 */
+		sortField?: UserSortField;
 	}
 
-	export interface RootSearch extends Paginate, SearchQuery {
+	export interface RootSearchQuery extends SearchQuery {
+		/**
+		 * sort the result by
+		 */
+		sortField?: RootSortField;
+	}
+
+	export interface RootSearch extends Paginate, RootSearchQuery {
+
 	}
 
 	export interface UserSearch extends Paginate, UserSearchQuery {

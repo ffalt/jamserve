@@ -1,8 +1,9 @@
 import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery} from '../base/base.store';
+import {BaseStore, QueryHelper, SearchQuery, SearchQuerySort} from '../base/base.store';
 import {Track} from './track.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {JamParameters} from '../../model/jam-rest-params';
 
 export interface SearchQueryTrack extends SearchQuery {
 	path?: string;
@@ -27,30 +28,21 @@ export interface SearchQueryTrack extends SearchQuery {
 	newerThan?: number;
 	fromYear?: number;
 	toYear?: number;
+	sorts?: Array<SearchQuerySort<JamParameters.TrackSortField>>;
 }
 
-export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
-	fieldMap: { [name: string]: string } = {
-		'path': 'path',
-		'parentID': 'parentID',
-		'parentIDs': 'parentID',
-		'rootID': 'rootID',
-		'rootIDs': 'rootID',
-		'artistID': 'artistID',
-		'artistIDs': 'artistID',
-		'albumArtistID': 'albumArtistID',
-		'albumArtistIDs': 'albumArtistID',
-		'albumID': 'albumID',
-		'albumIDs': 'albumID',
-		'artist': 'tag.artist',
-		'mbTrackID': 'tag.mbTrackID',
-		'title': 'tag.title',
-		'album': 'tag.album',
-		'year': 'tag.year',
-		'genre': 'tag.genre',
-		'created': 'stat.created'
-	};
+const fieldMap: { [name in JamParameters.TrackSortField]: string } = {
+	'artist': 'tag.artist',
+	'album': 'tag.album',
+	'albumartist': 'tag.albumArtist',
+	'genre': 'tag.genre',
+	'parent': 'path',
+	'title': 'tag.title',
+	'year': 'tag.year',
+	'created': 'stat.created'
+};
 
+export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 	constructor(db: Database) {
 		super(DBObjectType.track, db);
 	}
@@ -79,7 +71,7 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 		q.terms('albumID', query.albumIDs);
 		q.range('tag.year', query.toYear, query.fromYear);
 		q.range('stat.created', undefined, query.newerThan);
-		return q.get(query, this.fieldMap);
+		return q.get(query, fieldMap);
 	}
 
 	// async genres(): Promise<Array<string>> {
