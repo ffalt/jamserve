@@ -1219,6 +1219,17 @@ export declare namespace JamParameters {
 		rootID?: string;
 	}
 
+	export interface ChartlyricsSearch {
+		/**
+		 * search by artist name
+		 */
+		artist: string;
+		/**
+		 * search by song name
+		 */
+		song: string;
+	}
+
 	export interface MusicBrainzSearch {
 		/**
 		 * search by musicbrainz type

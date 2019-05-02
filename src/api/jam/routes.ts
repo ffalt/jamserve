@@ -58,6 +58,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/chartlyrics/search', async (req, res) => {
+		const options: JamRequest<JamParameters.ChartlyricsSearch> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.ChartLyricsResponse = await api.metadataController.chartlyricsSearch(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/acousticbrainz/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.AcousticBrainzLookup> = {query: req.query, user: req.user, client: req.client};
 		const result: AcousticBrainz.Response = await api.metadataController.acousticbrainzLookup(options);

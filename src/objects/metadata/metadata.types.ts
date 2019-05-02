@@ -6,5 +6,6 @@ export enum MetaDataType {
 	acoustid,
 	acousticbrainz,
 	coverartarchive,
-	lastfm
+	lastfm,
+	chartlyrics,
 }

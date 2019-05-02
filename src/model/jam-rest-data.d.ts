@@ -460,6 +460,19 @@ export declare namespace Jam {
 		summary?: WikipediaSummary;
 	}
 
+	export interface ChartLyricsResponse {
+		id?: string;
+		trackId?: string;
+		checksum?: string;
+		song?: string;
+		artist?: string;
+		url?: string;
+		covertArtUrl?: string;
+		rank?: string;
+		correctUrl?: string;
+		lyric?: string;
+	}
+
 	export type LastFMResponse = LastFM.Result;
 	export type AcoustidResponse = Acoustid.Result;
 

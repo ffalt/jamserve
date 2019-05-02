@@ -24,6 +24,7 @@ import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {Jam} from '../../model/jam-rest-data';
 import moment from 'moment';
 import Logger from '../../utils/logger';
+import {ChartLyricsResult} from '../../modules/audio/clients/chartlyrics-client';
 
 const log = Logger('Metadata');
 
@@ -564,6 +565,17 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		const brainz = await this.audioModule.musicbrainzLookup(type, mbid, inc);
 		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.musicbrainz, data: brainz, date: Date.now()});
 		return brainz;
+	}
+
+	async chartlyricsSearch(artist: string, song: string): Promise<Jam.ChartLyricsResponse> {
+		const name = 'lyrics-' + artist + '/' + song;
+		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.chartlyrics});
+		if (result) {
+			return result.data;
+		}
+		const lyrics = await this.audioModule.getLyrics(artist, song) || {};
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.chartlyrics, data: lyrics, date: Date.now()});
+		return lyrics;
 	}
 
 	async wikipediaSummary(title: string, lang: string | undefined): Promise<Jam.WikipediaResponse> {

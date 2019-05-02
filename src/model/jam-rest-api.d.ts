@@ -83,6 +83,15 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
+		 * metadata: search chartlyrics data
+		 */
+		'chartlyrics/search'?: {
+			operationId: 'metadata.chartlyricsSearch'
+			params: JamParameters.ChartlyricsSearch;
+			result: Jam.ChartLyricsResponse;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
 		 * metadata: lookup acousticbrainz data
 		 */
 		'acousticbrainz/lookup'?: {

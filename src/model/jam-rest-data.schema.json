@@ -6480,6 +6480,41 @@
 				}
 			}
 		},
+		"Jam.ChartLyricsResponse": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"trackId": {
+					"type": "string"
+				},
+				"checksum": {
+					"type": "string"
+				},
+				"song": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"covertArtUrl": {
+					"type": "string"
+				},
+				"rank": {
+					"type": "string"
+				},
+				"correctUrl": {
+					"type": "string"
+				},
+				"lyric": {
+					"type": "string"
+				}
+			}
+		},
 		"Jam.LastFMResponse": {
 			"type": "object",
 			"properties": {

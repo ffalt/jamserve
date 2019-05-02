@@ -48,4 +48,8 @@ export class MetadataController {
 	async wikidataSummary(req: JamRequest<JamParameters.WikidataSummary>): Promise<Jam.WikipediaResponse> {
 		return await this.metadataService.wikidataSummary(req.query.id, req.query.lang);
 	}
+
+	async chartlyricsSearch(req: JamRequest<JamParameters.ChartlyricsSearch>): Promise<Jam.ChartLyricsResponse> {
+		return await this.metadataService.chartlyricsSearch(req.query.artist, req.query.song);
+	}
 }

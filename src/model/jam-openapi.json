@@ -315,6 +315,56 @@
 				]
 			}
 		},
+		"/chartlyrics/search": {
+			"get": {
+				"operationId": "metadataController.chartlyricsSearch",
+				"description": "search chartlyrics data",
+				"tags": [
+					"metadata"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.ChartLyricsResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by artist name",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "song",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by song name",
+						"required": true
+					}
+				]
+			}
+		},
 		"/acousticbrainz/lookup": {
 			"get": {
 				"operationId": "metadataController.acousticbrainzLookup",
@@ -17023,6 +17073,41 @@
 					"work"
 				],
 				"type": "string"
+			},
+			"Jam.ChartLyricsResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"trackId": {
+						"type": "string"
+					},
+					"checksum": {
+						"type": "string"
+					},
+					"song": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"covertArtUrl": {
+						"type": "string"
+					},
+					"rank": {
+						"type": "string"
+					},
+					"correctUrl": {
+						"type": "string"
+					},
+					"lyric": {
+						"type": "string"
+					}
+				}
 			},
 			"AcousticBrainz.Response": {
 				"type": "object",
