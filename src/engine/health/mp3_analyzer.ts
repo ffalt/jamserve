@@ -84,16 +84,16 @@ export class MP3Analyzer {
 				(data.mpeg.frameCount - data.mpeg.frameCountDeclared === 1) &&
 				(data.mpeg.audioBytes - data.mpeg.audioBytesDeclared === head.header.size)
 			) {
-				info.msgs.push({msg: 'XING: Wrong ' + head.mode + ' declaration (frameCount and audioBytes must include the ' + head.mode + ' Header itself)', expected: data.mpeg.frameCountDeclared, actual: data.mpeg.frameCount});
+				info.msgs.push({msg: 'XING: Wrong ' + head.mode + ' declaration (frameCount and audioBytes must include the ' + head.mode + ' Header itself)', expected: data.mpeg.frameCount, actual: data.mpeg.frameCountDeclared});
 			} else {
 				if (data.mpeg.frameCount !== data.mpeg.frameCountDeclared) {
 					if (!options.ignoreOneOfErrorXingCount || Math.abs(data.mpeg.frameCount - data.mpeg.frameCountDeclared) !== 1) {
-						info.msgs.push({msg: 'XING: Wrong number of frames declared in ' + head.mode + ' Header', expected: data.mpeg.frameCountDeclared, actual: data.mpeg.frameCount});
+						info.msgs.push({msg: 'XING: Wrong number of frames declared in ' + head.mode + ' Header', expected: data.mpeg.frameCount, actual: data.mpeg.frameCountDeclared});
 					}
 				}
 				if (data.mpeg.audioBytes !== data.mpeg.audioBytesDeclared) {
 					if (!options.ignoreOneOfErrorXingCount || data.mpeg.audioBytes + head.header.size - data.mpeg.audioBytesDeclared === 0) {
-						info.msgs.push({msg: 'XING: Wrong number of data bytes declared in ' + head.mode + ' Header', expected: data.mpeg.audioBytesDeclared, actual: data.mpeg.audioBytes});
+						info.msgs.push({msg: 'XING: Wrong number of data bytes declared in ' + head.mode + ' Header', expected: data.mpeg.audioBytes, actual: data.mpeg.audioBytesDeclared});
 					}
 				}
 			}
