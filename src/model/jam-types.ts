@@ -117,6 +117,8 @@ export enum AlbumType {
 	audiodrama = 'audiodrama'
 }
 
+export const AlbumTypesArtistMusic = [AlbumType.album, AlbumType.live, AlbumType.bootleg, AlbumType.ep, AlbumType.single];
+
 export enum FileTyp {
 	UNKNOWN = 'unknown',
 	AUDIO = 'audio',

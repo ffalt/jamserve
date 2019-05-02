@@ -1,6 +1,6 @@
 import {Track} from '../../objects/track/track.model';
 import {RuleResult} from './rule.model';
-import {AudioFormatType} from '../../model/jam-types';
+import {AlbumTypesArtistMusic, AudioFormatType} from '../../model/jam-types';
 import {ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
 import {Folder} from '../../objects/folder/folder.model';
 import {Root} from '../../objects/root/root.model';
@@ -9,6 +9,9 @@ import {flac_test} from '../../modules/audio/tools/flac';
 import {IMP3Warning, MP3Analyzer} from './mp3_analyzer';
 import {IID3V2} from 'jamp3/src/lib/id3v2/id3v2__types';
 import {ID3v2, IID3V1} from 'jamp3';
+import Logger from '../../utils/logger';
+
+const log = Logger('TrackHealth');
 
 interface MediaCache {
 	id3v2?: IID3V2.Tag;
@@ -59,7 +62,7 @@ export class TrackTagValuesRule extends TrackRule {
 		super('track.tag.values.exists', 'Tag Values missing');
 	}
 
-	async run(track: Track): Promise<RuleResult | undefined> {
+	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
 		const missing = [];
 		if (!track.tag.album) {
 			missing.push('album');
@@ -70,9 +73,6 @@ export class TrackTagValuesRule extends TrackRule {
 		if (!track.tag.albumArtist) {
 			missing.push('album artist');
 		}
-		if (!track.tag.year) {
-			missing.push('year');
-		}
 		if (!track.tag.genre) {
 			missing.push('genre');
 		}
@@ -81,6 +81,11 @@ export class TrackTagValuesRule extends TrackRule {
 		}
 		if (!track.tag.trackTotal) {
 			missing.push('total track count');
+		}
+		if (parent.tag.albumType !== undefined && AlbumTypesArtistMusic.indexOf(parent.tag.albumType) >= 0) {
+			if (!track.tag.year) {
+				missing.push('year');
+			}
 		}
 		if (missing.length > 0) {
 			return {
@@ -206,6 +211,7 @@ export class TrackRulesChecker {
 		const filename = track.path + track.name;
 		if (checkMedia) {
 			if (isMP3(track)) {
+				log.debug('Check MPEG', filename);
 				const mp3ana = new MP3Analyzer();
 				const ana = await mp3ana.read(filename, {id3v1: false, id3v2: false, mpeg: true, xing: true, ignoreOneOfErrorXingCount: true});
 				mediaCache.id3v1 = ana.tags.id3v1;
@@ -215,10 +221,12 @@ export class TrackRulesChecker {
 					mediaCache.id3v2Warnings = mp3ana.analyseID3v2(ana.tags.id3v2);
 				}
 			} else {
+				log.debug('Check Media with flac', filename);
 				mediaCache.flacWarnings = await flac_test(filename);
 			}
 		} else {
 			if (isMP3(track)) {
+				log.debug('Read full tag', filename);
 				const id3v2 = new ID3v2();
 				mediaCache.id3v2 = await id3v2.read(filename);
 				if (mediaCache.id3v2) {
@@ -227,6 +235,7 @@ export class TrackRulesChecker {
 				}
 			}
 		}
+		log.debug('Analyzing track', filename);
 		for (const rule of this.rules) {
 			const match = await rule.run(track, parent, root, mediaCache);
 			if (match) {

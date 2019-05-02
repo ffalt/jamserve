@@ -1,6 +1,6 @@
 import {RuleResult} from './rule.model';
 import {Folder, FolderTag} from '../../objects/folder/folder.model';
-import {FolderType, FolderTypesAlbum} from '../../model/jam-types';
+import {AlbumTypesArtistMusic, FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import path from 'path';
 import {replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Jam} from '../../model/jam-rest-data';
@@ -21,7 +21,7 @@ export class FolderAlbumTagsRule extends FolderRule {
 		super('folder.album.tags.exists', 'Album folder values are missing');
 	}
 
-	async run(folder: Folder): Promise<RuleResult | undefined> {
+	async run(folder: Folder, parents: Array<Folder>, root: Root): Promise<RuleResult | undefined> {
 		if (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) {
 			const missing = [];
 			if (!folder.tag.album) {
@@ -30,14 +30,16 @@ export class FolderAlbumTagsRule extends FolderRule {
 			if (!folder.tag.artist) {
 				missing.push('artist');
 			}
-			if (!folder.tag.year) {
-				missing.push('year');
-			}
 			if (!folder.tag.genre) {
 				missing.push('genre');
 			}
 			if (!folder.tag.albumTrackCount) {
 				missing.push('album total track count');
+			}
+			if (folder.tag.albumType !== undefined && AlbumTypesArtistMusic.indexOf(folder.tag.albumType) >= 0) {
+				if (!folder.tag.year) {
+					missing.push('year');
+				}
 			}
 			if (missing.length > 0) {
 				return {
