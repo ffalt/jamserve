@@ -25,17 +25,16 @@ export class IndexTreeBuilder {
 		return matches ? matches[1] : name;
 	}
 
-	getIndexChar(name: string, sortname?: string): string {
-		const s = (sortname || this.removeArticles(name) || '').replace(/¿…‘“«/g, '');
-		const c = s.trim().charAt(0).toUpperCase();
-		const regex_symbols = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#\d]/;
-		if (c.match(regex_symbols) === null) {
-			return c;
+	getIndexChar(name: string): string {
+		const s = name.replace(/[¿…¡?[\]{}<>‘`“'&_~=:.\/;@#«!%$*()+\-\\|]/g, '').trim();
+		if (s.length === 0) {
+			return '#';
 		}
-		// if (!isNaN(Number(c))) {
-		// 	return '№';
-		// }
-		return '#';
+		const c = s.charAt(0).toUpperCase();
+		if (!isNaN(Number(c))) {
+			return '#';
+		}
+		return c;
 	}
 }
 
@@ -59,7 +58,7 @@ export class IndexFolderTreeBuilder extends IndexTreeBuilder {
 				trackCount: trackCount || 0,
 				folder
 			};
-			const indexChar = this.getIndexChar(entry.name, entry.nameSort);
+			const indexChar = this.getIndexChar(entry.nameSort);
 			let group = result.groups.find(g => g.name === indexChar);
 			if (!group) {
 				group = {name: indexChar, entries: []};
@@ -89,7 +88,7 @@ export class IndexArtistTreeBuilder extends IndexTreeBuilder {
 		const artists = await this.artistStore.search(query);
 		artists.forEach(artist => {
 			const entry: ArtistIndexEntry = {artist};
-			const indexChar = this.getIndexChar(artist.name, artist.nameSort);
+			const indexChar = this.getIndexChar(artist.nameSort || this.removeArticles(artist.name) || '');
 			let group = result.groups.find(g => g.name === indexChar);
 			if (!group) {
 				group = {name: indexChar, entries: []};
