@@ -6,7 +6,6 @@ import {FORMAT} from './format';
 import {SubsonicApi} from './api';
 import {Engine} from '../../engine/engine';
 import {Subsonic} from '../../model/subsonic-rest-data';
-import cors from 'cors';
 import {registerApi, SubsonicRolesHandler} from './routes';
 import {ApiResponder} from './response';
 
