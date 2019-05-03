@@ -226,7 +226,7 @@ export function initJamRouter(engine: Engine): express.Router {
 			credentials: true,
 			allowedHeaders: ['Content-Type', 'Authorization'],
 			origin: function(origin, cb) {
-				if (origins.indexOf(origin) !== -1 || !origin) {
+				if (!origin || origins.indexOf(origin) !== -1) {
 					cb(null, true);
 				} else {
 					if (req.method === 'OPTIONS' || req.jwt) {
