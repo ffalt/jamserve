@@ -463,7 +463,7 @@ export declare namespace Jam {
 	export interface ChartLyricsResponse {
 		id?: string;
 		trackId?: string;
-		checksum?: string;
+		trackChecksum?: string;
 		song?: string;
 		artist?: string;
 		url?: string;

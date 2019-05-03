@@ -6489,7 +6489,7 @@
 				"trackId": {
 					"type": "string"
 				},
-				"checksum": {
+				"trackChecksum": {
 					"type": "string"
 				},
 				"song": {
