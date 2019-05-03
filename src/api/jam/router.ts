@@ -190,6 +190,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await checkRoles(req.user, roles);
 					await execute(req, res);
 				} catch (e) {
+					log.error(e);
 					await ApiResponder.error(res, e);
 				}
 			});
@@ -200,6 +201,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await checkRoles(req.user, roles);
 					await execute(req, res);
 				} catch (e) {
+					log.error(e);
 					await ApiResponder.error(res, e);
 				}
 			});
@@ -210,6 +212,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await checkRoles(req.user, roles);
 					await execute(req, res);
 				} catch (e) {
+					log.error(e);
 					await ApiResponder.error(res, e);
 				}
 			});
