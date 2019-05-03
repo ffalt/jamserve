@@ -1027,34 +1027,36 @@ export class SubsonicApi {
 	}
 
 	async createUser(req: ApiOptions<SubsonicParameters.UpdateUser>): Promise<void> {
+		return Promise.reject('disabled');
 		/*
-		 createUser
+			 createUser
 
-		 http://your-server/rest/createUser.view
-		 Since 1.1.0
+			 http://your-server/rest/createUser.view
+			 Since 1.1.0
 
-		 Creates a new Subsonic user, using the following parameters:
-		 Parameter 	Required 	Default 	Comment
-		 username 	Yes 		The name of the new user.
-		 password 	Yes 		The password of the new user, either in clear text of hex-encoded (see above).
-		 email 	Yes 		The email address of the new user.
-		 ldapAuthenticated 	No 	false 	Whether the user is authenicated in LDAP.
-		 adminRole 	No 	false 	Whether the user is administrator.
-		 settingsRole 	No 	true 	Whether the user is allowed to change settings and password.
-		 streamRole 	No 	true 	Whether the user is allowed to play files.
-		 jukeboxRole 	No 	false 	Whether the user is allowed to play files in jukebox mode.
-		 downloadRole 	No 	false 	Whether the user is allowed to download files.
-		 uploadRole 	No 	false 	Whether the user is allowed to upload files.
-		 playlistRole 	No 	false 	Whether the user is allowed to create and delete playlists. Since 1.8.0, changing this role has no effect.
-		 coverArtRole 	No 	false 	Whether the user is allowed to change cover art and tags.
-		 commentRole 	No 	false 	Whether the user is allowed to create and edit comments and ratings.
-		 podcastRole 	No 	false 	Whether the user is allowed to administrate Podcasts.
-		 shareRole 	No 	false 	(Since 1.8.0)Whether the user is allowed to share files with anyone.
-		 videoConversionRole 	No 	false 	(Since 1.15.0) Whether the user is allowed to start video conversions.
-		 musicFolderId 	No 	All folders 	(Since 1.12.0) IDs of the music folders the user is allowed access to. Include the parameter once for each folder.
+			 Creates a new Subsonic user, using the following parameters:
+			 Parameter 	Required 	Default 	Comment
+			 username 	Yes 		The name of the new user.
+			 password 	Yes 		The password of the new user, either in clear text of hex-encoded (see above).
+			 email 	Yes 		The email address of the new user.
+			 ldapAuthenticated 	No 	false 	Whether the user is authenicated in LDAP.
+			 adminRole 	No 	false 	Whether the user is administrator.
+			 settingsRole 	No 	true 	Whether the user is allowed to change settings and password.
+			 streamRole 	No 	true 	Whether the user is allowed to play files.
+			 jukeboxRole 	No 	false 	Whether the user is allowed to play files in jukebox mode.
+			 downloadRole 	No 	false 	Whether the user is allowed to download files.
+			 uploadRole 	No 	false 	Whether the user is allowed to upload files.
+			 playlistRole 	No 	false 	Whether the user is allowed to create and delete playlists. Since 1.8.0, changing this role has no effect.
+			 coverArtRole 	No 	false 	Whether the user is allowed to change cover art and tags.
+			 commentRole 	No 	false 	Whether the user is allowed to create and edit comments and ratings.
+			 podcastRole 	No 	false 	Whether the user is allowed to administrate Podcasts.
+			 shareRole 	No 	false 	(Since 1.8.0)Whether the user is allowed to share files with anyone.
+			 videoConversionRole 	No 	false 	(Since 1.15.0) Whether the user is allowed to start video conversions.
+			 musicFolderId 	No 	All folders 	(Since 1.12.0) IDs of the music folders the user is allowed access to. Include the parameter once for each folder.
 
-		 Returns an empty <subsonic-response> element on success.
-		 */
+			 Returns an empty <subsonic-response> element on success.
+			 */
+		/*
 
 		if (
 			(!req.query.username) || (req.query.username.length === 0) ||
@@ -1097,29 +1099,34 @@ export class SubsonicApi {
 			u.subsonic_pass = hexDecode(u.subsonic_pass.slice(4)).trim();
 		}
 		await this.engine.userService.create(u);
+		*/
 	}
 
 	async deleteUser(req: ApiOptions<SubsonicParameters.Username>): Promise<void> {
+		return Promise.reject('disabled');
 		/*
-		 deleteUser
+			 deleteUser
 
-		 http://your-server/rest/deleteUser.view
-		 Since 1.3.0
+			 http://your-server/rest/deleteUser.view
+			 Since 1.3.0
 
-		 Deletes an existing Subsonic user, using the following parameters:
-		 Parameter 	Required 	Default 	Comment
-		 username 	Yes 		The name of the user to delete.
+			 Deletes an existing Subsonic user, using the following parameters:
+			 Parameter 	Required 	Default 	Comment
+			 username 	Yes 		The name of the user to delete.
 
-		 Returns an empty <subsonic-response> element on success.
-		 */
+			 Returns an empty <subsonic-response> element on success.
+			 */
+		/*
 		const u = await this.engine.userService.getByName(req.query.username);
 		if (!u) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
 		await this.engine.userService.remove(u);
+		 */
 	}
 
 	async changePassword(req: ApiOptions<SubsonicParameters.ChangePassword>): Promise<void> {
+		return Promise.reject('disabled');
 		/*
 		 changePassword
 
@@ -1133,6 +1140,7 @@ export class SubsonicApi {
 
 		 Returns an empty <subsonic-response> element on success.
 		 */
+		/*
 		if (
 			(!req.query.username) ||
 			(!req.query.password) ||
@@ -1154,6 +1162,7 @@ export class SubsonicApi {
 			u.subsonic_pass = hexDecode(u.subsonic_pass.slice(4)).trim();
 		}
 		await this.engine.userService.update(u);
+		 */
 	}
 
 	async getChatMessages(req: ApiOptions<SubsonicParameters.ChatMessages>): Promise<{ chatMessages: Subsonic.ChatMessages }> {
@@ -2021,7 +2030,7 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <videos> element on success.
 		 */
-		Promise.reject('not implemented');
+		// Promise.reject('not implemented');
 		return {videos: {}};
 	}
 
@@ -2035,7 +2044,7 @@ export class SubsonicApi {
 
 		Returns a <subsonic-response> element with a nested <videoInfo> element on success.
 		 */
-		Promise.reject('not implemented');
+		// Promise.reject('not implemented');
 		return {videoInfo: {id: ''}};
 	}
 
@@ -2050,7 +2059,7 @@ export class SubsonicApi {
 
 		Returns the raw video captions.
 		 */
-		Promise.reject('not implemented');
+		// Promise.reject('not implemented');
 		return {};
 	}
 
@@ -2075,7 +2084,7 @@ export class SubsonicApi {
 
 		 Returns an empty <subsonic-response> element on success.
 		 */
-		Promise.reject('not implemented');
+		// Promise.reject('not implemented');
 	}
 
 	async getShares(req: ApiOptions<{}>): Promise<{ shares: Subsonic.Shares }> {
@@ -2089,7 +2098,7 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <shares> element on success.
 		 */
-		Promise.reject('not implemented');
+		//  Promise.reject('not implemented');
 		return {shares: {}};
 	}
 
@@ -2109,7 +2118,7 @@ export class SubsonicApi {
 
 		 Returns a <subsonic-response> element with a nested <shares> element on success, which in turns contains a single <share> element for the newly created share.
 		 */
-		Promise.reject('not implemented');
+		return Promise.reject('not implemented');
 	}
 
 	async updateShare(req: ApiOptions<SubsonicParameters.Share>): Promise<void> {
@@ -2127,7 +2136,7 @@ export class SubsonicApi {
 
 		 Returns an empty <subsonic-response> element on success.
 		 */
-		Promise.reject('not implemented');
+		return Promise.reject('not implemented');
 	}
 
 	async deleteShare(req: ApiOptions<SubsonicParameters.ID>): Promise<void> {
@@ -2143,7 +2152,7 @@ export class SubsonicApi {
 
 		 Returns an empty <subsonic-response> element on success.
 		 */
-		Promise.reject('not implemented');
+		return Promise.reject('not implemented');
 	}
 
 	async hls(req: ApiOptions<SubsonicParameters.HLS>): Promise<IApiBinaryResult> {
@@ -2165,7 +2174,7 @@ export class SubsonicApi {
 
 		 Returns an M3U8 playlist on success (content type "application/vnd.apple.mpegurl"), or an XML document on error (in which case the HTTP content type will start with "text/xml").
 		 */
-		Promise.reject('not implemented');
+		// Promise.reject('not implemented');
 		return {};
 	}
 
@@ -2186,7 +2195,7 @@ export class SubsonicApi {
 
 		 Returns a <jukeboxStatus> element on success, unless the get action is used, in which case a nested <jukeboxPlaylist> element is returned.
 		 */
-		Promise.reject('not implemented');
+		// Promise.reject('not implemented');
 		return {jukeboxStatus: {currentIndex: 0, playing: false, gain: 0}};
 	}
 
