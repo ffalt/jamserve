@@ -1,5 +1,5 @@
-import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {Track, TrackTag} from './track.model';
 
 export function formatTrackTag(tag: TrackTag): Jam.TrackTag {
@@ -11,7 +11,7 @@ export function formatTrackTag(tag: TrackTag): Jam.TrackTag {
 		artistID: tag.mbArtistID,
 		releaseID: tag.mbAlbumID
 	};
-	if (!Object.keys(mbz).find(key => !!(<any>mbz)[key])) {
+	if (!Object.keys(mbz).find(key => !!(mbz as any)[key])) {
 		mbz = undefined;
 	}
 	return {

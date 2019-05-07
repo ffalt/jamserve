@@ -1,27 +1,27 @@
 import moment from 'moment';
 import path from 'path';
-import {fileSuffix} from '../../utils/fs-utils';
-import {AudioFormatType, AudioMimeTypes, PodcastStatus} from '../../model/jam-types';
-import {Subsonic} from '../../model/subsonic-rest-data';
-import {Root} from '../../objects/root/root.model';
-import {User} from '../../objects/user/user.model';
-import {ArtistIndex, FolderIndex, FolderIndexEntry} from '../../engine/index/index.model';
-import {State, States} from '../../objects/state/state.model';
-import {Folder} from '../../objects/folder/folder.model';
-import {Album} from '../../objects/album/album.model';
-import {Artist} from '../../objects/artist/artist.model';
-import {Track} from '../../objects/track/track.model';
-import {Episode} from '../../objects/episode/episode.model';
-import {NowPlaying} from '../../engine/nowplaying/nowplaying.model';
-import {Podcast} from '../../objects/podcast/podcast.model';
-import {Playlist} from '../../objects/playlist/playlist.model';
-import {Bookmark} from '../../objects/bookmark/bookmark.model';
-import {PlayQueue} from '../../objects/playqueue/playqueue.model';
-import {Radio} from '../../objects/radio/radio.model';
+import {DBObjectType} from '../../db/db.types';
 import {ChatMessage} from '../../engine/chat/chat.model';
 import {Genre} from '../../engine/genre/genre.model';
-import {DBObjectType} from '../../db/db.types';
+import {ArtistIndex, FolderIndex, FolderIndexEntry} from '../../engine/index/index.model';
+import {NowPlaying} from '../../engine/nowplaying/nowplaying.model';
+import {AudioFormatType, AudioMimeTypes, PodcastStatus} from '../../model/jam-types';
 import {LastFM} from '../../model/lastfm-rest-data';
+import {Subsonic} from '../../model/subsonic-rest-data';
+import {Album} from '../../objects/album/album.model';
+import {Artist} from '../../objects/artist/artist.model';
+import {Bookmark} from '../../objects/bookmark/bookmark.model';
+import {Episode} from '../../objects/episode/episode.model';
+import {Folder} from '../../objects/folder/folder.model';
+import {Playlist} from '../../objects/playlist/playlist.model';
+import {PlayQueue} from '../../objects/playqueue/playqueue.model';
+import {Podcast} from '../../objects/podcast/podcast.model';
+import {Radio} from '../../objects/radio/radio.model';
+import {Root} from '../../objects/root/root.model';
+import {State, States} from '../../objects/state/state.model';
+import {Track} from '../../objects/track/track.model';
+import {User} from '../../objects/user/user.model';
+import {fileSuffix} from '../../utils/fs-utils';
 
 export interface SubsonicExtResponse extends Subsonic.Response {
 	[name: string]: any;
@@ -76,13 +76,13 @@ export class FORMAT {
 
 		return {
 			'subsonic-response': {
-				'status': 'failed',
-				'xmlns': 'http://subsonic.org/restapi',
-				'error': {
-					code: code,
+				status: 'failed',
+				xmlns: 'http://subsonic.org/restapi',
+				error: {
+					code,
 					message: txt || codeStrings[code]
 				},
-				'version': '1.16.0'
+				version: '1.16.0'
 			}
 		};
 	}
@@ -94,7 +94,7 @@ export class FORMAT {
 			version: '1.16.0'
 		};
 		return {
-			'subsonic-response': Object.assign(response, o)
+			'subsonic-response': {...response, ...o}
 		};
 	}
 
@@ -135,7 +135,7 @@ export class FORMAT {
 			streamRole: user.roles.stream,
 			jukeboxRole: user.roles.admin, // user.roles.jukeboxRole,
 			shareRole: user.roles.admin, // user.roles.shareRole,
-			videoConversionRole: user.roles.admin, // user.roles.videoConversionRole
+			videoConversionRole: user.roles.admin // user.roles.videoConversionRole
 		};
 	}
 
@@ -374,7 +374,7 @@ export class FORMAT {
 			bitRate: (track.media.bitRate !== undefined) ? Math.round(track.media.bitRate / 1000) : -1,
 			track: track.tag.track,
 			size: track.stat.size,
-			suffix: suffix,
+			suffix,
 			contentType: AudioMimeTypes[suffix],
 			isVideo: false,
 			path: track.path + '/' + track.name,
@@ -402,10 +402,10 @@ export class FORMAT {
 		let entry: Subsonic.Child;
 		switch (nowPlaying.obj.type) {
 			case DBObjectType.track:
-				entry = FORMAT.packTrack(<Track>nowPlaying.obj, state);
+				entry = FORMAT.packTrack(nowPlaying.obj as Track, state);
 				break;
 			case DBObjectType.episode:
-				entry = FORMAT.packPodcastEpisode(<Episode>nowPlaying.obj, state);
+				entry = FORMAT.packPodcastEpisode(nowPlaying.obj as Episode, state);
 				break;
 			default:
 				entry = {
@@ -414,7 +414,7 @@ export class FORMAT {
 					title: 'Unknown'
 				};
 		}
-		const nowPlay = <Subsonic.NowPlayingEntry>entry;
+		const nowPlay = entry as Subsonic.NowPlayingEntry;
 		nowPlay.username = nowPlaying.user.name;
 		nowPlay.minutesAgo = Math.round(moment.duration(moment().diff(moment(nowPlaying.time))).asMinutes());
 		nowPlay.playerId = 0;
@@ -517,7 +517,7 @@ export class FORMAT {
 			id: playlist.id,
 			name: playlist.name,
 			comment: playlist.comment || '',
-			'public': playlist.isPublic,
+			public: playlist.isPublic,
 			duration: playlist.duration,
 			created: FORMAT.formatSubSonicDate(playlist.created),
 			changed: FORMAT.formatSubSonicDate(playlist.changed),
@@ -529,7 +529,7 @@ export class FORMAT {
 	}
 
 	static packPlaylistWithSongs(playlist: Playlist, tracks: Array<Track>, states: States): Subsonic.PlaylistWithSongs {
-		const result = <Subsonic.PlaylistWithSongs>FORMAT.packPlaylist(playlist);
+		const result = FORMAT.packPlaylist(playlist) as Subsonic.PlaylistWithSongs;
 		result.entry = tracks.map(track => FORMAT.packTrack(track, states[track.id]));
 		return result;
 	}
@@ -537,7 +537,7 @@ export class FORMAT {
 	static packBookmark(bookmark: Bookmark, username: string, child: Subsonic.Child): Subsonic.Bookmark {
 		return {
 			entry: child,
-			username: username,
+			username,
 			position: bookmark.position,
 			comment: bookmark.comment,
 			created: FORMAT.formatSubSonicDate(bookmark.created),

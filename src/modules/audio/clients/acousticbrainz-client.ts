@@ -1,6 +1,6 @@
-import {WebserviceClient} from '../../../utils/webservice-client';
-import Logger from '../../../utils/logger';
 import {AcousticBrainz} from '../../../model/acousticbrainz-rest-data';
+import Logger from '../../../utils/logger';
+import {WebserviceClient} from '../../../utils/webservice-client';
 
 const log = Logger('AcousticBrainz');
 
@@ -38,7 +38,7 @@ export class AcousticbrainzClient extends WebserviceClient {
 	constructor(options: AcousticbrainzClientApi.Options) {
 		// unknown rate limit, using same from musicbrainz https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting "Currently that rate is (on average) 1 request per second. (per ip)"
 		super(1, 1000, options.userAgent);
-		this.options = Object.assign({}, this.options, options);
+		this.options = {...this.options, ...options};
 	}
 
 	async highLevel(mbid: string, nr?: number): Promise<AcousticBrainz.Response> {

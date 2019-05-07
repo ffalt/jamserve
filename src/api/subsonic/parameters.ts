@@ -48,7 +48,7 @@ export interface SubsonicParameterRequest extends EngineRequest {
 	parameters: SubsonicBaseParams;
 }
 
-export function SubsonicParameterMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction) {
-	(<SubsonicParameterRequest>req).parameters = processParams(req);
+export function SubsonicParameterMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
+	(req as SubsonicParameterRequest).parameters = processParams(req);
 	next();
 }

@@ -1,12 +1,12 @@
-import express from 'express';
-import {Engine} from '../engine/engine';
 import bodyParser from 'body-parser';
+import express from 'express';
+import helmet from 'helmet';
+import * as http from 'http';
+import path from 'path';
+import {Engine} from '../engine/engine';
+import Logger from '../utils/logger';
 import {initJamRouter} from './jam/router';
 import {initSubsonicRouter} from './subsonic/router';
-import path from 'path';
-import * as http from 'http';
-import Logger from '../utils/logger';
-import helmet from 'helmet';
 
 const log = Logger('Server');
 
@@ -28,13 +28,12 @@ export class Server {
 
 		app.use(helmet());
 
-
 		if (engine.config.server.session.cookie.proxy) {
 			app.enable('trust proxy'); // trust first proxy
 		}
 
-		function EngineMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction) {
-			(<EngineRequest>req).engine = engine;
+		function EngineMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
+			(req as EngineRequest).engine = engine;
 			next();
 		}
 
@@ -84,4 +83,3 @@ export class Server {
 	}
 
 }
-

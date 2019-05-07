@@ -1,15 +1,15 @@
-import path from 'path';
-import Logger from '../../utils/logger';
-import {downloadFile} from '../../utils/download';
-import {fileDeleteIfExists} from '../../utils/fs-utils';
-import {IApiBinaryResult} from '../../typings';
+import fse from 'fs-extra';
 import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
-import {DebouncePromises} from '../../utils/debounce-promises';
-import fse from 'fs-extra';
-import {SupportedWriteImageFormat} from '../../utils/filetype';
-import {AvatarGen} from './avatar-generator/avatar-generator';
+import path from 'path';
 import sharp from 'sharp';
+import {ApiBinaryResult} from '../../typings';
+import {DebouncePromises} from '../../utils/debounce-promises';
+import {downloadFile} from '../../utils/download';
+import {SupportedWriteImageFormat} from '../../utils/filetype';
+import {fileDeleteIfExists} from '../../utils/fs-utils';
+import Logger from '../../utils/logger';
+import {AvatarGen} from './image.avatar';
 
 type JimpFont = any;
 
@@ -22,7 +22,7 @@ const log = Logger('Images');
 export class ImageModule {
 	private format = 'png';
 	private font: JimpFont | undefined;
-	private imageCacheDebounce = new DebouncePromises<IApiBinaryResult>();
+	private imageCacheDebounce = new DebouncePromises<ApiBinaryResult>();
 	private avatarPartsLocation: string;
 
 	constructor(private imageCachePath: string, avatarPartsLocation?: string) {
@@ -46,14 +46,14 @@ export class ImageModule {
 		return filename;
 	}
 
-	async paint(text: string, size: number | undefined, format: string | undefined): Promise<IApiBinaryResult> {
+	async paint(text: string, size: number | undefined, format: string | undefined): Promise<ApiBinaryResult> {
 		size = size || 320;
 		const image = new Jimp(360, 360, '#282828');
 		if (!this.font) {
 			this.font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
 		}
 		image.print(this.font, 10, 10, {
-			text: text,
+			text,
 			alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
 			alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE
 		}, 340, 340);
@@ -65,13 +65,13 @@ export class ImageModule {
 		const buffer = await image.getBufferAsync(mime);
 		return {
 			buffer: {
-				buffer: buffer,
+				buffer,
 				contentType: mime
 			}
 		};
 	}
 
-	private async getImage(filename: string, size: number | undefined, name: string): Promise<IApiBinaryResult> {
+	private async getImage(filename: string, size: number | undefined, name: string): Promise<ApiBinaryResult> {
 		if (!size) {
 			return {file: {filename, name}};
 		}
@@ -85,7 +85,7 @@ export class ImageModule {
 		return this.getImageAs(filename, fileFormat, size, name);
 	}
 
-	private async getImageAs(filename: string, format: string, size: number | undefined, name: string): Promise<IApiBinaryResult> {
+	private async getImageAs(filename: string, format: string, size: number | undefined, name: string): Promise<ApiBinaryResult> {
 		let fileFormat = path.extname(filename);
 		if (fileFormat[0] === '.') {
 			fileFormat = fileFormat.slice(1);
@@ -109,7 +109,7 @@ export class ImageModule {
 					.toBuffer();
 				return {
 					buffer: {
-						buffer: buffer,
+						buffer,
 						contentType: mime
 					}
 				};
@@ -119,7 +119,7 @@ export class ImageModule {
 					.toBuffer();
 				return {
 					buffer: {
-						buffer: buffer,
+						buffer,
 						contentType: mime
 					}
 				};
@@ -129,7 +129,7 @@ export class ImageModule {
 		}
 	}
 
-	async get(id: string, filename: string, size: number | undefined, format?: string): Promise<IApiBinaryResult> {
+	async get(id: string, filename: string, size: number | undefined, format?: string): Promise<ApiBinaryResult> {
 		if (!filename) {
 			return Promise.reject(Error('Invalid Path'));
 		}
@@ -143,17 +143,15 @@ export class ImageModule {
 			}
 			this.imageCacheDebounce.setPending(cacheID);
 			try {
-				let result: IApiBinaryResult;
+				let result: ApiBinaryResult;
 				const cachefile = path.join(this.imageCachePath, cacheID);
 				const exists = await fse.pathExists(cachefile);
 				if (exists) {
 					result = {file: {filename: cachefile, name: cacheID}};
 				} else {
-					if (format) {
-						result = await this.getImageAs(filename, format, size, cacheID);
-					} else {
-						result = await this.getImage(filename, size, cacheID);
-					}
+					result = format ?
+						await this.getImageAs(filename, format, size, cacheID) :
+						await this.getImage(filename, size, cacheID);
 					if (result.buffer) {
 						log.debug('Writing image cache file', cachefile);
 						await fse.writeFile(cachefile, result.buffer.buffer);

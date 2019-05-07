@@ -204,4 +204,3 @@ export namespace MusicbrainzClientApi {
 		offset?: number;
 	}
 }
-

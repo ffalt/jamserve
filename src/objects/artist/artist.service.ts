@@ -1,13 +1,13 @@
-import {IApiBinaryResult} from '../../typings';
-import {TrackStore} from '../track/track.store';
-import {FolderService} from '../folder/folder.service';
-import {Artist} from './artist.model';
-import {FolderType, MusicBrainz_VARIOUS_ARTISTS_ID, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
-import {ArtistStore, SearchQueryArtist} from './artist.store';
-import {Folder} from '../folder/folder.model';
-import {BaseListService} from '../base/base.list.service';
-import {StateService} from '../state/state.service';
 import {slugify} from '../../engine/scan/scan.utils';
+import {FolderType, MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
+import {ApiBinaryResult} from '../../typings';
+import {BaseListService} from '../base/base.list.service';
+import {Folder} from '../folder/folder.model';
+import {FolderService} from '../folder/folder.service';
+import {StateService} from '../state/state.service';
+import {TrackStore} from '../track/track.store';
+import {Artist} from './artist.model';
+import {ArtistStore, SearchQueryArtist} from './artist.store';
 
 export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 
@@ -16,7 +16,7 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 	}
 
 	canHaveArtistImage(artist: Artist): boolean {
-		return (artist.albumTypes.length > 0 && artist.mbArtistID !== MusicBrainz_VARIOUS_ARTISTS_ID);
+		return (artist.albumTypes.length > 0 && artist.mbArtistID !== MUSICBRAINZ_VARIOUS_ARTISTS_ID);
 	}
 
 	async getArtistFolder(artist: Artist): Promise<Folder | undefined> {
@@ -41,7 +41,7 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 		}
 	}
 
-	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (this.canHaveArtistImage(artist)) {
 			const folder = await this.getArtistFolder(artist);
 			if (folder) {

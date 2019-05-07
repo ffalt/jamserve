@@ -1,7 +1,6 @@
+/* tslint:disable:interface-name */
 // Source:
 // https://github.com/metadevpro/openapi3-ts
-
-
 
 // Typed interfaces for OpenAPI 3.0.0-RC
 // see https://github.com/OAI/OpenAPI-Specification/blob/3.0.0-rc0/versions/3.0.md
@@ -73,11 +72,11 @@ export interface ISpecificationExtension {
 export interface OpenAPIObject extends ISpecificationExtension {
 	openapi: string;
 	info: InfoObject;
-	servers?: ServerObject[];
+	servers?: Array<ServerObject>;
 	paths: PathsObject;
 	components?: ComponentsObject;
-	security?: SecurityRequirementObject[];
-	tags?: TagObject[];
+	security?: Array<SecurityRequirementObject>;
+	tags?: Array<TagObject>;
 	externalDocs?: ExternalDocumentationObject;
 }
 
@@ -108,7 +107,7 @@ export interface ServerObject extends ISpecificationExtension {
 }
 
 export interface ServerVariableObject extends ISpecificationExtension {
-	enum?: string[] | boolean[] | number[];
+	enum?: Array<string> | Array<boolean> | Array<number>;
 	default: string | boolean | number;
 	description?: string;
 }
@@ -159,23 +158,23 @@ export interface PathItemObject extends ISpecificationExtension {
 	head?: OperationObject;
 	patch?: OperationObject;
 	trace?: OperationObject;
-	servers?: ServerObject[];
-	parameters?: (ParameterObject | ReferenceObject)[];
+	servers?: Array<ServerObject>;
+	parameters?: Array<ParameterObject | ReferenceObject>;
 }
 
 export interface OperationObject extends ISpecificationExtension {
-	tags?: string[];
+	tags?: Array<string>;
 	summary?: string;
 	description?: string;
 	externalDocs?: ExternalDocumentationObject;
 	operationId?: string;
-	parameters?: (ParameterObject | ReferenceObject)[];
+	parameters?: Array<ParameterObject | ReferenceObject>;
 	requestBody?: RequestBodyObject | ReferenceObject;
 	responses: ResponsesObject;
 	callbacks?: CallbacksObject;
 	deprecated?: boolean;
-	security?: SecurityRequirementObject[];
-	servers?: ServerObject[];
+	security?: Array<SecurityRequirementObject>;
+	servers?: Array<ServerObject>;
 }
 
 export interface ExternalDocumentationObject extends ISpecificationExtension {
@@ -339,13 +338,13 @@ export interface SchemaObject extends ISpecificationExtension {
 	xml?: XmlObject;
 	externalDocs?: ExternalDocumentationObject;
 	example?: any;
-	examples?: any[];
+	examples?: Array<any>;
 	deprecated?: boolean;
 
 	type?: string;
-	allOf?: (SchemaObject | ReferenceObject)[];
-	oneOf?: (SchemaObject | ReferenceObject)[];
-	anyOf?: (SchemaObject | ReferenceObject)[];
+	allOf?: Array<SchemaObject | ReferenceObject>;
+	oneOf?: Array<SchemaObject | ReferenceObject>;
+	anyOf?: Array<SchemaObject | ReferenceObject>;
 	not?: SchemaObject | ReferenceObject;
 	items?: SchemaObject | ReferenceObject;
 	properties?: { [propertyName: string]: (SchemaObject | ReferenceObject) };
@@ -368,8 +367,8 @@ export interface SchemaObject extends ISpecificationExtension {
 	uniqueItems?: boolean;
 	maxProperties?: number;
 	minProperties?: number;
-	required?: string[];
-	enum?: any[];
+	required?: Array<string>;
+	enum?: Array<any>;
 }
 
 export interface SchemasObject {
@@ -425,5 +424,5 @@ export interface ScopesObject extends ISpecificationExtension {
 }
 
 export interface SecurityRequirementObject {
-	[name: string]: string[];
+	[name: string]: Array<string>;
 }

@@ -1,22 +1,22 @@
-import {UserStore} from '../../objects/user/user.store';
-import {TrackStore} from '../../objects/track/track.store';
-import {FolderStore} from '../../objects/folder/folder.store';
-import {EpisodeStore} from '../../objects/episode/episode.store';
+import {Database} from '../../db/db.model';
 import {AlbumStore} from '../../objects/album/album.store';
 import {ArtistStore} from '../../objects/artist/artist.store';
-import {RadioStore} from '../../objects/radio/radio.store';
-import {PlayQueueStore} from '../../objects/playqueue/playqueue.store';
-import {RootStore} from '../../objects/root/root.store';
-import {BookmarkStore} from '../../objects/bookmark/bookmark.store';
-import {PodcastStore} from '../../objects/podcast/podcast.store';
-import {PlaylistStore} from '../../objects/playlist/playlist.store';
-import {StateStore} from '../../objects/state/state.store';
-import {BaseStore, SearchQuery} from '../../objects/base/base.store';
 import {DBObject} from '../../objects/base/base.model';
-import {Database} from '../../db/db.model';
-import Logger from '../../utils/logger';
+import {BaseStore, SearchQuery} from '../../objects/base/base.store';
+import {BookmarkStore} from '../../objects/bookmark/bookmark.store';
+import {EpisodeStore} from '../../objects/episode/episode.store';
+import {FolderStore} from '../../objects/folder/folder.store';
 import {MetaDataStore} from '../../objects/metadata/metadata.store';
+import {PlaylistStore} from '../../objects/playlist/playlist.store';
+import {PlayQueueStore} from '../../objects/playqueue/playqueue.store';
+import {PodcastStore} from '../../objects/podcast/podcast.store';
+import {RadioStore} from '../../objects/radio/radio.store';
+import {RootStore} from '../../objects/root/root.store';
 import {SettingsStore} from '../../objects/settings/settings.store';
+import {StateStore} from '../../objects/state/state.store';
+import {TrackStore} from '../../objects/track/track.store';
+import {UserStore} from '../../objects/user/user.store';
+import Logger from '../../utils/logger';
 
 const log = Logger('Store');
 

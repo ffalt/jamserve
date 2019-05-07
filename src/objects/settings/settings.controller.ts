@@ -1,6 +1,6 @@
-import {SettingsService} from './settings.service';
-import {Jam} from '../../model/jam-rest-data';
 import {JamRequest} from '../../api/jam/api';
+import {Jam} from '../../model/jam-rest-data';
+import {SettingsService} from './settings.service';
 
 export class SettingsController {
 
@@ -8,7 +8,7 @@ export class SettingsController {
 	}
 
 	async admin(req: JamRequest<{}>): Promise<Jam.AdminSettings> {
-		return await this.settingsService.get();
+		return this.settingsService.get();
 	}
 
 	async adminUpdate(req: JamRequest<Jam.AdminSettings>): Promise<void> {

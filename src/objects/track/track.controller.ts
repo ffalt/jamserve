@@ -1,32 +1,32 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../db/db.types';
 import path from 'path';
-import {IApiBinaryResult} from '../../typings';
-import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
-import {BaseListController} from '../base/base.list.controller';
-import {formatTrack} from './track.format';
-import {SearchQueryTrack} from './track.store';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {BookmarkService} from '../bookmark/bookmark.service';
-import {MetaDataService} from '../metadata/metadata.service';
-import {formatState} from '../state/state.format';
-import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
+import {NotFoundError} from '../../api/jam/error';
+import {DBObjectType} from '../../db/db.types';
 import {DownloadService} from '../../engine/download/download.service';
-import {Track} from './track.model';
-import {User} from '../user/user.model';
+import {TrackRulesChecker} from '../../engine/health/track.rule';
+import {ImageService} from '../../engine/image/image.service';
 import {IoService} from '../../engine/io/io.service';
 import {StreamController} from '../../engine/stream/stream.controller';
-import {TrackService} from './track.service';
-import {FolderService} from '../folder/folder.service';
-import {NotFoundError} from '../../api/jam/error';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {AudioModule} from '../../modules/audio/audio.module';
 import {trackTagToRawTag} from '../../modules/audio/metadata';
-import {TrackRulesChecker} from '../../engine/health/track.rule';
+import {ApiBinaryResult} from '../../typings';
+import {paginate} from '../../utils/paginate';
+import {BaseListController} from '../base/base.list.controller';
+import {BookmarkService} from '../bookmark/bookmark.service';
+import {Folder} from '../folder/folder.model';
+import {FolderService} from '../folder/folder.service';
+import {MetaDataService} from '../metadata/metadata.service';
 import {Root} from '../root/root.model';
 import {RootService} from '../root/root.service';
-import {Folder} from '../folder/folder.model';
+import {formatState} from '../state/state.format';
+import {StateService} from '../state/state.service';
+import {User} from '../user/user.model';
+import {formatTrack} from './track.format';
+import {Track} from './track.model';
+import {TrackService} from './track.service';
+import {SearchQueryTrack} from './track.store';
 
 export class TrackController extends BaseListController<JamParameters.Track, JamParameters.Tracks, JamParameters.IncludesTrack, SearchQueryTrack, JamParameters.TrackSearch, Track, Jam.Track> {
 	checker = new TrackRulesChecker();
@@ -152,12 +152,12 @@ export class TrackController extends BaseListController<JamParameters.Track, Jam
 
 	async rawTagUpdate(req: JamRequest<JamParameters.RawTagUpdate>): Promise<Jam.AdminChangeQueueInfo> {
 		const track = await this.byID(req.query.id);
-		return await this.ioService.writeRawTag(track.id, req.query.tag, track.rootID);
+		return this.ioService.writeRawTag(track.id, req.query.tag, track.rootID);
 	}
 
-	async stream(req: JamRequest<JamParameters.Stream>): Promise<IApiBinaryResult> {
+	async stream(req: JamRequest<JamParameters.Stream>): Promise<ApiBinaryResult> {
 		const track = await this.byID(req.query.id);
-		return await this.streamController.streamTrack(track, req.query.format, req.query.maxBitRate, req.user);
+		return this.streamController.streamTrack(track, req.query.format, req.query.maxBitRate, req.user);
 	}
 
 	async similar(req: JamRequest<JamParameters.SimilarTracks>): Promise<Array<Jam.Track>> {

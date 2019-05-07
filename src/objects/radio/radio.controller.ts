@@ -1,17 +1,17 @@
-import {BaseController} from '../base/base.controller';
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../db/db.types';
 import {JamRequest} from '../../api/jam/api';
-import {formatRadio} from './radio.format';
-import {RadioService} from './radio.service';
+import {DBObjectType} from '../../db/db.types';
+import {DownloadService} from '../../engine/download/download.service';
+import {ImageService} from '../../engine/image/image.service';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {BaseController} from '../base/base.controller';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
-import {DownloadService} from '../../engine/download/download.service';
-import {SearchQueryRadio} from './radio.store';
-import {Radio} from './radio.model';
 import {User} from '../user/user.model';
+import {formatRadio} from './radio.format';
+import {Radio} from './radio.model';
+import {RadioService} from './radio.service';
+import {SearchQueryRadio} from './radio.store';
 
 export class RadioController extends BaseController<JamParameters.Radio, JamParameters.Radios, JamParameters.IncludesRadio, SearchQueryRadio, JamParameters.RadioSearch, Radio, Jam.Radio> {
 

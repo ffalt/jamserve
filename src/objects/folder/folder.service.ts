@@ -1,18 +1,18 @@
-import {Artwork, Folder} from './folder.model';
-import {FolderStore, SearchQueryFolder} from './folder.store';
-import {containsFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists, replaceFolderSystemChars} from '../../utils/fs-utils';
-import {TrackStore} from '../track/track.store';
-import path from 'path';
 import fse from 'fs-extra';
-import Logger from '../../utils/logger';
-import {IApiBinaryResult} from '../../typings';
-import {ArtworkImageType, FolderType, FolderTypeImageName} from '../../model/jam-types';
-import {ImageModule} from '../../modules/image/image.module';
-import {BaseListService} from '../base/base.list.service';
-import {StateService} from '../state/state.service';
-import {artWorkImageNameToType} from './folder.format';
+import path from 'path';
 import {DBObjectType} from '../../db/db.types';
 import {generateArtworkId} from '../../engine/scan/scan.utils';
+import {ArtworkImageType, FolderType, FolderTypeImageName} from '../../model/jam-types';
+import {ImageModule} from '../../modules/image/image.module';
+import {ApiBinaryResult} from '../../typings';
+import {containsFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists, replaceFolderSystemChars} from '../../utils/fs-utils';
+import Logger from '../../utils/logger';
+import {BaseListService} from '../base/base.list.service';
+import {StateService} from '../state/state.service';
+import {TrackStore} from '../track/track.store';
+import {artWorkImageNameToType} from './folder.format';
+import {Artwork, Folder} from './folder.model';
+import {FolderStore, SearchQueryFolder} from './folder.store';
 
 const log = Logger('FolderService');
 
@@ -32,7 +32,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 			}
 			let folder: Folder | undefined;
 			if (cachedFolders) {
-				folder = cachedFolders.find(f => f.id == id);
+				folder = cachedFolders.find(f => f.id === id);
 			}
 			if (!folder) {
 				folder = await store.byId(id);
@@ -50,11 +50,11 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		return result;
 	}
 
-	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (!folder.tag.image) {
 			return;
 		}
-		return await this.imageModule.get(folder.id, path.join(folder.path, folder.tag.image), size, format);
+		return this.imageModule.get(folder.id, path.join(folder.path, folder.tag.image), size, format);
 	}
 
 	async setFolderImage(folder: Folder, filename: string): Promise<void> {
@@ -67,8 +67,8 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		await this.folderStore.replace(folder);
 	}
 
-	async getArtworkImage(folder: Folder, artwork: Artwork, size?: number, format?: string): Promise<IApiBinaryResult> {
-		return await this.imageModule.get(artwork.id, path.join(folder.path, artwork.name), size, format);
+	async getArtworkImage(folder: Folder, artwork: Artwork, size?: number, format?: string): Promise<ApiBinaryResult> {
+		return this.imageModule.get(artwork.id, path.join(folder.path, artwork.name), size, format);
 	}
 
 	async setCurrentArtworkImage(folder: Folder): Promise<void> {

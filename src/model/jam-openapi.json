@@ -2,7 +2,7 @@
 	"openapi": "3.0.0",
 	"info": {
 		"description": "Api for JamServe",
-		"version": "0.1.1",
+		"version": "0.1.2",
 		"title": "JamApi",
 		"license": {
 			"name": "MIT"
@@ -18189,7 +18189,7 @@
 					"CNT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2Frames.Number"
+							"$ref": "#/components/schemas/ID3v2Frames.Num"
 						}
 					},
 					"COM": {
@@ -18357,19 +18357,19 @@
 					"PCNT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2Frames.Number"
+							"$ref": "#/components/schemas/ID3v2Frames.Num"
 						}
 					},
 					"PCS": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2Frames.Number"
+							"$ref": "#/components/schemas/ID3v2Frames.Num"
 						}
 					},
 					"PCST": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/ID3v2Frames.Number"
+							"$ref": "#/components/schemas/ID3v2Frames.Num"
 						}
 					},
 					"PIC": {
@@ -19476,7 +19476,7 @@
 					"value"
 				]
 			},
-			"ID3v2Frames.Number": {
+			"ID3v2Frames.Num": {
 				"type": "object",
 				"properties": {
 					"value": {

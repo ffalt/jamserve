@@ -1,7 +1,7 @@
+import {Express} from 'express';
+import {Store} from 'express-session';
 import fse from 'fs-extra';
 import path from 'path';
-import {Store} from 'express-session';
-import {Express} from 'express';
 
 export interface Sessions {
 	[key: string]: Express.SessionData;
@@ -19,7 +19,7 @@ export class SessionJSONFileStore extends Store {
 		});
 	}
 
-	async init() {
+	async init(): Promise<void> {
 		await fse.ensureDir(path.dirname(this.filename));
 		const exists = await fse.pathExists(this.filename);
 		if (exists) {
@@ -89,4 +89,3 @@ export class SessionJSONFileStore extends Store {
 	// };
 
 }
-

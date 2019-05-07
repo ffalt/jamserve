@@ -1,26 +1,25 @@
-import {IApiBinaryResult} from '../../typings';
+import {DBObjectType} from '../../db/db.types';
 import {Engine} from '../../engine/engine';
 import {FolderType, FolderTypesAlbum, LastFMLookupType, PodcastStatus} from '../../model/jam-types';
-import {randomItems} from '../../utils/random';
-import {paginate} from '../../utils/paginate';
-import {FORMAT} from './format';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {SubsonicParameters} from '../../model/subsonic-rest-params';
-import {BaseStore, SearchQuery} from '../../objects/base/base.store';
-import {User} from '../../objects/user/user.model';
-import {DBObject} from '../../objects/base/base.model';
 import {Album} from '../../objects/album/album.model';
 import {Artist} from '../../objects/artist/artist.model';
-import {Folder} from '../../objects/folder/folder.model';
-import {Track} from '../../objects/track/track.model';
-import {Playlist} from '../../objects/playlist/playlist.model';
-import {Episode} from '../../objects/episode/episode.model';
-import {State} from '../../objects/state/state.model';
-import {Podcast} from '../../objects/podcast/podcast.model';
+import {DBObject} from '../../objects/base/base.model';
+import {BaseStore, SearchQuery} from '../../objects/base/base.store';
 import {Bookmark} from '../../objects/bookmark/bookmark.model';
+import {Episode} from '../../objects/episode/episode.model';
+import {Folder} from '../../objects/folder/folder.model';
+import {Playlist} from '../../objects/playlist/playlist.model';
+import {Podcast} from '../../objects/podcast/podcast.model';
+import {State} from '../../objects/state/state.model';
+import {Track} from '../../objects/track/track.model';
 import {SearchQueryTrack} from '../../objects/track/track.store';
-import {hexDecode} from '../../utils/hex';
-import {DBObjectType} from '../../db/db.types';
+import {User} from '../../objects/user/user.model';
+import {ApiBinaryResult} from '../../typings';
+import {paginate} from '../../utils/paginate';
+import {randomItems} from '../../utils/random';
+import {FORMAT} from './format';
 
 /*
 	http://www.subsonic.org/pages/api.jsp
@@ -78,9 +77,7 @@ export class SubsonicApi {
 	private async prepareBookmarks(bookmarks: Array<Bookmark>, user: User): Promise<Array<Subsonic.Bookmark>> {
 
 		const removeDups = (list: Array<string>): Array<string> => {
-			return list.filter(function(item, pos) {
-				return list.indexOf(item) === pos;
-			});
+			return list.filter((item, pos) => list.indexOf(item) === pos);
 		};
 
 		const trackIDs = removeDups(bookmarks.map(bookmark => bookmark.destID));
@@ -244,7 +241,7 @@ export class SubsonicApi {
 				indexes: {
 					lastModified: folderIndex.lastModified,
 					ignoredArticles: (this.engine.indexService.indexConfig.ignoreArticles || []).join(' '),
-					index: FORMAT.packFolderIndex(folderIndex, states),
+					index: FORMAT.packFolderIndex(folderIndex, states)
 					// shortcut?: Artist[]; use unknown, there is no api to add/remove shortcuts
 					// child?: Child[]; use unknown
 				}
@@ -414,7 +411,7 @@ export class SubsonicApi {
 		return {albumList2: {album: result}};
 	}
 
-	async getCoverArt(req: ApiOptions<SubsonicParameters.CoverArt>): Promise<IApiBinaryResult> {
+	async getCoverArt(req: ApiOptions<SubsonicParameters.CoverArt>): Promise<ApiBinaryResult> {
 		/*
 		 getCoverArt
 
@@ -432,10 +429,10 @@ export class SubsonicApi {
 		if (!o) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
-		return await this.engine.imageService.getObjImage(o, req.query.size);
+		return this.engine.imageService.getObjImage(o, req.query.size);
 	}
 
-	async getAvatar(req: ApiOptions<SubsonicParameters.Username>): Promise<IApiBinaryResult> {
+	async getAvatar(req: ApiOptions<SubsonicParameters.Username>): Promise<ApiBinaryResult> {
 		/*
 		 getAvatar
 
@@ -453,7 +450,7 @@ export class SubsonicApi {
 		if (!user) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
-		return await this.engine.imageService.getObjImage(user);
+		return this.engine.imageService.getObjImage(user);
 	}
 
 	async getAlbumInfo(req: ApiOptions<SubsonicParameters.ID>): Promise<{ albumInfo: Subsonic.AlbumInfo }> {
@@ -671,16 +668,16 @@ export class SubsonicApi {
 			let tracks: Array<Track> = [];
 			switch (o.type) {
 				case DBObjectType.track:
-					tracks = await this.engine.metaDataService.getTrackSimilarTracks(<Track>o);
+					tracks = await this.engine.metaDataService.getTrackSimilarTracks(o as Track);
 					break;
 				case DBObjectType.folder:
-					tracks = await this.engine.metaDataService.getFolderSimilarTracks(<Folder>o);
+					tracks = await this.engine.metaDataService.getFolderSimilarTracks(o as Folder);
 					break;
 				case DBObjectType.artist:
-					tracks = await this.engine.metaDataService.getArtistSimilarTracks(<Artist>o);
+					tracks = await this.engine.metaDataService.getArtistSimilarTracks(o as Artist);
 					break;
 				case DBObjectType.album:
-					tracks = await this.engine.metaDataService.getAlbumSimilarTracks(<Album>o);
+					tracks = await this.engine.metaDataService.getAlbumSimilarTracks(o as Album);
 					break;
 			}
 			const limit = paginate(tracks, req.query.count || 50, 0);
@@ -708,7 +705,7 @@ export class SubsonicApi {
 		return {similarSongs2: FORMAT.packSimilarSongs2(childs)};
 	}
 
-	async download(req: ApiOptions<SubsonicParameters.ID>): Promise<IApiBinaryResult> {
+	async download(req: ApiOptions<SubsonicParameters.ID>): Promise<ApiBinaryResult> {
 		/*
 		 download
 
@@ -729,7 +726,7 @@ export class SubsonicApi {
 		}
 	}
 
-	async stream(req: ApiOptions<SubsonicParameters.Stream>): Promise<IApiBinaryResult> {
+	async stream(req: ApiOptions<SubsonicParameters.Stream>): Promise<ApiBinaryResult> {
 		/*
 		 stream
 
@@ -754,12 +751,12 @@ export class SubsonicApi {
 		} else {
 			switch (o.type) {
 				case DBObjectType.track:
-					const res = await this.engine.streamService.streamTrack(<Track>o, req.query.format, req.query.maxBitRate, req.user);
-					this.engine.nowPlayingService.reportTrack(<Track>o, req.user);
+					const res = await this.engine.streamService.streamTrack(o as Track, req.query.format, req.query.maxBitRate, req.user);
+					this.engine.nowPlayingService.reportTrack(o as Track, req.user);
 					return res;
 				case DBObjectType.episode:
-					const result = await this.engine.streamService.streamEpisode(<Episode>o, req.query.format, req.query.maxBitRate, req.user);
-					this.engine.nowPlayingService.reportEpisode(<Episode>o, req.user);
+					const result = await this.engine.streamService.streamEpisode(o as Episode, req.query.format, req.query.maxBitRate, req.user);
+					this.engine.nowPlayingService.reportEpisode(o as Episode, req.user);
 					return result;
 			}
 			return Promise.reject(Error('Invalid Object Type for Streaming'));
@@ -1279,8 +1276,8 @@ export class SubsonicApi {
 				name: req.query.name,
 				songIdToAdd: req.query.songId
 			};
-			(<any>req).query = updateQuery;
-			await this.updatePlaylist(<ApiOptions<SubsonicParameters.PlaylistUpdate>>req);
+			(req as any).query = updateQuery;
+			await this.updatePlaylist(req as ApiOptions<SubsonicParameters.PlaylistUpdate>);
 			playlist = await this.byID<Playlist>(req.query.playlistId, this.engine.store.playlistStore);
 		} else if (req.query.name) {
 			playlist = await this.engine.playlistService.create(req.query.name, undefined, false, req.user.id, req.query.songId !== undefined ? (Array.isArray(req.query.songId) ? req.query.songId : [req.query.songId]) : []);
@@ -1856,7 +1853,7 @@ export class SubsonicApi {
 		});
 		const state = await this.engine.stateService.findOrCreate(artist.id, req.user.id, DBObjectType.artist);
 		const states = await this.engine.stateService.findOrCreateMany(albumlist.map(a => a.id), req.user.id, DBObjectType.album);
-		const artistid3 = <Subsonic.ArtistWithAlbumsID3>FORMAT.packArtist(artist, state);
+		const artistid3 = FORMAT.packArtist(artist, state) as Subsonic.ArtistWithAlbumsID3;
 		artistid3.album = albumlist.map(a => FORMAT.packAlbum(a, states[a.id]));
 		return {artist: artistid3};
 	}
@@ -1881,7 +1878,7 @@ export class SubsonicApi {
 			return (a.tag.track || 0) - (b.tag.track || 0);
 		});
 		const childs = await this.prepareTracks(tracks, req.user);
-		const albumid3 = <Subsonic.AlbumWithSongsID3>FORMAT.packAlbum(album, state);
+		const albumid3 = FORMAT.packAlbum(album, state) as Subsonic.AlbumWithSongsID3;
 		albumid3.song = childs;
 		return {album: albumid3};
 	}
@@ -2048,7 +2045,7 @@ export class SubsonicApi {
 		return {videoInfo: {id: ''}};
 	}
 
-	async getCaptions(req: ApiOptions<SubsonicParameters.Captions>): Promise<IApiBinaryResult> {
+	async getCaptions(req: ApiOptions<SubsonicParameters.Captions>): Promise<ApiBinaryResult> {
 		/*
 		 http://your-server/rest/getCaptions Since 1.14.0
 
@@ -2155,7 +2152,7 @@ export class SubsonicApi {
 		return Promise.reject('not implemented');
 	}
 
-	async hls(req: ApiOptions<SubsonicParameters.HLS>): Promise<IApiBinaryResult> {
+	async hls(req: ApiOptions<SubsonicParameters.HLS>): Promise<ApiBinaryResult> {
 		/*
 		 hls
 
@@ -2200,4 +2197,3 @@ export class SubsonicApi {
 	}
 
 }
-

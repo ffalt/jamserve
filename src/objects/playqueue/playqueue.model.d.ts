@@ -8,4 +8,3 @@ export interface PlayQueue extends DBObject {
 	changed: number; // Datetime of change
 	changedBy: string; //  Name of client app
 }
-

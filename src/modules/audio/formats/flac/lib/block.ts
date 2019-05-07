@@ -11,16 +11,10 @@ export class MetaDataBlock {
 		this.removed = false;
 	}
 
-	remove() {
+	remove(): void {
 		this.removed = true;
 	}
 
-	parse(buffer: Buffer) {
+	parse(buffer: Buffer): void {
 	}
 }
-
-export class MetaWriteableDataBlock extends MetaDataBlock {
-	publish() {
-	}
-}
-

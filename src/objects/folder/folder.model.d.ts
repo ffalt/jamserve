@@ -1,5 +1,5 @@
-import {DBObject} from '../base/base.model';
 import {AlbumType, ArtworkImageType, FolderType} from '../../model/jam-types';
+import {DBObject} from '../base/base.model';
 
 export interface Folder extends DBObject {
 	rootID: string;

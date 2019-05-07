@@ -1,7 +1,7 @@
-import {Jam} from '../../model/jam-rest-data';
 import {JamRequest} from '../../api/jam/api';
-import {NowPlayingService} from './nowplaying.service';
+import {Jam} from '../../model/jam-rest-data';
 import {packNowPlaying} from './nowplaying.format';
+import {NowPlayingService} from './nowplaying.service';
 
 export class NowPlayingController {
 

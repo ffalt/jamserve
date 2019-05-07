@@ -37,13 +37,11 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
-	export interface Number extends Frame {
+	export interface Num extends Frame {
 		value: {
 			num: number;
 		};
 	}
-
 
 	export interface RVA extends Frame {
 		value: {
@@ -62,7 +60,6 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface RVA2Channel extends Frame {
 		value: {
 			type: number;
@@ -71,14 +68,12 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface RVA2 extends Frame {
 		value: {
 			id: string;
 			channels: Array<RVA2Channel>;
 		};
 	}
-
 
 	export interface Popularimeter extends Frame {
 		value: {
@@ -88,13 +83,11 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface Bool extends Frame {
 		value: {
 			bool: boolean;
 		};
 	}
-
 
 	export interface AudioEncryption extends Frame {
 		value: {
@@ -105,7 +98,6 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface Link extends Frame {
 		value: {
 			url: string;
@@ -114,7 +106,6 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface EventTimingCodes extends Frame {
 		value: {
 			format: number;
@@ -122,14 +113,12 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface EventTimingCodesEvent extends Frame {
 		value: {
 			type: number;
 			timestamp: number;
 		};
 	}
-
 
 	export interface SynchronisedLyrics extends Frame {
 		value: {
@@ -141,14 +130,12 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface SynchronisedLyricsEvent extends Frame {
 		value: {
 			timestamp: number;
 			text: string;
 		};
 	}
-
 
 	export interface GEOB extends Frame {
 		value: {
@@ -159,7 +146,6 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface ReplayGainAdjustment extends Frame {
 		value: {
 			peak: number;
@@ -167,7 +153,6 @@ export namespace ID3v2Frames {
 			audiophileAdjustment: number;
 		};
 	}
-
 
 	export interface ChapterToc extends Frame {
 		value: {
@@ -177,7 +162,6 @@ export namespace ID3v2Frames {
 			children: Array<string>;
 		};
 	}
-
 
 	export interface Chapter extends Frame {
 		value: {
@@ -189,14 +173,12 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface IdBin extends Frame {
 		value: {
 			id: string;
 			bin: string;
 		};
 	}
-
 
 	export interface IdText extends Frame {
 		value: {
@@ -205,20 +187,17 @@ export namespace ID3v2Frames {
 		};
 	}
 
-
 	export interface Ascii extends Frame {
 		value: {
 			text: string;
 		};
 	}
 
-
 	export interface Text extends Frame {
 		value: {
 			text: string;
 		};
 	}
-
 
 	export interface TextList extends Frame {
 		value: {
@@ -236,7 +215,7 @@ export namespace ID3v2Frames {
 		'CDM'?: Array<Bin>;
 		'CHAP'?: Array<Chapter>;
 		'CM1'?: Array<Text>;
-		'CNT'?: Array<Number>;
+		'CNT'?: Array<Num>;
 		'COM'?: Array<LangDescText>;
 		'COMM'?: Array<LangDescText>;
 		'COMR'?: Array<Bin>;
@@ -264,9 +243,9 @@ export namespace ID3v2Frames {
 		'NCO'?: Array<Bin>;
 		'NCON'?: Array<Bin>;
 		'OWNE'?: Array<Bin>;
-		'PCNT'?: Array<Number>;
-		'PCS'?: Array<Number>;
-		'PCST'?: Array<Number>;
+		'PCNT'?: Array<Num>;
+		'PCS'?: Array<Num>;
+		'PCST'?: Array<Num>;
 		'PIC'?: Array<Pic>;
 		'POP'?: Array<Popularimeter>;
 		'POPM'?: Array<Popularimeter>;

@@ -1,7 +1,8 @@
-import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery} from '../base/base.store';
-import {State} from './state.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
+import {DBObjectType} from '../../db/db.types';
+import {QueryHelper} from '../base/base.query.helper';
+import {BaseStore, SearchQuery} from '../base/base.store';
+import {State} from './state.model';
 
 export interface SearchQueryState extends SearchQuery {
 	destID?: string;

@@ -1,9 +1,10 @@
-import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery, SearchQuerySort} from '../base/base.store';
-import {Folder} from './folder.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
-import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
+import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {QueryHelper} from '../base/base.query.helper';
+import {BaseStore, SearchQuery, SearchQuerySort} from '../base/base.store';
+import {Folder} from './folder.model';
 
 export interface SearchQueryFolder extends SearchQuery {
 	rootID?: string;
@@ -28,13 +29,13 @@ export interface SearchQueryFolder extends SearchQuery {
 }
 
 const sortFieldMap: { [name in JamParameters.FolderSortField]: string } = {
-	'artist': 'tag.artist',
-	'album': 'tag.album',
-	'genre': 'tag.genre',
-	'created': 'stat.created',
-	'parent': 'parentID',
-	'title': 'tag.title',
-	'year': 'tag.year'
+	artist: 'tag.artist',
+	album: 'tag.album',
+	genre: 'tag.genre',
+	created: 'stat.created',
+	parent: 'parentID',
+	title: 'tag.title',
+	year: 'tag.year'
 };
 
 export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {

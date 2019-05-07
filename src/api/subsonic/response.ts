@@ -1,19 +1,19 @@
 import express from 'express';
-import {IApiBinaryResult, NodeError} from '../../typings';
 import path from 'path';
+import {ApiBinaryResult, NodeError} from '../../typings';
 import {toXML} from '../../utils/to-xml';
-import {SubsonicParameterRequest} from './parameters';
 import {FORMAT} from './format';
+import {SubsonicParameterRequest} from './parameters';
 
 export class ApiResponder {
 
-	public static ok(req: express.Request, res: express.Response) {
+	public static ok(req: express.Request, res: express.Response): void {
 		ApiResponder.send(req, res, FORMAT.packOK());
 	}
 
-	private static send(req: express.Request, res: express.Response, data: any) {
+	private static send(req: express.Request, res: express.Response, data: any): void {
 		res.setHeader('Access-Control-Allow-Origin', '*');
-		const params = (<SubsonicParameterRequest>req).parameters;
+		const params = (req as SubsonicParameterRequest).parameters;
 		if ((params.format === 'jsonp') && (params.callback)) {
 			res.status(200).send(params.callback + '(' + JSON.stringify(data) + ');');
 		} else if (params.format === 'json') {
@@ -24,11 +24,11 @@ export class ApiResponder {
 		}
 	}
 
-	public static data(req: express.Request, res: express.Response, data: any) {
+	public static data(req: express.Request, res: express.Response, data: any): void {
 		ApiResponder.send(req, res, FORMAT.packResponse(data));
 	}
 
-	public static error(req: express.Request, res: express.Response, err: NodeError) {
+	public static error(req: express.Request, res: express.Response, err: NodeError): void {
 		if (err.fail) {
 			ApiResponder.send(req, res, FORMAT.packFail(err.fail, err.text));
 		} else {
@@ -36,7 +36,7 @@ export class ApiResponder {
 		}
 	}
 
-	public static binary(req: express.Request, res: express.Response, data: IApiBinaryResult) {
+	public static binary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {
 		if (data.pipe) {
 			data.pipe.pipe(res);
 		} else if (data.buffer) {

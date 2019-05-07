@@ -1,6 +1,6 @@
 import path from 'path';
+import {AlbumType, cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
 import {deepCompare} from '../../utils/deep-compare';
-import {AlbumType, cUnknownAlbum, cUnknownArtist, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
 import {md5string} from '../../utils/md5';
 import {MatchDir, MatchFile} from './scan.match-dir';
 

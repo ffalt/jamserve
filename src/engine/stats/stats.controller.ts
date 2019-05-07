@@ -1,6 +1,6 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
 import {JamRequest} from '../../api/jam/api';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {formatStats} from './stats.format';
 import {StatsService} from './stats.service';
 

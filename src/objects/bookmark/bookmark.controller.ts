@@ -1,12 +1,12 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
 import {JamRequest} from '../../api/jam/api';
-import {User} from '../user/user.model';
-import {Bookmark} from './bookmark.model';
-import {SearchQueryBookmark} from './bookmark.store';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {TrackController} from '../track/track.controller';
+import {User} from '../user/user.model';
 import {formatBookmark} from './bookmark.format';
+import {Bookmark} from './bookmark.model';
 import {BookmarkService} from './bookmark.service';
+import {SearchQueryBookmark} from './bookmark.store';
 
 export class BookmarkController {
 

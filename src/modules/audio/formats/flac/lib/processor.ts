@@ -1,12 +1,12 @@
-/**
+/***
  based on https://github.com/claus/flac-metadata
  License: MIT
  **/
 import {Transform, TransformCallback, TransformOptions} from 'stream';
+import {MetaDataBlock} from './block';
+import {MetaDataBlockPicture} from './block.picture';
 import {MetaDataBlockStreamInfo} from './block.streaminfo';
 import {BlockVorbiscomment} from './block.vorbiscomment';
-import {MetaDataBlockPicture} from './block.picture';
-import {MetaDataBlock} from './block';
 
 const STATE_IDLE = 0;
 const STATE_MARKER = 1;
@@ -47,7 +47,6 @@ export class FlacProcessorStream extends Transform {
 		this.parseMetaDataBlocks = !!parseMetaDataBlocks;
 	}
 
-
 	_transform(chunk: any, encoding: string, callback: TransformCallback): void {
 		let chunkPos = 0;
 		const chunkLen = chunk.length;
@@ -72,11 +71,7 @@ export class FlacProcessorStream extends Transform {
 				}
 			}
 			if (this.reportID3) {
-				if (!this.buf) {
-					this.buf = chunk;
-				} else {
-					this.buf = Buffer.concat([this.buf, chunk]);
-				}
+				this.buf = !this.buf ? chunk : Buffer.concat([this.buf, chunk]);
 			}
 		};
 
@@ -84,9 +79,7 @@ export class FlacProcessorStream extends Transform {
 			let slice;
 			const chunkAvailable = chunkLen - chunkPos;
 			const isDone = (chunkAvailable + this.bufPos >= minCapacity);
-			const _validate = (typeof validate === 'function') ? validate : function() {
-				return true;
-			};
+			const _validate = (typeof validate === 'function') ? validate : () => true;
 			if (isDone) {
 				// Enough data available
 				if (persist) {
@@ -142,11 +135,9 @@ export class FlacProcessorStream extends Transform {
 					break;
 				case STATE_MARKER:
 					if (safePush(4, true, this._validateMarker.bind(this))) {
-						if (!this.isFlac && this.hasID3) {
-							this.state = STATE_SCAN_MARKER;
-						} else {
-							this.state = this.isFlac ? STATE_MDB_HEADER : STATE_PASS_THROUGH;
-						}
+						this.state = (!this.isFlac && this.hasID3) ?
+							STATE_SCAN_MARKER :
+							(this.isFlac ? STATE_MDB_HEADER : STATE_PASS_THROUGH);
 					} else {
 						isChunkProcessed = true;
 					}
@@ -235,7 +226,7 @@ export class FlacProcessorStream extends Transform {
 			// The consumer may change the MDB's isLast flag in the preprocess handler.
 			// Here that flag is updated in the MDB header.
 			if (this.mdbLast !== this.mdb.isLast) {
-					if (this.mdb.isLast) {
+				if (this.mdb.isLast) {
 					header |= 0x80000000;
 				} else {
 					header &= 0x7fffffff;

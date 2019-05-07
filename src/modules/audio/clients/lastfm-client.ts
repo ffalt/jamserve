@@ -1,6 +1,6 @@
-import {WebserviceClient} from '../../../utils/webservice-client';
 import {LastFM} from '../../../model/lastfm-rest-data';
 import Logger from '../../../utils/logger';
+import {WebserviceClient} from '../../../utils/webservice-client';
 import {LastFMClientApi} from './lastfm-client.interface';
 
 const log = Logger('LastFM');
@@ -49,7 +49,7 @@ export class LastFMClient extends WebserviceClient {
 						} else if (key === 'streamable') {
 							result[key] = {
 								sample: sub['#text'],
-								fulltrack: sub['fulltrack'],
+								fulltrack: sub['fulltrack']
 							};
 							if (sub.tag) {
 								if (!Array.isArray(sub.tag)) {
@@ -95,7 +95,7 @@ export class LastFMClient extends WebserviceClient {
 	private async get(api: string, params: { [name: string]: string; }): Promise<LastFM.Result> {
 		log.info('requesting', api, JSON.stringify(params));
 		params['method'] = api;
-		const sorted_params: { [name: string]: string; } = {'method': api};
+		const sorted_params: { [name: string]: string; } = {method: api};
 		Object.keys(params).forEach(key => {
 			sorted_params[key] = params[key];
 		});
@@ -103,7 +103,7 @@ export class LastFMClient extends WebserviceClient {
 		sorted_params['format'] = 'json';
 		try {
 			const data = await this.getJson('http://ws.audioscrobbler.com/2.0/', sorted_params);
-			return <LastFM.Result>this.beautify(data);
+			return this.beautify(data) as LastFM.Result;
 		} catch (e) {
 			log.error(e);
 			return Promise.reject(e);

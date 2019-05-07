@@ -1,21 +1,23 @@
-import {Store} from '../store/store';
-import {AudioModule} from '../../modules/audio/audio.module';
-import Logger from '../../utils/logger';
-import {WaveformService} from '../waveform/waveform.service';
-import {ImageModule} from '../../modules/image/image.module';
-import {RootScanStrategy} from '../../model/jam-types';
-import path from 'path';
 import fse from 'fs-extra';
-import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
+import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
-import {DirScanner, ScanDir} from './scan.scan-dir';
-import {MatchDir, ScanMatcher, DBMatcher} from './scan.match-dir';
-import {emptyChanges, MergeChanges} from './scan.changes';
-import {ScanMerger} from './scan.merge';
-import {ScanCleaner} from './scan.clean';
-import {ScanStorer} from './scan.store';
-import {ScanMetaMerger} from './scan.merge-meta';
+import {RootScanStrategy} from '../../model/jam-types';
+import {AudioModule} from '../../modules/audio/audio.module';
+import {ImageModule} from '../../modules/image/image.module';
 import {Root} from '../../objects/root/root.model';
+import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
+import Logger from '../../utils/logger';
+import {Store} from '../store/store';
+import {WaveformService} from '../waveform/waveform.service';
+import {emptyChanges, MergeChanges} from './scan.changes';
+import {ScanCleaner} from './scan.clean';
+import {MatchDir} from './scan.match-dir';
+import {DBMatcher} from './scan.match-dir-db';
+import {ScanMatcher} from './scan.match-dir-scan';
+import {ScanMerger} from './scan.merge';
+import {ScanMetaMerger} from './scan.merge-meta';
+import {DirScanner, ScanDir} from './scan.scan-dir';
+import {ScanStorer} from './scan.store';
 
 const log = Logger('IO.Service');
 
@@ -27,7 +29,7 @@ export class ScanService {
 	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
 	}
 
-	public setSettings(settings: Jam.AdminSettingsLibrary) {
+	public setSettings(settings: Jam.AdminSettingsLibrary): void {
 		this.settings = settings;
 	}
 
@@ -65,7 +67,7 @@ export class ScanService {
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(matchRoot, rootID, () => true, changes);
 
-		return await this.finish(changes, rootID, forceMetaRefresh);
+		return this.finish(changes, rootID, forceMetaRefresh);
 	}
 
 	async removeRoot(rootID: string): Promise<MergeChanges> {
@@ -75,7 +77,7 @@ export class ScanService {
 		changes.removedTracks = await this.store.trackStore.search({rootID});
 		changes.removedFolders = await this.store.folderStore.search({rootID});
 
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 	}
 
 	async refreshTracks(rootID: string, trackIDs: Array<string>): Promise<MergeChanges> {
@@ -95,7 +97,7 @@ export class ScanService {
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 	}
 
 	async deleteTracks(rootID: string, trackIDs: Array<string>): Promise<MergeChanges> {
@@ -120,7 +122,7 @@ export class ScanService {
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 	}
 
 	async deleteFolders(rootID: string, folderIDs: Array<string>): Promise<MergeChanges> {
@@ -150,7 +152,7 @@ export class ScanService {
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 	}
 
 	async refreshFolders(rootID: string, folderIDs: Array<string>): Promise<MergeChanges> {
@@ -162,7 +164,7 @@ export class ScanService {
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 	}
 
 	async moveFolders(rootID: string, newParentID: any, folderIDs: any): Promise<MergeChanges> {
@@ -237,7 +239,7 @@ export class ScanService {
 			return changedDirs.indexOf(dir) >= 0;
 		}, changes);
 
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 	}
 
 	async moveTracks(rootID: string, trackIDs: Array<string>, newParentID: string): Promise<MergeChanges> {
@@ -275,7 +277,7 @@ export class ScanService {
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 	}
 
 	async renameTrack(rootID: string, trackID: string, newName: string): Promise<MergeChanges> {
@@ -302,11 +304,11 @@ export class ScanService {
 		track.name = name;
 		await this.store.trackStore.replace(track);
 		// TODO: fill real {dir:MatchDir to this log object), even if it's not used outside scanner atm
-		changes.updateTracks.push(<any>{track: track, oldTrack: track});
+		changes.updateTracks.push({track, oldTrack: track} as any);
 		return changes;
 	}
 
-	async fixTrack(rootID: string, trackID: string, fixID: string) {
+	async fixTrack(rootID: string, trackID: string, fixID: string): Promise<MergeChanges> {
 		const {root, changes} = await this.start(rootID);
 		const track = await this.store.trackStore.byId(trackID);
 		if (!track) {
@@ -320,7 +322,7 @@ export class ScanService {
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 	}
 
 	async renameFolder(rootID: string, folderID: string, newName: string): Promise<MergeChanges> {
@@ -361,10 +363,10 @@ export class ScanService {
 		await this.store.trackStore.replaceMany(tracks);
 		folder.path = ensureTrailingPathSeparator(newPath);
 		// TODO: log changes?
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 	}
 
-	async writeTrackTags(rootID: string, tags: Array<{ trackID: string; tag: Jam.RawTag }>) {
+	async writeTrackTags(rootID: string, tags: Array<{ trackID: string; tag: Jam.RawTag }>): Promise<MergeChanges> {
 		const {root, changes} = await this.start(rootID);
 		const trackIDs = tags.map(t => t.trackID);
 		const tracks = await this.store.trackStore.byIds(trackIDs);
@@ -391,7 +393,7 @@ export class ScanService {
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
 
-		return await this.finish(changes, rootID, false);
+		return this.finish(changes, rootID, false);
 
 	}
 

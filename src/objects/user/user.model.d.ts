@@ -7,7 +7,6 @@ export interface User extends DBObject {
 	subsonic_pass: string;
 	email: string;
 	created: number;
-	// ldapAuthenticated: boolean;
 	scrobblingEnabled: boolean;
 	avatarLastChanged?: number;
 	avatar?: string;
@@ -18,18 +17,8 @@ export interface User extends DBObject {
 
 export interface UserRoles {
 	[name: string]: boolean;
-
 	stream: boolean;
 	upload: boolean;
 	admin: boolean;
 	podcast: boolean;
-	// coverArtRole: boolean;
-	// settingsRole: boolean;
-	// downloadRole: boolean;
-	// playlistRole: boolean;
-	// commentRole: boolean;
-	// jukeboxRole: boolean;
-	// shareRole: boolean;
-	// videoConversionRole: boolean;
 }
-

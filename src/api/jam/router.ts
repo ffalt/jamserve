@@ -1,29 +1,28 @@
-import express from 'express';
-import {CheckAuthMiddleWare, UserRequest} from './login';
-import {ApiResponder} from './response';
-import multer from 'multer';
-import path from 'path';
-import Logger from '../../utils/logger';
-import {JamController} from './api';
-import {Engine} from '../../engine/engine';
-import {Jam} from '../../model/jam-rest-data';
 import cors, {CorsOptions} from 'cors';
-import {SessionJSONFileStore} from '../../utils/session-storage';
+import express from 'express';
+import rateLimit from 'express-rate-limit';
 import session from 'express-session';
+import jwt from 'jsonwebtoken';
+import multer from 'multer';
+import autoUploadTempReap from 'multer-autoreap';
 import passport from 'passport';
 import passportJWT from 'passport-jwt';
 import passportLocal from 'passport-local';
-import jwt from 'jsonwebtoken';
-import {NotFoundError, UnauthError} from './error';
-import {Register, registerAccessControlApi, RegisterCallback, registerPublicApi} from './routes';
-import {apiCheck} from './check';
-import {getMaxAge} from '../../utils/max-age';
+import path from 'path';
+import {Engine} from '../../engine/engine';
+import {Jam} from '../../model/jam-rest-data';
 import {formatUser} from '../../objects/user/user.format';
 import {User} from '../../objects/user/user.model';
+import Logger from '../../utils/logger';
+import {getMaxAge} from '../../utils/max-age';
+import {SessionJSONFileStore} from '../../utils/session-storage';
 import {JAMAPI_VERSION} from '../../version';
-
-const autoUploadTempReap = require('multer-autoreap'); // TODO: multer-autoreap types
-const rateLimit = require('express-rate-limit');
+import {JamController} from './api';
+import {apiCheck} from './check';
+import {NotFoundError, UnauthError} from './error';
+import {CheckAuthMiddleWare, UserRequest} from './login';
+import {ApiResponder} from './response';
+import {Register, registerAccessControlApi, RegisterCallback, registerPublicApi} from './routes';
 
 const LoginLimiter = rateLimit({
 	windowMs: 60 * 60 * 1000, // 1 hour window
@@ -39,7 +38,7 @@ interface JWTPayload {
 	client: string;
 }
 
-function CallSessionLoginHandler(req: UserRequest, res: express.Response, next: express.NextFunction) {
+function CallSessionLoginHandler(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 	passport.authenticate('local', (err, user, info) => {
 		if (err || !user) {
 			return next();
@@ -64,7 +63,7 @@ function CallSessionLoginHandler(req: UserRequest, res: express.Response, next: 
 	})(req, res, next);
 }
 
-function CallSessionLogoutHandler(req: UserRequest, res: express.Response, next: express.NextFunction) {
+function CallSessionLogoutHandler(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 	req.logout();
 	ApiResponder.ok(res);
 }
@@ -134,7 +133,7 @@ export function initJamRouter(engine: Engine): express.Router {
 		}
 	));
 
-	function jwtParameterAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction) {
+	function jwtParameterAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 		if (req.user) {
 			return next();
 		}
@@ -150,7 +149,7 @@ export function initJamRouter(engine: Engine): express.Router {
 		})(req, res, next);
 	}
 
-	function jwtHeaderAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction) {
+	function jwtHeaderAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 		if (req.user) {
 			return next();
 		}
@@ -171,9 +170,8 @@ export function initJamRouter(engine: Engine): express.Router {
 		next();
 	});
 
-	router.use(<express.RequestHandler>jwtHeaderAuthMiddleware);
-	router.use(<express.RequestHandler>jwtParameterAuthMiddleware);
-
+	router.use(jwtHeaderAuthMiddleware as express.RequestHandler);
+	router.use(jwtParameterAuthMiddleware as express.RequestHandler);
 
 	router.use(cors({
 		preflightContinue: false,
@@ -220,15 +218,15 @@ export function initJamRouter(engine: Engine): express.Router {
 	};
 
 	registerPublicApi(register, api);
-	router.post('/login', LoginLimiter, apiCheck('/login'), <express.RequestHandler>CallSessionLoginHandler);
+	router.post('/login', LoginLimiter, apiCheck('/login'), CallSessionLoginHandler as express.RequestHandler);
 
-	const corsOptionsDelegate = function(req: express.Request, callback: (err: Error | null, options: CorsOptions) => void) {
+	const corsOptionsDelegate = (req: express.Request, callback: (err: Error | null, options: CorsOptions) => void) => {
 		const origins = engine.config.server.session.allowedCookieDomains || [];
 		const corsOptions: CorsOptions = {
 			preflightContinue: false,
 			credentials: true,
 			allowedHeaders: ['Content-Type', 'Authorization'],
-			origin: function(origin, cb) {
+			origin(origin, cb): void {
 				if (!origin || origins.indexOf(origin) !== -1) {
 					cb(null, true);
 				} else {
@@ -245,10 +243,10 @@ export function initJamRouter(engine: Engine): express.Router {
 	};
 	router.use(cors(corsOptionsDelegate));
 
-	router.post('/logout', <express.RequestHandler>CallSessionLogoutHandler);
+	router.post('/logout', CallSessionLogoutHandler as express.RequestHandler);
 	router.use('/docs', express.static(path.resolve('./dist/docs/api/')));
 
-	router.use(<express.RequestHandler>CheckAuthMiddleWare); // ensure req.user exists for all requests after this
+	router.use(CheckAuthMiddleWare as express.RequestHandler); // ensure req.user exists for all requests after this
 
 	registerAccessControlApi(register, api);
 

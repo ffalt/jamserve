@@ -1,19 +1,19 @@
-import {BaseController} from '../base/base.controller';
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../db/db.types';
-import {UnauthError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
-import {TrackController} from '../track/track.controller';
-import {formatState} from '../state/state.format';
-import {formatPlaylist} from './playlist.format';
-import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
+import {UnauthError} from '../../api/jam/error';
+import {DBObjectType} from '../../db/db.types';
 import {DownloadService} from '../../engine/download/download.service';
-import {SearchQueryPlaylist} from './playlist.store';
-import {PlaylistService} from './playlist.service';
-import {Playlist} from './playlist.model';
+import {ImageService} from '../../engine/image/image.service';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {BaseController} from '../base/base.controller';
+import {formatState} from '../state/state.format';
+import {StateService} from '../state/state.service';
+import {TrackController} from '../track/track.controller';
 import {User} from '../user/user.model';
+import {formatPlaylist} from './playlist.format';
+import {Playlist} from './playlist.model';
+import {PlaylistService} from './playlist.service';
+import {SearchQueryPlaylist} from './playlist.store';
 
 export class PlaylistController extends BaseController<JamParameters.Playlist, JamParameters.Playlists, JamParameters.IncludesPlaylist, SearchQueryPlaylist, JamParameters.PlaylistSearch, Playlist, Jam.Playlist> {
 

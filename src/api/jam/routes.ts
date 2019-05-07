@@ -1,16 +1,16 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
-import {Jam} from '../../model/jam-rest-data';
-import {MusicBrainz} from '../../model/musicbrainz-rest-data';
-import {Acoustid} from '../../model/acoustid-rest-data';
+import express from 'express';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
-import {LastFM} from '../../model/lastfm-rest-data';
+import {Acoustid} from '../../model/acoustid-rest-data';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
+import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
+import {LastFM} from '../../model/lastfm-rest-data';
+import {MusicBrainz} from '../../model/musicbrainz-rest-data';
+import {ApiBinaryResult} from '../../typings';
 import {JamController, JamRequest} from './api';
 import {ApiResponder} from './response';
-import express from 'express';
-import {IApiBinaryResult} from '../../typings';
 
 export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
 export interface Register {
@@ -648,169 +648,169 @@ export function registerAccessControlApi(register: Register, api: JamController)
 
 	register.get('/folder/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.folderController.download(options);
+		const result: ApiBinaryResult = await api.folderController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/folder/download', ['stream']);
 
 	register.get('/folder/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.folderController.image(options);
+		const result: ApiBinaryResult = await api.folderController.image(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/folder/artwork/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.folderController.artworkImage(options);
+		const result: ApiBinaryResult = await api.folderController.artworkImage(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/track/stream', async (req, res) => {
 		const options: JamRequest<JamParameters.Stream> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.trackController.stream(options);
+		const result: ApiBinaryResult = await api.trackController.stream(options);
 		await ApiResponder.binary(res, result);
 	}, '/track/stream', ['stream']);
 
 	register.get('/track/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.trackController.download(options);
+		const result: ApiBinaryResult = await api.trackController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/track/download', ['stream']);
 
 	register.get('/track/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.trackController.image(options);
+		const result: ApiBinaryResult = await api.trackController.image(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/episode/stream', async (req, res) => {
 		const options: JamRequest<JamParameters.Stream> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.episodeController.stream(options);
+		const result: ApiBinaryResult = await api.episodeController.stream(options);
 		await ApiResponder.binary(res, result);
 	}, '/episode/stream', ['stream']);
 
 	register.get('/episode/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.episodeController.download(options);
+		const result: ApiBinaryResult = await api.episodeController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/episode/download', ['stream']);
 
 	register.get('/episode/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.episodeController.image(options);
+		const result: ApiBinaryResult = await api.episodeController.image(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/podcast/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.podcastController.image(options);
+		const result: ApiBinaryResult = await api.podcastController.image(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/podcast/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.podcastController.download(options);
+		const result: ApiBinaryResult = await api.podcastController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/podcast/download', ['stream']);
 
 	register.get('/artist/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.artistController.image(options);
+		const result: ApiBinaryResult = await api.artistController.image(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/artist/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.artistController.download(options);
+		const result: ApiBinaryResult = await api.artistController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/artist/download', ['stream']);
 
 	register.get('/album/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.albumController.image(options);
+		const result: ApiBinaryResult = await api.albumController.image(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/album/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.albumController.download(options);
+		const result: ApiBinaryResult = await api.albumController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/album/download', ['stream']);
 
 	register.get('/playlist/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.playlistController.image(options);
+		const result: ApiBinaryResult = await api.playlistController.image(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/playlist/download', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.playlistController.download(options);
+		const result: ApiBinaryResult = await api.playlistController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/playlist/download', ['stream']);
 
 	register.get('/user/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.userController.image(options);
+		const result: ApiBinaryResult = await api.userController.image(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/root/image', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.query, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.rootController.image(options);
+		const result: ApiBinaryResult = await api.rootController.image(options);
 		await ApiResponder.binary(res, result);
 	});
 
 	register.get('/image/:id-:size.:format', async (req, res) => {
 		const options: JamRequest<JamParameters.Image> = {query: req.params, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.imageController.image(options);
+		const result: ApiBinaryResult = await api.imageController.image(options);
 		await ApiResponder.binary(res, result);
 	}, '/image/{id}-{size}.{format}');
 
 	register.get('/image/:id-:size', async (req, res) => {
 		const options: JamRequest<JamParameters.PathImageSize> = {query: req.params, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.imageController.image(options);
+		const result: ApiBinaryResult = await api.imageController.image(options);
 		await ApiResponder.binary(res, result);
 	}, '/image/{id}-{size}');
 
 	register.get('/image/:id.:format', async (req, res) => {
 		const options: JamRequest<JamParameters.PathImageFormat> = {query: req.params, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.imageController.image(options);
+		const result: ApiBinaryResult = await api.imageController.image(options);
 		await ApiResponder.binary(res, result);
 	}, '/image/{id}.{format}');
 
 	register.get('/image/:id', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.imageController.image(options);
+		const result: ApiBinaryResult = await api.imageController.image(options);
 		await ApiResponder.binary(res, result);
 	}, '/image/{id}');
 
 	register.get('/stream/:id.:format', async (req, res) => {
 		const options: JamRequest<JamParameters.PathStream> = {query: req.params, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.streamController.stream(options);
+		const result: ApiBinaryResult = await api.streamController.stream(options);
 		await ApiResponder.binary(res, result);
 	}, '/stream/{id}.{format}', ['stream']);
 
 	register.get('/stream/:id', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.streamController.stream(options);
+		const result: ApiBinaryResult = await api.streamController.stream(options);
 		await ApiResponder.binary(res, result);
 	}, '/stream/{id}', ['stream']);
 
 	register.get('/waveform/:id.:format', async (req, res) => {
 		const options: JamRequest<JamParameters.Waveform> = {query: req.params, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.waveformController.waveform(options);
+		const result: ApiBinaryResult = await api.waveformController.waveform(options);
 		await ApiResponder.binary(res, result);
 	}, '/waveform/{id}.{format}', ['stream']);
 
 	register.get('/download/:id', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.downloadController.download(options);
+		const result: ApiBinaryResult = await api.downloadController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/download/{id}', ['stream']);
 
 	register.get('/download/:id.:format', async (req, res) => {
 		const options: JamRequest<JamParameters.Download> = {query: req.params, user: req.user, client: req.client};
-		const result: IApiBinaryResult = await api.downloadController.download(options);
+		const result: ApiBinaryResult = await api.downloadController.download(options);
 		await ApiResponder.binary(res, result);
 	}, '/download/{id}.{format}', ['stream']);
 

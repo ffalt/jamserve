@@ -1,7 +1,7 @@
 export class DebouncePromises<T> {
 	private pendingPromises: { [id: string]: Array<any> } = {};
 
-	append(id: string): Promise<T> {
+	async append(id: string): Promise<T> {
 		return new Promise<T>((resolve, reject) => {
 			const run = (err: Error | null, result: T) => {
 				if (err) {
@@ -22,14 +22,14 @@ export class DebouncePromises<T> {
 		return !!this.pendingPromises[id];
 	}
 
-	resolve(id: string, result: T) {
+	resolve(id: string, result: T): void {
 		for (const cb of this.pendingPromises[id]) {
 			cb(null, result);
 		}
 		delete this.pendingPromises[id];
 	}
 
-	reject(id: string, error: Error) {
+	reject(id: string, error: Error): void {
 		for (const cb of this.pendingPromises[id]) {
 			cb(error);
 		}

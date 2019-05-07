@@ -1,8 +1,8 @@
-import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {PodcastStatus} from '../../model/jam-types';
 import {formatTrackTag} from '../track/track.format';
 import {Episode, PodcastEpisodeChapter} from './episode.model';
-import {PodcastStatus} from '../../model/jam-types';
 
 export function formatChapters(chapters: Array<PodcastEpisodeChapter>): Array<Jam.PodcastEpisodeChapter> {
 	return chapters.map(chap => {
@@ -19,7 +19,7 @@ export function formatEpisode(episode: Episode, includes: JamParameters.Includes
 		parentID: '',
 		created: episode.stat ? episode.stat.created : 0,
 		podcastID: episode.podcastID,
-		status: <Jam.PodcastEpisodeStatusType>status,
+		status: status as Jam.PodcastEpisodeStatusType,
 		errorMessage: episode.error,
 		name: episode.name,
 		duration: episode.media ? (episode.media.duration || -1) : (episode.duration ? episode.duration : -1),

@@ -1,18 +1,18 @@
-import path from 'path';
-import Logger from '../../utils/logger';
-import {IApiBinaryResult} from '../../typings';
-import {DebouncePromises} from '../../utils/debounce-promises';
-import {WaveformGenerator} from '../../modules/audio/tools/ffmpeg-waveform';
 import fse from 'fs-extra';
+import path from 'path';
 import {JamParameters} from '../../model/jam-rest-params';
-import {Track} from '../../objects/track/track.model';
-import {Episode} from '../../objects/episode/episode.model';
 import WaveformFormatType = JamParameters.WaveformFormatType;
+import {WaveformGenerator} from '../../modules/audio/waveform/waveform.generator';
+import {Episode} from '../../objects/episode/episode.model';
+import {Track} from '../../objects/track/track.model';
+import {ApiBinaryResult} from '../../typings';
+import {DebouncePromises} from '../../utils/debounce-promises';
+import Logger from '../../utils/logger';
 
 const log = Logger('WaveformService');
 
 export class WaveformService {
-	private waveformCacheDebounce = new DebouncePromises<IApiBinaryResult>();
+	private waveformCacheDebounce = new DebouncePromises<ApiBinaryResult>();
 
 	constructor(private waveformCachePath: string) {
 	}
@@ -21,7 +21,7 @@ export class WaveformService {
 		return 'waveform-' + id + '.' + format;
 	}
 
-	private async generateWaveform(filename: string, format: WaveformFormatType): Promise<IApiBinaryResult> {
+	private async generateWaveform(filename: string, format: WaveformFormatType): Promise<ApiBinaryResult> {
 		const wf = new WaveformGenerator();
 		switch (format) {
 			case 'svg':
@@ -47,7 +47,7 @@ export class WaveformService {
 		}
 	}
 
-	private async get(id: string, filename: string, format: WaveformFormatType): Promise<IApiBinaryResult> {
+	private async get(id: string, filename: string, format: WaveformFormatType): Promise<ApiBinaryResult> {
 		if (!filename || !(await fse.pathExists(filename))) {
 			return Promise.reject(Error('Invalid filename for waveform generation'));
 		}
@@ -57,7 +57,7 @@ export class WaveformService {
 		}
 		this.waveformCacheDebounce.setPending(cacheID);
 		try {
-			let result: IApiBinaryResult;
+			let result: ApiBinaryResult;
 			const cachefile = path.join(this.waveformCachePath, cacheID);
 			const exists = await fse.pathExists(cachefile);
 			if (exists) {
@@ -80,13 +80,13 @@ export class WaveformService {
 		}
 	}
 
-	async getTrackWaveform(track: Track, format: WaveformFormatType): Promise<IApiBinaryResult> {
-		return await this.get(track.id, path.join(track.path, track.name), format);
+	async getTrackWaveform(track: Track, format: WaveformFormatType): Promise<ApiBinaryResult> {
+		return this.get(track.id, path.join(track.path, track.name), format);
 	}
 
-	async getEpisodeWaveform(episode: Episode, format: WaveformFormatType): Promise<IApiBinaryResult> {
+	async getEpisodeWaveform(episode: Episode, format: WaveformFormatType): Promise<ApiBinaryResult> {
 		if (episode.path && episode.media) {
-			return await this.get(episode.id, episode.path, format);
+			return this.get(episode.id, episode.path, format);
 		} else {
 			return Promise.reject(Error('Podcast episode not ready'));
 		}

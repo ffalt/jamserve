@@ -1,3 +1,8 @@
+/***
+ * based on https://github.com/analog-nico/es-sequence
+ * MIT
+ */
+
 import elasticsearch from 'elasticsearch';
 
 const esTypeMapping = {
@@ -7,7 +12,7 @@ const esTypeMapping = {
 	enabled: false
 };
 
-export class ESSequence {
+export class DbElasticSequence {
 	client: elasticsearch.Client;
 	private initPromise: Promise<any> | null = null;
 	private initError: Promise<any> | null = null;
@@ -23,7 +28,7 @@ export class ESSequence {
 		}
 	}
 
-	init(options?: any, cacheSize?: number): Promise<any> {
+	async init(options?: any, cacheSize?: number): Promise<any> {
 		// The following checks are done before the init promise is created
 		// because errors thrown in the init promise are stored in _initError.
 		// If a check fails it should look as if init was not called.
@@ -47,7 +52,7 @@ export class ESSequence {
 				this.cacheSize = cacheSize;
 			}
 			if (isObject(options)) {
-				this.options = Object.assign(this.options, options);
+				this.options = {...this.options, ...options};
 			}
 			resolve(this.initEsIndexIfNeeded());
 		}).catch((e) => {
@@ -59,7 +64,7 @@ export class ESSequence {
 		return this.initPromise;
 	}
 
-	addMappingToEsIndexIfMissing(): Promise<any> {
+	async addMappingToEsIndexIfMissing(): Promise<any> {
 		const mapping: any = {};
 		mapping[this.options.esType] = esTypeMapping;
 		return this.client.indices.putMapping({
@@ -70,27 +75,26 @@ export class ESSequence {
 		});
 	}
 
-	initEsIndexIfNeeded(): Promise<any> {
-		return this.client.indices.exists({index: this.options.esIndex}).then(response => {
-			if (response) {
-				return this.addMappingToEsIndexIfMissing();
-			}
-			const config: any = {
-				settings: {
-					number_of_shards: 1,
-					auto_expand_replicas: '0-all'
-				},
-				mappings: {}
-			};
-			config.mappings[this.options.esType] = esTypeMapping;
-			return this.client.indices.create({
-				index: this.options.esIndex,
-				body: config
-			});
+	async initEsIndexIfNeeded(): Promise<any> {
+		const response = await this.client.indices.exists({index: this.options.esIndex});
+		if (response) {
+			return this.addMappingToEsIndexIfMissing();
+		}
+		const config: any = {
+			settings: {
+				number_of_shards: 1,
+				auto_expand_replicas: '0-all'
+			},
+			mappings: {}
+		};
+		config.mappings[this.options.esType] = esTypeMapping;
+		return this.client.indices.create({
+			index: this.options.esIndex,
+			body: config
 		});
 	}
 
-	fillCache(sequenceName: string): Promise<any> {
+	private async fillCache(sequenceName: string): Promise<any> {
 		this.cacheFillPromise = new Promise(resolve => {
 			if (!this.cache[sequenceName]) {
 				this.cache[sequenceName] = [];
@@ -104,9 +108,9 @@ export class ESSequence {
 			}
 			resolve(
 				this.client.bulk(bulkParams).then(response => {
-					for (let k = 0; k < response.items.length; k += 1) {
+					for (const item of response.items) {
 						// This is the core trick: The document's version is an auto-incrementing integer.
-						this.cache[sequenceName].push(response.items[k].index._version);
+						this.cache[sequenceName].push(item.index._version);
 					}
 				})
 			);
@@ -116,7 +120,7 @@ export class ESSequence {
 		return this.cacheFillPromise;
 	}
 
-	private interal_get(sequenceName: string): Promise<any> {
+	private async interal_get(sequenceName: string): Promise<any> {
 		if (this.initError !== null) {
 			return Promise.reject(this.initError);
 		}
@@ -124,7 +128,7 @@ export class ESSequence {
 			return Promise.resolve(this.cache[sequenceName].shift());
 		}
 
-		const returnValue = (): Promise<any> => {
+		const returnValue = async (): Promise<any> => {
 			return this.interal_get(sequenceName);
 		};
 
@@ -135,7 +139,7 @@ export class ESSequence {
 		}
 	}
 
-	public get(sequenceName: string): Promise<any> {
+	public async get(sequenceName: string): Promise<any> {
 		if (!this.client) {
 			throw new Error('Please run init(...) first to provide an elasticsearch client.');
 		}
@@ -167,7 +171,7 @@ function isFunction(val: any): boolean {
 	return typeof val === 'function';
 }
 
-function isInjectedClientValid(client: elasticsearch.Client) {
+function isInjectedClientValid(client: elasticsearch.Client): boolean {
 	return !((!isObject(client) && !isFunction(client)) ||
 		(!isObject(client.indices) && !isFunction(client.indices)) ||
 		!isFunction(client.indices.create) ||

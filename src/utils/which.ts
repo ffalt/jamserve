@@ -1,6 +1,12 @@
-import path from 'path';
-import {NodeDataCallback} from '../typings';
+/***
+ * based on https://github.com/npm/node-which
+ * ISC
+ *
+ * https://github.com/isaacs/isexe
+ * ISC
+ */
 import fse from 'fs-extra';
+import path from 'path';
 
 export const isWindows = process && (process.platform === 'win32' || /^(msys|cygwin)$/.test(process.env.OSTYPE || ''));
 
@@ -8,7 +14,13 @@ const cache: { [name: string]: string; } = {};
 
 const COLON = isWindows ? ';' : ':';
 
-function getPathInfo(cmd: string, opt: any) {
+interface PathInfo {
+	env: string;
+	ext: Array<string>;
+	extExe: string;
+}
+
+function getPathInfo(cmd: string, opt: any): PathInfo {
 	const colon = opt.colon || COLON;
 	let pathEnv = opt.path || process.env.PATH || '';
 	let pathExt = [''];
@@ -20,32 +32,22 @@ function getPathInfo(cmd: string, opt: any) {
 		pathEnv.unshift(process.cwd());
 		pathExtExe = (opt.pathExt || process.env.PATHEXT || '.EXE;.CMD;.BAT;.COM');
 		pathExt = pathExtExe.split(colon);
-
-
 		// Always test the cmd itself first.  isexe will check to make sure
 		// it's found in the pathExt set.
 		if (cmd.indexOf('.') !== -1 && pathExt[0] !== '') {
 			pathExt.unshift('');
 		}
 	}
-
 	// If it has a slash, then we don't bother searching the pathenv.
 	// just check the file itself, and that's it.
 	if (cmd.match(/\//) || isWindows && cmd.match(/\\/)) {
 		pathEnv = [''];
 	}
-
 	return {
 		env: pathEnv,
 		ext: pathExt,
 		extExe: pathExtExe
 	};
-}
-
-function getNotFoundError(cmd: string): Error {
-	const er = new Error('not found: ' + cmd);
-	(<any>er).code = 'ENOENT';
-	return er;
 }
 
 function checkWindowsMode(filename: string, options: { pathExt?: string }, stat: fse.Stats): boolean {
@@ -60,9 +62,9 @@ function checkWindowsMode(filename: string, options: { pathExt?: string }, stat:
 	if (pathexts.indexOf('') !== -1) {
 		return true;
 	}
-	for (let i = 0; i < pathexts.length; i++) {
-		const p = pathexts[i].toLowerCase();
-		if (p && filename.substr(-p.length).toLowerCase() === p) {
+	for (const pa of pathexts) {
+		const p = pa.toLowerCase();
+		if (p.length && filename.substr(-p.length).toLowerCase() === p) {
 			return true;
 		}
 	}
@@ -86,7 +88,7 @@ function checkMode(filename: string, options: { pathExt?: string }, stat: fse.St
 	return !!ret;
 }
 
-function isexeStat(filename: string, options: { pathExt?: string }, stat: fse.Stats) {
+function isexeStat(filename: string, options: { pathExt?: string }, stat: fse.Stats): boolean {
 	if (!stat.isFile()) {
 		return false;
 	}
@@ -97,69 +99,58 @@ function isexeStat(filename: string, options: { pathExt?: string }, stat: fse.St
 	}
 }
 
-function isexe(filename: string, options: { pathExt?: string }, cb: NodeDataCallback<boolean>) {
-	fse.stat(filename, (err, stat) => {
-		cb(err, err ? false : isexeStat(filename, options, stat));
-	});
+async function isExe(filename: string, options: { pathExt?: string }): Promise<boolean> {
+	try {
+		const stat = await fse.stat(filename);
+		return isexeStat(filename, options, stat);
+	} catch (e) {
+		return false;
+	}
 }
 
-export function whichs(cmd: string, cb: (error: Error | null, result?: Array<string>) => void) {
-	const opt: { all?: boolean } = {};
+export async function whichs(cmd: string, options?: { all?: boolean }): Promise<Array<string> | undefined> {
+	const opt = options || {};
 	const info = getPathInfo(cmd, opt);
 	const pathEnv = info.env;
 	const pathExt = info.ext;
 	const pathExtExe = info.extExe;
 	const found: Array<string> = [];
 
-	(function F(i, l) {
-		if (i === l) {
-			if (opt.all && found.length) {
-				return cb(null, found);
-			} else {
-				return cb(getNotFoundError(cmd));
-			}
-		}
-
+	for (let i = 0, l = pathEnv.length; i < l; i++) {
 		let pathPart = pathEnv[i];
 		if (pathPart.charAt(0) === '"' && pathPart.slice(-1) === '"') {
 			pathPart = pathPart.slice(1, -1);
 		}
 
 		let p = path.join(pathPart, cmd);
-		if (!pathPart && (/^\.[\\\/]/).test(cmd)) {
+		if (!pathPart && /^\.[\\\/]/.test(cmd)) {
 			p = cmd.slice(0, 2) + p;
 		}
-		(function E(ii, ll) {
-			if (ii === ll) {
-				return F(i + 1, l);
-			}
-			const ext = pathExt[ii];
-			isexe(p + ext, {pathExt: pathExtExe}, (err, is) => {
-				if (!err && is) {
+		for (let j = 0, ll = pathExt.length; j < ll; j++) {
+			const cur = p + pathExt[j];
+			try {
+				const is = await isExe(cur, {pathExt: pathExtExe});
+				if (is) {
 					if (opt.all) {
-						found.push(p + ext);
+						found.push(cur);
 					} else {
-						return cb(null, [p + ext]);
+						return [cur];
 					}
 				}
-				return E(ii + 1, ll);
-			});
-		})(0, pathExt.length);
-	})(0, pathEnv.length);
+			} catch (ex) {
+			}
+		}
+	}
+	if (opt.all && found.length) {
+		return found;
+	}
 }
 
 async function which(name: string): Promise<string | undefined> {
-	return new Promise<string | undefined>((resolve, reject) => {
-		whichs(name, (err, result) => {
-			if (err) {
-				reject(err);
-			} else if (result && result.length > 0) {
-				resolve(result[0]);
-			} else {
-				resolve();
-			}
-		});
-	});
+	const result = await whichs(name);
+	if (result) {
+		return result[0];
+	}
 }
 
 async function localBin(name: string): Promise<string | undefined> {
@@ -170,7 +161,7 @@ async function localBin(name: string): Promise<string | undefined> {
 	}
 }
 
-async function enviroment(envName: string): Promise<string | undefined> {
+async function environment(envName: string): Promise<string | undefined> {
 	const s = process.env[envName];
 	if (s && s.length > 0) {
 		const exists = await fse.pathExists(s);
@@ -186,7 +177,7 @@ export async function getBinPath(name: string, envName: string): Promise<string 
 	}
 	try {
 		// Try envName
-		const s = await enviroment(envName);
+		const s = await environment(envName);
 		if (s && s.length > 0) {
 			cache[name] = s;
 			return s;

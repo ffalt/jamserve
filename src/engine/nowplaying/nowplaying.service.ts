@@ -1,9 +1,9 @@
 import {DBObjectType} from '../../db/db.types';
-import {NowPlaying} from './nowplaying.model';
-import {User} from '../../objects/user/user.model';
 import {Episode} from '../../objects/episode/episode.model';
-import {Track} from '../../objects/track/track.model';
 import {StateService} from '../../objects/state/state.service';
+import {Track} from '../../objects/track/track.model';
+import {User} from '../../objects/user/user.model';
+import {NowPlaying} from './nowplaying.model';
 
 export class NowPlayingService {
 	playing: Array<NowPlaying> = [];
@@ -15,7 +15,7 @@ export class NowPlayingService {
 		return this.playing;
 	}
 
-	clear() {
+	clear(): void {
 		this.playing = [];
 	}
 
@@ -24,7 +24,7 @@ export class NowPlayingService {
 		this.playing.push({
 			time: Date.now(),
 			obj: episode,
-			user: user
+			user
 		});
 		await this.stateService.reportPlaying(episode.id, DBObjectType.episode, user.id);
 		await this.stateService.reportPlaying(episode.podcastID, DBObjectType.podcast, user.id);
@@ -35,7 +35,7 @@ export class NowPlayingService {
 		this.playing.push({
 			time: Date.now(),
 			obj: track,
-			user: user
+			user
 		});
 		await this.stateService.reportPlaying(track.id, DBObjectType.track, user.id);
 		await this.stateService.reportPlaying(track.albumID, DBObjectType.album, user.id);

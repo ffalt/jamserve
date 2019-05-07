@@ -1,7 +1,27 @@
 {
   "rulesDirectory": [
   ],
+  "extends": [
+    "tslint:latest"
+  ],
   "rules": {
+    "array-type": [
+      true,
+      "generic"
+    ],
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "never",
+        "singleline": "never",
+        "esSpecCompliant": true
+      }
+    ],
+    "newline-before-return": false,
+    "no-return-await": true,
+    "no-var-requires": true,
+    "no-namespace": false,
+    "arrow-parens": false,
     "arrow-return-shorthand": true,
     "callable-types": true,
     "class-name": true,
@@ -9,14 +29,10 @@
       true,
       "check-space"
     ],
+    "interface-name": [true, "never-prefix"],
     "curly": true,
     "eofline": true,
     "forin": true,
-    "import-blacklist": [
-      true,
-      "rxjs",
-      "rxjs/Rx"
-    ],
     "import-spacing": true,
     "indent": [
       true,
@@ -55,11 +71,13 @@
     "no-duplicate-super": true,
     "no-empty": false,
     "no-empty-interface": false,
+    "no-void-expression": false,
     "no-eval": true,
     "no-inferrable-types": [
       true,
       "ignore-params"
     ],
+    "promise-function-async": true,
     "no-misused-new": true,
     "no-non-null-assertion": true,
     "no-shadowed-variable": true,
@@ -92,6 +110,11 @@
     "triple-equals": [
       true,
       "allow-null-check"
+    ],
+    "typedef": [
+      true,
+      "call-signature",
+      "property-declaration"
     ],
     "typedef-whitespace": [
       true,

@@ -1,4 +1,3 @@
-
 export enum MetaDataType {
 	musicbrainz,
 	wikipedia,
@@ -7,5 +6,5 @@ export enum MetaDataType {
 	acousticbrainz,
 	coverartarchive,
 	lastfm,
-	chartlyrics,
+	chartlyrics
 }

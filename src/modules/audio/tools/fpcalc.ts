@@ -19,5 +19,5 @@ export async function fpcalc(filename: string, options: FPCalcOptions): Promise<
 	if (options.raw) {
 		cmds.push('-raw');
 	}
-	return await spawnToolJson<FPCalcResult>('fpcalc', 'FPCALC_PATH', [...cmds, filename]);
+	return spawnToolJson<FPCalcResult>('fpcalc', 'FPCALC_PATH', [...cmds, filename]);
 }

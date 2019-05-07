@@ -1,8 +1,9 @@
-import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery, SearchQuerySort} from '../base/base.store';
-import {User} from './user.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
+import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
+import {QueryHelper} from '../base/base.query.helper';
+import {BaseStore, SearchQuery, SearchQuerySort} from '../base/base.store';
+import {User} from './user.model';
 
 export interface SearchQueryUser extends SearchQuery {
 	name?: string;
@@ -11,8 +12,8 @@ export interface SearchQueryUser extends SearchQuery {
 }
 
 const fieldMap: { [name in JamParameters.UserSortField]: string } = {
-	'name': 'name',
-	'created': 'created'
+	name: 'name',
+	created: 'created'
 };
 
 export class UserStore extends BaseStore<User, SearchQueryUser> {

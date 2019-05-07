@@ -1,9 +1,10 @@
-import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery, SearchQuerySort} from '../base/base.store';
-import {Track} from './track.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
-import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
+import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {QueryHelper} from '../base/base.query.helper';
+import {BaseStore, SearchQuery, SearchQuerySort} from '../base/base.store';
+import {Track} from './track.model';
 
 export interface SearchQueryTrack extends SearchQuery {
 	path?: string;
@@ -32,14 +33,14 @@ export interface SearchQueryTrack extends SearchQuery {
 }
 
 const fieldMap: { [name in JamParameters.TrackSortField]: string } = {
-	'artist': 'tag.artist',
-	'album': 'tag.album',
-	'albumartist': 'tag.albumArtist',
-	'genre': 'tag.genre',
-	'parent': 'path',
-	'title': 'tag.title',
-	'year': 'tag.year',
-	'created': 'stat.created'
+	artist: 'tag.artist',
+	album: 'tag.album',
+	albumartist: 'tag.albumArtist',
+	genre: 'tag.genre',
+	parent: 'path',
+	title: 'tag.title',
+	year: 'tag.year',
+	created: 'stat.created'
 };
 
 export class TrackStore extends BaseStore<Track, SearchQueryTrack> {

@@ -3,7 +3,7 @@ import {after, before, beforeEach, describe, it} from 'mocha';
 import {FolderService} from '../folder/folder.service';
 import {ArtistService} from './artist.service';
 import {testService} from '../base/base.service.spec';
-import {AlbumType, FolderType, MusicBrainz_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
+import {AlbumType, FolderType, MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
 import {mockImage} from '../../modules/image/image.module.spec';
 import path from 'path';
 import fse from 'fs-extra';

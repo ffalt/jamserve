@@ -1,6 +1,6 @@
+import {BaseStoreService} from '../base/base.service';
 import {Root} from './root.model';
 import {RootStore, SearchQueryRoot} from './root.store';
-import {BaseStoreService} from '../base/base.service';
 
 export class RootService extends BaseStoreService<Root, SearchQueryRoot> {
 

@@ -1,6 +1,6 @@
-import {Stats} from './stats.model';
+import {AlbumType, MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
 import {Store} from '../store/store';
-import {AlbumType} from '../../model/jam-types';
+import {Stats} from './stats.model';
 
 export class StatsService {
 	private stats: Array<Stats> = [];
@@ -20,7 +20,7 @@ export class StatsService {
 				album: await this.store.albumStore.searchCount({rootID}),
 				albumTypes: {
 					album: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.album}),
-					compilation: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation}),
+					compilation: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation, mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}),
 					audiobook: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.audiobook}),
 					audiodrama: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.audiodrama}),
 					soundtrack: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.soundtrack}),
@@ -31,7 +31,7 @@ export class StatsService {
 				artist: await this.store.artistStore.searchCount({rootID}),
 				artistTypes: {
 					album: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.album}),
-					compilation: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation}),
+					compilation: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation, mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}),
 					audiobook: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.audiobook}),
 					audiodrama: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.audiodrama}),
 					soundtrack: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.soundtrack}),

@@ -1,9 +1,9 @@
+import fse from 'fs-extra';
 import path from 'path';
 import {transformTS2JSONScheme} from './utils';
-import fse from 'fs-extra';
 
 const basePath = '../../src/';
-const destfile = path.resolve(basePath, 'db', 'elasticsearch', 'mapping.ts');
+const destfile = path.resolve(basePath, 'db', 'elasticsearch', 'db-elastic.mapping.ts');
 
 async function run(): Promise<void> {
 	const strings: Array<string> = [];
@@ -89,10 +89,10 @@ async function run(): Promise<void> {
 		if (symbol.length > 0 && done.indexOf(symbol) < 0) {
 			done.push(symbol);
 			const name = 'type_' + symbol.replace(/\./g, '_');
-			strings.push('const ' + name + ' = ' + JSON.stringify({properties: properties}, null, '\t').replace(/"/g, '') + ';\n');
+			strings.push('const ' + name + ' = ' + JSON.stringify({properties}, null, '\t').replace(/"/g, '') + ';\n');
 			return name;
 		} else {
-			return {properties: properties};
+			return {properties};
 		}
 	}
 

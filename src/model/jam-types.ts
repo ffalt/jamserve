@@ -22,15 +22,15 @@ export enum RootScanStrategy {
 }
 
 export const AudioMimeTypes: { [ext: string]: string } = {
-	'mp3': 'audio/mpeg',
-	'm4a': 'audio/mp4',
-	'ogg': 'audio/ogg',
-	'oga': 'audio/ogg',
-	'flv': 'aaudio/x-flv',
-	'flac': 'audio/flac',
-	'webma': 'audio/webm',
-	'webm': 'audio/webm',
-	'wav': 'audio/wav'
+	mp3: 'audio/mpeg',
+	m4a: 'audio/mp4',
+	ogg: 'audio/ogg',
+	oga: 'audio/ogg',
+	flv: 'aaudio/x-flv',
+	flac: 'audio/flac',
+	webma: 'audio/webm',
+	webm: 'audio/webm',
+	wav: 'audio/wav'
 };
 
 export enum AudioFormatType {
@@ -45,11 +45,11 @@ export enum AudioFormatType {
 }
 
 export const VideoMimeTypes: { [ext: string]: string } = {
-	'mp4': 'audio/mp4',
-	'm4v': 'audio/mp4',
-	'ogv': 'audio/ogg',
-	'webmv': 'audio/webm',
-	'webm': 'audio/webm'
+	mp4: 'audio/mp4',
+	m4v: 'audio/mp4',
+	ogv: 'audio/ogg',
+	webmv: 'audio/webm',
+	webm: 'audio/webm'
 };
 
 export enum FolderType {
@@ -58,7 +58,7 @@ export enum FolderType {
 	collection = 'collection',
 	album = 'album',
 	multialbum = 'multialbum',
-	extras = 'extras',
+	extras = 'extras'
 }
 
 export enum PodcastStatus {
@@ -66,7 +66,7 @@ export enum PodcastStatus {
 	downloading = 'downloading',
 	completed = 'completed',
 	error = 'error',
-	deleted = 'deleted',
+	deleted = 'deleted'
 	// skipped = 'skipped'
 }
 
@@ -185,7 +185,7 @@ export const enum MusicBrainzAlbumPrimaryType {
 	single = 'Single',
 	ep = 'EP',
 	broadcast = 'Broadcast',
-	other = 'Other',
+	other = 'Other'
 }
 
 export const enum MusicBrainzAlbumSecondaryType {
@@ -201,8 +201,8 @@ export const enum MusicBrainzAlbumSecondaryType {
 	mixtape = 'Mixtape'
 }
 
-export const MusicBrainz_VARIOUS_ARTISTS_ID = '89ad4ac3-39f7-470e-963a-56509c546377';
-export const MusicBrainz_VARIOUS_ARTISTS_NAME = 'Various Artists';
+export const MUSICBRAINZ_VARIOUS_ARTISTS_ID = '89ad4ac3-39f7-470e-963a-56509c546377';
+export const MUSICBRAINZ_VARIOUS_ARTISTS_NAME = 'Various Artists';
 
 export const cUnknownArtist = '[Unknown Artist]';
 export const cUnknownAlbum = '[Unknown Album]';

@@ -31,6 +31,7 @@ export declare namespace JamParameters {
 		id: string;
 	}
 
+	// tslint:disable-next-line:interface-name
 	export interface IDs {
 		/**
 		 * array of item ids
@@ -772,6 +773,25 @@ export declare namespace JamParameters {
 	export interface Podcasts extends IDs, IncludesPodcast {
 	}
 
+	export interface PodcastSearchQuery extends SearchQuery {
+		/**
+		 * filter by podcast url
+		 */
+		url?: string;
+		/**
+		 * filter by podcast title
+		 */
+		title?: string;
+		/**
+		 * filter by podcast status
+		 */
+		status?: string;
+		/**
+		 * sort the result by
+		 */
+		sortField?: PodcastSortField;
+	}
+
 	export interface PodcastList extends PodcastSearchQuery, IncludesPodcast, List {
 	}
 
@@ -828,25 +848,6 @@ export declare namespace JamParameters {
 		 * sort the result by
 		 */
 		sortField?: RadioSortField;
-	}
-
-	export interface PodcastSearchQuery extends SearchQuery {
-		/**
-		 * filter by podcast url
-		 */
-		url?: string;
-		/**
-		 * filter by podcast title
-		 */
-		title?: string;
-		/**
-		 * filter by podcast status
-		 */
-		status?: string;
-		/**
-		 * sort the result by
-		 */
-		sortField?: PodcastSortField;
 	}
 
 	export interface PodcastNew {
@@ -1466,4 +1467,3 @@ export declare namespace JamParameters {
 	}
 
 }
-

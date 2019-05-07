@@ -1,7 +1,7 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {NotFoundError, UnauthError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
+import {NotFoundError, UnauthError} from '../../api/jam/error';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {formatChatMessage} from './chat.format';
 import {ChatService} from './chat.service';
 

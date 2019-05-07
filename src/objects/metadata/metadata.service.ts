@@ -1,30 +1,29 @@
-import {FolderType, LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType} from '../../model/jam-types';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {shuffle} from '../../utils/random';
-import {MetaData} from './metadata.model';
-import {Folder} from '../folder/folder.model';
-import {Artist} from '../artist/artist.model';
-import {Album} from '../album/album.model';
-import {Track} from '../track/track.model';
-import {ArtistStore} from '../artist/artist.store';
-import {AlbumStore} from '../album/album.store';
-import {TrackStore} from '../track/track.store';
-import {FolderStore} from '../folder/folder.store';
-import {BaseStoreService} from '../base/base.service';
-import {MetaDataStore, SearchQueryMetaData} from './metadata.store';
-import {MusicbrainzClientApi} from '../../modules/audio/clients/musicbrainz-client.interface';
-import {MusicBrainz} from '../../model/musicbrainz-rest-data';
-import {MetaDataType} from './metadata.types';
-import {DBObjectType} from '../../db/db.types';
-import {Acoustid} from '../../model/acoustid-rest-data';
-import path from 'path';
-import {LastFM} from '../../model/lastfm-rest-data';
-import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
-import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
-import {Jam} from '../../model/jam-rest-data';
 import moment from 'moment';
+import path from 'path';
+import {DBObjectType} from '../../db/db.types';
+import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
+import {Acoustid} from '../../model/acoustid-rest-data';
+import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
+import {Jam} from '../../model/jam-rest-data';
+import {FolderType, LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType} from '../../model/jam-types';
+import {LastFM} from '../../model/lastfm-rest-data';
+import {MusicBrainz} from '../../model/musicbrainz-rest-data';
+import {AudioModule} from '../../modules/audio/audio.module';
+import {MusicbrainzClientApi} from '../../modules/audio/clients/musicbrainz-client.interface';
 import Logger from '../../utils/logger';
-import {ChartLyricsResult} from '../../modules/audio/clients/chartlyrics-client';
+import {shuffle} from '../../utils/random';
+import {Album} from '../album/album.model';
+import {AlbumStore} from '../album/album.store';
+import {Artist} from '../artist/artist.model';
+import {ArtistStore} from '../artist/artist.store';
+import {BaseStoreService} from '../base/base.service';
+import {Folder} from '../folder/folder.model';
+import {FolderStore} from '../folder/folder.store';
+import {Track} from '../track/track.model';
+import {TrackStore} from '../track/track.store';
+import {MetaData} from './metadata.model';
+import {MetaDataStore, SearchQueryMetaData} from './metadata.store';
+import {MetaDataType} from './metadata.types';
 
 const log = Logger('Metadata');
 
@@ -296,7 +295,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 				names.push(a.name);
 			}
 		});
-		return await this.folderStore.search({types: [FolderType.artist], artists: names});
+		return this.folderStore.search({types: [FolderType.artist], artists: names});
 	}
 
 	private async findSimilarArtists(similarArtists: Array<SimilarArtist>): Promise<Array<Artist>> {
@@ -306,7 +305,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 				names.push(a.name);
 			}
 		});
-		return await this.artistStore.search({names});
+		return this.artistStore.search({names});
 	}
 
 	private async getSimilarArtistsInfo(mbArtistID?: string, artist?: string): Promise<Array<SimilarArtist>> {
@@ -398,7 +397,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return [];
 		}
 		const songs = await this.getSimilarSongs(similars);
-		return await this.findSimilarTracks(songs);
+		return this.findSimilarTracks(songs);
 	}
 
 	async getTopTracks(artist: string): Promise<Array<Track>> {
@@ -412,7 +411,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 					url: t.url
 				};
 			});
-			return await this.findSimilarTracks(songs);
+			return this.findSimilarTracks(songs);
 		}
 		return [];
 	}
@@ -444,7 +443,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 						url: t.url
 					};
 				});
-				return await this.findSimilarTracks(songs);
+				return this.findSimilarTracks(songs);
 			}
 		}
 		return [];
@@ -608,12 +607,12 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			if (!langSite) {
 				return {};
 			}
-			return await this.wikipediaSummary(langSite.title, lang);
+			return this.wikipediaSummary(langSite.title, lang);
 		}
 		return {};
 	}
 
-	async cleanUp() {
+	async cleanUp(): Promise<void> {
 		const olderThan = Date.now() - moment.duration(1, 'd').asMilliseconds();
 		const removed = await this.metadataStore.removeByQuery({olderThan});
 		if (removed > 0) {

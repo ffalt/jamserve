@@ -1,57 +1,58 @@
-import {IApiBinaryResult} from '../../typings';
-import {FolderType} from '../../model/jam-types';
 import path from 'path';
+import {DBObjectType} from '../../db/db.types';
+import {FolderType} from '../../model/jam-types';
 import {ImageModule} from '../../modules/image/image.module';
-import {Folder} from '../../objects/folder/folder.model';
-import {Track} from '../../objects/track/track.model';
-import {User} from '../../objects/user/user.model';
 import {Album} from '../../objects/album/album.model';
+import {AlbumService} from '../../objects/album/album.service';
 import {Artist} from '../../objects/artist/artist.model';
+import {ArtistService} from '../../objects/artist/artist.service';
 import {DBObject} from '../../objects/base/base.model';
 import {Episode} from '../../objects/episode/episode.model';
+import {Folder} from '../../objects/folder/folder.model';
+import {FolderService} from '../../objects/folder/folder.service';
 import {Playlist} from '../../objects/playlist/playlist.model';
 import {Podcast} from '../../objects/podcast/podcast.model';
-import {FolderService} from '../../objects/folder/folder.service';
-import {TrackService} from '../../objects/track/track.service';
-import {ArtistService} from '../../objects/artist/artist.service';
-import {AlbumService} from '../../objects/album/album.service';
-import {UserService} from '../../objects/user/user.service';
-import {DBObjectType} from '../../db/db.types';
 import {PodcastService} from '../../objects/podcast/podcast.service';
+import {Track} from '../../objects/track/track.model';
+import {TrackService} from '../../objects/track/track.service';
+import {User} from '../../objects/user/user.model';
+import {UserService} from '../../objects/user/user.service';
+import {ApiBinaryResult} from '../../typings';
 
 export class ImageService {
 
-	constructor(private imageModule: ImageModule, private trackService: TrackService,
-				private folderService: FolderService, private artistService: ArtistService,
-				private albumService: AlbumService, private userService: UserService,
-				private podcastService: PodcastService) {
+	constructor(
+		private imageModule: ImageModule, private trackService: TrackService,
+		private folderService: FolderService, private artistService: ArtistService,
+		private albumService: AlbumService, private userService: UserService,
+		private podcastService: PodcastService) {
 	}
 
-	async getObjImage(o: DBObject, size?: number, format?: string): Promise<IApiBinaryResult> {
-		let result: IApiBinaryResult | undefined;
+	async getObjImage(o: DBObject, size?: number, format?: string): Promise<ApiBinaryResult> {
+		let result: ApiBinaryResult | undefined;
 		switch (o.type) {
 			case DBObjectType.track:
-				const track = <Track>o;
+				const track = o as Track;
 				result = await this.trackService.getTrackImage(track, size, format);
 				break;
 			case DBObjectType.folder:
-				const folder = <Folder>o;
+				const folder = o as Folder;
 				result = await this.folderService.getFolderImage(folder, size, format);
 				break;
 			case DBObjectType.artist:
-				const artist = <Artist>o;
+				const artist = o as Artist;
 				result = await this.artistService.getArtistImage(artist, size, format);
 				break;
 			case DBObjectType.album:
-				const album = <Album>o;
+				const album = o as Album;
 				result = await this.albumService.getAlbumImage(album, size, format);
 				break;
 			case DBObjectType.user:
-				const user = <User>o;
+				const user = o as User;
 				result = await this.userService.getUserImage(user, size, format);
 				break;
 			case DBObjectType.podcast:
-				const podcast = <Podcast>o;
+				const podcast = o as Podcast;
 				result = await this.podcastService.getPodcastImage(podcast, size, format);
 				break;
 			default:
@@ -64,14 +65,14 @@ export class ImageService {
 		}
 	}
 
-	async paintImage(obj: DBObject, size?: number, format?: string): Promise<IApiBinaryResult> {
+	async paintImage(obj: DBObject, size?: number, format?: string): Promise<ApiBinaryResult> {
 		const getCoverArtText = (o: DBObject): string => {
 			switch (o.type) {
 				case DBObjectType.track:
-					const track = <Track>o;
+					const track = o as Track;
 					return track.tag && track.tag.title ? track.tag.title : path.basename(track.path);
 				case DBObjectType.folder:
-					const folder = <Folder>o;
+					const folder = o as Folder;
 					let result: string | undefined;
 					if (folder.tag) {
 						if (folder.tag.type === FolderType.artist) {
@@ -85,7 +86,7 @@ export class ImageService {
 					}
 					return result;
 				case DBObjectType.episode:
-					const episode: Episode = <Episode>o;
+					const episode: Episode = o as Episode;
 					let text: string | undefined = episode.tag ? episode.tag.title : undefined;
 					if (!text && episode.path) {
 						text = path.basename(episode.path);
@@ -95,19 +96,19 @@ export class ImageService {
 					}
 					return text;
 				case DBObjectType.playlist:
-					const playlist: Playlist = <Playlist>o;
+					const playlist: Playlist = o as Playlist;
 					return playlist.name;
 				case DBObjectType.podcast:
-					const podcast: Podcast = <Podcast>o;
+					const podcast: Podcast = o as Podcast;
 					return podcast.tag ? podcast.tag.title : podcast.url;
 				case DBObjectType.album:
-					const album: Album = <Album>o;
+					const album: Album = o as Album;
 					return album.name;
 				case DBObjectType.artist:
-					const artist: Artist = <Artist>o;
+					const artist: Artist = o as Artist;
 					return artist.name;
 				case DBObjectType.user:
-					const user: User = <User>o;
+					const user: User = o as User;
 					return user.name;
 				default:
 					return DBObjectType[o.type];

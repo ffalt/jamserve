@@ -1,22 +1,22 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../db/db.types';
-import {paginate} from '../../utils/paginate';
 import {JamRequest} from '../../api/jam/api';
-import {BaseListController} from '../base/base.list.controller';
-import {TrackController} from '../track/track.controller';
-import {formatAlbum} from './album.format';
-import {SearchQueryAlbum} from './album.store';
-import {MetaDataService} from '../metadata/metadata.service';
-import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
+import {DBObjectType} from '../../db/db.types';
 import {DownloadService} from '../../engine/download/download.service';
-import {Album} from './album.model';
-import {User} from '../user/user.model';
-import {AlbumService} from './album.service';
-import {Track} from '../track/track.model';
+import {ImageService} from '../../engine/image/image.service';
 import {formatAlbumIndex, formatArtistIndex} from '../../engine/index/index.format';
 import {IndexService} from '../../engine/index/index.service';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {paginate} from '../../utils/paginate';
+import {BaseListController} from '../base/base.list.controller';
+import {MetaDataService} from '../metadata/metadata.service';
+import {StateService} from '../state/state.service';
+import {TrackController} from '../track/track.controller';
+import {Track} from '../track/track.model';
+import {User} from '../user/user.model';
+import {formatAlbum} from './album.format';
+import {Album} from './album.model';
+import {AlbumService} from './album.service';
+import {SearchQueryAlbum} from './album.store';
 
 export class AlbumController extends BaseListController<JamParameters.Album, JamParameters.Albums, JamParameters.IncludesAlbum, SearchQueryAlbum, JamParameters.AlbumSearch, Album, Jam.Album> {
 

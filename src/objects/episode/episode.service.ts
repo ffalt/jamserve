@@ -1,16 +1,16 @@
-import {fileDeleteIfExists, fileSuffix, pathDeleteIfExists} from '../../utils/fs-utils';
-import {SupportedAudioFormat} from '../../utils/filetype';
-import path from 'path';
-import Logger from '../../utils/logger';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {downloadFile} from '../../utils/download';
 import fse from 'fs-extra';
-import {EpisodeStore, SearchQueryEpisode} from './episode.store';
-import {Episode, PodcastEpisodeChapter, PodcastEpisodeEnclosure} from './episode.model';
+import path from 'path';
 import {AudioFormatType, PodcastStatus} from '../../model/jam-types';
+import {AudioModule} from '../../modules/audio/audio.module';
 import {DebouncePromises} from '../../utils/debounce-promises';
+import {downloadFile} from '../../utils/download';
+import {SupportedAudioFormat} from '../../utils/filetype';
+import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
+import Logger from '../../utils/logger';
 import {BaseListService} from '../base/base.list.service';
 import {StateService} from '../state/state.service';
+import {Episode} from './episode.model';
+import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 
 const log = Logger('EpisodeService');
 
@@ -33,7 +33,7 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 			throw new Error('No podcast episode url found');
 		}
 		const suffix = fileSuffix(url);
-		if (SupportedAudioFormat.indexOf(<AudioFormatType>suffix) < 0) {
+		if (SupportedAudioFormat.indexOf(suffix as AudioFormatType) < 0) {
 			throw new Error('Unsupported Podcast audio format');
 		}
 		const p = path.resolve(this.podcastsPath, episode.podcastID);

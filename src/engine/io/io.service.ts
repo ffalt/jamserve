@@ -1,10 +1,11 @@
-import Logger from '../../utils/logger';
+/* tslint:disable:max-classes-per-file */
+import {Jam} from '../../model/jam-rest-data';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {RootStatus} from '../../objects/root/root.model';
-import {ScanService} from '../scan/scan.service';
 import {RootStore} from '../../objects/root/root.store';
-import {Jam} from '../../model/jam-rest-data';
+import Logger from '../../utils/logger';
 import {logChanges, MergeChanges} from '../scan/scan.changes';
+import {ScanService} from '../scan/scan.service';
 
 const log = Logger('IO');
 
@@ -38,7 +39,7 @@ export abstract class ScanRequest {
 		} catch (e) {
 			console.log(e.stack);
 			log.error('Scanning Error', this.rootID, e.toString());
-			if (['EACCES', 'ENOENT'].indexOf((<any>e).code) >= 0) {
+			if (['EACCES', 'ENOENT'].indexOf((e as any).code) >= 0) {
 				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
 			} else {
 				return Promise.reject(e);
@@ -54,7 +55,7 @@ export class ScanRequestMoveTracks extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.moveTracks(this.rootID, this.trackIDs, this.newParentID);
+		return this.scanService.moveTracks(this.rootID, this.trackIDs, this.newParentID);
 	}
 
 }
@@ -66,7 +67,7 @@ export class ScanRequestRenameTrack extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.renameTrack(this.rootID, this.trackID, this.newName);
+		return this.scanService.renameTrack(this.rootID, this.trackID, this.newName);
 	}
 
 }
@@ -78,7 +79,7 @@ export class ScanRequestFixTrack extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.fixTrack(this.rootID, this.trackID, this.fixID);
+		return this.scanService.fixTrack(this.rootID, this.trackID, this.fixID);
 	}
 
 }
@@ -90,7 +91,7 @@ export class ScanRequestRenameFolder extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.renameFolder(this.rootID, this.folderID, this.newName);
+		return this.scanService.renameFolder(this.rootID, this.folderID, this.newName);
 	}
 
 }
@@ -104,7 +105,7 @@ export class ScanRequestWriteRawTags extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.writeTrackTags(this.rootID, this.tags);
+		return this.scanService.writeTrackTags(this.rootID, this.tags);
 	}
 
 }
@@ -116,7 +117,7 @@ export class ScanRequestRefreshRoot extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.scanRoot(this.rootID, this.forceMetaRefresh);
+		return this.scanService.scanRoot(this.rootID, this.forceMetaRefresh);
 	}
 
 }
@@ -128,7 +129,7 @@ export class ScanRequestRefreshFolders extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.refreshFolders(this.rootID, this.folderIDs);
+		return this.scanService.refreshFolders(this.rootID, this.folderIDs);
 	}
 
 }
@@ -140,7 +141,7 @@ export class ScanRequestMoveFolders extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.moveFolders(this.rootID, this.newParentID, this.folderIDs);
+		return this.scanService.moveFolders(this.rootID, this.newParentID, this.folderIDs);
 	}
 }
 
@@ -151,7 +152,7 @@ export class ScanRequestRemoveRoot extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.removeRoot(this.rootID);
+		return this.scanService.removeRoot(this.rootID);
 	}
 }
 
@@ -162,7 +163,7 @@ export class ScanRequestRefreshTracks extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.refreshTracks(this.rootID, this.trackIDs);
+		return this.scanService.refreshTracks(this.rootID, this.trackIDs);
 	}
 }
 
@@ -173,7 +174,7 @@ export class ScanRequestRemoveTracks extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.deleteTracks(this.rootID, this.trackIDs);
+		return this.scanService.deleteTracks(this.rootID, this.trackIDs);
 	}
 }
 
@@ -184,7 +185,7 @@ export class ScanRequestDeleteFolders extends ScanRequest {
 	}
 
 	async execute(): Promise<MergeChanges> {
-		return await this.scanService.deleteFolders(this.rootID, this.folderIDs);
+		return this.scanService.deleteFolders(this.rootID, this.folderIDs);
 	}
 }
 
@@ -347,7 +348,7 @@ export class IoService {
 		}
 	*/
 	refreshRoot(rootID: string, forceMetaRefresh?: boolean): Jam.AdminChangeQueueInfo {
-		const oldRequest = <ScanRequestRefreshRoot>this.findRequest(rootID, ScanRequestMode.refreshRoot);
+		const oldRequest = this.findRequest(rootID, ScanRequestMode.refreshRoot) as ScanRequestRefreshRoot;
 		if (oldRequest) {
 			if (forceMetaRefresh) {
 				oldRequest.forceMetaRefresh = true;
@@ -368,7 +369,7 @@ export class IoService {
 	}
 
 	moveFolders(folderIDs: Array<string>, newParentID: string, rootID: string): Jam.AdminChangeQueueInfo {
-		const oldRequest = <ScanRequestMoveFolders>this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveFolders && (<ScanRequestMoveFolders>c).newParentID === newParentID));
+		const oldRequest = this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveFolders && (c as ScanRequestMoveFolders).newParentID === newParentID)) as ScanRequestMoveFolders;
 		if (oldRequest) {
 			for (const id of folderIDs) {
 				if (oldRequest.folderIDs.indexOf(id) < 0) {
@@ -397,7 +398,7 @@ export class IoService {
 		}
 	*/
 	deleteFolder(id: string, rootID: string): Jam.AdminChangeQueueInfo {
-		const oldRequest = <ScanRequestDeleteFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
+		const oldRequest = this.findRequest(rootID, ScanRequestMode.refreshFolders) as ScanRequestDeleteFolders;
 		if (oldRequest) {
 			if (oldRequest.folderIDs.indexOf(id) < 0) {
 				oldRequest.folderIDs.push(id);
@@ -409,7 +410,7 @@ export class IoService {
 	}
 
 	removeTrack(id: string, rootID: string): Jam.AdminChangeQueueInfo {
-		const oldRequest = <ScanRequestRemoveTracks>this.findRequest(rootID, ScanRequestMode.removeTracks);
+		const oldRequest = this.findRequest(rootID, ScanRequestMode.removeTracks) as ScanRequestRemoveTracks;
 		if (oldRequest) {
 			if (oldRequest.trackIDs.indexOf(id) < 0) {
 				oldRequest.trackIDs.push(id);
@@ -421,7 +422,7 @@ export class IoService {
 	}
 
 	moveTracks(trackIDs: Array<string>, newParentID: string, rootID: string): Jam.AdminChangeQueueInfo {
-		const oldRequest = <ScanRequestMoveTracks>this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveTracks && (<ScanRequestMoveTracks>c).newParentID === newParentID));
+		const oldRequest = this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveTracks && (c as ScanRequestMoveTracks).newParentID === newParentID)) as ScanRequestMoveTracks;
 		if (oldRequest) {
 			for (const id of trackIDs) {
 				if (oldRequest.trackIDs.indexOf(id) < 0) {
@@ -434,12 +435,12 @@ export class IoService {
 		}
 	}
 
-	renameTrack(trackID: string, name: string, rootID: string) {
+	renameTrack(trackID: string, name: string, rootID: string): Jam.AdminChangeQueueInfo {
 		return this.addRequest(new ScanRequestRenameTrack(this.getScanID(), rootID, trackID, name, this.scanService));
 	}
 
-	writeRawTag(trackID: string, tag: Jam.RawTag, rootID: string) {
-		const oldRequest = <ScanRequestWriteRawTags>this.findRequest(rootID, ScanRequestMode.writeRawTags);
+	writeRawTag(trackID: string, tag: Jam.RawTag, rootID: string): Jam.AdminChangeQueueInfo {
+		const oldRequest = this.findRequest(rootID, ScanRequestMode.writeRawTags) as ScanRequestWriteRawTags;
 		if (oldRequest) {
 			oldRequest.tags.push({trackID, tag});
 			return this.getRequestInfo(oldRequest);
@@ -449,7 +450,7 @@ export class IoService {
 			if (delayedCmd.timeout) {
 				clearTimeout(delayedCmd.timeout);
 			}
-			delayedCmd.request.tags.push({trackID: trackID, tag});
+			delayedCmd.request.tags.push({trackID, tag});
 		} else {
 			delayedCmd = {request: new ScanRequestWriteRawTags(this.getScanID(), rootID, trackID, tag, this.scanService), timeout: undefined};
 			this.delayedTrackTagWrite[rootID] = delayedCmd;
@@ -462,12 +463,11 @@ export class IoService {
 		return this.getRequestInfo(delayedCmd.request);
 	}
 
-
-	public fixTrack(trackID: string, fixID: string, rootID: string) {
+	public fixTrack(trackID: string, fixID: string, rootID: string): Jam.AdminChangeQueueInfo {
 		return this.addRequest(new ScanRequestFixTrack(this.getScanID(), rootID, trackID, fixID, this.scanService));
 	}
 
-	public renameFolder(folderID: string, name: string, rootID: string) {
+	public renameFolder(folderID: string, name: string, rootID: string): Jam.AdminChangeQueueInfo {
 		return this.addRequest(new ScanRequestRenameFolder(this.getScanID(), rootID, folderID, name, this.scanService));
 	}
 

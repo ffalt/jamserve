@@ -2,7 +2,6 @@ import express from 'express';
 
 export type NodeError = Error | string | null | undefined | {} | any;
 export type NodeErrorCallback = (err?: NodeError) => void;
-export type NodeDataCallback<T> = (err?: NodeError, data?: T) => void;
 
 declare global {
 	namespace Express {
@@ -18,14 +17,14 @@ declare module '*.json' {
 	export default value;
 }
 
-export interface IStreamData {
+export interface StreamData {
 	pipe: (stream: express.Response) => void;
 }
 
-export interface IApiBinaryResult {
+export interface ApiBinaryResult {
 	file?: { filename: string; name: string };
 	json?: any;
-	pipe?: IStreamData;
+	pipe?: StreamData;
 	buffer?: {
 		buffer: Buffer;
 		contentType: string;

@@ -1,5 +1,5 @@
 import {DBElastic} from './db-elastic';
-import {ElasticsearchConfig} from './config-elastic';
+import {ElasticsearchConfig} from './db-elastic.types';
 
 export function mockElasticDBConfig(): ElasticsearchConfig {
 	return {

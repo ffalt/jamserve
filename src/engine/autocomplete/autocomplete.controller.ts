@@ -1,7 +1,7 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {Store} from '../store/store';
 import {JamRequest} from '../../api/jam/api';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {Store} from '../store/store';
 
 export class AutocompleteController {
 
@@ -10,7 +10,7 @@ export class AutocompleteController {
 	}
 
 	async autocomplete(req: JamRequest<JamParameters.AutoComplete>): Promise<Jam.AutoComplete> {
-		return await this.autocompleteQuery(req.query);
+		return this.autocompleteQuery(req.query);
 	}
 
 	async autocompleteQuery(query: JamParameters.AutoComplete): Promise<Jam.AutoComplete> {

@@ -1,14 +1,14 @@
-import {Engine} from './engine/engine';
-import Logger, {configureLogger} from './utils/logger';
+import program from 'commander';
+import * as pack from '../package.json';
 import {Server} from './api/server';
 import {loadConfig} from './config';
-import {Store} from './engine/store/store';
+import {Database} from './db/db.model';
 import {DBElastic} from './db/elasticsearch/db-elastic';
 import {DBNedb} from './db/nedb/db-nedb';
-import {Database} from './db/db.model';
-import program from 'commander';
+import {Engine} from './engine/engine';
+import {Store} from './engine/store/store';
+import Logger, {configureLogger} from './utils/logger';
 
-const pack = require('../package.json');
 program
 	.version(pack.version, '-v, --version')
 	.usage('[options]')
@@ -20,12 +20,10 @@ const config = loadConfig(program.config);
 
 configureLogger(config.log.level);
 
-let db: Database;
-if (config.database.use === 'elasticsearch') {
-	db = new DBElastic(config.database.options.elasticsearch);
-} else {
-	db = new DBNedb(config.getDataPath(['nedb']));
-}
+const db: Database =
+	(config.database.use === 'elasticsearch') ?
+		new DBElastic(config.database.options.elasticsearch) :
+		new DBNedb(config.getDataPath(['nedb']));
 const store = new Store(db);
 const engine = new Engine(config, store, pack.version);
 const server = new Server(engine);
@@ -85,4 +83,3 @@ if (program.reset) {
 		console.error(e);
 	});
 }
-

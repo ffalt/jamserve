@@ -1,5 +1,5 @@
-import {DBObject} from '../base/base.model';
 import {AlbumType} from '../../model/jam-types';
+import {DBObject} from '../base/base.model';
 
 export interface Artist extends DBObject {
 	slug: string;

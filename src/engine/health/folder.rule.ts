@@ -1,10 +1,11 @@
-import {RuleResult} from './rule.model';
-import {Folder, FolderTag} from '../../objects/folder/folder.model';
-import {AlbumTypesArtistMusic, FolderType, FolderTypesAlbum} from '../../model/jam-types';
+/* tslint:disable:max-classes-per-file */
 import path from 'path';
-import {replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Jam} from '../../model/jam-rest-data';
+import {AlbumTypesArtistMusic, FolderType, FolderTypesAlbum} from '../../model/jam-types';
+import {Folder, FolderTag} from '../../objects/folder/folder.model';
 import {Root} from '../../objects/root/root.model';
+import {replaceFolderSystemChars} from '../../utils/fs-utils';
+import {RuleResult} from './rule.model';
 
 export abstract class FolderRule {
 

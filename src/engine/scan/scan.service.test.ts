@@ -1,28 +1,28 @@
 import {expect, should} from 'chai';
-import {after, before, beforeEach, describe, it} from 'mocha';
-import {testService} from '../../objects/base/base.service.spec';
-import {Store} from '../store/store';
-import tmp from 'tmp';
-import {buildMockRoot, MockFolder, MockRoot, removeMockFolder, removeMockRoot, writeMockFolder, writeMockRoot} from '../store/store.mock';
-import moment from 'moment';
-import {ScanService} from './scan.service';
-import {WaveformServiceTest} from '../waveform/waveform.service.spec';
-import path from 'path';
-import {randomItem} from '../../utils/random';
-import {Genres} from '../../utils/genres';
-import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
-import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import fse from 'fs-extra';
-import {MergeChanges} from './scan.changes';
+import {after, before, beforeEach, describe, it} from 'mocha';
+import moment from 'moment';
+import path from 'path';
+import tmp from 'tmp';
 import {DBObjectType} from '../../db/db.types';
+import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
+import {testService} from '../../objects/base/base.service.spec';
+import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {Genres} from '../../utils/genres';
+import {randomItem} from '../../utils/random';
+import {Store} from '../store/store';
+import {buildMockRoot, MockFolder, MockRoot, removeMockFolder, removeMockRoot, writeMockFolder, writeMockRoot} from '../store/store.mock';
+import {WaveformServiceTest} from '../waveform/waveform.service.spec';
+import {MergeChanges} from './scan.changes';
+import {ScanService} from './scan.service';
 
-function logChange(name: string, amount: number) {
+function logChange(name: string, amount: number): void {
 	if (amount > 0) {
 		console.log(name, amount);
 	}
 }
 
-function logChanges(changes: MergeChanges) {
+function logChanges(changes: MergeChanges): void {
 	const v = moment.utc(changes.end - changes.start).format('HH:mm:ss');
 	console.log('Duration:', v);
 	logChange('Added Tracks', changes.newTracks.length);
@@ -51,8 +51,7 @@ function logChanges(changes: MergeChanges) {
 	logChange('Removed Albums', changes.removedAlbums.length);
 }
 
-
-async function validate(mockFolder: MockFolder, store: Store) {
+async function validate(mockFolder: MockFolder, store: Store): Promise<void> {
 	const folder = await store.folderStore.searchOne({path: ensureTrailingPathSeparator(mockFolder.path)});
 	should().exist(folder);
 	if (!folder) {
@@ -590,7 +589,7 @@ describe('ScanService', () => {
 				await validate(mockRoot, store);
 			});
 
-			describe('renameFolder', function() {
+			describe('renameFolder', function testRenameFolder(): void {
 				this.timeout(40000);
 				it('should do handle invalid parameters', async () => {
 					const folder = await store.folderStore.random();

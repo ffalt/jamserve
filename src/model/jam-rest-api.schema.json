@@ -11578,7 +11578,7 @@
 				"CNT": {
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Number"
+						"$ref": "#/definitions/ID3v2Frames.Num"
 					}
 				},
 				"COM": {
@@ -11746,19 +11746,19 @@
 				"PCNT": {
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Number"
+						"$ref": "#/definitions/ID3v2Frames.Num"
 					}
 				},
 				"PCS": {
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Number"
+						"$ref": "#/definitions/ID3v2Frames.Num"
 					}
 				},
 				"PCST": {
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Number"
+						"$ref": "#/definitions/ID3v2Frames.Num"
 					}
 				},
 				"PIC": {
@@ -12865,7 +12865,7 @@
 				"value"
 			]
 		},
-		"ID3v2Frames.Number": {
+		"ID3v2Frames.Num": {
 			"type": "object",
 			"properties": {
 				"value": {

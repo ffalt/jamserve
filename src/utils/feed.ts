@@ -1,40 +1,33 @@
-import {NodeError, NodeErrorCallback} from '../typings';
-import zlib from 'zlib';
-import stream from 'stream';
-import request from 'request';
 import FeedParser from 'feedparser';
 import iconv from 'iconv-lite';
+import moment from 'moment';
+import request from 'request';
+import stream from 'stream';
+import zlib from 'zlib';
+import {DBObjectType} from '../db/db.types';
 import {PodcastStatus} from '../model/jam-types';
 import {Subsonic} from '../model/subsonic-rest-data';
-import {PodcastTag} from '../objects/podcast/podcast.model';
 import {Episode, PodcastEpisodeChapter} from '../objects/episode/episode.model';
-import {DBObjectType} from '../db/db.types';
-import moment from 'moment';
-
-function parseDurationMilliseconds(s: string): number {
-	return moment.duration(s).as('milliseconds');
-}
-
-function parseItunesDurationSeconds(s: string): number {
-	const num = Number(s);
-	if (s.indexOf(':') < 0 && !isNaN(num)) {
-		return num;
-	}
-	return moment.duration(s).as('seconds');
-}
+import {PodcastTag} from '../objects/podcast/podcast.model';
 
 export class Feed {
 
-	constructor() {
-
+	static parseDurationMilliseconds(s: string): number {
+		return moment.duration(s).as('milliseconds');
 	}
 
-	private getParams(str: string): { [key: string]: string } {
+	static parseItunesDurationSeconds(s: string): number {
+		const num = Number(s);
+		if (s.indexOf(':') < 0 && !isNaN(num)) {
+			return num;
+		}
+		return moment.duration(s).as('seconds');
+	}
+
+	static getParams(str: string): { [key: string]: string } {
 		return str.split(';').reduce(
 			(para: { [key: string]: string }, param: string) => {
-				const parts = param.split('=').map(function(part) {
-					return part.trim();
-				});
+				const parts = param.split('=').map(part => part.trim());
 				if (parts.length === 2) {
 					para[parts[0]] = parts[1];
 				}
@@ -42,7 +35,7 @@ export class Feed {
 			}, {});
 	}
 
-	private maybeDecompress(res: stream.Readable, encoding: string, done: NodeErrorCallback): stream.Readable {
+	static maybeDecompress(res: stream.Readable, encoding: string, done: (err?: Error) => void): stream.Readable {
 		let decompress;
 		if (encoding.match(/\bdeflate\b/)) {
 			decompress = zlib.createInflate();
@@ -54,7 +47,7 @@ export class Feed {
 		return decompress ? res.pipe(decompress) : res;
 	}
 
-	private maybeTranslate(res: stream.Readable, charset: string, done: NodeErrorCallback): stream.Readable {
+	static maybeTranslate(res: stream.Readable, charset: string, done: (err?: Error) => void): stream.Readable {
 		// Use iconv if its not utf8 already.
 		if (charset && !/utf-*8/i.test(charset)) {
 			try {
@@ -63,7 +56,7 @@ export class Feed {
 				iv.on('error', done);
 				// If we're using iconv, stream will be the output of iconv
 				// otherwise it will remain the output of request
-				res = <any>res.pipe(iv); // TODO: iconv stream doesn't return a stream.Readable?
+				res = res.pipe(iv) as any; // TODO: iconv stream doesn't return a stream.Readable?
 			} catch (err) {
 				res.emit('error', err);
 			}
@@ -81,10 +74,10 @@ export class Feed {
 		req.setHeader('user-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36');
 		req.setHeader('accept', 'text/html,application/xhtml+xml');
 
-		const feedparser = new FeedParser({});
+		const feedParser = new FeedParser({});
 
-		feedparser.on('readable', function streamResponse() {
-			const response = feedparser; // this;
+		feedParser.on('readable', function streamResponse(): void {
+			const response = feedParser;
 			feed = response.meta;
 			let item = response.read();
 			while (item) {
@@ -94,7 +87,7 @@ export class Feed {
 		});
 
 		return new Promise<{ feed: FeedParser.Node, posts: Array<FeedParser.Item> }>((resolve, reject) => {
-			const done = (err: NodeError) => {
+			const done = (err?: Error) => {
 				if (doneReported) {
 					return;
 				}
@@ -113,14 +106,14 @@ export class Feed {
 					return done(new Error('Bad status code ' + res.statusCode + (res.statusMessage ? ' ' + res.statusMessage : '')));
 				}
 				const encoding = res.headers['content-encoding'] || 'identity';
-				const charset = this.getParams(res.headers['content-type'] || '').charset;
-				let pipestream = this.maybeDecompress(res, encoding, done);
-				pipestream = this.maybeTranslate(pipestream, charset, done);
-				pipestream.pipe(feedparser);
+				const charset = Feed.getParams(res.headers['content-type'] || '').charset;
+				let pipestream = Feed.maybeDecompress(res, encoding, done);
+				pipestream = Feed.maybeTranslate(pipestream, charset, done);
+				pipestream.pipe(feedParser);
 			});
 
-			feedparser.on('error', done);
-			feedparser.on('end', done);
+			feedParser.on('error', done);
+			feedParser.on('end', done);
 
 		});
 	}
@@ -142,17 +135,17 @@ export class Feed {
 		const episodes: Array<Episode> = data.posts.map(post => {
 			let chapters: Array<PodcastEpisodeChapter> = [];
 
-			const anypost = <any>post;
+			const anypost = post as any;
 			let duration: number | undefined;
 			if (anypost['itunes:duration'] && anypost['itunes:duration']['#']) {
-				duration = parseItunesDurationSeconds(anypost['itunes:duration']['#']);
+				duration = Feed.parseItunesDurationSeconds(anypost['itunes:duration']['#']);
 			}
 			const pscChaps: any = anypost['psc:chapters'];
 			if (pscChaps) {
 				const pscChap: Array<any> = pscChaps['psc:chapter'];
 				if (pscChap) {
 					chapters = pscChap.map(item => {
-						return {start: parseDurationMilliseconds(item['@']['start']), title: item['@']['title']};
+						return {start: Feed.parseDurationMilliseconds(item['@']['start']), title: item['@']['title']};
 					}).sort((a, b) => a.start - b.start);
 				}
 			}
@@ -165,11 +158,11 @@ export class Feed {
 				link: post.link,
 				guid: post.guid,
 				summary: post.summary,
-				enclosures: <any>post.enclosures, // TODO: validate podcast enclosures (wrong interface description?)
+				enclosures: post.enclosures as any, // TODO: validate podcast enclosures (wrong interface description?)
 				date: post.date ? post.date.valueOf() : 0,
 				name: post.title,
 				duration,
-				chapters: chapters
+				chapters
 			};
 		});
 		return {tag, episodes};

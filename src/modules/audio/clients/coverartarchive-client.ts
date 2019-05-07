@@ -1,6 +1,6 @@
-import {WebserviceClient} from '../../../utils/webservice-client';
-import Logger from '../../../utils/logger';
 import {CoverArtArchive} from '../../../model/coverartarchive-rest-data';
+import Logger from '../../../utils/logger';
+import {WebserviceClient} from '../../../utils/webservice-client';
 
 const log = Logger('CoverArtArchive');
 
@@ -42,7 +42,7 @@ export class CoverArtArchiveClient extends WebserviceClient {
 
 		// nevertheless, we limit this to 10 per second
 		super(10, 1000, options.userAgent);
-		this.options = Object.assign({}, this.options, options);
+		this.options = {...this.options, ...options};
 	}
 
 	async releaseImages(mbid: string): Promise<CoverArtArchive.Response> {

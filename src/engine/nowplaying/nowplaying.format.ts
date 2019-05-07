@@ -1,11 +1,11 @@
-import {Jam} from '../../model/jam-rest-data';
 import moment from 'moment';
 import {DBObjectType} from '../../db/db.types';
-import {formatTrack} from '../../objects/track/track.format';
+import {Jam} from '../../model/jam-rest-data';
 import {formatEpisode} from '../../objects/episode/episode.format';
-import {NowPlaying} from './nowplaying.model';
-import {Track} from '../../objects/track/track.model';
 import {Episode} from '../../objects/episode/episode.model';
+import {formatTrack} from '../../objects/track/track.format';
+import {Track} from '../../objects/track/track.model';
+import {NowPlaying} from './nowplaying.model';
 
 export function packNowPlaying(entry: NowPlaying): Jam.NowPlaying {
 	const playing: Jam.NowPlaying = {
@@ -14,13 +14,12 @@ export function packNowPlaying(entry: NowPlaying): Jam.NowPlaying {
 	};
 	switch (entry.obj.type) {
 		case DBObjectType.track:
-			playing.track = formatTrack(<Track>entry.obj, {});
+			playing.track = formatTrack(entry.obj as Track, {});
 			break;
 		case DBObjectType.episode:
-			const episode = <Episode>entry.obj;
+			const episode = entry.obj as Episode;
 			playing.track = formatEpisode(episode, {}, episode.status);
 			break;
 	}
 	return playing;
 }
-

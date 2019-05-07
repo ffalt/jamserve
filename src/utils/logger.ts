@@ -1,8 +1,6 @@
 import winston from 'winston';
 
-require('winston-timer')(winston);
-
-export function configureLogger(level: string) {
+export function configureLogger(level: string): void {
 	winston.configure({
 		level,
 		transports: [
@@ -20,43 +18,36 @@ export function configureLogger(level: string) {
 }
 
 class Logger {
-	private name: string;
+	private readonly name: string;
 
 	constructor(name: string) {
 		this.name = name;
 	}
 
-	private applyLog(level: string, format: string, ...params: any[]) {
+	private applyLog(level: string, format: string, ...params: Array<any>): void {
 		const line: string = (new Date()).toISOString() + ' ' + this.name + ': ' + [format].concat(params).join(' ');
 		winston.log(level, line);
 	}
 
-	debug(format: string, ...params: any[]) {
+	debug(format: string, ...params: Array<any>): void {
 		this.applyLog('debug', format, params);
 	}
 
-	info(format: string, ...params: any[]) {
+	info(format: string, ...params: Array<any>): void {
 		this.applyLog('info', format, params);
 	}
 
-	warn(format: string, ...params: any[]) {
+	warn(format: string, ...params: Array<any>): void {
 		this.applyLog('warn', format, params);
 	}
 
-	error(format: string | Error, ...params: any[]) {
+	error(format: string | Error, ...params: Array<any>): void {
 		this.applyLog('error', format.toString(), params);
 	}
 
-	time(name: string) {
-		(<any>winston).start_log(name, 'debug');
-	}
-
-	timeEnd(name: string) {
-		(<any>winston).stop_log(name, 'debug');
-	}
 }
 
-function logger(name: string) {
+function logger(name: string): Logger {
 	return new Logger(name);
 }
 

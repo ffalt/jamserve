@@ -1,8 +1,9 @@
-import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery, SearchQuerySort} from '../base/base.store';
-import {Episode} from './episode.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
+import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
+import {QueryHelper} from '../base/base.query.helper';
+import {BaseStore, SearchQuery, SearchQuerySort} from '../base/base.store';
+import {Episode} from './episode.model';
 
 export interface SearchQueryEpisode extends SearchQuery {
 	podcastID?: string;
@@ -14,10 +15,10 @@ export interface SearchQueryEpisode extends SearchQuery {
 }
 
 const fieldMap: { [name in JamParameters.EpisodeSortField]: string } = {
-	'podcast': 'podcastID',
-	'date': 'date',
-	'name': 'name',
-	'created': 'created'
+	podcast: 'podcastID',
+	date: 'date',
+	name: 'name',
+	created: 'created'
 };
 
 export class EpisodeStore extends BaseStore<Episode, SearchQueryEpisode> {

@@ -1,15 +1,16 @@
-import {Track} from '../../objects/track/track.model';
-import {RuleResult} from './rule.model';
+/* tslint:disable:max-classes-per-file */
+import {ID3v2, IID3V1, MP3Analyzer} from 'jamp3';
+import {IMP3Warning} from 'jamp3/dist/lib/mp3/mp3_analyzer';
+import {IID3V2} from 'jamp3/src/lib/id3v2/id3v2__types';
+import {Jam} from '../../model/jam-rest-data';
 import {AlbumTypesArtistMusic, AudioFormatType} from '../../model/jam-types';
 import {ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
+import {flac_test} from '../../modules/audio/tools/flac';
 import {Folder} from '../../objects/folder/folder.model';
 import {Root} from '../../objects/root/root.model';
-import {Jam} from '../../model/jam-rest-data';
-import {flac_test} from '../../modules/audio/tools/flac';
-import {IMP3Warning, MP3Analyzer} from './mp3_analyzer';
-import {IID3V2} from 'jamp3/src/lib/id3v2/id3v2__types';
-import {ID3v2, IID3V1} from 'jamp3';
+import {Track} from '../../objects/track/track.model';
 import Logger from '../../utils/logger';
+import {RuleResult} from './rule.model';
 
 const log = Logger('TrackHealth');
 
@@ -28,7 +29,6 @@ export abstract class TrackRule {
 
 	abstract run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined>;
 }
-
 
 function hasID3v2Tag(track: Track): boolean {
 	return ID3TrackTagRawFormatTypes.indexOf(track.tag.format) >= 0;
@@ -213,7 +213,7 @@ export class TrackRulesChecker {
 			if (isMP3(track)) {
 				log.debug('Check MPEG', filename);
 				const mp3ana = new MP3Analyzer();
-				const ana = await mp3ana.read(filename, {id3v1: false, id3v2: false, mpeg: true, xing: true, ignoreOneOfErrorXingCount: true});
+				const ana = await mp3ana.read(filename, {id3v1: false, id3v2: false, mpeg: true, xing: true, ignoreXingOffOne: true});
 				mediaCache.id3v1 = ana.tags.id3v1;
 				mediaCache.id3v2 = ana.tags.id3v2;
 				mediaCache.mp3Warnings = ana.msgs;

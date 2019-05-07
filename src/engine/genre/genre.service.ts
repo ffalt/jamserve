@@ -1,5 +1,5 @@
-import {Genre} from './genre.model';
 import {TrackStore} from '../../objects/track/track.store';
+import {Genre} from './genre.model';
 
 export interface GenreInfo {
 	name: string;

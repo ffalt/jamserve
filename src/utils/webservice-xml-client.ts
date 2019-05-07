@@ -27,7 +27,7 @@ export class WebserviceXMLClient {
 						if (err2) {
 							return reject(err2);
 						}
-						resolve(<T>result);
+						resolve(result as T);
 					});
 				});
 			});

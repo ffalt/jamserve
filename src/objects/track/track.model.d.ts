@@ -1,5 +1,5 @@
-import {DBObject} from '../base/base.model';
 import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
+import {DBObject} from '../base/base.model';
 
 export interface Track extends DBObject {
 	rootID: string;

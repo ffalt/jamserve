@@ -54,7 +54,7 @@ export declare namespace Subsonic {
 	export type Version = string; // \d+\.\d+\.\d+
 
 	export interface MusicFolders {
-		musicFolder?: MusicFolder[];
+		musicFolder?: Array<MusicFolder>;
 	}
 
 	export interface MusicFolder {
@@ -63,15 +63,15 @@ export declare namespace Subsonic {
 	}
 
 	export interface Indexes {
-		shortcut?: Artist[];
-		index?: Index[];
-		child?: Child[]; //  Added in 1.7.0
+		shortcut?: Array<Artist>;
+		index?: Array<Index>;
+		child?: Array<Child>; //  Added in 1.7.0
 		lastModified: number;
 		ignoredArticles: string; //  Added in 1.10.0
 	}
 
 	export interface Index {
-		artist?: Artist[];
+		artist?: Array<Artist>;
 		name: string;
 	}
 
@@ -84,7 +84,7 @@ export declare namespace Subsonic {
 	}
 
 	export interface Genres {
-		genre?: Genre[];
+		genre?: Array<Genre>;
 	}
 
 	export interface Genre {
@@ -95,12 +95,12 @@ export declare namespace Subsonic {
 	}
 
 	export interface ArtistsID3 {
-		index?: IndexID3[];
+		index?: Array<IndexID3>;
 		ignoredArticles: string; //  Added in 1.10.0
 	}
 
 	export interface IndexID3 {
-		artist?: ArtistID3[];
+		artist?: Array<ArtistID3>;
 		name: string;
 	}
 
@@ -113,7 +113,7 @@ export declare namespace Subsonic {
 	}
 
 	export interface ArtistWithAlbumsID3 extends ArtistID3 {
-		album?: AlbumID3[];
+		album?: Array<AlbumID3>;
 	}
 
 	export interface AlbumID3 {
@@ -132,17 +132,17 @@ export declare namespace Subsonic {
 	}
 
 	export interface AlbumWithSongsID3 extends AlbumID3 {
-		song?: Child[];
+		song?: Array<Child>;
 	}
 
 	export interface Videos {
-		video?: Child[];
+		video?: Array<Child>;
 	}
 
 	export interface VideoInfo {
-		captions?: Captions[];
-		audioTrack?: AudioTrack[];
-		conversion?: VideoConversion[];
+		captions?: Array<Captions>;
+		audioTrack?: Array<AudioTrack>;
+		conversion?: Array<VideoConversion>;
 		id: string;
 	}
 
@@ -164,7 +164,7 @@ export declare namespace Subsonic {
 	}
 
 	export interface Directory {
-		child?: Child[];
+		child?: Array<Child>;
 		id: string;
 		parent?: string;
 		name: string;
@@ -215,7 +215,7 @@ export declare namespace Subsonic {
 	export type AverageRating = number; // 1.0 <= x <= 5.0
 
 	export interface NowPlaying {
-		entry?: NowPlayingEntry[];
+		entry?: Array<NowPlayingEntry>;
 	}
 
 	export interface NowPlayingEntry extends Child {
@@ -227,29 +227,29 @@ export declare namespace Subsonic {
 
 	// Deprecated
 	export interface SearchResult {
-		match?: Child[];
+		match?: Array<Child>;
 		offset: number;
 		totalHits: number;
 	}
 
 	export interface SearchResult2 {
-		artist?: Artist[];
-		album?: Child[];
-		song?: Child[];
+		artist?: Array<Artist>;
+		album?: Array<Child>;
+		song?: Array<Child>;
 	}
 
 	export interface SearchResult3 {
-		artist?: ArtistID3[];
-		album?: AlbumID3[];
-		song?: Child[];
+		artist?: Array<ArtistID3>;
+		album?: Array<AlbumID3>;
+		song?: Array<Child>;
 	}
 
 	export interface Playlists {
-		playlist?: Playlist[];
+		playlist?: Array<Playlist>;
 	}
 
 	export interface Playlist {
-		allowedUser?: string[]; // Added in 1.8.0
+		allowedUser?: Array<string>; // Added in 1.8.0
 		id: string;
 		name: string;
 		comment?: string; // Added in 1.8.0
@@ -263,7 +263,7 @@ export declare namespace Subsonic {
 	}
 
 	export interface PlaylistWithSongs extends Playlist {
-		entry?: Child[];
+		entry?: Array<Child>;
 	}
 
 	export interface JukeboxStatus {
@@ -274,11 +274,11 @@ export declare namespace Subsonic {
 	}
 
 	export interface JukeboxPlaylist extends JukeboxStatus {
-		entry?: Child[];
+		entry?: Array<Child>;
 	}
 
 	export interface ChatMessages {
-		chatMessage?: ChatMessage[];
+		chatMessage?: Array<ChatMessage>;
 	}
 
 	export interface ChatMessage {
@@ -288,15 +288,15 @@ export declare namespace Subsonic {
 	}
 
 	export interface AlbumList {
-		album?: Child[];
+		album?: Array<Child>;
 	}
 
 	export interface AlbumList2 {
-		album?: AlbumID3[];
+		album?: Array<AlbumID3>;
 	}
 
 	export interface Songs {
-		song?: Child[];
+		song?: Array<Child>;
 	}
 
 	export interface Lyrics {
@@ -306,11 +306,11 @@ export declare namespace Subsonic {
 	}
 
 	export interface Podcasts {
-		channel?: PodcastChannel[];
+		channel?: Array<PodcastChannel>;
 	}
 
 	export interface PodcastChannel {
-		episode?: PodcastEpisode[];
+		episode?: Array<PodcastEpisode>;
 		id: string;
 		url: string;
 		title?: string;
@@ -322,7 +322,7 @@ export declare namespace Subsonic {
 	}
 
 	export interface NewestPodcasts {
-		episode?: PodcastEpisode[];
+		episode?: Array<PodcastEpisode>;
 	}
 
 	export interface PodcastEpisode extends Child {
@@ -336,7 +336,7 @@ export declare namespace Subsonic {
 	export type PodcastStatus = 'new' | 'downloading' | 'completed' | 'error' | 'deleted' | 'skipped';
 
 	export interface InternetRadioStations {
-		internetRadioStation?: InternetRadioStation[];
+		internetRadioStation?: Array<InternetRadioStation>;
 	}
 
 	export interface InternetRadioStation {
@@ -347,7 +347,7 @@ export declare namespace Subsonic {
 	}
 
 	export interface Bookmarks {
-		bookmark?: Bookmark[];
+		bookmark?: Array<Bookmark>;
 	}
 
 	export interface Bookmark {
@@ -360,7 +360,7 @@ export declare namespace Subsonic {
 	}
 
 	export interface PlayQueue {
-		entry?: Child[];
+		entry?: Array<Child>;
 		current?: number; //  ID of currently playing track
 		position?: number; //  Position in milliseconds of currently playing track
 		username: string;
@@ -369,11 +369,11 @@ export declare namespace Subsonic {
 	}
 
 	export interface Shares {
-		share?: Share[];
+		share?: Array<Share>;
 	}
 
 	export interface Share {
-		entry?: Child[];
+		entry?: Array<Child>;
 		id: string;
 		url: string;
 		description?: string;
@@ -385,9 +385,9 @@ export declare namespace Subsonic {
 	}
 
 	export interface Starred {
-		artist?: Artist[];
-		album?: Child[];
-		song?: Child[];
+		artist?: Array<Artist>;
+		album?: Array<Child>;
+		song?: Array<Child>;
 	}
 
 	export interface AlbumInfo {
@@ -409,29 +409,29 @@ export declare namespace Subsonic {
 	}
 
 	export interface ArtistInfo extends ArtistInfoBase {
-		similarArtist?: Artist[];
+		similarArtist?: Array<Artist>;
 	}
 
 	export interface ArtistInfo2 extends ArtistInfoBase {
-		similarArtist?: ArtistID3[];
+		similarArtist?: Array<ArtistID3>;
 	}
 
 	export interface SimilarSongs {
-		song?: Child[];
+		song?: Array<Child>;
 	}
 
 	export interface SimilarSongs2 {
-		song?: Child[];
+		song?: Array<Child>;
 	}
 
 	export interface TopSongs {
-		song?: Child[];
+		song?: Array<Child>;
 	}
 
 	export interface Starred2 {
-		artist?: ArtistID3[];
-		album?: AlbumID3[];
-		song?: Child[];
+		artist?: Array<ArtistID3>;
+		album?: Array<AlbumID3>;
+		song?: Array<Child>;
 	}
 
 	export interface License {
@@ -447,11 +447,11 @@ export declare namespace Subsonic {
 	}
 
 	export interface Users {
-		user?: User[];
+		user?: Array<User>;
 	}
 
 	export interface User {
-		folder?: number[]; //  Added in 1.12.0
+		folder?: Array<number>; //  Added in 1.12.0
 		username: string;
 		email?: string; //  Added in 1.6.0
 		scrobblingEnabled: boolean; //  Added in 1.7.0

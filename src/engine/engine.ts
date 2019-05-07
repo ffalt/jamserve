@@ -1,44 +1,44 @@
-import path from 'path';
 import fse from 'fs-extra';
-import {IoService} from './io/io.service';
-import {Store} from './store/store';
-import {AudioModule} from '../modules/audio/audio.module';
+import path from 'path';
+import {Config} from '../config';
+import {ThirdPartyConfig} from '../config/thirdparty.config';
 import {DBObjectType} from '../db/db.types';
-import {IndexService} from './index/index.service';
+import {RootScanStrategy} from '../model/jam-types';
+import {AudioModule} from '../modules/audio/audio.module';
+import {ImageModule} from '../modules/image/image.module';
+import {AlbumService} from '../objects/album/album.service';
+import {ArtistService} from '../objects/artist/artist.service';
+import {BookmarkService} from '../objects/bookmark/bookmark.service';
+import {EpisodeService} from '../objects/episode/episode.service';
+import {FolderService} from '../objects/folder/folder.service';
 import {MetaDataService} from '../objects/metadata/metadata.service';
-import {UserService} from '../objects/user/user.service';
-import {ChatService} from './chat/chat.service';
-import {GenreService} from './genre/genre.service';
-import {PodcastService} from '../objects/podcast/podcast.service';
-import {NowPlayingService} from './nowplaying/nowplaying.service';
-import {RootService} from '../objects/root/root.service';
 import {PlaylistService} from '../objects/playlist/playlist.service';
 import {PlayQueueService} from '../objects/playqueue/playqueue.service';
-import {Config} from '../config';
-import {WaveformService} from './waveform/waveform.service';
-import {StreamService} from './stream/stream.service';
-import {BookmarkService} from '../objects/bookmark/bookmark.service';
-import {StateService} from '../objects/state/state.service';
-import {ImageService} from './image/image.service';
-import {DownloadService} from './download/download.service';
-import {User} from '../objects/user/user.model';
-import {Root} from '../objects/root/root.model';
+import {PodcastService} from '../objects/podcast/podcast.service';
 import {RadioService} from '../objects/radio/radio.service';
-import {FolderService} from '../objects/folder/folder.service';
-import {ImageModule} from '../modules/image/image.module';
+import {Root} from '../objects/root/root.model';
+import {RootService} from '../objects/root/root.service';
+import {SettingsService} from '../objects/settings/settings.service';
+import {StateService} from '../objects/state/state.service';
 import {TrackService} from '../objects/track/track.service';
-import {ArtistService} from '../objects/artist/artist.service';
-import {AlbumService} from '../objects/album/album.service';
-import {EpisodeService} from '../objects/episode/episode.service';
-import {ThirdPartyConfig} from '../config/thirdparty.config';
-import {hashSaltPassword} from '../utils/salthash';
+import {User} from '../objects/user/user.model';
+import {UserService} from '../objects/user/user.service';
+import {pathDeleteIfExists} from '../utils/fs-utils';
+import Logger from '../utils/logger';
 import {randomString} from '../utils/random';
+import {hashSaltPassword} from '../utils/salthash';
+import {ChatService} from './chat/chat.service';
+import {DownloadService} from './download/download.service';
+import {GenreService} from './genre/genre.service';
+import {ImageService} from './image/image.service';
+import {IndexService} from './index/index.service';
+import {IoService} from './io/io.service';
+import {NowPlayingService} from './nowplaying/nowplaying.service';
 import {ScanService} from './scan/scan.service';
 import {StatsService} from './stats/stats.service';
-import {SettingsService} from '../objects/settings/settings.service';
-import {RootScanStrategy} from '../model/jam-types';
-import Logger from '../utils/logger';
-import {pathDeleteIfExists} from '../utils/fs-utils';
+import {Store} from './store/store';
+import {StreamService} from './stream/stream.service';
+import {WaveformService} from './waveform/waveform.service';
 
 const log = Logger('Engine');
 
@@ -140,7 +140,7 @@ export class Engine {
 						stream: true,
 						upload: true,
 						admin: true,
-						podcast: true,
+						podcast: true
 						// coverArtRole: true,
 						// settingsRole: true,
 						// downloadRole: true,
@@ -165,7 +165,7 @@ export class Engine {
 						type: DBObjectType.root,
 						name: first.name,
 						path: first.path,
-						strategy: <RootScanStrategy>first.strategy || RootScanStrategy.auto
+						strategy: first.strategy as RootScanStrategy || RootScanStrategy.auto
 					};
 					await this.store.rootStore.add(root);
 				}
@@ -207,11 +207,10 @@ export class Engine {
 		await this.store.close();
 	}
 
-	async clearLocalFiles() {
+	async clearLocalFiles(): Promise<void> {
 		const paths = this.resolveCachePaths();
 		for (const p of paths) {
 			await pathDeleteIfExists(p);
 		}
 	}
 }
-

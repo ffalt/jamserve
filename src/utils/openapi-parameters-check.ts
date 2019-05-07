@@ -1,8 +1,8 @@
-import {OpenAPIObject, OperationObject, ParameterObject, RequestBodyObject, SchemaObject} from '../model/openapi-spec';
 import express from 'express';
-import Logger from './logger';
 import {Definition} from 'typescript-json-schema';
-import {validateJSON, jsonValidator, JSONValidator} from './validate-json';
+import {OpenAPIObject, OperationObject, ParameterObject, RequestBodyObject, SchemaObject} from '../model/openapi-spec';
+import Logger from './logger';
+import {jsonValidator, JSONValidator, validateJSON} from './validate-json';
 
 const log = Logger('CheckApiParameters');
 
@@ -10,7 +10,7 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 	if (!query) {
 		return 'Missing parameter collection ' + param.name;
 	}
-	const schema = <SchemaObject>param.schema;
+	const schema = param.schema as SchemaObject;
 	let value = query[param.name];
 	// set default values
 	if (value === undefined) {
@@ -65,12 +65,11 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 		}
 		query[param.name] = s;
 	} else if (schema.type === 'array') {
-		const items = <SchemaObject>(schema.items || {type: 'unknown'});
+		const items = (schema.items || {type: 'unknown'}) as SchemaObject;
 		if (items.type === 'string') {
 			const list = ((Array.isArray(value) ? value : [value]) || []).map(s => s.toString().trim());
 			if (items.enum) {
-				for (let i = 0; i < list.length; i++) {
-					const s = list[i];
+				for (const s of list) {
 					if (items.enum.indexOf(s) < 0) {
 						return 'Invalid enum string parameter ' + param.name + ': ' + s;
 					}
@@ -85,8 +84,7 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 				}
 				return num;
 			});
-			for (let i = 0; i < list.length; i++) {
-				const num = list[i];
+			for (const num of list) {
 				if (isNaN(num)) {
 					return 'Invalid number array parameter ' + param.name;
 				}
@@ -106,19 +104,19 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 }
 
 function createJSONValidator(def: any, apiSchema: any): JSONValidator {
-	const specialSchema = Object.assign({}, def);
+	const specialSchema = {...def};
 	specialSchema.definitions = apiSchema.definitions;
 	return jsonValidator(specialSchema);
 }
 
 async function checkAORequestBody(cmd: OperationObject, apiSchema: any, body: any): Promise<void> {
-	if (!cmd.requestBody || !(<RequestBodyObject>cmd.requestBody).content || !(<RequestBodyObject>cmd.requestBody).content['application/json']) {
+	if (!cmd.requestBody || !(cmd.requestBody as RequestBodyObject).content || !(cmd.requestBody as RequestBodyObject).content['application/json']) {
 		return;
 	}
 	if (!body) {
 		return Promise.reject(Error('Missing Request Body'));
 	}
-	const schema = (<RequestBodyObject>cmd.requestBody).content['application/json'].schema;
+	const schema = (cmd.requestBody as RequestBodyObject).content['application/json'].schema;
 	if (!schema || !schema.$ref) {
 		return Promise.reject(Error('Unimplemented POST schema'));
 	}
@@ -142,7 +140,7 @@ async function checkAOParameters(cmd: OperationObject, schema: Definition, req: 
 	}
 	let error: string | null = null;
 	cmd.parameters.find(param => {
-		param = <ParameterObject>param;
+		param = param as ParameterObject;
 		if (param.in === 'query') {
 			error = validOAParameter(req.query, param);
 		} else if (param.in === 'path') {

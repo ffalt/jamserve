@@ -1,19 +1,19 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {PodcastStatus} from '../../model/jam-types';
 import {JamRequest} from '../../api/jam/api';
+import {DBObjectType} from '../../db/db.types';
+import {DownloadService} from '../../engine/download/download.service';
+import {ImageService} from '../../engine/image/image.service';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {PodcastStatus} from '../../model/jam-types';
+import {BaseListController} from '../base/base.list.controller';
 import {EpisodeController} from '../episode/episode.controller';
-import {formatPodcast} from './podcast.format';
-import {PodcastService} from './podcast.service';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
-import {DownloadService} from '../../engine/download/download.service';
-import {SearchQueryPodcast} from './podcast.store';
-import {Podcast} from './podcast.model';
 import {User} from '../user/user.model';
-import {BaseListController} from '../base/base.list.controller';
-import {DBObjectType} from '../../db/db.types';
+import {formatPodcast} from './podcast.format';
+import {Podcast} from './podcast.model';
+import {PodcastService} from './podcast.service';
+import {SearchQueryPodcast} from './podcast.store';
 
 export class PodcastController extends BaseListController<JamParameters.Podcast, JamParameters.Podcasts, JamParameters.IncludesPodcast, SearchQueryPodcast, JamParameters.PodcastSearch, Podcast, Jam.Podcast> {
 
@@ -85,7 +85,7 @@ export class PodcastController extends BaseListController<JamParameters.Podcast,
 		const podcast = await this.byID(req.query.id);
 		return {
 			lastCheck: podcast.lastCheck,
-			status: <Jam.PodcastStatusType>(this.podcastService.isDownloading(podcast.id) ? PodcastStatus[PodcastStatus.downloading] : PodcastStatus[podcast.status])
+			status: (this.podcastService.isDownloading(podcast.id) ? PodcastStatus[PodcastStatus.downloading] : PodcastStatus[podcast.status]) as Jam.PodcastStatusType
 		};
 	}
 

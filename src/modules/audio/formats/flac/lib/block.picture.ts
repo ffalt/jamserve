@@ -1,4 +1,4 @@
-import {MetaWriteableDataBlock} from './block';
+import {MetaWriteableDataBlock} from './block.writeable';
 
 export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 	pictureType = 0;
@@ -28,7 +28,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 		return mdb;
 	}
 
-	parse(buffer: Buffer) {
+	parse(buffer: Buffer): void {
 		try {
 
 			let pos = 0;
@@ -62,7 +62,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 		}
 	}
 
-	publish() {
+	publish(): Buffer {
 		let pos = 0;
 		const size = this.getSize();
 		const buffer = Buffer.alloc(4 + size);
@@ -99,7 +99,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 		return buffer;
 	}
 
-	getSize() {
+	getSize(): number {
 		let size = 4;
 		size += 4 + Buffer.byteLength(this.mimeType);
 		size += 4 + Buffer.byteLength(this.description);

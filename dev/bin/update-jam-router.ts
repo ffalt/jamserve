@@ -1,6 +1,6 @@
 import {getJamApiCalls, IApiCall} from './utils';
 import path from 'path';
-import {IApiBinaryResult} from '../../src/typings';
+import {ApiBinaryResult} from '../../src/typings';
 import fse from 'fs-extra';
 
 const destPath = '../../src/api/jam/';
@@ -27,7 +27,7 @@ function generateCode(calls: Array<IApiCall>): string {
 		let paramType = call.paramType || '{}';
 		let resultType = call.resultType;
 		if (call.binaryResult) {
-			resultType = 'IApiBinaryResult';
+			resultType = 'ApiBinaryResult';
 		}
 		if (call.pathParams) {
 			name = call.name.replace(/}/g, '').replace(/{/g, ':');
@@ -75,17 +75,17 @@ async function run() {
 
 	const ts = `// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
-import {Jam} from '../../model/jam-rest-data';
-import {MusicBrainz} from '../../model/musicbrainz-rest-data';
-import {Acoustid} from '../../model/acoustid-rest-data';
+import express from 'express';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
-import {LastFM} from '../../model/lastfm-rest-data';
+import {Acoustid} from '../../model/acoustid-rest-data';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
+import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
+import {LastFM} from '../../model/lastfm-rest-data';
+import {MusicBrainz} from '../../model/musicbrainz-rest-data';
+import {ApiBinaryResult} from '../../typings';
 import {JamController, JamRequest} from './api';
 import {ApiResponder} from './response';
-import express from 'express';
-import {IApiBinaryResult} from '../../typings';
 
 export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
 export interface Register {

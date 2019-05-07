@@ -1,8 +1,8 @@
-import {AlbumType, FileTyp, FolderType, MusicBrainz_VARIOUS_ARTISTS_NAME, RootScanStrategy} from '../../model/jam-types';
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
-import {extractAlbumName, slugify} from './scan.utils';
+import {AlbumType, FileTyp, FolderType, MUSICBRAINZ_VARIOUS_ARTISTS_NAME, RootScanStrategy} from '../../model/jam-types';
 import {MatchDir} from './scan.match-dir';
+import {extractAlbumName, slugify} from './scan.utils';
 
 export interface MetaStatValue<T> {
 	count: number;
@@ -82,7 +82,7 @@ export class MetaStatBuilder {
 		[name: string]: { [key: string]: { count: number, val: string }; };
 	} = {};
 
-	statID(name: string, val?: string) {
+	statID(name: string, val?: string): void {
 		if (val && val.trim().length > 0) {
 			const slug = val.split(' ')[0].trim();
 			this.stats[name] = this.stats[name] || {};
@@ -91,16 +91,16 @@ export class MetaStatBuilder {
 		}
 	}
 
-	statNumber(name: string, val?: number) {
+	statNumber(name: string, val?: number): void {
 		if (val !== undefined) {
 			const slug = val.toString();
 			this.stats[name] = this.stats[name] || {};
-			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val: val};
+			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val};
 			this.stats[name][slug].count += 1;
 		}
 	}
 
-	statSlugValue(name: string, val?: string) {
+	statSlugValue(name: string, val?: string): void {
 		if (val && val.trim().length > 0) {
 			const slug = slugify(val);
 			this.stats[name] = this.stats[name] || {};
@@ -109,7 +109,7 @@ export class MetaStatBuilder {
 		}
 	}
 
-	statTrackCount(name: string, trackTotal?: number, disc?: number) {
+	statTrackCount(name: string, trackTotal?: number, disc?: number): void {
 		if (trackTotal !== undefined) {
 			const slug = (disc !== undefined ? disc : 1).toString() + '-' + trackTotal.toString();
 			this.stats[name] = this.stats[name] || {};
@@ -185,12 +185,12 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 	}
 
 	// heuristically most used values
-	const artist = builder.mostUsed('artist', MusicBrainz_VARIOUS_ARTISTS_NAME);
+	const artist = builder.mostUsed('artist', MUSICBRAINZ_VARIOUS_ARTISTS_NAME);
 	let artistSort = builder.mostUsed('artistSort');
 	const genre = builder.mostUsed('genre');
 	const mbAlbumType = builder.mostUsed('mbAlbumType', '');
 	// determinate album type
-	const hasMultipleArtists = artist === MusicBrainz_VARIOUS_ARTISTS_NAME;
+	const hasMultipleArtists = artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME;
 	const hasMultipleAlbums = builder.asList('album').length > 1;
 	if (hasMultipleArtists) {
 		artistSort = undefined;

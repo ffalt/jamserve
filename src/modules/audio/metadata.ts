@@ -1,12 +1,13 @@
 import {ID3V24TagBuilder, IID3V2, simplifyTag} from 'jamp3';
-import {MetaWriteableDataBlock} from './formats/flac/lib/block';
-import {BlockVorbiscomment} from './formats/flac/lib/block.vorbiscomment';
-import {MetaDataBlockPicture} from './formats/flac/lib/block.picture';
-import {ImageModule} from '../image/image.module';
-import {Jam} from '../../model/jam-rest-data';
-import {FlacInfo} from './formats/flac';
-import {TrackTag} from '../../objects/track/track.model';
 import moment from 'moment';
+import {ID3v2Frames} from '../../model/id3v2-frames';
+import {Jam} from '../../model/jam-rest-data';
+import {TrackTag} from '../../objects/track/track.model';
+import {ImageModule} from '../image/image.module';
+import {FlacInfo} from './formats/flac';
+import {MetaDataBlockPicture} from './formats/flac/lib/block.picture';
+import {BlockVorbiscomment} from './formats/flac/lib/block.vorbiscomment';
+import {MetaWriteableDataBlock} from './formats/flac/lib/block.writeable';
 
 export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | undefined> {
 	if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {
@@ -156,13 +157,13 @@ export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageMod
 		'TSIZ',
 		'APIC'
 	];
-	const simple = <any>simplifyTag(tag, DropFramesList);
+	const simple = simplifyTag(tag, DropFramesList) as any;
 	const comments: Array<string> = [];
 	Object.keys(simple).forEach(key => {
 		comments.push(key + '=' + simple[key].toString());
 	});
 	const result: Array<MetaWriteableDataBlock> = [BlockVorbiscomment.createVorbisCommentBlock('jamserve', comments)];
-	const pics = <Array<{ id: string; value: IID3V2.FrameValue.Pic }>>tag.frames.filter(frame => frame.id === 'APIC');
+	const pics = tag.frames.filter(frame => frame.id === 'APIC') as Array<{ id: string; value: IID3V2.FrameValue.Pic }>;
 	for (const pic of pics) {
 		if (pic.value.bin && pic.value.mimeType) {
 			const imageInfo = await imageModule.getImageInfo(pic.value.bin, pic.value.mimeType);
@@ -186,37 +187,48 @@ export function trackTagToRawTag(tag: TrackTag): Jam.RawTag {
 	return {version: 4, frames: builder.rawBuilder.build()};
 }
 
-export function prepareResponseTag(tag: Jam.RawTag) {
+function prepareFrame(frame: ID3v2Frames.Frame): void {
+	if (frame && frame.value && frame.value.hasOwnProperty('bin')) {
+		const binValue = frame.value as any;
+		binValue.bin = binValue.bin.toString('base64');
+	}
+	if (frame && frame.subframes) {
+		frame.subframes.forEach(prepareFrame);
+	}
+}
+
+export function prepareResponseTag(tag: Jam.RawTag): void {
 	Object.keys(tag.frames).forEach(key => {
 		const frames = tag.frames[key];
 		if (frames) {
-			frames.forEach(frame => {
-				if (frame && frame.value && frame.value.hasOwnProperty('bin')) {
-					const binValue = <any>frame.value;
-					binValue.bin = binValue.bin.toString('base64');
-				}
-			});
+			frames.forEach(prepareFrame);
 		}
 	});
 }
 
+function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {
+	if (frame && frame.value && frame.value.hasOwnProperty('bin')) {
+		const bin = (frame.value as any).bin;
+		if (typeof bin === 'string') {
+			(frame.value as any).bin = Buffer.from(bin, 'base64');
+		}
+	}
+	if (frame && frame.subframes) {
+		frame.subframes.forEach(rawFrameToID3v2);
+	}
+}
 
 export function rawTagToID3v2(tag: Jam.RawTag): IID3V2.Tag {
 	const frames: Array<IID3V2.Frame> = [];
 	Object.keys(tag.frames).map(id => {
 		const f = tag.frames[id] || [];
 		f.forEach(frame => {
-			if (frame && frame.value && frame.value.hasOwnProperty('bin')) {
-				const bin = (<any>frame.value).bin;
-				if (typeof bin === 'string') {
-					(<any>frame.value).bin = Buffer.from(bin, 'base64');
-				}
-			}
+			rawFrameToID3v2(frame);
 			frames.push(frame);
 		});
 		return;
 	});
-	const t: IID3V2.Tag = {
+	return {
 		id: 'ID3v2',
 		head: {
 			ver: tag.version,
@@ -228,5 +240,4 @@ export function rawTagToID3v2(tag: Jam.RawTag): IID3V2.Tag {
 		end: 0,
 		frames
 	};
-	return t;
 }

@@ -1,5 +1,5 @@
-import {DBObject} from '../base/base.model';
 import {RootScanStrategy} from '../../model/jam-types';
+import {DBObject} from '../base/base.model';
 
 export interface Root extends DBObject {
 	name: string;

@@ -1,7 +1,7 @@
 import {DBObjectType} from '../../db/db.types';
-import {SearchQueryState, StateStore} from './state.store';
-import {State, States} from './state.model';
 import {BaseStoreService} from '../base/base.service';
+import {State, States} from './state.model';
+import {SearchQueryState, StateStore} from './state.store';
 
 export class StateService extends BaseStoreService<State, SearchQueryState> {
 
@@ -46,11 +46,7 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 
 	async rate(id: string, type: DBObjectType, userID: string, rating: number): Promise<State> {
 		const state = await this.findOrCreate(id, userID, type);
-		if (rating === 0) {
-			state.rated = undefined;
-		} else {
-			state.rated = rating;
-		}
+		state.rated = (rating === 0) ? undefined : rating;
 		if (state.id.length === 0) {
 			await this.stateStore.add(state);
 		} else {
@@ -83,7 +79,7 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 
 	async getHighestRatedDestIDs(type: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateStore.search({userID, type, minRating: 1});
-		const ratings = states.filter(state => state.rated !== undefined).sort((a, b) => <number>b.rated - <number>a.rated);
+		const ratings = states.filter(state => state.rated !== undefined).sort((a, b) => Number(b.rated) - Number(a.rated));
 		return ratings.map(a => a.destID);
 	}
 
@@ -113,7 +109,7 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 
 	async getFavedDestIDs(type: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateStore.search({userID, type, isFaved: true});
-		states.sort((a, b) => <number>b.faved - <number>a.faved);
+		states.sort((a, b) => Number(b.faved) - Number(a.faved));
 		return states.map(a => a.destID);
 	}
 

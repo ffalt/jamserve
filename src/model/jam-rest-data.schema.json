@@ -1,6 +1,3422 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"definitions": {
+		"AcousticBrainz.Response": {
+			"type": "object",
+			"properties": {
+				"highlevel": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevel"
+				},
+				"metadata": {
+					"$ref": "#/definitions/AcousticBrainz.MetaData"
+				}
+			}
+		},
+		"AcousticBrainz.HighLevelSection": {
+			"type": "object",
+			"properties": {
+				"all": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "number"
+					}
+				},
+				"probability": {
+					"type": "number"
+				},
+				"value": {
+					"type": "string"
+				},
+				"version": {
+					"$ref": "#/definitions/AcousticBrainz.Version"
+				}
+			},
+			"required": [
+				"all",
+				"probability",
+				"value",
+				"version"
+			]
+		},
+		"AcousticBrainz.Version": {
+			"type": "object",
+			"properties": {
+				"essentia": {
+					"type": "string"
+				},
+				"essentia_build_sha": {
+					"type": "string"
+				},
+				"essentia_git_sha": {
+					"type": "string"
+				},
+				"extractor": {
+					"type": "string"
+				},
+				"gaia": {
+					"type": "string"
+				},
+				"gaia_git_sha": {
+					"type": "string"
+				},
+				"models_essentia_git_sha": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"essentia",
+				"essentia_build_sha",
+				"essentia_git_sha",
+				"extractor",
+				"gaia",
+				"gaia_git_sha",
+				"models_essentia_git_sha"
+			]
+		},
+		"AcousticBrainz.HighLevel": {
+			"type": "object",
+			"properties": {
+				"danceability": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"gender": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"genre_dortmund": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"genre_electronic": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"genre_rosamerica": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"genre_tzanetakis": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"ismir04_rhythm": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_acoustic": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_aggressive": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_electronic": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_happy": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_party": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_relaxed": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"mood_sad": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"moods_mirex": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"timbre": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"tonal_atonal": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				},
+				"voice_instrumental": {
+					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
+				}
+			}
+		},
+		"AcousticBrainz.MetaData": {
+			"type": "object",
+			"properties": {
+				"audio_properties": {
+					"type": "object",
+					"properties": {
+						"analysis_sample_rate": {
+							"type": "number"
+						},
+						"bit_rate": {
+							"type": "number"
+						},
+						"codec": {
+							"type": "string"
+						},
+						"downmix": {
+							"type": "string"
+						},
+						"equal_loudness": {
+							"type": "number"
+						},
+						"length": {
+							"type": "number"
+						},
+						"lossless": {
+							"type": "number"
+						},
+						"md5_encoded": {
+							"type": "string"
+						},
+						"replay_gain": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"analysis_sample_rate",
+						"bit_rate",
+						"codec",
+						"downmix",
+						"equal_loudness",
+						"length",
+						"lossless",
+						"md5_encoded",
+						"replay_gain"
+					]
+				},
+				"tags": {
+					"type": "object",
+					"properties": {
+						"acoustid_id": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"album": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"albumartist": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"albumartistsort": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"artist": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"artists": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"artistsort": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"asin": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"barcode": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"catalognumber": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"composer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"composersort": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"date": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"discnumber": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"discsubtitle": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"disctotal": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"engineer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"file_name": {
+							"type": "string"
+						},
+						"isrc": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"label": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"language": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"lyricist": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"media": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"mixer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_albumartistid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_albumid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_artistid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_recordingid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_releasegroupid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_releasetrackid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"musicbrainz_workid": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"originaldate": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"performer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"producer": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"releasecountry": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"releasestatus": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"releasetype": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"script": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"title": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"totaldiscs": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"totaltracks": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"tracknumber": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"tracktotal": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"work": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": [
+						"acoustid_id",
+						"album",
+						"albumartist",
+						"albumartistsort",
+						"artist",
+						"artists",
+						"artistsort",
+						"asin",
+						"barcode",
+						"catalognumber",
+						"composer",
+						"composersort",
+						"date",
+						"discnumber",
+						"discsubtitle",
+						"disctotal",
+						"engineer",
+						"file_name",
+						"isrc",
+						"label",
+						"language",
+						"lyricist",
+						"media",
+						"mixer",
+						"musicbrainz_albumartistid",
+						"musicbrainz_albumid",
+						"musicbrainz_artistid",
+						"musicbrainz_recordingid",
+						"musicbrainz_releasegroupid",
+						"musicbrainz_releasetrackid",
+						"musicbrainz_workid",
+						"originaldate",
+						"performer",
+						"producer",
+						"releasecountry",
+						"releasestatus",
+						"releasetype",
+						"script",
+						"title",
+						"totaldiscs",
+						"totaltracks",
+						"tracknumber",
+						"tracktotal",
+						"work"
+					]
+				},
+				"version": {
+					"type": "object",
+					"properties": {
+						"highlevel": {
+							"$ref": "#/definitions/AcousticBrainz.Version"
+						},
+						"lowlevel": {
+							"$ref": "#/definitions/AcousticBrainz.Version"
+						}
+					},
+					"required": [
+						"highlevel",
+						"lowlevel"
+					]
+				}
+			},
+			"required": [
+				"audio_properties",
+				"tags",
+				"version"
+			]
+		},
+		"Acoustid.Artist": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"name"
+			]
+		},
+		"Acoustid.Track": {
+			"type": "object",
+			"properties": {
+				"position": {
+					"type": "number"
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Artist"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artists",
+				"id",
+				"position",
+				"title"
+			]
+		},
+		"Acoustid.Medium": {
+			"type": "object",
+			"properties": {
+				"position": {
+					"type": "number"
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Track"
+					}
+				},
+				"track_count": {
+					"type": "number"
+				},
+				"format": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"format",
+				"position",
+				"title",
+				"track_count",
+				"tracks"
+			]
+		},
+		"Acoustid.AcousticDate": {
+			"type": "object",
+			"properties": {
+				"month": {
+					"type": "number"
+				},
+				"year": {
+					"type": "number"
+				},
+				"day": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"month",
+				"year"
+			]
+		},
+		"Acoustid.Releaseevent": {
+			"type": "object",
+			"properties": {
+				"date": {
+					"$ref": "#/definitions/Acoustid.AcousticDate"
+				},
+				"country": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"country",
+				"date"
+			]
+		},
+		"Acoustid.Release": {
+			"type": "object",
+			"properties": {
+				"mediums": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Medium"
+					}
+				},
+				"id": {
+					"type": "string"
+				},
+				"track_count": {
+					"type": "number"
+				},
+				"medium_count": {
+					"type": "number"
+				},
+				"releaseevents": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Releaseevent"
+					}
+				},
+				"country": {
+					"type": "string"
+				},
+				"date": {
+					"$ref": "#/definitions/Acoustid.AcousticDate"
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"country",
+				"date",
+				"id",
+				"medium_count",
+				"mediums",
+				"releaseevents",
+				"title",
+				"track_count"
+			]
+		},
+		"Acoustid.Releasegroup": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"releases": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Release"
+					}
+				},
+				"title": {
+					"type": "string"
+				},
+				"secondarytypes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"type": {
+					"type": "string"
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Artist"
+					}
+				}
+			},
+			"required": [
+				"artists",
+				"id",
+				"releases",
+				"secondarytypes",
+				"title",
+				"type"
+			]
+		},
+		"Acoustid.Recording": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"sources": {
+					"type": "number"
+				},
+				"artists": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Artist"
+					}
+				},
+				"duration": {
+					"type": "number"
+				},
+				"releasegroups": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Releasegroup"
+					}
+				},
+				"title": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artists",
+				"duration",
+				"id",
+				"releasegroups",
+				"sources",
+				"title"
+			]
+		},
+		"Acoustid.Result": {
+			"type": "object",
+			"properties": {
+				"recordings": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Recording"
+					}
+				},
+				"score": {
+					"type": "number"
+				},
+				"id": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"recordings",
+				"score"
+			]
+		},
+		"Acoustid.Results": {
+			"type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				},
+				"results": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Acoustid.Result"
+					}
+				}
+			},
+			"required": [
+				"results",
+				"status"
+			]
+		},
+		"CoverArtArchive.Response": {
+			"type": "object",
+			"properties": {
+				"images": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/CoverArtArchive.Image"
+					}
+				},
+				"release": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"images"
+			]
+		},
+		"CoverArtArchive.ImageTypes": {
+			"enum": [
+				"Back",
+				"Booklet",
+				"Front",
+				"Liner",
+				"Medium",
+				"Obi",
+				"Other",
+				"Poster",
+				"Raw",
+				"Spine",
+				"Sticker",
+				"Track",
+				"Tray",
+				"Unedited",
+				"Watermark"
+			],
+			"type": "string"
+		},
+		"CoverArtArchive.Image": {
+			"type": "object",
+			"properties": {
+				"types": {
+					"type": "array",
+					"items": {
+						"enum": [
+							"Back",
+							"Booklet",
+							"Front",
+							"Liner",
+							"Medium",
+							"Obi",
+							"Other",
+							"Poster",
+							"Raw",
+							"Spine",
+							"Sticker",
+							"Track",
+							"Tray",
+							"Unedited",
+							"Watermark"
+						],
+						"type": "string"
+					}
+				},
+				"front": {
+					"type": "boolean"
+				},
+				"back": {
+					"type": "boolean"
+				},
+				"edit": {
+					"type": "number"
+				},
+				"image": {
+					"type": "string"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"approved": {
+					"type": "boolean"
+				},
+				"id": {
+					"type": "string"
+				},
+				"thumbnails": {
+					"type": "object",
+					"properties": {
+						"250": {
+							"type": "string"
+						},
+						"500": {
+							"type": "string"
+						},
+						"1200": {
+							"type": "string"
+						},
+						"small": {
+							"type": "string"
+						},
+						"large": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"1200",
+						"250",
+						"500",
+						"large",
+						"small"
+					]
+				}
+			},
+			"required": [
+				"approved",
+				"back",
+				"comment",
+				"edit",
+				"front",
+				"id",
+				"image",
+				"thumbnails",
+				"types"
+			]
+		},
+		"ID3v2Frames.Frame": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"value": {
+					"type": "object",
+					"properties": {}
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.IdAscii": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"text": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"id",
+						"text"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.LangDescText": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"language": {
+							"type": "string"
+						},
+						"id": {
+							"type": "string"
+						},
+						"text": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"id",
+						"language",
+						"text"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Pic": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"description": {
+							"type": "string"
+						},
+						"pictureType": {
+							"type": "number"
+						},
+						"url": {
+							"type": "string"
+						},
+						"bin": {
+							"type": "string"
+						},
+						"mimeType": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"description",
+						"pictureType"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Bin": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"bin": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"bin"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Num": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"num": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"num"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.RVA": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"right": {
+							"type": "number"
+						},
+						"left": {
+							"type": "number"
+						},
+						"peakRight": {
+							"type": "number"
+						},
+						"peakLeft": {
+							"type": "number"
+						},
+						"rightBack": {
+							"type": "number"
+						},
+						"leftBack": {
+							"type": "number"
+						},
+						"peakRightBack": {
+							"type": "number"
+						},
+						"peakLeftBack": {
+							"type": "number"
+						},
+						"center": {
+							"type": "number"
+						},
+						"peakCenter": {
+							"type": "number"
+						},
+						"bass": {
+							"type": "number"
+						},
+						"peakBass": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"left",
+						"right"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.RVA2Channel": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "number"
+						},
+						"adjustment": {
+							"type": "number"
+						},
+						"peak": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"adjustment",
+						"type"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.RVA2": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"channels": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ID3v2Frames.RVA2Channel"
+							}
+						}
+					},
+					"required": [
+						"channels",
+						"id"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Popularimeter": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"rating": {
+							"type": "number"
+						},
+						"count": {
+							"type": "number"
+						},
+						"email": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"count",
+						"email",
+						"rating"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Bool": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"bool": {
+							"type": "boolean"
+						}
+					},
+					"required": [
+						"bool"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.AudioEncryption": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"previewStart": {
+							"type": "number"
+						},
+						"previewLength": {
+							"type": "number"
+						},
+						"bin": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"bin",
+						"id",
+						"previewLength",
+						"previewStart"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Link": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"url": {
+							"type": "string"
+						},
+						"id": {
+							"type": "string"
+						},
+						"additional": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": [
+						"additional",
+						"id",
+						"url"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.EventTimingCodes": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"format": {
+							"type": "number"
+						},
+						"events": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ID3v2Frames.EventTimingCodesEvent"
+							}
+						}
+					},
+					"required": [
+						"events",
+						"format"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.EventTimingCodesEvent": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "number"
+						},
+						"timestamp": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"timestamp",
+						"type"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.SynchronisedLyrics": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"language": {
+							"type": "string"
+						},
+						"timestampFormat": {
+							"type": "number"
+						},
+						"contentType": {
+							"type": "number"
+						},
+						"events": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/ID3v2Frames.SynchronisedLyricsEvent"
+							}
+						}
+					},
+					"required": [
+						"contentType",
+						"events",
+						"id",
+						"language",
+						"timestampFormat"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.SynchronisedLyricsEvent": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"timestamp": {
+							"type": "number"
+						},
+						"text": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"text",
+						"timestamp"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.GEOB": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"filename": {
+							"type": "string"
+						},
+						"mimeType": {
+							"type": "string"
+						},
+						"contentDescription": {
+							"type": "string"
+						},
+						"bin": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"bin",
+						"contentDescription",
+						"filename",
+						"mimeType"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.ReplayGainAdjustment": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"peak": {
+							"type": "number"
+						},
+						"radioAdjustment": {
+							"type": "number"
+						},
+						"audiophileAdjustment": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"audiophileAdjustment",
+						"peak",
+						"radioAdjustment"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.ChapterToc": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"ordered": {
+							"type": "boolean"
+						},
+						"topLevel": {
+							"type": "boolean"
+						},
+						"children": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": [
+						"children",
+						"id",
+						"ordered",
+						"topLevel"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Chapter": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"start": {
+							"type": "number"
+						},
+						"end": {
+							"type": "number"
+						},
+						"offset": {
+							"type": "number"
+						},
+						"offsetEnd": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"end",
+						"id",
+						"offset",
+						"offsetEnd",
+						"start"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.IdBin": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"bin": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"bin",
+						"id"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.IdText": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"text": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"id",
+						"text"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Ascii": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"text": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"text"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Text": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"text": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"text"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.TextList": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "object",
+					"properties": {
+						"list": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": [
+						"list"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"subframes": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Frame"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"value"
+			]
+		},
+		"ID3v2Frames.Frames": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "array",
+				"items": {
+					"$ref": "#/definitions/ID3v2Frames.Frame"
+				}
+			},
+			"properties": {
+				"AENC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.AudioEncryption"
+					}
+				},
+				"APIC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Pic"
+					}
+				},
+				"ASPI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"BUF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"CDM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"CHAP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Chapter"
+					}
+				},
+				"CM1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"CNT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Num"
+					}
+				},
+				"COM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.LangDescText"
+					}
+				},
+				"COMM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.LangDescText"
+					}
+				},
+				"COMR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"CRA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.AudioEncryption"
+					}
+				},
+				"CRM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"CTOC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.ChapterToc"
+					}
+				},
+				"ENCR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"EQU": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"EQUA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"ETC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.EventTimingCodes"
+					}
+				},
+				"ETCO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.EventTimingCodes"
+					}
+				},
+				"GEO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.GEOB"
+					}
+				},
+				"GEOB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.GEOB"
+					}
+				},
+				"GRID": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"GRP1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"IPL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.TextList"
+					}
+				},
+				"IPLS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.TextList"
+					}
+				},
+				"LINK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Link"
+					}
+				},
+				"LNK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Link"
+					}
+				},
+				"MCDI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"MLL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"MLLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"MVNM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"MVIN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"NCO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"NCON": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"OWNE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"PCNT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Num"
+					}
+				},
+				"PCS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Num"
+					}
+				},
+				"PCST": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Num"
+					}
+				},
+				"PIC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Pic"
+					}
+				},
+				"POP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Popularimeter"
+					}
+				},
+				"POPM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Popularimeter"
+					}
+				},
+				"POSS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"PRI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.IdBin"
+					}
+				},
+				"PRIV": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.IdBin"
+					}
+				},
+				"RBUF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"REV": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"RGAD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.ReplayGainAdjustment"
+					}
+				},
+				"RVA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.RVA"
+					}
+				},
+				"RVA2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.RVA2"
+					}
+				},
+				"RVAD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.RVA"
+					}
+				},
+				"RVRB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"SEEK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"SIGN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"SLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.SynchronisedLyricsEvent"
+					}
+				},
+				"STC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"SYLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.SynchronisedLyrics"
+					}
+				},
+				"SYTC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"TAL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TALB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TBP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TBPM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TCM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TCMP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bool"
+					}
+				},
+				"TCO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TCOM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TCON": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TCOP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TCP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bool"
+					}
+				},
+				"TCR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDAT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDES": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDLY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDOR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDEN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDRC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDRL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDTG": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TDY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TEN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TENC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TEXT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TFLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TGID": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TID": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TIM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TIME": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TIPL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.TextList"
+					}
+				},
+				"TIT1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TIT2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TIT3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TKE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TKEY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TKWD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"TLA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TLAN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TLE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TLEN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TMCL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.TextList"
+					}
+				},
+				"TMED": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TMOO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TMT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOAL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOFN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOL": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOLY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOPE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TORY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TOWN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TP1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TP2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TP3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TP4": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TPA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TPB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TPE1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TPE2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TPE3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TPE4": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TPOS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TPRO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TPUB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TRC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TRCK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TRD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TRDA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TRK": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TRSN": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TRSO": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TS2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSIZ": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSO2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSOA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSOC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSOP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSOT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSST": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSRC": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TSSE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TST": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TT1": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TT2": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TT3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TXT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TXX": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.IdText"
+					}
+				},
+				"TXXX": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.IdText"
+					}
+				},
+				"TYE": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"TYER": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"UFI": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.IdAscii"
+					}
+				},
+				"UFID": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.IdAscii"
+					}
+				},
+				"ULT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.LangDescText"
+					}
+				},
+				"USER": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"USLT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.LangDescText"
+					}
+				},
+				"WAF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WAR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WAS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WCM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WCOM": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WCOP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WCP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WFD": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"WFED": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"WOAF": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WOAR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WOAS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WORS": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WPAY": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WPB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WPUB": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Ascii"
+					}
+				},
+				"WXX": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.IdText"
+					}
+				},
+				"WXXX": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.IdText"
+					}
+				},
+				"XDOR": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"XHD3": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Bin"
+					}
+				},
+				"XSOA": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"XSOP": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				},
+				"XSOT": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/ID3v2Frames.Text"
+					}
+				}
+			}
+		},
+		"LastFM.Tag": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name",
+				"url"
+			]
+		},
+		"LastFM.ArtistInfo": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"mbid",
+				"name",
+				"url"
+			]
+		},
+		"LastFM.Image": {
+			"type": "object",
+			"properties": {
+				"url": {
+					"type": "string"
+				},
+				"size": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"size",
+				"url"
+			]
+		},
+		"LastFM.Track": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"duration": {
+					"type": "string"
+				},
+				"playcount": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"match": {
+					"type": "string"
+				},
+				"rank": {
+					"type": "string"
+				},
+				"streamable": {
+					"$ref": "#/definitions/LastFM.Streamable"
+				},
+				"artist": {
+					"$ref": "#/definitions/LastFM.ArtistInfo"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				}
+			},
+			"required": [
+				"artist",
+				"duration",
+				"image",
+				"match",
+				"mbid",
+				"name",
+				"playcount",
+				"rank",
+				"streamable",
+				"url"
+			]
+		},
+		"LastFM.Wiki": {
+			"type": "object",
+			"properties": {
+				"published": {
+					"type": "string"
+				},
+				"summary": {
+					"type": "string"
+				},
+				"content": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"content",
+				"published",
+				"summary"
+			]
+		},
+		"LastFM.Album": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"artist": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				},
+				"listeners": {
+					"type": "string"
+				},
+				"playcount": {
+					"type": "string"
+				},
+				"tracks": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Track"
+					}
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Tag"
+					}
+				},
+				"wiki": {
+					"$ref": "#/definitions/LastFM.Wiki"
+				}
+			},
+			"required": [
+				"artist",
+				"image",
+				"listeners",
+				"mbid",
+				"name",
+				"playcount",
+				"tracks",
+				"url"
+			]
+		},
+		"LastFM.Streamable": {
+			"type": "object",
+			"properties": {
+				"sample": {
+					"type": "string"
+				},
+				"fulltrack": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"fulltrack",
+				"sample"
+			]
+		},
+		"LastFM.TopTrack": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"streamable": {
+					"type": "string"
+				},
+				"playcount": {
+					"type": "number"
+				},
+				"listeners": {
+					"type": "number"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				},
+				"artist": {
+					"$ref": "#/definitions/LastFM.ArtistInfo"
+				},
+				"rank": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artist",
+				"image",
+				"listeners",
+				"mbid",
+				"name",
+				"playcount",
+				"rank",
+				"streamable",
+				"url"
+			]
+		},
+		"LastFM.Link": {
+			"type": "object",
+			"properties": {
+				"url": {
+					"type": "string"
+				},
+				"rel": {
+					"type": "string"
+				},
+				"href": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"href",
+				"rel",
+				"url"
+			]
+		},
+		"LastFM.Biography": {
+			"type": "object",
+			"properties": {
+				"published": {
+					"type": "string"
+				},
+				"summary": {
+					"type": "string"
+				},
+				"content": {
+					"type": "string"
+				},
+				"links": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Link"
+					}
+				}
+			},
+			"required": [
+				"content",
+				"published",
+				"summary"
+			]
+		},
+		"LastFM.Stats": {
+			"type": "object",
+			"properties": {
+				"listeners": {
+					"type": "string"
+				},
+				"playcount": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"listeners",
+				"playcount"
+			]
+		},
+		"LastFM.Artist": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				},
+				"streamable": {
+					"type": "string"
+				},
+				"ontour": {
+					"type": "string"
+				},
+				"stats": {
+					"$ref": "#/definitions/LastFM.Stats"
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Tag"
+					}
+				},
+				"bio": {
+					"$ref": "#/definitions/LastFM.Biography"
+				},
+				"similar": {
+					"$ref": "#/definitions/LastFM.SimilarArtists"
+				}
+			},
+			"required": [
+				"image",
+				"mbid",
+				"name",
+				"ontour",
+				"streamable",
+				"tags",
+				"url"
+			]
+		},
+		"LastFM.SimilarArtist": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"mbid": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				},
+				"image": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Image"
+					}
+				}
+			},
+			"required": [
+				"image",
+				"mbid",
+				"name",
+				"url"
+			]
+		},
+		"LastFM.SimilarArtists": {
+			"type": "object",
+			"properties": {
+				"artist": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.SimilarArtist"
+					}
+				}
+			}
+		},
+		"LastFM.TopTracks": {
+			"type": "object",
+			"properties": {
+				"track": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.TopTrack"
+					}
+				},
+				"artist": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artist",
+				"track"
+			]
+		},
+		"LastFM.SimilarTracks": {
+			"type": "object",
+			"properties": {
+				"track": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/LastFM.Track"
+					}
+				},
+				"artist": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"artist",
+				"track"
+			]
+		},
+		"LastFM.Result": {
+			"type": "object",
+			"properties": {
+				"similartracks": {
+					"$ref": "#/definitions/LastFM.SimilarTracks"
+				},
+				"toptracks": {
+					"$ref": "#/definitions/LastFM.TopTracks"
+				},
+				"artist": {
+					"$ref": "#/definitions/LastFM.Artist"
+				},
+				"album": {
+					"$ref": "#/definitions/LastFM.Album"
+				},
+				"track": {
+					"$ref": "#/definitions/LastFM.Track"
+				}
+			}
+		},
 		"MusicBrainz.Rating": {
 			"type": "object",
 			"properties": {
@@ -1173,3422 +4589,6 @@
 				},
 				"created": {
 					"type": "string"
-				}
-			}
-		},
-		"LastFM.Tag": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"url": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"name",
-				"url"
-			]
-		},
-		"LastFM.ArtistInfo": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"mbid": {
-					"type": "string"
-				},
-				"url": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"mbid",
-				"name",
-				"url"
-			]
-		},
-		"LastFM.Image": {
-			"type": "object",
-			"properties": {
-				"url": {
-					"type": "string"
-				},
-				"size": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"size",
-				"url"
-			]
-		},
-		"LastFM.Track": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"url": {
-					"type": "string"
-				},
-				"duration": {
-					"type": "string"
-				},
-				"playcount": {
-					"type": "string"
-				},
-				"mbid": {
-					"type": "string"
-				},
-				"match": {
-					"type": "string"
-				},
-				"rank": {
-					"type": "string"
-				},
-				"streamable": {
-					"$ref": "#/definitions/LastFM.Streamable"
-				},
-				"artist": {
-					"$ref": "#/definitions/LastFM.ArtistInfo"
-				},
-				"image": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Image"
-					}
-				}
-			},
-			"required": [
-				"artist",
-				"duration",
-				"image",
-				"match",
-				"mbid",
-				"name",
-				"playcount",
-				"rank",
-				"streamable",
-				"url"
-			]
-		},
-		"LastFM.Wiki": {
-			"type": "object",
-			"properties": {
-				"published": {
-					"type": "string"
-				},
-				"summary": {
-					"type": "string"
-				},
-				"content": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"content",
-				"published",
-				"summary"
-			]
-		},
-		"LastFM.Album": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"artist": {
-					"type": "string"
-				},
-				"mbid": {
-					"type": "string"
-				},
-				"url": {
-					"type": "string"
-				},
-				"image": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Image"
-					}
-				},
-				"listeners": {
-					"type": "string"
-				},
-				"playcount": {
-					"type": "string"
-				},
-				"tracks": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Track"
-					}
-				},
-				"tags": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Tag"
-					}
-				},
-				"wiki": {
-					"$ref": "#/definitions/LastFM.Wiki"
-				}
-			},
-			"required": [
-				"artist",
-				"image",
-				"listeners",
-				"mbid",
-				"name",
-				"playcount",
-				"tracks",
-				"url"
-			]
-		},
-		"LastFM.Streamable": {
-			"type": "object",
-			"properties": {
-				"sample": {
-					"type": "string"
-				},
-				"fulltrack": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"fulltrack",
-				"sample"
-			]
-		},
-		"LastFM.TopTrack": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"mbid": {
-					"type": "string"
-				},
-				"url": {
-					"type": "string"
-				},
-				"streamable": {
-					"type": "string"
-				},
-				"playcount": {
-					"type": "number"
-				},
-				"listeners": {
-					"type": "number"
-				},
-				"image": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Image"
-					}
-				},
-				"artist": {
-					"$ref": "#/definitions/LastFM.ArtistInfo"
-				},
-				"rank": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"artist",
-				"image",
-				"listeners",
-				"mbid",
-				"name",
-				"playcount",
-				"rank",
-				"streamable",
-				"url"
-			]
-		},
-		"LastFM.Link": {
-			"type": "object",
-			"properties": {
-				"url": {
-					"type": "string"
-				},
-				"rel": {
-					"type": "string"
-				},
-				"href": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"href",
-				"rel",
-				"url"
-			]
-		},
-		"LastFM.Biography": {
-			"type": "object",
-			"properties": {
-				"published": {
-					"type": "string"
-				},
-				"summary": {
-					"type": "string"
-				},
-				"content": {
-					"type": "string"
-				},
-				"links": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Link"
-					}
-				}
-			},
-			"required": [
-				"content",
-				"published",
-				"summary"
-			]
-		},
-		"LastFM.Stats": {
-			"type": "object",
-			"properties": {
-				"listeners": {
-					"type": "string"
-				},
-				"playcount": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"listeners",
-				"playcount"
-			]
-		},
-		"LastFM.Artist": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"mbid": {
-					"type": "string"
-				},
-				"url": {
-					"type": "string"
-				},
-				"image": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Image"
-					}
-				},
-				"streamable": {
-					"type": "string"
-				},
-				"ontour": {
-					"type": "string"
-				},
-				"stats": {
-					"$ref": "#/definitions/LastFM.Stats"
-				},
-				"tags": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Tag"
-					}
-				},
-				"bio": {
-					"$ref": "#/definitions/LastFM.Biography"
-				},
-				"similar": {
-					"$ref": "#/definitions/LastFM.SimilarArtists"
-				}
-			},
-			"required": [
-				"image",
-				"mbid",
-				"name",
-				"ontour",
-				"streamable",
-				"tags",
-				"url"
-			]
-		},
-		"LastFM.SimilarArtist": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"mbid": {
-					"type": "string"
-				},
-				"url": {
-					"type": "string"
-				},
-				"image": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Image"
-					}
-				}
-			},
-			"required": [
-				"image",
-				"mbid",
-				"name",
-				"url"
-			]
-		},
-		"LastFM.SimilarArtists": {
-			"type": "object",
-			"properties": {
-				"artist": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.SimilarArtist"
-					}
-				}
-			}
-		},
-		"LastFM.TopTracks": {
-			"type": "object",
-			"properties": {
-				"track": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.TopTrack"
-					}
-				},
-				"artist": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"artist",
-				"track"
-			]
-		},
-		"LastFM.SimilarTracks": {
-			"type": "object",
-			"properties": {
-				"track": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/LastFM.Track"
-					}
-				},
-				"artist": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"artist",
-				"track"
-			]
-		},
-		"LastFM.Result": {
-			"type": "object",
-			"properties": {
-				"similartracks": {
-					"$ref": "#/definitions/LastFM.SimilarTracks"
-				},
-				"toptracks": {
-					"$ref": "#/definitions/LastFM.TopTracks"
-				},
-				"artist": {
-					"$ref": "#/definitions/LastFM.Artist"
-				},
-				"album": {
-					"$ref": "#/definitions/LastFM.Album"
-				},
-				"track": {
-					"$ref": "#/definitions/LastFM.Track"
-				}
-			}
-		},
-		"Acoustid.Artist": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"type": "string"
-				},
-				"name": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"id",
-				"name"
-			]
-		},
-		"Acoustid.Track": {
-			"type": "object",
-			"properties": {
-				"position": {
-					"type": "number"
-				},
-				"artists": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Artist"
-					}
-				},
-				"id": {
-					"type": "string"
-				},
-				"title": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"artists",
-				"id",
-				"position",
-				"title"
-			]
-		},
-		"Acoustid.Medium": {
-			"type": "object",
-			"properties": {
-				"position": {
-					"type": "number"
-				},
-				"tracks": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Track"
-					}
-				},
-				"track_count": {
-					"type": "number"
-				},
-				"format": {
-					"type": "string"
-				},
-				"title": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"format",
-				"position",
-				"title",
-				"track_count",
-				"tracks"
-			]
-		},
-		"Acoustid.AcousticDate": {
-			"type": "object",
-			"properties": {
-				"month": {
-					"type": "number"
-				},
-				"year": {
-					"type": "number"
-				},
-				"day": {
-					"type": "number"
-				}
-			},
-			"required": [
-				"month",
-				"year"
-			]
-		},
-		"Acoustid.Releaseevent": {
-			"type": "object",
-			"properties": {
-				"date": {
-					"$ref": "#/definitions/Acoustid.AcousticDate"
-				},
-				"country": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"country",
-				"date"
-			]
-		},
-		"Acoustid.Release": {
-			"type": "object",
-			"properties": {
-				"mediums": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Medium"
-					}
-				},
-				"id": {
-					"type": "string"
-				},
-				"track_count": {
-					"type": "number"
-				},
-				"medium_count": {
-					"type": "number"
-				},
-				"releaseevents": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Releaseevent"
-					}
-				},
-				"country": {
-					"type": "string"
-				},
-				"date": {
-					"$ref": "#/definitions/Acoustid.AcousticDate"
-				},
-				"title": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"country",
-				"date",
-				"id",
-				"medium_count",
-				"mediums",
-				"releaseevents",
-				"title",
-				"track_count"
-			]
-		},
-		"Acoustid.Releasegroup": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"type": "string"
-				},
-				"releases": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Release"
-					}
-				},
-				"title": {
-					"type": "string"
-				},
-				"secondarytypes": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"type": {
-					"type": "string"
-				},
-				"artists": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Artist"
-					}
-				}
-			},
-			"required": [
-				"artists",
-				"id",
-				"releases",
-				"secondarytypes",
-				"title",
-				"type"
-			]
-		},
-		"Acoustid.Recording": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"type": "string"
-				},
-				"sources": {
-					"type": "number"
-				},
-				"artists": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Artist"
-					}
-				},
-				"duration": {
-					"type": "number"
-				},
-				"releasegroups": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Releasegroup"
-					}
-				},
-				"title": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"artists",
-				"duration",
-				"id",
-				"releasegroups",
-				"sources",
-				"title"
-			]
-		},
-		"Acoustid.Result": {
-			"type": "object",
-			"properties": {
-				"recordings": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Recording"
-					}
-				},
-				"score": {
-					"type": "number"
-				},
-				"id": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"id",
-				"recordings",
-				"score"
-			]
-		},
-		"Acoustid.Results": {
-			"type": "object",
-			"properties": {
-				"status": {
-					"type": "string"
-				},
-				"results": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Acoustid.Result"
-					}
-				}
-			},
-			"required": [
-				"results",
-				"status"
-			]
-		},
-		"AcousticBrainz.Response": {
-			"type": "object",
-			"properties": {
-				"highlevel": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevel"
-				},
-				"metadata": {
-					"$ref": "#/definitions/AcousticBrainz.MetaData"
-				}
-			}
-		},
-		"AcousticBrainz.HighLevelSection": {
-			"type": "object",
-			"properties": {
-				"all": {
-					"type": "object",
-					"additionalProperties": {
-						"type": "number"
-					}
-				},
-				"probability": {
-					"type": "number"
-				},
-				"value": {
-					"type": "string"
-				},
-				"version": {
-					"$ref": "#/definitions/AcousticBrainz.Version"
-				}
-			},
-			"required": [
-				"all",
-				"probability",
-				"value",
-				"version"
-			]
-		},
-		"AcousticBrainz.Version": {
-			"type": "object",
-			"properties": {
-				"essentia": {
-					"type": "string"
-				},
-				"essentia_build_sha": {
-					"type": "string"
-				},
-				"essentia_git_sha": {
-					"type": "string"
-				},
-				"extractor": {
-					"type": "string"
-				},
-				"gaia": {
-					"type": "string"
-				},
-				"gaia_git_sha": {
-					"type": "string"
-				},
-				"models_essentia_git_sha": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"essentia",
-				"essentia_build_sha",
-				"essentia_git_sha",
-				"extractor",
-				"gaia",
-				"gaia_git_sha",
-				"models_essentia_git_sha"
-			]
-		},
-		"AcousticBrainz.HighLevel": {
-			"type": "object",
-			"properties": {
-				"danceability": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"gender": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"genre_dortmund": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"genre_electronic": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"genre_rosamerica": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"genre_tzanetakis": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"ismir04_rhythm": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"mood_acoustic": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"mood_aggressive": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"mood_electronic": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"mood_happy": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"mood_party": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"mood_relaxed": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"mood_sad": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"moods_mirex": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"timbre": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"tonal_atonal": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				},
-				"voice_instrumental": {
-					"$ref": "#/definitions/AcousticBrainz.HighLevelSection"
-				}
-			}
-		},
-		"AcousticBrainz.MetaData": {
-			"type": "object",
-			"properties": {
-				"audio_properties": {
-					"type": "object",
-					"properties": {
-						"analysis_sample_rate": {
-							"type": "number"
-						},
-						"bit_rate": {
-							"type": "number"
-						},
-						"codec": {
-							"type": "string"
-						},
-						"downmix": {
-							"type": "string"
-						},
-						"equal_loudness": {
-							"type": "number"
-						},
-						"length": {
-							"type": "number"
-						},
-						"lossless": {
-							"type": "number"
-						},
-						"md5_encoded": {
-							"type": "string"
-						},
-						"replay_gain": {
-							"type": "number"
-						}
-					},
-					"required": [
-						"analysis_sample_rate",
-						"bit_rate",
-						"codec",
-						"downmix",
-						"equal_loudness",
-						"length",
-						"lossless",
-						"md5_encoded",
-						"replay_gain"
-					]
-				},
-				"tags": {
-					"type": "object",
-					"properties": {
-						"acoustid_id": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"album": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"albumartist": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"albumartistsort": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"artist": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"artists": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"artistsort": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"asin": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"barcode": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"catalognumber": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"composer": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"composersort": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"date": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"discnumber": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"discsubtitle": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"disctotal": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"engineer": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"file_name": {
-							"type": "string"
-						},
-						"isrc": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"label": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"language": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"lyricist": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"media": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"mixer": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"musicbrainz_albumartistid": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"musicbrainz_albumid": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"musicbrainz_artistid": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"musicbrainz_recordingid": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"musicbrainz_releasegroupid": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"musicbrainz_releasetrackid": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"musicbrainz_workid": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"originaldate": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"performer": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"producer": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"releasecountry": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"releasestatus": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"releasetype": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"script": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"title": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"totaldiscs": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"totaltracks": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"tracknumber": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"tracktotal": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						},
-						"work": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						}
-					},
-					"required": [
-						"acoustid_id",
-						"album",
-						"albumartist",
-						"albumartistsort",
-						"artist",
-						"artists",
-						"artistsort",
-						"asin",
-						"barcode",
-						"catalognumber",
-						"composer",
-						"composersort",
-						"date",
-						"discnumber",
-						"discsubtitle",
-						"disctotal",
-						"engineer",
-						"file_name",
-						"isrc",
-						"label",
-						"language",
-						"lyricist",
-						"media",
-						"mixer",
-						"musicbrainz_albumartistid",
-						"musicbrainz_albumid",
-						"musicbrainz_artistid",
-						"musicbrainz_recordingid",
-						"musicbrainz_releasegroupid",
-						"musicbrainz_releasetrackid",
-						"musicbrainz_workid",
-						"originaldate",
-						"performer",
-						"producer",
-						"releasecountry",
-						"releasestatus",
-						"releasetype",
-						"script",
-						"title",
-						"totaldiscs",
-						"totaltracks",
-						"tracknumber",
-						"tracktotal",
-						"work"
-					]
-				},
-				"version": {
-					"type": "object",
-					"properties": {
-						"highlevel": {
-							"$ref": "#/definitions/AcousticBrainz.Version"
-						},
-						"lowlevel": {
-							"$ref": "#/definitions/AcousticBrainz.Version"
-						}
-					},
-					"required": [
-						"highlevel",
-						"lowlevel"
-					]
-				}
-			},
-			"required": [
-				"audio_properties",
-				"tags",
-				"version"
-			]
-		},
-		"CoverArtArchive.Response": {
-			"type": "object",
-			"properties": {
-				"images": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/CoverArtArchive.Image"
-					}
-				},
-				"release": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"images"
-			]
-		},
-		"CoverArtArchive.ImageTypes": {
-			"enum": [
-				"Back",
-				"Booklet",
-				"Front",
-				"Liner",
-				"Medium",
-				"Obi",
-				"Other",
-				"Poster",
-				"Raw",
-				"Spine",
-				"Sticker",
-				"Track",
-				"Tray",
-				"Unedited",
-				"Watermark"
-			],
-			"type": "string"
-		},
-		"CoverArtArchive.Image": {
-			"type": "object",
-			"properties": {
-				"types": {
-					"type": "array",
-					"items": {
-						"enum": [
-							"Back",
-							"Booklet",
-							"Front",
-							"Liner",
-							"Medium",
-							"Obi",
-							"Other",
-							"Poster",
-							"Raw",
-							"Spine",
-							"Sticker",
-							"Track",
-							"Tray",
-							"Unedited",
-							"Watermark"
-						],
-						"type": "string"
-					}
-				},
-				"front": {
-					"type": "boolean"
-				},
-				"back": {
-					"type": "boolean"
-				},
-				"edit": {
-					"type": "number"
-				},
-				"image": {
-					"type": "string"
-				},
-				"comment": {
-					"type": "string"
-				},
-				"approved": {
-					"type": "boolean"
-				},
-				"id": {
-					"type": "string"
-				},
-				"thumbnails": {
-					"type": "object",
-					"properties": {
-						"250": {
-							"type": "string"
-						},
-						"500": {
-							"type": "string"
-						},
-						"1200": {
-							"type": "string"
-						},
-						"small": {
-							"type": "string"
-						},
-						"large": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"1200",
-						"250",
-						"500",
-						"large",
-						"small"
-					]
-				}
-			},
-			"required": [
-				"approved",
-				"back",
-				"comment",
-				"edit",
-				"front",
-				"id",
-				"image",
-				"thumbnails",
-				"types"
-			]
-		},
-		"ID3v2Frames.Frame": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"type": "string"
-				},
-				"value": {
-					"type": "object",
-					"properties": {}
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.IdAscii": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"text": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"id",
-						"text"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.LangDescText": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"language": {
-							"type": "string"
-						},
-						"id": {
-							"type": "string"
-						},
-						"text": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"id",
-						"language",
-						"text"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Pic": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"description": {
-							"type": "string"
-						},
-						"pictureType": {
-							"type": "number"
-						},
-						"url": {
-							"type": "string"
-						},
-						"bin": {
-							"type": "string"
-						},
-						"mimeType": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"description",
-						"pictureType"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Bin": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"bin": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"bin"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Number": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"num": {
-							"type": "number"
-						}
-					},
-					"required": [
-						"num"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.RVA": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"right": {
-							"type": "number"
-						},
-						"left": {
-							"type": "number"
-						},
-						"peakRight": {
-							"type": "number"
-						},
-						"peakLeft": {
-							"type": "number"
-						},
-						"rightBack": {
-							"type": "number"
-						},
-						"leftBack": {
-							"type": "number"
-						},
-						"peakRightBack": {
-							"type": "number"
-						},
-						"peakLeftBack": {
-							"type": "number"
-						},
-						"center": {
-							"type": "number"
-						},
-						"peakCenter": {
-							"type": "number"
-						},
-						"bass": {
-							"type": "number"
-						},
-						"peakBass": {
-							"type": "number"
-						}
-					},
-					"required": [
-						"left",
-						"right"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.RVA2Channel": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"type": {
-							"type": "number"
-						},
-						"adjustment": {
-							"type": "number"
-						},
-						"peak": {
-							"type": "number"
-						}
-					},
-					"required": [
-						"adjustment",
-						"type"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.RVA2": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"channels": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/ID3v2Frames.RVA2Channel"
-							}
-						}
-					},
-					"required": [
-						"channels",
-						"id"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Popularimeter": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"rating": {
-							"type": "number"
-						},
-						"count": {
-							"type": "number"
-						},
-						"email": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"count",
-						"email",
-						"rating"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Bool": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"bool": {
-							"type": "boolean"
-						}
-					},
-					"required": [
-						"bool"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.AudioEncryption": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"previewStart": {
-							"type": "number"
-						},
-						"previewLength": {
-							"type": "number"
-						},
-						"bin": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"bin",
-						"id",
-						"previewLength",
-						"previewStart"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Link": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"url": {
-							"type": "string"
-						},
-						"id": {
-							"type": "string"
-						},
-						"additional": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						}
-					},
-					"required": [
-						"additional",
-						"id",
-						"url"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.EventTimingCodes": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"format": {
-							"type": "number"
-						},
-						"events": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/ID3v2Frames.EventTimingCodesEvent"
-							}
-						}
-					},
-					"required": [
-						"events",
-						"format"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.EventTimingCodesEvent": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"type": {
-							"type": "number"
-						},
-						"timestamp": {
-							"type": "number"
-						}
-					},
-					"required": [
-						"timestamp",
-						"type"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.SynchronisedLyrics": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"language": {
-							"type": "string"
-						},
-						"timestampFormat": {
-							"type": "number"
-						},
-						"contentType": {
-							"type": "number"
-						},
-						"events": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/ID3v2Frames.SynchronisedLyricsEvent"
-							}
-						}
-					},
-					"required": [
-						"contentType",
-						"events",
-						"id",
-						"language",
-						"timestampFormat"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.SynchronisedLyricsEvent": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"timestamp": {
-							"type": "number"
-						},
-						"text": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"text",
-						"timestamp"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.GEOB": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"filename": {
-							"type": "string"
-						},
-						"mimeType": {
-							"type": "string"
-						},
-						"contentDescription": {
-							"type": "string"
-						},
-						"bin": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"bin",
-						"contentDescription",
-						"filename",
-						"mimeType"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.ReplayGainAdjustment": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"peak": {
-							"type": "number"
-						},
-						"radioAdjustment": {
-							"type": "number"
-						},
-						"audiophileAdjustment": {
-							"type": "number"
-						}
-					},
-					"required": [
-						"audiophileAdjustment",
-						"peak",
-						"radioAdjustment"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.ChapterToc": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"ordered": {
-							"type": "boolean"
-						},
-						"topLevel": {
-							"type": "boolean"
-						},
-						"children": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						}
-					},
-					"required": [
-						"children",
-						"id",
-						"ordered",
-						"topLevel"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Chapter": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"start": {
-							"type": "number"
-						},
-						"end": {
-							"type": "number"
-						},
-						"offset": {
-							"type": "number"
-						},
-						"offsetEnd": {
-							"type": "number"
-						}
-					},
-					"required": [
-						"end",
-						"id",
-						"offset",
-						"offsetEnd",
-						"start"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.IdBin": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"bin": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"bin",
-						"id"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.IdText": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"id": {
-							"type": "string"
-						},
-						"text": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"id",
-						"text"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Ascii": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"text": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"text"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Text": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"text": {
-							"type": "string"
-						}
-					},
-					"required": [
-						"text"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.TextList": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "object",
-					"properties": {
-						"list": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						}
-					},
-					"required": [
-						"list"
-					]
-				},
-				"id": {
-					"type": "string"
-				},
-				"subframes": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Frame"
-					}
-				}
-			},
-			"required": [
-				"id",
-				"value"
-			]
-		},
-		"ID3v2Frames.Frames": {
-			"type": "object",
-			"additionalProperties": {
-				"type": "array",
-				"items": {
-					"$ref": "#/definitions/ID3v2Frames.Frame"
-				}
-			},
-			"properties": {
-				"AENC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.AudioEncryption"
-					}
-				},
-				"APIC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Pic"
-					}
-				},
-				"ASPI": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"BUF": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"CDM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"CHAP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Chapter"
-					}
-				},
-				"CM1": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"CNT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Number"
-					}
-				},
-				"COM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.LangDescText"
-					}
-				},
-				"COMM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.LangDescText"
-					}
-				},
-				"COMR": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"CRA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.AudioEncryption"
-					}
-				},
-				"CRM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"CTOC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.ChapterToc"
-					}
-				},
-				"ENCR": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"EQU": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"EQUA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"ETC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.EventTimingCodes"
-					}
-				},
-				"ETCO": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.EventTimingCodes"
-					}
-				},
-				"GEO": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.GEOB"
-					}
-				},
-				"GEOB": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.GEOB"
-					}
-				},
-				"GRID": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"GRP1": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"IPL": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.TextList"
-					}
-				},
-				"IPLS": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.TextList"
-					}
-				},
-				"LINK": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Link"
-					}
-				},
-				"LNK": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Link"
-					}
-				},
-				"MCDI": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"MLL": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"MLLT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"MVNM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"MVIN": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"NCO": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"NCON": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"OWNE": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"PCNT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Number"
-					}
-				},
-				"PCS": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Number"
-					}
-				},
-				"PCST": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Number"
-					}
-				},
-				"PIC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Pic"
-					}
-				},
-				"POP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Popularimeter"
-					}
-				},
-				"POPM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Popularimeter"
-					}
-				},
-				"POSS": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"PRI": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.IdBin"
-					}
-				},
-				"PRIV": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.IdBin"
-					}
-				},
-				"RBUF": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"REV": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"RGAD": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.ReplayGainAdjustment"
-					}
-				},
-				"RVA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.RVA"
-					}
-				},
-				"RVA2": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.RVA2"
-					}
-				},
-				"RVAD": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.RVA"
-					}
-				},
-				"RVRB": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"SEEK": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"SIGN": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"SLT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.SynchronisedLyricsEvent"
-					}
-				},
-				"STC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"SYLT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.SynchronisedLyrics"
-					}
-				},
-				"SYTC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"TAL": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TALB": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TBP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TBPM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TCM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TCMP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bool"
-					}
-				},
-				"TCO": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TCOM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TCON": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TCOP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TCP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bool"
-					}
-				},
-				"TCR": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDAT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDES": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDLY": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDOR": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDR": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDEN": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDRC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDRL": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDS": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDTG": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TDY": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TEN": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TENC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TEXT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TFLT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TGID": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TID": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TIM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TIME": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TIPL": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.TextList"
-					}
-				},
-				"TIT1": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TIT2": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TIT3": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TKE": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TKEY": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TKWD": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"TLA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TLAN": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TLE": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TLEN": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TMCL": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.TextList"
-					}
-				},
-				"TMED": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TMOO": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TMT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOAL": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOF": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOFN": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOL": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOLY": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOPE": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOR": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TORY": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TOWN": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TP1": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TP2": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TP3": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TP4": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TPA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TPB": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TPE1": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TPE2": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TPE3": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TPE4": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TPOS": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TPRO": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TPUB": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TRC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TRCK": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TRD": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TRDA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TRK": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TRSN": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TRSO": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TS2": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSI": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSIZ": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSO2": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSOA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSOC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSOP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSOT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSST": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSRC": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSS": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TSSE": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TST": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TT1": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TT2": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TT3": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TXT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TXX": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.IdText"
-					}
-				},
-				"TXXX": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.IdText"
-					}
-				},
-				"TYE": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"TYER": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"UFI": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.IdAscii"
-					}
-				},
-				"UFID": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.IdAscii"
-					}
-				},
-				"ULT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.LangDescText"
-					}
-				},
-				"USER": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"USLT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.LangDescText"
-					}
-				},
-				"WAF": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WAR": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WAS": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WCM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WCOM": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WCOP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WCP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WFD": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"WFED": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"WOAF": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WOAR": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WOAS": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WORS": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WPAY": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WPB": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WPUB": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Ascii"
-					}
-				},
-				"WXX": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.IdText"
-					}
-				},
-				"WXXX": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.IdText"
-					}
-				},
-				"XDOR": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"XHD3": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Bin"
-					}
-				},
-				"XSOA": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"XSOP": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
-				},
-				"XSOT": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/ID3v2Frames.Text"
-					}
 				}
 			}
 		},

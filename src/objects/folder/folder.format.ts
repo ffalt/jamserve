@@ -1,6 +1,6 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
 import path from 'path';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {ArtworkImageType, cUnknownAlbum, cUnknownArtist, FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import {Artwork, Folder} from './folder.model';
 
@@ -28,7 +28,7 @@ function formatFolderTag(folder: Folder): Jam.FolderTag {
 		releaseID: isAlbum ? folder.tag.mbAlbumID : undefined,
 		releaseGroupID: isAlbum ? folder.tag.mbReleaseGroupID : undefined
 	};
-	if (!Object.keys(mbz).find(key => !!(<any>mbz)[key])) {
+	if (!Object.keys(mbz).find(key => !!(mbz as any)[key])) {
 		mbz = undefined;
 	}
 	return {
@@ -52,7 +52,7 @@ export function formatFolder(folder: Folder, includes: JamParameters.IncludesFol
 		created: folder.stat.created,
 		trackCount: includes.folderCounts ? folder.tag.trackCount : undefined,
 		folderCount: includes.folderCounts ? folder.tag.folderCount : undefined,
-		type: <Jam.FolderType>((folder.tag.type !== undefined) ? (FolderType[folder.tag.type] || 'unknown') : 'unknown'),
+		type: ((folder.tag.type !== undefined) ? (FolderType[folder.tag.type] || 'unknown') : 'unknown') as Jam.FolderType,
 		tag: includes.folderTag ? formatFolderTag(folder) : undefined,
 		artworks: includes.folderArtworks ? formatFolderArtworks(folder) : undefined
 	};
@@ -63,7 +63,7 @@ export function artWorkImageNameToType(name: string): Array<ArtworkImageType> {
 	const types: Array<ArtworkImageType> = [];
 	for (const t in ArtworkImageType) {
 		if (!Number(t) && lname.indexOf(t) >= 0) {
-			types.push(<ArtworkImageType>t);
+			types.push(t as ArtworkImageType);
 		}
 	}
 	if ((types.indexOf(ArtworkImageType.front) < 0) && (lname.indexOf('cover') >= 0 || lname.indexOf('folder') >= 0)) {

@@ -1,6 +1,6 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
 import {JamRequest} from '../../api/jam/api';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {TrackController} from '../track/track.controller';
 import {formatPlayQueue} from './playqueue.format';
 import {PlayQueueService} from './playqueue.service';
@@ -23,12 +23,11 @@ export class PlayQueueController {
 	}
 
 	async update(req: JamRequest<JamParameters.PlayQueueSet>): Promise<Jam.PlayQueue> {
-		return await this.playqueueService.save(req.user.id, req.query.trackIDs, req.query.currentID, req.query.position, req.client);
+		return this.playqueueService.save(req.user.id, req.query.trackIDs, req.query.currentID, req.query.position, req.client);
 	}
 
 	async delete(req: JamRequest<{}>): Promise<void> {
 		await this.playqueueService.remove(req.user.id);
 	}
-
 
 }

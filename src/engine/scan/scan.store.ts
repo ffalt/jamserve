@@ -1,6 +1,6 @@
 import Logger from '../../utils/logger';
-import {MergeChanges} from './scan.changes';
 import {Store} from '../store/store';
+import {MergeChanges} from './scan.changes';
 
 const log = Logger('IO.ScanStore');
 

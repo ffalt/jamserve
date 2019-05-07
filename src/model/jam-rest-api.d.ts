@@ -1472,4 +1472,3 @@ export interface JamApi {
 
 	};
 }
-

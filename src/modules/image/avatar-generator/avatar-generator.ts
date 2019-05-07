@@ -1,4 +1,4 @@
-/*
+/***
  * avatar-generator
  * https://github.com/arusanov/avatar-generator
  *
@@ -8,10 +8,10 @@
 
 /* This is included because jamserve uses a newer version of sharp */
 
-import path from 'path';
 import fs from 'fs';
-import sharp from 'sharp';
+import path from 'path';
 import seedrandom from 'seedrandom';
+import sharp from 'sharp';
 
 export type AvatarPart =
 	| 'background'
@@ -28,40 +28,36 @@ export interface AvatarGenearatorSettings {
 	partsLocation: string;
 }
 
-const defaultSettings: AvatarGenearatorSettings = {
+export const defaultAvatarSettings: AvatarGenearatorSettings = {
 	parts: ['background', 'face', 'clothes', 'head', 'hair', 'eye', 'mouth'],
 	partsLocation: path.join(__dirname),
 	imageExtension: '.png'
 };
 
-type PartsMap = { [key in AvatarPart]: string[] };
+type PartsMap = { [key in AvatarPart]: Array<string> };
 
 interface VariantsMap {
 	[key: string]: PartsMap;
 }
 
-class AvatarGenerator {
+export class AvatarGenerator {
 	private _variants: VariantsMap;
 	private _parts: Array<AvatarPart>;
 
 	constructor(settings: Partial<AvatarGenearatorSettings> = {}) {
 		const cfg = {
-			...defaultSettings,
+			...defaultAvatarSettings,
 			...settings
 		};
 		this._variants = AvatarGenerator.BuildVariantsMap(cfg);
 		this._parts = cfg.parts;
 	}
 
-	get variants() {
+	get variants(): Array<string> {
 		return Object.keys(this._variants);
 	}
 
-	private static BuildVariantsMap({
-										parts,
-										partsLocation,
-										imageExtension
-									}: AvatarGenearatorSettings) {
+	private static BuildVariantsMap({parts, partsLocation, imageExtension}: AvatarGenearatorSettings): VariantsMap {
 		const fileRegex = new RegExp(`(${parts.join('|')})(\\d+)${imageExtension}`);
 		const discriminators = fs
 			.readdirSync(partsLocation)
@@ -72,7 +68,7 @@ class AvatarGenerator {
 		return discriminators.reduce(
 			(variants, discriminator) => {
 				const dir = path.join(partsLocation, discriminator);
-				variants[discriminator] = fs.readdirSync(dir).reduce((ps, fileName) => {
+				variants[discriminator] = fs.readdirSync(dir).reduce((ps: PartsMap, fileName: string) => {
 						const match = fileRegex.exec(fileName);
 						if (match) {
 							const part = match[1] as AvatarPart;
@@ -83,15 +79,17 @@ class AvatarGenerator {
 						}
 						return ps;
 					},
+					// tslint:disable-next-line:no-object-literal-type-assertion
 					{} as PartsMap
 				);
 				return variants;
 			},
+			// tslint:disable-next-line:no-object-literal-type-assertion
 			{} as VariantsMap
 		);
 	}
 
-	private getParts(id: string, variant: string) {
+	private getParts(id: string, variant: string): Array<string> {
 		const variantParts = this._variants[variant];
 		if (!variantParts) {
 			throw new Error(
@@ -125,8 +123,8 @@ class AvatarGenerator {
 		}
 		const options = {
 			raw: {
-				width: width,
-				height: height,
+				width,
+				height,
 				channels: 4 as 4
 			}
 		};
@@ -134,26 +132,9 @@ class AvatarGenerator {
 		if (!composite) {
 			throw new Error(`variant '${variant}'does not contain any parts`);
 		}
-		return await sharp(composite, options)
+		return sharp(composite, options)
 			.composite(parts.map(p => {
 				return {input: p};
 			}));
 	}
 }
-
-export class AvatarGen {
-	avatar: AvatarGenerator;
-
-	constructor(avatarPartsLocation?: string) {
-		if (avatarPartsLocation) {
-			defaultSettings.partsLocation = avatarPartsLocation;
-		}
-		this.avatar = new AvatarGenerator(defaultSettings);
-	}
-
-	public async generate(id: string): Promise<Buffer> {
-		const image = await this.avatar.generate(id, 'parts');
-		return await image.png().toBuffer();
-	}
-}
-

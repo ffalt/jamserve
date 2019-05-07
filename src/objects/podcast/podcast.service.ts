@@ -1,19 +1,19 @@
-import {Feed} from '../../utils/feed';
-import Logger from '../../utils/logger';
-import {PodcastStatus} from '../../model/jam-types';
-import {Podcast} from './podcast.model';
-import {Episode} from '../episode/episode.model';
-import {PodcastStore, SearchQueryPodcast} from './podcast.store';
-import {EpisodeService} from '../episode/episode.service';
-import {DebouncePromises} from '../../utils/debounce-promises';
-import {BaseListService} from '../base/base.list.service';
-import {StateService} from '../state/state.service';
-import {DBObjectType} from '../../db/db.types';
-import path from 'path';
 import fse from 'fs-extra';
+import path from 'path';
+import {DBObjectType} from '../../db/db.types';
+import {PodcastStatus} from '../../model/jam-types';
 import {ImageModule} from '../../modules/image/image.module';
+import {ApiBinaryResult} from '../../typings';
+import {DebouncePromises} from '../../utils/debounce-promises';
+import {Feed} from '../../utils/feed';
 import {pathDeleteIfExists} from '../../utils/fs-utils';
-import {IApiBinaryResult} from '../../typings';
+import Logger from '../../utils/logger';
+import {BaseListService} from '../base/base.list.service';
+import {Episode} from '../episode/episode.model';
+import {EpisodeService} from '../episode/episode.service';
+import {StateService} from '../state/state.service';
+import {Podcast} from './podcast.model';
+import {PodcastStore, SearchQueryPodcast} from './podcast.store';
 
 const log = Logger('PodcastService');
 
@@ -34,7 +34,7 @@ export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast>
 			type: DBObjectType.podcast,
 			created: Date.now(),
 			lastCheck: 0,
-			url: url,
+			url,
 			status: PodcastStatus.new
 		};
 		podcast.id = await this.podcastStore.add(podcast);
@@ -102,7 +102,7 @@ export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast>
 		log.info('Refreshed');
 	}
 
-	async getPodcastImage(podcast: Podcast, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+	async getPodcastImage(podcast: Podcast, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (podcast.image) {
 			return this.imageModule.get(podcast.id, path.join(this.podcastsPath, podcast.id, podcast.image), size, format);
 		}

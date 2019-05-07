@@ -1,6 +1,6 @@
-import {Folder} from '../../objects/folder/folder.model';
-import {Artist} from '../../objects/artist/artist.model';
 import {Album} from '../../objects/album/album.model';
+import {Artist} from '../../objects/artist/artist.model';
+import {Folder} from '../../objects/folder/folder.model';
 
 export interface FolderIndexEntry {
 	name: string;

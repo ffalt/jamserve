@@ -1,25 +1,24 @@
+import path from 'path';
+import {DBObjectType} from '../../db/db.types';
+import {Jam} from '../../model/jam-rest-data';
+import {ArtworkImageType, FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
+import {AudioModule} from '../../modules/audio/audio.module';
+import {artWorkImageNameToType} from '../../objects/folder/folder.format';
 import {Artwork, Folder, FolderTag} from '../../objects/folder/folder.model';
 import {Track, TrackTag} from '../../objects/track/track.model';
-import {ArtworkImageType, FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
-import path from 'path';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
-import {DBObjectType} from '../../db/db.types';
-import {MatchDir, MatchFile} from './scan.match-dir';
 import Logger from '../../utils/logger';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {folderHasChanged, generateArtworkId, splitDirectoryName, trackHasChanged} from './scan.utils';
-import {MergeChanges} from './scan.changes';
 import {Store} from '../store/store';
+import {MergeChanges} from './scan.changes';
+import {MatchDir, MatchFile} from './scan.match-dir';
 import {buildMetaStat} from './scan.metastats';
-import {artWorkImageNameToType} from '../../objects/folder/folder.format';
-import {Jam} from '../../model/jam-rest-data';
+import {folderHasChanged, generateArtworkId, splitDirectoryName, trackHasChanged} from './scan.utils';
 
 const log = Logger('IO.Merge');
 
 export class ScanMerger {
 
 	constructor(private  audioModule: AudioModule, private store: Store, private settings: Jam.AdminSettingsLibrary, private strategy: RootScanStrategy) {
-
 	}
 
 	private buildDefaultTag(dir: MatchDir): FolderTag {
@@ -27,7 +26,7 @@ export class ScanMerger {
 			level: dir.level,
 			type: FolderType.unknown,
 			trackCount: dir.files.filter(t => t.type === FileTyp.AUDIO).length,
-			folderCount: dir.directories.length,
+			folderCount: dir.directories.length
 		};
 	}
 
@@ -163,7 +162,7 @@ export class ScanMerger {
 		};
 	}
 
-	private markMultiAlbumChilds(dir: MatchDir) {
+	private markMultiAlbumChilds(dir: MatchDir): void {
 		if (dir.tag && dir.tag.type !== FolderType.extras) {
 			this.setTagType(dir.tag, FolderType.multialbum);
 		}
@@ -176,7 +175,7 @@ export class ScanMerger {
 		});
 	}
 
-	private markArtistChilds(dir: MatchDir) {
+	private markArtistChilds(dir: MatchDir): void {
 		if (dir.tag && dir.tag.type === FolderType.artist) {
 			this.setTagType(dir.tag, FolderType.collection);
 		}
@@ -185,7 +184,7 @@ export class ScanMerger {
 		});
 	}
 
-	private setTagType(tag: FolderTag, type: FolderType) {
+	private setTagType(tag: FolderTag, type: FolderType): void {
 		tag.type = type;
 		switch (type) {
 			case FolderType.collection:
@@ -199,7 +198,7 @@ export class ScanMerger {
 				tag.artistSort = undefined;
 				tag.album = undefined;
 				tag.year = undefined;
-				return;
+				break;
 			case FolderType.artist:
 				tag.albumType = undefined;
 				tag.genre = undefined;
@@ -208,7 +207,7 @@ export class ScanMerger {
 				tag.mbReleaseGroupID = undefined;
 				tag.album = undefined;
 				tag.year = undefined;
-				return;
+				break;
 		}
 	}
 
@@ -226,7 +225,7 @@ export class ScanMerger {
 		});
 	}
 
-	private applyFolderTagType(dir: MatchDir) {
+	private applyFolderTagType(dir: MatchDir): void {
 		if (!dir.tag || !dir.metaStat) {
 			return;
 		}
@@ -235,16 +234,12 @@ export class ScanMerger {
 		let result: FolderType = FolderType.unknown;
 		if (dir.level === 0) {
 			result = FolderType.collection;
-		} else if (name.match(/\[(extra|various)\]/) || name.match(/^(extra|various)$/)) {
+		} else if (name.match(/\[(extra|various)]/) || name.match(/^(extra|various)$/)) {
 			// TODO: generalise extra folder detection
 			result = FolderType.extras;
 		} else if (metaStat.trackCount > 0) {
 			const dirCount = dir.directories.filter(d => !!d.tag && d.tag.type !== FolderType.extras).length;
-			if (dirCount === 0) {
-				result = FolderType.album;
-			} else {
-				result = FolderType.multialbum;
-			}
+			result = (dirCount === 0) ? FolderType.album : FolderType.multialbum;
 		} else if (dir.directories.length > 0) {
 			if (metaStat.hasMultipleAlbums) {
 				if (metaStat.hasMultipleArtists) {
@@ -255,11 +250,7 @@ export class ScanMerger {
 					result = FolderType.artist;
 				}
 			} else if (dir.directories.length === 1) {
-				if (this.strategy === RootScanStrategy.compilation) {
-					result = FolderType.collection;
-				} else {
-					result = FolderType.artist;
-				}
+				result = (this.strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
 			} else if (!metaStat.hasMultipleArtists && dir.directories.filter(d => d.tag && d.tag.type === FolderType.artist).length > 0) {
 				result = FolderType.artist;
 			} else {

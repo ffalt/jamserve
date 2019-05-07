@@ -1,14 +1,14 @@
-import Logger from '../../utils/logger';
-import {MergeChanges} from './scan.changes';
-import {Album} from '../../objects/album/album.model';
-import {AlbumType, cUnknownAlbum, cUnknownArtist, MusicBrainz_VARIOUS_ARTISTS_ID, MusicBrainz_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
-import {Track} from '../../objects/track/track.model';
-import {Artist} from '../../objects/artist/artist.model';
-import {Store} from '../store/store';
 import {DBObjectType} from '../../db/db.types';
-import {extractAlbumName, slugify} from './scan.utils';
-import {MetaStatBuilder} from './scan.metastats';
+import {AlbumType, cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
+import {Album} from '../../objects/album/album.model';
+import {Artist} from '../../objects/artist/artist.model';
 import {Folder} from '../../objects/folder/folder.model';
+import {Track} from '../../objects/track/track.model';
+import Logger from '../../utils/logger';
+import {Store} from '../store/store';
+import {MergeChanges} from './scan.changes';
+import {MetaStatBuilder} from './scan.metastats';
+import {extractAlbumName, slugify} from './scan.utils';
 
 const log = Logger('IO.MetaMerge');
 
@@ -71,7 +71,7 @@ export class ScanMetaMerger {
 			name: getAlbumName(trackInfo),
 			albumType: trackInfo.parent && trackInfo.parent.tag && trackInfo.parent.tag.albumType !== undefined ? trackInfo.parent.tag.albumType : AlbumType.unknown,
 			artist: trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist || cUnknownArtist,
-			artistID: artistID,
+			artistID,
 			mbArtistID: trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID,
 			mbAlbumID: trackInfo.track.tag.mbAlbumID,
 			genre: trackInfo.track.tag.genre,
@@ -183,11 +183,11 @@ export class ScanMetaMerger {
 	}
 
 	private async findCompilationArtist(changes: MergeChanges): Promise<Artist | undefined> {
-		const artistCache = await this.artistCache.find(a => a.artist.mbArtistID === MusicBrainz_VARIOUS_ARTISTS_ID);
+		const artistCache = await this.artistCache.find(a => a.artist.mbArtistID === MUSICBRAINZ_VARIOUS_ARTISTS_ID);
 		if (artistCache) {
 			return artistCache.artist;
 		}
-		const artist = await this.store.artistStore.searchOne({mbArtistID: MusicBrainz_VARIOUS_ARTISTS_ID});
+		const artist = await this.store.artistStore.searchOne({mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID});
 		if (artist) {
 			changes.updateArtists.push(artist);
 			this.artistCache.push({artist, slugs: [artist.slug]});
@@ -202,9 +202,9 @@ export class ScanMetaMerger {
 				id: await this.store.artistStore.getNewId(),
 				type: DBObjectType.artist,
 				rootIDs: [],
-				slug: slugify(MusicBrainz_VARIOUS_ARTISTS_NAME),
-				name: MusicBrainz_VARIOUS_ARTISTS_NAME,
-				mbArtistID: MusicBrainz_VARIOUS_ARTISTS_ID,
+				slug: slugify(MUSICBRAINZ_VARIOUS_ARTISTS_NAME),
+				name: MUSICBRAINZ_VARIOUS_ARTISTS_NAME,
+				mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID,
 				albumTypes: [AlbumType.compilation],
 				folderIDs: [],
 				albumIDs: [],
@@ -226,7 +226,7 @@ export class ScanMetaMerger {
 		artist = await this.findArtistInDB(trackInfo, albumArtist);
 		if (!artist) {
 			const name = (albumArtist ? (trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist) : trackInfo.track.tag.artist) || cUnknownArtist;
-			if (name === MusicBrainz_VARIOUS_ARTISTS_NAME) {
+			if (name === MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
 				return this.findOrCreateCompilationArtist(changes);
 			}
 			artist = await this.buildArtist(trackInfo, albumArtist);
@@ -243,11 +243,9 @@ export class ScanMetaMerger {
 			const artist = await this.findOrCreateArtist(trackInfo, false, changes);
 			trackInfo.track.artistID = artist.id;
 			let albumArtist: Artist;
-			if (trackInfo.parent.tag.artist === MusicBrainz_VARIOUS_ARTISTS_NAME) {
-				albumArtist = await this.findOrCreateCompilationArtist(changes);
-			} else {
-				albumArtist = await this.findOrCreateArtist(trackInfo, true, changes);
-			}
+			albumArtist = (trackInfo.parent.tag.artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME) ?
+				await this.findOrCreateCompilationArtist(changes) :
+				await this.findOrCreateArtist(trackInfo, true, changes);
 			trackInfo.track.albumArtistID = albumArtist.id;
 			const album = await this.findOrCreateAlbum(trackInfo, albumArtist.id, changes);
 			trackInfo.track.albumID = album.id;
@@ -349,7 +347,7 @@ export class ScanMetaMerger {
 			tracksIDs = tracksIDs.filter(t => removedFromAlbum.indexOf(t) < 0);
 			// rest tracksIDs are untouched tracks
 			// get all new and updated tracks which are part of the album
-			const refreshedTracks: Array<MetaMergeTrackInfo> = (<Array<MetaMergeTrackInfo>>updateTracks.filter(t => t.track && t.track.albumID === album.id))
+			const refreshedTracks: Array<MetaMergeTrackInfo> = (updateTracks.filter(t => t.track && t.track.albumID === album.id) as Array<MetaMergeTrackInfo>)
 				.concat(newTracks.filter(t => t.track.albumID === album.id));
 			if (refreshedTracks.length + tracksIDs.length === 0) {
 				if (changes.removedAlbums.indexOf(album) < 0) {
@@ -397,7 +395,7 @@ export class ScanMetaMerger {
 				album.mbAlbumID = metaStatBuilder.mostUsed('mbAlbumID');
 				album.genre = metaStatBuilder.mostUsed('genre');
 				album.year = metaStatBuilder.mostUsedNumber('year');
-				album.albumType = <AlbumType>metaStatBuilder.mostUsed('albumType') || AlbumType.unknown;
+				album.albumType = metaStatBuilder.mostUsed('albumType') as AlbumType || AlbumType.unknown;
 				album.duration = duration;
 				if (changes.newAlbums.indexOf(album) < 0) {
 					changes.updateAlbums.push(album);
@@ -427,7 +425,7 @@ export class ScanMetaMerger {
 			removedFromArtist = updateTracks.filter(t => (t.oldTrack.albumArtistID === artist.id && t.track.albumArtistID !== artist.id)).map(t => t.track.id);
 			tracksIDs = tracksIDs.filter(t => removedFromArtist.indexOf(t) < 0);
 			// get all new and updated tracks which are part of the artist
-			const refreshedTracks: Array<MetaMergeTrackInfo> = (<Array<MetaMergeTrackInfo>>updateTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id))
+			const refreshedTracks: Array<MetaMergeTrackInfo> = (updateTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id) as Array<MetaMergeTrackInfo>)
 				.concat(newTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id));
 			if (refreshedTracks.length + tracksIDs.length === 0) {
 				if (changes.newArtists.indexOf(artist) < 0) {
@@ -463,7 +461,7 @@ export class ScanMetaMerger {
 						artist.trackIDs.push(track.id);
 					}
 				}
-				if (artist.name !== MusicBrainz_VARIOUS_ARTISTS_NAME) {
+				if (artist.name !== MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
 					const artistName = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
 					artist.name = artistName;
 					artist.slug = slugify(artistName);

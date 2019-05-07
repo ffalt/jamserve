@@ -1,16 +1,16 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {SearchQuery} from './base.store';
-import {InvalidParamError, NotFoundError} from '../../api/jam/error';
-import {Jam} from '../../model/jam-rest-data';
-import {IApiBinaryResult} from '../../typings';
 import {JamRequest} from '../../api/jam/api';
+import {InvalidParamError, NotFoundError} from '../../api/jam/error';
+import {DownloadService} from '../../engine/download/download.service';
+import {ImageService} from '../../engine/image/image.service';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {ApiBinaryResult} from '../../typings';
 import {formatState, formatStates} from '../state/state.format';
 import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
-import {DownloadService} from '../../engine/download/download.service';
-import {DBObject} from './base.model';
 import {User} from '../user/user.model';
+import {DBObject} from './base.model';
 import {BaseStoreService} from './base.service';
+import {SearchQuery} from './base.store';
 
 export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLUDE, OBJLISTREQUEST extends JamParameters.IDs | INCLUDE, INCLUDE, JAMQUERY extends SearchQuery, S extends JamParameters.SearchQuery | INCLUDE, DBOBJECT extends DBObject, RESULTOBJ extends { id: string }> {
 
@@ -43,7 +43,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		if (!ids) {
 			return Promise.reject(InvalidParamError());
 		}
-		return await this.service.store.byIds(ids);
+		return this.service.store.byIds(ids);
 	}
 
 	async prepareList(items: Array<DBOBJECT>, includes: INCLUDE, user: User, sort?: (a: DBOBJECT, b: DBOBJECT) => number): Promise<Array<RESULTOBJ>> {
@@ -71,7 +71,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 
 	async prepareByID(id: string, includes: INCLUDE, user: User): Promise<RESULTOBJ> {
 		const o = await this.byID(id);
-		return await this.prepare(o, includes, user);
+		return this.prepare(o, includes, user);
 	}
 
 	async prepareByQuery(query: JAMQUERY, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
@@ -80,12 +80,12 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 	}
 
 	async id(req: JamRequest<OBJREQUEST>): Promise<RESULTOBJ> {
-		return this.prepareByID((<JamParameters.ID>req.query).id, <INCLUDE>req.query, req.user);
+		return this.prepareByID((req.query as JamParameters.ID).id, req.query as INCLUDE, req.user);
 	}
 
 	async ids(req: JamRequest<OBJLISTREQUEST>): Promise<Array<RESULTOBJ>> {
-		const items = await this.byIDs((<JamParameters.IDs>req.query).ids);
-		return this.prepareList(items, <INCLUDE>req.query, req.user);
+		const items = await this.byIDs((req.query as JamParameters.IDs).ids);
+		return this.prepareList(items, req.query as INCLUDE, req.user);
 	}
 
 	async state(req: JamRequest<JamParameters.ID>): Promise<Jam.State> {
@@ -118,17 +118,17 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 
 	async search(req: JamRequest<S>): Promise<Array<RESULTOBJ>> {
 		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		return this.prepareList(list, <INCLUDE>req.query, req.user);
+		return this.prepareList(list, req.query as INCLUDE, req.user);
 	}
 
-	async image(req: JamRequest<JamParameters.Image>): Promise<IApiBinaryResult> {
+	async image(req: JamRequest<JamParameters.Image>): Promise<ApiBinaryResult> {
 		const item = await this.byID(req.query.id);
-		return await this.imageService.getObjImage(item, req.query.size, req.query.format);
+		return this.imageService.getObjImage(item, req.query.size, req.query.format);
 	}
 
-	async download(req: JamRequest<JamParameters.Download>): Promise<IApiBinaryResult> {
+	async download(req: JamRequest<JamParameters.Download>): Promise<ApiBinaryResult> {
 		const item = await this.byID(req.query.id);
-		return await this.downloadService.getObjDownload(item, req.query.format, req.user);
+		return this.downloadService.getObjDownload(item, req.query.format, req.user);
 	}
 
 }

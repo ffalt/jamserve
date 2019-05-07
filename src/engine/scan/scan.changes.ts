@@ -1,9 +1,9 @@
-import {Track} from '../../objects/track/track.model';
-import {Artist} from '../../objects/artist/artist.model';
-import {Album} from '../../objects/album/album.model';
-import {Folder} from '../../objects/folder/folder.model';
-import Logger from '../../utils/logger';
 import moment from 'moment';
+import {Album} from '../../objects/album/album.model';
+import {Artist} from '../../objects/artist/artist.model';
+import {Folder} from '../../objects/folder/folder.model';
+import {Track} from '../../objects/track/track.model';
+import Logger from '../../utils/logger';
 
 const log = Logger('IO.MergeChanges');
 
@@ -33,13 +33,13 @@ export interface MergeChanges {
 	end: number;
 }
 
-function logChange(name: string, list: Array<any>) {
+function logChange(name: string, list: Array<any>): void {
 	if (list.length > 0) {
 		log.info(name, list.length);
 	}
 }
 
-export function logChanges(changes: MergeChanges) {
+export function logChanges(changes: MergeChanges): void {
 	const v = moment.utc(changes.end - changes.start).format('HH:mm:ss.SSS');
 	log.info('Duration:', v);
 	logChange('Added Tracks', changes.newTracks);
@@ -56,7 +56,7 @@ export function logChanges(changes: MergeChanges) {
 	logChange('Removed Albums', changes.removedAlbums);
 }
 
-export function  emptyChanges(): MergeChanges {
+export function emptyChanges(): MergeChanges {
 	const changes: MergeChanges = {
 		newArtists: [],
 		updateArtists: [],
@@ -74,7 +74,7 @@ export function  emptyChanges(): MergeChanges {
 		updateFolders: [],
 		removedFolders: [],
 		start: Date.now(),
-		end: 0,
+		end: 0
 	};
 	return changes;
 }

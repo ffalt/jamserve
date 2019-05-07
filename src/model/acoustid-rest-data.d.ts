@@ -9,14 +9,14 @@ export declare namespace Acoustid {
 
 	export interface Track {
 		position: number;
-		artists: Artist[];
+		artists: Array<Artist>;
 		id: string;
 		title: string;
 	}
 
 	export interface Medium {
 		position: number;
-		tracks: Track[];
+		tracks: Array<Track>;
 		track_count: number;
 		format: string;
 		title: string;
@@ -34,11 +34,11 @@ export declare namespace Acoustid {
 	}
 
 	export interface Release {
-		mediums: Medium[];
+		mediums: Array<Medium>;
 		id: string;
 		track_count: number;
 		medium_count: number;
-		releaseevents: Releaseevent[];
+		releaseevents: Array<Releaseevent>;
 		country: string;
 		date: AcousticDate;
 		title: string;
@@ -46,31 +46,31 @@ export declare namespace Acoustid {
 
 	export interface Releasegroup {
 		id: string;
-		releases: Release[];
+		releases: Array<Release>;
 		title: string;
-		secondarytypes: string[];
+		secondarytypes: Array<string>;
 		type: string;
-		artists: Artist[];
+		artists: Array<Artist>;
 	}
 
 	export interface Recording {
 		id: string;
 		sources: number;
-		artists: Artist[];
+		artists: Array<Artist>;
 		duration: number;
-		releasegroups: Releasegroup[];
+		releasegroups: Array<Releasegroup>;
 		title: string;
 	}
 
 	export interface Result {
-		recordings: Recording[];
+		recordings: Array<Recording>;
 		score: number;
 		id: string;
 	}
 
 	export interface Results {
 		status: string;
-		results: Result[];
+		results: Array<Result>;
 	}
 
 }

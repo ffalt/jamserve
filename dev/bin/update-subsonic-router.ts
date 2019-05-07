@@ -1,7 +1,7 @@
-import {getSubsonicApiCalls, IApiCall} from './utils';
-import path from 'path';
-import {IApiBinaryResult} from '../../src/typings';
 import fse from 'fs-extra';
+import path from 'path';
+import {ApiBinaryResult} from '../../src/typings';
+import {getSubsonicApiCalls, IApiCall} from './utils';
 
 const destPath = '../../src/api/subsonic/';
 const destfile = path.resolve(destPath, 'routes.ts');
@@ -24,7 +24,7 @@ function generateCode(calls: Array<IApiCall>): string {
 		let paramType = call.paramType || '{}';
 		let resultType = call.resultType;
 		if (call.binaryResult) {
-			resultType = 'IApiBinaryResult';
+			resultType = 'ApiBinaryResult';
 		} else if (call.resultSchema) {
 			const propname = call.resultSchema.required[0];
 			const proptype = call.resultSchema.properties[propname].$ref.split('/')[2];
@@ -81,13 +81,15 @@ async function run() {
 
 	const rolesType = 'export interface SubsonicRolesHandler {\n' + roles.map(role => '\t' + role + ': express.RequestHandler;').join('\n') + '\n}';
 
-	const ts = `import {Subsonic} from '../../model/subsonic-rest-data';
-import {SubsonicParameters} from '../../model/subsonic-rest-params';
-import {ApiOptions, SubsonicApi} from './api';
-import {ApiResponder} from './response';
+	const ts = `// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
 import express from 'express';
-import {IApiBinaryResult} from '../../typings';
+import {Subsonic} from '../../model/subsonic-rest-data';
+import {SubsonicParameters} from '../../model/subsonic-rest-params';
+import {ApiBinaryResult} from '../../typings';
+import {ApiOptions, SubsonicApi} from './api';
 import {apiCheck} from './check';
+import {ApiResponder} from './response';
 
 ${rolesType}
 
@@ -95,7 +97,6 @@ export function registerApi(router: express.Router, api: SubsonicApi, roles: Sub
 ${userApi}
 }
 `;
-
 	await fse.writeFile(destfile, ts);
 }
 

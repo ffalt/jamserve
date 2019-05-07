@@ -1,5 +1,5 @@
-import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {Album} from './album.model';
 
 export function formatAlbum(album: Album, includes: JamParameters.IncludesAlbum): Jam.Album {
@@ -25,6 +25,6 @@ export function formatAlbum(album: Album, includes: JamParameters.IncludesAlbum)
 			created: album.created,
 			musicbrainz: mbz
 		},
-		trackIDs: includes.albumTrackIDs ? album.trackIDs : undefined,
+		trackIDs: includes.albumTrackIDs ? album.trackIDs : undefined
 	};
 }

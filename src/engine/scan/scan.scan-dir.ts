@@ -1,8 +1,8 @@
-import {FileTyp} from '../../model/jam-types';
 import fse from 'fs-extra';
-import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import path from 'path';
+import {FileTyp} from '../../model/jam-types';
 import {getFileType} from '../../utils/filetype';
+import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import Logger from '../../utils/logger';
 
 const log = Logger('IO.DirScanner');
@@ -12,7 +12,7 @@ export interface ScanDir {
 	rootID: string;
 	stat: {
 		ctime: number,
-		mtime: number,
+		mtime: number
 	};
 	directories: Array<ScanDir>;
 	files: Array<ScanFile>;

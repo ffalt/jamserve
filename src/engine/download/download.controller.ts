@@ -1,9 +1,9 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {IApiBinaryResult} from '../../typings';
-import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
-import {DownloadService} from './download.service';
+import {InvalidParamError, NotFoundError} from '../../api/jam/error';
+import {JamParameters} from '../../model/jam-rest-params';
+import {ApiBinaryResult} from '../../typings';
 import {Store} from '../store/store';
+import {DownloadService} from './download.service';
 
 export class DownloadController {
 
@@ -13,7 +13,7 @@ export class DownloadController {
 	) {
 	}
 
-	async download(req: JamRequest<JamParameters.Download>): Promise<IApiBinaryResult> {
+	async download(req: JamRequest<JamParameters.Download>): Promise<ApiBinaryResult> {
 		const id = req.query.id;
 		if (!id || id.length === 0) {
 			return Promise.reject(InvalidParamError());

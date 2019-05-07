@@ -25,7 +25,7 @@ export class WebserviceClient {
 						reject(err);
 					} else {
 						try {
-							resolve(<T>JSON.parse(body));
+							resolve(JSON.parse(body) as T);
 						} catch (err) {
 							reject(err);
 						}

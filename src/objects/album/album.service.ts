@@ -1,12 +1,12 @@
-import {Album} from './album.model';
-import {IApiBinaryResult} from '../../typings';
-import {TrackStore} from '../track/track.store';
-import {AlbumStore, SearchQueryAlbum} from './album.store';
-import {FolderService} from '../folder/folder.service';
 import {FolderTypesAlbum} from '../../model/jam-types';
-import {Folder} from '../folder/folder.model';
+import {ApiBinaryResult} from '../../typings';
 import {BaseListService} from '../base/base.list.service';
+import {Folder} from '../folder/folder.model';
+import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
+import {TrackStore} from '../track/track.store';
+import {Album} from './album.model';
+import {AlbumStore, SearchQueryAlbum} from './album.store';
 
 export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 
@@ -50,7 +50,7 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 		}
 	}
 
-	async getAlbumImage(album: Album, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+	async getAlbumImage(album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		const folder = await this.getAlbumFolder(album);
 		if (folder) {
 			return this.folderService.getFolderImage(folder, size, format);

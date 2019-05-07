@@ -1,7 +1,7 @@
 import moment from 'moment';
-import {ChatMessage} from './chat.model';
-import {User} from '../../objects/user/user.model';
 import {Jam} from '../../model/jam-rest-data';
+import {User} from '../../objects/user/user.model';
+import {ChatMessage} from './chat.model';
 
 export class ChatService {
 	private messages: Array<ChatMessage> = [];
@@ -11,9 +11,9 @@ export class ChatService {
 	constructor() {
 	}
 
-	setSettings(chatConfig: Jam.AdminSettingsChat) {
+	setSettings(chatConfig: Jam.AdminSettingsChat): void {
 		this.chatConfig = chatConfig;
-		this.duration = moment.duration(this.chatConfig.maxAge.value, <moment.unitOfTime.Base>this.chatConfig.maxAge.unit);
+		this.duration = moment.duration(this.chatConfig.maxAge.value, this.chatConfig.maxAge.unit as moment.unitOfTime.Base);
 	}
 
 	async cleanOld(): Promise<void> {
@@ -41,7 +41,7 @@ export class ChatService {
 	async add(message: string, user: User): Promise<ChatMessage> {
 		await this.cleanOld();
 		const c = {
-			message: message,
+			message,
 			time: Date.now(),
 			username: user.name,
 			userID: user.id

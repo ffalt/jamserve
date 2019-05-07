@@ -1,12 +1,12 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {IApiBinaryResult} from '../../typings';
-import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
+import {InvalidParamError, NotFoundError} from '../../api/jam/error';
+import {DBObjectType} from '../../db/db.types';
+import {JamParameters} from '../../model/jam-rest-params';
+import {Episode} from '../../objects/episode/episode.model';
+import {Track} from '../../objects/track/track.model';
+import {ApiBinaryResult} from '../../typings';
 import {Store} from '../store/store';
 import {WaveformService} from './waveform.service';
-import {DBObjectType} from '../../db/db.types';
-import {Track} from '../../objects/track/track.model';
-import {Episode} from '../../objects/episode/episode.model';
 import WaveformFormatType = JamParameters.WaveformFormatType;
 
 export class WaveformController {
@@ -14,7 +14,7 @@ export class WaveformController {
 
 	}
 
-	async waveform(req: JamRequest<JamParameters.Waveform>): Promise<IApiBinaryResult> {
+	async waveform(req: JamRequest<JamParameters.Waveform>): Promise<ApiBinaryResult> {
 		const id = req.query.id;
 		if (!id || id.length === 0) {
 			return Promise.reject(InvalidParamError());
@@ -23,12 +23,12 @@ export class WaveformController {
 		if (!obj) {
 			return Promise.reject(NotFoundError());
 		}
-		const format = req.query.format || <WaveformFormatType>'svg';
+		const format = req.query.format || 'svg' as WaveformFormatType;
 		switch (obj.type) {
 			case DBObjectType.track:
-				return await this.waveformService.getTrackWaveform(<Track>obj, format);
+				return this.waveformService.getTrackWaveform(obj as Track, format);
 			case DBObjectType.episode:
-				return await this.waveformService.getEpisodeWaveform(<Episode>obj, format);
+				return this.waveformService.getEpisodeWaveform(obj as Episode, format);
 		}
 		return Promise.reject(Error('Invalid Object Type for Waveform generation'));
 	}

@@ -22,11 +22,11 @@ http://your-server/rest/ping.view?u=joe&t=26719a1196d2a940705a59634eb18eab&s=c19
  */
 
 import express from 'express';
-import {SubsonicParameterRequest} from './parameters';
-import {ApiResponder} from './response';
-import {FORMAT} from './format';
 import {User} from '../../objects/user/user.model';
 import {hexDecode} from '../../utils/hex';
+import {FORMAT} from './format';
+import {SubsonicParameterRequest} from './parameters';
+import {ApiResponder} from './response';
 
 /**
  * Fill user into req.user express requests
@@ -38,7 +38,7 @@ export interface UserRequest extends SubsonicParameterRequest {
 
 async function validateCredentials(req: SubsonicParameterRequest): Promise<User> {
 	if (req.user) {
-		return <User>req.user;
+		return req.user as User;
 	}
 	if (req.parameters.password) {
 		let pass = req.parameters.password;
@@ -53,7 +53,7 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 	}
 }
 
-export function SubsonicLoginMiddleWare(req: UserRequest, res: express.Response, next: express.NextFunction) {
+export function SubsonicLoginMiddleWare(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 	if (req.user) {
 		return next();
 	}
@@ -71,7 +71,7 @@ export function SubsonicLoginMiddleWare(req: UserRequest, res: express.Response,
 		});
 }
 
-export function CheckAuthMiddleWare(req: UserRequest, res: express.Response, next: express.NextFunction) {
+export function CheckAuthMiddleWare(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 	if (req.user) {
 		return next();
 	}

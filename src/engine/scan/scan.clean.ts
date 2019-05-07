@@ -1,10 +1,10 @@
-import Logger from '../../utils/logger';
-import {MergeChanges} from './scan.changes';
 import {DBObjectType} from '../../db/db.types';
-import {updatePlayListTracks} from '../../objects/playlist/playlist.service';
-import {Store} from '../store/store';
 import {ImageModule} from '../../modules/image/image.module';
+import {updatePlayListTracks} from '../../objects/playlist/playlist.service';
+import Logger from '../../utils/logger';
+import {Store} from '../store/store';
 import {WaveformService} from '../waveform/waveform.service';
+import {MergeChanges} from './scan.changes';
 
 const log = Logger('IO.Clean');
 
@@ -93,7 +93,7 @@ export class ScanCleaner {
 			await this.store.trackStore.remove(trackIDs);
 			await this.store.stateStore.removeByQuery({destIDs: trackIDs, type: DBObjectType.track});
 			await this.store.bookmarkStore.removeByQuery({destIDs: trackIDs});
-			const playlists = await this.store.playlistStore.search({trackIDs: trackIDs});
+			const playlists = await this.store.playlistStore.search({trackIDs});
 			if (playlists.length > 0) {
 				for (const playlist of playlists) {
 					playlist.trackIDs = playlist.trackIDs.filter(id => trackIDs.indexOf(id) < 0);

@@ -1,7 +1,7 @@
 import {DBObjectType} from '../../db/db.types';
+import {BaseStoreService} from '../base/base.service';
 import {PlayQueue} from './playqueue.model';
 import {PlayQueueStore, SearchQueryPlayQueue} from './playqueue.store';
-import {BaseStoreService} from '../base/base.service';
 
 export class PlayQueueService extends BaseStoreService<PlayQueue, SearchQueryPlayQueue> {
 

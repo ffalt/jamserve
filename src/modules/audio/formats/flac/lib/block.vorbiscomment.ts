@@ -1,4 +1,4 @@
-import {MetaWriteableDataBlock} from './block';
+import {MetaWriteableDataBlock} from './block.writeable';
 
 export class BlockVorbiscomment extends MetaWriteableDataBlock {
 	vendor = '';
@@ -16,7 +16,7 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 		return mdb;
 	}
 
-	parse(buffer: Buffer) {
+	parse(buffer: Buffer): void {
 		try {
 			let pos = 0;
 			const vendorLen = buffer.readUInt32LE(pos);
@@ -38,7 +38,7 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 		}
 	}
 
-	publish() {
+	publish(): Buffer {
 		let pos = 0;
 		const size = this.getSize();
 		const buffer = Buffer.alloc(4 + size);
@@ -71,8 +71,8 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 
 	getSize(): number {
 		let size = 8 + Buffer.byteLength(this.vendor);
-		for (let i = 0; i < this.comments.length; i++) {
-			size += 4 + Buffer.byteLength(this.comments[i]);
+		for (const c of this.comments) {
+			size += 4 + Buffer.byteLength(c);
 		}
 		return size;
 	}

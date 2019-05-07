@@ -1,5 +1,5 @@
-import {WebserviceClient} from '../../../utils/webservice-client';
 import Logger from '../../../utils/logger';
+import {WebserviceClient} from '../../../utils/webservice-client';
 
 const log = Logger('Wikipedia');
 
@@ -27,7 +27,6 @@ export declare namespace WikiData {
 
 }
 
-
 export declare namespace Wikipedia {
 
 	export interface Summary {
@@ -37,24 +36,24 @@ export declare namespace Wikipedia {
 		namespace: {
 			id: number;
 			text: string;
-		},
+		};
 		wikibase_item: string;
 		titles: {
 			canonical: string;
 			normalized: string;
 			display: string;
-		},
+		};
 		pageid: number;
 		thumbnail: {
 			source: string;
 			width: number;
 			height: number;
-		},
+		};
 		originalimage: {
 			source: string;
 			width: number;
 			height: number;
-		},
+		};
 		lang: string;
 		dir: string;
 		revision: string;
@@ -74,7 +73,7 @@ export declare namespace Wikipedia {
 				edit: string;
 				talk: string;
 			}
-		},
+		};
 		api_urls: {
 			summary: string;
 			metadata: string;
@@ -82,7 +81,7 @@ export declare namespace Wikipedia {
 			media: string;
 			edit_html: string;
 			talk_page_html: string;
-		},
+		};
 		extract: string;
 		extract_html: string;
 	}
@@ -118,7 +117,6 @@ export declare namespace WikiPHPApi {
 
 }
 
-
 export class WikipediaClient extends WebserviceClient {
 
 	constructor(userAgent: string) {
@@ -147,7 +145,6 @@ export class WikipediaClient extends WebserviceClient {
 		}
 		return {title: page.title, summary: page.extract, url: `https://${(lang || 'en')}.wikipedia.org/wiki/${encodeURIComponent(page.title)}`};
 	}
-
 
 	async summary_rest(title: string, lang: string | undefined): Promise<string | undefined> {
 		log.info('requesting summary', title);

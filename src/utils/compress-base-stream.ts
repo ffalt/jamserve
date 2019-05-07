@@ -1,10 +1,9 @@
 import archiver from 'archiver';
 import express from 'express';
-import {IStreamData} from '../typings';
-import * as path from 'path';
+import {StreamData} from '../typings';
 import {replaceFileSystemChars} from './fs-utils';
 
-abstract class BaseCompressStream implements IStreamData {
+export abstract class BaseCompressStream implements StreamData {
 	public filename: string;
 	public streaming = true;
 	public format: string;
@@ -12,7 +11,7 @@ abstract class BaseCompressStream implements IStreamData {
 	protected constructor(filename: string, format?: string) {
 		this.filename = replaceFileSystemChars(filename, '_').replace(/ /g, '_');
 		this.format = format || 'zip';
-		if (!CompressListStream.isSupportedFormat(this.format)) {
+		if (!BaseCompressStream.isSupportedFormat(this.format)) {
 			throw new Error('Unsupported Download Format');
 		}
 	}
@@ -21,10 +20,10 @@ abstract class BaseCompressStream implements IStreamData {
 		return ['zip', 'tar'].indexOf(format) >= 0;
 	}
 
-	pipe(stream: express.Response) {
+	pipe(stream: express.Response): void {
 		// logger.verbose('Start streaming');
 		const format = 'zip';
-		const archive = archiver(<archiver.Format>this.format, {zlib: {level: 0}});
+		const archive = archiver(this.format as archiver.Format, {zlib: {level: 0}});
 		archive.on('error', (err) => {
 			// logger.error('archiver err ' + err);
 			throw err;
@@ -42,32 +41,4 @@ abstract class BaseCompressStream implements IStreamData {
 	}
 
 	protected abstract run(archive: archiver.Archiver): void;
-}
-
-
-export class CompressFolderStream extends BaseCompressStream {
-
-	constructor(public folder: string, filename: string, format?: string) {
-		super(filename, format);
-	}
-
-	protected run(archive: archiver.Archiver): void {
-		archive.directory(this.folder, false);
-	}
-}
-
-export class CompressListStream extends BaseCompressStream {
-	public list: Array<string> = [];
-
-	constructor(list: Array<string>, filename: string, format?: string) {
-		super(filename, format);
-		this.list = list;
-	}
-
-	protected run(archive: archiver.Archiver): void {
-		this.list.forEach(file => {
-			archive.file(file, {name: path.basename(file)});
-		});
-	}
-
 }

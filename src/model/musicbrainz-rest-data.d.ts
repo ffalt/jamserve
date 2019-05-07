@@ -31,7 +31,6 @@ export declare namespace MusicBrainz {
 		isrcs?: Array<string>;
 	}
 
-
 	export interface Recording extends RecordingBase {
 		releases?: Array<Release>;
 		score?: number;
@@ -77,7 +76,6 @@ export declare namespace MusicBrainz {
 			iso31661Codes: Array<string>;
 		};
 	}
-
 
 	export interface ReleaseGroupBase {
 		id: string;
@@ -257,4 +255,3 @@ export declare namespace MusicBrainz {
 		created?: string;
 	}
 }
-

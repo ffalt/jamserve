@@ -30,7 +30,7 @@ async function run() {
 	}`;
 				resultAPI.push(s);
 				const s1 = `	async ${callname}_binary(params: ${call.paramType}): Promise<ArrayBuffer> {
-		return await this.binary('${call.name}', params);
+		return this.binary('${call.name}', params);
 	}`;
 				resultAPI.push(s1);
 			} else if (call.pathParams && call.pathParams.parameters) {
@@ -38,17 +38,19 @@ async function run() {
 				const basename = call.name.split('/')[0];
 				const parampath = call.pathParams.parameters.map(para => {
 					if (para.required) {
-						return (para.prefix ? ' \'' + para.prefix + '\' + ' : '') + para.name + (para.type !== 'string' ? '.toString()' : '');
+						return '${' + (para.prefix ? ' \'' + para.prefix + '\' + ' : '') + para.name + (para.type !== 'string' ? '.toString()' : '') + '}';
 					} else {
-						return '(' + para.name + ' !== undefined ? ' + (para.prefix ? ' \'' + para.prefix + '\' + ' : '') + para.name + (para.type !== 'string' ? '.toString()' : '') + ' : \'\')';
+						const prefix = (para.prefix ? ' \'' + para.prefix + '\' + ' : '');
+						const type = para.type !== 'string' ? '.toString()' : '';
+						return '${(' + para.name + ' !== undefined ? ' + prefix + para.name + type + ' : \'\')}';
 					}
-				}).join(' + ');
+				}).join('');
 				const s = `	${basename}_url(${params}): string {
-		return this.buildRequestUrl('${basename}/' + ${parampath});
+		return this.buildRequestUrl(\`${basename}/${parampath}\`);
 	}`;
 				resultAPI.push(s);
-				const s1 = `	${basename}_binary(${params}): Promise<ArrayBuffer> {
-		return this.binary('${basename}/' + ${parampath});
+				const s1 = `	async ${basename}_binary(${params}): Promise<ArrayBuffer> {
+		return this.binary(\`${basename}/${parampath}\`);
 	}`;
 				resultAPI.push(s1);
 			} else if (call.pathParams) {
@@ -74,26 +76,26 @@ async function run() {
 			const method = (call.method === 'post' ? 'requestPostData' : 'requestData');
 			const callvalue = (call.paramType ? 'params' : '{}');
 			const s = `	async ${callname}(${params}): Promise<${call.resultType}> {
-		return await this.${method}<${call.resultType}>('${call.name}', ${callvalue});
+		return this.${method}<${call.resultType}>('${call.name}', ${callvalue});
 	}`;
 			resultAPI.push(s);
 		}
 	});
 	const result = `// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
-import {Injectable} from '@angular/core';
 import {HttpEvent} from '@angular/common/http';
-import {NotificationService} from '../notification/notification.service';
+import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
+import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
+import {Acoustid} from '../../model/acoustid-rest-data';
+import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {LastFM} from '../../model/lastfm-rest-data';
-import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
-import {Acoustid} from '../../model/acoustid-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
-import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {AuthService} from '../auth/auth.service';
 import {HttpService} from '../http/http.service';
+import {NotificationService} from '../notification/notification.service';
 import {JamServiceBase} from './jam.service.base';
 
 @Injectable()

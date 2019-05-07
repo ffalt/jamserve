@@ -1,10 +1,11 @@
-import * as fs from 'fs';
-import {FlacProcessorStream, MDB_TYPE_PADDING, MDB_TYPE_PICTURE, MDB_TYPE_STREAMINFO, MDB_TYPE_VORBIS_COMMENT} from './lib/processor';
-import {MetaDataBlock, MetaWriteableDataBlock} from './lib/block';
+import fs from 'fs';
+import fse from 'fs-extra';
+import {MetaDataBlock} from './lib/block';
+import {MetaDataBlockPicture} from './lib/block.picture';
 import {MetaDataBlockStreamInfo} from './lib/block.streaminfo';
 import {BlockVorbiscomment} from './lib/block.vorbiscomment';
-import {MetaDataBlockPicture} from './lib/block.picture';
-import fse from 'fs-extra';
+import {MetaWriteableDataBlock} from './lib/block.writeable';
+import {FlacProcessorStream, MDB_TYPE_PADDING, MDB_TYPE_PICTURE, MDB_TYPE_STREAMINFO, MDB_TYPE_VORBIS_COMMENT} from './lib/processor';
 
 export interface FlacComment {
 	vendor: string;
@@ -52,13 +53,13 @@ export class Flac {
 			const processor = new FlacProcessorStream(true, true);
 			processor.on('postprocess', (mdb: MetaDataBlock) => {
 				if (mdb.type === MDB_TYPE_STREAMINFO) {
-					result.media = this.formatMediaBlock(<MetaDataBlockStreamInfo>mdb);
+					result.media = this.formatMediaBlock(mdb as MetaDataBlockStreamInfo);
 				} else if (mdb.type === MDB_TYPE_VORBIS_COMMENT) {
-					result.comment = this.formatMediaComment(<BlockVorbiscomment>mdb);
+					result.comment = this.formatMediaComment(mdb as BlockVorbiscomment);
 				} else if (mdb.type === MDB_TYPE_PICTURE) {
-					if ((<MetaDataBlockPicture>mdb).pictureData) {
+					if ((mdb as MetaDataBlockPicture).pictureData) {
 						result.pictures = result.pictures || [];
-						result.pictures.push(this.formatMediaPicture(<MetaDataBlockPicture>mdb));
+						result.pictures.push(this.formatMediaPicture(mdb as MetaDataBlockPicture));
 					}
 				}
 			});
@@ -174,7 +175,7 @@ export class Flac {
 			height: mdb.height,
 			bitsPerPixel: mdb.bitsPerPixel,
 			colors: mdb.colors,
-			pictureData: <Buffer>mdb.pictureData
+			pictureData: mdb.pictureData as Buffer
 		};
 	}
 

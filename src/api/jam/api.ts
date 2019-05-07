@@ -1,31 +1,31 @@
+import {AutocompleteController} from '../../engine/autocomplete/autocomplete.controller';
+import {ChatController} from '../../engine/chat/chat.controller';
+import {DownloadController} from '../../engine/download/download.controller';
 import {Engine} from '../../engine/engine';
+import {GenreController} from '../../engine/genre/genre.controller';
+import {ImageController} from '../../engine/image/image.controller';
+import {NowPlayingController} from '../../engine/nowplaying/nowplaying.controller';
+import {StatsController} from '../../engine/stats/stats.controller';
+import {StreamController} from '../../engine/stream/stream.controller';
+import {WaveformController} from '../../engine/waveform/waveform.controller';
 import {Jam} from '../../model/jam-rest-data';
-import {EpisodeController} from '../../objects/episode/episode.controller';
-import {PodcastController} from '../../objects/podcast/podcast.controller';
 import {AlbumController} from '../../objects/album/album.controller';
 import {ArtistController} from '../../objects/artist/artist.controller';
-import {PlaylistController} from '../../objects/playlist/playlist.controller';
-import {TrackController} from '../../objects/track/track.controller';
-import {FolderController} from '../../objects/folder/folder.controller';
-import {RootController} from '../../objects/root/root.controller';
-import {UserController} from '../../objects/user/user.controller';
-import {ChatController} from '../../engine/chat/chat.controller';
-import {MetadataController} from '../../objects/metadata/metadata.controller';
-import {StreamController} from '../../engine/stream/stream.controller';
-import {formatSessionUser} from '../../objects/user/user.format';
-import {GenreController} from '../../engine/genre/genre.controller';
-import {NowPlayingController} from '../../engine/nowplaying/nowplaying.controller';
-import {ImageController} from '../../engine/image/image.controller';
-import {DownloadController} from '../../engine/download/download.controller';
-import {User} from '../../objects/user/user.model';
-import {WaveformController} from '../../engine/waveform/waveform.controller';
-import {AutocompleteController} from '../../engine/autocomplete/autocomplete.controller';
 import {BookmarkController} from '../../objects/bookmark/bookmark.controller';
+import {EpisodeController} from '../../objects/episode/episode.controller';
+import {FolderController} from '../../objects/folder/folder.controller';
+import {MetadataController} from '../../objects/metadata/metadata.controller';
+import {PlaylistController} from '../../objects/playlist/playlist.controller';
 import {PlayQueueController} from '../../objects/playqueue/playqueue.controller';
+import {PodcastController} from '../../objects/podcast/podcast.controller';
 import {RadioController} from '../../objects/radio/radio.controller';
-import {JAMAPI_VERSION} from '../../version';
-import {StatsController} from '../../engine/stats/stats.controller';
+import {RootController} from '../../objects/root/root.controller';
 import {SettingsController} from '../../objects/settings/settings.controller';
+import {TrackController} from '../../objects/track/track.controller';
+import {UserController} from '../../objects/user/user.controller';
+import {formatSessionUser} from '../../objects/user/user.format';
+import {User} from '../../objects/user/user.model';
+import {JAMAPI_VERSION} from '../../version';
 
 export interface JamRequest<T> {
 	query: T;
@@ -102,6 +102,5 @@ export class JamController {
 	async session(req: JamRequest<{}>): Promise<Jam.Session> {
 		return {version: JAMAPI_VERSION, allowedCookieDomains: this.engine.config.server.session.allowedCookieDomains, user: req.user ? formatSessionUser(req.user) : undefined};
 	}
-
 
 }

@@ -1,15 +1,15 @@
-import {JamParameters} from '../../model/jam-rest-params';
 import {InvalidParamError} from '../../api/jam/error';
-import {randomItems} from '../../utils/random';
-import {paginate} from '../../utils/paginate';
-import {BaseController} from './base.controller';
-import {SearchQuery} from './base.store';
-import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
 import {DownloadService} from '../../engine/download/download.service';
+import {ImageService} from '../../engine/image/image.service';
+import {JamParameters} from '../../model/jam-rest-params';
+import {paginate} from '../../utils/paginate';
+import {randomItems} from '../../utils/random';
+import {StateService} from '../state/state.service';
+import {User} from '../user/user.model';
+import {BaseController} from './base.controller';
 import {BaseListService} from './base.list.service';
 import {DBObject} from './base.model';
-import {User} from '../user/user.model';
+import {SearchQuery} from './base.store';
 
 export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | INCLUDE, OBJLISTREQUEST extends JamParameters.IDs | INCLUDE, INCLUDE, JAMQUERY extends SearchQuery, S extends JamParameters.SearchQuery | INCLUDE, DBOBJECT extends DBObject, RESULTOBJ extends { id: string }> extends BaseController<OBJREQUEST, OBJLISTREQUEST, INCLUDE, JAMQUERY, S, DBOBJECT, RESULTOBJ> {
 
@@ -27,7 +27,7 @@ export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | I
 		let ids: Array<string> = [];
 		switch (listQuery.list) {
 			case 'random':
-				ids = await this.listService.store.searchIDs(Object.assign(query, {amount: -1, offset: 0}));
+				ids = await this.listService.store.searchIDs({...query, amount: -1, offset: 0});
 				ids = randomItems<string>(ids, listQuery.amount || 20);
 				break;
 			case 'highest':

@@ -1,31 +1,31 @@
+import path from 'path';
+import {JamRequest} from '../../api/jam/api';
+import {InvalidParamError, NotFoundError} from '../../api/jam/error';
+import {DBObjectType} from '../../db/db.types';
+import {DownloadService} from '../../engine/download/download.service';
+import {FolderRulesChecker} from '../../engine/health/folder.rule';
+import {ImageService} from '../../engine/image/image.service';
+import {formatFolderIndex} from '../../engine/index/index.format';
+import {IndexService} from '../../engine/index/index.service';
+import {IoService} from '../../engine/io/io.service';
+import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {ArtworkImageType, FolderType, FolderTypesAlbum} from '../../model/jam-types';
-import {InvalidParamError, NotFoundError} from '../../api/jam/error';
+import {ApiBinaryResult} from '../../typings';
 import {paginate} from '../../utils/paginate';
-import {JamRequest} from '../../api/jam/api';
 import {BaseListController} from '../base/base.list.controller';
-import {TrackController} from '../track/track.controller';
-import {formatFolder, formatFolderArtwork, formatFolderArtworks} from './folder.format';
-import {formatState} from '../state/state.format';
-import {formatFolderIndex} from '../../engine/index/index.format';
-import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
-import {DownloadService} from '../../engine/download/download.service';
-import {SearchQueryFolder} from './folder.store';
-import {SearchQueryTrack} from '../track/track.store';
 import {MetaDataService} from '../metadata/metadata.service';
-import {IndexService} from '../../engine/index/index.service';
-import {User} from '../user/user.model';
-import {FolderService} from './folder.service';
-import path from 'path';
-import {Jam} from '../../model/jam-rest-data';
-import {Artwork, Folder} from './folder.model';
-import {IApiBinaryResult} from '../../typings';
-import {FolderRulesChecker} from '../../engine/health/folder.rule';
-import {DBObjectType} from '../../db/db.types';
-import {IoService} from '../../engine/io/io.service';
 import {Root} from '../root/root.model';
 import {RootService} from '../root/root.service';
+import {formatState} from '../state/state.format';
+import {StateService} from '../state/state.service';
+import {TrackController} from '../track/track.controller';
+import {SearchQueryTrack} from '../track/track.store';
+import {User} from '../user/user.model';
+import {formatFolder, formatFolderArtwork, formatFolderArtworks} from './folder.format';
+import {Artwork, Folder} from './folder.model';
+import {FolderService} from './folder.service';
+import {SearchQueryFolder} from './folder.store';
 
 export class FolderController extends BaseListController<JamParameters.Folder, JamParameters.Folders, JamParameters.IncludesFolderChildren, SearchQueryFolder, JamParameters.FolderSearch, Folder, Jam.Folder> {
 	checker = new FolderRulesChecker();
@@ -151,7 +151,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 
 	async nameUpdate(req: JamRequest<JamParameters.FolderEditName>): Promise<Jam.AdminChangeQueueInfo> {
 		const folder = await this.byID(req.query.id);
-		return await this.ioService.renameFolder(folder.id, req.query.name, folder.rootID);
+		return this.ioService.renameFolder(folder.id, req.query.name, folder.rootID);
 	}
 
 	async artistInfo(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
@@ -199,14 +199,14 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return {folder, artwork};
 	}
 
-	async artworkImage(req: JamRequest<JamParameters.Image>): Promise<IApiBinaryResult> {
+	async artworkImage(req: JamRequest<JamParameters.Image>): Promise<ApiBinaryResult> {
 		const {folder, artwork} = await this.artworkByID(req.query.id);
-		return await this.folderService.getArtworkImage(folder, artwork, req.query.size, req.query.format);
+		return this.folderService.getArtworkImage(folder, artwork, req.query.size, req.query.format);
 	}
 
 	async artworkCreate(req: JamRequest<JamParameters.FolderArtworkNew>): Promise<Jam.ArtworkImage> {
 		const folder = await this.byID(req.query.id);
-		const artwork = await this.folderService.downloadFolderArtwork(folder, req.query.url, <Array<ArtworkImageType>>req.query.types);
+		const artwork = await this.folderService.downloadFolderArtwork(folder, req.query.url, req.query.types as Array<ArtworkImageType>);
 		return formatFolderArtwork(artwork);
 	}
 
@@ -218,7 +218,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 
 	async artworkDelete(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const {folder, artwork} = await this.artworkByID(req.query.id);
-		return await this.folderService.removeArtworkImage(folder, artwork);
+		return this.folderService.removeArtworkImage(folder, artwork);
 	}
 
 	async health(req: JamRequest<JamParameters.FolderHealth>): Promise<Array<Jam.FolderHealth>> {

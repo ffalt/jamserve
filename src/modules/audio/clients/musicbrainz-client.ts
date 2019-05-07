@@ -1,8 +1,8 @@
-import {WebserviceClient} from '../../../utils/webservice-client';
-import {LookupBrowseTypes, LookupIncludes} from './musicbrainz-client.types';
 import {MusicBrainz} from '../../../model/musicbrainz-rest-data';
 import Logger from '../../../utils/logger';
+import {WebserviceClient} from '../../../utils/webservice-client';
 import {MusicbrainzClientApi} from './musicbrainz-client.interface';
+import {LookupBrowseTypes, LookupIncludes} from './musicbrainz-client.types';
 
 const log = Logger('Musicbrainz');
 
@@ -21,7 +21,7 @@ export class MusicbrainzClient extends WebserviceClient {
 	constructor(options: MusicbrainzClientApi.Options) {
 		// https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting "Currently that rate is (on average) 1 request per second. (per ip)"
 		super(1, 1000, options.userAgent);
-		this.options = Object.assign({}, this.options, options);
+		this.options = {...this.options, ...options};
 	}
 
 	private beautify(obj: any): any {
@@ -61,8 +61,8 @@ export class MusicbrainzClient extends WebserviceClient {
 
 	private concatSearchQuery(query: MusicbrainzClientApi.SearchQuery): string {
 		return Object.keys(query)
-			.filter(key => ((<any>query)[key] !== undefined && (<any>query)[key] !== null))
-			.map(key => key + ':"' + encodeURIComponent((<any>query)[key]) + '"')
+			.filter(key => ((query as any)[key] !== undefined && (query as any)[key] !== null))
+			.map(key => key + ':"' + encodeURIComponent((query as any)[key]) + '"')
 			.join('%20AND%20');
 	}
 
@@ -156,7 +156,7 @@ export class MusicbrainzClient extends WebserviceClient {
 			path: this.options.basePath + params.type + '/' + params.id,
 			query: {
 				mbid: params.id,
-				inc: inc
+				inc
 			},
 			retry: 0,
 			limit: params.limit,
@@ -172,7 +172,7 @@ export class MusicbrainzClient extends WebserviceClient {
 		if (invalidKey) {
 			return Promise.reject(Error('Invalid browse lookup key for type ' + params.type + ': ' + invalidKey));
 		}
-		const query = Object.assign({inc: params.inc}, params.lookupIds);
+		const query = {inc: params.inc, ...params.lookupIds};
 		const data = await this.get({
 			path: this.options.basePath + params.type,
 			query,

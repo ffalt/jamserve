@@ -1,8 +1,9 @@
-import {DBObjectType} from '../../db/db.types';
-import {BaseStore, QueryHelper, SearchQuery, SearchQuerySort} from '../base/base.store';
-import {Album} from './album.model';
 import {Database, DatabaseQuery} from '../../db/db.model';
+import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
+import {QueryHelper} from '../base/base.query.helper';
+import {BaseStore, SearchQuery, SearchQuerySort} from '../base/base.store';
+import {Album} from './album.model';
 
 export interface SearchQueryAlbum extends SearchQuery {
 	name?: string;
@@ -24,11 +25,11 @@ export interface SearchQueryAlbum extends SearchQuery {
 }
 
 const fieldMap: { [name in JamParameters.AlbumSortField]: string } = {
-	'name': 'name',
-	'artist': 'artist',
-	'genre': 'genre',
-	'year': 'year',
-	'created': 'created'
+	name: 'name',
+	artist: 'artist',
+	genre: 'genre',
+	year: 'year',
+	created: 'created'
 };
 
 export class AlbumStore extends BaseStore<Album, SearchQueryAlbum> {

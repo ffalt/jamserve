@@ -1,9 +1,9 @@
 import {JamRequest} from '../../api/jam/api';
-import {JamParameters} from '../../model/jam-rest-params';
-import {IApiBinaryResult} from '../../typings';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
-import {ImageService} from './image.service';
+import {JamParameters} from '../../model/jam-rest-params';
+import {ApiBinaryResult} from '../../typings';
 import {Store} from '../store/store';
+import {ImageService} from './image.service';
 
 export class ImageController {
 	constructor(
@@ -12,7 +12,7 @@ export class ImageController {
 	) {
 	}
 
-	async image(req: JamRequest<JamParameters.Image>): Promise<IApiBinaryResult> {
+	async image(req: JamRequest<JamParameters.Image>): Promise<ApiBinaryResult> {
 		const id = req.query.id;
 		if (!id || id.length === 0) {
 			return Promise.reject(InvalidParamError());

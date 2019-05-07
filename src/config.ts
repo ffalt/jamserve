@@ -1,5 +1,5 @@
 import path from 'path';
-import {ElasticsearchConfig} from './db/elasticsearch/config-elastic';
+import {ElasticsearchConfig} from './db/elasticsearch/db-elastic.types';
 
 type LogLevel = 'error' | 'warn' | 'info' | 'debug';
 
@@ -60,7 +60,7 @@ export interface Config extends BaseConfig {
 }
 
 export function extendConfig(config: BaseConfig): Config {
-	const result = <Config>config;
+	const result = config as Config;
 	result.getDataPath = (parts: Array<string>): string => {
 		return path.resolve(config.paths.data, ...parts);
 	};

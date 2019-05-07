@@ -1,7 +1,6 @@
-import {DatabaseQuerySortType} from '../../model/jam-types';
-import {DBObject} from './base.model';
-import {Database, DatabaseIndex, DatabaseQuery, DatabaseQuerySort} from '../../db/db.model';
+import {Database, DatabaseIndex, DatabaseQuery} from '../../db/db.model';
 import {DBObjectType} from '../../db/db.types';
+import {DBObject} from './base.model';
 
 export interface SearchQuery {
 	id?: string;
@@ -29,23 +28,23 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 	protected abstract transformQuery(query: X): DatabaseQuery;
 
 	async getNewId(): Promise<string> {
-		return await this.group.getNewId();
+		return this.group.getNewId();
 	}
 
 	async add(item: T): Promise<string> {
-		return await this.group.add(item);
+		return this.group.add(item);
 	}
 
 	async bulk(items: Array<T>): Promise<void> {
-		return await this.group.bulk(items);
+		return this.group.bulk(items);
 	}
 
 	async replace(item: T): Promise<void> {
-		return await this.group.replace(item.id, item);
+		return this.group.replace(item.id, item);
 	}
 
 	async remove(idOrIds: string | Array<string>): Promise<void> {
-		return await this.group.remove(idOrIds);
+		return this.group.remove(idOrIds);
 	}
 
 	async replaceMany(items: Array<T>): Promise<void> {
@@ -55,27 +54,27 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 	}
 
 	async byId(id: string): Promise<T | undefined> {
-		return await this.group.byId(id);
+		return this.group.byId(id);
 	}
 
 	async byIds(ids: Array<string>): Promise<Array<T>> {
-		return await this.group.byIds(ids);
+		return this.group.byIds(ids);
 	}
 
 	async random(): Promise<T | undefined> {
-		return await this.group.queryOne({all: true});
+		return this.group.queryOne({all: true});
 	}
 
 	async all(): Promise<Array<T>> {
-		return await this.group.query({all: true});
+		return this.group.query({all: true});
 	}
 
 	async allIds(): Promise<Array<string>> {
-		return await this.group.queryIds({all: true});
+		return this.group.queryIds({all: true});
 	}
 
 	async count(): Promise<number> {
-		return await this.group.count({all: true});
+		return this.group.count({all: true});
 	}
 
 	async iterate(onItems: (items: Array<T>) => Promise<void>): Promise<void> {
@@ -89,112 +88,27 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 	}
 
 	async removeByQuery(query: X): Promise<number> {
-		return await this.group.removeByQuery(this.transformQuery(query));
+		return this.group.removeByQuery(this.transformQuery(query));
 	}
 
 	async searchIDs(query: X): Promise<Array<string>> {
-		return await this.group.queryIds(this.transformQuery(query));
+		return this.group.queryIds(this.transformQuery(query));
 	}
 
 	async search(query: X): Promise<Array<T>> {
-		return await this.group.query(this.transformQuery(query));
+		return this.group.query(this.transformQuery(query));
 	}
 
 	async searchOne(query: X): Promise<T | undefined> {
-		return await this.group.queryOne(this.transformQuery(query));
+		return this.group.queryOne(this.transformQuery(query));
 	}
 
 	async searchCount(query: X): Promise<number> {
-		return await this.group.count(this.transformQuery(query));
+		return this.group.count(this.transformQuery(query));
 	}
 
 	async searchDistinct(query: X, field: string): Promise<Array<string>> {
-		return await this.group.distinct(this.transformQuery(query), field);
+		return this.group.distinct(this.transformQuery(query), field);
 	}
 
-}
-
-export class QueryHelper {
-	private q: DatabaseQuery = {};
-
-	term(field: string, value: string | number | boolean | undefined) {
-		if (value !== undefined && value !== null) {
-			this.q.term = this.q.term || {};
-			this.q.term[field] = value;
-		}
-	}
-
-	match(field: string, value: string | undefined) {
-		if (value !== undefined && value !== null) {
-			this.q.match = this.q.match || {};
-			this.q.match[field] = value;
-		}
-	}
-
-	startsWith(field: string, value: string | undefined) {
-		if (value !== undefined && value !== null) {
-			this.q.startsWith = this.q.startsWith || {};
-			this.q.startsWith[field] = value;
-		}
-	}
-
-	startsWiths(field: string, value: Array<string> | undefined) {
-		if (value !== undefined && value !== null) {
-			this.q.startsWiths = this.q.startsWiths || {};
-			this.q.startsWiths[field] = value;
-		}
-	}
-
-	terms(field: string, value: Array<string | number | boolean> | undefined) {
-		if (value !== undefined && value !== null) {
-			this.q.terms = this.q.terms || {};
-			this.q.terms[field] = value;
-		}
-	}
-
-	bool(field: string, value: boolean | undefined) {
-		if (value !== undefined && value !== null) {
-			this.q.term = this.q.term || {};
-			this.q.term[field] = value;
-		}
-	}
-
-	notNull(field: string, value: boolean | undefined) {
-		if (value !== undefined && value !== null) {
-			this.q.notNull = this.q.notNull || [];
-			this.q.notNull.push(field);
-		}
-	}
-
-	range(field: string, lte: number | undefined, gte: number | undefined) {
-		if (lte !== undefined || gte !== undefined) {
-			this.q.range = this.q.range || {};
-			this.q.range[field] = {gte, lte};
-		}
-	}
-
-	get(query: SearchQuery, fieldMap?: { [name: string]: string }): DatabaseQuery {
-		this.terms('id', query.ids);
-		this.term('id', query.id);
-		if (Object.keys(this.q).length === 0) {
-			this.q.all = true;
-		}
-		if (query.sorts && query.sorts.length > 0) {
-			const sorts: DatabaseQuerySort = {};
-			query.sorts.forEach(sort => {
-				const field = fieldMap ? fieldMap[sort.field] : undefined;
-				if (field) {
-					sorts[field] = sort.descending ? DatabaseQuerySortType.descending : DatabaseQuerySortType.ascending;
-				}
-			});
-			this.q.sort = sorts;
-		}
-		if (query.amount !== undefined && query.amount > 0) {
-			this.q.amount = query.amount;
-		}
-		if (query.offset !== undefined && query.offset > 0) {
-			this.q.offset = query.offset;
-		}
-		return this.q;
-	}
 }

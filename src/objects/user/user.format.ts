@@ -3,18 +3,10 @@ import {User, UserRoles} from './user.model';
 
 function formatRoles(roles: UserRoles): Jam.Roles {
 	return {
-		// coverArt: roles.coverArtRole ? true : undefined,
 		stream: roles.stream ? true : undefined,
 		upload: roles.upload ? true : undefined,
 		admin: roles.admin ? true : undefined,
-		podcast: roles.podcast ? true : undefined,
-		// settings: roles.settingsRole ? true : undefined,
-		// download: roles.downloadRole ? true : undefined,
-		// playlist: roles.playlistRole ? true : undefined,
-		// comment: roles.commentRole ? true : undefined,
-		// jukebox: roles.jukeboxRole ? true : undefined,
-		// share: roles.shareRole ? true : undefined,
-		// videoConversion: roles.videoConversionRole ? true : undefined
+		podcast: roles.podcast ? true : undefined
 	};
 }
 
@@ -28,7 +20,6 @@ export function formatUser(user: User): Jam.User {
 	};
 }
 
-
 export function formatSessionUser(user: User): Jam.SessionUser {
 	return {
 		id: user.id,
@@ -37,4 +28,3 @@ export function formatSessionUser(user: User): Jam.SessionUser {
 		roles: formatRoles(user.roles)
 	};
 }
-

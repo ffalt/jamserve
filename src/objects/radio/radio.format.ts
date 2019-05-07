@@ -8,6 +8,6 @@ export function formatRadio(radio: Radio): Jam.Radio {
 		created: radio.created,
 		changed: radio.changed,
 		name: radio.name,
-		homepage: radio.homepage,
+		homepage: radio.homepage
 	};
 }

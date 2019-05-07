@@ -1,30 +1,33 @@
-import {fileDeleteIfExists} from '../../utils/fs-utils';
-import path from 'path';
-import {User} from './user.model';
+import commonPassword from 'common-password-checker';
 import {Md5} from 'md5-typescript';
-import {SearchQueryUser, UserStore} from './user.store';
-import {StateStore} from '../state/state.store';
+import path from 'path';
+import {ImageModule} from '../../modules/image/image.module';
+import {ApiBinaryResult} from '../../typings';
+import {fileDeleteIfExists} from '../../utils/fs-utils';
+import {hashSalt, hashSaltPassword} from '../../utils/salthash';
+import {BaseStoreService} from '../base/base.service';
+import {BookmarkStore} from '../bookmark/bookmark.store';
 import {PlaylistStore} from '../playlist/playlist.store';
 import {PlayQueueStore} from '../playqueue/playqueue.store';
-import {BookmarkStore} from '../bookmark/bookmark.store';
-import {IApiBinaryResult} from '../../typings';
-import {ImageModule} from '../../modules/image/image.module';
-import {BaseStoreService} from '../base/base.service';
-import {hashSalt, hashSaltPassword} from '../../utils/salthash';
-
-const commonPassword = require('common-password-checker');
+import {StateStore} from '../state/state.store';
+import {User} from './user.model';
+import {SearchQueryUser, UserStore} from './user.store';
 
 export class UserService extends BaseStoreService<User, SearchQueryUser> {
 	private cached: {
 		[id: string]: User;
 	} = {};
 
-	constructor(public userAvatarPath: string, public userStore: UserStore, private stateStore: StateStore, private playlistStore: PlaylistStore, private bookmarkStore: BookmarkStore,
-				private playQueueStore: PlayQueueStore, private imageModule: ImageModule) {
+	constructor(
+		public userAvatarPath: string, public userStore: UserStore,
+		private stateStore: StateStore, private playlistStore: PlaylistStore,
+		private bookmarkStore: BookmarkStore, private playQueueStore: PlayQueueStore,
+		private imageModule: ImageModule
+	) {
 		super(userStore);
 	}
 
-	async getUserImage(user: User, size?: number, format?: string): Promise<IApiBinaryResult | undefined> {
+	async getUserImage(user: User, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (!user.avatar) {
 			await this.generateAvatar(user);
 		}
@@ -161,7 +164,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		return user;
 	}
 
-	public clearCache() {
+	public clearCache(): void {
 		this.cached = {};
 	}
 

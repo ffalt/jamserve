@@ -1,5 +1,5 @@
-import {JamParameters} from '../../model/jam-rest-params';
 import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {Artist} from './artist.model';
 
 export function formatArtist(artist: Artist, includes: JamParameters.IncludesArtist): Jam.Artist {

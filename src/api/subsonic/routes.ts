@@ -1,10 +1,12 @@
+// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
+import express from 'express';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {SubsonicParameters} from '../../model/subsonic-rest-params';
+import {ApiBinaryResult} from '../../typings';
 import {ApiOptions, SubsonicApi} from './api';
-import {ApiResponder} from './response';
-import express from 'express';
-import {IApiBinaryResult} from '../../typings';
 import {apiCheck} from './check';
+import {ApiResponder} from './response';
 
 export interface SubsonicRolesHandler {
 	podcast: express.RequestHandler;
@@ -717,7 +719,7 @@ export function registerApi(router: express.Router, api: SubsonicApi, roles: Sub
 	router.all('/getAvatar.view', apiCheck('/getAvatar.view'), async (req, res) => {
 		try {
 			const options: ApiOptions<SubsonicParameters.Username> = {query: req.query, user: req.user, client: req.client};
-			const result: IApiBinaryResult = await api.getAvatar(options);
+			const result: ApiBinaryResult = await api.getAvatar(options);
 			await ApiResponder.binary(req, res, result);
 		} catch (e) {
 			await ApiResponder.error(req, res, e);
@@ -727,7 +729,7 @@ export function registerApi(router: express.Router, api: SubsonicApi, roles: Sub
 	router.all('/getCaptions.view', apiCheck('/getCaptions.view'), async (req, res) => {
 		try {
 			const options: ApiOptions<SubsonicParameters.Captions> = {query: req.query, user: req.user, client: req.client};
-			const result: IApiBinaryResult = await api.getCaptions(options);
+			const result: ApiBinaryResult = await api.getCaptions(options);
 			await ApiResponder.binary(req, res, result);
 		} catch (e) {
 			await ApiResponder.error(req, res, e);
@@ -737,7 +739,7 @@ export function registerApi(router: express.Router, api: SubsonicApi, roles: Sub
 	router.all('/getCoverArt.view', apiCheck('/getCoverArt.view'), async (req, res) => {
 		try {
 			const options: ApiOptions<SubsonicParameters.CoverArt> = {query: req.query, user: req.user, client: req.client};
-			const result: IApiBinaryResult = await api.getCoverArt(options);
+			const result: ApiBinaryResult = await api.getCoverArt(options);
 			await ApiResponder.binary(req, res, result);
 		} catch (e) {
 			await ApiResponder.error(req, res, e);
@@ -747,7 +749,7 @@ export function registerApi(router: express.Router, api: SubsonicApi, roles: Sub
 	router.all('/hls.view', apiCheck('/hls.view'), async (req, res) => {
 		try {
 			const options: ApiOptions<SubsonicParameters.HLS> = {query: req.query, user: req.user, client: req.client};
-			const result: IApiBinaryResult = await api.hls(options);
+			const result: ApiBinaryResult = await api.hls(options);
 			await ApiResponder.binary(req, res, result);
 		} catch (e) {
 			await ApiResponder.error(req, res, e);
@@ -757,7 +759,7 @@ export function registerApi(router: express.Router, api: SubsonicApi, roles: Sub
 	router.all('/stream.view', apiCheck('/stream.view'), async (req, res) => {
 		try {
 			const options: ApiOptions<SubsonicParameters.Stream> = {query: req.query, user: req.user, client: req.client};
-			const result: IApiBinaryResult = await api.stream(options);
+			const result: ApiBinaryResult = await api.stream(options);
 			await ApiResponder.binary(req, res, result);
 		} catch (e) {
 			await ApiResponder.error(req, res, e);
@@ -767,7 +769,7 @@ export function registerApi(router: express.Router, api: SubsonicApi, roles: Sub
 	router.all('/download.view', apiCheck('/download.view'), async (req, res) => {
 		try {
 			const options: ApiOptions<SubsonicParameters.Download> = {query: req.query, user: req.user, client: req.client};
-			const result: IApiBinaryResult = await api.download(options);
+			const result: ApiBinaryResult = await api.download(options);
 			await ApiResponder.binary(req, res, result);
 		} catch (e) {
 			await ApiResponder.error(req, res, e);

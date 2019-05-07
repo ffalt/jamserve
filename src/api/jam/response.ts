@@ -1,24 +1,24 @@
 import express from 'express';
-import {IApiBinaryResult, NodeError} from '../../typings';
 import path from 'path';
+import {ApiBinaryResult, NodeError} from '../../typings';
 
 export class ApiResponder {
 
-	public static ok(res: express.Response) {
+	public static ok(res: express.Response): void {
 		res.status(200).json({});
 	}
 
-	public static data(res: express.Response, data: any) {
+	public static data(res: express.Response, data: any): void {
 		res.status(200).json(data);
 	}
 
-	public static error(res: express.Response, err: NodeError) {
+	public static error(res: express.Response, err: NodeError): void {
 		const msg = (typeof err === 'string' ? err : (err.message || 'Guru Meditation')).toString();
 		const code = (typeof err.failCode === 'number' ? err.failCode : 500);
 		res.status(code || 500).json({error: msg});
 	}
 
-	public static binary(res: express.Response, data: IApiBinaryResult) {
+	public static binary(res: express.Response, data: ApiBinaryResult): void {
 		if (data.json) {
 			res.status(200).json(data.json);
 		} else if (data.pipe) {

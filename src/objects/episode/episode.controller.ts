@@ -1,20 +1,20 @@
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {PodcastStatus} from '../../model/jam-types';
-import {IApiBinaryResult} from '../../typings';
 import {JamRequest} from '../../api/jam/api';
-import {formatEpisode} from './episode.format';
+import {DBObjectType} from '../../db/db.types';
+import {DownloadService} from '../../engine/download/download.service';
+import {ImageService} from '../../engine/image/image.service';
+import {StreamController} from '../../engine/stream/stream.controller';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {PodcastStatus} from '../../model/jam-types';
+import {ApiBinaryResult} from '../../typings';
+import {BaseListController} from '../base/base.list.controller';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
-import {DownloadService} from '../../engine/download/download.service';
-import {SearchQueryEpisode} from './episode.store';
-import {Episode} from './episode.model';
 import {User} from '../user/user.model';
+import {formatEpisode} from './episode.format';
+import {Episode} from './episode.model';
 import {EpisodeService} from './episode.service';
-import {StreamController} from '../../engine/stream/stream.controller';
-import {BaseListController} from '../base/base.list.controller';
-import {DBObjectType} from '../../db/db.types';
+import {SearchQueryEpisode} from './episode.store';
 
 export class EpisodeController extends BaseListController<JamParameters.Episode, JamParameters.Episodes, JamParameters.IncludesEpisode, SearchQueryEpisode, JamParameters.EpisodeSearch, Episode, Jam.PodcastEpisode> {
 
@@ -79,9 +79,9 @@ export class EpisodeController extends BaseListController<JamParameters.Episode,
 		}
 	}
 
-	async stream(req: JamRequest<JamParameters.Stream>): Promise<IApiBinaryResult> {
+	async stream(req: JamRequest<JamParameters.Stream>): Promise<ApiBinaryResult> {
 		const episode = await this.byID(req.query.id);
-		return await this.streamController.streamEpisode(episode, req.query.format, req.query.maxBitRate, req.user);
+		return this.streamController.streamEpisode(episode, req.query.format, req.query.maxBitRate, req.user);
 	}
 
 	async status(req: JamRequest<JamParameters.ID>): Promise<Jam.PodcastEpisodeStatus> {

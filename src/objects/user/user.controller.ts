@@ -1,18 +1,18 @@
-import {BaseController} from '../base/base.controller';
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../db/db.types';
-import {GenericError, InvalidParamError, UnauthError} from '../../api/jam/error';
 import {JamRequest} from '../../api/jam/api';
-import {formatUser} from './user.format';
-import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
+import {GenericError, InvalidParamError, UnauthError} from '../../api/jam/error';
+import {DBObjectType} from '../../db/db.types';
 import {DownloadService} from '../../engine/download/download.service';
-import {SearchQueryUser} from './user.store';
-import {UserService} from './user.service';
-import {User} from './user.model';
-import {hashSaltPassword} from '../../utils/salthash';
+import {ImageService} from '../../engine/image/image.service';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {randomString} from '../../utils/random';
+import {hashSaltPassword} from '../../utils/salthash';
+import {BaseController} from '../base/base.controller';
+import {StateService} from '../state/state.service';
+import {formatUser} from './user.format';
+import {User} from './user.model';
+import {UserService} from './user.service';
+import {SearchQueryUser} from './user.store';
 
 export class UserController extends BaseController<JamParameters.ID, JamParameters.IDs, {}, SearchQueryUser, JamParameters.UserSearch, User, Jam.User> {
 
@@ -64,7 +64,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 				admin: req.query.roleAdmin !== undefined ? req.query.roleAdmin : false,
 				stream: req.query.roleStream !== undefined ? req.query.roleStream : true,
 				upload: req.query.roleUpload !== undefined ? req.query.roleUpload : false,
-				podcast: req.query.rolePodcast !== undefined ? req.query.rolePodcast : false,
+				podcast: req.query.rolePodcast !== undefined ? req.query.rolePodcast : false
 				// settingsRole: false,
 				// jukeboxRole: false,
 				// downloadRole: false,
@@ -78,7 +78,6 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		u.id = await this.userService.create(u);
 		return this.prepare(u, {}, req.user);
 	}
-
 
 	async update(req: JamRequest<JamParameters.UserUpdate>): Promise<Jam.User> {
 		const u = await this.byID(req.query.id);
@@ -121,7 +120,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		}
 		const u = await this.byID(req.query.id);
 		if (u.id === req.user.id || req.user.roles.admin) {
-			return await this.userService.setUserImage(u, req.file);
+			return this.userService.setUserImage(u, req.file);
 		}
 		return Promise.reject(UnauthError());
 	}
@@ -129,7 +128,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	async passwordUpdate(req: JamRequest<JamParameters.UserPasswordUpdate>): Promise<void> {
 		const u = await this.byID(req.query.id);
 		if (u.id === req.user.id || req.user.roles.admin) {
-			return await this.userService.setUserPassword(u, req.query.password);
+			return this.userService.setUserPassword(u, req.query.password);
 		}
 		return Promise.reject(UnauthError());
 	}
@@ -137,7 +136,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	async emailUpdate(req: JamRequest<JamParameters.UserEmailUpdate>): Promise<void> {
 		const u = await this.byID(req.query.id);
 		if (u.id === req.user.id || req.user.roles.admin) {
-			return await this.userService.setUserEmail(u, req.query.email);
+			return this.userService.setUserEmail(u, req.query.email);
 		}
 		return Promise.reject(UnauthError());
 	}

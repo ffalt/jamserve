@@ -1,7 +1,7 @@
 import {DBObjectType} from '../../db/db.types';
+import {BaseStoreService} from '../base/base.service';
 import {Radio} from './radio.model';
 import {RadioStore, SearchQueryRadio} from './radio.store';
-import {BaseStoreService} from '../base/base.service';
 
 export class RadioService extends BaseStoreService<Radio, SearchQueryRadio> {
 

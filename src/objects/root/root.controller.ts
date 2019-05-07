@@ -1,18 +1,18 @@
-import {BaseController} from '../base/base.controller';
-import {JamParameters} from '../../model/jam-rest-params';
-import {Jam} from '../../model/jam-rest-data';
-import {DBObjectType} from '../../db/db.types';
 import {JamRequest} from '../../api/jam/api';
-import {SearchQueryRoot} from './root.store';
-import {RootService} from './root.service';
-import {formatRoot} from './root.format';
-import {StateService} from '../state/state.service';
-import {ImageService} from '../../engine/image/image.service';
+import {DBObjectType} from '../../db/db.types';
 import {DownloadService} from '../../engine/download/download.service';
-import {Root} from './root.model';
-import {User} from '../user/user.model';
+import {ImageService} from '../../engine/image/image.service';
 import {IoService} from '../../engine/io/io.service';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {RootScanStrategy} from '../../model/jam-types';
+import {BaseController} from '../base/base.controller';
+import {StateService} from '../state/state.service';
+import {User} from '../user/user.model';
+import {formatRoot} from './root.format';
+import {Root} from './root.model';
+import {RootService} from './root.service';
+import {SearchQueryRoot} from './root.store';
 
 export class RootController extends BaseController<JamParameters.ID, JamParameters.IDs, {}, SearchQueryRoot, JamParameters.RootSearch, Root, Jam.Root> {
 
@@ -52,7 +52,7 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 			type: DBObjectType.root,
 			name: req.query.name,
 			path: req.query.path,
-			strategy: <RootScanStrategy>req.query.strategy
+			strategy: req.query.strategy as RootScanStrategy
 		};
 		root.id = await this.rootService.create(root);
 		return this.prepare(root, {}, req.user);
@@ -63,7 +63,7 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 		root.name = req.query.name;
 		root.path = req.query.path;
 		const forceRefreshMeta = root.strategy !== req.query.strategy;
-		root.strategy = <RootScanStrategy>req.query.strategy;
+		root.strategy = req.query.strategy as RootScanStrategy;
 		await this.rootService.update(root);
 		this.ioService.refreshRoot(root.id, forceRefreshMeta);
 		return this.prepare(root, {}, req.user);
@@ -75,12 +75,12 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 	}
 
 	async scanAll(req: JamRequest<{}>): Promise<Array<Jam.AdminChangeQueueInfo>> {
-		return await this.ioService.refresh();
+		return this.ioService.refresh();
 	}
 
 	async scan(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
 		const root = await this.byID(req.query.id);
-		return await this.ioService.refreshRoot(root.id, false);
+		return this.ioService.refreshRoot(root.id, false);
 	}
 
 	async status(req: JamRequest<JamParameters.ID>): Promise<Jam.RootStatus> {

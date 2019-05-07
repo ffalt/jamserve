@@ -1,5 +1,5 @@
-import {getBinPath} from './which';
 import {spawn} from 'child_process';
+import {getBinPath} from './which';
 
 // export async function spawnToolStream(binName: string, envName: string, args: Array<string>, onData: (buffer: Buffer) => void): Promise<string> {
 // 	const bin = await getBinPath(binName, envName);

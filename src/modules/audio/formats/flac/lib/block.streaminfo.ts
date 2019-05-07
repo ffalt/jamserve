@@ -16,11 +16,11 @@ export class MetaDataBlockStreamInfo extends MetaDataBlock {
 		super(isLast, 0);
 	}
 
-	remove() {
+	remove(): void {
 		console.error('WARNING: Can\'t remove StreamInfo block!');
 	}
 
-	parse(buffer: Buffer) {
+	parse(buffer: Buffer): void {
 		try {
 			const pos = 0;
 			this.minBlockSize = buffer.readUInt16BE(pos);
