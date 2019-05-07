@@ -1,5 +1,5 @@
 import express from 'express';
-import {Definition} from 'typescript-json-schema';
+import {JSONSchemaDefinition} from '../model/json-schema.spec';
 import {OpenAPIObject, OperationObject, ParameterObject, RequestBodyObject, SchemaObject} from '../model/openapi-spec';
 import Logger from './logger';
 import {jsonValidator, JSONValidator, validateJSON} from './validate-json';
@@ -134,7 +134,7 @@ async function checkAORequestBody(cmd: OperationObject, apiSchema: any, body: an
 	}
 }
 
-async function checkAOParameters(cmd: OperationObject, schema: Definition, req: express.Request): Promise<void> {
+async function checkAOParameters(cmd: OperationObject, schema: JSONSchemaDefinition, req: express.Request): Promise<void> {
 	if (!cmd.parameters) {
 		return;
 	}
@@ -159,7 +159,7 @@ async function checkAOParameters(cmd: OperationObject, schema: Definition, req: 
 	}
 }
 
-export async function checkOpenApiParameters(name: string, req: express.Request, openapi: OpenAPIObject, schema: Definition, forceMethod?: string): Promise<void> {
+export async function checkOpenApiParameters(name: string, req: express.Request, openapi: OpenAPIObject, schema: JSONSchemaDefinition, forceMethod?: string): Promise<void> {
 	const cmdPath = openapi.paths[name];
 	if (!cmdPath) {
 		log.info('cmd not found to validate', name);
