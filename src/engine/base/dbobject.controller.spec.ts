@@ -118,6 +118,15 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 					await validateJamResponse('Jam.State', result);
 				}
 			});
+			it('should search for an object', async () => {
+				for (const obj of objs) {
+					const req = {query: {id: obj.id}, user};
+					const result = await controller.search(req as JamRequest<SEARCHQUERY>);
+					should().exist(result);
+					expect(result.length).to.equal(1, 'Must find one object');
+					await validateJamResponse(opts.typeName, result, true);
+				}
+			});
 			it('should get an image for an object', async () => {
 				for (const obj of objs) {
 					const req: JamRequest<JamParameters.Image> = {query: {id: obj.id}, user};
