@@ -6,10 +6,10 @@ import {Jam} from '../../model/jam-rest-data';
 import {AlbumTypesArtistMusic, AudioFormatType} from '../../model/jam-types';
 import {ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
 import {flac_test} from '../../modules/audio/tools/flac';
+import Logger from '../../utils/logger';
 import {Folder} from '../folder/folder.model';
 import {Root} from '../root/root.model';
 import {Track} from '../track/track.model';
-import Logger from '../../utils/logger';
 import {RuleResult} from './rule.model';
 
 const log = Logger('TrackHealth');

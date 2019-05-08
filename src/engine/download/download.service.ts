@@ -1,5 +1,8 @@
 import path from 'path';
 import {DBObjectType} from '../../db/db.types';
+import {ApiBinaryResult} from '../../typings';
+import {CompressFolderStream} from '../../utils/compress-folder-stream';
+import {CompressListStream} from '../../utils/compress-list-stream';
 import {Album} from '../album/album.model';
 import {Artist} from '../artist/artist.model';
 import {DBObject} from '../base/base.model';
@@ -9,9 +12,6 @@ import {Playlist} from '../playlist/playlist.model';
 import {Track} from '../track/track.model';
 import {TrackStore} from '../track/track.store';
 import {User} from '../user/user.model';
-import {ApiBinaryResult} from '../../typings';
-import {CompressFolderStream} from '../../utils/compress-folder-stream';
-import {CompressListStream} from '../../utils/compress-list-stream';
 
 export class DownloadService {
 

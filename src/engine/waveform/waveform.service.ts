@@ -3,11 +3,11 @@ import path from 'path';
 import {JamParameters} from '../../model/jam-rest-params';
 import WaveformFormatType = JamParameters.WaveformFormatType;
 import {WaveformGenerator} from '../../modules/audio/waveform/waveform.generator';
-import {Episode} from '../episode/episode.model';
-import {Track} from '../track/track.model';
 import {ApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import Logger from '../../utils/logger';
+import {Episode} from '../episode/episode.model';
+import {Track} from '../track/track.model';
 
 const log = Logger('WaveformService');
 

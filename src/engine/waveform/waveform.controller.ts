@@ -2,10 +2,10 @@ import {JamRequest} from '../../api/jam/api';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
-import {Episode} from '../episode/episode.model';
-import {Track} from '../track/track.model';
 import {ApiBinaryResult} from '../../typings';
+import {Episode} from '../episode/episode.model';
 import {Store} from '../store/store';
+import {Track} from '../track/track.model';
 import {WaveformService} from './waveform.service';
 import WaveformFormatType = JamParameters.WaveformFormatType;
 

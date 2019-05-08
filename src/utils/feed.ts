@@ -5,10 +5,10 @@ import request from 'request';
 import stream from 'stream';
 import zlib from 'zlib';
 import {DBObjectType} from '../db/db.types';
-import {PodcastStatus} from '../model/jam-types';
-import {Subsonic} from '../model/subsonic-rest-data';
 import {Episode, PodcastEpisodeChapter} from '../engine/episode/episode.model';
 import {PodcastTag} from '../engine/podcast/podcast.model';
+import {PodcastStatus} from '../model/jam-types';
+import {Subsonic} from '../model/subsonic-rest-data';
 
 export class Feed {
 

@@ -1,9 +1,9 @@
-import {slugify} from '../scan/scan.utils';
 import {FolderType, MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {BaseListService} from '../base/dbobject-list.service';
 import {Folder} from '../folder/folder.model';
 import {FolderService} from '../folder/folder.service';
+import {slugify} from '../scan/scan.utils';
 import {StateService} from '../state/state.service';
 import {TrackStore} from '../track/track.store';
 import {Artist} from './artist.model';

@@ -3,11 +3,11 @@ import path from 'path';
 import {GenericError} from '../../api/jam/error';
 import {AudioFormatType} from '../../model/jam-types';
 import {PreTranscoderStream} from '../../modules/audio/transcoder/transcoder-pre-stream';
+import {ApiBinaryResult} from '../../typings';
+import {fileSuffix} from '../../utils/fs-utils';
 import {Episode} from '../episode/episode.model';
 import {Track} from '../track/track.model';
 import {User} from '../user/user.model';
-import {ApiBinaryResult} from '../../typings';
-import {fileSuffix} from '../../utils/fs-utils';
 
 export class StreamService {
 

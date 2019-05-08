@@ -1,6 +1,7 @@
 import fse from 'fs-extra';
 import {ID3v1, ID3v2, IID3V2, MP3} from 'jamp3';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
+import {TrackMedia, TrackTag} from '../../engine/track/track.model';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {Acoustid} from '../../model/acoustid-rest-data';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
@@ -8,7 +9,6 @@ import {Jam} from '../../model/jam-rest-data';
 import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType} from '../../model/jam-types';
 import {LastFM} from '../../model/lastfm-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
-import {TrackMedia, TrackTag} from '../../engine/track/track.model';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {ImageModule} from '../image/image.module';
 import {FORMAT} from './audio.format';

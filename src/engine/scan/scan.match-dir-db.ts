@@ -2,8 +2,8 @@ import fse from 'fs-extra';
 import path from 'path';
 import {FileTyp} from '../../model/jam-types';
 import {Folder} from '../folder/folder.model';
-import {Track} from '../track/track.model';
 import {Store} from '../store/store';
+import {Track} from '../track/track.model';
 import {MatchDir, MatchFile} from './scan.match-dir';
 
 export class DBMatcher {

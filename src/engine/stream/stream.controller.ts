@@ -2,13 +2,13 @@ import {JamRequest} from '../../api/jam/api';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
+import {ApiBinaryResult} from '../../typings';
 import {DBObject} from '../base/base.model';
 import {Episode} from '../episode/episode.model';
-import {Track} from '../track/track.model';
-import {User} from '../user/user.model';
-import {ApiBinaryResult} from '../../typings';
 import {NowPlayingService} from '../nowplaying/nowplaying.service';
 import {Store} from '../store/store';
+import {Track} from '../track/track.model';
+import {User} from '../user/user.model';
 import {StreamService} from './stream.service';
 
 export class StreamController {

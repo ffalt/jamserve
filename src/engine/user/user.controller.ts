@@ -1,13 +1,13 @@
 import {JamRequest} from '../../api/jam/api';
 import {GenericError, InvalidParamError, UnauthError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
-import {DownloadService} from '../download/download.service';
-import {ImageService} from '../image/image.service';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {randomString} from '../../utils/random';
 import {hashSaltPassword} from '../../utils/salthash';
 import {BaseController} from '../base/dbobject.controller';
+import {DownloadService} from '../download/download.service';
+import {ImageService} from '../image/image.service';
 import {StateService} from '../state/state.service';
 import {formatUser} from './user.format';
 import {User} from './user.model';

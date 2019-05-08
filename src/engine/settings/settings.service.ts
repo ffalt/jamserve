@@ -1,9 +1,9 @@
 import {defaultSettings} from '../../config/settings.default';
 import {DBObjectType} from '../../db/db.types';
+import {Jam} from '../../model/jam-rest-data';
 import {ChatService} from '../chat/chat.service';
 import {IndexService} from '../index/index.service';
 import {ScanService} from '../scan/scan.service';
-import {Jam} from '../../model/jam-rest-data';
 import {SettingsStore} from './settings.store';
 
 export class SettingsService {

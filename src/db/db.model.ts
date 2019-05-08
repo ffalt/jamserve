@@ -1,5 +1,5 @@
-import {DatabaseQuerySortType} from '../model/jam-types';
 import {DBObject} from '../engine/base/base.model';
+import {DatabaseQuerySortType} from '../model/jam-types';
 import {DBObjectType} from './db.types';
 
 export interface Database {

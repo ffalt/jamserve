@@ -2,6 +2,7 @@ import path from 'path';
 import {DBObjectType} from '../../db/db.types';
 import {FolderType} from '../../model/jam-types';
 import {ImageModule} from '../../modules/image/image.module';
+import {ApiBinaryResult} from '../../typings';
 import {Album} from '../album/album.model';
 import {AlbumService} from '../album/album.service';
 import {Artist} from '../artist/artist.model';
@@ -17,7 +18,6 @@ import {Track} from '../track/track.model';
 import {TrackService} from '../track/track.service';
 import {User} from '../user/user.model';
 import {UserService} from '../user/user.service';
-import {ApiBinaryResult} from '../../typings';
 
 export class ImageService {
 

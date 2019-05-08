@@ -1,7 +1,7 @@
 import {IID3V1, IID3V2, IMP3, simplifyTag} from 'jamp3';
 import {ID3v1_GENRES} from 'jamp3/dist/lib/id3v1/id3v1_consts';
-import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
 import {TrackMedia, TrackTag} from '../../engine/track/track.model';
+import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
 import {cleanGenre} from '../../utils/genres';
 import {ID3TrackTagRawFormatTypes} from './audio.module';
 import {FlacComment, FlacMedia} from './formats/flac';

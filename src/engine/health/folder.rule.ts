@@ -2,9 +2,9 @@
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
 import {AlbumTypesArtistMusic, FolderType, FolderTypesAlbum} from '../../model/jam-types';
+import {replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Folder, FolderTag} from '../folder/folder.model';
 import {Root} from '../root/root.model';
-import {replaceFolderSystemChars} from '../../utils/fs-utils';
 import {RuleResult} from './rule.model';
 
 export abstract class FolderRule {

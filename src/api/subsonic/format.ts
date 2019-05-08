@@ -1,18 +1,15 @@
 import moment from 'moment';
 import path from 'path';
 import {DBObjectType} from '../../db/db.types';
-import {ChatMessage} from '../../engine/chat/chat.model';
-import {Genre} from '../../engine/genre/genre.model';
-import {ArtistIndex, FolderIndex, FolderIndexEntry} from '../../engine/index/index.model';
-import {NowPlaying} from '../../engine/nowplaying/nowplaying.model';
-import {AudioFormatType, AudioMimeTypes, PodcastStatus} from '../../model/jam-types';
-import {LastFM} from '../../model/lastfm-rest-data';
-import {Subsonic} from '../../model/subsonic-rest-data';
 import {Album} from '../../engine/album/album.model';
 import {Artist} from '../../engine/artist/artist.model';
 import {Bookmark} from '../../engine/bookmark/bookmark.model';
+import {ChatMessage} from '../../engine/chat/chat.model';
 import {Episode} from '../../engine/episode/episode.model';
 import {Folder} from '../../engine/folder/folder.model';
+import {Genre} from '../../engine/genre/genre.model';
+import {ArtistIndex, FolderIndex, FolderIndexEntry} from '../../engine/index/index.model';
+import {NowPlaying} from '../../engine/nowplaying/nowplaying.model';
 import {Playlist} from '../../engine/playlist/playlist.model';
 import {PlayQueue} from '../../engine/playqueue/playqueue.model';
 import {Podcast} from '../../engine/podcast/podcast.model';
@@ -21,6 +18,9 @@ import {Root} from '../../engine/root/root.model';
 import {State, States} from '../../engine/state/state.model';
 import {Track} from '../../engine/track/track.model';
 import {User} from '../../engine/user/user.model';
+import {AudioFormatType, AudioMimeTypes, PodcastStatus} from '../../model/jam-types';
+import {LastFM} from '../../model/lastfm-rest-data';
+import {Subsonic} from '../../model/subsonic-rest-data';
 import {fileSuffix} from '../../utils/fs-utils';
 
 export interface SubsonicExtResponse extends Subsonic.Response {
