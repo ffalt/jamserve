@@ -1,12 +1,12 @@
 import {assert, expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {NowPlayingService} from './nowplaying.service';
-import {testService} from '../../objects/base/base.service.spec';
-import {StateService} from '../../objects/state/state.service';
-import {mockEpisode} from '../../objects/episode/episode.mock';
-import {mockUser} from '../../objects/user/user.mock';
+import {testService} from '../base/base.service.spec';
+import {StateService} from '../state/state.service';
+import {mockEpisode} from '../episode/episode.mock';
+import {mockUser} from '../user/user.mock';
 import {DBObjectType} from '../../db/db.types';
-import {mockTrack} from '../../objects/track/track.mock';
+import {mockTrack} from '../track/track.mock';
 
 describe('NowPlayingService', () => {
 	let nowPlayingService: NowPlayingService;

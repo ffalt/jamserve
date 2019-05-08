@@ -22,7 +22,7 @@ http://your-server/rest/ping.view?u=joe&t=26719a1196d2a940705a59634eb18eab&s=c19
  */
 
 import express from 'express';
-import {User} from '../../objects/user/user.model';
+import {User} from '../../engine/user/user.model';
 import {hexDecode} from '../../utils/hex';
 import {FORMAT} from './format';
 import {SubsonicParameterRequest} from './parameters';

@@ -38,10 +38,10 @@
     "dev:docs:api:subsonic": "redoc-cli bundle src/model/subsonic-openapi.json --output ./dist/docs/api/subsonic/index.html",
     "dev:docs:api:jam": "redoc-cli bundle src/model/jam-openapi.json --output ./dist/docs/api/jam/index.html",
     "clean": "rimraf dist",
-    "test:services": "mocha --recursive src/**/*.service.test.ts",
-    "test:stores": "mocha --recursive src/**/*.store.test.ts",
-    "test": "mocha --recursive ./src/**/**.test.ts",
-    "coverage": "nyc mocha --recursive ./src/**/*.test.ts",
+    "test:services": "mocha --recursive \".src/**/**.service.test.ts\"",
+    "test:stores": "mocha --recursive \".src/**/**.store.test.ts\"",
+    "test": "mocha --recursive \"./src/**/**.test.ts\"",
+    "coverage": "nyc mocha --recursive \"./src/**/**.test.ts\"",
     "release": "deplokay -c ./deplokay.json"
   },
   "dependencies": {

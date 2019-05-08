@@ -25,7 +25,7 @@
 	"paths": {
 		"/ping": {
 			"get": {
-				"operationId": "ping",
+				"operationId": "infoController.ping",
 				"description": "is the api online?",
 				"tags": [
 					"various"
@@ -47,7 +47,7 @@
 		},
 		"/session": {
 			"get": {
-				"operationId": "session",
+				"operationId": "infoController.session",
 				"description": "check the login state",
 				"tags": [
 					"auth"

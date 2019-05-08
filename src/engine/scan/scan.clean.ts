@@ -1,6 +1,6 @@
 import {DBObjectType} from '../../db/db.types';
 import {ImageModule} from '../../modules/image/image.module';
-import {updatePlayListTracks} from '../../objects/playlist/playlist.service';
+import {updatePlayListTracks} from '../playlist/playlist.service';
 import Logger from '../../utils/logger';
 import {Store} from '../store/store';
 import {WaveformService} from '../waveform/waveform.service';

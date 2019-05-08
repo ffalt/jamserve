@@ -9,8 +9,7 @@ export function mockElasticDBConfig(): ElasticsearchConfig {
 	};
 }
 
-
-export class TestElastic {
+export class TestDBElastic {
 	database: DBElastic;
 	name = 'elastic';
 
@@ -18,13 +17,13 @@ export class TestElastic {
 		this.database = new DBElastic(mockElasticDBConfig());
 	}
 
-	async setup() {
+	async setup(): Promise<void> {
 		await this.database.open();
 		await this.database.drop();
 		await this.database.check();
 	}
 
-	async cleanup() {
+	async cleanup(): Promise<void> {
 		await this.database.drop();
 		await this.database.close();
 	}

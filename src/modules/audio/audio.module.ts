@@ -8,7 +8,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType} from '../../model/jam-types';
 import {LastFM} from '../../model/lastfm-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
-import {TrackMedia, TrackTag} from '../../objects/track/track.model';
+import {TrackMedia, TrackTag} from '../../engine/track/track.model';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {ImageModule} from '../image/image.module';
 import {FORMAT} from './audio.format';

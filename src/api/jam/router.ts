@@ -11,13 +11,13 @@ import passportLocal from 'passport-local';
 import path from 'path';
 import {Engine} from '../../engine/engine';
 import {Jam} from '../../model/jam-rest-data';
-import {formatUser} from '../../objects/user/user.format';
-import {User} from '../../objects/user/user.model';
+import {formatUser} from '../../engine/user/user.format';
+import {User} from '../../engine/user/user.model';
 import Logger from '../../utils/logger';
 import {getMaxAge} from '../../utils/max-age';
 import {SessionJSONFileStore} from '../../utils/session-storage';
 import {JAMAPI_VERSION} from '../../version';
-import {JamController} from './api';
+import {JamApi} from './api';
 import {apiCheck} from './check';
 import {NotFoundError, UnauthError} from './error';
 import {CheckAuthMiddleWare, UserRequest} from './login';
@@ -79,7 +79,7 @@ async function checkRoles(user: User, roles?: Array<string>): Promise<void> {
 }
 
 export function initJamRouter(engine: Engine): express.Router {
-	const api = new JamController(engine);
+	const api = new JamApi(engine);
 
 	const UPLOAD_PATH = engine.config.getDataPath(['cache', 'uploads']);
 	const upload = multer({dest: `${UPLOAD_PATH}/`}); // multer configuration

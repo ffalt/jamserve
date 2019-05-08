@@ -1,8 +1,8 @@
 /* tslint:disable:max-classes-per-file */
 import {Jam} from '../../model/jam-rest-data';
 import {Subsonic} from '../../model/subsonic-rest-data';
-import {RootStatus} from '../../objects/root/root.model';
-import {RootStore} from '../../objects/root/root.store';
+import {RootStatus} from '../root/root.model';
+import {RootStore} from '../root/root.store';
 import Logger from '../../utils/logger';
 import {logChanges, MergeChanges} from '../scan/scan.changes';
 import {ScanService} from '../scan/scan.service';

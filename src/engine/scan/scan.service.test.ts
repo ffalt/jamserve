@@ -6,7 +6,7 @@ import path from 'path';
 import tmp from 'tmp';
 import {DBObjectType} from '../../db/db.types';
 import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
-import {testService} from '../../objects/base/base.service.spec';
+import {testService} from '../base/base.service.spec';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import {Genres} from '../../utils/genres';
 import {randomItem} from '../../utils/random';

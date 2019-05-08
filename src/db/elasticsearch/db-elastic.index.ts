@@ -1,5 +1,5 @@
 import elasticsearch from 'elasticsearch';
-import {DBObject} from '../../objects/base/base.model';
+import {DBObject} from '../../engine/base/base.model';
 import {DatabaseIndex, DatabaseQuery} from '../db.model';
 import {DBObjectType} from '../db.types';
 import {DBElastic} from './db-elastic';

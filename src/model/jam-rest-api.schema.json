@@ -8,6 +8,12 @@
 					"description": "various: is the api online?",
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"info.ping"
+							]
+						},
 						"result": {
 							"$ref": "#/definitions/Jam.Ping"
 						},
@@ -19,6 +25,7 @@
 						}
 					},
 					"required": [
+						"operationId",
 						"public",
 						"result"
 					]
@@ -27,6 +34,12 @@
 					"description": "auth: check the login state",
 					"type": "object",
 					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"info.session"
+							]
+						},
 						"result": {
 							"$ref": "#/definitions/Jam.Session"
 						},
@@ -38,6 +51,7 @@
 						}
 					},
 					"required": [
+						"operationId",
 						"public",
 						"result"
 					]

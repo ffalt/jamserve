@@ -1,5 +1,5 @@
 import {after, before, beforeEach, describe, it} from 'mocha';
-import {testService} from '../../objects/base/base.service.spec';
+import {testService} from '../base/base.service.spec';
 import {Store} from '../store/store';
 import tmp from 'tmp';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from '../store/store.mock';

@@ -1,4 +1,4 @@
-import {TrackStore} from '../../objects/track/track.store';
+import {TrackStore} from '../track/track.store';
 import {Genre} from './genre.model';
 
 export interface GenreInfo {

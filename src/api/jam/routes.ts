@@ -22,13 +22,13 @@ export interface Register {
 export function registerPublicApi(register: Register, api: JamController): void {
 	register.get('/ping', async (req, res) => {
 		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.Ping = await api.ping(options);
+		const result: Jam.Ping = await api.infoController.ping(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/session', async (req, res) => {
 		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.Session = await api.session(options);
+		const result: Jam.Session = await api.infoController.session(options);
 		await ApiResponder.data(res, result);
 	});
 }

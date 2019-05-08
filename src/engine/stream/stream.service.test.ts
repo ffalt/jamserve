@@ -1,12 +1,12 @@
 import {assert, expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
-import {testService} from '../../objects/base/base.service.spec';
-import {mockUser} from '../../objects/user/user.mock';
+import {testService} from '../base/base.service.spec';
+import {mockUser} from '../user/user.mock';
 import {StreamService} from './stream.service';
-import {TrackStore} from '../../objects/track/track.store';
+import {TrackStore} from '../track/track.store';
 import {SupportedTranscodeAudioFormat} from '../../utils/filetype';
-import {mockTrack} from '../../objects/track/track.mock';
-import {mockEpisode} from '../../objects/episode/episode.mock';
+import {mockTrack} from '../track/track.mock';
+import {mockEpisode} from '../episode/episode.mock';
 import path from 'path';
 
 describe('StreamService', () => {

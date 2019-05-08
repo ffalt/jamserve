@@ -1,9 +1,9 @@
 import {Jam} from '../../model/jam-rest-data';
 import {AlbumType} from '../../model/jam-types';
-import {AlbumStore, SearchQueryAlbum} from '../../objects/album/album.store';
-import {ArtistStore, SearchQueryArtist} from '../../objects/artist/artist.store';
-import {FolderStore, SearchQueryFolder} from '../../objects/folder/folder.store';
-import {TrackStore} from '../../objects/track/track.store';
+import {AlbumStore, SearchQueryAlbum} from '../album/album.store';
+import {ArtistStore, SearchQueryArtist} from '../artist/artist.store';
+import {FolderStore, SearchQueryFolder} from '../folder/folder.store';
+import {TrackStore} from '../track/track.store';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {IndexAlbumTreeBuilder, IndexArtistTreeBuilder, IndexFolderTreeBuilder} from './index.builder';
 import {AlbumIndex, ArtistIndex, FolderIndex} from './index.model';

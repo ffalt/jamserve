@@ -1,31 +1,29 @@
+import {AlbumController} from '../../engine/album/album.controller';
+import {ArtistController} from '../../engine/artist/artist.controller';
 import {AutocompleteController} from '../../engine/autocomplete/autocomplete.controller';
+import {BookmarkController} from '../../engine/bookmark/bookmark.controller';
 import {ChatController} from '../../engine/chat/chat.controller';
 import {DownloadController} from '../../engine/download/download.controller';
 import {Engine} from '../../engine/engine';
+import {EpisodeController} from '../../engine/episode/episode.controller';
+import {FolderController} from '../../engine/folder/folder.controller';
 import {GenreController} from '../../engine/genre/genre.controller';
 import {ImageController} from '../../engine/image/image.controller';
+import {InfoController} from '../../engine/info/info.controller';
+import {MetadataController} from '../../engine/metadata/metadata.controller';
 import {NowPlayingController} from '../../engine/nowplaying/nowplaying.controller';
+import {PlaylistController} from '../../engine/playlist/playlist.controller';
+import {PlayQueueController} from '../../engine/playqueue/playqueue.controller';
+import {PodcastController} from '../../engine/podcast/podcast.controller';
+import {RadioController} from '../../engine/radio/radio.controller';
+import {RootController} from '../../engine/root/root.controller';
+import {SettingsController} from '../../engine/settings/settings.controller';
 import {StatsController} from '../../engine/stats/stats.controller';
 import {StreamController} from '../../engine/stream/stream.controller';
+import {TrackController} from '../../engine/track/track.controller';
+import {UserController} from '../../engine/user/user.controller';
+import {User} from '../../engine/user/user.model';
 import {WaveformController} from '../../engine/waveform/waveform.controller';
-import {Jam} from '../../model/jam-rest-data';
-import {AlbumController} from '../../objects/album/album.controller';
-import {ArtistController} from '../../objects/artist/artist.controller';
-import {BookmarkController} from '../../objects/bookmark/bookmark.controller';
-import {EpisodeController} from '../../objects/episode/episode.controller';
-import {FolderController} from '../../objects/folder/folder.controller';
-import {MetadataController} from '../../objects/metadata/metadata.controller';
-import {PlaylistController} from '../../objects/playlist/playlist.controller';
-import {PlayQueueController} from '../../objects/playqueue/playqueue.controller';
-import {PodcastController} from '../../objects/podcast/podcast.controller';
-import {RadioController} from '../../objects/radio/radio.controller';
-import {RootController} from '../../objects/root/root.controller';
-import {SettingsController} from '../../objects/settings/settings.controller';
-import {TrackController} from '../../objects/track/track.controller';
-import {UserController} from '../../objects/user/user.controller';
-import {formatSessionUser} from '../../objects/user/user.format';
-import {User} from '../../objects/user/user.model';
-import {JAMAPI_VERSION} from '../../version';
 
 export interface JamRequest<T> {
 	query: T;
@@ -34,7 +32,7 @@ export interface JamRequest<T> {
 	file?: string;
 }
 
-export class JamController {
+export class JamApi {
 	albumController: AlbumController;
 	artistController: ArtistController;
 	autocompleteController: AutocompleteController;
@@ -58,8 +56,9 @@ export class JamController {
 	userController: UserController;
 	waveformController: WaveformController;
 	statsController: StatsController;
+	infoController: InfoController;
 
-	constructor(private engine: Engine) {
+	constructor(public engine: Engine) {
 		this.settingsController = new SettingsController(this.engine.settingsService);
 		this.streamController = new StreamController(this.engine.streamService, this.engine.nowPlayingService, this.engine.store);
 		this.chatController = new ChatController(this.engine.chatService);
@@ -93,14 +92,7 @@ export class JamController {
 		this.bookmarkController = new BookmarkController(this.engine.bookmarkService, this.trackController);
 		this.playqueueController = new PlayQueueController(this.engine.playQueueService, this.trackController);
 		this.metadataController = new MetadataController(this.engine.metaDataService, this.trackController);
-	}
-
-	async ping(req: JamRequest<{}>): Promise<Jam.Ping> {
-		return {version: JAMAPI_VERSION};
-	}
-
-	async session(req: JamRequest<{}>): Promise<Jam.Session> {
-		return {version: JAMAPI_VERSION, allowedCookieDomains: this.engine.config.server.session.allowedCookieDomains, user: req.user ? formatSessionUser(req.user) : undefined};
+		this.infoController = new InfoController(this.engine.config);
 	}
 
 }

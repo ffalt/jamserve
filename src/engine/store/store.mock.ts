@@ -3,7 +3,7 @@ import fse from 'fs-extra';
 import path from 'path';
 import tmp from 'tmp';
 import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
-import {Root} from '../../objects/root/root.model';
+import {Root} from '../root/root.model';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
 import {randomItem} from '../../utils/random';
@@ -359,7 +359,7 @@ export class StoreMock {
 		await scanService.scanRoot(root.id, false);
 	}
 
-	async cleanup() {
+	async cleanup(): Promise<void> {
 		await removeMockRoot(this.mockRoot);
 		await this.waveformServiceTest.cleanup();
 		this.dir.removeCallback();

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import {Jam} from '../../model/jam-rest-data';
-import {User} from '../../objects/user/user.model';
+import {User} from '../user/user.model';
 import {ChatMessage} from './chat.model';
 
 export class ChatService {

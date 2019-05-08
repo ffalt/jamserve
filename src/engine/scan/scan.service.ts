@@ -4,7 +4,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {RootScanStrategy} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
-import {Root} from '../../objects/root/root.model';
+import {Root} from '../root/root.model';
 import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
 import Logger from '../../utils/logger';
 import {Store} from '../store/store';

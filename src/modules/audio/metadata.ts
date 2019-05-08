@@ -2,7 +2,7 @@ import {ID3V24TagBuilder, IID3V2, simplifyTag} from 'jamp3';
 import moment from 'moment';
 import {ID3v2Frames} from '../../model/id3v2-frames';
 import {Jam} from '../../model/jam-rest-data';
-import {TrackTag} from '../../objects/track/track.model';
+import {TrackTag} from '../../engine/track/track.model';
 import {ImageModule} from '../image/image.module';
 import {FlacInfo} from './formats/flac';
 import {MetaDataBlockPicture} from './formats/flac/lib/block.picture';

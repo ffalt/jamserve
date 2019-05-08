@@ -1,11 +1,11 @@
 import {assert, expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
-import {testService} from '../../objects/base/base.service.spec';
+import {testService} from '../base/base.service.spec';
 import {DownloadService} from './download.service';
-import {mockUser} from '../../objects/user/user.mock';
-import {mockFolder} from '../../objects/folder/folder.mock';
-import {mockEpisode} from '../../objects/episode/episode.mock';
-import {mockPlaylist} from '../../objects/playlist/playlist.mock';
+import {mockUser} from '../user/user.mock';
+import {mockFolder} from '../folder/folder.mock';
+import {mockEpisode} from '../episode/episode.mock';
+import {mockPlaylist} from '../playlist/playlist.mock';
 import {Store} from '../store/store';
 
 describe('DownloadService', () => {

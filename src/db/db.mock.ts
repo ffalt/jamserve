@@ -1,21 +1,10 @@
-import {TestElastic} from './elasticsearch/db-elastic.spec';
-import {TestNeDB} from './nedb/db-nedb.spec';
-import {Database} from './db.model';
-import {configureLogger} from '../utils/logger';
 import {after, before, describe} from 'mocha';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import nock from 'nock';
+import {initTestFramework} from '../../test/common.spec';
+import {Database} from './db.model';
+import {TestDBElastic} from './elasticsearch/db-elastic.spec';
+import {TestNeDB} from './nedb/db-nedb.spec';
 
-nock.disableNetConnect();
-nock.enableNetConnect('localhost:9200');
-
-before(() => {
-	chai.should();
-	chai.use(chaiAsPromised);
-});
-
-configureLogger('warn');
+initTestFramework();
 
 export interface TestDB {
 	name: string;
@@ -26,13 +15,13 @@ export interface TestDB {
 	cleanup(): Promise<void>;
 }
 
-export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup: () => Promise<void>, tests: () => void) {
+export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup: () => Promise<void>, tests: () => void): void {
 	const dbs: Array<TestDB> = [];
 	dbs.push(new TestNeDB());
 	// dbs.push(new TestElastic());
 	for (const testDB of dbs) {
 		describe('with ' + testDB.name, () => {
-			before(function(done) {
+			before(function(done): void {
 				this.timeout(40000);
 				testDB.setup().then(() => {
 					setup(testDB).then(() => {

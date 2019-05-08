@@ -1,19 +1,78 @@
-import {Engine} from './engine';
+import tmp from 'tmp';
+import * as pack from '../../package.json';
 import {BaseConfig, Config, extendConfig} from '../config';
-import {mockElasticDBConfig, TestElastic} from '../db/elasticsearch/db-elastic.spec';
-import {Store} from './store/store';
-import tmp, {SynchrounousResult} from 'tmp';
+import {Database} from '../db/db.model';
+import {mockElasticDBConfig, TestDBElastic} from '../db/elasticsearch/db-elastic.spec';
 import {TestNeDB} from '../db/nedb/db-nedb.spec';
+import {mockUser} from './user/user.mock';
+import {Engine} from './engine';
+import {Store} from './store/store';
+import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from './store/store.mock';
+import {DBObjectType} from '../db/db.types';
+import {RootScanStrategy} from '../model/jam-types';
+import {mockPodcast} from './podcast/podcast.mock';
+import {mockEpisode, mockEpisode2} from './episode/episode.mock';
 
-export interface TestEngine {
-	name: string;
-	engine: Engine | undefined;
+export class EngineMock {
+	dir: tmp.DirResult;
+	mockRoot: MockRoot;
 
-	setup(): Promise<void>;
+	constructor(public engine: Engine) {
+		this.dir = tmp.dirSync();
+		this.mockRoot = buildMockRoot(this.dir.name, 1, 'rootID');
+	}
 
-	cleanup(): Promise<void>;
+	async setup(): Promise<void> {
+		await this.engine.userService.create(mockUser());
+		await writeMockRoot(this.mockRoot);
+		this.mockRoot.id = await this.engine.rootService.rootStore.add(
+			{
+				id: '',
+				path: this.mockRoot.path,
+				type: DBObjectType.root,
+				name: this.mockRoot.name,
+				strategy: RootScanStrategy.auto,
+				created: Date.now()
+			});
+		await this.engine.scanService.scanRoot(this.mockRoot.id, false);
+		const podcastID = await this.engine.podcastService.podcastStore.add(mockPodcast());
+		const episode = mockEpisode();
+		episode.podcastID = podcastID;
+		await this.engine.episodeService.episodeStore.add(episode);
+		const episode2 = mockEpisode2();
+		episode2.podcastID = podcastID;
+		await this.engine.episodeService.episodeStore.add(episode2);
+	}
+
+	async cleanup(): Promise<void> {
+		await removeMockRoot(this.mockRoot);
+		this.dir.removeCallback();
+	}
 }
 
+export class TestEngine {
+	// @ts-ignore
+	engine: Engine;
+	// @ts-ignore
+	engineMock: EngineMock;
+
+	constructor(public name: string) {
+	}
+
+	protected async init(config: Config, db: Database): Promise<void> {
+		const store = new Store(db);
+		this.engine = new Engine(config, store, pack.version);
+		this.engineMock = new EngineMock(this.engine);
+	}
+
+	async setup(): Promise<void> {
+		await this.engineMock.setup();
+	}
+
+	async cleanup(): Promise<void> {
+		await this.engineMock.cleanup();
+	}
+}
 
 function mockupConfig(testPath: string, useDB: string): Config {
 	const mockBaseConfig: BaseConfig = {
@@ -27,6 +86,7 @@ function mockupConfig(testPath: string, useDB: string): Config {
 				cookie: {
 					name: 'jam-test.sid',
 					secure: false,
+					proxy: false,
 					maxAge: {value: 5, unit: 'minute'}
 				}
 			},
@@ -47,48 +107,50 @@ function mockupConfig(testPath: string, useDB: string): Config {
 			}
 		}
 	};
-	return extendConfig(<Config>mockBaseConfig);
+	return extendConfig(mockBaseConfig as Config);
 }
 
-export class TestEngineElastic implements TestEngine {
-	name = 'elastic engine';
-	testDB = new TestElastic();
-	dir: SynchrounousResult;
-	engine: Engine | undefined;
+export class TestEngineElastic extends TestEngine {
+	dir: tmp.DirResult;
+	testDB = new TestDBElastic();
 
 	constructor() {
+		super('elastic engine');
 		this.dir = tmp.dirSync();
 	}
 
-	async setup() {
+	async setup(): Promise<void> {
+		await this.testDB.setup();
 		const config = mockupConfig(this.dir.name, 'elasticsearch');
-		const store = new Store(this.testDB.database);
-		this.engine = new Engine(config, store);
+		await this.init(config, this.testDB.database);
+		await super.setup();
 	}
 
-	async cleanup() {
+	async cleanup(): Promise<void> {
+		await this.testDB.cleanup();
 		this.dir.removeCallback();
 	}
 
 }
 
-export class TestEngineNeDB implements TestEngine {
-	name = 'nedb engine';
+export class TestEngineNeDB extends TestEngine {
+	dir: tmp.DirResult;
 	testDB = new TestNeDB();
-	dir: SynchrounousResult;
-	engine: Engine | undefined;
 
 	constructor() {
+		super('nedb engine');
 		this.dir = tmp.dirSync();
 	}
 
-	async setup() {
+	async setup(): Promise<void> {
+		await this.testDB.setup();
 		const config = mockupConfig(this.dir.name, 'nedb');
-		const store = new Store(this.testDB.database);
-		this.engine = new Engine(config, store);
+		await super.init(config, this.testDB.database);
+		await super.setup();
 	}
 
-	async cleanup() {
+	async cleanup(): Promise<void> {
+		await this.testDB.cleanup();
 		this.dir.removeCallback();
 	}
 
@@ -98,7 +160,7 @@ export class TestEngines {
 	engines: Array<TestEngine> = [];
 
 	constructor() {
-		this.engines.push(new TestEngineElastic());
+		// this.engines.push(new TestEngineElastic());
 		this.engines.push(new TestEngineNeDB());
 	}
 

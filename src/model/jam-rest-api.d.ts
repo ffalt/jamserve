@@ -35,6 +35,7 @@ export interface JamApi {
 		 * various: is the api online?
 		 */
 		'ping'?: {
+			operationId: 'info.ping'
 			result: Jam.Ping;
 			public: true;
 		};
@@ -42,6 +43,7 @@ export interface JamApi {
 		 * auth: check the login state
 		 */
 		'session'?: {
+			operationId: 'info.session'
 			result: Jam.Session;
 			public: true;
 		};

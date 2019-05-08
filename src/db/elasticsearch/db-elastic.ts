@@ -1,5 +1,5 @@
 import elasticsearch from 'elasticsearch';
-import {DBObject} from '../../objects/base/base.model';
+import {DBObject} from '../../engine/base/base.model';
 import Logger from '../../utils/logger';
 import {wait} from '../../utils/wait';
 import {Database} from '../db.model';

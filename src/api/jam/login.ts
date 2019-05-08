@@ -1,5 +1,5 @@
 import express from 'express';
-import {User} from '../../objects/user/user.model';
+import {User} from '../../engine/user/user.model';
 import {EngineRequest} from '../server';
 
 /**

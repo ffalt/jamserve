@@ -1,8 +1,8 @@
 import {DBObjectType} from '../../db/db.types';
-import {Episode} from '../../objects/episode/episode.model';
-import {StateService} from '../../objects/state/state.service';
-import {Track} from '../../objects/track/track.model';
-import {User} from '../../objects/user/user.model';
+import {Episode} from '../episode/episode.model';
+import {StateService} from '../state/state.service';
+import {Track} from '../track/track.model';
+import {User} from '../user/user.model';
 import {NowPlaying} from './nowplaying.model';
 
 export class NowPlayingService {

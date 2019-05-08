@@ -6,23 +6,23 @@ import {DBObjectType} from '../db/db.types';
 import {RootScanStrategy} from '../model/jam-types';
 import {AudioModule} from '../modules/audio/audio.module';
 import {ImageModule} from '../modules/image/image.module';
-import {AlbumService} from '../objects/album/album.service';
-import {ArtistService} from '../objects/artist/artist.service';
-import {BookmarkService} from '../objects/bookmark/bookmark.service';
-import {EpisodeService} from '../objects/episode/episode.service';
-import {FolderService} from '../objects/folder/folder.service';
-import {MetaDataService} from '../objects/metadata/metadata.service';
-import {PlaylistService} from '../objects/playlist/playlist.service';
-import {PlayQueueService} from '../objects/playqueue/playqueue.service';
-import {PodcastService} from '../objects/podcast/podcast.service';
-import {RadioService} from '../objects/radio/radio.service';
-import {Root} from '../objects/root/root.model';
-import {RootService} from '../objects/root/root.service';
-import {SettingsService} from '../objects/settings/settings.service';
-import {StateService} from '../objects/state/state.service';
-import {TrackService} from '../objects/track/track.service';
-import {User} from '../objects/user/user.model';
-import {UserService} from '../objects/user/user.service';
+import {AlbumService} from './album/album.service';
+import {ArtistService} from './artist/artist.service';
+import {BookmarkService} from './bookmark/bookmark.service';
+import {EpisodeService} from './episode/episode.service';
+import {FolderService} from './folder/folder.service';
+import {MetaDataService} from './metadata/metadata.service';
+import {PlaylistService} from './playlist/playlist.service';
+import {PlayQueueService} from './playqueue/playqueue.service';
+import {PodcastService} from './podcast/podcast.service';
+import {RadioService} from './radio/radio.service';
+import {Root} from './root/root.model';
+import {RootService} from './root/root.service';
+import {SettingsService} from './settings/settings.service';
+import {StateService} from './state/state.service';
+import {TrackService} from './track/track.service';
+import {User} from './user/user.model';
+import {UserService} from './user/user.service';
 import {pathDeleteIfExists} from '../utils/fs-utils';
 import Logger from '../utils/logger';
 import {randomString} from '../utils/random';
@@ -108,7 +108,7 @@ export class Engine {
 		this.radioService = new RadioService(this.store.radioStore);
 	}
 
-	private async refresh(): Promise<void> {
+	async refresh(): Promise<void> {
 		log.info('Refresh Indexes & Stats');
 		await this.indexService.buildDefaultIndexes();
 		await this.genreService.refresh();

@@ -1,6 +1,6 @@
 import {assert, expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
-import {testService} from '../../objects/base/base.service.spec';
+import {testService} from '../base/base.service.spec';
 import {GenreService} from './genre.service';
 
 describe('GenreService', () => {

@@ -1,6 +1,6 @@
 import {FileTyp} from '../../model/jam-types';
-import {Folder, FolderTag} from '../../objects/folder/folder.model';
-import {Track} from '../../objects/track/track.model';
+import {Folder, FolderTag} from '../folder/folder.model';
+import {Track} from '../track/track.model';
 import {MetaStat} from './scan.metastats';
 
 export interface MatchDir {

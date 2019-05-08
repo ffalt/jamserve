@@ -1,5 +1,5 @@
-import {DBObject} from '../../objects/base/base.model';
-import {User} from '../../objects/user/user.model';
+import {DBObject} from '../base/base.model';
+import {User} from '../user/user.model';
 
 export interface NowPlaying {
 	time: number;

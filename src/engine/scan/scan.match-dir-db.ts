@@ -1,8 +1,8 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {FileTyp} from '../../model/jam-types';
-import {Folder} from '../../objects/folder/folder.model';
-import {Track} from '../../objects/track/track.model';
+import {Folder} from '../folder/folder.model';
+import {Track} from '../track/track.model';
 import {Store} from '../store/store';
 import {MatchDir, MatchFile} from './scan.match-dir';
 

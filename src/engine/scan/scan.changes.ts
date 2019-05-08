@@ -1,8 +1,8 @@
 import moment from 'moment';
-import {Album} from '../../objects/album/album.model';
-import {Artist} from '../../objects/artist/artist.model';
-import {Folder} from '../../objects/folder/folder.model';
-import {Track} from '../../objects/track/track.model';
+import {Album} from '../album/album.model';
+import {Artist} from '../artist/artist.model';
+import {Folder} from '../folder/folder.model';
+import {Track} from '../track/track.model';
 import Logger from '../../utils/logger';
 
 const log = Logger('IO.MergeChanges');

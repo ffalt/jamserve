@@ -12,16 +12,16 @@ export async function validateJSON(data: any, schemaValidator: JSONValidator): P
 	const valid = await schemaValidator(data);
 	if (valid) {
 		return {errors: []};
-	} else if (schemaValidator.errors) {
-		return {errors: schemaValidator.errors};
-	} else {
-		return {
-			errors: [{
-				keyword: 'unknown',
-				dataPath: 'unknown',
-				schemaPath: 'unknown',
-				params: []
-			}]
-		};
 	}
+	if (schemaValidator.errors) {
+		return {errors: schemaValidator.errors};
+	}
+	return {
+		errors: [{
+			keyword: 'unknown',
+			dataPath: 'unknown',
+			schemaPath: 'unknown',
+			params: []
+		}]
+	};
 }

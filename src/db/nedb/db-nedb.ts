@@ -1,6 +1,6 @@
 import Nedb from 'nedb';
 import path from 'path';
-import {DBObject} from '../../objects/base/base.model';
+import {DBObject} from '../../engine/base/base.model';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import {Database} from '../db.model';
 import {DBObjectType} from '../db.types';

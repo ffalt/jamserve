@@ -1,5 +1,5 @@
-import {DBNedb} from './db-nedb';
 import tmp from 'tmp';
+import {DBNedb} from './db-nedb';
 
 export class TestNeDB {
 	name = 'nedb';
@@ -11,13 +11,13 @@ export class TestNeDB {
 	constructor() {
 	}
 
-	async setup() {
+	async setup(): Promise<void> {
 		this.dir = tmp.dirSync();
 		this.database = new DBNedb(this.dir.name);
 		await this.database.open();
 	}
 
-	async cleanup() {
+	async cleanup(): Promise<void> {
 		await this.database.drop();
 		await this.database.close();
 		this.dir.removeCallback();
