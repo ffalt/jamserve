@@ -1,14 +1,14 @@
-import {getJamApiCalls, IApiCall} from './utils';
-import path from 'path';
 import fse from 'fs-extra';
+import path from 'path';
+import {getJamApiCalls, ApiCall} from './utils';
 
 const destPath = '../../dist/';
 const destfile = path.resolve(destPath, 'jam.service.ts');
 const basePath = path.resolve('../../src/model/');
 
-async function run() {
+async function run(): Promise<void> {
 
-	const calls: Array<IApiCall> = await getJamApiCalls(basePath);
+	const calls: Array<ApiCall> = await getJamApiCalls(basePath);
 	const resultAPI: Array<string> = [];
 	calls.forEach(call => {
 		if (call.aliasFor) {
@@ -39,11 +39,10 @@ async function run() {
 				const parampath = call.pathParams.parameters.map(para => {
 					if (para.required) {
 						return '${' + (para.prefix ? ' \'' + para.prefix + '\' + ' : '') + para.name + (para.type !== 'string' ? '.toString()' : '') + '}';
-					} else {
-						const prefix = (para.prefix ? ' \'' + para.prefix + '\' + ' : '');
-						const type = para.type !== 'string' ? '.toString()' : '';
-						return '${(' + para.name + ' !== undefined ? ' + prefix + para.name + type + ' : \'\')}';
 					}
+					const prefix = (para.prefix ? ' \'' + para.prefix + '\' + ' : '');
+					const type = para.type !== 'string' ? '.toString()' : '';
+					return '${(' + para.name + ' !== undefined ? ' + prefix + para.name + type + ' : \'\')}';
 				}).join('');
 				const s = `	${basename}_url(${params}): string {
 		return this.buildRequestUrl(\`${basename}/${parampath}\`);

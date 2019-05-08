@@ -1,5 +1,4 @@
 import tmp from 'tmp';
-import * as pack from '../../package.json';
 import {BaseConfig, Config, extendConfig} from '../config';
 import {Database} from '../db/db.model';
 import {DBObjectType} from '../db/db.types';
@@ -13,6 +12,7 @@ import {mockPodcast} from './podcast/podcast.mock';
 import {Store} from './store/store';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from './store/store.mock';
 import {mockUser} from './user/user.mock';
+import {JAMSERVE_VERSION} from '../version';
 
 export class EngineMock {
 	dir: tmp.DirResult;
@@ -66,7 +66,7 @@ export class TestEngine {
 
 	protected async init(config: Config, db: Database): Promise<void> {
 		const store = new Store(db);
-		this.engine = new Engine(config, store, pack.version);
+		this.engine = new Engine(config, store, JAMSERVE_VERSION);
 		this.engineMock = new EngineMock(this.engine);
 	}
 

@@ -1,7 +1,7 @@
-import * as TJS from 'typescript-json-schema';
-import path from 'path';
-import {Definition} from 'typescript-json-schema/typescript-json-schema';
 import fse from 'fs-extra';
+import path from 'path';
+import * as TJS from 'typescript-json-schema';
+import {Definition} from 'typescript-json-schema/typescript-json-schema';
 
 const settings: TJS.PartialArgs = {
 	required: true
@@ -27,9 +27,8 @@ export async function transformTS2JSONScheme(basePath: string, filename: string,
 	const scheme = generator.getSchemaForSymbol(symbol, true);
 	if (scheme) {
 		return scheme;
-	} else {
-		return Promise.reject('Typescript symbol not found: ' + symbol);
 	}
+	return Promise.reject('Typescript symbol not found: ' + symbol);
 }
 
 export async function transformTS2NamespaceJSONScheme(basePath: string, filename: string): Promise<Definition> {
@@ -49,9 +48,8 @@ export async function transformTS2NamespaceJSONScheme(basePath: string, filename
 	const scheme = generator.getSchemaForSymbols(symbols, true);
 	if (scheme) {
 		return scheme;
-	} else {
-		return Promise.reject('Typescript schema could not be created: ' + filename);
 	}
+	return Promise.reject('Typescript schema could not be created: ' + filename);
 }
 
 export async function saveTS2JSONScheme(basePath: string, filename: string, symbol: string): Promise<void> {
@@ -68,8 +66,7 @@ export async function saveTS2NamespaceJSONScheme(basePath: string, filename: str
 	console.log(destfile, 'written');
 }
 
-
-export interface IApiCall {
+export interface ApiCall {
 	method: string;
 	name: string;
 	tag: string;
@@ -124,18 +121,18 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): {
 	return {paramType, parameters};
 }
 
-export async function getSubsonicApiCalls(basePath: string): Promise<Array<IApiCall>> {
+export async function getSubsonicApiCalls(basePath: string): Promise<Array<ApiCall>> {
 	const api = await transformTS2JSONScheme(basePath, 'subsonic-rest-api', 'SubsonicApi');
 	return getApiCalls(api);
 }
 
-export async function getJamApiCalls(basePath: string): Promise<Array<IApiCall>> {
+export async function getJamApiCalls(basePath: string): Promise<Array<ApiCall>> {
 	const api = await transformTS2JSONScheme(basePath, 'jam-rest-api', 'JamApi');
 	return getApiCalls(api);
 }
 
-export function getApiCalls(api: any): Array<IApiCall> {
-	const result: Array<IApiCall> = [];
+export function getApiCalls(api: any): Array<ApiCall> {
+	const result: Array<ApiCall> = [];
 	Object.keys(api.properties).forEach(method => {
 		Object.keys(api.properties[method].properties).forEach(name => {
 			const apidef = api.properties[method].properties[name];
@@ -152,11 +149,9 @@ export function getApiCalls(api: any): Array<IApiCall> {
 				}
 			} else {
 				splits = name.split('/');
-				if (splits.length > 1) {
-					operationId = splits[0] + 'Controller.' + splits[1];
-				} else {
-					operationId = name;
-				}
+				operationId = splits.length > 1 ?
+					splits[0] + 'Controller.' + splits[1] :
+					name;
 			}
 			if (splits.length > 2) {
 				operationId += splits.slice(2).map(sp => sp[0].toUpperCase() + sp.slice(1).toLowerCase()).join('');

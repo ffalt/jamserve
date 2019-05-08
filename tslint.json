@@ -17,6 +17,20 @@
         "esSpecCompliant": true
       }
     ],
+    "increment-decrement": [
+      true,
+      "allow-post"
+    ],
+    "comment-type": [
+      true,
+      "singleline",
+      "multiline",
+      "doc"
+    ],
+    "ban-comma-operator": true,
+    "no-for-in-array": true,
+    "prefer-while": true,
+    "prefer-for-of": true,
     "unnecessary-else": true,
     "newline-before-return": false,
     "no-return-await": true,
@@ -30,7 +44,10 @@
       true,
       "check-space"
     ],
-    "interface-name": [true, "never-prefix"],
+    "interface-name": [
+      true,
+      "never-prefix"
+    ],
     "curly": true,
     "eofline": true,
     "forin": true,

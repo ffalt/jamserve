@@ -1,13 +1,13 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {ApiBinaryResult} from '../../src/typings';
-import {getSubsonicApiCalls, IApiCall} from './utils';
+import {getSubsonicApiCalls, ApiCall} from './utils';
 
 const destPath = '../../src/api/subsonic/';
 const destfile = path.resolve(destPath, 'routes.ts');
 const basePath = path.resolve('../../src/model/');
 
-function generateCode(calls: Array<IApiCall>): string {
+function generateCode(calls: Array<ApiCall>): string {
 	const result: Array<string> = [];
 	calls.forEach(call => {
 		let datasouce = 'req.query';
@@ -67,8 +67,8 @@ function generateCode(calls: Array<IApiCall>): string {
 	return result.join('\n\n');
 }
 
-async function run() {
-	const apicalls: Array<IApiCall> = await getSubsonicApiCalls(basePath);
+async function run(): Promise<void> {
+	const apicalls: Array<ApiCall> = await getSubsonicApiCalls(basePath);
 	const roles: Array<string> = [];
 	apicalls.forEach(call => {
 		(call.roles || []).forEach(role => {

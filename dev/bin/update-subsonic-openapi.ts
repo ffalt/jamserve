@@ -1,30 +1,30 @@
-import {OpenAPIObject} from '../../src/model/openapi-spec';
-import path from 'path';
-import {getSubsonicApiCalls, IApiCall, transformTS2JSONScheme} from './utils';
 import fse from 'fs-extra';
+import path from 'path';
+import {OpenAPIObject} from '../../src/model/openapi-spec';
+import {getSubsonicApiCalls, ApiCall, transformTS2JSONScheme} from './utils';
 
 const version = '1.16.0';
 const basePath = path.resolve('../../src/model/');
 const destfile = path.resolve(basePath, 'subsonic-openapi.json');
 
-async function run() {
+async function run(): Promise<void> {
 	const data = await transformTS2JSONScheme(basePath, 'subsonic-rest-data', 'Subsonic.Response');
 	data.definitions = data.definitions || {};
 	data.definitions['Subsonic.ResponseStatus'] = {
-		'enum': [
+		enum: [
 			'failed',
 			'ok'
 		],
-		'type': 'string'
+		type: 'string'
 	};
 	data.definitions['Subsonic.Version'] = {
-		'enum': [version],
-		'type': 'string'
+		enum: [version],
+		type: 'string'
 	};
-	const apicalls: Array<IApiCall> = await getSubsonicApiCalls(basePath);
+	const apicalls: Array<ApiCall> = await getSubsonicApiCalls(basePath);
 
 	function fillResponse(p: any): any {
-		const o = Object.assign({}, p);
+		const o = {...p};
 		o.properties['status'] = {$ref: '#/definitions/Subsonic.ResponseStatus'};
 		o.properties['error'] = {$ref: '#/definitions/Subsonic.Error'};
 		o.properties['version'] = {$ref: '#/definitions/Subsonic.Version'};
@@ -33,7 +33,7 @@ async function run() {
 		return o;
 	}
 
-	function collectSchema(p: any, definitions: any) {
+	function collectSchema(p: any, definitions: any): void {
 		if (p.$ref) {
 			const proptype = p.$ref.split('/')[2];
 			p = definitions[proptype];
@@ -68,7 +68,7 @@ async function run() {
 		const proptype = p.$ref.split('/')[2];
 		p = definitions[proptype];
 		Object.keys(p.properties).forEach(key => {
-			const prop = Object.assign({}, p.properties[key]);
+			const prop = {...p.properties[key]};
 			const description = prop.description;
 			delete prop.description;
 			if (prop.$ref) {
@@ -92,7 +92,7 @@ async function run() {
 		openapi: '3.0.0',
 		info: {
 			description: 'Api for Subsonic',
-			version: version,
+			version,
 			title: 'SubsonicApi'
 		},
 		servers: [{
@@ -103,13 +103,13 @@ async function run() {
 		security:
 			[
 				{
-					'userAuth': [],
-					'passwdAuth': [],
-					'tokenAuth': [],
-					'saltAuth': [],
-					'versionAuth': [],
-					'clientAuth': [],
-					'formatAuth': []
+					userAuth: [],
+					passwdAuth: [],
+					tokenAuth: [],
+					saltAuth: [],
+					versionAuth: [],
+					clientAuth: [],
+					formatAuth: []
 				}
 			],
 		components: {
@@ -181,11 +181,7 @@ async function run() {
 			cmd.responses['200'] = success;
 		} else {
 			const success: any = {description: 'ok'};
-			if (call.resultSchema) {
-				success.content = {'application/json': {schema: fillResponse(call.resultSchema)}};
-			} else {
-				success.content = {'application/json': {schema: fillResponse({type: 'object', properties: {}, required: []})}};
-			}
+			success.content = {'application/json': {schema: fillResponse(call.resultSchema ? call.resultSchema : {type: 'object', properties: {}, required: []})}};
 			success.content['application/xml'] = success.content['application/json'];
 			cmd.responses['200'] = success;
 		}
@@ -215,7 +211,7 @@ async function run() {
 			};
 		}
 		openapi.paths['/' + call.name] = openapi.paths['/' + call.name] || {};
-		(<any>openapi.paths['/' + call.name])[call.method] = cmd;
+		(openapi.paths['/' + call.name] as any)[call.method] = cmd;
 	});
 	const oa = JSON.stringify(openapi, null, '\t').replace(/\/definitions/g, '/components/schemas');
 	await fse.writeFile(destfile, oa);

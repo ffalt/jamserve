@@ -1,13 +1,13 @@
-import {OpenAPIObject} from '../../src/model/openapi-spec';
-import path from 'path';
-import {getJamApiCalls, IApiCall, transformTS2NamespaceJSONScheme} from './utils';
 import fse from 'fs-extra';
+import path from 'path';
+import {OpenAPIObject} from '../../src/model/openapi-spec';
 import {JAMAPI_VERSION} from '../../src/version';
+import {getJamApiCalls, ApiCall, transformTS2NamespaceJSONScheme} from './utils';
 
 const basePath = path.resolve('../../src/model/');
 const destfile = path.resolve(basePath, 'jam-openapi.json');
 
-async function run() {
+async function run(): Promise<void> {
 
 	const openapi: OpenAPIObject = {
 		openapi: '3.0.0',
@@ -47,11 +47,11 @@ async function run() {
 		},
 		security: [
 			{cookieAuth: []},
-			{bearerAuth: []},
+			{bearerAuth: []}
 		]
 	};
 
-	function collectSchema(p: any, definitions: any) {
+	function collectSchema(p: any, definitions: any): void {
 		if (p.$ref) {
 			const proptype = p.$ref.split('/')[2];
 			const pr = definitions[proptype];
@@ -80,7 +80,7 @@ async function run() {
 		const proptype = p.$ref.split('/')[2];
 		p = definitions[proptype];
 		Object.keys(p.properties).forEach(key => {
-			const prop = Object.assign({}, p.properties[key]);
+			const prop = {...p.properties[key]};
 			const description = prop.description;
 			delete prop.description;
 			if (prop.$ref) {
@@ -101,7 +101,7 @@ async function run() {
 	}
 
 	const data = await transformTS2NamespaceJSONScheme(basePath, 'jam-rest-data');
-	const apicalls: Array<IApiCall> = await getJamApiCalls(basePath);
+	const apicalls: Array<ApiCall> = await getJamApiCalls(basePath);
 	const usedIDs: { [name: string]: boolean } = {};
 
 	apicalls.forEach(call => {
@@ -173,7 +173,7 @@ async function run() {
 			};
 		}
 		openapi.paths['/' + call.name] = openapi.paths['/' + call.name] || {};
-		(<any>openapi.paths['/' + call.name])[call.method] = cmd;
+		(openapi.paths['/' + call.name] as any)[call.method] = cmd;
 	});
 
 	const oa = JSON.stringify(openapi, null, '\t').replace(/\/definitions/g, '/components/schemas');

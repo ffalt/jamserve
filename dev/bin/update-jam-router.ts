@@ -1,13 +1,13 @@
-import {getJamApiCalls, IApiCall} from './utils';
+import fse from 'fs-extra';
 import path from 'path';
 import {ApiBinaryResult} from '../../src/typings';
-import fse from 'fs-extra';
+import {getJamApiCalls, ApiCall} from './utils';
 
 const destPath = '../../src/api/jam/';
 const destfile = path.resolve(destPath, 'routes.ts');
 const basePath = path.resolve('../../src/model/');
 
-function generateCode(calls: Array<IApiCall>): string {
+function generateCode(calls: Array<ApiCall>): string {
 	const result: Array<string> = [];
 	calls.forEach(call => {
 		if (['login', 'logout'].indexOf(call.name) >= 0) {
@@ -68,8 +68,8 @@ function generateCode(calls: Array<IApiCall>): string {
 	return result.join('\n\n');
 }
 
-async function run() {
-	const apicalls: Array<IApiCall> = await getJamApiCalls(basePath);
+async function run(): Promise<void> {
+	const apicalls: Array<ApiCall> = await getJamApiCalls(basePath);
 	const publicApi = generateCode(apicalls.filter(call => call.isPublic));
 	const accessControlApi = generateCode(apicalls.filter(call => !call.isPublic));
 

@@ -59,18 +59,21 @@ async function run(): Promise<void> {
 			}
 			// console.log(name + ': string in ' + parent);
 			return 'type_key';
-		} else if (prop.type === 'number') {
-			return 'type_int';
-		} else if (prop.type === 'boolean') {
-			return 'type_bool';
-		} else if (prop.type === 'array') {
-			return transformProperty(name, parent, prop.items, definitions, paths);
-		} else if (prop.type === 'object') {
-			return transformProperties(key, prop.properties, definitions, paths);
-		} else {
-			console.log('TODO', prop);
-			return '';
 		}
+		if (prop.type === 'number') {
+			return 'type_int';
+		}
+		if (prop.type === 'boolean') {
+			return 'type_bool';
+		}
+		if (prop.type === 'array') {
+			return transformProperty(name, parent, prop.items, definitions, paths);
+		}
+		if (prop.type === 'object') {
+			return transformProperties(key, prop.properties, definitions, paths);
+		}
+		console.log('TODO', prop);
+		return '';
 	}
 
 	function transformProperties(symbol: string, props: any, definitions: any, paths: Array<string>): any {
@@ -91,9 +94,8 @@ async function run(): Promise<void> {
 			const name = 'type_' + symbol.replace(/\./g, '_');
 			strings.push('const ' + name + ' = ' + JSON.stringify({properties}, null, '\t').replace(/"/g, '') + ';\n');
 			return name;
-		} else {
-			return {properties};
 		}
+		return {properties};
 	}
 
 	const symbols = ['Root', 'User', 'Folder', 'PlayQueue', 'Track', 'Album', 'Artist', 'Radio', 'State', 'Playlist', 'Podcast', 'Episode', 'Bookmark', 'MetaData', 'Settings'];
@@ -103,7 +105,7 @@ async function run(): Promise<void> {
 	strings.push('const type_string = {type: \'text\', fields: {keyword: {type: \'keyword\'}}};\n');
 	strings.push('const type_key = {type: \'keyword\'};\n');
 	for (const symbol of symbols) {
-		const baseP = path.resolve(basePath, `objects/${symbol.toLowerCase()}`);
+		const baseP = path.resolve(basePath, `engine/${symbol.toLowerCase()}`);
 		const scheme = await transformTS2JSONScheme(baseP, symbol.toLowerCase() + '.model', symbol);
 		transformProperties(symbol, scheme.properties || {}, scheme.definitions || {}, []);
 		result[symbol.toLowerCase()] = 'type_' + symbol.replace(/\./g, '_');

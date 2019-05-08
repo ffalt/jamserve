@@ -1,5 +1,4 @@
 import program from 'commander';
-import * as pack from '../package.json';
 import {Server} from './api/server';
 import {loadConfig} from './config';
 import {Database} from './db/db.model';
@@ -8,9 +7,10 @@ import {DBNedb} from './db/nedb/db-nedb';
 import {Engine} from './engine/engine';
 import {Store} from './engine/store/store';
 import Logger, {configureLogger} from './utils/logger';
+import {JAMSERVE_VERSION} from './version';
 
 program
-	.version(pack.version, '-v, --version')
+	.version(JAMSERVE_VERSION, '-v, --version')
 	.usage('[options]')
 	.option('-r, --reset', 'reset the db')
 	.option('-c, --config <folder>', 'config file folder')
@@ -25,7 +25,7 @@ const db: Database =
 		new DBElastic(config.database.options.elasticsearch) :
 		new DBNedb(config.getDataPath(['nedb']));
 const store = new Store(db);
-const engine = new Engine(config, store, pack.version);
+const engine = new Engine(config, store, JAMSERVE_VERSION);
 const server = new Server(engine);
 const log = Logger('JamServe');
 
