@@ -937,7 +937,7 @@ export declare namespace JamParameters {
 		sortField?: AlbumSortField;
 	}
 
-	export interface AlbumList extends Paginate, IncludesAlbum, AlbumSearchQuery, List {
+	export interface AlbumList extends List, IncludesAlbum, AlbumSearchQuery {
 	}
 
 	export interface AlbumSearch extends Paginate, AlbumSearchQuery, IncludesAlbum {
@@ -970,6 +970,9 @@ export declare namespace JamParameters {
 	}
 
 	export interface PlaylistSearch extends Paginate, PlaylistSearchQuery, IncludesPlaylist {
+	}
+
+	export interface PlaylistList extends List, IncludesPlaylist, PlaylistSearchQuery {
 	}
 
 	export interface PlaylistNew {

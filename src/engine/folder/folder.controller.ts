@@ -272,4 +272,5 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		const newFolder = await this.folderService.newFolder(folder, req.query.name);
 		return this.prepare(newFolder, {}, req.user);
 	}
+
 }

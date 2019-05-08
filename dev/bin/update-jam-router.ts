@@ -84,7 +84,7 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {LastFM} from '../../model/lastfm-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {ApiBinaryResult} from '../../typings';
-import {JamController, JamRequest} from './api';
+import {JamApi, JamRequest} from './api';
 import {ApiResponder} from './response';
 
 export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
@@ -94,11 +94,11 @@ export interface Register {
 	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
 }
 
-export function registerPublicApi(register: Register, api: JamController): void {
+export function registerPublicApi(register: Register, api: JamApi): void {
 ${publicApi}
 }
 
-export function registerAccessControlApi(register: Register, api: JamController): void {
+export function registerAccessControlApi(register: Register, api: JamApi): void {
 ${accessControlApi}
 }
 `;

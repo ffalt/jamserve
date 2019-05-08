@@ -3,6 +3,7 @@ import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {PlaylistService} from './playlist.service';
 import {TrackStore} from '../track/track.store';
+import {StateService} from '../state/state.service';
 
 describe('PlaylistService', () => {
 	let playlistService: PlaylistService;
@@ -10,7 +11,8 @@ describe('PlaylistService', () => {
 	testService({mockData: false},
 		async (store, imageModuleTest) => {
 			trackStore = store.trackStore;
-			playlistService = new PlaylistService(store.playlistStore, store.trackStore);
+			const stateService = new StateService(store.stateStore);
+			playlistService = new PlaylistService(store.playlistStore, store.trackStore, stateService);
 		},
 		() => {
 			it('create an empty playlist', async () => {

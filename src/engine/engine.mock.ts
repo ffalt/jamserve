@@ -2,16 +2,17 @@ import tmp from 'tmp';
 import * as pack from '../../package.json';
 import {BaseConfig, Config, extendConfig} from '../config';
 import {Database} from '../db/db.model';
+import {DBObjectType} from '../db/db.types';
 import {mockElasticDBConfig, TestDBElastic} from '../db/elasticsearch/db-elastic.spec';
 import {TestNeDB} from '../db/nedb/db-nedb.spec';
-import {mockUser} from './user/user.mock';
+import {RootScanStrategy} from '../model/jam-types';
 import {Engine} from './engine';
+import {mockEpisode, mockEpisode2} from './episode/episode.mock';
+import {mockPlaylist} from './playlist/playlist.mock';
+import {mockPodcast} from './podcast/podcast.mock';
 import {Store} from './store/store';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from './store/store.mock';
-import {DBObjectType} from '../db/db.types';
-import {RootScanStrategy} from '../model/jam-types';
-import {mockPodcast} from './podcast/podcast.mock';
-import {mockEpisode, mockEpisode2} from './episode/episode.mock';
+import {mockUser} from './user/user.mock';
 
 export class EngineMock {
 	dir: tmp.DirResult;
@@ -23,7 +24,7 @@ export class EngineMock {
 	}
 
 	async setup(): Promise<void> {
-		await this.engine.userService.create(mockUser());
+		const userID = await this.engine.userService.create(mockUser());
 		await writeMockRoot(this.mockRoot);
 		this.mockRoot.id = await this.engine.rootService.rootStore.add(
 			{
@@ -42,6 +43,10 @@ export class EngineMock {
 		const episode2 = mockEpisode2();
 		episode2.podcastID = podcastID;
 		await this.engine.episodeService.episodeStore.add(episode2);
+		const playlist = mockPlaylist();
+		playlist.userID = userID;
+		playlist.trackIDs = await this.engine.trackService.trackStore.allIds();
+		await this.engine.playlistService.playlistStore.add(playlist);
 	}
 
 	async cleanup(): Promise<void> {

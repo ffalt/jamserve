@@ -716,7 +716,7 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
-		 * album: get tracks of an album by album id
+		 * album: get tracks of an album by album ids
 		 */
 		'album/tracks'?: {
 			params: JamParameters.Tracks;
@@ -772,10 +772,21 @@ export interface JamApi {
 			result: Jam.States;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * playlist: get tracks of a playlist(s) by playlist ids
+		 */
 		'playlist/tracks'?: {
 			params: JamParameters.Tracks;
 			result: Array<Jam.Track>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * playlist: get a playlist list by playlist list type
+		 */
+		'playlist/list'?: {
+			params: JamParameters.PlaylistList;
+			result: Array<Jam.Playlist>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 
 		/**

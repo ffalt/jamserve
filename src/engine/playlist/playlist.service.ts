@@ -1,5 +1,7 @@
 import {DBObjectType} from '../../db/db.types';
 import {BaseStoreService} from '../base/base.service';
+import {BaseListService} from '../base/dbobject-list.service';
+import {StateService} from '../state/state.service';
 import {Track} from '../track/track.model';
 import {TrackStore} from '../track/track.store';
 import {Playlist} from './playlist.model';
@@ -19,10 +21,10 @@ export async function updatePlayListTracks(trackStore: TrackStore, playlist: Pla
 	});
 }
 
-export class PlaylistService extends BaseStoreService<Playlist, SearchQueryPlaylist> {
+export class PlaylistService extends BaseListService<Playlist, SearchQueryPlaylist> {
 
-	constructor(public playlistStore: PlaylistStore, private trackStore: TrackStore) {
-		super(playlistStore);
+	constructor(public playlistStore: PlaylistStore, private trackStore: TrackStore, stateService: StateService) {
+		super(playlistStore, stateService);
 	}
 
 	async create(name: string, comment: string | undefined, isPublic: boolean, userID: string, trackIDs: Array<string>): Promise<Playlist> {

@@ -9,7 +9,7 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {LastFM} from '../../model/lastfm-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {ApiBinaryResult} from '../../typings';
-import {JamController, JamRequest} from './api';
+import {JamApi, JamRequest} from './api';
 import {ApiResponder} from './response';
 
 export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
@@ -19,7 +19,7 @@ export interface Register {
 	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
 }
 
-export function registerPublicApi(register: Register, api: JamController): void {
+export function registerPublicApi(register: Register, api: JamApi): void {
 	register.get('/ping', async (req, res) => {
 		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Ping = await api.infoController.ping(options);
@@ -33,7 +33,7 @@ export function registerPublicApi(register: Register, api: JamController): void 
 	});
 }
 
-export function registerAccessControlApi(register: Register, api: JamController): void {
+export function registerAccessControlApi(register: Register, api: JamApi): void {
 	register.get('/lastfm/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.LastFMLookup> = {query: req.query, user: req.user, client: req.client};
 		const result: LastFM.Result = await api.metadataController.lastfmLookup(options);
@@ -565,6 +565,12 @@ export function registerAccessControlApi(register: Register, api: JamController)
 	register.get('/playlist/tracks', async (req, res) => {
 		const options: JamRequest<JamParameters.Tracks> = {query: req.query, user: req.user, client: req.client};
 		const result: Array<Jam.Track> = await api.playlistController.tracks(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/playlist/list', async (req, res) => {
+		const options: JamRequest<JamParameters.PlaylistList> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.Playlist> = await api.playlistController.list(options);
 		await ApiResponder.data(res, result);
 	});
 

@@ -1,10 +1,10 @@
 import {JamRequest} from '../../api/jam/api';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
-import {DownloadService} from '../../engine/download/download.service';
-import {ImageService} from '../../engine/image/image.service';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {ApiBinaryResult} from '../../typings';
+import {DownloadService} from '../download/download.service';
+import {ImageService} from '../image/image.service';
 import {formatState, formatStates} from '../state/state.format';
 import {StateService} from '../state/state.service';
 import {User} from '../user/user.model';
@@ -130,11 +130,6 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 	async image(req: JamRequest<JamParameters.Image>): Promise<ApiBinaryResult> {
 		const item = await this.byID(req.query.id);
 		return this.imageService.getObjImage(item, req.query.size, req.query.format);
-	}
-
-	async download(req: JamRequest<JamParameters.Download>): Promise<ApiBinaryResult> {
-		const item = await this.byID(req.query.id);
-		return this.downloadService.getObjDownload(item, req.query.format, req.user);
 	}
 
 }

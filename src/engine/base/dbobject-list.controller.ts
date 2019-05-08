@@ -1,6 +1,7 @@
 import {JamRequest} from '../../api/jam/api';
 import {InvalidParamError} from '../../api/jam/error';
 import {JamParameters} from '../../model/jam-rest-params';
+import {ApiBinaryResult} from '../../typings';
 import {paginate} from '../../utils/paginate';
 import {randomItems} from '../../utils/random';
 import {DownloadService} from '../download/download.service';
@@ -69,4 +70,8 @@ export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | I
 		return this.getList(req.query as JamParameters.List, req.query as SEARCHQUERY, req.query as INCLUDE, req.user);
 	}
 
+	async download(req: JamRequest<JamParameters.Download>): Promise<ApiBinaryResult> {
+		const item = await this.byID(req.query.id);
+		return this.downloadService.getObjDownload(item, req.query.format, req.user);
+	}
 }

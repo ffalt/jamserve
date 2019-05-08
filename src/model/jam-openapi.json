@@ -8515,6 +8515,15 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "list",
+						"schema": {
+							"$ref": "#/components/schemas/JamParameters.ListType"
+						},
+						"description": "the type of the item list",
+						"required": true
+					},
+					{
+						"in": "query",
 						"name": "offset",
 						"schema": {
 							"default": 0,
@@ -8816,15 +8825,6 @@
 						},
 						"description": "sort direction",
 						"required": false
-					},
-					{
-						"in": "query",
-						"name": "list",
-						"schema": {
-							"$ref": "#/components/schemas/JamParameters.ListType"
-						},
-						"description": "the type of the item list",
-						"required": true
 					}
 				]
 			}
@@ -9605,7 +9605,7 @@
 		"/album/tracks": {
 			"get": {
 				"operationId": "albumController.tracks",
-				"description": "get tracks of an album by album id",
+				"description": "get tracks of an album by album ids",
 				"tags": [
 					"album"
 				],
@@ -10258,6 +10258,7 @@
 		"/playlist/tracks": {
 			"get": {
 				"operationId": "playlistController.tracks",
+				"description": "get tracks of a playlist(s) by playlist ids",
 				"tags": [
 					"playlist"
 				],
@@ -10339,6 +10340,212 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					}
+				]
+			}
+		},
+		"/playlist/list": {
+			"get": {
+				"operationId": "playlistController.list",
+				"description": "get a playlist list by playlist list type",
+				"tags": [
+					"playlist"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.Playlist"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "list",
+						"schema": {
+							"$ref": "#/components/schemas/JamParameters.ListType"
+						},
+						"description": "the type of the item list",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "playlistTracks",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tracks on playlist(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "playlistTracksIDs",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include track ids on playlist(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "playlistState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on playlist(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackMedia",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include media information on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackRawTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include raw tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by playlist name",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "isPublic",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "filter by public state",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"enum": [
+								"created",
+								"name"
+							],
+							"type": "string"
+						},
+						"description": "sort the result by",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "search by ids",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "sort direction",
 						"required": false
 					}
 				]

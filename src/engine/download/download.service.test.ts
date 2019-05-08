@@ -1,12 +1,12 @@
 import {assert, expect, should, use} from 'chai';
 import {after, before, beforeEach, describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
-import {DownloadService} from './download.service';
-import {mockUser} from '../user/user.mock';
-import {mockFolder} from '../folder/folder.mock';
 import {mockEpisode} from '../episode/episode.mock';
+import {mockFolder} from '../folder/folder.mock';
 import {mockPlaylist} from '../playlist/playlist.mock';
 import {Store} from '../store/store';
+import {mockUser} from '../user/user.mock';
+import {DownloadService} from './download.service';
 
 describe('DownloadService', () => {
 	let downloadService: DownloadService;
@@ -14,7 +14,7 @@ describe('DownloadService', () => {
 	testService({mockData: true},
 		async (storeTest) => {
 			store = storeTest;
-			downloadService = new DownloadService(store.trackStore);
+			downloadService = new DownloadService(store.trackStore, store.episodeStore);
 		},
 		() => {
 			const user = mockUser();

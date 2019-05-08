@@ -94,10 +94,10 @@ export class Engine {
 				log.error('Error on Refresh Indexes & Stats', e);
 			});
 		});
-		this.downloadService = new DownloadService(this.store.trackStore);
+		this.downloadService = new DownloadService(this.store.trackStore, this.store.episodeStore);
 		this.nowPlayingService = new NowPlayingService(this.stateService);
 		this.streamService = new StreamService();
-		this.playlistService = new PlaylistService(this.store.playlistStore, this.store.trackStore);
+		this.playlistService = new PlaylistService(this.store.playlistStore, this.store.trackStore, this.stateService);
 		this.playQueueService = new PlayQueueService(this.store.playQueueStore);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
 		this.episodeService = new EpisodeService(config.getDataPath(['podcasts']), this.store.episodeStore, this.stateService, this.audioModule);

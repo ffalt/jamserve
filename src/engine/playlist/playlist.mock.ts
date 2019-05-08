@@ -1,5 +1,5 @@
-import {Playlist} from './playlist.model';
 import {DBObjectType} from '../../db/db.types';
+import {Playlist} from './playlist.model';
 
 export function mockPlaylist(): Playlist {
 	return {

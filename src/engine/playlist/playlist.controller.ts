@@ -3,7 +3,7 @@ import {UnauthError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
-import {BaseController} from '../base/dbobject.controller';
+import {BaseListController} from '../base/dbobject-list.controller';
 import {DownloadService} from '../download/download.service';
 import {ImageService} from '../image/image.service';
 import {formatState} from '../state/state.format';
@@ -15,7 +15,16 @@ import {Playlist} from './playlist.model';
 import {PlaylistService} from './playlist.service';
 import {SearchQueryPlaylist} from './playlist.store';
 
-export class PlaylistController extends BaseController<JamParameters.Playlist, JamParameters.Playlists, JamParameters.IncludesPlaylist, SearchQueryPlaylist, JamParameters.PlaylistSearch, Playlist, Jam.Playlist> {
+export class PlaylistController extends BaseListController<
+	JamParameters.Playlist,
+	JamParameters.Playlists,
+	JamParameters.IncludesPlaylist,
+	SearchQueryPlaylist,
+	JamParameters.PlaylistSearch,
+	Playlist,
+	Jam.Playlist,
+	JamParameters.PlaylistList
+	> {
 
 	constructor(
 		private playlistService: PlaylistService,

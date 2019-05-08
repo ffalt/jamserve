@@ -25,10 +25,15 @@ export function testBaseListController<OBJREQUEST extends JamParameters.ID | INC
 ): void {
 	let controller: BaseListController<OBJREQUEST, OBJLISTREQUEST, INCLUDE, JAMQUERY, SEARCHQUERY, DBOBJECT, RESULTOBJ, LISTQUERY>;
 	let user: User;
+	let objs: Array<DBOBJECT>;
 	testBaseController<OBJREQUEST, OBJLISTREQUEST, INCLUDE, JAMQUERY, SEARCHQUERY, DBOBJECT, RESULTOBJ>(opts,
 		async (jamApi, jamUser) => {
 			user = jamUser;
 			controller = await setup(jamApi, jamUser);
+			objs = await controller.service.store.all();
+			if (objs.length === 0) {
+				return Promise.reject(Error('Invalid Test Setup, missing any object for ' + opts.typeName));
+			}
 			return controller;
 		},
 		() => {
@@ -43,6 +48,20 @@ export function testBaseListController<OBJREQUEST extends JamParameters.ID | INC
 					const result = await controller.list(req as JamRequest<LISTQUERY>);
 					should().exist(result);
 					await validateJamResponse(opts.typeName, result, true);
+				}
+			});
+			it('should not (prepare) download an object with unsupported format', async () => {
+				const req = {query: {id: objs[0].id, format: 'rar'}, user};
+				await controller.download(req as JamRequest<JamParameters.Download>).should.eventually.be.rejectedWith(Error);
+			});
+			it('should (prepare) download an object', async () => {
+				for (const format of [undefined, '', 'zip', 'tar']) {
+					for (const obj of objs) {
+						const req = {query: {id: obj.id, format}, user};
+						const result = await controller.download(req as JamRequest<JamParameters.Download>);
+						should().exist(result);
+						should().exist(result.pipe);
+					}
 				}
 			});
 			tests();

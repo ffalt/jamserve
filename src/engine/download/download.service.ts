@@ -7,15 +7,17 @@ import {Album} from '../album/album.model';
 import {Artist} from '../artist/artist.model';
 import {DBObject} from '../base/base.model';
 import {Episode} from '../episode/episode.model';
+import {EpisodeStore} from '../episode/episode.store';
 import {Folder} from '../folder/folder.model';
 import {Playlist} from '../playlist/playlist.model';
+import {Podcast} from '../podcast/podcast.model';
 import {Track} from '../track/track.model';
 import {TrackStore} from '../track/track.store';
 import {User} from '../user/user.model';
 
 export class DownloadService {
 
-	constructor(private trackStore: TrackStore) {
+	constructor(private trackStore: TrackStore, private episodeStore: EpisodeStore) {
 	}
 
 	private async downloadEpisode(episode: Episode, format?: string): Promise<ApiBinaryResult> {
@@ -45,6 +47,12 @@ export class DownloadService {
 		return {pipe: new CompressListStream(fileList, album.name, format)};
 	}
 
+	private async downloadPodcast(podcast: Podcast, format: string | undefined): Promise<ApiBinaryResult> {
+		const episodes = await this.episodeStore.search({podcastID: podcast.id});
+		const fileList: Array<string> = episodes.filter(e => !!e.path).map(e => e.path as string);
+		return {pipe: new CompressListStream(fileList, podcast.id, format)};
+	}
+
 	private async downloadPlaylist(playlist: Playlist, format: string | undefined, user: User): Promise<ApiBinaryResult> {
 		if (playlist.userID !== user.id && !playlist.isPublic) {
 			return Promise.reject(Error('Unauthorized'));
@@ -67,6 +75,8 @@ export class DownloadService {
 				return this.downloadAlbum(o as Album, format);
 			case DBObjectType.episode:
 				return this.downloadEpisode(o as Episode, format);
+			case DBObjectType.podcast:
+				return this.downloadPodcast(o as Podcast, format);
 			case DBObjectType.playlist:
 				return this.downloadPlaylist(o as Playlist, format, user);
 		}

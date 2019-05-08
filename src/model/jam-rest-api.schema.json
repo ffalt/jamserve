@@ -2867,7 +2867,7 @@
 					]
 				},
 				"album/tracks": {
-					"description": "album: get tracks of an album by album id",
+					"description": "album: get tracks of an album by album ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3101,6 +3101,7 @@
 					]
 				},
 				"playlist/tracks": {
+					"description": "playlist: get tracks of a playlist(s) by playlist ids",
 					"type": "object",
 					"properties": {
 						"params": {
@@ -3125,6 +3126,39 @@
 								},
 								{
 									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
+				"playlist/list": {
+					"description": "playlist: get a playlist list by playlist list type",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.PlaylistList"
+						},
+						"result": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Jam.Playlist"
+							}
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
 								}
 							]
 						}
@@ -17260,6 +17294,10 @@
 		"JamParameters.AlbumList": {
 			"type": "object",
 			"properties": {
+				"list": {
+					"$ref": "#/definitions/JamParameters.ListType",
+					"description": "the type of the item list"
+				},
 				"offset": {
 					"description": "get back items from position",
 					"default": 0,
@@ -17423,10 +17461,6 @@
 					"description": "sort direction",
 					"default": false,
 					"type": "boolean"
-				},
-				"list": {
-					"$ref": "#/definitions/JamParameters.ListType",
-					"description": "the type of the item list"
 				}
 			},
 			"required": [
@@ -18023,6 +18057,100 @@
 					"type": "boolean"
 				}
 			}
+		},
+		"JamParameters.PlaylistList": {
+			"type": "object",
+			"properties": {
+				"list": {
+					"$ref": "#/definitions/JamParameters.ListType",
+					"description": "the type of the item list"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				},
+				"playlistTracks": {
+					"description": "include tracks on playlist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"playlistTracksIDs": {
+					"description": "include track ids on playlist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"playlistState": {
+					"description": "include user states (fav,rate) on playlist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"name": {
+					"description": "filter by playlist name",
+					"type": "string"
+				},
+				"isPublic": {
+					"description": "filter by public state",
+					"type": "boolean"
+				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"name"
+					],
+					"type": "string"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
+				"sortDescending": {
+					"description": "sort direction",
+					"default": false,
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"list"
+			]
 		},
 		"Jam.User": {
 			"type": "object",

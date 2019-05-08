@@ -97,4 +97,5 @@ export class EpisodeController extends BaseListController<JamParameters.Episode,
 			status: this.episodeService.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status
 		};
 	}
+
 }
