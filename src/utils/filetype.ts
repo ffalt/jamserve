@@ -26,11 +26,14 @@ export function getFileType(filename: string): FileTyp {
 	const suffix = fileSuffix(filename);
 	if (SupportedReadImageFormat.indexOf(suffix) >= 0) {
 		return FileTyp.IMAGE;
-	} else if (SupportedAudioFormat.indexOf(suffix as AudioFormatType) >= 0) {
+	}
+	if (SupportedAudioFormat.indexOf(suffix as AudioFormatType) >= 0) {
 		return FileTyp.AUDIO;
-	} else if (['tag'].indexOf(suffix) >= 0) {
+	}
+	if (['tag'].indexOf(suffix) >= 0) {
 		return FileTyp.TAG;
-	} else if (['bak'].indexOf(suffix) >= 0) {
+	}
+	if (['bak'].indexOf(suffix) >= 0) {
 		return FileTyp.BACKUP;
 	}
 	return FileTyp.OTHER;

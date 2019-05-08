@@ -90,9 +90,8 @@ export class MusicbrainzClient extends WebserviceClient {
 						this.get(req).then(resolve).catch(reject);
 					}, options.retryDelay);
 				});
-			} else {
-				return Promise.reject(error);
 			}
+			return Promise.reject(error);
 		};
 
 		log.info('requesting', JSON.stringify(req));
@@ -106,10 +105,9 @@ export class MusicbrainzClient extends WebserviceClient {
 			const statusCode = e.statusCode;
 			if (statusCode === 502 || statusCode === 503) {
 				return retry(e);
-			} else {
-				log.error(e);
-				return Promise.reject(e);
 			}
+			log.error(e);
+			return Promise.reject(e);
 		}
 	}
 

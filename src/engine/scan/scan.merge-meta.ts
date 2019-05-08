@@ -24,9 +24,8 @@ export interface UpdateMetaMergeTrackInfo extends MetaMergeTrackInfo {
 export function getAlbumName(trackInfo: MetaMergeTrackInfo): string {
 	if (trackInfo.parent && trackInfo.parent.tag.albumType === AlbumType.compilation) {
 		return trackInfo.parent.tag.album || cUnknownAlbum;
-	} else {
-		return extractAlbumName(trackInfo.track.tag.album || cUnknownAlbum);
 	}
+	return extractAlbumName(trackInfo.track.tag.album || cUnknownAlbum);
 }
 
 export function getAlbumSlug(trackInfo: MetaMergeTrackInfo): string {

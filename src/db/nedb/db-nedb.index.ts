@@ -49,7 +49,6 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 			});
 			return result;
 		}
-		return;
 	}
 
 	private translateQuery(query: DatabaseQuery): any {
@@ -179,9 +178,8 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		if (!id || id.length === 0) {
 			await this.add(body);
 			return;
-		} else {
-			await this.replace(id, body);
 		}
+		await this.replace(id, body);
 	}
 
 	async remove(id: string | Array<string>): Promise<void> {
@@ -217,19 +215,18 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 	async byId(id: string): Promise<T | undefined> {
 		if (this.type === undefined) {
 			return this.queryOne({term: {id}});
-		} else {
-			return new Promise<T>((resolve, reject) => {
-				this.client.find<T>({id}, (err, docs) => {
-					if (err) {
-						reject(err);
-					} else if (docs.length === 0) {
-						resolve();
-					} else {
-						resolve(this.hit2Obj(docs[0]));
-					}
-				});
-			});
 		}
+		return new Promise<T>((resolve, reject) => {
+			this.client.find<T>({id}, (err, docs) => {
+				if (err) {
+					reject(err);
+				} else if (docs.length === 0) {
+					resolve();
+				} else {
+					resolve(this.hit2Obj(docs[0]));
+				}
+			});
+		});
 	}
 
 	async byIds(ids: Array<string>): Promise<Array<T>> {

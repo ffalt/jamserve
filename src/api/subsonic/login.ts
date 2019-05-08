@@ -46,11 +46,11 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 			pass = hexDecode(pass.slice(4)).trim();
 		}
 		return req.engine.userService.authSubsonic(req.parameters.username, pass);
-	} else if (req.parameters.token && req.parameters.salt) {
-		return req.engine.userService.authToken(req.parameters.username, req.parameters.token, req.parameters.salt);
-	} else {
-		return Promise.reject('Invalid Login Type');
 	}
+	if (req.parameters.token && req.parameters.salt) {
+		return req.engine.userService.authToken(req.parameters.username, req.parameters.token, req.parameters.salt);
+	}
+	return Promise.reject('Invalid Login Type');
 }
 
 export function SubsonicLoginMiddleWare(req: UserRequest, res: express.Response, next: express.NextFunction): void {

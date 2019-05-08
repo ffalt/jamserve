@@ -248,22 +248,20 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 	async byId(id: string): Promise<T | undefined> {
 		if (this.type === undefined) {
 			return this.queryOne({term: {id}});
-		} else {
-			try {
-				const response = await this.db.client.get({
-					index: this._index,
-					type: this._type,
-					id
-				});
-				if (!response.found) {
-					return;
-				} else {
-					return this.hit2Obj(response);
-				}
-			} catch (e) {
-				if (e.statusCode !== 404) {
-					Promise.reject(e);
-				}
+		}
+		try {
+			const response = await this.db.client.get({
+				index: this._index,
+				type: this._type,
+				id
+			});
+			if (!response.found) {
+				return;
+			}
+			return this.hit2Obj(response);
+		} catch (e) {
+			if (e.statusCode !== 404) {
+				return Promise.reject(e);
 			}
 		}
 	}

@@ -60,9 +60,8 @@ export class ImageService {
 		}
 		if (!result) {
 			return this.paintImage(o, size, format);
-		} else {
-			return result;
 		}
+		return result;
 	}
 
 	async paintImage(obj: DBObject, size?: number, format?: string): Promise<ApiBinaryResult> {

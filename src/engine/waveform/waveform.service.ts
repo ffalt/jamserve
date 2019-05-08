@@ -87,8 +87,7 @@ export class WaveformService {
 	async getEpisodeWaveform(episode: Episode, format: WaveformFormatType): Promise<ApiBinaryResult> {
 		if (episode.path && episode.media) {
 			return this.get(episode.id, episode.path, format);
-		} else {
-			return Promise.reject(Error('Podcast episode not ready'));
 		}
+		return Promise.reject(Error('Podcast episode not ready'));
 	}
 }

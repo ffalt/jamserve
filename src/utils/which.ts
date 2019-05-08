@@ -92,11 +92,10 @@ function isexeStat(filename: string, options: { pathExt?: string }, stat: fse.St
 	if (!stat.isFile()) {
 		return false;
 	}
-	if (!isWindows) {
-		return checkMode(filename, options, stat);
-	} else {
+	if (isWindows) {
 		return checkWindowsMode(filename, options, stat);
 	}
+	return checkMode(filename, options, stat);
 }
 
 async function isExe(filename: string, options: { pathExt?: string }): Promise<boolean> {

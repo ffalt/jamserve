@@ -61,17 +61,16 @@ export class AudioModule {
 				const result = await mp3.read(filename, {mpegQuick: true, mpeg: true, id3v2: true});
 				if (!result) {
 					return {tag: {format: TrackTagFormatType.none}, media: {}};
-				} else {
-					if (result.id3v2) {
-						return {tag: FORMAT.packID3v2JamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
-					}
-					const id3v1 = new ID3v1();
-					const v1 = await id3v1.read(filename);
-					if (!v1) {
-						return {tag: {format: TrackTagFormatType.none}, media: FORMAT.packJamServeMedia(result.mpeg)};
-					}
-					return {tag: FORMAT.packID3v1JamServeTag(v1), media: FORMAT.packJamServeMedia(result.mpeg)};
 				}
+				if (result.id3v2) {
+					return {tag: FORMAT.packID3v2JamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
+				}
+				const id3v1 = new ID3v1();
+				const v1 = await id3v1.read(filename);
+				if (!v1) {
+					return {tag: {format: TrackTagFormatType.none}, media: FORMAT.packJamServeMedia(result.mpeg)};
+				}
+				return {tag: FORMAT.packID3v1JamServeTag(v1), media: FORMAT.packJamServeMedia(result.mpeg)};
 			} catch (e) {
 				console.error(e);
 				return {tag: {format: TrackTagFormatType.none}, media: {}};
@@ -89,9 +88,8 @@ export class AudioModule {
 			const p = await probe(filename, []);
 			if (!p) {
 				return {tag: {format: TrackTagFormatType.none}, media: {}};
-			} else {
-				return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p, suffix as AudioFormatType)};
 			}
+			return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p, suffix as AudioFormatType)};
 		}
 	}
 
@@ -122,7 +120,8 @@ export class AudioModule {
 		const suffix = fileSuffix(filename);
 		if (suffix === AudioFormatType.mp3) {
 			return this.readMP3RawTag(filename);
-		} else if (suffix === AudioFormatType.flac) {
+		}
+		if (suffix === AudioFormatType.flac) {
 			return this.readFlacRawTag(filename);
 		}
 	}
@@ -225,11 +224,11 @@ export class AudioModule {
 	async coverartarchiveLookup(type: string, id: string): Promise<CoverArtArchive.Response> {
 		if (type === CoverArtArchiveLookupType.release) {
 			return this.coverArtArchive.releaseImages(id);
-		} else if (type === CoverArtArchiveLookupType.releaseGroup) {
-			return this.coverArtArchive.releaseGroupImages(id);
-		} else {
-			return Promise.reject(Error('Invalid CoverArtArchive Lookup Type'));
 		}
+		if (type === CoverArtArchiveLookupType.releaseGroup) {
+			return this.coverArtArchive.releaseGroupImages(id);
+		}
+		return Promise.reject(Error('Invalid CoverArtArchive Lookup Type'));
 	}
 
 	async lastFMLookup(type: string, id: string): Promise<LastFM.Result> {

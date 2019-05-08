@@ -11,10 +11,6 @@ import {User} from '../user/user.model';
 
 export class StreamService {
 
-	constructor() {
-
-	}
-
 	async streamFile(filename: string, id: string, sourceFormat?: string, destFormat?: string, maxBitRate?: number): Promise<ApiBinaryResult> {
 		const exists = await fse.pathExists(filename);
 		if (!exists) {
@@ -30,9 +26,8 @@ export class StreamService {
 				return Promise.reject(Error('Unsupported transcoding format'));
 			}
 			return {pipe: new PreTranscoderStream(filename, destFormat, bitRate)};
-		} else {
-			return {file: {filename, name: id + '.' + destFormat}};
 		}
+		return {file: {filename, name: id + '.' + destFormat}};
 	}
 
 	async streamTrack(track: Track, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
@@ -42,9 +37,8 @@ export class StreamService {
 	async streamEpisode(episode: Episode, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
 		if (episode.path && episode.media) {
 			return this.streamFile(episode.path, episode.id, episode.media.format, format, maxBitRate);
-		} else {
-			return Promise.reject(GenericError('Podcast episode not ready'));
 		}
+		return Promise.reject(GenericError('Podcast episode not ready'));
 	}
 
 }

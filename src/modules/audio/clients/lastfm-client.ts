@@ -174,24 +174,28 @@ export class LastFMClient extends WebserviceClient {
 		if (type === 'album') {
 			const album = await this.albumID(id);
 			return {album};
-		} else if (type === 'album-toptracks') {
+		}
+		if (type === 'album-toptracks') {
 			const toptracks = await this.albumIDTopTags(id);
 			return {toptracks};
-		} else if (type === 'artist') {
+		}
+		if (type === 'artist') {
 			const artist = await this.artistID(id);
 			return {artist};
-		} else if (type === 'track') {
+		}
+		if (type === 'track') {
 			const track = await this.trackID(id);
 			return {track};
-		} else if (type === 'track-similar') {
+		}
+		if (type === 'track-similar') {
 			const similartracks = await this.similarTrackID(id);
 			return {similartracks};
-		} else if (type === 'artist-toptracks') {
+		}
+		if (type === 'artist-toptracks') {
 			const toptracks = await this.topArtistSongsID(id);
 			return {toptracks};
-		} else {
-			return Promise.reject(Error('Invalid LastFM lookup type parameter'));
 		}
+		return Promise.reject(Error('Invalid LastFM lookup type parameter'));
 	}
 
 }

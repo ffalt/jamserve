@@ -162,15 +162,15 @@ export class FolderAlbumNameRule extends FolderRule {
 		const hasArtist = parents.find(p => p.tag.type === FolderType.artist);
 		if (hasArtist) {
 			return this.checkArtistAlbumFolderName(folder);
-		} else {
-			return this.checkOtherFolderName(folder);
 		}
+		return this.checkOtherFolderName(folder);
 	}
 
 	async run(folder: Folder, parents: Array<Folder>, root: Root): Promise<RuleResult | undefined> {
 		if (folder.tag.type === FolderType.album) {
 			return this.checkName(folder, parents);
-		} else if ((folder.tag.type === FolderType.multialbum) && (folder.tag.trackCount === 0)) {
+		}
+		if ((folder.tag.type === FolderType.multialbum) && (folder.tag.trackCount === 0)) {
 			return this.checkName(folder, parents);
 		}
 	}

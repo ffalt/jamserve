@@ -42,11 +42,10 @@ export class WaveformStream extends Transform {
 				errored = true;
 				log.debug('ffmpeg failed to start.');
 				return this.emit('done', 'ffmpeg failed to start');
-			} else {
-				errored = true;
-				log.debug('ffmpeg decoding error: ' + err);
-				return this.emit('done', 'ffmpeg decoding error: ' + err);
 			}
+			errored = true;
+			log.debug('ffmpeg decoding error: ' + err);
+			return this.emit('done', 'ffmpeg decoding error: ' + err);
 		});
 		this._ffmpeg.on('end', () => {
 			if (!errored) {

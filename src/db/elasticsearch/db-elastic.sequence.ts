@@ -134,9 +134,8 @@ export class DbElasticSequence {
 
 		if (this.cacheFillPromise !== null) {
 			return this.cacheFillPromise.then(returnValue);
-		} else {
-			return this.fillCache(sequenceName).then(returnValue);
 		}
+		return this.fillCache(sequenceName).then(returnValue);
 	}
 
 	public async get(sequenceName: string): Promise<any> {
@@ -156,9 +155,8 @@ export class DbElasticSequence {
 	public getCacheSize(sequenceName: string): number {
 		if (!this.cache[sequenceName]) {
 			return 0;
-		} else {
-			return this.cache[sequenceName].length;
 		}
+		return this.cache[sequenceName].length;
 	}
 
 }

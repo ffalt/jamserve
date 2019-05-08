@@ -41,9 +41,8 @@ export abstract class ScanRequest {
 			log.error('Scanning Error', this.rootID, e.toString());
 			if (['EACCES', 'ENOENT'].indexOf((e as any).code) >= 0) {
 				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
-			} else {
-				return Promise.reject(e);
 			}
+			return Promise.reject(e);
 		}
 	}
 }
@@ -354,18 +353,16 @@ export class IoService {
 				oldRequest.forceMetaRefresh = true;
 			}
 			return this.getRequestInfo(oldRequest);
-		} else {
-			return this.addRequest(new ScanRequestRefreshRoot(this.getScanID(), rootID, forceMetaRefresh === true, this.scanService));
 		}
+		return this.addRequest(new ScanRequestRefreshRoot(this.getScanID(), rootID, forceMetaRefresh === true, this.scanService));
 	}
 
 	removeRoot(rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = this.findRequest(rootID, ScanRequestMode.removeRoot);
 		if (oldRequest) {
 			return this.getRequestInfo(oldRequest);
-		} else {
-			return this.addRequest(new ScanRequestRemoveRoot(this.getScanID(), rootID, this.scanService));
 		}
+		return this.addRequest(new ScanRequestRemoveRoot(this.getScanID(), rootID, this.scanService));
 	}
 
 	moveFolders(folderIDs: Array<string>, newParentID: string, rootID: string): Jam.AdminChangeQueueInfo {
@@ -377,9 +374,8 @@ export class IoService {
 				}
 			}
 			return this.getRequestInfo(oldRequest);
-		} else {
-			return this.addRequest(new ScanRequestMoveFolders(this.getScanID(), rootID, this.scanService, newParentID, folderIDs));
 		}
+		return this.addRequest(new ScanRequestMoveFolders(this.getScanID(), rootID, this.scanService, newParentID, folderIDs));
 	}
 
 	/*
@@ -404,9 +400,8 @@ export class IoService {
 				oldRequest.folderIDs.push(id);
 			}
 			return this.getRequestInfo(oldRequest);
-		} else {
-			return this.addRequest(new ScanRequestDeleteFolders(this.getScanID(), rootID, this.scanService, [id]));
 		}
+		return this.addRequest(new ScanRequestDeleteFolders(this.getScanID(), rootID, this.scanService, [id]));
 	}
 
 	removeTrack(id: string, rootID: string): Jam.AdminChangeQueueInfo {
@@ -416,9 +411,8 @@ export class IoService {
 				oldRequest.trackIDs.push(id);
 			}
 			return this.getRequestInfo(oldRequest);
-		} else {
-			return this.addRequest(new ScanRequestRemoveTracks(this.getScanID(), rootID, this.scanService, [id]));
 		}
+		return this.addRequest(new ScanRequestRemoveTracks(this.getScanID(), rootID, this.scanService, [id]));
 	}
 
 	moveTracks(trackIDs: Array<string>, newParentID: string, rootID: string): Jam.AdminChangeQueueInfo {
@@ -430,9 +424,8 @@ export class IoService {
 				}
 			}
 			return this.getRequestInfo(oldRequest);
-		} else {
-			return this.addRequest(new ScanRequestMoveTracks(this.getScanID(), rootID, trackIDs, newParentID, this.scanService));
 		}
+		return this.addRequest(new ScanRequestMoveTracks(this.getScanID(), rootID, trackIDs, newParentID, this.scanService));
 	}
 
 	renameTrack(trackID: string, name: string, rootID: string): Jam.AdminChangeQueueInfo {

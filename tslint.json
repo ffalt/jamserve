@@ -17,6 +17,7 @@
         "esSpecCompliant": true
       }
     ],
+    "unnecessary-else": true,
     "newline-before-return": false,
     "no-return-await": true,
     "no-var-requires": true,

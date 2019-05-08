@@ -231,22 +231,21 @@ export class SubsonicApi {
 		if (req.query.ifModifiedSince && req.query.ifModifiedSince > 0 && (folderIndex.lastModified <= req.query.ifModifiedSince)) {
 			const empty: any = {};
 			return empty;
-		} else {
-			let ids: Array<string> = [];
-			folderIndex.groups.forEach(entry => {
-				ids = ids.concat(entry.entries.map(e => e.folder.id));
-			});
-			const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.folder);
-			return {
-				indexes: {
-					lastModified: folderIndex.lastModified,
-					ignoredArticles: (this.engine.indexService.indexConfig.ignoreArticles || []).join(' '),
-					index: FORMAT.packFolderIndex(folderIndex, states)
-					// shortcut?: Artist[]; use unknown, there is no api to add/remove shortcuts
-					// child?: Child[]; use unknown
-				}
-			};
 		}
+		let ids: Array<string> = [];
+		folderIndex.groups.forEach(entry => {
+			ids = ids.concat(entry.entries.map(e => e.folder.id));
+		});
+		const states = await this.engine.stateService.findOrCreateMany(ids, req.user.id, DBObjectType.folder);
+		return {
+			indexes: {
+				lastModified: folderIndex.lastModified,
+				ignoredArticles: (this.engine.indexService.indexConfig.ignoreArticles || []).join(' '),
+				index: FORMAT.packFolderIndex(folderIndex, states)
+				// shortcut?: Artist[]; use unknown, there is no api to add/remove shortcuts
+				// child?: Child[]; use unknown
+			}
+		};
 	}
 
 	async getArtists(req: ApiOptions<SubsonicParameters.MusicFolderID>): Promise<{ artists: Subsonic.ArtistsID3 }> {
@@ -664,26 +663,25 @@ export class SubsonicApi {
 		const o = await this.engine.store.findInAll(req.query.id);
 		if (!o) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
-		} else {
-			let tracks: Array<Track> = [];
-			switch (o.type) {
-				case DBObjectType.track:
-					tracks = await this.engine.metaDataService.getTrackSimilarTracks(o as Track);
-					break;
-				case DBObjectType.folder:
-					tracks = await this.engine.metaDataService.getFolderSimilarTracks(o as Folder);
-					break;
-				case DBObjectType.artist:
-					tracks = await this.engine.metaDataService.getArtistSimilarTracks(o as Artist);
-					break;
-				case DBObjectType.album:
-					tracks = await this.engine.metaDataService.getAlbumSimilarTracks(o as Album);
-					break;
-			}
-			const limit = paginate(tracks, req.query.count || 50, 0);
-			const childs = await this.prepareTracks(limit, req.user);
-			return {similarSongs: FORMAT.packSimilarSongs(childs)};
 		}
+		let tracks: Array<Track> = [];
+		switch (o.type) {
+			case DBObjectType.track:
+				tracks = await this.engine.metaDataService.getTrackSimilarTracks(o as Track);
+				break;
+			case DBObjectType.folder:
+				tracks = await this.engine.metaDataService.getFolderSimilarTracks(o as Folder);
+				break;
+			case DBObjectType.artist:
+				tracks = await this.engine.metaDataService.getArtistSimilarTracks(o as Artist);
+				break;
+			case DBObjectType.album:
+				tracks = await this.engine.metaDataService.getAlbumSimilarTracks(o as Album);
+				break;
+		}
+		const limit = paginate(tracks, req.query.count || 50, 0);
+		const childs = await this.prepareTracks(limit, req.user);
+		return {similarSongs: FORMAT.packSimilarSongs(childs)};
 	}
 
 	async getSimilarSongs2(req: ApiOptions<SubsonicParameters.SimilarSongs>): Promise<{ similarSongs2: Subsonic.SimilarSongs2 }> {
@@ -721,9 +719,8 @@ export class SubsonicApi {
 		const o = await this.engine.store.findInAll(req.query.id);
 		if (!o) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
-		} else {
-			return this.engine.downloadService.getObjDownload(o, undefined, req.user);
 		}
+		return this.engine.downloadService.getObjDownload(o, undefined, req.user);
 	}
 
 	async stream(req: ApiOptions<SubsonicParameters.Stream>): Promise<ApiBinaryResult> {
@@ -748,19 +745,18 @@ export class SubsonicApi {
 		const o = await this.engine.store.findInAll(req.query.id);
 		if (!o) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
-		} else {
-			switch (o.type) {
-				case DBObjectType.track:
-					const res = await this.engine.streamService.streamTrack(o as Track, req.query.format, req.query.maxBitRate, req.user);
-					this.engine.nowPlayingService.reportTrack(o as Track, req.user);
-					return res;
-				case DBObjectType.episode:
-					const result = await this.engine.streamService.streamEpisode(o as Episode, req.query.format, req.query.maxBitRate, req.user);
-					this.engine.nowPlayingService.reportEpisode(o as Episode, req.user);
-					return result;
-			}
-			return Promise.reject(Error('Invalid Object Type for Streaming'));
 		}
+		switch (o.type) {
+			case DBObjectType.track:
+				const res = await this.engine.streamService.streamTrack(o as Track, req.query.format, req.query.maxBitRate, req.user);
+				this.engine.nowPlayingService.reportTrack(o as Track, req.user);
+				return res;
+			case DBObjectType.episode:
+				const result = await this.engine.streamService.streamEpisode(o as Episode, req.query.format, req.query.maxBitRate, req.user);
+				this.engine.nowPlayingService.reportEpisode(o as Episode, req.user);
+				return result;
+		}
+		return Promise.reject(Error('Invalid Object Type for Streaming'));
 	}
 
 	async getSong(req: ApiOptions<SubsonicParameters.ID>): Promise<{ song: Subsonic.Child }> {
@@ -838,16 +834,15 @@ export class SubsonicApi {
 
 		if ((!req.query.username) || (req.user.name === req.query.username)) {
 			return {user: FORMAT.packUser(req.user)};
-		} else if (!req.user.roles.admin) {
-			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
-		} else {
-			const u = await this.engine.userService.getByName(req.query.username);
-			if (!u) {
-				return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
-			} else {
-				return {user: FORMAT.packUser(u)};
-			}
 		}
+		if (!req.user.roles.admin) {
+			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
+		}
+		const u = await this.engine.userService.getByName(req.query.username);
+		if (!u) {
+			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+		}
+		return {user: FORMAT.packUser(u)};
 	}
 
 	async star(req: ApiOptions<SubsonicParameters.State>): Promise<void> {
@@ -1270,7 +1265,8 @@ export class SubsonicApi {
 		let playlist: Playlist | undefined;
 		if (!req.query.playlistId && !req.query.name) {
 			return Promise.reject({fail: FORMAT.FAIL.PARAMETER});
-		} else if (req.query.playlistId) {
+		}
+		if (req.query.playlistId) {
 			const updateQuery: SubsonicParameters.PlaylistUpdate = {
 				playlistId: req.query.playlistId,
 				name: req.query.name,
@@ -1313,13 +1309,13 @@ export class SubsonicApi {
 			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
 		}
 
-		const removetracks = req.query.songIndexToRemove !== undefined ? (Array.isArray(req.query.songIndexToRemove) ? req.query.songIndexToRemove : [req.query.songIndexToRemove]) : [];
-		playlist.trackIDs = playlist.trackIDs.filter((id, index) => removetracks.indexOf(index) < 0);
+		const removeTracks = req.query.songIndexToRemove !== undefined ? (Array.isArray(req.query.songIndexToRemove) ? req.query.songIndexToRemove : [req.query.songIndexToRemove]) : [];
+		playlist.trackIDs = playlist.trackIDs.filter((id, index) => removeTracks.indexOf(index) < 0);
 
 		const tracks: Array<string> = playlist.trackIDs;
 		if (req.query.songIdToAdd) {
-			const songadd = req.query.songIdToAdd !== undefined ? (Array.isArray(req.query.songIdToAdd) ? req.query.songIdToAdd : [req.query.songIdToAdd]) : [];
-			playlist.trackIDs = tracks.concat(songadd);
+			const songAdd = (Array.isArray(req.query.songIdToAdd) ? req.query.songIdToAdd : [req.query.songIdToAdd]);
+			playlist.trackIDs = tracks.concat(songAdd);
 		}
 		playlist.name = req.query.name || playlist.name;
 		playlist.comment = req.query.comment || playlist.comment;

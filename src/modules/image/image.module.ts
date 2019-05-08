@@ -23,7 +23,7 @@ export class ImageModule {
 	private format = 'png';
 	private font: JimpFont | undefined;
 	private imageCacheDebounce = new DebouncePromises<ApiBinaryResult>();
-	private avatarPartsLocation: string;
+	private readonly avatarPartsLocation: string;
 
 	constructor(private imageCachePath: string, avatarPartsLocation?: string) {
 		this.avatarPartsLocation = avatarPartsLocation || path.join(__dirname, 'static', 'avatar');
@@ -100,33 +100,29 @@ export class ImageModule {
 				return Promise.reject('Unknown Image Format Request');
 			}
 			if (size) {
-				const buffer = await sharp(filename)
-					.resize(size, size,
-						{
-							fit: sharp.fit.cover,
-							position: sharp.strategy.entropy
-						}).toFormat(format)
-					.toBuffer();
 				return {
 					buffer: {
-						buffer,
-						contentType: mime
-					}
-				};
-			} else {
-				const buffer = await sharp(filename)
-					.toFormat(format)
-					.toBuffer();
-				return {
-					buffer: {
-						buffer,
+						buffer: await sharp(filename)
+							.resize(size, size,
+								{
+									fit: sharp.fit.cover,
+									position: sharp.strategy.entropy
+								}).toFormat(format)
+							.toBuffer(),
 						contentType: mime
 					}
 				};
 			}
-		} else {
-			return {file: {filename, name}};
+			return {
+				buffer: {
+					buffer: await sharp(filename)
+						.toFormat(format)
+						.toBuffer(),
+					contentType: mime
+				}
+			};
 		}
+		return {file: {filename, name}};
 	}
 
 	async get(id: string, filename: string, size: number | undefined, format?: string): Promise<ApiBinaryResult> {
