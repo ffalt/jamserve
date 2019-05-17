@@ -14,6 +14,8 @@ import {FolderService} from '../folder/folder.service';
 import {Playlist} from '../playlist/playlist.model';
 import {Podcast} from '../podcast/podcast.model';
 import {PodcastService} from '../podcast/podcast.service';
+import {Root} from '../root/root.model';
+import {RootService} from '../root/root.service';
 import {Track} from '../track/track.model';
 import {TrackService} from '../track/track.service';
 import {User} from '../user/user.model';
@@ -25,7 +27,7 @@ export class ImageService {
 		private imageModule: ImageModule, private trackService: TrackService,
 		private folderService: FolderService, private artistService: ArtistService,
 		private albumService: AlbumService, private userService: UserService,
-		private podcastService: PodcastService) {
+		private podcastService: PodcastService, private rootService: RootService) {
 	}
 
 	async getObjImage(o: DBObject, size?: number, format?: string): Promise<ApiBinaryResult> {
@@ -54,6 +56,13 @@ export class ImageService {
 			case DBObjectType.podcast:
 				const podcast = o as Podcast;
 				result = await this.podcastService.getPodcastImage(podcast, size, format);
+				break;
+			case DBObjectType.root:
+				const root = o as Root;
+				const rfolder = await this.folderService.folderStore.searchOne({rootID: root.id, level: 0});
+				if (rfolder) {
+					result = await this.folderService.getFolderImage(rfolder, size, format);
+				}
 				break;
 			default:
 				break;
