@@ -888,6 +888,18 @@
 					},
 					{
 						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "parentID",
 						"schema": {
 							"type": "string"
@@ -2137,6 +2149,18 @@
 					},
 					{
 						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "parentID",
 						"schema": {
 							"type": "string"
@@ -2486,6 +2510,18 @@
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
 						"required": false
 					},
 					{
@@ -2858,6 +2894,18 @@
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
 						"required": false
 					},
 					{
@@ -3747,6 +3795,18 @@
 					},
 					{
 						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "title",
 						"schema": {
 							"type": "string"
@@ -4088,6 +4148,18 @@
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
 						"required": false
 					},
 					{
@@ -4489,6 +4561,18 @@
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
 						"required": false
 					},
 					{
@@ -6879,6 +6963,18 @@
 					},
 					{
 						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "albumID",
 						"schema": {
 							"type": "string"
@@ -7295,6 +7391,18 @@
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
 						"required": false
 					},
 					{
@@ -7965,6 +8073,18 @@
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
 						"required": false
 					},
 					{
@@ -8643,6 +8763,18 @@
 					},
 					{
 						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "artist",
 						"schema": {
 							"type": "string"
@@ -8898,6 +9030,18 @@
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
 						"required": false
 					},
 					{
@@ -9213,6 +9357,18 @@
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "rootIDs",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "filter by root ids",
 						"required": false
 					},
 					{

@@ -13715,6 +13715,13 @@
 					"description": "filter by root id",
 					"type": "string"
 				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"parentID": {
 					"description": "filter by parent folder id",
 					"type": "string"
@@ -14464,6 +14471,13 @@
 					"description": "filter by root id",
 					"type": "string"
 				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"parentID": {
 					"description": "filter by parent folder id",
 					"type": "string"
@@ -14651,6 +14665,13 @@
 					"description": "filter by root id",
 					"type": "string"
 				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"parentID": {
 					"description": "filter by parent folder id",
 					"type": "string"
@@ -14832,6 +14853,13 @@
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
+				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"parentID": {
 					"description": "filter by parent folder id",
@@ -15208,6 +15236,13 @@
 					"description": "filter by root id",
 					"type": "string"
 				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"title": {
 					"description": "filter by title",
 					"type": "string"
@@ -15321,6 +15356,13 @@
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
+				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"title": {
 					"description": "filter by title",
@@ -15458,6 +15500,13 @@
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
+				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"title": {
 					"description": "filter by title",
@@ -16705,6 +16754,13 @@
 					"description": "filter by root id",
 					"type": "string"
 				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"albumID": {
 					"description": "filter by album id",
 					"type": "string"
@@ -16868,6 +16924,13 @@
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
+				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"albumID": {
 					"description": "filter by album id",
@@ -17050,6 +17113,13 @@
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
+				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"albumID": {
 					"description": "filter by album id",
@@ -17357,6 +17427,13 @@
 					"description": "filter by root id",
 					"type": "string"
 				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
 				"artist": {
 					"description": "filter by artist name",
 					"type": "string"
@@ -17488,6 +17565,13 @@
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
+				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"artist": {
 					"description": "filter by artist name",
@@ -17646,6 +17730,13 @@
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
+				},
+				"rootIDs": {
+					"description": "filter by root ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"artist": {
 					"description": "filter by artist name",

@@ -15,7 +15,6 @@ import {Playlist} from '../playlist/playlist.model';
 import {Podcast} from '../podcast/podcast.model';
 import {PodcastService} from '../podcast/podcast.service';
 import {Root} from '../root/root.model';
-import {RootService} from '../root/root.service';
 import {Track} from '../track/track.model';
 import {TrackService} from '../track/track.service';
 import {User} from '../user/user.model';
@@ -27,7 +26,7 @@ export class ImageService {
 		private imageModule: ImageModule, private trackService: TrackService,
 		private folderService: FolderService, private artistService: ArtistService,
 		private albumService: AlbumService, private userService: UserService,
-		private podcastService: PodcastService, private rootService: RootService) {
+		private podcastService: PodcastService) {
 	}
 
 	async getObjImage(o: DBObject, size?: number, format?: string): Promise<ApiBinaryResult> {

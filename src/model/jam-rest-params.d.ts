@@ -446,6 +446,10 @@ export declare namespace JamParameters {
 		 */
 		rootID?: string;
 		/**
+		 * filter by root ids
+		 */
+		rootIDs?: Array<string>;
+		/**
 		 * filter by title
 		 */
 		title?: string;
@@ -544,6 +548,10 @@ export declare namespace JamParameters {
 		 * filter by root id
 		 */
 		rootID?: string;
+		/**
+		 * filter by root ids
+		 */
+		rootIDs?: Array<string>;
 		/**
 		 * filter by parent folder id
 		 */
@@ -879,6 +887,10 @@ export declare namespace JamParameters {
 		 */
 		rootID?: string;
 		/**
+		 * filter by root ids
+		 */
+		rootIDs?: Array<string>;
+		/**
 		 * filter by artist name
 		 */
 		artist?: string;
@@ -1032,6 +1044,10 @@ export declare namespace JamParameters {
 		 * filter by root id
 		 */
 		rootID?: string;
+		/**
+		 * filter by root ids
+		 */
+		rootIDs?: Array<string>;
 		/**
 		 * filter by album id
 		 */

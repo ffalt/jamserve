@@ -8,6 +8,7 @@ import {Folder} from './folder.model';
 
 export interface SearchQueryFolder extends SearchQuery {
 	rootID?: string;
+	rootIDs?: Array<string>;
 	parentID?: string;
 	parentIDs?: Array<string>;
 	path?: string;
@@ -55,6 +56,7 @@ export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 		q.term('tag.title', query.title);
 		q.term('tag.album', query.album);
 		q.term('rootID', query.rootID);
+		q.terms('rootID', query.rootIDs);
 		q.term('parentID', query.parentID);
 		q.terms('parentID', query.parentIDs);
 		q.term('tag.level', query.level);

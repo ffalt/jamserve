@@ -9,6 +9,7 @@ export interface SearchQueryAlbum extends SearchQuery {
 	name?: string;
 	slug?: string;
 	rootID?: string;
+	rootIDs?: Array<string>;
 	artist?: string;
 	artistID?: string;
 	trackID?: string;
@@ -41,14 +42,15 @@ export class AlbumStore extends BaseStore<Album, SearchQueryAlbum> {
 	protected transformQuery(query: SearchQueryAlbum): DatabaseQuery {
 		const q = new QueryHelper();
 		q.term('rootIDs', query.rootID);
+		q.terms('rootIDs', query.rootIDs);
+		q.term('trackIDs', query.trackID);
+		q.terms('trackIDs', query.trackIDs);
+		q.term('albumType', query.albumType);
+		q.terms('albumType', query.albumTypes);
 		q.term('artistID', query.artistID);
 		q.term('genre', query.genre);
 		q.term('mbAlbumID', query.mbAlbumID);
 		q.term('mbArtistID', query.mbArtistID);
-		q.term('trackIDs', query.trackID);
-		q.term('albumType', query.albumType);
-		q.terms('albumType', query.albumTypes);
-		q.terms('trackIDs', query.trackIDs);
 		q.term('artist', query.artist);
 		q.term('name', query.name);
 		q.term('slug', query.slug);

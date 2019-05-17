@@ -1,8 +1,8 @@
 import {JamRequest} from '../../api/jam/api';
 import {Config} from '../../config';
 import {Jam} from '../../model/jam-rest-data';
-import {JAMAPI_VERSION} from '../../version';
 import {formatSessionUser} from '../user/user.format';
+import {JAMAPI_VERSION} from '../../api/jam/version';
 
 export class InfoController {
 

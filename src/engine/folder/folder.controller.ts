@@ -107,6 +107,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			id: query.id,
 			ids: query.ids,
 			rootID: query.rootID,
+			rootIDs: query.rootIDs,
 			parentID: query.parentID,
 			inPath,
 			artist: query.artist,
