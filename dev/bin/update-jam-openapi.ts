@@ -1,8 +1,8 @@
 import fse from 'fs-extra';
 import path from 'path';
+import {JAMAPI_VERSION} from '../../src/api/jam/version';
 import {OpenAPIObject} from '../../src/model/openapi-spec';
-import {JAMAPI_VERSION} from '../../src/version';
-import {getJamApiCalls, ApiCall, transformTS2NamespaceJSONScheme} from './utils';
+import {ApiCall, getJamApiCalls, transformTS2NamespaceJSONScheme} from './utils';
 
 const basePath = path.resolve('../../src/model/');
 const destfile = path.resolve(basePath, 'jam-openapi.json');

@@ -16,13 +16,13 @@ import {Jam} from '../../model/jam-rest-data';
 import Logger from '../../utils/logger';
 import {getMaxAge} from '../../utils/max-age';
 import {SessionJSONFileStore} from '../../utils/session-storage';
-import {JAMAPI_VERSION} from '../../version';
 import {JamApi} from './api';
 import {apiCheck} from './check';
 import {NotFoundError, UnauthError} from './error';
 import {CheckAuthMiddleWare, UserRequest} from './login';
 import {ApiResponder} from './response';
 import {Register, registerAccessControlApi, RegisterCallback, registerPublicApi} from './routes';
+import {JAMAPI_VERSION} from './version';
 
 const LoginLimiter = rateLimit({
 	windowMs: 60 * 60 * 1000, // 1 hour window

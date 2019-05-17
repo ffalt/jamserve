@@ -10,6 +10,7 @@ const settings: TJS.PartialArgs = {
 export async function transformTS2JSONScheme(basePath: string, filename: string, symbol: string): Promise<Definition> {
 	const compilerOptions: TJS.CompilerOptions = {
 		strictNullChecks: true,
+		resolveJsonModule: true,
 		rootDir: basePath,
 		typeRoots: [basePath]
 	};
@@ -35,6 +36,7 @@ export async function transformTS2NamespaceJSONScheme(basePath: string, filename
 	const compilerOptions: TJS.CompilerOptions = {
 		strictNullChecks: true,
 		rootDir: basePath,
+		resolveJsonModule: true,
 		typeRoots: [basePath]
 	};
 	const file = path.resolve(basePath, filename + '.d.ts');
