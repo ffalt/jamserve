@@ -78,13 +78,19 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/wikipedia/summary', async (req, res) => {
 		const options: JamRequest<JamParameters.WikipediaSummary> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.WikipediaResponse = await api.metadataController.wikipediaSummary(options);
+		const result: Jam.WikipediaSummaryResponse = await api.metadataController.wikipediaSummary(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/wikidata/summary', async (req, res) => {
 		const options: JamRequest<JamParameters.WikidataSummary> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.WikipediaResponse = await api.metadataController.wikidataSummary(options);
+		const result: Jam.WikipediaSummaryResponse = await api.metadataController.wikidataSummary(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/wikidata/lookup', async (req, res) => {
+		const options: JamRequest<JamParameters.WikidataLookup> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.WikidataLookupResponse = await api.metadataController.wikidataLookup(options);
 		await ApiResponder.data(res, result);
 	});
 

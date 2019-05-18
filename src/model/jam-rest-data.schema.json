@@ -4592,6 +4592,241 @@
 				}
 			}
 		},
+		"WikiData.SiteLink": {
+			"type": "object",
+			"properties": {
+				"site": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"badges": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"badges",
+				"site",
+				"title"
+			]
+		},
+		"WikiData.Snak": {
+			"type": "object",
+			"properties": {
+				"snaktype": {
+					"type": "string"
+				},
+				"property": {
+					"type": "string"
+				},
+				"hash": {
+					"type": "string"
+				},
+				"datatype": {
+					"type": "string"
+				},
+				"datavalue": {
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string"
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"entity-type": {
+									"type": "string"
+								},
+								"numeric-id": {
+									"type": "number"
+								}
+							},
+							"required": [
+								"entity-type",
+								"id",
+								"numeric-id"
+							]
+						}
+					},
+					"required": [
+						"type",
+						"value"
+					]
+				}
+			},
+			"required": [
+				"datatype",
+				"datavalue",
+				"hash",
+				"property",
+				"snaktype"
+			]
+		},
+		"WikiData.Claim": {
+			"type": "object",
+			"properties": {
+				"mainsnak": {
+					"$ref": "#/definitions/WikiData.Snak"
+				},
+				"id": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string"
+				},
+				"rank": {
+					"type": "string"
+				},
+				"references": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"hash": {
+								"type": "string"
+							},
+							"snaks": {
+								"type": "object",
+								"additionalProperties": {
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/WikiData.Snak"
+									}
+								}
+							},
+							"snakorder": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						},
+						"required": [
+							"hash",
+							"snakorder",
+							"snaks"
+						]
+					}
+				}
+			},
+			"required": [
+				"id",
+				"mainsnak",
+				"rank",
+				"references",
+				"type"
+			]
+		},
+		"WikiData.Entity": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"labels": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"language": {
+								"type": "string"
+							},
+							"value": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"language",
+							"value"
+						]
+					}
+				},
+				"aliases": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"language": {
+								"type": "string"
+							},
+							"value": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"language",
+							"value"
+						]
+					}
+				},
+				"descriptions": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"language": {
+								"type": "string"
+							},
+							"value": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"language",
+							"value"
+						]
+					}
+				},
+				"sitelinks": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/WikiData.SiteLink"
+					}
+				},
+				"claims": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/WikiData.Claim"
+						}
+					}
+				}
+			},
+			"required": [
+				"aliases",
+				"claims",
+				"descriptions",
+				"id",
+				"labels",
+				"sitelinks",
+				"type"
+			]
+		},
+		"WikiData.Response": {
+			"type": "object",
+			"properties": {
+				"entities": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/WikiData.Entity"
+					}
+				}
+			},
+			"required": [
+				"entities"
+			]
+		},
 		"Jam.AlbumType": {
 			"enum": [
 				"album",
@@ -6472,11 +6707,19 @@
 				"url"
 			]
 		},
-		"Jam.WikipediaResponse": {
+		"Jam.WikipediaSummaryResponse": {
 			"type": "object",
 			"properties": {
 				"summary": {
 					"$ref": "#/definitions/Jam.WikipediaSummary"
+				}
+			}
+		},
+		"Jam.WikidataLookupResponse": {
+			"type": "object",
+			"properties": {
+				"entity": {
+					"$ref": "#/definitions/WikiData.Entity"
 				}
 			}
 		},
@@ -6574,6 +6817,9 @@
 				},
 				"acoustid": {
 					"$ref": "#/definitions/Acoustid.Result"
+				},
+				"wikidata": {
+					"$ref": "#/definitions/Jam.WikidataLookupResponse"
 				}
 			},
 			"required": [
@@ -6581,7 +6827,8 @@
 				"acoustid",
 				"coverartarchive",
 				"lastfm",
-				"musicbrainz"
+				"musicbrainz",
+				"wikidata"
 			]
 		}
 	}

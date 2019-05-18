@@ -478,7 +478,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.WikipediaResponse"
+									"$ref": "#/components/schemas/Jam.WikipediaSummaryResponse"
 								}
 							}
 						}
@@ -529,7 +529,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.WikipediaResponse"
+									"$ref": "#/components/schemas/Jam.WikipediaSummaryResponse"
 								}
 							}
 						}
@@ -563,6 +563,46 @@
 						},
 						"description": "get summary of wikipedia language",
 						"required": false
+					}
+				]
+			}
+		},
+		"/wikidata/lookup": {
+			"get": {
+				"operationId": "metadataController.wikidataLookup",
+				"tags": [
+					"wikidata"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.WikidataLookupResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "lookup by wikidata id",
+						"required": true
 					}
 				]
 			}
@@ -18094,7 +18134,7 @@
 				],
 				"type": "string"
 			},
-			"Jam.WikipediaResponse": {
+			"Jam.WikipediaSummaryResponse": {
 				"type": "object",
 				"properties": {
 					"summary": {
@@ -18119,6 +18159,103 @@
 					"summary",
 					"title",
 					"url"
+				]
+			},
+			"Jam.WikidataLookupResponse": {
+				"type": "object",
+				"properties": {
+					"entity": {
+						"$ref": "#/components/schemas/WikiData.Entity"
+					}
+				}
+			},
+			"WikiData.Entity": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"labels": {
+						"type": "object",
+						"additionalProperties": {
+							"type": "object",
+							"properties": {
+								"language": {
+									"type": "string"
+								},
+								"value": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"language",
+								"value"
+							]
+						}
+					},
+					"aliases": {
+						"type": "object",
+						"additionalProperties": {
+							"type": "object",
+							"properties": {
+								"language": {
+									"type": "string"
+								},
+								"value": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"language",
+								"value"
+							]
+						}
+					},
+					"descriptions": {
+						"type": "object",
+						"additionalProperties": {
+							"type": "object",
+							"properties": {
+								"language": {
+									"type": "string"
+								},
+								"value": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"language",
+								"value"
+							]
+						}
+					},
+					"sitelinks": {
+						"type": "object",
+						"additionalProperties": {
+							"$ref": "#/components/schemas/WikiData.SiteLink"
+						}
+					},
+					"claims": {
+						"type": "object",
+						"additionalProperties": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/WikiData.Claim"
+							}
+						}
+					}
+				},
+				"required": [
+					"aliases",
+					"claims",
+					"descriptions",
+					"id",
+					"labels",
+					"sitelinks",
+					"type"
 				]
 			},
 			"Jam.AutoComplete": {

@@ -1,31 +1,8 @@
+import {WikiData} from '../../../model/wikidata-rest-data';
 import Logger from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 
 const log = Logger('Wikipedia');
-
-export declare namespace WikiData {
-
-	export interface SiteLink {
-		site: string;
-		title: string;
-		badges: Array<string>;
-	}
-
-	export interface Entity {
-		type: string;
-		id: string;
-		sitelinks: {
-			[name: string]: SiteLink;
-		};
-	}
-
-	export interface Response {
-		entities: {
-			[id: string]: Entity;
-		};
-	}
-
-}
 
 export declare namespace Wikipedia {
 
@@ -156,10 +133,10 @@ export class WikipediaClient extends WebserviceClient {
 		return data.extract_html;
 	}
 
-	async wikidata(id: string):
-		Promise<WikiData.Entity | undefined> {
-		log.info('requesting wikidata enttity', id);
-		const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=sitelinks&ids=${(id)}`;
+	async wikidata(id: string): Promise<WikiData.Entity | undefined> {
+		log.info('requesting wikidata entity', id);
+		// &props=sitelinks|info
+		const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${(id)}`;
 		const data = await this.getJson<WikiData.Response>(url, {});
 		if (!data || !data.entities) {
 			return;

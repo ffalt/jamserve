@@ -577,7 +577,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		return lyrics;
 	}
 
-	async wikipediaSummary(title: string, lang: string | undefined): Promise<Jam.WikipediaResponse> {
+	async wikipediaSummary(title: string, lang: string | undefined): Promise<Jam.WikipediaSummaryResponse> {
 		lang = lang || 'en';
 		const name = 'summary-' + title + '/' + lang;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.wikipedia});
@@ -589,21 +589,27 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		return pedia;
 	}
 
-	async wikidataSummary(id: string, lang: string | undefined): Promise<Jam.WikipediaResponse> {
-		const name = 'wikidata-sitelinks-' + id;
+	async wikidataLookup(id: string): Promise<Jam.WikidataLookupResponse> {
+		const name = 'wikidata-entity-' + id;
 		let result = await this.metadataStore.searchOne({name, dataType: MetaDataType.wikidata});
-		if (!result) {
-			const entity = await this.audioModule.wikidataID(id);
-			if (!entity) {
-				return {};
-			}
-			result = {id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now()};
-			await this.metadataStore.add(result);
+		if (result) {
+			return {entity: result.data};
+		}
+		const entity = await this.audioModule.wikidataID(id);
+		result = {id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now()};
+		await this.metadataStore.add(result);
+		return {entity};
+	}
+
+	async wikidataSummary(id: string, lang: string | undefined): Promise<Jam.WikipediaSummaryResponse> {
+		const lookup = await this.wikidataLookup(id);
+		if (!lookup.entity) {
+			return {};
 		}
 		lang = lang || 'en';
 		const site = lang + 'wiki';
-		if (result.data && result.data.sitelinks) {
-			const langSite = result.data.sitelinks[site];
+		if (lookup.entity.sitelinks) {
+			const langSite = lookup.entity.sitelinks[site];
 			if (!langSite) {
 				return {};
 			}

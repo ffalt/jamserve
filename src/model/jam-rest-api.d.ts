@@ -117,7 +117,7 @@ export interface JamApi {
 		'wikipedia/summary'?: {
 			operationId: 'metadata.wikipediaSummary'
 			params: JamParameters.WikipediaSummary;
-			result: Jam.WikipediaResponse;
+			result: Jam.WikipediaSummaryResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -126,7 +126,13 @@ export interface JamApi {
 		'wikidata/summary'?: {
 			operationId: 'metadata.wikidataSummary'
 			params: JamParameters.WikidataSummary;
-			result: Jam.WikipediaResponse;
+			result: Jam.WikipediaSummaryResponse;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		'wikidata/lookup'?: {
+			operationId: 'metadata.wikidataLookup'
+			params: JamParameters.WikidataLookup;
+			result: Jam.WikidataLookupResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 

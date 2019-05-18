@@ -332,7 +332,7 @@
 							"$ref": "#/definitions/JamParameters.WikipediaSummary"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.WikipediaResponse"
+							"$ref": "#/definitions/Jam.WikipediaSummaryResponse"
 						},
 						"errors": {
 							"anyOf": [
@@ -369,7 +369,43 @@
 							"$ref": "#/definitions/JamParameters.WikidataSummary"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.WikipediaResponse"
+							"$ref": "#/definitions/Jam.WikipediaSummaryResponse"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"operationId",
+						"params",
+						"result"
+					]
+				},
+				"wikidata/lookup": {
+					"type": "object",
+					"properties": {
+						"operationId": {
+							"type": "string",
+							"enum": [
+								"metadata.wikidataLookup"
+							]
+						},
+						"params": {
+							"$ref": "#/definitions/JamParameters.WikidataLookup"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.WikidataLookupResponse"
 						},
 						"errors": {
 							"anyOf": [
@@ -11058,7 +11094,7 @@
 				"title"
 			]
 		},
-		"Jam.WikipediaResponse": {
+		"Jam.WikipediaSummaryResponse": {
 			"type": "object",
 			"properties": {
 				"summary": {
@@ -11100,6 +11136,247 @@
 			},
 			"required": [
 				"id"
+			]
+		},
+		"JamParameters.WikidataLookup": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "lookup by wikidata id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"Jam.WikidataLookupResponse": {
+			"type": "object",
+			"properties": {
+				"entity": {
+					"$ref": "#/definitions/WikiData.Entity"
+				}
+			}
+		},
+		"WikiData.Entity": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"labels": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"language": {
+								"type": "string"
+							},
+							"value": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"language",
+							"value"
+						]
+					}
+				},
+				"aliases": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"language": {
+								"type": "string"
+							},
+							"value": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"language",
+							"value"
+						]
+					}
+				},
+				"descriptions": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"language": {
+								"type": "string"
+							},
+							"value": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"language",
+							"value"
+						]
+					}
+				},
+				"sitelinks": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "#/definitions/WikiData.SiteLink"
+					}
+				},
+				"claims": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/WikiData.Claim"
+						}
+					}
+				}
+			},
+			"required": [
+				"aliases",
+				"claims",
+				"descriptions",
+				"id",
+				"labels",
+				"sitelinks",
+				"type"
+			]
+		},
+		"WikiData.SiteLink": {
+			"type": "object",
+			"properties": {
+				"site": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"badges": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"badges",
+				"site",
+				"title"
+			]
+		},
+		"WikiData.Claim": {
+			"type": "object",
+			"properties": {
+				"mainsnak": {
+					"$ref": "#/definitions/WikiData.Snak"
+				},
+				"id": {
+					"type": "string"
+				},
+				"type": {
+					"type": "string"
+				},
+				"rank": {
+					"type": "string"
+				},
+				"references": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"hash": {
+								"type": "string"
+							},
+							"snaks": {
+								"type": "object",
+								"additionalProperties": {
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/WikiData.Snak"
+									}
+								}
+							},
+							"snakorder": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						},
+						"required": [
+							"hash",
+							"snakorder",
+							"snaks"
+						]
+					}
+				}
+			},
+			"required": [
+				"id",
+				"mainsnak",
+				"rank",
+				"references",
+				"type"
+			]
+		},
+		"WikiData.Snak": {
+			"type": "object",
+			"properties": {
+				"snaktype": {
+					"type": "string"
+				},
+				"property": {
+					"type": "string"
+				},
+				"hash": {
+					"type": "string"
+				},
+				"datatype": {
+					"type": "string"
+				},
+				"datavalue": {
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string"
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"entity-type": {
+									"type": "string"
+								},
+								"numeric-id": {
+									"type": "number"
+								}
+							},
+							"required": [
+								"entity-type",
+								"id",
+								"numeric-id"
+							]
+						}
+					},
+					"required": [
+						"type",
+						"value"
+					]
+				}
+			},
+			"required": [
+				"datatype",
+				"datavalue",
+				"hash",
+				"property",
+				"snaktype"
 			]
 		},
 		"JamParameters.AutoComplete": {

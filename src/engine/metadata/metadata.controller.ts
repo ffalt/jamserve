@@ -41,12 +41,16 @@ export class MetadataController {
 		return this.metadataService.musicbrainzLookup(req.query.type, req.query.id, req.query.inc);
 	}
 
-	async wikipediaSummary(req: JamRequest<JamParameters.WikipediaSummary>): Promise<Jam.WikipediaResponse> {
+	async wikipediaSummary(req: JamRequest<JamParameters.WikipediaSummary>): Promise<Jam.WikipediaSummaryResponse> {
 		return this.metadataService.wikipediaSummary(req.query.title, req.query.lang);
 	}
 
-	async wikidataSummary(req: JamRequest<JamParameters.WikidataSummary>): Promise<Jam.WikipediaResponse> {
+	async wikidataSummary(req: JamRequest<JamParameters.WikidataSummary>): Promise<Jam.WikipediaSummaryResponse> {
 		return this.metadataService.wikidataSummary(req.query.id, req.query.lang);
+	}
+
+	async wikidataLookup(req: JamRequest<JamParameters.WikidataLookup>): Promise<Jam.WikidataLookupResponse> {
+		return this.metadataService.wikidataLookup(req.query.id);
 	}
 
 	async chartlyricsSearch(req: JamRequest<JamParameters.ChartlyricsSearch>): Promise<Jam.ChartLyricsResponse> {

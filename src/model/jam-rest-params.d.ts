@@ -1317,6 +1317,13 @@ export declare namespace JamParameters {
 		lang?: string;
 	}
 
+	export interface WikidataLookup {
+		/**
+		 * lookup by wikidata id
+		 */
+		id: string;
+	}
+
 	export interface MusicBrainzLookup extends ID {
 		/**
 		 * lookup by musicbrainz type

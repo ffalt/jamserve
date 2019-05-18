@@ -4,6 +4,7 @@ import {CoverArtArchive} from './coverartarchive-rest-data';
 import {ID3v2Frames} from './id3v2-frames';
 import {LastFM} from './lastfm-rest-data';
 import {MusicBrainz} from './musicbrainz-rest-data';
+import {WikiData} from './wikidata-rest-data';
 
 export declare namespace Jam {
 
@@ -456,8 +457,12 @@ export declare namespace Jam {
 		url: string;
 	}
 
-	export interface WikipediaResponse {
+	export interface WikipediaSummaryResponse {
 		summary?: WikipediaSummary;
+	}
+
+	export interface WikidataLookupResponse {
+		entity?: WikiData.Entity;
 	}
 
 	export interface ChartLyricsResponse {
@@ -482,6 +487,7 @@ export declare namespace Jam {
 		musicbrainz: MusicBrainzResponse;
 		lastfm: LastFMResponse;
 		acoustid: AcoustidResponse;
+		wikidata: WikidataLookupResponse;
 	}
 
 }
