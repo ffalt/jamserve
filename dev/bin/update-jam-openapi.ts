@@ -68,6 +68,8 @@ async function run(): Promise<void> {
 			}
 		} else if (p.items) {
 			collectSchema(p.items, definitions);
+		} else if (p.additionalProperties) {
+			collectSchema(p.additionalProperties, definitions);
 		} else if (p.properties) {
 			Object.keys(p.properties).forEach(key => {
 				collectSchema(p.properties[key], definitions);
