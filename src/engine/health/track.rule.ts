@@ -3,7 +3,7 @@ import {ID3v2, IID3V1, MP3Analyzer} from 'jamp3';
 import {IMP3Warning} from 'jamp3/dist/lib/mp3/mp3_analyzer';
 import {IID3V2} from 'jamp3/src/lib/id3v2/id3v2__types';
 import {Jam} from '../../model/jam-rest-data';
-import {AlbumTypesArtistMusic, AudioFormatType} from '../../model/jam-types';
+import {AlbumType, AlbumTypesArtistMusic, AudioFormatType} from '../../model/jam-types';
 import {ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
 import {flac_test} from '../../modules/audio/tools/flac';
 import Logger from '../../utils/logger';
@@ -79,8 +79,10 @@ export class TrackTagValuesRule extends TrackRule {
 		if (!track.tag.track) {
 			missing.push('track nr');
 		}
-		if (!track.tag.trackTotal) {
-			missing.push('total track count');
+		if (parent.tag.albumType !== undefined && parent.tag.albumType !== AlbumType.audiodrama) {
+			if (!track.tag.trackTotal) {
+				missing.push('total track count');
+			}
 		}
 		if (parent.tag.albumType !== undefined && AlbumTypesArtistMusic.indexOf(parent.tag.albumType) >= 0) {
 			if (!track.tag.year) {
