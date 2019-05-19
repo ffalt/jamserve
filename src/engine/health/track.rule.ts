@@ -98,6 +98,8 @@ export class TrackTagValuesRule extends TrackRule {
 
 }
 
+const fixable = ['XING: VBR detected, but no VBR head frame found', 'XING: Wrong number of data bytes declared in VBR Header', 'XING: Wrong number of frames declared in VBR Header'];
+
 export class TrackValidMediaRule extends TrackRule {
 
 	constructor() {
@@ -107,7 +109,7 @@ export class TrackValidMediaRule extends TrackRule {
 	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
 		if (isMP3(track) && tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
 			const mp3Warnings = tagCache.mp3Warnings.filter(m => {
-				return m.msg !== 'XING: VBR detected, but no VBR head frame found';
+				return fixable.indexOf(m.msg) < 0;
 			});
 			if (mp3Warnings.length > 0) {
 				return {
@@ -160,6 +162,25 @@ export class TrackMissingVBRHeaderRule extends TrackRule {
 
 }
 
+export class TrackInvalidVBRHeaderRule extends TrackRule {
+
+	constructor() {
+		super('track.mp3.vbr.header.valid', 'MP3 File has invalid VBR Header');
+	}
+
+	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
+		if (isMP3(track) && tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
+			const warning = tagCache.mp3Warnings.find(m => {
+				return ['XING: Wrong number of data bytes declared in VBR Header', 'XING: Wrong number of frames declared in VBR Header'].indexOf(m.msg) >= 0;
+			});
+			if (warning) {
+				return {};
+			}
+		}
+	}
+
+}
+
 const GARBAGE_FRAMES_IDS: Array<string> = [
 	'PRIV', // application specific binary, mostly windows media player
 	'COMM',
@@ -201,6 +222,7 @@ export class TrackRulesChecker {
 		this.rules.push(new TrackTagValuesRule());
 		this.rules.push(new TrackValidMediaRule());
 		this.rules.push(new TrackMissingVBRHeaderRule());
+		this.rules.push(new TrackInvalidVBRHeaderRule());
 		this.rules.push(new TrackValidID3v2Rule());
 		this.rules.push(new TrackID3v2GarbageRule());
 	}
