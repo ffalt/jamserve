@@ -1,7 +1,5 @@
 /* tslint:disable:max-classes-per-file */
-import {ID3v2, IID3V1, MP3Analyzer} from 'jamp3';
-import {IMP3Warning} from 'jamp3/dist/lib/mp3/mp3_analyzer';
-import {IID3V2} from 'jamp3/src/lib/id3v2/id3v2__types';
+import {ID3v2, IID3V1, IID3V2, IMP3Warning, MP3Analyzer} from 'jamp3';
 import {Jam} from '../../model/jam-rest-data';
 import {AlbumType, AlbumTypesArtistMusic, AudioFormatType} from '../../model/jam-types';
 import {ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
