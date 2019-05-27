@@ -203,7 +203,7 @@ export class FORMAT {
 			titleSort: simple.TITLESORT,
 			track: this.parseNum(simple.TRACKNUMBER) || this.parseNum(simple.TRACK),
 			trackTotal: this.parseNum(simple.TRACKTOTAL) || this.parseNum(simple.TOTALTRACKS),
-			year: this.parseYear(simple.ORIGINALYEAR) || this.parseYear(simple.DATE),
+			year: this.parseYear(simple.ORIGINALYEAR) || this.parseYear(simple.ORIGINALDATE) || this.parseYear(simple.DATE),
 			mbTrackID: simple.MUSICBRAINZ_TRACKID,
 			mbAlbumType: simple.RELEASETYPE,
 			mbAlbumArtistID: simple.MUSICBRAINZ_ALBUMARTISTID,
