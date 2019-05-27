@@ -1,12 +1,12 @@
 /* tslint:disable:max-classes-per-file */
 import {Jam} from '../../model/jam-rest-data';
+import {TrackHealthID} from '../../model/jam-types';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import Logger from '../../utils/logger';
 import {RootStatus} from '../root/root.model';
 import {RootStore} from '../root/root.store';
 import {logChanges, MergeChanges} from '../scan/scan.changes';
 import {ScanService} from '../scan/scan.service';
-import {TrackHealthID} from '../../model/jam-types';
 
 const log = Logger('IO');
 
@@ -198,6 +198,7 @@ export class IoService {
 	// private delayedTrackRefresh: { [rootID: string]: { request: ScanRequestRefreshTracks, timeout?: NodeJS.Timeout } } = {};
 	private delayedTrackTagWrite: { [rootID: string]: { request: ScanRequestWriteRawTags, timeout?: NodeJS.Timeout } } = {};
 	private nextID: number = Date.now();
+	private afterScanTimeout: NodeJS.Timeout | undefined;
 	private history: Array<{
 		id: string;
 		error?: string;
@@ -249,6 +250,7 @@ export class IoService {
 	}
 
 	private async runRequest(cmd: ScanRequest): Promise<void> {
+		this.clearAfterRefresh();
 		this.rootstatus[cmd.rootID] = {lastScan: Date.now(), scanning: true};
 		try {
 			this.current = cmd;
@@ -262,8 +264,26 @@ export class IoService {
 			this.history.push({id: cmd.id, error: e.toString(), date: Date.now()});
 		}
 		if (this.queue.length === 0) {
-			await this.onRefresh();
+			this.runAfterRefresh();
 		}
+	}
+
+	private runAfterRefresh(): void {
+		this.clearAfterRefresh();
+		this.afterScanTimeout = setTimeout(() => {
+			this.clearAfterRefresh();
+			this.onRefresh()
+				.catch(e => {
+					console.error(e);
+				});
+		}, 10000);
+	}
+
+	private clearAfterRefresh(): void {
+		if (this.afterScanTimeout) {
+			clearTimeout(this.afterScanTimeout);
+		}
+		this.afterScanTimeout = undefined;
 	}
 
 	private findRequest(rootID: string, mode: ScanRequestMode): ScanRequest | undefined {
