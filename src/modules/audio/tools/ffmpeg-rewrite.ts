@@ -1,5 +1,6 @@
 import ffmpeg from 'fluent-ffmpeg';
 import path from 'path';
+import {fileSuffix} from '../../../utils/fs-utils';
 
 // 	// ffmpeg -i input.mp3 -map_metadata -1 -c:a copy -c:v copy output.mp3
 
@@ -10,7 +11,7 @@ export async function rewriteWriteFFmpeg(filename: string, destination: string):
 			.addOption('-c:v', 'copy')
 			.addOption('-map_metadata', '-1')
 			.output(destination)
-			.format(path.extname(filename).slice(1));
+			.format(fileSuffix(filename));
 		proc.on('end', () => {
 			resolve();
 		}).on('error', (err) => {
