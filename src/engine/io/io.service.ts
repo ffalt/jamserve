@@ -6,6 +6,7 @@ import {RootStatus} from '../root/root.model';
 import {RootStore} from '../root/root.store';
 import {logChanges, MergeChanges} from '../scan/scan.changes';
 import {ScanService} from '../scan/scan.service';
+import {TrackHealthID} from '../../model/jam-types';
 
 const log = Logger('IO');
 
@@ -73,7 +74,7 @@ export class ScanRequestRenameTrack extends ScanRequest {
 
 export class ScanRequestFixTrack extends ScanRequest {
 
-	constructor(public id: string, public rootID: string, public trackID: string, public fixID: string, public scanService: ScanService) {
+	constructor(public id: string, public rootID: string, public trackID: string, public fixID: TrackHealthID, public scanService: ScanService) {
 		super(id, rootID, ScanRequestMode.fixTrack);
 	}
 
@@ -456,7 +457,7 @@ export class IoService {
 		return this.getRequestInfo(delayedCmd.request);
 	}
 
-	public fixTrack(trackID: string, fixID: string, rootID: string): Jam.AdminChangeQueueInfo {
+	public fixTrack(trackID: string, fixID: TrackHealthID, rootID: string): Jam.AdminChangeQueueInfo {
 		return this.addRequest(new ScanRequestFixTrack(this.getScanID(), rootID, trackID, fixID, this.scanService));
 	}
 

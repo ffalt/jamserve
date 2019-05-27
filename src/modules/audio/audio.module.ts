@@ -26,6 +26,7 @@ import {MetaWriteableDataBlock} from './formats/flac/lib/block.writeable';
 import {flacToRawTag, id3v2ToFlacMetaData, id3v2ToRawTag, rawTagToID3v2} from './metadata';
 import {rewriteWriteFFmpeg} from './tools/ffmpeg-rewrite';
 import {probe} from './tools/ffprobe';
+import {mp3val} from './tools/mp3val';
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -161,6 +162,10 @@ export class AudioModule {
 			await fse.copy(filename, filename + '.bak');
 		}
 		await flac.write(filename, flacBlocks);
+	}
+
+	async fixMP3Audio(filename: string): Promise<void> {
+		await mp3val(filename, true);
 	}
 
 	async rewriteAudio(filename: string): Promise<void> {

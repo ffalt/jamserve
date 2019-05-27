@@ -27,6 +27,7 @@ import {formatTrack} from './track.format';
 import {Track} from './track.model';
 import {TrackService} from './track.service';
 import {SearchQueryTrack} from './track.store';
+import {TrackHealthID} from '../../model/jam-types';
 
 export class TrackController extends BaseListController<JamParameters.Track,
 	JamParameters.Tracks,
@@ -194,7 +195,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 
 	async fix(req: JamRequest<JamParameters.TrackFix>): Promise<Jam.AdminChangeQueueInfo> {
 		const track = await this.byID(req.query.id);
-		return this.ioService.fixTrack(track.id, req.query.fixID, track.rootID);
+		return this.ioService.fixTrack(track.id, req.query.fixID as TrackHealthID, track.rootID);
 	}
 
 	async health(req: JamRequest<JamParameters.TrackHealth>): Promise<Array<Jam.TrackHealth>> {

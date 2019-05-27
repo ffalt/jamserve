@@ -1,7 +1,6 @@
-/* tslint:disable:max-classes-per-file */
 import {ID3v2, IID3V1, IID3V2, IMP3Warning, MP3Analyzer} from 'jamp3';
 import {Jam} from '../../model/jam-rest-data';
-import {AlbumType, AlbumTypesArtistMusic, AudioFormatType} from '../../model/jam-types';
+import {AlbumType, AlbumTypesArtistMusic, AudioFormatType, TrackHealthID} from '../../model/jam-types';
 import {ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
 import {flac_test} from '../../modules/audio/tools/flac';
 import Logger from '../../utils/logger';
@@ -20,13 +19,179 @@ interface MediaCache {
 	flacWarnings?: string;
 }
 
-export abstract class TrackRule {
+const headererrors = [
+	'XING: Wrong number of data bytes declared in VBRI Header',
+	'XING: Wrong number of frames declared in VBRI Header',
+	'XING: Wrong number of data bytes declared in Info Header',
+	'XING: Wrong number of frames declared in Info Header',
+	'XING: Wrong number of data bytes declared in Xing Header',
+	'XING: Wrong number of frames declared in Xing Header'
+];
+const fixable = ['XING: VBR detected, but no VBR head frame found'].concat(headererrors);
 
-	protected constructor(public id: string, public name: string) {
-	}
+interface TrackRuleInfo {
+	id: string;
+	name: string;
+	all?: boolean;
+	mp3?: boolean;
+	flac?: boolean;
 
-	abstract run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined>;
+	run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined>;
 }
+
+const trackRules: Array<TrackRuleInfo> = [
+	{
+		id: TrackHealthID.tagValuesExists,
+		name: 'Tag Values missing',
+		all: true,
+		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			const missing = [];
+			if (!track.tag.album) {
+				missing.push('album');
+			}
+			if (!track.tag.artist) {
+				missing.push('artist');
+			}
+			if (!track.tag.albumArtist) {
+				missing.push('album artist');
+			}
+			if (!track.tag.genre) {
+				missing.push('genre');
+			}
+			if (!track.tag.track) {
+				missing.push('track nr');
+			}
+			if (parent.tag.albumType !== undefined && parent.tag.albumType !== AlbumType.audiodrama) {
+				if (!track.tag.trackTotal) {
+					missing.push('total track count');
+				}
+			}
+			if (parent.tag.albumType !== undefined && AlbumTypesArtistMusic.indexOf(parent.tag.albumType) >= 0) {
+				if (!track.tag.year) {
+					missing.push('year');
+				}
+			}
+			if (missing.length > 0) {
+				return {
+					details: missing.map(m => {
+						return {reason: m};
+					})
+				};
+			}
+		}
+
+	},
+	{
+		id: TrackHealthID.id3v2Exists,
+		name: 'ID3v2 Tag is missing',
+		mp3: true,
+		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			if (!hasID3v2Tag(track)) {
+				return {};
+			}
+		}
+	},
+	{
+		id: TrackHealthID.id3v2Valid,
+		name: 'ID3v2 is invalid',
+		mp3: true,
+		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			if (tagCache.id3v2Warnings && tagCache.id3v2Warnings.length > 0) {
+				return {
+					details: tagCache.id3v2Warnings.map(m => {
+						return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
+					})
+				};
+			}
+		}
+	},
+	{
+		id: TrackHealthID.id3v2Garbage,
+		name: 'ID3v2 has garbage frames',
+		mp3: true,
+		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			if (tagCache.id3v2) {
+				const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.indexOf(frame.id) >= 0);
+				if (frames.length > 0) {
+					const ids: Array<string> = [];
+					frames.forEach(frame => {
+						if (ids.indexOf(frame.id) < 0) {
+							ids.push(frame.id);
+						}
+					});
+					return {
+						details: ids.map(m => {
+							return {reason: m};
+						})
+					};
+				}
+			}
+		}
+	},
+	{
+		id: TrackHealthID.mp3HeaderExists,
+		name: 'VBR Header is missing',
+		mp3: true,
+		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			if (tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
+				const warning = tagCache.mp3Warnings.find(m => {
+					return m.msg === 'XING: VBR detected, but no VBR head frame found';
+				});
+				if (warning) {
+					return {};
+				}
+			}
+		}
+	},
+	{
+		id: TrackHealthID.mp3HeaderValid,
+		name: 'VBR Header is invalid',
+		mp3: true,
+		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			if (tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
+				const warnings = tagCache.mp3Warnings.filter(m => {
+					return headererrors.indexOf(m.msg) >= 0;
+				});
+				if (warnings.length > 0) {
+					return {
+						details: warnings.map(m => {
+							return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
+						})
+					};
+				}
+			}
+		}
+	},
+	{
+		id: TrackHealthID.mp3MediaValid,
+		name: 'MP3 Media is invalid',
+		mp3: true,
+		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			if (tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
+				const mp3Warnings = tagCache.mp3Warnings.filter(m => {
+					return fixable.indexOf(m.msg) < 0;
+				});
+				if (mp3Warnings.length > 0) {
+					return {
+						details: mp3Warnings.map(m => {
+							return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
+						})
+					};
+				}
+			}
+		}
+	},
+	{
+		id: TrackHealthID.flacMediaValid,
+		name: 'Flac Media is invalid',
+		mp3: true,
+		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			if (tagCache.flacWarnings) {
+				return {details: [{reason: tagCache.flacWarnings}]};
+			}
+		}
+	}
+];
 
 function hasID3v2Tag(track: Track): boolean {
 	return ID3TrackTagRawFormatTypes.indexOf(track.tag.format) >= 0;
@@ -40,191 +205,15 @@ function isFlac(track: Track): boolean {
 	return track.media && track.media.format === AudioFormatType.flac;
 }
 
-export class TrackID3v2Rule extends TrackRule {
-
-	constructor() {
-		super('track.mp3.id3v2.exists', 'ID3v2 Tag is missing');
-	}
-
-	async run(track: Track): Promise<RuleResult | undefined> {
-		if (isMP3(track) && !hasID3v2Tag(track)) {
-			return {};
-		}
-	}
-
-}
-
-export class TrackTagValuesRule extends TrackRule {
-
-	constructor() {
-		super('track.tag.values.exists', 'Tag Values missing');
-	}
-
-	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
-		const missing = [];
-		if (!track.tag.album) {
-			missing.push('album');
-		}
-		if (!track.tag.artist) {
-			missing.push('artist');
-		}
-		if (!track.tag.albumArtist) {
-			missing.push('album artist');
-		}
-		if (!track.tag.genre) {
-			missing.push('genre');
-		}
-		if (!track.tag.track) {
-			missing.push('track nr');
-		}
-		if (parent.tag.albumType !== undefined && parent.tag.albumType !== AlbumType.audiodrama) {
-			if (!track.tag.trackTotal) {
-				missing.push('total track count');
-			}
-		}
-		if (parent.tag.albumType !== undefined && AlbumTypesArtistMusic.indexOf(parent.tag.albumType) >= 0) {
-			if (!track.tag.year) {
-				missing.push('year');
-			}
-		}
-		if (missing.length > 0) {
-			return {
-				details: missing.map(m => {
-					return {reason: m};
-				})
-			};
-		}
-	}
-
-}
-
-const fixable = ['XING: VBR detected, but no VBR head frame found', 'XING: Wrong number of data bytes declared in VBR Header', 'XING: Wrong number of frames declared in VBR Header'];
-
-export class TrackValidMediaRule extends TrackRule {
-
-	constructor() {
-		super('track.media.valid', 'Track Media is invalid');
-	}
-
-	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
-		if (isMP3(track) && tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
-			const mp3Warnings = tagCache.mp3Warnings.filter(m => {
-				return fixable.indexOf(m.msg) < 0;
-			});
-			if (mp3Warnings.length > 0) {
-				return {
-					details: mp3Warnings.map(m => {
-						return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
-					})
-				};
-			}
-		} else if (isFlac(track) && tagCache.flacWarnings) {
-			return {details: [{reason: tagCache.flacWarnings}]};
-		}
-	}
-
-}
-
-export class TrackValidID3v2Rule extends TrackRule {
-
-	constructor() {
-		super('track.id3v2.valid', 'Track ID3v2 is invalid');
-	}
-
-	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
-		if (isMP3(track) && tagCache.id3v2Warnings && tagCache.id3v2Warnings.length > 0) {
-			return {
-				details: tagCache.id3v2Warnings.map(m => {
-					return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
-				})
-			};
-		}
-	}
-
-}
-
-export class TrackMissingVBRHeaderRule extends TrackRule {
-
-	constructor() {
-		super('track.mp3.vbr.header.missing', 'MP3 File is missing a VBR Header');
-	}
-
-	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
-		if (isMP3(track) && tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
-			const warning = tagCache.mp3Warnings.find(m => {
-				return m.msg === 'XING: VBR detected, but no VBR head frame found';
-			});
-			if (warning) {
-				return {};
-			}
-		}
-	}
-
-}
-
-export class TrackInvalidVBRHeaderRule extends TrackRule {
-
-	constructor() {
-		super('track.mp3.vbr.header.valid', 'MP3 File has invalid VBR Header');
-	}
-
-	async run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> {
-		if (isMP3(track) && tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
-			const warning = tagCache.mp3Warnings.find(m => {
-				return ['XING: Wrong number of data bytes declared in VBR Header', 'XING: Wrong number of frames declared in VBR Header'].indexOf(m.msg) >= 0;
-			});
-			if (warning) {
-				return {};
-			}
-		}
-	}
-
-}
-
 const GARBAGE_FRAMES_IDS: Array<string> = [
 	'PRIV', // application specific binary, mostly windows media player
 	'COMM',
 	'POPM'
 ];
 
-export class TrackID3v2GarbageRule extends TrackRule {
-
-	constructor() {
-		super('track.id3v2.garbage.frames', 'Track ID3v2 has garbage frames');
-	}
-
-	async run(track: Track, parent: Folder, root: Root, mediaCache: MediaCache): Promise<RuleResult | undefined> {
-		if (mediaCache.id3v2) {
-			const frames = mediaCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.indexOf(frame.id) >= 0);
-			if (frames.length > 0) {
-				const ids: Array<string> = [];
-				frames.forEach(frame => {
-					if (ids.indexOf(frame.id) < 0) {
-						ids.push(frame.id);
-					}
-				});
-				return {
-					details: ids.map(m => {
-						return {reason: m};
-					})
-				};
-			}
-		}
-	}
-
-}
-
 export class TrackRulesChecker {
-	rules: Array<TrackRule> = [];
 
 	constructor() {
-		this.rules.push(new TrackID3v2Rule());
-		this.rules.push(new TrackTagValuesRule());
-		this.rules.push(new TrackValidMediaRule());
-		this.rules.push(new TrackMissingVBRHeaderRule());
-		this.rules.push(new TrackInvalidVBRHeaderRule());
-		this.rules.push(new TrackValidID3v2Rule());
-		this.rules.push(new TrackID3v2GarbageRule());
 	}
 
 	async run(track: Track, parent: Folder, root: Root, checkMedia: boolean): Promise<Array<Jam.HealthHint>> {
@@ -258,14 +247,18 @@ export class TrackRulesChecker {
 			}
 		}
 		log.debug('Analyzing track', filename);
-		for (const rule of this.rules) {
-			const match = await rule.run(track, parent, root, mediaCache);
-			if (match) {
-				result.push({
-					id: rule.id,
-					name: rule.name,
-					details: match.details
-				});
+		const mp3 = isMP3(track);
+		const flac = isFlac(track);
+		for (const rule of trackRules) {
+			if (rule.all || (rule.mp3 && mp3) || (rule.flac && flac)) {
+				const match = await rule.run(track, parent, root, mediaCache);
+				if (match) {
+					result.push({
+						id: rule.id,
+						name: rule.name,
+						details: match.details
+					});
+				}
 			}
 		}
 		return result;

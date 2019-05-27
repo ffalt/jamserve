@@ -206,3 +206,14 @@ export const MUSICBRAINZ_VARIOUS_ARTISTS_NAME = 'Various Artists';
 
 export const cUnknownArtist = '[Unknown Artist]';
 export const cUnknownAlbum = '[Unknown Album]';
+
+export enum TrackHealthID {
+	tagValuesExists = 'track.tag.values.exists',
+	id3v2Exists = 'track.mp3.id3v2.exists',
+	id3v2Valid = 'track.mp3.id3v2.valid',
+	id3v2Garbage = 'track.mp3.id3v2.garbage.frames',
+	mp3HeaderExists = 'track.mp3.vbr.header.exists',
+	mp3HeaderValid = 'track.mp3.vbr.header.valid',
+	mp3MediaValid = 'track.mp3.media.valid',
+	flacMediaValid = 'track.flac.media.valid'
+}
