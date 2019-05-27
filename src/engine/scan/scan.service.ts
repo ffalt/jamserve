@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
-import {RootScanStrategy} from '../../model/jam-types';
+import {RootScanStrategy, TrackHealthID} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
 import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
@@ -308,14 +308,19 @@ export class ScanService {
 		return changes;
 	}
 
-	async fixTrack(rootID: string, trackID: string, fixID: string): Promise<MergeChanges> {
+	async fixTrack(rootID: string, trackID: string, fixID: TrackHealthID): Promise<MergeChanges> {
 		const {root, changes} = await this.start(rootID);
 		const track = await this.store.trackStore.byId(trackID);
 		if (!track) {
 			return Promise.reject(Error('Track not found'));
 		}
-		await this.audioModule.rewriteAudio(path.join(track.path, track.name));
-
+		if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].indexOf(fixID) >= 0) {
+			await this.audioModule.rewriteAudio(path.join(track.path, track.name));
+		} else if ([TrackHealthID.mp3MediaValid].indexOf(fixID) >= 0) {
+			await this.audioModule.fixMP3Audio(path.join(track.path, track.name));
+		} else {
+			return Promise.reject(Error('Invalid TrackHealthID'));
+		}
 		const dbMatcher = new DBMatcher(this.store);
 		const {rootMatch, changedDirs} = await dbMatcher.match([track.parentID], [track.id]);
 

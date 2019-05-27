@@ -130,7 +130,7 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | und
 
 	if (flacInfo.pictures) {
 		for (const pic of flacInfo.pictures) {
-			builder.addPicture(pic.pictureType, pic.description, pic.mimeType, pic.pictureData);
+			builder.picture(pic.pictureType, pic.description, pic.mimeType, pic.pictureData);
 		}
 	}
 	const tag = {version: 4, frames: builder.rawBuilder.build()};
