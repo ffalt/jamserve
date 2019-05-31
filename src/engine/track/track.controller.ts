@@ -4,6 +4,7 @@ import {NotFoundError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
+import {TrackHealthID} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {trackTagToRawTag} from '../../modules/audio/metadata';
 import {ApiBinaryResult} from '../../typings';
@@ -27,7 +28,6 @@ import {formatTrack} from './track.format';
 import {Track} from './track.model';
 import {TrackService} from './track.service';
 import {SearchQueryTrack} from './track.store';
-import {TrackHealthID} from '../../model/jam-types';
 
 export class TrackController extends BaseListController<JamParameters.Track,
 	JamParameters.Tracks,

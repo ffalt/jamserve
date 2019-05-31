@@ -29,6 +29,12 @@ const headererrors = [
 ];
 const fixable = ['XING: VBR detected, but no VBR head frame found'].concat(headererrors);
 
+const GARBAGE_FRAMES_IDS: Array<string> = [
+	'PRIV', // application specific binary, mostly windows media player
+	'COMM',
+	'POPM'
+];
+
 interface TrackRuleInfo {
 	id: string;
 	name: string;
@@ -202,12 +208,6 @@ function isMP3(track: Track): boolean {
 function isFlac(track: Track): boolean {
 	return track.media && track.media.format === AudioFormatType.flac;
 }
-
-const GARBAGE_FRAMES_IDS: Array<string> = [
-	'PRIV', // application specific binary, mostly windows media player
-	'COMM',
-	'POPM'
-];
 
 export class TrackRulesChecker {
 
