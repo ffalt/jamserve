@@ -68,7 +68,7 @@ export class DBMatcher {
 		}
 		let parentMatch = loadedMatches.find(m => !!m.folder && m.folder.id === folder.parentID);
 		if (parentMatch) {
-			if (parentMatch.directories.indexOf(match) < 0) {
+			if (!parentMatch.directories.includes(match)) {
 				parentMatch.directories.push(match);
 			}
 			match.parent = parentMatch;
@@ -135,12 +135,12 @@ export class DBMatcher {
 				}
 			}
 			loadedMatches.push(match);
-			if (changedDirs.indexOf(match) < 0) {
+			if (!changedDirs.includes(match)) {
 				changedDirs.push(match);
 			}
 			let p = match.parent;
 			while (p) {
-				if (p.level > 0 && changedDirs.indexOf(p) < 0) {
+				if (p.level > 0 && !changedDirs.includes(p)) {
 					changedDirs.push(p);
 				}
 				p = p.parent;

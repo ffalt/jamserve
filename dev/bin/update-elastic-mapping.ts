@@ -89,7 +89,7 @@ async function run(): Promise<void> {
 				properties[key] = val;
 			}
 		});
-		if (symbol.length > 0 && done.indexOf(symbol) < 0) {
+		if (symbol.length > 0 && !done.includes(symbol)) {
 			done.push(symbol);
 			const name = 'type_' + symbol.replace(/\./g, '_');
 			strings.push('const ' + name + ' = ' + JSON.stringify({properties}, null, '\t').replace(/"/g, '') + ';\n');

@@ -377,7 +377,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 					docs.forEach(doc => {
 						const vals = this.getDotFieldValues(field, doc);
 						vals.forEach(val => {
-							if (list.indexOf(val) < 0) {
+							if (!list.includes(val)) {
 								list.push(val);
 							}
 						});
@@ -410,7 +410,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 					docs.forEach(doc => {
 						const vals = this.getDotFieldValues(field, doc);
 						vals.forEach(val => {
-							if (list.indexOf(val) < 0) {
+							if (!list.includes(val)) {
 								list.push(val);
 							}
 						});

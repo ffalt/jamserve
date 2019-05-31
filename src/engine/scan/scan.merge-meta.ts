@@ -101,7 +101,7 @@ export class ScanMetaMerger {
 		if (mbArtistID) {
 			const artist = this.artistCache.find(a => a.artist.mbArtistID === mbArtistID);
 			if (artist) {
-				if (artist.slugs.indexOf(slug) < 0) {
+				if (!artist.slugs.includes(slug)) {
 					artist.slugs.push(slug);
 				}
 
@@ -253,17 +253,17 @@ export class ScanMetaMerger {
 
 	private async removeMeta(track: Track, changes: MergeChanges): Promise<void> {
 		let artist = await this.getArtistByID(track.artistID, changes);
-		if (artist && changes.updateArtists.indexOf(artist) < 0) {
+		if (artist && !changes.updateArtists.includes(artist)) {
 			changes.updateArtists.push(artist);
 		}
 		if (track.artistID !== track.albumArtistID) {
 			artist = await this.getArtistByID(track.albumArtistID, changes);
-			if (artist && changes.updateArtists.indexOf(artist) < 0) {
+			if (artist && !changes.updateArtists.includes(artist)) {
 				changes.updateArtists.push(artist);
 			}
 		}
 		const album = await this.getAlbumByID(track.albumID, changes);
-		if (album && changes.updateAlbums.indexOf(album) < 0) {
+		if (album && !changes.updateAlbums.includes(album)) {
 			changes.updateAlbums.push(album);
 		}
 	}
@@ -340,16 +340,16 @@ export class ScanMetaMerger {
 			// get the db state
 			let tracksIDs = await this.store.trackStore.searchIDs({albumID: album.id});
 			// filter out removed tracks
-			tracksIDs = tracksIDs.filter(t => removedTrackIDs.indexOf(t) < 0);
+			tracksIDs = tracksIDs.filter(t => !removedTrackIDs.includes(t));
 			// filter out updated tracks which are no longer part of the album
 			const removedFromAlbum = updateTracks.filter(t => (t.oldTrack.albumID === album.id && t.track.albumID !== album.id)).map(t => t.track.id);
-			tracksIDs = tracksIDs.filter(t => removedFromAlbum.indexOf(t) < 0);
+			tracksIDs = tracksIDs.filter(t => !removedFromAlbum.includes(t));
 			// rest tracksIDs are untouched tracks
 			// get all new and updated tracks which are part of the album
 			const refreshedTracks: Array<MetaMergeTrackInfo> = (updateTracks.filter(t => t.track && t.track.albumID === album.id) as Array<MetaMergeTrackInfo>)
 				.concat(newTracks.filter(t => t.track.albumID === album.id));
 			if (refreshedTracks.length + tracksIDs.length === 0) {
-				if (changes.removedAlbums.indexOf(album) < 0) {
+				if (!changes.removedAlbums.includes(album)) {
 					changes.removedAlbums.push(album);
 				} else {
 					log.error('new album without tracks', album);
@@ -370,13 +370,13 @@ export class ScanMetaMerger {
 
 				for (const trackInfo of refreshedTracks) {
 					const track = trackInfo.track;
-					if (album.rootIDs.indexOf(track.rootID) < 0) {
+					if (!album.rootIDs.includes(track.rootID)) {
 						album.rootIDs.push(track.rootID);
 					}
-					if (album.folderIDs.indexOf(track.parentID) < 0) {
+					if (!album.folderIDs.includes(track.parentID)) {
 						album.folderIDs.push(track.parentID);
 					}
-					if (album.trackIDs.indexOf(track.id) < 0) {
+					if (!album.trackIDs.includes(track.id)) {
 						album.trackIDs.push(track.id);
 					}
 					metaStatBuilder.statSlugValue('artist', track.tag.albumArtist || track.tag.artist);
@@ -396,7 +396,7 @@ export class ScanMetaMerger {
 				album.year = metaStatBuilder.mostUsedNumber('year');
 				album.albumType = metaStatBuilder.mostUsed('albumType') as AlbumType || AlbumType.unknown;
 				album.duration = duration;
-				if (changes.newAlbums.indexOf(album) < 0) {
+				if (!changes.newAlbums.includes(album)) {
 					changes.updateAlbums.push(album);
 				}
 			}
@@ -411,26 +411,26 @@ export class ScanMetaMerger {
 			let tracksIDs = await this.store.trackStore.searchIDs({artistID: artist.id});
 			const tracksAlbumsIDs = await this.store.trackStore.searchIDs({albumArtistID: artist.id});
 			for (const id of tracksAlbumsIDs) {
-				if (tracksIDs.indexOf(id) < 0) {
+				if (!tracksIDs.includes(id)) {
 					tracksIDs.push(id);
 				}
 			}
 			// filter out removed tracks
-			tracksIDs = tracksIDs.filter(t => removedTrackIDs.indexOf(t) < 0);
+			tracksIDs = tracksIDs.filter(t => !removedTrackIDs.includes(t));
 			// filter out updated tracks which are no longer part of the artist
 			let removedFromArtist = updateTracks.filter(t => (t.oldTrack.artistID === artist.id && t.track.artistID !== artist.id)).map(t => t.track.id);
-			tracksIDs = tracksIDs.filter(t => removedFromArtist.indexOf(t) < 0);
+			tracksIDs = tracksIDs.filter(t => !removedFromArtist.includes(t));
 			// filter out updated tracks which are no longer part of the album artist
 			removedFromArtist = updateTracks.filter(t => (t.oldTrack.albumArtistID === artist.id && t.track.albumArtistID !== artist.id)).map(t => t.track.id);
-			tracksIDs = tracksIDs.filter(t => removedFromArtist.indexOf(t) < 0);
+			tracksIDs = tracksIDs.filter(t => !removedFromArtist.includes(t));
 			// get all new and updated tracks which are part of the artist
 			const refreshedTracks: Array<MetaMergeTrackInfo> = (updateTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id) as Array<MetaMergeTrackInfo>)
 				.concat(newTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id));
 			if (refreshedTracks.length + tracksIDs.length === 0) {
-				if (changes.newArtists.indexOf(artist) < 0) {
-					changes.removedArtists.push(artist);
-				} else {
+				if (changes.newArtists.includes(artist)) {
 					log.error('new artist without tracks', artist);
+				} else {
+					changes.removedArtists.push(artist);
 				}
 			} else {
 				artist.trackIDs = [];
@@ -450,13 +450,13 @@ export class ScanMetaMerger {
 						metaStatBuilder.statSlugValue('artist', track.tag.albumArtist);
 						metaStatBuilder.statSlugValue('artistSort', track.tag.albumArtistSort);
 					}
-					if (artist.rootIDs.indexOf(track.rootID) < 0) {
+					if (!artist.rootIDs.includes(track.rootID)) {
 						artist.rootIDs.push(track.rootID);
 					}
-					if (artist.folderIDs.indexOf(track.parentID) < 0) {
+					if (!artist.folderIDs.includes(track.parentID)) {
 						artist.folderIDs.push(track.parentID);
 					}
-					if (artist.trackIDs.indexOf(track.id) < 0) {
+					if (!artist.trackIDs.includes(track.id)) {
 						artist.trackIDs.push(track.id);
 					}
 				}
@@ -474,14 +474,14 @@ export class ScanMetaMerger {
 				let albums = await this.store.albumStore.byIds(albumIDs);
 				albums = refreshedAlbums.concat(albums);
 				for (const album of albums) {
-					if (artist.albumIDs.indexOf(album.id) < 0) {
+					if (!artist.albumIDs.includes(album.id)) {
 						artist.albumIDs.push(album.id);
 					}
-					if (artist.albumTypes.indexOf(album.albumType) < 0) {
+					if (!artist.albumTypes.includes(album.albumType)) {
 						artist.albumTypes.push(album.albumType);
 					}
 				}
-				if (changes.newArtists.indexOf(artist) < 0) {
+				if (!changes.newArtists.includes(artist)) {
 					changes.updateArtists.push(artist);
 				}
 			}

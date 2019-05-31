@@ -24,14 +24,14 @@ export function deepCompare(a: any, b: any, ignore?: Array<string>): boolean {
 	}
 	let key;
 	for (key in a) {
-		if (a.hasOwnProperty(key) && ignoreList.indexOf(key) < 0) {
+		if (a.hasOwnProperty(key) && !ignoreList.includes(key)) {
 			if (!compare(a[key], b[key])) {
 				return false;
 			}
 		}
 	}
 	for (key in b) {
-		if (b.hasOwnProperty(key) && ignoreList.indexOf(key) < 0) {
+		if (b.hasOwnProperty(key) && !ignoreList.includes(key)) {
 			if (!compare(a[key], b[key])) {
 				return false;
 			}

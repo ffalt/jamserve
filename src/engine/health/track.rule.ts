@@ -115,7 +115,7 @@ const trackRules: Array<TrackRuleInfo> = [
 				if (frames.length > 0) {
 					const ids: Array<string> = [];
 					frames.forEach(frame => {
-						if (ids.indexOf(frame.id) < 0) {
+						if (!ids.includes(frame.id)) {
 							ids.push(frame.id);
 						}
 					});
@@ -168,9 +168,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		mp3: true,
 		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
-				const mp3Warnings = tagCache.mp3Warnings.filter(m => {
-					return fixable.indexOf(m.msg) < 0;
-				});
+				const mp3Warnings = tagCache.mp3Warnings.filter(m => !fixable.includes(m.msg));
 				if (mp3Warnings.length > 0) {
 					return {
 						details: mp3Warnings.map(m => {

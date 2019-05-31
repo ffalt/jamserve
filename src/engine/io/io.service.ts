@@ -341,7 +341,7 @@ export class IoService {
 		refreshTrack(track: Track): Jam.AdminChangeQueueInfo {
 			const oldRequest = <ScanRequestRefreshTracks>this.findRequest(track.rootID, ScanRequestMode.refreshTracks);
 			if (oldRequest) {
-				if (oldRequest.trackIDs.indexOf(track.id) < 0) {
+				if (!oldRequest.trackIDs.includes(track.id)) {
 					oldRequest.trackIDs.push(track.id);
 				}
 				return this.getRequestInfo(oldRequest);
@@ -351,7 +351,7 @@ export class IoService {
 				if (delayedCmd.timeout) {
 					clearTimeout(delayedCmd.timeout);
 				}
-				if (delayedCmd.request.trackIDs.indexOf(track.id) < 0) {
+				if (!delayedCmd.request.trackIDs.includes(track.id)) {
 					delayedCmd.request.trackIDs.push(track.id);
 				}
 				return this.getRequestInfo(delayedCmd.request);
@@ -390,7 +390,7 @@ export class IoService {
 		const oldRequest = this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveFolders && (c as ScanRequestMoveFolders).newParentID === newParentID)) as ScanRequestMoveFolders;
 		if (oldRequest) {
 			for (const id of folderIDs) {
-				if (oldRequest.folderIDs.indexOf(id) < 0) {
+				if (!oldRequest.folderIDs.includes(id)) {
 					oldRequest.folderIDs.push(id);
 				}
 			}
@@ -404,7 +404,7 @@ export class IoService {
 			const oldRequest = <ScanRequestRefreshFolders>this.findRequest(rootID, ScanRequestMode.refreshFolders);
 			if (oldRequest) {
 				for (const id of folderIDs) {
-					if (oldRequest.folderIDs.indexOf(id) < 0) {
+					if (!oldRequest.folderIDs.includes(id)) {
 						oldRequest.folderIDs.push(id);
 					}
 				}
@@ -417,7 +417,7 @@ export class IoService {
 	deleteFolder(id: string, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = this.findRequest(rootID, ScanRequestMode.refreshFolders) as ScanRequestDeleteFolders;
 		if (oldRequest) {
-			if (oldRequest.folderIDs.indexOf(id) < 0) {
+			if (!oldRequest.folderIDs.includes(id)) {
 				oldRequest.folderIDs.push(id);
 			}
 			return this.getRequestInfo(oldRequest);
@@ -428,7 +428,7 @@ export class IoService {
 	removeTrack(id: string, rootID: string): Jam.AdminChangeQueueInfo {
 		const oldRequest = this.findRequest(rootID, ScanRequestMode.removeTracks) as ScanRequestRemoveTracks;
 		if (oldRequest) {
-			if (oldRequest.trackIDs.indexOf(id) < 0) {
+			if (!oldRequest.trackIDs.includes(id)) {
 				oldRequest.trackIDs.push(id);
 			}
 			return this.getRequestInfo(oldRequest);
@@ -440,7 +440,7 @@ export class IoService {
 		const oldRequest = this.queue.find(c => !!c.rootID && (c.rootID === rootID && c.mode === ScanRequestMode.moveTracks && (c as ScanRequestMoveTracks).newParentID === newParentID)) as ScanRequestMoveTracks;
 		if (oldRequest) {
 			for (const id of trackIDs) {
-				if (oldRequest.trackIDs.indexOf(id) < 0) {
+				if (!oldRequest.trackIDs.includes(id)) {
 					oldRequest.trackIDs.push(id);
 				}
 			}

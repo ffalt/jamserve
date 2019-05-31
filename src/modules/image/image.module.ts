@@ -79,7 +79,7 @@ export class ImageModule {
 		if (fileFormat[0] === '.') {
 			fileFormat = fileFormat.slice(1);
 		}
-		if (SupportedWriteImageFormat.indexOf(fileFormat) < 0) {
+		if (!SupportedWriteImageFormat.includes(fileFormat)) {
 			fileFormat = this.format;
 		}
 		return this.getImageAs(filename, fileFormat, size, name);
@@ -129,7 +129,7 @@ export class ImageModule {
 		if (!filename) {
 			return Promise.reject(Error('Invalid Path'));
 		}
-		if (format && SupportedWriteImageFormat.indexOf(format) < 0) {
+		if (format && !SupportedWriteImageFormat.includes(format)) {
 			return Promise.reject(Error('Invalid Format'));
 		}
 		if (format || size) {

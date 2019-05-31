@@ -46,8 +46,8 @@ export class ScanCleaner {
 		}
 		const artists = await store.artistStore.search({trackIDs});
 		artists.forEach(artist => {
-			artist.trackIDs = artist.trackIDs.filter(id => trackIDs.indexOf(id) < 0);
-			artist.albumIDs = artist.albumIDs.filter(id => removeAlbums.indexOf(id) < 0);
+			artist.trackIDs = artist.trackIDs.filter(id => !trackIDs.includes(id));
+			artist.albumIDs = artist.albumIDs.filter(id => !removeAlbums.includes(id));
 		});
 		const removeArtists = artists.filter(artist => artist.trackIDs.length === 0).map(artist => artist.id);
 		const updateArtists = artists.filter(artist => artist.trackIDs.length !== 0);
@@ -96,7 +96,7 @@ export class ScanCleaner {
 			const playlists = await this.store.playlistStore.search({trackIDs});
 			if (playlists.length > 0) {
 				for (const playlist of playlists) {
-					playlist.trackIDs = playlist.trackIDs.filter(id => trackIDs.indexOf(id) < 0);
+					playlist.trackIDs = playlist.trackIDs.filter(id => !trackIDs.includes(id));
 					if (playlist.trackIDs.length === 0) {
 						await this.store.playlistStore.remove(playlist.id);
 					} else {

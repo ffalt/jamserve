@@ -59,7 +59,7 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 		// 	return 'Empty string parameter ' + param.name;
 		// }
 		if (schema.enum) {
-			if (schema.enum.indexOf(s) < 0) {
+			if (!schema.enum.includes(s)) {
 				return 'Invalid enum string parameter ' + param.name + ': ' + s;
 			}
 		}
@@ -70,7 +70,7 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 			const list = ((Array.isArray(value) ? value : [value]) || []).map(s => s.toString().trim());
 			if (items.enum) {
 				for (const s of list) {
-					if (items.enum.indexOf(s) < 0) {
+					if (!items.enum.includes(s)) {
 						return 'Invalid enum string parameter ' + param.name + ': ' + s;
 					}
 				}

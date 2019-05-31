@@ -25,7 +25,7 @@ export function randomItems<T>(list: Array<T>, amount?: number): Array<T> {
 	const done: Array<number> = [];
 	while ((result.length < amount)) {
 		const i = randomInt(0, list.length - 1);
-		if (done.indexOf(i) < 0) {
+		if (!done.includes(i)) {
 			result.push(list[i]);
 			done.push(i);
 		}

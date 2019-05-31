@@ -18,7 +18,7 @@ export class Feed {
 
 	static parseItunesDurationSeconds(s: string): number {
 		const num = Number(s);
-		if (s.indexOf(':') < 0 && !isNaN(num)) {
+		if (!s.includes(':') && !isNaN(num)) {
 			return num;
 		}
 		return moment.duration(s).as('seconds');

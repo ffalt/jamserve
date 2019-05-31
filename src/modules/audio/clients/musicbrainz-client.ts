@@ -166,7 +166,7 @@ export class MusicbrainzClient extends WebserviceClient {
 	}
 
 	async browse(params: MusicbrainzClientApi.ParameterBrowse): Promise<MusicBrainz.Response> {
-		const invalidKey = Object.keys(params.lookupIds).find(key => !LookupBrowseTypes[params.type] || LookupBrowseTypes[params.type].indexOf(key) < 0);
+		const invalidKey = Object.keys(params.lookupIds).find(key => !LookupBrowseTypes[params.type] || !LookupBrowseTypes[params.type].includes(key));
 		if (invalidKey) {
 			return Promise.reject(Error('Invalid browse lookup key for type ' + params.type + ': ' + invalidKey));
 		}

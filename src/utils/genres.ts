@@ -1123,16 +1123,16 @@ export function cleanGenre(genre: string): string {
 				const subParts = part.split('&');
 				subParts.forEach(sub => {
 					sub = cleanGenre(sub);
-					if (results.indexOf(sub) < 0) {
+					if (!results.includes(sub)) {
 						results.push(sub);
 					}
 				});
 			} else if (result) {
-				if (results.indexOf(result) < 0) {
+				if (!results.includes(result)) {
 					results.push(result);
 				}
 			} else {
-				if (results.indexOf(part) < 0) {
+				if (!results.includes(part)) {
 					results.push(part);
 				}
 			}

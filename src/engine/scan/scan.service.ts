@@ -87,7 +87,7 @@ export class ScanService {
 		const tracks = await this.store.trackStore.byIds(trackIDs);
 		const folderIDs: Array<string> = [];
 		for (const track of tracks) {
-			if (folderIDs.indexOf(track.parentID) < 0) {
+			if (!folderIDs.includes(track.parentID)) {
 				folderIDs.push(track.parentID);
 			}
 		}
@@ -109,9 +109,9 @@ export class ScanService {
 			await fse.move(path.join(track.path, track.name), path.join(trashPath, Date.now() + '_' + track.name));
 		}
 
-		const folderIDs = [];
+		const folderIDs: Array<string> = [];
 		for (const track of changes.removedTracks) {
-			if (folderIDs.indexOf(track.parentID) < 0) {
+			if (!folderIDs.includes(track.parentID)) {
 				folderIDs.push(track.parentID);
 			}
 		}
@@ -140,9 +140,9 @@ export class ScanService {
 			await fse.move(folder.path, path.join(trashPath, Date.now() + '_' + path.basename(folder.path)));
 		}
 		changes.removedTracks = await this.store.trackStore.search({inPaths});
-		const parentIDs = [];
+		const parentIDs: Array<string> = [];
 		for (const folder of folders) {
-			if (folder.parentID && parentIDs.indexOf(folder.parentID) < 0) {
+			if (folder.parentID && !parentIDs.includes(folder.parentID)) {
 				parentIDs.push(folder.parentID);
 			}
 		}
@@ -179,7 +179,7 @@ export class ScanService {
 		const folders = await this.store.folderStore.byIds(folderIDs);
 		const updateFolderIDs = folderIDs.slice(0);
 		const updateTrackIDs: Array<string> = [];
-		if (updateFolderIDs.indexOf(newParent.id) < 0) {
+		if (!updateFolderIDs.includes(newParent.id)) {
 			updateFolderIDs.push(newParent.id);
 		}
 		const usedPathAfterMove: Array<string> = [];
@@ -200,17 +200,17 @@ export class ScanService {
 		for (const folder of folders) {
 			const dest = ensureTrailingPathSeparator(path.join(newParent.path, path.basename(folder.path)));
 			await fse.move(folder.path, dest);
-			if (updateFolderIDs.indexOf(folder.id) < 0) {
+			if (!updateFolderIDs.includes(folder.id)) {
 				updateFolderIDs.push(folder.id);
 			}
-			if (updateFolderIDs.indexOf(folder.parentID) < 0) {
+			if (!updateFolderIDs.includes(folder.parentID)) {
 				updateFolderIDs.push(folder.parentID);
 			}
 			const tracks = await this.store.trackStore.search({inPath: folder.path});
 			for (const track of tracks) {
 				track.path = track.path.replace(folder.path, dest);
 				track.rootID = newParent.rootID;
-				if (updateTrackIDs.indexOf(track.id) < 0) {
+				if (!updateTrackIDs.includes(track.id)) {
 					updateTrackIDs.push(track.id);
 				}
 			}
@@ -220,7 +220,7 @@ export class ScanService {
 			for (const sub of subfolders) {
 				sub.path = sub.path.replace(folder.path, dest);
 				sub.rootID = newParent.rootID;
-				if (updateFolderIDs.indexOf(sub.id) < 0) {
+				if (!updateFolderIDs.includes(sub.id)) {
 					updateFolderIDs.push(sub.id);
 				}
 			}
@@ -259,7 +259,7 @@ export class ScanService {
 		const updateTrackIDs: Array<string> = [];
 		for (const track of tracks) {
 			updateTrackIDs.push(track.id);
-			if (updateFolderIDs.indexOf(track.parentID) < 0) {
+			if (!updateFolderIDs.includes(track.parentID)) {
 				updateFolderIDs.push(track.parentID);
 			}
 			await fse.move(path.join(track.path, track.name), path.join(newParent.path, track.name));
@@ -382,7 +382,7 @@ export class ScanService {
 				const filename = path.join(track.path, track.name);
 				log.info('Writing Tag', filename);
 				await this.audioModule.writeRawTag(filename, tag.tag);
-				if (folderIDs.indexOf(track.parentID) < 0) {
+				if (!folderIDs.includes(track.parentID)) {
 					folderIDs.push(track.parentID);
 				}
 			}

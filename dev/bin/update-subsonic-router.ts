@@ -72,7 +72,7 @@ async function run(): Promise<void> {
 	const roles: Array<string> = [];
 	apicalls.forEach(call => {
 		(call.roles || []).forEach(role => {
-			if (roles.indexOf(role) < 0) {
+			if (!roles.includes(role)) {
 				roles.push(role);
 			}
 		});

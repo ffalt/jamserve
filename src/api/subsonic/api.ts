@@ -1310,7 +1310,7 @@ export class SubsonicApi {
 		}
 
 		const removeTracks = req.query.songIndexToRemove !== undefined ? (Array.isArray(req.query.songIndexToRemove) ? req.query.songIndexToRemove : [req.query.songIndexToRemove]) : [];
-		playlist.trackIDs = playlist.trackIDs.filter((id, index) => removeTracks.indexOf(index) < 0);
+		playlist.trackIDs = playlist.trackIDs.filter((id, index) => !removeTracks.includes(index));
 
 		const tracks: Array<string> = playlist.trackIDs;
 		if (req.query.songIdToAdd) {
