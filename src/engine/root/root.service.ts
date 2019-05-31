@@ -10,7 +10,7 @@ export class RootService extends BaseStoreService<Root, SearchQueryRoot> {
 
 	private async checkUsedPath(dir: string, roots: Array<Root>): Promise<void> {
 		for (const r of roots) {
-			if (dir.indexOf(r.path) === 0 || r.path.indexOf(dir) === 0) {
+			if (dir.startsWith(r.path) || r.path.startsWith(dir)) {
 				return Promise.reject(Error('Root path already used'));
 			}
 		}

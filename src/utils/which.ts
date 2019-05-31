@@ -34,7 +34,7 @@ function getPathInfo(cmd: string, opt: any): PathInfo {
 		pathExt = pathExtExe.split(colon);
 		// Always test the cmd itself first.  isexe will check to make sure
 		// it's found in the pathExt set.
-		if (cmd.indexOf('.') !== -1 && pathExt[0] !== '') {
+		if (!cmd.includes('.') && pathExt[0] !== '') {
 			pathExt.unshift('');
 		}
 	}

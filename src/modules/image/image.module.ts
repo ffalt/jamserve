@@ -179,7 +179,7 @@ export class ImageModule {
 		if (searches.length > 0) {
 			let list = await fse.readdir(this.imageCachePath);
 			list = list.filter(name => {
-				return searches.findIndex(s => name.indexOf(s) === 0) >= 0;
+				return searches.findIndex(s => name.startsWith(s)) >= 0;
 			});
 			for (const filename of list) {
 				await fse.unlink(path.resolve(this.imageCachePath, filename));
@@ -193,7 +193,7 @@ export class ImageModule {
 		}
 		const search = 'thumb-' + id;
 		let list = await fse.readdir(this.imageCachePath);
-		list = list.filter(name => name.indexOf(search) === 0);
+		list = list.filter(name => name.startsWith(search));
 		for (const filename of list) {
 			await fse.unlink(path.resolve(this.imageCachePath, filename));
 		}

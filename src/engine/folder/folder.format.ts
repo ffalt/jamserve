@@ -66,7 +66,7 @@ export function artWorkImageNameToType(name: string): Array<ArtworkImageType> {
 			types.push(t as ArtworkImageType);
 		}
 	}
-	if ((!types.indexOf(ArtworkImageType.front)) && (lname.includes('cover') || lname.includes('folder'))) {
+	if ((!types.includes(ArtworkImageType.front)) && (lname.includes('cover') || lname.includes('folder'))) {
 		types.push(ArtworkImageType.front);
 	}
 	if (types.length === 0) {

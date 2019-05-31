@@ -39,7 +39,7 @@ export class WaveformService {
 		if (searches.length > 0) {
 			let list = await fse.readdir(this.waveformCachePath);
 			list = list.filter(name => {
-				return searches.findIndex(s => name.indexOf(s) === 0) >= 0;
+				return searches.findIndex(s => name.startsWith(s)) >= 0;
 			});
 			for (const filename of list) {
 				await fse.unlink(path.resolve(this.waveformCachePath, filename));

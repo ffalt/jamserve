@@ -1087,7 +1087,7 @@ export class SubsonicApi {
 				// videoConversionRole: getBool(req.query.videoConversionRole, false)
 			}
 		};
-		if (u.subsonic_pass.indexOf('enc:') === 0) {
+		if (u.subsonic_pass.startsWith('enc:')) {
 			u.subsonic_pass = hexDecode(u.subsonic_pass.slice(4)).trim();
 		}
 		await this.engine.userService.create(u);
@@ -1150,7 +1150,7 @@ export class SubsonicApi {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
 		u.subsonic_pass = req.query.password;
-		if (u.subsonic_pass.indexOf('enc:') === 0) {
+		if (u.subsonic_pass.startsWith('enc:')) {
 			u.subsonic_pass = hexDecode(u.subsonic_pass.slice(4)).trim();
 		}
 		await this.engine.userService.update(u);

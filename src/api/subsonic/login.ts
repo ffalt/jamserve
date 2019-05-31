@@ -42,7 +42,7 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 	}
 	if (req.parameters.password) {
 		let pass = req.parameters.password;
-		if (pass.indexOf('enc:') === 0) {
+		if (pass.startsWith('enc:')) {
 			pass = hexDecode(pass.slice(4)).trim();
 		}
 		return req.engine.userService.authSubsonic(req.parameters.username, pass);

@@ -93,7 +93,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				Object.keys(o).map((key: string): any => {
 					return {
 						$where(): boolean {
-							return this[key].indexOf(o[key]) === 0;
+							return this[key].startsWith(o[key]);
 						}
 					};
 				})
@@ -105,7 +105,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				Object.keys(o).map((key: string): any => {
 					return {
 						$where(): boolean {
-							return !!o[key].find(entry => this[key].indexOf(entry) === 0);
+							return !!o[key].find(entry => this[key].startsWith(entry));
 						}
 					};
 				})
