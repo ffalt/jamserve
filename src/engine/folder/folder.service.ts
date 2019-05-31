@@ -78,10 +78,10 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		if (folder.tag.artworks) {
 			let artwork: Artwork | undefined;
 			if (folder.tag.type === FolderType.artist) {
-				artwork = folder.tag.artworks.find(a => a.types.indexOf(ArtworkImageType.artist) >= 0);
+				artwork = folder.tag.artworks.find(a => a.types.includes(ArtworkImageType.artist));
 			}
 			if (!artwork) {
-				artwork = folder.tag.artworks.find(a => a.types.indexOf(ArtworkImageType.front) >= 0);
+				artwork = folder.tag.artworks.find(a => a.types.includes(ArtworkImageType.front));
 			}
 			if (artwork) {
 				folder.tag.image = artwork.name;
@@ -169,7 +169,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 			return Promise.reject(Error('Invalid Directory Name'));
 		}
 		name = replaceFolderSystemChars(name, '').trim();
-		if (name.length === 0 || ['.', '..'].indexOf(name) >= 0) {
+		if (name.length === 0 || ['.', '..'].includes(name)) {
 			return Promise.reject(Error('Invalid Directory Name'));
 		}
 		const destination = path.join(folder.path, name);

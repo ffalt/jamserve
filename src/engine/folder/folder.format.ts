@@ -21,7 +21,7 @@ export function formatFolderArtworks(folder: Folder): Array<Jam.ArtworkImage> {
 }
 
 function formatFolderTag(folder: Folder): Jam.FolderTag {
-	const isAlbum = FolderTypesAlbum.indexOf(folder.tag.type) >= 0;
+	const isAlbum = FolderTypesAlbum.includes(folder.tag.type);
 	const isArtist = folder.tag.type === FolderType.artist;
 	let mbz: Jam.FolderMBTag | undefined = {
 		artistID: isArtist || isAlbum ? folder.tag.mbArtistID : undefined,
@@ -62,11 +62,11 @@ export function artWorkImageNameToType(name: string): Array<ArtworkImageType> {
 	const lname = name.toLowerCase();
 	const types: Array<ArtworkImageType> = [];
 	for (const t in ArtworkImageType) {
-		if (!Number(t) && lname.indexOf(t) >= 0) {
+		if (!Number(t) && lname.includes(t)) {
 			types.push(t as ArtworkImageType);
 		}
 	}
-	if ((types.indexOf(ArtworkImageType.front) < 0) && (lname.indexOf('cover') >= 0 || lname.indexOf('folder') >= 0)) {
+	if ((types.indexOf(ArtworkImageType.front) < 0) && (lname.includes('cover') || lname.includes('folder'))) {
 		types.push(ArtworkImageType.front);
 	}
 	if (types.length === 0) {

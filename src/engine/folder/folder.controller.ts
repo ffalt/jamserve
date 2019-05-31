@@ -70,7 +70,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		if (includes.folderInfo) {
 			if (folder.tag.type === FolderType.artist) {
 				result.info = await this.metadataService.getFolderArtistInfo(folder);
-			} else if (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) {
+			} else if (FolderTypesAlbum.includes(folder.tag.type)) {
 				result.info = await this.metadataService.getFolderAlbumInfo(folder);
 			}
 		}

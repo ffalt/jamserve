@@ -200,7 +200,7 @@ export class AudioModule {
 			return {};
 		}
 		const frame = tag.frames.find(f => {
-			if (['APIC', 'PIC'].indexOf(f.id) >= 0) {
+			if (['APIC', 'PIC'].includes(f.id)) {
 				return (f.value as IID3V2.FrameValue.Pic).pictureType === type;
 			}
 			return false;

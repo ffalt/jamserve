@@ -108,7 +108,7 @@ export class ScanMetaMerger {
 				return artist.artist;
 			}
 		}
-		const slugArtist = this.artistCache.find(a => a.slugs.indexOf(slug) >= 0);
+		const slugArtist = this.artistCache.find(a => a.slugs.includes(slug));
 		if (slugArtist) {
 			if (!slugArtist.artist.mbArtistID) {
 				slugArtist.artist.mbArtistID = mbArtistID;

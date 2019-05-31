@@ -32,13 +32,13 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 			folders = folders.sort((a, b) => b.tag.level - a.tag.level);
 			let folder = folders[0];
 			for (const f of folders) {
-				if (FolderTypesAlbum.indexOf(f.tag.type) >= 0) {
+				if (FolderTypesAlbum.includes(f.tag.type)) {
 					folder = f;
 				} else {
 					break;
 				}
 			}
-			if (folder && (FolderTypesAlbum.indexOf(folder.tag.type) >= 0)) {
+			if (folder && (FolderTypesAlbum.includes(folder.tag.type))) {
 				return folder;
 			}
 		};

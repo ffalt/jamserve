@@ -35,7 +35,7 @@ async function run(): Promise<void> {
 			prop = definitions[key];
 		}
 		if (prop.type === 'string') {
-			// if (['id', 'mbid', 'url', 'type', 'link', 'mode', 'format', 'status'].indexOf(name) >= 0) {
+			// if (['id', 'mbid', 'url', 'type', 'link', 'mode', 'format', 'status'].includes(name)) {
 			// 	return 'type_key';
 			// }
 			// if (name.indexOf('Id') === name.length - 2) {
@@ -49,12 +49,12 @@ async function run(): Promise<void> {
 			// }
 			// const def = stringDefs[parent];
 			// if (def) {
-			// 	if (def.texts.indexOf(name) >= 0) {
+			// 	if (def.texts.includes(name)) {
 			// 		return 'type_text';
 			// 	}
 			// 	return 'type_key';
 			// }
-			if (['name', 'title'].indexOf(name) >= 0) {
+			if (['name', 'title'].includes(name)) {
 				return 'type_string';
 			}
 			// console.log(name + ': string in ' + parent);
@@ -77,7 +77,7 @@ async function run(): Promise<void> {
 	}
 
 	function transformProperties(symbol: string, props: any, definitions: any, paths: Array<string>): any {
-		if (symbol.length > 0 && done.indexOf(symbol) >= 0) {
+		if (symbol.length > 0 && done.includes(symbol)) {
 			const name = 'type_' + symbol.replace(/\./g, '_');
 			return name;
 		}

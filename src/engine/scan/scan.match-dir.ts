@@ -35,7 +35,7 @@ export interface MatchFile {
 export function debugPrintTree(match: MatchDir, level: number = 0) {
 	const prefix = ' '.repeat(level);
 	if (match.folder) {
-		console.log(prefix + '📁 ' + path.basename(match.name), '[' + match.folder.tag.type + ']', FolderTypesAlbum.indexOf(match.folder.tag.type) >= 0 ? '[' + match.folder.tag.albumType + ']' : '');
+		console.log(prefix + '📁 ' + path.basename(match.name), '[' + match.folder.tag.type + ']', FolderTypesAlbum.includes(match.folder.tag.type) ? '[' + match.folder.tag.albumType + ']' : '');
 	} else {
 		console.log(prefix + '📁 ' + path.basename(match.name), '[new]');
 	}

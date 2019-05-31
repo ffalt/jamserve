@@ -117,7 +117,7 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): {
 			if (type === 'integer') {
 				type = 'number';
 			}
-			const required = (paramDef.required || []).indexOf(id) >= 0;
+			const required = (paramDef.required || []).includes(id);
 			return {name: id, prefix, type, required, description: prop.description};
 		});
 	return {paramType, parameters};

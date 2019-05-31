@@ -23,7 +23,7 @@ export class FolderAlbumTagsRule extends FolderRule {
 	}
 
 	async run(folder: Folder, parents: Array<Folder>, root: Root): Promise<RuleResult | undefined> {
-		if (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) {
+		if (FolderTypesAlbum.includes(folder.tag.type)) {
 			const missing = [];
 			if (!folder.tag.album) {
 				missing.push('album');
@@ -37,7 +37,7 @@ export class FolderAlbumTagsRule extends FolderRule {
 			if (!folder.tag.albumTrackCount) {
 				missing.push('album total track count');
 			}
-			if (folder.tag.albumType !== undefined && AlbumTypesArtistMusic.indexOf(folder.tag.albumType) >= 0) {
+			if (folder.tag.albumType !== undefined && AlbumTypesArtistMusic.includes(folder.tag.albumType)) {
 				if (!folder.tag.year) {
 					missing.push('year');
 				}
@@ -61,7 +61,7 @@ export class FolderAlbumMusicBrainzRule extends FolderRule {
 	}
 
 	async run(folder: Folder): Promise<RuleResult | undefined> {
-		if (FolderTypesAlbum.indexOf(folder.tag.type) >= 0) {
+		if (FolderTypesAlbum.includes(folder.tag.type)) {
 			const missing = [];
 			if (!folder.tag.mbAlbumID) {
 				missing.push('musicbrainz album id');

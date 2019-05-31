@@ -198,23 +198,23 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 	let albumType = AlbumType.unknown;
 	if (mbAlbumType) {
 		const t = mbAlbumType.toLowerCase();
-		if (t.indexOf('audiobook') >= 0) {
+		if (t.includes('audiobook')) {
 			albumType = AlbumType.audiobook;
-		} else if (t.indexOf('bootleg') >= 0) {
+		} else if (t.includes('bootleg')) {
 			albumType = AlbumType.bootleg;
-		} else if (t.indexOf('compilation') >= 0) {
+		} else if (t.includes('compilation')) {
 			albumType = AlbumType.compilation;
-		} else if (t.indexOf('live') >= 0) {
+		} else if (t.includes('live')) {
 			albumType = AlbumType.live;
-		} else if (t.indexOf('soundtrack') >= 0) {
+		} else if (t.includes('soundtrack')) {
 			albumType = AlbumType.soundtrack;
-		} else if (t.indexOf('audiodrama') >= 0 || t.indexOf('audio drama') >= 0) {
+		} else if (t.includes('audiodrama') || t.includes('audio drama')) {
 			albumType = AlbumType.audiodrama;
-		} else if (t.indexOf('ep') >= 0) {
+		} else if (t.includes('ep')) {
 			albumType = AlbumType.ep;
-		} else if (t.indexOf('single') >= 0) {
+		} else if (t.includes('single')) {
 			albumType = AlbumType.single;
-		} else if (t.indexOf('album') >= 0) {
+		} else if (t.includes('album')) {
 			albumType = AlbumType.album;
 		}
 	}

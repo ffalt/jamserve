@@ -66,7 +66,7 @@ const trackRules: Array<TrackRuleInfo> = [
 					missing.push('total track count');
 				}
 			}
-			if (parent.tag.albumType !== undefined && AlbumTypesArtistMusic.indexOf(parent.tag.albumType) >= 0) {
+			if (parent.tag.albumType !== undefined && AlbumTypesArtistMusic.includes(parent.tag.albumType)) {
 				if (!track.tag.year) {
 					missing.push('year');
 				}
@@ -111,7 +111,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		mp3: true,
 		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.id3v2) {
-				const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.indexOf(frame.id) >= 0);
+				const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.includes(frame.id));
 				if (frames.length > 0) {
 					const ids: Array<string> = [];
 					frames.forEach(frame => {
@@ -150,7 +150,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.mp3Warnings && tagCache.mp3Warnings.length > 0) {
 				const warnings = tagCache.mp3Warnings.filter(m => {
-					return headererrors.indexOf(m.msg) >= 0;
+					return headererrors.includes(m.msg);
 				});
 				if (warnings.length > 0) {
 					return {
@@ -194,7 +194,7 @@ const trackRules: Array<TrackRuleInfo> = [
 ];
 
 function hasID3v2Tag(track: Track): boolean {
-	return ID3TrackTagRawFormatTypes.indexOf(track.tag.format) >= 0;
+	return ID3TrackTagRawFormatTypes.includes(track.tag.format);
 }
 
 function isMP3(track: Track): boolean {

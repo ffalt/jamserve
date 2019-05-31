@@ -64,7 +64,7 @@ export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery
 					should().exist(o, 'Match did not match the right item ' + JSON.stringify(match));
 					const tid = await store.searchIDs(match);
 					expect(tid.length > 0).to.equal(true);
-					expect(tid.indexOf(id) >= 0).to.equal(true);
+					expect(tid.includes(id)).to.equal(true);
 					const nr = await store.searchCount(match);
 					expect(nr > 0).to.equal(true);
 				}

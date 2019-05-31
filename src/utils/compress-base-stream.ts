@@ -17,7 +17,7 @@ export abstract class BaseCompressStream implements StreamData {
 	}
 
 	static isSupportedFormat(format: string): boolean {
-		return ['zip', 'tar'].indexOf(format) >= 0;
+		return ['zip', 'tar'].includes(format);
 	}
 
 	pipe(stream: express.Response): void {

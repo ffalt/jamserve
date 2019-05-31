@@ -96,7 +96,7 @@ async function run(): Promise<void> {
 				name: key,
 				schema: prop,
 				description,
-				required: (inPart === 'path') || ((p.required || []).indexOf(key) >= 0)
+				required: (inPart === 'path') || ((p.required || []).includes(key))
 			});
 		});
 		return result;

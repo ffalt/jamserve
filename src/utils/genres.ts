@@ -1119,7 +1119,7 @@ export function cleanGenre(genre: string): string {
 			if (GenresSlugs && GenresSlugs[slug]) {
 				result = GenresSlugs[slug];
 			}
-			if (!result && part.indexOf(' & ') >= 0) {
+			if (!result && part.includes(' & ')) {
 				const subParts = part.split('&');
 				subParts.forEach(sub => {
 					sub = cleanGenre(sub);

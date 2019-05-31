@@ -95,7 +95,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, trackIDs);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
 
 		return this.finish(changes, rootID, false);
 	}
@@ -120,7 +120,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, []);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
 
 		return this.finish(changes, rootID, false);
 	}
@@ -150,7 +150,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(parentIDs, []);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
 
 		return this.finish(changes, rootID, false);
 	}
@@ -162,14 +162,14 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, []);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
 
 		return this.finish(changes, rootID, false);
 	}
 
 	async moveFolders(rootID: string, newParentID: any, folderIDs: any): Promise<MergeChanges> {
 		const {root, changes} = await this.start(rootID);
-		if (folderIDs.indexOf(newParentID) >= 0) {
+		if (folderIDs.includes(newParentID)) {
 			return Promise.reject(Error('Folder cannot be moved to itself'));
 		}
 		const newParent = await this.store.folderStore.byId(newParentID);
@@ -192,7 +192,7 @@ export class ScanService {
 			if (exists) {
 				return Promise.reject(Error('Folder name already used in Destination'));
 			}
-			if (usedPathAfterMove.indexOf(dest) >= 0) {
+			if (usedPathAfterMove.includes(dest)) {
 				return Promise.reject(Error('Folder name will be already used in Destination after previous folder is moved'));
 			}
 			usedPathAfterMove.push(dest);
@@ -235,9 +235,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(updateFolderIDs, updateTrackIDs);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, rootID, (dir) => {
-			return changedDirs.indexOf(dir) >= 0;
-		}, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
 
 		return this.finish(changes, rootID, false);
 	}
@@ -275,7 +273,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(updateFolderIDs, updateTrackIDs);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
 
 		return this.finish(changes, rootID, false);
 	}
@@ -314,9 +312,9 @@ export class ScanService {
 		if (!track) {
 			return Promise.reject(Error('Track not found'));
 		}
-		if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].indexOf(fixID) >= 0) {
+		if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].includes(fixID)) {
 			await this.audioModule.rewriteAudio(path.join(track.path, track.name));
-		} else if ([TrackHealthID.mp3MediaValid].indexOf(fixID) >= 0) {
+		} else if ([TrackHealthID.mp3MediaValid].includes(fixID)) {
 			await this.audioModule.fixMP3Audio(path.join(track.path, track.name));
 		} else {
 			return Promise.reject(Error('Invalid TrackHealthID'));
@@ -325,7 +323,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match([track.parentID], [track.id]);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
 
 		return this.finish(changes, rootID, false);
 	}
@@ -341,7 +339,7 @@ export class ScanService {
 			return Promise.reject(Error('Folder not found'));
 		}
 		const name = replaceFolderSystemChars(newName, '').trim();
-		if (name.length === 0 || ['.', '..'].indexOf(name) >= 0) {
+		if (name.length === 0 || ['.', '..'].includes(name)) {
 			return Promise.reject(Error('Invalid Directory Name'));
 		}
 		const p = path.dirname(folder.path);
@@ -396,7 +394,7 @@ export class ScanService {
 		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, trackIDs);
 
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.indexOf(dir) >= 0, changes);
+		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
 
 		return this.finish(changes, rootID, false);
 

@@ -70,7 +70,7 @@ export class CoverArtArchiveClient extends WebserviceClient {
 		const url = this.options.host + (this.options.port !== 80 ? ':' + this.options.port : '') + req.path + '?' + q.join('&');
 
 		const isRateLimitError = (body: any): boolean => {
-			return (body && body.error && body.error.indexOf('allowable rate limit') >= 0);
+			return (body && body.error && body.error.includes('allowable rate limit'));
 		};
 		const options = this.options;
 

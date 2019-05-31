@@ -130,7 +130,7 @@ export class DBMatcher {
 			match.parent = await this.buildMatchDirParentsFromDBData(match, loadedMatches);
 			await this.loadChildsFromDBData(match, loadedMatches);
 			for (const file of match.files) {
-				if (file.track && changedTrackIDs.indexOf(file.track.id) >= 0) {
+				if (file.track && changedTrackIDs.includes(file.track.id)) {
 					changedFiles.push(file);
 				}
 			}

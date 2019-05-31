@@ -24,16 +24,16 @@ export const SupportedTranscodeAudioFormat: Array<AudioFormatType> = [
 
 export function getFileType(filename: string): FileTyp {
 	const suffix = fileSuffix(filename);
-	if (SupportedReadImageFormat.indexOf(suffix) >= 0) {
+	if (SupportedReadImageFormat.includes(suffix)) {
 		return FileTyp.IMAGE;
 	}
-	if (SupportedAudioFormat.indexOf(suffix as AudioFormatType) >= 0) {
+	if (SupportedAudioFormat.includes(suffix as AudioFormatType)) {
 		return FileTyp.AUDIO;
 	}
-	if (['tag'].indexOf(suffix) >= 0) {
+	if (['tag'].includes(suffix)) {
 		return FileTyp.TAG;
 	}
-	if (['bak'].indexOf(suffix) >= 0) {
+	if (['bak'].includes(suffix)) {
 		return FileTyp.BACKUP;
 	}
 	return FileTyp.OTHER;

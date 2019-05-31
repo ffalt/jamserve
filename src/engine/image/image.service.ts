@@ -84,7 +84,7 @@ export class ImageService {
 					if (folder.tag) {
 						if (folder.tag.type === FolderType.artist) {
 							result = folder.tag.artist;
-						} else if ([FolderType.multialbum, FolderType.album].indexOf(folder.tag.type) >= 0) {
+						} else if ([FolderType.multialbum, FolderType.album].includes(folder.tag.type)) {
 							result = folder.tag.album;
 						}
 					}

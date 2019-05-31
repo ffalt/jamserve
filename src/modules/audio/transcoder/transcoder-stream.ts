@@ -10,7 +10,7 @@ export abstract class TranscoderStream implements StreamData {
 	}
 
 	static validTranscoding(format: AudioFormatType): boolean {
-		return SupportedTranscodeAudioFormat.indexOf(format) >= 0;
+		return SupportedTranscodeAudioFormat.includes(format);
 	}
 
 	static async getAvailableFormats(): Promise<Array<{ format: string, name: string }>> {

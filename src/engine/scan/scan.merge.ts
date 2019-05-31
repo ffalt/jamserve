@@ -133,9 +133,9 @@ export class ScanMerger {
 		const nameSplit = splitDirectoryName(dir.name);
 		const images = this.collectFolderImages(dir);
 		let imageName: string | undefined;
-		let image = images.find(i => i.types.length === 1 && (i.types.indexOf(ArtworkImageType.front) >= 0));
+		let image = images.find(i => i.types.length === 1 && (i.types.includes(ArtworkImageType.front)));
 		if (!image) {
-			image = images.find(i => i.types.length === 1 && (i.types.indexOf(ArtworkImageType.artist) >= 0));
+			image = images.find(i => i.types.length === 1 && (i.types.includes(ArtworkImageType.artist)));
 		}
 		if (image) {
 			imageName = image.name;

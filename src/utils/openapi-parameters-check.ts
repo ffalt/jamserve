@@ -28,17 +28,17 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 	}
 	// sanitize & check string parameter type
 	if (schema.type === 'boolean') {
-		if (['true', 'yes', '1'].indexOf(value.toString()) >= 0) {
+		if (['true', 'yes', '1'].includes(value.toString())) {
 			query[param.name] = true;
 			value = true;
-		} else if (['false', 'no', '0'].indexOf(value.toString()) >= 0) {
+		} else if (['false', 'no', '0'].includes(value.toString())) {
 			query[param.name] = false;
 			value = false;
 		} else {
 			return 'Invalid boolean parameter ' + param.name;
 		}
 		query[param.name] = value;
-	} else if (['float', 'long', 'double', 'number', 'integer'].indexOf(schema.type || '') >= 0) {
+	} else if (['float', 'long', 'double', 'number', 'integer'].includes(schema.type || '')) {
 		let num = Number(value.toString());
 		if (isNaN(num)) {
 			return 'Invalid number parameter ' + param.name;
@@ -76,7 +76,7 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 				}
 			}
 			query[param.name] = list;
-		} else if (['float', 'long', 'double', 'number', 'integer'].indexOf(items.type || '') >= 0) {
+		} else if (['float', 'long', 'double', 'number', 'integer'].includes(items.type || '')) {
 			const list = ((Array.isArray(value) ? value : [value]) || []).map(id => {
 				let num = Number(id.toString());
 				if (items.type === 'integer') {

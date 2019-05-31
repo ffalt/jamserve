@@ -10,7 +10,7 @@ const basePath = path.resolve('../../src/model/');
 function generateCode(calls: Array<ApiCall>): string {
 	const result: Array<string> = [];
 	calls.forEach(call => {
-		if (['login', 'logout'].indexOf(call.name) >= 0) {
+		if (['login', 'logout'].includes(call.name)) {
 			return;
 		}
 		let datasouce = 'req.query';
