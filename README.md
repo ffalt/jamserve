@@ -16,10 +16,18 @@ Features:
 * Enhance Metadata via Musicbrainz, LastFM, Wikipedia, Chartlyrics & AcoustID
 * Database Support for NeDB or ElasticSearch
 
-## Installation
+## Requirements
 
 - install [NodeJS](https://nodejs.org/) >= 8.x and [NPM](https://www.npmjs.com/)
-- install [FFMPEG](https://ffmpeg.org/) (You may need to add the path binaries to your os environment variable, [Read more](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg))
+- install [FFMPEG](https://ffmpeg.org/) 
+  and set [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe) FFPROBE_PATH and FFMPEG_PATH
+
+ optional for meta data matching & mp3 repair support
+- install [fpcalc](https://github.com/acoustid/chromaprint/releases/) and set environment variable: FPCALC_PATH
+- install [mp3val](http://mp3val.sourceforge.net/) and set environment variable: MP3VAL_PATH
+
+
+## Installation
 
 - run command `npm install` in the root folder of this repository
 
