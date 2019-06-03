@@ -164,6 +164,11 @@ export class AudioModule {
 		await flac.write(filename, flacBlocks);
 	}
 
+	async removeMP3ID3v1Tag(filename: string): Promise<void> {
+		const mp3 = new MP3();
+		await mp3.removeTags(filename, {id3v1: true, id3v2: false, keepBackup: true});
+	}
+
 	async fixMP3Audio(filename: string): Promise<void> {
 		await mp3val(filename, true);
 	}

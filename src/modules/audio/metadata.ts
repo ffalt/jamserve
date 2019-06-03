@@ -1,4 +1,4 @@
-import {ID3V24TagBuilder, IID3V2, simplifyTag} from 'jamp3';
+import {ID3V24TagBuilder, IID3V2, ITagID, simplifyTag} from 'jamp3';
 import moment from 'moment';
 import {TrackTag} from '../../engine/track/track.model';
 import {ID3v2Frames} from '../../model/id3v2-frames';
@@ -229,7 +229,7 @@ export function rawTagToID3v2(tag: Jam.RawTag): IID3V2.Tag {
 		return;
 	});
 	return {
-		id: 'ID3v2',
+		id: ITagID.ID3v2,
 		head: {
 			ver: tag.version,
 			rev: 0,

@@ -8,6 +8,7 @@ import {Engine} from './engine/engine';
 import {Store} from './engine/store/store';
 import Logger, {configureLogger} from './utils/logger';
 import {JAMSERVE_VERSION} from './version';
+// import memwatch from 'node-memwatch';
 
 program
 	.version(JAMSERVE_VERSION, '-v, --version')
@@ -19,6 +20,10 @@ program
 const config = loadConfig(program.config);
 
 configureLogger(config.log.level);
+
+// memwatch.on('leak', (info) => {
+// 	console.log('leak', JSON.stringify(info, null, '\t'));
+// });
 
 const db: Database =
 	(config.database.use === 'elasticsearch') ?
