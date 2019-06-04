@@ -89,7 +89,7 @@ const trackRules: Array<TrackRuleInfo> = [
 	},
 	{
 		id: TrackHealthID.id3v2NoId3v1,
-		name: 'ID3v2 is available, ID3v1 is obsolete',
+		name: 'ID3v2 is available, ID3v1 is redundant',
 		mp3: true,
 		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (hasID3v2Tag(track) && tagCache.id3v1) {
