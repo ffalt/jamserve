@@ -62,7 +62,7 @@
     "fs-extra": "8.0.1",
     "helmet": "3.18.0",
     "iconv-lite": "0.4.24",
-    "jamp3": "0.3.8",
+    "jamp3": "0.3.9",
     "jimp": "0.6.4",
     "jsonwebtoken": "8.5.1",
     "limiter": "1.1.4",
