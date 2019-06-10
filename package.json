@@ -55,7 +55,7 @@
     "cors": "2.8.5",
     "elasticsearch": "16.1.0",
     "express": "4.17.1",
-    "express-rate-limit": "4.0.4",
+    "express-rate-limit": "5.0.0",
     "express-session": "1.16.1",
     "feedparser": "2.2.9",
     "fluent-ffmpeg": "2.1.2",
