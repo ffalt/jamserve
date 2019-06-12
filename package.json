@@ -56,7 +56,7 @@
     "elasticsearch": "16.1.1",
     "express": "4.17.1",
     "express-rate-limit": "5.0.0",
-    "express-session": "1.16.1",
+    "express-session": "1.16.2",
     "feedparser": "2.2.9",
     "fluent-ffmpeg": "2.1.2",
     "fs-extra": "8.0.1",
