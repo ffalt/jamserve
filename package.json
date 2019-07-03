@@ -42,7 +42,9 @@
     "test:stores": "mocha --recursive \".src/**/**.store.test.ts\"",
     "test": "mocha --recursive \"./src/**/**.test.ts\"",
     "coverage": "nyc mocha --recursive \"./src/**/**.test.ts\"",
-    "release": "deplokay -c ./deplokay.json"
+    "release": "deplokay -c ./deplokay.json",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "ajv": "6.10.0",
@@ -82,7 +84,8 @@
     "tmp": "0.1.0",
     "waveform-data": "2.1.2",
     "winston": "3.2.1",
-    "xml2js": "0.4.19"
+    "xml2js": "0.4.19",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@types/archiver": "3.0.0",
@@ -181,5 +184,6 @@
   },
   "engines": {
     "node": ">= 0.8.10"
-  }
+  },
+  "snyk": true
 }
