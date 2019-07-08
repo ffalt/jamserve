@@ -45,7 +45,7 @@
     "release": "deplokay -c ./deplokay.json"
   },
   "dependencies": {
-    "ajv": "6.10.0",
+    "ajv": "6.10.1",
     "archiver": "3.0.0",
     "body-parser": "1.19.0",
     "colors": "1.3.3",
