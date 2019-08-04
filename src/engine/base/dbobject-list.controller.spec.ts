@@ -1,5 +1,5 @@
 import {should} from 'chai';
-import {describe, it} from 'mocha';
+import {it} from 'mocha';
 import {JamApi, JamRequest} from '../../api/jam/api';
 import {JamParameters} from '../../model/jam-rest-params';
 import {User} from '../user/user.model';

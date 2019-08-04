@@ -41,7 +41,7 @@ interface VariantsMap {
 }
 
 export class AvatarGenerator {
-	private _variants: VariantsMap;
+	private readonly _variants: VariantsMap;
 	private _parts: Array<AvatarPart>;
 
 	constructor(settings: Partial<AvatarGenearatorSettings> = {}) {

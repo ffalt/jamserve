@@ -1,6 +1,6 @@
 import {DBObject} from './base.model';
 import {BaseStore, SearchQuery} from './base.store';
-import {after, before, beforeEach, describe, it} from 'mocha';
+import {it} from 'mocha';
 import {expect, should} from 'chai';
 import {testDatabases, TestDB} from '../../db/db.mock';
 

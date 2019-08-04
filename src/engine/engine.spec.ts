@@ -1,4 +1,4 @@
-import {after, before, describe, it} from 'mocha';
+import {after, before, describe} from 'mocha';
 import {initTestFramework} from '../../test/common.spec';
 import {TestEngine, TestEngines} from './engine.mock';
 

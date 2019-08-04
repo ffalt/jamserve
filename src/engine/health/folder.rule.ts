@@ -113,7 +113,7 @@ export class FolderAlbumNameRule extends FolderRule {
 			.replace(/[!?]/g, '')
 			.replace(/< >/g, ' - ')
 			.replace(/<>/g, ' - ')
-			.replace(/[\//]/g, '-')
+			.replace(/[\/]/g, '-')
 			.replace(/\.\.\./g, '…')
 			.replace(/  /g, ' ')
 			.trim();
@@ -127,7 +127,7 @@ export class FolderAlbumNameRule extends FolderRule {
 			.replace(/[!?]/g, '')
 			.replace(/< >/g, ' - ')
 			.replace(/<>/g, ' - ')
-			.replace(/[\//]/g, '-')
+			.replace(/[\/]/g, '-')
 			.replace(/\.\.\./g, '…')
 			.replace(/  /g, ' ')
 			.trim();

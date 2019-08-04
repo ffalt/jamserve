@@ -142,7 +142,7 @@ export class DbElasticSequence {
 		if (!this.client) {
 			throw new Error('Please run init(...) first to provide an elasticsearch client.');
 		}
-		if ((typeof sequenceName !== 'string') || sequenceName.length === 0) {
+		if ((!sequenceName) || sequenceName.length === 0) {
 			throw new Error('The parameter value for sequenceName is invalid.');
 		}
 		if (this.initPromise !== null) {

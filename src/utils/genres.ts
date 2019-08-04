@@ -1075,7 +1075,7 @@ export const Genres: Array<string> = [
 ];
 
 function slugify(genre: string): string {
-	return genre.replace(/[& \-\.]/g, '').toLowerCase();
+	return genre.replace(/[& \-.]/g, '').toLowerCase();
 }
 
 export function getKnownGenre(genre: string): string | undefined {

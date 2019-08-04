@@ -1,7 +1,6 @@
 import {after, before, describe} from 'mocha';
 import {initTestFramework} from '../../test/common.spec';
 import {Database} from './db.model';
-import {TestDBElastic} from './elasticsearch/db-elastic.spec';
 import {TestNeDB} from './nedb/db-nedb.spec';
 
 initTestFramework();

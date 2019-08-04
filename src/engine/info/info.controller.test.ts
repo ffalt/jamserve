@@ -2,7 +2,6 @@ import {should} from 'chai';
 import {describe, it} from 'mocha';
 import {JamApi, JamRequest} from '../../api/jam/api';
 import {testController, validateJamResponse} from '../base/controller.spec';
-import {testEngines} from '../engine.spec';
 import {mockUserName} from '../user/user.mock';
 import {User} from '../user/user.model';
 

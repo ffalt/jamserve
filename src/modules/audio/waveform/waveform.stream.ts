@@ -63,7 +63,7 @@ export class WaveformStream extends Transform {
 		let data: Buffer | undefined = this._out.read();
 		while (data && data.length > 0) {
 			i = 0;
-			if (oddByte != null) {
+			if (oddByte !== null) {
 				value = ((data.readInt8(0) << 8) | oddByte);
 				oddByte = null;
 				i = 1;

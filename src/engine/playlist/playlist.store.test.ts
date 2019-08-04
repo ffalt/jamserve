@@ -1,5 +1,4 @@
-import {expect, should, use} from 'chai';
-import {after, before, beforeEach, describe, it} from 'mocha';
+import {describe} from 'mocha';
 import {PlaylistStore, SearchQueryPlaylist} from './playlist.store';
 import {Playlist} from './playlist.model';
 import {testStore} from '../base/base.store.spec';

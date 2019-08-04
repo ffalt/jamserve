@@ -2,8 +2,8 @@ import rateLimiter from 'limiter';
 import request from 'request';
 
 export class WebserviceClient {
-	private limiter: rateLimiter.RateLimiter;
-	private userAgent: string;
+	private readonly limiter: rateLimiter.RateLimiter;
+	private readonly userAgent: string;
 
 	constructor(requestPerInterval: number, requestIntervalMS: number, userAgent: string) {
 		this.limiter = new rateLimiter.RateLimiter(requestPerInterval, requestIntervalMS);

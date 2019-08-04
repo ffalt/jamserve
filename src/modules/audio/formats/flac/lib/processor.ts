@@ -43,8 +43,8 @@ export class FlacProcessorStream extends Transform {
 
 	constructor(reportID3: boolean = false, parseMetaDataBlocks: boolean = false, options?: TransformOptions) {
 		super(options);
-		this.reportID3 = !!reportID3;
-		this.parseMetaDataBlocks = !!parseMetaDataBlocks;
+		this.reportID3 = reportID3;
+		this.parseMetaDataBlocks = parseMetaDataBlocks;
 	}
 
 	_transform(chunk: any, encoding: string, callback: TransformCallback): void {

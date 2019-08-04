@@ -156,7 +156,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 
 	async bulk(bodies: Array<T>): Promise<void> {
 		for (const body of bodies) {
-			await await this.add(body);
+			await this.add(body);
 		}
 	}
 

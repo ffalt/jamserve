@@ -1,5 +1,5 @@
-import {assert, expect, should, use} from 'chai';
-import {after, before, beforeEach, describe, it} from 'mocha';
+import {expect, should} from 'chai';
+import {describe, it} from 'mocha';
 import {FolderService} from './folder.service';
 import nock from 'nock';
 import path from 'path';
@@ -7,7 +7,7 @@ import tmp from 'tmp';
 import fse from 'fs-extra';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import mimeTypes from 'mime-types';
-import {ArtworkImageType, FolderType} from '../../model/jam-types';
+import {ArtworkImageType} from '../../model/jam-types';
 import {testService} from '../base/base.service.spec';
 import {ImageModuleTest, mockImage} from '../../modules/image/image.module.spec';
 import {StateService} from '../state/state.service';

@@ -1,11 +1,10 @@
 import path from 'path';
-import {AlbumType, cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
 import {deepCompare} from '../../utils/deep-compare';
 import {md5string} from '../../utils/md5';
 import {MatchDir, MatchFile} from './scan.match-dir';
 
 export function slugify(s: string): string {
-	return s.replace(/[\[\]\. -]/g, '').toLowerCase();
+	return s.replace(/[\[\]. -]/g, '').toLowerCase();
 }
 
 export function splitDirectoryName(name: string): { title: string; year?: number; } {

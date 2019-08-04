@@ -42,14 +42,13 @@ export class AcousticbrainzClient extends WebserviceClient {
 	}
 
 	async highLevel(mbid: string, nr?: number): Promise<AcousticBrainz.Response> {
-		const data = await this.get({
+		return this.get({
 			path: this.options.basePath + mbid + '/high-level',
 			query: {
 				n: (nr !== undefined ? nr.toString() : undefined)
 			},
 			retry: 0
 		});
-		return data;
 	}
 
 	private async get(req: AcousticbrainzClientApi.Request): Promise<any> {

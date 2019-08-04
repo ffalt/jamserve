@@ -6,8 +6,6 @@ import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
 import {Root} from '../root/root.model';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
-import {randomItem} from '../../utils/random';
-import {Genres} from '../../utils/genres';
 import {ScanService} from '../scan/scan.service';
 import {ImageModule} from '../../modules/image/image.module';
 import {WaveformServiceTest} from '../waveform/waveform.service.spec';

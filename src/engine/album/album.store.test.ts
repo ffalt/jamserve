@@ -1,8 +1,8 @@
-import {after, before, beforeEach, describe, it} from 'mocha';
-import {AlbumStore, SearchQueryAlbum} from './album.store';
-import {Album} from './album.model';
+import {describe} from 'mocha';
 import {testStore} from '../base/base.store.spec';
 import {generateMockObjects} from './album.mock';
+import {Album} from './album.model';
+import {AlbumStore, SearchQueryAlbum} from './album.store';
 
 describe('AlbumStore', () => {
 	let albumStore: AlbumStore;

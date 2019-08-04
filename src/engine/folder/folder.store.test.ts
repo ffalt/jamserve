@@ -1,5 +1,5 @@
-import {expect, should, use} from 'chai';
-import {after, before, beforeEach, describe, it} from 'mocha';
+import {expect} from 'chai';
+import {describe, it} from 'mocha';
 import {FolderStore, SearchQueryFolder} from './folder.store';
 import {Folder} from './folder.model';
 import path from 'path';

@@ -4,7 +4,7 @@ import xml2js from 'xml2js';
 
 export class WebserviceXMLClient {
 	private limiter: rateLimiter.RateLimiter;
-	private userAgent: string;
+	private readonly userAgent: string;
 
 	constructor(requestPerInterval: number, requestIntervalMS: number, userAgent: string) {
 		this.limiter = new rateLimiter.RateLimiter(requestPerInterval, requestIntervalMS);

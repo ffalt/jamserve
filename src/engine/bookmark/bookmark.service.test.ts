@@ -1,5 +1,5 @@
-import {assert, expect, should, use} from 'chai';
-import {after, before, beforeEach, describe, it} from 'mocha';
+import {expect, should} from 'chai';
+import {describe, it} from 'mocha';
 import {BookmarkService} from './bookmark.service';
 import {testService} from '../base/base.service.spec';
 

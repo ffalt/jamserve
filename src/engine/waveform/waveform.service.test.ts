@@ -1,5 +1,5 @@
 import {expect, should} from 'chai';
-import {after, before, beforeEach, describe, it} from 'mocha';
+import {describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {WaveformService} from './waveform.service';
 import tmp from 'tmp';

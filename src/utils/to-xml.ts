@@ -1,5 +1,3 @@
-import util from 'util';
-
 export function toXML(obj: any): string {
 
 	const xmls = (s: any): string => s.toString().replace(/&/g, '&amp;')
@@ -13,7 +11,7 @@ export function toXML(obj: any): string {
 		Object.keys(o).forEach(key => {
 			if ((key !== 'content')) {
 				const sub = o[key];
-				if (!util.isArray(sub) && (typeof sub !== 'object')) {
+				if (!Array.isArray(sub) && (typeof sub !== 'object')) {
 					const val = JSON.stringify(sub);
 					if (val !== undefined) {
 						s += ' ' + key + '="' + xmls(sub) + '"';
@@ -37,7 +35,7 @@ export function toXML(obj: any): string {
 		let s = '';
 		Object.keys(o).forEach(key => {
 			const sub = o[key];
-			if (util.isArray(sub)) {
+			if (Array.isArray(sub)) {
 				sub.forEach((entry) => {
 					const val = xmlc(entry) + xmlo(entry);
 					s += '<' + key + xmli(entry);

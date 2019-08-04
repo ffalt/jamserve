@@ -1,6 +1,5 @@
 import express from 'express';
 import {Engine} from '../../engine/engine';
-import {Subsonic} from '../../model/subsonic-rest-data';
 import Logger from '../../utils/logger';
 import {SubsonicApi} from './api';
 import {FORMAT} from './format';

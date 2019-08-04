@@ -1,4 +1,3 @@
-import {it} from 'mocha';
 import {JamApi} from '../../api/jam/api';
 import * as dataSchema from '../../model/jam-rest-data.schema.json';
 import {jsonValidator, validateJSON} from '../../utils/validate-json';
