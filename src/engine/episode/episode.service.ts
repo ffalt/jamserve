@@ -98,7 +98,7 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		await this.episodeStore.replace(episode);
 	}
 
-	async mergeEpisodes(podcastID: string, episodes: Array<Episode>): Promise<Array<Episode>> {
+	async mergeEpisodes(podcastID: string, podcast: string, episodes: Array<Episode>): Promise<Array<Episode>> {
 		if ((!episodes) || (!episodes.length)) {
 			return [];
 		}
@@ -107,6 +107,7 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		for (const epi of episodes) {
 			const update = oldEpisodes.find(e => e.link === epi.link);
 			if (update) {
+				update.podcast = podcast;
 				update.duration = epi.duration;
 				update.chapters = epi.chapters;
 				update.date = epi.date;
@@ -117,6 +118,7 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 				update.enclosures = epi.enclosures;
 				storeEpisodes.push(update);
 			} else {
+				epi.podcast = podcast;
 				storeEpisodes.push(epi);
 			}
 		}

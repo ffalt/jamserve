@@ -84,7 +84,7 @@ export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast>
 				}
 			}
 			await this.podcastStore.replace(podcast);
-			const newEpisodes = await this.episodeService.mergeEpisodes(podcast.id, episodes);
+			const newEpisodes = await this.episodeService.mergeEpisodes(podcast.id, podcast.tag ? podcast.tag.title : podcast.url, episodes);
 			log.info(podcast.url + ': New Episodes: ' + newEpisodes.length);
 			await this.podcastRefreshDebounce.resolve(podcast.id, undefined);
 		} catch (e) {
