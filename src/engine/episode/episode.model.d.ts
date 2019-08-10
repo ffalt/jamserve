@@ -4,6 +4,7 @@ import {TrackMedia, TrackTag} from '../track/track.model';
 
 export interface Episode extends DBObject {
 	podcastID: string;
+	podcast: string;
 	status: PodcastStatus;
 	error?: string;
 	path?: string;

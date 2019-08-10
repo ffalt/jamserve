@@ -294,6 +294,7 @@ const type_PodcastEpisodeEnclosure = {
 const type_Episode = {
 	properties: {
 		podcastID: type_key,
+		podcast: type_key,
 		status: type_key,
 		error: type_key,
 		path: type_key,

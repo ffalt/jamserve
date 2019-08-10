@@ -108,6 +108,7 @@ export declare namespace Jam {
 
 	export interface PodcastEpisode extends Track {
 		podcastID: string;
+		podcast: string;
 		status: PodcastEpisodeStatusType;
 		date: number;
 		summary?: string;

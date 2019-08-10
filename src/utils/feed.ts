@@ -152,6 +152,7 @@ export class Feed {
 			return {
 				id: '',
 				podcastID: podcast.id,
+				podcast: podcast.title || '',
 				status: PodcastStatus.new,
 				type: DBObjectType.episode,
 				author: post.author,

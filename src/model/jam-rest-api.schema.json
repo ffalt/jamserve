@@ -15921,6 +15921,9 @@
 				"podcastID": {
 					"type": "string"
 				},
+				"podcast": {
+					"type": "string"
+				},
 				"status": {
 					"$ref": "#/definitions/Jam.PodcastEpisodeStatusType"
 				},
@@ -15992,6 +15995,7 @@
 				"id",
 				"name",
 				"parentID",
+				"podcast",
 				"podcastID",
 				"status"
 			]

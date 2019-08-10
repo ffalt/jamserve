@@ -21297,6 +21297,9 @@
 					"podcastID": {
 						"type": "string"
 					},
+					"podcast": {
+						"type": "string"
+					},
 					"status": {
 						"$ref": "#/components/schemas/Jam.PodcastEpisodeStatusType"
 					},
@@ -21368,6 +21371,7 @@
 					"id",
 					"name",
 					"parentID",
+					"podcast",
 					"podcastID",
 					"status"
 				]

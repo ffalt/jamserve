@@ -19,6 +19,7 @@ export function formatEpisode(episode: Episode, includes: JamParameters.Includes
 		parentID: '',
 		created: episode.stat ? episode.stat.created : 0,
 		podcastID: episode.podcastID,
+		podcast: episode.podcast,
 		status: status as Jam.PodcastEpisodeStatusType,
 		errorMessage: episode.error,
 		name: episode.name,
