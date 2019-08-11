@@ -150,7 +150,7 @@ export interface JamApi {
 		 */
 		'genre/list'?: {
 			params: JamParameters.Genres;
-			result: Array<Jam.Genre>;
+			result: Jam.GenreList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -166,7 +166,8 @@ export interface JamApi {
 		 * various: get list of tracks played by all users
 		 */
 		'nowPlaying/list'?: {
-			result: Array<Jam.NowPlaying>;
+			params: JamParameters.NowPlaying;
+			result: Jam.NowPlayingList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 		};
 
@@ -204,19 +205,11 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
-		 * folder: get tracks and subfolders of a folder by id
-		 */
-		'folder/children'?: {
-			params: JamParameters.FolderChildren;
-			result: Jam.FolderChildren;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-		};
-		/**
 		 * folder: get tracks of a folder by id
 		 */
 		'folder/tracks'?: {
 			params: JamParameters.FolderTracks;
-			result: Array<Jam.Track>;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -224,15 +217,15 @@ export interface JamApi {
 		 */
 		'folder/subfolders'?: {
 			params: JamParameters.FolderSubFolders;
-			result: Array<Jam.Folder>;
+			result: Jam.FolderList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
 		 * folder: get similar artist folders of a folder by id
 		 */
 		'folder/artist/similar'?: {
-			params: JamParameters.Folder;
-			result: Array<Jam.Folder>;
+			params: JamParameters.SimilarFolders;
+			result: Jam.FolderList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -256,7 +249,7 @@ export interface JamApi {
 		 */
 		'folder/list'?: {
 			params: JamParameters.FolderList;
-			result: Array<Jam.Folder>;
+			result: Jam.FolderList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -264,7 +257,7 @@ export interface JamApi {
 		 */
 		'folder/search'?: {
 			params: JamParameters.FolderSearch;
-			result: Array<Jam.Folder>;
+			result: Jam.FolderList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -297,7 +290,7 @@ export interface JamApi {
 		 */
 		'folder/artist/similar/tracks'?: {
 			params: JamParameters.SimilarTracks;
-			result: Array<Jam.Track>;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -346,7 +339,7 @@ export interface JamApi {
 		 */
 		'track/search'?: {
 			params: JamParameters.TrackSearch;
-			result: Array<Jam.Track>;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -370,7 +363,7 @@ export interface JamApi {
 		 */
 		'track/list'?: {
 			params: JamParameters.TrackList;
-			result: Array<Jam.Track>;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -378,7 +371,7 @@ export interface JamApi {
 		 */
 		'track/similar'?: {
 			params: JamParameters.SimilarTracks;
-			result: Array<Jam.Track>;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -412,7 +405,7 @@ export interface JamApi {
 		 */
 		'episode/search'?: {
 			params: JamParameters.EpisodeSearch;
-			result: Array<Jam.PodcastEpisode>;
+			result: Jam.PodcastEpisodeList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -452,7 +445,7 @@ export interface JamApi {
 		 */
 		'episode/list'?: {
 			params: JamParameters.PodcastEpisodeList;
-			result: Array<Jam.PodcastEpisode>;
+			result: Jam.PodcastEpisodeList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 
@@ -485,7 +478,15 @@ export interface JamApi {
 		 */
 		'podcast/search'?: {
 			params: JamParameters.PodcastSearch;
-			result: Array<Jam.Podcast>;
+			result: Jam.PodcastList;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
+		 * podcast: get podcast episodes by podcast id
+		 */
+		'podcast/episodes'?: {
+			params: JamParameters.PodcastEpisodes
+			result: Jam.PodcastEpisodeList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -523,7 +524,7 @@ export interface JamApi {
 		 */
 		'podcast/list'?: {
 			params: JamParameters.PodcastList;
-			result: Array<Jam.Podcast>;
+			result: Jam.PodcastList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 
@@ -547,8 +548,8 @@ export interface JamApi {
 		 * radio: search radios
 		 */
 		'radio/search'?: {
-			params: JamParameters.Radios;
-			result: Array<Jam.Radio>;
+			params: JamParameters.RadioSearch;
+			result: Jam.RadioList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -589,7 +590,7 @@ export interface JamApi {
 		 */
 		'artist/search'?: {
 			params: JamParameters.ArtistSearch;
-			result: Array<Jam.Artist>;
+			result: Jam.ArtistList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -613,7 +614,7 @@ export interface JamApi {
 		 */
 		'artist/list'?: {
 			params: JamParameters.ArtistList;
-			result: Array<Jam.Artist>;
+			result: Jam.ArtistList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -621,15 +622,15 @@ export interface JamApi {
 		 */
 		'artist/similar/tracks'?: {
 			params: JamParameters.SimilarTracks;
-			result: Array<Jam.Track>;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
 		 * artist: get similar artists of an artist by artist id
 		 */
 		'artist/similar'?: {
-			params: JamParameters.Artist;
-			result: Array<Jam.Artist>;
+			params: JamParameters.SimilarArtists;
+			result: Jam.ArtistList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -644,8 +645,8 @@ export interface JamApi {
 		 * album: get tracks of an artist by artist id
 		 */
 		'artist/tracks'?: {
-			params: JamParameters.Tracks;
-			result: Array<Jam.Track>;
+			params: JamParameters.ArtistTracks;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -678,7 +679,7 @@ export interface JamApi {
 		 */
 		'album/list'?: {
 			params: JamParameters.AlbumList;
-			result: Array<Jam.Album>;
+			result: Jam.AlbumList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -686,7 +687,7 @@ export interface JamApi {
 		 */
 		'album/search'?: {
 			params: JamParameters.AlbumSearch;
-			result: Array<Jam.Album>;
+			result: Jam.AlbumList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -718,15 +719,15 @@ export interface JamApi {
 		 */
 		'album/similar/tracks'?: {
 			params: JamParameters.SimilarTracks;
-			result: Array<Jam.Track>;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
 		 * album: get tracks of an album by album ids
 		 */
 		'album/tracks'?: {
-			params: JamParameters.Tracks;
-			result: Array<Jam.Track>;
+			params: JamParameters.AlbumTracks;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -759,7 +760,7 @@ export interface JamApi {
 		 */
 		'playlist/search'?: {
 			params: JamParameters.PlaylistSearch;
-			result: Array<Jam.Playlist>;
+			result: Jam.PlaylistList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -782,8 +783,8 @@ export interface JamApi {
 		 * playlist: get tracks of a playlist(s) by playlist ids
 		 */
 		'playlist/tracks'?: {
-			params: JamParameters.Tracks;
-			result: Array<Jam.Track>;
+			params: JamParameters.PlaylistTracks;
+			result: Jam.TrackList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -791,7 +792,7 @@ export interface JamApi {
 		 */
 		'playlist/list'?: {
 			params: JamParameters.PlaylistList;
-			result: Array<Jam.Playlist>;
+			result: Jam.PlaylistList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 
@@ -818,7 +819,7 @@ export interface JamApi {
 		 */
 		'user/search'?: {
 			params: JamParameters.UserSearch;
-			result: Array<Jam.User>;
+			result: Jam.UserList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['admin'];
 		};
@@ -837,7 +838,7 @@ export interface JamApi {
 		 */
 		'bookmark/list'?: {
 			params: JamParameters.BookmarkList;
-			result: Array<Jam.Bookmark>;
+			result: Jam.BookmarkList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
@@ -862,7 +863,7 @@ export interface JamApi {
 		 */
 		'root/search'?: {
 			params: JamParameters.RootSearch;
-			result: Array<Jam.Root>;
+			result: Jam.RootList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**

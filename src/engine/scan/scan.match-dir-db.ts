@@ -40,8 +40,8 @@ export class DBMatcher {
 			metaStat: undefined
 		};
 		const tracks = await this.store.trackStore.search({parentID: folder.id});
-		for (const t of tracks) {
-			match.files.push(await this.buildMatchFileFromDB(t));
+		for (const track of tracks.items) {
+			match.files.push(await this.buildMatchFileFromDB(track));
 		}
 		if (folder.tag.artworks) {
 			for (const art of folder.tag.artworks) {
@@ -82,7 +82,7 @@ export class DBMatcher {
 		parentMatch.directories.push(match);
 		if (match.level > 1) {
 			const folders = await this.store.folderStore.search({parentID: parent.id});
-			for (const f of folders) {
+			for (const f of folders.items) {
 				if (f.id !== folder.id) {
 					let c = loadedMatches.find(m => !!m.folder && m.folder.id === f.id);
 					if (!c) {
@@ -106,7 +106,7 @@ export class DBMatcher {
 		}
 		if (!match.directories || match.directories.length === 0) {
 			const folders = await this.store.folderStore.search({parentID: folder.id});
-			for (const f of folders) {
+			for (const f of folders.items) {
 				const c = await this.buildMatchDirDBData(f);
 				c.parent = match;
 				loadedMatches.push(match);

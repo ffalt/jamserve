@@ -66,7 +66,7 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 		}
 		const list = await this.stateStore.search({userID, type, destIDs});
 		const result: { [id: string]: State } = {};
-		list.forEach((state) => {
+		list.items.forEach((state) => {
 			result[state.destID] = state;
 		});
 		destIDs.forEach((id) => {
@@ -79,14 +79,14 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 
 	async getHighestRatedDestIDs(type: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateStore.search({userID, type, minRating: 1});
-		const ratings = states.filter(state => state.rated !== undefined).sort((a, b) => Number(b.rated) - Number(a.rated));
+		const ratings = states.items.filter(state => state.rated !== undefined).sort((a, b) => Number(b.rated) - Number(a.rated));
 		return ratings.map(a => a.destID);
 	}
 
 	async getAvgHighestDestIDs(type: DBObjectType): Promise<Array<string>> {
 		const states = await this.stateStore.search({type});
 		const ratings: { [id: string]: Array<number> } = {};
-		states.forEach(state => {
+		states.items.forEach(state => {
 			if (state.rated !== undefined) {
 				ratings[state.destID] = ratings[state.destID] || [];
 				ratings[state.destID].push(state.rated);
@@ -103,20 +103,17 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 
 	async getFrequentlyPlayedDestIDs(type: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateStore.search({userID, type, isPlayed: true});
-		states.sort((a, b) => b.played - a.played);
-		return states.map(a => a.destID);
+		return states.items.sort((a, b) => b.played - a.played).map(a => a.destID);
 	}
 
 	async getFavedDestIDs(type: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateStore.search({userID, type, isFaved: true});
-		states.sort((a, b) => Number(b.faved) - Number(a.faved));
-		return states.map(a => a.destID);
+		return states.items.sort((a, b) => Number(b.faved) - Number(a.faved)).map(a => a.destID);
 	}
 
 	async getRecentlyPlayedDestIDs(type: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateStore.search({userID, type, isPlayed: true});
-		states.sort((a, b) => b.lastplayed - a.lastplayed);
-		return states.map(a => a.destID);
+		return states.items.sort((a, b) => b.lastplayed - a.lastplayed).map(a => a.destID);
 	}
 
 	async reportPlaying(id: string, type: DBObjectType, userID: string): Promise<State> {

@@ -361,7 +361,7 @@ export declare namespace JamParameters {
 		position: number;
 	}
 
-	export interface BookmarkList extends IncludesBookmark {
+	export interface BookmarkList extends IncludesBookmark, Paginate {
 	}
 
 	export interface Bookmark extends ID, IncludesBookmark {
@@ -407,6 +407,15 @@ export declare namespace JamParameters {
 	}
 
 	export interface Tracks extends IDs, IncludesTrack {
+	}
+
+	export interface ArtistTracks extends IDs, IncludesTrack, Paginate {
+	}
+
+	export interface AlbumTracks extends IDs, IncludesTrack, Paginate {
+	}
+
+	export interface PlaylistTracks extends IDs, IncludesTrack, Paginate {
 	}
 
 	export interface TrackFix extends ID {
@@ -537,6 +546,12 @@ export declare namespace JamParameters {
 	export interface SimilarTracks extends ID, IncludesTrack, Paginate {
 	}
 
+	export interface SimilarArtists extends ID, IncludesArtist, Paginate {
+	}
+
+	export interface SimilarFolders extends ID, IncludesFolder, IncludesFolderChildren, Paginate {
+	}
+
 	export interface Folder extends ID, IncludesFolder, IncludesFolderChildren {
 	}
 
@@ -618,13 +633,13 @@ export declare namespace JamParameters {
 	export interface FolderList extends FolderSearchQuery, IncludesFolder, List {
 	}
 
-	export interface FolderSubFolders extends ID, IncludesFolder {
+	export interface FolderSubFolders extends ID, IncludesFolder, Paginate {
 	}
 
 	export interface FolderChildren extends ID, IncludesTrack, IncludesFolder {
 	}
 
-	export interface FolderTracks extends IDs, IncludesTrack {
+	export interface FolderTracks extends IDs, IncludesTrack, Paginate {
 		/**
 		 * include tracks of sub folders
 		 *
@@ -749,6 +764,9 @@ export declare namespace JamParameters {
 		 * sort the result by
 		 */
 		sortField?: EpisodeSortField;
+	}
+
+	export interface PodcastEpisodes extends ID, IncludesEpisode, Paginate {
 	}
 
 	export interface PodcastEpisodeList extends EpisodeSearchQuery, IncludesEpisode, List {
@@ -1225,11 +1243,14 @@ export declare namespace JamParameters {
 	export interface UserSearch extends Paginate, UserSearchQuery {
 	}
 
-	export interface Genres {
+	export interface Genres extends Paginate {
 		/**
 		 * filter by root id
 		 */
 		rootID?: string;
+	}
+
+	export interface NowPlaying extends Paginate {
 	}
 
 	export interface Stats {

@@ -10,6 +10,7 @@ import {trackTagToRawTag} from '../../modules/audio/metadata';
 import {ApiBinaryResult} from '../../typings';
 import {paginate} from '../../utils/paginate';
 import {BaseListController} from '../base/dbobject-list.controller';
+import {ListResult} from '../base/list-result';
 import {BookmarkService} from '../bookmark/bookmark.service';
 import {DownloadService} from '../download/download.service';
 import {Folder} from '../folder/folder.model';
@@ -169,10 +170,16 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		return this.streamController.streamTrack(track, req.query.format, req.query.maxBitRate, req.user);
 	}
 
-	async similar(req: JamRequest<JamParameters.SimilarTracks>): Promise<Array<Jam.Track>> {
+	async similar(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const track = await this.byID(req.query.id);
 		const tracks = await this.metaService.getTrackSimilarTracks(track);
-		return this.prepareList(paginate(tracks, req.query.amount, req.query.offset), req.query, req.user);
+		const list = paginate(tracks, req.query.amount, req.query.offset);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.prepareList(list.items, req.query, req.user)
+		};
 	}
 
 	async nameUpdate(req: JamRequest<JamParameters.TrackEditName>): Promise<Jam.AdminChangeQueueInfo> {
@@ -199,12 +206,12 @@ export class TrackController extends BaseListController<JamParameters.Track,
 	}
 
 	async health(req: JamRequest<JamParameters.TrackHealth>): Promise<Array<Jam.TrackHealth>> {
-		let list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		list = list.sort(this.defaultCompare);
+		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
+		list.items = list.items.sort(this.defaultCompare);
 		const result: Array<Jam.TrackHealth> = [];
 		const roots: Array<Root> = [];
 		const folders: Array<Folder> = [];
-		for (const track of list) {
+		for (const track of list.items) {
 			let root = roots.find(r => r.id === track.rootID);
 			if (!root) {
 				root = await this.rootService.rootStore.byId(track.rootID);

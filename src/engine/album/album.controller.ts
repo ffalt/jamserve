@@ -4,6 +4,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {paginate} from '../../utils/paginate';
 import {BaseListController} from '../base/dbobject-list.controller';
+import {ListResult} from '../base/list-result';
 import {DownloadService} from '../download/download.service';
 import {ImageService} from '../image/image.service';
 import {formatAlbumIndex} from '../index/index.format';
@@ -90,19 +91,25 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 		};
 	}
 
-	async similarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<Array<Jam.Track>> {
+	async similarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const album = await this.byID(req.query.id);
 		const tracks = await this.metaDataService.getAlbumSimilarTracks(album);
-		return this.trackController.prepareList(paginate(tracks, req.query.amount, req.query.offset), req.query, req.user);
+		const list = paginate(tracks, req.query.amount, req.query.offset);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.trackController.prepareList(list.items, req.query, req.user)
+		};
 	}
 
-	async tracks(req: JamRequest<JamParameters.Tracks>): Promise<Array<Jam.Track>> {
+	async tracks(req: JamRequest<JamParameters.Tracks>): Promise<ListResult<Jam.Track>> {
 		const albums = await this.byIDs(req.query.ids);
 		let trackIDs: Array<string> = [];
 		albums.forEach(album => {
 			trackIDs = trackIDs.concat(album.trackIDs);
 		});
-		return this.trackController.prepareListByIDs(trackIDs, req.query, req.user, this.sortAlbumTracks);
+		return {items: await this.trackController.prepareListByIDs(trackIDs, req.query, req.user, this.sortAlbumTracks)};
 	}
 
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {

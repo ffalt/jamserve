@@ -11,6 +11,7 @@ import {User} from '../user/user.model';
 import {DBObject} from './base.model';
 import {BaseStoreService} from './base.service';
 import {SearchQuery} from './base.store';
+import {ListResult} from './list-result';
 
 export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLUDE,
 	OBJLISTREQUEST extends JamParameters.IDs | INCLUDE,
@@ -52,27 +53,25 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		return this.service.store.byIds(ids);
 	}
 
-	async prepareList(items: Array<DBOBJECT>, includes: INCLUDE, user: User, sort?: (a: DBOBJECT, b: DBOBJECT) => number): Promise<Array<RESULTOBJ>> {
-		const result: Array<RESULTOBJ> = [];
+	async prepareList(list: Array<DBOBJECT>, includes: INCLUDE, user: User, sort?: (a: DBOBJECT, b: DBOBJECT) => number): Promise<Array<RESULTOBJ>> {
+		const items: Array<RESULTOBJ> = [];
 		if (sort) {
-			items = items.sort(sort);
+			list = list.sort(sort);
 		}
-		for (const item of items) {
+		for (const item of list) {
 			const r = await this.prepare(item, includes, user);
-			result.push(r);
+			items.push(r);
 		}
-		return result;
+		return items;
 	}
 
 	async prepareListByIDs(ids: Array<string>, includes: INCLUDE, user: User, sort?: (a: DBOBJECT, b: DBOBJECT) => number): Promise<Array<RESULTOBJ>> {
 		const list = await this.service.store.byIds(ids);
-		const result = await this.prepareList(list, includes, user, sort);
-		if (sort) {
-			return result;
+		let result = await this.prepareList(list, includes, user, sort);
+		if (!sort) {
+			result = result.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
 		}
-		return result.sort((a, b) => {
-			return ids.indexOf(a.id) - ids.indexOf(b.id);
-		});
+		return result;
 	}
 
 	async prepareByID(id: string, includes: INCLUDE, user: User): Promise<RESULTOBJ> {
@@ -80,9 +79,15 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		return this.prepare(o, includes, user);
 	}
 
-	async prepareByQuery(query: JAMQUERY, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
+	async prepareByQuery(query: JAMQUERY, includes: INCLUDE, user: User): Promise<ListResult<RESULTOBJ>> {
 		const list = await this.service.store.search(query);
-		return this.prepareList(this.defaultSort(list), includes, user);
+		list.items = this.defaultSort(list.items);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.prepareList(list.items, includes, user)
+		};
 	}
 
 	async id(req: JamRequest<OBJREQUEST>): Promise<RESULTOBJ> {
@@ -101,8 +106,8 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 	}
 
 	async states(req: JamRequest<JamParameters.IDs>): Promise<Jam.States> {
-		const items = await this.byIDs(req.query.ids);
-		const states = await this.stateService.findOrCreateMany(items.map(item => item.id), req.user.id, this.service.store.type);
+		const list = await this.byIDs(req.query.ids);
+		const states = await this.stateService.findOrCreateMany(list.map(item => item.id), req.user.id, this.service.store.type);
 		return formatStates(states);
 	}
 
@@ -122,9 +127,14 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 		return formatState(state);
 	}
 
-	async search(req: JamRequest<SEARCHQUERY>): Promise<Array<RESULTOBJ>> {
+	async search(req: JamRequest<SEARCHQUERY>): Promise<ListResult<RESULTOBJ>> {
 		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		return this.prepareList(list, req.query as INCLUDE, req.user);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.prepareList(list.items, req.query as INCLUDE, req.user)
+		};
 	}
 
 	async image(req: JamRequest<JamParameters.Image>): Promise<ApiBinaryResult> {

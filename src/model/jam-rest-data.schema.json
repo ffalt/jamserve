@@ -4940,6 +4940,20 @@
 				"version"
 			]
 		},
+		"Jam.ListResult": {
+			"type": "object",
+			"properties": {
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			}
+		},
 		"Jam.Base": {
 			"type": "object",
 			"properties": {
@@ -5011,6 +5025,29 @@
 				"path",
 				"status",
 				"strategy"
+			]
+		},
+		"Jam.RootList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Root"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"Jam.TrackMBTag": {
@@ -5121,6 +5158,20 @@
 				"trackID"
 			]
 		},
+		"Jam.BookmarkList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Bookmark"
+					}
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"Jam.NowPlaying": {
 			"type": "object",
 			"properties": {
@@ -5137,6 +5188,20 @@
 			"required": [
 				"minutesAgo",
 				"username"
+			]
+		},
+		"Jam.NowPlayingList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.NowPlaying"
+					}
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"Jam.Track": {
@@ -5185,6 +5250,29 @@
 				"id",
 				"name",
 				"parentID"
+			]
+		},
+		"Jam.TrackList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Track"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"Jam.PodcastEpisodeChapter": {
@@ -5287,6 +5375,29 @@
 				"status"
 			]
 		},
+		"Jam.PodcastEpisodeList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.PodcastEpisode"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"Jam.PodcastEpisodeStatus": {
 			"type": "object",
 			"properties": {
@@ -5357,6 +5468,29 @@
 				"url"
 			]
 		},
+		"Jam.PodcastList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Podcast"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"Jam.Radio": {
 			"type": "object",
 			"properties": {
@@ -5388,6 +5522,29 @@
 				"id",
 				"name",
 				"url"
+			]
+		},
+		"Jam.RadioList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Radio"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"Jam.RawTag": {
@@ -5507,6 +5664,29 @@
 				"level",
 				"name",
 				"type"
+			]
+		},
+		"Jam.FolderList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Folder"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"Jam.FolderHealth": {
@@ -5830,6 +6010,29 @@
 				"trackCount"
 			]
 		},
+		"Jam.AlbumList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Album"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"Jam.Artist": {
 			"type": "object",
 			"properties": {
@@ -5920,6 +6123,29 @@
 				"trackCount"
 			]
 		},
+		"Jam.ArtistList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Artist"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"Jam.Playlist": {
 			"type": "object",
 			"properties": {
@@ -5975,6 +6201,29 @@
 				"name",
 				"trackCount",
 				"userID"
+			]
+		},
+		"Jam.PlaylistList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Playlist"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"Jam.FolderIndexEntry": {
@@ -6313,6 +6562,29 @@
 				"roles"
 			]
 		},
+		"Jam.UserList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.User"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"Jam.Genre": {
 			"type": "object",
 			"properties": {
@@ -6334,6 +6606,29 @@
 				"artistCount",
 				"name",
 				"trackCount"
+			]
+		},
+		"Jam.GenreList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Genre"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"Jam.ChatMessage": {

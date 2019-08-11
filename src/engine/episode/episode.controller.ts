@@ -49,7 +49,7 @@ export class EpisodeController extends BaseListController<JamParameters.Episode,
 						return res;
 					}
 				}
-				return a.date - b.date;
+				return b.date - a.date;
 			}
 		);
 	}
@@ -75,7 +75,7 @@ export class EpisodeController extends BaseListController<JamParameters.Episode,
 			status: query.status,
 			offset: query.offset,
 			amount: query.amount,
-			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] : undefined
+			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] : [{field: 'date', descending: true}]
 		};
 	}
 

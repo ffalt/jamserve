@@ -1,6 +1,8 @@
 import {JamRequest} from '../../api/jam/api';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
+import {paginate} from '../../utils/paginate';
+import {ListResult} from '../base/list-result';
 import {TrackController} from '../track/track.controller';
 import {User} from '../user/user.model';
 import {formatBookmark} from './bookmark.format';
@@ -49,7 +51,7 @@ export class BookmarkController {
 		await this.bookmarkService.remove(req.query.id, req.user.id);
 	}
 
-	async list(req: JamRequest<JamParameters.BookmarkList>): Promise<Array<Jam.Bookmark>> {
+	async list(req: JamRequest<JamParameters.BookmarkList>): Promise<ListResult<Jam.Bookmark>> {
 		const bookmarks = await this.bookmarkService.getAll(req.user.id);
 		const result = bookmarks.map(bookmark => formatBookmark(bookmark));
 		if (req.query.bookmarkTrack) {
@@ -58,7 +60,7 @@ export class BookmarkController {
 				bookmark.track = tracks.find(t => t.id === bookmark.trackID);
 			});
 		}
-		return result;
+		return paginate(result, req.query.amount, req.query.offset);
 	}
 
 }

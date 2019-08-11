@@ -1,5 +1,7 @@
 import elasticsearch from 'elasticsearch';
 import {DBObject} from '../../engine/base/base.model';
+import {ListResult} from '../../engine/base/list-result';
+import {paginate} from '../../utils/paginate';
 import {DatabaseIndex, DatabaseQuery} from '../db.model';
 import {DBObjectType} from '../db.types';
 import {DBElastic} from './db-elastic';
@@ -285,8 +287,8 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		});
 	}
 
-	async query(query: DatabaseQuery): Promise<Array<T>> {
-		let list: Array<T> = [];
+	async query(query: DatabaseQuery): Promise<ListResult<T>> {
+		let docs: Array<T> = [];
 		const response = await this.db.client.search<T>({
 			index: this._index,
 			type: this._type,
@@ -297,9 +299,16 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			}
 		});
 		await this.scroll(response, async (hits) => {
-			list = list.concat(hits.map(this.hit2Obj));
+			docs = docs.concat(hits);
 		});
-		return list;
+		// TODO: paginate in db if query.amount is specified
+		const list = paginate(docs, query.amount, query.offset);
+		return {
+			amount: list.amount,
+			offset: list.offset,
+			total: list.total,
+			items: list.items.map(this.hit2Obj)
+		};
 	}
 
 	async queryOne(query: DatabaseQuery): Promise<T | undefined> {

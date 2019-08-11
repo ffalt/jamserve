@@ -74,8 +74,8 @@ export class ScanService {
 		const {root, changes} = await this.start(rootID);
 
 		log.info('Removing Root', root.path);
-		changes.removedTracks = await this.store.trackStore.search({rootID});
-		changes.removedFolders = await this.store.folderStore.search({rootID});
+		changes.removedTracks = (await this.store.trackStore.search({rootID})).items;
+		changes.removedFolders = (await this.store.folderStore.search({rootID})).items;
 
 		return this.finish(changes, rootID, false);
 	}
@@ -134,12 +134,12 @@ export class ScanService {
 			}
 		}
 		const inPaths = folders.map(f => f.path);
-		changes.removedFolders = await this.store.folderStore.search({inPaths});
+		changes.removedFolders = (await this.store.folderStore.search({inPaths})).items;
 		const trashPath = path.join(root.path, '.trash');
 		for (const folder of folders) {
 			await fse.move(folder.path, path.join(trashPath, Date.now() + '_' + path.basename(folder.path)));
 		}
-		changes.removedTracks = await this.store.trackStore.search({inPaths});
+		changes.removedTracks = (await this.store.trackStore.search({inPaths})).items;
 		const parentIDs: Array<string> = [];
 		for (const folder of folders) {
 			if (folder.parentID && !parentIDs.includes(folder.parentID)) {
@@ -206,7 +206,7 @@ export class ScanService {
 			if (!updateFolderIDs.includes(folder.parentID)) {
 				updateFolderIDs.push(folder.parentID);
 			}
-			const tracks = await this.store.trackStore.search({inPath: folder.path});
+			const tracks = (await this.store.trackStore.search({inPath: folder.path})).items;
 			for (const track of tracks) {
 				track.path = track.path.replace(folder.path, dest);
 				track.rootID = newParent.rootID;
@@ -215,7 +215,7 @@ export class ScanService {
 				}
 			}
 			await this.store.trackStore.replaceMany(tracks);
-			let subfolders = await this.store.folderStore.search({inPath: folder.path});
+			let subfolders = (await this.store.folderStore.search({inPath: folder.path})).items;
 			subfolders = subfolders.filter(sub => sub.id !== folder.id);
 			for (const sub of subfolders) {
 				sub.path = sub.path.replace(folder.path, dest);
@@ -351,7 +351,7 @@ export class ScanService {
 			return Promise.reject(Error('Directory already exists'));
 		}
 		await fse.rename(folder.path, newPath);
-		const folders = await this.store.folderStore.search({inPath: folder.path});
+		const folders = (await this.store.folderStore.search({inPath: folder.path})).items;
 		for (const f of folders) {
 			const rest = f.path.slice(folder.path.length - 1);
 			if (rest.length > 0 && rest[0] !== path.sep) {
@@ -361,7 +361,7 @@ export class ScanService {
 			}
 		}
 		await this.store.folderStore.replaceMany(folders);
-		const tracks = await this.store.trackStore.search({inPath: folder.path});
+		const tracks = (await this.store.trackStore.search({inPath: folder.path})).items;
 		for (const t of tracks) {
 			t.path = t.path.replace(folder.path, ensureTrailingPathSeparator(newPath));
 		}

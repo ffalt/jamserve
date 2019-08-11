@@ -77,9 +77,9 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 
 	async removeEpisodes(podcastID: string): Promise<void> {
 		const removeEpisodes = await this.episodeStore.search({podcastID});
-		const ids = removeEpisodes.map(episode => episode.id);
+		const ids = removeEpisodes.items.map(episode => episode.id);
 		await this.episodeStore.remove(ids);
-		for (const episode of removeEpisodes) {
+		for (const episode of removeEpisodes.items) {
 			if (episode.path) {
 				await fileDeleteIfExists(episode.path);
 			}
@@ -105,7 +105,7 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		const storeEpisodes: Array<Episode> = [];
 		const oldEpisodes = await this.episodeStore.search({podcastID});
 		for (const epi of episodes) {
-			const update = oldEpisodes.find(e => e.link === epi.link);
+			const update = oldEpisodes.items.find(e => e.link === epi.link);
 			if (update) {
 				update.podcast = podcast;
 				update.duration = epi.duration;

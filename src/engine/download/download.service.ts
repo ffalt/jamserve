@@ -49,7 +49,7 @@ export class DownloadService {
 
 	private async downloadPodcast(podcast: Podcast, format: string | undefined): Promise<ApiBinaryResult> {
 		const episodes = await this.episodeStore.search({podcastID: podcast.id});
-		const fileList: Array<string> = episodes.filter(e => !!e.path).map(e => e.path as string);
+		const fileList: Array<string> = episodes.items.filter(e => !!e.path).map(e => e.path as string);
 		return {pipe: new CompressListStream(fileList, podcast.id, format)};
 	}
 

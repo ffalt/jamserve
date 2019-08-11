@@ -28,6 +28,12 @@ export declare namespace Jam {
 		allowedCookieDomains: Array<string>;
 	}
 
+	export interface ListResult {
+		offset?: number;
+		amount?: number;
+		total?: number;
+	}
+
 	export interface Base {
 		id: string;
 		state?: State;
@@ -45,6 +51,10 @@ export declare namespace Jam {
 		path: string;
 		status: RootStatus;
 		strategy: RootScanStrategy;
+	}
+
+	export interface RootList extends ListResult {
+		items: Array<Root>;
 	}
 
 	export interface TrackMBTag {
@@ -84,10 +94,18 @@ export declare namespace Jam {
 		changed: number;
 	}
 
+	export interface BookmarkList {
+		items: Array<Bookmark>;
+	}
+
 	export interface NowPlaying {
 		username: string;
 		minutesAgo: number;
 		track?: Track;
+	}
+
+	export interface NowPlayingList {
+		items: Array<NowPlaying>;
 	}
 
 	export interface Track extends Base {
@@ -99,6 +117,10 @@ export declare namespace Jam {
 		artistID?: string;
 		albumArtistID?: string;
 		albumID?: string;
+	}
+
+	export interface TrackList extends ListResult {
+		items: Array<Track>;
 	}
 
 	export interface PodcastEpisodeChapter {
@@ -119,6 +141,10 @@ export declare namespace Jam {
 		chapters?: Array<PodcastEpisodeChapter>;
 	}
 
+	export interface PodcastEpisodeList extends ListResult {
+		items: Array<PodcastEpisode>;
+	}
+
 	export interface PodcastEpisodeStatus {
 		status: PodcastEpisodeStatusType;
 	}
@@ -137,11 +163,19 @@ export declare namespace Jam {
 		episodes?: Array<PodcastEpisode>;
 	}
 
+	export interface PodcastList extends ListResult {
+		items: Array<Podcast>;
+	}
+
 	export interface Radio extends Base {
 		url: string;
 		homepage?: string;
 		created: number;
 		changed: number;
+	}
+
+	export interface RadioList extends ListResult {
+		items: Array<Radio>;
 	}
 
 	export interface RawTag {
@@ -177,6 +211,10 @@ export declare namespace Jam {
 		parents?: Array<FolderParent>;
 		artworks?: Array<ArtworkImage>;
 		similar?: Array<Folder>;
+	}
+
+	export interface FolderList extends ListResult {
+		items: Array<Folder>;
 	}
 
 	export interface FolderHealth {
@@ -262,6 +300,10 @@ export declare namespace Jam {
 		info?: ExtendedInfo;
 	}
 
+	export interface AlbumList extends ListResult {
+		items: Array<Album>;
+	}
+
 	export interface Artist extends Base {
 		albumCount: number;
 		trackCount: number;
@@ -277,6 +319,10 @@ export declare namespace Jam {
 		info?: ExtendedInfo;
 	}
 
+	export interface ArtistList extends ListResult {
+		items: Array<Artist>;
+	}
+
 	export interface Playlist extends Base {
 		userID: string;
 		isPublic: boolean;
@@ -286,6 +332,10 @@ export declare namespace Jam {
 		changed: number;
 		tracks?: Array<Track>;
 		trackIDs?: Array<string>;
+	}
+
+	export interface PlaylistList extends ListResult {
+		items: Array<Playlist>;
 	}
 
 	export interface FolderIndexEntry {
@@ -386,11 +436,19 @@ export declare namespace Jam {
 		roles: Roles;
 	}
 
+	export interface UserList extends ListResult {
+		items: Array<User>;
+	}
+
 	export interface Genre {
 		name: string;
 		trackCount: number;
 		albumCount: number;
 		artistCount: number;
+	}
+
+	export interface GenreList extends ListResult {
+		items: Array<Genre>;
 	}
 
 	export interface ChatMessage {

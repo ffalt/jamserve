@@ -295,7 +295,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 				names.push(a.name);
 			}
 		});
-		return this.folderStore.search({types: [FolderType.artist], artists: names});
+		return (await this.folderStore.search({types: [FolderType.artist], artists: names})).items;
 	}
 
 	private async findSimilarArtists(similarArtists: Array<SimilarArtist>): Promise<Array<Artist>> {
@@ -305,7 +305,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 				names.push(a.name);
 			}
 		});
-		return this.artistStore.search({names});
+		return (await this.artistStore.search({names})).items;
 	}
 
 	private async getSimilarArtistsInfo(mbArtistID?: string, artist?: string): Promise<Array<SimilarArtist>> {
@@ -351,9 +351,9 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			}
 		});
 		const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
-		const tracks = await this.trackStore.search({mbTrackIDs});
+		const list = await this.trackStore.search({mbTrackIDs});
 		ids.forEach(sim => {
-			const t = tracks.find(tr => tr.tag.mbTrackID === sim.mbid);
+			const t = list.items.find(tr => tr.tag.mbTrackID === sim.mbid);
 			if (!t) {
 				vals.push(sim);
 			} else {

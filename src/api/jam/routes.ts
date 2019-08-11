@@ -102,7 +102,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/genre/list', async (req, res) => {
 		const options: JamRequest<JamParameters.Genres> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Genre> = await api.genreController.list(options);
+		const result: Jam.GenreList = await api.genreController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -113,8 +113,8 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	});
 
 	register.get('/nowPlaying/list', async (req, res) => {
-		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.NowPlaying> = await api.nowPlayingController.list(options);
+		const options: JamRequest<JamParameters.NowPlaying> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.NowPlayingList = await api.nowPlayingController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -142,27 +142,21 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/folder/children', async (req, res) => {
-		const options: JamRequest<JamParameters.FolderChildren> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.FolderChildren = await api.folderController.children(options);
-		await ApiResponder.data(res, result);
-	});
-
 	register.get('/folder/tracks', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderTracks> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.folderController.tracks(options);
+		const result: Jam.TrackList = await api.folderController.tracks(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/folder/subfolders', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderSubFolders> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Folder> = await api.folderController.subfolders(options);
+		const result: Jam.FolderList = await api.folderController.subfolders(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/folder/artist/similar', async (req, res) => {
-		const options: JamRequest<JamParameters.Folder> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Folder> = await api.folderController.artistSimilar(options);
+		const options: JamRequest<JamParameters.SimilarFolders> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.FolderList = await api.folderController.artistSimilar(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -180,13 +174,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/folder/list', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Folder> = await api.folderController.list(options);
+		const result: Jam.FolderList = await api.folderController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/folder/search', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Folder> = await api.folderController.search(options);
+		const result: Jam.FolderList = await api.folderController.search(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -210,7 +204,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/folder/artist/similar/tracks', async (req, res) => {
 		const options: JamRequest<JamParameters.SimilarTracks> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.folderController.artistSimilarTracks(options);
+		const result: Jam.TrackList = await api.folderController.artistSimilarTracks(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -246,7 +240,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/track/search', async (req, res) => {
 		const options: JamRequest<JamParameters.TrackSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.trackController.search(options);
+		const result: Jam.TrackList = await api.trackController.search(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -264,13 +258,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/track/list', async (req, res) => {
 		const options: JamRequest<JamParameters.TrackList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.trackController.list(options);
+		const result: Jam.TrackList = await api.trackController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/track/similar', async (req, res) => {
 		const options: JamRequest<JamParameters.SimilarTracks> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.trackController.similar(options);
+		const result: Jam.TrackList = await api.trackController.similar(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -294,7 +288,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/episode/search', async (req, res) => {
 		const options: JamRequest<JamParameters.EpisodeSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.PodcastEpisode> = await api.episodeController.search(options);
+		const result: Jam.PodcastEpisodeList = await api.episodeController.search(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -324,7 +318,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/episode/list', async (req, res) => {
 		const options: JamRequest<JamParameters.PodcastEpisodeList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.PodcastEpisode> = await api.episodeController.list(options);
+		const result: Jam.PodcastEpisodeList = await api.episodeController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -348,7 +342,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/podcast/search', async (req, res) => {
 		const options: JamRequest<JamParameters.PodcastSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Podcast> = await api.podcastController.search(options);
+		const result: Jam.PodcastList = await api.podcastController.search(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/podcast/episodes', async (req, res) => {
+		const options: JamRequest<JamParameters.PodcastEpisodes> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.PodcastEpisodeList = await api.podcastController.episodes(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -378,7 +378,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/podcast/list', async (req, res) => {
 		const options: JamRequest<JamParameters.PodcastList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Podcast> = await api.podcastController.list(options);
+		const result: Jam.PodcastList = await api.podcastController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -395,8 +395,8 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	});
 
 	register.get('/radio/search', async (req, res) => {
-		const options: JamRequest<JamParameters.Radios> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Radio> = await api.radioController.search(options);
+		const options: JamRequest<JamParameters.RadioSearch> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.RadioList = await api.radioController.search(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -426,7 +426,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/artist/search', async (req, res) => {
 		const options: JamRequest<JamParameters.ArtistSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Artist> = await api.artistController.search(options);
+		const result: Jam.ArtistList = await api.artistController.search(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -444,19 +444,19 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/artist/list', async (req, res) => {
 		const options: JamRequest<JamParameters.ArtistList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Artist> = await api.artistController.list(options);
+		const result: Jam.ArtistList = await api.artistController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/artist/similar/tracks', async (req, res) => {
 		const options: JamRequest<JamParameters.SimilarTracks> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.artistController.similarTracks(options);
+		const result: Jam.TrackList = await api.artistController.similarTracks(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/artist/similar', async (req, res) => {
-		const options: JamRequest<JamParameters.Artist> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Artist> = await api.artistController.similar(options);
+		const options: JamRequest<JamParameters.SimilarArtists> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.ArtistList = await api.artistController.similar(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -467,8 +467,8 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	});
 
 	register.get('/artist/tracks', async (req, res) => {
-		const options: JamRequest<JamParameters.Tracks> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.artistController.tracks(options);
+		const options: JamRequest<JamParameters.ArtistTracks> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.TrackList = await api.artistController.tracks(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -492,13 +492,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/album/list', async (req, res) => {
 		const options: JamRequest<JamParameters.AlbumList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Album> = await api.albumController.list(options);
+		const result: Jam.AlbumList = await api.albumController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/album/search', async (req, res) => {
 		const options: JamRequest<JamParameters.AlbumSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Album> = await api.albumController.search(options);
+		const result: Jam.AlbumList = await api.albumController.search(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -522,13 +522,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/album/similar/tracks', async (req, res) => {
 		const options: JamRequest<JamParameters.SimilarTracks> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.albumController.similarTracks(options);
+		const result: Jam.TrackList = await api.albumController.similarTracks(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/album/tracks', async (req, res) => {
-		const options: JamRequest<JamParameters.Tracks> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.albumController.tracks(options);
+		const options: JamRequest<JamParameters.AlbumTracks> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.TrackList = await api.albumController.tracks(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -552,7 +552,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/playlist/search', async (req, res) => {
 		const options: JamRequest<JamParameters.PlaylistSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Playlist> = await api.playlistController.search(options);
+		const result: Jam.PlaylistList = await api.playlistController.search(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -569,14 +569,14 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	});
 
 	register.get('/playlist/tracks', async (req, res) => {
-		const options: JamRequest<JamParameters.Tracks> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Track> = await api.playlistController.tracks(options);
+		const options: JamRequest<JamParameters.PlaylistTracks> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.TrackList = await api.playlistController.tracks(options);
 		await ApiResponder.data(res, result);
 	});
 
 	register.get('/playlist/list', async (req, res) => {
 		const options: JamRequest<JamParameters.PlaylistList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Playlist> = await api.playlistController.list(options);
+		const result: Jam.PlaylistList = await api.playlistController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -594,7 +594,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/user/search', async (req, res) => {
 		const options: JamRequest<JamParameters.UserSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.User> = await api.userController.search(options);
+		const result: Jam.UserList = await api.userController.search(options);
 		await ApiResponder.data(res, result);
 	}, '/user/search', ['admin']);
 
@@ -606,7 +606,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/bookmark/list', async (req, res) => {
 		const options: JamRequest<JamParameters.BookmarkList> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Bookmark> = await api.bookmarkController.list(options);
+		const result: Jam.BookmarkList = await api.bookmarkController.list(options);
 		await ApiResponder.data(res, result);
 	});
 
@@ -624,7 +624,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.get('/root/search', async (req, res) => {
 		const options: JamRequest<JamParameters.RootSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.Root> = await api.rootController.search(options);
+		const result: Jam.RootList = await api.rootController.search(options);
 		await ApiResponder.data(res, result);
 	});
 

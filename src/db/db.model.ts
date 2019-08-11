@@ -1,4 +1,5 @@
 import {DBObject} from '../engine/base/base.model';
+import {ListResult} from '../engine/base/list-result';
 import {DatabaseQuerySortType} from '../model/jam-types';
 import {DBObjectType} from './db.types';
 
@@ -37,7 +38,7 @@ export interface DatabaseIndex<T extends DBObject> {
 
 	byIds(ids: Array<string>): Promise<Array<T>>;
 
-	query(query: DatabaseQuery): Promise<Array<T>>;
+	query(query: DatabaseQuery): Promise<ListResult<T>>;
 
 	queryOne(query: DatabaseQuery): Promise<T | undefined>;
 

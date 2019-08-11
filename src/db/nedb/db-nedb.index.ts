@@ -1,6 +1,8 @@
 import Nedb from 'nedb';
 import {DBObject} from '../../engine/base/base.model';
+import {ListResult} from '../../engine/base/list-result';
 import {DatabaseQuerySortType} from '../../model/jam-types';
+import {paginate} from '../../utils/paginate';
 import {DatabaseIndex, DatabaseQuery} from '../db.model';
 import {DBObjectType} from '../db.types';
 
@@ -244,25 +246,25 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		});
 	}
 
-	async query(query: DatabaseQuery): Promise<Array<T>> {
+	async query(query: DatabaseQuery): Promise<ListResult<T>> {
 		let dbquery = this.client.find<T>(this.translateQuery(query));
 		const sort = this.translateSortQuery(query);
 		if (sort) {
 			dbquery = dbquery.sort(sort);
 		}
-		if (query.offset) {
-			dbquery = dbquery.skip(query.offset);
-		}
-		if (query.amount) {
-			dbquery = dbquery.limit(query.amount);
-		}
-
-		return new Promise<Array<T>>((resolve, reject) => {
+		// if (query.offset) {
+		// 	dbquery = dbquery.skip(query.offset);
+		// }
+		// if (query.amount) {
+		// 	dbquery = dbquery.limit(query.amount);
+		// }
+		return new Promise<ListResult<T>>((resolve, reject) => {
 			dbquery.exec((err, docs) => {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(this.hits2Objs(docs));
+					const list = paginate(docs, query.amount, query.offset);
+					resolve({items: this.hits2Objs(list.items), offset: list.offset, amount: list.amount, total: list.total});
 				}
 			});
 		});

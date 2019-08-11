@@ -34,7 +34,7 @@ export class ScanMatcher {
 	private async matchDirR(dir: MatchDir, changes: MergeChanges): Promise<void> {
 		log.debug('Comparing:', dir.name);
 		const tracks = await this.store.trackStore.search({path: dir.name});
-		tracks.forEach(track => {
+		tracks.items.forEach(track => {
 			const filename = path.join(track.path, track.name);
 			const file = dir.files.find(f => f.name === filename);
 			if (file) {
@@ -44,9 +44,9 @@ export class ScanMatcher {
 			}
 		});
 		if (dir.folder) {
-			let folders = await this.store.folderStore.search({parentID: dir.folder.id});
-			folders = folders.sort((a, b) => a.path.localeCompare(b.path));
-			for (const subFolder of folders) {
+			const folders = await this.store.folderStore.search({parentID: dir.folder.id});
+			folders.items = folders.items.sort((a, b) => a.path.localeCompare(b.path));
+			for (const subFolder of folders.items) {
 				const subDir = dir.directories.find(sd => sd.name === subFolder.path);
 				if (!subDir) {
 					changes.removedFolders.push(subFolder);
@@ -67,13 +67,13 @@ export class ScanMatcher {
 		const removedTracks: Array<Track> = changes.removedTracks;
 		for (const sub of changes.removedFolders) {
 			const folderList = await this.store.folderStore.search({inPath: sub.path});
-			for (const folder of folderList) {
+			for (const folder of folderList.items) {
 				if (!removedFolders.find(f => f.id === folder.id)) {
 					removedFolders.push(folder);
 				}
 			}
 			const trackList = await this.store.trackStore.search({inPath: sub.path});
-			for (const track of trackList) {
+			for (const track of trackList.items) {
 				if (!removedTracks.find(t => t.id === track.id)) {
 					removedTracks.push(track);
 				}

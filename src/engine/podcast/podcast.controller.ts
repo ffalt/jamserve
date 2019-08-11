@@ -4,6 +4,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {PodcastStatus} from '../../model/jam-types';
 import {BaseListController} from '../base/dbobject-list.controller';
+import {ListResult} from '../base/list-result';
 import {DownloadService} from '../download/download.service';
 import {EpisodeController} from '../episode/episode.controller';
 import {ImageService} from '../image/image.service';
@@ -45,7 +46,7 @@ export class PodcastController extends BaseListController<JamParameters.Podcast,
 			result.state = formatState(state);
 		}
 		if (includes.podcastEpisodes) {
-			result.episodes = await this.episodeController.prepareByQuery({podcastID: podcast.id}, includes, user);
+			result.episodes = (await this.episodeController.prepareByQuery({podcastID: podcast.id}, includes, user)).items;
 		}
 		return result;
 	}
@@ -64,8 +65,8 @@ export class PodcastController extends BaseListController<JamParameters.Podcast,
 		};
 	}
 
-	async tracks(req: JamRequest<JamParameters.Tracks>): Promise<Array<Jam.PodcastEpisode>> {
-		return this.episodeController.prepareByQuery({podcastIDs: req.query.ids}, req.query, req.user);
+	async episodes(req: JamRequest<JamParameters.PodcastEpisodes>): Promise<ListResult<Jam.PodcastEpisode>> {
+		return this.episodeController.prepareByQuery({podcastID: req.query.id, amount: req.query.amount, offset: req.query.offset}, req.query, req.user);
 	}
 
 	async refreshAll(req: JamRequest<{}>): Promise<void> {

@@ -94,8 +94,8 @@ export class ScanCleaner {
 			await this.store.stateStore.removeByQuery({destIDs: trackIDs, type: DBObjectType.track});
 			await this.store.bookmarkStore.removeByQuery({destIDs: trackIDs});
 			const playlists = await this.store.playlistStore.search({trackIDs});
-			if (playlists.length > 0) {
-				for (const playlist of playlists) {
+			if (playlists.items.length > 0) {
+				for (const playlist of playlists.items) {
 					playlist.trackIDs = playlist.trackIDs.filter(id => !trackIDs.includes(id));
 					if (playlist.trackIDs.length === 0) {
 						await this.store.playlistStore.remove(playlist.id);

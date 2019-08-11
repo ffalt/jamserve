@@ -1,6 +1,7 @@
 import {Database, DatabaseIndex, DatabaseQuery} from '../../db/db.model';
 import {DBObjectType} from '../../db/db.types';
 import {DBObject} from './base.model';
+import {ListResult} from './list-result';
 
 export interface SearchQuery {
 	id?: string;
@@ -66,7 +67,7 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 	}
 
 	async all(): Promise<Array<T>> {
-		return this.group.query({all: true});
+		return (await this.group.query({all: true})).items;
 	}
 
 	async allIds(): Promise<Array<string>> {
@@ -95,7 +96,7 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 		return this.group.queryIds(this.transformQuery(query));
 	}
 
-	async search(query: X): Promise<Array<T>> {
+	async search(query: X): Promise<ListResult<T>> {
 		return this.group.query(this.transformQuery(query));
 	}
 

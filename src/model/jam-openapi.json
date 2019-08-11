@@ -2,7 +2,7 @@
 	"openapi": "3.0.0",
 	"info": {
 		"description": "Api for JamServe",
-		"version": "0.1.2",
+		"version": "0.1.3",
 		"title": "JamApi",
 		"license": {
 			"name": "MIT"
@@ -741,10 +741,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Genre"
-									}
+									"$ref": "#/components/schemas/Jam.GenreList"
 								}
 							}
 						}
@@ -767,6 +764,27 @@
 							"type": "string"
 						},
 						"description": "filter by root id",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
 						"required": false
 					}
 				]
@@ -826,10 +844,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.NowPlaying"
-									}
+									"$ref": "#/components/schemas/Jam.NowPlayingList"
 								}
 							}
 						}
@@ -840,7 +855,30 @@
 					"500": {
 						"description": "internal server error"
 					}
-				}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
+					}
+				]
 			}
 		},
 		"/chat/list": {
@@ -1500,160 +1538,6 @@
 				]
 			}
 		},
-		"/folder/children": {
-			"get": {
-				"operationId": "folderController.children",
-				"description": "get tracks and subfolders of a folder by id",
-				"tags": [
-					"folder"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.FolderChildren"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"404": {
-						"description": "requested object not found"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"parameters": [
-					{
-						"in": "query",
-						"name": "id",
-						"schema": {
-							"type": "string"
-						},
-						"description": "the item id",
-						"required": true
-					},
-					{
-						"in": "query",
-						"name": "trackMedia",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include media information on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackRawTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include raw tag on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "trackState",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include user states (fav,rate) on track(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderState",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include user states (fav,rate) on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderCounts",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include information about children (trackCount/folderCount) on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderParents",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include a list of all parent folder ids on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderInfo",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include extended meta data on folder(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderSimilar",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include similar folders list on folder(s) - only for folders of type artist",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "folderArtworks",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include artwork images list on folder(s)",
-						"required": false
-					}
-				]
-			}
-		},
 		"/folder/tracks": {
 			"get": {
 				"operationId": "folderController.tracks",
@@ -1667,10 +1551,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -1750,6 +1631,27 @@
 						},
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
 					}
 				]
 			}
@@ -1767,10 +1669,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Folder"
-									}
+									"$ref": "#/components/schemas/Jam.FolderList"
 								}
 							}
 						}
@@ -1867,6 +1766,27 @@
 						},
 						"description": "include artwork images list on folder(s)",
 						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
 					}
 				]
 			}
@@ -1884,10 +1804,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Folder"
-									}
+									"$ref": "#/components/schemas/Jam.FolderList"
 								}
 							}
 						}
@@ -2054,6 +1971,27 @@
 						},
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
 					}
 				]
 			}
@@ -2159,10 +2097,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Folder"
-									}
+									"$ref": "#/components/schemas/Jam.FolderList"
 								}
 							}
 						}
@@ -2503,10 +2438,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Folder"
-									}
+									"$ref": "#/components/schemas/Jam.FolderList"
 								}
 							}
 						}
@@ -3313,10 +3245,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -3727,10 +3656,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -4105,10 +4031,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -4401,10 +4324,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -4955,10 +4875,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.PodcastEpisode"
-									}
+									"$ref": "#/components/schemas/Jam.PodcastEpisodeList"
 								}
 							}
 						}
@@ -5302,10 +5219,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.PodcastEpisode"
-									}
+									"$ref": "#/components/schemas/Jam.PodcastEpisodeList"
 								}
 							}
 						}
@@ -5741,10 +5655,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Podcast"
-									}
+									"$ref": "#/components/schemas/Jam.PodcastList"
 								}
 							}
 						}
@@ -5924,6 +5835,108 @@
 				]
 			}
 		},
+		"/podcast/episodes": {
+			"get": {
+				"operationId": "podcastController.episodes",
+				"description": "get podcast episodes by podcast id",
+				"tags": [
+					"podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.PodcastEpisodeList"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "trackMedia",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include media information on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackRawTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include raw tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
+					}
+				]
+			}
+		},
 		"/podcast/refreshAll": {
 			"get": {
 				"operationId": "podcastController.refreshAll",
@@ -6079,10 +6092,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Podcast"
-									}
+									"$ref": "#/components/schemas/Jam.PodcastList"
 								}
 							}
 						}
@@ -6395,10 +6405,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Radio"
-									}
+									"$ref": "#/components/schemas/Jam.RadioList"
 								}
 							}
 						}
@@ -6416,6 +6423,76 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "url",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by radio url",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "homepage",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by radio homepage url",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by radio name",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortField",
+						"schema": {
+							"enum": [
+								"created",
+								"name"
+							],
+							"type": "string"
+						},
+						"description": "sort the result by",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search by id",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "ids",
 						"schema": {
 							"type": "array",
@@ -6423,8 +6500,27 @@
 								"type": "string"
 							}
 						},
-						"description": "array of item ids",
-						"required": true
+						"description": "search by ids",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "search query",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "sortDescending",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "sort direction",
+						"required": false
 					},
 					{
 						"in": "query",
@@ -6943,10 +7039,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Artist"
-									}
+									"$ref": "#/components/schemas/Jam.ArtistList"
 								}
 							}
 						}
@@ -7396,10 +7489,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Artist"
-									}
+									"$ref": "#/components/schemas/Jam.ArtistList"
 								}
 							}
 						}
@@ -7767,10 +7857,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -7875,10 +7962,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Artist"
-									}
+									"$ref": "#/components/schemas/Jam.ArtistList"
 								}
 							}
 						}
@@ -7897,15 +7981,6 @@
 					}
 				},
 				"parameters": [
-					{
-						"in": "query",
-						"name": "rootID",
-						"schema": {
-							"type": "string"
-						},
-						"description": "filter by root id",
-						"required": false
-					},
 					{
 						"in": "query",
 						"name": "id",
@@ -8063,6 +8138,27 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
 						"required": false
 					}
 				]
@@ -8269,10 +8365,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -8341,6 +8434,27 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
 						"required": false
 					}
 				]
@@ -8654,10 +8768,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Album"
-									}
+									"$ref": "#/components/schemas/Jam.AlbumList"
 								}
 							}
 						}
@@ -9014,10 +9125,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Album"
-									}
+									"$ref": "#/components/schemas/Jam.AlbumList"
 								}
 							}
 						}
@@ -9703,10 +9811,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -9811,10 +9916,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -9883,6 +9985,27 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
 						"required": false
 					}
 				]
@@ -10176,10 +10299,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Playlist"
-									}
+									"$ref": "#/components/schemas/Jam.PlaylistList"
 								}
 							}
 						}
@@ -10464,10 +10584,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Track"
-									}
+									"$ref": "#/components/schemas/Jam.TrackList"
 								}
 							}
 						}
@@ -10537,6 +10654,27 @@
 						},
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
 					}
 				]
 			}
@@ -10554,10 +10692,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Playlist"
-									}
+									"$ref": "#/components/schemas/Jam.PlaylistList"
 								}
 							}
 						}
@@ -10851,10 +10986,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.User"
-									}
+									"$ref": "#/components/schemas/Jam.UserList"
 								}
 							}
 						}
@@ -11070,10 +11202,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Bookmark"
-									}
+									"$ref": "#/components/schemas/Jam.BookmarkList"
 								}
 							}
 						}
@@ -11140,6 +11269,27 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
 						"required": false
 					}
 				]
@@ -11249,10 +11399,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.Root"
-									}
+									"$ref": "#/components/schemas/Jam.RootList"
 								}
 							}
 						}
@@ -18521,6 +18668,29 @@
 					}
 				}
 			},
+			"Jam.GenreList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Genre"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
+				]
+			},
 			"Jam.Genre": {
 				"type": "object",
 				"properties": {
@@ -18632,6 +18802,20 @@
 					"artistTypes",
 					"folder",
 					"track"
+				]
+			},
+			"Jam.NowPlayingList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.NowPlaying"
+						}
+					}
+				},
+				"required": [
+					"items"
 				]
 			},
 			"Jam.NowPlaying": {
@@ -21172,22 +21356,51 @@
 					"types"
 				]
 			},
-			"Jam.FolderChildren": {
+			"Jam.TrackList": {
 				"type": "object",
 				"properties": {
-					"folders": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Track"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
+				]
+			},
+			"Jam.FolderList": {
+				"type": "object",
+				"properties": {
+					"items": {
 						"type": "array",
 						"items": {
 							"$ref": "#/components/schemas/Jam.Folder"
 						}
 					},
-					"tracks": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/Jam.Track"
-						}
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
 					}
-				}
+				},
+				"required": [
+					"items"
+				]
 			},
 			"Jam.Info": {
 				"type": "object",
@@ -21401,6 +21614,29 @@
 					"title"
 				]
 			},
+			"Jam.PodcastEpisodeList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.PodcastEpisode"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
+				]
+			},
 			"Jam.PodcastEpisodeStatus": {
 				"type": "object",
 				"properties": {
@@ -21480,6 +21716,29 @@
 					"status"
 				]
 			},
+			"Jam.PodcastList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Podcast"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
+				]
+			},
 			"Jam.Radio": {
 				"type": "object",
 				"properties": {
@@ -21511,6 +21770,29 @@
 					"id",
 					"name",
 					"url"
+				]
+			},
+			"Jam.RadioList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Radio"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
 				]
 			},
 			"Jam.Artist": {
@@ -21705,6 +21987,29 @@
 				],
 				"type": "string"
 			},
+			"Jam.ArtistList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Artist"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
+				]
+			},
 			"Jam.ArtistIndex": {
 				"type": "object",
 				"properties": {
@@ -21758,6 +22063,29 @@
 					"artistID",
 					"name",
 					"trackCount"
+				]
+			},
+			"Jam.AlbumList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Album"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
 				]
 			},
 			"Jam.AlbumIndex": {
@@ -21880,6 +22208,29 @@
 					"userID"
 				]
 			},
+			"Jam.PlaylistList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Playlist"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
+				]
+			},
 			"Jam.User": {
 				"type": "object",
 				"properties": {
@@ -21908,6 +22259,29 @@
 					"id",
 					"name",
 					"roles"
+				]
+			},
+			"Jam.UserList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.User"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
 				]
 			},
 			"Jam.PlayQueue": {
@@ -21941,6 +22315,20 @@
 				"required": [
 					"changed",
 					"changedBy"
+				]
+			},
+			"Jam.BookmarkList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Bookmark"
+						}
+					}
+				},
+				"required": [
+					"items"
 				]
 			},
 			"Jam.Bookmark": {
@@ -22035,6 +22423,29 @@
 					"compilation"
 				],
 				"type": "string"
+			},
+			"Jam.RootList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Root"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
+				]
 			},
 			"Jam.AdminSettings": {
 				"type": "object",

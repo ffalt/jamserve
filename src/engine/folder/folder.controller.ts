@@ -8,6 +8,7 @@ import {ArtworkImageType, FolderType, FolderTypesAlbum} from '../../model/jam-ty
 import {ApiBinaryResult} from '../../typings';
 import {paginate} from '../../utils/paginate';
 import {BaseListController} from '../base/dbobject-list.controller';
+import {ListResult} from '../base/list-result';
 import {DownloadService} from '../download/download.service';
 import {FolderRulesChecker} from '../health/folder.rule';
 import {ImageService} from '../image/image.service';
@@ -54,12 +55,12 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	async prepare(folder: Folder, includes: JamParameters.IncludesFolderChildren, user: User): Promise<Jam.Folder> {
 		const result = formatFolder(folder, includes);
 		if (includes.folderChildren || includes.folderTracks) {
-			result.tracks = await this.trackController.prepareByQuery({parentID: folder.id}, includes, user);
+			result.tracks = (await this.trackController.prepareByQuery({parentID: folder.id}, includes, user)).items;
 		}
 		if (includes.folderChildren || includes.folderSubfolders) {
 			const folders = await this.folderService.folderStore.search({parentID: folder.id, sorts: [{field: 'title', descending: false}]});
 			// TODO: introduce children includes?
-			result.folders = await this.prepareList(folders,
+			result.folders = await this.prepareList(folders.items,
 				{folderState: includes.folderState, folderCounts: includes.folderCounts, folderTag: includes.folderTag}
 				, user);
 		}
@@ -127,12 +128,17 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 
 	/* more folder api */
 
-	async subfolders(req: JamRequest<JamParameters.FolderSubFolders>): Promise<Array<Jam.Folder>> {
-		const list = await this.folderService.folderStore.search({parentID: req.query.id});
-		return this.prepareList(list, req.query, req.user);
+	async subfolders(req: JamRequest<JamParameters.FolderSubFolders>): Promise<ListResult<Jam.Folder>> {
+		const list = await this.folderService.folderStore.search({parentID: req.query.id, amount: req.query.amount, offset: req.query.offset});
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.prepareList(list.items, req.query, req.user)
+		};
 	}
 
-	async tracks(req: JamRequest<JamParameters.FolderTracks>): Promise<Array<Jam.Track>> {
+	async tracks(req: JamRequest<JamParameters.FolderTracks>): Promise<ListResult<Jam.Track>> {
 		const folders = await this.byIDs(req.query.ids);
 		const trackQuery: SearchQueryTrack = req.query.recursive ? {inPaths: folders.map(folder => folder.path)} : {parentIDs: folders.map(folder => folder.id)};
 		return this.trackController.prepareByQuery(trackQuery, req.query, req.user);
@@ -141,8 +147,8 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	async children(req: JamRequest<JamParameters.FolderChildren>): Promise<Jam.FolderChildren> {
 		const folders = await this.folderService.folderStore.search({parentID: req.query.id});
 		const resultTracks = await this.trackController.prepareByQuery({parentID: req.query.id}, req.query, req.user);
-		const resultFolders = await this.prepareList(folders, req.query, req.user);
-		return {folders: resultFolders, tracks: resultTracks};
+		const resultFolders = await this.prepareList(folders.items, req.query, req.user);
+		return {folders: resultFolders, tracks: resultTracks.items};
 	}
 
 	async imageUploadUpdate(req: JamRequest<JamParameters.ID>): Promise<void> {
@@ -163,10 +169,16 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return {info: await this.metadataService.getFolderArtistInfo(folder)};
 	}
 
-	async artistSimilar(req: JamRequest<JamParameters.Folder>): Promise<Array<Jam.Folder>> {
+	async artistSimilar(req: JamRequest<JamParameters.SimilarFolders>): Promise<ListResult<Jam.Folder>> {
 		const folder = await this.byID(req.query.id);
-		const list = await this.metadataService.getSimilarArtistFolders(folder);
-		return this.prepareList(list, req.query, req.user);
+		const folders = await this.metadataService.getSimilarArtistFolders(folder);
+		const list = paginate(folders, req.query.amount, req.query.offset);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.prepareList(list.items, req.query, req.user)
+		};
 	}
 
 	async albumInfo(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
@@ -174,10 +186,16 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return {info: await this.metadataService.getFolderAlbumInfo(folder)};
 	}
 
-	async artistSimilarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<Array<Jam.Track>> {
+	async artistSimilarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const folder = await this.byID(req.query.id);
 		const tracks = await this.metadataService.getFolderSimilarTracks(folder);
-		return this.trackController.prepareList(paginate(tracks, req.query.amount, req.query.offset), req.query, req.user);
+		const list = paginate(tracks, req.query.amount, req.query.offset);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.trackController.prepareList(list.items, req.query, req.user)
+		};
 	}
 
 	async index(req: JamRequest<JamParameters.FolderSearch>): Promise<Jam.FolderIndex> {
@@ -222,14 +240,14 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	}
 
 	async health(req: JamRequest<JamParameters.FolderHealth>): Promise<Array<Jam.FolderHealth>> {
-		let list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		list = list.sort((a, b) => {
+		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
+		list.items = list.items.sort((a, b) => {
 			return a.path.localeCompare(b.path);
 		});
 		const result: Array<Jam.FolderHealth> = [];
 		const roots: Array<Root> = [];
-		const cachedFolders = list.slice(0);
-		for (const folder of list) {
+		const cachedFolders = list.items.slice(0);
+		for (const folder of list.items) {
 			let root = roots.find(r => r.id === folder.rootID);
 			if (!root) {
 				root = await this.rootService.rootStore.byId(folder.rootID);

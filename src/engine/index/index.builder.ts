@@ -46,7 +46,7 @@ export class IndexFolderTreeBuilder extends IndexTreeBuilder {
 	async buildFolderIndex(query: SearchQueryFolder): Promise<FolderIndex> {
 		const result: FolderIndex = {groups: [], lastModified: Date.now()};
 		const folders = await this.folderStore.search(query);
-		for (const folder of folders) {
+		for (const folder of folders.items) {
 			const trackCount = await this.getTotalTrackCount(folder);
 			const entry: FolderIndexEntry = {
 				name: path.basename(folder.path),
@@ -82,7 +82,7 @@ export class IndexArtistTreeBuilder extends IndexTreeBuilder {
 	async buildArtistIndex(query: SearchQueryArtist): Promise<ArtistIndex> {
 		const result: ArtistIndex = {groups: [], lastModified: Date.now()};
 		const artists = await this.artistStore.search(query);
-		artists.forEach(artist => {
+		artists.items.forEach(artist => {
 			const entry: ArtistIndexEntry = {artist};
 			const indexChar = this.getIndexChar(artist.nameSort || this.removeArticles(artist.name) || '');
 			let group = result.groups.find(g => g.name === indexChar);
@@ -113,7 +113,7 @@ export class IndexAlbumTreeBuilder extends IndexTreeBuilder {
 	async buildAlbumIndex(query: SearchQueryAlbum): Promise<AlbumIndex> {
 		const result: AlbumIndex = {groups: [], lastModified: Date.now()};
 		const albums = await this.albumStore.search(query);
-		albums.forEach(album => {
+		albums.items.forEach(album => {
 			const entry: AlbumIndexEntry = {album};
 			const indexChar = this.getIndexChar(album.name);
 			let group = result.groups.find(g => g.name === indexChar);

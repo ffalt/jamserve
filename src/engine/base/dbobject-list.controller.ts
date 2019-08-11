@@ -12,6 +12,7 @@ import {DBObject} from './base.model';
 import {SearchQuery} from './base.store';
 import {BaseListService} from './dbobject-list.service';
 import {BaseController} from './dbobject.controller';
+import {ListResult} from './list-result';
 
 export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | INCLUDE,
 	OBJLISTREQUEST extends JamParameters.IDs | INCLUDE,
@@ -32,41 +33,54 @@ export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | I
 		super(listService, stateService, imageService, downloadService);
 	}
 
-	private async getList(listQuery: JamParameters.List, jamquery: SEARCHQUERY, includes: INCLUDE, user: User): Promise<Array<RESULTOBJ>> {
+	private async getList(listQuery: JamParameters.List, jamquery: SEARCHQUERY, includes: INCLUDE, user: User): Promise<ListResult<RESULTOBJ>> {
 		const query = await this.translateQuery(jamquery, user);
 		let ids: Array<string> = [];
+		let total: number | undefined;
 		switch (listQuery.list) {
 			case 'random':
 				ids = await this.listService.store.searchIDs({...query, amount: -1, offset: 0});
+				listQuery.amount = listQuery.amount || 20;
 				ids = randomItems<string>(ids, listQuery.amount || 20);
 				break;
 			case 'highest':
 				ids = await this.listService.getHighestRatedIDs(query, user);
-				ids = paginate(ids, listQuery.amount, listQuery.offset);
+				total = ids.length;
+				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
 				break;
 			case 'avghighest':
 				ids = await this.listService.getAvgHighestIDs(query);
-				ids = paginate(ids, listQuery.amount, listQuery.offset);
+				total = ids.length;
+				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
 				break;
 			case 'frequent':
 				ids = await this.listService.getFrequentlyPlayedIDs(query, user);
-				ids = paginate(ids, listQuery.amount, listQuery.offset);
+				total = ids.length;
+				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
 				break;
 			case 'faved':
 				ids = await this.listService.getFavedIDs(query, user);
-				ids = paginate(ids, listQuery.amount, listQuery.offset);
+				total = ids.length;
+				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
 				break;
 			case 'recent':
 				ids = await this.listService.getRecentlyPlayedIDs(query, user);
-				ids = paginate(ids, listQuery.amount, listQuery.offset);
+				total = ids.length;
+				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
 				break;
 			default:
 				return Promise.reject(InvalidParamError('Unknown List Type'));
 		}
-		return this.prepareListByIDs(ids, includes, user);
+		const result = await this.prepareListByIDs(ids, includes, user);
+		return {
+			total,
+			offset: listQuery.offset,
+			amount: listQuery.amount,
+			items: result
+		};
 	}
 
-	async list(req: JamRequest<LISTQUERY>): Promise<Array<RESULTOBJ>> {
+	async list(req: JamRequest<LISTQUERY>): Promise<ListResult<RESULTOBJ>> {
 		return this.getList(req.query as JamParameters.List, req.query as SEARCHQUERY, req.query as INCLUDE, req.user);
 	}
 

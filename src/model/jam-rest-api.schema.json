@@ -476,10 +476,7 @@
 							"$ref": "#/definitions/JamParameters.Genres"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Genre"
-							}
+							"$ref": "#/definitions/Jam.GenreList"
 						},
 						"errors": {
 							"anyOf": [
@@ -542,11 +539,11 @@
 					"description": "various: get list of tracks played by all users",
 					"type": "object",
 					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.NowPlaying"
+						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.NowPlaying"
-							}
+							"$ref": "#/definitions/Jam.NowPlayingList"
 						},
 						"errors": {
 							"anyOf": [
@@ -561,6 +558,7 @@
 					},
 					"required": [
 						"errors",
+						"params",
 						"result"
 					]
 				},
@@ -693,39 +691,6 @@
 						"result"
 					]
 				},
-				"folder/children": {
-					"description": "folder: get tracks and subfolders of a folder by id",
-					"type": "object",
-					"properties": {
-						"params": {
-							"$ref": "#/definitions/JamParameters.FolderChildren"
-						},
-						"result": {
-							"$ref": "#/definitions/Jam.FolderChildren"
-						},
-						"errors": {
-							"anyOf": [
-								{
-									"$ref": "#/definitions/JamApiErrorUnauthorized"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorGeneric"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorParameters"
-								},
-								{
-									"$ref": "#/definitions/JamApiErrorNotFound"
-								}
-							]
-						}
-					},
-					"required": [
-						"errors",
-						"params",
-						"result"
-					]
-				},
 				"folder/tracks": {
 					"description": "folder: get tracks of a folder by id",
 					"type": "object",
@@ -734,10 +699,7 @@
 							"$ref": "#/definitions/JamParameters.FolderTracks"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -770,10 +732,7 @@
 							"$ref": "#/definitions/JamParameters.FolderSubFolders"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Folder"
-							}
+							"$ref": "#/definitions/Jam.FolderList"
 						},
 						"errors": {
 							"anyOf": [
@@ -803,13 +762,10 @@
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.Folder"
+							"$ref": "#/definitions/JamParameters.SimilarFolders"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Folder"
-							}
+							"$ref": "#/definitions/Jam.FolderList"
 						},
 						"errors": {
 							"anyOf": [
@@ -908,10 +864,7 @@
 							"$ref": "#/definitions/JamParameters.FolderList"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Folder"
-							}
+							"$ref": "#/definitions/Jam.FolderList"
 						},
 						"errors": {
 							"anyOf": [
@@ -941,10 +894,7 @@
 							"$ref": "#/definitions/JamParameters.FolderSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Folder"
-							}
+							"$ref": "#/definitions/Jam.FolderList"
 						},
 						"errors": {
 							"anyOf": [
@@ -1096,10 +1046,7 @@
 							"$ref": "#/definitions/JamParameters.SimilarTracks"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -1297,10 +1244,7 @@
 							"$ref": "#/definitions/JamParameters.TrackSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -1396,10 +1340,7 @@
 							"$ref": "#/definitions/JamParameters.TrackList"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -1429,10 +1370,7 @@
 							"$ref": "#/definitions/JamParameters.SimilarTracks"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -1587,10 +1525,7 @@
 							"$ref": "#/definitions/JamParameters.EpisodeSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.PodcastEpisode"
-							}
+							"$ref": "#/definitions/Jam.PodcastEpisodeList"
 						},
 						"errors": {
 							"anyOf": [
@@ -1768,10 +1703,7 @@
 							"$ref": "#/definitions/JamParameters.PodcastEpisodeList"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.PodcastEpisode"
-							}
+							"$ref": "#/definitions/Jam.PodcastEpisodeList"
 						},
 						"errors": {
 							"anyOf": [
@@ -1897,10 +1829,37 @@
 							"$ref": "#/definitions/JamParameters.PodcastSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Podcast"
-							}
+							"$ref": "#/definitions/Jam.PodcastList"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
+				"podcast/episodes": {
+					"description": "podcast: get podcast episodes by podcast id",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.PodcastEpisodes"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.PodcastEpisodeList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2079,10 +2038,7 @@
 							"$ref": "#/definitions/JamParameters.PodcastList"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Podcast"
-							}
+							"$ref": "#/definitions/Jam.PodcastList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2175,13 +2131,10 @@
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.Radios"
+							"$ref": "#/definitions/JamParameters.RadioSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Radio"
-							}
+							"$ref": "#/definitions/Jam.RadioList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2343,10 +2296,7 @@
 							"$ref": "#/definitions/JamParameters.ArtistSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Artist"
-							}
+							"$ref": "#/definitions/Jam.ArtistList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2442,10 +2392,7 @@
 							"$ref": "#/definitions/JamParameters.ArtistList"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Artist"
-							}
+							"$ref": "#/definitions/Jam.ArtistList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2475,10 +2422,7 @@
 							"$ref": "#/definitions/JamParameters.SimilarTracks"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2508,13 +2452,10 @@
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.Artist"
+							"$ref": "#/definitions/JamParameters.SimilarArtists"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Artist"
-							}
+							"$ref": "#/definitions/Jam.ArtistList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2574,13 +2515,10 @@
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.Tracks"
+							"$ref": "#/definitions/JamParameters.ArtistTracks"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2712,10 +2650,7 @@
 							"$ref": "#/definitions/JamParameters.AlbumList"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Album"
-							}
+							"$ref": "#/definitions/Jam.AlbumList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2745,10 +2680,7 @@
 							"$ref": "#/definitions/JamParameters.AlbumSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Album"
-							}
+							"$ref": "#/definitions/Jam.AlbumList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2874,10 +2806,7 @@
 							"$ref": "#/definitions/JamParameters.SimilarTracks"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -2907,13 +2836,10 @@
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.Tracks"
+							"$ref": "#/definitions/JamParameters.AlbumTracks"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -3045,10 +2971,7 @@
 							"$ref": "#/definitions/JamParameters.PlaylistSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Playlist"
-							}
+							"$ref": "#/definitions/Jam.PlaylistList"
 						},
 						"errors": {
 							"anyOf": [
@@ -3141,13 +3064,10 @@
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.Tracks"
+							"$ref": "#/definitions/JamParameters.PlaylistTracks"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Track"
-							}
+							"$ref": "#/definitions/Jam.TrackList"
 						},
 						"errors": {
 							"anyOf": [
@@ -3180,10 +3100,7 @@
 							"$ref": "#/definitions/JamParameters.PlaylistList"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Playlist"
-							}
+							"$ref": "#/definitions/Jam.PlaylistList"
 						},
 						"errors": {
 							"anyOf": [
@@ -3325,10 +3242,7 @@
 							"$ref": "#/definitions/JamParameters.UserSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.User"
-							}
+							"$ref": "#/definitions/Jam.UserList"
 						},
 						"errors": {
 							"anyOf": [
@@ -3411,10 +3325,7 @@
 							"$ref": "#/definitions/JamParameters.BookmarkList"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Bookmark"
-							}
+							"$ref": "#/definitions/Jam.BookmarkList"
 						},
 						"errors": {
 							"anyOf": [
@@ -3513,10 +3424,7 @@
 							"$ref": "#/definitions/JamParameters.RootSearch"
 						},
 						"result": {
-							"type": "array",
-							"items": {
-								"$ref": "#/definitions/Jam.Root"
-							}
+							"$ref": "#/definitions/Jam.RootList"
 						},
 						"errors": {
 							"anyOf": [
@@ -11591,8 +11499,42 @@
 				"rootID": {
 					"description": "filter by root id",
 					"type": "string"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
 				}
 			}
+		},
+		"Jam.GenreList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Genre"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
 		},
 		"Jam.Genre": {
 			"type": "object",
@@ -11714,6 +11656,36 @@
 				"artistTypes",
 				"folder",
 				"track"
+			]
+		},
+		"JamParameters.NowPlaying": {
+			"type": "object",
+			"properties": {
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			}
+		},
+		"Jam.NowPlayingList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.NowPlaying"
+					}
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"Jam.NowPlaying": {
@@ -14550,90 +14522,6 @@
 				"ids"
 			]
 		},
-		"JamParameters.FolderChildren": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"description": "the item id",
-					"type": "string"
-				},
-				"trackMedia": {
-					"description": "include media information on track(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"trackTag": {
-					"description": "include tag on track(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"trackRawTag": {
-					"description": "include raw tag on track(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"trackState": {
-					"description": "include user states (fav,rate) on track(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"folderTag": {
-					"description": "include tag on folder(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"folderState": {
-					"description": "include user states (fav,rate) on folder(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"folderCounts": {
-					"description": "include information about children (trackCount/folderCount) on folder(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"folderParents": {
-					"description": "include a list of all parent folder ids on folder(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"folderInfo": {
-					"description": "include extended meta data on folder(s)",
-					"default": false,
-					"type": "boolean"
-				},
-				"folderSimilar": {
-					"description": "include similar folders list on folder(s) - only for folders of type artist",
-					"default": false,
-					"type": "boolean"
-				},
-				"folderArtworks": {
-					"description": "include artwork images list on folder(s)",
-					"default": false,
-					"type": "boolean"
-				}
-			},
-			"required": [
-				"id"
-			]
-		},
-		"Jam.FolderChildren": {
-			"type": "object",
-			"properties": {
-				"folders": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Jam.Folder"
-					}
-				},
-				"tracks": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Jam.Track"
-					}
-				}
-			}
-		},
 		"JamParameters.FolderTracks": {
 			"type": "object",
 			"properties": {
@@ -14668,10 +14556,44 @@
 					"description": "include user states (fav,rate) on track(s)",
 					"default": false,
 					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
 				}
 			},
 			"required": [
 				"ids"
+			]
+		},
+		"Jam.TrackList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Track"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"JamParameters.FolderSubFolders": {
@@ -14715,6 +14637,133 @@
 					"description": "include artwork images list on folder(s)",
 					"default": false,
 					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"Jam.FolderList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Folder"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
+		"JamParameters.SimilarFolders": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				},
+				"folderTag": {
+					"description": "include tag on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderState": {
+					"description": "include user states (fav,rate) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderCounts": {
+					"description": "include information about children (trackCount/folderCount) on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderParents": {
+					"description": "include a list of all parent folder ids on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderInfo": {
+					"description": "include extended meta data on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderSimilar": {
+					"description": "include similar folders list on folder(s) - only for folders of type artist",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderArtworks": {
+					"description": "include artwork images list on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderChildren": {
+					"description": "include tracks and sub folders on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderSubfolders": {
+					"description": "include sub folders on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"folderTracks": {
+					"description": "include tracks on folder(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
 				}
 			},
 			"required": [
@@ -16138,6 +16187,29 @@
 				}
 			}
 		},
+		"Jam.PodcastEpisodeList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.PodcastEpisode"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"Jam.PodcastEpisodeStatus": {
 			"type": "object",
 			"properties": {
@@ -16475,6 +16547,72 @@
 				}
 			}
 		},
+		"Jam.PodcastList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Podcast"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
+		"JamParameters.PodcastEpisodes": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
 		"JamParameters.PodcastList": {
 			"type": "object",
 			"properties": {
@@ -16638,6 +16776,93 @@
 			"required": [
 				"ids",
 				"radioState"
+			]
+		},
+		"JamParameters.RadioSearch": {
+			"type": "object",
+			"properties": {
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				},
+				"url": {
+					"description": "filter by radio url",
+					"type": "string"
+				},
+				"homepage": {
+					"description": "filter by radio homepage url",
+					"type": "string"
+				},
+				"name": {
+					"description": "filter by radio name",
+					"type": "string"
+				},
+				"sortField": {
+					"description": "sort the result by",
+					"enum": [
+						"created",
+						"name"
+					],
+					"type": "string"
+				},
+				"id": {
+					"description": "search by id",
+					"type": "string"
+				},
+				"ids": {
+					"description": "search by ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"query": {
+					"description": "search query",
+					"type": "string"
+				},
+				"sortDescending": {
+					"description": "sort direction",
+					"default": false,
+					"type": "boolean"
+				},
+				"radioState": {
+					"description": "include user states (fav,rate) on radio(s)",
+					"default": false,
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"radioState"
+			]
+		},
+		"Jam.RadioList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Radio"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"JamParameters.Artist": {
@@ -17195,6 +17420,29 @@
 				}
 			}
 		},
+		"Jam.ArtistList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Artist"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"JamParameters.ArtistList": {
 			"type": "object",
 			"properties": {
@@ -17384,6 +17632,104 @@
 				"list"
 			]
 		},
+		"JamParameters.SimilarArtists": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				},
+				"artistAlbums": {
+					"description": "include albums on artist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"artistAlbumIDs": {
+					"description": "include album ids on artist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"artistState": {
+					"description": "include user states (fav,rate) on artist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"artistTracks": {
+					"description": "include tracks on artist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"artistTracksIDs": {
+					"description": "include track ids on artist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"artistInfo": {
+					"description": "include extended meta data on artist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"artistSimilar": {
+					"description": "include similar artists on artist(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"albumTracks": {
+					"description": "include tracks on album(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"albumTrackIDs": {
+					"description": "include track ids on album(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"albumState": {
+					"description": "include user states (fav,rate) on album(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"albumInfo": {
+					"description": "include extended meta data on album(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
 		"JamParameters.ArtistIndex": {
 			"type": "object",
 			"properties": {
@@ -17533,6 +17879,52 @@
 				"artistID",
 				"name",
 				"trackCount"
+			]
+		},
+		"JamParameters.ArtistTracks": {
+			"type": "object",
+			"properties": {
+				"ids": {
+					"description": "array of item ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"ids"
 			]
 		},
 		"JamParameters.Album": {
@@ -17823,6 +18215,29 @@
 			},
 			"required": [
 				"list"
+			]
+		},
+		"Jam.AlbumList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Album"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
 			]
 		},
 		"JamParameters.AlbumSearch": {
@@ -18189,6 +18604,52 @@
 				"trackCount"
 			]
 		},
+		"JamParameters.AlbumTracks": {
+			"type": "object",
+			"properties": {
+				"ids": {
+					"description": "array of item ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"ids"
+			]
+		},
 		"JamParameters.Playlist": {
 			"type": "object",
 			"properties": {
@@ -18430,6 +18891,75 @@
 				}
 			}
 		},
+		"Jam.PlaylistList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Playlist"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
+		"JamParameters.PlaylistTracks": {
+			"type": "object",
+			"properties": {
+				"ids": {
+					"description": "array of item ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"ids"
+			]
+		},
 		"JamParameters.PlaylistList": {
 			"type": "object",
 			"properties": {
@@ -18606,6 +19136,29 @@
 				}
 			}
 		},
+		"Jam.UserList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.User"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"JamParameters.PlayQueue": {
 			"type": "object",
 			"properties": {
@@ -18701,8 +19254,33 @@
 					"description": "include user states (fav,rate) on track(s)",
 					"default": false,
 					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
 				}
 			}
+		},
+		"Jam.BookmarkList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Bookmark"
+					}
+				}
+			},
+			"required": [
+				"items"
+			]
 		},
 		"Jam.Bookmark": {
 			"type": "object",
@@ -18840,6 +19418,29 @@
 					"type": "boolean"
 				}
 			}
+		},
+		"Jam.RootList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Root"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
 		},
 		"Jam.AdminSettings": {
 			"type": "object",

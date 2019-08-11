@@ -6,6 +6,7 @@ import {paginate} from '../../utils/paginate';
 import {AlbumController} from '../album/album.controller';
 import {Album} from '../album/album.model';
 import {BaseListController} from '../base/dbobject-list.controller';
+import {ListResult} from '../base/list-result';
 import {DownloadService} from '../download/download.service';
 import {ImageService} from '../image/image.service';
 import {formatArtistIndex} from '../index/index.format';
@@ -109,29 +110,47 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 		};
 	}
 
-	async similar(req: JamRequest<JamParameters.Artist>): Promise<Array<Jam.Artist>> {
+	async similar(req: JamRequest<JamParameters.SimilarArtists>): Promise<ListResult<Jam.Artist>> {
 		const artist = await this.byID(req.query.id);
-		const list = await this.metaDataService.getSimilarArtists(artist);
-		return this.prepareList(list, req.query, req.user);
+		const artists = await this.metaDataService.getSimilarArtists(artist);
+		const list = paginate(artists, req.query.amount, req.query.offset);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.prepareList(list.items, req.query, req.user)
+		};
 	}
 
-	async similarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<Array<Jam.Track>> {
+	async similarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const artist = await this.byID(req.query.id);
 		const tracks = await this.metaDataService.getArtistSimilarTracks(artist);
-		return this.trackController.prepareList(paginate(tracks, req.query.amount, req.query.offset), req.query, req.user);
+		const list = paginate(tracks, req.query.amount, req.query.offset);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.trackController.prepareList(list.items, req.query, req.user)
+		};
 	}
 
 	async index(req: JamRequest<JamParameters.ArtistSearchQuery>): Promise<Jam.ArtistIndex> {
 		return formatArtistIndex(await this.indexService.getArtistIndex(await this.translateQuery(req.query, req.user)));
 	}
 
-	async tracks(req: JamRequest<JamParameters.Tracks>): Promise<Array<Jam.Track>> {
+	async tracks(req: JamRequest<JamParameters.ArtistTracks>): Promise<ListResult<Jam.Track>> {
 		const artists = await this.byIDs(req.query.ids);
 		let trackIDs: Array<string> = [];
 		artists.forEach(artist => {
 			trackIDs = trackIDs.concat(artist.trackIDs);
 		});
-		return this.trackController.prepareListByIDs(trackIDs, req.query, req.user, this.sortArtistTracks);
+		const list = paginate(trackIDs, req.query.amount, req.query.offset);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.trackController.prepareListByIDs(list.items, req.query, req.user, this.sortArtistTracks)
+		};
 	}
 
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
