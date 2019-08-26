@@ -10,13 +10,15 @@ import {LastFM} from '../../model/lastfm-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {ApiBinaryResult} from '../../typings';
 import {JamApi, JamRequest} from './api';
+import {UserRequest} from './login';
 import {ApiResponder} from './response';
 
-export type RegisterCallback = (req: express.Request, res: express.Response) => Promise<void>;
+export type JamApiRole = 'admin' | 'podcast' | 'stream';
+export type RegisterCallback = (req: UserRequest, res: express.Response) => Promise<void>;
 export interface Register {
-	get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
-	post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
-	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => void;
+	get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => void;
+	post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => void;
+	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => void;
 }
 
 export function registerPublicApi(register: Register, api: JamApi): void {

@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import {ID3v1, ID3v2, IID3V2, MP3} from 'jamp3';
+import {ID3v1, ID3v2, IID3V2, MP3} from '../../../../jamp3/src';//'jamp3';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
 import {TrackMedia, TrackTag} from '../../engine/track/track.model';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
@@ -149,7 +149,7 @@ export class AudioModule {
 	private async writeMP3Tag(filename: string, tag: Jam.RawTag): Promise<void> {
 		const id3 = rawTagToID3v2(tag);
 		const id3v2 = new ID3v2();
-		await id3v2.write(filename, id3, id3.head ? id3.head.ver : 4, id3.head ? id3.head.rev : 0);
+		await id3v2.write(filename, id3, id3.head ? id3.head.ver : 4, id3.head ? id3.head.rev : 0, {keepBackup: false, paddingSize: 10});
 	}
 
 	private async writeFlacTag(filename: string, tag: Jam.RawTag): Promise<void> {
@@ -189,7 +189,7 @@ export class AudioModule {
 				await fse.copy(filename, filename + '.bak');
 			}
 			if (tag) {
-				await id3v2.write(filename + '.tmp', tag, 4, 0);
+				await id3v2.write(filename + '.tmp', tag, 4, 0, {keepBackup: false, paddingSize: 10});
 			}
 			await fse.rename(filename + '.tmp', filename);
 		} catch (e) {

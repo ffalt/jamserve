@@ -314,7 +314,7 @@ export class ScanService {
 		}
 		if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].includes(fixID)) {
 			await this.audioModule.rewriteAudio(path.join(track.path, track.name));
-		} else if ([TrackHealthID.mp3MediaValid].includes(fixID)) {
+		} else if ([TrackHealthID.mp3Garbage, TrackHealthID.mp3MediaValid].includes(fixID)) {
 			await this.audioModule.fixMP3Audio(path.join(track.path, track.name));
 		} else if ([TrackHealthID.id3v2NoId3v1].includes(fixID)) {
 			await this.audioModule.removeMP3ID3v1Tag(path.join(track.path, track.name));

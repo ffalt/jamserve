@@ -39,8 +39,10 @@ export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | I
 		let total: number | undefined;
 		switch (listQuery.list) {
 			case 'random':
+				// TODO: cache ids to avoid duplicates in random items pagination
 				ids = await this.listService.store.searchIDs({...query, amount: -1, offset: 0});
 				listQuery.amount = listQuery.amount || 20;
+				total = ids.length;
 				ids = randomItems<string>(ids, listQuery.amount || 20);
 				break;
 			case 'highest':

@@ -1,5 +1,6 @@
 import express from 'express';
 import {EngineRequest} from '../server';
+import {User} from '../../engine/user/user.model';
 
 export interface SubsonicBaseParams {
 	username: string;
@@ -45,6 +46,7 @@ function processParams(req: express.Request): SubsonicBaseParams {
 }
 
 export interface SubsonicParameterRequest extends EngineRequest {
+	user?: User;
 	parameters: SubsonicBaseParams;
 }
 

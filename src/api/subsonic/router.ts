@@ -1,51 +1,55 @@
 import express from 'express';
 import {Engine} from '../../engine/engine';
+import {User} from '../../engine/user/user.model';
 import Logger from '../../utils/logger';
+import {UnauthError} from '../jam/error';
 import {SubsonicApi} from './api';
-import {FORMAT} from './format';
-import {CheckAuthMiddleWare, SubsonicLoginMiddleWare} from './login';
-import {SubsonicParameterMiddleWare, SubsonicParameterRequest} from './parameters';
+import {apiCheck} from './check';
+import {CheckAuthMiddleWare, SubsonicLoginMiddleWare, UserRequest} from './login';
+import {SubsonicParameterMiddleWare} from './parameters';
 import {ApiResponder} from './response';
-import {registerApi, SubsonicRolesHandler} from './routes';
+import {Register, registerApi, RegisterCallback, SubSonicRole} from './routes';
 
 const log = Logger('Subsonic.Api');
 
-export function AdminMiddleWare(req: SubsonicParameterRequest, res: express.Response, next: express.NextFunction): void {
-	if (!req.user || !req.user.roles.admin) {
-		ApiResponder.error(req, res, {fail: FORMAT.FAIL.UNAUTH});
+async function checkRoles(user?: User, roles?: Array<SubSonicRole>): Promise<void> {
+	if (!user) {
+		return Promise.reject(UnauthError());
 	}
-	next();
-}
-
-export function PodcastAdminMiddleWare(req: SubsonicParameterRequest, res: express.Response, next: express.NextFunction): void {
-	if (!req.user || !req.user.roles.podcast) {
-		ApiResponder.error(req, res, {fail: FORMAT.FAIL.UNAUTH});
+	if (roles && roles.length > 0) {
+		for (const role of roles) {
+			if (role === 'admin' && !user.roles.admin) {
+				return Promise.reject(UnauthError());
+			}
+			if (role === 'podcast' && !user.roles.podcast) {
+				return Promise.reject(UnauthError());
+			}
+			if (role === 'share' && !user.roles.admin) {
+				return Promise.reject(UnauthError());
+			}
+			if (role === 'jukebox' && !user.roles.admin) {
+				return Promise.reject(UnauthError());
+			}
+		}
 	}
-	next();
-}
-
-export function ShareMiddleWare(req: SubsonicParameterRequest, res: express.Response, next: express.NextFunction): void {
-	if (!req.user || !req.user.roles.shareRole) {
-		ApiResponder.error(req, res, {fail: FORMAT.FAIL.UNAUTH});
-	}
-	next();
-}
-
-export function JukeboxMiddleWare(req: SubsonicParameterRequest, res: express.Response, next: express.NextFunction): void {
-	if (!req.user || !req.user.roles.jukeboxRole) {
-		ApiResponder.error(req, res, {fail: FORMAT.FAIL.UNAUTH});
-	}
-	next();
 }
 
 export function initSubsonicRouter(engine: Engine): express.Router {
 	const api = new SubsonicApi(engine);
-	const roles: SubsonicRolesHandler = {
-		admin: AdminMiddleWare as express.RequestHandler,
-		podcast: PodcastAdminMiddleWare as express.RequestHandler,
-		share: ShareMiddleWare as express.RequestHandler,
-		jukebox: JukeboxMiddleWare as express.RequestHandler
+	const register: Register = {
+		all: (name: string, roles: Array<SubSonicRole>, execute: RegisterCallback) => {
+			router.all(name, apiCheck(name), async (req, res) => {
+				try {
+					await checkRoles((req as UserRequest).user, roles);
+					await execute(req as UserRequest, res);
+				} catch (e) {
+					log.error(e);
+					await ApiResponder.error(req, res, e);
+				}
+			});
+		}
 	};
+
 
 	const router = express.Router();
 	// router.options('*', cors());
@@ -57,7 +61,7 @@ export function initSubsonicRouter(engine: Engine): express.Router {
 	router.use(SubsonicParameterMiddleWare);
 	router.use(SubsonicLoginMiddleWare as express.RequestHandler);
 	router.use(CheckAuthMiddleWare as express.RequestHandler);
-	registerApi(router, api, roles);
+	registerApi(register, api);
 
 	router.use((req, res, next) => {
 		res.status(404).send('subsonic api cmd not found');

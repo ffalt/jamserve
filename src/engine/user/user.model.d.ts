@@ -16,7 +16,6 @@ export interface User extends DBObject {
 }
 
 export interface UserRoles {
-	[name: string]: boolean;
 	stream: boolean;
 	upload: boolean;
 	admin: boolean;

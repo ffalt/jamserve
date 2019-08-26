@@ -1,4 +1,4 @@
-import {ID3v1_GENRES, IID3V1, IID3V2, IMP3, simplifyTag} from 'jamp3';
+import {ID3v1_GENRES, ID3v2, IID3V1, IID3V2, IMP3} from '../../../../jamp3/src'; // 'jamp3';
 import {TrackMedia, TrackTag} from '../../engine/track/track.model';
 import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
 import {cleanGenre} from '../../utils/genres';
@@ -146,7 +146,7 @@ export class FORMAT {
 		// 		title: chapterTag.TITLE
 		// 	};
 		// });
-		const simple = simplifyTag(data, ['CHAP']);
+		const simple = ID3v2.simplify(data, ['CHAP']);
 		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
 		return {
 			format,

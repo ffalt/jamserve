@@ -21,7 +21,7 @@ import {apiCheck} from './check';
 import {NotFoundError, UnauthError} from './error';
 import {CheckAuthMiddleWare, UserRequest} from './login';
 import {ApiResponder} from './response';
-import {Register, registerAccessControlApi, RegisterCallback, registerPublicApi} from './routes';
+import {JamApiRole, Register, registerAccessControlApi, RegisterCallback, registerPublicApi} from './routes';
 import {JAMAPI_VERSION} from './version';
 
 const LoginLimiter = rateLimit({
@@ -68,7 +68,10 @@ function CallSessionLogoutHandler(req: UserRequest, res: express.Response, next:
 	ApiResponder.ok(res);
 }
 
-async function checkRoles(user: User, roles?: Array<string>): Promise<void> {
+async function checkRoles(user?: User, roles?: Array<JamApiRole>): Promise<void> {
+	if (!user) {
+		return Promise.reject(UnauthError());
+	}
 	if (roles && roles.length > 0) {
 		for (const role of roles) {
 			if (!user.roles[role]) {
@@ -181,43 +184,23 @@ export function initJamRouter(engine: Engine): express.Router {
 		methods: ['GET', 'POST']
 	}));
 
-	const register: Register = {
-		get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => {
-			router.get(name, apiCheck(apiCheckName || name), async (req, res) => {
+	const register_public: Register = {
+		get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+			router.get<any>(name, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
-					await checkRoles(req.user, roles);
-					await execute(req, res);
+					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.error(e);
 					await ApiResponder.error(res, e);
 				}
 			});
 		},
-		post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => {
-			router.post(name, apiCheck(apiCheckName || name), async (req, res) => {
-				try {
-					await checkRoles(req.user, roles);
-					await execute(req, res);
-				} catch (e) {
-					log.error(e);
-					await ApiResponder.error(res, e);
-				}
-			});
-		},
-		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<string>) => {
-			router.post(name, upload.single(field), apiCheck(apiCheckName || name), autoUploadTempReap, async (req, res) => {
-				try {
-					await checkRoles(req.user, roles);
-					await execute(req, res);
-				} catch (e) {
-					log.error(e);
-					await ApiResponder.error(res, e);
-				}
-			});
-		}
+		post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {},
+		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {}
 	};
 
-	registerPublicApi(register, api);
+	registerPublicApi(register_public, api);
+
 	router.post('/login', LoginLimiter, apiCheck('/login'), CallSessionLoginHandler as express.RequestHandler);
 
 	const corsOptionsDelegate = (req: express.Request, callback: (err: Error | null, options: CorsOptions) => void) => {
@@ -247,6 +230,42 @@ export function initJamRouter(engine: Engine): express.Router {
 	router.use('/docs', express.static(path.resolve('./dist/docs/api/')));
 
 	router.use(CheckAuthMiddleWare as express.RequestHandler); // ensure req.user exists for all requests after this
+
+	const register: Register = {
+		get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+			router.get<any>(name, apiCheck(apiCheckName || name), async (req, res) => {
+				try {
+					await checkRoles((req as UserRequest).user, roles);
+					await execute(req as UserRequest, res);
+				} catch (e) {
+					log.error(e);
+					await ApiResponder.error(res, e);
+				}
+			});
+		},
+		post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+			router.post(name, apiCheck(apiCheckName || name), async (req, res) => {
+				try {
+					await checkRoles((req as UserRequest).user, roles);
+					await execute(req as UserRequest, res);
+				} catch (e) {
+					log.error(e);
+					await ApiResponder.error(res, e);
+				}
+			});
+		},
+		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+			router.post(name, upload.single(field), apiCheck(apiCheckName || name), autoUploadTempReap, async (req, res) => {
+				try {
+					await checkRoles((req as UserRequest).user, roles);
+					await execute(req as UserRequest, res);
+				} catch (e) {
+					log.error(e);
+					await ApiResponder.error(res, e);
+				}
+			});
+		}
+	};
 
 	registerAccessControlApi(register, api);
 

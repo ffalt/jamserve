@@ -198,7 +198,7 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 	let albumType = AlbumType.unknown;
 	if (mbAlbumType) {
 		const t = mbAlbumType.toLowerCase();
-		if (t.includes('audiobook')) {
+		if (t.includes('audiobook') || t.includes('spokenword')) {
 			albumType = AlbumType.audiobook;
 		} else if (t.includes('bootleg')) {
 			albumType = AlbumType.bootleg;

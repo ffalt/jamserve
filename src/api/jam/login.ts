@@ -9,6 +9,7 @@ export interface UserRequest extends EngineRequest {
 	user: User;
 	client: string;
 	jwt: boolean;
+	params: any;
 }
 
 export function CheckAuthMiddleWare(req: UserRequest, res: express.Response, next: express.NextFunction): void {

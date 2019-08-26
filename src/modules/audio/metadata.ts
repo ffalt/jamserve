@@ -1,5 +1,5 @@
-import {ID3V24TagBuilder, IID3V2, ITagID, simplifyTag} from 'jamp3';
 import moment from 'moment';
+import {ID3v2, ID3V24TagBuilder, IID3V2, ITagID} from '../../../../jamp3/src'; // 'jamp3';
 import {TrackTag} from '../../engine/track/track.model';
 import {ID3v2Frames} from '../../model/id3v2-frames';
 import {Jam} from '../../model/jam-rest-data';
@@ -14,14 +14,13 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | und
 		return;
 	}
 	const simple = flacInfo.comment.tag;
-	const builder = new ID3V24TagBuilder();
+	const builder = new ID3V24TagBuilder('utf8');
 	builder
 		.album(simple.ALBUM)
 		.albumSort(simple.ALBUMSORT)
 		.originalAlbum(simple.ORIGINALALBUM)
 		.originalArtist(simple.ORIGINALARTIST)
 		.originalDate(simple.ORIGINALDATE)
-		.originalYear(simple.ORIGINALYEAR)
 		.title(simple.TITLE)
 		.titleSort(simple.TITLESORT)
 		.work(simple.WORK)
@@ -41,14 +40,14 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | und
 		.discSubtitle(simple.DISCSUBTITLE)
 		.lyricist(simple.LYRICIST)
 		.genre(simple.GENRE)
-		.bmp(simple.BPM)
+		.bpm(simple.BPM)
 		.mood(simple.MOOD)
 		.lyrics(simple.LYRICS)
-		.media(simple.MEDIA)
+		.mediaType(simple.MEDIA)
 		.language(simple.LANGUAGE)
 		.encoder(simple.ENCODEDBY || simple['ENCODED-BY'])
 		.encoderSettings(simple.ENCODERSETTINGS)
-		.key(simple.KEY)
+		.initialKey(simple.KEY)
 		.copyright(simple.COPYRIGHT)
 		.isrc(simple.ISRC)
 		.barcode(simple.BARCODE)
@@ -102,6 +101,7 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | und
 		.custom('SOURCE', simple.SOURCE)
 		.custom('SOURCEMEDIA', simple.SOURCEMEDIA)
 		.custom('SHOWMOVEMENT', simple.SHOWMOVEMENT)
+		.custom('ORIGINALYEAR', simple.ORIGINALYEAR)
 		.custom('REPLAYGAIN_ALBUM_GAIN', simple.REPLAYGAIN_ALBUM_GAIN)
 		.custom('REPLAYGAIN_ALBUM_PEAK', simple.REPLAYGAIN_ALBUM_PEAK)
 		.custom('REPLAYGAIN_TRACK_GAIN', simple.REPLAYGAIN_TRACK_GAIN)
@@ -109,7 +109,6 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | und
 		.comment('comment', simple.COMMENT)
 		.comment('description', simple.DESCRIPTION)
 	;
-
 	// builder.popm('POPM', simple['RATING:user@email']);
 	// builder.idtext('TXXX', 'MusicMagic Fingerprint', simple.FINGERPRINT=MusicMagic Fingerprint);
 
@@ -121,7 +120,7 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | und
 		const chapterID = simple[id + 'ID'] || id;
 		const chapterName = simple[id + 'NAME'];
 		const chapterURL = simple[id + 'URL'];
-		const subframeBuilder = new ID3V24TagBuilder();
+		const subframeBuilder = new ID3V24TagBuilder('utf8');
 		subframeBuilder.title(chapterName).website(chapterURL);
 		builder.chapter(chapterID, chapterTime, chapterTime, 0, 0, subframeBuilder.buildFrames());
 		nr++;
@@ -157,7 +156,7 @@ export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageMod
 		'TSIZ',
 		'APIC'
 	];
-	const simple = simplifyTag(tag, DropFramesList) as any;
+	const simple = ID3v2.simplify(tag, DropFramesList) as any;
 	const comments: Array<string> = [];
 	Object.keys(simple).forEach(key => {
 		comments.push(key + '=' + simple[key].toString());
@@ -176,14 +175,14 @@ export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageMod
 }
 
 export function trackTagToRawTag(tag: TrackTag): Jam.RawTag {
-	const builder = new ID3V24TagBuilder();
+	const builder = new ID3V24TagBuilder('utf8');
 	builder.artist(tag.artist)
 		.album(tag.album)
 		.title(tag.title)
 		.genre(tag.genre)
 		.track(tag.track, tag.trackTotal)
 		.disc(tag.disc, tag.discTotal)
-		.year(tag.year);
+		.date(tag.year ? tag.year.toString() : undefined);
 	return {version: 4, frames: builder.rawBuilder.build()};
 }
 

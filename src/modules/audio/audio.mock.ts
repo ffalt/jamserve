@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import {ID3v2, IID3V2} from 'jamp3';
+import {ID3v2, IID3V2} from '../../../../jamp3/src';//'jamp3';
 
 export async function writeMP3Track(filename: string, album: string, artist: string, trackNr: number, genre: string, albumArtist?: string): Promise<void> {
 	const mp3stub = Buffer.from(

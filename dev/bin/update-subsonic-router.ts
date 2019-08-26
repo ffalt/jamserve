@@ -51,14 +51,10 @@ function generateCode(calls: Array<ApiCall>): string {
 		code = code.replace(/\n/g, '\n\t\t');
 		let roles = '';
 		if (call.roles && call.roles.length > 0) {
-			roles = call.roles.map(r => `roles.${r}`).join(', ') + ', ';
+			roles = call.roles.map(r => `'${r}'`).join(', ');
 		}
-		const s = `	router.all('/${name}', ${roles}apiCheck('/${call.name}'), async (req, res) => {
-		try {
+		const s = `	register.all('/${name}', [${roles}], async (req, res) => {
 			${code}
-		} catch (e) {
-			await ApiResponder.error(req, res, e);
-		}
 	});`;
 
 		result.push(s);
@@ -69,17 +65,16 @@ function generateCode(calls: Array<ApiCall>): string {
 
 async function run(): Promise<void> {
 	const apicalls: Array<ApiCall> = await getSubsonicApiCalls(basePath);
-	const roles: Array<string> = [];
+	const collectRoles: Array<string> = [];
 	apicalls.forEach(call => {
 		(call.roles || []).forEach(role => {
-			if (!roles.includes(role)) {
-				roles.push(role);
+			if (!collectRoles.includes(role)) {
+				collectRoles.push(role);
 			}
 		});
 	});
+	const roles = collectRoles.map(r => `'${r}'`).join(' | ');
 	const userApi = generateCode(apicalls);
-
-	const rolesType = 'export interface SubsonicRolesHandler {\n' + roles.map(role => '\t' + role + ': express.RequestHandler;').join('\n') + '\n}';
 
 	const ts = `// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
@@ -88,12 +83,16 @@ import {Subsonic} from '../../model/subsonic-rest-data';
 import {SubsonicParameters} from '../../model/subsonic-rest-params';
 import {ApiBinaryResult} from '../../typings';
 import {ApiOptions, SubsonicApi} from './api';
-import {apiCheck} from './check';
+import {UserRequest} from './login';
 import {ApiResponder} from './response';
 
-${rolesType}
+export type SubSonicRole = ${roles};
+export type RegisterCallback = (req: UserRequest, res: express.Response) => Promise<void>;
+export interface Register {
+	all: (name: string, roles: Array<SubSonicRole>, execute: RegisterCallback) => void;
+}
 
-export function registerApi(router: express.Router, api: SubsonicApi, roles: SubsonicRolesHandler): void {
+export function registerApi(register: Register, api: SubsonicApi): void {
 ${userApi}
 }
 `;
