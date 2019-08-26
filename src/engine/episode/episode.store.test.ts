@@ -1,8 +1,9 @@
 import {describe} from 'mocha';
-import {EpisodeStore, SearchQueryEpisode} from './episode.store';
-import {Episode} from './episode.model';
+
 import {testStore} from '../base/base.store.spec';
 import {mockEpisode, mockEpisode2} from './episode.mock';
+import {Episode} from './episode.model';
+import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 
 describe('EpisodeStore', () => {
 	let episodeStore: EpisodeStore;

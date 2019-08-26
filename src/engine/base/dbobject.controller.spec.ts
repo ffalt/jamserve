@@ -1,12 +1,13 @@
 import {expect, should} from 'chai';
 import {it} from 'mocha';
+
 import {JamApi, JamRequest} from '../../api/jam/api';
 import {JamParameters} from '../../model/jam-rest-params';
-import {testController, validateJamResponse} from './controller.spec';
 import {mockUserName} from '../user/user.mock';
 import {User} from '../user/user.model';
 import {DBObject} from './base.model';
 import {SearchQuery} from './base.store';
+import {testController, validateJamResponse} from './controller.spec';
 import {BaseController} from './dbobject.controller';
 
 export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE,
@@ -123,8 +124,9 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 					const req = {query: {id: obj.id}, user};
 					const result = await controller.search(req as JamRequest<SEARCHQUERY>);
 					should().exist(result);
-					expect(result.length).to.equal(1, 'Must find one object');
-					await validateJamResponse(opts.typeName, result, true);
+					should().exist(result.items);
+					expect(result.items.length).to.equal(1, 'Must find one object');
+					await validateJamResponse(opts.typeName, result.items, true);
 				}
 			});
 			it('should get an image for an object', async () => {

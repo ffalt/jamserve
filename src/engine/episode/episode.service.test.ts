@@ -1,13 +1,14 @@
 import {expect, should} from 'chai';
 import {describe, it} from 'mocha';
-import {testService} from '../base/base.service.spec';
-import {EpisodeService} from './episode.service';
-import tmp from 'tmp';
-import {mockEpisode, mockEpisode2} from './episode.mock';
-import {PodcastStatus} from '../../model/jam-types';
 import nock from 'nock';
+import tmp from 'tmp';
+
+import {PodcastStatus} from '../../model/jam-types';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
+import {testService} from '../base/base.service.spec';
 import {StateService} from '../state/state.service';
+import {mockEpisode, mockEpisode2} from './episode.mock';
+import {EpisodeService} from './episode.service';
 
 describe('EpisodeService', () => {
 	let episodeService: EpisodeService;
@@ -20,21 +21,21 @@ describe('EpisodeService', () => {
 		},
 		() => {
 			it('should merge podcast episodes', async () => {
-				await episodeService.mergeEpisodes('dummy', []); // do nothing
+				await episodeService.mergeEpisodes('dummy', 'podcast name', []); // do nothing
 				const podcastID = 'podcastID1';
 				const mock = mockEpisode();
 				mock.podcastID = podcastID;
-				await episodeService.mergeEpisodes(mock.podcastID, [mock]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				let count = await episodeService.episodeStore.searchCount({podcastID});
 				expect(count).to.equal(1);
 				const mock_same = mockEpisode();
 				mock_same.podcastID = podcastID;
-				await episodeService.mergeEpisodes(mock.podcastID, [mock_same]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock_same]);
 				count = await episodeService.episodeStore.searchCount({podcastID});
 				expect(count).to.equal(1);
 				const mock2 = mockEpisode2();
 				mock2.podcastID = podcastID;
-				await episodeService.mergeEpisodes(mock.podcastID, [mock_same, mock2]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock_same, mock2]);
 				count = await episodeService.episodeStore.searchCount({podcastID});
 				expect(count).to.equal(2);
 				await episodeService.removeEpisodes(podcastID);
@@ -47,7 +48,7 @@ describe('EpisodeService', () => {
 				mock.path = undefined;
 				mock.podcastID = podcastID;
 				mock.enclosures = [];
-				await episodeService.mergeEpisodes(mock.podcastID, [mock]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				await episodeService.downloadEpisode(mock);
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
 				should().exist(episode);
@@ -62,7 +63,7 @@ describe('EpisodeService', () => {
 				mock.path = undefined;
 				mock.podcastID = podcastID;
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.unknownformat', type: 'dummy', length: 0}];
-				await episodeService.mergeEpisodes(mock.podcastID, [mock]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				await episodeService.downloadEpisode(mock);
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
 				should().exist(episode);
@@ -78,7 +79,7 @@ describe('EpisodeService', () => {
 				mock.path = undefined;
 				mock.podcastID = podcastID;
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
-				await episodeService.mergeEpisodes(mock.podcastID, [mock]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/episode1.mp3').reply(404);
 				await episodeService.downloadEpisode(mock);
@@ -102,7 +103,7 @@ describe('EpisodeService', () => {
 				mock.path = undefined;
 				mock.podcastID = podcastID;
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
-				await episodeService.mergeEpisodes(mock.podcastID, [mock]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				await episodeService.downloadEpisode(mock);
 				expect(scope.isDone()).to.equal(true, 'no request has been made');
 				file.removeCallback();
@@ -126,7 +127,7 @@ describe('EpisodeService', () => {
 				mock.path = undefined;
 				mock.podcastID = podcastID;
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
-				await episodeService.mergeEpisodes(mock.podcastID, [mock]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
 				should().exist(episode);
 				if (!episode) {
@@ -136,7 +137,7 @@ describe('EpisodeService', () => {
 				expect(episodeService.isDownloading(episode.id)).to.equal(true);
 				const id = episode.id;
 
-				function wait(cb: () => void) {
+				function wait(cb: () => void): void {
 					if (episodeService.isDownloading(id)) {
 						setTimeout(() => {
 							wait(cb);
@@ -164,7 +165,7 @@ describe('EpisodeService', () => {
 				mock.path = undefined;
 				mock.podcastID = podcastID;
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
-				await episodeService.mergeEpisodes(mock.podcastID, [mock]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				episodeService.downloadEpisode(mock);
 				expect(episodeService.isDownloading(mock.id)).to.equal(true);
 				await episodeService.downloadEpisode(mock);
@@ -184,7 +185,7 @@ describe('EpisodeService', () => {
 				mock.path = undefined;
 				mock.podcastID = podcastID;
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
-				await episodeService.mergeEpisodes(mock.podcastID, [mock]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				const org = episodeService.episodeStore.replace;
 				episodeService.episodeStore.replace = async (p) => {
 					return Promise.reject(Error('test error'));

@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import {ID3v2, IID3V2} from '../../../../jamp3/src';//'jamp3';
+import {ID3v2, IID3V2, ITagID} from '../../../../jamp3/src'; // 'jamp3';
 
 export async function writeMP3Track(filename: string, album: string, artist: string, trackNr: number, genre: string, albumArtist?: string): Promise<void> {
 	const mp3stub = Buffer.from(
@@ -15,44 +15,44 @@ export async function writeMP3Track(filename: string, album: string, artist: str
 	);
 	await fse.writeFile(filename, mp3stub);
 	const t: IID3V2.Tag = {
-		id: 'ID3v2',
+		id: ITagID.ID3v2,
 		start: 0,
 		end: 0,
 		frames: [
 			{
-				'id': 'TALB',
-				'value': {
-					'text': album
+				id: 'TALB',
+				value: {
+					text: album
 				}
 			},
 			{
-				'id': 'TPE1',
-				'value': {
-					'text': artist
+				id: 'TPE1',
+				value: {
+					text: artist
 				}
 			},
 			{
-				'id': 'TCON',
-				'value': {
-					'text': genre
+				id: 'TCON',
+				value: {
+					text: genre
 				}
 			},
 			{
-				'id': 'TRCK',
-				'value': {
-					'text': trackNr.toString()
+				id: 'TRCK',
+				value: {
+					text: trackNr.toString()
 				}
 			}
 		]
 	};
 	if (albumArtist) {
 		t.frames.push({
-			'id': 'TPE2',
-			'value': {
-				'text': albumArtist
+			id: 'TPE2',
+			value: {
+				text: albumArtist
 			}
 		});
 	}
 	const id3v2 = new ID3v2();
-	await id3v2.write(filename, t, 4, 0);
+	await id3v2.write(filename, t, 4, 0, {keepBackup: false});
 }

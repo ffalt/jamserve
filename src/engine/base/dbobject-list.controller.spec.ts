@@ -1,5 +1,6 @@
 import {should} from 'chai';
 import {it} from 'mocha';
+
 import {JamApi, JamRequest} from '../../api/jam/api';
 import {JamParameters} from '../../model/jam-rest-params';
 import {User} from '../user/user.model';
@@ -47,7 +48,7 @@ export function testBaseListController<OBJREQUEST extends JamParameters.ID | INC
 					const req = {query: {list: listId}, user};
 					const result = await controller.list(req as JamRequest<LISTQUERY>);
 					should().exist(result);
-					await validateJamResponse(opts.typeName, result, true);
+					await validateJamResponse(opts.typeName, result.items, true);
 				}
 			});
 			it('should not (prepare) download an object with unsupported format', async () => {

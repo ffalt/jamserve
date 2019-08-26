@@ -50,9 +50,9 @@ describe('FolderStore', () => {
 				folder2.path = mockPath('folder 1');
 				folder2.id = await folderStore.add(folder2);
 				let list = await folderStore.search({inPath: removeTrailingPathSeparator(folder2.path)});
-				expect(list.length).to.equal(1);
+				expect(list.items.length).to.equal(1);
 				list = await folderStore.search({inPath: removeTrailingPathSeparator(folder1.path)});
-				expect(list.length).to.equal(1);
+				expect(list.items.length).to.equal(1);
 			});
 		});
 });

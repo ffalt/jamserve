@@ -6,6 +6,7 @@ export function mockEpisode(): Episode {
 	return {
 		id: '',
 		type: DBObjectType.episode,
+		podcast: 'Podcast 1',
 		podcastID: 'podcastID1',
 		status: PodcastStatus.new,
 		error: 'an error',
@@ -71,6 +72,7 @@ export function mockEpisode2(): Episode {
 	return {
 		id: '',
 		type: DBObjectType.episode,
+		podcast: 'Podcast 2',
 		podcastID: 'podcastID2',
 		status: PodcastStatus.completed,
 		error: 'second error',

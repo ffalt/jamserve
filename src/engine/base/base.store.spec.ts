@@ -1,10 +1,11 @@
+import {expect, should} from 'chai';
+import {it} from 'mocha';
+
+import {testDatabases, TestDB} from '../../db/db.mock';
 import {DBObject} from './base.model';
 import {BaseStore, SearchQuery} from './base.store';
-import {it} from 'mocha';
-import {expect, should} from 'chai';
-import {testDatabases, TestDB} from '../../db/db.mock';
 
-export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery>, generateMockObjects: () => Array<DBObject>, generateMatchingQueries: (obj: any) => Array<SearchQuery>, tests: () => void) {
+export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery>, generateMockObjects: () => Array<DBObject>, generateMatchingQueries: (obj: any) => Array<SearchQuery>, tests: () => void): void {
 
 	let store: BaseStore<DBObject, SearchQuery>;
 
@@ -16,7 +17,7 @@ export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery
 
 		const ids: Array<string> = [];
 
-		it('should add the obj', async function() {
+		it('should add the obj', async () => {
 			const objs = generateMockObjects();
 			await store.upsert([objs[0]]);
 			const r = await store.count();
@@ -34,7 +35,7 @@ export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery
 			expect(r3).to.equal(objs.length);
 		});
 
-		it('should find & compare the obj', async function() {
+		it('should find & compare the obj', async () => {
 			const objs = generateMockObjects();
 			let index = 0;
 			for (const id of ids) {
@@ -48,7 +49,7 @@ export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery
 			}
 		});
 
-		it('should query & find the obj', async function() {
+		it('should query & find the obj', async () => {
 			const objs = generateMockObjects();
 			let index = 0;
 			for (const obj of objs) {
@@ -59,8 +60,8 @@ export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery
 					let o = await store.searchOne(match);
 					should().exist(o, 'Match did not match anything ' + JSON.stringify(match));
 					const list = await store.search(match);
-					expect(list.length > 0).to.equal(true, 'Match did not match anything ' + JSON.stringify(match));
-					o = list.find(ob => ob.id === id);
+					expect(list.items.length > 0).to.equal(true, 'Match did not match anything ' + JSON.stringify(match));
+					o = list.items.find(ob => ob.id === id);
 					should().exist(o, 'Match did not match the right item ' + JSON.stringify(match));
 					const tid = await store.searchIDs(match);
 					expect(tid.length > 0).to.equal(true);
@@ -72,7 +73,7 @@ export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery
 			}
 		});
 
-		it('should remove the obj', async function() {
+		it('should remove the obj', async () => {
 			const r = await store.removeByQuery({id: ids[0]});
 			expect(r).to.deep.equal(1, 'Removed more or none items by query');
 			const rest = ids.slice(1);
@@ -87,5 +88,3 @@ export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery
 	});
 
 }
-
-

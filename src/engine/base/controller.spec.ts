@@ -29,7 +29,7 @@ export async function validateJamResponse(name: string, data: any, isArray?: boo
 	const validator = jsonValidator(def);
 	const result = await validateJSON(testData, validator);
 	if (result.errors.length > 0) {
-		return Promise.reject(Error(JSON.stringify(result.errors)));
+		return Promise.reject(Error(JSON.stringify({name, errors: result.errors})));
 	}
 }
 

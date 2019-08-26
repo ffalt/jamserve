@@ -4,6 +4,7 @@ import {describe, it} from 'mocha';
 import moment from 'moment';
 import path from 'path';
 import tmp from 'tmp';
+
 import {DBObjectType} from '../../db/db.types';
 import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
 import {testService} from '../base/base.service.spec';
@@ -432,26 +433,26 @@ describe('ScanService', () => {
 			});
 			it('should remove tracks', async () => {
 				const tracks = await store.trackStore.search({rootID: mockRoot.id});
-				for (const track of tracks) {
+				for (const track of tracks.items) {
 					const changes = await scanService.deleteTracks(mockRoot.id, [track.id]);
 					expect(changes.removedTracks.length).to.equal(1, 'Removed Tracks count doesnt match');
 				}
 				const album = await store.albumStore.search({rootID: mockRoot.id});
-				expect(album.length).to.equal(0, 'All albums should have been removed');
+				expect(album.items.length).to.equal(0, 'All albums should have been removed');
 				const artists = await store.artistStore.search({rootID: mockRoot.id});
-				expect(artists.length).to.equal(0, 'All artists should have been removed');
+				expect(artists.items.length).to.equal(0, 'All artists should have been removed');
 				await writeMockRoot(mockRoot);
 				const restorechanges = await scanService.scanRoot(mockRoot.id, false);
-				expect(restorechanges.newTracks.length).to.equal(tracks.length, 'Restored Tracks count doesnt match');
+				expect(restorechanges.newTracks.length).to.equal(tracks.items.length, 'Restored Tracks count doesnt match');
 			});
 			it('should remove folders', async () => {
 				const folders = await store.folderStore.search({rootID: mockRoot.id});
-				let folder = folders.find(f => f.tag.level === 0);
+				let folder = folders.items.find(f => f.tag.level === 0);
 				if (!folder) {
 					throw Error('Invalid Test Setup');
 				}
 				await scanService.deleteFolders(mockRoot.id, [folder.id]).should.eventually.be.rejectedWith(Error);
-				folder = folders.find(f => f.tag.type === FolderType.artist && f.tag.artist === 'artist 1');
+				folder = folders.items.find(f => f.tag.type === FolderType.artist && f.tag.artist === 'artist 1');
 				if (!folder) {
 					throw Error('Invalid Test Setup');
 				}
@@ -613,11 +614,11 @@ describe('ScanService', () => {
 						const name = path.basename(folder.path);
 						let changes = await scanService.renameFolder(folder.rootID, folder.id, name + '_renamed');
 						const all = await store.folderStore.search({inPath: folder.path});
-						for (const f of all) {
+						for (const f of all.items) {
 							expect(await fse.pathExists(f.path)).to.equal(true, 'path does not exist ' + f.path);
 						}
 						const tracks = await store.trackStore.search({inPath: folder.path});
-						for (const t of tracks) {
+						for (const t of tracks.items) {
 							expect(await fse.pathExists(t.path + t.name)).to.equal(true, 'file does not exist ' + t.path + t.name);
 						}
 						changes = await scanService.renameFolder(folder.rootID, folder.id, name);
