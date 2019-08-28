@@ -14300,9 +14300,16 @@
 														"type": "string",
 														"format": "binary"
 													}
-												}
+												},
+												"required": [
+													"type",
+													"file"
+												]
 											}
-										}
+										},
+										"required": [
+											"image"
+										]
 									}
 								]
 							}
@@ -14363,9 +14370,16 @@
 														"type": "string",
 														"format": "binary"
 													}
-												}
+												},
+												"required": [
+													"type",
+													"file"
+												]
 											}
-										}
+										},
+										"required": [
+											"image"
+										]
 									}
 								]
 							}
@@ -15544,9 +15558,16 @@
 														"type": "string",
 														"format": "binary"
 													}
-												}
+												},
+												"required": [
+													"type",
+													"file"
+												]
 											}
-										}
+										},
+										"required": [
+											"image"
+										]
 									}
 								]
 							}

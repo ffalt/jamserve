@@ -189,9 +189,11 @@ async function run(): Promise<void> {
 														type: 'string',
 														format: 'binary'
 													}
-												}
+												},
+												required: ['type', 'file']
 											}
-										}
+										},
+										required: ['image']
 									}
 								]
 							}
