@@ -626,6 +626,124 @@ describe('ScanService', () => {
 				});
 
 			});
+
+			/*
+		describe('setFolderImage', () => {
+			it('should do handle invalid parameters', async () => {
+				const folder = await folderService.folderStore.random();
+				should().exist(folder, 'Wrong Test Setup');
+				if (!folder) {
+					return;
+				}
+				await folderService.setFolderImage(folder, 'invalid-not-existent').should.eventually.be.rejectedWith(Error);
+				await folderService.setFolderImage(folder, '').should.eventually.be.rejectedWith(Error);
+			});
+			it('should set an image', async () => {
+				const folder = await folderService.folderStore.random();
+				should().exist(folder, 'Wrong Test Setup');
+				if (!folder) {
+					return;
+				}
+				folder.tag.image = undefined;
+				const file = tmp.fileSync();
+				await folderService.setFolderImage(folder, file.name);
+				should().exist(folder.tag.image);
+				const image = path.resolve(folder.path, folder.tag.image || 'invalid-not-existent');
+				expect(await fse.pathExists(image)).to.equal(true, 'folder image file does not exist ' + image);
+				file.removeCallback();
+				await fse.unlink(image);
+				const updatedFolder = await folderService.folderStore.byId(folder.id);
+				should().exist(updatedFolder);
+				if (!updatedFolder) {
+					return;
+				}
+				expect(updatedFolder.tag.image).to.equal(folder.tag.image);
+				folder.tag.image = undefined;
+				await folderService.folderStore.upsert([folder]);
+			});
+		});
+
+		describe('downloadFolderImage', () => {
+			it('should do handle invalid parameters', async () => {
+				const folder = await folderService.folderStore.random();
+				should().exist(folder, 'Wrong Test Setup');
+				if (!folder) {
+					return;
+				}
+				// await folderService.downloadFolderArtwork(folder, 'invalid', [ArtworkImageType.front]).should.eventually.be.rejectedWith(Error);
+				// await folderService.downloadFolderArtwork(folder, 'http://invaliddomain.invaliddomain.invaliddomain/invalid', [ArtworkImageType.front]).should.eventually.be.rejectedWith(Error);
+				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
+					.get('/invalid.png').reply(404);
+				await folderService.downloadFolderArtwork(folder, 'http://invaliddomain.invaliddomain.invaliddomain/invalid.png', [ArtworkImageType.front]).should.eventually.be.rejectedWith(Error);
+				expect(scope.isDone()).to.equal(true, 'no request has been made');
+			});
+			it('should download an image', async () => {
+				const folder = await folderService.folderStore.random();
+				should().exist(folder, 'Wrong Test Setup');
+				if (!folder) {
+					return;
+				}
+				const image = await mockImage('png');
+				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
+					.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
+				const artwork = await folderService.downloadFolderArtwork(folder, 'http://invaliddomain.invaliddomain.invaliddomain/image.png', [ArtworkImageType.front]);
+				expect(scope.isDone()).to.equal(true, 'no request has been made');
+				const filename = path.resolve(folder.path, folder.tag.image || 'invalid-not-existent');
+				expect(await fse.pathExists(filename)).to.equal(true, 'folder image file does not exist ' + filename);
+				await fse.unlink(filename);
+				const updatedFolder = await folderService.folderStore.byId(folder.id);
+				should().exist(updatedFolder);
+				if (!updatedFolder) {
+					return;
+				}
+				expect(updatedFolder.tag.image).to.equal(folder.tag.image);
+			});
+		});
+*/
+			/*
+				it('should deliver local images', async () => {
+					const folder = await folderService.folderStore.random();
+					should().exist(folder, 'Wrong Test Setup');
+					if (!folder) {
+						return;
+					}
+					const image = await mockImage('png');
+					const filename = path.resolve(folder.path, 'dummy.png');
+					await fse.writeFile(filename, image.buffer);
+					await folderService.createArtworkImageFile(folder, [ArtworkImageType.front], filename, 'image/png');
+					let res = await folderService.getFolderImage(folder);
+					should().exist(res);
+					if (res) {
+						should().exist(res.file);
+						if (res.file) {
+							expect(res.file.filename).to.equal(filename);
+						}
+					}
+					res = await folderService.getFolderImage(folder, 100);
+					should().exist(res);
+					if (res) {
+						should().exist(res.buffer);
+					}
+					for (const format of SupportedWriteImageFormat) {
+						res = await folderService.getFolderImage(folder, 100, format);
+						should().exist(res, 'image format ' + format + ' did not work');
+						if (res) {
+							expect(!!res.buffer || !!res.file).to.equal(true);
+							if (res.buffer) {
+								const mime = mimeTypes.lookup(format);
+								expect(res.buffer.contentType).to.equal(mime);
+							}
+							if (res.file) {
+								expect(path.extname(res.file.filename)).to.equal('.' + format);
+								expect(path.extname(res.file.name)).to.equal('.' + format);
+							}
+						}
+					}
+					await fse.unlink(filename);
+					await imageModuleTest.imageModule.clearImageCacheByID(folder.id);
+				});
+*/
+
 		},
 		async () => {
 			await removeMockRoot(mockRoot);

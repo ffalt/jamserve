@@ -17,7 +17,7 @@ export declare namespace WikiData {
 				id: string;
 				'entity-type': string;
 				'numeric-id': number;
-			}
+			} | string;
 		};
 	}
 

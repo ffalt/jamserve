@@ -47,7 +47,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		await this.update(user);
 	}
 
-	async setUserImage(user: User, filename: string): Promise<void> {
+	async setUserImage(user: User, filename: string, mimetype?: string): Promise<void> {
 		const destFileName = 'avatar-' + user.id + '.png';
 		const destName = path.join(this.userAvatarPath, destFileName);
 		await fileDeleteIfExists(destName);

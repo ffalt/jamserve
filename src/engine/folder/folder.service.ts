@@ -16,6 +16,16 @@ import {FolderStore, SearchQueryFolder} from './folder.store';
 
 const log = Logger('FolderService');
 
+export async function getFolderDisplayImage(folder: Folder): Promise<Artwork | undefined> {
+	if (!folder.tag || !folder.tag.artworks) {
+		return;
+	}
+	if (folder.tag.type === FolderType.artist) {
+		return folder.tag.artworks.find(a => a.types.includes(ArtworkImageType.artist));
+	}
+	return folder.tag.artworks.find(a => a.types.includes(ArtworkImageType.front));
+}
+
 export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 
 	constructor(public folderStore: FolderStore, private trackStore: TrackStore, stateService: StateService, public imageModule: ImageModule) {
@@ -48,120 +58,6 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 
 		await collect(folderId);
 		return result;
-	}
-
-	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
-		if (!folder.tag.image) {
-			return;
-		}
-		return this.imageModule.get(folder.id, path.join(folder.path, folder.tag.image), size, format);
-	}
-
-	async setFolderImage(folder: Folder, filename: string): Promise<void> {
-		// TODO: move this ioService=>scanService
-		const destFileName = FolderTypeImageName[folder.tag.type] + path.extname(filename);
-		const destName = path.join(folder.path, destFileName);
-		await fileDeleteIfExists(destName);
-		await fse.copy(filename, destName);
-		folder.tag.image = destFileName;
-		await this.folderStore.replace(folder);
-	}
-
-	async getArtworkImage(folder: Folder, artwork: Artwork, size?: number, format?: string): Promise<ApiBinaryResult> {
-		return this.imageModule.get(artwork.id, path.join(folder.path, artwork.name), size, format);
-	}
-
-	async setCurrentArtworkImage(folder: Folder): Promise<void> {
-		if (folder.tag.image) {
-			return;
-		}
-		if (folder.tag.artworks) {
-			let artwork: Artwork | undefined;
-			if (folder.tag.type === FolderType.artist) {
-				artwork = folder.tag.artworks.find(a => a.types.includes(ArtworkImageType.artist));
-			}
-			if (!artwork) {
-				artwork = folder.tag.artworks.find(a => a.types.includes(ArtworkImageType.front));
-			}
-			if (artwork) {
-				folder.tag.image = artwork.name;
-				await this.folderStore.replace(folder);
-			}
-		}
-	}
-
-	async updateArtworkImage(folder: Folder, artwork: Artwork, name: string): Promise<Artwork> {
-		// TODO: move this ioService=>scanService
-		if (containsFolderSystemChars(name)) {
-			return Promise.reject(Error('Invalid Image File Name'));
-		}
-		name = replaceFolderSystemChars(name, '').trim();
-		if (name.length === 0) {
-			return Promise.reject(Error('Invalid Image File Name'));
-		}
-		const ext = path.extname(artwork.name).toLowerCase();
-		const newName = name + ext;
-		await fse.rename(path.join(folder.path, artwork.name), path.join(folder.path, newName));
-		await this.imageModule.clearImageCacheByIDs([artwork.id]);
-		if (folder.tag.image === artwork.name) {
-			folder.tag.image = newName;
-		}
-		const stat = await fse.stat(path.join(folder.path, newName));
-		folder.tag.artworks = (folder.tag.artworks || []).filter(a => a.id !== artwork.id);
-		folder.tag.artworks.push({
-			id: generateArtworkId(folder.id, newName),
-			name: newName,
-			types: artWorkImageNameToType(name),
-			stat: {
-				created: stat.ctime.valueOf(),
-				modified: stat.mtime.valueOf(),
-				size: stat.size
-			}
-		});
-		await this.folderStore.replace(folder);
-		await this.setCurrentArtworkImage(folder);
-		return artwork;
-	}
-
-	async removeArtworkImage(folder: Folder, artwork: Artwork): Promise<void> {
-		// TODO: move this ioService=>scanService
-		if (!folder.tag.artworks) {
-			return;
-		}
-		folder.tag.artworks = (folder.tag.artworks || []).filter(art => art.id !== artwork.id);
-		const clearID = [];
-		if (folder.tag.image === artwork.name) {
-			folder.tag.image = undefined;
-			clearID.push(folder.id);
-		}
-		clearID.push(artwork.id);
-		await this.folderStore.replace(folder);
-		const destName = path.join(folder.path, artwork.name);
-		await fileDeleteIfExists(destName);
-		await this.imageModule.clearImageCacheByIDs(clearID);
-		await this.setCurrentArtworkImage(folder);
-	}
-
-	async downloadFolderArtwork(folder: Folder, imageUrl: string, types: Array<ArtworkImageType>): Promise<Artwork> {
-		// TODO: move this ioService=>scanService
-		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
-		const filename = await this.imageModule.storeImage(folder.path, name, imageUrl);
-		const stat = await fse.stat(path.join(folder.path, filename));
-		const artwork: Artwork = {
-			id: generateArtworkId(folder.id, filename),
-			name: filename,
-			types,
-			stat: {
-				created: stat.ctime.valueOf(),
-				modified: stat.mtime.valueOf(),
-				size: stat.size
-			}
-		};
-		folder.tag.artworks = folder.tag.artworks || [];
-		folder.tag.artworks.push(artwork);
-		await this.folderStore.replace(folder);
-		await this.setCurrentArtworkImage(folder);
-		return artwork;
 	}
 
 	async newFolder(folder: Folder, name: string): Promise<Folder> {
@@ -199,4 +95,16 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		result.id = await this.store.add(result);
 		return result;
 	}
+
+	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+		const artwork = await getFolderDisplayImage(folder);
+		if (artwork) {
+			return this.getArtworkImage(folder, artwork, size, format);
+		}
+	}
+
+	async getArtworkImage(folder: Folder, artwork: Artwork, size?: number, format?: string): Promise<ApiBinaryResult> {
+		return this.imageModule.get(artwork.id, path.join(folder.path, artwork.name), size, format);
+	}
+
 }

@@ -120,7 +120,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		}
 		const u = await this.byID(req.query.id);
 		if (u.id === req.user.id || req.user.roles.admin) {
-			return this.userService.setUserImage(u, req.file);
+			return this.userService.setUserImage(u, req.file, req.fileType);
 		}
 		return Promise.reject(UnauthError());
 	}

@@ -1,10 +1,10 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
-import {RootScanStrategy, TrackHealthID} from '../../model/jam-types';
+import {ArtworkImageType, FolderTypeImageName, RootScanStrategy, TrackHealthID} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
-import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
+import {containsFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
 import Logger from '../../utils/logger';
 import {Root} from '../root/root.model';
 import {Store} from '../store/store';
@@ -18,6 +18,9 @@ import {ScanMerger} from './scan.merge';
 import {ScanMetaMerger} from './scan.merge-meta';
 import {DirScanner, ScanDir} from './scan.scan-dir';
 import {ScanStorer} from './scan.store';
+import {Artwork, Folder} from '../folder/folder.model';
+import {generateArtworkId} from './scan.utils';
+import {artWorkImageNameToType} from '../folder/folder.format';
 
 const log = Logger('IO.Service');
 
@@ -377,7 +380,6 @@ export class ScanService {
 		const tracks = await this.store.trackStore.byIds(trackIDs);
 		const folderIDs: Array<string> = [];
 		log.info('Writing Tags in Root', root.path);
-
 		for (const track of tracks) {
 			const tag = tags.find(t => t.trackID === track.id);
 			if (tag) {
@@ -389,17 +391,126 @@ export class ScanService {
 				}
 			}
 		}
-
 		log.info('Refresh Tracks in Root', root.path);
-
 		const dbMatcher = new DBMatcher(this.store);
 		const {rootMatch, changedDirs} = await dbMatcher.match(folderIDs, trackIDs);
-
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
-
 		return this.finish(changes, rootID, false);
-
 	}
 
+	private async buildArtworkImageFile(folder: Folder, name: string, removedID?: string): Promise<Artwork> {
+		const destFile = path.join(folder.path, name);
+		const stat = await fse.stat(destFile);
+		const id = generateArtworkId(folder.id, name);
+		const artwork: Artwork = {
+			id,
+			name,
+			types: artWorkImageNameToType(name),
+			stat: {
+				created: stat.ctime.valueOf(),
+				modified: stat.mtime.valueOf(),
+				size: stat.size
+			}
+		};
+		folder.tag.artworks = (folder.tag.artworks || []).filter(a => (a.id !== id) && (a.id !== removedID));
+		folder.tag.artworks.push(artwork);
+		await this.store.folderStore.replace(folder);
+		await this.imageModule.clearImageCacheByIDs([folder.id, artwork.id].concat(removedID ? [removedID] : []));
+		return artwork;
+	}
+
+	async renameArtwork(rootID: string, folderID: string, artworkID: string, name: string): Promise<MergeChanges> {
+		const {changes} = await this.start(rootID);
+		const folder = await this.store.folderStore.byId(folderID);
+		if (!folder) {
+			return Promise.reject(Error(`Folder ${folderID} not found`));
+		}
+		const artwork = (folder.tag.artworks || []).find(a => a.id === artworkID);
+		if (!artwork) {
+			return Promise.reject(Error(`Artwork ${artworkID} not found`));
+		}
+		if (containsFolderSystemChars(name)) {
+			return Promise.reject(Error('Invalid Image File Name'));
+		}
+		name = replaceFolderSystemChars(name, '').trim();
+		if (name.length === 0) {
+			return Promise.reject(Error('Invalid Image File Name'));
+		}
+		const ext = path.extname(artwork.name).toLowerCase();
+		const newName = name + ext;
+		await fse.rename(path.join(folder.path, artwork.name), path.join(folder.path, newName));
+		await this.buildArtworkImageFile(folder, newName, artworkID);
+		return this.finish(changes, rootID, false);
+	}
+
+	async createArtwork(rootID: string, folderID: string, artworkFilename: string, artworkMimeType: string, types: Array<ArtworkImageType>): Promise<MergeChanges> {
+		const folder = await this.store.folderStore.byId(folderID);
+		if (!folder) {
+			return Promise.reject(Error(`Folder ${folderID} not found`));
+		}
+		const {changes} = await this.start(rootID);
+		const name = FolderTypeImageName[folder.tag.type];
+		const imageext = path.extname(artworkFilename).trim().toLowerCase();
+		if (imageext.length === 0) {
+			return Promise.reject(Error('Invalid Image Filename'));
+		}
+		let dest = name + imageext;
+		let nr = 2;
+		while (await fse.pathExists(path.join(folder.path, dest))) {
+			dest = name + '-' + nr + imageext;
+			nr++;
+		}
+		const destFile = path.join(folder.path, dest);
+		await fse.copy(artworkFilename, destFile);
+		await this.buildArtworkImageFile(folder, dest);
+		return this.finish(changes, rootID, false);
+	}
+
+	async updateArtwork(rootID: string, folderID: string, artworkID: string, artworkFilename: string, artworkMimeType: string): Promise<MergeChanges> {
+		const folder = await this.store.folderStore.byId(folderID);
+		if (!folder) {
+			return Promise.reject(Error(`Folder ${folderID} not found`));
+		}
+		const artwork = (folder.tag.artworks || []).find(a => a.id === artworkID);
+		if (!artwork) {
+			return Promise.reject(Error(`Artwork ${artworkID} not found`));
+		}
+		const {root, changes} = await this.start(rootID);
+		const dest = path.join(folder.path, artwork.name);
+		await fileDeleteIfExists(dest);
+		await fse.copy(artworkFilename, dest);
+		await this.buildArtworkImageFile(folder, dest, artworkID);
+		return this.finish(changes, rootID, false);
+	}
+
+	async downloadArtwork(rootID: string, folderID: string, artworkURL: string, types: Array<ArtworkImageType>): Promise<MergeChanges> {
+		const {changes} = await this.start(rootID);
+		const folder = await this.store.folderStore.byId(folderID);
+		if (!folder) {
+			return Promise.reject(Error(`Folder ${folderID} not found`));
+		}
+		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
+		const filename = await this.imageModule.storeImage(folder.path, name, artworkURL);
+		await this.buildArtworkImageFile(folder, filename);
+		return this.finish(changes, rootID, false);
+	}
+
+	async deleteArtwork(rootID: string, folderID: string, artworkID: string): Promise<MergeChanges> {
+		const {changes} = await this.start(rootID);
+		const folder = await this.store.folderStore.byId(folderID);
+		if (!folder) {
+			return Promise.reject(Error(`Folder ${folderID} not found`));
+		}
+		const artwork = (folder.tag.artworks || []).find(a => a.id === artworkID);
+		if (!artwork) {
+			return Promise.reject(Error(`Artwork ${artworkID} not found`));
+		}
+		folder.tag.artworks = (folder.tag.artworks || []).filter(art => art.id !== artwork.id);
+		await this.store.folderStore.replace(folder);
+		const destName = path.join(folder.path, artwork.name);
+		await fileDeleteIfExists(destName);
+		await this.imageModule.clearImageCacheByIDs([folder.id, artwork.id]);
+		return this.finish(changes, rootID, false);
+	}
 }

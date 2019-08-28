@@ -6,6 +6,7 @@ import {replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Folder, FolderTag} from '../folder/folder.model';
 import {Root} from '../root/root.model';
 import {RuleResult} from './rule.model';
+import {getFolderDisplayImage} from '../folder/folder.service';
 
 export abstract class FolderRule {
 
@@ -184,11 +185,9 @@ export class FolderAlbumImageRule extends FolderRule {
 	}
 
 	async run(folder: Folder): Promise<RuleResult | undefined> {
-		if (!folder.tag.image) {
-			if (folder.tag.type === FolderType.album) {
-				return {};
-			}
-			if (folder.tag.type === FolderType.multialbum && folder.tag.folderCount > 0) {
+		if ((folder.tag.type === FolderType.album) || (folder.tag.type === FolderType.multialbum && folder.tag.folderCount > 0)) {
+			const artwork = await getFolderDisplayImage(folder);
+			if (!artwork) {
 				return {};
 			}
 		}
@@ -203,8 +202,11 @@ export class FolderArtistImageRule extends FolderRule {
 	}
 
 	async run(folder: Folder): Promise<RuleResult | undefined> {
-		if ((folder.tag.type === FolderType.artist) && (!folder.tag.image)) {
-			return {};
+		if (folder.tag.type === FolderType.artist) {
+			const artwork = await getFolderDisplayImage(folder);
+			if (!artwork) {
+				return {};
+			}
 		}
 	}
 

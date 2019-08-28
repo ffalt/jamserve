@@ -71,7 +71,6 @@ const type_FolderTag = {
 		mbReleaseGroupID: type_key,
 		mbAlbumType: type_key,
 		mbArtistID: type_key,
-		image: type_key,
 		artworks: type_Artwork
 	}
 };

@@ -40,6 +40,6 @@ export interface FolderTag {
 	mbReleaseGroupID?: string;
 	mbAlbumType?: string;
 	mbArtistID?: string;
-	image?: string;
+	// image?: string;
 	artworks?: Array<Artwork>;
 }

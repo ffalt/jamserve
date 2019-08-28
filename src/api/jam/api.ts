@@ -30,6 +30,7 @@ export interface JamRequest<T> {
 	user: User;
 	client?: string;
 	file?: string;
+	fileType?: string;
 }
 
 export class JamApi {

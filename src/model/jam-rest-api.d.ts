@@ -1279,26 +1279,36 @@ export interface JamApi {
 			roles: ['admin'];
 		};
 
-		'folder/imageUpload/update'?: {
+		'folder/artworkUpload/create'?: {
+			params: JamParameters.FolderArtworkUpload;
+			result: Jam.AdminChangeQueueInfo,
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+			upload: 'image'
+		};
+
+		'folder/artworkUpload/update'?: {
 			params: JamParameters.ID;
+			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 			upload: 'image'
 		};
 		'folder/artwork/create'?: {
 			params: JamParameters.FolderArtworkNew;
-			result: Jam.ArtworkImage;
+			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
 		'folder/artwork/delete'?: {
 			params: JamParameters.ID;
+			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
-		'folder/artwork/update'?: {
-			params: JamParameters.FolderArtworkUpdate;
-			result: Jam.ArtworkImage;
+		'folder/artwork/name/update'?: {
+			params: JamParameters.FolderArtworkEditName;
+			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};

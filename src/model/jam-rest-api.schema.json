@@ -6647,11 +6647,14 @@
 						"roles"
 					]
 				},
-				"folder/imageUpload/update": {
+				"folder/artworkUpload/create": {
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.ID"
+							"$ref": "#/definitions/JamParameters.FolderArtworkUpload"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
 						},
 						"errors": {
 							"anyOf": [
@@ -6701,6 +6704,69 @@
 					"required": [
 						"errors",
 						"params",
+						"result",
+						"roles",
+						"upload"
+					]
+				},
+				"folder/artworkUpload/update": {
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.ID"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						},
+						"roles": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string",
+									"enum": [
+										"admin"
+									]
+								}
+							],
+							"minItems": 1,
+							"additionalItems": {
+								"anyOf": [
+									{
+										"type": "string",
+										"enum": [
+											"admin"
+										]
+									}
+								]
+							}
+						},
+						"upload": {
+							"type": "string",
+							"enum": [
+								"image"
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result",
 						"roles",
 						"upload"
 					]
@@ -6712,7 +6778,7 @@
 							"$ref": "#/definitions/JamParameters.FolderArtworkNew"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.ArtworkImage"
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
 						},
 						"errors": {
 							"anyOf": [
@@ -6766,6 +6832,9 @@
 						"params": {
 							"$ref": "#/definitions/JamParameters.ID"
 						},
+						"result": {
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
+						},
 						"errors": {
 							"anyOf": [
 								{
@@ -6808,17 +6877,18 @@
 					"required": [
 						"errors",
 						"params",
+						"result",
 						"roles"
 					]
 				},
-				"folder/artwork/update": {
+				"folder/artwork/name/update": {
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.FolderArtworkUpdate"
+							"$ref": "#/definitions/JamParameters.FolderArtworkEditName"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.ArtworkImage"
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
 						},
 						"errors": {
 							"anyOf": [
@@ -19915,6 +19985,45 @@
 				"id"
 			]
 		},
+		"JamParameters.FolderArtworkUpload": {
+			"description": "Add an artwork to a folder by upload",
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "id of folder",
+					"type": "string"
+				},
+				"types": {
+					"description": "types of the image",
+					"type": "array",
+					"items": {
+						"enum": [
+							"artist",
+							"back",
+							"booklet",
+							"front",
+							"liner",
+							"medium",
+							"obi",
+							"other",
+							"poster",
+							"raw",
+							"spine",
+							"sticker",
+							"track",
+							"tray",
+							"unedited",
+							"watermark"
+						],
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"id",
+				"types"
+			]
+		},
 		"JamParameters.FolderArtworkNew": {
 			"description": "Add an artwork to a folder by url",
 			"type": "object",
@@ -19959,8 +20068,8 @@
 				"url"
 			]
 		},
-		"JamParameters.FolderArtworkUpdate": {
-			"description": "Update an artwork in a folder",
+		"JamParameters.FolderArtworkEditName": {
+			"description": "Rename an artwork in a folder",
 			"type": "object",
 			"properties": {
 				"name": {

@@ -14247,15 +14247,65 @@
 				}
 			}
 		},
-		"/folder/imageUpload/update": {
+		"/folder/artworkUpload/create": {
 			"post": {
-				"operationId": "folderController.imageUploadUpdate",
+				"operationId": "folderController.artworkUploadCreate",
 				"tags": [
 					"folder"
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"404": {
+						"description": "requested object not found"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"requestBody": {
+					"description": "Add an artwork to a folder by upload",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.FolderArtworkUpload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/folder/artworkUpload/update": {
+			"post": {
+				"operationId": "folderController.artworkUploadUpdate",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "parameter is missing or invalid"
@@ -14294,7 +14344,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.ArtworkImage"
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
 								}
 							}
 						}
@@ -14333,7 +14383,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "parameter is missing or invalid"
@@ -14360,9 +14417,9 @@
 				}
 			}
 		},
-		"/folder/artwork/update": {
+		"/folder/artwork/name/update": {
 			"post": {
-				"operationId": "folderController.artworkUpdate",
+				"operationId": "folderController.artworkNameUpdate",
 				"tags": [
 					"folder"
 				],
@@ -14372,7 +14429,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.ArtworkImage"
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
 								}
 							}
 						}
@@ -14391,12 +14448,12 @@
 					}
 				},
 				"requestBody": {
-					"description": "Update an artwork in a folder",
+					"description": "Rename an artwork in a folder",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/JamParameters.FolderArtworkUpdate"
+								"$ref": "#/components/schemas/JamParameters.FolderArtworkEditName"
 							}
 						}
 					}
@@ -22774,6 +22831,45 @@
 					"id"
 				]
 			},
+			"JamParameters.FolderArtworkUpload": {
+				"description": "Add an artwork to a folder by upload",
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "id of folder",
+						"type": "string"
+					},
+					"types": {
+						"description": "types of the image",
+						"type": "array",
+						"items": {
+							"enum": [
+								"artist",
+								"back",
+								"booklet",
+								"front",
+								"liner",
+								"medium",
+								"obi",
+								"other",
+								"poster",
+								"raw",
+								"spine",
+								"sticker",
+								"track",
+								"tray",
+								"unedited",
+								"watermark"
+							],
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"types"
+				]
+			},
 			"JamParameters.FolderArtworkNew": {
 				"description": "Add an artwork to a folder by url",
 				"type": "object",
@@ -22818,8 +22914,8 @@
 					"url"
 				]
 			},
-			"JamParameters.FolderArtworkUpdate": {
-				"description": "Update an artwork in a folder",
+			"JamParameters.FolderArtworkEditName": {
+				"description": "Rename an artwork in a folder",
 				"type": "object",
 				"properties": {
 					"name": {

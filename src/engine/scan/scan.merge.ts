@@ -128,18 +128,10 @@ export class ScanMerger {
 	private buildFolderTag(dir: MatchDir): FolderTag {
 		const metaStat = dir.metaStat;
 		if (!metaStat) {
-			throw Error('internal error, metastat must exists');
+			throw Error('internal error, metastat must exist');
 		}
 		const nameSplit = splitDirectoryName(dir.name);
 		const images = this.collectFolderImages(dir);
-		let imageName: string | undefined;
-		let image = images.find(i => i.types.length === 1 && (i.types.includes(ArtworkImageType.front)));
-		if (!image) {
-			image = images.find(i => i.types.length === 1 && (i.types.includes(ArtworkImageType.artist)));
-		}
-		if (image) {
-			imageName = image.name;
-		}
 		return {
 			trackCount: metaStat.trackCount,
 			folderCount: dir.directories.length,
@@ -151,7 +143,6 @@ export class ScanMerger {
 			artist: metaStat.artist,
 			artistSort: metaStat.artistSort,
 			title: nameSplit.title,
-			image: imageName,
 			artworks: images,
 			genre: metaStat.genre,
 			mbAlbumID: metaStat.mbAlbumID,
@@ -213,7 +204,7 @@ export class ScanMerger {
 
 	private collectFolderImages(dir: MatchDir): Array<Artwork> {
 		if (!dir.folder) {
-			log.error('folder obj must has been created at this point');
+			log.error('folder obj must exist at this point');
 			return [];
 		}
 		const folderID = dir.folder.id;

@@ -20,7 +20,7 @@ function generateCode(calls: Array<ApiCall>): string {
 			datasouce = 'req.body';
 		}
 
-		const options = '{query: ' + datasouce + ', user: req.user, client: req.client' + (call.upload ? ', file: req.file ? req.file.path : undefined' : '') + '}';
+		const options = '{query: ' + datasouce + ', user: req.user, client: req.client' + (call.upload ? ', file: req.file ? req.file.path : undefined' : '')  + (call.upload ? ', fileType: req.file ? req.file.mimetype : undefined' : '') + '}';
 
 		let name = call.name;
 		const operation = 'api.' + call.operationId;

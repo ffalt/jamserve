@@ -1,6 +1,6 @@
 /* tslint:disable:max-classes-per-file */
 import {Jam} from '../../model/jam-rest-data';
-import {TrackHealthID} from '../../model/jam-types';
+import {ArtworkImageType, TrackHealthID} from '../../model/jam-types';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import Logger from '../../utils/logger';
 import {RootStatus} from '../root/root.model';
@@ -22,7 +22,12 @@ export enum ScanRequestMode {
 	renameTrack,
 	renameFolder,
 	writeRawTags,
-	fixTrack
+	fixTrack,
+	deleteArtwork,
+	downloadArtwork,
+	updateArtwork,
+	createArtwork,
+	renameArtwork
 }
 
 export abstract class ScanRequest {
@@ -189,6 +194,61 @@ export class ScanRequestDeleteFolders extends ScanRequest {
 	}
 }
 
+export class ScanRequestDeleteArtwork extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public folderID: string, public artworkID: string) {
+		super(id, rootID, ScanRequestMode.deleteArtwork);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return this.scanService.deleteArtwork(this.rootID, this.folderID, this.artworkID);
+	}
+}
+
+export class ScanRequestDownloadArtwork extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public folderID: string, public artworkURL: string, public types: Array<ArtworkImageType>) {
+		super(id, rootID, ScanRequestMode.downloadArtwork);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return this.scanService.downloadArtwork(this.rootID, this.folderID, this.artworkURL, this.types);
+	}
+}
+
+export class ScanRequestUpdateArtwork extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public folderID: string, public artworkID: string, public artworkFilename: string, public artworkMimeType: string) {
+		super(id, rootID, ScanRequestMode.updateArtwork);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return this.scanService.updateArtwork(this.rootID, this.folderID, this.artworkID, this.artworkFilename, this.artworkMimeType);
+	}
+}
+
+export class ScanRequestCreateArtwork extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public folderID: string, public artworkFilename: string, public artworkMimeType: string, public types: Array<ArtworkImageType>) {
+		super(id, rootID, ScanRequestMode.createArtwork);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return this.scanService.createArtwork(this.rootID, this.folderID, this.artworkFilename, this.artworkMimeType, this.types);
+	}
+}
+
+export class ScanRequestRenameArtwork extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public scanService: ScanService, public folderID: string, public artworkID: string, public destinationName: string) {
+		super(id, rootID, ScanRequestMode.renameArtwork);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return this.scanService.renameArtwork(this.rootID, this.folderID, this.artworkID, this.destinationName);
+	}
+}
+
 export class IoService {
 	public scanning = false;
 	private scanningCount: undefined | number;
@@ -260,8 +320,12 @@ export class IoService {
 			this.current = undefined;
 		} catch (e) {
 			this.current = undefined;
-			this.rootstatus[cmd.rootID] = {lastScan: Date.now(), error: e.toString()};
-			this.history.push({id: cmd.id, error: e.toString(), date: Date.now()});
+			let msg = e.toString();
+			if (msg.startsWith('Error:')) {
+				msg = msg.slice(6).trim();
+			}
+			this.rootstatus[cmd.rootID] = {lastScan: Date.now(), error: msg};
+			this.history.push({id: cmd.id, error: msg, date: Date.now()});
 		}
 		if (this.queue.length === 0) {
 			this.runAfterRefresh();
@@ -423,6 +487,26 @@ export class IoService {
 			return this.getRequestInfo(oldRequest);
 		}
 		return this.addRequest(new ScanRequestDeleteFolders(this.getScanID(), rootID, this.scanService, [id]));
+	}
+
+	renameArtwork(folderID: string, artworkID: string, newname: string, rootID: string): Jam.AdminChangeQueueInfo {
+		return this.addRequest(new ScanRequestRenameArtwork(this.getScanID(), rootID, this.scanService, folderID, artworkID, newname));
+	}
+
+	updateArtwork(folderID: string, artworkID: string, artworkFilename: string, artworkMimeType: string, rootID: string): Jam.AdminChangeQueueInfo {
+		return this.addRequest(new ScanRequestUpdateArtwork(this.getScanID(), rootID, this.scanService, folderID, artworkID, artworkFilename, artworkMimeType));
+	}
+
+	createArtwork(folderID: string, artworkFilename: string, artworkMimeType: string, types: Array<ArtworkImageType>, rootID: string): Jam.AdminChangeQueueInfo {
+		return this.addRequest(new ScanRequestCreateArtwork(this.getScanID(), rootID, this.scanService, folderID, artworkFilename, artworkMimeType, types));
+	}
+
+	downloadArtwork(folderID: string, artworkUrl: string, types: Array<ArtworkImageType>, rootID: string): Jam.AdminChangeQueueInfo {
+		return this.addRequest(new ScanRequestDownloadArtwork(this.getScanID(), rootID, this.scanService, folderID, artworkUrl, types));
+	}
+
+	deleteArtwork(folderID: string, artworkID: string, rootID: string): Jam.AdminChangeQueueInfo {
+		return this.addRequest(new ScanRequestDeleteArtwork(this.getScanID(), rootID, this.scanService, folderID, artworkID));
 	}
 
 	removeTrack(id: string, rootID: string): Jam.AdminChangeQueueInfo {

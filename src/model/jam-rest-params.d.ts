@@ -663,9 +663,23 @@ export declare namespace JamParameters {
 	}
 
 	/**
-	 * Update an artwork in a folder
+	 * Add an artwork to a folder by upload
 	 */
-	export interface FolderArtworkUpdate extends ID {
+	export interface FolderArtworkUpload extends ID {
+		/**
+		 * id of folder
+		 */
+		id: string;
+		/**
+		 * types of the image
+		 */
+		types: Array<Jam.ArtworkImageType>;
+	}
+
+	/**
+	 * Rename an artwork in a folder
+	 */
+	export interface FolderArtworkEditName extends ID {
 		/**
 		 * name of an image
 		 */

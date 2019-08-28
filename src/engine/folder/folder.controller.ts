@@ -151,14 +151,6 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return {folders: resultFolders, tracks: resultTracks.items};
 	}
 
-	async imageUploadUpdate(req: JamRequest<JamParameters.ID>): Promise<void> {
-		if (!req.file) {
-			return Promise.reject(InvalidParamError('Image upload failed'));
-		}
-		const folder = await this.byID(req.query.id);
-		await this.folderService.setFolderImage(folder, req.file);
-	}
-
 	async nameUpdate(req: JamRequest<JamParameters.FolderEditName>): Promise<Jam.AdminChangeQueueInfo> {
 		const folder = await this.byID(req.query.id);
 		return this.ioService.renameFolder(folder.id, req.query.name, folder.rootID);
@@ -222,21 +214,35 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return this.folderService.getArtworkImage(folder, artwork, req.query.size, req.query.format);
 	}
 
-	async artworkCreate(req: JamRequest<JamParameters.FolderArtworkNew>): Promise<Jam.ArtworkImage> {
+	async artworkCreate(req: JamRequest<JamParameters.FolderArtworkNew>): Promise<Jam.AdminChangeQueueInfo> {
 		const folder = await this.byID(req.query.id);
-		const artwork = await this.folderService.downloadFolderArtwork(folder, req.query.url, req.query.types as Array<ArtworkImageType>);
-		return formatFolderArtwork(artwork);
+		return this.ioService.downloadArtwork(folder.id, req.query.url, req.query.types as Array<ArtworkImageType>, folder.rootID);
 	}
 
-	async artworkUpdate(req: JamRequest<JamParameters.FolderArtworkUpdate>): Promise<Jam.ArtworkImage> {
-		const {folder, artwork} = await this.artworkByID(req.query.id);
-		const result = await this.folderService.updateArtworkImage(folder, artwork, req.query.name);
-		return formatFolderArtwork(result);
+	async artworkUploadCreate(req: JamRequest<JamParameters.FolderArtworkUpload>): Promise<Jam.AdminChangeQueueInfo> {
+		if (!req.file) {
+			return Promise.reject(InvalidParamError('Image upload failed'));
+		}
+		const folder = await this.byID(req.query.id);
+		return this.ioService.createArtwork(folder.id, req.file, req.fileType || '', req.query.types as Array<ArtworkImageType>, folder.rootID);
 	}
 
-	async artworkDelete(req: JamRequest<JamParameters.ID>): Promise<void> {
+	async artworkUploadUpdate(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
+		if (!req.file) {
+			return Promise.reject(InvalidParamError('Image upload failed'));
+		}
 		const {folder, artwork} = await this.artworkByID(req.query.id);
-		return this.folderService.removeArtworkImage(folder, artwork);
+		return this.ioService.updateArtwork(folder.id, artwork.id, req.file, req.fileType || '', folder.rootID);
+	}
+
+	async artworkNameUpdate(req: JamRequest<JamParameters.FolderArtworkEditName>): Promise<Jam.AdminChangeQueueInfo> {
+		const {folder, artwork} = await this.artworkByID(req.query.id);
+		return this.ioService.renameArtwork(folder.id, artwork.id, req.query.name, folder.rootID);
+	}
+
+	async artworkDelete(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
+		const {folder, artwork} = await this.artworkByID(req.query.id);
+		return this.ioService.deleteArtwork(folder.id, artwork.id, folder.rootID);
 	}
 
 	async health(req: JamRequest<JamParameters.FolderHealth>): Promise<Array<Jam.FolderHealth>> {

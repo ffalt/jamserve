@@ -149,19 +149,14 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			};
 			return info;
 		}
-		return;
 	}
 
 	private async getArtistInfoByMusicBrainzID(mbArtistID: string): Promise<Jam.ExtendedInfo | undefined> {
-		let info = await this.getMusicBrainzIDWikipediaArtistInfo(mbArtistID);
+		const info = await this.getMusicBrainzIDWikipediaArtistInfo(mbArtistID);
 		if (info) {
 			return info;
 		}
-		info = await this.getLastFMArtistInfo(mbArtistID);
-		if (info) {
-			return info;
-		}
-		return;
+		return await this.getLastFMArtistInfo(mbArtistID);
 	}
 
 	private async getAlbumInfoByMusicBrainzID(mbReleaseID: string): Promise<Jam.ExtendedInfo | undefined> {
@@ -215,67 +210,79 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	// ExtendedInfos
 
 	async getArtistInfo(artist: Artist): Promise<Jam.ExtendedInfo | undefined> {
-		if (artist.mbArtistID) {
-			const info = await this.getArtistInfoByMusicBrainzID(artist.mbArtistID);
-			if (info) {
-				return info;
+		try {
+			if (artist.mbArtistID) {
+				const info = await this.getArtistInfoByMusicBrainzID(artist.mbArtistID);
+				if (info) {
+					return info;
+				}
 			}
-		}
-		if (artist.name) {
-			const info = await this.getArtistInfoByName(artist.name);
-			if (info) {
-				return info;
+			if (artist.name) {
+				const info = await this.getArtistInfoByName(artist.name);
+				if (info) {
+					return info;
+				}
 			}
+		} catch (e) {
+			log.error(e);
 		}
-		return;
 	}
 
 	async getAlbumInfo(album: Album): Promise<Jam.ExtendedInfo | undefined> {
-		if (album.mbAlbumID) {
-			const info = await this.getAlbumInfoByMusicBrainzID(album.mbAlbumID);
-			if (info) {
-				return info;
+		try {
+			if (album.mbAlbumID) {
+				const info = await this.getAlbumInfoByMusicBrainzID(album.mbAlbumID);
+				if (info) {
+					return info;
+				}
 			}
-		}
-		if (album.name && album.artist) {
-			const info = await this.getAlbumInfoByName(album.name, album.artist);
-			if (info) {
-				return info;
+			if (album.name && album.artist) {
+				const info = await this.getAlbumInfoByName(album.name, album.artist);
+				if (info) {
+					return info;
+				}
 			}
+		} catch (e) {
+			log.error(e);
 		}
-		return;
 	}
 
 	async getFolderArtistInfo(folder: Folder): Promise<Jam.ExtendedInfo | undefined> {
-		if (folder.tag.mbArtistID) {
-			const info = await this.getArtistInfoByMusicBrainzID(folder.tag.mbArtistID);
-			if (info) {
-				return info;
+		try {
+			if (folder.tag.mbArtistID) {
+				const info = await this.getArtistInfoByMusicBrainzID(folder.tag.mbArtistID);
+				if (info) {
+					return info;
+				}
 			}
-		}
-		if (folder.tag.artist) {
-			const info = await this.getArtistInfoByName(folder.tag.artist);
-			if (info) {
-				return info;
+			if (folder.tag.artist) {
+				const info = await this.getArtistInfoByName(folder.tag.artist);
+				if (info) {
+					return info;
+				}
 			}
+		} catch (e) {
+			log.error(e);
 		}
-		return;
 	}
 
 	async getFolderAlbumInfo(folder: Folder): Promise<Jam.ExtendedInfo | undefined> {
-		if (folder.tag.mbAlbumID) {
-			const info = await this.getAlbumInfoByMusicBrainzID(folder.tag.mbAlbumID);
-			if (info) {
-				return info;
+		try {
+			if (folder.tag.mbAlbumID) {
+				const info = await this.getAlbumInfoByMusicBrainzID(folder.tag.mbAlbumID);
+				if (info) {
+					return info;
+				}
 			}
-		}
-		if (folder.tag.album && folder.tag.artist) {
-			const info = await this.getAlbumInfoByName(folder.tag.album, folder.tag.artist);
-			if (info) {
-				return info;
+			if (folder.tag.album && folder.tag.artist) {
+				const info = await this.getAlbumInfoByName(folder.tag.album, folder.tag.artist);
+				if (info) {
+					return info;
+				}
 			}
+		} catch (e) {
+			log.error(e);
 		}
-		return;
 	}
 
 	// similar artists
@@ -322,17 +329,25 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async getSimilarArtists(artist: Artist): Promise<Array<Artist>> {
-		const similar = await this.getSimilarArtistsInfo(artist.mbArtistID, artist.name);
-		if (similar && similar.length > 0) {
-			return this.findSimilarArtists(similar);
+		try {
+			const similar = await this.getSimilarArtistsInfo(artist.mbArtistID, artist.name);
+			if (similar && similar.length > 0) {
+				return this.findSimilarArtists(similar);
+			}
+		} catch (e) {
+			log.error(e);
 		}
 		return [];
 	}
 
 	async getSimilarArtistFolders(folder: Folder): Promise<Array<Folder>> {
-		const similar = await this.getSimilarArtistsInfo(folder.tag.mbArtistID, folder.tag.artist);
-		if (similar && similar.length > 0) {
-			return this.findSimilarArtistFolders(similar);
+		try {
+			const similar = await this.getSimilarArtistsInfo(folder.tag.mbArtistID, folder.tag.artist);
+			if (similar && similar.length > 0) {
+				return this.findSimilarArtistFolders(similar);
+			}
+		} catch (e) {
+			log.error(e);
 		}
 		return [];
 	}
