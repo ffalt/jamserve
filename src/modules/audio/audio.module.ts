@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import {ID3v1, ID3v2, IID3V2, MP3} from '../../../../jamp3/src';//'jamp3';
+import {ID3v1, ID3v2, IID3V2, MP3} from 'jamp3';
 import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
 import {TrackMedia, TrackTag} from '../../engine/track/track.model';
 import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';

@@ -1,4 +1,4 @@
-import {ID3v2, IID3V1, IID3V2, IMP3Analyzer, MP3Analyzer} from '../../../../jamp3/src';//'jamp3';
+import {ID3v2, IID3V1, IID3V2, IMP3Analyzer, MP3Analyzer} from 'jamp3';
 import {Jam} from '../../model/jam-rest-data';
 import {AlbumType, AlbumTypesArtistMusic, AudioFormatType, TrackHealthID} from '../../model/jam-types';
 import {ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';

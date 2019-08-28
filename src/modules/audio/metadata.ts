@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {ID3v2, ID3V24TagBuilder, IID3V2, ITagID} from '../../../../jamp3/src'; // 'jamp3';
+import {ID3v2, ID3V24TagBuilder, IID3V2, ITagID} from 'jamp3';
 import {TrackTag} from '../../engine/track/track.model';
 import {ID3v2Frames} from '../../model/id3v2-frames';
 import {Jam} from '../../model/jam-rest-data';
