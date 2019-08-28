@@ -14281,9 +14281,30 @@
 					"description": "Add an artwork to a folder by upload",
 					"required": true,
 					"content": {
-						"application/json": {
+						"multipart/form-data": {
 							"schema": {
-								"$ref": "#/components/schemas/JamParameters.FolderArtworkUpload"
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/JamParameters.FolderArtworkUpload"
+									},
+									{
+										"properties": {
+											"image": {
+												"description": "the image",
+												"type": "object",
+												"properties": {
+													"type": {
+														"type": "string"
+													},
+													"file": {
+														"type": "string",
+														"format": "binary"
+													}
+												}
+											}
+										}
+									}
+								]
 							}
 						}
 					}
@@ -14323,9 +14344,30 @@
 				"requestBody": {
 					"required": true,
 					"content": {
-						"application/json": {
+						"multipart/form-data": {
 							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ID"
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/JamParameters.ID"
+									},
+									{
+										"properties": {
+											"image": {
+												"description": "the image",
+												"type": "object",
+												"properties": {
+													"type": {
+														"type": "string"
+													},
+													"file": {
+														"type": "string",
+														"format": "binary"
+													}
+												}
+											}
+										}
+									}
+								]
 							}
 						}
 					}
@@ -15483,9 +15525,30 @@
 				"requestBody": {
 					"required": true,
 					"content": {
-						"application/json": {
+						"multipart/form-data": {
 							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ID"
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/JamParameters.ID"
+									},
+									{
+										"properties": {
+											"image": {
+												"description": "the image",
+												"type": "object",
+												"properties": {
+													"type": {
+														"type": "string"
+													},
+													"file": {
+														"type": "string",
+														"format": "binary"
+													}
+												}
+											}
+										}
+									}
+								]
 							}
 						}
 					}
@@ -18561,22 +18624,29 @@
 								"type": "string"
 							},
 							"value": {
-								"type": "object",
-								"properties": {
-									"id": {
-										"type": "string"
+								"anyOf": [
+									{
+										"type": "object",
+										"properties": {
+											"id": {
+												"type": "string"
+											},
+											"entity-type": {
+												"type": "string"
+											},
+											"numeric-id": {
+												"type": "number"
+											}
+										},
+										"required": [
+											"entity-type",
+											"id",
+											"numeric-id"
+										]
 									},
-									"entity-type": {
+									{
 										"type": "string"
-									},
-									"numeric-id": {
-										"type": "number"
 									}
-								},
-								"required": [
-									"entity-type",
-									"id",
-									"numeric-id"
 								]
 							}
 						},

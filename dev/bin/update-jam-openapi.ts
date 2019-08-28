@@ -107,76 +107,104 @@ async function run(): Promise<void> {
 	const usedIDs: { [name: string]: boolean } = {};
 
 	apicalls.forEach(call => {
-		let s = call.operationId;
-		let nr = 1;
-		while (usedIDs[s]) {
-			nr++;
-			s = call.operationId + nr.toString();
-		}
-		usedIDs[s] = true;
-		const cmd: any = {
-			operationId: s,
-			description: call.description,
-			tags: [call.tag],
-			responses: {}
-		};
-		if (call.binaryResult) {
-			const success: any = {description: 'binary data', content: {}};
-			call.binaryResult.forEach(ct => {
-				success.content[ct] = {
-					schema: {
-						type: 'string',
-						format: 'binary'
-					}
-				};
-			});
-			cmd.responses['200'] = success;
-		} else {
-			const success: any = {description: 'ok'};
-			if (call.name === 'login') {
-				success.headers = {
-					'Set-Cookie': {
+			let s = call.operationId;
+			let nr = 1;
+			while (usedIDs[s]) {
+				nr++;
+				s = call.operationId + nr.toString();
+			}
+			usedIDs[s] = true;
+			const cmd: any = {
+				operationId: s,
+				description: call.description,
+				tags: [call.tag],
+				responses: {}
+			};
+			if (call.binaryResult) {
+				const success: any = {description: 'binary data', content: {}};
+				call.binaryResult.forEach(ct => {
+					success.content[ct] = {
 						schema: {
 							type: 'string',
-							example: 'jam.sid=abcde12345; Path=/; HttpOnly'
+							format: 'binary'
 						}
-					}
-				};
-			}
-			if (call.resultSchema) {
-				collectSchema(call.resultSchema, data.definitions);
-				success.content = {'application/json': {schema: call.resultSchema}};
-			}
-			cmd.responses['200'] = success;
-		}
-		if (call.isPublic) {
-			cmd.security = [];
-		}
-		call.resultErrors.forEach(re => {
-			cmd.responses[re.code.toString()] = {description: re.text};
-		});
-		if (call.paramSchema) {
-			cmd.parameters = collectParams(call.paramSchema, call.definitions, 'query');
-		}
-		if (call.pathParamsSchema) {
-			const parameters = collectParams(call.pathParamsSchema, call.definitions, 'path');
-			cmd.parameters = (cmd.parameters || []).concat(parameters);
-		}
-		if (call.bodySchema) {
-			collectSchema(call.bodySchema, call.definitions);
-			const proptype = call.bodySchema.$ref.split('/')[2];
-			const p = call.definitions[proptype];
-			cmd.requestBody = {
-				description: p.description,
-				required: true,
-				content: {
-					'application/json': {schema: call.bodySchema}
+					};
+				});
+				cmd.responses['200'] = success;
+			} else {
+				const success: any = {description: 'ok'};
+				if (call.name === 'login') {
+					success.headers = {
+						'Set-Cookie': {
+							schema: {
+								type: 'string',
+								example: 'jam.sid=abcde12345; Path=/; HttpOnly'
+							}
+						}
+					};
 				}
-			};
+				if (call.resultSchema) {
+					collectSchema(call.resultSchema, data.definitions);
+					success.content = {'application/json': {schema: call.resultSchema}};
+				}
+				cmd.responses['200'] = success;
+			}
+			if (call.isPublic) {
+				cmd.security = [];
+			}
+			call.resultErrors.forEach(re => {
+				cmd.responses[re.code.toString()] = {description: re.text};
+			});
+			if (call.paramSchema) {
+				cmd.parameters = collectParams(call.paramSchema, call.definitions, 'query');
+			}
+			if (call.pathParamsSchema) {
+				const parameters = collectParams(call.pathParamsSchema, call.definitions, 'path');
+				cmd.parameters = (cmd.parameters || []).concat(parameters);
+			}
+			if (call.bodySchema) {
+				collectSchema(call.bodySchema, call.definitions);
+				const proptype = call.bodySchema.$ref.split('/')[2];
+				const p = call.definitions[proptype];
+				cmd.requestBody = {
+					description: p.description,
+					required: true,
+					content: {}
+				};
+				if (call.upload) {
+					cmd.requestBody.content = {
+						'multipart/form-data': {
+							schema: {
+								allOf: [call.bodySchema,
+									{
+										properties: {
+											image: {
+												description: 'the image',
+												type: 'object',
+												properties: {
+													type: {
+														type: 'string'
+													},
+													file: {
+														type: 'string',
+														format: 'binary'
+													}
+												}
+											}
+										}
+									}
+								]
+							}
+						}
+					};
+				} else {
+					cmd.requestBody.content = {'application/json': {schema: call.bodySchema}};
+				}
+			}
+			openapi.paths['/' + call.name] = openapi.paths['/' + call.name] || {};
+			(openapi.paths['/' + call.name] as any)[call.method] = cmd;
 		}
-		openapi.paths['/' + call.name] = openapi.paths['/' + call.name] || {};
-		(openapi.paths['/' + call.name] as any)[call.method] = cmd;
-	});
+	);
 
 	const oa = JSON.stringify(openapi, null, '\t').replace(/\/definitions/g, '/components/schemas');
 	await fse.writeFile(destfile, oa);
