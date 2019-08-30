@@ -25,7 +25,8 @@ export class WaveformService {
 		const wf = new WaveformGenerator();
 		switch (format) {
 			case 'svg':
-				return {buffer: {buffer: Buffer.from(await wf.svg(filename)), contentType: 'image/svg+xml'}};
+				const svg = await wf.svg(filename);
+				return {buffer: {buffer: Buffer.from(svg, 'ascii'), contentType: 'image/svg+xml'}};
 			case 'json':
 				return {json: await wf.json(filename)};
 			case 'dat':
