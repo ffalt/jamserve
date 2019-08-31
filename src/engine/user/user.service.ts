@@ -52,6 +52,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		const destName = path.join(this.userAvatarPath, destFileName);
 		await fileDeleteIfExists(destName);
 		await this.imageModule.createAvatar(filename, destName);
+		await fileDeleteIfExists(filename);
 		await this.imageModule.clearImageCacheByID(user.id);
 		user.avatar = destFileName;
 		user.avatarLastChanged = Date.now();

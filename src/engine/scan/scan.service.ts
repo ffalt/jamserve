@@ -21,6 +21,7 @@ import {ScanStorer} from './scan.store';
 import {Artwork, Folder} from '../folder/folder.model';
 import {generateArtworkId} from './scan.utils';
 import {artWorkImageNameToType} from '../folder/folder.format';
+import {getImageInfo} from './scan.artwork';
 
 const log = Logger('IO.Service');
 
@@ -407,6 +408,7 @@ export class ScanService {
 			id,
 			name,
 			types: artWorkImageNameToType(name),
+			image: await getImageInfo(destFile),
 			stat: {
 				created: stat.ctime.valueOf(),
 				modified: stat.mtime.valueOf(),
@@ -462,7 +464,7 @@ export class ScanService {
 			nr++;
 		}
 		const destFile = path.join(folder.path, dest);
-		await fse.copy(artworkFilename, destFile);
+		await fse.move(artworkFilename, destFile);
 		await this.buildArtworkImageFile(folder, dest);
 		return this.finish(changes, rootID, false);
 	}
@@ -476,11 +478,11 @@ export class ScanService {
 		if (!artwork) {
 			return Promise.reject(Error(`Artwork ${artworkID} not found`));
 		}
-		const {root, changes} = await this.start(rootID);
+		const {changes} = await this.start(rootID);
 		const dest = path.join(folder.path, artwork.name);
 		await fileDeleteIfExists(dest);
-		await fse.copy(artworkFilename, dest);
-		await this.buildArtworkImageFile(folder, dest, artworkID);
+		await fse.move(artworkFilename, dest);
+		await this.buildArtworkImageFile(folder, artwork.name, artworkID);
 		return this.finish(changes, rootID, false);
 	}
 

@@ -4,7 +4,7 @@ import rateLimit from 'express-rate-limit';
 import session from 'express-session';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
-import autoUploadTempReap from 'multer-autoreap';
+import finishedRequest from 'on-finished';
 import passport from 'passport';
 import passportJWT from 'passport-jwt';
 import passportLocal from 'passport-local';
@@ -13,6 +13,7 @@ import {Engine} from '../../engine/engine';
 import {formatUser} from '../../engine/user/user.format';
 import {User} from '../../engine/user/user.model';
 import {Jam} from '../../model/jam-rest-data';
+import {fileDeleteIfExists} from '../../utils/fs-utils';
 import Logger from '../../utils/logger';
 import {getMaxAge} from '../../utils/max-age';
 import {SessionJSONFileStore} from '../../utils/session-storage';
@@ -66,6 +67,17 @@ function CallSessionLoginHandler(req: UserRequest, res: express.Response, next: 
 function CallSessionLogoutHandler(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 	req.logout();
 	ApiResponder.ok(res);
+}
+
+function AutoCleanupHandler(req: express.Request, res: express.Response, next: express.NextFunction): void {
+	finishedRequest(res, (err) => {
+		if (err && req.file && req.file.path) {
+			fileDeleteIfExists(req.file.path).catch(e => {
+				log.error(e);
+			});
+		}
+	});
+	next();
 }
 
 async function checkRoles(user?: User, roles?: Array<JamApiRole>): Promise<void> {
@@ -195,8 +207,10 @@ export function initJamRouter(engine: Engine): express.Router {
 				}
 			});
 		},
-		post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {},
-		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {}
+		post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+		},
+		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+		}
 	};
 
 	registerPublicApi(register_public, api);
@@ -255,7 +269,7 @@ export function initJamRouter(engine: Engine): express.Router {
 			});
 		},
 		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
-			router.post(name, upload.single(field), apiCheck(apiCheckName || name), autoUploadTempReap, async (req, res) => {
+			router.post(name, upload.single(field), AutoCleanupHandler, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
 					await checkRoles((req as UserRequest).user, roles);
 					await execute(req as UserRequest, res);
