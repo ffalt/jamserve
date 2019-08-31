@@ -12,10 +12,17 @@ export interface Folder extends DBObject {
 	tag: FolderTag;
 }
 
+export interface ArtworkImage {
+	width?: number;
+	height?: number;
+	format?: string;
+}
+
 export interface Artwork {
 	id: string;
 	name: string;
 	types: Array<ArtworkImageType>;
+	image: ArtworkImage;
 	stat: {
 		created: number;
 		modified: number;

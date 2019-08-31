@@ -1,7 +1,7 @@
 import path from 'path';
 import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
-import {ArtworkImageType, FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
+import {FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import Logger from '../../utils/logger';
@@ -9,6 +9,7 @@ import {artWorkImageNameToType} from '../folder/folder.format';
 import {Artwork, Folder, FolderTag} from '../folder/folder.model';
 import {Store} from '../store/store';
 import {Track, TrackTag} from '../track/track.model';
+import {getImageInfo} from './scan.artwork';
 import {MergeChanges} from './scan.changes';
 import {MatchDir, MatchFile} from './scan.match-dir';
 import {buildMetaStat} from './scan.metastats';
@@ -125,13 +126,13 @@ export class ScanMerger {
 		}
 	}
 
-	private buildFolderTag(dir: MatchDir): FolderTag {
+	private async buildFolderTag(dir: MatchDir): Promise<FolderTag> {
 		const metaStat = dir.metaStat;
 		if (!metaStat) {
 			throw Error('internal error, metastat must exist');
 		}
 		const nameSplit = splitDirectoryName(dir.name);
-		const images = this.collectFolderImages(dir);
+		const images = await this.collectFolderArtworks(dir);
 		return {
 			trackCount: metaStat.trackCount,
 			folderCount: dir.directories.length,
@@ -202,18 +203,25 @@ export class ScanMerger {
 		}
 	}
 
-	private collectFolderImages(dir: MatchDir): Array<Artwork> {
+	private async collectFolderArtworks(dir: MatchDir): Promise<Array<Artwork>> {
 		if (!dir.folder) {
 			log.error('folder obj must exist at this point');
 			return [];
 		}
 		const folderID = dir.folder.id;
-		return dir.files.filter(file => file.type === FileTyp.IMAGE).map(file => {
+		const files = dir.files.filter(file => file.type === FileTyp.IMAGE);
+		const result: Array<Artwork> = [];
+		for (const file of files) {
 			const name = path.basename(file.name);
-			const types: Array<ArtworkImageType> = artWorkImageNameToType(name);
-			const id = generateArtworkId(folderID, name);
-			return {id, name, types, stat: {created: file.stat.ctime, modified: file.stat.mtime, size: file.stat.size}};
-		});
+			result.push({
+				id: generateArtworkId(folderID, name),
+				name,
+				types: artWorkImageNameToType(name),
+				image: await getImageInfo(file.name),
+				stat: {created: file.stat.ctime, modified: file.stat.mtime, size: file.stat.size}
+			});
+		}
+		return result;
 	}
 
 	private applyFolderTagType(dir: MatchDir): void {
@@ -276,7 +284,7 @@ export class ScanMerger {
 		}
 		if (dir.folder && rebuildTag(dir)) {
 			dir.metaStat = buildMetaStat(dir, this.settings, this.strategy);
-			dir.tag = this.buildFolderTag(dir);
+			dir.tag = await this.buildFolderTag(dir);
 		}
 		this.applyFolderTagType(dir);
 	}
