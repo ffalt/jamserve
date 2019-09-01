@@ -87,7 +87,7 @@
     "tmp": "0.1.0",
     "waveform-data": "3.0.0",
     "winston": "3.2.1",
-    "xml2js": "0.4.19"
+    "xml2js": "0.4.20"
   },
   "devDependencies": {
     "@types/archiver": "3.0.0",
