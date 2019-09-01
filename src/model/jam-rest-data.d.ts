@@ -236,6 +236,9 @@ export declare namespace Jam {
 		id: string;
 		name: string;
 		types: Array<ArtworkImageType>;
+		height?: number;
+		width?: number;
+		format?: string;
 		size: number;
 	}
 

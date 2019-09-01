@@ -9,6 +9,9 @@ export function formatFolderArtwork(artwork: Artwork): Jam.ArtworkImage {
 		id: artwork.id,
 		name: artwork.name,
 		types: artwork.types,
+		format: artwork.image ? artwork.image.format : undefined,
+		height: artwork.image ? artwork.image.height : undefined,
+		width: artwork.image ? artwork.image.width : undefined,
 		size: artwork.stat.size
 	};
 }

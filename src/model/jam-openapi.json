@@ -21493,6 +21493,15 @@
 							"type": "string"
 						}
 					},
+					"height": {
+						"type": "number"
+					},
+					"width": {
+						"type": "number"
+					},
+					"format": {
+						"type": "string"
+					},
 					"size": {
 						"type": "number"
 					}

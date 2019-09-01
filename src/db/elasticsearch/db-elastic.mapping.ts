@@ -45,11 +45,20 @@ const type_User = {
 	}
 };
 
+const type_ArtworkImage = {
+	properties: {
+		width: type_int,
+		height: type_int,
+		format: type_key
+	}
+};
+
 const type_Artwork = {
 	properties: {
 		id: type_key,
 		name: type_string,
-		types: type_key
+		types: type_key,
+		image: type_ArtworkImage
 	}
 };
 
