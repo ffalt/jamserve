@@ -219,3 +219,15 @@ export enum TrackHealthID {
 	id3v2NoId3v1 = 'track.mp3.id3v2.no.id3v1',
 	mp3Garbage = 'track.mp3.garbage.data'
 }
+
+export enum FolderHealthID {
+	albumTagsExists = 'folder.album.tags.exists',
+	albumMBIDExists = 'folder.album.mbid.exists',
+	albumTracksComplete = 'folder.album.tracks.complete',
+	albumNameConform = 'folder.album.name.conform',
+	albumImageExists = 'folder.album.image.exists',
+	albumImageValid = 'folder.album.image.valid',
+	artistNameConform = 'folder.artist.name.conform',
+	artistImageExists = 'folder.artist.image.exists',
+	artistImageValid = 'folder.artist.image.valid',
+}

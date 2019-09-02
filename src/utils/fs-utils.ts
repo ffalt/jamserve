@@ -19,6 +19,10 @@ export function fileSuffix(filename: string): string {
 	return path.extname(filename).slice(1).toLowerCase();
 }
 
+export function fileExt(filename: string): string {
+	return path.extname(filename).toLowerCase();
+}
+
 export function replaceFileSystemChars(s: string, replace: string): string {
 	return s.toString()
 		.replace(/:/g, ' - ')

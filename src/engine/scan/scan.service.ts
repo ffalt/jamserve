@@ -4,7 +4,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {ArtworkImageType, FolderTypeImageName, RootScanStrategy, TrackHealthID} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
-import {containsFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
+import {containsFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists, fileExt, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
 import Logger from '../../utils/logger';
 import {Root} from '../root/root.model';
 import {Store} from '../store/store';
@@ -292,8 +292,8 @@ export class ScanService {
 		if (!track) {
 			return Promise.reject(Error('Track not found'));
 		}
-		const ext = path.extname(name).toLowerCase();
-		const ext2 = path.extname(track.name).toLowerCase();
+		const ext = fileExt(name);
+		const ext2 = fileExt(track.name);
 		if (ext !== ext2) {
 			return Promise.reject(Error('Changing File extension not supported ' + ext + '=>' + ext2));
 		}
@@ -453,7 +453,7 @@ export class ScanService {
 		}
 		const {changes} = await this.start(rootID);
 		const name = FolderTypeImageName[folder.tag.type];
-		const imageext = path.extname(artworkFilename).trim().toLowerCase();
+		const imageext = fileExt(artworkFilename);
 		if (imageext.length === 0) {
 			return Promise.reject(Error('Invalid Image Filename'));
 		}

@@ -7,7 +7,7 @@ import {ApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {downloadFile} from '../../utils/download';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
-import {fileDeleteIfExists} from '../../utils/fs-utils';
+import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import Logger from '../../utils/logger';
 import {AvatarGen} from './image.avatar';
 
@@ -75,10 +75,7 @@ export class ImageModule {
 		if (!size) {
 			return {file: {filename, name}};
 		}
-		let fileFormat = path.extname(filename);
-		if (fileFormat[0] === '.') {
-			fileFormat = fileFormat.slice(1);
-		}
+		let fileFormat = fileSuffix(filename);
 		if (!SupportedWriteImageFormat.includes(fileFormat)) {
 			fileFormat = this.format;
 		}
@@ -86,10 +83,7 @@ export class ImageModule {
 	}
 
 	private async getImageAs(filename: string, format: string, size: number | undefined, name: string): Promise<ApiBinaryResult> {
-		let fileFormat = path.extname(filename);
-		if (fileFormat[0] === '.') {
-			fileFormat = fileFormat.slice(1);
-		}
+		const fileFormat = fileSuffix(filename);
 		const exists = await fse.pathExists(filename);
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
