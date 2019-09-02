@@ -211,15 +211,22 @@ export class ScanMerger {
 		const folderID = dir.folder.id;
 		const files = dir.files.filter(file => file.type === FileTyp.IMAGE);
 		const result: Array<Artwork> = [];
+		const oldArtworks = dir.folder && dir.folder.tag && dir.folder.tag.artworks ? dir.folder.tag.artworks : [];
 		for (const file of files) {
 			const name = path.basename(file.name);
-			result.push({
-				id: generateArtworkId(folderID, name),
-				name,
-				types: artWorkImageNameToType(name),
-				image: await getImageInfo(file.name),
-				stat: {created: file.stat.ctime, modified: file.stat.mtime, size: file.stat.size}
-			});
+			const id = generateArtworkId(folderID, name);
+			const oldArtwork = oldArtworks.find(o => o.name === name);
+			if (!oldArtwork || oldArtwork.stat.modified !== file.stat.mtime) {
+				result.push({
+					id,
+					name,
+					types: artWorkImageNameToType(name),
+					image: await getImageInfo(file.name),
+					stat: {created: file.stat.ctime, modified: file.stat.mtime, size: file.stat.size}
+				});
+			} else {
+				result.push(oldArtwork);
+			}
 		}
 		return result;
 	}
