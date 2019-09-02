@@ -1,14 +1,18 @@
 import fse from 'fs-extra';
 import path from 'path';
+
 import {Jam} from '../../model/jam-rest-data';
 import {ArtworkImageType, FolderTypeImageName, RootScanStrategy, TrackHealthID} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
 import {containsFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists, fileExt, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
 import Logger from '../../utils/logger';
+import {artWorkImageNameToType} from '../folder/folder.format';
+import {Artwork, Folder} from '../folder/folder.model';
 import {Root} from '../root/root.model';
 import {Store} from '../store/store';
 import {WaveformService} from '../waveform/waveform.service';
+import {getImageInfo} from './scan.artwork';
 import {emptyChanges, MergeChanges} from './scan.changes';
 import {ScanCleaner} from './scan.clean';
 import {MatchDir} from './scan.match-dir';
@@ -18,10 +22,7 @@ import {ScanMerger} from './scan.merge';
 import {ScanMetaMerger} from './scan.merge-meta';
 import {DirScanner, ScanDir} from './scan.scan-dir';
 import {ScanStorer} from './scan.store';
-import {Artwork, Folder} from '../folder/folder.model';
 import {generateArtworkId} from './scan.utils';
-import {artWorkImageNameToType} from '../folder/folder.format';
-import {getImageInfo} from './scan.artwork';
 
 const log = Logger('IO.Service');
 

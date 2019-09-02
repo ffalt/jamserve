@@ -1,6 +1,6 @@
 import express from 'express';
-import {EngineRequest} from '../server';
 import {User} from '../../engine/user/user.model';
+import {EngineRequest} from '../server';
 
 export interface SubsonicBaseParams {
 	username: string;

@@ -156,7 +156,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		if (info) {
 			return info;
 		}
-		return await this.getLastFMArtistInfo(mbArtistID);
+		return this.getLastFMArtistInfo(mbArtistID);
 	}
 
 	private async getAlbumInfoByMusicBrainzID(mbReleaseID: string): Promise<Jam.ExtendedInfo | undefined> {

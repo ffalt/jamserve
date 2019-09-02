@@ -267,7 +267,7 @@ export class TrackRulesChecker {
 					xing: ana.warnings.filter(w => w.msg.startsWith('XING:')),
 					mpeg: ana.warnings.filter(w => w.msg.startsWith('MPEG:')),
 					id3v1: ana.warnings.filter(w => w.msg.startsWith('ID3V1:')),
-					id3v2: ana.warnings.filter(w => w.msg.startsWith('ID3V2:')),
+					id3v2: ana.warnings.filter(w => w.msg.startsWith('ID3V2:'))
 				};
 			} else {
 				log.debug('Check Media with flac', filename);
