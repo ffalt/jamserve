@@ -53,7 +53,7 @@ export class MetadataController {
 		return this.metadataService.wikidataLookup(req.query.id);
 	}
 
-	async chartlyricsSearch(req: JamRequest<JamParameters.ChartlyricsSearch>): Promise<Jam.ChartLyricsResponse> {
-		return this.metadataService.chartlyricsSearch(req.query.artist, req.query.song);
-	}
+	// async chartlyricsSearch(req: JamRequest<JamParameters.ChartlyricsSearch>): Promise<Jam.ChartLyricsResponse> {
+	// 	return this.metadataService.chartlyricsSearch(req.query.artist, req.query.song);
+	// }
 }

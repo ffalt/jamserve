@@ -6,3 +6,5 @@
 * api endpoint for generated subsonic password (get/refresh)
 
 * db schema update on data of older jamserve version
+
+* search by regex

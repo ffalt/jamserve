@@ -1895,10 +1895,10 @@ export class SubsonicApi {
 			return {lyrics: {content: ''}};
 		}
 		const lyrics = await this.engine.audioModule.getLyrics(req.query.artist, req.query.title);
-		if (!lyrics) {
+		if (!lyrics || !lyrics.lyrics) {
 			return {lyrics: {content: ''}};
 		}
-		return {lyrics: {artist: lyrics.artist, title: lyrics.song, content: lyrics.lyric.replace(/\r\n/g, '\n')}};
+		return {lyrics: {artist: req.query.artist, title: req.query.title, content: lyrics.lyrics.replace(/\r\n/g, '\n')}};
 	}
 
 	async getPlayQueue(req: ApiOptions<{}>): Promise<{ playQueue: Subsonic.PlayQueue }> {

@@ -11,7 +11,7 @@ export class WebserviceXMLClient {
 		this.userAgent = userAgent;
 	}
 
-	protected async getJson<T>(url: string, parameters: object | undefined): Promise<T> {
+	protected async getJson<T>(url: string, parameters?: object): Promise<T> {
 		const options: request.Options = {
 			url,
 			headers: {'User-Agent': this.userAgent},

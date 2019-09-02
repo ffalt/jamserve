@@ -85,15 +85,6 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
-		 * metadata: search chartlyrics data
-		 */
-		'chartlyrics/search'?: {
-			operationId: 'metadata.chartlyricsSearch'
-			params: JamParameters.ChartlyricsSearch;
-			result: Jam.ChartLyricsResponse;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-		};
-		/**
 		 * metadata: lookup acousticbrainz data
 		 */
 		'acousticbrainz/lookup'?: {
@@ -382,6 +373,14 @@ export interface JamApi {
 			result: Array<Jam.TrackHealth>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['admin'];
+		};
+		/**
+		 * track: search lyrics for the track
+		 */
+		'track/lyrics'?: {
+			params: JamParameters.ID;
+			result: Jam.TrackLyrics;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 
 		/**

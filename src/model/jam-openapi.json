@@ -315,56 +315,6 @@
 				]
 			}
 		},
-		"/chartlyrics/search": {
-			"get": {
-				"operationId": "metadataController.chartlyricsSearch",
-				"description": "search chartlyrics data",
-				"tags": [
-					"metadata"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.ChartLyricsResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "parameter is missing or invalid"
-					},
-					"401": {
-						"description": "unauthorized"
-					},
-					"500": {
-						"description": "internal server error"
-					}
-				},
-				"parameters": [
-					{
-						"in": "query",
-						"name": "artist",
-						"schema": {
-							"type": "string"
-						},
-						"description": "search by artist name",
-						"required": true
-					},
-					{
-						"in": "query",
-						"name": "song",
-						"schema": {
-							"type": "string"
-						},
-						"description": "search by song name",
-						"required": true
-					}
-				]
-			}
-		},
 		"/acousticbrainz/lookup": {
 			"get": {
 				"operationId": "metadataController.acousticbrainzLookup",
@@ -4687,6 +4637,47 @@
 						},
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false
+					}
+				]
+			}
+		},
+		"/track/lyrics": {
+			"get": {
+				"operationId": "trackController.lyrics",
+				"description": "search lyrics for the track",
+				"tags": [
+					"track"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.TrackLyrics"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "parameter is missing or invalid"
+					},
+					"401": {
+						"description": "unauthorized"
+					},
+					"500": {
+						"description": "internal server error"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
 					}
 				]
 			}
@@ -17765,41 +17756,6 @@
 				],
 				"type": "string"
 			},
-			"Jam.ChartLyricsResponse": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"trackId": {
-						"type": "string"
-					},
-					"trackChecksum": {
-						"type": "string"
-					},
-					"song": {
-						"type": "string"
-					},
-					"artist": {
-						"type": "string"
-					},
-					"url": {
-						"type": "string"
-					},
-					"covertArtUrl": {
-						"type": "string"
-					},
-					"rank": {
-						"type": "string"
-					},
-					"correctUrl": {
-						"type": "string"
-					},
-					"lyric": {
-						"type": "string"
-					}
-				}
-			},
 			"AcousticBrainz.Response": {
 				"type": "object",
 				"properties": {
@@ -21660,6 +21616,17 @@
 					"health",
 					"track"
 				]
+			},
+			"Jam.TrackLyrics": {
+				"type": "object",
+				"properties": {
+					"lyrics": {
+						"type": "string"
+					},
+					"source": {
+						"type": "string"
+					}
+				}
 			},
 			"Jam.PodcastEpisode": {
 				"type": "object",

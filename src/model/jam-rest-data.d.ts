@@ -227,6 +227,11 @@ export declare namespace Jam {
 		health: Array<HealthHint>;
 	}
 
+	export interface TrackLyrics {
+		lyrics?: string;
+		source?: string;
+	}
+
 	export interface FolderParent {
 		id: string;
 		name: string;
@@ -525,19 +530,6 @@ export declare namespace Jam {
 
 	export interface WikidataLookupResponse {
 		entity?: WikiData.Entity;
-	}
-
-	export interface ChartLyricsResponse {
-		id?: string;
-		trackId?: string;
-		trackChecksum?: string;
-		song?: string;
-		artist?: string;
-		url?: string;
-		covertArtUrl?: string;
-		rank?: string;
-		correctUrl?: string;
-		lyric?: string;
 	}
 
 	export type LastFMResponse = LastFM.Result;

@@ -15,7 +15,7 @@ import {ImageModule} from '../image/image.module';
 import {FORMAT} from './audio.format';
 import {AcousticbrainzClient} from './clients/acousticbrainz-client';
 import {AcoustidClient} from './clients/acoustid-client';
-import {ChartLyricsClient, ChartLyricsResult} from './clients/chartlyrics-client';
+import {LyricsOVHClient, LyricsResult} from './clients/lyricsovh-client';
 import {CoverArtArchiveClient} from './clients/coverartarchive-client';
 import {LastFMClient} from './clients/lastfm-client';
 import {MusicbrainzClient} from './clients/musicbrainz-client';
@@ -39,7 +39,7 @@ export class AudioModule {
 	musicbrainz: MusicbrainzClient;
 	acoustid: AcoustidClient;
 	lastFM: LastFMClient;
-	chartLyrics: ChartLyricsClient;
+	lyricsOVH: LyricsOVHClient;
 	acousticbrainz: AcousticbrainzClient;
 	coverArtArchive: CoverArtArchiveClient;
 	wikipedia: WikipediaClient;
@@ -50,7 +50,7 @@ export class AudioModule {
 		this.acousticbrainz = new AcousticbrainzClient({userAgent: tools.acousticbrainz.userAgent, retryOn: true});
 		this.lastFM = new LastFMClient({key: tools.lastfm.apiKey, userAgent: tools.lastfm.userAgent});
 		this.acoustid = new AcoustidClient({key: tools.acoustid.apiKey, userAgent: tools.acoustid.userAgent});
-		this.chartLyrics = new ChartLyricsClient(tools.chartlyrics.userAgent);
+		this.lyricsOVH = new LyricsOVHClient(tools.chartlyrics.userAgent);
 		this.wikipedia = new WikipediaClient(tools.wikipedia.userAgent);
 		this.coverArtArchive = new CoverArtArchiveClient({userAgent: tools.coverartarchive.userAgent, retryOn: true});
 	}
@@ -247,8 +247,8 @@ export class AudioModule {
 		return this.lastFM.lookup(type, id);
 	}
 
-	async getLyrics(artist: string, song: string): Promise<ChartLyricsResult | undefined> {
-		return this.chartLyrics.search(artist, song);
+	async getLyrics(artist: string, song: string): Promise<LyricsResult | undefined> {
+		return this.lyricsOVH.search(artist, song);
 	}
 
 	async wikipediaSummary(title: string, lang: string | undefined): Promise<{ title: string, url: string, summary: string } | undefined> {

@@ -60,12 +60,6 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		await ApiResponder.data(res, result);
 	});
 
-	register.get('/chartlyrics/search', async (req, res) => {
-		const options: JamRequest<JamParameters.ChartlyricsSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.ChartLyricsResponse = await api.metadataController.chartlyricsSearch(options);
-		await ApiResponder.data(res, result);
-	});
-
 	register.get('/acousticbrainz/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.AcousticBrainzLookup> = {query: req.query, user: req.user, client: req.client};
 		const result: AcousticBrainz.Response = await api.metadataController.acousticbrainzLookup(options);
@@ -275,6 +269,12 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Array<Jam.TrackHealth> = await api.trackController.health(options);
 		await ApiResponder.data(res, result);
 	}, '/track/health', ['admin']);
+
+	register.get('/track/lyrics', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.TrackLyrics = await api.trackController.lyrics(options);
+		await ApiResponder.data(res, result);
+	});
 
 	register.get('/episode/id', async (req, res) => {
 		const options: JamRequest<JamParameters.Episode> = {query: req.query, user: req.user, client: req.client};

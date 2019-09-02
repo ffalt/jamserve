@@ -581,14 +581,14 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		return brainz;
 	}
 
-	async chartlyricsSearch(artist: string, song: string): Promise<Jam.ChartLyricsResponse> {
+	async lyrics(artist: string, song: string): Promise<Jam.TrackLyrics> {
 		const name = 'lyrics-' + artist + '/' + song;
-		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.chartlyrics});
+		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.lyrics});
 		if (result) {
 			return result.data;
 		}
 		const lyrics = await this.audioModule.getLyrics(artist, song) || {};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.chartlyrics, data: lyrics, date: Date.now()});
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lyrics, data: lyrics, date: Date.now()});
 		return lyrics;
 	}
 

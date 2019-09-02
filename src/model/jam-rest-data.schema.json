@@ -5732,6 +5732,17 @@
 				"track"
 			]
 		},
+		"Jam.TrackLyrics": {
+			"type": "object",
+			"properties": {
+				"lyrics": {
+					"type": "string"
+				},
+				"source": {
+					"type": "string"
+				}
+			}
+		},
 		"Jam.FolderParent": {
 			"type": "object",
 			"properties": {
@@ -7035,41 +7046,6 @@
 			"properties": {
 				"entity": {
 					"$ref": "#/definitions/WikiData.Entity"
-				}
-			}
-		},
-		"Jam.ChartLyricsResponse": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"type": "string"
-				},
-				"trackId": {
-					"type": "string"
-				},
-				"trackChecksum": {
-					"type": "string"
-				},
-				"song": {
-					"type": "string"
-				},
-				"artist": {
-					"type": "string"
-				},
-				"url": {
-					"type": "string"
-				},
-				"covertArtUrl": {
-					"type": "string"
-				},
-				"rank": {
-					"type": "string"
-				},
-				"correctUrl": {
-					"type": "string"
-				},
-				"lyric": {
-					"type": "string"
 				}
 			}
 		},

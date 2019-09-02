@@ -242,4 +242,14 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		return result;
 	}
 
+	async lyrics(req: JamRequest<JamParameters.ID>): Promise<Jam.TrackLyrics> {
+		const track = await this.byID(req.query.id);
+		const artist = track.tag.artist;
+		const song = track.tag.title;
+		if (!artist || !song) {
+			return {};
+		}
+		return this.metaService.lyrics(artist, song);
+
+	}
 }
