@@ -329,6 +329,10 @@ export declare namespace JamParameters {
 		 */
 		query?: string;
 		/**
+		 * sort field name
+		 */
+		sortField?: string; // stronger typed by extending interfaces
+		/**
 		 * sort direction
 		 *
 		 * @default false
