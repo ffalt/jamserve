@@ -1,12 +1,13 @@
 /* tslint:disable:max-classes-per-file */
 import path from 'path';
+
 import {Jam} from '../../model/jam-rest-data';
 import {AlbumTypesArtistMusic, FolderType, FolderTypesAlbum} from '../../model/jam-types';
 import {replaceFolderSystemChars} from '../../utils/fs-utils';
 import {Folder, FolderTag} from '../folder/folder.model';
+import {getFolderDisplayImage} from '../folder/folder.service';
 import {Root} from '../root/root.model';
 import {RuleResult} from './rule.model';
-import {getFolderDisplayImage} from '../folder/folder.service';
 
 export abstract class FolderRule {
 
@@ -195,6 +196,23 @@ export class FolderAlbumImageRule extends FolderRule {
 
 }
 
+export class FolderAlbumImageValidRule extends FolderRule {
+
+	constructor() {
+		super('folder.album.image.valid', 'Album folder image is invalid');
+	}
+
+	async run(folder: Folder): Promise<RuleResult | undefined> {
+		if ((folder.tag.type === FolderType.album) || (folder.tag.type === FolderType.multialbum && folder.tag.folderCount > 0)) {
+			const artwork = await getFolderDisplayImage(folder);
+			if (artwork && (!artwork.image || artwork.image.format === 'invalid')) {
+				return {};
+			}
+		}
+	}
+
+}
+
 export class FolderArtistImageRule extends FolderRule {
 
 	constructor() {
@@ -205,6 +223,23 @@ export class FolderArtistImageRule extends FolderRule {
 		if (folder.tag.type === FolderType.artist) {
 			const artwork = await getFolderDisplayImage(folder);
 			if (!artwork) {
+				return {};
+			}
+		}
+	}
+
+}
+
+export class FolderArtistImageValidRule extends FolderRule {
+
+	constructor() {
+		super('folder.artist.image.valid', 'Artist folder image is invalid');
+	}
+
+	async run(folder: Folder): Promise<RuleResult | undefined> {
+		if (folder.tag.type === FolderType.artist) {
+			const artwork = await getFolderDisplayImage(folder);
+			if (artwork && (!artwork.image || artwork.image.format === 'invalid')) {
 				return {};
 			}
 		}
@@ -246,7 +281,9 @@ export class FolderRulesChecker {
 		this.rules.push(new FolderAlbumNameRule());
 		this.rules.push(new FolderAlbumCompleteRule());
 		this.rules.push(new FolderAlbumImageRule());
+		this.rules.push(new FolderAlbumImageValidRule());
 		this.rules.push(new FolderArtistImageRule());
+		this.rules.push(new FolderArtistImageValidRule());
 		this.rules.push(new FolderArtistNameRule());
 	}
 

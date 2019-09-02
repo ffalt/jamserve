@@ -7,6 +7,10 @@ export interface ImageInfo {
 }
 
 export async function getImageInfo(filename: string): Promise<ImageInfo> {
-	const meta = await sharp(filename).metadata();
-	return {height: meta.height, width: meta.width, format: meta.format};
+	try {
+		const meta = await sharp(filename).metadata();
+		return {height: meta.height, width: meta.width, format: meta.format};
+	} catch (e) {
+		return {format: 'invalid'};
+	}
 }
