@@ -112,7 +112,7 @@
     "@types/on-finished": "^2.3.1",
     "@types/nedb": "1.8.8",
     "@types/nock": "10.0.3",
-    "@types/node": "12.7.3",
+    "@types/node": "12.7.4",
     "@types/passport": "1.0.1",
     "@types/passport-jwt": "3.0.1",
     "@types/passport-local": "1.0.33",
