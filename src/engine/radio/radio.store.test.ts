@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {RadioStore, SearchQueryRadio} from './radio.store';
 import {Radio} from './radio.model';
 import {testStore} from '../base/base.store.spec';

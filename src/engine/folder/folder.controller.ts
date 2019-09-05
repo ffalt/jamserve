@@ -23,7 +23,7 @@ import {StateService} from '../state/state.service';
 import {TrackController} from '../track/track.controller';
 import {SearchQueryTrack} from '../track/track.store';
 import {User} from '../user/user.model';
-import {formatFolder, formatFolderArtwork, formatFolderArtworks} from './folder.format';
+import {formatFolder, formatFolderArtworks} from './folder.format';
 import {Artwork, Folder} from './folder.model';
 import {FolderService} from './folder.service';
 import {SearchQueryFolder} from './folder.store';

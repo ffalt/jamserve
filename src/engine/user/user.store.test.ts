@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {SearchQueryUser, UserStore} from './user.store';
 import {User} from './user.model';
 import {testStore} from '../base/base.store.spec';

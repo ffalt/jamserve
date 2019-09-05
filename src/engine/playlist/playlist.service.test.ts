@@ -1,5 +1,3 @@
-import {expect, should} from 'chai';
-import {describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {PlaylistService} from './playlist.service';
 import {TrackStore} from '../track/track.store';
@@ -17,31 +15,31 @@ describe('PlaylistService', () => {
 		() => {
 			it('create an empty playlist', async () => {
 				const playlist = await playlistService.create('playlist 1', 'a comment', false, 'userID1', []);
-				should().exist(playlist);
+				expect(playlist).toBeTruthy();
 			});
 			it('modify a playlist', async () => {
 				const trackIDs = await trackStore.allIds();
 				let playlist = await playlistService.playlistStore.searchOne({userID: 'userID1'});
-				should().exist(playlist);
+				expect(playlist).toBeTruthy();
 				if (playlist) {
 					playlist.trackIDs = trackIDs;
 					await playlistService.update(playlist);
 				}
 				playlist = await playlistService.playlistStore.searchOne({userID: 'userID1'});
-				should().exist(playlist);
+				expect(playlist).toBeTruthy();
 				if (playlist) {
-					expect(playlist.trackIDs.length).to.be.equal(trackIDs.length);
-					expect(playlist.duration).to.be.equal(trackIDs.length);
+					expect(playlist.trackIDs.length).toBe(trackIDs.length);
+					expect(playlist.duration).toBe(trackIDs.length);
 				}
 			});
 			it('remove a playlist', async () => {
 				let playlist = await playlistService.playlistStore.searchOne({userID: 'userID1'});
-				should().exist(playlist);
+				expect(playlist).toBeTruthy();
 				if (playlist) {
 					await playlistService.remove(playlist);
 				}
 				playlist = await playlistService.playlistStore.searchOne({userID: 'userID1'});
-				should().not.exist(playlist);
+				expect(playlist).toBeUndefined();
 			});
 		}
 	);

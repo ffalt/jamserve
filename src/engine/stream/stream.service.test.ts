@@ -1,13 +1,12 @@
-import {expect, should} from 'chai';
-import {describe, it} from 'mocha';
+import path from 'path';
+
+import {SupportedTranscodeAudioFormat} from '../../utils/filetype';
 import {testService} from '../base/base.service.spec';
+import {mockEpisode} from '../episode/episode.mock';
+import {mockTrack} from '../track/track.mock';
+import {TrackStore} from '../track/track.store';
 import {mockUser} from '../user/user.mock';
 import {StreamService} from './stream.service';
-import {TrackStore} from '../track/track.store';
-import {SupportedTranscodeAudioFormat} from '../../utils/filetype';
-import {mockTrack} from '../track/track.mock';
-import {mockEpisode} from '../episode/episode.mock';
-import path from 'path';
 
 describe('StreamService', () => {
 	let streamService: StreamService;
@@ -22,60 +21,60 @@ describe('StreamService', () => {
 		() => {
 			it('should stream a track', async () => {
 				const track = await trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
-				let res = await streamService.streamTrack(track, undefined, undefined, user);
-				should().exist(res);
-				should().exist(res.file);
+				let result = await streamService.streamTrack(track, undefined, undefined, user);
+				expect(result).toBeTruthy();
+				expect(result.file).toBeTruthy();
 				for (const format of SupportedTranscodeAudioFormat) {
-					res = await streamService.streamTrack(track, format, undefined, user);
-					should().exist(res);
-					expect(!!res.file || !!res.pipe).to.be.equal(true, 'Invalid result');
+					result = await streamService.streamTrack(track, format, undefined, user);
+					expect(result).toBeTruthy();
+					expect(!!result.file || !!result.pipe).toBe(true); // 'Invalid result');
 				}
 				track.media.format = undefined;
-				res = await streamService.streamTrack(track, undefined, undefined, user);
-				should().exist(res);
-				should().exist(res.file);
+				result = await streamService.streamTrack(track, undefined, undefined, user);
+				expect(result).toBeTruthy();
+				expect(result.file).toBeTruthy();
 			});
 			it('should fail streaming a track if file does not exists', async () => {
 				const mock = mockTrack();
 				mock.path = '/dev/null';
 				mock.name = 'notexisting.mp3';
-				await streamService.streamTrack(mock, undefined, undefined, user).should.eventually.be.rejectedWith(Error);
+				await expect(streamService.streamTrack(mock, undefined, undefined, user)).rejects.toThrow('File not found');
 			});
 			it('should not stream invalid settings', async () => {
 				const track = await trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
-				await streamService.streamTrack(track, 'invalid', undefined, user).should.eventually.be.rejectedWith(Error);
-				await streamService.streamTrack(track, '.invalid', undefined, user).should.eventually.be.rejectedWith(Error);
+				await expect(streamService.streamTrack(track, 'invalid', undefined, user)).rejects.toThrow('Unsupported transcoding format');
+				await expect(streamService.streamTrack(track, '.invalid', undefined, user)).rejects.toThrow('Unsupported transcoding format');
 			});
 			it('should stream a episode', async () => {
 				const track = await trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
 				const mock = mockEpisode();
 				mock.path = path.join(track.path, track.name);
 				mock.media = track.media;
-				const res = await streamService.streamEpisode(mock, undefined, undefined, user);
-				should().exist(res);
-				should().exist(res.file);
+				const result = await streamService.streamEpisode(mock, undefined, undefined, user);
+				expect(result).toBeTruthy();
+				expect(result.file).toBeTruthy();
 			});
 			it('should fail streaming a episode if file does not exists', async () => {
 				const mock = mockEpisode();
 				mock.path = '/dev/null/notexisting.mp3';
-				await streamService.streamEpisode(mock, undefined, undefined, user).should.eventually.be.rejectedWith(Error);
+				await expect(streamService.streamEpisode(mock, undefined, undefined, user)).rejects.toThrow('File not found');
 				mock.path = undefined;
-				await streamService.streamEpisode(mock, undefined, undefined, user).should.eventually.be.rejectedWith(Error);
+				await expect(streamService.streamEpisode(mock, undefined, undefined, user)).rejects.toThrow('Podcast episode not ready');
 				mock.path = '/dev/null/notexisting.mp3';
 				mock.media = undefined;
-				await streamService.streamEpisode(mock, undefined, undefined, user).should.eventually.be.rejectedWith(Error);
+				await expect(streamService.streamEpisode(mock, undefined, undefined, user)).rejects.toThrow('Podcast episode not ready');
 			});
 
 		}

@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {SearchQueryState, StateStore} from './state.store';
 import {State} from './state.model';
 import {testStore} from '../base/base.store.spec';

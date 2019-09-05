@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {OpenAPIObject} from '../../src/model/openapi-spec';
-import {getSubsonicApiCalls, ApiCall, transformTS2JSONScheme} from './utils';
+import {ApiCall, getSubsonicApiCalls, transformTS2JSONScheme} from './utils';
 
 const version = '1.16.0';
 const basePath = path.resolve('../../src/model/');

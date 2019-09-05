@@ -1,12 +1,10 @@
-import {expect} from 'chai';
-import {describe, it} from 'mocha';
-import {FolderStore, SearchQueryFolder} from './folder.store';
-import {Folder} from './folder.model';
 import path from 'path';
+import {removeTrailingPathSeparator} from '../../utils/fs-utils';
+import {mockPath} from '../../utils/testutils.spec';
 import {testStore} from '../base/base.store.spec';
 import {mockFolder, mockFolder2} from './folder.mock';
-import {mockPath} from '../../utils/testutils.spec';
-import {removeTrailingPathSeparator} from '../../utils/fs-utils';
+import {Folder} from './folder.model';
+import {FolderStore, SearchQueryFolder} from './folder.store';
 
 describe('FolderStore', () => {
 	let folderStore: FolderStore;
@@ -50,9 +48,9 @@ describe('FolderStore', () => {
 				folder2.path = mockPath('folder 1');
 				folder2.id = await folderStore.add(folder2);
 				let list = await folderStore.search({inPath: removeTrailingPathSeparator(folder2.path)});
-				expect(list.items.length).to.equal(1);
+				expect(list.items.length).toBe(1);
 				list = await folderStore.search({inPath: removeTrailingPathSeparator(folder1.path)});
-				expect(list.items.length).to.equal(1);
+				expect(list.items.length).toBe(1);
 			});
 		});
 });

@@ -1,9 +1,7 @@
-import {expect, should} from 'chai';
-import {describe, it} from 'mocha';
 import {FolderService} from '../folder/folder.service';
 import {ArtistService} from './artist.service';
 import {testService} from '../base/base.service.spec';
-import {FolderType} from '../../model/jam-types';
+import {ArtworkImageType, FolderType} from '../../model/jam-types';
 import {mockImage} from '../../modules/image/image.module.spec';
 import path from 'path';
 import fse from 'fs-extra';
@@ -21,41 +19,51 @@ describe('ArtistService', () => {
 		() => {
 			it('should return the artist folder', async () => {
 				const artists = await artistService.artistStore.all();
-				expect(artists.length > 0).to.be.equal(true, 'Wrong Test Setup');
+				expect(artists.length > 0).toBe(true); // 'Wrong Test Setup');
 				for (const artist of artists) {
 					if (artistService.canHaveArtistImage(artist)) {
 						const folder = await artistService.getArtistFolder(artist);
 						if (!folder) {
 							console.log(artist);
 						}
-						should().exist(folder);
+						expect(folder).toBeTruthy();
 						if (folder) {
-							expect(
-								(folder.tag.type === FolderType.artist)
-							).to.be.equal(true, folder.path + ' is not an artist folder');
+							expect(folder.tag.type).toBe(FolderType.artist); // folder.path + ' is not an artist folder');
 						}
 					}
 				}
 			});
 			it('should return an artist image', async () => {
+				jest.setTimeout(30000);
 				const artists = await artistService.artistStore.all();
-				expect(artists.length > 0).to.be.equal(true, 'Wrong Test Setup');
+				expect(artists.length > 0).toBe(true); //  'Wrong Test Setup');
 				for (const artist of artists) {
 					if (artistService.canHaveArtistImage(artist)) {
 						const folder = await artistService.getArtistFolder(artist);
-						should().exist(folder);
+						expect(folder).toBeTruthy();
 						if (folder) {
-							folder.tag.image = 'dummy.png';
+							const name = 'dummy.png';
 							const image = await mockImage('png');
-							const filename = path.resolve(folder.path, folder.tag.image);
+							const filename = path.resolve(folder.path, name);
 							await fse.writeFile(filename, image.buffer);
+							folder.tag.artworks = [{
+								id: 'dummyID',
+								image: {format: 'png', height: 123, width: 123},
+								name,
+								types: [ArtworkImageType.artist],
+								stat: {
+									created: 123,
+									modified: 123,
+									size: 123
+								}
+							}];
 							await folderService.folderStore.replace(folder);
 							const img = await artistService.getArtistImage(artist);
-							should().exist(img, 'Image not found');
+							expect(img).toBeTruthy();
 							if (img) {
-								should().exist(img.file || img.buffer, 'Image response not valid');
+								expect(img.file || img.buffer).toBeTruthy(); // 'Image response not valid');
 								if (img.file) {
-									expect(img.file.filename).to.be.equal(filename);
+									expect(img.file.filename).toBe(filename);
 								}
 							}
 							await fse.unlink(filename);

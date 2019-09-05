@@ -1,5 +1,3 @@
-import {describe} from 'mocha';
-
 import {testStore} from '../base/base.store.spec';
 import {mockEpisode, mockEpisode2} from './episode.mock';
 import {Episode} from './episode.model';

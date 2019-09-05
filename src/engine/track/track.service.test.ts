@@ -1,9 +1,7 @@
-import {expect, should} from 'chai';
-import {describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {TrackService} from './track.service';
 import {FolderService} from '../folder/folder.service';
-import {FolderTypesAlbum} from '../../model/jam-types';
+import {ArtworkImageType, FolderTypesAlbum} from '../../model/jam-types';
 import {mockImage} from '../../modules/image/image.module.spec';
 import path from 'path';
 import fse from 'fs-extra';
@@ -21,35 +19,46 @@ describe('TrackService', () => {
 		() => {
 			it('should return the track folder', async () => {
 				const tracks = await trackService.trackStore.all();
-				expect(tracks.length > 0).to.be.equal(true, 'Wrong Test Setup');
+				expect(tracks.length > 0).toBe(true); // , 'Wrong Test Setup');
 				for (const track of tracks) {
 					const folder = await trackService.getTrackFolder(track);
-					should().exist(folder);
+					expect(folder).toBeTruthy();
 					if (folder) {
-						expect(folder.tag.type).to.be.oneOf(FolderTypesAlbum);
+						expect(FolderTypesAlbum).toContain(folder.tag.type);
 					}
 				}
 			});
 			it('should return a track image', async () => {
 				const track = await trackService.trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
 				const folder = await trackService.getTrackFolder(track);
-				should().exist(folder);
+				expect(folder).toBeTruthy();
 				if (folder) {
-					folder.tag.image = 'dummy.png';
+					const name = 'dummy.png';
 					const image = await mockImage('png');
-					const filename = path.resolve(folder.path, folder.tag.image);
+					const filename = path.resolve(folder.path, name);
 					await fse.writeFile(filename, image.buffer);
+					folder.tag.artworks = [{
+						id: 'dummyID',
+						image: {format: 'png', height: 123, width: 123},
+						name,
+						types: [ArtworkImageType.front],
+						stat: {
+							created: 123,
+							modified: 123,
+							size: 123
+						}
+					}];
 					await folderService.folderStore.replace(folder);
 					const img = await trackService.getTrackImage(track);
-					should().exist(img, 'Image not found');
+					expect(img).toBeTruthy();
 					if (img) {
-						should().exist(img.file, 'Image response not valid');
+						expect(img.file).toBeTruthy(); // 'Image response not valid');
 						if (img.file) {
-							expect(img.file.filename).to.be.equal(filename);
+							expect(img.file.filename).toBe(filename);
 						}
 					}
 					await fse.unlink(filename);

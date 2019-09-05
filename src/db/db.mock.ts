@@ -1,5 +1,4 @@
-import {after, before, describe} from 'mocha';
-import {initTestFramework} from '../../test/common.spec';
+import {initTestFramework} from '../engine/base/common.spec';
 import {Database} from './db.model';
 import {TestNeDB} from './nedb/db-nedb.spec';
 
@@ -20,8 +19,8 @@ export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup:
 	// dbs.push(new TestElastic());
 	for (const testDB of dbs) {
 		describe('with ' + testDB.name, () => {
-			before(function(done): void {
-				this.timeout(40000);
+			beforeAll(function(done): void {
+				// this.timeout(40000);
 				testDB.setup().then(() => {
 					setup(testDB).then(() => {
 						done();
@@ -33,7 +32,7 @@ export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup:
 				});
 			});
 
-			after(async () => {
+			afterAll(async () => {
 				await cleanup();
 				await testDB.cleanup();
 			});

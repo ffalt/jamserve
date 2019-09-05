@@ -1,4 +1,3 @@
-import {describe, it} from 'mocha';
 import {testEngines} from './engine.spec';
 
 describe('Engine', () => {

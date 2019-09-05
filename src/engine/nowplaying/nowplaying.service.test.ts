@@ -1,5 +1,3 @@
-import {expect} from 'chai';
-import {describe, it} from 'mocha';
 import {NowPlayingService} from './nowplaying.service';
 import {testService} from '../base/base.service.spec';
 import {StateService} from '../state/state.service';
@@ -21,9 +19,9 @@ describe('NowPlayingService', () => {
 		() => {
 			it('should return an empty list', async () => {
 				const playing = await nowPlayingService.getNowPlaying();
-				expect(playing.length).to.equal(0);
+				expect(playing.length).toBe(0);
 				const count = await stateService.stateStore.searchCount({userID: user.id});
-				expect(count).to.equal(0);
+				expect(count).toBe(0);
 			});
 			it('should handle a playing episode', async () => {
 				const episode = mockEpisode();
@@ -31,13 +29,13 @@ describe('NowPlayingService', () => {
 				await nowPlayingService.reportEpisode(episode, user);
 				await nowPlayingService.reportEpisode(episode, user);
 				const playing = await nowPlayingService.getNowPlaying();
-				expect(playing.length).to.equal(1);
+				expect(playing.length).toBe(1);
 				const ep = playing[0];
-				expect(ep.obj.id).to.equal(episode.id);
+				expect(ep.obj.id).toBe(episode.id);
 				let count = await stateService.stateStore.searchCount({userID: user.id, type: DBObjectType.podcast, isPlayed: true});
-				expect(count).to.equal(1);
+				expect(count).toBe(1);
 				count = await stateService.stateStore.searchCount({userID: user.id, type: DBObjectType.episode, isPlayed: true});
-				expect(count).to.equal(1);
+				expect(count).toBe(1);
 				nowPlayingService.clear();
 			});
 			it('should handle a playing track', async () => {
@@ -46,17 +44,17 @@ describe('NowPlayingService', () => {
 				await nowPlayingService.reportTrack(track, user);
 				await nowPlayingService.reportTrack(track, user);
 				const playing = await nowPlayingService.getNowPlaying();
-				expect(playing.length).to.equal(1);
+				expect(playing.length).toBe(1);
 				const ep = playing[0];
-				expect(ep.obj.id).to.equal(track.id);
+				expect(ep.obj.id).toBe(track.id);
 				let count = await stateService.stateStore.searchCount({userID: user.id, type: DBObjectType.track, isPlayed: true});
-				expect(count).to.equal(1);
+				expect(count).toBe(1);
 				count = await stateService.stateStore.searchCount({userID: user.id, type: DBObjectType.folder, isPlayed: true});
-				expect(count).to.equal(1);
+				expect(count).toBe(1);
 				count = await stateService.stateStore.searchCount({userID: user.id, type: DBObjectType.album, isPlayed: true});
-				expect(count).to.equal(1);
+				expect(count).toBe(1);
 				count = await stateService.stateStore.searchCount({userID: user.id, type: DBObjectType.artist, isPlayed: true});
-				expect(count).to.equal(1);
+				expect(count).toBe(1);
 				nowPlayingService.clear();
 			});
 

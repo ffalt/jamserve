@@ -1,5 +1,3 @@
-import {should} from 'chai';
-import {describe, it} from 'mocha';
 import {testEngines} from '../../engine/engine.spec';
 import {JamApi} from './api';
 
@@ -9,7 +7,7 @@ describe('JamApi', () => {
 		jam = new JamApi(testEngine.engine);
 	}, () => {
 		it('should exist', async () => {
-			should().exist(jam);
+			expect(jam).toBeTruthy();
 		});
 	}, async () => {
 

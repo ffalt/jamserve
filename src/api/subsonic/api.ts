@@ -3,7 +3,6 @@ import {Album} from '../../engine/album/album.model';
 import {Artist} from '../../engine/artist/artist.model';
 import {DBObject} from '../../engine/base/base.model';
 import {BaseStore, SearchQuery} from '../../engine/base/base.store';
-import {ListResult} from '../../engine/base/list-result';
 import {Bookmark} from '../../engine/bookmark/bookmark.model';
 import {Engine} from '../../engine/engine';
 import {Episode} from '../../engine/episode/episode.model';

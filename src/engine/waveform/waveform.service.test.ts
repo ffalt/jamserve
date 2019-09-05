@@ -1,5 +1,3 @@
-import {expect, should} from 'chai';
-import {describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {WaveformService} from './waveform.service';
 import tmp from 'tmp';
@@ -20,101 +18,105 @@ describe('WaveformService', () => {
 		() => {
 			it('should return svg for a track', async () => {
 				const track = await trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
-				let res = await waveformService.getTrackWaveform(track, 'svg');
-				should().exist(res);
-				should().exist(res.buffer);
-				if (!res.buffer) {
+				let result = await waveformService.getTrackWaveform(track, 'svg');
+				expect(result).toBeTruthy();
+				expect(result.buffer).toBeTruthy();
+				if (!result.buffer) {
 					return;
 				}
-				expect(res.buffer.contentType).to.be.equal('image/svg+xml');
-				res = await waveformService.getTrackWaveform(track, 'svg');
-				should().exist(res.file);
+				expect(result.buffer.contentType).toBe('image/svg+xml');
+				result = await waveformService.getTrackWaveform(track, 'svg');
+				expect(result).toBeTruthy();
+				expect(result.file).toBeTruthy();
 				await waveformService.clearWaveformCacheByIDs([track.id]);
 			});
 			it('should return svg for an episode', async () => {
 				const track = await trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
 				const episode = mockEpisode();
 				episode.path = path.resolve(track.path, track.name);
 				episode.id = 'testEpisodeID';
-				let res = await waveformService.getEpisodeWaveform(episode, 'svg');
-				should().exist(res);
-				should().exist(res.buffer);
-				if (!res.buffer) {
+				let result = await waveformService.getEpisodeWaveform(episode, 'svg');
+				expect(result).toBeTruthy();
+				expect(result.buffer).toBeTruthy();
+				if (!result.buffer) {
 					return;
 				}
-				expect(res.buffer.contentType).to.be.equal('image/svg+xml');
-				res = await waveformService.getEpisodeWaveform(episode, 'svg');
-				should().exist(res.file);
+				expect(result.buffer.contentType).toBe('image/svg+xml');
+				result = await waveformService.getEpisodeWaveform(episode, 'svg');
+				expect(result).toBeTruthy();
+				expect(result.file).toBeTruthy();
 				await waveformService.clearWaveformCacheByIDs([episode.id]);
 			});
 			it('should return json', async () => {
 				const track = await trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
-				let res = await waveformService.getTrackWaveform(track, 'json');
-				should().exist(res);
-				should().exist(res.json);
-				if (!res.json) {
+				let result = await waveformService.getTrackWaveform(track, 'json');
+				expect(result).toBeTruthy();
+				expect(result.json).toBeTruthy();
+				if (!result.json) {
 					return;
 				}
-				res = await waveformService.getTrackWaveform(track, 'json');
-				should().exist(res.file);
+				result = await waveformService.getTrackWaveform(track, 'json');
+				expect(result).toBeTruthy();
+				expect(result.file).toBeTruthy();
 				await waveformService.clearWaveformCacheByIDs([track.id]);
 			});
 			it('should return binary', async () => {
 				const track = await trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
-				let res = await waveformService.getTrackWaveform(track, 'dat');
-				should().exist(res);
-				should().exist(res.buffer);
-				if (!res.buffer) {
+				let result = await waveformService.getTrackWaveform(track, 'dat');
+				expect(result).toBeTruthy();
+				expect(result.buffer).toBeTruthy();
+				if (!result.buffer) {
 					return;
 				}
-				expect(res.buffer.contentType).to.be.equal('application/binary');
-				res = await waveformService.getTrackWaveform(track, 'dat');
-				should().exist(res.file);
+				expect(result.buffer.contentType).toBe('application/binary');
+				result = await waveformService.getTrackWaveform(track, 'dat');
+				expect(result).toBeTruthy();
+				expect(result.file).toBeTruthy();
 				await waveformService.clearWaveformCacheByIDs([track.id]);
 			});
 			it('should throw errors', async () => {
 				const track = await trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
-				await waveformService.getTrackWaveform(track, <any>'invalid').should.eventually.be.rejectedWith(Error);
+				await expect(waveformService.getTrackWaveform(track, <any>'invalid')).rejects.toThrow('Invalid Format for Waveform generation');
 				track.name = 'invalid.invalid.invalid';
-				await waveformService.getTrackWaveform(track, 'svg').should.eventually.be.rejectedWith(Error);
+				await expect(waveformService.getTrackWaveform(track, 'svg')).rejects.toThrow('Invalid filename for waveform generation');
 				const episode = mockEpisode();
 				episode.path = undefined;
 				episode.id = 'testEpisodeID';
-				await waveformService.getEpisodeWaveform(episode, 'svg').should.eventually.be.rejectedWith(Error);
+				await expect(waveformService.getEpisodeWaveform(episode, 'svg')).rejects.toThrow('Podcast episode not ready');
 			});
 			it('should block creating a waveform while creating a waveform', async () => {
 				const track = await trackStore.random();
-				should().exist(track, 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
 					return;
 				}
 				const promise = waveformService.getTrackWaveform(track, 'svg');
-				const res = await waveformService.getTrackWaveform(track, 'svg');
-				const res2 = await promise;
-				should().exist(res);
-				should().exist(res.buffer);
-				should().exist(res2);
-				should().exist(res2.buffer);
+				const result = await waveformService.getTrackWaveform(track, 'svg');
+				const result2 = await promise;
+				expect(result).toBeTruthy();
+				expect(result.buffer).toBeTruthy();
+				expect(result2).toBeTruthy();
+				expect(result2.buffer).toBeTruthy();
 				await waveformService.clearWaveformCacheByIDs([track.id]);
 			});
 		},

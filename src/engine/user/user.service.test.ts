@@ -1,13 +1,11 @@
-import {expect, should} from 'chai';
-import {describe, it} from 'mocha';
-import {testService} from '../base/base.service.spec';
-import {UserService} from './user.service';
-import tmp from 'tmp';
-import path from 'path';
-import {mockUser, mockUser2, mockUserPass} from './user.mock';
-import {Md5} from 'md5-typescript';
-import {mockImage} from '../../modules/image/image.module.spec';
 import fse from 'fs-extra';
+import {Md5} from 'md5-typescript';
+import path from 'path';
+import tmp from 'tmp';
+import {mockImage} from '../../modules/image/image.module.spec';
+import {testService} from '../base/base.service.spec';
+import {mockUser, mockUser2, mockUserPass} from './user.mock';
+import {UserService} from './user.service';
 
 function salt(length: number): string {
 	let s = '';
@@ -39,95 +37,95 @@ describe('UserService', () => {
 			let userID: string;
 			const mock = mockUser();
 
-			it('should not create invalid user', async function() {
+			it('should not create invalid user', async () => {
 				const notRight = mockUser2();
 				notRight.name = ' ';
-				await userService.create(notRight).should.eventually.be.rejectedWith(Error);
+				await expect(userService.create(notRight)).rejects.toThrow('Invalid Username');
 			});
 
-			it('should add the user', async function() {
+			it('should add the user', async () => {
 				userID = await userService.create(mock);
 				mock.id = userID;
 			});
-			it('should find and compare the created user by ID', async function() {
+			it('should find and compare the created user by ID', async () => {
 				const user = await userService.getByID(userID);
-				should().exist(user);
-				expect(user).to.deep.equal(mock);
+				expect(user).toBeTruthy();
+				expect(user).toEqual(mock);
 			});
-			it('should find and compare the created user by name', async function() {
+			it('should find and compare the created user by name', async () => {
 				const user = await userService.getByName(mock.name);
-				should().exist(user);
-				expect(user).to.deep.equal(mock);
+				expect(user).toBeTruthy();
+				expect(user).toEqual(mock);
 			});
-			it('should not allow add an same name user', async function() {
-				await userService.create(mock).should.eventually.be.rejectedWith(Error);
+			it('should not allow add an same name user', async () => {
+				await expect(userService.create(mock)).rejects.toThrow('Username already exists');
 			});
-			it('should auth the user by password', async function() {
+			it('should auth the user by password', async () => {
 				const user = await userService.auth(mock.name, mockUserPass);
-				should().exist(user);
-				expect(user).to.deep.equal(mock);
+				expect(user).toBeTruthy();
+				expect(user).toEqual(mock);
 			});
-			it('should not auth the user with the wrong password', async function() {
-				await userService.auth(mock.name, mockUserPass + '_wrong').should.eventually.be.rejectedWith(Error);
-				await userService.auth(' ', mockUserPass).should.eventually.be.rejectedWith(Error);
-				await userService.auth(mock.name, '').should.eventually.be.rejectedWith(Error);
-				await userService.auth('non-existing', 'something').should.eventually.be.rejectedWith(Error);
+			it('should not auth the user with the wrong password', async () => {
+				await expect(userService.auth(mock.name, mockUserPass + '_wrong')).rejects.toThrow('Invalid Password');
+				await expect(userService.auth(' ', mockUserPass)).rejects.toThrow('Invalid Username');
+				await expect(userService.auth(mock.name, '')).rejects.toThrow('Invalid Password');
+				await expect(userService.auth('non-existing', 'something')).rejects.toThrow('Invalid Username');
 			});
-			it('should auth the user by token', async function() {
+			it('should auth the user by token', async () => {
 				const s = salt(6);
 				const token = Md5.init(mock.subsonic_pass + s);
 				const user = await userService.authToken(mock.name, token, s);
-				should().exist(user);
-				expect(user).to.deep.equal(mock);
+				expect(user).toBeTruthy();
+				expect(user).toEqual(mock);
 			});
-			it('should not auth the user with the wrong token', async function() {
-				await userService.authToken(mock.name, 'wrong', 'wrong').should.eventually.be.rejectedWith(Error);
-				await userService.authToken(' ', 'wrong', 'wrong').should.eventually.be.rejectedWith(Error);
-				await userService.authToken(mock.name, '', 'wrong').should.eventually.be.rejectedWith(Error);
-				await userService.authToken(mock.name, 'wrong', '').should.eventually.be.rejectedWith(Error);
-				await userService.authToken('non-existing', 'wrong', 'wrong').should.eventually.be.rejectedWith(Error);
+			it('should not auth the user with the wrong token', async () => {
+				await expect(userService.authToken(mock.name, 'wrong', 'wrong')).rejects.toThrow('Invalid Token');
+				await expect(userService.authToken(' ', 'wrong', 'wrong')).rejects.toThrow('Invalid Username');
+				await expect(userService.authToken(mock.name, '', 'wrong')).rejects.toThrow('Invalid Token');
+				await expect(userService.authToken(mock.name, 'wrong', '')).rejects.toThrow('Invalid Token');
+				await expect(userService.authToken('non-existing', 'wrong', 'wrong')).rejects.toThrow('Invalid Username');
 			});
 
-			it('should use the cache', async function() {
+			it('should use the cache', async () => {
 				userService.clearCache();
 				let user = await userService.getByName(mock.name);
 				let u = await userService.getByName(mock.name);
-				expect(u === user).to.be.equal(true);
+				expect(u === user).toBe(true);
 				userService.clearCache();
 				user = await userService.getByID(mock.id);
 				u = await userService.getByID(mock.id);
-				expect(u === user).to.be.equal(true);
+				expect(u === user).toBe(true);
 			});
-			it('should update the created user', async function() {
+			it('should update the created user', async () => {
 				const oldname = mock.name;
 				mock.name = oldname + '_renamed';
 				await userService.update(mock);
 				const user = await userService.getByID(userID);
-				should().exist(user);
-				expect(user).to.deep.equal(mock);
+				expect(user).toBeTruthy();
+				expect(user).toEqual(mock);
 				mock.name = oldname;
 				delete mock.avatar;
 				await userService.update(mock);
 				const user2 = await userService.getByID(userID);
-				expect(user2).to.deep.equal(mock);
+				expect(user2).toEqual(mock);
 			});
-			it('should return a generated avatar image, even if not set', async function() {
+			it('should return a generated avatar image, even if not set', async () => {
 				mock.avatar = undefined;
 				await userService.update(mock);
-				const res = await userService.getUserImage(mock);
-				should().exist(res);
+				const result = await userService.getUserImage(mock);
+				expect(result).toBeTruthy();
 			});
-			it('should return an avatar image', async function() {
+			it('should return an avatar image', async () => {
 				mock.avatar = 'testget-' + mock.id + '.png';
 				const image = await mockImage('png');
 				const filename = path.resolve(userService.userAvatarPath, mock.avatar);
 				await fse.writeFile(filename, image.buffer);
 				await userService.update(mock);
-				const res = await userService.getUserImage(mock);
-				should().exist(res);
+				const result = await userService.getUserImage(mock);
+				expect(result).toBeTruthy();
 				await fse.remove(filename);
 			});
-			it('should set the avatar image', async function() {
+			it('should set the avatar image', async () => {
 				mock.avatar = undefined;
 				await userService.update(mock);
 				const image = await mockImage('png');
@@ -135,13 +133,13 @@ describe('UserService', () => {
 				await fse.writeFile(filename, image.buffer);
 				await userService.setUserImage(mock, filename);
 				await fse.remove(filename);
-				const res = await userService.getUserImage(mock);
-				should().exist(res);
+				const result = await userService.getUserImage(mock);
+				expect(result).toBeTruthy();
 			});
-			it('should remove the user', async function() {
+			it('should remove the user', async () => {
 				await userService.remove(mock);
 				const user = await userService.getByID(userID);
-				should().not.exist(user);
+				expect(user).toBeFalsy();
 			});
 		},
 		async () => {

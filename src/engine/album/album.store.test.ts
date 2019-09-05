@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {testStore} from '../base/base.store.spec';
 import {generateMockObjects} from './album.mock';
 import {Album} from './album.model';

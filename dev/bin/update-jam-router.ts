@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {ApiBinaryResult} from '../../src/typings';
-import {getJamApiCalls, ApiCall} from './utils';
+import {ApiCall, getJamApiCalls} from './utils';
 
 const destPath = '../../src/api/jam/';
 const destfile = path.resolve(destPath, 'routes.ts');

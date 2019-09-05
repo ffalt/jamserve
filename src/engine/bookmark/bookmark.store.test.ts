@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {BookmarkStore, SearchQueryBookmark} from './bookmark.store';
 import {Bookmark} from './bookmark.model';
 import {testStore} from '../base/base.store.spec';

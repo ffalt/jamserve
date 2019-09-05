@@ -1,5 +1,3 @@
-import {expect, should} from 'chai';
-import {describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {RootService} from './root.service';
 import {mockRoot} from './root.mock';
@@ -13,48 +11,48 @@ describe('RootService', () => {
 		() => {
 			it('should find roots', async () => {
 				const roots = await rootService.rootStore.allIds();
-				expect(roots.length > 0).to.be.equal(true, 'Wrong Test Setup');
+				expect(roots.length > 0).toBe(true); // 'Wrong Test Setup');
 			});
 			it('should create a root', async () => {
 				const root = mockRoot();
 				root.path = '/invalid/test/path/';
 				root.id = await rootService.create(root);
-				const r = await rootService.rootStore.searchOne({path: '/invalid/test/path/'});
-				should().exist(r);
+				const result = await rootService.rootStore.searchOne({path: '/invalid/test/path/'});
+				expect(result).toBeTruthy();
 			});
 			it('should not allow already scanned path or parts of path in a new root', async () => {
 				const root = mockRoot();
 				root.path = '/invalid/test/path/';
-				await rootService.create(root).should.eventually.be.rejectedWith(Error);
+				await expect(rootService.create(root)).rejects.toThrow('Root path already used');
 				root.path = '/invalid/test/';
-				await rootService.create(root).should.eventually.be.rejectedWith(Error);
+				await expect(rootService.create(root)).rejects.toThrow('Root path already used');
 				root.path = '/invalid/test/path/other';
-				await rootService.create(root).should.eventually.be.rejectedWith(Error);
+				await expect(rootService.create(root)).rejects.toThrow('Root path already used');
 			});
 			it('should not allow already scanned path or parts of path in a updated root', async () => {
 				const root = mockRoot();
 				root.path = '/invalid/test/isOK/';
 				root.id = await rootService.create(root);
 				root.path = '/invalid/test/path/';
-				await rootService.update(root).should.eventually.be.rejectedWith(Error);
+				await expect(rootService.update(root)).rejects.toThrow('Root path already used');
 			});
 			it('should update a root', async () => {
-				let r = await rootService.rootStore.searchOne({path: '/invalid/test/path/'});
-				should().exist(r);
-				if (r) {
-					r.path = '/invalid/something/different/';
-					await rootService.update(r);
-					r = await rootService.rootStore.searchOne({path: r.path});
+				let result = await rootService.rootStore.searchOne({path: '/invalid/test/path/'});
+				expect(result).toBeTruthy();
+				if (result) {
+					result.path = '/invalid/something/different/';
+					await rootService.update(result);
+					result = await rootService.rootStore.searchOne({path: result.path});
 				}
-				should().exist(r);
+				expect(result).toBeTruthy();
 			});
 			it('should remove a root', async () => {
 				const root = mockRoot();
 				root.path = '/invalid/test/toremove/';
 				root.id = await rootService.create(root);
 				await rootService.remove(root);
-				const r = await rootService.rootStore.searchOne({path: root.path});
-				should().not.exist(r);
+				const result = await rootService.rootStore.searchOne({path: root.path});
+				expect(result).toBeUndefined();
 			});
 		},
 		async () => {

@@ -1,5 +1,3 @@
-import {should} from 'chai';
-import {describe, it} from 'mocha';
 import {JamApi, JamRequest} from '../../api/jam/api';
 import {testController, validateJamResponse} from '../base/controller.spec';
 import {mockUserName} from '../user/user.mock';
@@ -17,19 +15,19 @@ describe('InfoController', () => {
 	}, () => {
 		it('should return ping', async () => {
 			let result = await jam.infoController.ping({query: {}} as JamRequest<{}>);
-			should().exist(result);
+			expect(result).toBeTruthy();
 			await validateJamResponse('Jam.Ping', result);
 			result = await jam.infoController.ping({query: {}, user});
-			should().exist(result);
+			expect(result).toBeTruthy();
 			await validateJamResponse('Jam.Ping', result);
 		});
 		it('should return session info', async () => {
 			let result = await jam.infoController.session({query: {}} as JamRequest<{}>);
-			should().exist(result);
+			expect(result).toBeTruthy();
 			await validateJamResponse('Jam.Session', result);
 			result = await jam.infoController.session({query: {}, user});
-			should().exist(result);
-			should().exist(result.user);
+			expect(result).toBeTruthy();
+			expect(result.user).toBeTruthy();
 			await validateJamResponse('Jam.Session', result);
 		});
 	}, async () => {

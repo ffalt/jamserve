@@ -1,6 +1,5 @@
 import {DBObjectType} from '../../db/db.types';
 import {BaseStoreService} from '../base/base.service';
-import {ListResult} from '../base/list-result';
 import {Bookmark} from './bookmark.model';
 import {BookmarkStore, SearchQueryBookmark} from './bookmark.store';
 

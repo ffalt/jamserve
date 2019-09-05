@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {getJamApiCalls, ApiCall} from './utils';
+import {ApiCall, getJamApiCalls} from './utils';
 
 const destPath = '../../dist/';
 const destfile = path.resolve(destPath, 'jam.service.ts');

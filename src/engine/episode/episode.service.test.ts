@@ -1,5 +1,3 @@
-import {expect, should} from 'chai';
-import {describe, it} from 'mocha';
 import nock from 'nock';
 import tmp from 'tmp';
 
@@ -27,20 +25,20 @@ describe('EpisodeService', () => {
 				mock.podcastID = podcastID;
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				let count = await episodeService.episodeStore.searchCount({podcastID});
-				expect(count).to.equal(1);
+				expect(count).toBe(1);
 				const mock_same = mockEpisode();
 				mock_same.podcastID = podcastID;
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock_same]);
 				count = await episodeService.episodeStore.searchCount({podcastID});
-				expect(count).to.equal(1);
+				expect(count).toBe(1);
 				const mock2 = mockEpisode2();
 				mock2.podcastID = podcastID;
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock_same, mock2]);
 				count = await episodeService.episodeStore.searchCount({podcastID});
-				expect(count).to.equal(2);
+				expect(count).toBe(2);
 				await episodeService.removeEpisodes(podcastID);
 				count = await episodeService.episodeStore.searchCount({podcastID});
-				expect(count).to.equal(0);
+				expect(count).toBe(0);
 			});
 			it('should fail to download an episode file with no urls', async () => {
 				const podcastID = 'podcastID2';
@@ -51,9 +49,9 @@ describe('EpisodeService', () => {
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				await episodeService.downloadEpisode(mock);
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				should().exist(episode);
+				expect(episode).toBeTruthy();
 				if (episode) {
-					expect(episode.status).to.equal(PodcastStatus.error);
+					expect(episode.status).toBe(PodcastStatus.error);
 				}
 				await episodeService.removeEpisodes(podcastID);
 			});
@@ -66,9 +64,9 @@ describe('EpisodeService', () => {
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				await episodeService.downloadEpisode(mock);
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				should().exist(episode);
+				expect(episode).toBeTruthy();
 				if (episode) {
-					expect(episode.status).to.equal(PodcastStatus.error);
+					expect(episode.status).toBe(PodcastStatus.error);
 					await episodeService.deleteEpisode(episode); // should do nothing;
 				}
 				await episodeService.removeEpisodes(podcastID);
@@ -83,11 +81,11 @@ describe('EpisodeService', () => {
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/episode1.mp3').reply(404);
 				await episodeService.downloadEpisode(mock);
-				expect(scope.isDone()).to.equal(true, 'no request has been made');
+				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				should().exist(episode);
+				expect(episode).toBeTruthy();
 				if (episode) {
-					expect(episode.status).to.equal(PodcastStatus.error);
+					expect(episode.status).toBe(PodcastStatus.error);
 					await episodeService.deleteEpisode(episode); // should do nothing;
 				}
 				await episodeService.removeEpisodes(podcastID);
@@ -105,12 +103,12 @@ describe('EpisodeService', () => {
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				await episodeService.downloadEpisode(mock);
-				expect(scope.isDone()).to.equal(true, 'no request has been made');
+				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				file.removeCallback();
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				should().exist(episode);
+				expect(episode).toBeTruthy();
 				if (episode) {
-					expect(episode.status).to.equal(PodcastStatus.completed);
+					expect(episode.status).toBe(PodcastStatus.completed);
 					await episodeService.deleteEpisode(episode);
 				}
 				await episodeService.removeEpisodes(podcastID);
@@ -129,12 +127,12 @@ describe('EpisodeService', () => {
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				should().exist(episode);
+				expect(episode).toBeTruthy();
 				if (!episode) {
 					return;
 				}
 				episodeService.downloadEpisode(episode);
-				expect(episodeService.isDownloading(episode.id)).to.equal(true);
+				expect(episodeService.isDownloading(episode.id)).toBe(true);
 				const id = episode.id;
 
 				function wait(cb: () => void): void {
@@ -143,7 +141,7 @@ describe('EpisodeService', () => {
 							wait(cb);
 						}, 100);
 					} else {
-						expect(scope.isDone()).to.equal(true, 'no request has been made');
+						expect(scope.isDone()).toBe(true); // 'no request has been made');
 						file.removeCallback();
 						episodeService.removeEpisodes(podcastID).then(cb);
 					}
@@ -152,7 +150,7 @@ describe('EpisodeService', () => {
 				return new Promise((resolve, reject) => {
 					wait(() => resolve());
 				});
-			}).timeout(2000);
+			});
 			it('should block downloading a podcast while download already running', async () => {
 				const podcastID = 'podcastID6';
 				const file = tmp.fileSync();
@@ -167,13 +165,13 @@ describe('EpisodeService', () => {
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				episodeService.downloadEpisode(mock);
-				expect(episodeService.isDownloading(mock.id)).to.equal(true);
+				expect(episodeService.isDownloading(mock.id)).toBe(true);
 				await episodeService.downloadEpisode(mock);
-				expect(episodeService.isDownloading(mock.id)).to.equal(false);
-				expect(scope.isDone()).to.equal(true, 'no request has been made');
+				expect(episodeService.isDownloading(mock.id)).toBe(false);
+				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				file.removeCallback();
 				await episodeService.removeEpisodes(podcastID);
-			}).timeout(2000);
+			});
 			it('should throw a storage error', async () => {
 				const podcastID = 'podcastID7';
 				const file = tmp.fileSync();
@@ -190,12 +188,12 @@ describe('EpisodeService', () => {
 				episodeService.episodeStore.replace = async (p) => {
 					return Promise.reject(Error('test error'));
 				};
-				await episodeService.downloadEpisode(mock).should.eventually.be.rejectedWith(Error);
+				await expect(episodeService.downloadEpisode(mock)).rejects.toThrow('error');
 				episodeService.episodeStore.replace = org;
-				expect(scope.isDone()).to.equal(true, 'no request has been made');
+				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				file.removeCallback();
 				await episodeService.removeEpisodes(podcastID);
-			}).timeout(2000);
+			});
 		},
 		async () => {
 			dir.removeCallback();

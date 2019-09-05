@@ -1,6 +1,3 @@
-import {expect, should} from 'chai';
-import {it} from 'mocha';
-
 import {JamApi, JamRequest} from '../../api/jam/api';
 import {JamParameters} from '../../model/jam-rest-params';
 import {mockUserName} from '../user/user.mock';
@@ -42,24 +39,24 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 		}, () => {
 			it('should return error on invalid id parameter', async () => {
 				const req = {query: {}, user};
-				await controller.id(req as JamRequest<OBJREQUEST>).should.eventually.be.rejectedWith(Error);
-				await controller.ids(req as JamRequest<OBJLISTREQUEST>).should.eventually.be.rejectedWith(Error);
+				await expect(controller.id(req as JamRequest<OBJREQUEST>)).rejects.toThrow('Invalid/Missing parameter');
+				await expect(controller.ids(req as JamRequest<OBJLISTREQUEST>)).rejects.toThrow('Invalid/Missing parameter');
 			});
 			it('should return 404 for invalid id', async () => {
 				const req = {query: {id: 'invalid'}, user};
-				await controller.id(req as JamRequest<OBJREQUEST>).should.eventually.be.rejectedWith(Error);
+				await expect(controller.id(req as JamRequest<OBJREQUEST>)).rejects.toThrow('Item not found');
 			});
 			it('should ignore invalid ids', async () => {
 				const req = {query: {ids: ['invalid']}, user};
 				const list = await controller.ids(req as JamRequest<OBJLISTREQUEST>);
-				should().exist(list);
-				expect(list.length).to.equal(0, 'no items should be returned');
+				expect(list).toBeTruthy();
+				expect(list.length).toBe(0); // 'no items should be returned'
 			});
 			it('should return objects', async () => {
 				for (const obj of objs) {
 					const req = {query: {id: obj.id}, user};
 					const result = await controller.id(req as JamRequest<OBJREQUEST>);
-					should().exist(result);
+					expect(result).toBeTruthy();
 					await validateJamResponse(opts.typeName, result);
 				}
 			});
@@ -67,23 +64,23 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 				for (const obj of objs) {
 					const req: JamRequest<JamParameters.ID> = {query: {id: obj.id}, user};
 					const result = await controller.state(req);
-					should().exist(result);
+					expect(result).toBeTruthy();
 					await validateJamResponse('Jam.State', result);
 				}
 			});
 			it('should return object states', async () => {
 				const req: JamRequest<JamParameters.IDs> = {query: {ids: objs.map(o => o.id)}, user};
 				const result = await controller.states(req);
-				should().exist(result);
-				expect(Object.keys(result).length).to.equal(objs.length);
+				expect(result).toBeTruthy();
+				expect(Object.keys(result).length).toBe(objs.length);
 				await validateJamResponse('Jam.States', result);
 			});
 			it('should fav an object', async () => {
 				for (const obj of objs) {
 					const req: JamRequest<JamParameters.Fav> = {query: {id: obj.id}, user};
 					const result = await controller.favUpdate(req);
-					should().exist(result);
-					expect(result.faved !== undefined && result.faved > 0).to.equal(true, 'Must have a fav timestamp');
+					expect(result).toBeTruthy();
+					expect(result.faved !== undefined && result.faved > 0).toBe(true); // 'Must have a fav timestamp');
 					await validateJamResponse('Jam.State', result);
 				}
 			});
@@ -91,22 +88,22 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 				for (const obj of objs) {
 					const req: JamRequest<JamParameters.Fav> = {query: {id: obj.id, remove: true}, user};
 					const result = await controller.favUpdate(req);
-					should().exist(result);
-					expect(result.faved).to.equal(undefined, 'Must not have a fav timestamp');
+					expect(result).toBeTruthy();
+					expect(result.faved).toBeUndefined(); // 'Must not have a fav timestamp'
 					await validateJamResponse('Jam.State', result);
 				}
 			});
 			it('should not rate with invalid parameters', async () => {
-				await controller.rateUpdate({query: {id: objs[0].id, rating: -1}, user}).should.eventually.be.rejectedWith(Error);
-				await controller.rateUpdate({query: {id: objs[0].id, rating: 5.1}, user}).should.eventually.be.rejectedWith(Error);
-				await controller.rateUpdate({query: {id: objs[0].id, rating: 6}, user}).should.eventually.be.rejectedWith(Error);
+				await expect(controller.rateUpdate({query: {id: objs[0].id, rating: -1}, user})).rejects.toThrow('Invalid/Missing parameter');
+				await expect(controller.rateUpdate({query: {id: objs[0].id, rating: 5.1}, user})).rejects.toThrow('Invalid/Missing parameter');
+				await expect(controller.rateUpdate({query: {id: objs[0].id, rating: 6}, user})).rejects.toThrow('Invalid/Missing parameter');
 			});
 			it('should rate an object', async () => {
 				for (const obj of objs) {
 					const req: JamRequest<JamParameters.Rate> = {query: {id: obj.id, rating: 1}, user};
 					const result = await controller.rateUpdate(req);
-					should().exist(result);
-					expect(result.rated).to.equal(1, 'Must have a rate value');
+					expect(result).toBeTruthy();
+					expect(result.rated).toBe(1); // 'Must have a rate value');
 					await validateJamResponse('Jam.State', result);
 				}
 			});
@@ -114,8 +111,8 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 				for (const obj of objs) {
 					const req: JamRequest<JamParameters.Rate> = {query: {id: obj.id, rating: 0}, user};
 					const result = await controller.rateUpdate(req);
-					should().exist(result);
-					expect(result.rated).to.equal(undefined, 'Must not have a rating');
+					expect(result).toBeTruthy();
+					expect(result.rated).toBeUndefined(); // 'Must not have a rating');
 					await validateJamResponse('Jam.State', result);
 				}
 			});
@@ -123,20 +120,21 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 				for (const obj of objs) {
 					const req = {query: {id: obj.id}, user};
 					const result = await controller.search(req as JamRequest<SEARCHQUERY>);
-					should().exist(result);
-					should().exist(result.items);
-					expect(result.items.length).to.equal(1, 'Must find one object');
+					expect(result).toBeTruthy();
+					expect(result.items).toBeTruthy();
+					expect(result.items.length).toBe(1); // 'Must find one object')
 					await validateJamResponse(opts.typeName, result.items, true);
 				}
 			});
 			it('should get an image for an object', async () => {
+				jest.setTimeout(30000);
 				for (const obj of objs) {
 					const req: JamRequest<JamParameters.Image> = {query: {id: obj.id}, user};
 					const result = await controller.image(req);
-					should().exist(result);
-					should().exist(result.buffer || result.file);
+					expect(result).toBeTruthy();
+					expect(result.buffer || result.file).toBeTruthy();
 				}
-			});
+			}, 30000);
 			tests();
 		}, async () => {
 			if (cleanup) {

@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {ApiBinaryResult} from '../../src/typings';
-import {getSubsonicApiCalls, ApiCall} from './utils';
+import {ApiCall, getSubsonicApiCalls} from './utils';
 
 const destPath = '../../src/api/subsonic/';
 const destfile = path.resolve(destPath, 'routes.ts');

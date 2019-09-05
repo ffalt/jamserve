@@ -1,4 +1,3 @@
-import {describe, it} from 'mocha';
 import {testBaseListController} from '../base/dbobject-list.controller.spec';
 import {User} from '../user/user.model';
 import {EpisodeController} from './episode.controller';

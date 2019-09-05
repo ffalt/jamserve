@@ -1,13 +1,13 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {JamParameters} from '../../model/jam-rest-params';
-import WaveformFormatType = JamParameters.WaveformFormatType;
 import {WaveformGenerator} from '../../modules/audio/waveform/waveform.generator';
 import {ApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import Logger from '../../utils/logger';
 import {Episode} from '../episode/episode.model';
 import {Track} from '../track/track.model';
+import WaveformFormatType = JamParameters.WaveformFormatType;
 
 const log = Logger('WaveformService');
 

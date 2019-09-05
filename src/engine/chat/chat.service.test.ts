@@ -1,5 +1,3 @@
-import {expect, should} from 'chai';
-import {describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {mockUser} from '../user/user.mock';
 import {ChatService} from './chat.service';
@@ -22,19 +20,19 @@ describe('ChatService', () => {
 		() => {
 			it('should add and remove a msg', async () => {
 				const msg = await chatService.add('msg', user1);
-				should().exist(msg);
-				expect(await chatService.find(msg.time)).to.be.equal(msg);
+				expect(msg).toBeTruthy();
+				expect(await chatService.find(msg.time)).toBe(msg);
 				await chatService.remove(msg);
 				const list = await chatService.get();
-				expect(list.length).to.be.equal(0);
+				expect(list.length).toBe(0);
 			});
 			it('should find since a given datetime', async () => {
 				const msg = await chatService.add('msg', user1);
-				should().exist(msg);
+				expect(msg).toBeTruthy();
 				let list = await chatService.get(msg.time - 1);
-				expect(list.length).to.be.equal(1);
+				expect(list.length).toBe(1);
 				list = await chatService.get(msg.time);
-				expect(list.length).to.be.equal(0);
+				expect(list.length).toBe(0);
 				await chatService.remove(msg);
 			});
 			it('should remove old/max messages', async () => {
@@ -44,10 +42,10 @@ describe('ChatService', () => {
 				await chatService.add('msg4', user1);
 				const msg = await chatService.add('msg5', user1);
 				let list = await chatService.get();
-				expect(list.length).to.be.equal(4);
+				expect(list.length).toBe(4);
 				msg.time = msg.time - (1000 * 60 * 1000);
 				list = await chatService.get();
-				expect(list.length).to.be.equal(3);
+				expect(list.length).toBe(3);
 			});
 		}
 	);

@@ -1,16 +1,14 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {DBObjectType} from '../../db/db.types';
-import {ArtworkImageType, FolderType, FolderTypeImageName} from '../../model/jam-types';
+import {ArtworkImageType, FolderType} from '../../model/jam-types';
 import {ImageModule} from '../../modules/image/image.module';
 import {ApiBinaryResult} from '../../typings';
-import {containsFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists, replaceFolderSystemChars} from '../../utils/fs-utils';
+import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFolderSystemChars} from '../../utils/fs-utils';
 import Logger from '../../utils/logger';
 import {BaseListService} from '../base/dbobject-list.service';
-import {generateArtworkId} from '../scan/scan.utils';
 import {StateService} from '../state/state.service';
 import {TrackStore} from '../track/track.store';
-import {artWorkImageNameToType} from './folder.format';
 import {Artwork, Folder} from './folder.model';
 import {FolderStore, SearchQueryFolder} from './folder.store';
 

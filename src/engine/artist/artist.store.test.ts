@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {ArtistStore, SearchQueryArtist} from './artist.store';
 import {Artist} from './artist.model';
 import {testStore} from '../base/base.store.spec';

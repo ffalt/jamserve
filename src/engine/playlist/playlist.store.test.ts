@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {PlaylistStore, SearchQueryPlaylist} from './playlist.store';
 import {Playlist} from './playlist.model';
 import {testStore} from '../base/base.store.spec';

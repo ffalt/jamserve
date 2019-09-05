@@ -16,32 +16,31 @@
     "start": "node dist/bundle.js",
     "build": "webpack --mode development",
     "build:prod": "webpack --mode production",
-    "build:docs": "npm run dev:docs:api:jam && npm run dev:docs:api:subsonic",
-    "develop": "concurrently --kill-others \"npm run dev:watch\" \"npm run dev:nodemon\"",
+    "build:docs": "npm run docs:api:jam && npm run docs:api:subsonic",
+    "develop": "concurrently --kill-others \"npm run watch\" \"npm run nodemon\"",
     "build:deploy": "npm run clean && npm run build:prod && npm run build:docs",
     "cmd:cleandb": "node dist/bundle.js --cleardb",
-    "dev:nodemon": "nodemon --config nodemon.json",
-    "dev:watch": "webpack --watch --mode development",
-    "dev:lint": "tslint --project tsconfig.json \"src/**/*.ts\"",
-    "dev:lint:fix": "tslint --fix --project tsconfig.json \"src/**/*.ts\"",
-    "dev:update:schema:jam": "cd dev/bin && ts-node update-jam-schema.ts",
-    "dev:update:schema:subsonic": "cd dev/bin && ts-node update-subsonic-schema.ts",
-    "dev:update:elasticmapping": "cd dev/bin && ts-node update-elastic-mapping.ts",
-    "dev:update:openapi:jam": "cd dev/bin && ts-node update-jam-openapi.ts",
-    "dev:update:openapi:subsonic": "cd dev/bin && ts-node update-subsonic-openapi.ts",
-    "dev:update:client:jam": "cd dev/bin && ts-node update-jam-client.ts",
-    "dev:update:router:jam": "cd dev/bin && ts-node update-jam-router.ts",
-    "dev:update:router:subsonic": "cd dev/bin && ts-node update-subsonic-router.ts",
-    "dev:update:jam": "npm run dev:update:schema:jam && npm run dev:update:openapi:jam && npm run dev:update:client:jam && npm run dev:update:router:jam",
-    "dev:update:subsonic": "npm run dev:update:schema:subsonic && npm run dev:update:openapi:subsonic && npm run dev:update:router:subsonic",
-    "dev:update": "npm run dev:update:jam && npm run dev:update:subsonic && npm run dev:update:elasticmapping",
-    "dev:docs:api:subsonic": "redoc-cli bundle src/model/subsonic-openapi.json --output ./dist/docs/api/subsonic/index.html",
-    "dev:docs:api:jam": "redoc-cli bundle src/model/jam-openapi.json --output ./dist/docs/api/jam/index.html",
+    "nodemon": "nodemon --config nodemon.json",
+    "watch": "webpack --watch --mode development",
+    "lint": "tslint --project tsconfig.json \"src/**/*.ts\"",
+    "lint:fix": "tslint --fix --project tsconfig.json \"src/**/*.ts\"",
+    "update:schema:jam": "cd dev/bin && ts-node update-jam-schema.ts",
+    "update:schema:subsonic": "cd dev/bin && ts-node update-subsonic-schema.ts",
+    "update:elasticmapping": "cd dev/bin && ts-node update-elastic-mapping.ts",
+    "update:openapi:jam": "cd dev/bin && ts-node update-jam-openapi.ts",
+    "update:openapi:subsonic": "cd dev/bin && ts-node update-subsonic-openapi.ts",
+    "update:client:jam": "cd dev/bin && ts-node update-jam-client.ts",
+    "update:router:jam": "cd dev/bin && ts-node update-jam-router.ts",
+    "update:router:subsonic": "cd dev/bin && ts-node update-subsonic-router.ts",
+    "update:jam": "npm run update:schema:jam && npm run update:openapi:jam && npm run update:client:jam && npm run update:router:jam",
+    "update:subsonic": "npm run update:schema:subsonic && npm run update:openapi:subsonic && npm run update:router:subsonic",
+    "update": "npm run update:jam && npm run update:subsonic && npm run update:elasticmapping",
+    "docs:api:subsonic": "redoc-cli bundle src/model/subsonic-openapi.json --output ./dist/docs/api/subsonic/index.html",
+    "docs:api:jam": "redoc-cli bundle src/model/jam-openapi.json --output ./dist/docs/api/jam/index.html",
     "clean": "rimraf dist",
-    "test:services": "mocha --recursive \".src/**/**.service.test.ts\"",
-    "test:stores": "mocha --recursive \".src/**/**.store.test.ts\"",
-    "test": "mocha --recursive \"./src/**/**.test.ts\"",
-    "coverage": "nyc mocha --recursive \"./src/**/**.test.ts\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
     "release": "deplokay -c ./deplokay.json"
   },
   "dependencies": {
@@ -91,8 +90,6 @@
   },
   "devDependencies": {
     "@types/archiver": "3.0.0",
-    "@types/chai": "4.2.1",
-    "@types/chai-as-promised": "7.1.2",
     "@types/cookie-parser": "1.4.2",
     "@types/cors": "2.8.6",
     "@types/d3": "5.7.2",
@@ -103,16 +100,13 @@
     "@types/fluent-ffmpeg": "2.1.10",
     "@types/fs-extra": "8.0.0",
     "@types/helmet": "0.0.44",
-    "@types/image-size": "0.7.0",
-    "@types/json-stable-stringify": "1.0.32",
+    "@types/jest": "^24.0.18",
     "@types/mime-types": "2.1.0",
-    "@types/mkdirp": "0.5.2",
-    "@types/mocha": "5.2.7",
     "@types/multer": "1.3.9",
-    "@types/on-finished": "^2.3.1",
     "@types/nedb": "1.8.8",
     "@types/nock": "10.0.3",
     "@types/node": "12.7.4",
+    "@types/on-finished": "^2.3.1",
     "@types/passport": "1.0.1",
     "@types/passport-jwt": "3.0.1",
     "@types/passport-local": "1.0.33",
@@ -120,23 +114,19 @@
     "@types/rimraf": "2.0.2",
     "@types/seedrandom": "2.4.28",
     "@types/sharp": "0.22.2",
-    "@types/supertest": "2.0.8",
     "@types/svgo": "1.2.1",
     "@types/tmp": "0.1.0",
     "@types/xml2js": "0.4.4",
-    "chai": "4.2.0",
-    "chai-as-promised": "7.1.1",
     "concurrently": "4.1.2",
     "copy-webpack-plugin": "5.0.4",
     "deplokay": "0.0.9",
-    "mocha": "6.2.0",
+    "jest": "^24.9.0",
     "nock": "11.3.2",
     "nodemon": "1.19.2",
-    "nyc": "14.1.1",
     "redoc-cli": "0.8.6",
     "rimraf": "3.0.0",
     "source-map-support": "0.5.13",
-    "supertest": "4.0.2",
+    "ts-jest": "^24.0.2",
     "ts-loader": "6.0.4",
     "ts-node": "8.3.0",
     "tslint": "5.19.0",
@@ -146,43 +136,6 @@
     "webpack-cli": "3.3.7",
     "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-node-externals": "1.7.2"
-  },
-  "ava": {
-    "compileEnhancements": false,
-    "extensions": [
-      "ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "files": [
-      "test/**/*.ts"
-    ]
-  },
-  "nyc": {
-    "temp-dir": "./reports/.nyc_output",
-    "report-dir": "./reports/coverage",
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "**/*.mock.ts",
-      "**/*.test.ts",
-      "**/*.spec.ts"
-    ],
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "html"
-    ],
-    "sourceMap": true,
-    "instrument": true
   },
   "engines": {
     "node": ">= 0.8.10"

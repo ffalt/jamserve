@@ -1,9 +1,9 @@
-import {describe} from 'mocha';
-import {SearchQueryTrack, TrackStore} from './track.store';
-import {Track} from './track.model';
-import {testStore} from '../base/base.store.spec';
 import path from 'path';
+
+import {testStore} from '../base/base.store.spec';
 import {mockTrack, mockTrack2} from './track.mock';
+import {Track} from './track.model';
+import {SearchQueryTrack, TrackStore} from './track.store';
 
 describe('TrackStore', () => {
 	let trackStore: TrackStore;

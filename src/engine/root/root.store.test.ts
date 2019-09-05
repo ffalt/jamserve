@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {RootStore, SearchQueryRoot} from './root.store';
 import {Root} from './root.model';
 import {testStore} from '../base/base.store.spec';

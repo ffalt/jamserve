@@ -204,7 +204,12 @@ export class ScanService {
 		}
 		for (const folder of folders) {
 			const dest = ensureTrailingPathSeparator(path.join(newParent.path, path.basename(folder.path)));
-			await fse.move(folder.path, dest);
+			try {
+				await fse.move(folder.path, dest);
+			} catch (e) {
+				// debug.error(e);
+				return Promise.reject(Error('Folder moving failed'));
+			}
 			if (!updateFolderIDs.includes(folder.id)) {
 				updateFolderIDs.push(folder.id);
 			}
@@ -354,6 +359,9 @@ export class ScanService {
 		const exists = await fse.pathExists(newPath);
 		if (exists) {
 			return Promise.reject(Error('Directory already exists'));
+		}
+		if (!await fse.pathExists(folder.path)) {
+			return Promise.reject(Error('Directory does not exists'));
 		}
 		await fse.rename(folder.path, newPath);
 		const folders = (await this.store.folderStore.search({inPath: folder.path})).items;

@@ -25,7 +25,6 @@ export function mockFolder(): Folder {
 			artistSort: 'artist sort name, an',
 			albumType: AlbumType.unknown,
 			title: 'a title',
-			image: 'folder.jpg',
 			year: 1984,
 			mbAlbumID: 'mbAlbumID1',
 			mbArtistID: 'mbArtistID1'
@@ -55,7 +54,6 @@ export function mockFolder2(): Folder {
 			artistSort: 'artist sort name, second',
 			albumType: AlbumType.album,
 			title: 'second title',
-			image: 'second folder.jpg',
 			year: 2000,
 			mbAlbumID: 'mbAlbumID2',
 			mbArtistID: 'mbArtistID2'

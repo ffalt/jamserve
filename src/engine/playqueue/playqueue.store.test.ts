@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {PlayQueueStore, SearchQueryPlayQueue} from './playqueue.store';
 import {PlayQueue} from './playqueue.model';
 import {testStore} from '../base/base.store.spec';

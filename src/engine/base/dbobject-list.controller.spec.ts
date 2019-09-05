@@ -1,6 +1,3 @@
-import {should} from 'chai';
-import {it} from 'mocha';
-
 import {JamApi, JamRequest} from '../../api/jam/api';
 import {JamParameters} from '../../model/jam-rest-params';
 import {User} from '../user/user.model';
@@ -40,28 +37,28 @@ export function testBaseListController<OBJREQUEST extends JamParameters.ID | INC
 		() => {
 			it('should return invalid list error', async () => {
 				const req = {query: {list: 'invalid'}, user};
-				await controller.list(req as JamRequest<LISTQUERY>).should.eventually.be.rejectedWith(Error);
+				await expect(controller.list(req as JamRequest<LISTQUERY>)).rejects.toThrow('Unknown List Type');
 			});
 			it('should return lists', async () => {
 				const lists = ['random', 'highest', 'avghighest', 'frequent', 'faved', 'recent'];
 				for (const listId of lists) {
 					const req = {query: {list: listId}, user};
 					const result = await controller.list(req as JamRequest<LISTQUERY>);
-					should().exist(result);
+					expect(result).toBeTruthy();
 					await validateJamResponse(opts.typeName, result.items, true);
 				}
 			});
 			it('should not (prepare) download an object with unsupported format', async () => {
 				const req = {query: {id: objs[0].id, format: 'rar'}, user};
-				await controller.download(req as JamRequest<JamParameters.Download>).should.eventually.be.rejectedWith(Error);
+				await expect(controller.download(req as JamRequest<JamParameters.Download>)).rejects.toThrow('Unsupported Download Format');
 			});
 			it('should (prepare) download an object', async () => {
 				for (const format of [undefined, '', 'zip', 'tar']) {
 					for (const obj of objs) {
 						const req = {query: {id: obj.id, format}, user};
 						const result = await controller.download(req as JamRequest<JamParameters.Download>);
-						should().exist(result);
-						should().exist(result.pipe);
+						expect(result).toBeTruthy();
+						expect(result.pipe).toBeTruthy();
 					}
 				}
 			});

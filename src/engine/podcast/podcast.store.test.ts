@@ -1,4 +1,3 @@
-import {describe} from 'mocha';
 import {PodcastStore, SearchQueryPodcast} from './podcast.store';
 import {Podcast} from './podcast.model';
 import {testStore} from '../base/base.store.spec';

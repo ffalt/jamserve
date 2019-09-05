@@ -1,5 +1,4 @@
-import {after, before, describe} from 'mocha';
-import {initTestFramework} from '../../test/common.spec';
+import {initTestFramework} from './base/common.spec';
 import {TestEngine, TestEngines} from './engine.mock';
 
 initTestFramework();
@@ -9,8 +8,8 @@ export function testEngines(opts: {}, setup: (testEngine: TestEngine) => Promise
 
 	for (const testEngine of engines.engines) {
 		describe('with ' + testEngine.name, () => {
-			before(function(done): void {
-				this.timeout(40000);
+			beforeAll(function(done): void {
+				// this.timeout(40000);
 				testEngine.setup().then(async () => {
 					await testEngine.engine.start();
 					await setup(testEngine);
@@ -20,7 +19,7 @@ export function testEngines(opts: {}, setup: (testEngine: TestEngine) => Promise
 				});
 			});
 
-			after(async () => {
+			afterAll(async () => {
 				if (cleanup) {
 					await cleanup();
 				}

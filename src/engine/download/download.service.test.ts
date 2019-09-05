@@ -1,5 +1,3 @@
-import {should} from 'chai';
-import {describe, it} from 'mocha';
 import {testService} from '../base/base.service.spec';
 import {mockEpisode} from '../episode/episode.mock';
 import {mockFolder} from '../folder/folder.mock';
@@ -25,8 +23,8 @@ describe('DownloadService', () => {
 					return Promise.reject('Invalid Test Setup');
 				}
 				const res = await downloadService.getObjDownload(track, undefined, user);
-				should().exist(res);
-				should().exist(res.pipe);
+				expect(res).toBeTruthy();
+				expect(res.pipe).toBeTruthy();
 			});
 			it('should download a folder', async () => {
 				const folder = await store.folderStore.random();
@@ -34,22 +32,22 @@ describe('DownloadService', () => {
 					return Promise.reject('Invalid Test Setup');
 				}
 				const res = await downloadService.getObjDownload(folder, undefined, user);
-				should().exist(res);
-				should().exist(res.pipe);
+				expect(res).toBeTruthy();
+				expect(res.pipe).toBeTruthy();
 			});
 			it('should download an episode', async () => {
 				const episode = mockEpisode();
 				episode.id = 'downloadEpisodeID1';
 				episode.path = '/invalid.invalid.invalid';
 				const res = await downloadService.getObjDownload(episode, undefined, user);
-				should().exist(res);
-				should().exist(res.pipe);
+				expect(res).toBeTruthy();
+				expect(res.pipe).toBeTruthy();
 			});
 			it('should not download an unavailable episode', async () => {
 				const episode = mockEpisode();
 				episode.id = 'downloadEpisodeID1';
 				episode.path = undefined;
-				await downloadService.getObjDownload(episode, undefined, user).should.eventually.be.rejectedWith(Error);
+				await expect(downloadService.getObjDownload(episode, undefined, user)).rejects.toThrow('Podcast episode not ready');
 			});
 			it('should download an artist', async () => {
 				const artist = await store.artistStore.random();
@@ -57,8 +55,8 @@ describe('DownloadService', () => {
 					return Promise.reject('Invalid Test Setup');
 				}
 				const res = await downloadService.getObjDownload(artist, undefined, user);
-				should().exist(res);
-				should().exist(res.pipe);
+				expect(res).toBeTruthy();
+				expect(res.pipe).toBeTruthy();
 			});
 			it('should download an album', async () => {
 				const album = await store.albumStore.random();
@@ -66,8 +64,8 @@ describe('DownloadService', () => {
 					return Promise.reject('Invalid Test Setup');
 				}
 				const res = await downloadService.getObjDownload(album, undefined, user);
-				should().exist(res);
-				should().exist(res.pipe);
+				expect(res).toBeTruthy();
+				expect(res.pipe).toBeTruthy();
 			});
 			it('should download a playlist', async () => {
 				const playlist = mockPlaylist();
@@ -80,35 +78,35 @@ describe('DownloadService', () => {
 				}
 				playlist.trackIDs = [track.id];
 				let res = await downloadService.getObjDownload(playlist, undefined, user);
-				should().exist(res);
-				should().exist(res.pipe);
+				expect(res).toBeTruthy();
+				expect(res.pipe).toBeTruthy();
 				playlist.userID = 'someOtherUserID1';
 				res = await downloadService.getObjDownload(playlist, undefined, user);
-				should().exist(res);
-				should().exist(res.pipe);
+				expect(res).toBeTruthy();
+				expect(res.pipe).toBeTruthy();
 			});
 			it('should not download a non public playlist', async () => {
 				const playlist = mockPlaylist();
 				playlist.id = 'downloadPlaylistID1';
 				playlist.isPublic = false;
 				playlist.userID = 'someOtherUserID1';
-				await downloadService.getObjDownload(playlist, undefined, user).should.eventually.be.rejectedWith(Error);
+				await expect(downloadService.getObjDownload(playlist, undefined, user)).rejects.toThrow('Unauthorized');
 			});
 			it('should not allow an unknown download format', async () => {
 				const folder = mockFolder();
 				folder.id = 'downloadFolderID1';
-				await downloadService.getObjDownload(folder, 'invalid', user).should.eventually.be.rejectedWith(Error);
+				await expect(downloadService.getObjDownload(folder, 'invalid', user)).rejects.toThrow('Unsupported Download Format');
 			});
 
 			it('should download as tar', async () => {
 				const folder = mockFolder();
 				folder.id = 'downloadFolderID1';
 				const res = await downloadService.getObjDownload(folder, undefined, user);
-				should().exist(res);
-				should().exist(res.pipe);
+				expect(res).toBeTruthy();
+				expect(res.pipe).toBeTruthy();
 			});
 			it('should not download a car', async () => {
-				await downloadService.getObjDownload(user, undefined, user).should.eventually.be.rejectedWith(Error);
+				await expect(downloadService.getObjDownload(user, undefined, user)).rejects.toThrow('Invalid Download Type');
 			});
 		}
 	);
