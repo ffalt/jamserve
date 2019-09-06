@@ -94,7 +94,7 @@ export declare namespace Jam {
 		changed: number;
 	}
 
-	export interface BookmarkList {
+	export interface BookmarkList extends ListResult {
 		items: Array<Bookmark>;
 	}
 
@@ -104,7 +104,7 @@ export declare namespace Jam {
 		track?: Track;
 	}
 
-	export interface NowPlayingList {
+	export interface NowPlayingList extends ListResult {
 		items: Array<NowPlaying>;
 	}
 

@@ -11180,6 +11180,218 @@
 				]
 			}
 		},
+		"/bookmark/id": {
+			"get": {
+				"operationId": "bookmarkController.id",
+				"description": "get a bookmark by id",
+				"tags": [
+					"bookmark"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.Bookmark"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "the item id",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "bookmarkTrack",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include the track of the bookmark",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackMedia",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include media information on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackRawTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include raw tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					}
+				]
+			}
+		},
+		"/bookmark/ids": {
+			"get": {
+				"operationId": "bookmarkController.ids",
+				"description": "get bookmarks by ids",
+				"tags": [
+					"bookmark"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.BookmarkList"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "ids",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"description": "array of item ids",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "bookmarkTrack",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include the track of the bookmark",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackMedia",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include media information on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackRawTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include raw tag on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "trackState",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"default": 0,
+							"minimum": 0,
+							"type": "integer"
+						},
+						"description": "get back items from position",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"schema": {
+							"minimum": 1,
+							"type": "integer"
+						},
+						"description": "get back number of items",
+						"required": false
+					}
+				]
+			}
+		},
 		"/bookmark/list": {
 			"get": {
 				"operationId": "bookmarkController.list",
@@ -19017,6 +19229,15 @@
 						"items": {
 							"$ref": "#/components/schemas/Jam.NowPlaying"
 						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
 					}
 				},
 				"required": [
@@ -22542,20 +22763,6 @@
 					"changedBy"
 				]
 			},
-			"Jam.BookmarkList": {
-				"type": "object",
-				"properties": {
-					"items": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/Jam.Bookmark"
-						}
-					}
-				},
-				"required": [
-					"items"
-				]
-			},
 			"Jam.Bookmark": {
 				"type": "object",
 				"properties": {
@@ -22587,6 +22794,29 @@
 					"id",
 					"position",
 					"trackID"
+				]
+			},
+			"Jam.BookmarkList": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Jam.Bookmark"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"amount": {
+						"type": "number"
+					},
+					"total": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"items"
 				]
 			},
 			"Jam.Root": {

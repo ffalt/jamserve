@@ -606,6 +606,18 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/bookmark/id', async (req, res) => {
+		const options: JamRequest<JamParameters.Bookmark> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.Bookmark = await api.bookmarkController.id(options);
+		await ApiResponder.data(res, result);
+	});
+
+	register.get('/bookmark/ids', async (req, res) => {
+		const options: JamRequest<JamParameters.Bookmarks> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.BookmarkList = await api.bookmarkController.ids(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/bookmark/list', async (req, res) => {
 		const options: JamRequest<JamParameters.BookmarkList> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.BookmarkList = await api.bookmarkController.list(options);

@@ -3310,6 +3310,72 @@
 						"result"
 					]
 				},
+				"bookmark/id": {
+					"description": "bookmark: get a bookmark by id",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.Bookmark"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.Bookmark"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
+				"bookmark/ids": {
+					"description": "bookmark: get bookmarks by ids",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.Bookmarks"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.BookmarkList"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"bookmark/list": {
 					"description": "bookmark: get a bookmarks list for the calling user",
 					"type": "object",
@@ -11762,6 +11828,15 @@
 					"items": {
 						"$ref": "#/definitions/Jam.NowPlaying"
 					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
 				}
 			},
 			"required": [
@@ -19327,6 +19402,150 @@
 				"changedBy"
 			]
 		},
+		"JamParameters.Bookmark": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "the item id",
+					"type": "string"
+				},
+				"bookmarkTrack": {
+					"description": "include the track of the bookmark",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"Jam.Bookmark": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"track": {
+					"$ref": "#/definitions/Jam.Track"
+				},
+				"trackID": {
+					"type": "string"
+				},
+				"position": {
+					"type": "number"
+				},
+				"comment": {
+					"type": "string"
+				},
+				"created": {
+					"type": "number"
+				},
+				"changed": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"changed",
+				"created",
+				"id",
+				"position",
+				"trackID"
+			]
+		},
+		"JamParameters.Bookmarks": {
+			"type": "object",
+			"properties": {
+				"ids": {
+					"description": "array of item ids",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"bookmarkTrack": {
+					"description": "include the track of the bookmark",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackMedia": {
+					"description": "include media information on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackTag": {
+					"description": "include tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackRawTag": {
+					"description": "include raw tag on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"trackState": {
+					"description": "include user states (fav,rate) on track(s)",
+					"default": false,
+					"type": "boolean"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
+				"ids"
+			]
+		},
+		"Jam.BookmarkList": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/Jam.Bookmark"
+					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
+				}
+			},
+			"required": [
+				"items"
+			]
+		},
 		"JamParameters.BookmarkList": {
 			"type": "object",
 			"properties": {
@@ -19367,53 +19586,6 @@
 					"type": "integer"
 				}
 			}
-		},
-		"Jam.BookmarkList": {
-			"type": "object",
-			"properties": {
-				"items": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/Jam.Bookmark"
-					}
-				}
-			},
-			"required": [
-				"items"
-			]
-		},
-		"Jam.Bookmark": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"type": "string"
-				},
-				"track": {
-					"$ref": "#/definitions/Jam.Track"
-				},
-				"trackID": {
-					"type": "string"
-				},
-				"position": {
-					"type": "number"
-				},
-				"comment": {
-					"type": "string"
-				},
-				"created": {
-					"type": "number"
-				},
-				"changed": {
-					"type": "number"
-				}
-			},
-			"required": [
-				"changed",
-				"created",
-				"id",
-				"position",
-				"trackID"
-			]
 		},
 		"JamParameters.BookmarkListByTrack": {
 			"type": "object",

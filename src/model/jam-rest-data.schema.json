@@ -5173,6 +5173,15 @@
 					"items": {
 						"$ref": "#/definitions/Jam.Bookmark"
 					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
 				}
 			},
 			"required": [
@@ -5205,6 +5214,15 @@
 					"items": {
 						"$ref": "#/definitions/Jam.NowPlaying"
 					}
+				},
+				"offset": {
+					"type": "number"
+				},
+				"amount": {
+					"type": "number"
+				},
+				"total": {
+					"type": "number"
 				}
 			},
 			"required": [

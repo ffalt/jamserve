@@ -94,3 +94,154 @@
 // 	.reply(200, lastFMresult);
 // await api.metadataController.metadataService.clear();
 //
+import {testService} from '../base/base.service.spec';
+import {MetaDataService} from './metadata.service';
+
+describe('MetaDataService', () => {
+	let metaDataService: MetaDataService;
+	testService({mockData: false},
+		async (store, imageModuleTest, audioModule) => {
+			metaDataService = new MetaDataService(store.metaStore, store.folderStore, store.trackStore, store.albumStore, store.artistStore, audioModule);
+		},
+		() => {
+			describe('.', () => {
+				it('should', async () => {
+				});
+			});
+			/*
+			describe('.getArtistInfo', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getAlbumInfo', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getFolderArtistInfo', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getFolderAlbumInfo', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getSimilarArtists', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getSimilarArtistFolders', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getTopTracks', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getAlbumSimilarTracks', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getArtistSimilarTracks', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getFolderSimilarTracks', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.getTrackSimilarTracks', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.musicbrainzSearch', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.acoustidLookupTrack', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.lastFMLookup', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.lastFMAlbumSearch', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.lastFMArtistSearch', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.lastFMTopTracksArtist', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.lastFMTopTracksArtistID', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.lastFMSimilarTracks', () => {
+				it('should', async () => {
+				});
+			});
+
+			describe('.acousticbrainzLookup', () => {
+				it('should', async () => {
+				});
+			});
+			describe('.coverartarchiveLookup', () => {
+				it('should', async () => {
+				});
+			});
+			describe('.musicbrainzLookup', () => {
+				it('should', async () => {
+				});
+			});
+			describe('.lyrics', () => {
+				it('should', async () => {
+				});
+			});
+			describe('.wikipediaSummary', () => {
+				it('should', async () => {
+				});
+			});
+			describe('.wikidataLookup', () => {
+				it('should', async () => {
+				});
+			});
+			describe('.wikidataSummary', () => {
+				it('should', async () => {
+				});
+			});
+			describe('.cleanUp', () => {
+				it('should', async () => {
+				});
+			});
+			describe('.clear', () => {
+				it('should', async () => {
+				});
+			});
+
+			 */
+		}
+	);
+});

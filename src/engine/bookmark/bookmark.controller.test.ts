@@ -1,9 +1,10 @@
-import {JamApi} from '../../api/jam/api';
-import {testController} from '../base/controller.spec';
+import {JamApi, JamRequest} from '../../api/jam/api';
+import {Errors} from '../../api/jam/error';
+import {JamParameters} from '../../model/jam-rest-params';
+import {testController, validateJamResponse} from '../base/controller.spec';
+import {mockUser} from '../user/user.mock';
 import {User} from '../user/user.model';
 import {BookmarkController} from './bookmark.controller';
-import {Errors} from '../../api/jam/error';
-import {mockUser} from '../user/user.mock';
 
 describe('BookmarkController', () => {
 	let controller: BookmarkController;
@@ -74,8 +75,11 @@ describe('BookmarkController', () => {
 				const list = await controller.list({query: {}, user});
 				await controller.create({query: {trackID: track.id, comment: 'list', position: 55555}, user});
 				await controller.create({query: {trackID: track.id, comment: 'list', position: 55555}, user: dummyUser});
-				const result = await controller.list({query: {}, user});
+				const result = await controller.list({query: {bookmarkTrack: true}, user});
 				expect(result.items.length).toBe(list.items.length + 1);
+				for (const bookmark of result.items) {
+					expect(bookmark.track).toBeTruthy();
+				}
 			});
 		});
 		describe('.byTrackList', () => {
@@ -89,6 +93,35 @@ describe('BookmarkController', () => {
 				await controller.create({query: {trackID: track.id, comment: 'byTrackList', position: 99999}, user: dummyUser});
 				const result = await controller.byTrackList({query: {trackID: track.id}, user});
 				expect(result.items.length).toBe(list.items.length + 1);
+			});
+		});
+		describe('.id', () => {
+			it('should return error on invalid id parameter', async () => {
+				const req = {query: {}, user};
+				await expect(controller.id(req as JamRequest<JamParameters.Bookmark>)).rejects.toThrow(Errors.invalidParameter);
+				await expect(controller.ids(req as JamRequest<JamParameters.Bookmarks>)).rejects.toThrow(Errors.invalidParameter);
+			});
+			it('should return 404 for invalid id', async () => {
+				const req: JamRequest<JamParameters.Bookmark> = {query: {id: 'invalid'}, user};
+				await expect(controller.id(req)).rejects.toThrow(Errors.itemNotFound);
+			});
+			it('should ignore invalid ids', async () => {
+				const req: JamRequest<JamParameters.Bookmarks> = {query: {ids: ['invalid']}, user};
+				const list = await controller.ids(req);
+				expect(list).toBeTruthy();
+				expect(list.items.length).toBe(0); // 'no items should be returned'
+			});
+			it('should return an bookmark', async () => {
+				const track = await api.trackController.trackService.trackStore.random();
+				if (!track) {
+					throw Error('Wrong Test Setup');
+				}
+				const bookmark = await controller.create({query: {trackID: track.id, comment: 'byTrackList', position: 33333}, user});
+				const req: JamRequest<JamParameters.Bookmark> = {query: {id: bookmark.id, bookmarkTrack: true}, user};
+				const result = await controller.id(req);
+				expect(result).toBeTruthy();
+				expect(result.track).toBeTruthy();
+				await validateJamResponse('Jam.Bookmark', result);
 			});
 		});
 	});

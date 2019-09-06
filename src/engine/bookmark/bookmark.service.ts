@@ -48,4 +48,11 @@ export class BookmarkService extends BaseStoreService<Bookmark, SearchQueryBookm
 		await this.bookmarkStore.removeByQuery({destID, userID});
 	}
 
+	async byID(id: string, userID: string): Promise<Bookmark | undefined> {
+		return this.bookmarkStore.searchOne({id, userID});
+	}
+
+	async byIDs(ids: Array<string>, userID: string, amount?: number, offset?: number): Promise<ListResult<Bookmark>> {
+		return this.bookmarkStore.search({ids, userID, amount, offset});
+	}
 }

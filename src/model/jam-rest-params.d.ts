@@ -392,7 +392,7 @@ export declare namespace JamParameters {
 	export interface Bookmark extends ID, IncludesBookmark {
 	}
 
-	export interface Bookmarks extends IDs, IncludesBookmark {
+	export interface Bookmarks extends IDs, IncludesBookmark, Paginate {
 	}
 
 	export interface Image extends ID {

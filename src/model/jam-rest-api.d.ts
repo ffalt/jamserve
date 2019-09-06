@@ -833,6 +833,22 @@ export interface JamApi {
 		};
 
 		/**
+		 * bookmark: get a bookmark by id
+		 */
+		'bookmark/id'?: {
+			params: JamParameters.Bookmark;
+			result: Jam.Bookmark;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * bookmark: get bookmarks by ids
+		 */
+		'bookmark/ids'?: {
+			params: JamParameters.Bookmarks;
+			result: Jam.BookmarkList;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
 		 * bookmark: get a bookmarks list for the calling user
 		 */
 		'bookmark/list'?: {
