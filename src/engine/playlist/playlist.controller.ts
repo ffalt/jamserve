@@ -70,7 +70,7 @@ export class PlaylistController extends BaseListController<JamParameters.Playlis
 
 	async create(req: JamRequest<JamParameters.PlaylistNew>): Promise<Jam.Playlist> {
 		const playlist = await this.playlistService.create(req.query.name, req.query.comment, req.query.isPublic === undefined ? false : req.query.isPublic, req.user.id, req.query.trackIDs || []);
-		return this.prepare(playlist, {playlistTracksIDs: true, playlistState: true}, req.user);
+		return this.prepare(playlist, {playlistTrackIDs: true, playlistState: true}, req.user);
 	}
 
 	async update(req: JamRequest<JamParameters.PlaylistUpdate>): Promise<void> {

@@ -1,8 +1,9 @@
 import fse from 'fs-extra';
 import path from 'path';
 
+import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
-import {ArtworkImageType, FolderTypeImageName, RootScanStrategy, TrackHealthID} from '../../model/jam-types';
+import {ArtworkImageType, FolderType, FolderTypeImageName, RootScanStrategy, TrackHealthID} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
 import {containsFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists, fileExt, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
@@ -169,6 +170,50 @@ export class ScanService {
 		const scanMerger = new ScanMerger(this.audioModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
 		await scanMerger.merge(rootMatch, rootID, (dir) => changedDirs.includes(dir), changes);
 
+		return this.finish(changes, rootID, false);
+	}
+
+	async newFolder(rootID: string, parentID: string, name: string): Promise<MergeChanges> {
+		const {root, changes} = await this.start(rootID);
+		const newParent = await this.store.folderStore.byId(parentID);
+		if (!newParent) {
+			return Promise.reject(Error('Destination Folder not found'));
+		}
+		if (containsFolderSystemChars(name)) {
+			return Promise.reject(Error('Invalid Directory Name'));
+		}
+		name = replaceFolderSystemChars(name, '').trim();
+		if (name.length === 0 || ['.', '..'].includes(name)) {
+			return Promise.reject(Error('Invalid Directory Name'));
+		}
+		const destination = path.join(newParent.path, name);
+		const exists = await fse.pathExists(destination);
+		if (exists) {
+			return Promise.reject(Error('Directory already exists'));
+		}
+		await fse.mkdir(destination);
+		const stat = await fse.stat(destination);
+		const result: Folder = {
+			id: '',
+			type: DBObjectType.folder,
+			rootID: newParent.rootID,
+			path: ensureTrailingPathSeparator(destination),
+			parentID: newParent.id,
+			stat: {
+				created: stat.ctime.valueOf(),
+				modified: stat.mtime.valueOf()
+			},
+			tag: {
+				level: newParent.tag.level + 1,
+				trackCount: 0,
+				folderCount: 0,
+				type: FolderType.extras
+			}
+		};
+		result.id = await this.store.folderStore.add(result);
+		newParent.tag.folderCount += newParent.tag.folderCount;
+		this.store.folderStore.replace(newParent);
+		// TODO: add to change log
 		return this.finish(changes, rootID, false);
 	}
 

@@ -35,7 +35,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	checker = new FolderRulesChecker();
 
 	constructor(
-		protected folderService: FolderService,
+		public folderService: FolderService,
 		private trackController: TrackController,
 		private metadataService: MetaDataService,
 		private indexService: IndexService,
@@ -292,10 +292,9 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return this.ioService.deleteFolder(folder.id, folder.rootID);
 	}
 
-	async create(req: JamRequest<JamParameters.FolderCreate>): Promise<Jam.Folder> {
+	async create(req: JamRequest<JamParameters.FolderCreate>): Promise<Jam.AdminChangeQueueInfo> {
 		const folder = await this.byID(req.query.id);
-		const newFolder = await this.folderService.newFolder(folder, req.query.name);
-		return this.prepare(newFolder, {}, req.user);
+		return this.ioService.newFolder(folder.id, req.query.name, folder.rootID);
 	}
 
 }

@@ -32,7 +32,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 	JamParameters.ArtistList> {
 
 	constructor(
-		private artistService: ArtistService,
+		public artistService: ArtistService,
 		private trackController: TrackController,
 		private albumController: AlbumController,
 		private metaDataService: MetaDataService,
@@ -44,11 +44,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 		super(artistService, stateService, imageService, downloadService);
 	}
 
-	defaultSort(items: Array<Artist>): Array<Artist> {
-		return items.sort((a, b) => a.name.localeCompare(b.name));
-	}
-
-	sortArtistAlbums(a: Album, b: Album): number {
+	static sortArtistAlbums(a: Album, b: Album): number {
 		let res = a.albumType.localeCompare(b.albumType);
 		if (res === 0) {
 			res = (b.year || 0) - (a.year || 0);
@@ -56,7 +52,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 		return res;
 	}
 
-	sortArtistTracks(a: Track, b: Track): number {
+	static sortArtistTracks(a: Track, b: Track): number {
 		let res = a.parentID.localeCompare(b.parentID);
 		if (res === 0) {
 			res = (b.tag.disc || 0) - (a.tag.disc || 0);
@@ -67,6 +63,10 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 		return res;
 	}
 
+	defaultSort(items: Array<Artist>): Array<Artist> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
+	}
+
 	async prepare(artist: Artist, includes: JamParameters.IncludesArtist, user: User): Promise<Jam.Artist> {
 		const result = formatArtist(artist, includes);
 		if (includes.artistState) {
@@ -74,16 +74,24 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 			result.state = formatState(state);
 		}
 		if (includes.artistInfo) {
-			result.info = await this.metaDataService.getArtistInfo(artist);
+			try {
+				result.info = await this.metaDataService.getArtistInfo(artist);
+			} catch (e) {
+				result.info = undefined;
+			}
 		}
 		if (includes.artistSimilar) {
-			result.similar = await this.prepareList(await this.metaDataService.getSimilarArtists(artist), {}, user);
+			try {
+				result.similar = await this.prepareList(await this.metaDataService.getSimilarArtists(artist), {}, user);
+			} catch (e) {
+				result.similar = undefined;
+			}
 		}
 		if (includes.artistTracks) {
-			result.tracks = await this.trackController.prepareListByIDs(artist.trackIDs, includes, user, this.sortArtistTracks);
+			result.tracks = await this.trackController.prepareListByIDs(artist.trackIDs, includes, user, ArtistController.sortArtistTracks);
 		}
 		if (includes.artistAlbums) {
-			result.albums = await this.albumController.prepareListByIDs(artist.albumIDs, includes, user, this.sortArtistAlbums);
+			result.albums = await this.albumController.prepareListByIDs(artist.albumIDs, includes, user, ArtistController.sortArtistAlbums);
 		}
 		return result;
 	}
@@ -112,26 +120,34 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 
 	async similar(req: JamRequest<JamParameters.SimilarArtists>): Promise<ListResult<Jam.Artist>> {
 		const artist = await this.byID(req.query.id);
-		const artists = await this.metaDataService.getSimilarArtists(artist);
-		const list = paginate(artists, req.query.amount, req.query.offset);
-		return {
-			total: list.total,
-			amount: list.amount,
-			offset: list.offset,
-			items: await this.prepareList(list.items, req.query, req.user)
-		};
+		try {
+			const artists = await this.metaDataService.getSimilarArtists(artist);
+			const list = paginate(artists, req.query.amount, req.query.offset);
+			return {
+				total: list.total,
+				amount: list.amount,
+				offset: list.offset,
+				items: await this.prepareList(list.items, req.query, req.user)
+			};
+		} catch (e) {
+			return {items: []};
+		}
 	}
 
 	async similarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const artist = await this.byID(req.query.id);
-		const tracks = await this.metaDataService.getArtistSimilarTracks(artist);
-		const list = paginate(tracks, req.query.amount, req.query.offset);
-		return {
-			total: list.total,
-			amount: list.amount,
-			offset: list.offset,
-			items: await this.trackController.prepareList(list.items, req.query, req.user)
-		};
+		try {
+			const tracks = await this.metaDataService.getArtistSimilarTracks(artist);
+			const list = paginate(tracks, req.query.amount, req.query.offset);
+			return {
+				total: list.total,
+				amount: list.amount,
+				offset: list.offset,
+				items: await this.trackController.prepareList(list.items, req.query, req.user)
+			};
+		} catch (e) {
+			return {items: []};
+		}
 	}
 
 	async index(req: JamRequest<JamParameters.ArtistSearchQuery>): Promise<Jam.ArtistIndex> {
@@ -149,7 +165,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 			total: list.total,
 			amount: list.amount,
 			offset: list.offset,
-			items: await this.trackController.prepareListByIDs(list.items, req.query, req.user, this.sortArtistTracks)
+			items: await this.trackController.prepareListByIDs(list.items, req.query, req.user, ArtistController.sortArtistTracks)
 		};
 	}
 

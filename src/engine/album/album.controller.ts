@@ -58,7 +58,11 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 			result.state = await this.stateService.findOrCreate(album.id, user.id, DBObjectType.album);
 		}
 		if (includes.albumInfo) {
-			result.info = await this.metaDataService.getAlbumInfo(album);
+			try {
+				result.info = await this.metaDataService.getAlbumInfo(album);
+			} catch (e) {
+				result.info = undefined;
+			}
 		}
 		if (includes.albumTracks) {
 			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user, this.sortAlbumTracks);
@@ -93,14 +97,18 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 
 	async similarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const album = await this.byID(req.query.id);
-		const tracks = await this.metaDataService.getAlbumSimilarTracks(album);
-		const list = paginate(tracks, req.query.amount, req.query.offset);
-		return {
-			total: list.total,
-			amount: list.amount,
-			offset: list.offset,
-			items: await this.trackController.prepareList(list.items, req.query, req.user)
-		};
+		try {
+			const tracks = await this.metaDataService.getAlbumSimilarTracks(album);
+			const list = paginate(tracks, req.query.amount, req.query.offset);
+			return {
+				total: list.total,
+				amount: list.amount,
+				offset: list.offset,
+				items: await this.trackController.prepareList(list.items, req.query, req.user)
+			};
+		} catch (e) {
+			return {total: 0, amount: req.query.amount, offset: req.query.offset, items: []};
+		}
 	}
 
 	async tracks(req: JamRequest<JamParameters.Tracks>): Promise<ListResult<Jam.Track>> {

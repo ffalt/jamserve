@@ -13,6 +13,6 @@ export function formatPlaylist(playlist: Playlist, includes: JamParameters.Inclu
 		created: playlist.created,
 		changed: playlist.changed,
 		trackCount: playlist.trackIDs.length,
-		trackIDs: includes.playlistTracksIDs ? playlist.trackIDs : undefined
+		trackIDs: includes.playlistTrackIDs ? playlist.trackIDs : undefined
 	};
 }

@@ -24,6 +24,9 @@ export class WebserviceClient {
 					if (err) {
 						reject(err);
 					} else {
+						if (response.statusCode === 404) {
+							reject(Error(response.statusCode + (response.statusMessage ? ' ' + response.statusMessage : '')));
+						}
 						try {
 							resolve(JSON.parse(body) as T);
 						} catch (err) {

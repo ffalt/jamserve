@@ -14,6 +14,7 @@ import {Podcast} from '../podcast/podcast.model';
 import {Track} from '../track/track.model';
 import {TrackStore} from '../track/track.store';
 import {User} from '../user/user.model';
+import {Errors} from '../../api/jam/error';
 
 export class DownloadService {
 
@@ -55,7 +56,7 @@ export class DownloadService {
 
 	private async downloadPlaylist(playlist: Playlist, format: string | undefined, user: User): Promise<ApiBinaryResult> {
 		if (playlist.userID !== user.id && !playlist.isPublic) {
-			return Promise.reject(Error('Unauthorized'));
+			return Promise.reject(Error(Errors.unauthorized));
 		}
 		const tracks = await this.trackStore.byIds(playlist.trackIDs);
 		const fileList = tracks.map(t => path.join(t.path, t.name));

@@ -101,6 +101,18 @@ export class ScanRequestRenameFolder extends ScanRequest {
 
 }
 
+export class ScanRequestNewFolder extends ScanRequest {
+
+	constructor(public id: string, public rootID: string, public folderID: string, public newName: string, public scanService: ScanService) {
+		super(id, rootID, ScanRequestMode.renameFolder);
+	}
+
+	async execute(): Promise<MergeChanges> {
+		return this.scanService.newFolder(this.rootID, this.folderID, this.newName);
+	}
+
+}
+
 export class ScanRequestWriteRawTags extends ScanRequest {
 	tags: Array<{ trackID: string, tag: Jam.RawTag }> = [];
 
@@ -569,4 +581,7 @@ export class IoService {
 		return this.addRequest(new ScanRequestRenameFolder(this.getScanID(), rootID, folderID, name, this.scanService));
 	}
 
+	public newFolder(parentFolderID: string, name: string, rootID: string): Jam.AdminChangeQueueInfo {
+		return this.addRequest(new ScanRequestNewFolder(this.getScanID(), rootID, parentFolderID, name, this.scanService));
+	}
 }

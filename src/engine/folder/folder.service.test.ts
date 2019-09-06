@@ -16,20 +16,18 @@ describe('FolderService', () => {
 			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
 		},
 		() => {
-			describe('getFolderImage', () => {
+			describe('.getFolderImage', () => {
 				it('should return an empty response for not available images', async () => {
 					const folder = await folderService.folderStore.random();
-					expect(folder).toBeTruthy(); // 'Wrong Test Setup');
 					if (!folder) {
-						return;
+						throw new Error('Wrong Test Setup');
 					}
 					folder.tag.artworks = undefined;
 					const res = await folderService.getFolderImage(folder);
 					expect(res).toBeUndefined();
 				});
 			});
-
-			describe('collectFolderPath', () => {
+			describe('.collectFolderPath', () => {
 				it('should do handle invalid parameters', async () => {
 					let list = await folderService.collectFolderPath(undefined);
 					expect(list.length).toBe(0);
@@ -47,8 +45,6 @@ describe('FolderService', () => {
 						});
 					}
 				});
-
 			});
-
 		});
 });

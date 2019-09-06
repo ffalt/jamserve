@@ -641,4 +641,9 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		}
 	}
 
+	async clear(): Promise<void> {
+		const ids = await this.metadataStore.allIds();
+		await this.metadataStore.remove(ids);
+	}
+
 }

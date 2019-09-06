@@ -18,9 +18,8 @@ describe('WaveformService', () => {
 		() => {
 			it('should return svg for a track', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
 				if (!track) {
-					return;
+					throw Error('Wrong Test Setup');
 				}
 				let result = await waveformService.getTrackWaveform(track, 'svg');
 				expect(result).toBeTruthy();

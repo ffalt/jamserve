@@ -1,18 +1,12 @@
-import fse from 'fs-extra';
 import path from 'path';
-import {DBObjectType} from '../../db/db.types';
 import {ArtworkImageType, FolderType} from '../../model/jam-types';
 import {ImageModule} from '../../modules/image/image.module';
 import {ApiBinaryResult} from '../../typings';
-import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFolderSystemChars} from '../../utils/fs-utils';
-import Logger from '../../utils/logger';
 import {BaseListService} from '../base/dbobject-list.service';
 import {StateService} from '../state/state.service';
 import {TrackStore} from '../track/track.store';
 import {Artwork, Folder} from './folder.model';
 import {FolderStore, SearchQueryFolder} from './folder.store';
-
-const log = Logger('FolderService');
 
 export async function getFolderDisplayImage(folder: Folder): Promise<Artwork | undefined> {
 	if (!folder.tag || !folder.tag.artworks) {
@@ -55,42 +49,6 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		}
 
 		await collect(folderId);
-		return result;
-	}
-
-	async newFolder(folder: Folder, name: string): Promise<Folder> {
-		if (containsFolderSystemChars(name)) {
-			return Promise.reject(Error('Invalid Directory Name'));
-		}
-		name = replaceFolderSystemChars(name, '').trim();
-		if (name.length === 0 || ['.', '..'].includes(name)) {
-			return Promise.reject(Error('Invalid Directory Name'));
-		}
-		const destination = path.join(folder.path, name);
-		const exists = await fse.pathExists(destination);
-		if (exists) {
-			return Promise.reject(Error('Directory already exists'));
-		}
-		await fse.mkdir(destination);
-		const stat = await fse.stat(destination);
-		const result: Folder = {
-			id: '',
-			type: DBObjectType.folder,
-			rootID: folder.rootID,
-			path: ensureTrailingPathSeparator(destination),
-			parentID: folder.id,
-			stat: {
-				created: stat.ctime.valueOf(),
-				modified: stat.mtime.valueOf()
-			},
-			tag: {
-				level: folder.tag.level + 1,
-				trackCount: 0,
-				folderCount: 0,
-				type: FolderType.extras
-			}
-		};
-		result.id = await this.store.add(result);
 		return result;
 	}
 

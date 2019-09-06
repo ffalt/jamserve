@@ -134,7 +134,7 @@ const genreByNumbers = [
 	'Terror',
 	'Indie',
 	'BritPop',
-	'Weltmusik',
+	'World Music',
 	'Polsk Punk',
 	'Beat',
 	'Christian Gangsta Rap',

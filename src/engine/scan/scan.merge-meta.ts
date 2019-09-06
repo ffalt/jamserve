@@ -338,17 +338,17 @@ export class ScanMetaMerger {
 		for (const album of checkAlbums) {
 			log.debug('refresh album', album.name, album.id, album.artist);
 			// get the db state
-			let tracksIDs = await this.store.trackStore.searchIDs({albumID: album.id});
+			let trackIDs = await this.store.trackStore.searchIDs({albumID: album.id});
 			// filter out removed tracks
-			tracksIDs = tracksIDs.filter(t => !removedTrackIDs.includes(t));
+			trackIDs = trackIDs.filter(t => !removedTrackIDs.includes(t));
 			// filter out updated tracks which are no longer part of the album
 			const removedFromAlbum = updateTracks.filter(t => (t.oldTrack.albumID === album.id && t.track.albumID !== album.id)).map(t => t.track.id);
-			tracksIDs = tracksIDs.filter(t => !removedFromAlbum.includes(t));
-			// rest tracksIDs are untouched tracks
+			trackIDs = trackIDs.filter(t => !removedFromAlbum.includes(t));
+			// rest trackIDs are untouched tracks
 			// get all new and updated tracks which are part of the album
 			const refreshedTracks: Array<MetaMergeTrackInfo> = (updateTracks.filter(t => t.track && t.track.albumID === album.id) as Array<MetaMergeTrackInfo>)
 				.concat(newTracks.filter(t => t.track.albumID === album.id));
-			if (refreshedTracks.length + tracksIDs.length === 0) {
+			if (refreshedTracks.length + trackIDs.length === 0) {
 				if (!changes.removedAlbums.includes(album)) {
 					changes.removedAlbums.push(album);
 				} else {
@@ -360,7 +360,7 @@ export class ScanMetaMerger {
 				album.trackIDs = [];
 				album.folderIDs = [];
 				const metaStatBuilder = new MetaStatBuilder();
-				const tracks = await this.store.trackStore.byIds(tracksIDs);
+				const tracks = await this.store.trackStore.byIds(trackIDs);
 				for (const track of tracks) {
 					const folder = await this.findFolder(track.parentID, changes);
 					if (folder) {
@@ -408,25 +408,25 @@ export class ScanMetaMerger {
 		for (const artist of checkArtists) {
 			log.debug('refresh artist', artist.name, artist.id);
 			// get the db state
-			let tracksIDs = await this.store.trackStore.searchIDs({artistID: artist.id});
+			let trackIDs = await this.store.trackStore.searchIDs({artistID: artist.id});
 			const tracksAlbumsIDs = await this.store.trackStore.searchIDs({albumArtistID: artist.id});
 			for (const id of tracksAlbumsIDs) {
-				if (!tracksIDs.includes(id)) {
-					tracksIDs.push(id);
+				if (!trackIDs.includes(id)) {
+					trackIDs.push(id);
 				}
 			}
 			// filter out removed tracks
-			tracksIDs = tracksIDs.filter(t => !removedTrackIDs.includes(t));
+			trackIDs = trackIDs.filter(t => !removedTrackIDs.includes(t));
 			// filter out updated tracks which are no longer part of the artist
 			let removedFromArtist = updateTracks.filter(t => (t.oldTrack.artistID === artist.id && t.track.artistID !== artist.id)).map(t => t.track.id);
-			tracksIDs = tracksIDs.filter(t => !removedFromArtist.includes(t));
+			trackIDs = trackIDs.filter(t => !removedFromArtist.includes(t));
 			// filter out updated tracks which are no longer part of the album artist
 			removedFromArtist = updateTracks.filter(t => (t.oldTrack.albumArtistID === artist.id && t.track.albumArtistID !== artist.id)).map(t => t.track.id);
-			tracksIDs = tracksIDs.filter(t => !removedFromArtist.includes(t));
+			trackIDs = trackIDs.filter(t => !removedFromArtist.includes(t));
 			// get all new and updated tracks which are part of the artist
 			const refreshedTracks: Array<MetaMergeTrackInfo> = (updateTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id) as Array<MetaMergeTrackInfo>)
 				.concat(newTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id));
-			if (refreshedTracks.length + tracksIDs.length === 0) {
+			if (refreshedTracks.length + trackIDs.length === 0) {
 				if (changes.newArtists.includes(artist)) {
 					log.error('new artist without tracks', artist);
 				} else {
@@ -439,7 +439,7 @@ export class ScanMetaMerger {
 				artist.albumTypes = [];
 				artist.rootIDs = [];
 				const metaStatBuilder = new MetaStatBuilder();
-				let tracks = await this.store.trackStore.byIds(tracksIDs);
+				let tracks = await this.store.trackStore.byIds(trackIDs);
 				tracks = tracks.concat(refreshedTracks.map(t => t.track));
 				for (const track of tracks) {
 					if (track.artistID === artist.id) {

@@ -5,6 +5,7 @@ import {mockPlaylist} from '../playlist/playlist.mock';
 import {Store} from '../store/store';
 import {mockUser} from '../user/user.mock';
 import {DownloadService} from './download.service';
+import {Errors} from '../../api/jam/error';
 
 describe('DownloadService', () => {
 	let downloadService: DownloadService;
@@ -90,7 +91,7 @@ describe('DownloadService', () => {
 				playlist.id = 'downloadPlaylistID1';
 				playlist.isPublic = false;
 				playlist.userID = 'someOtherUserID1';
-				await expect(downloadService.getObjDownload(playlist, undefined, user)).rejects.toThrow('Unauthorized');
+				await expect(downloadService.getObjDownload(playlist, undefined, user)).rejects.toThrow(Errors.unauthorized);
 			});
 			it('should not allow an unknown download format', async () => {
 				const folder = mockFolder();

@@ -16,7 +16,8 @@ export function testBaseListController<OBJREQUEST extends JamParameters.ID | INC
 	RESULTOBJ extends { id: string },
 	LISTQUERY extends JamParameters.List | INCLUDE | SEARCHQUERY>(
 	opts: {
-		typeName: string
+		typeName: string,
+		skipBaseTests?: boolean
 	},
 	setup: (jam: JamApi, user: User) => Promise<BaseListController<OBJREQUEST, OBJLISTREQUEST, INCLUDE, JAMQUERY, SEARCHQUERY, DBOBJECT, RESULTOBJ, LISTQUERY>>,
 	tests: () => void, cleanup ?: () => Promise<void>
@@ -35,32 +36,39 @@ export function testBaseListController<OBJREQUEST extends JamParameters.ID | INC
 			return controller;
 		},
 		() => {
-			it('should return invalid list error', async () => {
-				const req = {query: {list: 'invalid'}, user};
-				await expect(controller.list(req as JamRequest<LISTQUERY>)).rejects.toThrow('Unknown List Type');
-			});
-			it('should return lists', async () => {
-				const lists = ['random', 'highest', 'avghighest', 'frequent', 'faved', 'recent'];
-				for (const listId of lists) {
-					const req = {query: {list: listId}, user};
-					const result = await controller.list(req as JamRequest<LISTQUERY>);
-					expect(result).toBeTruthy();
-					await validateJamResponse(opts.typeName, result.items, true);
-				}
-			});
-			it('should not (prepare) download an object with unsupported format', async () => {
-				const req = {query: {id: objs[0].id, format: 'rar'}, user};
-				await expect(controller.download(req as JamRequest<JamParameters.Download>)).rejects.toThrow('Unsupported Download Format');
-			});
-			it('should (prepare) download an object', async () => {
-				for (const format of [undefined, '', 'zip', 'tar']) {
-					for (const obj of objs) {
-						const req = {query: {id: obj.id, format}, user};
-						const result = await controller.download(req as JamRequest<JamParameters.Download>);
+			if (opts.skipBaseTests) {
+				return tests();
+			}
+			describe('.list', () => {
+				it('should return invalid list error', async () => {
+					const req = {query: {list: 'invalid'}, user};
+					await expect(controller.list(req as JamRequest<LISTQUERY>)).rejects.toThrow('Unknown List Type');
+				});
+				it('should return lists', async () => {
+					const lists = ['random', 'highest', 'avghighest', 'frequent', 'faved', 'recent'];
+					for (const listId of lists) {
+						const req = {query: {list: listId}, user};
+						const result = await controller.list(req as JamRequest<LISTQUERY>);
 						expect(result).toBeTruthy();
-						expect(result.pipe).toBeTruthy();
+						await validateJamResponse(opts.typeName, result.items, true);
 					}
-				}
+				});
+			});
+			describe('.download', () => {
+				it('should not (prepare) download an object with unsupported format', async () => {
+					const req = {query: {id: objs[0].id, format: 'rar'}, user};
+					await expect(controller.download(req as JamRequest<JamParameters.Download>)).rejects.toThrow('Unsupported Download Format');
+				});
+				it('should (prepare) download an object', async () => {
+					for (const format of [undefined, '', 'zip', 'tar']) {
+						for (const obj of objs) {
+							const req = {query: {id: obj.id, format}, user};
+							const result = await controller.download(req as JamRequest<JamParameters.Download>);
+							expect(result).toBeTruthy();
+							expect(result.pipe).toBeTruthy();
+						}
+					}
+				});
 			});
 			tests();
 		}, async () => {

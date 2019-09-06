@@ -3,6 +3,8 @@ import * as dataSchema from '../../model/jam-rest-data.schema.json';
 import {jsonValidator, validateJSON} from '../../utils/validate-json';
 import {testEngines} from '../engine.spec';
 import {JSONSchemaDefinition} from '../../model/json-schema.spec';
+import {mockUserName} from '../user/user.mock';
+import {User} from '../user/user.model';
 
 export async function validateJamResponse(name: string, data: any, isArray?: boolean): Promise<void> {
 	let def: JSONSchemaDefinition;
@@ -33,11 +35,15 @@ export async function validateJamResponse(name: string, data: any, isArray?: boo
 	}
 }
 
-export function testController(opts: {}, setup: (jam: JamApi) => Promise<void>, tests: (jam: JamApi) => void, cleanup?: () => Promise<void>): void {
+export function testController(opts: {}, setup: (jam: JamApi, user: User) => Promise<void>, tests: (jam: JamApi) => void, cleanup?: () => Promise<void>): void {
 	let jam: JamApi;
 	testEngines(opts, async (testEngine) => {
 		jam = new JamApi(testEngine.engine);
-		await setup(jam);
+		const user = await jam.engine.userService.getByName(mockUserName) as User;
+		if (!user) {
+			return Promise.reject(Error('Invalid Test Setup'));
+		}
+		await setup(jam, user);
 	}, () => {
 		tests(jam);
 	}, async () => {

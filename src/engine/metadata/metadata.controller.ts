@@ -11,7 +11,7 @@ import {MetaDataService} from './metadata.service';
 
 export class MetadataController {
 
-	constructor(private metadataService: MetaDataService, private trackController: TrackController) {
+	constructor(public metadataService: MetaDataService, private trackController: TrackController) {
 	}
 
 	async musicbrainzSearch(req: JamRequest<JamParameters.MusicBrainzSearch>): Promise<MusicBrainz.Response> {

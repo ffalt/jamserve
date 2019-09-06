@@ -1,17 +1,13 @@
 import {JamApi, JamRequest} from '../../api/jam/api';
 import {testController, validateJamResponse} from '../base/controller.spec';
-import {mockUserName} from '../user/user.mock';
 import {User} from '../user/user.model';
 
 describe('InfoController', () => {
 	let jam: JamApi;
 	let user: User;
-	testController({}, async (jamApi) => {
+	testController({}, async (jamApi, jamUser) => {
 		jam = jamApi;
-		user = await jamApi.engine.userService.getByName(mockUserName) as User;
-		if (!user) {
-			return Promise.reject(Error('Invalid Test Setup'));
-		}
+		user = jamUser;
 	}, () => {
 		it('should return ping', async () => {
 			let result = await jam.infoController.ping({query: {}} as JamRequest<{}>);
