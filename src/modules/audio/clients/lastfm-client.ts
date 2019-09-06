@@ -102,7 +102,7 @@ export class LastFMClient extends WebserviceClient {
 		sorted_params['api_key'] = this.options.key;
 		sorted_params['format'] = 'json';
 		try {
-			const data = await this.getJson('http://ws.audioscrobbler.com/2.0/', sorted_params);
+			const data = await this.getJson('https://ws.audioscrobbler.com/2.0/', sorted_params);
 			return this.beautify(data) as LastFM.Result;
 		} catch (e) {
 			log.error(e);

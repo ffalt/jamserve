@@ -8,7 +8,7 @@ const log = Logger('Musicbrainz');
 
 export class MusicbrainzClient extends WebserviceClient {
 	options = {
-		host: 'http://musicbrainz.org',
+		host: 'https://musicbrainz.org',
 		port: 80,
 		basePath: '/ws/2/',
 		userAgent: '',
@@ -106,7 +106,6 @@ export class MusicbrainzClient extends WebserviceClient {
 			if (statusCode === 502 || statusCode === 503) {
 				return retry(e);
 			}
-			log.error(e);
 			return Promise.reject(e);
 		}
 	}
