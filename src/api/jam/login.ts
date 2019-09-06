@@ -1,6 +1,7 @@
 import express from 'express';
 import {User} from '../../engine/user/user.model';
 import {EngineRequest} from '../server';
+import {Errors} from './error';
 
 /**
  * Fill user into req.user express requests
@@ -19,5 +20,5 @@ export function CheckAuthMiddleWare(req: UserRequest, res: express.Response, nex
 	if (req.user) {
 		return next();
 	}
-	res.status(401).json({error: 'Unauthorized'});
+	res.status(401).json({error: Errors.unauthorized});
 }

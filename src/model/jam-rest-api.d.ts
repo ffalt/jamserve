@@ -3,22 +3,22 @@ import {JamParameters} from './jam-rest-params';
 
 export interface JamApiErrorUnauthorized {
 	error: 401;
-	text: 'unauthorized';
+	text: 'Unauthorized';
 }
 
 export interface JamApiErrorGeneric {
 	error: 500;
-	text: 'internal server error';
+	text: 'Guru Meditation';
 }
 
 export interface JamApiErrorParameters {
 	error: 400;
-	text: 'parameter is missing or invalid';
+	text: 'Invalid/Missing parameter';
 }
 
 export interface JamApiErrorNotFound {
 	error: 404;
-	text: 'requested object not found';
+	text: 'Item not found';
 }
 
 export type JamApiImageTypes = ['image/jpeg', 'image/png'];
@@ -840,6 +840,14 @@ export interface JamApi {
 			result: Jam.BookmarkList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * bookmark: get a bookmarks list for a track id for the calling user
+		 */
+		'bookmark/byTrack/list'?: {
+			params: JamParameters.BookmarkListByTrack;
+			result: Jam.BookmarkList;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
 
 		/**
 		 * root: get a root by id
@@ -1206,10 +1214,17 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
-		 * bookmark: delete a bookmark
+		 * bookmark: delete a bookmark by id
 		 */
 		'bookmark/delete'?: {
-			params: JamParameters.ID;
+			params: JamParameters.BookmarkDelete;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * bookmark: delete all bookmark by track ID
+		 */
+		'bookmark/byTrack/delete'?: {
+			params: JamParameters.BookmarkTrackDelete;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
@@ -1339,7 +1354,7 @@ export interface JamApi {
 		};
 		'folder/create'?: {
 			params: JamParameters.FolderCreate;
-			result: Jam.Folder;
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};

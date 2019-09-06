@@ -612,6 +612,12 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		await ApiResponder.data(res, result);
 	});
 
+	register.get('/bookmark/byTrack/list', async (req, res) => {
+		const options: JamRequest<JamParameters.BookmarkListByTrack> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.BookmarkList = await api.bookmarkController.byTrackList(options);
+		await ApiResponder.data(res, result);
+	});
+
 	register.get('/root/id', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Root = await api.rootController.id(options);
@@ -835,8 +841,14 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	});
 
 	register.post('/bookmark/delete', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		const options: JamRequest<JamParameters.BookmarkDelete> = {query: req.body, user: req.user, client: req.client};
 		await api.bookmarkController.delete(options);
+		await ApiResponder.ok(res);
+	});
+
+	register.post('/bookmark/byTrack/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.BookmarkTrackDelete> = {query: req.body, user: req.user, client: req.client};
+		await api.bookmarkController.byTrackDelete(options);
 		await ApiResponder.ok(res);
 	});
 
@@ -974,7 +986,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 
 	register.post('/folder/create', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderCreate> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.Folder = await api.folderController.create(options);
+		const result: Jam.AdminChangeQueueInfo = await api.folderController.create(options);
 		await ApiResponder.data(res, result);
 	}, '/folder/create', ['admin']);
 

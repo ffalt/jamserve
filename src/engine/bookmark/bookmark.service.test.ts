@@ -8,35 +8,45 @@ describe('BookmarkService', () => {
 			bookmarkService = new BookmarkService(store.bookmarkStore);
 		},
 		() => {
-			it('create a bookmark', async () => {
-				const bookmark = await bookmarkService.create('trackID1', 'userID1', 5, 'a comment');
-				expect(bookmark).toBeTruthy();
+			describe('.create', () => {
+				it('should create a bookmark', async () => {
+					const bookmark = await bookmarkService.create('trackID1', 'userID1', 5, 'a comment');
+					expect(bookmark).toBeTruthy();
+				});
+				it('should overwrite a bookmark', async () => {
+					const bookmark = await bookmarkService.create('trackID1', 'userID1', 15, 'a comment');
+					expect(bookmark).toBeTruthy();
+					const update = await bookmarkService.create('trackID1', 'userID1', 15, 'a update comment');
+					expect(update).toBeTruthy();
+					expect(update.id).toBe(bookmark.id);
+				});
 			});
-
-			it('overwrite a bookmark', async () => {
-				const bookmark = await bookmarkService.create('trackID1', 'userID1', 15, 'a comment');
-				expect(bookmark).toBeTruthy();
-				const result = await bookmarkService.get('trackID1', 'userID1');
-				expect(result).toBeTruthy();
-				if (!result) {
-					return;
-				}
-				expect(result.position).toBe(15);
-				expect(await bookmarkService.bookmarkStore.searchCount({destID: 'trackID1', userID: 'userID1'})).toBe(1);
+			describe('.byUser', () => {
+				it('should get all bookmarks for a user', async () => {
+					await bookmarkService.create('trackID2', 'userID2', 5, 'a comment');
+					await bookmarkService.create('trackID2', 'userID2', 15, 'a comment');
+					await bookmarkService.create('trackID3', 'userID2', 15, 'a comment');
+					const bookmarks = await bookmarkService.byUser('userID2');
+					expect(bookmarks.items.length).toBe(3);
+				});
 			});
-			it('create another bookmark', async () => {
-				const bookmark = await bookmarkService.create('trackID2', 'userID1', 1, 'a comment');
-				expect(bookmark).toBeTruthy();
+			describe('.remove', () => {
+				it('should remove a bookmark', async () => {
+					const bookmark = await bookmarkService.create('trackID1', 'userID1', 15, 'a comment');
+					expect(bookmark).toBeTruthy();
+					await bookmarkService.remove(bookmark.id, 'userID1');
+					const result = await bookmarkService.bookmarkStore.byId(bookmark.id);
+					expect(result).toBeUndefined();
+				});
 			});
-			it('get all bookmarks for a user', async () => {
-				const bookmarks = await bookmarkService.getAll('userID1');
-				expect(bookmarks.length).toBe(2);
-				await bookmarkService.remove('trackID2', 'userID1');
-			});
-			it('remove a bookmark', async () => {
-				await bookmarkService.remove('trackID1', 'userID1');
-				const result = await bookmarkService.get('trackID1', 'userID1');
-				expect(result).toBeUndefined();
+			describe('.removeByTrack', () => {
+				it('should remove a bookmark', async () => {
+					const bookmark = await bookmarkService.create('trackID1', 'userID1', 15, 'a comment');
+					expect(bookmark).toBeTruthy();
+					await bookmarkService.removeByTrack('trackID1', 'userID1');
+					const result = await bookmarkService.byTrack('trackID1', 'userID1');
+					expect(result.items.length).toBe(0);
+				});
 			});
 		}
 	);

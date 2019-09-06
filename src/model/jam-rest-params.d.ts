@@ -15,7 +15,7 @@ export declare namespace JamParameters {
 	export type TrackSortField = 'artist' | 'album' | 'albumartist' | 'genre' | 'parent' | 'title' | 'year' | 'created';
 	export type FolderSortField = 'artist' | 'album' | 'genre' | 'parent' | 'title' | 'year' | 'created' ;
 	export type EpisodeSortField = 'podcast' | 'name' | 'date' | 'created';
-	export type BookmarkSortField = 'created';
+	export type BookmarkSortField = 'created' | 'position';
 	export type RadioSortField = 'name' | 'created';
 	export type PlaylistSortField = 'name' | 'created' ;
 	export type PodcastSortField = 'title' | 'created' ;
@@ -240,7 +240,7 @@ export declare namespace JamParameters {
 		 *
 		 * @default false
 		 */
-		playlistTracksIDs?: boolean;
+		playlistTrackIDs?: boolean;
 		/**
 		 * include user states (fav,rate) on playlist(s)
 		 *
@@ -279,7 +279,7 @@ export declare namespace JamParameters {
 		 *
 		 * @default false
 		 */
-		artistTracksIDs?: boolean;
+		artistTrackIDs?: boolean;
 		/**
 		 * include extended meta data on artist(s)
 		 *
@@ -347,6 +347,20 @@ export declare namespace JamParameters {
 		list: ListType;
 	}
 
+	export interface BookmarkDelete extends ID {
+		/**
+		 * a bookmark id
+		 */
+		id: string;
+	}
+
+	export interface BookmarkTrackDelete {
+		/**
+		 * a track id
+		 */
+		trackID: string;
+	}
+
 	export interface BookmarkCreate {
 		/**
 		 * a track id
@@ -366,6 +380,13 @@ export declare namespace JamParameters {
 	}
 
 	export interface BookmarkList extends IncludesBookmark, Paginate {
+	}
+
+	export interface BookmarkListByTrack extends Paginate {
+		/**
+		 * a track id
+		 */
+		trackID: string;
 	}
 
 	export interface Bookmark extends ID, IncludesBookmark {

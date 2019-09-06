@@ -3343,6 +3343,39 @@
 						"result"
 					]
 				},
+				"bookmark/byTrack/list": {
+					"description": "bookmark: get a bookmarks list for a track id for the calling user",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.BookmarkListByTrack"
+						},
+						"result": {
+							"$ref": "#/definitions/Jam.BookmarkList"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params",
+						"result"
+					]
+				},
 				"root/id": {
 					"description": "root: get a root by id",
 					"type": "object",
@@ -6074,11 +6107,40 @@
 					]
 				},
 				"bookmark/delete": {
-					"description": "bookmark: delete a bookmark",
+					"description": "bookmark: delete a bookmark by id",
 					"type": "object",
 					"properties": {
 						"params": {
-							"$ref": "#/definitions/JamParameters.ID"
+							"$ref": "#/definitions/JamParameters.BookmarkDelete"
+						},
+						"errors": {
+							"anyOf": [
+								{
+									"$ref": "#/definitions/JamApiErrorUnauthorized"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorGeneric"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorParameters"
+								},
+								{
+									"$ref": "#/definitions/JamApiErrorNotFound"
+								}
+							]
+						}
+					},
+					"required": [
+						"errors",
+						"params"
+					]
+				},
+				"bookmark/byTrack/delete": {
+					"description": "bookmark: delete all bookmark by track ID",
+					"type": "object",
+					"properties": {
+						"params": {
+							"$ref": "#/definitions/JamParameters.BookmarkTrackDelete"
 						},
 						"errors": {
 							"anyOf": [
@@ -7157,7 +7219,7 @@
 							"$ref": "#/definitions/JamParameters.FolderCreate"
 						},
 						"result": {
-							"$ref": "#/definitions/Jam.Folder"
+							"$ref": "#/definitions/Jam.AdminChangeQueueInfo"
 						},
 						"errors": {
 							"anyOf": [
@@ -8768,7 +8830,7 @@
 				"text": {
 					"type": "string",
 					"enum": [
-						"unauthorized"
+						"Unauthorized"
 					]
 				}
 			},
@@ -8789,7 +8851,7 @@
 				"text": {
 					"type": "string",
 					"enum": [
-						"internal server error"
+						"Guru Meditation"
 					]
 				}
 			},
@@ -8810,7 +8872,7 @@
 				"text": {
 					"type": "string",
 					"enum": [
-						"parameter is missing or invalid"
+						"Invalid/Missing parameter"
 					]
 				}
 			},
@@ -11502,7 +11564,7 @@
 				"text": {
 					"type": "string",
 					"enum": [
-						"requested object not found"
+						"Item not found"
 					]
 				}
 			},
@@ -16934,7 +16996,7 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"artistTracksIDs": {
+				"artistTrackIDs": {
 					"description": "include track ids on artist(s)",
 					"default": false,
 					"type": "boolean"
@@ -17216,7 +17278,7 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"artistTracksIDs": {
+				"artistTrackIDs": {
 					"description": "include track ids on artist(s)",
 					"default": false,
 					"type": "boolean"
@@ -17401,7 +17463,7 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"artistTracksIDs": {
+				"artistTrackIDs": {
 					"description": "include track ids on artist(s)",
 					"default": false,
 					"type": "boolean"
@@ -17595,7 +17657,7 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"artistTracksIDs": {
+				"artistTrackIDs": {
 					"description": "include track ids on artist(s)",
 					"default": false,
 					"type": "boolean"
@@ -17697,7 +17759,7 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"artistTracksIDs": {
+				"artistTrackIDs": {
 					"description": "include track ids on artist(s)",
 					"default": false,
 					"type": "boolean"
@@ -18700,7 +18762,7 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"playlistTracksIDs": {
+				"playlistTrackIDs": {
 					"description": "include track ids on playlist(s)",
 					"default": false,
 					"type": "boolean"
@@ -18807,7 +18869,7 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"playlistTracksIDs": {
+				"playlistTrackIDs": {
 					"description": "include track ids on playlist(s)",
 					"default": false,
 					"type": "boolean"
@@ -18897,7 +18959,7 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"playlistTracksIDs": {
+				"playlistTrackIDs": {
 					"description": "include track ids on playlist(s)",
 					"default": false,
 					"type": "boolean"
@@ -19021,7 +19083,7 @@
 					"default": false,
 					"type": "boolean"
 				},
-				"playlistTracksIDs": {
+				"playlistTrackIDs": {
 					"description": "include track ids on playlist(s)",
 					"default": false,
 					"type": "boolean"
@@ -19350,6 +19412,29 @@
 				"created",
 				"id",
 				"position",
+				"trackID"
+			]
+		},
+		"JamParameters.BookmarkListByTrack": {
+			"type": "object",
+			"properties": {
+				"trackID": {
+					"description": "a track id",
+					"type": "string"
+				},
+				"offset": {
+					"description": "get back items from position",
+					"default": 0,
+					"minimum": 0,
+					"type": "integer"
+				},
+				"amount": {
+					"description": "get back number of items",
+					"minimum": 1,
+					"type": "integer"
+				}
+			},
+			"required": [
 				"trackID"
 			]
 		},
@@ -19770,6 +19855,30 @@
 			},
 			"required": [
 				"position"
+			]
+		},
+		"JamParameters.BookmarkDelete": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"description": "a bookmark id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"JamParameters.BookmarkTrackDelete": {
+			"type": "object",
+			"properties": {
+				"trackID": {
+					"description": "a track id",
+					"type": "string"
+				}
+			},
+			"required": [
+				"trackID"
 			]
 		},
 		"JamParameters.ChatNew": {

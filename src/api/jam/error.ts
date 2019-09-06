@@ -19,16 +19,23 @@ class ApiError extends Error {
 	}
 }
 
+export const Errors = {
+	itemNotFound: 'Item not found',
+	invalidParameter: 'Invalid/Missing parameter',
+	internalError: 'Guru Meditation',
+	unauthorized: 'Unauthorized'
+};
+
 export function InvalidParamError(msg?: string): ApiError {
-	return new ApiError(msg || 'Invalid/Missing parameter', 400);
+	return new ApiError(msg || Errors.invalidParameter, 400);
 }
 
 export function NotFoundError(msg?: string): ApiError {
-	return new ApiError(msg || 'Item not found', 404);
+	return new ApiError(msg || Errors.itemNotFound, 404);
 }
 
 export function UnauthError(msg?: string): ApiError {
-	return new ApiError(msg || 'Unauthorized', 401);
+	return new ApiError(msg || Errors.unauthorized, 401);
 }
 
 export function GenericError(msg?: string): ApiError {

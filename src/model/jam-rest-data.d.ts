@@ -270,8 +270,8 @@ export declare namespace Jam {
 	}
 
 	export interface FolderChildren {
-		folders?: Array<Folder>;
-		tracks?: Array<Track>;
+		folders: Array<Folder>;
+		tracks: Array<Track>;
 	}
 
 	export interface AlbumTag {

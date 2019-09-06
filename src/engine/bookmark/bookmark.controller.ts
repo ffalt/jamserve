@@ -1,7 +1,6 @@
 import {JamRequest} from '../../api/jam/api';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
-import {paginate} from '../../utils/paginate';
 import {ListResult} from '../base/list-result';
 import {TrackController} from '../track/track.controller';
 import {User} from '../user/user.model';
@@ -13,7 +12,7 @@ import {SearchQueryBookmark} from './bookmark.store';
 export class BookmarkController {
 
 	constructor(
-		private bookmarkService: BookmarkService,
+		public bookmarkService: BookmarkService,
 		private trackController: TrackController
 	) {
 	}
@@ -47,20 +46,39 @@ export class BookmarkController {
 		return this.prepare(bookmark, {}, req.user);
 	}
 
-	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
+	async delete(req: JamRequest<JamParameters.BookmarkDelete>): Promise<void> {
 		await this.bookmarkService.remove(req.query.id, req.user.id);
 	}
 
+	async byTrackDelete(req: JamRequest<JamParameters.BookmarkTrackDelete>): Promise<void> {
+		await this.bookmarkService.removeByTrack(req.query.trackID, req.user.id);
+	}
+
 	async list(req: JamRequest<JamParameters.BookmarkList>): Promise<ListResult<Jam.Bookmark>> {
-		const bookmarks = await this.bookmarkService.getAll(req.user.id);
-		const result = bookmarks.map(bookmark => formatBookmark(bookmark));
+		const list = await this.bookmarkService.byUser(req.user.id, req.query.amount, req.query.offset);
+		const result: ListResult<Jam.Bookmark> = {
+			total: list.total,
+			offset: list.offset,
+			amount: list.amount,
+			items: list.items.map(bookmark => formatBookmark(bookmark))
+		};
 		if (req.query.bookmarkTrack) {
-			const tracks = await this.trackController.prepareListByIDs(bookmarks.map(b => b.destID), req.query, req.user);
-			result.forEach(bookmark => {
+			const tracks = await this.trackController.prepareListByIDs(list.items.map(b => b.destID), req.query, req.user);
+			result.items.forEach(bookmark => {
 				bookmark.track = tracks.find(t => t.id === bookmark.trackID);
 			});
 		}
-		return paginate(result, req.query.amount, req.query.offset);
+		return result;
 	}
 
+	async byTrackList(req: JamRequest<JamParameters.BookmarkListByTrack>): Promise<ListResult<Jam.Bookmark>> {
+		const list = await this.bookmarkService.byTrack(req.query.trackID, req.user.id);
+		const result: ListResult<Jam.Bookmark> = {
+			total: list.total,
+			offset: list.offset,
+			amount: list.amount,
+			items: list.items.map(bookmark => formatBookmark(bookmark))
+		};
+		return result;
+	}
 }

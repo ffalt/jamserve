@@ -5913,7 +5913,11 @@
 						"$ref": "#/definitions/Jam.Track"
 					}
 				}
-			}
+			},
+			"required": [
+				"folders",
+				"tracks"
+			]
 		},
 		"Jam.AlbumTag": {
 			"type": "object",

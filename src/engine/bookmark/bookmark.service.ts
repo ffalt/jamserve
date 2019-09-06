@@ -2,6 +2,7 @@ import {DBObjectType} from '../../db/db.types';
 import {BaseStoreService} from '../base/base.service';
 import {Bookmark} from './bookmark.model';
 import {BookmarkStore, SearchQueryBookmark} from './bookmark.store';
+import {ListResult} from '../base/list-result';
 
 export class BookmarkService extends BaseStoreService<Bookmark, SearchQueryBookmark> {
 
@@ -9,16 +10,16 @@ export class BookmarkService extends BaseStoreService<Bookmark, SearchQueryBookm
 		super(bookmarkStore);
 	}
 
-	async getAll(userID: string): Promise<Array<Bookmark>> {
-		return (await this.bookmarkStore.search({userID})).items;
+	async byUser(userID: string, amount?: number, offset?: number): Promise<ListResult<Bookmark>> {
+		return this.bookmarkStore.search({userID, amount, offset});
 	}
 
-	async get(trackID: string, userID: string): Promise<Bookmark | undefined> {
-		return this.bookmarkStore.searchOne({userID, destID: trackID});
+	async byTrack(destID: string, userID: string): Promise<ListResult<Bookmark>> {
+		return this.bookmarkStore.search({userID, destID});
 	}
 
 	async create(destID: string, userID: string, position: number, comment: string | undefined): Promise<Bookmark> {
-		let bookmark = await this.bookmarkStore.searchOne({destID, userID});
+		let bookmark = await this.bookmarkStore.searchOne({destID, userID, position});
 		if (!bookmark) {
 			bookmark = {
 				id: '',
@@ -33,15 +34,18 @@ export class BookmarkService extends BaseStoreService<Bookmark, SearchQueryBookm
 			bookmark.id = await this.bookmarkStore.add(bookmark);
 		} else {
 			bookmark.comment = comment;
-			bookmark.position = position;
 			bookmark.changed = Date.now();
 			await this.bookmarkStore.replace(bookmark);
 		}
 		return bookmark;
 	}
 
-	async remove(trackID: string, userID: string): Promise<void> {
-		await this.bookmarkStore.removeByQuery({destID: trackID, userID});
+	async remove(id: string, userID: string): Promise<void> {
+		await this.bookmarkStore.removeByQuery({id, userID});
+	}
+
+	async removeByTrack(destID: string, userID: string): Promise<void> {
+		await this.bookmarkStore.removeByQuery({destID, userID});
 	}
 
 }

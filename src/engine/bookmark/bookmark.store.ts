@@ -6,6 +6,7 @@ import {BaseStore, SearchQuery, SearchQuerySort} from '../base/base.store';
 import {Bookmark} from './bookmark.model';
 
 export interface SearchQueryBookmark extends SearchQuery {
+	position?: number;
 	userID?: string;
 	destID?: string;
 	destIDs?: Array<string>;
@@ -13,7 +14,8 @@ export interface SearchQueryBookmark extends SearchQuery {
 }
 
 const fieldMap: { [name in JamParameters.BookmarkSortField]: string } = {
-	created: 'created'
+	created: 'created',
+	position: 'position'
 };
 
 export class BookmarkStore extends BaseStore<Bookmark, SearchQueryBookmark> {
@@ -24,6 +26,7 @@ export class BookmarkStore extends BaseStore<Bookmark, SearchQueryBookmark> {
 
 	protected transformQuery(query: SearchQueryBookmark): DatabaseQuery {
 		const q = new QueryHelper();
+		q.term('position', query.position);
 		q.term('userID', query.userID);
 		q.term('destID', query.destID);
 		q.terms('destID', query.destIDs);
