@@ -58,14 +58,14 @@ export async function saveTS2JSONScheme(basePath: string, filename: string, symb
 	const scheme = await transformTS2JSONScheme(basePath, filename, symbol);
 	const destfile = path.resolve(basePath, filename + '.schema.json');
 	await fse.writeFile(destfile, JSON.stringify(scheme, null, '\t'));
-	console.log(destfile, 'written');
+	console.log('👍', destfile, 'written');
 }
 
 export async function saveTS2NamespaceJSONScheme(basePath: string, filename: string): Promise<void> {
 	const scheme = await transformTS2NamespaceJSONScheme(basePath, filename);
 	const destfile = path.resolve(basePath, filename + '.schema.json');
 	await fse.writeFile(destfile, JSON.stringify(scheme, null, '\t'));
-	console.log(destfile, 'written');
+	console.log('👍', destfile, 'written');
 }
 
 export interface ApiCall {

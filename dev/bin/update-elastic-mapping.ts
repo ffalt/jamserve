@@ -72,7 +72,9 @@ async function run(): Promise<void> {
 		if (prop.type === 'object') {
 			return transformProperties(key, prop.properties, definitions, paths);
 		}
-		console.log('TODO', prop);
+		if (Object.keys(prop).length > 0) {
+			console.log('TODO', prop);
+		}
 		return '';
 	}
 
@@ -116,7 +118,7 @@ async function run(): Promise<void> {
 
 run()
 	.then(() => {
-		console.log(destfile, 'written');
+		console.log('👍', destfile, 'written');
 	})
 	.catch(e => {
 		console.error(e);

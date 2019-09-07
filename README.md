@@ -13,7 +13,7 @@ This is the backend development repository. Web-Client, Installation & Usage Scr
 Features:
 * API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
 * API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/master/src/model/jam-openapi.json)
-* Enhance Metadata via Musicbrainz, LastFM, Wikipedia, Chartlyrics & AcoustID
+* Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
 * Database Support for NeDB or ElasticSearch
 
 ## Requirements
@@ -211,10 +211,9 @@ module.exports = {
 
 `npm run start` to run the server (available after a successful build)
 
-
 ### Development Build
 
-`npm run build` to build the server into dist/bundle.js
+`npm run build:dev` to build the server into dist/bundle.js
 
 ### Production Build
 
@@ -226,7 +225,7 @@ module.exports = {
 
 ### Update Model & Definition Files
 
-`npm run dev:update` to build json schemes & openapi jsons
+`npm run build:model` to build json schemes & openapi jsons
 
 ### Develop
 
@@ -234,7 +233,7 @@ module.exports = {
 
 ### CleanDB
 
-`npm run cmd:cleandb` to complete empty the current database
+`npm run cleandb` to complete empty the current database
 
 ### Clean Dist
 

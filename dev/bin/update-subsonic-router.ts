@@ -101,7 +101,7 @@ ${userApi}
 
 run()
 	.then(() => {
-		console.log(destfile, 'written');
+		console.log('👍', destfile, 'written');
 	})
 	.catch(e => {
 		console.error(e);

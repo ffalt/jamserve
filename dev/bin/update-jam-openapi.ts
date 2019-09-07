@@ -214,7 +214,7 @@ async function run(): Promise<void> {
 
 run()
 	.then(() => {
-		console.log(destfile, 'written');
+		console.log('👍', destfile, 'written');
 	})
 	.catch(e => {
 		console.error(e);

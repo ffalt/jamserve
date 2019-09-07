@@ -16,7 +16,7 @@ async function run(): Promise<void> {
 		}
 		const callname = call.name.replace(/\//g, '_');
 		if (call.upload) {
-			console.log(call.name, call.upload);
+			// console.log(call.name, call.upload);
 			const params = (call.paramType ? 'params: ' + call.paramType : '');
 			const callvalue = (call.paramType ? 'params' : '{}');
 			const s = `	${callname}(${params}, file: File): Observable<HttpEvent<any>> {
@@ -114,7 +114,7 @@ ${resultAPI.join('\n\n')}
 
 run()
 	.then(() => {
-		console.log(destfile, 'written');
+		console.log('👍', destfile, 'written');
 	})
 	.catch(e => {
 		console.error(e);
