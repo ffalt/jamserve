@@ -231,3 +231,8 @@ export enum FolderHealthID {
 	artistImageExists = 'folder.artist.image.exists',
 	artistImageValid = 'folder.artist.image.valid'
 }
+
+export const DownloadFormats = ['zip', 'tar'];
+export const DefaultDownloadFormat = 'zip';
+export const WaveformFormats = ['svg', 'json', 'dat'];
+export const WaveformDefaultFormat = 'svg';

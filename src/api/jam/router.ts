@@ -240,10 +240,11 @@ export function initJamRouter(engine: Engine): express.Router {
 	};
 	router.use(cors(corsOptionsDelegate));
 
-	router.post('/logout', CallSessionLogoutHandler as express.RequestHandler);
 	router.use('/docs', express.static(path.resolve('./dist/docs/api/')));
 
 	router.use(CheckAuthMiddleWare as express.RequestHandler); // ensure req.user exists for all requests after this
+
+	router.post('/logout', CallSessionLogoutHandler as express.RequestHandler);
 
 	const register: Register = {
 		get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
@@ -252,7 +253,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await checkRoles((req as UserRequest).user, roles);
 					await execute(req as UserRequest, res);
 				} catch (e) {
-					log.error(e);
+					log.debug(e);
 					await ApiResponder.error(res, e);
 				}
 			});
@@ -263,7 +264,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await checkRoles((req as UserRequest).user, roles);
 					await execute(req as UserRequest, res);
 				} catch (e) {
-					log.error(e);
+					log.debug(e);
 					await ApiResponder.error(res, e);
 				}
 			});
@@ -274,7 +275,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await checkRoles((req as UserRequest).user, roles);
 					await execute(req as UserRequest, res);
 				} catch (e) {
-					log.error(e);
+					log.debug(e);
 					await ApiResponder.error(res, e);
 				}
 			});

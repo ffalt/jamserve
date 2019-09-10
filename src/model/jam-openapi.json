@@ -13930,8 +13930,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.Session",
-									"description": "returns a Jam.Session on success"
+									"$ref": "#/components/schemas/Jam.Session"
 								}
 							}
 						}
@@ -23188,8 +23187,7 @@
 						"type": "string"
 					},
 					"tag": {
-						"$ref": "#/components/schemas/Jam.RawTag",
-						"description": "the raw tag to store in the track (e.g. id3v2/vorbis)"
+						"$ref": "#/components/schemas/Jam.RawTag"
 					}
 				},
 				"required": [
@@ -23623,8 +23621,7 @@
 						"type": "string"
 					},
 					"strategy": {
-						"$ref": "#/components/schemas/Jam.RootScanStrategy",
-						"description": "the scan strategy for the root"
+						"$ref": "#/components/schemas/Jam.RootScanStrategy"
 					}
 				},
 				"required": [
@@ -23645,8 +23642,7 @@
 						"type": "string"
 					},
 					"strategy": {
-						"$ref": "#/components/schemas/Jam.RootScanStrategy",
-						"description": "the scan strategy for the root"
+						"$ref": "#/components/schemas/Jam.RootScanStrategy"
 					},
 					"id": {
 						"description": "the item id",

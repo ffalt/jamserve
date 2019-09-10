@@ -2,6 +2,7 @@ import {JamRequest} from '../../api/jam/api';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
+import {AudioMimeTypes} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {DBObject} from '../base/base.model';
 import {Episode} from '../episode/episode.model';
@@ -45,6 +46,11 @@ export class StreamController {
 		if (!id || id.length === 0) {
 			return Promise.reject(InvalidParamError());
 		}
+		if (req.query.format !== undefined) {
+			if (!AudioMimeTypes[req.query.format]) {
+				return Promise.reject(InvalidParamError());
+			}
+		}
 		const obj = await this.store.findInAll(id);
 		if (!obj) {
 			return Promise.reject(NotFoundError());
@@ -54,5 +60,16 @@ export class StreamController {
 			return Promise.reject(NotFoundError());
 		}
 		return result;
+	}
+
+	async streamByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
+		const pathParameter = (req.query.pathParameter || '').trim();
+		if (!pathParameter || pathParameter.length === 0) {
+			return Promise.reject(InvalidParamError());
+		}
+		const split = pathParameter.split('.');
+		const id = split[0];
+		const format = split[1];
+		return this.stream({query: {id, format: format as JamParameters.AudioFormatType}, user: req.user});
 	}
 }

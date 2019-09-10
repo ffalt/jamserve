@@ -1,11 +1,11 @@
 import {JamApi, JamRequest} from '../../api/jam/api';
+import {Errors} from '../../api/jam/error';
 import {JamParameters} from '../../model/jam-rest-params';
 import {User} from '../user/user.model';
 import {DBObject} from './base.model';
 import {SearchQuery} from './base.store';
 import {testController, validateJamResponse} from './controller.spec';
 import {BaseController} from './dbobject.controller';
-import {Errors} from '../../api/jam/error';
 
 export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE,
 	OBJLISTREQUEST extends JamParameters.IDs | INCLUDE,

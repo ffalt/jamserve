@@ -53,6 +53,7 @@ async function run(): Promise<void> {
 
 	function collectSchema(p: any, definitions: any): void {
 		if (p.$ref) {
+			delete p.description;
 			const proptype = p.$ref.split('/')[2];
 			const pr = definitions[proptype];
 			if (openapi.components && openapi.components.schemas && !openapi.components.schemas[proptype]) {
@@ -145,6 +146,9 @@ async function run(): Promise<void> {
 				}
 				if (call.resultSchema) {
 					collectSchema(call.resultSchema, data.definitions);
+					if (call.resultSchema.$ref) {
+						delete call.resultSchema.description;
+					}
 					success.content = {'application/json': {schema: call.resultSchema}};
 				}
 				cmd.responses['200'] = success;

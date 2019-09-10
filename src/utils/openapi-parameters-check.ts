@@ -1,26 +1,19 @@
 import express from 'express';
-import {JSONSchemaDefinition} from '../model/json-schema.spec';
 import {OpenAPIObject, OperationObject, ParameterObject, RequestBodyObject, SchemaObject} from '../model/openapi-spec';
 import Logger from './logger';
 import {jsonValidator, JSONValidator, validateJSON} from './validate-json';
 
 const log = Logger('CheckApiParameters');
 
-function validOAParameter(query: any, param: ParameterObject): string | null {
-	if (!query) {
-		return 'Missing parameter collection ' + param.name;
-	}
-	const schema = param.schema as SchemaObject;
-	let value = query[param.name];
-	// set default values
-	if (value === undefined) {
+function validOAParameterValueBySchema(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | null {
+	if (value === undefined || value === null) {
 		if (schema && schema.default !== undefined) {
 			query[param.name] = schema.default;
 			value = schema.default;
 		}
 	}
-	// check required
-	if (value === undefined) {
+	// check required?
+	if (value === undefined || value === null) {
 		if (param.required) {
 			return 'Missing required parameter ' + param.name;
 		}
@@ -39,12 +32,16 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 		}
 		query[param.name] = value;
 	} else if (['float', 'long', 'double', 'number', 'integer'].includes(schema.type || '')) {
-		let num = Number(value.toString());
+		const s = value.toString().trim();
+		if (s.length === 0) {
+			return 'Empty number parameter ' + param.name;
+		}
+		const num = Number(s);
 		if (isNaN(num)) {
 			return 'Invalid number parameter ' + param.name;
 		}
-		if (schema.type === 'integer') {
-			num = Math.floor(num);
+		if (schema.type === 'integer' && !Number.isInteger(num)) {
+			return 'Invalid integer parameter ' + param.name;
 		}
 		if (schema.minimum !== undefined && schema.minimum > num) {
 			return 'Invalid number parameter ' + param.name + '; minimum is ' + schema.minimum;
@@ -54,10 +51,13 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 		}
 		query[param.name] = num;
 	} else if (schema.type === 'string') {
-		const s = value.toString().trim();
-		// if (s.length === 0) {
-		// 	return 'Empty string parameter ' + param.name;
-		// }
+		if (typeof value !== 'string') {
+			return 'Invalid string parameter ' + param.name;
+		}
+		const s = value.trim();
+		if (s.length === 0) {
+			return 'Empty string parameter ' + param.name;
+		}
 		if (schema.enum) {
 			if (!schema.enum.includes(s)) {
 				return 'Invalid enum string parameter ' + param.name + ': ' + s;
@@ -66,41 +66,26 @@ function validOAParameter(query: any, param: ParameterObject): string | null {
 		query[param.name] = s;
 	} else if (schema.type === 'array') {
 		const items = (schema.items || {type: 'unknown'}) as SchemaObject;
-		if (items.type === 'string') {
-			const list = ((Array.isArray(value) ? value : [value]) || []).map(s => s.toString().trim());
-			if (items.enum) {
-				for (const s of list) {
-					if (!items.enum.includes(s)) {
-						return 'Invalid enum string parameter ' + param.name + ': ' + s;
-					}
-				}
-			}
-			query[param.name] = list;
-		} else if (['float', 'long', 'double', 'number', 'integer'].includes(items.type || '')) {
-			const list = ((Array.isArray(value) ? value : [value]) || []).map(id => {
-				let num = Number(id.toString());
-				if (items.type === 'integer') {
-					num = Math.floor(num);
-				}
-				return num;
-			});
-			for (const num of list) {
-				if (isNaN(num)) {
-					return 'Invalid number array parameter ' + param.name;
-				}
-				if (items.minimum !== undefined && items.minimum > num) {
-					return 'Invalid number array parameter ' + param.name + '; minimum is ' + items.minimum;
-				}
-				if (schema.maximum !== undefined && schema.maximum < num) {
-					return 'Invalid number array parameter ' + items.name + '; maximum is ' + items.maximum;
-				}
-			}
-			query[param.name] = list;
-		} else {
-			console.log('TODO: validOAParameter list type', schema, value);
+		const listValues = ((Array.isArray(value) ? value : [value]) || []);
+		if (param.required && listValues.length === 0) {
+			return 'Missing required parameter ' + param.name;
 		}
+		for (const listValue of listValues) {
+			const result = validOAParameterValueBySchema({}, {name: param.name, required: true}, listValue, items);
+			if (result) {
+				return result;
+			}
+		}
+		query[param.name] = listValues;
 	}
 	return null;
+}
+
+function validOAParameter(query: any, param: ParameterObject): string | null {
+	if (!query) {
+		return 'Missing parameter collection ' + param.name;
+	}
+	return validOAParameterValueBySchema(query, param, query[param.name], param.schema as SchemaObject);
 }
 
 function createJSONValidator(def: any, apiSchema: any): JSONValidator {
@@ -109,32 +94,32 @@ function createJSONValidator(def: any, apiSchema: any): JSONValidator {
 	return jsonValidator(specialSchema);
 }
 
-async function checkAORequestBody(cmd: OperationObject, apiSchema: any, body: any): Promise<void> {
+async function checkAORequestBody(cmd: OperationObject, body: any): Promise<void> {
 	if (!cmd.requestBody || !(cmd.requestBody as RequestBodyObject).content || !(cmd.requestBody as RequestBodyObject).content['application/json']) {
 		return;
 	}
 	if (!body) {
 		return Promise.reject(Error('Missing Request Body'));
 	}
-	const schema = (cmd.requestBody as RequestBodyObject).content['application/json'].schema;
-	if (!schema || !schema.$ref) {
+	const content = (cmd.requestBody as RequestBodyObject).content['application/json'];
+	if (!content) {
+		return Promise.reject(Error('Unimplemented POST json schema'));
+	}
+	const schema = content.schema;
+	if (!schema) {
 		return Promise.reject(Error('Unimplemented POST schema'));
 	}
-	const def = apiSchema.definitions[schema.$ref.split('/')[3]];
-	if (!def) {
-		return Promise.reject(Error('Unknown POST schema' + schema.$ref));
+	if (!content.validator) {
+		content.validator = createJSONValidator(schema, {});
 	}
-	if (!def.validator) {
-		def.validator = createJSONValidator(def, apiSchema);
-	}
-	const result = await validateJSON(body, def.validator);
+	const result = await validateJSON(body, content.validator);
 	if (result.errors.length > 0) {
-		console.error(def, body, result.errors);
+		// console.error(schema, body, result.errors);
 		return Promise.reject(Error(JSON.stringify(result.errors)));
 	}
 }
 
-async function checkAOParameters(cmd: OperationObject, schema: JSONSchemaDefinition, req: express.Request): Promise<void> {
+async function checkAOParameters(cmd: OperationObject, req: express.Request): Promise<void> {
 	if (!cmd.parameters) {
 		return;
 	}
@@ -159,7 +144,7 @@ async function checkAOParameters(cmd: OperationObject, schema: JSONSchemaDefinit
 	}
 }
 
-export async function checkOpenApiParameters(name: string, req: express.Request, openapi: OpenAPIObject, schema: JSONSchemaDefinition, forceMethod?: string): Promise<void> {
+export async function checkOpenApiParameters(name: string, req: express.Request, openapi: OpenAPIObject, forceMethod?: string): Promise<void> {
 	const cmdPath = openapi.paths[name];
 	if (!cmdPath) {
 		log.info('cmd not found to validate', name);
@@ -172,8 +157,8 @@ export async function checkOpenApiParameters(name: string, req: express.Request,
 		return;
 	}
 	if (method === 'get') {
-		await checkAOParameters(cmd, schema, req);
+		await checkAOParameters(cmd, req);
 	} else {
-		await checkAORequestBody(cmd, schema, req.body);
+		await checkAORequestBody(cmd, req.body);
 	}
 }

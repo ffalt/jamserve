@@ -10,7 +10,7 @@ const basePath = path.resolve('../../src/model/');
 function generateCode(calls: Array<ApiCall>): string {
 	const result: Array<string> = [];
 	calls.forEach(call => {
-		if (['login', 'logout'].includes(call.name)) {
+		if (call.aliasFor || ['login', 'logout'].includes(call.name)) {
 			return;
 		}
 		let datasouce = 'req.query';
@@ -29,13 +29,19 @@ function generateCode(calls: Array<ApiCall>): string {
 		if (call.binaryResult) {
 			resultType = 'ApiBinaryResult';
 		}
+		let operationSuffix = '';
 		if (call.pathParams) {
 			name = call.name.replace(/}/g, '').replace(/{/g, ':');
-			paramType = call.pathParams.paramType;
+			const list = name.split('/');
+			list.pop();
+			list.push(':pathParameter');
+			name = list.join('/');
+			paramType = '{pathParameter: string}';
+			operationSuffix = 'ByPathParameter';
 		}
 		let code = `const options: JamRequest<${paramType}> = ${options};`;
 		if (resultType) {
-			code += `\n\tconst result: ${resultType} = await ${operation}(options);`;
+			code += `\n\tconst result: ${resultType} = await ${operation}${operationSuffix}(options);`;
 		} else {
 			code += `\n\tawait ${operation}(options);`;
 		}

@@ -4,6 +4,7 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {ApiBinaryResult} from '../../typings';
 import {Store} from '../store/store';
 import {DownloadService} from './download.service';
+import {DefaultDownloadFormat, DownloadFormats} from '../../model/jam-types';
 
 export class DownloadController {
 
@@ -11,6 +12,20 @@ export class DownloadController {
 		private store: Store,
 		private downloadService: DownloadService
 	) {
+	}
+
+	async downloadByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
+		const pathParameter = (req.query.pathParameter || '').trim();
+		if (!pathParameter || pathParameter.length === 0) {
+			return Promise.reject(InvalidParamError('parameters are missing'));
+		}
+		const split = pathParameter.split('.');
+		const id = split[0];
+		const format = split[1] || DefaultDownloadFormat;
+		if (!DownloadFormats.includes(format)) {
+			return Promise.reject(InvalidParamError('parameter format is invalid'));
+		}
+		return this.download({query: {id, format: format as JamParameters.DownloadFormatType}, user: req.user});
 	}
 
 	async download(req: JamRequest<JamParameters.Download>): Promise<ApiBinaryResult> {

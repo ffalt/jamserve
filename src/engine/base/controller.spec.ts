@@ -1,13 +1,25 @@
+import refParser from 'json-schema-ref-parser';
 import {JamApi} from '../../api/jam/api';
-import * as dataSchema from '../../model/jam-rest-data.schema.json';
+import JamOpenApi from '../../model/jam-openapi.json';
+import {JSONSchemaDefinition} from '../../model/json-schema.spec';
+import {OpenAPIObject} from '../../model/openapi-spec';
 import {jsonValidator, validateJSON} from '../../utils/validate-json';
 import {testEngines} from '../engine.spec';
-import {JSONSchemaDefinition} from '../../model/json-schema.spec';
 import {mockUserName} from '../user/user.mock';
 import {User} from '../user/user.model';
 
+// let JamOpenApiDeref: OpenAPIObject;
+
 export async function validateJamResponse(name: string, data: any, isArray?: boolean): Promise<void> {
-	let def: JSONSchemaDefinition;
+	// if (!JamOpenApiDeref) {
+	// 	JamOpenApiDeref = (await refParser.dereference(JamOpenApi)) as any;
+	// }
+	if (!JamOpenApi.components) {
+		throw new Error('Invalid Open Api Spec');
+	}
+	const schemas = JamOpenApi.components.schemas;
+
+	let def: any;
 	let testData: any;
 	if (isArray) {
 		def = {
@@ -16,17 +28,17 @@ export async function validateJamResponse(name: string, data: any, isArray?: boo
 				list: {
 					type: 'array',
 					items: {
-						$ref: '#/definitions/' + name
+						$ref: '#/components/schemas/' + name
 					}
 				}
 			},
-			definitions: dataSchema.definitions
+			components: {schemas}
 		};
 		testData = {list: data};
 	} else {
 		testData = data;
-		def = {...(dataSchema.definitions as any)[name]};
-		def.definitions = {...dataSchema.definitions};
+		def = {...(schemas as any)[name]};
+		def.components = {schemas};
 	}
 	const validator = jsonValidator(def);
 	const result = await validateJSON(testData, validator);

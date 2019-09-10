@@ -23,10 +23,10 @@ export function mockUser(): User {
 		maxBitRate: 10,
 		allowedfolder: [],
 		roles: {
-			admin: false,
-			podcast: false,
-			stream: false,
-			upload: false
+			admin: true,
+			podcast: true,
+			stream: true,
+			upload: true
 		}
 	};
 }
@@ -51,10 +51,10 @@ export function mockUser2(): User {
 		maxBitRate: 20,
 		allowedfolder: [],
 		roles: {
-			admin: true,
-			podcast: true,
-			stream: true,
-			upload: true
+			admin: false,
+			podcast: false,
+			stream: false,
+			upload: false
 		}
 	};
 }

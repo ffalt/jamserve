@@ -12,6 +12,7 @@ import {ApiBinaryResult} from '../../typings';
 import {JamApi, JamRequest} from './api';
 import {UserRequest} from './login';
 import {ApiResponder} from './response';
+import {childOfKind} from 'tslint';
 
 export type JamApiRole = 'admin' | 'podcast' | 'stream';
 export type RegisterCallback = (req: UserRequest, res: express.Response) => Promise<void>;
@@ -792,59 +793,30 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		await ApiResponder.binary(res, result);
 	});
 
-	register.get('/image/:id-:size.:format', async (req, res) => {
-		const options: JamRequest<JamParameters.Image> = {query: req.params, user: req.user, client: req.client};
-		const result: ApiBinaryResult = await api.imageController.image(options);
+	register.get('/image/:pathParameter', async (req, res) => {
+	// register.get(/\/image\/(.*)/ as any, async (req, res) => {
+		const options: JamRequest<{pathParameter: string}> = {query: req.params, user: req.user, client: req.client};
+		const result: ApiBinaryResult = await api.imageController.imageByPathParameter(options);
 		await ApiResponder.binary(res, result);
-	}, '/image/{id}-{size}.{format}');
+	}, '/image/{pathParameter}');
 
-	register.get('/image/:id-:size', async (req, res) => {
-		const options: JamRequest<JamParameters.PathImageSize> = {query: req.params, user: req.user, client: req.client};
-		const result: ApiBinaryResult = await api.imageController.image(options);
+	register.get('/stream/:pathParameter', async (req, res) => {
+		const options: JamRequest<{pathParameter: string}> = {query: req.params, user: req.user, client: req.client};
+		const result: ApiBinaryResult = await api.streamController.streamByPathParameter(options);
 		await ApiResponder.binary(res, result);
-	}, '/image/{id}-{size}');
+	}, '/stream/{pathParameter}', ['stream']);
 
-	register.get('/image/:id.:format', async (req, res) => {
-		const options: JamRequest<JamParameters.PathImageFormat> = {query: req.params, user: req.user, client: req.client};
-		const result: ApiBinaryResult = await api.imageController.image(options);
+	register.get('/waveform/:pathParameter', async (req, res) => {
+		const options: JamRequest<{pathParameter: string}> = {query: req.params, user: req.user, client: req.client};
+		const result: ApiBinaryResult = await api.waveformController.waveformByPathParameter(options);
 		await ApiResponder.binary(res, result);
-	}, '/image/{id}.{format}');
+	}, '/waveform/{pathParameter}', ['stream']);
 
-	register.get('/image/:id', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
-		const result: ApiBinaryResult = await api.imageController.image(options);
+	register.get('/download/:pathParameter', async (req, res) => {
+		const options: JamRequest<{pathParameter: string}> = {query: req.params, user: req.user, client: req.client};
+		const result: ApiBinaryResult = await api.downloadController.downloadByPathParameter(options);
 		await ApiResponder.binary(res, result);
-	}, '/image/{id}');
-
-	register.get('/stream/:id.:format', async (req, res) => {
-		const options: JamRequest<JamParameters.PathStream> = {query: req.params, user: req.user, client: req.client};
-		const result: ApiBinaryResult = await api.streamController.stream(options);
-		await ApiResponder.binary(res, result);
-	}, '/stream/{id}.{format}', ['stream']);
-
-	register.get('/stream/:id', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
-		const result: ApiBinaryResult = await api.streamController.stream(options);
-		await ApiResponder.binary(res, result);
-	}, '/stream/{id}', ['stream']);
-
-	register.get('/waveform/:id.:format', async (req, res) => {
-		const options: JamRequest<JamParameters.Waveform> = {query: req.params, user: req.user, client: req.client};
-		const result: ApiBinaryResult = await api.waveformController.waveform(options);
-		await ApiResponder.binary(res, result);
-	}, '/waveform/{id}.{format}', ['stream']);
-
-	register.get('/download/:id', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.params, user: req.user, client: req.client};
-		const result: ApiBinaryResult = await api.downloadController.download(options);
-		await ApiResponder.binary(res, result);
-	}, '/download/{id}', ['stream']);
-
-	register.get('/download/:id.:format', async (req, res) => {
-		const options: JamRequest<JamParameters.Download> = {query: req.params, user: req.user, client: req.client};
-		const result: ApiBinaryResult = await api.downloadController.download(options);
-		await ApiResponder.binary(res, result);
-	}, '/download/{id}.{format}', ['stream']);
+	}, '/download/{pathParameter}', ['stream']);
 
 	register.post('/bookmark/create', async (req, res) => {
 		const options: JamRequest<JamParameters.BookmarkCreate> = {query: req.body, user: req.user, client: req.client};

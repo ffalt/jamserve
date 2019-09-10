@@ -8,10 +8,26 @@ import {Store} from '../store/store';
 import {Track} from '../track/track.model';
 import {WaveformService} from './waveform.service';
 import WaveformFormatType = JamParameters.WaveformFormatType;
+import {WaveformDefaultFormat, WaveformFormats} from '../../model/jam-types';
 
 export class WaveformController {
 	constructor(private store: Store, private waveformService: WaveformService) {
 
+	}
+
+	async waveformByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
+		const pathParameter = (req.query.pathParameter || '').trim();
+		if (!pathParameter || pathParameter.length === 0) {
+			return Promise.reject(InvalidParamError());
+		}
+		const split = pathParameter.split('.');
+		const id = split[0];
+		const format = split[1];
+		if (format !== undefined && !WaveformFormats.includes(format)) {
+			return Promise.reject(InvalidParamError());
+		}
+		const query: JamParameters.Waveform = {id, format: format as JamParameters.WaveformFormatType};
+		return this.waveform({query, user: req.user});
 	}
 
 	async waveform(req: JamRequest<JamParameters.Waveform>): Promise<ApiBinaryResult> {
@@ -23,7 +39,7 @@ export class WaveformController {
 		if (!obj) {
 			return Promise.reject(NotFoundError());
 		}
-		const format = req.query.format || 'svg' as WaveformFormatType;
+		const format = (req.query.format || WaveformDefaultFormat) as WaveformFormatType;
 		switch (obj.type) {
 			case DBObjectType.track:
 				return this.waveformService.getTrackWaveform(obj as Track, format);
