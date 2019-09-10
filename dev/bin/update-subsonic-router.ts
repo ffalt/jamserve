@@ -2,6 +2,7 @@ import fse from 'fs-extra';
 import path from 'path';
 import {ApiBinaryResult} from '../../src/typings';
 import {ApiCall, getSubsonicApiCalls} from './utils';
+import Mustache from 'mustache';
 
 const destPath = '../../src/api/subsonic/';
 const destfile = path.resolve(destPath, 'routes.ts');
@@ -63,40 +64,83 @@ function generateCode(calls: Array<ApiCall>): string {
 	return result.join('\n\n');
 }
 
+interface MustacheDataRegisterFunction {
+	method: string;
+	apiPath: string;
+	apiPathCheck: string;
+	parameterType: string;
+	parameterSource: string;
+	resultType: string;
+	controllerCall: string;
+	respondCall: string;
+	upload: string;
+	callRoles: string;
+}
+
+function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
+	const result: MustacheDataRegisterFunction = {
+		method: call.upload ? 'upload' : call.method,
+		apiPath: call.name,
+		apiPathCheck: '',
+		parameterType: call.paramType || '{}',
+		parameterSource: (call.method === 'post') ? 'body' : 'query',
+		resultType: '',
+		controllerCall: call.operationId.replace('.view', ''),
+		respondCall: '',
+		callRoles: '',
+		upload: call.upload || ''
+	};
+	if (call.resultSchema) {
+		const propname = call.resultSchema.required[0];
+		const proptype = call.resultSchema.properties[propname].$ref.split('/')[2];
+		result.resultType = '{ ' + propname + ': ' + proptype + ' }';
+	}
+	// if (call.resultType) {
+	// 	console.log(call);
+	// 	result.resultType = call.resultType;
+	// }
+	if (call.binaryResult) {
+		result.resultType = 'ApiBinaryResult';
+	}
+	if (call.pathParams) {
+		const list = call.name.split('/');
+		result.parameterSource = 'params';
+		result.apiPath = list[0] + '/:pathParameter';
+		result.parameterType = '{pathParameter: string}';
+		result.controllerCall += 'ByPathParameter';
+		result.apiPathCheck = list[0] + '/{pathParameter}';
+	}
+	if (call.roles.length > 0) {
+		result.callRoles = JSON.stringify(call.roles).replace(/"/g, '\'');
+	}
+	if (result.callRoles.length === 0 && result.apiPathCheck.length > 0) {
+		result.callRoles = '[]';
+	}
+	if (call.binaryResult) {
+		result.respondCall = 'binary(req, res, result)';
+	} else if (!result.resultType) {
+		result.respondCall = 'ok(req, res)';
+	} else {
+		result.respondCall = 'data(req, res, result)';
+	}
+	return result;
+}
+
 async function run(): Promise<void> {
 	const apicalls: Array<ApiCall> = await getSubsonicApiCalls(basePath);
 	const collectRoles: Array<string> = [];
+	const publicAccess: Array<MustacheDataRegisterFunction> = [];
 	apicalls.forEach(call => {
 		(call.roles || []).forEach(role => {
 			if (!collectRoles.includes(role)) {
 				collectRoles.push(role);
 			}
 		});
+		publicAccess.push(generateRegisterFunction(call));
 	});
 	const roles = collectRoles.map(r => `'${r}'`).join(' | ');
-	const userApi = generateCode(apicalls);
-
-	const ts = `// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
-
-import express from 'express';
-import {Subsonic} from '../../model/subsonic-rest-data';
-import {SubsonicParameters} from '../../model/subsonic-rest-params';
-import {ApiBinaryResult} from '../../typings';
-import {ApiOptions, SubsonicApi} from './api';
-import {UserRequest} from './login';
-import {ApiResponder} from './response';
-
-export type SubSonicRole = ${roles};
-export type RegisterCallback = (req: UserRequest, res: express.Response) => Promise<void>;
-export interface Register {
-	all: (name: string, roles: Array<SubSonicRole>, execute: RegisterCallback) => void;
-}
-
-export function registerApi(register: Register, api: SubsonicApi): void {
-${userApi}
-}
-`;
-	await fse.writeFile(destfile, ts);
+	const template = Mustache.render((await fse.readFile('../templates/subsonic-routes.ts.template')).toString(), {publicAccess, roles});
+	await fse.writeFile(destfile, template);
 }
 
 run()

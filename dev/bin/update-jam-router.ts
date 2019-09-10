@@ -10,35 +10,26 @@ const basePath = path.resolve('../../src/model/');
 
 function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
 	const result: MustacheDataRegisterFunction = {
-		method: call.method,
+		method: call.upload ? 'upload' : call.method,
 		apiPath: call.name,
 		apiPathCheck: '',
 		parameterType: call.paramType || '{}',
-		parameterSource: 'query',
+		parameterSource: (call.method === 'post') ? 'body' : 'query',
 		resultType: '',
 		controllerCall: call.operationId,
 		respondCall: '',
 		callRoles: '',
 		upload: call.upload || ''
 	};
-	if (call.pathParams) {
-		result.parameterSource = 'params';
-	} else if (call.method === 'post') {
-		result.parameterSource = 'body';
-	}
-	if (call.upload) {
-		result.method = 'upload';
-	}
 	if (call.resultType) {
 		result.resultType = call.resultType;
 	}
 	if (call.binaryResult) {
 		result.resultType = 'ApiBinaryResult';
 	}
-	// result.upload = (call.upload ? ', file: req.file ? req.file.path : undefined' : '') + (call.upload ? ', fileType: req.file ? req.file.mimetype : undefined' : '');
 	if (call.pathParams) {
-		// name = call.name.replace(/}/g, '').replace(/{/g, ':');
 		const list = call.name.split('/');
+		result.parameterSource = 'params';
 		result.apiPath = list[0] + '/:pathParameter';
 		result.parameterType = '{pathParameter: string}';
 		result.controllerCall += 'ByPathParameter';
@@ -57,67 +48,7 @@ function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
 	} else {
 		result.respondCall = 'data(res, result)';
 	}
-
 	return result;
-	/*
-		let datasouce = 'req.query';
-		if (call.pathParams) {
-			datasouce = 'req.params';
-		} else if (call.method === 'post') {
-			datasouce = 'req.body';
-		}
-
-		const options = '{query: ' + datasouce + ', user: req.user, client: req.client' + (call.upload ? ', file: req.file ? req.file.path : undefined' : '') + (call.upload ? ', fileType: req.file ? req.file.mimetype : undefined' : '') + '}';
-
-		let name = call.name;
-		const operation = 'api.' + call.operationId;
-		let paramType = call.paramType || '{}';
-		let resultType = call.resultType;
-		if (call.binaryResult) {
-			resultType = 'ApiBinaryResult';
-		}
-		let operationSuffix = '';
-		if (call.pathParams) {
-			name = call.name.replace(/}/g, '').replace(/{/g, ':');
-			const list = name.split('/');
-			list.pop();
-			list.push(':pathParameter');
-			name = list.join('/');
-			paramType = '{pathParameter: string}';
-			operationSuffix = 'ByPathParameter';
-		}
-		let code = `const options: JamRequest<${paramType}> = ${options};`;
-		if (resultType) {
-			code += `\n\tconst result: ${resultType} = await ${operation}${operationSuffix}(options);`;
-		} else {
-			code += `\n\tawait ${operation}(options);`;
-		}
-		if (call.binaryResult) {
-			code += '\n\tawait ApiResponder.binary(res, result);';
-		} else if (!call.resultType) {
-			code += '\n\tawait ApiResponder.ok(res);';
-		} else {
-			code += '\n\tawait ApiResponder.data(res, result);';
-		}
-		code = code.replace(/\n/g, '\n\t');
-		const upload = call.upload ? ` '${call.upload}',` : '';
-		let method = call.method;
-		if (call.upload) {
-			method = 'upload';
-		}
-		let apicheck = '';
-		if (call.name !== name || call.roles.length > 0) {
-			apicheck = `, '/${call.name}'`;
-		}
-		if (call.roles.length > 0) {
-			apicheck += `, ${JSON.stringify(call.roles).replace(/"/g, '\'')}`;
-		}
-		const s = `	register.${method}('/${name}',${upload} async (req, res) => {
-			${code}
-		}${apicheck});`;
-		return s;
-
-	 */
 }
 
 interface MustacheDataRegisterFunction {

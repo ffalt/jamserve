@@ -37,10 +37,10 @@ async function checkRoles(user?: User, roles?: Array<SubSonicRole>): Promise<voi
 export function initSubsonicRouter(engine: Engine): express.Router {
 	const api = new SubsonicApi(engine);
 	const register: Register = {
-		all: (name: string, roles: Array<SubSonicRole>, execute: RegisterCallback) => {
+		all: (name: string, execute: RegisterCallback, roles?: Array<SubSonicRole>) => {
 			router.all(name, apiCheck(name), async (req, res) => {
 				try {
-					await checkRoles((req as UserRequest).user, roles);
+					await checkRoles((req as UserRequest).user, roles || []);
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.error(e);

@@ -1,0 +1,25 @@
+// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
+import express from 'express';
+import {Subsonic} from '../../model/subsonic-rest-data';
+import {SubsonicParameters} from '../../model/subsonic-rest-params';
+import {ApiBinaryResult} from '../../typings';
+import {ApiOptions, SubsonicApi} from './api';
+import {UserRequest} from './login';
+import {ApiResponder} from './response';
+
+export type SubSonicRole = {{{roles}}};
+export type RegisterCallback = (req: UserRequest, res: express.Response) => Promise<void>;
+export interface Register {
+	all: (name: string, execute: RegisterCallback, roles?: Array<SubSonicRole>) => void;
+}
+
+export function registerApi(register: Register, api: SubsonicApi): void {
+	{{#publicAccess}}
+	register.all('/{{{apiPath}}}', async (req, res) => {
+		const options: ApiOptions<{{{parameterType}}}> = {query: req.{{{parameterSource}}}, user: req.user, client: req.client{{#upload}}, file: req.file ? req.file.path : undefined, fileType: req.file ? req.file.mimetype : undefined{{/upload}}};
+		{{#resultType}}const result: {{{resultType}}} = {{/resultType}}await api.{{{controllerCall}}}(options);
+		await ApiResponder.{{{respondCall}}};
+	}{{#callRoles}}, {{{callRoles}}}{{/callRoles}});
+	{{/publicAccess}}
+}
