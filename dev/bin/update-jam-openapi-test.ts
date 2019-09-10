@@ -1,7 +1,7 @@
 import {Chance} from 'chance';
 import fse from 'fs-extra';
-import Mustache from 'mustache';
 import refParser from 'json-schema-ref-parser';
+import Mustache from 'mustache';
 import path from 'path';
 import {OpenAPIObject, OperationObject, ParameterObject, SchemaObject} from '../../src/model/openapi-spec';
 
@@ -206,7 +206,7 @@ function formatData(data: any): string {
 				if (v === undefined || v === null) {
 					return 'null';
 				}
-				return JSON.stringify(v).replace(/"/g, '\'')
+				return JSON.stringify(v).replace(/"/g, '\'');
 			}).join(', ') + ']';
 		}
 		return key + ': ' + JSON.stringify(data[key]).replace(/"/g, '\'');
@@ -306,8 +306,7 @@ interface MustacheDataTest {
 async function run(): Promise<void> {
 	const spec: OpenAPIObject = await fse.readJSON(path.join(basePath, 'jam-openapi.json'));
 	const mocks = await generateRequestMocks(spec);
-	await fse.writeFile(destfile + '.json', JSON.stringify(mocks));
-
+	// await fse.writeFile(destfile + '.json', JSON.stringify(mocks));
 	const sections: Array<MustacheDataSection> = [];
 	for (const apiPath in mocks) {
 		if (mocks.hasOwnProperty(apiPath)) {

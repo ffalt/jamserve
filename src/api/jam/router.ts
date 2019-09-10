@@ -197,7 +197,7 @@ export function initJamRouter(engine: Engine): express.Router {
 	}));
 
 	const register_public: Register = {
-		get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+		get: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
 			router.get<any>(name, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
 					await execute(req as UserRequest, res);
@@ -207,9 +207,9 @@ export function initJamRouter(engine: Engine): express.Router {
 				}
 			});
 		},
-		post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+		post: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
 		},
-		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+		upload: (name: string, field: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
 		}
 	};
 
@@ -247,7 +247,7 @@ export function initJamRouter(engine: Engine): express.Router {
 	router.post('/logout', CallSessionLogoutHandler as express.RequestHandler);
 
 	const register: Register = {
-		get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+		get: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
 			router.get<any>(name, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
 					await checkRoles((req as UserRequest).user, roles);
@@ -258,7 +258,7 @@ export function initJamRouter(engine: Engine): express.Router {
 				}
 			});
 		},
-		post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+		post: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
 			router.post(name, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
 					await checkRoles((req as UserRequest).user, roles);
@@ -269,7 +269,7 @@ export function initJamRouter(engine: Engine): express.Router {
 				}
 			});
 		},
-		upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => {
+		upload: (name: string, field: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
 			router.post(name, upload.single(field), AutoCleanupHandler, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
 					await checkRoles((req as UserRequest).user, roles);

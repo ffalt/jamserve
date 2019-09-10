@@ -1,3 +1,5 @@
+// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
 import supertest from 'supertest';
 import {testEngines} from '../engine/engine.spec';
 import {mockUserName, mockUserPass} from '../engine/user/user.mock';

@@ -1,4 +1,5 @@
 import fse from 'fs-extra';
+import Mustache from 'mustache';
 import path from 'path';
 import {ApiBinaryResult} from '../../src/typings';
 import {ApiCall, getJamApiCalls} from './utils';
@@ -7,12 +8,58 @@ const destPath = '../../src/api/jam/';
 const destfile = path.resolve(destPath, 'routes.ts');
 const basePath = path.resolve('../../src/model/');
 
-function generateCode(calls: Array<ApiCall>): string {
-	const result: Array<string> = [];
-	calls.forEach(call => {
-		if (call.aliasFor || ['login', 'logout'].includes(call.name)) {
-			return;
-		}
+function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
+	const result: MustacheDataRegisterFunction = {
+		method: call.method,
+		apiPath: call.name,
+		apiPathCheck: '',
+		parameterType: call.paramType || '{}',
+		parameterSource: 'query',
+		resultType: '',
+		controllerCall: call.operationId,
+		respondCall: '',
+		callRoles: '',
+		upload: call.upload || ''
+	};
+	if (call.pathParams) {
+		result.parameterSource = 'params';
+	} else if (call.method === 'post') {
+		result.parameterSource = 'body';
+	}
+	if (call.upload) {
+		result.method = 'upload';
+	}
+	if (call.resultType) {
+		result.resultType = call.resultType;
+	}
+	if (call.binaryResult) {
+		result.resultType = 'ApiBinaryResult';
+	}
+	// result.upload = (call.upload ? ', file: req.file ? req.file.path : undefined' : '') + (call.upload ? ', fileType: req.file ? req.file.mimetype : undefined' : '');
+	if (call.pathParams) {
+		// name = call.name.replace(/}/g, '').replace(/{/g, ':');
+		const list = call.name.split('/');
+		result.apiPath = list[0] + '/:pathParameter';
+		result.parameterType = '{pathParameter: string}';
+		result.controllerCall += 'ByPathParameter';
+		result.apiPathCheck = list[0] + '/{pathParameter}';
+	}
+	if (call.roles.length > 0) {
+		result.callRoles = JSON.stringify(call.roles).replace(/"/g, '\'');
+	}
+	if (result.callRoles.length === 0 && result.apiPathCheck.length > 0) {
+		result.callRoles = '[]';
+	}
+	if (call.binaryResult) {
+		result.respondCall = 'binary(res, result)';
+	} else if (!call.resultType) {
+		result.respondCall = 'ok(res)';
+	} else {
+		result.respondCall = 'data(res, result)';
+	}
+
+	return result;
+	/*
 		let datasouce = 'req.query';
 		if (call.pathParams) {
 			datasouce = 'req.params';
@@ -20,7 +67,7 @@ function generateCode(calls: Array<ApiCall>): string {
 			datasouce = 'req.body';
 		}
 
-		const options = '{query: ' + datasouce + ', user: req.user, client: req.client' + (call.upload ? ', file: req.file ? req.file.path : undefined' : '')  + (call.upload ? ', fileType: req.file ? req.file.mimetype : undefined' : '') + '}';
+		const options = '{query: ' + datasouce + ', user: req.user, client: req.client' + (call.upload ? ', file: req.file ? req.file.path : undefined' : '') + (call.upload ? ', fileType: req.file ? req.file.mimetype : undefined' : '') + '}';
 
 		let name = call.name;
 		const operation = 'api.' + call.operationId;
@@ -66,18 +113,30 @@ function generateCode(calls: Array<ApiCall>): string {
 			apicheck += `, ${JSON.stringify(call.roles).replace(/"/g, '\'')}`;
 		}
 		const s = `	register.${method}('/${name}',${upload} async (req, res) => {
-		${code}
-	}${apicheck});`;
+			${code}
+		}${apicheck});`;
+		return s;
 
-		result.push(s);
-	});
-	return result.join('\n\n');
+	 */
+}
+
+interface MustacheDataRegisterFunction {
+	method: string;
+	apiPath: string;
+	apiPathCheck: string;
+	parameterType: string;
+	parameterSource: string;
+	resultType: string;
+	controllerCall: string;
+	respondCall: string;
+	upload: string;
+	callRoles: string;
 }
 
 async function run(): Promise<void> {
 	const apicalls: Array<ApiCall> = await getJamApiCalls(basePath);
-	const publicApi = generateCode(apicalls.filter(call => call.isPublic));
-	const accessControlApi = generateCode(apicalls.filter(call => !call.isPublic));
+	const publicAccess: Array<MustacheDataRegisterFunction> = [];
+	const privateAccess: Array<MustacheDataRegisterFunction> = [];
 	const collectRoles: Array<string> = [];
 	apicalls.forEach(call => {
 		(call.roles || []).forEach(role => {
@@ -85,42 +144,19 @@ async function run(): Promise<void> {
 				collectRoles.push(role);
 			}
 		});
+		if (call.aliasFor || ['login', 'logout'].includes(call.name)) {
+			return;
+		}
+		if (call.isPublic) {
+			publicAccess.push(generateRegisterFunction(call));
+		} else {
+			privateAccess.push(generateRegisterFunction(call));
+
+		}
 	});
 	const roles = collectRoles.map(r => `'${r}'`).join(' | ');
-
-	const ts = `// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
-
-import express from 'express';
-import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
-import {Acoustid} from '../../model/acoustid-rest-data';
-import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
-import {Jam} from '../../model/jam-rest-data';
-import {JamParameters} from '../../model/jam-rest-params';
-import {LastFM} from '../../model/lastfm-rest-data';
-import {MusicBrainz} from '../../model/musicbrainz-rest-data';
-import {ApiBinaryResult} from '../../typings';
-import {JamApi, JamRequest} from './api';
-import {UserRequest} from './login';
-import {ApiResponder} from './response';
-
-export type JamApiRole = ${roles};
-export type RegisterCallback = (req: UserRequest, res: express.Response) => Promise<void>;
-export interface Register {
-	get: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => void;
-	post: (name: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => void;
-	upload: (name: string, field: string, execute: RegisterCallback, apiCheckName?: string, roles?: Array<JamApiRole>) => void;
-}
-
-export function registerPublicApi(register: Register, api: JamApi): void {
-${publicApi}
-}
-
-export function registerAccessControlApi(register: Register, api: JamApi): void {
-${accessControlApi}
-}
-`;
-
-	await fse.writeFile(destfile, ts);
+	const template = Mustache.render((await fse.readFile('../templates/jam-routes.ts.template')).toString(), {publicAccess, privateAccess, roles});
+	await fse.writeFile(destfile, template);
 }
 
 run()
