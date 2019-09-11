@@ -3,7 +3,7 @@ import {Jam} from './jam-rest-data';
 export declare namespace JamParameters {
 
 	export type ListType = 'random' | 'highest' | 'avghighest' | 'frequent' | 'faved' | 'recent';
-	export type ImageFormatType = 'bmp' | 'png' | 'jpeg' | 'jpg' | 'tiff';
+	export type ImageFormatType = 'png' | 'jpeg' | 'jpg' | 'tiff';
 	export type WaveformFormatType = 'svg' | 'json' | 'dat';
 	export type AudioFormatType = 'mp3';
 	export type DownloadFormatType = 'zip' | 'tar';
