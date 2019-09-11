@@ -28,7 +28,7 @@ describe('FolderService', () => {
 				});
 			});
 			describe('.collectFolderPath', () => {
-				it('should do handle invalid parameters', async () => {
+				it('should handle invalid parameters', async () => {
 					let list = await folderService.collectFolderPath(undefined);
 					expect(list.length).toBe(0);
 					list = await folderService.collectFolderPath('invalid');

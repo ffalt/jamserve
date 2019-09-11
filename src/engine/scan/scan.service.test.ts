@@ -23,7 +23,6 @@ function logChange(name: string, amount: number): void {
 
 function logChanges(changes: MergeChanges): void {
 	const v = moment.utc(changes.end - changes.start).format('HH:mm:ss');
-	console.log('Duration:', v);
 	logChange('Added Tracks', changes.newTracks.length);
 	logChange('Updated Tracks', changes.updateTracks.length);
 	logChange('Removed Tracks', changes.removedTracks.length);
@@ -77,15 +76,15 @@ describe('ScanService', () => {
 	testService({mockData: false},
 		async (storeTest, imageModuleTest, audioModule) => {
 			store = storeTest;
-			dir = tmp.dirSync();
-			mockRoot = buildMockRoot(dir.name, 1, 'rootID1');
 			await waveformServiceTest.setup();
 			scanService = new ScanService(store, audioModule, imageModuleTest.imageModule, waveformServiceTest.waveformService);
-			await writeMockRoot(mockRoot);
-			mockRoot.id = await store.rootStore.add({id: '', path: mockRoot.path, type: DBObjectType.root, name: mockRoot.name, strategy: RootScanStrategy.auto, created: Date.now()});
 		},
 		() => {
-			it('should scan', async () => {
+			beforeEach(async () => {
+				dir = tmp.dirSync();
+				mockRoot = buildMockRoot(dir.name, 1, 'rootID1');
+				await writeMockRoot(mockRoot);
+				mockRoot.id = await store.rootStore.add({id: '', path: mockRoot.path, type: DBObjectType.root, name: mockRoot.name, strategy: RootScanStrategy.auto, created: Date.now()});
 				const changes = await scanService.scanRoot(mockRoot.id, false);
 				expect(changes.newTracks.length).toBe(mockRoot.expected.tracks); // , 'New Track count doesnt match');
 				expect(changes.newFolders.length).toBe(mockRoot.expected.folders); // , 'New Folder count doesnt match');
@@ -101,6 +100,29 @@ describe('ScanService', () => {
 				expect(changes.removedAlbums.length).toBe(0); // Removed Album count doesnt match');
 				await validate(mockRoot, store);
 			});
+			afterEach(async () => {
+				await removeMockRoot(mockRoot);
+				await store.reset();
+				dir.removeCallback();
+			});
+
+			// it('should scan', async () => {
+			// 	const changes = await scanService.scanRoot(mockRoot.id, false);
+			// 	expect(changes.newTracks.length).toBe(mockRoot.expected.tracks); // , 'New Track count doesnt match');
+			// 	expect(changes.newFolders.length).toBe(mockRoot.expected.folders); // , 'New Folder count doesnt match');
+			// 	expect(changes.newArtists.length).toBe(mockRoot.expected.artists); // , 'New Artist count doesnt match');
+			// 	expect(changes.newAlbums.length).toBe(mockRoot.expected.albums); // , 'New Album count doesnt match');
+			// 	expect(changes.updateTracks.length).toBe(0); // , 'Update Track count doesnt match');
+			// 	expect(changes.removedTracks.length).toBe(0); // Removed Tracks count doesnt match');
+			// 	expect(changes.updateFolders.length).toBe(0); // Update Folder count doesnt match');
+			// 	expect(changes.removedFolders.length).toBe(0); // Removed Folders count doesnt match');
+			// 	expect(changes.updateArtists.length).toBe(0); // Update Artist count doesnt match');
+			// 	expect(changes.removedArtists.length).toBe(0); // Removed Artists count doesnt match');
+			// 	expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
+			// 	expect(changes.removedAlbums.length).toBe(0); // Removed Album count doesnt match');
+			// 	await validate(mockRoot, store);
+			// 	await store.reset();
+			// });
 			it('should rescan', async () => {
 				const changes = await scanService.scanRoot(mockRoot.id, false);
 				expect(changes.newTracks.length).toBe(0); // New Track count doesnt match');
@@ -121,7 +143,6 @@ describe('ScanService', () => {
 				await removeMockRoot(mockRoot);
 				await fse.ensureDir(mockRoot.path);
 				const changes = await scanService.scanRoot(mockRoot.id, false);
-				await fse.rmdir(mockRoot.path);
 				expect(changes.newTracks.length).toBe(0); // New Track count doesnt match');
 				expect(changes.updateTracks.length).toBe(0); // Update Track count doesnt match');
 				expect(changes.removedTracks.length).toBe(mockRoot.expected.tracks); // Removed Tracks count doesnt match');
@@ -138,8 +159,12 @@ describe('ScanService', () => {
 				expect(await store.trackStore.count()).toBe(0);
 				expect(await store.albumStore.count()).toBe(0);
 				expect(await store.artistStore.count()).toBe(0);
+				mockRoot.folders = [];
 			});
 			it('should scan added in the root', async () => {
+				await removeMockRoot(mockRoot);
+				await fse.ensureDir(mockRoot.path);
+				await scanService.scanRoot(mockRoot.id, false);
 				await writeMockRoot(mockRoot);
 				const changes = await scanService.scanRoot(mockRoot.id, false);
 				expect(changes.newTracks.length).toBe(mockRoot.expected.tracks); // New Track count doesnt match');
@@ -587,9 +612,8 @@ describe('ScanService', () => {
 				await validate(mockRoot, store);
 			});
 
-			describe('renameFolder', function testRenameFolder(): void {
-				// this.timeout(40000);
-				it('should do handle invalid parameters', async () => {
+			describe('renameFolder', () => {
+				it('should handle invalid parameters', async () => {
 					const folder = await store.folderStore.random();
 					if (!folder) {
 						throw Error('Invalid Test Setup');
@@ -597,8 +621,7 @@ describe('ScanService', () => {
 					await expect(scanService.renameFolder(folder.rootID, folder.id, '')).rejects.toThrow('Invalid Directory Name');
 					await expect(scanService.renameFolder(folder.rootID, folder.id, '.')).rejects.toThrow('Invalid Directory Name');
 					await expect(scanService.renameFolder(folder.rootID, folder.id, '//..*\.')).rejects.toThrow('Invalid Directory Name');
-					await expect(scanService.renameFolder(folder.rootID, folder.id, path.basename(folder.path))).rejects.toThrow('Directory does not exists');
-					// await expect(scanService.renameFolder(folder.rootID, folder.id, path.basename(folder.path))).rejects.toThrow('Directory already exists');
+					await expect(scanService.renameFolder(folder.rootID, folder.id, path.basename(folder.path))).rejects.toThrow('Directory already exists');
 				});
 				it('should rename and update all folder & track paths', async () => {
 					const folderIds = await store.folderStore.searchIDs({rootID: mockRoot.id});
@@ -629,7 +652,7 @@ describe('ScanService', () => {
 
 			/*
 		describe('setFolderImage', () => {
-			it('should do handle invalid parameters', async () => {
+			it('should handle invalid parameters', async () => {
 				const folder = await folderService.folderStore.random();
 				should().exist(folder, 'Wrong Test Setup');
 				if (!folder) {
@@ -664,7 +687,7 @@ describe('ScanService', () => {
 		});
 
 		describe('downloadFolderImage', () => {
-			it('should do handle invalid parameters', async () => {
+			it('should handle invalid parameters', async () => {
 				const folder = await folderService.folderStore.random();
 				should().exist(folder, 'Wrong Test Setup');
 				if (!folder) {
@@ -746,9 +769,7 @@ describe('ScanService', () => {
 
 		},
 		async () => {
-			await removeMockRoot(mockRoot);
 			await waveformServiceTest.cleanup();
-			dir.removeCallback();
 		}
 	);
 

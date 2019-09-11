@@ -19,24 +19,14 @@ export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup:
 	// dbs.push(new TestElastic());
 	for (const testDB of dbs) {
 		describe('with ' + testDB.name, () => {
-			beforeAll(function(done): void {
-				// this.timeout(40000);
-				testDB.setup().then(() => {
-					setup(testDB).then(() => {
-						done();
-					}).catch(e => {
-						throw e;
-					});
-				}).catch(e => {
-					throw e;
-				});
+			beforeAll(async () => {
+				await testDB.setup();
+				await setup(testDB);
 			});
-
 			afterAll(async () => {
 				await cleanup();
 				await testDB.cleanup();
 			});
-
 			tests();
 		});
 	}
