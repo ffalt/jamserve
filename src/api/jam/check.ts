@@ -25,10 +25,11 @@ const pathParameterPath = {
 
 async function check(name: string, req: express.Request): Promise<void> {
 	if (!JamOpenApiDeref) {
-		(JamOpenApi.paths as any)['/image/{pathParameter}'] = pathParameterPath;
-		(JamOpenApi.paths as any)['/download/{pathParameter}'] = pathParameterPath;
-		(JamOpenApi.paths as any)['/waveform/{pathParameter}'] = pathParameterPath;
-		(JamOpenApi.paths as any)['/stream/{pathParameter}'] = pathParameterPath;
+		const paths = (JamOpenApi.paths as any);
+		paths['image/{pathParameter}'] = pathParameterPath;
+		paths['download/{pathParameter}'] = pathParameterPath;
+		paths['waveform/{pathParameter}'] = pathParameterPath;
+		paths['stream/{pathParameter}'] = pathParameterPath;
 		JamOpenApiDeref = (await refParser.dereference(JamOpenApi)) as any;
 	}
 	await checkOpenApiParameters(name, req, JamOpenApiDeref);
