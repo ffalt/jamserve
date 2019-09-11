@@ -1,7 +1,8 @@
 import {AudioFormatType, FileTyp} from '../model/jam-types';
 import {fileSuffix} from './fs-utils';
 
-export const SupportedReadImageFormat = ['bmp', 'png', 'jpeg', 'jpg', 'gif', 'tiff'];
+// TODO: 'bmp' is not supported by sharp, preconvert with jimp?
+export const SupportedReadImageFormat = ['png', 'jpeg', 'jpg', 'gif', 'tiff'];
 export const SupportedWriteImageFormat = ['png', 'jpeg', 'jpg', 'tiff'];
 
 export const SupportedAudioFormat: Array<AudioFormatType> = [
