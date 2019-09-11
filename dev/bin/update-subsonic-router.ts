@@ -1,68 +1,12 @@
 import fse from 'fs-extra';
+import Mustache from 'mustache';
 import path from 'path';
 import {ApiBinaryResult} from '../../src/typings';
 import {ApiCall, getSubsonicApiCalls} from './utils';
-import Mustache from 'mustache';
 
 const destPath = '../../src/api/subsonic/';
 const destfile = path.resolve(destPath, 'routes.ts');
 const basePath = path.resolve('../../src/model/');
-
-function generateCode(calls: Array<ApiCall>): string {
-	const result: Array<string> = [];
-	calls.forEach(call => {
-		let datasouce = 'req.query';
-		if (call.pathParams) {
-			datasouce = 'req.params';
-		} else if (call.method === 'post') {
-			datasouce = 'req.body';
-		}
-
-		const options = '{query: ' + datasouce + ', user: req.user, client: req.client' + (call.upload ? ', file: req.file?req.file.path:undefined' : '') + '}';
-
-		let name = call.name;
-		let operation = 'api.' + call.operationId.replace(/\.view/g, '');
-		let paramType = call.paramType || '{}';
-		let resultType = call.resultType;
-		if (call.binaryResult) {
-			resultType = 'ApiBinaryResult';
-		} else if (call.resultSchema) {
-			const propname = call.resultSchema.required[0];
-			const proptype = call.resultSchema.properties[propname].$ref.split('/')[2];
-			resultType = '{ ' + propname + ': ' + proptype + ' }';
-		}
-		if (call.pathParams) {
-			operation = 'api.' + call.name.split('/')[0];
-			name = call.name.replace(/}/g, '').replace(/{/g, ':');
-			paramType = call.pathParams.paramType;
-		}
-		let code = `const options: ApiOptions<${paramType}> = ${options};`;
-		if (resultType) {
-			code += `\n\tconst result: ${resultType} = await ${operation}(options);`;
-		} else {
-			code += `\n\tawait ${operation}(options);`;
-		}
-		if (call.binaryResult) {
-			code += '\n\tawait ApiResponder.binary(req, res, result);';
-		} else if (!call.resultSchema) {
-			code += '\n\tawait ApiResponder.ok(req, res);';
-		} else {
-			code += '\n\tawait ApiResponder.data(req, res, result);';
-		}
-		code = code.replace(/\n/g, '\n\t\t');
-		let roles = '';
-		if (call.roles && call.roles.length > 0) {
-			roles = call.roles.map(r => `'${r}'`).join(', ');
-		}
-		const s = `	register.all('/${name}', [${roles}], async (req, res) => {
-			${code}
-	});`;
-
-		result.push(s);
-
-	});
-	return result.join('\n\n');
-}
 
 interface MustacheDataRegisterFunction {
 	method: string;

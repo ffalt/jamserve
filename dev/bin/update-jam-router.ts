@@ -82,7 +82,6 @@ async function run(): Promise<void> {
 			publicAccess.push(generateRegisterFunction(call));
 		} else {
 			privateAccess.push(generateRegisterFunction(call));
-
 		}
 	});
 	const roles = collectRoles.map(r => `'${r}'`).join(' | ');

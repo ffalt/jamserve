@@ -38,7 +38,6 @@
     "build:jam:client": "cd dev/bin && ts-node update-jam-client.ts",
     "build:jam:router": "cd dev/bin && ts-node update-jam-router.ts",
     "build:jam:api:docs": "redoc-cli bundle src/model/jam-openapi.json --output ./dist/docs/api/jam/index.html",
-    "build:subsonic:schema": "cd dev/bin && ts-node update-subsonic-schema.ts",
     "build:subsonic:openapi": "cd dev/bin && ts-node update-subsonic-openapi.ts",
     "build:subsonic:router": "cd dev/bin && ts-node update-subsonic-router.ts",
     "build:subsonic:api:docs": "redoc-cli bundle src/model/subsonic-openapi.json --output ./dist/docs/api/subsonic/index.html"

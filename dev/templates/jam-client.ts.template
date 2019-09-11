@@ -1,0 +1,31 @@
+// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
+import {HttpEvent} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
+import {Acoustid} from '../../model/acoustid-rest-data';
+import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
+import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
+import {LastFM} from '../../model/lastfm-rest-data';
+import {MusicBrainz} from '../../model/musicbrainz-rest-data';
+import {AuthService} from '../auth/auth.service';
+import {HttpService} from '../http/http.service';
+import {NotificationService} from '../notification/notification.service';
+import {JamServiceBase} from './jam.service.base';
+
+@Injectable()
+export class JamService extends JamServiceBase {
+
+	constructor(http: HttpService, notify: NotificationService, auth: AuthService) {
+		super(http, notify, auth);
+	}
+
+	{{#list}}
+	{{^sync}}async {{/sync}}{{{name}}}({{{paramName}}}{{#paramsType}}: {{{paramsType}}}{{/paramsType}}): {{^sync}}Promise<{{/sync}}{{{resultType}}}{{^sync}}>{{/sync}} {
+		return this.{{{baseFunc}}}{{#baseFuncResultType}}<{{{baseFuncResultType}}}>{{/baseFuncResultType}}({{#apiPathTemplate}}`{{/apiPathTemplate}}{{^apiPathTemplate}}'{{/apiPathTemplate}}{{{apiPath}}}{{#apiPathTemplate}}`{{/apiPathTemplate}}{{^apiPathTemplate}}'{{/apiPathTemplate}}{{#baseFuncParameters}}, {{{baseFuncParameters}}}{{/baseFuncParameters}});
+	}
+
+	{{/list}}
+}
