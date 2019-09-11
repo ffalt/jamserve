@@ -1,4 +1,5 @@
 import path from 'path';
+import {Errors} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {ApiBinaryResult} from '../../typings';
 import {CompressFolderStream} from '../../utils/compress-folder-stream';
@@ -14,7 +15,6 @@ import {Podcast} from '../podcast/podcast.model';
 import {Track} from '../track/track.model';
 import {TrackStore} from '../track/track.store';
 import {User} from '../user/user.model';
-import {Errors} from '../../api/jam/error';
 
 export class DownloadService {
 

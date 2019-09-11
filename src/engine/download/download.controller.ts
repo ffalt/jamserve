@@ -1,10 +1,10 @@
 import {JamRequest} from '../../api/jam/api';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {JamParameters} from '../../model/jam-rest-params';
+import {DefaultDownloadFormat, DownloadFormats} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {Store} from '../store/store';
 import {DownloadService} from './download.service';
-import {DefaultDownloadFormat, DownloadFormats} from '../../model/jam-types';
 
 export class DownloadController {
 

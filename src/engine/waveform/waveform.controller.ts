@@ -2,13 +2,13 @@ import {JamRequest} from '../../api/jam/api';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
+import WaveformFormatType = JamParameters.WaveformFormatType;
+import {WaveformDefaultFormat, WaveformFormats} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {Episode} from '../episode/episode.model';
 import {Store} from '../store/store';
 import {Track} from '../track/track.model';
 import {WaveformService} from './waveform.service';
-import WaveformFormatType = JamParameters.WaveformFormatType;
-import {WaveformDefaultFormat, WaveformFormats} from '../../model/jam-types';
 
 export class WaveformController {
 	constructor(private store: Store, private waveformService: WaveformService) {
