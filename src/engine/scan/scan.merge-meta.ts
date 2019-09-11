@@ -53,7 +53,7 @@ export class ScanMetaMerger {
 
 	private async findAlbumInCache(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Album | undefined> {
 		if (trackInfo.track.tag.mbAlbumID) {
-			const album = await this.albumCache.find(a => a.mbAlbumID === trackInfo.track.tag.mbAlbumID);
+			const album = this.albumCache.find(a => a.mbAlbumID === trackInfo.track.tag.mbAlbumID);
 			if (album) {
 				return album;
 			}
@@ -182,7 +182,7 @@ export class ScanMetaMerger {
 	}
 
 	private async findCompilationArtist(changes: MergeChanges): Promise<Artist | undefined> {
-		const artistCache = await this.artistCache.find(a => a.artist.mbArtistID === MUSICBRAINZ_VARIOUS_ARTISTS_ID);
+		const artistCache = this.artistCache.find(a => a.artist.mbArtistID === MUSICBRAINZ_VARIOUS_ARTISTS_ID);
 		if (artistCache) {
 			return artistCache.artist;
 		}

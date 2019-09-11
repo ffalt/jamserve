@@ -13,7 +13,7 @@ export async function downloadFile(url: string, filename: string): Promise<void>
 				if (res.statusCode !== 200) {
 					fileDeleteIfExists(filename).then(() => {
 						reject(new Error(http.STATUS_CODES[res.statusCode]));
-					}).catch((e) => {
+					}).catch(e => {
 						reject(new Error(http.STATUS_CODES[res.statusCode]));
 					});
 				} else {

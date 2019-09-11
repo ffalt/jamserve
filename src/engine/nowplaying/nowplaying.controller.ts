@@ -18,7 +18,7 @@ export class NowPlayingController {
 			total: list.total,
 			amount: list.amount,
 			offset: list.offset,
-			items: list.items.map(entry => packNowPlaying(entry))
+			items: list.items.map(packNowPlaying)
 		};
 	}
 

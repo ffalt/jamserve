@@ -61,7 +61,7 @@ export class AvatarGenerator {
 		const fileRegex = new RegExp(`(${parts.join('|')})(\\d+)${imageExtension}`);
 		const discriminators = fs
 			.readdirSync(partsLocation)
-			.filter((partsDir) =>
+			.filter(partsDir =>
 				fs.statSync(path.join(partsLocation, partsDir)).isDirectory()
 			);
 

@@ -280,9 +280,9 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		if (!response.docs) {
 			return [];
 		}
-		return response.docs.filter((doc) => {
+		return response.docs.filter(doc => {
 			return doc.found;
-		}).map((doc) => {
+		}).map(doc => {
 			return this.hit2Obj(doc);
 		});
 	}
@@ -298,7 +298,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 				query: this.translateElasticQuery(query)
 			}
 		});
-		await this.scroll(response, async (hits) => {
+		await this.scroll(response, async hits => {
 			docs = docs.concat(hits);
 		});
 		// TODO: paginate in db if query.amount is specified
@@ -336,7 +336,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 				query: this.translateElasticQuery(query)
 			}
 		});
-		await this.scroll(response, async (hits) => {
+		await this.scroll(response, async hits => {
 			await onItem(hits.map(this.hit2Obj));
 		});
 	}
@@ -352,7 +352,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 				stored_fields: []
 			}
 		});
-		await this.scroll(response, async (hits) => {
+		await this.scroll(response, async hits => {
 			list = list.concat(hits.map(hit => hit._id.toString()));
 		});
 		return list;

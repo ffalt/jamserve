@@ -44,7 +44,7 @@ export function initSubsonicRouter(engine: Engine): express.Router {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.error(e);
-					await ApiResponder.error(req, res, e);
+					ApiResponder.error(req, res, e);
 				}
 			});
 		}

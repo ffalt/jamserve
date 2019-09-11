@@ -118,29 +118,23 @@ const folderRules: Array<FolderRuleInfo> = [
 					.replace(/  /g, ' ')
 					.trim();
 				name = replaceFolderSystemChars(name, '_');
-				const s = (year.length > 0 ? '[' + replaceFolderSystemChars(year, '_') + '] ' : '') + name;
+				const s = (year.length > 0 ? `[${replaceFolderSystemChars(year, '_')}] ` : '') + name;
 				return s.trim();
 			}
 
-			function checkArtistAlbumFolderName(): RuleResult | undefined {
-				if ((folder.tag.album) && (folder.tag.year) && (folder.tag.year > 0)) {
-					const nameSlug = path.basename(folder.path).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
-					const nicename = getNiceAlbumFolderName(folder.tag);
-					const nicenameSlug = nicename.replace(/[_:!?\/ ]/g, '').toLowerCase();
-					if (nameSlug.localeCompare(nicenameSlug) !== 0) {
-						return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: nicename}]};
-					}
-				}
+			function slug(folderPath: string): string {
+				return path.basename(folderPath).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
 			}
 
-			function checkOtherFolderName(): RuleResult | undefined {
-				if ((folder.tag.album)) {
-					const nameSlug = path.basename(folder.path).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
-					const nicename = getNiceOtherFolderName(folder.tag);
-					const nicenameSlug = nicename.replace(/[_:!?\/ ]/g, '').toLowerCase();
-					if (nameSlug.localeCompare(nicenameSlug) !== 0) {
-						return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: nicename}]};
-					}
+			function niceSlug(nicename: string): string {
+				return nicename.replace(/[_:!?\/ ]/g, '').toLowerCase();
+			}
+
+			function checkNiceName(nicename: string): RuleResult | undefined {
+				const nameSlug = slug(folder.path);
+				const nicenameSlug = niceSlug(nicename);
+				if (nameSlug.localeCompare(nicenameSlug) !== 0) {
+					return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: nicename}]};
 				}
 			}
 
@@ -149,9 +143,13 @@ const folderRules: Array<FolderRuleInfo> = [
 			) {
 				const hasArtist = parents.find(p => p.tag.type === FolderType.artist);
 				if (hasArtist) {
-					return checkArtistAlbumFolderName();
+					if ((folder.tag.album) && (folder.tag.year) && (folder.tag.year > 0)) {
+						return checkNiceName(getNiceAlbumFolderName(folder.tag));
+					}
 				}
-				return checkOtherFolderName();
+				if ((folder.tag.album)) {
+					return checkNiceName(getNiceOtherFolderName(folder.tag));
+				}
 			}
 		}
 	},

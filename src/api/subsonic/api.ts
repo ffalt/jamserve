@@ -1952,7 +1952,7 @@ export class SubsonicApi {
 
 		Returns an empty <subsonic-response> element on success.
 		 */
-		const radio = await this.byID(req.query.id, await this.engine.store.radioStore);
+		const radio = await this.byID(req.query.id, this.engine.store.radioStore);
 		await this.engine.store.radioStore.remove(radio.id);
 	}
 
@@ -1988,7 +1988,7 @@ export class SubsonicApi {
 
 		Returns an empty <subsonic-response> element on success.
 		 */
-		const radio = await this.byID(req.query.id, await this.engine.store.radioStore);
+		const radio = await this.byID(req.query.id, this.engine.store.radioStore);
 		await this.engine.radioService.update(radio, req.query.name, req.query.streamUrl, req.query.homepageUrl);
 	}
 

@@ -31,7 +31,7 @@ export class GenreService {
 			}
 		} = {};
 
-		await this.trackStore.iterate(async (tracks) => {
+		await this.trackStore.iterate(async tracks => {
 			for (const track of tracks) {
 				const genre = track.tag.genre || '[No genre]';
 				const data = genreHash[genre] || {roots: {}};

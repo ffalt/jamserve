@@ -377,7 +377,7 @@ export class FORMAT {
 			suffix,
 			contentType: AudioMimeTypes[suffix],
 			isVideo: false,
-			path: track.path + '/' + track.name,
+			path: `${track.path}/${track.name}`,
 			discNumber: track.tag.disc,
 			albumId: track.albumID,
 			artistId: track.artistID,

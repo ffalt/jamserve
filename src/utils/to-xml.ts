@@ -14,7 +14,7 @@ export function toXML(obj: any): string {
 				if (!Array.isArray(sub) && (typeof sub !== 'object')) {
 					const val = JSON.stringify(sub);
 					if (val !== undefined) {
-						s += ' ' + key + '="' + xmls(sub) + '"';
+						s += ` ${key}="${xmls(sub)}"`;
 					}
 				}
 			}
@@ -36,20 +36,20 @@ export function toXML(obj: any): string {
 		Object.keys(o).forEach(key => {
 			const sub = o[key];
 			if (Array.isArray(sub)) {
-				sub.forEach((entry) => {
+				sub.forEach(entry => {
 					const val = xmlc(entry) + xmlo(entry);
-					s += '<' + key + xmli(entry);
+					s += `<${key}${xmli(entry)}`;
 					if (val.length > 0) {
-						s += '>' + val + '</' + key + '>';
+						s += `>${val}</${key}>`;
 					} else {
 						s += ' />';
 					}
 				});
 			} else if (typeof sub === 'object') {
 				const val = xmlo(sub);
-				s += '<' + key + xmli(sub);
+				s += `<${key}${xmli(sub)}`;
 				if (val.length > 0) {
-					s += '>' + val + '</' + key + '>';
+					s += `>${val}</${key}>`;
 				} else {
 					s += ' />';
 				}
@@ -62,14 +62,14 @@ export function toXML(obj: any): string {
 		let s = '';
 		Object.keys(o).forEach(key => {
 			const val = xmlo(o[key]);
-			s += '<' + key + xmli(o[key]);
+			s += `<${key}${xmli(o[key])}`;
 			if (val.length > 0) {
-				s += '>' + val + '</' + key + '>';
+				s += `>${val}</${key}>`;
 			} else {
 				s += ' />';
 			}
 		});
-		return '<?xml version="1.0" encoding="UTF-8"?>' + s;
+		return `<?xml version="1.0" encoding="UTF-8"?>${s}`;
 	};
 
 	return xml(obj);

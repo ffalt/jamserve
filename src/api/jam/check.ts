@@ -39,7 +39,7 @@ export function apiCheck(name: string): express.RequestHandler {
 	function CheckApiParametersHandler(req: express.Request, res: express.Response, next: express.NextFunction): void {
 		check(name, req).then(() => {
 			next();
-		}).catch((e) => {
+		}).catch(e => {
 			// console.log(e.message);
 			ApiResponder.error(res, InvalidParamError(e.message));
 		});

@@ -48,7 +48,7 @@ export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 	protected transformQuery(query: SearchQueryFolder): DatabaseQuery {
 		const q = new QueryHelper();
 		q.term('path', query.path);
-		q.startsWiths('path', query.inPaths ? query.inPaths.map(s => ensureTrailingPathSeparator(s)) : undefined);
+		q.startsWiths('path', query.inPaths ? query.inPaths.map(ensureTrailingPathSeparator) : undefined);
 		q.startsWith('path', query.inPath ? ensureTrailingPathSeparator(query.inPath) : undefined);
 		q.term('tag.mbAlbumID', query.mbAlbumID);
 		q.term('tag.mbArtistID', query.mbArtistID);

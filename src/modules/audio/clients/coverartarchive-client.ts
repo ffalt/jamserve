@@ -47,7 +47,7 @@ export class CoverArtArchiveClient extends WebserviceClient {
 
 	async releaseImages(mbid: string): Promise<CoverArtArchive.Response> {
 		const data = await this.get({
-			path: this.options.basePath + 'release/' + mbid + '/',
+			path: `${this.options.basePath}release/${mbid}/`,
 			query: {},
 			retry: 0
 		});
@@ -56,7 +56,7 @@ export class CoverArtArchiveClient extends WebserviceClient {
 
 	async releaseGroupImages(mbid: string): Promise<CoverArtArchive.Response> {
 		const data = await this.get({
-			path: this.options.basePath + 'release-group/' + mbid + '/',
+			path: `${this.options.basePath}release-group/${mbid}/`,
 			query: {},
 			retry: 0
 		});
@@ -66,8 +66,8 @@ export class CoverArtArchiveClient extends WebserviceClient {
 	private async get(req: CoverArtArchiveClientApi.Request): Promise<CoverArtArchive.Response> {
 		const q = Object.keys(req.query)
 			.filter(key => (req.query[key] !== undefined && req.query[key] !== null))
-			.map(key => key + '=' + req.query[key]);
-		const url = this.options.host + (this.options.port !== 80 ? ':' + this.options.port : '') + req.path + '?' + q.join('&');
+			.map(key => `${key}=${req.query[key]}`);
+		const url = `${this.options.host}${this.options.port !== 80 ? `:${this.options.port}` : ''}${req.path}?${q.join('&')}`;
 
 		const isRateLimitError = (body: any): boolean => {
 			return (body && body.error && body.error.includes('allowable rate limit'));
@@ -77,7 +77,7 @@ export class CoverArtArchiveClient extends WebserviceClient {
 		const retry = async (error: Error): Promise<any> => {
 			if (options.retryOn && req.retry < options.retryCount) {
 				req.retry++;
-				log.info('rate limit hit, retrying in ' + options.retryDelay + 'ms');
+				log.info(`rate limit hit, retrying in ${options.retryDelay}ms`);
 				return new Promise<any>((resolve, reject) => {
 					setTimeout(() => {
 						this.get(req).then(resolve).catch(reject);

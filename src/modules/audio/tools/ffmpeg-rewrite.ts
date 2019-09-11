@@ -13,7 +13,7 @@ export async function rewriteWriteFFmpeg(filename: string, destination: string):
 			.format(fileSuffix(filename));
 		proc.on('end', () => {
 			resolve();
-		}).on('error', (err) => {
+		}).on('error', err => {
 			reject(err);
 		});
 		proc.run();

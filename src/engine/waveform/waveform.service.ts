@@ -18,7 +18,7 @@ export class WaveformService {
 	}
 
 	private getCacheID(id: string, format: string): string {
-		return 'waveform-' + id + '.' + format;
+		return `waveform-${id}.${format}`;
 	}
 
 	private async generateWaveform(filename: string, format: WaveformFormatType): Promise<ApiBinaryResult> {
@@ -73,10 +73,10 @@ export class WaveformService {
 					await fse.writeFile(cachefile, JSON.stringify(result.json));
 				}
 			}
-			await this.waveformCacheDebounce.resolve(cacheID, result);
+			this.waveformCacheDebounce.resolve(cacheID, result);
 			return result;
 		} catch (e) {
-			await this.waveformCacheDebounce.reject(cacheID, e);
+			this.waveformCacheDebounce.reject(cacheID, e);
 			return Promise.reject(e);
 		}
 	}

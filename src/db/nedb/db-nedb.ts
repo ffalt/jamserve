@@ -27,7 +27,7 @@ export class DBNedb implements Database {
 
 	private async loadDatabase(db: Nedb): Promise<void> {
 		return new Promise((resolve, reject) => {
-			db.loadDatabase((err) => {
+			db.loadDatabase(err => {
 				if (err) {
 					return reject(err);
 				}
@@ -56,11 +56,11 @@ export class DBNedb implements Database {
 
 	private async resetIndex(db: Nedb): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
-			db.remove({}, {multi: true}, (err) => {
+			db.remove({}, {multi: true}, err => {
 				if (err) {
 					return reject(err);
 				}
-				db.loadDatabase((err2) => {
+				db.loadDatabase(err2 => {
 					if (err2) {
 						reject(err2);
 					}

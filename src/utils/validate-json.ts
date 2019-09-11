@@ -9,7 +9,8 @@ export function jsonValidator(schema: any): JSONValidator {
 }
 
 export async function validateJSON(data: any, schemaValidator: JSONValidator): Promise<{ errors: Array<ajv.ErrorObject> }> {
-	const valid = await schemaValidator(data);
+	const result = schemaValidator(data);
+	const valid = typeof result === 'boolean' ? result : await (result as Promise<boolean>);
 	if (valid) {
 		return {errors: []};
 	}

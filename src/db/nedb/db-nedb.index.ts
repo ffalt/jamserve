@@ -145,7 +145,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 			body.id = await this.getNewId();
 		}
 		return new Promise<string>((resolve, reject) => {
-			this.client.insert(body, (err) => {
+			this.client.insert(body, err => {
 				if (err) {
 					reject(err);
 				} else {
@@ -168,7 +168,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				if (err) {
 					reject(err);
 				} else if (numReplaced !== 1) {
-					return reject(Error('Could not find ' + this._type + ' doc with id ' + id));
+					return reject(Error(`Could not find ${this._type} doc with id ${id}`));
 				} else {
 					resolve();
 				}
@@ -194,7 +194,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				if (err) {
 					reject(err);
 				} else if (count !== ids.length) {
-					reject(Error('Found nr of items ' + count + ' does not match nr. of ids ' + ids.length));
+					reject(Error(`Found nr of items ${count} does not match nr. of ids ${ids.length}`));
 				} else {
 					resolve();
 				}

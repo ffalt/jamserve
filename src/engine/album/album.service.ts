@@ -24,7 +24,7 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 
 		const cachedFolders: Array<Folder> = [];
 
-		const tryFolderID: (folderID: string) => Promise<Folder | undefined> = async (folderID) => {
+		const tryFolderID: (folderID: string) => Promise<Folder | undefined> = async folderID => {
 			let folders = await this.folderService.collectFolderPath(folderID, cachedFolders);
 			if (folders.length === 0) {
 				return;

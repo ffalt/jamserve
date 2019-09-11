@@ -397,7 +397,7 @@ export class IoService {
 		const rootIDs = await this.rootStore.allIds();
 		const result = [];
 		for (const rootID of rootIDs) {
-			result.push(await this.refreshRoot(rootID, forceMetaRefresh));
+			result.push(this.refreshRoot(rootID, forceMetaRefresh));
 		}
 		return result;
 	}

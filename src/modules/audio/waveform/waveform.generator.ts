@@ -34,7 +34,7 @@ export class WaveformGenerator {
 				samplesPerPixel: 256,
 				sampleRate: 44100
 			});
-			wf.run((err) => {
+			wf.run(err => {
 				if (err) {
 					reject(err);
 				} else {

@@ -56,7 +56,7 @@ export class DBElastic implements Database {
 	}
 
 	indexName(name: string): string {
-		return this.indexPrefix + '_' + name;
+		return `${this.indexPrefix}_${name}`;
 	}
 
 	private getTypes(): Array<DBObjectType> {

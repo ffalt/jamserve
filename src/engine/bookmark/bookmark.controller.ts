@@ -39,7 +39,7 @@ export class BookmarkController {
 	}
 
 	async prepareList(list: ListResult<Bookmark>, includes: JamParameters.IncludesBookmark, user: User): Promise<Jam.BookmarkList> {
-		const items = list.items.map(bookmark => formatBookmark(bookmark));
+		const items = list.items.map(formatBookmark);
 		if (includes.bookmarkTrack) {
 			const ids: Array<string> = [];
 			for (const item of list.items) {

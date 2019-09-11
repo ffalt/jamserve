@@ -15,7 +15,7 @@ export class ApiResponder {
 		res.setHeader('Access-Control-Allow-Origin', '*');
 		const params = (req as SubsonicParameterRequest).parameters;
 		if ((params.format === 'jsonp') && (params.callback)) {
-			res.status(200).send(params.callback + '(' + JSON.stringify(data) + ');');
+			res.status(200).send(`${params.callback}(${JSON.stringify(data)});`);
 		} else if (params.format === 'json') {
 			res.status(200).json(data);
 		} else {

@@ -62,7 +62,7 @@ function getMostUsedTagValue<T>(list: Array<MetaStatValue<T>>, multi?: T): T | u
 	if (list.length > 3 && multi !== undefined) {
 		return multi;
 	}
-	const cleaned = list.filter((o) => {
+	const cleaned = list.filter(o => {
 		return o.count > 1;
 	});
 	if (cleaned.length > 1 && multi !== undefined) {
@@ -111,7 +111,7 @@ export class MetaStatBuilder {
 
 	statTrackCount(name: string, trackTotal?: number, disc?: number): void {
 		if (trackTotal !== undefined) {
-			const slug = (disc !== undefined ? disc : 1).toString() + '-' + trackTotal.toString();
+			const slug = `${(disc !== undefined ? disc : 1)}-${trackTotal}`;
 			this.stats[name] = this.stats[name] || {};
 			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val: trackTotal};
 			this.stats[name][slug].count += 1;

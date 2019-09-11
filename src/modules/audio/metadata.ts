@@ -114,17 +114,17 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | und
 
 	const pad = '000';
 	let nr = 1;
-	let id = 'CHAPTER' + pad.substring(0, pad.length - nr.toString().length) + nr.toString();
+	let id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
 	while (simple[id]) {
 		const chapterTime = moment(simple[id]).valueOf() || 0;
-		const chapterID = simple[id + 'ID'] || id;
-		const chapterName = simple[id + 'NAME'];
-		const chapterURL = simple[id + 'URL'];
+		const chapterID = simple[`${id}ID`] || id;
+		const chapterName = simple[`${id}NAME`];
+		const chapterURL = simple[`${id}URL`];
 		const subframeBuilder = new ID3V24TagBuilder('utf8');
 		subframeBuilder.title(chapterName).website(chapterURL);
 		builder.chapter(chapterID, chapterTime, chapterTime, 0, 0, subframeBuilder.buildFrames());
 		nr++;
-		id = 'CHAPTER' + pad.substring(0, pad.length - nr.toString().length) + nr.toString();
+		id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
 	}
 
 	if (flacInfo.pictures) {
@@ -159,7 +159,7 @@ export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageMod
 	const simple = ID3v2.simplify(tag, DropFramesList) as any;
 	const comments: Array<string> = [];
 	Object.keys(simple).forEach(key => {
-		comments.push(key + '=' + simple[key].toString());
+		comments.push(`${key}=${simple[key].toString()}`);
 	});
 	const result: Array<MetaWriteableDataBlock> = [BlockVorbiscomment.createVorbisCommentBlock('jamserve', comments)];
 	const pics = tag.frames.filter(frame => frame.id === 'APIC') as Array<{ id: string; value: IID3V2.FrameValue.Pic }>;

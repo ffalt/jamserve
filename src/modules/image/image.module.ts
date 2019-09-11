@@ -38,7 +38,7 @@ export class ImageModule {
 		let filename = name + imageext;
 		let nr = 2;
 		while (await fse.pathExists(path.join(filepath, filename))) {
-			filename = name + '-' + nr + imageext;
+			filename = `${name}-${nr}${imageext}`;
 			nr++;
 		}
 		await downloadFile(imageUrl, path.join(filepath, filename));
@@ -127,7 +127,7 @@ export class ImageModule {
 			return Promise.reject(Error('Invalid Format'));
 		}
 		if (format || size) {
-			const cacheID = 'thumb-' + id + (size ? '-' + size : '') + '.' + (format || this.format);
+			const cacheID = `thumb-${id}${size ? `-${size}` : ''}.${format || this.format}`;
 			if (this.imageCacheDebounce.isPending(cacheID)) {
 				return this.imageCacheDebounce.append(cacheID);
 			}
@@ -147,14 +147,14 @@ export class ImageModule {
 						await fse.writeFile(cachefile, result.buffer.buffer);
 					}
 				}
-				await this.imageCacheDebounce.resolve(cacheID, result);
+				this.imageCacheDebounce.resolve(cacheID, result);
 				return result;
 			} catch (e) {
-				await this.imageCacheDebounce.reject(cacheID, e);
+				this.imageCacheDebounce.reject(cacheID, e);
 				return Promise.reject(e);
 			}
 		} else {
-			return this.getImage(filename, size, id + '.' + (format || this.format));
+			return this.getImage(filename, size, `${id}.${format || this.format}`);
 		}
 	}
 
@@ -169,7 +169,7 @@ export class ImageModule {
 	}
 
 	async clearImageCacheByIDs(ids: Array<string>): Promise<void> {
-		const searches = ids.filter(id => id.length > 0).map(id => 'thumb-' + id);
+		const searches = ids.filter(id => id.length > 0).map(id => `thumb-${id}`);
 		if (searches.length > 0) {
 			let list = await fse.readdir(this.imageCachePath);
 			list = list.filter(name => {
@@ -185,7 +185,7 @@ export class ImageModule {
 		if (id.length === 0) {
 			return;
 		}
-		const search = 'thumb-' + id;
+		const search = `thumb-${id}`;
 		let list = await fse.readdir(this.imageCachePath);
 		list = list.filter(name => name.startsWith(search));
 		for (const filename of list) {
@@ -201,9 +201,9 @@ export class ImageModule {
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
 		}
-		await this.resizeImage(filename, filename + '.new', 64);
+		await this.resizeImage(filename, `${filename}.new`, 64);
 		await fileDeleteIfExists(destination);
-		await fse.rename(filename + '.new', destination);
+		await fse.rename(`${filename}.new`, destination);
 	}
 
 	async generateAvatar(seed: string, destination: string): Promise<void> {

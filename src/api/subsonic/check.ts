@@ -9,7 +9,7 @@ export function apiCheck(name: string): express.RequestHandler {
 	function CheckApiParametersHandler(req: express.Request, res: express.Response, next: express.NextFunction): void {
 		checkOpenApiParameters(name, req, SubsonicOpenApi as OpenAPIObject, 'get').then(() => {
 			next();
-		}).catch((e) => {
+		}).catch(e => {
 			ApiResponder.error(req, res, {fail: FORMAT.FAIL.PARAMETER, text: e.toString()});
 		});
 	}

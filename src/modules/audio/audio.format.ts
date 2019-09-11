@@ -19,7 +19,7 @@ export class FORMAT {
 			channels: data.channels,
 			encoded: data.encoded,
 			mode: data.mode,
-			version: data.version + ' ' + data.layer
+			version: `${data.version} ${data.layer}`
 		};
 	}
 

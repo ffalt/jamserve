@@ -38,7 +38,7 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		}
 		const p = path.resolve(this.podcastsPath, episode.podcastID);
 		await fse.ensureDir(p);
-		const filename = path.join(p, episode.id + '.' + suffix);
+		const filename = path.join(p, `${episode.id}.${suffix}`);
 		log.info('retrieving file', url);
 		await downloadFile(url, filename);
 		return filename;
@@ -68,9 +68,9 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 				episode.error = (e || '').toString();
 			}
 			await this.episodeStore.replace(episode);
-			await this.episodeDownloadDebounce.resolve(episode.id, undefined);
+			this.episodeDownloadDebounce.resolve(episode.id, undefined);
 		} catch (e) {
-			await this.episodeDownloadDebounce.resolve(episode.id, undefined);
+			this.episodeDownloadDebounce.resolve(episode.id, undefined);
 			return Promise.reject(e);
 		}
 	}

@@ -19,7 +19,7 @@ export function registerApi(register: Register, api: SubsonicApi): void {
 	register.all('/{{{apiPath}}}', async (req, res) => {
 		const options: ApiOptions<{{{parameterType}}}> = {query: req.{{{parameterSource}}}, user: req.user, client: req.client{{#upload}}, file: req.file ? req.file.path : undefined, fileType: req.file ? req.file.mimetype : undefined{{/upload}}};
 		{{#resultType}}const result: {{{resultType}}} = {{/resultType}}await api.{{{controllerCall}}}(options);
-		await ApiResponder.{{{respondCall}}};
+		ApiResponder.{{{respondCall}}};
 	}{{#callRoles}}, {{{callRoles}}}{{/callRoles}});
 	{{/publicAccess}}
 }

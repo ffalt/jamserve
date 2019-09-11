@@ -44,7 +44,7 @@ export class SessionJSONFileStore extends Store {
 	}
 
 	private savejson(callback?: (err?: Error) => void): void {
-		fse.writeFile(this.filename, JSON.stringify(this.cache), (err) => {
+		fse.writeFile(this.filename, JSON.stringify(this.cache), err => {
 			if (callback) {
 				callback(err);
 			}
@@ -54,7 +54,7 @@ export class SessionJSONFileStore extends Store {
 	get: (sid: string, callback: (err: any, data?: Express.SessionData | null) => void) => void = (sid, callback) => {
 		const sessionData = this.cache[sid];
 		if (sessionData && this.expired(sessionData)) {
-			return this.destroy(sid, (err) => {
+			return this.destroy(sid, err => {
 				callback(err);
 			});
 		}
@@ -71,15 +71,15 @@ export class SessionJSONFileStore extends Store {
 		this.savejson(callback);
 	}
 
-	all: (callback: (err: any, obj?: { [sid: string]: Express.SessionData; } | null) => void) => void = (callback) => {
+	all: (callback: (err: any, obj?: { [sid: string]: Express.SessionData; } | null) => void) => void = callback => {
 		callback(null, this.cache);
 	}
 
-	length: (callback: (err: any, length?: number | null) => void) => void = (callback) => {
+	length: (callback: (err: any, length?: number | null) => void) => void = callback => {
 		callback(null, Object.keys(this.cache).length);
 	}
 
-	clear: (callback?: (err?: any) => void) => void = (callback) => {
+	clear: (callback?: (err?: any) => void) => void = callback => {
 		this.cache = {};
 		this.savejson(callback);
 	}

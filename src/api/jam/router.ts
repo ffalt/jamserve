@@ -44,7 +44,7 @@ function CallSessionLoginHandler(req: UserRequest, res: express.Response, next: 
 		if (err || !user) {
 			return next();
 		}
-		req.login(user, (err2) => {
+		req.login(user, err2 => {
 			if (err2) {
 				log.error(err2);
 				return next();
@@ -70,7 +70,7 @@ function CallSessionLogoutHandler(req: UserRequest, res: express.Response, next:
 }
 
 function AutoCleanupHandler(req: express.Request, res: express.Response, next: express.NextFunction): void {
-	finishedRequest(res, (err) => {
+	finishedRequest(res, err => {
 		if (err && req.file && req.file.path) {
 			fileDeleteIfExists(req.file.path).catch(e => {
 				log.error(e);
@@ -203,7 +203,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.error(e);
-					await ApiResponder.error(res, e);
+					ApiResponder.error(res, e);
 				}
 			});
 		},
@@ -254,7 +254,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.debug(e);
-					await ApiResponder.error(res, e);
+					ApiResponder.error(res, e);
 				}
 			});
 		},
@@ -265,7 +265,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.debug(e);
-					await ApiResponder.error(res, e);
+					ApiResponder.error(res, e);
 				}
 			});
 		},
@@ -276,7 +276,7 @@ export function initJamRouter(engine: Engine): express.Router {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.debug(e);
-					await ApiResponder.error(res, e);
+					ApiResponder.error(res, e);
 				}
 			});
 		}

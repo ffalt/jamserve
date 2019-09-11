@@ -467,7 +467,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	// generic searches
 
 	async musicbrainzSearch(type: string, query: MusicbrainzClientApi.SearchQuery): Promise<MusicBrainz.Response> {
-		const name = 'search-' + type + JSON.stringify(query);
+		const name = `search-${type}${JSON.stringify(query)}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.musicbrainz});
 		if (result) {
 			return result.data;
@@ -483,7 +483,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async lastFMLookup(type: string, mbid: string): Promise<LastFM.Result> {
-		const name = 'lookup-' + type + mbid;
+		const name = `lookup-${type}${mbid}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.lastfm});
 		if (result) {
 			return result.data;
@@ -494,7 +494,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async lastFMAlbumSearch(album: string, artist: string): Promise<LastFM.Result> {
-		const name = 'search-album-' + album + '//' + artist;
+		const name = `search-album-${album}//${artist}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.lastfm});
 		if (result) {
 			return result.data;
@@ -505,7 +505,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async lastFMArtistSearch(artist: string): Promise<LastFM.Result> {
-		const name = 'search-artist-' + artist;
+		const name = `search-artist-${artist}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.lastfm});
 		if (result) {
 			return result.data;
@@ -516,7 +516,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async lastFMTopTracksArtist(artist: string): Promise<LastFM.Result> {
-		const name = 'toptracks-artist-' + artist;
+		const name = `toptracks-artist-${artist}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.lastfm});
 		if (result) {
 			return result.data;
@@ -527,7 +527,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async lastFMTopTracksArtistID(mbid: string): Promise<LastFM.Result> {
-		const name = 'toptracks-artistid-' + mbid;
+		const name = `toptracks-artistid-${mbid}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.lastfm});
 		if (result) {
 			return result.data;
@@ -538,7 +538,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async lastFMSimilarTracks(mbid: string): Promise<LastFM.Result> {
-		const name = 'similar-trackid-' + mbid;
+		const name = `similar-trackid-${mbid}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.lastfm});
 		if (result) {
 			return result.data;
@@ -549,7 +549,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async acousticbrainzLookup(mbid: string, nr: number | undefined): Promise<AcousticBrainz.Response> {
-		const name = 'lookup-' + mbid + (nr !== undefined) ? '-' + nr : '';
+		const name = `lookup-${mbid}${nr !== undefined}` ? `-${nr}` : '';
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.acousticbrainz});
 		if (result) {
 			return result.data;
@@ -560,7 +560,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async coverartarchiveLookup(type: string, mbid: string): Promise<CoverArtArchive.Response> {
-		const name = 'lookup-' + type + mbid;
+		const name = `lookup-${type}${mbid}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.coverartarchive});
 		if (result) {
 			return result.data;
@@ -571,7 +571,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async musicbrainzLookup(type: string, mbid: string, inc?: string): Promise<MusicBrainz.Response> {
-		const name = 'lookup-' + type + mbid + (inc ? inc : '');
+		const name = `lookup-${type}${mbid}${inc ? inc : ''}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.musicbrainz});
 		if (result) {
 			return result.data;
@@ -582,7 +582,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async lyrics(artist: string, song: string): Promise<Jam.TrackLyrics> {
-		const name = 'lyrics-' + artist + '/' + song;
+		const name = `lyrics-${artist}/${song}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.lyrics});
 		if (result) {
 			return result.data;
@@ -594,7 +594,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 
 	async wikipediaSummary(title: string, lang: string | undefined): Promise<Jam.WikipediaSummaryResponse> {
 		lang = lang || 'en';
-		const name = 'summary-' + title + '/' + lang;
+		const name = `summary-${title}/${lang}`;
 		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.wikipedia});
 		if (result) {
 			return result.data;
@@ -605,7 +605,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	async wikidataLookup(id: string): Promise<Jam.WikidataLookupResponse> {
-		const name = 'wikidata-entity-' + id;
+		const name = `wikidata-entity-${id}`;
 		let result = await this.metadataStore.searchOne({name, dataType: MetaDataType.wikidata});
 		if (result) {
 			return {entity: result.data};
@@ -622,7 +622,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return {};
 		}
 		lang = lang || 'en';
-		const site = lang + 'wiki';
+		const site = `${lang}wiki`;
 		if (lookup.entity.sitelinks) {
 			const langSite = lookup.entity.sitelinks[site];
 			if (!langSite) {

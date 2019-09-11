@@ -27,7 +27,7 @@ export class StreamService {
 			}
 			return {pipe: new PreTranscoderStream(filename, destFormat, bitRate)};
 		}
-		return {file: {filename, name: id + '.' + destFormat}};
+		return {file: {filename, name: `${id}.${destFormat}`}};
 	}
 
 	async streamTrack(track: Track, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {

@@ -66,10 +66,10 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 		}
 		const list = await this.stateStore.search({userID, type, destIDs});
 		const result: { [id: string]: State } = {};
-		list.items.forEach((state) => {
+		list.items.forEach(state => {
 			result[state.destID] = state;
 		});
-		destIDs.forEach((id) => {
+		destIDs.forEach(id => {
 			if (!result[id]) {
 				result[id] = this.emptyState(id, type, userID);
 			}

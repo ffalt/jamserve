@@ -94,7 +94,7 @@ export class Flac {
 		const writer = fs.createWriteStream(destination);
 		const processor = new FlacProcessorStream(false, false);
 		return new Promise<void>((resolve, reject) => {
-			processor.on('preprocess', (mdb) => {
+			processor.on('preprocess', mdb => {
 				if (mdb.type === MDB_TYPE_VORBIS_COMMENT || mdb.type === MDB_TYPE_PICTURE || mdb.type === MDB_TYPE_PADDING) {
 					mdb.remove();
 				}

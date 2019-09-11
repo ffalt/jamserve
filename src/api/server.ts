@@ -55,7 +55,7 @@ export class Server {
 	}
 
 	getURL(): string {
-		return 'http://' + (this.engine.config.server.listen === '127.0.0.1' ? 'localhost' : this.engine.config.server.listen) + ':' + this.engine.config.server.port;
+		return `http://${this.engine.config.server.listen === '127.0.0.1' ? 'localhost' : this.engine.config.server.listen}:${this.engine.config.server.port}`;
 	}
 
 	async start(): Promise<void> {
@@ -67,7 +67,7 @@ export class Server {
 	async stop(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 				if (this.server) {
-					this.server.close((err) => {
+					this.server.close(err => {
 						if (err) {
 							reject(err);
 						} else {

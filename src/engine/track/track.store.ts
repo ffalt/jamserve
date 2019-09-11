@@ -52,7 +52,7 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 		const q = new QueryHelper();
 		q.terms('parentID', query.parentIDs);
 		q.term('path', query.path);
-		q.startsWiths('path', query.inPaths ? query.inPaths.map(s => ensureTrailingPathSeparator(s)) : undefined);
+		q.startsWiths('path', query.inPaths ? query.inPaths.map(ensureTrailingPathSeparator) : undefined);
 		q.startsWith('path', query.inPath ? ensureTrailingPathSeparator(query.inPath) : undefined);
 		q.term('tag.genre', query.genre);
 		q.term('rootID', query.rootID);

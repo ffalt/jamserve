@@ -17,7 +17,7 @@ export class IndexTreeBuilder {
 
 	removeArticles(name: string): string {
 		// /^(?:(?:the|los|les)\s+)?(.*)/gi
-		const matches = new RegExp('^(?:(?:' + this.ignore + ')\\s+)?(.*)', 'gi').exec(name);
+		const matches = new RegExp(`^(?:(?:${this.ignore})\\s+)?(.*)`, 'gi').exec(name);
 		return matches ? matches[1] : name;
 	}
 

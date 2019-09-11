@@ -109,7 +109,7 @@ export class AudioModule {
 				await this.writeFlacTag(filename, tag);
 			} else {
 				delete this.isSaving[filename];
-				return Promise.reject(new Error('Writing to format ' + suffix + ' is currently not supported'));
+				return Promise.reject(new Error(`Writing to format ${suffix} is currently not supported`));
 			}
 			delete this.isSaving[filename];
 		} catch (e) {

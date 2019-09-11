@@ -24,12 +24,12 @@ export abstract class BaseCompressStream implements StreamData {
 		// logger.verbose('Start streaming');
 		const format = 'zip';
 		const archive = archiver(this.format as archiver.Format, {zlib: {level: 0}});
-		archive.on('error', (err) => {
+		archive.on('error', err => {
 			// logger.error('archiver err ' + err);
 			throw err;
 		});
 		stream.contentType('zip');
-		stream.setHeader('Content-Disposition', 'attachment; filename="' + (this.filename || 'download') + '.' + format + '"');
+		stream.setHeader('Content-Disposition', `attachment; filename="${this.filename || 'download'}.${format}"`);
 		// stream.setHeader('Content-Length', stat.size); do NOT report wrong size!
 		stream.on('finish', () => {
 			// logger.verbose('streamed ' + archive.pointer() + ' total bytes');

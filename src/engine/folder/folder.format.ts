@@ -20,7 +20,7 @@ export function formatFolderArtworks(folder: Folder): Array<Jam.ArtworkImage> {
 	if (!folder.tag.artworks) {
 		return [];
 	}
-	return folder.tag.artworks.map(artwork => formatFolderArtwork(artwork));
+	return folder.tag.artworks.map(formatFolderArtwork);
 }
 
 function formatFolderTag(folder: Folder): Jam.FolderTag {

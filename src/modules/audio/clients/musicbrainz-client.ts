@@ -42,7 +42,7 @@ export class MusicbrainzClient extends WebserviceClient {
 				return undefined;
 			}
 			if (Array.isArray(o)) {
-				return o.map((sub: any) => walk(sub)).filter((sub: any) => sub !== undefined);
+				return o.map(walk).filter((sub: any) => sub !== undefined);
 			}
 			if (typeof o === 'object') {
 				const result: any = {};
@@ -62,18 +62,18 @@ export class MusicbrainzClient extends WebserviceClient {
 	private concatSearchQuery(query: MusicbrainzClientApi.SearchQuery): string {
 		return Object.keys(query)
 			.filter(key => ((query as any)[key] !== undefined && (query as any)[key] !== null))
-			.map(key => key + ':"' + encodeURIComponent((query as any)[key]) + '"')
+			.map(key => `${key}:"${encodeURIComponent((query as any)[key])}"`)
 			.join('%20AND%20');
 	}
 
 	private async get(req: MusicbrainzClientApi.Request): Promise<any> {
 		const q = Object.keys(req.query)
 			.filter(key => (req.query[key] !== undefined && req.query[key] !== null))
-			.map(key => key + '=' + req.query[key]);
-		q.push('limit=' + (req.limit || this.options.limit || 25));
-		q.push('offset=' + (req.offset || 0));
+			.map(key => `${key}=${req.query[key]}`);
+		q.push(`limit=${req.limit || this.options.limit || 25}`);
+		q.push(`offset=${req.offset || 0}`);
 		q.push('fmt=json');
-		const url = this.options.host + (this.options.port !== 80 ? ':' + this.options.port : '') + req.path + '?' + q.join('&');
+		const url = `${this.options.host}${this.options.port !== 80 ? `:${this.options.port}` : ''}${req.path}?${q.join('&')}`;
 
 		const isRateLimitError = (body: any): boolean => {
 			return (body && body.error && body.error.includes('allowable rate limit'));
@@ -84,7 +84,7 @@ export class MusicbrainzClient extends WebserviceClient {
 		const retry = async (error: Error): Promise<any> => {
 			if (options.retryOn && req.retry < options.retryCount) {
 				req.retry++;
-				log.info('rate limit hit, retrying in ' + options.retryDelay + 'ms');
+				log.info(`rate limit hit, retrying in ${options.retryDelay}ms`);
 				return new Promise<any>((resolve, reject) => {
 					setTimeout(() => {
 						this.get(req).then(resolve).catch(reject);
@@ -112,7 +112,7 @@ export class MusicbrainzClient extends WebserviceClient {
 
 	async search(params: MusicbrainzClientApi.ParameterSearch): Promise<MusicBrainz.Response> {
 		const data = await this.get({
-			path: this.options.basePath + params.type + '/',
+			path: `${this.options.basePath + params.type}/`,
 			query: {query: this.concatSearchQuery(params.query || {})},
 			retry: 0,
 			limit: params.limit,
@@ -124,10 +124,10 @@ export class MusicbrainzClient extends WebserviceClient {
 	async luceneSearch(params: MusicbrainzClientApi.ParameterLuceneSearch): Promise<MusicBrainz.Response> {
 		// https://lucene.apache.org/core/4_3_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description
 		if (!params.query || params.query.length === 0) {
-			return Promise.reject(Error('Invalid query for type ' + params.type));
+			return Promise.reject(Error(`Invalid query for type ${params.type}`));
 		}
 		const data = await this.get({
-			path: this.options.basePath + params.type + '/',
+			path: `${this.options.basePath + params.type}/`,
 			query: {
 				query: encodeURIComponent(params.query || '')
 			},
@@ -142,7 +142,7 @@ export class MusicbrainzClient extends WebserviceClient {
 
 	async lookup(params: MusicbrainzClientApi.ParameterLookup): Promise<MusicBrainz.Response> {
 		if (!params.id || params.id.length === 0) {
-			return Promise.reject(Error('Invalid lookup id for type ' + params.type));
+			return Promise.reject(Error(`Invalid lookup id for type ${params.type}`));
 		}
 		const lookup = LookupIncludes[params.type];
 		const inc = params.inc || LookupIncludes[params.type].join('+');
@@ -150,7 +150,7 @@ export class MusicbrainzClient extends WebserviceClient {
 			return Promise.reject(Error('Invalid Lookup'));
 		}
 		const data = await this.get({
-			path: this.options.basePath + params.type + '/' + params.id,
+			path: `${this.options.basePath + params.type}/${params.id}`,
 			query: {
 				mbid: params.id,
 				inc
@@ -167,7 +167,7 @@ export class MusicbrainzClient extends WebserviceClient {
 	async browse(params: MusicbrainzClientApi.ParameterBrowse): Promise<MusicBrainz.Response> {
 		const invalidKey = Object.keys(params.lookupIds).find(key => !LookupBrowseTypes[params.type] || !LookupBrowseTypes[params.type].includes(key));
 		if (invalidKey) {
-			return Promise.reject(Error('Invalid browse lookup key for type ' + params.type + ': ' + invalidKey));
+			return Promise.reject(Error(`Invalid browse lookup key for type ${params.type}: ${invalidKey}`));
 		}
 		const query = {inc: params.inc, ...params.lookupIds};
 		const data = await this.get({

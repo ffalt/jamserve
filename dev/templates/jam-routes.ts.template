@@ -26,7 +26,7 @@ export function registerPublicApi(register: Register, api: JamApi): void {
 	register.{{{method}}}('/{{{apiPath}}}'{{#upload}}, '{{{upload}}}'{{/upload}}, async (req, res) => {
 		const options: JamRequest<{{{parameterType}}}> = {query: req.{{{parameterSource}}}, user: req.user, client: req.client{{#upload}}, file: req.file ? req.file.path : undefined, fileType: req.file ? req.file.mimetype : undefined{{/upload}}};
 		{{#resultType}}const result: {{{resultType}}} = {{/resultType}}await api.{{{controllerCall}}}(options);
-		await ApiResponder.{{{respondCall}}};
+		ApiResponder.{{{respondCall}}};
 	}{{#callRoles}}, {{{callRoles}}}{{/callRoles}}{{#apiPathCheck}}, '{{{apiPathCheck}}}'{{/apiPathCheck}});
 	{{/publicAccess}}
 }
@@ -36,7 +36,7 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	register.{{{method}}}('/{{{apiPath}}}'{{#upload}}, '{{{upload}}}'{{/upload}}, async (req, res) => {
 		const options: JamRequest<{{{parameterType}}}> = {query: req.{{{parameterSource}}}, user: req.user, client: req.client{{#upload}}, file: req.file ? req.file.path : undefined, fileType: req.file ? req.file.mimetype : undefined{{/upload}}};
 		{{#resultType}}const result: {{{resultType}}} = {{/resultType}}await api.{{{controllerCall}}}(options);
-		await ApiResponder.{{{respondCall}}};
+		ApiResponder.{{{respondCall}}};
 	}{{#callRoles}}, {{{callRoles}}}{{/callRoles}}{{#apiPathCheck}}, '{{{apiPathCheck}}}'{{/apiPathCheck}});
 	{{/privateAccess}}
 }

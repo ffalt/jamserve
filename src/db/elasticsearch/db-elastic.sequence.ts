@@ -44,7 +44,7 @@ export class DbElasticSequence {
 		if (!isInjectedCacheSizeValid(cacheSize)) {
 			return Promise.reject(new Error('Init was called with an invalid cacheSize parameter value.'));
 		}
-		this.initPromise = new Promise((resolve) => {
+		this.initPromise = new Promise(resolve => {
 			this.cache = {}; // In case init is called multiple times.
 			this.cacheSize = 100;
 			this.initError = null;
@@ -55,7 +55,7 @@ export class DbElasticSequence {
 				this.options = {...this.options, ...options};
 			}
 			resolve(this.initEsIndexIfNeeded());
-		}).catch((e) => {
+		}).catch(e => {
 			this.initError = e;
 			throw e;
 		}).then(() => {

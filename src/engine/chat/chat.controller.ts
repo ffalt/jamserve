@@ -12,7 +12,7 @@ export class ChatController {
 
 	async list(req: JamRequest<JamParameters.Chat>): Promise<Array<Jam.ChatMessage>> {
 		const messages = await this.chatService.get(req.query.since);
-		return messages.map(msg => formatChatMessage(msg));
+		return messages.map(formatChatMessage);
 	}
 
 	async create(req: JamRequest<JamParameters.ChatNew>): Promise<void> {

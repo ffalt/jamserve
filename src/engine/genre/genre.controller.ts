@@ -18,7 +18,7 @@ export class GenreController {
 			total: list.total,
 			amount: list.amount,
 			offset: list.offset,
-			items: list.items.map(genre => formatGenre(genre))
+			items: list.items.map(formatGenre)
 		};
 	}
 

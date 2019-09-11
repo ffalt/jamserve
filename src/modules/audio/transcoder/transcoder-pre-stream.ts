@@ -45,7 +45,7 @@ export class PreTranscoderStream extends TranscoderStream {
 					rs.on('end', () => {
 						cleanupCallback();
 					});
-					rs.on('error', (msg) => {
+					rs.on('error', msg => {
 						log.error(msg);
 						cleanupCallback();
 					});

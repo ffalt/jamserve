@@ -37,7 +37,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 	}
 
 	async generateAvatar(user: User): Promise<void> {
-		const destFileName = 'avatar-' + user.id + '.png';
+		const destFileName = `avatar-${user.id}.png`;
 		const destName = path.join(this.userAvatarPath, destFileName);
 		await fileDeleteIfExists(destName);
 		await this.imageModule.clearImageCacheByID(user.id);
@@ -48,7 +48,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 	}
 
 	async setUserImage(user: User, filename: string, mimetype?: string): Promise<void> {
-		const destFileName = 'avatar-' + user.id + '.png';
+		const destFileName = `avatar-${user.id}.png`;
 		const destName = path.join(this.userAvatarPath, destFileName);
 		await fileDeleteIfExists(destName);
 		await this.imageModule.createAvatar(filename, destName);

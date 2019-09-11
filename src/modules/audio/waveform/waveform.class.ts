@@ -52,7 +52,7 @@ export class Waveform {
 				px = ws.read();
 			}
 		});
-		ws.on('done', (err) => {
+		ws.on('done', err => {
 			cb(err);
 		});
 		this.stream.pipe(ws);

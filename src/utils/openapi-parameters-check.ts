@@ -15,7 +15,7 @@ function validOAParameterValueBySchema(query: any, param: { name: string, requir
 	// check required?
 	if (value === undefined || value === null) {
 		if (param.required) {
-			return 'Missing required parameter ' + param.name;
+			return `Missing required parameter ${param.name}`;
 		}
 		return null;
 	}
@@ -28,39 +28,39 @@ function validOAParameterValueBySchema(query: any, param: { name: string, requir
 			query[param.name] = false;
 			value = false;
 		} else {
-			return 'Invalid boolean parameter ' + param.name;
+			return `Invalid boolean parameter ${param.name}`;
 		}
 		query[param.name] = value;
 	} else if (['float', 'long', 'double', 'number', 'integer'].includes(schema.type || '')) {
 		const s = value.toString().trim();
 		if (s.length === 0) {
-			return 'Empty number parameter ' + param.name;
+			return `Empty number parameter ${param.name}`;
 		}
 		const num = Number(s);
 		if (isNaN(num)) {
-			return 'Invalid number parameter ' + param.name;
+			return `Invalid number parameter ${param.name}`;
 		}
 		if (schema.type === 'integer' && !Number.isInteger(num)) {
-			return 'Invalid integer parameter ' + param.name;
+			return `Invalid integer parameter ${param.name}`;
 		}
 		if (schema.minimum !== undefined && schema.minimum > num) {
-			return 'Invalid number parameter ' + param.name + '; minimum is ' + schema.minimum;
+			return `Invalid number parameter ${param.name}; minimum is ${schema.minimum}`;
 		}
 		if (schema.maximum !== undefined && schema.maximum < num) {
-			return 'Invalid number parameter ' + param.name + '; maximum is ' + schema.maximum;
+			return `Invalid number parameter ${param.name}; maximum is ${schema.maximum}`;
 		}
 		query[param.name] = num;
 	} else if (schema.type === 'string') {
 		if (typeof value !== 'string') {
-			return 'Invalid string parameter ' + param.name;
+			return `Invalid string parameter ${param.name}`;
 		}
 		const s = value.trim();
 		if (s.length === 0) {
-			return 'Empty string parameter ' + param.name;
+			return `Empty string parameter ${param.name}`;
 		}
 		if (schema.enum) {
 			if (!schema.enum.includes(s)) {
-				return 'Invalid enum string parameter ' + param.name + ': ' + s;
+				return `Invalid enum string parameter ${param.name}: ${s}`;
 			}
 		}
 		query[param.name] = s;
@@ -68,7 +68,7 @@ function validOAParameterValueBySchema(query: any, param: { name: string, requir
 		const items = (schema.items || {type: 'unknown'}) as SchemaObject;
 		const listValues = ((Array.isArray(value) ? value : [value]) || []);
 		if (param.required && listValues.length === 0) {
-			return 'Missing required parameter ' + param.name;
+			return `Missing required parameter ${param.name}`;
 		}
 		for (const listValue of listValues) {
 			const result = validOAParameterValueBySchema({}, {name: param.name, required: true}, listValue, items);
@@ -83,7 +83,7 @@ function validOAParameterValueBySchema(query: any, param: { name: string, requir
 
 function validOAParameter(query: any, param: ParameterObject): string | null {
 	if (!query) {
-		return 'Missing parameter collection ' + param.name;
+		return `Missing parameter collection ${param.name}`;
 	}
 	return validOAParameterValueBySchema(query, param, query[param.name], param.schema as SchemaObject);
 }
@@ -153,7 +153,7 @@ export async function checkOpenApiParameters(name: string, req: express.Request,
 	const method = forceMethod || req.method.toLowerCase();
 	const cmd = cmdPath[method];
 	if (!cmd) {
-		log.info('cmd method ' + req.method + ' not found to validate', req.path);
+		log.info(`cmd method ${req.method} not found to validate`, req.path);
 		return;
 	}
 	if (method === 'get') {

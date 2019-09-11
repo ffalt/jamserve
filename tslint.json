@@ -34,10 +34,17 @@
     "unnecessary-else": true,
     "newline-before-return": false,
     "no-return-await": true,
+    "no-this-assignment": true,
     "no-var-requires": true,
     "no-namespace": false,
-    "arrow-parens": false,
+    "no-unnecessary-callback-wrapper": true,
+    "arrow-parens": [
+      true,
+      "ban-single-arg-parens"
+    ],
+    "unnecessary-bind": true,
     "arrow-return-shorthand": true,
+    "function-constructor": true,
     "callable-types": true,
     "class-name": true,
     "comment-format": [
@@ -95,14 +102,25 @@
       true,
       "ignore-params"
     ],
+    "await-promise": true,
     "promise-function-async": true,
+    "return-undefined": false,
     "no-misused-new": true,
     "no-non-null-assertion": true,
     "no-shadowed-variable": true,
     "no-string-literal": false,
     "no-string-throw": true,
     "no-switch-case-fall-through": true,
+    "no-duplicate-imports": true,
     "no-trailing-whitespace": true,
+    "one-variable-per-declaration": [
+      true,
+      "ignore-for-loop"
+    ],
+    "no-duplicate-variable": [
+      true,
+      "check-parameters"
+    ],
     "no-unnecessary-initializer": true,
     "no-unused-expression": true,
     "no-var-keyword": true,
@@ -114,12 +132,21 @@
       "check-else",
       "check-whitespace"
     ],
+    "only-arrow-functions": [
+      true,
+      "allow-declarations",
+      "allow-named-functions"
+    ],
     "prefer-const": true,
     "quotemark": [
       true,
       "single"
     ],
     "radix": true,
+    "prefer-template": [
+      true,
+      "allow-single-concat"
+    ],
     "semicolon": [
       true,
       "always"

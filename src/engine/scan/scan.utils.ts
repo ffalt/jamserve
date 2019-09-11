@@ -41,8 +41,7 @@ export function trackHasChanged(file: MatchFile): boolean {
 }
 
 export function generateArtworkId(folderID: string, filename: string): string {
-	const id = folderID + '-' + md5string(filename + filename);
-	return id;
+	return `${folderID}-${md5string(filename + filename)}`;
 }
 
 export function extractAlbumName(name: string): string {

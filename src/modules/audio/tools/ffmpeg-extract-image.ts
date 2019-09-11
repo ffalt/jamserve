@@ -10,7 +10,7 @@ export async function extractFFmpegImage(filename: string, index: number, stream
 				// logger.verbose('image extracted');
 				resolve();
 			})
-			.on('error', (err) => {
+			.on('error', err => {
 				// logger.error('an error happened while extracting image: ' + err.message + ' ' + filename);
 				reject(err);
 			});
