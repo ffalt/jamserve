@@ -157,9 +157,9 @@ export class AudioModule {
 		const flacBlocks: Array<MetaWriteableDataBlock> = await id3v2ToFlacMetaData(id3, this.imageModule);
 		const flac = new Flac();
 		// TODO: add tests for flac writing, make backup copy as long it is not well tested
-		const exits = await fse.pathExists(filename + '.bak');
+		const exits = await fse.pathExists(`${filename}.bak`);
 		if (!exits) {
-			await fse.copy(filename, filename + '.bak');
+			await fse.copy(filename, `${filename}.bak`);
 		}
 		await flac.write(filename, flacBlocks);
 	}
@@ -174,6 +174,8 @@ export class AudioModule {
 	}
 
 	async rewriteAudio(filename: string): Promise<void> {
+		const tempFile = `${filename}.tmp`;
+		const backupFile = `${filename}.bak`;
 		try {
 			const suffix = fileSuffix(filename);
 			const id3v2 = new ID3v2();
@@ -181,19 +183,19 @@ export class AudioModule {
 			if (suffix === AudioFormatType.mp3) {
 				tag = await id3v2.read(filename);
 			}
-			await rewriteWriteFFmpeg(filename, filename + '.tmp');
-			const exits = await fse.pathExists(filename + '.bak');
+			await rewriteWriteFFmpeg(filename, tempFile);
+			const exits = await fse.pathExists(backupFile);
 			if (exits) {
 				await fileDeleteIfExists(filename);
 			} else {
-				await fse.copy(filename, filename + '.bak');
+				await fse.copy(filename, backupFile);
 			}
 			if (tag) {
-				await id3v2.write(filename + '.tmp', tag, 4, 0, {keepBackup: false, paddingSize: 10});
+				await id3v2.write(tempFile, tag, 4, 0, {keepBackup: false, paddingSize: 10});
 			}
-			await fse.rename(filename + '.tmp', filename);
+			await fse.rename(tempFile, filename);
 		} catch (e) {
-			await fileDeleteIfExists(filename + '.tmp');
+			await fileDeleteIfExists(tempFile);
 			return Promise.reject(e);
 		}
 	}

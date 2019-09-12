@@ -45,7 +45,7 @@ export abstract class ScanRequest {
 		} catch (e) {
 			console.log(e.stack);
 			log.error('Scanning Error', this.rootID, e.toString());
-			if (['EACCES', 'ENOENT'].includes((e as any).code)) {
+			if (['EACCES', 'ENOENT'].includes(e.code)) {
 				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
 			}
 			return Promise.reject(e);

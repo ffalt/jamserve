@@ -134,8 +134,8 @@ export function initJamRouter(engine: Engine): express.Router {
 			jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
 			secretOrKey: engine.config.server.jwt.secret
 		},
-		(jwt_payload, done) => {
-			engine.userService.getByID(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
+		(jwtPayload, done) => {
+			engine.userService.getByID(jwtPayload.id).then(user => done(null, user ? user : false, jwtPayload)).catch(done);
 		}
 	));
 	passport.use('jwt-parameter', new passportJWT.Strategy(
@@ -143,8 +143,8 @@ export function initJamRouter(engine: Engine): express.Router {
 			jwtFromRequest: passportJWT.ExtractJwt.fromUrlQueryParameter('bearer'),
 			secretOrKey: engine.config.server.jwt.secret
 		},
-		(jwt_payload, done) => {
-			engine.userService.getByID(jwt_payload.id).then(user => done(null, user ? user : false, jwt_payload)).catch(done);
+		(jwtPayload, done) => {
+			engine.userService.getByID(jwtPayload.id).then(user => done(null, user ? user : false, jwtPayload)).catch(done);
 		}
 	));
 
@@ -196,8 +196,8 @@ export function initJamRouter(engine: Engine): express.Router {
 		methods: ['GET', 'POST']
 	}));
 
-	const register_public: Register = {
-		get: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
+	const registerPublic: Register = {
+		get(name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void {
 			router.get<any>(name, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
 					await execute(req as UserRequest, res);
@@ -207,13 +207,15 @@ export function initJamRouter(engine: Engine): express.Router {
 				}
 			});
 		},
-		post: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
+		post(name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void {
+			// dummy, there is no public post
 		},
-		upload: (name: string, field: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
+		upload(name: string, field: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void {
+			// dummy, there is no public upload
 		}
 	};
 
-	registerPublicApi(register_public, api);
+	registerPublicApi(registerPublic, api);
 
 	router.post('/login', LoginLimiter, apiCheck('/login'), CallSessionLoginHandler as express.RequestHandler);
 
@@ -247,7 +249,7 @@ export function initJamRouter(engine: Engine): express.Router {
 	router.post('/logout', CallSessionLogoutHandler as express.RequestHandler);
 
 	const register: Register = {
-		get: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
+		get(name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void {
 			router.get<any>(name, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
 					await checkRoles((req as UserRequest).user, roles);
@@ -258,7 +260,7 @@ export function initJamRouter(engine: Engine): express.Router {
 				}
 			});
 		},
-		post: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
+		post(name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void {
 			router.post(name, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
 					await checkRoles((req as UserRequest).user, roles);
@@ -269,7 +271,7 @@ export function initJamRouter(engine: Engine): express.Router {
 				}
 			});
 		},
-		upload: (name: string, field: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => {
+		upload(name: string, field: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void {
 			router.post(name, upload.single(field), AutoCleanupHandler, apiCheck(apiCheckName || name), async (req, res) => {
 				try {
 					await checkRoles((req as UserRequest).user, roles);
@@ -284,7 +286,7 @@ export function initJamRouter(engine: Engine): express.Router {
 
 	registerAccessControlApi(register, api);
 
-	router.use((req, res, next) => {
+	router.use((req, res) => {
 		ApiResponder.error(res, NotFoundError('jam api cmd not found'));
 	});
 

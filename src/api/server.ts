@@ -61,7 +61,7 @@ export class Server {
 	async start(): Promise<void> {
 		this.server = this.app.listen(this.engine.config.server.port, this.engine.config.server.listen);
 		this.server.setTimeout(4 * 60000); // 4 minutes
-		log.info('listening at ' + this.getURL());
+		log.info(`listening at ${this.getURL()}`);
 	}
 
 	async stop(): Promise<void> {

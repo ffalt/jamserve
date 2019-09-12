@@ -103,7 +103,7 @@ export class Feed {
 			req.on('response', (res: request.Response) => {
 				if (res.statusCode !== 200) {
 					req.abort();
-					return done(new Error(`Bad status code ${res.statusCode}${res.statusMessage ? ' ' + res.statusMessage : ''}`));
+					return done(new Error(`Bad status code ${res.statusCode}${res.statusMessage ? ` ${res.statusMessage}` : ''}`));
 				}
 				const encoding = res.headers['content-encoding'] || 'identity';
 				const charset = Feed.getParams(res.headers['content-type'] || '').charset;
@@ -144,7 +144,8 @@ export class Feed {
 				const pscChap: Array<any> = pscChaps['psc:chapter'];
 				if (pscChap) {
 					chapters = pscChap.map(item => {
-						return {start: Feed.parseDurationMilliseconds(item['@']['start']), title: item['@']['title']};
+						const entry = item['@'];
+						return {start: Feed.parseDurationMilliseconds(entry.start), title: entry.title};
 					}).sort((a, b) => a.start - b.start);
 				}
 			}

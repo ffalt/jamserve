@@ -11,9 +11,9 @@ export class DBNedb implements Database {
 		[type: string]: { client: Nedb; filename: string };
 	} = {};
 
-	constructor(db_path: string) {
+	constructor(dbPath: string) {
 		this.getTypes().forEach(type => {
-			const filename = path.resolve(db_path, DBObjectType[type] + '.db');
+			const filename = path.resolve(dbPath, `${DBObjectType[type]}.db`);
 			this.clients[DBObjectType[type]] = {client: new Nedb({filename}), filename};
 		});
 	}

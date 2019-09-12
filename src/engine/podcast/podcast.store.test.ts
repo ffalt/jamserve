@@ -1,12 +1,12 @@
-import {PodcastStore, SearchQueryPodcast} from './podcast.store';
-import {Podcast} from './podcast.model';
 import {testStore} from '../base/base.store.spec';
 import {mockPodcast, mockPodcast2} from './podcast.mock';
+import {Podcast} from './podcast.model';
+import {PodcastStore, SearchQueryPodcast} from './podcast.store';
 
 describe('PodcastStore', () => {
 	let podcastStore: PodcastStore;
 
-	testStore((testDB) => {
+	testStore(testDB => {
 			podcastStore = new PodcastStore(testDB.database);
 			return podcastStore;
 		}, () => {
@@ -26,5 +26,6 @@ describe('PodcastStore', () => {
 			return matches;
 		},
 		() => {
+			//
 		});
 });

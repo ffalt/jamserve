@@ -80,6 +80,7 @@ export class DownloadService {
 				return this.downloadPodcast(o as Podcast, format);
 			case DBObjectType.playlist:
 				return this.downloadPlaylist(o as Playlist, format, user);
+			default:
 		}
 		return Promise.reject(Error('Invalid Download Type'));
 	}

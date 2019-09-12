@@ -45,8 +45,8 @@ export class DBElastic implements Database {
 
 	async open(): Promise<void> {
 		log.debug('Open connection to elasticsearch');
-		await this.sequence.init(this.client);
 		await this.ping();
+		await this.sequence.init(this.client);
 		await this.check();
 	}
 
@@ -62,7 +62,7 @@ export class DBElastic implements Database {
 	private getTypes(): Array<DBObjectType> {
 		return Object.keys(DBObjectType)
 			.filter(key => !isNaN(Number(key)))
-			.map(key => parseInt(key, 10));
+			.map(Number);
 	}
 
 	private async resetIndex(type: DBObjectType): Promise<void> {
@@ -82,11 +82,11 @@ export class DBElastic implements Database {
 	private async createIndex(type: DBObjectType): Promise<void> {
 		const name = DBObjectType[type];
 		if (!mapping[name]) {
-			return Promise.reject(Error('Missing Elasticsearch Mapping for type ' + name));
+			return Promise.reject(Error(`Missing Elasticsearch Mapping for type ${name}`));
 		}
 		const index = this.indexName(name);
 		const m: any = {};
-		m['_default_'] = {_default_: {date_detection: false}};
+		m._default_ = {_default_: {date_detection: false}};
 		m[name] = mapping[name];
 		await this.client.indices.create({index, body: {mappings: m}});
 	}

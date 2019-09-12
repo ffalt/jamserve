@@ -16,10 +16,10 @@ describe('Server', () => {
 	let postNoRights: (apiPath: string) => supertest.Test;
 	testEngines({}, async (testEngine) => {
 		testEngine.engine.config.server.port = 10010;
-		testEngine.engine.config.server.listen = '127.0.0.1';
+		testEngine.engine.config.server.listen = 'localhost';
 		server = new Server(testEngine.engine);
 		await server.start();
-		request = supertest('http://127.0.0.1:10010');
+		request = supertest('http://localhost:10010');
 		const res = await request.post('/api/v1/login')
 			.send({username: mockUserName, password: mockUserPass, client: 'supertest-tests'});
 		token = res.body.jwt;

@@ -48,12 +48,12 @@ export class LiveTranscoderStream extends TranscoderStream {
 		}
 		proc.withNoVideo()
 			.toFormat(this.format)
-			.withAudioBitrate(this.maxBitRate + 'k')
+			.withAudioBitrate(`${this.maxBitRate}k`)
 			.on('end', () => {
 				log.debug('file has been transcoded successfully');
 			})
 			.on('error', (err: Error) => {
-				log.error('an error happened while transcoding: ' + err.message);
+				log.error(`an error happened while transcoding: ${err.message}`);
 			});
 		stream.contentType(this.format);
 		proc.writeToStream(stream, {end: true});

@@ -30,7 +30,7 @@ export interface ThirdpartyToolsConfig {
 	};
 }
 
-export const userAgent = 'JamServe/' + JAMSERVE_VERSION;
+export const userAgent = `JamServe/${JAMSERVE_VERSION}`;
 
 export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 	/*
@@ -50,24 +50,24 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		https://musicbrainz.org/
 		open music encyclopedia
 	 */
-	musicbrainz: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
+	musicbrainz: {userAgent: `${userAgent} ( jamserve@protonmail.com )`},
 	/*
 		AcousticBrainz
 		https://acousticbrainz.org/
 		crowd sourced acoustic information
  	*/
-	acousticbrainz: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
+	acousticbrainz: {userAgent: `${userAgent} ( jamserve@protonmail.com )`},
 	/*
 		CoverArtArchive
 		https://coverartarchive.org/
 		cover art from Internet Archive (archive.org) via musicbrainz ids
  	*/
-	coverartarchive: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
+	coverartarchive: {userAgent: `${userAgent} ( jamserve@protonmail.com )`},
 	/*
 		Wikipedia
 		https://en.wikipedia.org/api/rest_v1/#/
  	*/
-	wikipedia: {userAgent: userAgent + ' ( jamserve@protonmail.com )'},
+	wikipedia: {userAgent: `${userAgent} ( jamserve@protonmail.com )`},
 	/*
 		Chart Lyrics
 		http://www.chartlyrics.com/

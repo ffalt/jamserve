@@ -125,17 +125,18 @@ export class Flac {
 	}
 
 	async write(filename: string, flacBlocks: Array<MetaWriteableDataBlock>): Promise<void> {
+		const tmpFile = `${filename}.tmp`;
 		try {
-			await this.writeTo(filename, filename + '.tmp', flacBlocks);
+			await this.writeTo(filename, tmpFile, flacBlocks);
 			const exists = await fse.pathExists(filename);
 			if (exists) {
 				await fse.remove(filename);
 			}
-			await fse.move(filename + '.tmp', filename);
+			await fse.move(tmpFile, filename);
 		} catch (e) {
-			const exists = await fse.pathExists(filename) + '.tmp';
+			const exists = await fse.pathExists(tmpFile);
 			if (exists) {
-				await fse.remove(filename + '.tmp');
+				await fse.remove(tmpFile);
 			}
 			return Promise.reject(e);
 		}

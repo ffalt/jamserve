@@ -36,7 +36,7 @@ export class PreTranscoderStream extends TranscoderStream {
 			}
 			proc.withNoVideo()
 				.toFormat(this.format)
-				.withAudioBitrate(this.maxBitRate + 'k')
+				.withAudioBitrate(`${this.maxBitRate}k`)
 				.on('end', () => {
 					log.info('transcoding ended, sending file now');
 					stream.contentType(this.format);
@@ -53,7 +53,7 @@ export class PreTranscoderStream extends TranscoderStream {
 				})
 				.on('error', (err2: Error) => {
 					cleanupCallback();
-					const msg = 'an error happened while transcoding: ' + err2.message;
+					const msg = `an error happened while transcoding: ${err2.message}`;
 					stream.status(400).send(msg);
 					log.error(msg);
 				});

@@ -17,9 +17,12 @@ import {FolderType, FolderTypesAlbum, LastFMLookupType, PodcastStatus} from '../
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {SubsonicParameters} from '../../model/subsonic-rest-params';
 import {ApiBinaryResult} from '../../typings';
+import Logger from '../../utils/logger';
 import {paginate} from '../../utils/paginate';
 import {randomItems} from '../../utils/random';
 import {FORMAT} from './format';
+
+const log = Logger('SubsonicApi');
 
 /*
 	http://www.subsonic.org/pages/api.jsp
@@ -678,6 +681,7 @@ export class SubsonicApi {
 			case DBObjectType.album:
 				tracks = await this.engine.metaDataService.getAlbumSimilarTracks(o as Album);
 				break;
+			default:
 		}
 		const limit = paginate(tracks, req.query.count || 50, 0);
 		const childs = await this.prepareTracks(limit.items, req.user);
@@ -749,12 +753,13 @@ export class SubsonicApi {
 		switch (o.type) {
 			case DBObjectType.track:
 				const res = await this.engine.streamService.streamTrack(o as Track, req.query.format, req.query.maxBitRate, req.user);
-				this.engine.nowPlayingService.reportTrack(o as Track, req.user);
+				this.engine.nowPlayingService.reportTrack(o as Track, req.user).catch(e => log.error(e)); // do not wait
 				return res;
 			case DBObjectType.episode:
 				const result = await this.engine.streamService.streamEpisode(o as Episode, req.query.format, req.query.maxBitRate, req.user);
-				this.engine.nowPlayingService.reportEpisode(o as Episode, req.user);
+				this.engine.nowPlayingService.reportEpisode(o as Episode, req.user).catch(e => log.error(e)); // do not wait
 				return result;
+			default:
 		}
 		return Promise.reject(Error('Invalid Object Type for Streaming'));
 	}
@@ -1424,7 +1429,7 @@ export class SubsonicApi {
 
 		 Returns an empty <subsonic-response> element on success.
 		 */
-		this.engine.podcastService.refreshPodcasts(); // do not wait
+		this.engine.podcastService.refreshPodcasts().catch(e => log.error(e)); // do not wait
 	}
 
 	async createPodcastChannel(req: ApiOptions<SubsonicParameters.PodcastChannel>): Promise<void> {
@@ -1548,7 +1553,7 @@ export class SubsonicApi {
 
 		const episode = await this.byID<Episode>(req.query.id, this.engine.store.episodeStore);
 		if (!episode.path) {
-			this.engine.episodeService.downloadEpisode(episode); // do not wait
+			this.engine.episodeService.downloadEpisode(episode).catch(e => log.error(e)); // do not wait
 		}
 	}
 
@@ -1826,7 +1831,7 @@ export class SubsonicApi {
 
 		Returns a <subsonic-response> element with a nested <scanStatus> element on success.
 		 */
-		this.engine.ioService.refresh();
+		this.engine.ioService.refresh().catch(e => log.error(e)); // do not wait;
 	}
 
 	async getArtist(req: ApiOptions<SubsonicParameters.ID>): Promise<{ artist: Subsonic.ArtistWithAlbumsID3 }> {

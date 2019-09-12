@@ -121,7 +121,7 @@ export class FORMAT {
 			username: user.name,
 			email: user.email,
 			maxBitRate: user.maxBitRate,
-			avatarLastChanged: user.avatarLastChanged !== undefined ? this.formatSubSonicDate(user.avatarLastChanged) : undefined,
+			avatarLastChanged: user.avatarLastChanged !== undefined ? FORMAT.formatSubSonicDate(user.avatarLastChanged) : undefined,
 			folder: user.allowedfolder ? user.allowedfolder.map(s => parseInt(s, 10)) : undefined,
 			scrobblingEnabled: user.scrobblingEnabled,
 			adminRole: user.roles.admin,
@@ -152,7 +152,7 @@ export class FORMAT {
 		return {
 			id: entry.folder.id,
 			name: entry.name,
-			starred: state && state.faved ? this.formatSubSonicDate(state.faved) : undefined,
+			starred: state && state.faved ? FORMAT.formatSubSonicDate(state.faved) : undefined,
 			userRating: state ? state.rated : undefined
 			// TODO: averageRating
 		};
@@ -196,7 +196,7 @@ export class FORMAT {
 			id: folder.id,
 			parent: folder.parentID,
 			name: path.basename(folder.path),
-			starred: state && state.faved ? this.formatSubSonicDate(state.faved) : undefined
+			starred: state && state.faved ? FORMAT.formatSubSonicDate(state.faved) : undefined
 		};
 	}
 
@@ -213,7 +213,7 @@ export class FORMAT {
 		return {
 			id: folder.id,
 			name: folder.tag.title || folder.tag.artist || '',
-			starred: state && state.faved ? this.formatSubSonicDate(state.faved) : undefined,
+			starred: state && state.faved ? FORMAT.formatSubSonicDate(state.faved) : undefined,
 			userRating: state ? state.rated : undefined
 		};
 	}
@@ -264,7 +264,7 @@ export class FORMAT {
 			name: artist.name,
 			coverArt: artist.id,
 			albumCount: artist.albumIDs.length,
-			starred: state && state.faved ? this.formatSubSonicDate(state.faved) : undefined
+			starred: state && state.faved ? FORMAT.formatSubSonicDate(state.faved) : undefined
 		};
 	}
 
@@ -383,7 +383,7 @@ export class FORMAT {
 			artistId: track.artistID,
 			type: 'music',
 			userRating: state ? state.rated : undefined,
-			starred: state && state.faved ? this.formatSubSonicDate(state.faved) : undefined,
+			starred: state && state.faved ? FORMAT.formatSubSonicDate(state.faved) : undefined,
 			playCount: state && state.played ? state.played : 0,
 			transcodedSuffix: undefined,
 			transcodedContentType: undefined
@@ -437,7 +437,7 @@ export class FORMAT {
 			// "albumId": '',  // TODO: folder albumId if only one?
 			// "artistId": '',  // TODO: folder artistId if only one?
 			isDir: true,
-			starred: state && state.faved ? this.formatSubSonicDate(state.faved) : undefined
+			starred: state && state.faved ? FORMAT.formatSubSonicDate(state.faved) : undefined
 		};
 	}
 
@@ -464,7 +464,7 @@ export class FORMAT {
 			coverArt: episode.id,
 			channelId: episode.podcastID,
 			description: episode.summary,
-			publishDate: episode.date !== undefined ? this.formatSubSonicDate(episode.date) : undefined,
+			publishDate: episode.date !== undefined ? FORMAT.formatSubSonicDate(episode.date) : undefined,
 			title: episode.name,
 			status: status ? PodcastStatus[status] : PodcastStatus[episode.status],
 			id: episode.id,
@@ -477,7 +477,7 @@ export class FORMAT {
 			discNumber: episode.tag ? episode.tag.disc : undefined,
 			type: 'podcast',
 			playCount: state && state.played ? state.played : 0,
-			starred: state && state.faved ? this.formatSubSonicDate(state.faved) : undefined,
+			starred: state && state.faved ? FORMAT.formatSubSonicDate(state.faved) : undefined,
 			userRating: state ? state.rated : undefined,
 			isVideo: false,
 			isDir: false,

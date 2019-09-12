@@ -30,9 +30,9 @@ export class WaveformStream extends Transform {
 		const options: Ffmpeg.FfmpegCommandOptions = {
 			source: this._buf as Readable
 		};
-		this._ffmpeg = Ffmpeg(options).addOptions(['-f s16le', '-ac 1', '-acodec pcm_s16le', '-ar ' + this._sampleRate]);
+		this._ffmpeg = Ffmpeg(options).addOptions(['-f s16le', '-ac 1', '-acodec pcm_s16le', `-ar ${this._sampleRate}`]);
 		this._ffmpeg.on('start', (cmd: string) => {
-			log.debug('ffmpeg started with ' + cmd);
+			log.debug(`ffmpeg started with ${cmd}`);
 			this._started = true;
 			return this.emit('_started');
 		});
@@ -44,8 +44,8 @@ export class WaveformStream extends Transform {
 				return this.emit('done', 'ffmpeg failed to start');
 			}
 			errored = true;
-			log.debug('ffmpeg decoding error: ' + err);
-			return this.emit('done', 'ffmpeg decoding error: ' + err);
+			log.debug(`ffmpeg decoding error: ${err}`);
+			return this.emit('done', `ffmpeg decoding error: ${err}`);
 		});
 		this._ffmpeg.on('end', () => {
 			if (!errored) {

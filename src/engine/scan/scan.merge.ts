@@ -122,7 +122,7 @@ export class ScanMerger {
 				await this.mergeR(d, changes);
 			}
 		} else {
-			return Promise.reject(Error('db entry must exists to compare ' + dir.name));
+			return Promise.reject(Error(`db entry must exists to compare ${dir.name}`));
 		}
 	}
 

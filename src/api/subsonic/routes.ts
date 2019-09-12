@@ -11,7 +11,7 @@ import {ApiResponder} from './response';
 export type SubSonicRole = 'podcast' | 'share' | 'admin' | 'jukebox';
 export type RegisterCallback = (req: UserRequest, res: express.Response) => Promise<void>;
 export interface Register {
-	all: (name: string, execute: RegisterCallback, roles?: Array<SubSonicRole>) => void;
+	all(name: string, execute: RegisterCallback, roles?: Array<SubSonicRole>): void;
 }
 
 export function registerApi(register: Register, api: SubsonicApi): void {

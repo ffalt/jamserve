@@ -16,9 +16,9 @@ import {ApiResponder} from './response';
 export type JamApiRole = 'admin' | 'podcast' | 'stream';
 export type RegisterCallback = (req: UserRequest, res: express.Response) => Promise<void>;
 export interface Register {
-	get: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => void;
-	post: (name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => void;
-	upload: (name: string, field: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string) => void;
+	get(name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void;
+	post(name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void;
+	upload(name: string, field: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void;
 }
 
 export function registerPublicApi(register: Register, api: JamApi): void {

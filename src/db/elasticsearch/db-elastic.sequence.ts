@@ -8,7 +8,6 @@ import elasticsearch from 'elasticsearch';
 const esTypeMapping = {
 	_source: {enabled: false},
 	_all: {enabled: false},
-	// _type: {index: 'no'},
 	enabled: false
 };
 
@@ -21,9 +20,30 @@ export class DbElasticSequence {
 	private cacheSize = 100;
 	private options = {esIndex: 'sequences', esType: 'sequence'};
 
+	private static isObject(val: any): boolean {
+		return typeof val === 'object';
+	}
+
+	private static isFunction(val: any): boolean {
+		return typeof val === 'function';
+	}
+
+	private static isInjectedClientValid(client: any): boolean {
+		return (
+			(DbElasticSequence.isObject(client) || DbElasticSequence.isFunction(client)) &&
+			(DbElasticSequence.isObject(client.indices) || DbElasticSequence.isFunction(client.indices)) &&
+			DbElasticSequence.isFunction(client.indices.create) && DbElasticSequence.isFunction(client.indices.exists) &&
+			DbElasticSequence.isFunction(client.indices.putMapping) && DbElasticSequence.isFunction(client.bulk)
+		);
+	}
+
+	private static isInjectedCacheSizeValid(cacheSize: number | any): boolean {
+		return ((cacheSize === undefined) || (typeof cacheSize === 'number' && isFinite(cacheSize) && Math.floor(cacheSize) === cacheSize));
+	}
+
 	constructor(client: elasticsearch.Client) {
 		this.client = client;
-		if (!isInjectedClientValid(client)) {
+		if (!DbElasticSequence.isInjectedClientValid(client)) {
 			throw new Error('Init was called with an invalid client parameter value.');
 		}
 	}
@@ -32,7 +52,7 @@ export class DbElasticSequence {
 		// The following checks are done before the init promise is created
 		// because errors thrown in the init promise are stored in _initError.
 		// If a check fails it should look as if init was not called.
-		if (!isInjectedClientValid(this.client)) {
+		if (!DbElasticSequence.isInjectedClientValid(this.client)) {
 			return Promise.reject(new Error('Init was called with an invalid client parameter value.'));
 		}
 		if (this.initPromise !== null) {
@@ -41,7 +61,7 @@ export class DbElasticSequence {
 		if (this.cacheFillPromise !== null) {
 			return Promise.reject(new Error('Init was called while get requests are pending.'));
 		}
-		if (!isInjectedCacheSizeValid(cacheSize)) {
+		if (!DbElasticSequence.isInjectedCacheSizeValid(cacheSize)) {
 			return Promise.reject(new Error('Init was called with an invalid cacheSize parameter value.'));
 		}
 		this.initPromise = new Promise(resolve => {
@@ -51,16 +71,18 @@ export class DbElasticSequence {
 			if (cacheSize !== undefined) {
 				this.cacheSize = cacheSize;
 			}
-			if (isObject(options)) {
+			if (DbElasticSequence.isObject(options)) {
 				this.options = {...this.options, ...options};
 			}
 			resolve(this.initEsIndexIfNeeded());
-		}).catch(e => {
-			this.initError = e;
-			throw e;
-		}).then(() => {
-			this.initPromise = null;
-		});
+		})
+			.catch(e => {
+				this.initError = e;
+				throw e;
+			})
+			.then(() => {
+				this.initPromise = null;
+			});
 		return this.initPromise;
 	}
 
@@ -159,25 +181,4 @@ export class DbElasticSequence {
 		return this.cache[sequenceName].length;
 	}
 
-}
-
-function isObject(val: any): boolean {
-	return typeof val === 'object';
-}
-
-function isFunction(val: any): boolean {
-	return typeof val === 'function';
-}
-
-function isInjectedClientValid(client: elasticsearch.Client): boolean {
-	return !((!isObject(client) && !isFunction(client)) ||
-		(!isObject(client.indices) && !isFunction(client.indices)) ||
-		!isFunction(client.indices.create) ||
-		!isFunction(client.indices.exists) ||
-		!isFunction(client.indices.putMapping) ||
-		!isFunction(client.bulk));
-}
-
-function isInjectedCacheSizeValid(cacheSize: number | any): boolean {
-	return ((cacheSize === undefined) || (typeof cacheSize === 'number' && isFinite(cacheSize) && Math.floor(cacheSize) === cacheSize));
 }

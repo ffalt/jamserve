@@ -4,6 +4,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {PodcastStatus} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
+import Logger from '../../utils/logger';
 import {BaseListController} from '../base/dbobject-list.controller';
 import {DownloadService} from '../download/download.service';
 import {ImageService} from '../image/image.service';
@@ -15,6 +16,8 @@ import {formatEpisode} from './episode.format';
 import {Episode} from './episode.model';
 import {EpisodeService} from './episode.service';
 import {SearchQueryEpisode} from './episode.store';
+
+const log = Logger('EpisodeController');
 
 export class EpisodeController extends BaseListController<JamParameters.Episode,
 	JamParameters.Episodes,
@@ -82,7 +85,7 @@ export class EpisodeController extends BaseListController<JamParameters.Episode,
 	async retrieve(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const episode = await this.byID(req.query.id);
 		if (!episode.path) {
-			this.episodeService.downloadEpisode(episode); // do not wait
+			this.episodeService.downloadEpisode(episode).catch(e => log.error(e)); // do not wait
 		}
 	}
 

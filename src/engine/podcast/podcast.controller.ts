@@ -3,6 +3,7 @@ import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {PodcastStatus} from '../../model/jam-types';
+import Logger from '../../utils/logger';
 import {BaseListController} from '../base/dbobject-list.controller';
 import {ListResult} from '../base/list-result';
 import {DownloadService} from '../download/download.service';
@@ -15,6 +16,8 @@ import {formatPodcast} from './podcast.format';
 import {Podcast} from './podcast.model';
 import {PodcastService} from './podcast.service';
 import {SearchQueryPodcast} from './podcast.store';
+
+const log = Logger('PodcastController');
 
 export class PodcastController extends BaseListController<JamParameters.Podcast,
 	JamParameters.Podcasts,
@@ -70,17 +73,17 @@ export class PodcastController extends BaseListController<JamParameters.Podcast,
 	}
 
 	async refreshAll(req: JamRequest<{}>): Promise<void> {
-		this.podcastService.refreshPodcasts(); // do not wait
+		this.podcastService.refreshPodcasts().catch(e => log.error(e)); // do not wait
 	}
 
 	async refresh(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const podcast = await this.byID(req.query.id);
-		this.podcastService.refresh(podcast); // do not wait
+		this.podcastService.refresh(podcast).catch(e => log.error(e)); // do not wait
 	}
 
 	async create(req: JamRequest<JamParameters.PodcastNew>): Promise<Jam.Podcast> {
 		const podcast = await this.podcastService.create(req.query.url);
-		this.podcastService.refresh(podcast); // do not wait
+		this.podcastService.refresh(podcast).catch(e => log.error(e)); // do not wait
 		return this.prepare(podcast, {}, req.user);
 	}
 

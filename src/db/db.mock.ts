@@ -1,5 +1,6 @@
 import {initTestFramework} from '../engine/base/common.spec';
 import {Database} from './db.model';
+import {TestDBElastic} from './elasticsearch/db-elastic.spec';
 import {TestNeDB} from './nedb/db-nedb.spec';
 
 initTestFramework();
@@ -15,8 +16,12 @@ export interface TestDB {
 
 export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup: () => Promise<void>, tests: () => void): void {
 	const dbs: Array<TestDB> = [];
-	dbs.push(new TestNeDB());
-	// dbs.push(new TestElastic());
+	if ((global as any)._testDatabases_.includes('nedb')) {
+		dbs.push(new TestNeDB());
+	}
+	if ((global as any)._testDatabases_.includes('elastic')) {
+		dbs.push(new TestDBElastic());
+	}
 	for (const testDB of dbs) {
 		describe('with ' + testDB.name, () => {
 			beforeAll(async () => {

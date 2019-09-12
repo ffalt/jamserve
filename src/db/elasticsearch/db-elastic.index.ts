@@ -29,14 +29,12 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 
 	private hit2Obj(hit: any): T {
 		hit._source.id = hit._source.id.toString();
-		hit._source.type = DBObjectType[hit._type];
+		hit._source.type = this.type;
 		return hit._source as T;
 	}
 
 	private filterProperties(o: T): any {
-		const result: any = {...o};
-		result.type = undefined;
-		return result;
+		return {...o, type: undefined};
 	}
 
 	private getPropertyMapping(key: string): any {
@@ -63,7 +61,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 						console.log('Unknown prop', this._type, key);
 					}
 					if (prop && prop.type === 'text') {
-						term[key + '.keyword'] = o[key];
+						term[`${key}.keyword`] = o[key];
 					} else {
 						term[key] = o[key];
 					}
@@ -81,7 +79,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 						console.log('Unknown prop', this._type, key);
 					}
 					if (prop && prop.type === 'text') {
-						term[key + '.keyword'] = o[key];
+						term[`${key}.keyword`] = o[key];
 					} else {
 						term[key] = o[key];
 					}
@@ -228,20 +226,12 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			await this.db.client.deleteByQuery({
 				index: this._index,
 				type: this._type,
-				body: {
-					query: {
-						terms: {
-							_id: id
-						}
-					}
-				},
+				body: {query: {terms: {_id: id}}},
 				refresh: this.db.indexRefresh as elasticsearch.Refresh
 			});
 		} else {
 			await this.db.client.delete({
-				index: this._index,
-				type: this._type,
-				id: id as string,
+				id, index: this._index, type: this._type,
 				refresh: this.db.indexRefresh as elasticsearch.Refresh
 			});
 		}
@@ -307,7 +297,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			amount: list.amount,
 			offset: list.offset,
 			total: list.total,
-			items: list.items.map(this.hit2Obj)
+			items: list.items.map(o => this.hit2Obj(o))
 		};
 	}
 
@@ -316,9 +306,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			index: this._index,
 			type: this._type,
 			size: 1,
-			body: {
-				query: this.translateElasticQuery(query)
-			}
+			body: {query: this.translateElasticQuery(query)}
 		});
 		if (response.hits.total > 0) {
 			return this.hit2Obj(response.hits.hits[0]);
@@ -332,12 +320,10 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			type: this._type,
 			scroll: '30s',
 			size: 100,
-			body: {
-				query: this.translateElasticQuery(query)
-			}
+			body: {query: this.translateElasticQuery(query)}
 		});
 		await this.scroll(response, async hits => {
-			await onItem(hits.map(this.hit2Obj));
+			await onItem(hits.map(o => this.hit2Obj(o)));
 		});
 	}
 

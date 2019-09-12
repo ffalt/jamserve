@@ -1,373 +1,374 @@
-const type_bool = {type: 'boolean'};
+// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+const typeBool = {type: 'boolean'};
 
-const type_int = {type: 'long'};
+const typeInt = {type: 'long'};
 
-const type_string = {type: 'text', fields: {keyword: {type: 'keyword'}}};
+const typeString = {type: 'text', fields: {keyword: {type: 'keyword'}}};
 
-const type_key = {type: 'keyword'};
+const typeKey = {type: 'keyword'};
 
-const type_Root = {
+const typeRoot = {
 	properties: {
-		name: type_string,
-		path: type_key,
-		created: type_int,
-		strategy: type_key,
-		id: type_key,
-		type: type_int
+		name: typeString,
+		path: typeKey,
+		created: typeInt,
+		strategy: typeKey,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_UserRoles = {
+const typeUserRoles = {
 	properties: {
-		stream: type_bool,
-		upload: type_bool,
-		admin: type_bool,
-		podcast: type_bool
+		stream: typeBool,
+		upload: typeBool,
+		admin: typeBool,
+		podcast: typeBool
 	}
 };
 
-const type_User = {
+const typeUser = {
 	properties: {
-		name: type_string,
-		salt: type_key,
-		hash: type_key,
-		subsonic_pass: type_key,
-		email: type_key,
-		created: type_int,
-		scrobblingEnabled: type_bool,
-		avatarLastChanged: type_int,
-		avatar: type_key,
-		maxBitRate: type_int,
-		allowedfolder: type_key,
-		roles: type_UserRoles,
-		id: type_key,
-		type: type_int
+		name: typeString,
+		salt: typeKey,
+		hash: typeKey,
+		subsonic_pass: typeKey,
+		email: typeKey,
+		created: typeInt,
+		scrobblingEnabled: typeBool,
+		avatarLastChanged: typeInt,
+		avatar: typeKey,
+		maxBitRate: typeInt,
+		allowedfolder: typeKey,
+		roles: typeUserRoles,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_ArtworkImage = {
+const typeArtworkImage = {
 	properties: {
-		width: type_int,
-		height: type_int,
-		format: type_key
+		width: typeInt,
+		height: typeInt,
+		format: typeKey
 	}
 };
 
-const type_Artwork = {
+const typeArtwork = {
 	properties: {
-		id: type_key,
-		name: type_string,
-		types: type_key,
-		image: type_ArtworkImage
+		id: typeKey,
+		name: typeString,
+		types: typeKey,
+		image: typeArtworkImage
 	}
 };
 
-const type_FolderTag = {
+const typeFolderTag = {
 	properties: {
-		level: type_int,
-		trackCount: type_int,
-		folderCount: type_int,
-		type: type_key,
-		genre: type_key,
-		album: type_key,
-		artist: type_key,
-		artistSort: type_key,
-		albumType: type_key,
-		albumTrackCount: type_int,
-		title: type_string,
-		year: type_int,
-		mbAlbumID: type_key,
-		mbReleaseGroupID: type_key,
-		mbAlbumType: type_key,
-		mbArtistID: type_key,
-		artworks: type_Artwork
+		level: typeInt,
+		trackCount: typeInt,
+		folderCount: typeInt,
+		type: typeKey,
+		genre: typeKey,
+		album: typeKey,
+		artist: typeKey,
+		artistSort: typeKey,
+		albumType: typeKey,
+		albumTrackCount: typeInt,
+		title: typeString,
+		year: typeInt,
+		mbAlbumID: typeKey,
+		mbReleaseGroupID: typeKey,
+		mbAlbumType: typeKey,
+		mbArtistID: typeKey,
+		artworks: typeArtwork
 	}
 };
 
-const type_Folder = {
+const typeFolder = {
 	properties: {
-		rootID: type_key,
-		path: type_key,
-		parentID: type_key,
-		tag: type_FolderTag,
-		id: type_key,
-		type: type_int
+		rootID: typeKey,
+		path: typeKey,
+		parentID: typeKey,
+		tag: typeFolderTag,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_PlayQueue = {
+const typePlayQueue = {
 	properties: {
-		userID: type_key,
-		trackIDs: type_key,
-		currentID: type_key,
-		position: type_int,
-		changed: type_int,
-		changedBy: type_key,
-		id: type_key,
-		type: type_int
+		userID: typeKey,
+		trackIDs: typeKey,
+		currentID: typeKey,
+		position: typeInt,
+		changed: typeInt,
+		changedBy: typeKey,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_TrackTagChapter = {
+const typeTrackTagChapter = {
 	properties: {
-		start: type_int,
-		end: type_int,
-		title: type_string
+		start: typeInt,
+		end: typeInt,
+		title: typeString
 	}
 };
 
-const type_TrackTag = {
+const typeTrackTag = {
 	properties: {
-		format: type_key,
-		album: type_key,
-		albumSort: type_key,
-		albumArtist: type_key,
-		albumArtistSort: type_key,
-		artist: type_key,
-		artistSort: type_key,
-		genre: type_key,
-		disc: type_int,
-		discTotal: type_int,
-		title: type_string,
-		titleSort: type_key,
-		track: type_int,
-		trackTotal: type_int,
-		year: type_int,
-		mbTrackID: type_key,
-		mbAlbumType: type_key,
-		mbAlbumArtistID: type_key,
-		mbArtistID: type_key,
-		mbAlbumID: type_key,
-		mbReleaseTrackID: type_key,
-		mbReleaseGroupID: type_key,
-		mbRecordingID: type_key,
-		mbAlbumStatus: type_key,
-		mbReleaseCountry: type_key,
-		chapters: type_TrackTagChapter
+		format: typeKey,
+		album: typeKey,
+		albumSort: typeKey,
+		albumArtist: typeKey,
+		albumArtistSort: typeKey,
+		artist: typeKey,
+		artistSort: typeKey,
+		genre: typeKey,
+		disc: typeInt,
+		discTotal: typeInt,
+		title: typeString,
+		titleSort: typeKey,
+		track: typeInt,
+		trackTotal: typeInt,
+		year: typeInt,
+		mbTrackID: typeKey,
+		mbAlbumType: typeKey,
+		mbAlbumArtistID: typeKey,
+		mbArtistID: typeKey,
+		mbAlbumID: typeKey,
+		mbReleaseTrackID: typeKey,
+		mbReleaseGroupID: typeKey,
+		mbRecordingID: typeKey,
+		mbAlbumStatus: typeKey,
+		mbReleaseCountry: typeKey,
+		chapters: typeTrackTagChapter
 	}
 };
 
-const type_TrackMedia = {
+const typeTrackMedia = {
 	properties: {
-		duration: type_int,
-		bitRate: type_int,
-		format: type_key,
-		sampleRate: type_int,
-		channels: type_int,
-		encoded: type_key,
-		mode: type_key,
-		version: type_key
+		duration: typeInt,
+		bitRate: typeInt,
+		format: typeKey,
+		sampleRate: typeInt,
+		channels: typeInt,
+		encoded: typeKey,
+		mode: typeKey,
+		version: typeKey
 	}
 };
 
-const type_Track = {
+const typeTrack = {
 	properties: {
-		rootID: type_key,
-		parentID: type_key,
-		name: type_string,
-		path: type_key,
-		albumID: type_key,
-		artistID: type_key,
-		albumArtistID: type_key,
-		tag: type_TrackTag,
-		media: type_TrackMedia,
-		id: type_key,
-		type: type_int
+		rootID: typeKey,
+		parentID: typeKey,
+		name: typeString,
+		path: typeKey,
+		albumID: typeKey,
+		artistID: typeKey,
+		albumArtistID: typeKey,
+		tag: typeTrackTag,
+		media: typeTrackMedia,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_Album = {
+const typeAlbum = {
 	properties: {
-		slug: type_key,
-		name: type_string,
-		rootIDs: type_key,
-		trackIDs: type_key,
-		folderIDs: type_key,
-		albumType: type_key,
-		artistID: type_key,
-		artist: type_key,
-		genre: type_key,
-		year: type_int,
-		duration: type_int,
-		created: type_int,
-		mbArtistID: type_key,
-		mbAlbumID: type_key,
-		id: type_key,
-		type: type_int
+		slug: typeKey,
+		name: typeString,
+		rootIDs: typeKey,
+		trackIDs: typeKey,
+		folderIDs: typeKey,
+		albumType: typeKey,
+		artistID: typeKey,
+		artist: typeKey,
+		genre: typeKey,
+		year: typeInt,
+		duration: typeInt,
+		created: typeInt,
+		mbArtistID: typeKey,
+		mbAlbumID: typeKey,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_Artist = {
+const typeArtist = {
 	properties: {
-		slug: type_key,
-		name: type_string,
-		nameSort: type_key,
-		rootIDs: type_key,
-		trackIDs: type_key,
-		folderIDs: type_key,
-		albumIDs: type_key,
-		albumTypes: type_key,
-		mbArtistID: type_key,
-		created: type_int,
-		id: type_key,
-		type: type_int
+		slug: typeKey,
+		name: typeString,
+		nameSort: typeKey,
+		rootIDs: typeKey,
+		trackIDs: typeKey,
+		folderIDs: typeKey,
+		albumIDs: typeKey,
+		albumTypes: typeKey,
+		mbArtistID: typeKey,
+		created: typeInt,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_Radio = {
+const typeRadio = {
 	properties: {
-		name: type_string,
-		url: type_key,
-		homepage: type_key,
-		disabled: type_bool,
-		created: type_int,
-		changed: type_int,
-		id: type_key,
-		type: type_int
+		name: typeString,
+		url: typeKey,
+		homepage: typeKey,
+		disabled: typeBool,
+		created: typeInt,
+		changed: typeInt,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_State = {
+const typeState = {
 	properties: {
-		userID: type_key,
-		destID: type_key,
-		destType: type_int,
-		played: type_int,
-		lastplayed: type_int,
-		faved: type_int,
-		rated: type_int,
-		id: type_key,
-		type: type_int
+		userID: typeKey,
+		destID: typeKey,
+		destType: typeInt,
+		played: typeInt,
+		lastplayed: typeInt,
+		faved: typeInt,
+		rated: typeInt,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_Playlist = {
+const typePlaylist = {
 	properties: {
-		name: type_string,
-		userID: type_key,
-		comment: type_key,
-		coverArt: type_key,
-		changed: type_int,
-		created: type_int,
-		allowedUser: type_key,
-		isPublic: type_bool,
-		duration: type_int,
-		trackIDs: type_key,
-		id: type_key,
-		type: type_int
+		name: typeString,
+		userID: typeKey,
+		comment: typeKey,
+		coverArt: typeKey,
+		changed: typeInt,
+		created: typeInt,
+		allowedUser: typeKey,
+		isPublic: typeBool,
+		duration: typeInt,
+		trackIDs: typeKey,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_PodcastTag = {
+const typePodcastTag = {
 	properties: {
-		title: type_string,
-		link: type_key,
-		author: type_key,
-		description: type_key,
-		generator: type_key,
-		image: type_key,
-		categories: type_key
+		title: typeString,
+		link: typeKey,
+		author: typeKey,
+		description: typeKey,
+		generator: typeKey,
+		image: typeKey,
+		categories: typeKey
 	}
 };
 
-const type_Podcast = {
+const typePodcast = {
 	properties: {
-		url: type_key,
-		created: type_int,
-		lastCheck: type_int,
-		status: type_key,
-		image: type_key,
-		errorMessage: type_key,
-		tag: type_PodcastTag,
-		id: type_key,
-		type: type_int
+		url: typeKey,
+		created: typeInt,
+		lastCheck: typeInt,
+		status: typeKey,
+		image: typeKey,
+		errorMessage: typeKey,
+		tag: typePodcastTag,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_PodcastEpisodeChapter = {
+const typePodcastEpisodeChapter = {
 	properties: {
-		start: type_int,
-		title: type_string
+		start: typeInt,
+		title: typeString
 	}
 };
 
-const type_PodcastEpisodeEnclosure = {
+const typePodcastEpisodeEnclosure = {
 	properties: {
-		url: type_key,
-		type: type_key,
-		length: type_int
+		url: typeKey,
+		type: typeKey,
+		length: typeInt
 	}
 };
 
-const type_Episode = {
+const typeEpisode = {
 	properties: {
-		podcastID: type_key,
-		podcast: type_key,
-		status: type_key,
-		error: type_key,
-		path: type_key,
-		link: type_key,
-		summary: type_key,
-		date: type_int,
-		duration: type_int,
-		name: type_string,
-		guid: type_key,
-		author: type_key,
-		chapters: type_PodcastEpisodeChapter,
-		enclosures: type_PodcastEpisodeEnclosure,
-		tag: type_TrackTag,
-		media: type_TrackMedia,
-		id: type_key,
-		type: type_int
+		podcastID: typeKey,
+		podcast: typeKey,
+		status: typeKey,
+		error: typeKey,
+		path: typeKey,
+		link: typeKey,
+		summary: typeKey,
+		date: typeInt,
+		duration: typeInt,
+		name: typeString,
+		guid: typeKey,
+		author: typeKey,
+		chapters: typePodcastEpisodeChapter,
+		enclosures: typePodcastEpisodeEnclosure,
+		tag: typeTrackTag,
+		media: typeTrackMedia,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_Bookmark = {
+const typeBookmark = {
 	properties: {
-		destID: type_key,
-		userID: type_key,
-		comment: type_key,
-		created: type_int,
-		changed: type_int,
-		position: type_int,
-		id: type_key,
-		type: type_int
+		destID: typeKey,
+		userID: typeKey,
+		comment: typeKey,
+		created: typeInt,
+		changed: typeInt,
+		position: typeInt,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_MetaData = {
+const typeMetaData = {
 	properties: {
-		date: type_int,
-		name: type_string,
-		dataType: type_int,
-		id: type_key,
-		type: type_int
+		date: typeInt,
+		name: typeString,
+		dataType: typeInt,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
-const type_Settings = {
+const typeSettings = {
 	properties: {
-		section: type_key,
-		version: type_key,
-		id: type_key,
-		type: type_int
+		section: typeKey,
+		version: typeKey,
+		id: typeKey,
+		type: typeInt
 	}
 };
 
 export const mapping: any = {
-	root: type_Root,
-	user: type_User,
-	folder: type_Folder,
-	playqueue: type_PlayQueue,
-	track: type_Track,
-	album: type_Album,
-	artist: type_Artist,
-	radio: type_Radio,
-	state: type_State,
-	playlist: type_Playlist,
-	podcast: type_Podcast,
-	episode: type_Episode,
-	bookmark: type_Bookmark,
-	metadata: type_MetaData,
-	settings: type_Settings
+	root: typeRoot,
+	user: typeUser,
+	folder: typeFolder,
+	playqueue: typePlayQueue,
+	track: typeTrack,
+	album: typeAlbum,
+	artist: typeArtist,
+	radio: typeRadio,
+	state: typeState,
+	playlist: typePlaylist,
+	podcast: typePodcast,
+	episode: typeEpisode,
+	bookmark: typeBookmark,
+	metadata: typeMetaData,
+	settings: typeSettings
 };

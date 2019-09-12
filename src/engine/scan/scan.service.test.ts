@@ -102,8 +102,9 @@ describe('ScanService', () => {
 			});
 			afterEach(async () => {
 				await removeMockRoot(mockRoot);
-				await store.reset();
 				dir.removeCallback();
+				await store.reset();
+				await store.check();
 			});
 
 			// it('should scan', async () => {

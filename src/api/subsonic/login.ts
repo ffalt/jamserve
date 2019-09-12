@@ -38,7 +38,7 @@ export interface UserRequest extends SubsonicParameterRequest {
 
 async function validateCredentials(req: SubsonicParameterRequest): Promise<User> {
 	if (req.user) {
-		return req.user as User;
+		return req.user;
 	}
 	if (req.parameters.password) {
 		let pass = req.parameters.password;

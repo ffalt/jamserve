@@ -65,7 +65,7 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 			}
 		}
 		if (includes.albumTracks) {
-			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user, this.sortAlbumTracks);
+			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user, (a, b) => this.sortAlbumTracks(a, b));
 		}
 		return result;
 	}
@@ -117,7 +117,7 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 		albums.forEach(album => {
 			trackIDs = trackIDs.concat(album.trackIDs);
 		});
-		return {items: await this.trackController.prepareListByIDs(trackIDs, req.query, req.user, this.sortAlbumTracks)};
+		return {items: await this.trackController.prepareListByIDs(trackIDs, req.query, req.user, (a, b) => this.sortAlbumTracks(a, b))};
 	}
 
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {

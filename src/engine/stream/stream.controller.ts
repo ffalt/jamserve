@@ -4,6 +4,7 @@ import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
 import {AudioMimeTypes} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
+import Logger from '../../utils/logger';
 import {DBObject} from '../base/base.model';
 import {Episode} from '../episode/episode.model';
 import {NowPlayingService} from '../nowplaying/nowplaying.service';
@@ -11,6 +12,8 @@ import {Store} from '../store/store';
 import {Track} from '../track/track.model';
 import {User} from '../user/user.model';
 import {StreamService} from './stream.service';
+
+const log = Logger('StreamController');
 
 export class StreamController {
 
@@ -20,13 +23,13 @@ export class StreamController {
 
 	async streamTrack(track: Track, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
 		const result = await this.streamService.streamTrack(track, format, maxBitRate, user);
-		this.nowPlayingService.reportTrack(track, user); // do not wait
+		this.nowPlayingService.reportTrack(track, user).catch(e => log.error(e)); // do not wait
 		return result;
 	}
 
 	async streamEpisode(episode: Episode, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
 		const result = await this.streamService.streamEpisode(episode, format, maxBitRate, user);
-		this.nowPlayingService.reportEpisode(episode, user); // do not wait
+		this.nowPlayingService.reportEpisode(episode, user).catch(e => log.error(e)); // do not wait
 		return result;
 	}
 

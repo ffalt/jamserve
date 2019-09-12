@@ -249,9 +249,6 @@ function isFlac(track: Track): boolean {
 
 export class TrackRulesChecker {
 
-	constructor() {
-	}
-
 	async run(track: Track, parent: Folder, root: Root, checkMedia: boolean): Promise<Array<Jam.HealthHint>> {
 		const result: Array<Jam.HealthHint> = [];
 		const mediaCache: MediaCache = {};

@@ -8,7 +8,7 @@ import {ImageModuleTest} from '../../modules/image/image.module.spec';
 export function testService(opts: { mockData: boolean }, setup: (store: Store, testImageModule: ImageModuleTest, audioModule: AudioModule) => Promise<void>, tests: () => void, cleanup?: () => Promise<void>): void {
 	let imageModuleTest: ImageModuleTest;
 	let storeTest: StoreMock;
-	testDatabases(async (testDB) => {
+	testDatabases(async testDB => {
 		const store = new Store(testDB.database);
 		imageModuleTest = new ImageModuleTest();
 		await imageModuleTest.setup();

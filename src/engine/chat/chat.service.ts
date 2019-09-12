@@ -8,9 +8,6 @@ export class ChatService {
 	private duration: moment.Duration = moment.duration(0, 's');
 	private chatConfig: Jam.AdminSettingsChat = {maxMessages: 0, maxAge: {value: 0, unit: 's'}};
 
-	constructor() {
-	}
-
 	setSettings(chatConfig: Jam.AdminSettingsChat): void {
 		this.chatConfig = chatConfig;
 		this.duration = moment.duration(this.chatConfig.maxAge.value, this.chatConfig.maxAge.unit as moment.unitOfTime.Base);

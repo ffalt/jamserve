@@ -8,8 +8,8 @@ import {DBObjectType} from '../db.types';
 
 let globaltempid = Date.now();
 
-function regExpEscape(literal_string: string): string {
-	return literal_string.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
+function regExpEscape(literal: string): string {
+	return literal.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
 }
 
 export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
@@ -32,7 +32,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 	constructor(type: DBObjectType, client: Nedb) {
 		this.type = type;
 		this._type = DBObjectType[type];
-		this._index = 'jam_' + DBObjectType[type];
+		this._index = `jam_${DBObjectType[type]}`;
 		this.client = client;
 	}
 
@@ -95,6 +95,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				Object.keys(o).map((key: string): any => {
 					return {
 						$where(): boolean {
+							// tslint:disable-next-line:no-invalid-this
 							return this[key].startsWith(o[key]);
 						}
 					};
@@ -107,6 +108,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				Object.keys(o).map((key: string): any => {
 					return {
 						$where(): boolean {
+							// tslint:disable-next-line:no-invalid-this
 							return !!o[key].find(entry => this[key].startsWith(entry));
 						}
 					};

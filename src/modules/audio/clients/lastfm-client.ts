@@ -32,7 +32,7 @@ export class LastFMClient extends WebserviceClient {
 					const sub = walk(o[key], o);
 					if (sub !== undefined) {
 						if (key === '#text') {
-							result['url'] = sub;
+							result.url = sub;
 						} else if (key === '@attr') {
 							Object.keys(sub).forEach(subkey => {
 								result[subkey] = sub[subkey];
@@ -49,7 +49,7 @@ export class LastFMClient extends WebserviceClient {
 						} else if (key === 'streamable') {
 							result[key] = {
 								sample: sub['#text'],
-								fulltrack: sub['fulltrack']
+								fulltrack: sub.fulltrack
 							};
 							if (sub.tag) {
 								if (!Array.isArray(sub.tag)) {
@@ -94,15 +94,15 @@ export class LastFMClient extends WebserviceClient {
 
 	private async get(api: string, params: { [name: string]: string; }): Promise<LastFM.Result> {
 		log.info('requesting', api, JSON.stringify(params));
-		params['method'] = api;
-		const sorted_params: { [name: string]: string; } = {method: api};
+		params.method = api;
+		const sortedParams: { [name: string]: string; } = {method: api};
 		Object.keys(params).forEach(key => {
-			sorted_params[key] = params[key];
+			sortedParams[key] = params[key];
 		});
-		sorted_params['api_key'] = this.options.key;
-		sorted_params['format'] = 'json';
+		sortedParams.api_key = this.options.key;
+		sortedParams.format = 'json';
 		try {
-			const data = await this.getJson('https://ws.audioscrobbler.com/2.0/', sorted_params);
+			const data = await this.getJson('https://ws.audioscrobbler.com/2.0/', sortedParams);
 			return this.beautify(data) as LastFM.Result;
 		} catch (e) {
 			log.error(e);
