@@ -2,6 +2,8 @@ import fse from 'fs-extra';
 import path from 'path';
 import which from 'which';
 
+export const isWindows =  ['win32', 'cygwin', 'msys'].includes(process.platform);
+
 const cache: { [name: string]: string; } = {};
 
 async function whichAsync(name: string): Promise<string> {
@@ -17,7 +19,6 @@ async function whichAsync(name: string): Promise<string> {
 }
 
 async function localBin(name: string): Promise<string | undefined> {
-	const isWindows = ['win32', 'cygwin', 'msys'].includes(process.platform);
 	const s = path.join('.', 'bin', 'tools', name, process.platform, process.arch, name) + (isWindows ? '.exe' : '');
 	const exists = await fse.pathExists(s);
 	if (exists) {
