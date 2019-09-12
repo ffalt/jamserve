@@ -4,12 +4,12 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {WaveformGenerator} from '../../modules/audio/waveform/waveform.generator';
 import {ApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {Episode} from '../episode/episode.model';
 import {Track} from '../track/track.model';
 import WaveformFormatType = JamParameters.WaveformFormatType;
 
-const log = Logger('WaveformService');
+const log = logger('WaveformService');
 
 export class WaveformService {
 	private waveformCacheDebounce = new DebouncePromises<ApiBinaryResult>();
@@ -31,6 +31,7 @@ export class WaveformService {
 				return {json: await wf.json(filename)};
 			case 'dat':
 				return {buffer: {buffer: await wf.binary(filename), contentType: 'application/binary'}};
+			default:
 		}
 		return Promise.reject(Error('Invalid Format for Waveform generation'));
 	}

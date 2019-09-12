@@ -1,10 +1,10 @@
 import express from 'express';
 import ffmpeg from 'fluent-ffmpeg';
 import {AudioFormatType} from '../../../model/jam-types';
-import Logger from '../../../utils/logger';
+import {logger} from '../../../utils/logger';
 import {TranscoderStream} from './transcoder-stream';
 
-const log = Logger('audio.transcoder.live');
+const log = logger('audio.transcoder.live');
 
 export class LiveTranscoderStream extends TranscoderStream {
 	filename: string;

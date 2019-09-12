@@ -7,7 +7,7 @@ import {ApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {Feed} from '../../utils/feed';
 import {pathDeleteIfExists} from '../../utils/fs-utils';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {BaseListService} from '../base/dbobject-list.service';
 import {Episode} from '../episode/episode.model';
 import {EpisodeService} from '../episode/episode.service';
@@ -15,7 +15,7 @@ import {StateService} from '../state/state.service';
 import {Podcast} from './podcast.model';
 import {PodcastStore, SearchQueryPodcast} from './podcast.store';
 
-const log = Logger('PodcastService');
+const log = logger('PodcastService');
 
 export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast> {
 	private podcastRefreshDebounce = new DebouncePromises<void>();

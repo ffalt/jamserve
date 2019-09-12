@@ -1,5 +1,5 @@
 import path from 'path';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {Folder} from '../folder/folder.model';
 import {Store} from '../store/store';
 import {Track} from '../track/track.model';
@@ -7,7 +7,7 @@ import {MergeChanges} from './scan.changes';
 import {MatchDir} from './scan.match-dir';
 import {ScanDir} from './scan.scan-dir';
 
-const log = Logger('IO.Scan.Matcher');
+const log = logger('IO.Scan.Matcher');
 
 export class ScanMatcher {
 

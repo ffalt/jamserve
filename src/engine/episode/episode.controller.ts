@@ -4,7 +4,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {PodcastStatus} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {BaseListController} from '../base/dbobject-list.controller';
 import {DownloadService} from '../download/download.service';
 import {ImageService} from '../image/image.service';
@@ -17,7 +17,7 @@ import {Episode} from './episode.model';
 import {EpisodeService} from './episode.service';
 import {SearchQueryEpisode} from './episode.store';
 
-const log = Logger('EpisodeController');
+const log = logger('EpisodeController');
 
 export class EpisodeController extends BaseListController<JamParameters.Episode,
 	JamParameters.Episodes,

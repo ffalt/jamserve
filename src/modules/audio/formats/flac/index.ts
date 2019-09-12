@@ -147,8 +147,14 @@ export class Flac {
 		mdb.comments.forEach(line => {
 			const pos = line.indexOf('=');
 			const key = line.slice(0, pos).toUpperCase().replace(/ /g, '_');
+			let i = 1;
+			let suffix = '';
+			while (tag[key + suffix]) {
+				i++;
+				suffix = `|${i}`;
+			}
 			const val = line.slice(pos + 1);
-			tag[key] = val;
+			tag[key + suffix] = val;
 		});
 		return {vendor: mdb.vendor, tag};
 	}

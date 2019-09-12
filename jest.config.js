@@ -4,6 +4,6 @@ module.exports = {
 	coverageDirectory: 'coverage',
 	testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(test).[jt]s?(x)"],
 	globals: {
-		_testDatabases_: ['nedb', 'elastic']
+		_testDatabases_: ['nedb'] //, 'elastic']
 	}
 };

@@ -1,11 +1,11 @@
 import moment from 'moment';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {Album} from '../album/album.model';
 import {Artist} from '../artist/artist.model';
 import {Folder} from '../folder/folder.model';
 import {Track} from '../track/track.model';
 
-const log = Logger('IO.MergeChanges');
+const log = logger('IO.MergeChanges');
 
 export interface MergeChangesTrackInfo {
 	track: Track;

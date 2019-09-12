@@ -1,8 +1,8 @@
 import {WikiData} from '../../../model/wikidata-rest-data';
-import Logger from '../../../utils/logger';
+import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 
-const log = Logger('Wikipedia');
+const log = logger('Wikipedia');
 
 export declare namespace Wikipedia {
 

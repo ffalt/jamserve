@@ -6,7 +6,7 @@ import {DBElastic} from './db/elasticsearch/db-elastic';
 import {DBNedb} from './db/nedb/db-nedb';
 import {Engine} from './engine/engine';
 import {Store} from './engine/store/store';
-import Logger, {configureLogger} from './utils/logger';
+import {configureLogger, logger} from './utils/logger';
 import {JAMSERVE_VERSION} from './version';
 // import memwatch from 'node-memwatch';
 
@@ -20,6 +20,7 @@ program
 const config = loadConfig(program.config);
 
 configureLogger(config.log.level);
+const log = logger('JamServe');
 
 // memwatch.on('leak', (info) => {
 // 	console.log('leak', JSON.stringify(info, null, '\t'));
@@ -32,7 +33,6 @@ const db: Database =
 const store = new Store(db);
 const engine = new Engine(config, store, JAMSERVE_VERSION);
 const server = new Server(engine);
-const log = Logger('JamServe');
 
 async function run(): Promise<void> {
 	try {

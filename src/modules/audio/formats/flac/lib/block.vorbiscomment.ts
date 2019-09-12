@@ -20,16 +20,15 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 		try {
 			let pos = 0;
 			const vendorLen = buffer.readUInt32LE(pos);
-			const vendor = buffer.toString('utf8', pos + 4, pos + 4 + vendorLen);
-			this.vendor = vendor;
-			pos += 4 + vendorLen;
+			this.vendor = buffer.toString('utf8', pos + 4, pos + vendorLen + 4);
+			pos += vendorLen + 4;
 			let commentCount = buffer.readUInt32LE(pos);
 			pos += 4;
 			while (commentCount-- > 0) {
 				const commentLen = buffer.readUInt32LE(pos);
-				const comment = buffer.toString('utf8', pos + 4, pos + 4 + commentLen);
+				const comment = buffer.toString('utf8', pos + 4, pos + commentLen + 4);
 				this.comments.push(comment);
-				pos += 4 + commentLen;
+				pos += commentLen + 4;
 			}
 			this.hasData = true;
 		} catch (e) {
@@ -41,7 +40,7 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 	publish(): Buffer {
 		let pos = 0;
 		const size = this.getSize();
-		const buffer = Buffer.alloc(4 + size);
+		const buffer = Buffer.alloc(size + 4);
 
 		let header = size;
 		header |= (this.type << 24);
@@ -52,7 +51,7 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 		const vendorLen = Buffer.byteLength(this.vendor);
 		buffer.writeUInt32LE(vendorLen, pos);
 		buffer.write(this.vendor, pos + 4);
-		pos += 4 + vendorLen;
+		pos += vendorLen + 4;
 
 		const commentCount = this.comments.length;
 		buffer.writeUInt32LE(commentCount, pos);
@@ -63,38 +62,17 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 			const commentLen = Buffer.byteLength(comment);
 			buffer.writeUInt32LE(commentLen, pos);
 			buffer.write(comment, pos + 4);
-			pos += 4 + commentLen;
+			pos += commentLen + 4;
 		}
 
 		return buffer;
 	}
 
 	getSize(): number {
-		let size = 8 + Buffer.byteLength(this.vendor);
+		let size = Buffer.byteLength(this.vendor) + 8;
 		for (const c of this.comments) {
-			size += 4 + Buffer.byteLength(c);
+			size += Buffer.byteLength(c) + 4;
 		}
 		return size;
 	}
-
-	// toString(): string {
-	// 	let str = '[MetaDataBlockVorbisComment]';
-	// 	str += ' type: ' + this.type;
-	// 	str += ', isLast: ' + this.isLast;
-	// 	if (this.error) {
-	// 		str += '\n  ERROR: ' + this.error;
-	// 	}
-	// 	if (this.hasData) {
-	// 		str += '\n  vendor: ' + this.vendor;
-	// 		if (this.comments.length) {
-	// 			str += '\n  comments:';
-	// 			for (let i = 0; i < this.comments.length; i++) {
-	// 				str += '\n    ' + this.comments[i].split('=').join(': ');
-	// 			}
-	// 		} else {
-	// 			str += '\n  comments: none';
-	// 		}
-	// 	}
-	// 	return str;
-	// }
 }

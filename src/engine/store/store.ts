@@ -1,5 +1,5 @@
 import {Database} from '../../db/db.model';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {AlbumStore} from '../album/album.store';
 import {ArtistStore} from '../artist/artist.store';
 import {DBObject} from '../base/base.model';
@@ -18,7 +18,7 @@ import {StateStore} from '../state/state.store';
 import {TrackStore} from '../track/track.store';
 import {UserStore} from '../user/user.store';
 
-const log = Logger('Store');
+const log = logger('Store');
 
 export class Store {
 	public settingsStore: SettingsStore;

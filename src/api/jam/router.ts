@@ -14,7 +14,7 @@ import {formatUser} from '../../engine/user/user.format';
 import {User} from '../../engine/user/user.model';
 import {Jam} from '../../model/jam-rest-data';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {getMaxAge} from '../../utils/max-age';
 import {SessionJSONFileStore} from '../../utils/session-storage';
 import {JamApi} from './api';
@@ -31,7 +31,7 @@ const LoginLimiter = rateLimit({
 	message: 'Too many login requests from this IP, please try again after an hour'
 });
 
-const log = Logger('Jam.Api');
+const log = logger('Jam.Api');
 
 interface JWTPayload {
 	id: string;

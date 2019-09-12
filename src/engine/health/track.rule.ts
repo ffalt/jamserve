@@ -3,13 +3,13 @@ import {Jam} from '../../model/jam-rest-data';
 import {AlbumType, AlbumTypesArtistMusic, AudioFormatType, TrackHealthID} from '../../model/jam-types';
 import {ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
 import {flac_test} from '../../modules/audio/tools/flac';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {Folder} from '../folder/folder.model';
 import {Root} from '../root/root.model';
 import {Track} from '../track/track.model';
 import {RuleResult} from './rule.model';
 
-const log = Logger('TrackHealth');
+const log = logger('TrackHealth');
 
 interface MediaCache {
 	id3v2?: IID3V2.Tag;

@@ -17,7 +17,7 @@ export class MetaDataBlockStreamInfo extends MetaDataBlock {
 	}
 
 	remove(): void {
-		console.error('WARNING: Can\'t remove StreamInfo block!');
+		throw Error('Can\'t remove StreamInfo block!');
 	}
 
 	parse(buffer: Buffer): void {
@@ -30,8 +30,8 @@ export class MetaDataBlockStreamInfo extends MetaDataBlock {
 			const tmp = buffer.readUInt32BE(pos + 10);
 			this.sampleRate = tmp >>> 12;
 			this.channels = (tmp >>> 9) & 0x07;
-			this.bitsPerSample = (tmp >>> 4) & 0x1f;
-			this.samples = +((tmp & 0x0f) << 4) + buffer.readUInt32BE(pos + 14);
+			this.bitsPerSample = (tmp >>> 4) & 0x1F;
+			this.samples = +((tmp & 0x0F) << 4) + buffer.readUInt32BE(pos + 14);
 			this.checksum = Buffer.alloc(16);
 			buffer.copy(this.checksum, 0, 18, 34);
 			this.duration = this.samples / this.sampleRate;
@@ -41,26 +41,4 @@ export class MetaDataBlockStreamInfo extends MetaDataBlock {
 			this.hasData = false;
 		}
 	}
-
-	// toString(): string {
-	// 	let str = '[MetaDataBlockStreamInfo]';
-	// 	str += ' type: ' + this.type;
-	// 	str += ', isLast: ' + this.isLast;
-	// 	if (this.error) {
-	// 		str += '\n  ERROR: ' + this.error;
-	// 	}
-	// 	if (this.hasData) {
-	// 		str += '\n  minBlockSize: ' + this.minBlockSize;
-	// 		str += '\n  maxBlockSize: ' + this.maxBlockSize;
-	// 		str += '\n  minFrameSize: ' + this.minFrameSize;
-	// 		str += '\n  maxFrameSize: ' + this.maxFrameSize;
-	// 		str += '\n  samples: ' + this.samples;
-	// 		str += '\n  sampleRate: ' + this.sampleRate;
-	// 		str += '\n  channels: ' + (this.channels + 1);
-	// 		str += '\n  bitsPerSample: ' + (this.bitsPerSample + 1);
-	// 		str += '\n  duration: ' + this.duration;
-	// 		str += '\n  checksum: ' + (this.checksum ? this.checksum.toString('hex') : '<null>');
-	// 	}
-	// 	return str;
-	// }
 }

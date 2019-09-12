@@ -1,12 +1,12 @@
 import {DBObjectType} from '../../db/db.types';
 import {ImageModule} from '../../modules/image/image.module';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {updatePlayListTracks} from '../playlist/playlist.service';
 import {Store} from '../store/store';
 import {WaveformService} from '../waveform/waveform.service';
 import {MergeChanges} from './scan.changes';
 
-const log = Logger('IO.Clean');
+const log = logger('IO.Clean');
 
 export class ScanCleaner {
 

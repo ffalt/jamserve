@@ -7,9 +7,9 @@
 
 import Ffmpeg from 'fluent-ffmpeg';
 import {PassThrough, Readable, Transform, TransformCallback} from 'stream';
-import Logger from '../../../utils/logger';
+import {logger} from '../../../utils/logger';
 
-const log = Logger('waveform.stream');
+const log = logger('waveform.stream');
 
 export class WaveformStream extends Transform {
 	_buf = new PassThrough();
@@ -23,10 +23,10 @@ export class WaveformStream extends Transform {
 	_samples = 0;
 	_total = 0;
 
-	constructor(_at__samplesPerPixel?: number, _at__sampleRate?: number) {
+	constructor(atSamplesPerPixel?: number, atSampleRate?: number) {
 		super({writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024});
-		this._samplesPerPixel = _at__samplesPerPixel != null ? _at__samplesPerPixel : 256;
-		this._sampleRate = _at__sampleRate != null ? _at__sampleRate : 44100;
+		this._samplesPerPixel = atSamplesPerPixel != null ? atSamplesPerPixel : 256;
+		this._sampleRate = atSampleRate != null ? atSampleRate : 44100;
 		const options: Ffmpeg.FfmpegCommandOptions = {
 			source: this._buf as Readable
 		};
@@ -57,21 +57,23 @@ export class WaveformStream extends Transform {
 	}
 
 	start(): void {
-		let oddByte: number | null = null;
-		let i: number;
-		let value: number;
+		// TODO: oddByte is always null => commented out
+		// let oddByte: number | null = null;
+		// let i: number;
+		// let value: number;
 		let data: Buffer | undefined = this._out.read();
 		while (data && data.length > 0) {
-			i = 0;
-			if (oddByte !== null) {
-				value = ((data.readInt8(0) << 8) | oddByte);
-				oddByte = null;
-				i = 1;
-			} else {
-				value = data.readInt16LE(0);
-				i = 2;
-			}
-			this.readResults(value, i, data);
+			// i = 0;
+			// if (oddByte != null) {
+			// 	value = ((data.readInt8(0) << 8) | oddByte);
+			// 	oddByte = null;
+			// 	i = 1;
+			// } else {
+			// value = data.readInt16LE(0);
+			// i = 2;
+			// }
+			// this.readResults(value, i, data);
+			this.readResults(data.readInt16LE(0), 2, data);
 			data = this._out.read();
 		}
 	}

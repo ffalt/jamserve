@@ -8,12 +8,12 @@ import {DebouncePromises} from '../../utils/debounce-promises';
 import {downloadFile} from '../../utils/download';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {AvatarGen} from './image.avatar';
 
 type JimpFont = any;
 
-const log = Logger('Images');
+const log = logger('Images');
 
 /**
  * Handles image access/reading/writing/transforming

@@ -10,7 +10,7 @@ import {LastFM} from '../../model/lastfm-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {MusicbrainzClientApi} from '../../modules/audio/clients/musicbrainz-client.interface';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {shuffle} from '../../utils/random';
 import {Album} from '../album/album.model';
 import {AlbumStore} from '../album/album.store';
@@ -25,7 +25,7 @@ import {MetaData} from './metadata.model';
 import {MetaDataStore, SearchQueryMetaData} from './metadata.store';
 import {MetaDataType} from './metadata.types';
 
-const log = Logger('Metadata');
+const log = logger('Metadata');
 
 function stripInlineLastFM(content: string): string {
 	return (content || '').replace(/<a href=".*">Read more on Last\.fm<\/a>\.?/g, '')

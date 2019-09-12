@@ -4,11 +4,11 @@ import helmet from 'helmet';
 import * as http from 'http';
 import path from 'path';
 import {Engine} from '../engine/engine';
-import Logger from '../utils/logger';
+import {logger} from '../utils/logger';
 import {initJamRouter} from './jam/router';
 import {initSubsonicRouter} from './subsonic/router';
 
-const log = Logger('Server');
+const log = logger('Server');
 
 export interface EngineRequest extends express.Request {
 	engine: Engine;

@@ -7,7 +7,7 @@ import {ArtworkImageType, FolderType, FolderTypeImageName, RootScanStrategy, Tra
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
 import {containsFolderSystemChars, ensureTrailingPathSeparator, fileDeleteIfExists, fileExt, replaceFileSystemChars, replaceFolderSystemChars} from '../../utils/fs-utils';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {artWorkImageNameToType} from '../folder/folder.format';
 import {Artwork, Folder} from '../folder/folder.model';
 import {Root} from '../root/root.model';
@@ -25,7 +25,7 @@ import {DirScanner, ScanDir} from './scan.scan-dir';
 import {ScanStorer} from './scan.store';
 import {generateArtworkId} from './scan.utils';
 
-const log = Logger('IO.Service');
+const log = logger('IO.Service');
 
 export class ScanService {
 	private settings: Jam.AdminSettingsLibrary = {
@@ -212,7 +212,7 @@ export class ScanService {
 		};
 		result.id = await this.store.folderStore.add(result);
 		newParent.tag.folderCount += newParent.tag.folderCount;
-		this.store.folderStore.replace(newParent);
+		await this.store.folderStore.replace(newParent);
 		// TODO: add to change log
 		return this.finish(changes, rootID, false);
 	}

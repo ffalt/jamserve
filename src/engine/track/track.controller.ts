@@ -77,7 +77,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 	}
 
 	defaultSort(tracks: Array<Track>): Array<Track> {
-		return tracks.sort(this.defaultCompare);
+		return tracks.sort((a, b) => this.defaultCompare(a, b));
 	}
 
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
@@ -207,7 +207,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 
 	async health(req: JamRequest<JamParameters.TrackHealth>): Promise<Array<Jam.TrackHealth>> {
 		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		list.items = list.items.sort(this.defaultCompare);
+		list.items = list.items.sort((a, b) => this.defaultCompare(a, b));
 		const result: Array<Jam.TrackHealth> = [];
 		const roots: Array<Root> = [];
 		const folders: Array<Folder> = [];

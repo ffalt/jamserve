@@ -2,13 +2,13 @@
 import {Jam} from '../../model/jam-rest-data';
 import {ArtworkImageType, TrackHealthID} from '../../model/jam-types';
 import {Subsonic} from '../../model/subsonic-rest-data';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {RootStatus} from '../root/root.model';
 import {RootStore} from '../root/root.store';
 import {logChanges, MergeChanges} from '../scan/scan.changes';
 import {ScanService} from '../scan/scan.service';
 
-const log = Logger('IO');
+const log = logger('IO');
 
 export enum ScanRequestMode {
 	refreshRoot,

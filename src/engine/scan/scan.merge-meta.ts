@@ -1,6 +1,6 @@
 import {DBObjectType} from '../../db/db.types';
 import {AlbumType, cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {Album} from '../album/album.model';
 import {Artist} from '../artist/artist.model';
 import {Folder} from '../folder/folder.model';
@@ -10,7 +10,7 @@ import {MergeChanges} from './scan.changes';
 import {MetaStatBuilder} from './scan.metastats';
 import {extractAlbumName, slugify} from './scan.utils';
 
-const log = Logger('IO.MetaMerge');
+const log = logger('IO.MetaMerge');
 
 export interface MetaMergeTrackInfo {
 	track: Track;

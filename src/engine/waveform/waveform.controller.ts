@@ -39,12 +39,13 @@ export class WaveformController {
 		if (!obj) {
 			return Promise.reject(NotFoundError());
 		}
-		const format = (req.query.format || WaveformDefaultFormat) as WaveformFormatType;
+		const format = (req.query.format || WaveformDefaultFormat);
 		switch (obj.type) {
 			case DBObjectType.track:
 				return this.waveformService.getTrackWaveform(obj as Track, format);
 			case DBObjectType.episode:
 				return this.waveformService.getEpisodeWaveform(obj as Episode, format);
+			default:
 		}
 		return Promise.reject(Error('Invalid Object Type for Waveform generation'));
 	}

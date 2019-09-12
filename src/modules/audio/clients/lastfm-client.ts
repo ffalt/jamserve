@@ -1,9 +1,9 @@
 import {LastFM} from '../../../model/lastfm-rest-data';
-import Logger from '../../../utils/logger';
+import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 import {LastFMClientApi} from './lastfm-client.interface';
 
-const log = Logger('LastFM');
+const log = logger('LastFM');
 
 export class LastFMClient extends WebserviceClient {
 	options: LastFMClientApi.LastFMClientApiOptions;

@@ -20,6 +20,7 @@ export function packNowPlaying(entry: NowPlaying): Jam.NowPlaying {
 			const episode = entry.obj as Episode;
 			playing.track = formatEpisode(episode, {}, episode.status);
 			break;
+		default:
 	}
 	return playing;
 }

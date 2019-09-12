@@ -4,7 +4,7 @@ import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
 import {AudioMimeTypes} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {DBObject} from '../base/base.model';
 import {Episode} from '../episode/episode.model';
 import {NowPlayingService} from '../nowplaying/nowplaying.service';
@@ -13,7 +13,7 @@ import {Track} from '../track/track.model';
 import {User} from '../user/user.model';
 import {StreamService} from './stream.service';
 
-const log = Logger('StreamController');
+const log = logger('StreamController');
 
 export class StreamController {
 
@@ -39,7 +39,7 @@ export class StreamController {
 				return this.streamTrack(o as Track, format, maxBitRate, user);
 			case DBObjectType.episode:
 				return this.streamEpisode(o as Episode, format, maxBitRate, user);
-
+			default:
 		}
 		return Promise.reject(Error('Invalid Object Type for Streaming'));
 	}

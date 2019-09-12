@@ -17,12 +17,12 @@ import {FolderType, FolderTypesAlbum, LastFMLookupType, PodcastStatus} from '../
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {SubsonicParameters} from '../../model/subsonic-rest-params';
 import {ApiBinaryResult} from '../../typings';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {paginate} from '../../utils/paginate';
 import {randomItems} from '../../utils/random';
 import {FORMAT} from './format';
 
-const log = Logger('SubsonicApi');
+const log = logger('SubsonicApi');
 
 /*
 	http://www.subsonic.org/pages/api.jsp

@@ -18,7 +18,7 @@ declare module '*.json' {
 }
 
 export interface StreamData {
-	pipe: (stream: express.Response) => void;
+	pipe(stream: express.Response): void;
 }
 
 export interface ApiBinaryResult {

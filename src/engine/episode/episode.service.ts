@@ -6,13 +6,13 @@ import {DebouncePromises} from '../../utils/debounce-promises';
 import {downloadFile} from '../../utils/download';
 import {SupportedAudioFormat} from '../../utils/filetype';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {BaseListService} from '../base/dbobject-list.service';
 import {StateService} from '../state/state.service';
 import {Episode} from './episode.model';
 import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 
-const log = Logger('EpisodeService');
+const log = logger('EpisodeService');
 
 export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode> {
 	private episodeDownloadDebounce = new DebouncePromises<void>();

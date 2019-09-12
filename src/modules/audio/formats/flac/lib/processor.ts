@@ -162,6 +162,7 @@ export class FlacProcessorStream extends Transform {
 						isChunkProcessed = true;
 					}
 					break;
+				default:
 				case STATE_PASS_THROUGH:
 					safePush(chunkLen - chunkPos, false);
 					isChunkProcessed = true;
@@ -174,7 +175,7 @@ export class FlacProcessorStream extends Transform {
 		callback();
 	}
 
-	_validateMarker(slice: Buffer, isDone: boolean): boolean {
+	_validateMarker(slice: Buffer): boolean {
 		this.isFlac = (slice.toString('utf8', 0) === 'fLaC');
 		if (!this.isFlac) {
 			this.hasID3 = slice.slice(0, 3).toString('utf8', 0) === 'ID3';
@@ -190,9 +191,9 @@ export class FlacProcessorStream extends Transform {
 	_validateMDBHeader(slice: Buffer, isDone: boolean): boolean {
 		// Parse MDB header
 		let header = slice.readUInt32BE(0);
-		const type = (header >>> 24) & 0x7f;
+		const type = (header >>> 24) & 0x7F;
 		this.mdbLast = (((header >>> 24) & 0x80) !== 0);
-		this.mdbLen = header & 0xffffff;
+		this.mdbLen = header & 0xFFFFFF;
 
 		// Create appropriate MDB object
 		// (data is injected later in _validateMDB, if parseMetaDataBlocks option is set to true)
@@ -229,7 +230,7 @@ export class FlacProcessorStream extends Transform {
 				if (this.mdb.isLast) {
 					header |= 0x80000000;
 				} else {
-					header &= 0x7fffffff;
+					header &= 0x7FFFFFFF;
 				}
 				slice.writeUInt32BE(header >>> 0, 0);
 			}

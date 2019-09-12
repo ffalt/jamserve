@@ -1,10 +1,10 @@
 import {MusicBrainz} from '../../../model/musicbrainz-rest-data';
-import Logger from '../../../utils/logger';
+import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 import {MusicbrainzClientApi} from './musicbrainz-client.interface';
 import {LookupBrowseTypes, LookupIncludes} from './musicbrainz-client.types';
 
-const log = Logger('Musicbrainz');
+const log = logger('Musicbrainz');
 
 export class MusicbrainzClient extends WebserviceClient {
 	options = {

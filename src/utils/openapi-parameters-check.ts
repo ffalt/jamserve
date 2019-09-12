@@ -1,9 +1,9 @@
 import express from 'express';
 import {OpenAPIObject, OperationObject, ParameterObject, RequestBodyObject, SchemaObject} from '../model/openapi-spec';
-import Logger from './logger';
+import {logger} from './logger';
 import {jsonValidator, JSONValidator, validateJSON} from './validate-json';
 
-const log = Logger('CheckApiParameters');
+const log = logger('CheckApiParameters');
 
 function validOAParameterValueBySchema(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | null {
 	if (value === undefined || value === null) {

@@ -4,7 +4,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {artWorkImageNameToType} from '../folder/folder.format';
 import {Artwork, Folder, FolderTag} from '../folder/folder.model';
 import {Store} from '../store/store';
@@ -12,10 +12,10 @@ import {Track, TrackTag} from '../track/track.model';
 import {getImageInfo} from './scan.artwork';
 import {MergeChanges} from './scan.changes';
 import {MatchDir, MatchFile} from './scan.match-dir';
-import {buildMetaStat} from './scan.metastats';
+import {buildMetaStat, MetaStat} from './scan.metastats';
 import {folderHasChanged, generateArtworkId, splitDirectoryName, trackHasChanged} from './scan.utils';
 
-const log = Logger('IO.Merge');
+const log = logger('IO.Merge');
 
 export class ScanMerger {
 
@@ -140,7 +140,7 @@ export class ScanMerger {
 			type: FolderType.unknown,
 			album: metaStat.album,
 			albumType: metaStat.albumType,
-			albumTrackCount: metaStat.albumTrackCount,
+			albumTrackCount: (metaStat.subFolderTrackCount || 0) + metaStat.trackCount,
 			artist: metaStat.artist,
 			artistSort: metaStat.artistSort,
 			title: nameSplit.title,
@@ -200,6 +200,7 @@ export class ScanMerger {
 				tag.album = undefined;
 				tag.year = undefined;
 				break;
+			default:
 		}
 	}
 
@@ -235,46 +236,7 @@ export class ScanMerger {
 		if (!dir.tag || !dir.metaStat) {
 			return;
 		}
-		const metaStat = dir.metaStat;
-		const name = path.basename(dir.name).toLowerCase();
-		let result: FolderType = FolderType.unknown;
-		if (dir.level === 0) {
-			result = FolderType.collection;
-		} else if (name.match(/\[(extra|various)]/) || name.match(/^(extra|various)$/)) {
-			// TODO: generalise extra folder detection
-			result = FolderType.extras;
-		} else if (metaStat.trackCount > 0) {
-			const dirCount = dir.directories.filter(d => !!d.tag && d.tag.type !== FolderType.extras).length;
-			result = (dirCount === 0) ? FolderType.album : FolderType.multialbum;
-		} else if (dir.directories.length > 0) {
-			if (metaStat.hasMultipleAlbums) {
-				if (metaStat.hasMultipleArtists) {
-					result = FolderType.collection;
-				} else if (this.strategy === RootScanStrategy.compilation) {
-					result = FolderType.collection;
-				} else {
-					result = FolderType.artist;
-				}
-			} else if (dir.directories.length === 1) {
-				result = (this.strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
-			} else if (!metaStat.hasMultipleArtists && dir.directories.filter(d => d.tag && d.tag.type === FolderType.artist).length > 0) {
-				result = FolderType.artist;
-			} else {
-				result = FolderType.multialbum;
-			}
-		} else if (dir.directories.length === 0 && dir.files.filter(f => f.type === FileTyp.AUDIO).length === 0) {
-			result = FolderType.extras;
-		} else {
-			result = FolderType.album;
-		}
-		if (result === FolderType.multialbum) {
-			const a = dir.directories.find(d => {
-				return (!!d.tag && d.tag.type === FolderType.artist);
-			});
-			if (a) {
-				result = FolderType.collection;
-			}
-		}
+		const result = this.findFolderType(dir, dir.metaStat);
 		this.setTagType(dir.tag, result);
 		if (result === FolderType.multialbum) {
 			this.markMultiAlbumChilds(dir);
@@ -283,6 +245,45 @@ export class ScanMerger {
 				this.markArtistChilds(sub);
 			}
 		}
+	}
+
+	private findMultiAlbumFolderType(dir: MatchDir, metaStat: MetaStat): FolderType {
+		let result: FolderType = FolderType.multialbum;
+		const a = dir.directories.find(d => {
+			return (!!d.tag && d.tag.type === FolderType.artist);
+		});
+		if (a) {
+			result = FolderType.collection;
+		}
+		return result;
+	}
+
+	private findFolderType(dir: MatchDir, metaStat: MetaStat): FolderType {
+		const name = path.basename(dir.name).toLowerCase();
+		if (dir.level === 0) {
+			return FolderType.collection;
+		}
+		if (name.match(/\[(extra|various)]/) || name.match(/^(extra|various)$/)) {
+			// TODO: generalise extra folder detection
+			return FolderType.extras;
+		}
+		if (metaStat.trackCount > 0) {
+			const dirCount = dir.directories.filter(d => !!d.tag && d.tag.type !== FolderType.extras).length;
+			return (dirCount === 0) ? FolderType.album : this.findMultiAlbumFolderType(dir, metaStat);
+		}
+		if (dir.directories.length > 0) {
+			if (metaStat.hasMultipleAlbums) {
+				return (metaStat.hasMultipleArtists || this.strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
+			}
+			if (dir.directories.length === 1) {
+				return (this.strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
+			}
+			if (!metaStat.hasMultipleArtists && dir.directories.filter(d => d.tag && d.tag.type === FolderType.artist).length > 0) {
+				return FolderType.artist;
+			}
+			return this.findMultiAlbumFolderType(dir, metaStat);
+		}
+		return (dir.directories.length === 0 && dir.files.filter(f => f.type === FileTyp.AUDIO).length === 0) ? FolderType.extras : FolderType.album;
 	}
 
 	private async buildMergeTags(dir: MatchDir, rebuildTag: (dir: MatchDir) => boolean): Promise<void> {

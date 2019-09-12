@@ -3,10 +3,10 @@ import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs';
 import tmp from 'tmp';
 import {AudioFormatType} from '../../../model/jam-types';
-import Logger from '../../../utils/logger';
+import {logger} from '../../../utils/logger';
 import {TranscoderStream} from './transcoder-stream';
 
-const log = Logger('audio.transcoder.pre');
+const log = logger('audio.transcoder.pre');
 
 export class PreTranscoderStream extends TranscoderStream {
 	filename: string;

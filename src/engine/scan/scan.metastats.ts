@@ -27,8 +27,8 @@ export interface MetaStat {
 	year?: number;
 	hasMultipleArtists: boolean;
 	hasMultipleAlbums: boolean;
-	albumTrackCount?: number;
 	trackCount: number;
+	subFolderTrackCount?: number;
 	albumType: AlbumType;
 }
 
@@ -138,11 +138,68 @@ export class MetaStatBuilder {
 
 }
 
-export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary, strategy: RootScanStrategy): MetaStat {
+const typeByGenreNames: { [name: string]: AlbumType } = {
+	audiobook: AlbumType.audiobook,
+	'audio theater': AlbumType.audiodrama,
+	soundtrack: AlbumType.soundtrack
+};
+
+function getGenreAlbumType(genre: string): AlbumType {
+	return typeByGenreNames[genre.toLowerCase()] || AlbumType.unknown;
+}
+
+function getMusicbrainzAlbumType(mbAlbumType: string): AlbumType {
+	const t = mbAlbumType.toLowerCase();
+	if (t.includes('audiobook') || t.includes('spokenword')) {
+		return AlbumType.audiobook;
+	}
+	if (t.includes('bootleg')) {
+		return AlbumType.bootleg;
+	}
+	if (t.includes('compilation')) {
+		return AlbumType.compilation;
+	}
+	if (t.includes('live')) {
+		return AlbumType.live;
+	}
+	if (t.includes('soundtrack')) {
+		return AlbumType.soundtrack;
+	}
+	if (t.includes('audiodrama') || t.includes('audio drama')) {
+		return AlbumType.audiodrama;
+	}
+	if (t.includes('ep')) {
+		return AlbumType.ep;
+	}
+	if (t.includes('single')) {
+		return AlbumType.single;
+	}
+	if (t.includes('album')) {
+		return AlbumType.album;
+	}
+	return AlbumType.unknown;
+}
+
+function getStrategyAlbumType(strategy: RootScanStrategy, hasMultipleArtists: boolean): AlbumType {
+	switch (strategy) {
+		case RootScanStrategy.auto:
+			if (hasMultipleArtists) {
+				return AlbumType.compilation;
+			}
+			return AlbumType.album;
+		case RootScanStrategy.artistalbum:
+			return AlbumType.album;
+		case RootScanStrategy.compilation:
+			return AlbumType.compilation;
+		case RootScanStrategy.audiobook:
+			return AlbumType.audiobook;
+		default:
+			return AlbumType.unknown;
+	}
+}
+
+function buildTrackSlugs(dir: MatchDir, builder: MetaStatBuilder): number {
 	let trackCount = 0;
-
-	const builder = new MetaStatBuilder();
-
 	for (const file of dir.files) {
 		if (file.type === FileTyp.AUDIO) {
 			trackCount++;
@@ -161,11 +218,11 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 			}
 		}
 	}
-	let albumTrackCount = 0;
-	const albumTrackCounts = builder.asNumberList('albumTrackCount');
-	for (const atcount of albumTrackCounts) {
-		albumTrackCount += atcount.val;
-	}
+	return trackCount;
+}
+
+function buildSubfolderSlugs(dir: MatchDir, builder: MetaStatBuilder): number {
+	let subfolderTrackCount = 0;
 	for (const sub of dir.directories) {
 		if (sub.folder && sub.tag && (sub.tag.type !== FolderType.extras)) {
 			const subtag = sub.tag;
@@ -179,11 +236,17 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 			builder.statID('mbAlbumID', subtag.mbAlbumID);
 			builder.statID('mbReleaseGroupID', subtag.mbReleaseGroupID);
 			if (subtag.albumTrackCount !== undefined) {
-				albumTrackCount += subtag.albumTrackCount;
+				subfolderTrackCount += subtag.albumTrackCount;
 			}
 		}
 	}
+	return subfolderTrackCount;
+}
 
+export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary, strategy: RootScanStrategy): MetaStat {
+	const builder = new MetaStatBuilder();
+	const trackCount = buildTrackSlugs(dir, builder);
+	const subfolderTrackCount = buildSubfolderSlugs(dir, builder);
 	// heuristically most used values
 	const artist = builder.mostUsed('artist', MUSICBRAINZ_VARIOUS_ARTISTS_NAME);
 	let artistSort = builder.mostUsed('artistSort');
@@ -196,54 +259,15 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 		artistSort = undefined;
 	}
 	let albumType = AlbumType.unknown;
-	if (mbAlbumType) {
-		const t = mbAlbumType.toLowerCase();
-		if (t.includes('audiobook') || t.includes('spokenword')) {
-			albumType = AlbumType.audiobook;
-		} else if (t.includes('bootleg')) {
-			albumType = AlbumType.bootleg;
-		} else if (t.includes('compilation')) {
-			albumType = AlbumType.compilation;
-		} else if (t.includes('live')) {
-			albumType = AlbumType.live;
-		} else if (t.includes('soundtrack')) {
-			albumType = AlbumType.soundtrack;
-		} else if (t.includes('audiodrama') || t.includes('audio drama')) {
-			albumType = AlbumType.audiodrama;
-		} else if (t.includes('ep')) {
-			albumType = AlbumType.ep;
-		} else if (t.includes('single')) {
-			albumType = AlbumType.single;
-		} else if (t.includes('album')) {
-			albumType = AlbumType.album;
-		}
-	}
 	if (genre) {
-		const g = genre.toLowerCase();
-		if (g === 'audiobook') {
-			albumType = AlbumType.audiobook;
-		} else if (g === 'audio theater') {
-			albumType = AlbumType.audiodrama;
-		} else if (g === 'soundtrack') {
-			albumType = AlbumType.soundtrack;
-		}
+		albumType = getGenreAlbumType(genre);
+	}
+	if (mbAlbumType && albumType === AlbumType.unknown) {
+		albumType = getMusicbrainzAlbumType(mbAlbumType);
 	}
 	if (albumType === AlbumType.unknown) {
-		if (strategy === RootScanStrategy.audiobook) {
-			albumType = AlbumType.audiobook;
-		} else if (strategy === RootScanStrategy.compilation) {
-			albumType = AlbumType.compilation;
-		} else if (strategy === RootScanStrategy.artistalbum) {
-			albumType = AlbumType.album;
-		} else {
-			if (hasMultipleArtists) {
-				albumType = AlbumType.compilation;
-			} else {
-				albumType = AlbumType.album;
-			}
-		}
+		albumType = getStrategyAlbumType(strategy, hasMultipleArtists);
 	}
-
 	return {
 		trackCount,
 		albumType,
@@ -258,6 +282,6 @@ export function buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary,
 		mbAlbumType,
 		mbArtistID: builder.mostUsed('mbArtistID', ''),
 		year: builder.mostUsedNumber('year'),
-		albumTrackCount: albumTrackCount > 0 ? albumTrackCount : undefined
+		subFolderTrackCount: subfolderTrackCount > 0 ? subfolderTrackCount : undefined
 	};
 }

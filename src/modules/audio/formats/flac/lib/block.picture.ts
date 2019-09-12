@@ -38,11 +38,11 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 
 			const mimeTypeLength = buffer.readUInt32BE(pos);
 			this.mimeType = buffer.toString('utf8', pos + 4, pos + 4 + mimeTypeLength);
-			pos += 4 + mimeTypeLength;
+			pos += mimeTypeLength + 4;
 
 			const descriptionLength = buffer.readUInt32BE(pos);
 			this.description = buffer.toString('utf8', pos + 4, pos + 4 + descriptionLength);
-			pos += 4 + descriptionLength;
+			pos += descriptionLength + 4;
 
 			this.width = buffer.readUInt32BE(pos);
 			this.height = buffer.readUInt32BE(pos + 4);
@@ -65,7 +65,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 	publish(): Buffer {
 		let pos = 0;
 		const size = this.getSize();
-		const buffer = Buffer.alloc(4 + size);
+		const buffer = Buffer.alloc(size + 4);
 
 		if (this.pictureData) {
 			let header = size;
@@ -80,12 +80,12 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 			const mimeTypeLen = Buffer.byteLength(this.mimeType);
 			buffer.writeUInt32BE(mimeTypeLen, pos);
 			buffer.write(this.mimeType, pos + 4);
-			pos += 4 + mimeTypeLen;
+			pos += mimeTypeLen + 4;
 
 			const descriptionLen = Buffer.byteLength(this.description);
 			buffer.writeUInt32BE(descriptionLen, pos);
 			buffer.write(this.description, pos + 4);
-			pos += 4 + descriptionLen;
+			pos += descriptionLen + 4;
 
 			buffer.writeUInt32BE(this.width, pos);
 			buffer.writeUInt32BE(this.height, pos + 4);
@@ -100,11 +100,9 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 	}
 
 	getSize(): number {
-		let size = 4;
-		size += 4 + Buffer.byteLength(this.mimeType);
-		size += 4 + Buffer.byteLength(this.description);
-		size += 16;
-		size += 4 + (this.pictureData ? this.pictureData.length : 0);
-		return size;
+		return Buffer.byteLength(this.mimeType) + 4 +
+			Buffer.byteLength(this.description) + 4 +
+			+16
+			+ (this.pictureData ? this.pictureData.length : 0) + 4;
 	}
 }

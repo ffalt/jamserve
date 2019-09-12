@@ -16,5 +16,6 @@ export class MetaDataBlock {
 	}
 
 	parse(buffer: Buffer): void {
+		// nope
 	}
 }

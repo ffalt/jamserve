@@ -7,7 +7,7 @@ import {RootScanStrategy} from '../model/jam-types';
 import {AudioModule} from '../modules/audio/audio.module';
 import {ImageModule} from '../modules/image/image.module';
 import {pathDeleteIfExists} from '../utils/fs-utils';
-import Logger from '../utils/logger';
+import {logger} from '../utils/logger';
 import {randomString} from '../utils/random';
 import {hashSaltPassword} from '../utils/salthash';
 import {AlbumService} from './album/album.service';
@@ -40,7 +40,7 @@ import {User} from './user/user.model';
 import {UserService} from './user/user.service';
 import {WaveformService} from './waveform/waveform.service';
 
-const log = Logger('Engine');
+const log = logger('Engine');
 
 export class Engine {
 	public ioService: IoService;

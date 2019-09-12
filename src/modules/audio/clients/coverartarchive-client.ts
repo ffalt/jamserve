@@ -1,8 +1,8 @@
 import {CoverArtArchive} from '../../../model/coverartarchive-rest-data';
-import Logger from '../../../utils/logger';
+import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 
-const log = Logger('CoverArtArchive');
+const log = logger('CoverArtArchive');
 
 declare namespace CoverArtArchiveClientApi {
 

@@ -101,8 +101,12 @@ describe('ScanService', () => {
 				await validate(mockRoot, store);
 			});
 			afterEach(async () => {
-				await removeMockRoot(mockRoot);
-				dir.removeCallback();
+				try {
+					await removeMockRoot(mockRoot);
+					dir.removeCallback();
+				} catch (e) {
+					console.error(e);
+				}
 				await store.reset();
 				await store.check();
 			});
@@ -590,8 +594,8 @@ describe('ScanService', () => {
 				expect(changes.removedArtists.length).toBe(0); // Removed Artists count doesnt match');
 				expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
 				expect(changes.updateArtists.length).toBe(2); // Update Artist count doesnt match');
-				// 3 the source, the dest & artist
-				expect(changes.updateFolders.length).toBe(3); // Update Folder count doesnt match');
+				// 4 = the source, the dest & artist & new artist
+				expect(changes.updateFolders.length).toBe(4); // Update Folder count doesnt match');
 				expect(changes.updateTracks.length).toBe(trackIDs.length); // Update Track count doesnt match');
 				expect(changes.newAlbums.length).toBe(1); // New Album count doesnt match');
 				expect(changes.removedAlbums.length).toBe(1); // Removed Album count doesnt match');
@@ -606,7 +610,7 @@ describe('ScanService', () => {
 				expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
 				expect(changes.updateArtists.length).toBe(2); // Update Artist count doesnt match');
 				// 3 the source, the dest & artist
-				expect(changes.updateFolders.length).toBe(3); // Update Folder count doesnt match');
+				expect(changes.updateFolders.length).toBe(4); // Update Folder count doesnt match');
 				expect(changes.updateTracks.length).toBe(trackIDs.length); // Update Track count doesnt match');
 				expect(changes.newAlbums.length).toBe(1); // New Album count doesnt match');
 				expect(changes.removedAlbums.length).toBe(1); // Removed Album count doesnt match');

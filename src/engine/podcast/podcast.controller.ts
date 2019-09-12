@@ -3,7 +3,7 @@ import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {PodcastStatus} from '../../model/jam-types';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {BaseListController} from '../base/dbobject-list.controller';
 import {ListResult} from '../base/list-result';
 import {DownloadService} from '../download/download.service';
@@ -17,7 +17,7 @@ import {Podcast} from './podcast.model';
 import {PodcastService} from './podcast.service';
 import {SearchQueryPodcast} from './podcast.store';
 
-const log = Logger('PodcastController');
+const log = logger('PodcastController');
 
 export class PodcastController extends BaseListController<JamParameters.Podcast,
 	JamParameters.Podcasts,

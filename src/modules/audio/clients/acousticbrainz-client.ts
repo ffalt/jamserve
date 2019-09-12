@@ -1,8 +1,8 @@
 import {AcousticBrainz} from '../../../model/acousticbrainz-rest-data';
-import Logger from '../../../utils/logger';
+import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 
-const log = Logger('AcousticBrainz');
+const log = logger('AcousticBrainz');
 
 declare namespace AcousticbrainzClientApi {
 

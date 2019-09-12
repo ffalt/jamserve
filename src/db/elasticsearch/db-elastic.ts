@@ -1,6 +1,6 @@
 import elasticsearch from 'elasticsearch';
 import {DBObject} from '../../engine/base/base.model';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {wait} from '../../utils/wait';
 import {Database} from '../db.model';
 import {DBObjectType} from '../db.types';
@@ -9,7 +9,7 @@ import {mapping} from './db-elastic.mapping';
 import {DbElasticSequence} from './db-elastic.sequence';
 import {ElasticsearchConfig} from './db-elastic.types';
 
-const log = Logger('DB.elastic');
+const log = logger('DB.elastic');
 
 export class DBElastic implements Database {
 	client: elasticsearch.Client;

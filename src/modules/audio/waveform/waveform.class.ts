@@ -60,7 +60,7 @@ export class Waveform {
 
 	asBinary(): Buffer {
 		// https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md
-		const result = Buffer.alloc(20 + (this._samples.length * 2));
+		const result = Buffer.alloc((this._samples.length * 2) + 20);
 		result.writeInt32LE(1, 0); // version
 		result.writeUInt32LE(0, 4); // flags 0 (lsb) 	0: 16-bit resolution, 1: 8-bit resolution 1-31 	Unused
 		result.writeInt32LE(this.opts.sampleRate, 8); // Sample rate

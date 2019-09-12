@@ -17,7 +17,7 @@ export function configureLogger(level: string): void {
 	});
 }
 
-class Logger {
+export class Logger {
 	private readonly name: string;
 
 	constructor(name: string) {
@@ -46,8 +46,6 @@ class Logger {
 
 }
 
-function logger(name: string): Logger {
+export function logger(name: string): Logger {
 	return new Logger(name);
 }
-
-export default logger;

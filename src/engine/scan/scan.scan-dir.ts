@@ -3,9 +3,9 @@ import path from 'path';
 import {FileTyp} from '../../model/jam-types';
 import {getFileType} from '../../utils/filetype';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 
-const log = Logger('IO.DirScanner');
+const log = logger('IO.DirScanner');
 
 export interface ScanDir {
 	name: string;

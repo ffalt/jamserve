@@ -1,8 +1,8 @@
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {Store} from '../store/store';
 import {MergeChanges} from './scan.changes';
 
-const log = Logger('IO.ScanStore');
+const log = logger('IO.ScanStore');
 
 export class ScanStorer {
 	constructor(private store: Store) {

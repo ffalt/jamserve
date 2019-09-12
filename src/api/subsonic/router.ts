@@ -1,7 +1,7 @@
 import express from 'express';
 import {Engine} from '../../engine/engine';
 import {User} from '../../engine/user/user.model';
-import Logger from '../../utils/logger';
+import {logger} from '../../utils/logger';
 import {UnauthError} from '../jam/error';
 import {SubsonicApi} from './api';
 import {apiCheck} from './check';
@@ -10,7 +10,7 @@ import {SubsonicParameterMiddleWare} from './parameters';
 import {ApiResponder} from './response';
 import {Register, registerApi, RegisterCallback, SubSonicRole} from './routes';
 
-const log = Logger('Subsonic.Api');
+const log = logger('Subsonic.Api');
 
 async function checkRoles(user?: User, roles?: Array<SubSonicRole>): Promise<void> {
 	if (!user) {

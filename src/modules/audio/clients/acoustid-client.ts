@@ -1,9 +1,9 @@
 import {Acoustid} from '../../../model/acoustid-rest-data';
-import Logger from '../../../utils/logger';
+import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 import {fpcalc, FPCalcOptions, FPCalcResult} from '../tools/fpcalc';
 
-const log = Logger('Acoustid');
+const log = logger('Acoustid');
 
 // const ALL_META_DEFAULT = 'recordings recordingids releases releaseids releasegroups releasegroupids tracks compress usermeta sources';
 
