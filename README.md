@@ -6,7 +6,7 @@ An audio library server written in Typescript for NodeJS
 
 This is my current pet project to manage/stream/edit my own music collection. It's not ready yet a.k.a. work in progress. Everything is subject to change. Please do not use it for other than testing purposes until further notice.
 
-It's heavily inspired by the now closed source Java Server [Subsonic](http://www.subsonic.org/pages/index.jsp) (it even has an Subsonic compatible API, so compatible streaming apps can be used).
+It's heavily inspired by the now closed source Java Server [Subsonic](http://www.subsonic.org/pages/index.jsp) (it even has a Subsonic compatible API, so compatible streaming apps can be used).
 
 This is the backend development repository. Web-Client, Installation & Usage Scripts (e.g. with Docker) will be published soon® in different repositories.
 
