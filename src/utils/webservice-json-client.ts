@@ -33,14 +33,18 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 			retryDelay: 3000,
 			retryCount: 3
 		};
-		this.options =  {...defaultOptions, ...options};
+		this.options = {...defaultOptions, ...options};
+	}
+
+	protected reqToHost(req: T): string {
+		return `${this.options.host}${this.options.port !== 80 ? `:${this.options.port}` : ''}`;
 	}
 
 	protected reqToUrl(req: T): string {
 		const q = Object.keys(req.query)
 			.filter(key => (req.query[key] !== undefined && req.query[key] !== null))
 			.map(key => `${key}=${req.query[key]}`);
-		return `${this.options.host}${this.options.port !== 80 ? `:${this.options.port}` : ''}${req.path}?${q.join('&')}`;
+		return `${this.reqToHost(req)}${req.path}?${q.join('&')}`;
 	}
 
 	protected async retry(error: Error, req: T): Promise<any> {

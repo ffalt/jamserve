@@ -63,7 +63,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 		q.push(`limit=${req.limit || (this.options as MusicbrainzClientApi.Options).limit || 25}`);
 		q.push(`offset=${req.offset || 0}`);
 		q.push('fmt=json');
-		return `${this.options.host}${this.options.port !== 80 ? `:${this.options.port}` : ''}${req.path}?${q.join('&')}`;
+		return `${this.reqToHost(req)}}${req.path}?${q.join('&')}`;
 	}
 
 	protected isRateLimitError(body: any): boolean {
