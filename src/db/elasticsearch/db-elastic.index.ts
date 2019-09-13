@@ -158,6 +158,16 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		await getMoreUntilDone(response);
 	}
 
+	private async indexItem(body: T, id: string): Promise<void> {
+		await this.db.client.index({
+			index: this._index,
+			type: this._type,
+			body: this.filterProperties(body),
+			id,
+			refresh: this.db.indexRefresh as elasticsearch.Refresh
+		});
+	}
+
 	async getNewId(): Promise<string> {
 		return this.db.getNewId();
 	}
@@ -166,13 +176,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		if (!body.id || body.id.length === 0) {
 			body.id = await this.getNewId();
 		}
-		await this.db.client.index({
-			index: this._index,
-			type: this._type,
-			body: this.filterProperties(body),
-			id: body.id,
-			refresh: this.db.indexRefresh as elasticsearch.Refresh
-		});
+		await this.indexItem(body, body.id);
 		return body.id;
 	}
 
@@ -183,13 +187,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 	}
 
 	async replace(id: string, body: T): Promise<void> {
-		await this.db.client.index({
-			index: this._index,
-			type: this._type,
-			body: this.filterProperties(body),
-			id,
-			refresh: this.db.indexRefresh as elasticsearch.Refresh
-		});
+		await this.indexItem(body, id);
 	}
 
 	async upsert(id: string, body: T): Promise<void> {
@@ -197,13 +195,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			await this.add(body);
 			return;
 		}
-		await this.db.client.index({
-			index: this._index,
-			type: this._type,
-			body: this.filterProperties(body),
-			id,
-			refresh: this.db.indexRefresh as elasticsearch.Refresh
-		});
+		await this.indexItem(body, id);
 	}
 
 	async removeByQuery(query: DatabaseQuery): Promise<number> {
