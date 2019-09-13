@@ -1,9 +1,9 @@
 import express from 'express';
 import path from 'path';
 import {ApiBinaryResult, NodeError} from '../../typings';
-import {toXML} from '../../utils/to-xml';
 import {FORMAT} from './format';
 import {SubsonicParameterRequest} from './parameters';
+import {xml} from './xml';
 
 export class ApiResponder {
 
@@ -20,7 +20,7 @@ export class ApiResponder {
 			res.status(200).json(data);
 		} else {
 			res.set('Content-Type', 'application/xml');
-			res.status(200).send(toXML(data));
+			res.status(200).send(xml(data));
 		}
 	}
 
