@@ -35,9 +35,10 @@ async function check(name: string, req: express.Request): Promise<void> {
 
 export function apiCheck(name: string): express.RequestHandler {
 	function CheckApiParametersHandler(req: express.Request, res: express.Response, next: express.NextFunction): void {
-		check(name, req).then(() => {
-			next();
-		}).catch(e => {
+		check(name, req)
+			.then(() => {
+				next();
+			}).catch(e => {
 			// console.log(e.message);
 			ApiResponder.error(res, InvalidParamError(e.message));
 		});

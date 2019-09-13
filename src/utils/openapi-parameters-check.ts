@@ -27,6 +27,7 @@ function validateNumberParameter(query: any, param: { name: string, required?: b
 	if (isNaN(num)) {
 		return `Invalid number parameter ${param.name}`;
 	}
+	query[param.name] = num;
 	if (schema.type === 'integer' && !Number.isInteger(num)) {
 		return `Invalid integer parameter ${param.name}`;
 	}
@@ -36,7 +37,6 @@ function validateNumberParameter(query: any, param: { name: string, required?: b
 	if (schema.maximum !== undefined && schema.maximum < num) {
 		return `Invalid number parameter ${param.name}; maximum is ${schema.maximum}`;
 	}
-	query[param.name] = num;
 }
 
 function validateStringParameter(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
@@ -44,6 +44,7 @@ function validateStringParameter(query: any, param: { name: string, required?: b
 		return `Invalid string parameter ${param.name}`;
 	}
 	const s = value.trim();
+	query[param.name] = s;
 	if (s.length === 0) {
 		return `Empty string parameter ${param.name}`;
 	}
@@ -52,7 +53,6 @@ function validateStringParameter(query: any, param: { name: string, required?: b
 			return `Invalid enum string parameter ${param.name}: ${s}`;
 		}
 	}
-	query[param.name] = s;
 }
 
 function validateArrayParameter(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
@@ -61,13 +61,13 @@ function validateArrayParameter(query: any, param: { name: string, required?: bo
 	if (param.required && listValues.length === 0) {
 		return `Missing required parameter ${param.name}`;
 	}
+	query[param.name] = listValues;
 	for (const listValue of listValues) {
 		const result = validOAParameterValueBySchema({}, {name: param.name, required: true}, listValue, items);
 		if (result) {
 			return result;
 		}
 	}
-	query[param.name] = listValues;
 }
 
 function validOAParameterValueBySchema(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
@@ -103,11 +103,19 @@ function validOAParameterValueBySchema(query: any, param: { name: string, requir
 	}
 }
 
-function validOAParameter(query: any, param: ParameterObject): string | undefined {
+function validOAParameter(query: any, param: ParameterObject, components: ComponentsObject): string | undefined {
 	if (!query) {
 		return `Missing parameter collection ${param.name}`;
 	}
-	return validOAParameterValueBySchema(query, param, query[param.name], param.schema as SchemaObject);
+	let schema = param.schema;
+	if (schema && schema.$ref) {
+		const name = schema.$ref.split('/').pop();
+		if (!components.schemas) {
+			throw new Error('Invalid Internal Server Data');
+		}
+		schema = components.schemas[name];
+	}
+	return validOAParameterValueBySchema(query, param, query[param.name], schema as SchemaObject);
 }
 
 function createJSONValidator(def: SchemaObject, components: ComponentsObject): JSONValidator {
@@ -149,13 +157,13 @@ async function checkAOParameters(cmd: OperationObject, req: express.Request, com
 	cmd.parameters.find(param => {
 		param = param as ParameterObject;
 		if (param.in === 'query') {
-			error = validOAParameter(req.query, param);
+			error = validOAParameter(req.query, param, components);
 		} else if (param.in === 'path') {
-			error = validOAParameter(req.params, param);
+			error = validOAParameter(req.params, param, components);
 		} else if (param.in === 'header') {
-			error = validOAParameter(req.headers, param);
+			error = validOAParameter(req.headers, param, components);
 		} else if (param.in === 'cookie') {
-			error = validOAParameter(req.cookies, param);
+			error = validOAParameter(req.cookies, param, components);
 		} else {
 			log.info('Invalid/Unknown parameter spec', param);
 		}
