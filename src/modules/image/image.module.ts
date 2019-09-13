@@ -63,12 +63,7 @@ export class ImageModule {
 			return Promise.reject('Unknown Image Format Request');
 		}
 		const buffer = await image.getBufferAsync(mime);
-		return {
-			buffer: {
-				buffer,
-				contentType: mime
-			}
-		};
+		return {buffer: {buffer, contentType: mime}};
 	}
 
 	private async getImage(filename: string, size: number | undefined, name: string): Promise<ApiBinaryResult> {

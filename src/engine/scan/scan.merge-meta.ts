@@ -301,7 +301,6 @@ export class ScanMetaMerger {
 				updateTracks.push({track: trackInfo.track, oldTrack: trackInfo.oldTrack, parent});
 			}
 		}
-
 		log.debug('merge meta tracks new', newTracks.length);
 		for (const trackInfo of newTracks) {
 			await this.addMeta(trackInfo, changes);
@@ -327,80 +326,12 @@ export class ScanMetaMerger {
 				await this.getAlbumByID(id, changes);
 			}
 		}
-
 		const removedTrackIDs = changes.removedTracks.map(t => t.id);
+		await this.refreshAlbums(changes, removedTrackIDs, updateTracks, newTracks);
+		await this.refreshArtists(changes, removedTrackIDs, updateTracks, newTracks);
+	}
 
-		const checkAlbums = changes.updateAlbums.concat(changes.newAlbums);
-		log.debug('refresh albums', checkAlbums.length);
-
-		changes.removedAlbums = [];
-		changes.updateAlbums = [];
-		for (const album of checkAlbums) {
-			log.debug('refresh album', album.name, album.id, album.artist);
-			// get the db state
-			let trackIDs = await this.store.trackStore.searchIDs({albumID: album.id});
-			// filter out removed tracks
-			trackIDs = trackIDs.filter(t => !removedTrackIDs.includes(t));
-			// filter out updated tracks which are no longer part of the album
-			const removedFromAlbum = updateTracks.filter(t => (t.oldTrack.albumID === album.id && t.track.albumID !== album.id)).map(t => t.track.id);
-			trackIDs = trackIDs.filter(t => !removedFromAlbum.includes(t));
-			// rest trackIDs are untouched tracks
-			// get all new and updated tracks which are part of the album
-			const refreshedTracks: Array<MetaMergeTrackInfo> = (updateTracks.filter(t => t.track && t.track.albumID === album.id) as Array<MetaMergeTrackInfo>)
-				.concat(newTracks.filter(t => t.track.albumID === album.id));
-			if (refreshedTracks.length + trackIDs.length === 0) {
-				if (!changes.removedAlbums.includes(album)) {
-					changes.removedAlbums.push(album);
-				} else {
-					log.error('new album without tracks', album);
-				}
-			} else {
-				let duration = 0;
-				album.rootIDs = [];
-				album.trackIDs = [];
-				album.folderIDs = [];
-				const metaStatBuilder = new MetaStatBuilder();
-				const tracks = await this.store.trackStore.byIds(trackIDs);
-				for (const track of tracks) {
-					const folder = await this.findFolder(track.parentID, changes);
-					if (folder) {
-						refreshedTracks.push({track, parent: folder});
-					}
-				}
-
-				for (const trackInfo of refreshedTracks) {
-					const track = trackInfo.track;
-					if (!album.rootIDs.includes(track.rootID)) {
-						album.rootIDs.push(track.rootID);
-					}
-					if (!album.folderIDs.includes(track.parentID)) {
-						album.folderIDs.push(track.parentID);
-					}
-					if (!album.trackIDs.includes(track.id)) {
-						album.trackIDs.push(track.id);
-					}
-					metaStatBuilder.statSlugValue('artist', track.tag.albumArtist || track.tag.artist);
-					metaStatBuilder.statID('mbArtistID', track.tag.mbAlbumArtistID || track.tag.mbArtistID);
-					metaStatBuilder.statID('mbAlbumID', track.tag.mbAlbumID);
-					metaStatBuilder.statSlugValue('genre', track.tag.genre);
-					metaStatBuilder.statNumber('year', track.tag.year);
-					duration += (track.media.duration || 0);
-					metaStatBuilder.statSlugValue('name', getAlbumName(trackInfo));
-					metaStatBuilder.statID('albumType', trackInfo.parent && trackInfo.parent.tag && trackInfo.parent.tag.albumType !== undefined ? trackInfo.parent.tag.albumType : undefined);
-				}
-				album.artist = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
-				album.name = metaStatBuilder.mostUsed('name') || cUnknownAlbum;
-				album.mbArtistID = metaStatBuilder.mostUsed('mbArtistID');
-				album.mbAlbumID = metaStatBuilder.mostUsed('mbAlbumID');
-				album.genre = metaStatBuilder.mostUsed('genre');
-				album.year = metaStatBuilder.mostUsedNumber('year');
-				album.albumType = metaStatBuilder.mostUsed('albumType') as AlbumType || AlbumType.unknown;
-				album.duration = duration;
-				if (!changes.newAlbums.includes(album)) {
-					changes.updateAlbums.push(album);
-				}
-			}
-		}
+	private async refreshArtists(changes: MergeChanges, removedTrackIDs: Array<string>, updateTracks: Array<UpdateMetaMergeTrackInfo>, newTracks: Array<MetaMergeTrackInfo>): Promise<void> {
 		const checkArtists = changes.updateArtists.concat(changes.newArtists);
 		log.debug('refresh artists', checkArtists.length);
 		changes.removedArtists = [];
@@ -488,4 +419,76 @@ export class ScanMetaMerger {
 		}
 	}
 
+	private async refreshAlbums(changes: MergeChanges, removedTrackIDs: Array<string>, updateTracks: Array<UpdateMetaMergeTrackInfo>, newTracks: Array<MetaMergeTrackInfo>): Promise<void> {
+		const checkAlbums = changes.updateAlbums.concat(changes.newAlbums);
+		log.debug('refresh albums', checkAlbums.length);
+		changes.removedAlbums = [];
+		changes.updateAlbums = [];
+		for (const album of checkAlbums) {
+			log.debug('refresh album', album.name, album.id, album.artist);
+			// get the db state
+			let trackIDs = await this.store.trackStore.searchIDs({albumID: album.id});
+			// filter out removed tracks
+			trackIDs = trackIDs.filter(t => !removedTrackIDs.includes(t));
+			// filter out updated tracks which are no longer part of the album
+			const removedFromAlbum = updateTracks.filter(t => (t.oldTrack.albumID === album.id && t.track.albumID !== album.id)).map(t => t.track.id);
+			trackIDs = trackIDs.filter(t => !removedFromAlbum.includes(t));
+			// rest trackIDs are untouched tracks
+			// get all new and updated tracks which are part of the album
+			const refreshedTracks: Array<MetaMergeTrackInfo> = (updateTracks.filter(t => t.track && t.track.albumID === album.id) as Array<MetaMergeTrackInfo>)
+				.concat(newTracks.filter(t => t.track.albumID === album.id));
+			if (refreshedTracks.length + trackIDs.length === 0) {
+				if (!changes.removedAlbums.includes(album)) {
+					changes.removedAlbums.push(album);
+				} else {
+					log.error('new album without tracks', album);
+				}
+			} else {
+				let duration = 0;
+				album.rootIDs = [];
+				album.trackIDs = [];
+				album.folderIDs = [];
+				const metaStatBuilder = new MetaStatBuilder();
+				const tracks = await this.store.trackStore.byIds(trackIDs);
+				for (const track of tracks) {
+					const folder = await this.findFolder(track.parentID, changes);
+					if (folder) {
+						refreshedTracks.push({track, parent: folder});
+					}
+				}
+
+				for (const trackInfo of refreshedTracks) {
+					const track = trackInfo.track;
+					if (!album.rootIDs.includes(track.rootID)) {
+						album.rootIDs.push(track.rootID);
+					}
+					if (!album.folderIDs.includes(track.parentID)) {
+						album.folderIDs.push(track.parentID);
+					}
+					if (!album.trackIDs.includes(track.id)) {
+						album.trackIDs.push(track.id);
+					}
+					metaStatBuilder.statSlugValue('artist', track.tag.albumArtist || track.tag.artist);
+					metaStatBuilder.statID('mbArtistID', track.tag.mbAlbumArtistID || track.tag.mbArtistID);
+					metaStatBuilder.statID('mbAlbumID', track.tag.mbAlbumID);
+					metaStatBuilder.statSlugValue('genre', track.tag.genre);
+					metaStatBuilder.statNumber('year', track.tag.year);
+					duration += (track.media.duration || 0);
+					metaStatBuilder.statSlugValue('name', getAlbumName(trackInfo));
+					metaStatBuilder.statID('albumType', trackInfo.parent && trackInfo.parent.tag && trackInfo.parent.tag.albumType !== undefined ? trackInfo.parent.tag.albumType : undefined);
+				}
+				album.artist = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
+				album.name = metaStatBuilder.mostUsed('name') || cUnknownAlbum;
+				album.mbArtistID = metaStatBuilder.mostUsed('mbArtistID');
+				album.mbAlbumID = metaStatBuilder.mostUsed('mbAlbumID');
+				album.genre = metaStatBuilder.mostUsed('genre');
+				album.year = metaStatBuilder.mostUsedNumber('year');
+				album.albumType = metaStatBuilder.mostUsed('albumType') as AlbumType || AlbumType.unknown;
+				album.duration = duration;
+				if (!changes.newAlbums.includes(album)) {
+					changes.updateAlbums.push(album);
+				}
+			}
+		}
+	}
 }
