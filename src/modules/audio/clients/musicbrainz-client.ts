@@ -1,27 +1,17 @@
 import {MusicBrainz} from '../../../model/musicbrainz-rest-data';
-import {logger} from '../../../utils/logger';
-import {WebserviceClient} from '../../../utils/webservice-client';
+import {WebserviceJSONClient} from '../../../utils/webservice-json-client';
 import {MusicbrainzClientApi} from './musicbrainz-client.interface';
 import {LookupBrowseTypes, LookupIncludes} from './musicbrainz-client.types';
 
-const log = logger('Musicbrainz');
-
-export class MusicbrainzClient extends WebserviceClient {
-	options = {
-		host: 'https://musicbrainz.org',
-		port: 80,
-		basePath: '/ws/2/',
-		userAgent: '',
-		limit: 25,
-		retryOn: false,
-		retryDelay: 3000,
-		retryCount: 3
-	};
+export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi.Request, MusicBrainz.Response> {
 
 	constructor(options: MusicbrainzClientApi.Options) {
+		const defaultOptions = {
+			host: 'https://musicbrainz.org',
+			basePath: '/ws/2/'
+		};
 		// https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting "Currently that rate is (on average) 1 request per second. (per ip)"
-		super(1, 1000, options.userAgent);
-		this.options = {...this.options, ...options};
+		super(1, 1000, options.userAgent, {...defaultOptions, ...options});
 	}
 
 	private beautify(obj: any): any {
@@ -66,48 +56,19 @@ export class MusicbrainzClient extends WebserviceClient {
 			.join('%20AND%20');
 	}
 
-	private async get(req: MusicbrainzClientApi.Request): Promise<any> {
+	protected reqToUrl(req: MusicbrainzClientApi.Request): string {
 		const q = Object.keys(req.query)
 			.filter(key => (req.query[key] !== undefined && req.query[key] !== null))
 			.map(key => `${key}=${req.query[key]}`);
-		q.push(`limit=${req.limit || this.options.limit || 25}`);
+		q.push(`limit=${req.limit || (this.options as MusicbrainzClientApi.Options).limit || 25}`);
 		q.push(`offset=${req.offset || 0}`);
 		q.push('fmt=json');
-		const url = `${this.options.host}${this.options.port !== 80 ? `:${this.options.port}` : ''}${req.path}?${q.join('&')}`;
+		return `${this.options.host}${this.options.port !== 80 ? `:${this.options.port}` : ''}${req.path}?${q.join('&')}`;
+	}
 
-		const isRateLimitError = (body: any): boolean => {
-			return (body && body.error && body.error.includes('allowable rate limit'));
-			// "error":"Your requests are exceeding the allowable rate limit. Please see http://wiki.musicbrainz.org/XMLWebService for more information."
-		};
-		const options = this.options;
-
-		const retry = async (error: Error): Promise<any> => {
-			if (options.retryOn && req.retry < options.retryCount) {
-				req.retry++;
-				log.info(`rate limit hit, retrying in ${options.retryDelay}ms`);
-				return new Promise<any>((resolve, reject) => {
-					setTimeout(() => {
-						this.get(req).then(resolve).catch(reject);
-					}, options.retryDelay);
-				});
-			}
-			return Promise.reject(error);
-		};
-
-		log.info('requesting', JSON.stringify(req));
-		try {
-			const data = await this.getJson<any>(url, undefined);
-			if (isRateLimitError(data)) {
-				return retry(Error(data.error));
-			}
-			return data;
-		} catch (e) {
-			const statusCode = e.statusCode;
-			if (statusCode === 502 || statusCode === 503) {
-				return retry(e);
-			}
-			return Promise.reject(e);
-		}
+	protected isRateLimitError(body: any): boolean {
+		// "error":"Your requests are exceeding the allowable rate limit. Please see http://wiki.musicbrainz.org/XMLWebService for more information."
+		return (body && body.error && body.error.includes('allowable rate limit'));
 	}
 
 	async search(params: MusicbrainzClientApi.ParameterSearch): Promise<MusicBrainz.Response> {
@@ -119,25 +80,6 @@ export class MusicbrainzClient extends WebserviceClient {
 			offset: params.offset
 		});
 		return this.beautify(data);
-	}
-
-	async luceneSearch(params: MusicbrainzClientApi.ParameterLuceneSearch): Promise<MusicBrainz.Response> {
-		// https://lucene.apache.org/core/4_3_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description
-		if (!params.query || params.query.length === 0) {
-			return Promise.reject(Error(`Invalid query for type ${params.type}`));
-		}
-		const data = await this.get({
-			path: `${this.options.basePath + params.type}/`,
-			query: {
-				query: encodeURIComponent(params.query || '')
-			},
-			retry: 0,
-			limit: params.limit,
-			offset: params.offset
-		});
-		const result: any = {};
-		result[params.type] = data || {};
-		return this.beautify(result);
 	}
 
 	async lookup(params: MusicbrainzClientApi.ParameterLookup): Promise<MusicBrainz.Response> {
@@ -173,6 +115,25 @@ export class MusicbrainzClient extends WebserviceClient {
 		const data = await this.get({
 			path: this.options.basePath + params.type,
 			query,
+			retry: 0,
+			limit: params.limit,
+			offset: params.offset
+		});
+		const result: any = {};
+		result[params.type] = data || {};
+		return this.beautify(result);
+	}
+
+	async luceneSearch(params: MusicbrainzClientApi.ParameterLuceneSearch): Promise<MusicBrainz.Response> {
+		// https://lucene.apache.org/core/4_3_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description
+		if (!params.query || params.query.length === 0) {
+			return Promise.reject(Error(`Invalid query for type ${params.type}`));
+		}
+		const data = await this.get({
+			path: `${this.options.basePath + params.type}/`,
+			query: {
+				query: encodeURIComponent(params.query || '')
+			},
 			retry: 0,
 			limit: params.limit,
 			offset: params.offset
