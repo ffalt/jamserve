@@ -1,5 +1,4 @@
 import {Database} from '../../db/db.model';
-import {logger} from '../../utils/logger';
 import {AlbumStore} from '../album/album.store';
 import {ArtistStore} from '../artist/artist.store';
 import {DBObject} from '../base/base.model';
@@ -17,8 +16,6 @@ import {SettingsStore} from '../settings/settings.store';
 import {StateStore} from '../state/state.store';
 import {TrackStore} from '../track/track.store';
 import {UserStore} from '../user/user.store';
-
-const log = logger('Store');
 
 export class Store {
 	public settingsStore: SettingsStore;
@@ -71,10 +68,16 @@ export class Store {
 		await this.db.close();
 	}
 
+	allStores(): Array<BaseStore<DBObject, SearchQuery>> {
+		return [
+			this.folderStore, this.trackStore, this.albumStore, this.artistStore,
+			this.podcastStore, this.episodeStore, this.playlistStore, this.artistStore,
+			this.albumStore, this.radioStore, this.userStore
+		];
+	}
+
 	async findInAll(id: string): Promise<DBObject | undefined> {
-		const stores: Array<BaseStore<DBObject, SearchQuery>> =
-			[this.folderStore, this.trackStore, this.albumStore, this.artistStore, this.podcastStore, this.episodeStore, this.playlistStore, this.artistStore, this.albumStore, this.radioStore, this.userStore];
-		for (const store of stores) {
+		for (const store of this.allStores()) {
 			const obj = await store.byId(id);
 			if (obj) {
 				return obj;
@@ -84,9 +87,7 @@ export class Store {
 
 	async findMultiInAll(ids: Array<string>): Promise<Array<DBObject>> {
 		let result: Array<DBObject> = [];
-		const stores: Array<BaseStore<DBObject, SearchQuery>> =
-			[this.folderStore, this.trackStore, this.albumStore, this.artistStore, this.podcastStore, this.episodeStore, this.playlistStore, this.artistStore, this.albumStore, this.radioStore, this.userStore];
-		for (const store of stores) {
+		for (const store of this.allStores()) {
 			const objs = await store.byIds(ids);
 			result = result.concat(objs);
 		}
