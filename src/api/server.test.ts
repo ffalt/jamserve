@@ -1,12 +1,12 @@
+// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
 import supertest from 'supertest';
 import {testEngines} from '../engine/engine.spec';
-import {mockUserName, mockUserPass} from '../engine/user/user.mock';
+import {mockUserName, mockUserName2, mockUserPass, mockUserPass2} from '../engine/user/user.mock';
 import {Server} from './server';
 
 describe('Server', () => {
-	jest.setTimeout(30000);
 	let server: Server;
-	let token: string;
 	let request: supertest.SuperTest<supertest.Test>;
 	let get: (apiPath: string) => supertest.Test;
 	let post: (apiPath: string) => supertest.Test;
@@ -14,32 +14,37 @@ describe('Server', () => {
 	let postNotLoggedIn: (apiPath: string) => supertest.Test;
 	let getNoRights: (apiPath: string) => supertest.Test;
 	let postNoRights: (apiPath: string) => supertest.Test;
-	testEngines({}, async (testEngine) => {
+	testEngines({}, async testEngine => {
 		testEngine.engine.config.server.port = 10010;
 		testEngine.engine.config.server.listen = 'localhost';
 		server = new Server(testEngine.engine);
 		await server.start();
 		request = supertest('http://localhost:10010');
-		const res = await request.post('/api/v1/login')
+		const res1 = await request.post('/api/v1/login')
 			.send({username: mockUserName, password: mockUserPass, client: 'supertest-tests'});
-		token = res.body.jwt;
-		get = (apiPath) => request.get(apiPath).set('Authorization', 'Bearer ' + token);
-		getNotLoggedIn = (apiPath) => request.post(apiPath);
-		post = (apiPath) => request.post(apiPath).set('Authorization', 'Bearer ' + token);
-		postNotLoggedIn = (apiPath) => request.post(apiPath);
+		const user1token = res1.body.jwt;
+		get = apiPath => request.get(apiPath).set('Authorization', 'Bearer ' + user1token);
+		post = apiPath => request.post(apiPath).set('Authorization', 'Bearer ' + user1token);
+		const res2 = await request.post('/api/v1/login')
+			.send({username: mockUserName2, password: mockUserPass2, client: 'supertest-tests'});
+		const user2token = res2.body.jwt;
+		getNoRights = apiPath => request.get(apiPath).set('Authorization', 'Bearer ' + user2token);
+		postNoRights = apiPath => request.post(apiPath).set('Authorization', 'Bearer ' + user2token);
+		getNotLoggedIn = apiPath => request.post(apiPath);
+		postNotLoggedIn = apiPath => request.post(apiPath);
 	}, () => {
 		describe('/lastfm/lookup', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/lastfm/lookup').query({type: 'artist', id: 'DNy8r4F%F@HUwimlfwkf'}).expect(401);
+						return getNotLoggedIn('/api/v1/lastfm/lookup').query({type: 'album-toptracks', id: 'EO(12qMB^&K@L'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "type" set to value empty string', async () => {
-						return get('/api/v1/lastfm/lookup').query({type: '', id: 'jha(5%R2gjr0KXjsd'}).expect(400);
+						return get('/api/v1/lastfm/lookup').query({type: '', id: 'FaS!a'}).expect(400);
 					});
 					it('should respond with 400 with "type" set to value invalid enum', async () => {
-						return get('/api/v1/lastfm/lookup').query({type: 'invalid', id: 'GZ2iizMsaYJ%*o'}).expect(400);
+						return get('/api/v1/lastfm/lookup').query({type: 'invalid', id: 'WncUJ'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/lastfm/lookup').query({type: 'track', id: ''}).expect(400);
@@ -49,7 +54,7 @@ describe('Server', () => {
 		describe('/acoustid/lookup', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/acoustid/lookup').query({id: 'OQHbu^bCIRg!uz'}).expect(401);
+						return getNotLoggedIn('/api/v1/acoustid/lookup').query({id: 'F%e3iTJT&[(JRHFGZ'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -57,35 +62,35 @@ describe('Server', () => {
 						return get('/api/v1/acoustid/lookup').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "inc" set to value empty string', async () => {
-						return get('/api/v1/acoustid/lookup').query({id: 'FeVJf', inc: ''}).expect(400);
+						return get('/api/v1/acoustid/lookup').query({id: 'TwJSTEJGOj0E', inc: ''}).expect(400);
 					});
 			});
 		});
 		describe('/musicbrainz/lookup', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/musicbrainz/lookup').query({type: 'series', id: 'Z$[zqzaRhELt*'}).expect(401);
+						return getNotLoggedIn('/api/v1/musicbrainz/lookup').query({type: 'place', id: 'DRv(b]^civaVzQ'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "type" set to value empty string', async () => {
-						return get('/api/v1/musicbrainz/lookup').query({type: '', id: '9EUNc!Nu5!'}).expect(400);
+						return get('/api/v1/musicbrainz/lookup').query({type: '', id: '43SAF@H3m%jfL(9fP'}).expect(400);
 					});
 					it('should respond with 400 with "type" set to value invalid enum', async () => {
-						return get('/api/v1/musicbrainz/lookup').query({type: 'invalid', id: '7KyNZ2gJ^'}).expect(400);
+						return get('/api/v1/musicbrainz/lookup').query({type: 'invalid', id: '7YmNblCg2EL@P'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/musicbrainz/lookup').query({type: 'release-group', id: ''}).expect(400);
+						return get('/api/v1/musicbrainz/lookup').query({type: 'artist', id: ''}).expect(400);
 					});
 					it('should respond with 400 with "inc" set to value empty string', async () => {
-						return get('/api/v1/musicbrainz/lookup').query({type: 'artist', id: 'FjfN2Wt', inc: ''}).expect(400);
+						return get('/api/v1/musicbrainz/lookup').query({type: 'instrument', id: 'nb2Vv', inc: ''}).expect(400);
 					});
 			});
 		});
 		describe('/musicbrainz/search', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/musicbrainz/search').query({type: 'label'}).expect(401);
+						return getNotLoggedIn('/api/v1/musicbrainz/search').query({type: 'release'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -96,35 +101,35 @@ describe('Server', () => {
 						return get('/api/v1/musicbrainz/search').query({type: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "recording" set to value empty string', async () => {
-						return get('/api/v1/musicbrainz/search').query({type: 'release', recording: ''}).expect(400);
+						return get('/api/v1/musicbrainz/search').query({type: 'artist', recording: ''}).expect(400);
 					});
 					it('should respond with 400 with "releasegroup" set to value empty string', async () => {
-						return get('/api/v1/musicbrainz/search').query({type: 'recording', releasegroup: ''}).expect(400);
+						return get('/api/v1/musicbrainz/search').query({type: 'release', releasegroup: ''}).expect(400);
 					});
 					it('should respond with 400 with "release" set to value empty string', async () => {
-						return get('/api/v1/musicbrainz/search').query({type: 'release', release: ''}).expect(400);
+						return get('/api/v1/musicbrainz/search').query({type: 'work', release: ''}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value empty string', async () => {
-						return get('/api/v1/musicbrainz/search').query({type: 'recording', artist: ''}).expect(400);
+						return get('/api/v1/musicbrainz/search').query({type: 'artist', artist: ''}).expect(400);
 					});
 					it('should respond with 400 with "tracks" set to value string', async () => {
-						return get('/api/v1/musicbrainz/search').query({type: 'release', tracks: 'sLLOfRqraq$9a0&e61'}).expect(400);
+						return get('/api/v1/musicbrainz/search').query({type: 'artist', tracks: '4dRa1L(NctI'}).expect(400);
 					});
 					it('should respond with 400 with "tracks" set to value empty string', async () => {
-						return get('/api/v1/musicbrainz/search').query({type: 'artist', tracks: ''}).expect(400);
+						return get('/api/v1/musicbrainz/search').query({type: 'label', tracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "tracks" set to value boolean', async () => {
 						return get('/api/v1/musicbrainz/search').query({type: 'release', tracks: true}).expect(400);
 					});
 					it('should respond with 400 with "tracks" set to value float', async () => {
-						return get('/api/v1/musicbrainz/search').query({type: 'release-group', tracks: 90.37}).expect(400);
+						return get('/api/v1/musicbrainz/search').query({type: 'release-group', tracks: 34.45}).expect(400);
 					});
 			});
 		});
 		describe('/acousticbrainz/lookup', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/acousticbrainz/lookup').query({id: '^(k^SS#dcTTHS]Vo'}).expect(401);
+						return getNotLoggedIn('/api/v1/acousticbrainz/lookup').query({id: 'mN6e*E]u25%KsPz'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -132,38 +137,38 @@ describe('Server', () => {
 						return get('/api/v1/acousticbrainz/lookup').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "nr" set to value string', async () => {
-						return get('/api/v1/acousticbrainz/lookup').query({id: 'ZXk$U0MDW', nr: 'U&o$#NE#99Q'}).expect(400);
+						return get('/api/v1/acousticbrainz/lookup').query({id: 'I3H(m&YS&V$H*3', nr: 'XB]VbQ^BxnM3^'}).expect(400);
 					});
 					it('should respond with 400 with "nr" set to value empty string', async () => {
-						return get('/api/v1/acousticbrainz/lookup').query({id: 'bYNTF0', nr: ''}).expect(400);
+						return get('/api/v1/acousticbrainz/lookup').query({id: '9Iu3Iw4v8', nr: ''}).expect(400);
 					});
 					it('should respond with 400 with "nr" set to value boolean', async () => {
-						return get('/api/v1/acousticbrainz/lookup').query({id: 'xKqqezgBADZNA[e', nr: true}).expect(400);
+						return get('/api/v1/acousticbrainz/lookup').query({id: 'b!HGZtaqFfXxr', nr: true}).expect(400);
 					});
 			});
 		});
 		describe('/coverartarchive/lookup', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/coverartarchive/lookup').query({type: 'release', id: 'qUz]tsZjla)#SEe'}).expect(401);
+						return getNotLoggedIn('/api/v1/coverartarchive/lookup').query({type: 'release-group', id: '!rEcd'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "type" set to value empty string', async () => {
-						return get('/api/v1/coverartarchive/lookup').query({type: '', id: 't)#9Z1ag[*H7wkp'}).expect(400);
+						return get('/api/v1/coverartarchive/lookup').query({type: '', id: 'Qm4aVhyD^x%qg1L]'}).expect(400);
 					});
 					it('should respond with 400 with "type" set to value invalid enum', async () => {
-						return get('/api/v1/coverartarchive/lookup').query({type: 'invalid', id: '7DQPvPMAXNRPZzF$'}).expect(400);
+						return get('/api/v1/coverartarchive/lookup').query({type: 'invalid', id: 'tNJ1s3VpkT['}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/coverartarchive/lookup').query({type: 'release-group', id: ''}).expect(400);
+						return get('/api/v1/coverartarchive/lookup').query({type: 'release', id: ''}).expect(400);
 					});
 			});
 		});
 		describe('/wikipedia/summary', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/wikipedia/summary').query({title: 'S#zcrQr2^2mu85!7s82e'}).expect(401);
+						return getNotLoggedIn('/api/v1/wikipedia/summary').query({title: '#s7TWBJDxg1Bi6z(O'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -175,7 +180,7 @@ describe('Server', () => {
 		describe('/wikidata/summary', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/wikidata/summary').query({id: 'Sg9gffL03ClJ^N'}).expect(401);
+						return getNotLoggedIn('/api/v1/wikidata/summary').query({id: '^[6aOH2Om@e9d'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -187,7 +192,7 @@ describe('Server', () => {
 		describe('/wikidata/lookup', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/wikidata/lookup').query({id: 'lCP!f**kh7)mCn!x'}).expect(401);
+						return getNotLoggedIn('/api/v1/wikidata/lookup').query({id: '%7zS1JPg)nz&S^OKK'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -199,7 +204,7 @@ describe('Server', () => {
 		describe('/autocomplete', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/autocomplete').query({query: 'ZE&xCuYZkZRmKp3!'}).expect(401);
+						return getNotLoggedIn('/api/v1/autocomplete').query({query: '3S$aqjF9D9vQW'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -207,109 +212,109 @@ describe('Server', () => {
 						return get('/api/v1/autocomplete').query({query: ''}).expect(400);
 					});
 					it('should respond with 400 with "track" set to value string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'GmCWNUi6KCxLb0EpJJm', track: 'KTV@oW!1cJA0V'}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'GXaMKzDUq', track: 'w7THXnsPZX'}).expect(400);
 					});
 					it('should respond with 400 with "track" set to value empty string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'dUeL5os', track: ''}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'gs02Y4eJw&D', track: ''}).expect(400);
 					});
 					it('should respond with 400 with "track" set to value boolean', async () => {
-						return get('/api/v1/autocomplete').query({query: 'f%n5c7P6qMKkP', track: true}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'rZdV6o7PQJ%P2#$%', track: true}).expect(400);
 					});
 					it('should respond with 400 with "track" set to value float', async () => {
-						return get('/api/v1/autocomplete').query({query: '$2Hxweo', track: 62.11}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'Ij098ne', track: 23.41}).expect(400);
 					});
 					it('should respond with 400 with "track" set to value less than minimum 0', async () => {
-						return get('/api/v1/autocomplete').query({query: 'k[uyQpXAK8oBav&b', track: -1}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'ml0b(xIa7d9[H', track: -1}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'eEp3za5qWe6ciG', artist: 'pXrpqX9nmXMrukh'}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '&(7729^IgJJ', artist: 'AcI%3MGpfbma'}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value empty string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'Qm$F]qzdYFWSB7shS', artist: ''}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'ba[WE!MoG7$mPekLf', artist: ''}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value boolean', async () => {
-						return get('/api/v1/autocomplete').query({query: 'DQyl^&X)toiux', artist: true}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '1bIc9M)sool50Z%cq', artist: true}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value float', async () => {
-						return get('/api/v1/autocomplete').query({query: 'kkrn0auv[', artist: 59.74}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'jkjg]Hm', artist: 28.04}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value less than minimum 0', async () => {
-						return get('/api/v1/autocomplete').query({query: 'Fdl)4', artist: -1}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'P(J(@4*U', artist: -1}).expect(400);
 					});
 					it('should respond with 400 with "album" set to value string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'QPVlWmsTZH1', album: 'uB!lX2qY'}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'O!9Y1bVltVlP[', album: 'ZHkJgr!E2]X$tT@!w'}).expect(400);
 					});
 					it('should respond with 400 with "album" set to value empty string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'RIS*J$CoJ6WPg&N(8', album: ''}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '4j(223H[EJjGg]RT', album: ''}).expect(400);
 					});
 					it('should respond with 400 with "album" set to value boolean', async () => {
-						return get('/api/v1/autocomplete').query({query: ')M9tr(x55whL^KfZR', album: true}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '@yOppZ]&]c5N(', album: true}).expect(400);
 					});
 					it('should respond with 400 with "album" set to value float', async () => {
-						return get('/api/v1/autocomplete').query({query: '47X(5q44bb5Q', album: 59.32}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'TC0t*9(9qYuChh9ykb', album: 61.1}).expect(400);
 					});
 					it('should respond with 400 with "album" set to value less than minimum 0', async () => {
-						return get('/api/v1/autocomplete').query({query: 'ZFjLdZ8itt*y0nL', album: -1}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'P$He69kS10WrqeQk', album: -1}).expect(400);
 					});
 					it('should respond with 400 with "folder" set to value string', async () => {
-						return get('/api/v1/autocomplete').query({query: '!9$hKyuZE$cFE**gr', folder: 'DJV1hqSYhaq%5'}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '2jSv@41pzho[', folder: 'x27ZfxnCpq2*z3PDe)N'}).expect(400);
 					});
 					it('should respond with 400 with "folder" set to value empty string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'RJvWZ(YvXJ', folder: ''}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'BB7F]%oTem)gUP', folder: ''}).expect(400);
 					});
 					it('should respond with 400 with "folder" set to value boolean', async () => {
-						return get('/api/v1/autocomplete').query({query: 'yZQDc8L', folder: true}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'weDyKy', folder: true}).expect(400);
 					});
 					it('should respond with 400 with "folder" set to value float', async () => {
-						return get('/api/v1/autocomplete').query({query: 's^0lU^D[YNb((Y', folder: 10.72}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '39HCW', folder: 49.94}).expect(400);
 					});
 					it('should respond with 400 with "folder" set to value less than minimum 0', async () => {
-						return get('/api/v1/autocomplete').query({query: 'nofSV', folder: -1}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '[sKm(S$TpI@kfVt529', folder: -1}).expect(400);
 					});
 					it('should respond with 400 with "playlist" set to value string', async () => {
-						return get('/api/v1/autocomplete').query({query: '46sd3p1c', playlist: 'DgUS]'}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'wsJDsV4tXquTV%R1]QMq', playlist: 'wNo4U1*1'}).expect(400);
 					});
 					it('should respond with 400 with "playlist" set to value empty string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'CiEK$n*La^lkt', playlist: ''}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '93qBR]5', playlist: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlist" set to value boolean', async () => {
-						return get('/api/v1/autocomplete').query({query: 'Mn3qElaRvgg', playlist: true}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'jZf#w8', playlist: true}).expect(400);
 					});
 					it('should respond with 400 with "playlist" set to value float', async () => {
-						return get('/api/v1/autocomplete').query({query: 'd02gCYdrUIm^kh', playlist: 66.85}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '1yKM4n%', playlist: 32.93}).expect(400);
 					});
 					it('should respond with 400 with "playlist" set to value less than minimum 0', async () => {
-						return get('/api/v1/autocomplete').query({query: '1zh)KK6(Ljk', playlist: -1}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'N2WUg#0', playlist: -1}).expect(400);
 					});
 					it('should respond with 400 with "podcast" set to value string', async () => {
-						return get('/api/v1/autocomplete').query({query: '23QSKcEB', podcast: 'w)^BFSSn'}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'lfPU6!EV1N7vR', podcast: 'n2jNSrZ6ba'}).expect(400);
 					});
 					it('should respond with 400 with "podcast" set to value empty string', async () => {
-						return get('/api/v1/autocomplete').query({query: 't#P*nWu&Jn#Zqv7U', podcast: ''}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'TgNT5yhvTo1', podcast: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcast" set to value boolean', async () => {
-						return get('/api/v1/autocomplete').query({query: 'ki(ynbVG6gCqe&&tgIFT', podcast: true}).expect(400);
+						return get('/api/v1/autocomplete').query({query: '^oYRa9H', podcast: true}).expect(400);
 					});
 					it('should respond with 400 with "podcast" set to value float', async () => {
-						return get('/api/v1/autocomplete').query({query: '$nu9DN5UeFw(J', podcast: 81.96}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'WFYxui', podcast: 63.99}).expect(400);
 					});
 					it('should respond with 400 with "podcast" set to value less than minimum 0', async () => {
-						return get('/api/v1/autocomplete').query({query: '5m2z4qDsA]6amZ', podcast: -1}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'fUndZ!97X', podcast: -1}).expect(400);
 					});
 					it('should respond with 400 with "episode" set to value string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'Dau3!$wX5c', episode: 'yP0bfuXMYPtIHjD'}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'ZetJn', episode: 'D6DdFElC]5sL2'}).expect(400);
 					});
 					it('should respond with 400 with "episode" set to value empty string', async () => {
-						return get('/api/v1/autocomplete').query({query: 'INFQ%X1FHyBpc1', episode: ''}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'o*4*OUxFuB!bp#fO(fdl', episode: ''}).expect(400);
 					});
 					it('should respond with 400 with "episode" set to value boolean', async () => {
-						return get('/api/v1/autocomplete').query({query: 'qf9F@', episode: true}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'chU6Cu%', episode: true}).expect(400);
 					});
 					it('should respond with 400 with "episode" set to value float', async () => {
-						return get('/api/v1/autocomplete').query({query: '(@vsubb82^CE&m8L(g5', episode: 95.64}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'E[Gwyz*]wvTPoA', episode: 40.92}).expect(400);
 					});
 					it('should respond with 400 with "episode" set to value less than minimum 0', async () => {
-						return get('/api/v1/autocomplete').query({query: 'dt1$PBcP5', episode: -1}).expect(400);
+						return get('/api/v1/autocomplete').query({query: 'f]97xf*', episode: -1}).expect(400);
 					});
 			});
 		});
@@ -324,7 +329,7 @@ describe('Server', () => {
 						return get('/api/v1/genre/list').query({rootID: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/genre/list').query({offset: 'eK%ge['}).expect(400);
+						return get('/api/v1/genre/list').query({offset: 'eW%2ilYLWl5@z'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/genre/list').query({offset: ''}).expect(400);
@@ -333,13 +338,13 @@ describe('Server', () => {
 						return get('/api/v1/genre/list').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/genre/list').query({offset: 57.32}).expect(400);
+						return get('/api/v1/genre/list').query({offset: 26.29}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/genre/list').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/genre/list').query({amount: 'MB)EFcxEvk'}).expect(400);
+						return get('/api/v1/genre/list').query({amount: 'dIjZsj]87'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/genre/list').query({amount: ''}).expect(400);
@@ -348,7 +353,7 @@ describe('Server', () => {
 						return get('/api/v1/genre/list').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/genre/list').query({amount: 84.46}).expect(400);
+						return get('/api/v1/genre/list').query({amount: 61.16}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/genre/list').query({amount: 0}).expect(400);
@@ -375,7 +380,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/nowPlaying/list').query({offset: 'mYSn8AH0'}).expect(400);
+						return get('/api/v1/nowPlaying/list').query({offset: '^YrUV)lv9e'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/nowPlaying/list').query({offset: ''}).expect(400);
@@ -384,13 +389,13 @@ describe('Server', () => {
 						return get('/api/v1/nowPlaying/list').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/nowPlaying/list').query({offset: 93.6}).expect(400);
+						return get('/api/v1/nowPlaying/list').query({offset: 37.36}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/nowPlaying/list').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/nowPlaying/list').query({amount: '79^Wj!FSR2'}).expect(400);
+						return get('/api/v1/nowPlaying/list').query({amount: 'IF6u(j$'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/nowPlaying/list').query({amount: ''}).expect(400);
@@ -399,7 +404,7 @@ describe('Server', () => {
 						return get('/api/v1/nowPlaying/list').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/nowPlaying/list').query({amount: 19.33}).expect(400);
+						return get('/api/v1/nowPlaying/list').query({amount: 74.52}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/nowPlaying/list').query({amount: 0}).expect(400);
@@ -414,7 +419,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "since" set to value string', async () => {
-						return get('/api/v1/chat/list').query({since: 'ue*iz!cM%J3'}).expect(400);
+						return get('/api/v1/chat/list').query({since: '47cUclSLgK(dBtq@'}).expect(400);
 					});
 					it('should respond with 400 with "since" set to value empty string', async () => {
 						return get('/api/v1/chat/list').query({since: ''}).expect(400);
@@ -423,7 +428,7 @@ describe('Server', () => {
 						return get('/api/v1/chat/list').query({since: true}).expect(400);
 					});
 					it('should respond with 400 with "since" set to value float', async () => {
-						return get('/api/v1/chat/list').query({since: 24.27}).expect(400);
+						return get('/api/v1/chat/list').query({since: 17.63}).expect(400);
 					});
 					it('should respond with 400 with "since" set to value less than minimum 0', async () => {
 						return get('/api/v1/chat/list').query({since: -1}).expect(400);
@@ -465,7 +470,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/index').query({genre: ''}).expect(400);
 					});
 					it('should respond with 400 with "level" set to value string', async () => {
-						return get('/api/v1/folder/index').query({level: '08NEFSC'}).expect(400);
+						return get('/api/v1/folder/index').query({level: '92BKjSoRbe'}).expect(400);
 					});
 					it('should respond with 400 with "level" set to value empty string', async () => {
 						return get('/api/v1/folder/index').query({level: ''}).expect(400);
@@ -474,7 +479,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/index').query({level: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/folder/index').query({newerThan: 'VChr6kl9N8UfQQBhtPuh'}).expect(400);
+						return get('/api/v1/folder/index').query({newerThan: 'PWEqeyy!LaW8b'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
 						return get('/api/v1/folder/index').query({newerThan: ''}).expect(400);
@@ -483,13 +488,13 @@ describe('Server', () => {
 						return get('/api/v1/folder/index').query({newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/folder/index').query({newerThan: 20.65}).expect(400);
+						return get('/api/v1/folder/index').query({newerThan: 84.44}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/index').query({newerThan: -1}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/folder/index').query({fromYear: 'O*E0K@gFRXgJ5'}).expect(400);
+						return get('/api/v1/folder/index').query({fromYear: 'X!DSGt0!N1%oqI5'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
 						return get('/api/v1/folder/index').query({fromYear: ''}).expect(400);
@@ -498,13 +503,13 @@ describe('Server', () => {
 						return get('/api/v1/folder/index').query({fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/folder/index').query({fromYear: 74.54}).expect(400);
+						return get('/api/v1/folder/index').query({fromYear: 19.36}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/index').query({fromYear: -1}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/folder/index').query({toYear: '0tWoH8ALYN(]6'}).expect(400);
+						return get('/api/v1/folder/index').query({toYear: 'n74BxLr0oR2&'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
 						return get('/api/v1/folder/index').query({toYear: ''}).expect(400);
@@ -513,7 +518,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/index').query({toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/folder/index').query({toYear: 1.58}).expect(400);
+						return get('/api/v1/folder/index').query({toYear: 60.71}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/index').query({toYear: -1}).expect(400);
@@ -555,20 +560,20 @@ describe('Server', () => {
 						return get('/api/v1/folder/index').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/folder/index').query({sortDescending: ']KO5NPnH&GJy9I'}).expect(400);
+						return get('/api/v1/folder/index').query({sortDescending: '@IClHB!2FBsLD4ct'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/folder/index').query({sortDescending: 612130172698626}).expect(400);
+						return get('/api/v1/folder/index').query({sortDescending: 7426442488971266}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/folder/index').query({sortDescending: -4274057570680833}).expect(400);
+						return get('/api/v1/folder/index').query({sortDescending: -3800271708749825}).expect(400);
 					});
 			});
 		});
 		describe('/folder/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/id').query({id: '0o#v%HrFgk25ZHPbUj*z'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/id').query({id: 'a42(h6O@'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -576,179 +581,179 @@ describe('Server', () => {
 						return get('/api/v1/folder/id').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: 'uC!(zf399%*N7tf@B', folderTag: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: '8ErMXxLRFyqBzjbGx', folderTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: 'SkjKTv1aD', folderTag: 'vbN9UON]^O&xN'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'tuw%[k1!zEEP5SW6', folderTag: '2b1ur2A'}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: '(a(5]H2QPqe3*PbMmRTK', folderTag: 4636586805297154}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'w#^xr6*HZN6(K', folderTag: 8330766526185474}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'vJlc*0Y3e6xT3', folderTag: -2018445570867201}).expect(400);
+						return get('/api/v1/folder/id').query({id: '[bB)9OSV*KTjW', folderTag: -4376105565814785}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: 'KH*BW', folderState: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'V(a4HPkt%', folderState: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: 't!*pcsGGA41QhqbZr!e', folderState: 'jJi0q*o&eZC(S(vG'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'pvAwYkBm', folderState: '2Z]5j(7QoWHf$s'}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: '2W3LI5sH#kICDKs', folderState: -555718818136062}).expect(400);
+						return get('/api/v1/folder/id').query({id: '0xRvIDSuiLTKhdRQ9d', folderState: 522086120423426}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: '5#7VJ', folderState: 4536005856067583}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'SGeb5rV*e(', folderState: -2230967909482497}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: 'C4jrK03t', folderCounts: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: '5z5eAFh@RP12^)VvV', folderCounts: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: 'iq!Ijcg&(', folderCounts: ')160Je9LlJ6#'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'fVx18*coVdu$rld', folderCounts: '6qVyg7Nc82g3j69gsU#D'}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: 'OOt83l8HUEgdSVY*', folderCounts: 2107957642788866}).expect(400);
+						return get('/api/v1/folder/id').query({id: '[iRz74&#d&ugfe', folderCounts: 1930893916635138}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: ')!TilMZfw&xk5zBKW', folderCounts: 8453114591969279}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'H5tkNe', folderCounts: 966378345463807}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: 'ww$EL]IdIlmVsB1C5R', folderParents: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'RD9tqPXUenfVr', folderParents: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: 'bryyFh!2QFcEjwbii', folderParents: 'FpXVhYsO0%LoJN'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'MHNaPiR%sN4q0vm', folderParents: 'E(YLztVuq9UZ6r'}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: 'Zk2Y8t', folderParents: -4456184350244862}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'fxZ$fq9@7JCm24xQ', folderParents: -1335296272629758}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'C7Vw3!JaJ)m9854PsX^i', folderParents: -3496696998789121}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'eR26HzmET*[t@Q(0d', folderParents: -2013973431975937}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: '5l4kROLPD%QnG9', folderInfo: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'rpQZjpSJCcm4W)(e', folderInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: 's[OiscJthVvw', folderInfo: 'Oi(xwYGR3u7'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'ySRQ9XoG1Q&(rjInC!I', folderInfo: '6x4g(lRyOFWNmoiGGCR'}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: 'K4r72U*2quS(QMd', folderInfo: -86428650307582}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'tH)gb0#uBvbi', folderInfo: 7918628833853442}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'B%vUzrO', folderInfo: 4536148256882687}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'ffLj3hakAY', folderInfo: 7831291613413375}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: '2qPP)7N%n', folderSimilar: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'Y*2BOF@Tyo$tk2E8x', folderSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: 'eE#iG5v[*b', folderSimilar: '!qFez$QyHQU'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'D]425y', folderSimilar: 'Op)0XnCifRdjOl'}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: 'QdG2@2PJYZ@94v6P#', folderSimilar: -2293339504246782}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'p@rDuQON%HG[ms7x7%', folderSimilar: -4515345633116158}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: '#H9YWL', folderSimilar: 78565571821567}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'Ekh@o@*sVex%[', folderSimilar: 6837237585018879}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: '4S6j*iwyVd', folderArtworks: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'vwRU0$X^n58', folderArtworks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: '5f6*^y5%mbbLm&O(', folderArtworks: 'fOGCKmzmrW8fx$$d53'}).expect(400);
+						return get('/api/v1/folder/id').query({id: '*VtQk4c)SwI@lJ', folderArtworks: 'o[U(0254'}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: 'i6BfWKw[(8McKfM*i$P', folderArtworks: 3755657618522114}).expect(400);
+						return get('/api/v1/folder/id').query({id: '8%(mE1&SJBh', folderArtworks: 577450559930370}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: '0ad*yhPy2fkk', folderArtworks: 2572730641678335}).expect(400);
+						return get('/api/v1/folder/id').query({id: '#mD]mw', folderArtworks: 5208773295603711}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: 'sEuHv', folderChildren: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: '1H%ORJo(g0Tlq0LYF', folderChildren: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: 'H^HXe2iS28PmJeku', folderChildren: '8bW]XgR'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'fpxgM[VI]ZQ!KA5mTB', folderChildren: 'c0$gW*B^h4xP!2MPy383'}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: 'pw0tykO&CP)Tgl&Pe', folderChildren: 7614906606026754}).expect(400);
+						return get('/api/v1/folder/id').query({id: '2DRUVAED*TFvewY1(Sr', folderChildren: 772998751584258}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'M*3fUG5](', folderChildren: 5959409612095487}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'W&o8l', folderChildren: -848696501600257}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: '%1c*yb8nqy!#H', folderSubfolders: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: '4736QmVLaVPp]d', folderSubfolders: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: '(]D)yciW*O8iR)', folderSubfolders: 'yDDxAQ!FeP*fDuY4z'}).expect(400);
+						return get('/api/v1/folder/id').query({id: '2WpxUUnbS8jxZ$Gr', folderSubfolders: 'k]tTAGh'}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: 'IHotypSNI*FMP8', folderSubfolders: 5520883644891138}).expect(400);
+						return get('/api/v1/folder/id').query({id: '1cR!)qZV2O7a*!&ZHd', folderSubfolders: 6590418657476610}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'v!dN1W', folderSubfolders: -1841326974828545}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'lL%!g9gMEtQ])j3', folderSubfolders: -5042048222625793}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: 'USiwd2^f[bsLE$26Oa]&', folderTracks: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'YIsg[b@VlsqBR', folderTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: ')1E!vVC*Bv]rqm@*J', folderTracks: '@x$!(FEg!LeEpbCq'}).expect(400);
+						return get('/api/v1/folder/id').query({id: '!I)!vvQ(lqpJ4t2T', folderTracks: 'rx%fHVQ'}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: '#p5Lym', folderTracks: 4379375516516354}).expect(400);
+						return get('/api/v1/folder/id').query({id: '3q[EYP', folderTracks: -906688869695486}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'SNA*gOgIWlO]QR@0NIpI', folderTracks: -2672526090043393}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'P@zfO&gndmgyC6', folderTracks: -6057061179719681}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: 'aYH5v', trackMedia: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'Za1rnFdZBaCw(VCyj5k', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: ')Z8d&&(fEwVPB4CW5EYO', trackMedia: 'Dm1Ivq]'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'KfQcZm', trackMedia: 'PcH9L'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: '8JgKd@V1&8NVAb72y', trackMedia: 8008677277564930}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'C@@k8tc1)T0DijI1Y', trackMedia: -8228582589464574}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'oYJfD', trackMedia: 8508184008327167}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'j^J&(Vw9@GIq26c$I', trackMedia: -6172755586187265}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: 'tn0gcVXnf8Nmt*#$j', trackTag: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'yD5]v', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: 'zSBjFF*&0k4', trackTag: 'HaRktuA[iws@XLZ'}).expect(400);
+						return get('/api/v1/folder/id').query({id: '2JEPh@C8', trackTag: '$A*%Zrcm'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: 'c4Vz#VczxC3A7IaQkZGi', trackTag: -2144315627274238}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'uWJ!I!&o&Ww%HoSM*e5%', trackTag: -1898925950763006}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'lDBDy#yb&G#2JigQi', trackTag: -7008820362477569}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'kt*CWm)k]LF$', trackTag: 8746563211886591}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: '2Hk#XMG7UvJ9T^XfU', trackRawTag: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'THn4Gc^A', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: '0MNd24XVR(2Z%apGM', trackRawTag: 'Vd^pqAhM$m1VkyfbDhp'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'CcsCg#cBe8', trackRawTag: '3AIelSKY#(u25e!jGpY'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: '$$%[i7n#y&', trackRawTag: -3573076935573502}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'h1n0zlBTYtE%E7%[6', trackRawTag: -2600691633750014}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'CbMoqOyONMpswxoyP3%0', trackRawTag: -3682030105657345}).expect(400);
+						return get('/api/v1/folder/id').query({id: ')*MriZhcQhkKBtYls', trackRawTag: -5359977673785345}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/folder/id').query({id: '6Y(FwSXYS6(65dJr]dH$', trackState: ''}).expect(400);
+						return get('/api/v1/folder/id').query({id: '#%PBaI', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/folder/id').query({id: 'SpHXOO5WtKG4*jdUgx', trackState: 'X2nlo&CrQtS'}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'v6CNNGzoxq&Ek$*%', trackState: 'HPXf(5(Q7%'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/id').query({id: 'gX3Xo@wkf3d)2orI**', trackState: 5646564311695362}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'lXEDxw]', trackState: -444900097130494}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/id').query({id: 'FReuL%BY', trackState: 2480645636882431}).expect(400);
+						return get('/api/v1/folder/id').query({id: 'knErnW!b(xEQg2Xn', trackState: -7512642952364033}).expect(400);
 					});
 			});
 		});
 		describe('/folder/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/ids').query({ids: ['ifYIhdO', 'h&rYBWG']}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/ids').query({ids: ['Ts@*3tL', 'OgXTLP&']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -759,179 +764,179 @@ describe('Server', () => {
 						return get('/api/v1/folder/ids').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['kX6REcMxrndgUGD1FC^', '6d^xYHD^4epFxb3j'], folderTag: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['s4ysvlGGc', 'hL[Edp3EDZn6fwptW[We'], folderTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['#HA($', 'a]J9mDrFNzwqApiE72a'], folderTag: '&Cm!BS)f$hikZv0b9U^'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['%qjqEq1GaAt', 't)Rg0Xn71(mTLH@4#)2'], folderTag: '^pieYzoFNULgADktr(7T'}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['[ZYSbEm#OR1Z(kL', 'R1P[o2ho15Jf$R'], folderTag: -3752651942526974}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['^F6T81*^H', '6woA07i4qwkJe&Z%3'], folderTag: -3306089428811774}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['LMCk[lHM', 'c!U2QNHY9[N1xf6L!c'], folderTag: -2728125150527489}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['3Q%gCuXjn(lF^Vk&(@', '$El@E*&@P'], folderTag: -3963734166863873}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['sLpJ)NDZdpKE3Tx64u', 'cH#^5#8'], folderState: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['0NZB4wY)od*6%(vV', 'J8QUBHT'], folderState: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['cS)%bP(5ah', '(WO3iiq0#k4W'], folderState: 'UbUA8Mf5cvGyh[m'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['rnUe6n(2#yjfQc2', 'rN8Arn'], folderState: 'cOVbf2J@]1Te'}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['&c@iE4oQGZO6#hMEfpE', '8J9vYe'], folderState: 3148329374449666}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['p(7AP0YY0GtAsUH)As', 'kY*wMQ@HTcwf4LMzpK'], folderState: 5128743706165250}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['CiCA!e7u1XInl))n(os', 'CLlRa6z]f*0$3Y7'], folderState: -1789933517799425}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['f)LP*^F', 'UQPh84'], folderState: 4397203523108863}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['XSzAgw', 'HAP$i'], folderCounts: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['!1al1YQ%FUDR4ovN4', '5rH%Z3u31Bp$Ca'], folderCounts: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['WGNe)PyvLV0mxO', 'TO%qe4P7dbN)usV&X'], folderCounts: '#l)EyOT'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['Um[M7hQb20zsLI]9Lxi', '@2Empz$j'], folderCounts: 'oapuEt99WesZhJF'}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['[EO3ayj2uYLyl', '&ret9h9]JCE%!S1rd'], folderCounts: -1003783161118718}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['WkeYZL', 'Hy4hx8IXA'], folderCounts: -391898652999678}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['5JMH3mo%mnDf*', 'zhMSsqreWlCQANqT8m'], folderCounts: 6600059089059839}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['0phKERJXoWm', ']ZS)ukyWBhTEbnIQ'], folderCounts: 5281288575516671}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['1kK@j2JZHv!', '4V%BgAt3Ge(@v%4D)%wH'], folderParents: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['tUuzfub!', 'S2BBr7K7a]S(XC7CY'], folderParents: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['tPjk]AOZvo9iN', 'v(@[*E5Yf4bk1XjcAo6'], folderParents: 'BnxCjzm'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['QaTKMq', 'oZHv%73xDiO506qJH'], folderParents: 'jk*TqTL&'}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['^mI*jf', 'DagIbwM'], folderParents: -7415492599873534}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['bYIvK8', 'IHs0]O!BUNtL'], folderParents: -3825039694626814}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['Q]vVq', 'ElaXmISF9ZvFNbG3'], folderParents: -5379216375808001}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['Yeg1ghFol0g', '!*Y5[yLhbLq]%'], folderParents: 7121016077680639}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['#w]Hrv0', 'UB@NY712^G'], folderInfo: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['18SbpGOEjGNP', 'w0A[Izk&ee'], folderInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['qIysC', 'JKQ!VpQ'], folderInfo: 'Xb1tA%#@DVtfo'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['dBU@vHqBY5%C&$4zc]', 'uQE#gIKs9Mv&$F%EUMx6'], folderInfo: '7E#]Zp[9%I'}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['dvZZu%PI[S&6cEMPq7', 'M@j2iC2'], folderInfo: -308586655776766}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['ejRCT%&JuA%^V', '%5ITtnipG6PClDIdQMM('], folderInfo: 8431138112536578}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['u7kynwg@', '#vd)$r]!I8cK'], folderInfo: 2455125398388735}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['0woQqPe%I^^5H%TG$C', 'Qv2C*odbj3s3Sz'], folderInfo: 8816536936513535}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['@8IZ&!K!kg4l1eLz*MI', 'wyMoHV9q2x'], folderSimilar: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['(QxU0^lWznc1OWn3P', 'JCsYPcG)5QCP&!d'], folderSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['NI0BrB3uHhM', '9927h#W[6qA8!Qx]'], folderSimilar: 'UsjIQp'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['EsYYM', '8[#$iy]r!cr'], folderSimilar: '@mgkF7h[EcmvtPc50'}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['h(IiaVn@47JQ%', 'YzJcej!DVj#slSRCmR'], folderSimilar: -3648410615807998}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['t5%%NDI', 'Z4tIzLxqNrpNgnoVkKwB'], folderSimilar: -8844089801834494}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['(NxZA', '17[p6SfJjBc!gmYhi'], folderSimilar: -5769881446252545}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['C25IMTp', 'VytB8E0PojOa6'], folderSimilar: 955250915672063}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['j1RfAT$RRs[Ijd', '!t1j2J5M8V('], folderArtworks: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['w*dYKTsE@f7U%[P', 'TXJoFrG5%zo9h*!pJ)'], folderArtworks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['*!tZp9!lo0yh2h', 'Gl^KS4'], folderArtworks: 'knw^1N'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['ZXZPIjp0tUeowUiE%q@', 'n[j&iZ'], folderArtworks: 'g[x!mtYZzSb(I*'}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['udD%uX', 'ocs3dCflunQ$Jb2'], folderArtworks: 6987237807882242}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['$9hs1uLTW', '@j$Sy!$'], folderArtworks: 6622906796736514}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: [')c3jtqN(', '2L$nQ'], folderArtworks: -749989055692801}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['ZmrCr0!v5qaP', '$%Q1SvLDgh](3O'], folderArtworks: -6581722716045313}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['u7Lvz[VGV6@EOfyK', '4J!K)(HhI&@exe'], folderChildren: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['*ypbaLw5SCh7bxbcdAJB', '7]WZ5rRK8DQvK'], folderChildren: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['WYZfh[FBP8K0', '3GziJ20rQZkTt'], folderChildren: '0tYkDYNzC'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['ZK4ojiI8v', '72Y1XRVsskOu*Jxz'], folderChildren: 'P0YMp1'}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['mQat)OOARO#5)', '$MaIpr'], folderChildren: 3255674154778626}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['E#VGr^XM', '!^6V#o9sP[WVF157'], folderChildren: 4776289600798722}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['c]M@her)(KlUoy&q1kvP', 'E2ON*O#'], folderChildren: -980180453556225}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['zGe3Fo*', 'pG!6JgzH8'], folderChildren: -6187321103745025}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['P2ony!BmCAwg*KMO*7', '&(iO)4BVM$B'], folderSubfolders: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['$(J]2', 'gg)AlsW[IKU6'], folderSubfolders: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['tMVW^mLY4#kWUm3nX^', 'OMnrT7]6v'], folderSubfolders: 'e1wNG)$SH'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['^u^X2Mpgs', 'k)*3PxEKG)Yj0'], folderSubfolders: '5tDvd]D]'}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['k6Baw!0e5EbFNv', 'BhiQ*'], folderSubfolders: 909107326353410}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['U64PQZ', '15@(9iGa'], folderSubfolders: 4449268777615362}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['Fh0nQOL7@&', 'icgJRm%gDv7'], folderSubfolders: -2320428349521921}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['J[nvgbyTXQ4A3ZZBdlJ', '(5lSITEk'], folderSubfolders: -8787549455646721}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['8ihx#ShY9f)2GI@5Q9D', 'LcNQ7T@X0]EHzThTj6VR'], folderTracks: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['n%XU*BZzk', 'bBcGZ6TBLcvAgF'], folderTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['T9!4wIasR4@BTD', 'Ziv8N54@v'], folderTracks: 'LhfqAe5IHI%P'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['W8L(JPB6DHy!lY', '47NDt]o^q@88f2gnc'], folderTracks: 'ugV6sh'}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['jufdA]', 'buIpyyQiD#!1D439jvd7'], folderTracks: -8100561756880894}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['m2nD7G1G*MsLah9Zf', 'lixIF#CBt)zD'], folderTracks: -1779760329916414}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['ZbJ55Kfyv]Z', '!*$3pS'], folderTracks: -1620129083293697}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['AqyL2ken0)PIYvZ9', '@VKmHM(5rIUP'], folderTracks: -378422446522369}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['OsMeIZZ18sZ[oxNli', 'tj4kQ$]r'], trackMedia: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['OAY]XcC!w2VjTGi[7', '[%VA$k3J6ZFCq3My2PQU'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['SYFvqi2l', 'BkTqGShxdhT9'], trackMedia: '37yd6M@QykofUTH'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: [']iAn9U0k]HTs$', 'qI[xn'], trackMedia: 'CpBq&KX]'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['Mr8!Va5[rgUj[iE', 'Fj9#uYZXd9C9iz'], trackMedia: 7148075533467650}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['osij9m0br(KD', '8#RO&#Z%lwzKf9#u'], trackMedia: 340135149305858}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['QFHY^ZWrboiBDg$', '8vbf#x)OooJr@9qEdS'], trackMedia: -4810918168887297}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['r$PB8hCkB[&!&hbKnA', '2tKn]006z'], trackMedia: 7975104629702655}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['rEBrH4@P^)Uc', 'Xyu8Usa'], trackTag: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['*tVNBHW[', '4^P3LW2'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['^[UJrmkoc6mbmS7Vv', 'ys&9m!Gs8^U5VYa8'], trackTag: '9LG%]g7qBw(RA'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['nPzlpLP!C4v@RJhf&G7[', 'gtpYfG(RHP8f0YTEce'], trackTag: 'j&e*Uw'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['a%@$4rIm', 'Co^d9pe#'], trackTag: 4046542516256770}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['qgXrpc', '%VSE@'], trackTag: 1311893675311106}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['DKAas5QY1Uc!4xZSK', 't&1HDB*'], trackTag: -7383882596876289}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['IgOqHeyf', '3f2@aU&GsE5'], trackTag: -6274116730486785}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['(d)6CQbdpld', ']ySgDExPuAEtiGXsf'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['#75gNIOin@', 'l!w^N&'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['Hh7[k$kgQ31C', '1cP)g4S]p'], trackRawTag: '5JCPimus9tS)4%'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['^HqBFO0@6aoPFK', 'k[z)fDf[fAb#K!y)d!$'], trackRawTag: 'bOthA['}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['cG$l8', 'qczzhx&f)E'], trackRawTag: -2494230379364350}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['9AiMg$o', '[UDpC'], trackRawTag: -4756628268122110}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['vhKnLw414FtVaA]', 'WB2Ez^'], trackRawTag: -8789239365894145}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['puN!bKv4xO', 'hAUq6n'], trackRawTag: 8810628856676351}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['5)PF#OuJ', 'cSLPXeyE@LKhiLH9I^v'], trackState: ''}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['S]1JxrsM4', 'bFt*05&OMfX6RK'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['(VHA^tD', 'm&QZ1!'], trackState: 'ZMkypy)Lfv0TUP[66ANW'}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['oZL[imf[&KDH0GmeS@', 'lv2bVdzgO'], trackState: '3Qplo%Xmz'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/ids').query({ids: [']dt8aS*P4yCn[kja8v%c', 'K@srA3z'], trackState: 8192427613487106}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['iY9f@(D^Rr]Hoqee', 'Ud5M6'], trackState: -5225635626614782}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/ids').query({ids: ['5!%#!kJNjXlr#U8[Yu*e', 'Jm)221qS1hk*dUjamU'], trackState: 4170538662494207}).expect(400);
+						return get('/api/v1/folder/ids').query({ids: ['omoBb%9VKlviUSafT', '4]qAmPl@'], trackState: -6539959389388801}).expect(400);
 					});
 			});
 		});
 		describe('/folder/tracks', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/tracks').query({ids: ['^25PW6', 'T!EG@']}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/tracks').query({ids: [')1[RU', 'ECnvz!mZx#w']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -942,101 +947,101 @@ describe('Server', () => {
 						return get('/api/v1/folder/tracks').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "recursive" set to value empty string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['X#Cz)w3NumO!Y', 'La4*CfS!B'], recursive: ''}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['U1kBoylp', '!(vq4159xEp$!4L'], recursive: ''}).expect(400);
 					});
 					it('should respond with 400 with "recursive" set to value string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['k((&&!56', '%n69m[4]Q61e!'], recursive: 'p[6TcYesT'}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['l18aa@IfPcUM$@', ']HE[HE4d'], recursive: '1vdYKcaz'}).expect(400);
 					});
 					it('should respond with 400 with "recursive" set to value integer > 1', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['Ed9TO', '1J]W^z(YuJiF'], recursive: 4500826072547330}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['aX)pwVlBTeqgcCAcEN', 'DZ*saUp!7MmBH'], recursive: -1003360408829950}).expect(400);
 					});
 					it('should respond with 400 with "recursive" set to value integer < 0', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['IY$14J', ']LXYmklo5#u!U)pRpj'], recursive: 1000248000380927}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['lLSH!IQe4%k%7VRJ55u', '2DxJvw*Y'], recursive: 227780549672959}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['GjSlA0HyIYSRv(AKhNUI', 'BiKU^PQg4p!zr#(@J'], trackMedia: ''}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['L(l1NEP', '@H4omwy('], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['@29J)*4', 'qCVfYb'], trackMedia: '0Z*)[k)y^*whB46^k!#'}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['c4ONI', 'V$JizxtrP@'], trackMedia: '6(XKJr'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['5jYgY', ']n7MB'], trackMedia: -550523841282046}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['ukxa3pk@AU]gP43', 'w*Xw)9hBDD$SkST2'], trackMedia: -8820643185295358}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['L[mE5Y0I*lGfQyMMW&', '4FijcC@e'], trackMedia: -31736725504001}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['wmXEN4X$LwrrO9VAb', 'NzPlX$Vv&GtSrl)'], trackMedia: 3074896800251903}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['U(iS0C0qS', 'qo9ra9r0j1j'], trackTag: ''}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['nqwhfQzPfbia[&2', 'e4jpbs@r64p*!v(VF'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['*XV*L&x%IGZ', 'c!Smd4e*S#baX'], trackTag: 'JM#dZI0^C'}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['4wZth^wem$BI*wM', 'zJUV5])c'], trackTag: '74xbAnhZ'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['Q%T^0GeEG', 'I)ExihnOO2LVC]'], trackTag: -8896244785086462}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['s&)PVlo[CFF', 'Bp6FR2@#2]2QEo'], trackTag: 4151721303474178}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['Wkl3P', 'O1D*$'], trackTag: -8279765123334145}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['h8bsu%OdwiPB&$q', '9ZF]FbSxF'], trackTag: -5136737705656321}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['YLRGYwJ0SC3pZ3jqG', 'yrVXZYMuRhKkA'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['YTF%gCFB', 'v%[C5'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['fc8x@hgxf[9', 'xv9%x4XUglDMWV*wH'], trackRawTag: '&07[3u2mSES['}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['KFw0^F', ')SCln9(51GB6reIj4'], trackRawTag: '(oZtif'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['b^&OPU@VbI%0ED', 'it^)EGRA'], trackRawTag: -4298408428830718}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['HG^Oe]tpw', 'PmK7FG8t6Z'], trackRawTag: -4493395883982846}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['vYyVDOoj', 'i9ylY$kghMUG(*yzo('], trackRawTag: 3361133570293759}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['zotpg$$kW', 'P0]#Cd@*u3r0Dx'], trackRawTag: -5895521688354817}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['IwRjsAOTA4Cm!6d', 'OjsNafNIVMMH'], trackState: ''}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: [')&NQYMK', 'k$R#[vbJKemEeRgybI*6'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['AMjQHhig', 't#sy^6xf#u^XRTx5a7M'], trackState: 'HL^ZA$U7HmG'}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['jDGOMaP', '!kDDZ^9'], trackState: '1NIJgb9LHTZcN'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['SzNboTynL', '6v*Z!K&aFAPn)Z]8M$'], trackState: 3786804054458370}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['M0l!I', 'N60M9)!K'], trackState: 4755161968803842}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['cICCp9CWh0JWWH%*Zxd', 'ryGggwm8tZf11)Hdt'], trackState: 1496661062844415}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['3K9j^#)^jT^*k77JN', 'oY#70'], trackState: -3886732231573505}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['U0srtxYmG^HzJ', 'j!Bx#v7y1j^YfyiN6HLV'], offset: '%Sm9l*9i1ODc]F'}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['fsc$fBC*nIux1', 'tOe$Q[CNRFyN@u!H'], offset: 'b$S7S'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['FIKXc', 'jZtgGc@%T2SRU'], offset: ''}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['xUhNLsokNHd', 'b7aRP7&ELV'], offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['3RTKS^isvmd]H$', '[bclYt94dquX*'], offset: true}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['Aw8*mHMZbx', '0aT*sd3L&zGZ*k4d]'], offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['t2]$@PMoggnm', ')b$Yc[DQRQQerrPR'], offset: 66.8}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['eN!daukT@0JhIqgPZH', 'LkcqJKaFV6dF1O'], offset: 44.82}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['Tiv84l6', 'Rl5OXRIAmRDu'], offset: -1}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['XB(ijC3AW!gylr^72', 'F^ySVDDnXPh%v9p'], offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['AlzHJ4KsEeK!5(aU', 'Yh]yKLbZ)'], amount: '#7uJuv3%0v4G7f5!u4CJ'}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['JjB4v*NQ1', 'n&MSz@fNZ'], amount: 'kg2]7D1WO!%PWo'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['ZEOcA&3L', ']tzR80Gz2'], amount: ''}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['0FA@5zCj15]y!!UoKZ', '!B)9E405#Y6'], amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['PJc(wISNosT@&aj!!IY', '9mwv)IUU'], amount: true}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['Y&kCGg', 'cowa)WP%xc'], amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['ewG]Ak', 'WSKIKR9h$clRBH9]rlL'], amount: 79.82}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['!ZFazFdJo', '@80Mpv'], amount: 72.84}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/folder/tracks').query({ids: ['rhI6RfMzm&y1n', 'LJeLW^1G6Fk%r*'], amount: 0}).expect(400);
+						return get('/api/v1/folder/tracks').query({ids: ['qEwqY%c%vm3y', 'dg6NVwuPe6X'], amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/folder/subfolders', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/subfolders').query({id: 'xG3&nE]lJzZs'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/subfolders').query({id: 'Om@^IAhVy'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -1044,125 +1049,125 @@ describe('Server', () => {
 						return get('/api/v1/folder/subfolders').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value empty string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '!A[n4%D$gyZdt', folderTag: ''}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'A$mBdirCK6X(', folderTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'C$^LYy2yf@M4S%uXqAiW', folderTag: 't8k!St7iDpp$AT'}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: '7ba4L*8', folderTag: '@F#TE2G77p6M9#o'}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'i4y)GEKybSpvdIYYANp', folderTag: -5871344075931646}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'tmF8^!w', folderTag: 8475925985361922}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '!dCJ*S%vP', folderTag: 2654111019302911}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: '&ZIf)rFU8D', folderTag: -7456909070172161}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value empty string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'jTa@SZLDs[w[lHw%%gZ', folderState: ''}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'HjK%xFq]i', folderState: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'OdHMzC6b1W2g$', folderState: 'qWfCOmG'}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'wsRlWQ6D', folderState: 'oF42E'}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'Pc(Nm5JRyg@K', folderState: -7687861688074238}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'UvEi0Zg3ogp4G0w0qJe', folderState: 3709647101886466}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '0t#fK&ruyuSkN@6Wy*]', folderState: -4326435577659393}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'P())*7rDvM5B*7Q$C', folderState: -266504775925761}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value empty string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'gArjCK6qT7w', folderCounts: ''}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'v&0^ZO(2rxx0oa*p)]y', folderCounts: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 't%q**L3V', folderCounts: 'fGW$h06E6Z!&A'}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'pdJ%utBprqZ*oNJJn', folderCounts: 'Q9fZhn'}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer > 1', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'kszJ!z&A', folderCounts: 6081950401953794}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'zuxGsm', folderCounts: 7441343198527490}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer < 0', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '$@UBVb', folderCounts: -6829866594861057}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'rHATTex!4)j', folderCounts: 2380866940567551}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value empty string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '&6XH0vwCcjd', folderParents: ''}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: '8Dx%ko&', folderParents: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'He$@kmPdMW465PUf5', folderParents: ']u9$lLIhVcG'}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'Hz*aavc', folderParents: 'BT6vI'}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer > 1', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'G)n)6@%KX1!qY]Y*lfg', folderParents: 1884076235554818}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: '4L^apz!K!GX@75Ch1', folderParents: 6208783663497218}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer < 0', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '$A8QyOL!AjNN', folderParents: 2450758393921535}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'uZ9FiD4Ny^jPe4', folderParents: 998720560693247}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value empty string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'nwl8WuWF', folderInfo: ''}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'TMeLHJ!Q20$42Ljsy', folderInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'jq9w@@DmjoIxjS$KyU', folderInfo: 'bqCvDPMSrhS)rKW'}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'STnw&#)&CTzJsfqzo', folderInfo: 'C2D^bN7)toFQW'}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer > 1', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '(Io6XrpKR^hzq', folderInfo: -6419024934076414}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'nr^)QOxQg18h#&jDg', folderInfo: 7388614719700994}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer < 0', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'eJcqQQy&U!', folderInfo: 6672102987923455}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'I8dZVGhjkeq)eve]B', folderInfo: -7086661661884417}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value empty string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'SCxjyaeuRLp8', folderSimilar: ''}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'U8ObW!JF&', folderSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'es8#hPLzdly$s', folderSimilar: 'N6f![2b2wkdb@J21m!'}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'b88wCPq1D62*XT(RB)t', folderSimilar: '[d3Wcjb'}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'kPS6eWOLauQ', folderSimilar: 4857295481602050}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'uGYNo', folderSimilar: 4868406650077186}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '!q8!nI@pSWl7', folderSimilar: 749701246746623}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'G$4S[1th[gMy@VCq', folderSimilar: -3573532290187265}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value empty string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '3g0Gup0b@', folderArtworks: ''}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: '[03t%cxw*mhU3wPd', folderArtworks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'kmgAaV9ACa]mV', folderArtworks: 'hecd%Nd'}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: '6qpJx$E1zd$', folderArtworks: 'l0C(do0'}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '(^KShwE@@B(', folderArtworks: 5063587907239938}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'gqIk&xaV', folderArtworks: -1339799407427582}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '4P6Gb%8fG)NvyTApA&', folderArtworks: -5215158909534209}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'TI9@Ad3ojJNFU*k!GHR7', folderArtworks: -6134352672980993}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '!crfP3312KWz', offset: 'ZFKnRh&p*l7mH'}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'NGfLYXu*sHKY59', offset: 'DQq25US(D'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '4jR4m', offset: ''}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: ')U[#UN71VTC3i3y8z2', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'lgb]bBcd7', offset: true}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: '6f&Th', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'N^TdKB2T2)i9uW*)d', offset: 6.55}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'PUMEN3krW3J1!5y', offset: 58.15}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'A0uONug[R', offset: -1}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'oALzbxeg[D#I[', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '2d3d#eGf', amount: 'cl]hg%v'}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'obg[hNUnC*', amount: '!r0DDo[IVB$nWZ%(17u'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '!T]jQZi(G6Qa3CCKsn', amount: ''}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: '0EhO]7Ws2@YFqu9FI5', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/folder/subfolders').query({id: '$IhGyj6XK4', amount: true}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'E^7Evt0O', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'NjCJxSjoyy', amount: 31.89}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'eJ080[vb#0FgZmA8qC^', amount: 57.66}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/folder/subfolders').query({id: 'K0VHwmCiv(L8mYCv%', amount: 0}).expect(400);
+						return get('/api/v1/folder/subfolders').query({id: 'fo^dK]4Of41RR', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/folder/artist/similar', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/artist/similar').query({id: 'utC2M@r3xech'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/artist/similar').query({id: '345Jo3ZeM'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -1170,209 +1175,209 @@ describe('Server', () => {
 						return get('/api/v1/folder/artist/similar').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '2D2GkJzSAOZ@nZHcleq', folderTag: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '5pzps]j2a)ZW0', folderTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '#j]BCIHYzX*TVY[', folderTag: 'USpKV'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'AT1[%iWK', folderTag: 'mhx8V&GPSis'}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '7AhR$Ds6hp7(MQJ]M', folderTag: 4800335214280706}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'DOaw9h', folderTag: -4215153289592830}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'TQL#4[kbp1u*%', folderTag: -58303732252673}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '*Qn10X', folderTag: -883565105512449}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'xnr3@6Gp', folderState: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'Vz@)4Qrk#UhYyDx^!', folderState: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: ')(aQin8', folderState: '5T)dsTjtDH3evn'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'ium&TSmD5w0CZ76', folderState: 'uQsCW6%(QPyk#FlkjN#'}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'JE4]y0j5o[gRR1z2MY5', folderState: 4470425060900866}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '1UD8nv]Cvfqrtl))0Y', folderState: -2975986861735934}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'EO!1!WR4UvcVLJh&oLjA', folderState: 2886208803831807}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '0$USzONSGOK^', folderState: -4313237268987905}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '8NQ1d8b', folderCounts: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'AyHe[#)e', folderCounts: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'U2l)J13nqqz[Gs0', folderCounts: 'C2hOf@0wEPw'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'C^Gop9uIXHxfmn', folderCounts: 'KkSxS526D(d[1fo56R'}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '43&9u6b@vf', folderCounts: 8398231360765954}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '148YM[l', folderCounts: -5726907567964158}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'VC0DaOxHXwDpfeQk@S', folderCounts: -4524646330269697}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'jbS8hvIPY@aC2VB', folderCounts: -3021808030711809}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'oB%uHOD', folderParents: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '3zXrUqI@GJJd$Ml(', folderParents: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'DK4gIYMEWx&z', folderParents: 'S%w(pmi%h!i'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '[Bw]YV)X@Z(iqHf', folderParents: 'ARt^^XmHrVXO%)EHXdFE'}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'tIX(o5)T080[', folderParents: -2754925956169726}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '1s4nlgm', folderParents: -629826205515774}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'fSk[a', folderParents: -5838467024027649}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'qSrb4bCQi8F&&@FizBy', folderParents: -2698134027239425}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'AiJNhy^9rudXm)#', folderInfo: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'xODf0KsX[hrD&3YjJ', folderInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'i5Qg$oSONw3u!YmAPb', folderInfo: '5@SLsyCn[AMxMQsaEuzL'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'JkmmV^', folderInfo: '82vo$3vZR2cLH%M4!X]'}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'Il1loB$di^gASOx(rRfC', folderInfo: 2409225712041986}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'X2TX7M96a', folderInfo: -7425506915909630}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'C&pFsFSEC1^a', folderInfo: 8548250239893503}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'd)9l]1YK0vzDk', folderInfo: -6656056822333441}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'S3]CIaX8w^[', folderSimilar: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'G[DxrJ1nJWfoW9', folderSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'Fx!DLB90v^2cFq^R4(XH', folderSimilar: '3Rzqb076[85t4'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'RKAOzwT@x9', folderSimilar: 'rkFXbf0qK'}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'rRi&Ef8nAtb0Hkeni3W', folderSimilar: -74822109364222}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '@f*8gUGdGpSRhID', folderSimilar: 6659374915256322}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '[IOfQEc', folderSimilar: -3533183140233217}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'DK3sT&W*%%4o[^Wj6v(', folderSimilar: 3004075184488447}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'mm*pO]LEcRjl0', folderArtworks: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'n!DQR5vx7d7fkX]z', folderArtworks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'YPywR', folderArtworks: 'elnbNmP*ZB^^ny'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'JU3Iqqep!wNIlqo9pvJ', folderArtworks: 'oZ5Rv$'}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '^qP&@mc3', folderArtworks: 5573015832100866}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'z&FVybk$W9XM1N6fj[', folderArtworks: 5194341190467586}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'rqWZS', folderArtworks: 4431346554372095}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '57SIqACzV*&kjF(1', folderArtworks: -1900244858044417}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'RaZUb)4]T', folderChildren: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'y77r[Pf', folderChildren: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'A4!rssE', folderChildren: 'tnSeQ'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'S5HZH[WWP&', folderChildren: 'R2dMq'}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '7RmHfRpwR(gm*PvFQ(n*', folderChildren: -4520724660223998}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'sr$q@HLlTH]%oWa', folderChildren: 3948787638730754}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'gUFTgYRSya', folderChildren: 2305180502589439}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'pxtd#Op6', folderChildren: 6397220437884927}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '$sAFM$cGp&YW4m%z$%eh', folderSubfolders: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'lySNK$XGNy8y*zVYJ#ya', folderSubfolders: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'n&xfAZNUVdU', folderSubfolders: 'GqE%]B#0%[zSh8bX'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '#6&9H2^9lK4i', folderSubfolders: 'wbuG4]G0IJ4Oe)l0j4Sd'}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '7W@6e*Njc', folderSubfolders: -526506220584958}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: ']d)t7h0KlMWC7sP', folderSubfolders: 823640840994818}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'sG6IYrR', folderSubfolders: -2114235580547073}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'v7xxFPyG)zBT[', folderSubfolders: 2042573048774655}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'U#WuXNEyV6NWvjLBs', folderTracks: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'Eh^vwtD', folderTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'HIKBaZ0kCymmnjC1M', folderTracks: '*[1do$YJF@y&'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'PdP%NJLUuJr2Enif!tM9', folderTracks: 'm^aHzEYoS'}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'PoLH(bqaG', folderTracks: 3966564319625218}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '0ChV6n%8Fe0VJm', folderTracks: -2104172862242814}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '^#^wG6S&0C5e%)HXbvhD', folderTracks: -8991685904171009}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '%yYX0', folderTracks: -7807509855207425}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'YFw@rLgNY', trackMedia: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'GvXMSi8cG4sli@Iv$]v^', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'ljGebr5QBGxHn*8(qaI^', trackMedia: 'h8E!Ynq'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'C[X@Sb1*fj6BKJ', trackMedia: 'XNUV)1ajnei9*bg0'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '^OE%nykd6!JRrU2Zm', trackMedia: 8395958148661250}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '6k!xb5gK[@OR', trackMedia: 1758417165221890}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '$VZ0s', trackMedia: -2572503994073089}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'mIjmbVcTV!y', trackMedia: -2437913518276609}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '5kFqd5I', trackTag: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 's8(HLIqv!N', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'SG)!S7)9(', trackTag: 'JRFLAmt^%O@xqyv]Z'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'CEYa28y', trackTag: 'ObjoujOEr0$[Mq@4i'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'VUhPc8sx2]Ms', trackTag: 2038681669992450}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'IRn8W!Lg[B$2B1', trackTag: 1891171404087298}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'e24fU@ZqBS', trackTag: 2421903612444671}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'zYMf9R', trackTag: 2055825581408255}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '!jCTzI4@aJO(@M', trackRawTag: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'aV$ii', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'V)RPe^NLx', trackRawTag: 'x3b4[WsIklO]$29'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'Dh%7)4', trackRawTag: 'iMFydjM'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'V8P6O[1xNp', trackRawTag: -5586512045408254}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: ')dPwQdT%mCmZ', trackRawTag: 6786155513118722}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'v(YLM2oFjDX8Me', trackRawTag: 3684465146593279}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'gtxOlVRcklxaTsL', trackRawTag: 5959859493142527}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'SVR[Q3', trackState: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'hnGw&', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '139*3]cd', trackState: 'ybzXsUgc)6OCAq'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '*5nkdpuec', trackState: 'J88b2g@'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'QCtt3dKbn64ivYqFE', trackState: 6546281895821314}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: ']M4%MA1s)&%L5', trackState: -3101953143865342}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'jp2Kt1G6pfR%@VJ(g', trackState: -1218085235195905}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'Iy7)!oHg&emWXD', trackState: -7363065540509697}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '7[!)j', offset: 'h(H2D!xu'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '6dR7xEoS', offset: 'ff&]Gq4L*cc0R)yp5&O'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'opDGY(#%iKM6hzMbmPp', offset: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '$P]4*m%2lt4Tiui0', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'ioGUKsgRl', offset: true}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'XaIsI*rXBCb#0n', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'u#*AJLy8U9w(&o', offset: 26.51}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '9)Bb[EIUKkc', offset: 33.68}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'UtQ&Qv9d@Lc5W07SIi', offset: -1}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'W9K6Tkn714', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '943NBRuc', amount: 'Qi(mMO^mwGW'}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '7b(Rt8m]p%g', amount: 'NJugAHw'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: '$MS[ZAqJ', amount: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 't2dv(1l7t', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'Z(*B18', amount: true}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'xT8M^L]V]%UfXgDpL', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'VbYnq%&PI', amount: 8.21}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: 'V[Gp2F97x^pB7w', amount: 94.14}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/folder/artist/similar').query({id: 'c(6tkbjMsek', amount: 0}).expect(400);
+						return get('/api/v1/folder/artist/similar').query({id: '$QB%[gUOrDZ', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/folder/artist/info', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/artist/info').query({id: '4)Q7iu*$mO4p%e4axK'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/artist/info').query({id: 'eSpSeUHPtsXZY$O'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -1384,7 +1389,7 @@ describe('Server', () => {
 		describe('/folder/album/info', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/album/info').query({id: 'ptWcCVENeQm!$#tZPk&'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/album/info').query({id: 'IhO82@aX'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -1396,7 +1401,7 @@ describe('Server', () => {
 		describe('/folder/list', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/list').query({list: 'frequent'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/list').query({list: 'highest'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -1410,94 +1415,94 @@ describe('Server', () => {
 						return get('/api/v1/folder/list').query({list: 'recent', rootID: ''}).expect(400);
 					});
 					it('should respond with 400 with "rootIDs" set to value null', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', rootIDs: null}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', rootIDs: null}).expect(400);
 					});
 					it('should respond with 400 with "rootIDs" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', rootIDs: [null, '']}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', rootIDs: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "parentID" set to value empty string', async () => {
 						return get('/api/v1/folder/list').query({list: 'frequent', parentID: ''}).expect(400);
 					});
 					it('should respond with 400 with "childOfID" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', childOfID: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', childOfID: ''}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', artist: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', artist: ''}).expect(400);
 					});
 					it('should respond with 400 with "title" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', title: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', title: ''}).expect(400);
 					});
 					it('should respond with 400 with "album" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', album: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', album: ''}).expect(400);
 					});
 					it('should respond with 400 with "genre" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', genre: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', genre: ''}).expect(400);
 					});
 					it('should respond with 400 with "level" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', level: '2hZtILg7X$83C0v87a'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'recent', level: '1UF@KK0aG@N]Ox9J'}).expect(400);
 					});
 					it('should respond with 400 with "level" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', level: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', level: ''}).expect(400);
 					});
 					it('should respond with 400 with "level" set to value boolean', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', level: true}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', level: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', newerThan: 'ylObUaxUP(p5ND(9CvL'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', newerThan: 'EIrZf!7sSWW*z'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', newerThan: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', newerThan: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value boolean', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', newerThan: true}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', newerThan: 14.3}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', newerThan: 46.84}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', newerThan: -1}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', newerThan: -1}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'avghighest', fromYear: 'ND88KeUMrfLU'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'faved', fromYear: 'Zu@tT'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', fromYear: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'recent', fromYear: ''}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value boolean', async () => {
-						return get('/api/v1/folder/list').query({list: 'avghighest', fromYear: true}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', fromYear: 96.86}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', fromYear: 77.72}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value less than minimum 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', fromYear: -1}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', fromYear: -1}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', toYear: 'jxfJC)ox3POU*o'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'faved', toYear: 'hY]UaEtm5fq0E%sCU@'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', toYear: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', toYear: ''}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value boolean', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', toYear: true}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', toYear: 12.32}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', toYear: 79.53}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/list').query({list: 'frequent', toYear: -1}).expect(400);
 					});
 					it('should respond with 400 with "type" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', type: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', type: ''}).expect(400);
 					});
 					it('should respond with 400 with "type" set to value invalid enum', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', type: 'invalid'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', type: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "types" set to value null', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', types: null}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', types: null}).expect(400);
 					});
 					it('should respond with 400 with "types" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', types: [null, '']}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', types: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "types" set to value invalid enum', async () => {
 						return get('/api/v1/folder/list').query({list: 'highest', types: [null, 'invalid']}).expect(400);
@@ -1506,13 +1511,13 @@ describe('Server', () => {
 						return get('/api/v1/folder/list').query({list: 'faved', sortField: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value invalid enum', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', sortField: 'invalid'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'recent', sortField: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', id: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', id: ''}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value null', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', ids: null}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/folder/list').query({list: 'recent', ids: [null, '']}).expect(400);
@@ -1524,127 +1529,127 @@ describe('Server', () => {
 						return get('/api/v1/folder/list').query({list: 'recent', sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', sortDescending: 'Kj(Sgo'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', sortDescending: 'bkGJXBr0N75ey8zbFs'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', sortDescending: -5837799097892862}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', sortDescending: 4417458177835010}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', sortDescending: -2418836343095297}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', sortDescending: 408726162898943}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'avghighest', folderTag: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', folderTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'avghighest', folderTag: 'H[E&)[)wMp7w*!$!H'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', folderTag: '3WpkJWG]gF'}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', folderTag: -8331404261720062}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', folderTag: 8209061124243458}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', folderTag: -5606460461416449}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', folderTag: 1399299468427263}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value empty string', async () => {
 						return get('/api/v1/folder/list').query({list: 'avghighest', folderState: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', folderState: 'TbVnGvWrx^ieN5L$A'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', folderState: 'ca(Acxc'}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', folderState: 6466636433326082}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', folderState: -7211095911563262}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', folderState: 389909072314367}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', folderState: -4375317577728001}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value empty string', async () => {
 						return get('/api/v1/folder/list').query({list: 'frequent', folderCounts: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'avghighest', folderCounts: 'lzj@V)ZQ'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', folderCounts: 'n2(zlYJ%u4zQnIvAiZhX'}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer > 1', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', folderCounts: 295184159997954}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'faved', folderCounts: -3171122526814206}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer < 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', folderCounts: -3764449127170049}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'faved', folderCounts: -6668635359674369}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', folderParents: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', folderParents: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', folderParents: '4&QDB&lD'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', folderParents: '9LF&Y%zgLI(NA^'}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer > 1', async () => {
-						return get('/api/v1/folder/list').query({list: 'avghighest', folderParents: -7653082632552446}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', folderParents: 4244000923975682}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer < 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', folderParents: -146320387997697}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'recent', folderParents: -3715475334758401}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value empty string', async () => {
 						return get('/api/v1/folder/list').query({list: 'faved', folderInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', folderInfo: '0P97OR'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', folderInfo: 'hIJ^&EhW3K@b['}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer > 1', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', folderInfo: -5387956579729406}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', folderInfo: 2970245648089090}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer < 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', folderInfo: -1574801768449}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', folderInfo: 8639768854265855}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', folderSimilar: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'recent', folderSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', folderSimilar: 'TVu103lwj'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', folderSimilar: 'EyGVnB1ws'}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', folderSimilar: 5588644962238466}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'faved', folderSimilar: -2621107555270654}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', folderSimilar: 7527836931850239}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', folderSimilar: -5049139226214401}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'avghighest', folderArtworks: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'random', folderArtworks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', folderArtworks: '3OxR^m90D'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'faved', folderArtworks: 'ksHOkEcJw@[(*hGspI@f'}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', folderArtworks: -3157098426793982}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', folderArtworks: 4506160329654274}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'highest', folderArtworks: 6396244029079551}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'avghighest', folderArtworks: -5378949811011585}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', offset: 'sA3aykaM!hz7*'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'recent', offset: 'UwuxmH*cHd5R!'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', offset: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', offset: true}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'recent', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', offset: 48.2}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', offset: 18.32}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', offset: -1}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/folder/list').query({list: 'frequent', amount: 'Q^Ca[jB9C'}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'faved', amount: 'G4SeI'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/folder/list').query({list: 'random', amount: ''}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'highest', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
 						return get('/api/v1/folder/list').query({list: 'recent', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/folder/list').query({list: 'recent', amount: 78.96}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'recent', amount: 85.37}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/folder/list').query({list: 'faved', amount: 0}).expect(400);
+						return get('/api/v1/folder/list').query({list: 'frequent', amount: 0}).expect(400);
 					});
 			});
 		});
@@ -1656,7 +1661,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/folder/search').query({offset: 'ji!US(]xK$)#iYyvHu'}).expect(400);
+						return get('/api/v1/folder/search').query({offset: 'ySYhjWGTrOrSiZdFG'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({offset: ''}).expect(400);
@@ -1665,13 +1670,13 @@ describe('Server', () => {
 						return get('/api/v1/folder/search').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/folder/search').query({offset: 17.35}).expect(400);
+						return get('/api/v1/folder/search').query({offset: 31.58}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/search').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/folder/search').query({amount: 'fX^LU%urfTr8J*(Nm6X'}).expect(400);
+						return get('/api/v1/folder/search').query({amount: '6ke]$O%mo'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({amount: ''}).expect(400);
@@ -1680,7 +1685,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/search').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/folder/search').query({amount: 73.98}).expect(400);
+						return get('/api/v1/folder/search').query({amount: 60.05}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/folder/search').query({amount: 0}).expect(400);
@@ -1713,7 +1718,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/search').query({genre: ''}).expect(400);
 					});
 					it('should respond with 400 with "level" set to value string', async () => {
-						return get('/api/v1/folder/search').query({level: '0hdy2qd11AAAEV8'}).expect(400);
+						return get('/api/v1/folder/search').query({level: '^Nn]sW'}).expect(400);
 					});
 					it('should respond with 400 with "level" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({level: ''}).expect(400);
@@ -1722,7 +1727,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/search').query({level: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/folder/search').query({newerThan: 'mMyOXU'}).expect(400);
+						return get('/api/v1/folder/search').query({newerThan: 'S3@QHv^1qfyN@PSh'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({newerThan: ''}).expect(400);
@@ -1731,13 +1736,13 @@ describe('Server', () => {
 						return get('/api/v1/folder/search').query({newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/folder/search').query({newerThan: 7.91}).expect(400);
+						return get('/api/v1/folder/search').query({newerThan: 18.07}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/search').query({newerThan: -1}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/folder/search').query({fromYear: '6#E5I4QgOJx)kbE'}).expect(400);
+						return get('/api/v1/folder/search').query({fromYear: 'nOrTsq'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({fromYear: ''}).expect(400);
@@ -1746,13 +1751,13 @@ describe('Server', () => {
 						return get('/api/v1/folder/search').query({fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/folder/search').query({fromYear: 77.67}).expect(400);
+						return get('/api/v1/folder/search').query({fromYear: 63.02}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/search').query({fromYear: -1}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/folder/search').query({toYear: 'bgDaDMVQ&EW'}).expect(400);
+						return get('/api/v1/folder/search').query({toYear: '[tu!mD0T[tO0wkv'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({toYear: ''}).expect(400);
@@ -1761,7 +1766,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/search').query({toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/folder/search').query({toYear: 75.44}).expect(400);
+						return get('/api/v1/folder/search').query({toYear: 71.53}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/search').query({toYear: -1}).expect(400);
@@ -1803,181 +1808,181 @@ describe('Server', () => {
 						return get('/api/v1/folder/search').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/folder/search').query({sortDescending: 'cON&R'}).expect(400);
+						return get('/api/v1/folder/search').query({sortDescending: 'tWGnRAZst@nPqMhzO'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({sortDescending: 6203347518357506}).expect(400);
+						return get('/api/v1/folder/search').query({sortDescending: -3427962636468222}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({sortDescending: 8793757449191423}).expect(400);
+						return get('/api/v1/folder/search').query({sortDescending: -8073806211973121}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderChildren: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderChildren: 'l7w6^t9&'}).expect(400);
+						return get('/api/v1/folder/search').query({folderChildren: 'z3FP#PtIP8'}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderChildren: -5790924332335102}).expect(400);
+						return get('/api/v1/folder/search').query({folderChildren: -8986595893968894}).expect(400);
 					});
 					it('should respond with 400 with "folderChildren" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderChildren: -8107317358755841}).expect(400);
+						return get('/api/v1/folder/search').query({folderChildren: 1078926042464255}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderSubfolders: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderSubfolders: 's$GTe*'}).expect(400);
+						return get('/api/v1/folder/search').query({folderSubfolders: 'qQbjut4J#7w]p&J'}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderSubfolders: 2242028918276098}).expect(400);
+						return get('/api/v1/folder/search').query({folderSubfolders: -612447614402558}).expect(400);
 					});
 					it('should respond with 400 with "folderSubfolders" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderSubfolders: -1831177694478337}).expect(400);
+						return get('/api/v1/folder/search').query({folderSubfolders: 5581860323196927}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderTracks: 'Ws5uVvcb'}).expect(400);
+						return get('/api/v1/folder/search').query({folderTracks: '3)eF&LQ[EpLzIB7w'}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderTracks: -2130231519346686}).expect(400);
+						return get('/api/v1/folder/search').query({folderTracks: -6873860678877182}).expect(400);
 					});
 					it('should respond with 400 with "folderTracks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderTracks: -8707797332000769}).expect(400);
+						return get('/api/v1/folder/search').query({folderTracks: 5963208061878271}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/folder/search').query({trackMedia: 'HfWshVXTAF@Bi!'}).expect(400);
+						return get('/api/v1/folder/search').query({trackMedia: 'd[XkLOQ%oy^Okq'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({trackMedia: -3606255348219902}).expect(400);
+						return get('/api/v1/folder/search').query({trackMedia: 826634294788098}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({trackMedia: 1751854828486655}).expect(400);
+						return get('/api/v1/folder/search').query({trackMedia: -6081454278705153}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/folder/search').query({trackTag: 'd!UtIcSyOLA&$i4'}).expect(400);
+						return get('/api/v1/folder/search').query({trackTag: 'tAqn7'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({trackTag: 7399536213360642}).expect(400);
+						return get('/api/v1/folder/search').query({trackTag: 20358413418498}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({trackTag: 8689634125021183}).expect(400);
+						return get('/api/v1/folder/search').query({trackTag: -5054856914010113}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/folder/search').query({trackRawTag: '!f#2aGGD734'}).expect(400);
+						return get('/api/v1/folder/search').query({trackRawTag: 'awADzwam*TA@#J)sO'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({trackRawTag: -8681774305509374}).expect(400);
+						return get('/api/v1/folder/search').query({trackRawTag: 3467817185705986}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({trackRawTag: -4588098319024129}).expect(400);
+						return get('/api/v1/folder/search').query({trackRawTag: -6519029204254721}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/folder/search').query({trackState: '#PUazt)tis%('}).expect(400);
+						return get('/api/v1/folder/search').query({trackState: ']ffdezGMBH12WV@'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({trackState: -3107906027257854}).expect(400);
+						return get('/api/v1/folder/search').query({trackState: 6212394493673474}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({trackState: -2223763575799809}).expect(400);
+						return get('/api/v1/folder/search').query({trackState: -2457351059668993}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderTag: 'A417@gEo09Le0tGQcMg'}).expect(400);
+						return get('/api/v1/folder/search').query({folderTag: 'JqGA6'}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderTag: 2094365157621762}).expect(400);
+						return get('/api/v1/folder/search').query({folderTag: 3873759719063554}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderTag: 3775435741593599}).expect(400);
+						return get('/api/v1/folder/search').query({folderTag: 7122624840728575}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderState: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderState: 'v[0Ll[I[BAWr'}).expect(400);
+						return get('/api/v1/folder/search').query({folderState: '$[*dc'}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderState: 8992554422894594}).expect(400);
+						return get('/api/v1/folder/search').query({folderState: 5992533393932290}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderState: 2245880530862079}).expect(400);
+						return get('/api/v1/folder/search').query({folderState: -341056105218049}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderCounts: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderCounts: '^G9JX6'}).expect(400);
+						return get('/api/v1/folder/search').query({folderCounts: 'TUdKpQ9@OK8'}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderCounts: 3524499295174658}).expect(400);
+						return get('/api/v1/folder/search').query({folderCounts: -5455994251378686}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderCounts: -392394453286913}).expect(400);
+						return get('/api/v1/folder/search').query({folderCounts: 5507719851147263}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderParents: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderParents: 'jYS2oTZDWEmMv)7&U'}).expect(400);
+						return get('/api/v1/folder/search').query({folderParents: 'L)4HsbITENL3A]iN'}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderParents: -8072103534264318}).expect(400);
+						return get('/api/v1/folder/search').query({folderParents: 7159924068974594}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderParents: 1070032138272767}).expect(400);
+						return get('/api/v1/folder/search').query({folderParents: 2108252569468927}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderInfo: 'IwI$B)fz8mZLjaI'}).expect(400);
+						return get('/api/v1/folder/search').query({folderInfo: 'nae6qEx3CXZfP'}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderInfo: 5733970935283714}).expect(400);
+						return get('/api/v1/folder/search').query({folderInfo: -8612770975055870}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderInfo: 5005000073805823}).expect(400);
+						return get('/api/v1/folder/search').query({folderInfo: 8986575631286271}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderSimilar: 'tIMYQ]B#eDYebP8P*MaC'}).expect(400);
+						return get('/api/v1/folder/search').query({folderSimilar: 'e#4KeG'}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderSimilar: -2779121381801982}).expect(400);
+						return get('/api/v1/folder/search').query({folderSimilar: 5758214452805634}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderSimilar: -8124865370390529}).expect(400);
+						return get('/api/v1/folder/search').query({folderSimilar: 3211508439842815}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value empty string', async () => {
 						return get('/api/v1/folder/search').query({folderArtworks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value string', async () => {
-						return get('/api/v1/folder/search').query({folderArtworks: '4ZE0bNIw'}).expect(400);
+						return get('/api/v1/folder/search').query({folderArtworks: 'JG&l%X'}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/search').query({folderArtworks: -5068729956171774}).expect(400);
+						return get('/api/v1/folder/search').query({folderArtworks: 2781473924972546}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/search').query({folderArtworks: 7621316932796415}).expect(400);
+						return get('/api/v1/folder/search').query({folderArtworks: 2456485355323391}).expect(400);
 					});
 			});
 		});
@@ -1985,6 +1990,11 @@ describe('Server', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/health').query({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/folder/health').query({}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2016,7 +2026,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/health').query({genre: ''}).expect(400);
 					});
 					it('should respond with 400 with "level" set to value string', async () => {
-						return get('/api/v1/folder/health').query({level: '1!cRy'}).expect(400);
+						return get('/api/v1/folder/health').query({level: 'itGrkp*l'}).expect(400);
 					});
 					it('should respond with 400 with "level" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({level: ''}).expect(400);
@@ -2025,7 +2035,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/health').query({level: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/folder/health').query({newerThan: 'Hl2AMOxmw'}).expect(400);
+						return get('/api/v1/folder/health').query({newerThan: 'OKefNdRl#89'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({newerThan: ''}).expect(400);
@@ -2034,13 +2044,13 @@ describe('Server', () => {
 						return get('/api/v1/folder/health').query({newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/folder/health').query({newerThan: 19.7}).expect(400);
+						return get('/api/v1/folder/health').query({newerThan: 96.67}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/health').query({newerThan: -1}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/folder/health').query({fromYear: 'O0lap4j]3#^uk'}).expect(400);
+						return get('/api/v1/folder/health').query({fromYear: '0]XYeU3S)Xn10af6]r'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({fromYear: ''}).expect(400);
@@ -2049,13 +2059,13 @@ describe('Server', () => {
 						return get('/api/v1/folder/health').query({fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/folder/health').query({fromYear: 5.18}).expect(400);
+						return get('/api/v1/folder/health').query({fromYear: 47.43}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/health').query({fromYear: -1}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/folder/health').query({toYear: 'PJQIr2Bg!zwqgBR)s)3'}).expect(400);
+						return get('/api/v1/folder/health').query({toYear: 'ViP55ZQlp!]t77NwKBA'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({toYear: ''}).expect(400);
@@ -2064,7 +2074,7 @@ describe('Server', () => {
 						return get('/api/v1/folder/health').query({toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/folder/health').query({toYear: 45.87}).expect(400);
+						return get('/api/v1/folder/health').query({toYear: 50.11}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/folder/health').query({toYear: -1}).expect(400);
@@ -2106,104 +2116,104 @@ describe('Server', () => {
 						return get('/api/v1/folder/health').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/folder/health').query({sortDescending: 'oaa)('}).expect(400);
+						return get('/api/v1/folder/health').query({sortDescending: '3483m'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/folder/health').query({sortDescending: -2889241159794686}).expect(400);
+						return get('/api/v1/folder/health').query({sortDescending: -7072188104441854}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/folder/health').query({sortDescending: 6926084205445119}).expect(400);
+						return get('/api/v1/folder/health').query({sortDescending: 8014325113421823}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({folderTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value string', async () => {
-						return get('/api/v1/folder/health').query({folderTag: '2QbuRP6GQ)x9^1Ul9!7r'}).expect(400);
+						return get('/api/v1/folder/health').query({folderTag: 'qdi##&3!2[30T]'}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/health').query({folderTag: 5811904777814018}).expect(400);
+						return get('/api/v1/folder/health').query({folderTag: -8280136981938174}).expect(400);
 					});
 					it('should respond with 400 with "folderTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/health').query({folderTag: -8534623617286145}).expect(400);
+						return get('/api/v1/folder/health').query({folderTag: 7074916692131839}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({folderState: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value string', async () => {
-						return get('/api/v1/folder/health').query({folderState: 'FF$n31Lkq@FiQ6r'}).expect(400);
+						return get('/api/v1/folder/health').query({folderState: 'wb%cy2mkgjSymzQ7E'}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/health').query({folderState: -71756333187070}).expect(400);
+						return get('/api/v1/folder/health').query({folderState: -1774255737929726}).expect(400);
 					});
 					it('should respond with 400 with "folderState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/health').query({folderState: -2069917041950721}).expect(400);
+						return get('/api/v1/folder/health').query({folderState: -7281775323643905}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({folderCounts: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value string', async () => {
-						return get('/api/v1/folder/health').query({folderCounts: 'PbP2S(k0@#q2qZ$'}).expect(400);
+						return get('/api/v1/folder/health').query({folderCounts: 'Q5gaH@N3X#^F['}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer > 1', async () => {
-						return get('/api/v1/folder/health').query({folderCounts: -8332285304635390}).expect(400);
+						return get('/api/v1/folder/health').query({folderCounts: -6034559950913534}).expect(400);
 					});
 					it('should respond with 400 with "folderCounts" set to value integer < 0', async () => {
-						return get('/api/v1/folder/health').query({folderCounts: -3079094371614721}).expect(400);
+						return get('/api/v1/folder/health').query({folderCounts: 5019612060057599}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({folderParents: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value string', async () => {
-						return get('/api/v1/folder/health').query({folderParents: 'Ylm3o@'}).expect(400);
+						return get('/api/v1/folder/health').query({folderParents: 'l#hcHOdOdbS26t]Ko'}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer > 1', async () => {
-						return get('/api/v1/folder/health').query({folderParents: 3321897735421954}).expect(400);
+						return get('/api/v1/folder/health').query({folderParents: -4754238701830142}).expect(400);
 					});
 					it('should respond with 400 with "folderParents" set to value integer < 0', async () => {
-						return get('/api/v1/folder/health').query({folderParents: 6843729130291199}).expect(400);
+						return get('/api/v1/folder/health').query({folderParents: -1410055693926401}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({folderInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value string', async () => {
-						return get('/api/v1/folder/health').query({folderInfo: 'JCdkNh^aLSsOpW7c'}).expect(400);
+						return get('/api/v1/folder/health').query({folderInfo: '9mRJExD'}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer > 1', async () => {
-						return get('/api/v1/folder/health').query({folderInfo: 8901646289469442}).expect(400);
+						return get('/api/v1/folder/health').query({folderInfo: -2281869802471422}).expect(400);
 					});
 					it('should respond with 400 with "folderInfo" set to value integer < 0', async () => {
-						return get('/api/v1/folder/health').query({folderInfo: -2590461604659201}).expect(400);
+						return get('/api/v1/folder/health').query({folderInfo: -4919521102004225}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({folderSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value string', async () => {
-						return get('/api/v1/folder/health').query({folderSimilar: 'mZHOnc2)r8twq'}).expect(400);
+						return get('/api/v1/folder/health').query({folderSimilar: 'a1V3cUJQ9ksy'}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/folder/health').query({folderSimilar: -3319458965749758}).expect(400);
+						return get('/api/v1/folder/health').query({folderSimilar: -1359552742162430}).expect(400);
 					});
 					it('should respond with 400 with "folderSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/folder/health').query({folderSimilar: -6518023041056769}).expect(400);
+						return get('/api/v1/folder/health').query({folderSimilar: -2343541485338625}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({folderArtworks: ''}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value string', async () => {
-						return get('/api/v1/folder/health').query({folderArtworks: 'e9bEtr$!YmZ8w!tF)'}).expect(400);
+						return get('/api/v1/folder/health').query({folderArtworks: '1v5sf!yfk'}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer > 1', async () => {
-						return get('/api/v1/folder/health').query({folderArtworks: -3883783212236798}).expect(400);
+						return get('/api/v1/folder/health').query({folderArtworks: -7602472780562430}).expect(400);
 					});
 					it('should respond with 400 with "folderArtworks" set to value integer < 0', async () => {
-						return get('/api/v1/folder/health').query({folderArtworks: 6949361099472895}).expect(400);
+						return get('/api/v1/folder/health').query({folderArtworks: -6442111457034241}).expect(400);
 					});
 			});
 		});
 		describe('/folder/state', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/state').query({id: 'n9EUY$RK5MO[EIJ7[^m%'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/state').query({id: 'kQ1Tbxhw'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2215,7 +2225,7 @@ describe('Server', () => {
 		describe('/folder/states', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/states').query({ids: ['qLlAWmUr', 'xk6yoZJf&89A4CH(jj']}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/states').query({ids: ['x3h&h(1sF2Jf', 'o%5vPB87Al']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2230,7 +2240,7 @@ describe('Server', () => {
 		describe('/folder/artist/similar/tracks', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/artist/similar/tracks').query({id: 'W!MzN(4&#sFJuZl'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/artist/similar/tracks').query({id: ']#a!A%*C8OF3Dh[B'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2238,89 +2248,89 @@ describe('Server', () => {
 						return get('/api/v1/folder/artist/similar/tracks').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'mX8EFTnC(mnMhNol8', trackMedia: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'SgyjwUp', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'A$jknfBMV9U^6Ss', trackMedia: '9i3Sj6sCYX'}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'e^]M55h%hG$bny5Fw&', trackMedia: 't$2OFVJuX)'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'Lz&^j#Y9TDO]E5', trackMedia: -7887751626096638}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'X8a$T#!V!EmbA$', trackMedia: 7036947163774978}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: '!8Ks2', trackMedia: 2955732823572479}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'NASGk8*', trackMedia: 3517877764227071}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: '!TPj[n3bE6', trackTag: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: '1y[&Kr@', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'SNbAzTQnlzx]', trackTag: '9gmk3hkU'}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: '4!MXbebA$', trackTag: 'xAig*AA2S[0zkwtDmRjb'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'srFjAMBoeb5Q', trackTag: 6763974519422978}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: ')tTS2WU#su1y*Uv', trackTag: -5210631166754814}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: '0EsLk7jL', trackTag: 7533351002963967}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: '50uO&Fa', trackTag: -6468347797438465}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'Dk]&SOUvEx', trackRawTag: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: ']rvckcb', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'wnZe)ysRnvks!', trackRawTag: 'OkPOk'}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'i8sp%4', trackRawTag: 'xyOOZPmh4t(5b'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: '#(YPCwZtY(x', trackRawTag: 2417261612630018}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: ')liBtBfJwV3uIOT3', trackRawTag: 2172375047077890}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'KKqtiSqPrbIYiw1pxZED', trackRawTag: 6010095024472063}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: '[VEd2(f', trackRawTag: 6875370942889983}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'PGZhhW2Aa)@5', trackState: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'cZ69C', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: '5&7HkruSbIgil1g', trackState: 't]0YXW)Zg^M23!3'}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'SF[XwNt%l(wEPz46hc', trackState: 'RGde]o6ZbPN'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'ULL1T3*6bROWj&Ud$S', trackState: -7452959449284606}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: ')OP@HH]4)%', trackState: 457147808743426}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: '6to7!x#q', trackState: -2351265526841345}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'gh$gg#Zd&2]dSKzf', trackState: 4872685825818623}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: '4x0Zq!)H6VN', offset: 'Ur)cgAU[yd*BC'}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: '0&UDG', offset: '!f8GJzVjAa'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'KJJ2^BvEjUQOCgcOJ[De', offset: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: '1A&lg^YkgXe%pZY^^0P', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'vUOPfbiSyhsv', offset: true}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'KnBvO7hJf80[Z*b', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'bumyme8ho]O', offset: 34.48}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: '40xX#!)fSVojNQ7K', offset: 21.73}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'IPfZ!@', offset: -1}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: ')vq7WFifQ4hKa*m$o%#', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'Plc*AfEh8)gsXyXjF', amount: 'sLPNy]iJENlYUUuG%n'}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'sFA23!Je2A7[5Y', amount: 'II(p*IGoh%ZOt#'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'UU0KLZ2Dz#ESmhC6&', amount: ''}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'Wa6J5o!195F0U2)', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'pGocy#qPh', amount: true}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'KS*nGofHd3F[8A1$3', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: 'b3bmtHWt*)eJf58$nmmj', amount: 85.75}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'ToYw1&A^$GVOT7^w', amount: 41.15}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/folder/artist/similar/tracks').query({id: '1ZeIwuau9BXb%eJg2s', amount: 0}).expect(400);
+						return get('/api/v1/folder/artist/similar/tracks').query({id: 'hi91JEC5[$', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/folder/artworks', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/artworks').query({id: 'GFshy4rYo'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/artworks').query({id: 'hHslrBl'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2332,7 +2342,7 @@ describe('Server', () => {
 		describe('/track/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/id').query({id: 'I0]WEibot5'}).expect(401);
+						return getNotLoggedIn('/api/v1/track/id').query({id: 'F)4k5'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2340,59 +2350,59 @@ describe('Server', () => {
 						return get('/api/v1/track/id').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/track/id').query({id: 'Y$Cap7G46Qh', trackMedia: ''}).expect(400);
+						return get('/api/v1/track/id').query({id: 'NDvDEYCInlvAEm(Ekb', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/track/id').query({id: 'IXy6@EZxu', trackMedia: '$A1FSFXlG3iL*2M'}).expect(400);
+						return get('/api/v1/track/id').query({id: 'mjbGOfRmh', trackMedia: 'b[xTj'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/track/id').query({id: '#IJ9XmFD4LY)MuQO', trackMedia: -6394483121848318}).expect(400);
+						return get('/api/v1/track/id').query({id: 'uLolmkZavJ6', trackMedia: 7145023279726594}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/track/id').query({id: '@59Jy#353E1Trw', trackMedia: 8387589643960319}).expect(400);
+						return get('/api/v1/track/id').query({id: 'hgy@VxZqaSrlPF2VR#Q', trackMedia: 3274890295640063}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/track/id').query({id: 'HVUWoDhHk[CZ@z2LS[$*', trackTag: ''}).expect(400);
+						return get('/api/v1/track/id').query({id: 'Z71&XIeO', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/track/id').query({id: 'ZRVmO([fmoTJ[idakL4', trackTag: 'J2R[1pciicEX'}).expect(400);
+						return get('/api/v1/track/id').query({id: 'DpzSvB*', trackTag: '))Mkx8T'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/id').query({id: '0AKz&y(TAi]EWa!i', trackTag: -120553197273086}).expect(400);
+						return get('/api/v1/track/id').query({id: '^CynF@t5]t#', trackTag: 7155972267048962}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/id').query({id: 'N&SpIH', trackTag: 7388532519731199}).expect(400);
+						return get('/api/v1/track/id').query({id: 'q7%([8', trackTag: 3310702391459839}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/track/id').query({id: '*J99mT5', trackRawTag: ''}).expect(400);
+						return get('/api/v1/track/id').query({id: '2J90Rvot@HO18^', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/track/id').query({id: 'IQ*vP8ji*aak!V', trackRawTag: '09k8O1]29$'}).expect(400);
+						return get('/api/v1/track/id').query({id: 'P1%RMyn%wYCJQ', trackRawTag: 'eWmfjh1rlpC]'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/id').query({id: 'l3hj)$aG', trackRawTag: 5783277478608898}).expect(400);
+						return get('/api/v1/track/id').query({id: 'kQTRI0', trackRawTag: 3802695873855490}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/id').query({id: 'jM6FLCY!7Ufot', trackRawTag: -1560450051342337}).expect(400);
+						return get('/api/v1/track/id').query({id: 'UKG4HgY', trackRawTag: 6988275080232959}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/track/id').query({id: '9@Sb3^*KeZEi[D$pp', trackState: ''}).expect(400);
+						return get('/api/v1/track/id').query({id: 'PLkfHkFywijMIZlblxc', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/track/id').query({id: 'FqWZVpqA6#UWe$Xart', trackState: 'qcZxkpW!$2ygMD'}).expect(400);
+						return get('/api/v1/track/id').query({id: 'W16&fUkr5k#@', trackState: '(E3ibJ(TBQod#AUR'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/track/id').query({id: 'aMs9IDBbmVH[6', trackState: -1143139356114942}).expect(400);
+						return get('/api/v1/track/id').query({id: 'T)JV(j^#pYsKTiUw^yT', trackState: -8038948861378558}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/track/id').query({id: 'q]LdogXfIYSMUM1ii', trackState: 113451938611199}).expect(400);
+						return get('/api/v1/track/id').query({id: '0zch3CinGW', trackState: 5304051528892415}).expect(400);
 					});
 			});
 		});
 		describe('/track/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/ids').query({ids: ['B@0ijZXW', 'WCGV5ZH8wa7sOpvFdI8']}).expect(401);
+						return getNotLoggedIn('/api/v1/track/ids').query({ids: ['pDxvbC$ykFURlag', '^*l(g3%W8']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2403,59 +2413,59 @@ describe('Server', () => {
 						return get('/api/v1/track/ids').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/track/ids').query({ids: [')P7TvgF', 'mHK!@95tQ4be&#PrE'], trackMedia: ''}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['ci0&sN', 'pAigA3vq52'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/track/ids').query({ids: ['$Wwh8Hh', 'WN0jf#Z3V'], trackMedia: 'eBH^oQwYY&G8E^8]'}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['YU2MB1*1pIkR@u%Fv', 'XMAmH%WGArT%'], trackMedia: 'jiUup'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/track/ids').query({ids: ['@lmN4u*', 'fSNjOdCY%%'], trackMedia: -7004134666403838}).expect(400);
+						return get('/api/v1/track/ids').query({ids: [')$MUTQQn3', '&#%pCcc'], trackMedia: 8325306691616770}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/track/ids').query({ids: ['adRZU', '&uDbYAmJ'], trackMedia: 5188095846645759}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['U]q[7pYQShp5[9s', '68r]TNnoDaE^d][6AOzH'], trackMedia: -4587825345331201}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/track/ids').query({ids: ['vr$2pevvU', '5nSIElDPl&an'], trackTag: ''}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['chugL&3h$TuCB2', 'ad6C^3ge3tepc%zJOR'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/track/ids').query({ids: ['X!v*W)9rLLg2)fDfl', 'WS$VT'], trackTag: 'xnpdR'}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['@mE%QQc2TSov', 'zW&cp'], trackTag: '][S9@sWRd[L'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/ids').query({ids: ['Wum)su@Ic@Jbb(', '[T83jsy5m'], trackTag: -6239509272330238}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['JurZDoA', '95JNYe4'], trackTag: 4037952896237570}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/ids').query({ids: ['BXDj@x4ghjWvOpF*Xs', 'd1S%KsfJLo'], trackTag: 5534559345049599}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['@[[fMsWAsh9[w[6G', '#M)qI!sy1nygZG'], trackTag: -3382684168486913}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/track/ids').query({ids: ['v7SQjK5#i', 'QxkcLfRzP$#Lr[S5'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['UhH(hfPsmN^X*', 'A30!l2)'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/track/ids').query({ids: ['b]p2npgP', '7oqtwVOHPx#o#*Tt1q'], trackRawTag: 'p!Xgx]Ige8SqX'}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['zI4WO@aBqonI&0)', 'Pk5oM7)BrbS$TxAG3rj'], trackRawTag: '1jId$htcjZX$4]L40xL#'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/ids').query({ids: ['X@FAKLwUXx1B2v', 'S$GzFGOcDi'], trackRawTag: -4895584251019262}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['km^*AiFo3W9[VOr3', 'EsD1val2qv'], trackRawTag: -8119747887497214}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/ids').query({ids: ['R663*', 'eqfL)lOZD'], trackRawTag: -7565775980199937}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['(OkFzYhM@L', 'uFPUnCeuKgK7DW$wM5LI'], trackRawTag: -8445420409716737}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/track/ids').query({ids: ['*HXu1', ')o%r%b'], trackState: ''}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['F5q%n1je83CW2SZ', 'v#b0FA!pID*'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/track/ids').query({ids: ['wLEzETXMtAV', ']4saWKD6gc9UHS)%d'], trackState: 'gyl]$KZ%2md!$O7ER#'}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['ssG]efyu#a', 'iLPEd5c9l95iwt@'], trackState: 'NS5I@uY3LaZqn4lCrV%E'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/track/ids').query({ids: ['Jv!oeTbZN(', 'oB645qFntWlU%yR'], trackState: -4849496332697598}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['Uk)Yk]TWA&WoLKUC6[t7', 'y*f(Kcmk5U'], trackState: 2794714474479618}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/track/ids').query({ids: ['T#hzF%S5Ri^)LSbzLxWa', '2wT!)k7kp$LJ%Ff'], trackState: 5011403874238463}).expect(400);
+						return get('/api/v1/track/ids').query({ids: ['TQkK2z&FMj9wCF', 'd#$6]]J%Xleaf'], trackState: -3878461982638081}).expect(400);
 					});
 			});
 		});
 		describe('/track/rawTag', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/rawTag').query({id: 'u8P)!1Iu'}).expect(401);
+						return getNotLoggedIn('/api/v1/track/rawTag').query({id: '!YGfk^cQjq87t'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2467,7 +2477,7 @@ describe('Server', () => {
 		describe('/track/rawTags', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/rawTags').query({ids: ['s5%pPobaW&rt', 'GtGb#@gmgQ$hV']}).expect(401);
+						return getNotLoggedIn('/api/v1/track/rawTags').query({ids: ['cZ4&glFlgKG1Sc%ua', 'kKSAvV']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2487,7 +2497,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/track/search').query({offset: 'Dgaf9uf'}).expect(400);
+						return get('/api/v1/track/search').query({offset: 'n@v*mZRI*'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({offset: ''}).expect(400);
@@ -2496,13 +2506,13 @@ describe('Server', () => {
 						return get('/api/v1/track/search').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/track/search').query({offset: 52.49}).expect(400);
+						return get('/api/v1/track/search').query({offset: 45.35}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/track/search').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/track/search').query({amount: 'e6Yg83*QUYFmzlVk^[vk'}).expect(400);
+						return get('/api/v1/track/search').query({amount: '7baX*E^%[Pe%%zdd]CYD'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({amount: ''}).expect(400);
@@ -2511,7 +2521,7 @@ describe('Server', () => {
 						return get('/api/v1/track/search').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/track/search').query({amount: 48.91}).expect(400);
+						return get('/api/v1/track/search').query({amount: 3.87}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/track/search').query({amount: 0}).expect(400);
@@ -2556,7 +2566,7 @@ describe('Server', () => {
 						return get('/api/v1/track/search').query({genre: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/track/search').query({newerThan: '&zl#T)RPk$NLMtRTx)F'}).expect(400);
+						return get('/api/v1/track/search').query({newerThan: 'Bzsr^2!%htO'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({newerThan: ''}).expect(400);
@@ -2565,10 +2575,10 @@ describe('Server', () => {
 						return get('/api/v1/track/search').query({newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/track/search').query({newerThan: 43.96}).expect(400);
+						return get('/api/v1/track/search').query({newerThan: 3.5}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/track/search').query({fromYear: 'YkS]gEvbYKvSwO'}).expect(400);
+						return get('/api/v1/track/search').query({fromYear: '6*&EZl0Ni'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({fromYear: ''}).expect(400);
@@ -2577,10 +2587,10 @@ describe('Server', () => {
 						return get('/api/v1/track/search').query({fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/track/search').query({fromYear: 84.65}).expect(400);
+						return get('/api/v1/track/search').query({fromYear: 7.85}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/track/search').query({toYear: 'boaKyA^f62O'}).expect(400);
+						return get('/api/v1/track/search').query({toYear: 'b#0ujSkCsL]p99B'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({toYear: ''}).expect(400);
@@ -2589,7 +2599,7 @@ describe('Server', () => {
 						return get('/api/v1/track/search').query({toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/track/search').query({toYear: 83.28}).expect(400);
+						return get('/api/v1/track/search').query({toYear: 43.88}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({sortField: ''}).expect(400);
@@ -2613,68 +2623,68 @@ describe('Server', () => {
 						return get('/api/v1/track/search').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/track/search').query({sortDescending: '*jbT6P'}).expect(400);
+						return get('/api/v1/track/search').query({sortDescending: 'iiKe6G3u8F2T6oz'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/track/search').query({sortDescending: 7154654865522690}).expect(400);
+						return get('/api/v1/track/search').query({sortDescending: -889626105479166}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/track/search').query({sortDescending: -1031554751004673}).expect(400);
+						return get('/api/v1/track/search').query({sortDescending: 5123646494343167}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/track/search').query({trackMedia: 'GOT)VjPJoHSA5zw^'}).expect(400);
+						return get('/api/v1/track/search').query({trackMedia: 'ieQccIYIR'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/track/search').query({trackMedia: 6468437719121922}).expect(400);
+						return get('/api/v1/track/search').query({trackMedia: 2943866281918466}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/track/search').query({trackMedia: -7129502496849921}).expect(400);
+						return get('/api/v1/track/search').query({trackMedia: -7823354434158593}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/track/search').query({trackTag: 'q%EqwI^'}).expect(400);
+						return get('/api/v1/track/search').query({trackTag: 'rXc0P@5rLZ$VK1uH^'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/search').query({trackTag: -348028644884478}).expect(400);
+						return get('/api/v1/track/search').query({trackTag: 2400216263163906}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/search').query({trackTag: 638314948329471}).expect(400);
+						return get('/api/v1/track/search').query({trackTag: 5945352553234431}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/track/search').query({trackRawTag: 'YoZQ&]'}).expect(400);
+						return get('/api/v1/track/search').query({trackRawTag: '^20xM^xFFTUmu'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/search').query({trackRawTag: -7583569551556606}).expect(400);
+						return get('/api/v1/track/search').query({trackRawTag: -7277202202689534}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/search').query({trackRawTag: 7618172815409151}).expect(400);
+						return get('/api/v1/track/search').query({trackRawTag: -2805222959218689}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/track/search').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/track/search').query({trackState: '(&9SqRXUfk)jb'}).expect(400);
+						return get('/api/v1/track/search').query({trackState: 'Dnkcr(FG#UB[hB58ruZ'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/track/search').query({trackState: -408156836462590}).expect(400);
+						return get('/api/v1/track/search').query({trackState: -819681233469438}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/track/search').query({trackState: 2334360921440255}).expect(400);
+						return get('/api/v1/track/search').query({trackState: -3380630968598529}).expect(400);
 					});
 			});
 		});
 		describe('/track/state', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/state').query({id: 'sEA6^a@hpNC'}).expect(401);
+						return getNotLoggedIn('/api/v1/track/state').query({id: 'QfMOnF5XTIlA7!$na7W'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2686,7 +2696,7 @@ describe('Server', () => {
 		describe('/track/states', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/states').query({ids: ['!Hb(4(q!', 'gtMlAf2u1wNd&Lo9I']}).expect(401);
+						return getNotLoggedIn('/api/v1/track/states').query({ids: ['lW2T5@', 'fLY!0T29z']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2712,194 +2722,194 @@ describe('Server', () => {
 						return get('/api/v1/track/list').query({list: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'highest', artist: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', artist: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistID" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'highest', artistID: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', artistID: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumArtistID" set to value empty string', async () => {
 						return get('/api/v1/track/list').query({list: 'highest', albumArtistID: ''}).expect(400);
 					});
 					it('should respond with 400 with "parentID" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'random', parentID: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', parentID: ''}).expect(400);
 					});
 					it('should respond with 400 with "parentIDs" set to value null', async () => {
 						return get('/api/v1/track/list').query({list: 'avghighest', parentIDs: null}).expect(400);
 					});
 					it('should respond with 400 with "parentIDs" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'faved', parentIDs: [null, '']}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', parentIDs: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "childOfID" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'faved', childOfID: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', childOfID: ''}).expect(400);
 					});
 					it('should respond with 400 with "rootID" set to value empty string', async () => {
 						return get('/api/v1/track/list').query({list: 'frequent', rootID: ''}).expect(400);
 					});
 					it('should respond with 400 with "rootIDs" set to value null', async () => {
-						return get('/api/v1/track/list').query({list: 'random', rootIDs: null}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', rootIDs: null}).expect(400);
 					});
 					it('should respond with 400 with "rootIDs" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'faved', rootIDs: [null, '']}).expect(400);
+						return get('/api/v1/track/list').query({list: 'random', rootIDs: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "title" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'faved', title: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'highest', title: ''}).expect(400);
 					});
 					it('should respond with 400 with "album" set to value empty string', async () => {
 						return get('/api/v1/track/list').query({list: 'highest', album: ''}).expect(400);
 					});
 					it('should respond with 400 with "genre" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'highest', genre: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'recent', genre: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'recent', newerThan: 'XeA&pr'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', newerThan: 'CDLZDA3092vRe6'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'frequent', newerThan: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'highest', newerThan: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value boolean', async () => {
-						return get('/api/v1/track/list').query({list: 'random', newerThan: true}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/track/list').query({list: 'random', newerThan: 3.55}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', newerThan: 19.8}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'random', fromYear: 'mHyn#'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'highest', fromYear: 'S2A2@8F'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'random', fromYear: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', fromYear: ''}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value boolean', async () => {
-						return get('/api/v1/track/list').query({list: 'frequent', fromYear: true}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/track/list').query({list: 'random', fromYear: 95.06}).expect(400);
+						return get('/api/v1/track/list').query({list: 'recent', fromYear: 62.35}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'faved', toYear: 'x!dSHfZmqK'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', toYear: 'xsSN7DU8ielnnKA7'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'random', toYear: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'recent', toYear: ''}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value boolean', async () => {
-						return get('/api/v1/track/list').query({list: 'frequent', toYear: true}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/track/list').query({list: 'random', toYear: 22.27}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', toYear: 4.1}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'frequent', sortField: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', sortField: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value invalid enum', async () => {
-						return get('/api/v1/track/list').query({list: 'random', sortField: 'invalid'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', sortField: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'highest', id: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', id: ''}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value null', async () => {
-						return get('/api/v1/track/list').query({list: 'recent', ids: null}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'highest', ids: [null, '']}).expect(400);
+						return get('/api/v1/track/list').query({list: 'random', ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "query" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'recent', query: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', query: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'faved', sortDescending: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'frequent', sortDescending: 'AAn@Pg&JFt*1*yafQ9R'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', sortDescending: 'Tv!SU6AQFGfyjRW'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/track/list').query({list: 'recent', sortDescending: -5967578698612734}).expect(400);
+						return get('/api/v1/track/list').query({list: 'recent', sortDescending: -816662936813566}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/track/list').query({list: 'faved', sortDescending: -7028711773700097}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', sortDescending: -3203397926780929}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/track/list').query({list: 'avghighest', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'faved', trackMedia: 'm!pdNb'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', trackMedia: 't]^1xOC1'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/track/list').query({list: 'avghighest', trackMedia: 5363729130586114}).expect(400);
+						return get('/api/v1/track/list').query({list: 'recent', trackMedia: 2343744946831362}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/track/list').query({list: 'random', trackMedia: 1785224484618239}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', trackMedia: -4491455703810049}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'random', trackTag: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'avghighest', trackTag: '%*n5X1UC!6K'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', trackTag: 'ZvhMfgwWyx'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/list').query({list: 'random', trackTag: -2488189084237822}).expect(400);
+						return get('/api/v1/track/list').query({list: 'highest', trackTag: -2527694071791614}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/list').query({list: 'avghighest', trackTag: -8778349442760705}).expect(400);
+						return get('/api/v1/track/list').query({list: 'highest', trackTag: 5839128222498815}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/track/list').query({list: 'frequent', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'highest', trackRawTag: '$vFV0L^bGlAtFxeoTV'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', trackRawTag: '39C%j%]l1bQvoYkfR'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/list').query({list: 'highest', trackRawTag: -2726759258652670}).expect(400);
+						return get('/api/v1/track/list').query({list: 'random', trackRawTag: 2751368829861890}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/list').query({list: 'recent', trackRawTag: 419229056630783}).expect(400);
+						return get('/api/v1/track/list').query({list: 'recent', trackRawTag: -1040073382428673}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'avghighest', trackState: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'highest', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'highest', trackState: 'L7RFLm4Qf^Md$H1mKNf'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', trackState: 'Bosnw6*'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/track/list').query({list: 'avghighest', trackState: -1065799716438014}).expect(400);
+						return get('/api/v1/track/list').query({list: 'frequent', trackState: 5574555028422658}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/track/list').query({list: 'frequent', trackState: -6929231233679361}).expect(400);
+						return get('/api/v1/track/list').query({list: 'recent', trackState: 8138185066414079}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'frequent', offset: '[L6)N^ZFB*0'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', offset: '&nc!4RGm8m%R5@'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/track/list').query({list: 'faved', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/track/list').query({list: 'avghighest', offset: true}).expect(400);
+						return get('/api/v1/track/list').query({list: 'random', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/track/list').query({list: 'avghighest', offset: 67.36}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', offset: 80.85}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/track/list').query({list: 'frequent', offset: -1}).expect(400);
+						return get('/api/v1/track/list').query({list: 'random', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/track/list').query({list: 'random', amount: 'lv5!wZWo'}).expect(400);
+						return get('/api/v1/track/list').query({list: 'random', amount: 'I0WRkBkd%&'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/track/list').query({list: 'recent', amount: ''}).expect(400);
+						return get('/api/v1/track/list').query({list: 'random', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/track/list').query({list: 'highest', amount: true}).expect(400);
+						return get('/api/v1/track/list').query({list: 'avghighest', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/track/list').query({list: 'frequent', amount: 18.46}).expect(400);
+						return get('/api/v1/track/list').query({list: 'faved', amount: 43.28}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/track/list').query({list: 'faved', amount: 0}).expect(400);
+						return get('/api/v1/track/list').query({list: 'random', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/track/similar', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/similar').query({id: 'JMSF6kgX^'}).expect(401);
+						return getNotLoggedIn('/api/v1/track/similar').query({id: 'P&u0*AmPE9'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -2907,82 +2917,82 @@ describe('Server', () => {
 						return get('/api/v1/track/similar').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/track/similar').query({id: 'lmbB4nFPFKw&1', trackMedia: ''}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'HAV7bAv#J(uB0k^z%', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/track/similar').query({id: 'Yh*Jz4(#YvXckZG', trackMedia: 'ly[ZOUQc(dZE3X'}).expect(400);
+						return get('/api/v1/track/similar').query({id: '2]En@Aa&!#eltuql]', trackMedia: 't[U(1wb5[C&EaDK'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/track/similar').query({id: 'pxuXR^)(Cr', trackMedia: 8722273875787778}).expect(400);
+						return get('/api/v1/track/similar').query({id: '#@4ahDv', trackMedia: 238555662123010}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/track/similar').query({id: 'o3bvey', trackMedia: 7873069775323135}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'vRz2eG^', trackMedia: -7807383694737409}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/track/similar').query({id: 'J7fnGuhSo8F&@Jq', trackTag: ''}).expect(400);
+						return get('/api/v1/track/similar').query({id: ']wBT3$fWZIfPP8UO', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/track/similar').query({id: '6bKH0T)jao6asX[', trackTag: 'Q^y4kSi7Lxx'}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'YbI*GsqaMcq', trackTag: 'nVWe[^]@udou4z3c(#'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/similar').query({id: 'YbD3mux', trackTag: 7721838079639554}).expect(400);
+						return get('/api/v1/track/similar').query({id: '!P%6ha6l7#Y1', trackTag: -3535624548122622}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/similar').query({id: 'x4HwJ7q2vxodv6Z@@7J*', trackTag: 8643325187850239}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'W8)h1UcO', trackTag: 4230816284540927}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/track/similar').query({id: 'h#M[k6(W', trackRawTag: ''}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'k(w0l$XPX!9WoM', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/track/similar').query({id: '8Ac]cG*0*&NKE', trackRawTag: 'FR8EK&#1DD]EE&#DPz'}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'Z[vM5@5VNw7j0V239', trackRawTag: 'qVoW1JV][9x%8RUXfO@'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/similar').query({id: 'G94OC!q15fwcuQBL]@[Y', trackRawTag: 8249834016342018}).expect(400);
+						return get('/api/v1/track/similar').query({id: '9vCZjI@^7(QrUNh$4iP', trackRawTag: 6926839184359426}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/similar').query({id: 'NmyGt[k', trackRawTag: 2069304153473023}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'YB*a!xoVvj0qS)uB1ALx', trackRawTag: 8996767714508799}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/track/similar').query({id: 'fm3IpqYGE!XvsXF8qFTj', trackState: ''}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'Z]Vs]N1G0*y]L', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/track/similar').query({id: '!c%JPrQ', trackState: 'WyAaRuQ'}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'KXg2qWTQ)@4', trackState: 'YigRcNMocN!O$YgGiTu'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/track/similar').query({id: ']IESHrug0E&l]kl', trackState: -5269327263563774}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'cXR9kHge0QlTP2ZP%[Y', trackState: 5895515405287426}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/track/similar').query({id: 'X1z2whycgb[K', trackState: -6068774667026433}).expect(400);
+						return get('/api/v1/track/similar').query({id: '$9KqVoRfeYJ', trackState: -276198722633729}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/track/similar').query({id: 'BkLaM9JDX90lYCJ7', offset: 'jJsrY'}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'mo5P[mfW&]', offset: 'Htxzj5UGNbW@$Fxri'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/track/similar').query({id: '5U!V!#K!D&G', offset: ''}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'w6O4@vjZJ[M', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/track/similar').query({id: '&5[jDXqLleHAFTffW5S', offset: true}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'MJbLuXs5G6*x6lkJ3', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/track/similar').query({id: '(Z]jl', offset: 3.22}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'h9RuUeBmo5oaLdq', offset: 98.68}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/track/similar').query({id: 'TU0y5ZO(]Ou]90P', offset: -1}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'nHH$^%1F!&D', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/track/similar').query({id: '!9YJDCOMt#JJ*bzZf', amount: 'QsZhz'}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'cm*ib4maq', amount: 'ScLf1'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/track/similar').query({id: 'oM^FNGV[iSS', amount: ''}).expect(400);
+						return get('/api/v1/track/similar').query({id: '#PZN0[!FKS*OI*vC@(', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/track/similar').query({id: 'c#Uq7meg6w', amount: true}).expect(400);
+						return get('/api/v1/track/similar').query({id: '%rjm%qmUmmC', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/track/similar').query({id: '6p9TcF073SpvbN[', amount: 47.13}).expect(400);
+						return get('/api/v1/track/similar').query({id: '#tg1Vf4N9', amount: 61.72}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/track/similar').query({id: 'jGcFaPmE[Qsi1r3Lj', amount: 0}).expect(400);
+						return get('/api/v1/track/similar').query({id: 'Tj7o5MLW#[P%', amount: 0}).expect(400);
 					});
 			});
 		});
@@ -2992,18 +3002,23 @@ describe('Server', () => {
 						return getNotLoggedIn('/api/v1/track/health').query({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/track/health').query({}).expect(401);
+					});
+			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "media" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({media: ''}).expect(400);
 					});
 					it('should respond with 400 with "media" set to value string', async () => {
-						return get('/api/v1/track/health').query({media: 'LkzOO'}).expect(400);
+						return get('/api/v1/track/health').query({media: '2*A$oy#l1R%4GtQ'}).expect(400);
 					});
 					it('should respond with 400 with "media" set to value integer > 1', async () => {
-						return get('/api/v1/track/health').query({media: 4309645556449282}).expect(400);
+						return get('/api/v1/track/health').query({media: 7319042406744066}).expect(400);
 					});
 					it('should respond with 400 with "media" set to value integer < 0', async () => {
-						return get('/api/v1/track/health').query({media: 7235483788640255}).expect(400);
+						return get('/api/v1/track/health').query({media: 7337979915796479}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({artist: ''}).expect(400);
@@ -3045,7 +3060,7 @@ describe('Server', () => {
 						return get('/api/v1/track/health').query({genre: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/track/health').query({newerThan: 'm(^ZVrcFR@7#'}).expect(400);
+						return get('/api/v1/track/health').query({newerThan: 'DSfKeEHpRwE*'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({newerThan: ''}).expect(400);
@@ -3054,10 +3069,10 @@ describe('Server', () => {
 						return get('/api/v1/track/health').query({newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/track/health').query({newerThan: 79.95}).expect(400);
+						return get('/api/v1/track/health').query({newerThan: 22.98}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/track/health').query({fromYear: 'xgN%qR[1gKDvLk'}).expect(400);
+						return get('/api/v1/track/health').query({fromYear: 'U#KlAFJ(cz*A6]TfP'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({fromYear: ''}).expect(400);
@@ -3066,10 +3081,10 @@ describe('Server', () => {
 						return get('/api/v1/track/health').query({fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/track/health').query({fromYear: 4.45}).expect(400);
+						return get('/api/v1/track/health').query({fromYear: 47.45}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/track/health').query({toYear: 'KaWsYdbHpeI(mb0#V2'}).expect(400);
+						return get('/api/v1/track/health').query({toYear: 'XL#4CHWDC0P2(*r'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({toYear: ''}).expect(400);
@@ -3078,7 +3093,7 @@ describe('Server', () => {
 						return get('/api/v1/track/health').query({toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/track/health').query({toYear: 40.67}).expect(400);
+						return get('/api/v1/track/health').query({toYear: 90.41}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({sortField: ''}).expect(400);
@@ -3102,68 +3117,68 @@ describe('Server', () => {
 						return get('/api/v1/track/health').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/track/health').query({sortDescending: 'T$wC]M6ZhMj!'}).expect(400);
+						return get('/api/v1/track/health').query({sortDescending: 'lz1Ji5secxqDIy'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/track/health').query({sortDescending: 6501829231771650}).expect(400);
+						return get('/api/v1/track/health').query({sortDescending: 7385333352103938}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/track/health').query({sortDescending: -2938950750568449}).expect(400);
+						return get('/api/v1/track/health').query({sortDescending: 2439845016240127}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/track/health').query({trackMedia: ']yPuCEQ4VfwYwY8Mp&2'}).expect(400);
+						return get('/api/v1/track/health').query({trackMedia: '^p$xh1D8'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/track/health').query({trackMedia: -1804047929573374}).expect(400);
+						return get('/api/v1/track/health').query({trackMedia: -4543601455398910}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/track/health').query({trackMedia: -4506326164045825}).expect(400);
+						return get('/api/v1/track/health').query({trackMedia: -7296203892981761}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/track/health').query({trackTag: 'Wbmz0enYNJHk3'}).expect(400);
+						return get('/api/v1/track/health').query({trackTag: 'ZOiBlf10o'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/health').query({trackTag: -8024596502544382}).expect(400);
+						return get('/api/v1/track/health').query({trackTag: 1430385745461250}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/health').query({trackTag: 6874916687183871}).expect(400);
+						return get('/api/v1/track/health').query({trackTag: -1284969460662273}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/track/health').query({trackRawTag: 'FNm%STfIDK2z@O'}).expect(400);
+						return get('/api/v1/track/health').query({trackRawTag: '#(ddbCX'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/track/health').query({trackRawTag: -6685304312299518}).expect(400);
+						return get('/api/v1/track/health').query({trackRawTag: -5342608586964990}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/track/health').query({trackRawTag: 3111124161527807}).expect(400);
+						return get('/api/v1/track/health').query({trackRawTag: 7802427612856319}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/track/health').query({trackState: 'D4(Z36k(j4T2qS'}).expect(400);
+						return get('/api/v1/track/health').query({trackState: '5mjQK'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/track/health').query({trackState: -5183168453804030}).expect(400);
+						return get('/api/v1/track/health').query({trackState: -4788799036981246}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/track/health').query({trackState: -8665310177525761}).expect(400);
+						return get('/api/v1/track/health').query({trackState: -6333573640486913}).expect(400);
 					});
 			});
 		});
 		describe('/track/lyrics', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/lyrics').query({id: '4ED17xF0p2g8'}).expect(401);
+						return getNotLoggedIn('/api/v1/track/lyrics').query({id: 'S1q1$^Ph[2'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3175,7 +3190,7 @@ describe('Server', () => {
 		describe('/episode/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/id').query({id: '2B]*u'}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/id').query({id: '@W16CKBna^$]o'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3183,59 +3198,59 @@ describe('Server', () => {
 						return get('/api/v1/episode/id').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/episode/id').query({id: '6&!Ay()H*DjrCtpwCj', trackMedia: ''}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'C(yB58%8mp', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/episode/id').query({id: ')zCI0d9lqx', trackMedia: '*Hd]c5h#3B'}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'X(v5ryXu', trackMedia: 'c[K&[t'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/episode/id').query({id: 'bx&aSrtv', trackMedia: 2619480618303490}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'FMGx!@7yYkHi', trackMedia: -4308588709281790}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/episode/id').query({id: 'k24cRiMj5e', trackMedia: -5885460492582913}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'b84pGOGK', trackMedia: 1899162727612415}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/episode/id').query({id: 'GidU4$)o)SX@9', trackTag: ''}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'qpjX#D6ZL', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/episode/id').query({id: 'Qcz1JI', trackTag: '1$VW%!]'}).expect(400);
+						return get('/api/v1/episode/id').query({id: ']N^sRUV[j', trackTag: 'mI!J2jGlScS8K'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/episode/id').query({id: 'q5@Ya(ZVpB*]', trackTag: -7011644303474686}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'wQ9]udp@pp', trackTag: 5011611676835842}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/episode/id').query({id: 'cv4FKOY&$46W', trackTag: 5790711437852671}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'x4u]#^2[', trackTag: 7472049748443135}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/episode/id').query({id: 'FBavsnHcz8$kvko)dRRS', trackRawTag: ''}).expect(400);
+						return get('/api/v1/episode/id').query({id: '9*eFEt]eKr%9k96', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/episode/id').query({id: 'erl4UBoy', trackRawTag: '^Bxq#!6m1jLlMGJI'}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'dP9IA%saeI2c24l3O', trackRawTag: 'xpTQi'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/episode/id').query({id: 'hLyh[ftUgX$IedGED', trackRawTag: -6532782259961854}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'HuNE$a9![*c8]TNu1Z', trackRawTag: -1774600778153982}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/episode/id').query({id: 'fK^PXef1&[QD[Z', trackRawTag: 5894804118437887}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'kt$tUsZJ[nKf', trackRawTag: -3323088036954113}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/episode/id').query({id: '@$K[*X!uwwvNzd)FlK', trackState: ''}).expect(400);
+						return get('/api/v1/episode/id').query({id: '8gcV%BdUTg7TA0B!Q', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/episode/id').query({id: 'FKTX1JhzB&3^3geg)6w', trackState: 'e(7wSlsqRk*k'}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'WO7o5', trackState: 'MyepQObTP&0w82]EYL'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/episode/id').query({id: '$4yk3GDfdI%!%]f9', trackState: -6271433311256574}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'A@s2Ol0frQQfF8', trackState: -4336225624260606}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/episode/id').query({id: 'F[WAZ70[UYKz36($R', trackState: 5184318196416511}).expect(400);
+						return get('/api/v1/episode/id').query({id: 'QxiUx', trackState: -1338113838284801}).expect(400);
 					});
 			});
 		});
 		describe('/episode/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/ids').query({ids: [']Z$TCttpZ#Fw5vOM7D', '$PB]0i']}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/ids').query({ids: ['mrbKbrL@g6@vT*OO', 'Fi5&Jc*T21)P%ApXM*']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3246,52 +3261,52 @@ describe('Server', () => {
 						return get('/api/v1/episode/ids').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['JqLjty', 'A$upWGgiMZ5$ww'], trackMedia: ''}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['B9b(#A!*DM2[xbiSF[g', 'wnt]!]8!#wgmGmEg4)q6'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['51#LD3L423m#Ny', 'Y^1keO'], trackMedia: 'bOc@(]0vTdHi'}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['Y(N3@m!%]6s7%o1C', 'qx$kpf4%G(!mtY'], trackMedia: ')tIdkJ0v'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['ij00GRKt%w', '702@#m31CnI'], trackMedia: 5622056943091714}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['k]oXM[k', 'x&6&DBr3OAdOW]'], trackMedia: -1538973004464126}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['(*X^lJIh(*T', 'DwCZ%3BbvNR'], trackMedia: 5122003866484735}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['IGhO!6kr3eo*KqPP)C', 'zdHoV^y#qv53I'], trackMedia: -6674086063243265}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['eXFE!Xuu$&GpMT', 'BGD@u$@V$(LB^'], trackTag: ''}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['FoeWMppq!1YYTG8nR', 'vF@4ogOCg2G3)6d'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['kYYw[YbafF3[3', '7X5qFIm@(muQ7p8I9xy'], trackTag: 'ATfMJ&XOQMdrtsk]'}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['dfWU$Tgjd&', '@r4Wrw!o3%@f'], trackTag: 'e45]jfV]uY'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['jppmcC', ')0RJk'], trackTag: 839692522094594}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['DqYL3TYpp!b2@haBw%', 'mDWE![Uv7'], trackTag: 3142102754000898}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['%r9[pG', 'Pk@gIP^4!s![PUYmQEq'], trackTag: -8086002958598145}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['pjMY!N', '6u6V[58Zn!LF$i'], trackTag: -978520499027969}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/episode/ids').query({ids: [')G6qpENA]))', '[MW]mvl%3D^D(6%ih%j'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['E2CW8s21$m3VTz%DdJ', 'gZx&9Hl)L[fEhBmgL'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['AW)gpNH', 'J4RMh'], trackRawTag: 'ZTspsgM9'}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['1Abblm3H', 'aR5Q&[iQtsqRFFp'], trackRawTag: 'DJqL953fM7I'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['q&OG@EA2@6', 'dz)FCXeHPTxc90Jpnt'], trackRawTag: 8581544046231554}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['fR5C5zSsV5l!&(kMx', '@Orw*t^L'], trackRawTag: 113562487881730}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['Cf*IH@', '#La9['], trackRawTag: 5928740190158847}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['Ug6m%iR$$Es52NK[6CLN', '30NH$VIH38HwTnXwIm'], trackRawTag: 267491003596799}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/episode/ids').query({ids: [']KmJcV', ')gnQ@n1wySP[AB)5viP'], trackState: ''}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['TpT459', 'W@pFNG'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['Nqk$3]0jKa8vs@', 'Pmwr0sfv4'], trackState: 'wqm(4I^Bl$tB['}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['7Jm*3m', 'V)gwROVzC'], trackState: '(pPr94su%]euNWO*t6'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['vxx8bP9BDFAX]GU4w([', 'eaBoxX#47S44^W'], trackState: -6247742913380350}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['IP1RKyrgpkL', 's6rW5RiD#IFX'], trackState: -5534096344219646}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/episode/ids').query({ids: ['$*7[3rkqz5atl)JFdG', 'czfQB6VtkyS'], trackState: -314949956009985}).expect(400);
+						return get('/api/v1/episode/ids').query({ids: ['j8XfzF@fFEP4WjrvZ0E', 'Rwh(dI&RP$xN'], trackState: -8922749984571393}).expect(400);
 					});
 			});
 		});
@@ -3303,7 +3318,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/episode/search').query({offset: '[Rw6gsZ2aFd[$FP'}).expect(400);
+						return get('/api/v1/episode/search').query({offset: 'wfIR$qfB&OG0'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/episode/search').query({offset: ''}).expect(400);
@@ -3312,13 +3327,13 @@ describe('Server', () => {
 						return get('/api/v1/episode/search').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/episode/search').query({offset: 12.69}).expect(400);
+						return get('/api/v1/episode/search').query({offset: 10.78}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/episode/search').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/episode/search').query({amount: '4d3W6O'}).expect(400);
+						return get('/api/v1/episode/search').query({amount: 'F2OxDA(tKaOz*R1'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/episode/search').query({amount: ''}).expect(400);
@@ -3327,7 +3342,7 @@ describe('Server', () => {
 						return get('/api/v1/episode/search').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/episode/search').query({amount: 90.8}).expect(400);
+						return get('/api/v1/episode/search').query({amount: 66.69}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/episode/search').query({amount: 0}).expect(400);
@@ -3363,68 +3378,73 @@ describe('Server', () => {
 						return get('/api/v1/episode/search').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/episode/search').query({sortDescending: 'zk72ZhB1ec4o8xGa@Vad'}).expect(400);
+						return get('/api/v1/episode/search').query({sortDescending: '[BvURy1ZBWzsCxI'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/episode/search').query({sortDescending: -2540872470102014}).expect(400);
+						return get('/api/v1/episode/search').query({sortDescending: 2762629340725250}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/episode/search').query({sortDescending: 3541199252094975}).expect(400);
+						return get('/api/v1/episode/search').query({sortDescending: 7157054133239807}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/episode/search').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/episode/search').query({trackMedia: 'i2]xr'}).expect(400);
+						return get('/api/v1/episode/search').query({trackMedia: ']BFAvF5@TxwOD0yBMrQl'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/episode/search').query({trackMedia: 6919421658398722}).expect(400);
+						return get('/api/v1/episode/search').query({trackMedia: -7462791975796734}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/episode/search').query({trackMedia: -3275384414011393}).expect(400);
+						return get('/api/v1/episode/search').query({trackMedia: -6023055314780161}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/episode/search').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/episode/search').query({trackTag: '3B&vfYG6z1#Ivo8T%Yj'}).expect(400);
+						return get('/api/v1/episode/search').query({trackTag: 'Oufuz7'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/episode/search').query({trackTag: 1902030335508482}).expect(400);
+						return get('/api/v1/episode/search').query({trackTag: 6324480888537090}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/episode/search').query({trackTag: 8160953426247679}).expect(400);
+						return get('/api/v1/episode/search').query({trackTag: -7547678586044417}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/episode/search').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/episode/search').query({trackRawTag: 'RVM9gXVaR)Ue9h&7QK'}).expect(400);
+						return get('/api/v1/episode/search').query({trackRawTag: 'ZU$azI)7a*(w^KVk5J'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/episode/search').query({trackRawTag: -7163673940328446}).expect(400);
+						return get('/api/v1/episode/search').query({trackRawTag: 8555265590820866}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/episode/search').query({trackRawTag: 6137272340578303}).expect(400);
+						return get('/api/v1/episode/search').query({trackRawTag: -6545129825370113}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/episode/search').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/episode/search').query({trackState: 'z74Gsc#0FMKGV'}).expect(400);
+						return get('/api/v1/episode/search').query({trackState: 'xT!7Y'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/episode/search').query({trackState: -4330645660631038}).expect(400);
+						return get('/api/v1/episode/search').query({trackState: -7922208735231998}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/episode/search').query({trackState: -2808245949300737}).expect(400);
+						return get('/api/v1/episode/search').query({trackState: -5137319547895809}).expect(400);
 					});
 			});
 		});
 		describe('/episode/retrieve', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/retrieve').query({id: '73Vg5FGMdBlA]'}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/retrieve').query({id: 'YD%gF'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/episode/retrieve').query({id: 'YD%gF'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3436,7 +3456,7 @@ describe('Server', () => {
 		describe('/episode/state', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/state').query({id: 'D7#b9kU'}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/state').query({id: 'HPPxFbT'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3448,7 +3468,7 @@ describe('Server', () => {
 		describe('/episode/states', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/states').query({ids: ['@*wj78To', 'xQKCvq5E[M']}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/states').query({ids: ['2cbUIxvXxbi)', 'DA9[DA9Wkvh']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3463,7 +3483,7 @@ describe('Server', () => {
 		describe('/episode/status', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/status').query({id: 'g2@xj'}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/status').query({id: 'WWK4z&nPji'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3475,7 +3495,7 @@ describe('Server', () => {
 		describe('/episode/list', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/list').query({list: 'highest'}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/list').query({list: 'frequent'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3486,128 +3506,128 @@ describe('Server', () => {
 						return get('/api/v1/episode/list').query({list: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "podcastID" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'highest', podcastID: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'recent', podcastID: ''}).expect(400);
 					});
 					it('should respond with 400 with "name" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'faved', name: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'random', name: ''}).expect(400);
 					});
 					it('should respond with 400 with "status" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'recent', status: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'avghighest', status: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', sortField: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'avghighest', sortField: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value invalid enum', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', sortField: 'invalid'}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'highest', sortField: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'frequent', id: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'avghighest', id: ''}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value null', async () => {
-						return get('/api/v1/episode/list').query({list: 'faved', ids: null}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'avghighest', ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'frequent', ids: [null, '']}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'recent', ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "query" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'recent', query: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'faved', query: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'avghighest', sortDescending: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'faved', sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', sortDescending: 'fuX3wKMkQ*R4&t9oj'}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'faved', sortDescending: 'Vmlx!GeV$c@rmXe%'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/episode/list').query({list: 'faved', sortDescending: 2771941437997058}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'recent', sortDescending: 348144785162242}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/episode/list').query({list: 'highest', sortDescending: -8577444558667777}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'random', sortDescending: -4660386326380545}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'highest', trackMedia: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'frequent', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/episode/list').query({list: 'recent', trackMedia: 'Qd8kjR'}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'frequent', trackMedia: 'S)Js(XX&4G'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/episode/list').query({list: 'avghighest', trackMedia: -7128931022929918}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'highest', trackMedia: 488902683000834}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/episode/list').query({list: 'frequent', trackMedia: 8141997483229183}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'recent', trackMedia: 6389631373279231}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'faved', trackTag: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'frequent', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/episode/list').query({list: 'highest', trackTag: 'kF2SUYvIYaa8Kv'}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'faved', trackTag: 'ueN*EBfOa8bdsBkB'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', trackTag: -8186087688110078}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'highest', trackTag: 5093164989808642}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/episode/list').query({list: 'recent', trackTag: -5596374691217409}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'recent', trackTag: 6246109139697663}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'highest', trackRawTag: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'avghighest', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', trackRawTag: 'kEQpEdOcFBgkGhw'}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'highest', trackRawTag: 'V0cIulb9@c'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/episode/list').query({list: 'frequent', trackRawTag: 6350662946258946}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'highest', trackRawTag: -5505795638689790}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/episode/list').query({list: 'highest', trackRawTag: -7981632531202049}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'faved', trackRawTag: -8681955080011777}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', trackState: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'faved', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', trackState: 'c$Sv*HEjnPZ]*VGfj'}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'avghighest', trackState: '*d@&(P'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', trackState: -2779033376915454}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'avghighest', trackState: -8155477686878206}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/episode/list').query({list: 'recent', trackState: -5176768164003841}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'frequent', trackState: -187026666160129}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', offset: 'Mp3^$H$uDIhs2'}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'recent', offset: 'w[LVv)3vtU3Kd^&M3nsF'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', offset: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'avghighest', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
 						return get('/api/v1/episode/list').query({list: 'avghighest', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/episode/list').query({list: 'highest', offset: 73.29}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'avghighest', offset: 31.69}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/episode/list').query({list: 'recent', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/episode/list').query({list: 'recent', amount: 'Qm%Cb18exIoep!TJu^'}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'faved', amount: '^oGI5GK'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', amount: ''}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'frequent', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/episode/list').query({list: 'faved', amount: true}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'random', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/episode/list').query({list: 'random', amount: 71.13}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'highest', amount: 22.46}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/episode/list').query({list: 'avghighest', amount: 0}).expect(400);
+						return get('/api/v1/episode/list').query({list: 'faved', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/podcast/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/podcast/id').query({id: 'CzDkeNf'}).expect(401);
+						return getNotLoggedIn('/api/v1/podcast/id').query({id: '4ykK)$7YSnu'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3615,83 +3635,83 @@ describe('Server', () => {
 						return get('/api/v1/podcast/id').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value empty string', async () => {
-						return get('/api/v1/podcast/id').query({id: '9%@cPr4]YMCyQ*w1M', podcastState: ''}).expect(400);
+						return get('/api/v1/podcast/id').query({id: '6za!wvnYe(B$', podcastState: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value string', async () => {
-						return get('/api/v1/podcast/id').query({id: 'pIh7cd#aJ#s)f', podcastState: 'sUWXmqA'}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'CW]@neQCf', podcastState: 'PoQKZgI)3Bvz9Asnj'}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/id').query({id: 'J7[vxK9J68KL2o', podcastState: -7555205113577470}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'uBXqMw6uA3J*lu&8', podcastState: 5991823650586626}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/id').query({id: '8A2HeL@', podcastState: -2986072095064065}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'Mxrfv97#BryZ0F', podcastState: -7189827917185025}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value empty string', async () => {
-						return get('/api/v1/podcast/id').query({id: '(!TNm3k^#U', podcastEpisodes: ''}).expect(400);
+						return get('/api/v1/podcast/id').query({id: '!i&OYER]s&7)#)', podcastEpisodes: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value string', async () => {
-						return get('/api/v1/podcast/id').query({id: 'BKYsQyuPKeTE', podcastEpisodes: 'AK1i7*(WeoEY[V'}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'wdk^v]zU@)Ke', podcastEpisodes: 'JG4KH2dc)!m&Tri*b!@)'}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/id').query({id: 'ZG[dwc4(', podcastEpisodes: 3961654677078018}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'z)cK*A(K', podcastEpisodes: 507144537374722}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/id').query({id: '**]eEQrpStSPSS^Z7', podcastEpisodes: 5301749753577471}).expect(400);
+						return get('/api/v1/podcast/id').query({id: '7YDwx7sctj%', podcastEpisodes: -8353068382945281}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/podcast/id').query({id: 'xOMr13*Ar7UDJIs', trackMedia: ''}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'rnKQQ%oW]jKY!gwPF^', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/podcast/id').query({id: 'FHVx]', trackMedia: 'WI@g!VTN[XYr%Y30GvT%'}).expect(400);
+						return get('/api/v1/podcast/id').query({id: '!kPDkAiUV(q2JG5', trackMedia: 'MmwctMIX[N@Gj'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/id').query({id: '[Mr]wQqQJ8ZKi3(A', trackMedia: -2179676793470974}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'y]bhT))DZnxRwCId', trackMedia: -5184433153900542}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/id').query({id: 'xwO)szDkWvVBoh$', trackMedia: -7266480685057}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'L5dJse&Agxytp#MMD', trackMedia: 7849875249037311}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/podcast/id').query({id: '!k0yt!6UhFfq', trackTag: ''}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'Jus@lp]wN)J8%ThNhX#4', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/podcast/id').query({id: 'DbM%t^SmQ', trackTag: 'ZMu2(0'}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'ZwlUQ', trackTag: 'GI7kONSnU(tMxxC2@'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/id').query({id: '(2TrK]E9V', trackTag: -5711898032996350}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'nSW]N2O', trackTag: -4733534505795582}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/id').query({id: 'kD*o5wrIJf^n&t', trackTag: 4139977814310911}).expect(400);
+						return get('/api/v1/podcast/id').query({id: ']19!SlYWo!kJzL^NjN5m', trackTag: -6518862363230209}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/podcast/id').query({id: '9]qaDEqRMRbk', trackRawTag: ''}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'KRHBfvR&svnsducO', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/podcast/id').query({id: 'QuxE@b(6F5R', trackRawTag: 'b@R(t#ZY'}).expect(400);
+						return get('/api/v1/podcast/id').query({id: '[e5N21', trackRawTag: 'Iegmj'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/id').query({id: 'pCXtOxB50iJwJA', trackRawTag: 6705252485038082}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'izShYioH2^)j3Ue1oUEm', trackRawTag: -2555405242728446}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/id').query({id: 'rTPqzs68', trackRawTag: -851149414465537}).expect(400);
+						return get('/api/v1/podcast/id').query({id: '3q#YOoKdA', trackRawTag: -6166789562040321}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/podcast/id').query({id: 'c*452*hOst&@Xjbxy0', trackState: ''}).expect(400);
+						return get('/api/v1/podcast/id').query({id: '5$g[Rk0P', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/podcast/id').query({id: 'Q(OR8kQ6n3P*U)[2m', trackState: '9su@2dSO(nO$9LUuM'}).expect(400);
+						return get('/api/v1/podcast/id').query({id: '#B3sUHb^', trackState: 'VuCcnRnGV3Y'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/id').query({id: 'Go##ZTWJ&&', trackState: -1648889706840062}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'dz7y2e', trackState: -6236372050378750}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/id').query({id: 'JXW5u#c', trackState: -7765454634352641}).expect(400);
+						return get('/api/v1/podcast/id').query({id: 'Ul*cheqgiz$Hy#ooXK', trackState: 6750148008869887}).expect(400);
 					});
 			});
 		});
 		describe('/podcast/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/podcast/ids').query({ids: ['ce^8WVK7q6DjRHYaT5EB', '^1YtU%Ef3G']}).expect(401);
+						return getNotLoggedIn('/api/v1/podcast/ids').query({ids: ['C!WvpD5DLKA53JWHR3F', '@x$y^bI']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3702,83 +3722,83 @@ describe('Server', () => {
 						return get('/api/v1/podcast/ids').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value empty string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['^BEVL4eOD)1EFK', 'P92CXTN'], podcastState: ''}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['#G4z0yk#)GZxOpfAfDhE', '61RWic9CIdI&'], podcastState: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['fv@EmqPHQ#vYj#l*W', 'se3s6YCDsM!eEz'], podcastState: 'BdvJL&]1R0Vz[t'}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['[Ihwc5ai[9Uq4J', 'sRdB8F'], podcastState: 'ZV9cl(^'}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['dY3rSoANvK0c#fk&8h', 'ETC]sNNSV@SOn'], podcastState: 4297075411910658}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['Z4HtD', 'M2RnEVvidk6w(D'], podcastState: 939388074721282}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['zvM#Ci6j', 'hA2x$ebw*RKUT'], podcastState: -2559161216794625}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['YBZ^z%wfRbGEg9b', 'X&L1q#cowCm3J6514JG'], podcastState: 1886764637618175}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value empty string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['F[xh3^d@7[@7yw2', 'qLH1mb'], podcastEpisodes: ''}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['F1uHdJW', '$hzSSjjo]'], podcastEpisodes: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['cLskI', 'Hy78DxrRs^z'], podcastEpisodes: 'RYv30ac$[ce!'}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['2t)4dsgIvD#8', 'JUWkvwJ)&@Q$@'], podcastEpisodes: 'Y8P9S@eP#n9U!V%W9'}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['G53XyxnHWhf', 'Jqkp^E%FNtB9Oo6'], podcastEpisodes: -3601141841526782}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['9UJj4m4re$', 'Z0vCzR9UX^c$zfELP'], podcastEpisodes: -2564676982407166}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['b1[^73mb6cedbPbip', 'ND9o$@v]Z%]iVF%JH8'], podcastEpisodes: 822567363411967}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['C(3b@aF(5VLdlmkhPb[', 'Ol0SGPz6]cURNz'], podcastEpisodes: 9003070281220095}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['IPJHZGUs9rmb7K', 'a3%Q[7'], trackMedia: ''}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['FIZya', 'W2h9grAg!k'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['4#y5QEEEQBw5rfp*3r', 'I8mAs1hP'], trackMedia: '(*Jx!0'}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['RYZ^x9#T1QzF9(](Y', '%ev]vH%OX#mc'], trackMedia: 'xrKuAQ)lli'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['60M[W4voX&', 'qUpConER'], trackMedia: 3691758034616322}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['AEhuk', 'MPowdRurQs!bN'], trackMedia: -1885085875830782}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['iy7dKlqwUZG3]fZI', 'FhtlZ9[QNkE9p'], trackMedia: -5342657857454081}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['5kSF9avOkcbKVhG4', '8]gHSZ3'], trackMedia: -8941328050159617}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['lkIq]1', '8%kVelzdh#s2'], trackTag: ''}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['uy])#)w', 'l[KcN)!L(Wbo#b'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['l!iRNk)Fdne2tBT', 'zMS2ONG&^JV[U4EW[j'], trackTag: 'I]bvzOr1ga'}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['Z@i^]]Q)mAPgc', 'q!C&&yt'], trackTag: 'A0XgGRs'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['DLgRY', '0Q(7r[GUJ8#sM7]'], trackTag: 3555753214345218}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['H9X3zC', '[2kZ2[z'], trackTag: 6443107067363330}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['eX^M(vIg4', 'Tz6o2n($(xN*FlltgQ'], trackTag: -4472753658789889}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['Zx#)pV)qC0Xpk7fKVRU', 'Q$AJ(tmQv6rbN'], trackTag: -2361429189459969}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['$@XIEJYB', '6S#B4z2k1TXqAc43Xq0'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['1^2^CrTtLoeVjGfN', 'oogIlO$'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['B2iuSbFu9INebOkQP', '^RzD)QLQ%gll*lKfP![D'], trackRawTag: 'Jlio]yVKlV5%@'}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['%WQ3#hsomj4Li', 'wNr0BCe'], trackRawTag: 'CXc1os'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['$r4YRvMYYsZWRRnIOS', 'FKT0[x^OW'], trackRawTag: 8010531348676610}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['8q2(sbGC3*I2JUVU', 'KM#oTz'], trackRawTag: 8817924441636866}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['uoVR2!UZwd', 'DRbwap%7@5L!)1'], trackRawTag: 7518442731077631}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['tFtF#C$i$6gBf1s', 'vM&]QkO8nfHURFc^c@sd'], trackRawTag: -5261176048975873}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['sH2crnx', 'AWCDgm0yVV'], trackState: ''}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['yEgTxtlvoN5fpH', 'L7EN(O'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['P%L@C(]IThd#jDdSKLS', 'YMxwn4'], trackState: 'Yj1))]3D'}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['QDOg*RF@nvL[(W', 'gPY^DZ@SIAgk[$^wv'], trackState: 'Z8dtpPJkTXE)'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['oehWuwAA$W&5hRTL9', '7@@gn5qx'], trackState: -2160532903690238}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['K&oD#p73^R7HA4BaU]', '*$sEeZmL(m'], trackState: 4266500244373506}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/ids').query({ids: ['3RsazbO%cWDKt', '6i1GsB'], trackState: -6106520827723777}).expect(400);
+						return get('/api/v1/podcast/ids').query({ids: ['wezzRVXMIsFI', 'xAc3e^#[a0AL4iym(v'], trackState: 5206013472931839}).expect(400);
 					});
 			});
 		});
 		describe('/podcast/status', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/podcast/status').query({id: 'oyWNImKhKa'}).expect(401);
+						return getNotLoggedIn('/api/v1/podcast/status').query({id: '4KPPwQ6k9nChmm'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3795,7 +3815,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/podcast/search').query({offset: 'iU4((4AFNr[l7&#R7('}).expect(400);
+						return get('/api/v1/podcast/search').query({offset: '!xiDUrX'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/podcast/search').query({offset: ''}).expect(400);
@@ -3804,13 +3824,13 @@ describe('Server', () => {
 						return get('/api/v1/podcast/search').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/podcast/search').query({offset: 79.91}).expect(400);
+						return get('/api/v1/podcast/search').query({offset: 75.81}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/podcast/search').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/podcast/search').query({amount: '%Br5]gGM'}).expect(400);
+						return get('/api/v1/podcast/search').query({amount: '$YBorDUP$D7'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/podcast/search').query({amount: ''}).expect(400);
@@ -3819,7 +3839,7 @@ describe('Server', () => {
 						return get('/api/v1/podcast/search').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/podcast/search').query({amount: 49.11}).expect(400);
+						return get('/api/v1/podcast/search').query({amount: 34.3}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/podcast/search').query({amount: 0}).expect(400);
@@ -3855,92 +3875,92 @@ describe('Server', () => {
 						return get('/api/v1/podcast/search').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/podcast/search').query({sortDescending: 'JN1(t8IPeXsdQG'}).expect(400);
+						return get('/api/v1/podcast/search').query({sortDescending: 'o6A4a&bx8q6'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/search').query({sortDescending: -5139948910936062}).expect(400);
+						return get('/api/v1/podcast/search').query({sortDescending: 4945178406158338}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/search').query({sortDescending: -8514127995600897}).expect(400);
+						return get('/api/v1/podcast/search').query({sortDescending: -628943119974401}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value empty string', async () => {
 						return get('/api/v1/podcast/search').query({podcastState: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value string', async () => {
-						return get('/api/v1/podcast/search').query({podcastState: 'u$bgc9nXOg'}).expect(400);
+						return get('/api/v1/podcast/search').query({podcastState: 'ZuKFg)Sx^[s'}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/search').query({podcastState: 6804918572679170}).expect(400);
+						return get('/api/v1/podcast/search').query({podcastState: -5484208038346750}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/search').query({podcastState: -4322599924400129}).expect(400);
+						return get('/api/v1/podcast/search').query({podcastState: 2849116950364159}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value empty string', async () => {
 						return get('/api/v1/podcast/search').query({podcastEpisodes: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value string', async () => {
-						return get('/api/v1/podcast/search').query({podcastEpisodes: '8*Kg(z)3qi@'}).expect(400);
+						return get('/api/v1/podcast/search').query({podcastEpisodes: 'QaA1Y^Bm6O8z&'}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/search').query({podcastEpisodes: 8465908141916162}).expect(400);
+						return get('/api/v1/podcast/search').query({podcastEpisodes: 2001777570349058}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/search').query({podcastEpisodes: -6404927739920385}).expect(400);
+						return get('/api/v1/podcast/search').query({podcastEpisodes: -2754785094664193}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/podcast/search').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/podcast/search').query({trackMedia: 'rSXO2S'}).expect(400);
+						return get('/api/v1/podcast/search').query({trackMedia: '@la7LsKGeiB'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/search').query({trackMedia: -1073401007439870}).expect(400);
+						return get('/api/v1/podcast/search').query({trackMedia: -4604158522949630}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/search').query({trackMedia: 8253689609322495}).expect(400);
+						return get('/api/v1/podcast/search').query({trackMedia: 1635483318747135}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/podcast/search').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/podcast/search').query({trackTag: '1@4ku'}).expect(400);
+						return get('/api/v1/podcast/search').query({trackTag: 'L2x*pNn5'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/search').query({trackTag: 5783706908229634}).expect(400);
+						return get('/api/v1/podcast/search').query({trackTag: -1073857259634686}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/search').query({trackTag: -1711882008264705}).expect(400);
+						return get('/api/v1/podcast/search').query({trackTag: -8188577900920833}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/podcast/search').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/podcast/search').query({trackRawTag: 'wWY]xVhGw2o'}).expect(400);
+						return get('/api/v1/podcast/search').query({trackRawTag: 'po6hM&J(udC(fk(5'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/search').query({trackRawTag: 5675840360677378}).expect(400);
+						return get('/api/v1/podcast/search').query({trackRawTag: 954840679186434}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/search').query({trackRawTag: -8551416234770433}).expect(400);
+						return get('/api/v1/podcast/search').query({trackRawTag: 1398136698306559}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/podcast/search').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/podcast/search').query({trackState: 'yhtVb[Yv^$NGywgFp6'}).expect(400);
+						return get('/api/v1/podcast/search').query({trackState: 'e(#4%('}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/search').query({trackState: 4558101042692098}).expect(400);
+						return get('/api/v1/podcast/search').query({trackState: 7575628446433282}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/search').query({trackState: 4911345828888575}).expect(400);
+						return get('/api/v1/podcast/search').query({trackState: -3735458752233473}).expect(400);
 					});
 			});
 		});
 		describe('/podcast/episodes', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/podcast/episodes').query({id: 'IWKQfBmVRZP&'}).expect(401);
+						return getNotLoggedIn('/api/v1/podcast/episodes').query({id: ')cyU4Tyc5txshlz$t#'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -3948,82 +3968,82 @@ describe('Server', () => {
 						return get('/api/v1/podcast/episodes').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'wQ(TctINatzZdufS^M0', trackMedia: ''}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'pCrC$sT', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'C9ET3zt$wYg', trackMedia: '6TveffrQZS5u5Kno'}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: '(#Xhxso78W8)', trackMedia: 'zSylZ&i!%LdMimYW5cm'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'ZdKea', trackMedia: -2296644875845630}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'RFge[#fuZTg', trackMedia: 7310303922487298}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/episodes').query({id: '3$m2Vb1IjAVu', trackMedia: -8953048420319233}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'bvPCcmRx]6', trackMedia: -2488833551630337}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'OEN%W', trackTag: ''}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'ABa5ptBPJzlH', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'T&c72YzOS^m!6C', trackTag: 'KJ%CK@j0wCgjlo@p'}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'HB#vG#UOg[VO5YUsR$x!', trackTag: 'h&[DAFWu'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'q#ny!Nk4cf^rkFxp', trackTag: -99587859677182}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'P*O#XG[pd2My', trackTag: 4229252958388226}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'om0xb#da7]J8', trackTag: 4813100528173055}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'Q7h6V@sb)R(DK5', trackTag: -3732842165043201}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: '@vxZG#*', trackRawTag: ''}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'Q]tBMZ2', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: '#e&ERTVs20U3kZibUVP', trackRawTag: 'Tp^gB%Ji0'}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'c#*OKpa^W3%1zsXFym', trackRawTag: 'N*y&NfHDp!bzs8)P#'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/episodes').query({id: '%il3!JIFI(0#R', trackRawTag: 2443941605539842}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'x1euzx^meQyGDnbC', trackRawTag: -4874464231686142}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'v6J[!mqN', trackRawTag: -1994083354542081}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: '0O3fTg!FpSp', trackRawTag: -3982310324043777}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'oDsRu$l3P3)^*jy]Ee', trackState: ''}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'nx$l70gyCV', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'q0tq04@J', trackState: 'BWjY(*P592F)0'}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'o4HwTSte76$v%JlDx', trackState: 'pZ4^U0nwS'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'L(zmHa', trackState: -6030785320583166}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'xAHg%SFAa8XKZerV@H]', trackState: 5788967744045058}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'CxcU8Nstl', trackState: 3842615699046399}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: '%zB)PBeP0GGET', trackState: -2315323126579201}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'OcbAFI24v4h!L', offset: 'fEYc22[89'}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: '$K^Rn*EtS^d!', offset: 'ZELpEHI'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: '7ufMDM@^xJ', offset: ''}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'cL@Dmn$Dy4pm%A)7eg', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'W1D0gLAK8vlRbR', offset: true}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: '#9rXM', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'wa7QKeh]', offset: 79.28}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'L2^CvQjt#J%jFJ[XK', offset: 83.33}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'scQQp', offset: -1}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: '4kGvWUrQaVBg', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: '6tdOjPwfE7U&S6eY', amount: '2^4WaK)e*'}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'V$w(#hE%4X', amount: '&%etr'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'y9DC7T', amount: ''}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'j&Ou%s(pExmw', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/podcast/episodes').query({id: '@3[sYk', amount: true}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'agt3[kI!', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'j#vK!d4xt3][j%[lNPe', amount: 62.59}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'C#AX0', amount: 63.04}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/podcast/episodes').query({id: 'xR^NQ', amount: 0}).expect(400);
+						return get('/api/v1/podcast/episodes').query({id: 'D@Skw', amount: 0}).expect(400);
 					});
 			});
 		});
@@ -4033,11 +4053,21 @@ describe('Server', () => {
 						return getNotLoggedIn('/api/v1/podcast/refreshAll').query({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/podcast/refreshAll').query({}).expect(401);
+					});
+			});
 		});
 		describe('/podcast/refresh', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/podcast/refresh').query({id: '5G)nRFcrpa1tj'}).expect(401);
+						return getNotLoggedIn('/api/v1/podcast/refresh').query({id: '8dG0v'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/podcast/refresh').query({id: '8dG0v'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -4049,7 +4079,7 @@ describe('Server', () => {
 		describe('/podcast/state', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/podcast/state').query({id: 'Xg#KWq'}).expect(401);
+						return getNotLoggedIn('/api/v1/podcast/state').query({id: 'ABJc&L2@0c2q@['}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -4061,7 +4091,7 @@ describe('Server', () => {
 		describe('/podcast/states', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/podcast/states').query({ids: ['iT[nKxs(CoURq)M&EUJ', 'kCUmjcU']}).expect(401);
+						return getNotLoggedIn('/api/v1/podcast/states').query({ids: ['Z((mCne8^97en*', '4gp2t43QTC7h&E']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -4087,25 +4117,25 @@ describe('Server', () => {
 						return get('/api/v1/podcast/list').query({list: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "url" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'random', url: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'faved', url: ''}).expect(400);
 					});
 					it('should respond with 400 with "title" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'highest', title: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'faved', title: ''}).expect(400);
 					});
 					it('should respond with 400 with "status" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'highest', status: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'avghighest', status: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'avghighest', sortField: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'highest', sortField: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value invalid enum', async () => {
-						return get('/api/v1/podcast/list').query({list: 'frequent', sortField: 'invalid'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'recent', sortField: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', id: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'highest', id: ''}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value null', async () => {
-						return get('/api/v1/podcast/list').query({list: 'avghighest', ids: null}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'frequent', ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/podcast/list').query({list: 'faved', ids: [null, '']}).expect(400);
@@ -4114,106 +4144,106 @@ describe('Server', () => {
 						return get('/api/v1/podcast/list').query({list: 'recent', query: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', sortDescending: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'recent', sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'random', sortDescending: 'HelO(tzr'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'random', sortDescending: 'YXNG[H'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/list').query({list: 'recent', sortDescending: 2281540142759938}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'frequent', sortDescending: -4704485104418814}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/list').query({list: 'recent', sortDescending: -1210719613747201}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'faved', sortDescending: 2740763729330175}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'recent', podcastState: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'faved', podcastState: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'random', podcastState: 'SE^Nu%SFuKKm3c*'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'frequent', podcastState: 'a^$&mox'}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/list').query({list: 'avghighest', podcastState: 8548919390765058}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'random', podcastState: 3917368623366146}).expect(400);
 					});
 					it('should respond with 400 with "podcastState" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', podcastState: 835011762716671}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'highest', podcastState: 767016029913087}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', podcastEpisodes: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'avghighest', podcastEpisodes: ''}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', podcastEpisodes: 'SpvamNxs)ILwZDayD]'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'faved', podcastEpisodes: 'E#zZ(qXQ'}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/list').query({list: 'highest', podcastEpisodes: -5677858076753918}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'frequent', podcastEpisodes: -3693466261389310}).expect(400);
 					});
 					it('should respond with 400 with "podcastEpisodes" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/list').query({list: 'random', podcastEpisodes: -8429384729886721}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'highest', podcastEpisodes: -4593230008025089}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'recent', trackMedia: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'random', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', trackMedia: 'W!VnV8zb1@4k'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'recent', trackMedia: 'p8gQtzhi'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/list').query({list: 'highest', trackMedia: 1069875296468994}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'faved', trackMedia: -7268382915166206}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/list').query({list: 'frequent', trackMedia: 6014873683099647}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'frequent', trackMedia: -567877543395329}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/podcast/list').query({list: 'faved', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'frequent', trackTag: 'wyGkVZfY'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'random', trackTag: '9lruOMri'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/list').query({list: 'recent', trackTag: 8758614198059010}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'frequent', trackTag: -5239510229057534}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/list').query({list: 'frequent', trackTag: -851094028681217}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'avghighest', trackTag: -4299385294815233}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/podcast/list').query({list: 'frequent', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'random', trackRawTag: 'VWE7RL@YytvLJJMyArtJ'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'frequent', trackRawTag: 'msDvm%yX@g'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', trackRawTag: 3250727866597378}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'random', trackRawTag: -734038214049790}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', trackRawTag: -7632968889663489}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'avghighest', trackRawTag: -6698708376748033}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', trackState: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'highest', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'random', trackState: 'NPIN9EdKNJy0'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'random', trackState: 'hdI#b3%K'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/podcast/list').query({list: 'highest', trackState: -7998851667460094}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'highest', trackState: -3664819110543358}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/podcast/list').query({list: 'avghighest', trackState: -7778877468311553}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'random', trackState: -8493726120804353}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'highest', offset: 'eP$FbQU[F^Ro*y'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'highest', offset: 'q0hKqXi)3$3'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'faved', offset: ''}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'random', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
 						return get('/api/v1/podcast/list').query({list: 'avghighest', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/podcast/list').query({list: 'avghighest', offset: 22.85}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'avghighest', offset: 75.32}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/podcast/list').query({list: 'avghighest', offset: -1}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'recent', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/podcast/list').query({list: 'recent', amount: '6De^xZN9xs2'}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'recent', amount: 'qgAOFB!VN6e'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/podcast/list').query({list: 'random', amount: ''}).expect(400);
@@ -4222,17 +4252,17 @@ describe('Server', () => {
 						return get('/api/v1/podcast/list').query({list: 'recent', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/podcast/list').query({list: 'avghighest', amount: 28.34}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'faved', amount: 71.3}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/podcast/list').query({list: 'avghighest', amount: 0}).expect(400);
+						return get('/api/v1/podcast/list').query({list: 'recent', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/radio/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/radio/id').query({id: 'VYSEWwTsl', radioState: false}).expect(401);
+						return getNotLoggedIn('/api/v1/radio/id').query({id: 'l[#U8gWXHVduO%O8YA', radioState: true}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -4240,43 +4270,43 @@ describe('Server', () => {
 						return get('/api/v1/radio/id').query({id: '', radioState: false}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value empty string', async () => {
-						return get('/api/v1/radio/id').query({id: 'zOyraZtto', radioState: ''}).expect(400);
+						return get('/api/v1/radio/id').query({id: 'ANRFc0BB!', radioState: ''}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value string', async () => {
-						return get('/api/v1/radio/id').query({id: 'FDqo$C', radioState: '[LOcEruNw@*PTtaKm7'}).expect(400);
+						return get('/api/v1/radio/id').query({id: 'VOqc3g5dtbccU(Ak8[', radioState: 'q@6@F3a5X8bEa#W'}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value integer > 1', async () => {
-						return get('/api/v1/radio/id').query({id: 'SI##1(okh#xxD8', radioState: 7634549739618306}).expect(400);
+						return get('/api/v1/radio/id').query({id: 'c3^2wsJXtqj[X1)', radioState: -5874144289751038}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value integer < 0', async () => {
-						return get('/api/v1/radio/id').query({id: 'q2R*Q', radioState: 6411419406827519}).expect(400);
+						return get('/api/v1/radio/id').query({id: '7@[CaXq!', radioState: -2007483585396737}).expect(400);
 					});
 			});
 		});
 		describe('/radio/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/radio/ids').query({ids: ['3A5U27mc)@C', 'eCRUO3Q#stagw)Z'], radioState: false}).expect(401);
+						return getNotLoggedIn('/api/v1/radio/ids').query({ids: ['pc@PRv!', 'W2mgs%a*'], radioState: true}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
-						return get('/api/v1/radio/ids').query({ids: null, radioState: true}).expect(400);
+						return get('/api/v1/radio/ids').query({ids: null, radioState: false}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/radio/ids').query({ids: [null, ''], radioState: true}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value empty string', async () => {
-						return get('/api/v1/radio/ids').query({ids: ['6JM(c9', ']M1Nlhjd)t'], radioState: ''}).expect(400);
+						return get('/api/v1/radio/ids').query({ids: ['j7y5Uncg9EktLKQFidZn', 'tgLLt'], radioState: ''}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value string', async () => {
-						return get('/api/v1/radio/ids').query({ids: ['qs1r9[Qdfoo*^)9XBx', ']]Ho#'], radioState: 'BRXfj1pkaIgW'}).expect(400);
+						return get('/api/v1/radio/ids').query({ids: ['Knejz@zoS$', 'ZJ$9wp1a0)$WP16R0^'], radioState: 'J*]$NKH#]5t68Zgyw'}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value integer > 1', async () => {
-						return get('/api/v1/radio/ids').query({ids: ['UF&aR9AC(', 'P*9LfEkYWfy^Jr'], radioState: 550484595179522}).expect(400);
+						return get('/api/v1/radio/ids').query({ids: ['#pm[T1*4Lwue1a^', '@SvJGJSFS9s9T]cvw'], radioState: -5212630557917182}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value integer < 0', async () => {
-						return get('/api/v1/radio/ids').query({ids: ['*IQbvJ7zb07^', 'EoBBDSY'], radioState: 4409419794219007}).expect(400);
+						return get('/api/v1/radio/ids').query({ids: ['RDck9gwvjAGGKZ@COu', '@E!Swgu8w'], radioState: -5874938045005825}).expect(400);
 					});
 			});
 		});
@@ -4291,31 +4321,31 @@ describe('Server', () => {
 						return get('/api/v1/radio/search').query({radioState: ''}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value string', async () => {
-						return get('/api/v1/radio/search').query({radioState: 'EH!Zn#GT4L9@]ekG2!'}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: '@xAT6w'}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value integer > 1', async () => {
-						return get('/api/v1/radio/search').query({radioState: 2539781904924674}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: -5685749319991294}).expect(400);
 					});
 					it('should respond with 400 with "radioState" set to value integer < 0', async () => {
-						return get('/api/v1/radio/search').query({radioState: -3109701076123649}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: -3686804385431553}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/radio/search').query({radioState: false, offset: '40n#pBIbqIs(q'}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: true, offset: 'g!x($6RTXI3H]'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/radio/search').query({radioState: false, offset: ''}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: true, offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, offset: true}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, offset: 96.93}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: true, offset: 51.77}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, offset: -1}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, amount: 'hWp)cfiuu8CE7Gos'}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, amount: 'LDHBnTw#@t]JB%s'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/radio/search').query({radioState: false, amount: ''}).expect(400);
@@ -4324,56 +4354,56 @@ describe('Server', () => {
 						return get('/api/v1/radio/search').query({radioState: true, amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, amount: 11.04}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, amount: 39.59}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, amount: 0}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, amount: 0}).expect(400);
 					});
 					it('should respond with 400 with "url" set to value empty string', async () => {
 						return get('/api/v1/radio/search').query({radioState: false, url: ''}).expect(400);
 					});
 					it('should respond with 400 with "homepage" set to value empty string', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, homepage: ''}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, homepage: ''}).expect(400);
 					});
 					it('should respond with 400 with "name" set to value empty string', async () => {
 						return get('/api/v1/radio/search').query({radioState: true, name: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
-						return get('/api/v1/radio/search').query({radioState: false, sortField: ''}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: true, sortField: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value invalid enum', async () => {
-						return get('/api/v1/radio/search').query({radioState: false, sortField: 'invalid'}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: true, sortField: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, id: ''}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, id: ''}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value null', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, ids: null}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, ids: [null, '']}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "query" set to value empty string', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, query: ''}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, query: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value empty string', async () => {
 						return get('/api/v1/radio/search').query({radioState: true, sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, sortDescending: '*!q)Sl@9l2ogv11S0IMJ'}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, sortDescending: 'ef8UbG6(o4'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, sortDescending: -5972137974169598}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: false, sortDescending: -9248574537726}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/radio/search').query({radioState: true, sortDescending: 8475391471648767}).expect(400);
+						return get('/api/v1/radio/search').query({radioState: true, sortDescending: 7119121435066367}).expect(400);
 					});
 			});
 		});
 		describe('/radio/state', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/radio/state').query({id: 'QBp!I[Y['}).expect(401);
+						return getNotLoggedIn('/api/v1/radio/state').query({id: 'XWyzFYKY$u%QDV2)tQ'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -4385,7 +4415,7 @@ describe('Server', () => {
 		describe('/radio/states', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/radio/states').query({ids: ['jrNO^qTh[JD][NFg', 'm)YNQIECsuJ#&48mm[sw']}).expect(401);
+						return getNotLoggedIn('/api/v1/radio/states').query({ids: ['sBB1%G0F', '*c1eHqOVwt!#s%U[eqzA']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -4400,7 +4430,7 @@ describe('Server', () => {
 		describe('/artist/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/id').query({id: 'N&zG%zJwnhP$(Bp'}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/id').query({id: '8gwloeGHuEDiD05J(U0k'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -4408,194 +4438,194 @@ describe('Server', () => {
 						return get('/api/v1/artist/id').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "rootID" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'h6MhSw3029DiKFFD@', rootID: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'Jas&#13TQQ', rootID: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'UZ3V25ehN23D%&cx', artistAlbums: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'mKW43xuwCdLCK7C@', artistAlbums: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'Kh!lfjG1e5ZA[(', artistAlbums: 'Pw[*D*R)GuGg*y!3m*'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'c$J2xPWY', artistAlbums: 'gD!qjfcSsnVpbau'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'vgM44[[D', artistAlbums: 3289697702903810}).expect(400);
+						return get('/api/v1/artist/id').query({id: '!LMBhSAEWPzs1^', artistAlbums: 5631080279310338}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'OA0h!^zi*09*r3@C', artistAlbums: 2394031631892479}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'tPGWNzg%D8W9N)YLr%*z', artistAlbums: 7258846271635455}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: '^mwgxb^w8gb', artistAlbumIDs: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'ByrCRP4xQIdb', artistAlbumIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'pNHdL$I', artistAlbumIDs: 'hV0sA'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'OC7GK5O', artistAlbumIDs: '895Abog2*'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: '9QPrC1%^E', artistAlbumIDs: 4763405323862018}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'Z7s$KRRu*4GxoR', artistAlbumIDs: 4195292765224962}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'E2]l*f6t][(Syj', artistAlbumIDs: -120674462990337}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'J1LAoMGjC4atT$U0qlx@', artistAlbumIDs: -437665287634945}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: '[tNbrW^W2Vek)KMh!2', artistState: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: '^BQOunDQbrz(YXKpVa', artistState: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'MJzrCl$n(Hr*tLzE', artistState: 'l$j5]6MwJATw6S8ApG!$'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'lyay(R&GyIrqoa', artistState: 'T!*p]N'}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: '9Vdvd$j3YoqO%*Et', artistState: 8008117241511938}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'F5M^(rxJ(3', artistState: 5203236206149634}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'rlatIll1rvWaJ1J#4deX', artistState: 7202450620547071}).expect(400);
+						return get('/api/v1/artist/id').query({id: '13MKnq[VE!sJ@77wwy', artistState: 6190985864282111}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: '&IL85', artistTracks: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: '61$2bWzSoj', artistTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'b]icA3OaiiEJl', artistTracks: '[$(CXLYpAaQP9IR9qOES'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'kX%H][r2%2RYWLZL%', artistTracks: 'RhItA'}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'Op3qbB&vc4%mlQ(JM$x', artistTracks: 730216762703874}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'mSo%m8Cao', artistTracks: -5723801664880638}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'R*eA]]eNDX6y4RVf', artistTracks: -6162186019799041}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'w37d7&3^tXvrYsQf', artistTracks: 8454505603530751}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: '@g@G8', artistTrackIDs: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: '1)A0NlcsFDLxqE', artistTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'V2oYE', artistTrackIDs: 'juZ^0CQOn%GCQW'}).expect(400);
+						return get('/api/v1/artist/id').query({id: '[z2D[0$TllTMV5vvwF', artistTrackIDs: 'wBI2GWI[U)Bo$'}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: '^!m(8%C', artistTrackIDs: -1182139076837374}).expect(400);
+						return get('/api/v1/artist/id').query({id: 't]g)Z@Z@4qVKcVf8E', artistTrackIDs: 3106726152765442}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'uyci!JBzMXx$', artistTrackIDs: -3127319749197825}).expect(400);
+						return get('/api/v1/artist/id').query({id: 't[9Zp3f3D', artistTrackIDs: 6522948458381311}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'gOFi5*O', artistInfo: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'r&p*8DL4t(6a@rp6&]gW', artistInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'jyvhj4', artistInfo: 'Pl0kK*8xi4'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'QuDgU8jcuM^Mkq#%OQj6', artistInfo: 'qMr!)g5j75U[YKr'}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'd5w5I]l0k)mRAv5^Z2O', artistInfo: 6310401784414210}).expect(400);
+						return get('/api/v1/artist/id').query({id: '[Rqgt)VHvYR', artistInfo: -374204390178814}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: '7*[wM*Iwh', artistInfo: 2966148438032383}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'l^[3)R)9D', artistInfo: -492314090799105}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'jaTkU@yUA7*r', artistSimilar: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'Y(KDzqNHc8g12*', artistSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'sbe!tvy7I', artistSimilar: '((2i2'}).expect(400);
+						return get('/api/v1/artist/id').query({id: '1fsyJ!KHn&L5D', artistSimilar: '2rH^ByTB6!'}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'dPHVZgEq', artistSimilar: 2185077953921026}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'ofM1Y)3p4hUw', artistSimilar: 6310666277224450}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'SXo&vmcyq0Pg', artistSimilar: -1561413042569217}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'QU^E&k!NbI)@G', artistSimilar: 2626107270496255}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'py@C(5IAtI', albumTracks: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'l$niFWegL@%bm9l2uk]', albumTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: '2E6LfR0GDOC82PKLI', albumTracks: '378dS!Go3%W1'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'rDj6afK5jYW7kW@O8', albumTracks: 'GotxL#lw7q'}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: '*3^vq', albumTracks: 6321215153111042}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'q60@rID[Lnv(RHD1n6Bt', albumTracks: 7888255273926658}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'k6OuQKS', albumTracks: 7973199849455615}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'bc8dTDOeRY@m%WqfS', albumTracks: 7962337424179199}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'yIxrh$TIp1)MVsY%', albumTrackIDs: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'RKloPEx', albumTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: '!wL^y', albumTrackIDs: 'U^Vy$gW((SRCV#9I89I'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'qF[srJp', albumTrackIDs: '#Q[m5YO8UQ()'}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'R($ebCB%^OtH4XzFRFYp', albumTrackIDs: -8453045776023550}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'capnIreBZIaLFqr[v', albumTrackIDs: 3629085351739394}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'm^ifcz86!5N%jIz', albumTrackIDs: 1802666330030079}).expect(400);
+						return get('/api/v1/artist/id').query({id: '03jS75rWV2jFY8', albumTrackIDs: 8762212579540991}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'bYuBM*AUDGDPfxIW9x', albumState: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'T7bA@BH9LAfr3%J*D', albumState: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'v][jt7&', albumState: 'VAPJ(5YX'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'Af22m7i&DtdVOGVck2VH', albumState: '9JZc*&1pwy8N'}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'cGis&#pF1GJvFaHKnn', albumState: -6882540832948222}).expect(400);
+						return get('/api/v1/artist/id').query({id: '[[h6$W&0b', albumState: 6358775178985474}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'hUEte3!uv', albumState: -6454943598772225}).expect(400);
+						return get('/api/v1/artist/id').query({id: '1s8iEM&CLkWY', albumState: 7306720183320575}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'rY8gmyPekWe!QSWH(j6N', albumInfo: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'N9C91)(DHnlVA', albumInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'YQodntF6ztMH4Kejr', albumInfo: '3CN7^[&'}).expect(400);
+						return get('/api/v1/artist/id').query({id: '063HDEGr8M@[JtQEcA]', albumInfo: '0R8%Tb'}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'i@bB0zZdR#yNoOQKCo3(', albumInfo: 5118157190594562}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'p8)9SXCL', albumInfo: 4115261116383234}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'ktw0#$HMxamo3u1Fw', albumInfo: -2167074604449793}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'J$!Gv#d#[C!e#Sc', albumInfo: -970600491253761}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'FM4rTc', trackMedia: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'aX^#^1NFe1QH$IydU', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'Yu@qcK[#%IInKJV7b', trackMedia: 'IpPw[Ytv#d!8uY'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'J]rQ4bDOM', trackMedia: '&BNlOdLw6cPj4'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: '%VfV4A', trackMedia: 8538463766839298}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'fnOF#Mt', trackMedia: 839403136090114}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'yJgRCMHs)xD&H(X)', trackMedia: 4440598073311231}).expect(400);
+						return get('/api/v1/artist/id').query({id: '2iV9yO@551g$av2hT', trackMedia: 1861932948652031}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'mVb&Z]!iRy*S*', trackTag: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: '2&@]k9', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: ']Icw%5', trackTag: 'Tphhx#w*2'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'pJN6bR', trackTag: 'FFc1Np7X]bC7Q@ERAN'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'AE5uf^wCPc', trackTag: 5252151374774274}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'RsY*0(%jgDRtngk', trackTag: 4522913692647426}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'l8SVP[2n4dV0P', trackTag: -8207072483082241}).expect(400);
+						return get('/api/v1/artist/id').query({id: '!^Ol%KX*6S1!aMMRRQ', trackTag: -4808288629686273}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: ']ytWYJfDh&]aN&ElT', trackRawTag: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: '7LgYP*!', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: ']%TF$C5khwEw2FuYs', trackRawTag: 'Rt$nj#'}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'r3Wgp)kdpX@nGz]', trackRawTag: '[J*yRJmsV'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'wJhQx4DH1qn&]L%y', trackRawTag: 1317152682409986}).expect(400);
+						return get('/api/v1/artist/id').query({id: '&vAI7!OnpO4', trackRawTag: -467815102414846}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'yFpxmW6h4', trackRawTag: 5864300199542783}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'I7dYb@BXD', trackRawTag: 1677784086740991}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/artist/id').query({id: 'jo20D!CqPby', trackState: ''}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'MiuRErQf@5Zy5j)Yo', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/artist/id').query({id: 'gYY(^$58NY^HYuc%LX', trackState: 'hckuMq'}).expect(400);
+						return get('/api/v1/artist/id').query({id: '9Ec2kV[', trackState: '0H5ucOWGmeSL^Lyn'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/id').query({id: 'TYg!JD&FZ]', trackState: -6090109283729406}).expect(400);
+						return get('/api/v1/artist/id').query({id: '(p1uPzWfVcw9t', trackState: -5847700780089342}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/id').query({id: 'lIO$ix', trackState: 8808509680386047}).expect(400);
+						return get('/api/v1/artist/id').query({id: 'gzKI^', trackState: 2478058623729663}).expect(400);
 					});
 			});
 		});
 		describe('/artist/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/ids').query({ids: ['HDp@EJRFjvSm3WaDW8m', 'hzN8^c']}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/ids').query({ids: ['zp^6FQvCJ', 'wa#0NAmbQmVlS5k&0jX']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -4606,184 +4636,184 @@ describe('Server', () => {
 						return get('/api/v1/artist/ids').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: [']AdNaI', 'ePQDD*a$#EZ8aw'], artistAlbums: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['(8M]wKPfNrvUwPz72c', 'j3O43V^Oei6OxWj0'], artistAlbums: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['(%J!be', '2L([hfgpGCJ$VZ'], artistAlbums: '@j14rCmuB5YLes*IVM'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['P2b^K', 'jD6C]W'], artistAlbums: '!bcgI)xO'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['attfENW*)V7AUjf4t', 'z!x*!g607Y'], artistAlbums: -2353576508653566}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['Z32JpMVIXPfW5fTx7', 'CK8Rw)urzQK]eS'], artistAlbums: -8667241595797502}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['2z](](', 'Rsrg*DzhPj!i!'], artistAlbums: -5598971842002945}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['xGvd]!tR43d1*Fk', '7XiJa5BjsTA5HOO'], artistAlbums: -5395377754734593}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['Gb20#Zpnn', '0RIwKML1HfYLAJcEo'], artistAlbumIDs: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['#Mph!XPC', 'wmXTxfGMy9MH*'], artistAlbumIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['9GDdeYMN#@t$H7o9Oa', 'xiV])[E7OQIO^7Jyn^zJ'], artistAlbumIDs: 'U)lrTmuSAVG&uPp$Jefm'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['Rnpa(O1ebpjCLmvL', '&Ds2^SFqw3CRRkusWT'], artistAlbumIDs: '*O$LwZY!T)jRCn1p&'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['tYPdV5B&f4r3XOJ]', 'c%xX$!&QWGEe'], artistAlbumIDs: -4550057089040382}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['$OMvFUKQX2v[O4zE@', 'josM*Y5BeZNAUAH'], artistAlbumIDs: -2663447510646782}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['%aoy#]FQvfKf', 'AyJSvu(%0d7i3fMm]e8'], artistAlbumIDs: -1705483073224705}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['hrNRaFq%RT', 'Eral@A]AW^IacLIQ'], artistAlbumIDs: -7629646183006209}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['sFBDZn9gVlc^hsdbK', '5bqbx*][JkE6YgPYl73t'], artistState: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['1BVlyU', '4GbrWvwUyh&[sx'], artistState: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['l*DuWl#nG', ')JJDoj!3UTzdLj'], artistState: 'UOJXjj68xY(@3I'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['u(zGZn[)', 'weV0KZGxvS5u6'], artistState: '9pBUrFNVLa7qCZmS!8r'}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['t$TPnmKV1e', 'iehqAkc[hs9w3^cz'], artistState: -7163313230184446}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['IwrcD@Y$^BfO3', 'rHrYVnoi4zhO%y0elK'], artistState: -135971572023294}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['d5HlB[k]f8L$QXPmR', 'T087KwLKQL'], artistState: 6823740272803839}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['AYx@BT9Y5[SxaAC', 'zpIOt5cvjC4Psz2r%R'], artistState: -5826566672089089}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['8G#fa18E', 'bLpbb&AHWx1Fo@oOEtf)'], artistTracks: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['oBivu8VU0iUHNS!^n', 'bqddKs^^n6[C'], artistTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['Ar(AE$uPRMF', 'URc&!yv5xfA$lAyo'], artistTracks: 'Yf1TeS'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['L9Bk#*Csu5!6]TLm!t', 'iy#gp'], artistTracks: '3fuWx'}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['vronlfS2O#z%', 'oRL9LOW)p5Y'], artistTracks: 8787173134303234}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['KzHIr^t@j', '91(%9'], artistTracks: 2470416190799874}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['pPORmp%[8z', 'v2q!a'], artistTracks: -5653863528923137}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['euDmPyW12nx6aj', 'Lt@9A$IgD[u(Np))'], artistTracks: -2689886708563969}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['^UjlsfIOe]^AfqMOq', 'd%eSgg(5[V'], artistTrackIDs: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['iPrCr$', 'vNWXxjB*lGQgrnK9)oPM'], artistTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['pg[b$Y^ChUnu]&uL#tJk', '26]e4T!^bUCUU%LK'], artistTrackIDs: '&@shRNhK@^xsU06VS'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['$]h9)', '3fU2GoA0l'], artistTrackIDs: 'ggR$oJ#1%T(0Dp'}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['^QFIXRs5M%rP9Ob4wg92', ']99jN42Hy4c]o'], artistTrackIDs: 7022803240878082}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['P%nUfLU6(Hs', 'V13bZ'], artistTrackIDs: 2161686156935170}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['mJDySoK7ne[y^EO3x', '^f4b5(36pnbRo#027TnC'], artistTrackIDs: 1197575772307455}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['VYIBBu36$Fb', 'o&v1grOagLz2y'], artistTrackIDs: -4038243360178177}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['6s(O@cBKC1fHwrc', '@dE&02QjGyDvJpY!o'], artistInfo: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['wcx73Lx^WH', 'T*B[mO'], artistInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['^b@Tw7Ha^^59beZg', 'MBAc#!HojV3dbBU(%xA'], artistInfo: 'vj)@s]'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['NRc9EbilaZ', 'wUOzncRt&xr)pD0b'], artistInfo: 'prxW2'}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['rb7s$*[i23tGv0lk!wt', 'll[2Bv'], artistInfo: -8455819993546750}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['w@%xQ09yP', '@)ISr4R0S7u99cHqbY^o'], artistInfo: 4530713994985474}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['KmrZ]PQMLvz1InDk9Qs^', 'Mtn9MmO0M'], artistInfo: -8928834741075969}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['xMZZyd@^MZ5t1Ww', '9vS(P4&9@'], artistInfo: 1246059296718847}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['PekqKci]uYTcSIS', 'T!tAs4hrB)qk0x[n'], artistSimilar: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['PJPia4im^6)ciuKM', '506BMy8'], artistSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['vRzMygvS[j!Iiw', 'jl$vkNJ*wC9gQHORteKf'], artistSimilar: 'T[r1iA!'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['[Z^l7%NfB', 'CBRna&uyDbfUB'], artistSimilar: 'ZWcMuLk$2'}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: [')d7BdkMFF1ZGsny0iV', 'QOapR%*'], artistSimilar: -338731332534270}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['sGlc#u1n', 'VKcuF4xl'], artistSimilar: -7042035873742846}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['bWOBlhisM', 'd](PtuWE!qVhYO*umi'], artistSimilar: -6224800628342785}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['3l%Gvm&pARfx]f', 'TwEzHzIW'], artistSimilar: 976714607886335}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['uvj7D*B%cc&QGH%feyQ', 'Oy)pbOpm9B6%PC'], albumTracks: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['5AtXG5', 'T5BA9RLimXc'], albumTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['cdlLsty', 'Gpp8cKqW&8o'], albumTracks: 'c&)Se^o(3hldSGecK'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['aoWxQM2JQyYg', '4N4KKzrSyDe0^'], albumTracks: 'WfcVispyg'}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['j5T7a2D', 'mTs9EQQqqeFZJTK^P25'], albumTracks: -1804783014903806}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['Ko%QCgunZY7$O8sPuM31', 'dQ^]Q'], albumTracks: 7067328982286338}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['R4T]WnQNTSEz', 'Ic2FM9'], albumTracks: 8212689356587007}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['^XQqvd^', 'vkME3FY&s&M1RA'], albumTracks: -783521572454401}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['Sbk7Fh(]RWO#', 'BeGgEkn@JXb'], albumTrackIDs: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['9Kh^zjyoK', '9xM@!@YxbNJf*$cKllQ'], albumTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['!dP1pPmEyxYJo8R#G', 'CiW7ttdYo'], albumTrackIDs: 'HG@4g'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['Q31d]#L', 'lz6btDU9mBJ'], albumTrackIDs: 'hB(GS4^5f0l6ZBgF'}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['n!(5n6', 'V&Im%'], albumTrackIDs: 7258955961073666}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['VM6UWcrQsn3', '1YdMkV2Qhmzo4X$KL'], albumTrackIDs: 7848742543687682}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: [']0#rMeRaTKU)!5uM5', 'vF8%af9FblX$cG0'], albumTrackIDs: -8429423711748097}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['qqRI9g9XkldL', 'Bb1W$NpXUw6Gmzb'], albumTrackIDs: -7567484513157121}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['t$nwr&*jX#q(X$GST3f', 'uO9rebm*%R1bY'], albumState: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['mGemyixZKcJmwyfKVc', 'gES@^LM]X@ffqyY'], albumState: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['AypQ!k', '0C(IQm8'], albumState: 'k0ZKJeg^AR'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['VT9bv[i', 'cH7N0j(rNpK8^Ddx'], albumState: 'VggFHO%)!6@3'}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['(vhhhj8L6Pz9', '&BiNx9zb'], albumState: 1524608817692674}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['B[yMzxPZ7[EO%', '&NuG*Psv7Bp!3Z'], albumState: -7024394090053630}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['FSVRGPtG0J*jY@dW', 'HQ^jt]'], albumState: -7890565605621761}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['M6yleIsG0W(', 'LZ*DGRqp$'], albumState: -3299305846734849}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['qW@o1iWi0)', '4O4yC#bkro['], albumInfo: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['NPE*Jehv0b0V', '#vJEGOGSkhCDa'], albumInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['%][K9tBCX4zD%u2&T0DQ', 'GBD^dEZ%Lv)'], albumInfo: '3KvVz@FrRz'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['4PyPONbY1V(YBCT', 'nv$rsSz0C!YAXD@1Q9e'], albumInfo: 'eKSo)@O9x5^'}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['ip#x$mViYX', 'tOd]gfXdka5B4SAM%K'], albumInfo: 1822659285352450}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['mM!elm2Pwf@', '1XE5nPYV0S@SiUC*'], albumInfo: 1399961417678850}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['c*4d2Dj9h4z)Ds^', 'PPPfJ2U6NY'], albumInfo: 4916961788035071}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['oC!g&ns4!0WV', 'AgUzik*AwBq#O'], albumInfo: -1296840972566529}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['2tx1Jl)b', 'FMo1uqV0'], trackMedia: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['djTEOvoc', 'F]NAlJb8&[mF[AM4MT'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['qVYRd[@a', 'O6TVXvJGZa'], trackMedia: 'qPVSfy3y'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['tX$GlB8', 'p7GR#C4TdHT1T1emr'], trackMedia: 'xILj9'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['cowq)5', 't[1noppK@Hb%Mzs*N6D0'], trackMedia: -8965574419808254}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['KMqc)q', 'e5NNq(FK^nQCpBnmP7'], trackMedia: 222445877329922}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['Sqc5349incdK1TH', 'W[cNdv8rU3M4QJ9$7'], trackMedia: 2260501690056703}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['!BfiwI8nHuU$', '&RA3lz@T'], trackMedia: -714756272947201}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['7sIqw($', 'P&&I$%AdP2YJ'], trackTag: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['bS[NwdP7rhT', 'XPc2%fi'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['MS[sgM(C[b', 'yZWGTS%EUHEQ)g!me'], trackTag: 'uHopQ]k8ZE@j9#qZ'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['WxTRCjCTdYw9j', 'rIf8&YCJX'], trackTag: 'XfPKf9bcMHn5%'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['!okh$VlQKG01g', '[9EqSTAABr'], trackTag: -978725369806846}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['T8GUE(1aqlbTn*', '(TcgU^EKRiwAXOf'], trackTag: -7122151219920894}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['sA2p[RA', '70#X(vsu'], trackTag: -4114674505220097}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['4cb3^Z', 'hljV067[&zx'], trackTag: 4087857190797311}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['UABpQ4L1fg6wq4kFgH', 'TszXkfN#'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['e@BILx%VEZDNe&t', 'jC]64XB^ne#T^g'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['VGENett8x@W1n7', 'zZC&znMW3]Lfn'], trackRawTag: '82VG@BLCKK'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['l%gh&3mOTe3cYx', '%qAujv3BN@y('], trackRawTag: 'Q0c%IyjWK^m1Usq*F'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['&at7%8Er82', 'AQqYC7RLP(6)To2aHDDS'], trackRawTag: -1162280599289854}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['rw*JXjY2pa*u2i', '0$s&WSjA&qTO$ed'], trackRawTag: 7854950432374786}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['qpQBsvH%&CtY3vH@]zb', 'XOwf$6aDaELHuyx#X'], trackRawTag: 4486359494426623}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['XWF#9@9CY9g', 'K@A%K6UJRe'], trackRawTag: -3240576786890753}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['L3Om^)HdEiue', 'rDe9vR(K'], trackState: ''}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['fX@U!wlg]xJm7AFHX', 'GzNx&#Uq&wf'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['Zp@#86jF94CT2mGrK^nm', 'VaI0Id%3ZTB'], trackState: '!37xU]YEfewofYR@f'}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['v]RDG!F2mj1[z&5Jcclf', ')NN6XGDf'], trackState: '4H]BefCJ8]xn'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['Oc#owI(', '0$^!J!Jg)'], trackState: 1101335780917250}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['0%qqDZrPpp@c', ')2S&owyeRx'], trackState: -4105196107988990}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/ids').query({ids: ['BECyY1Wr9IN9myD]OEl', '8l^esg2kH]'], trackState: -1307454881136641}).expect(400);
+						return get('/api/v1/artist/ids').query({ids: ['ZCL0ZAjL3ju!boYR', 'o4MI5[qIIeJ'], trackState: -4129327159443457}).expect(400);
 					});
 			});
 		});
@@ -4795,7 +4825,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/artist/search').query({offset: 'iL*G(bJbl(2v%MM!h%'}).expect(400);
+						return get('/api/v1/artist/search').query({offset: 'xBR[qKZBK'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({offset: ''}).expect(400);
@@ -4804,13 +4834,13 @@ describe('Server', () => {
 						return get('/api/v1/artist/search').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/artist/search').query({offset: 75.02}).expect(400);
+						return get('/api/v1/artist/search').query({offset: 10.66}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/artist/search').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/artist/search').query({amount: 'jfHBm'}).expect(400);
+						return get('/api/v1/artist/search').query({amount: 'oDEbh'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({amount: ''}).expect(400);
@@ -4819,7 +4849,7 @@ describe('Server', () => {
 						return get('/api/v1/artist/search').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/artist/search').query({amount: 27.75}).expect(400);
+						return get('/api/v1/artist/search').query({amount: 24.03}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/artist/search').query({amount: 0}).expect(400);
@@ -4858,7 +4888,7 @@ describe('Server', () => {
 						return get('/api/v1/artist/search').query({mbArtistID: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/artist/search').query({newerThan: '2GcQsHH%yc[v4tF%@u'}).expect(400);
+						return get('/api/v1/artist/search').query({newerThan: 'm5]A%mZEPB9WL&u%l'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({newerThan: ''}).expect(400);
@@ -4867,7 +4897,7 @@ describe('Server', () => {
 						return get('/api/v1/artist/search').query({newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/artist/search').query({newerThan: 38.72}).expect(400);
+						return get('/api/v1/artist/search').query({newerThan: 7.08}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
 						return get('/api/v1/artist/search').query({newerThan: -1}).expect(400);
@@ -4894,200 +4924,200 @@ describe('Server', () => {
 						return get('/api/v1/artist/search').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/artist/search').query({sortDescending: 'PZYO3c'}).expect(400);
+						return get('/api/v1/artist/search').query({sortDescending: 'smehaEzNxP'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({sortDescending: -2518524958343166}).expect(400);
+						return get('/api/v1/artist/search').query({sortDescending: 7948871833485314}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({sortDescending: -3919207070695425}).expect(400);
+						return get('/api/v1/artist/search').query({sortDescending: 4114375233241087}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({artistAlbums: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value string', async () => {
-						return get('/api/v1/artist/search').query({artistAlbums: 'DuXIHr#ZFh8wHv0['}).expect(400);
+						return get('/api/v1/artist/search').query({artistAlbums: 'WImnNt!e]Ra'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({artistAlbums: 1275041790558210}).expect(400);
+						return get('/api/v1/artist/search').query({artistAlbums: 3911038638489602}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({artistAlbums: 2477906513100799}).expect(400);
+						return get('/api/v1/artist/search').query({artistAlbums: 1527855431286783}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({artistAlbumIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value string', async () => {
-						return get('/api/v1/artist/search').query({artistAlbumIDs: 'CxGuv!4WIEW21)9B'}).expect(400);
+						return get('/api/v1/artist/search').query({artistAlbumIDs: 'CKrdKZ'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({artistAlbumIDs: -6805849024495614}).expect(400);
+						return get('/api/v1/artist/search').query({artistAlbumIDs: 8668043693522946}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({artistAlbumIDs: 5341438212571135}).expect(400);
+						return get('/api/v1/artist/search').query({artistAlbumIDs: 7812362845290495}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({artistState: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value string', async () => {
-						return get('/api/v1/artist/search').query({artistState: '3tabnYzE#M#U@q9rByt'}).expect(400);
+						return get('/api/v1/artist/search').query({artistState: 'oHb7yeuCSf@5xH(O!'}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({artistState: -3268314038009854}).expect(400);
+						return get('/api/v1/artist/search').query({artistState: 3362464271958018}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({artistState: 7255510747185151}).expect(400);
+						return get('/api/v1/artist/search').query({artistState: -6752866303737857}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({artistTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value string', async () => {
-						return get('/api/v1/artist/search').query({artistTracks: 'j^u#R1VD'}).expect(400);
+						return get('/api/v1/artist/search').query({artistTracks: 'iiIfK03rodco'}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({artistTracks: -1754897556963326}).expect(400);
+						return get('/api/v1/artist/search').query({artistTracks: -8371309067108350}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({artistTracks: 2609686520004607}).expect(400);
+						return get('/api/v1/artist/search').query({artistTracks: -1118309533614081}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({artistTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/search').query({artistTrackIDs: 'iOB!!S6dndMC4Qgai0T'}).expect(400);
+						return get('/api/v1/artist/search').query({artistTrackIDs: '72QWR9By'}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({artistTrackIDs: 6140455737622530}).expect(400);
+						return get('/api/v1/artist/search').query({artistTrackIDs: -8950402686910462}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({artistTrackIDs: 8369983000150015}).expect(400);
+						return get('/api/v1/artist/search').query({artistTrackIDs: -8265515566891009}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({artistInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value string', async () => {
-						return get('/api/v1/artist/search').query({artistInfo: 'AJk$@)%DTR'}).expect(400);
+						return get('/api/v1/artist/search').query({artistInfo: 'Us7NiOL9poIX2Z!WWF@'}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({artistInfo: 4937359879569410}).expect(400);
+						return get('/api/v1/artist/search').query({artistInfo: -5888041428189182}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({artistInfo: -1091700135034881}).expect(400);
+						return get('/api/v1/artist/search').query({artistInfo: 8289410621636607}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({artistSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value string', async () => {
-						return get('/api/v1/artist/search').query({artistSimilar: 'OZE[@(oGANahK%f'}).expect(400);
+						return get('/api/v1/artist/search').query({artistSimilar: '@V[(OQvp!1C)ZO'}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({artistSimilar: 8270253490438146}).expect(400);
+						return get('/api/v1/artist/search').query({artistSimilar: -7258706479677438}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({artistSimilar: 6557402430177279}).expect(400);
+						return get('/api/v1/artist/search').query({artistSimilar: -4122337695760385}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({albumTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value string', async () => {
-						return get('/api/v1/artist/search').query({albumTracks: 'lmArhmjlY$('}).expect(400);
+						return get('/api/v1/artist/search').query({albumTracks: '8Jog6YoGc]J('}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({albumTracks: 9003549606281218}).expect(400);
+						return get('/api/v1/artist/search').query({albumTracks: 8834982944440322}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({albumTracks: 1727053359480831}).expect(400);
+						return get('/api/v1/artist/search').query({albumTracks: 3533792539049983}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({albumTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/search').query({albumTrackIDs: 'C$5Z&kawgyFdnbPG'}).expect(400);
+						return get('/api/v1/artist/search').query({albumTrackIDs: 'QvL6Yd[H2Y!avf&WQ1!K'}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({albumTrackIDs: -4470936409473022}).expect(400);
+						return get('/api/v1/artist/search').query({albumTrackIDs: -3985895208255486}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({albumTrackIDs: 7752716898009087}).expect(400);
+						return get('/api/v1/artist/search').query({albumTrackIDs: 5587570519965695}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({albumState: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value string', async () => {
-						return get('/api/v1/artist/search').query({albumState: '[seRclWbWW*KQQw'}).expect(400);
+						return get('/api/v1/artist/search').query({albumState: 'HFB2tdB9G2dWK'}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({albumState: 5941837130891266}).expect(400);
+						return get('/api/v1/artist/search').query({albumState: 6847697747181570}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({albumState: 7440991569051647}).expect(400);
+						return get('/api/v1/artist/search').query({albumState: -5927418384613377}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({albumInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value string', async () => {
-						return get('/api/v1/artist/search').query({albumInfo: 'EV1zGI&nR3'}).expect(400);
+						return get('/api/v1/artist/search').query({albumInfo: '4hNiXPh'}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({albumInfo: 4318834706087938}).expect(400);
+						return get('/api/v1/artist/search').query({albumInfo: 4906245282594818}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({albumInfo: -1492521003778049}).expect(400);
+						return get('/api/v1/artist/search').query({albumInfo: -3518494251417601}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/artist/search').query({trackMedia: 'Eh7xJmJ(90TuXk9sM!PF'}).expect(400);
+						return get('/api/v1/artist/search').query({trackMedia: '(hoiv'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({trackMedia: -1361123622256638}).expect(400);
+						return get('/api/v1/artist/search').query({trackMedia: 3889224117911554}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({trackMedia: 8652954835877887}).expect(400);
+						return get('/api/v1/artist/search').query({trackMedia: -772604226961409}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/artist/search').query({trackTag: 'mhc*rzA$5$PJ9SgjWyZf'}).expect(400);
+						return get('/api/v1/artist/search').query({trackTag: '!&zf7ORB2!Rf5b'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({trackTag: -8367130508525566}).expect(400);
+						return get('/api/v1/artist/search').query({trackTag: 1507529288843266}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({trackTag: -8720041944023041}).expect(400);
+						return get('/api/v1/artist/search').query({trackTag: -3222891621515265}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/artist/search').query({trackRawTag: 'JcgFFU$mN$qtmz5slNE'}).expect(400);
+						return get('/api/v1/artist/search').query({trackRawTag: 'OJQUjkrKNog'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({trackRawTag: -4936124912893950}).expect(400);
+						return get('/api/v1/artist/search').query({trackRawTag: -204782077739006}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({trackRawTag: 4427464679882751}).expect(400);
+						return get('/api/v1/artist/search').query({trackRawTag: -6173573215420417}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/artist/search').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/artist/search').query({trackState: 'k@6j8!9FJ*Ojv]'}).expect(400);
+						return get('/api/v1/artist/search').query({trackState: 'ZjTHcebHM'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/search').query({trackState: -7369309747675134}).expect(400);
+						return get('/api/v1/artist/search').query({trackState: 2418212234854402}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/search').query({trackState: 4402356254932991}).expect(400);
+						return get('/api/v1/artist/search').query({trackState: -3023760105930753}).expect(400);
 					});
 			});
 		});
 		describe('/artist/state', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/state').query({id: 'IRF%LRHy[uGN'}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/state').query({id: 'S!ido9'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -5099,7 +5129,7 @@ describe('Server', () => {
 		describe('/artist/states', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/states').query({ids: ['0]2)DG7aMrSA1bOdMfA[', 'QrMHDsBbqWOQ']}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/states').query({ids: ['VOeYE*VX2*85[buX5q3b', 's0PRd2RPl']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -5114,7 +5144,7 @@ describe('Server', () => {
 		describe('/artist/list', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/list').query({list: 'faved'}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/list').query({list: 'avghighest'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -5125,299 +5155,299 @@ describe('Server', () => {
 						return get('/api/v1/artist/list').query({list: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "name" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', name: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', name: ''}).expect(400);
 					});
 					it('should respond with 400 with "rootID" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', rootID: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', rootID: ''}).expect(400);
 					});
 					it('should respond with 400 with "rootIDs" set to value null', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', rootIDs: null}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', rootIDs: null}).expect(400);
 					});
 					it('should respond with 400 with "rootIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', rootIDs: [null, '']}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', rootIDs: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "albumID" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', albumID: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', albumID: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumType" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', albumType: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', albumType: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumType" set to value invalid enum', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', albumType: 'invalid'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'faved', albumType: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "albumTypes" set to value null', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', albumTypes: null}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', albumTypes: null}).expect(400);
 					});
 					it('should respond with 400 with "albumTypes" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', albumTypes: [null, '']}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', albumTypes: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "albumTypes" set to value invalid enum', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', albumTypes: [null, 'invalid']}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', albumTypes: [null, 'invalid']}).expect(400);
 					});
 					it('should respond with 400 with "mbArtistID" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', mbArtistID: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', mbArtistID: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', newerThan: 'o[975)$BVcWxW*Z*w'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', newerThan: '!C6VXWd6]Qij6]NnJI'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', newerThan: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'faved', newerThan: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value boolean', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', newerThan: true}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', newerThan: 90.38}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', newerThan: 98.95}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', newerThan: -1}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', newerThan: -1}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
 						return get('/api/v1/artist/list').query({list: 'frequent', sortField: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value invalid enum', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', sortField: 'invalid'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', sortField: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', id: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', id: ''}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value null', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', ids: null}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', ids: [null, '']}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "query" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', query: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', query: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value empty string', async () => {
 						return get('/api/v1/artist/list').query({list: 'highest', sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', sortDescending: 'mwCrWCFsh*'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', sortDescending: 'A#EiD4'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', sortDescending: -1617529961185278}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', sortDescending: -279482996883454}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', sortDescending: -6832441859768321}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', sortDescending: -1245712981426177}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistAlbums: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', artistAlbums: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', artistAlbums: 'o@zQl2C$8jt#&'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', artistAlbums: 'iJ$Ay4H(Zh]'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', artistAlbums: 6069590740172802}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', artistAlbums: -7786336392052734}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', artistAlbums: 7705230678425599}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', artistAlbums: 5368446648844287}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistAlbumIDs: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistAlbumIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', artistAlbumIDs: 'aP5lA'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'faved', artistAlbumIDs: 'R[LU0M#zW]oQ'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', artistAlbumIDs: -5920629341552638}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', artistAlbumIDs: -3821347419455486}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', artistAlbumIDs: -2308150283730945}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistAlbumIDs: -2296951164895233}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', artistState: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', artistState: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', artistState: 'EWSzeFE'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', artistState: 'NGpP&KUE'}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistState: 4145290147790850}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', artistState: 3372269120258050}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', artistState: 1809131086282751}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', artistState: 3983494292176895}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', artistTracks: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', artistTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', artistTracks: 'xoVAw(3^[W96wNw'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistTracks: 'nzi!]6AqlBKG9'}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistTracks: -5449651180273662}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistTracks: -628575266930686}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistTracks: 8196355591766015}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'faved', artistTracks: -7471043421667329}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistTrackIDs: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', artistTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistTrackIDs: 'mHmecT]4tX@jZ!YP0)'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistTrackIDs: 'jecGp]w'}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistTrackIDs: -101478031163390}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistTrackIDs: 6920523804049410}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', artistTrackIDs: 4017418724704255}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistTrackIDs: -4423612937273345}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', artistInfo: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', artistInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistInfo: 'XBTXpUwWzk(@AYFBjGDk'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', artistInfo: ')hpG$b9ts'}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', artistInfo: -8892057938558974}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'faved', artistInfo: 6901896472166402}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', artistInfo: 8455984603201535}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistInfo: 2468139304484863}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', artistSimilar: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', artistSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', artistSimilar: '1$1pRe4#CNtwvaI%KN'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistSimilar: '9UsArw%n'}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', artistSimilar: 478941127114754}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', artistSimilar: -1160845660782590}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', artistSimilar: 7591655720878079}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', artistSimilar: 5216076388368383}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', albumTracks: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', albumTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', albumTracks: 'CVLMfZYF&tz'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', albumTracks: 'eC$6fX'}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', albumTracks: 1053764551180290}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', albumTracks: -1934621700784126}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', albumTracks: -6400885366194177}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', albumTracks: -1250539274764289}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', albumTrackIDs: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', albumTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', albumTrackIDs: 'Zv9%GOW2'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', albumTrackIDs: '@JOrcf'}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', albumTrackIDs: -3702319204007934}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', albumTrackIDs: 1870978447572994}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', albumTrackIDs: -2662705362108417}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', albumTrackIDs: 5458192607739903}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', albumState: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', albumState: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', albumState: '9Ngq^qAKX5d'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', albumState: 'U(1*th5l95PM'}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', albumState: -2754833031364606}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', albumState: 8927632259284994}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', albumState: 6919011711320063}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', albumState: 4727615722094591}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', albumInfo: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'faved', albumInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', albumInfo: ')%170hqzY$rZp#S(5xy'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', albumInfo: '27HDPCv#OGosJZ'}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', albumInfo: 8331016192131074}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', albumInfo: 3467480181768194}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', albumInfo: -157159107067905}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'faved', albumInfo: -3484702111432705}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', trackMedia: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', trackMedia: '!Fs4CKJ0C'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', trackMedia: 'JLmnF#JF'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', trackMedia: 4847477563850754}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', trackMedia: -4689158689783806}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', trackMedia: -1244719556329473}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', trackMedia: 1167189591719935}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', trackTag: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'faved', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', trackTag: 'P(Kkz3feV8'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', trackTag: 'PsrRJv47$OI#S^O'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', trackTag: 542525089644546}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', trackTag: 5416676673716226}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', trackTag: -8359930612416513}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'frequent', trackTag: -6668614362988545}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', trackRawTag: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', trackRawTag: 'XaoQvT'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', trackRawTag: '[U2DJJ%'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', trackRawTag: 4465688336924674}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', trackRawTag: -4925318410272766}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', trackRawTag: -3672997881708545}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'faved', trackRawTag: -6549501930110977}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', trackState: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', trackState: 'mlGwM5hbZk7R7sYKdC'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', trackState: 'WkEJ3MqP'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'recent', trackState: -6025250479276030}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'avghighest', trackState: 5206671999631362}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', trackState: -5907193815629825}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', trackState: -7893754920828929}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', offset: '&1HGYe'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', offset: '#wqaUv2Co$y9dyQFW'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'faved', offset: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', offset: true}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', offset: 64.36}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', offset: 92.62}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', offset: -1}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/artist/list').query({list: 'random', amount: 'uPX)glO[KT'}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', amount: 'x7Z0]T1kGOz]$c]glQ'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', amount: ''}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'recent', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/artist/list').query({list: 'avghighest', amount: true}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/artist/list').query({list: 'highest', amount: 38.02}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'random', amount: 44.74}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/artist/list').query({list: 'frequent', amount: 0}).expect(400);
+						return get('/api/v1/artist/list').query({list: 'highest', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/artist/similar/tracks', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/similar/tracks').query({id: 'Rk&7H'}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/similar/tracks').query({id: '4$j86f'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -5425,89 +5455,89 @@ describe('Server', () => {
 						return get('/api/v1/artist/similar/tracks').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'KvTtjfLl', trackMedia: ''}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'Qg80O4hjry5^d0L86', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'zPUM)$CFPrU', trackMedia: 'tOjFBka0rxMfPZPB96'}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: '3f*kzSwdzmrF*1E^8', trackMedia: 'qZ8]AUZP6njoi*T'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'y$tFmvXW@]gPJU', trackMedia: 6659699260784642}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'I4$85[lA(DroedW^C0', trackMedia: -4817437518200830}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'q#X#r^GCsG^0[', trackMedia: -3249241006800897}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: '7x$RS0txbo]pM', trackMedia: -5600479341969409}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'JmrT!OUd%#JW', trackTag: ''}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: '%Ct6B3CR', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: '6C2xiU%MPLv$[U9oME', trackTag: '#Z9sv#R@spc'}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: ')S$OOldG31^]hX', trackTag: 'Q7pVOd*VD1S&KSMzfij'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'Pi2o@4V7wg', trackTag: 7760913973116930}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'yNE!a]#J38(k', trackTag: -8302256466165758}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: '&KAnJ', trackTag: -7849673503014913}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'mdo$yfgp11m8', trackTag: -373319387840513}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'uI[gRijEpq[$HAC', trackRawTag: ''}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: ')CzS#@wMWXTEF(', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'h%Ou6e^)Dw%n6DL', trackRawTag: '8)EwlT9x6#wYx9Jv'}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'R%]8Zx%1^ERCB7n2r', trackRawTag: '[WI5LD'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'dM*06bJ@XblJdtsG', trackRawTag: -2633330902171646}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'yb*J3Ex3Fug', trackRawTag: 7210449636425730}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'ppRul&', trackRawTag: -7338252809797633}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'DHYnHg]Oba$Slv9[nqoT', trackRawTag: 2586687783829503}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'ksS%Ai^%&sTf', trackState: ''}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'UrvXx#UeyYgei', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'P*JSX!97@QG', trackState: '#xl3%cm'}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'AANVpxR7%Lt2tHS0G&5F', trackState: '5a7P!k@lWMv6mM0yxq0Q'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'xifjNAtQ[sd1cyeTs&1l', trackState: -6459225412730878}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'OTPx8', trackState: -769048023400446}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: '^fOBp61isH8', trackState: -1382591336808449}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'UshJ3LF^S5z', trackState: -2495067159789569}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'aRXSd', offset: 'a2RpUFpWt%r)'}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'NDPOyYLRZ', offset: 'd)oRStP'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: '@Zwrx', offset: ''}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'ds8vNCnO0FX2TyKh', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: '2[G[Of', offset: true}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'lNy^bvyMHWq', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: '*MgL8mPT8Ybj&5gm)s', offset: 49.23}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'u3XQFQHub', offset: 73.17}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'kBs[hKAi&a', offset: -1}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'rfgtnJm', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: ']$Y)Cym2DN])2icg', amount: 'wW)QFG1rTJU'}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'WWl%vxtX4XbkmVNrtCp', amount: 'LSyGt]&0'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: 'vZ8a^8x%gttzV', amount: ''}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: '&PBuuqdDTIdhM]!B0c5W', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: '1iU0ae!VoUcx$Kp)N^9k', amount: true}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: '4dAmIaqTl$(rl', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: '^(&NxGuegV3w4', amount: 58.26}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: '9*@Qz8T', amount: 27.21}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/artist/similar/tracks').query({id: '[2k#c0z]', amount: 0}).expect(400);
+						return get('/api/v1/artist/similar/tracks').query({id: 'F][$jnF8q', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/artist/similar', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/similar').query({id: 'xHltNsV0yOk('}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/similar').query({id: 'n!N@WXsbI(vdFSk'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -5515,214 +5545,214 @@ describe('Server', () => {
 						return get('/api/v1/artist/similar').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'Vt*1tG', artistAlbums: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'C4i##F5erV3[m', artistAlbums: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: '2*Ok#1sqA60UdCl%', artistAlbums: '@Fp8]qG)o*0TeKcJrvv'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'E99v2[EV(Tv5tAc^pjhV', artistAlbums: 'kx1[M[ajVVhszMj'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'v(ZD((GS', artistAlbums: 3158404470145026}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'hGhF7qf$4', artistAlbums: -6022894031208446}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbums" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: 'lTr[cWNxC]pYFhIkn*', artistAlbums: -8896645928321025}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'Wg(pd5XuBwUh9&a[Xs4#', artistAlbums: -6525058646278145}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'FgG4H2', artistAlbumIDs: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'QcTknuf]', artistAlbumIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'sgy3ijO6]VSGn', artistAlbumIDs: 'kWzSC@@6yO4m'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'M%GA0poYgctF0*jAysf', artistAlbumIDs: 'b1T2Zs'}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'bE8X&c&w65', artistAlbumIDs: -3692661487697918}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'VTlth', artistAlbumIDs: 8031064475828226}).expect(400);
 					});
 					it('should respond with 400 with "artistAlbumIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: 'BclQn%!1#FGr', artistAlbumIDs: -2936667333722113}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'uS3TuPOJQcb8M&jUTj3W', artistAlbumIDs: 5079432624603135}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'So(j^*AGAYp9roHh', artistState: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'bCWJ*LJ#', artistState: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: '*2EL9uV0c)O1trg4mIdL', artistState: 'GCk6l'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'G4XCQb(T6HKazO', artistState: 'XA%2YW'}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'ZG14[BuC20%S46HE##$', artistState: -7218891910545406}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'i@VS&2ruaX', artistState: 8098411718901762}).expect(400);
 					});
 					it('should respond with 400 with "artistState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: '4yj(rql', artistState: -2505687137517569}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'tgbv$KA]9aGVG2]6x', artistState: -8907112226750465}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: '8*WEb8R3$DlyeC]^Ht(', artistTracks: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'NN&[HO[I92qNR$@VZ', artistTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: '0!V7ZxH52j', artistTracks: '*%mOq18SwslZ]u'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'X1wZm]XEx$UEO7B^CCkT', artistTracks: 'wxJ7clGz)'}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'tT85cww', artistTracks: 3786998770827266}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '0a95tQpaf&lR', artistTracks: -1815970985279486}).expect(400);
 					});
 					it('should respond with 400 with "artistTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: '(mf27kNdVspfgOTp', artistTracks: -3227964216967169}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'XF4q#q7oeQi85hh', artistTracks: -98466210512897}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: '5an*9g]a)Jbpd#Xbf', artistTrackIDs: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'i6tgp**9drp8zQ*of', artistTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'Skla#%D)70e]S5xJG', artistTrackIDs: '(!u8g]H2e71j^b8zZ%'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'dYDb$RcErI]&8*(5)y', artistTrackIDs: 'Lnq8O9(SpG3'}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: '8L0)OELUx1RZXW283YuZ', artistTrackIDs: 2140524605603842}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '$hK*3qj(gnX&1qR@m5', artistTrackIDs: 5004110537424898}).expect(400);
 					});
 					it('should respond with 400 with "artistTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: 'gy^vuVGgR&96)KiLVFSn', artistTrackIDs: 7771687902773247}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'UT0mE5CP6!^OOd!f0V', artistTrackIDs: -5711075211214849}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: '&rNFSu', artistInfo: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'oe&Gbxr*w98N', artistInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'xxh]h&FHrj', artistInfo: 'QvYfJV4QPE8E1$6)H01f'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'z!Zqiwd6QJv8MA^', artistInfo: '*NDDX[G*S61haa^Se'}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: ']rm@KVlB', artistInfo: -1513994774904830}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'dR[Zdoz1oVB', artistInfo: 5749110296543234}).expect(400);
 					});
 					it('should respond with 400 with "artistInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: 'Z@w*(5rz1JIIGbzA3&d', artistInfo: -5020526070202369}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'U^vT%8', artistInfo: 3084167285833727}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'jQIduh5%n(!SYo9', artistSimilar: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'aiCP&', artistSimilar: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: ']!txOax', artistSimilar: 'NdCJ8)tV7dP'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'FvooaBb8MPjmJRO', artistSimilar: 'rV9dC0^%q&J*@(J'}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'OOnMlsYldhMZ]I', artistSimilar: 5003969344569346}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'weT@]N9%)jF$T^T', artistSimilar: 4033243187773442}).expect(400);
 					});
 					it('should respond with 400 with "artistSimilar" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: ']T5w852z8IB(g3gCcdA', artistSimilar: -680326175129601}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '0BlSm4ZJuYu]GUv33', artistSimilar: -4605908629848065}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: '6rdUh', albumTracks: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '@KbXfM', albumTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'YgF[U8muEwz', albumTracks: 'jhqDLn2'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '$9NL4F1Mrg1r[a3Ue1^X', albumTracks: 'E]Ku!t2dq8'}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'eNvLm[#O6E&[', albumTracks: 6311270059868162}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'dpz#q8uY14oe^o)5W', albumTracks: -5913833373695998}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: '#x!XR', albumTracks: 1598449430560767}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'Rw]ktF)nOdlCH%qEVf9', albumTracks: -7414934790995969}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'kQNU$JQvjod]V', albumTrackIDs: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '38KryEvTd', albumTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: '2!Ao[@lRL(WrK)w', albumTrackIDs: 'dA^Yb&8EN!s^m'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'O21bY!9DUODnz', albumTrackIDs: 'GgBJLcZbmyEmL'}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'Qt5J@!wZ^wZwzi', albumTrackIDs: 6940443866562562}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'sFKvkkNxSg!', albumTrackIDs: -1251015835779070}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: '6BdYY5HVG@!', albumTrackIDs: -2514776525635585}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'IdQF*mlZeAO0o2w', albumTrackIDs: 3594422511992831}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'W*)H2nz8lry)EOXari', albumState: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'nnvdVdaXYC[J', albumState: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'Mh[x$zE)%@$', albumState: '7]xs6py1QsEJm$tPj(j'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'nMXLct7t!eRUY[L', albumState: 'Kn3DqLOEL%Wu6'}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'Jy$O)lJSN6sDARRO', albumState: -3545144070504446}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '9NSN4C^kz]*Jpr@c#', albumState: -4306572649955326}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: '0F4RNeDm)UD(1&KZW4', albumState: 2140919205724159}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'OhI0@srk', albumState: 2092398976958463}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'DpTYDWr7ex(p0SDRs*', albumInfo: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'jjH46s)f', albumInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: '$sz4K6oG[Z', albumInfo: 'VZpLqCUPVTY%)@Bc&u'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'lOE9(oDqS', albumInfo: 'szBl05mio5[Ei(!4'}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'dggusbHqg', albumInfo: 6707211833180162}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'Zy%3xt', albumInfo: -1712771628531710}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: 'L!dC0JZl]rz5]lhx', albumInfo: 1291881312944127}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'q4EY!CRN^', albumInfo: 6504111507767295}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'zuwCAfc)l', trackMedia: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '[sk*PP#zZ5F9OC', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'Ghkya&e81[9bo^L', trackMedia: 'I#bvAWlGNzl'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '4Yarac0&Hwx@W', trackMedia: 'nnqe6gsE'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'rpg@AWJET#6JNm(l*I', trackMedia: -4782147621617662}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'Fj#$4', trackMedia: 5275238728204290}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: '2lWCq^buYjidDxqZ', trackMedia: 6517635676110847}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'gT%AO9JFl1*!', trackMedia: -3055808824737793}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'hAFJH', trackTag: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '!ZT[V', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: '0RGNw@GJbqER', trackTag: 'RRA2XwwHqrLD0M]3nO'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'rbMqgCmI$Jiu8w4#MU9', trackTag: 'A[^Bnay'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'p*VQxm^GvlnlGEw', trackTag: -8143225604800510}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '(eig1vj]02[FHaRlhf', trackTag: -8754358288121854}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: 'lF]JTC@sXr9JvYVitB]^', trackTag: 386162376048639}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'U]pz(1@TtrUAZw', trackTag: -7105333105262593}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'Wd%eMrCVwH4Rbnn(', trackRawTag: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'Pta*4c', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'Igh4jk]Mz', trackRawTag: '&8gi@qKnfy'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '#aQtB[BF&(sXYiCS9P', trackRawTag: 'p*uZFx!U![Hd'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'whi3ZjV', trackRawTag: 6304009564454914}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'H*W(Gn!zh4r1^mnT', trackRawTag: 3490141653958658}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: 'LOnyF', trackRawTag: -6090234156548097}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'gtlK6*Pz2rk9EE&SQL', trackRawTag: -6802573013024769}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'HhMpY%eZ(MZB^[', trackState: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '3A4rCuRxj$mY&cRJe', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: '[Y0Of@*k3*gthw', trackState: 'iW$yNZAi$]jMibziF5p'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 's]qELoz3H', trackState: ')]Dgzgc'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/similar').query({id: 'WFrdWQF[iSs0*1lAJ', trackState: 5842325016150018}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'I02$o', trackState: -2207373519224830}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/similar').query({id: 'ZyxgK*iCpLAyOGHH&5', trackState: -155707856912385}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '&r^zqOqx7%0f', trackState: -4714426041106433}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'ZLHou#j24&1Hm', offset: '($%0lRe(ALA7blO!G'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'dWbcYgAtXF5Kk', offset: ']Gp@&w^'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'YMqF^jyUX', offset: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'im)zA', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/artist/similar').query({id: 'C]SM4*]z6Fknvs[xZj', offset: true}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'KViW^c6', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/artist/similar').query({id: 'd5zSfI58Mgb8KiIPwSL', offset: 47.13}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'ut9WmV1IZjP5', offset: 16.73}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/artist/similar').query({id: 'D!s@ET3ggExkUynMo8!', offset: -1}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'K8)GnEBX3', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/artist/similar').query({id: 'R6nNT&4sIk3ybXf0c9F', amount: 'oZOKBwLW'}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'BT!]&2!C', amount: 'JNguYF6ZKrOkPTS('}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/artist/similar').query({id: '5pp95m4*kLk@kei)Pa[b', amount: ''}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'NMe#m5%iQqfMonJvF1', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/artist/similar').query({id: '9e6RFxR*g4$e7Hyscli', amount: true}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'b%t4yChw1)Z#p', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/artist/similar').query({id: 'WBa2uFS*NnBcc^S', amount: 14.33}).expect(400);
+						return get('/api/v1/artist/similar').query({id: 'npRz8)O33KhmMy', amount: 40.59}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/artist/similar').query({id: '6)zrY@FST24#eMY20', amount: 0}).expect(400);
+						return get('/api/v1/artist/similar').query({id: '#XFq(Wt4dXwW', amount: 0}).expect(400);
 					});
 			});
 		});
@@ -5767,7 +5797,7 @@ describe('Server', () => {
 						return get('/api/v1/artist/index').query({mbArtistID: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/artist/index').query({newerThan: 'gP&mI%]u0CX8zuQG'}).expect(400);
+						return get('/api/v1/artist/index').query({newerThan: 'mG(Qrki5f5!'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
 						return get('/api/v1/artist/index').query({newerThan: ''}).expect(400);
@@ -5776,7 +5806,7 @@ describe('Server', () => {
 						return get('/api/v1/artist/index').query({newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/artist/index').query({newerThan: 27.41}).expect(400);
+						return get('/api/v1/artist/index').query({newerThan: 60.23}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
 						return get('/api/v1/artist/index').query({newerThan: -1}).expect(400);
@@ -5803,20 +5833,20 @@ describe('Server', () => {
 						return get('/api/v1/artist/index').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/artist/index').query({sortDescending: 'g6[50oM'}).expect(400);
+						return get('/api/v1/artist/index').query({sortDescending: 'k84!WEvyjSm'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/artist/index').query({sortDescending: 5066280537161730}).expect(400);
+						return get('/api/v1/artist/index').query({sortDescending: 8834934802219010}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/artist/index').query({sortDescending: 3286027942756351}).expect(400);
+						return get('/api/v1/artist/index').query({sortDescending: -2530539009474561}).expect(400);
 					});
 			});
 		});
 		describe('/artist/tracks', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/tracks').query({ids: ['ipOCV[MYY', 'wI@ZRo]sN6y']}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/tracks').query({ids: ['6tf5j[vZ[wL&&4#', 'XbrFW*1O[CJ%#^[*l']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -5827,89 +5857,89 @@ describe('Server', () => {
 						return get('/api/v1/artist/tracks').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['g3ax5J', '^VJ@VPjp'], trackMedia: ''}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['9KXjn#0HLwmQ', 'hYt4PCVsRqW)m^'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['*^PY!ld8kKj4VYWGTDDP', '9qpTKOBFJqnL$X&236n'], trackMedia: 'bXpEGV'}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['i2tLxlJ(pN', '33nbPbIw*[ZIYSpqTUB'], trackMedia: 'p*L]wV'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['JT^b&KNug', 'xa86avjtS[]%9v]@Hb^'], trackMedia: -6376640233865214}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['!kRG0c*jCPI2X', 'K4ODmO%J(eHIr3Qz6'], trackMedia: 3762883787751426}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['2V^i2Iv2Ut', 'Ax&)f458FGcggBRfL'], trackMedia: -7998359516217345}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['JgwoQIj9Pd7M0vQDZJ', 'I2dd&tEos'], trackMedia: 7034224829792255}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['!GFT$9YmgOF%l', '#&cLOBlrz#mg'], trackTag: ''}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['OEN!&oa(vU', '@qkPiwonG$[nMIOnWj'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['O#31AoxC[4m0bqb39u', 'AvayT0#Bj[X!Hn3la'], trackTag: 'Ar5aI(Kk6@vqBFC'}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['TlYi#kJ3dx)!Llp^)k6', '5Vl3T2'], trackTag: '$ng7Ts)[wRg)VzvI'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['##])WMt[l', '9)YLlF'], trackTag: 6595174411010050}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['uIwN0713L', 'NOqMicYoSGK&Mc'], trackTag: -7994600136376318}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['z%!qX00RiK3pUzu2W', 'ct8sgPq2v&z3w2oX*(ii'], trackTag: 7373046130147327}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['^og)l%mY@tQTC@', '$PeSn(51[LP^&'], trackTag: -4396072893939713}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['SvYe*ONxx^Iy4E^qkJ(]', 'u[Nrg&'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['D2TxtS)1', 'S]5A!d&ir0v4J'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['szDxfPyW', 'c[thfD'], trackRawTag: 'F$I$XMJ1tFhls4)F0'}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['UcxH6x^ym93', 'T!L&WTvtZ*f3pAngJg'], trackRawTag: '927C1'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['1!I#P59#(QMV^Opssr[', 'r%k3*qiKFpmk'], trackRawTag: 5146338454929410}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['d#Khu', 'Gt6HOQYAUvy$)6H'], trackRawTag: 3763394289074178}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/artist/tracks').query({ids: [']S0g0CXcbeDwn9Gi3ua3', '!$Ka6)f)GH1n'], trackRawTag: -1698355147177985}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['1dmRrAPHcY4zifSe##g', '6KqVXCooI00M9WsMH1'], trackRawTag: -8029748764606465}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['okAWvNGB(b&msJJ', '[ag4n'], trackState: ''}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['Jj5P4En1vHY2[p&(', 'BaXM7f'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['7YTjkfRAR', 'Pw2*pJ5AV7X5ENRE'], trackState: 'pLAsyJ0D6gt08xgnHSg9'}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['Q(IPdz', 'Z5T^63p@IZkpa#gqUoRC'], trackState: 'Cl3)6XEo@3]t1^Mq0S'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['gfgz#$SB@4Od', '(Epv8i3'], trackState: -8294999716265982}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['ePcYc&Z4B6PHeKSE', 'km6XRbeW'], trackState: -573633802010622}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['%7W$@D7yF!7OJ', '1Ck1#hHTZLqX%YOYr1lN'], trackState: -1501592108924929}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['[dAoEbIx^RK1tuAy1h', '1IgmrYi9gh6]$Se('], trackState: 291804310142975}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['$]B4w', 'FoPs]!9Fs1Z]r4dSDx1'], offset: 'v#5iB#'}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['1zPDQhSI4aWNrJD', ']fcKCz95'], offset: ')@oL]Hf@8dt'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['b[#$(Iq[BNaT2oJri', '#t3zmPo]%WVy'], offset: ''}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['d!YRhp3', 'V9vIb8iGl]XJM4'], offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['7qk]!5om0TMDd@W6]7y', '$s66A'], offset: true}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['z3ti54T6', 'T0o]NBPI6jH15t6'], offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['4swG%]cg1Rwj5MloC', 'kRNAwn7J@XVEdNx'], offset: 58.15}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['3SrwGc[Qsg]O)QE', 'kZ!yg'], offset: 7.97}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['0Q6lK[', '$rezrO[3uX'], offset: -1}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['7Rifen&9jnVd076', '7ozQ&CO4qumL&UEB5y#'], offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['S6Fy]u0Gv#QySqeYW', ')QCFnvvrqNAu6'], amount: 'oi&yGyC$GgbB$8![]oM'}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['pdkuuhm*G]$*n', 'KOpz#XAz'], amount: 'YLmkFoY%kWJ@T'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['A9]YIiRE*nPhu', '^op3qkXaYI1R5JQY3'], amount: ''}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['x[P!KJ6bejGu7', 'v#3tSKs'], amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['v@^Gd)jZpy8T@J)', 'KU6PQEtr0hqjIc&V8%O'], amount: true}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['&s%WE!Shgl6v$ZCf', 'lV!%sCI8)ltiS[nB8W('], amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['3PS!9US3i%(', ']Vf34'], amount: 66.01}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['xHd)kqm$JP', 'Tx6V%'], amount: 38.95}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/artist/tracks').query({ids: ['@ey[gC1vN!HZZ)z4', 'X^SPbB]%(XPHr(E('], amount: 0}).expect(400);
+						return get('/api/v1/artist/tracks').query({ids: ['cJLU4UE0xeb', 'k^kk!xYN(0TyjC'], amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/artist/info', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/info').query({id: 'MUvb9d^#8I#L!89fA5pb'}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/info').query({id: 'ilw0OGC'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -5921,7 +5951,7 @@ describe('Server', () => {
 		describe('/album/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/album/id').query({id: 'kZm6*QL!Oy#OE7dN@eC!'}).expect(401);
+						return getNotLoggedIn('/api/v1/album/id').query({id: 'YTQ8IyE'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -5929,107 +5959,107 @@ describe('Server', () => {
 						return get('/api/v1/album/id').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value empty string', async () => {
-						return get('/api/v1/album/id').query({id: 'UGyHO', albumTracks: ''}).expect(400);
+						return get('/api/v1/album/id').query({id: 'yGD&MT2', albumTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value string', async () => {
-						return get('/api/v1/album/id').query({id: 'd(r*%h!L%', albumTracks: 'UI@H3M1LZ'}).expect(400);
+						return get('/api/v1/album/id').query({id: 'hKMLdw*YcFlQM6', albumTracks: '08hTGoA[Q5IG6QKZ'}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer > 1', async () => {
-						return get('/api/v1/album/id').query({id: 'K1VrB]qy', albumTracks: -6499711506710526}).expect(400);
+						return get('/api/v1/album/id').query({id: 'l412yJY1^', albumTracks: 5783018006380546}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer < 0', async () => {
-						return get('/api/v1/album/id').query({id: 'lbNBnI', albumTracks: -8201770002022401}).expect(400);
+						return get('/api/v1/album/id').query({id: 'n6ygibgvPK1H', albumTracks: -6697184422526977}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/album/id').query({id: '0m%%USE&Vn3Au]', albumTrackIDs: ''}).expect(400);
+						return get('/api/v1/album/id').query({id: 'v!fk*U1DC!^drFpTDp2', albumTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value string', async () => {
-						return get('/api/v1/album/id').query({id: 'b359Q2@60Uy5f&4zk%6', albumTrackIDs: 'EkA@##p'}).expect(400);
+						return get('/api/v1/album/id').query({id: 'IZqD%u2', albumTrackIDs: 'y9wzK!AU374'}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/album/id').query({id: '5Oh7f]giCkSXr', albumTrackIDs: 8794936979750914}).expect(400);
+						return get('/api/v1/album/id').query({id: '[]uBWww$Hrji', albumTrackIDs: -6794432326139902}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/album/id').query({id: 'lhtY%ASJFE', albumTrackIDs: 3234053767561215}).expect(400);
+						return get('/api/v1/album/id').query({id: 'c[jQrhPhH*Dn]fs6', albumTrackIDs: -3468264835383297}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value empty string', async () => {
-						return get('/api/v1/album/id').query({id: 'YxwxXz5@aq[d', albumState: ''}).expect(400);
+						return get('/api/v1/album/id').query({id: 'Wr%xZT%n[&c@NL7Z', albumState: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value string', async () => {
-						return get('/api/v1/album/id').query({id: 'nRiwQL13Co(yu!JiY81', albumState: 'k[)9r1oEtbsL0([xf&y'}).expect(400);
+						return get('/api/v1/album/id').query({id: '^eT*yhX@aLQ4l', albumState: '1tz$uq&pPgeB$K'}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer > 1', async () => {
-						return get('/api/v1/album/id').query({id: 'y1DNKuXrWj[)Eo$b', albumState: 1548468749336578}).expect(400);
+						return get('/api/v1/album/id').query({id: 'z0cCDJa*(InqT', albumState: 7079432711831554}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer < 0', async () => {
-						return get('/api/v1/album/id').query({id: 'br8E%6blh', albumState: -145063350894593}).expect(400);
+						return get('/api/v1/album/id').query({id: '@h49br[IvoMS9D6zfx', albumState: -3615888024535041}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value empty string', async () => {
-						return get('/api/v1/album/id').query({id: 'wPGRsN1tGFD9$FW]Bu7', albumInfo: ''}).expect(400);
+						return get('/api/v1/album/id').query({id: 'F[[NXeRcM#tB9)i', albumInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value string', async () => {
-						return get('/api/v1/album/id').query({id: 'ArIN]', albumInfo: 'Wy%EbOpW'}).expect(400);
+						return get('/api/v1/album/id').query({id: '9ZXKM@jxkGIGj7BDBZAI', albumInfo: '&QrHX%6kpjF2dt&'}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer > 1', async () => {
-						return get('/api/v1/album/id').query({id: '4u9gk9K%k%Yn(t$', albumInfo: -923489947090942}).expect(400);
+						return get('/api/v1/album/id').query({id: 'oEi&SK', albumInfo: 5416535074013186}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer < 0', async () => {
-						return get('/api/v1/album/id').query({id: 'RzoedwWohh%F', albumInfo: -2564764962127873}).expect(400);
+						return get('/api/v1/album/id').query({id: 'Hpc5SB!Sec!0Y*d95v', albumInfo: 3067345631182847}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/album/id').query({id: 'v2!JPF%Nrz!&Q5U%', trackMedia: ''}).expect(400);
+						return get('/api/v1/album/id').query({id: 'M2@na7$0I^$t8!', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/album/id').query({id: 'dozb560!MfOPH!hy^', trackMedia: 'oAH&UBW'}).expect(400);
+						return get('/api/v1/album/id').query({id: 'Rz98T', trackMedia: '5vqOQr@BDv]$cwLF^fsy'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/album/id').query({id: 'oXDSh%ao$H)', trackMedia: -4733715099942910}).expect(400);
+						return get('/api/v1/album/id').query({id: 'ta)RLF]GK1aez2U#XCg8', trackMedia: 5493079402348546}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/album/id').query({id: '7^P7bXM6$hNkAi5bldq#', trackMedia: 3278828017287167}).expect(400);
+						return get('/api/v1/album/id').query({id: 'FwzF4', trackMedia: 1221976530092031}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/album/id').query({id: 'upz]U9ww&fz', trackTag: ''}).expect(400);
+						return get('/api/v1/album/id').query({id: 'dI3bdzu)kO7y', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/album/id').query({id: 'GXFeK#)G0cJ', trackTag: '%2!)yqreo!C6uT'}).expect(400);
+						return get('/api/v1/album/id').query({id: '1VQ&Cy@5mg[o74rR', trackTag: 'Pv95aWS'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/id').query({id: 'yjkuZt&45Cz&', trackTag: 737270487318530}).expect(400);
+						return get('/api/v1/album/id').query({id: 'MVTFMY', trackTag: -5500418767454206}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/id').query({id: '(IKtn%9KeAmiEvo', trackTag: -3934038066724865}).expect(400);
+						return get('/api/v1/album/id').query({id: 'buEbiMcVJC@kp4tILkf$', trackTag: -406410894508033}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/album/id').query({id: '[IbD&3U(', trackRawTag: ''}).expect(400);
+						return get('/api/v1/album/id').query({id: 'DXC98aQ&xp4bL!XVU', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/album/id').query({id: '1h3yX6Oy', trackRawTag: 'mb02uK^'}).expect(400);
+						return get('/api/v1/album/id').query({id: '^oDIDScRzj0@I', trackRawTag: 'xXTS4hv9)pms'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/id').query({id: 'ZQ@dS%KmWmV', trackRawTag: 7692119531585538}).expect(400);
+						return get('/api/v1/album/id').query({id: '9%PnN4DLRQM!xYwPjU5Y', trackRawTag: -2681098031071230}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/id').query({id: 'aJ)Lw55#JZhChHeNy', trackRawTag: 2231555078488063}).expect(400);
+						return get('/api/v1/album/id').query({id: 'IfB9B)YoH$UK09Ec', trackRawTag: -1215884563578881}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/album/id').query({id: '@P^rns@)0C^#qT%oI@b', trackState: ''}).expect(400);
+						return get('/api/v1/album/id').query({id: 'WO]Zy$#iTsMtvGL0Ne', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/album/id').query({id: 'ad^p%gA%4$F!EPHmCp9', trackState: '&lO$f0bowR)wJ1DLv'}).expect(400);
+						return get('/api/v1/album/id').query({id: 'A(#uk(s^@HupHG3xEp', trackState: 'f&ygo7'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/album/id').query({id: 'cz^mNl7^jp[4UnXwF(S', trackState: 5872970933207042}).expect(400);
+						return get('/api/v1/album/id').query({id: 'j5cRg41[2LfcuJwC', trackState: 2236674545287170}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/album/id').query({id: 'JKwAxrPNaw]dkZzu', trackState: -8979249293688833}).expect(400);
+						return get('/api/v1/album/id').query({id: 'ov)2ZXH!u%(RSoWa%', trackState: 6063391407865855}).expect(400);
 					});
 			});
 		});
 		describe('/album/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/album/ids').query({ids: ['&F[ZrUWlu8e#ogZc', 'u!LtIkakc!6chk']}).expect(401);
+						return getNotLoggedIn('/api/v1/album/ids').query({ids: ['rpj!1Nq!gd41C', 'tVQb%dN48^pF!(']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -6040,100 +6070,100 @@ describe('Server', () => {
 						return get('/api/v1/album/ids').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value empty string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['2zsFKsxoYXiMy', 'BI&@W2sa55MTk#w8'], albumTracks: ''}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['F023JUGdq3xb', '18m6P$J%tvo0'], albumTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['Y4spdzv*3pRjj5MlA8', 'a!b0VYbC(k0CucbB'], albumTracks: 'bH)KofG$mNaI'}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['34]h6)][(f3aVISm!Ff', 'ywyHBh3uz3I3QPX'], albumTracks: 'CQDn*qz)V4daDI)pX3C'}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer > 1', async () => {
-						return get('/api/v1/album/ids').query({ids: ['$Xr[1IvSRlO', 'nvG%0'], albumTracks: -6894292916240382}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['cE&QnIr^&]$RY(W', '@VJyD'], albumTracks: 4745208331763714}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer < 0', async () => {
-						return get('/api/v1/album/ids').query({ids: ['G*h8[8$KQsnvK', '*D#MGG*P14&)&'], albumTracks: -5424788751253505}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['w(A[[SKW(xC2x', 'gcUclp%Ha4zj3'], albumTracks: -1361490791628801}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/album/ids').query({ids: [']7kVe', 'sRSyQJwr$^DuXs6'], albumTrackIDs: ''}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['TiHN8%ojBrCZG', 'Wg7l^j^R9ryOw'], albumTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['34SRtnVT5AAbjq#E', '4eVk$'], albumTrackIDs: '^[p&0B$%l'}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['EtUjf@^z))q', 'eELS8F64Rxq'], albumTrackIDs: 'KHwgV3p'}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/album/ids').query({ids: ['f7IOW', 'J65RS0'], albumTrackIDs: -8282452363575294}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['A@nw*yXHR[D', 'V2GnNEkkPljKKJUqye9'], albumTrackIDs: 6325651388760066}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/album/ids').query({ids: ['GRGCBB(Sd)ipbPasfo5', 'EV4emD*S'], albumTrackIDs: -1007618428502017}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['9!SgRGOWGnW[l', 'y5aVkh]SAMMN3NzGOS'], albumTrackIDs: -4746684240232449}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value empty string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['#3^tPDFjzicNPZ9d', 'eG!^kIDp'], albumState: ''}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['^QjVi2s^KC', 'isQW8Gmn*SG7'], albumState: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['*pop2H8kmsCuiDD2&', '8ES6tYCrV[oPwp!'], albumState: '!c6%ilq!Yy(mF]'}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['w^^ogQ$8ezFF@D', 'IAmUOu7'], albumState: 'gQt&[q$HEj'}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer > 1', async () => {
-						return get('/api/v1/album/ids').query({ids: ['pvZ7vT]&', 'Rfi@&$o6eR@Km[E'], albumState: 3667119745007618}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['p7qSYypbQ()afQQ^5$', 'WWaQA&8Bj1Qzbm^Q'], albumState: -7127078826672126}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer < 0', async () => {
-						return get('/api/v1/album/ids').query({ids: ['Ucdroa)crpL4xRgzv', 'Esc$h!qfwA'], albumState: -441849688883201}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['KPt@FBWj5bkGxBj)O6', '@&xVmkrnO$V)4'], albumState: -4428406594732033}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value empty string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['On9nZQ', 'cqc91ZpUtp'], albumInfo: ''}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['&AvRfEfMn$e)yH', 'K@eTMgoNSer^r)D$7'], albumInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['%RZa1Q*4DMB]NO6(', '1yLv6M3K'], albumInfo: 'aD(Q6s9&[y5]'}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['IxgcOMUc!Lp2D[KFB[aD', 'dME*^U[xTzj[gj'], albumInfo: '#4Y*yVKSwyUbP[0kFY'}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer > 1', async () => {
-						return get('/api/v1/album/ids').query({ids: ['rIvE[gA)5c', 'dnNI]Xi^zhg7@VluM)'], albumInfo: 4401958194511874}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['s[P)7!2UnU@KZ', '6euAY'], albumInfo: 903940602331138}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer < 0', async () => {
-						return get('/api/v1/album/ids').query({ids: ['iTrhc!(6C0RcIRqL@s', 'J2YXcjvNq'], albumInfo: -2784580650139649}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['ntMwlT6F@UXP8', 'K(1(zO'], albumInfo: -6578473481011201}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['rw2OludsH', 't7r$y8c'], trackMedia: ''}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['@0xf)*h', 'D)xe#A7xkX%57]!!'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['l&r]#lwImKUC@Zw0', 'Sx9j0)9C45fMEj76ncn6'], trackMedia: '!!hFYhY6ma'}).expect(400);
+						return get('/api/v1/album/ids').query({ids: [']%]Xn)pj', 'Xc@I#$Ql]IdPuR)CX1f'], trackMedia: '30tiPEUt^wcs$s&E4Gj'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/album/ids').query({ids: ['TAkswTl4&tTcfE*Fujmj', 'U)aa4HArA'], trackMedia: -1406980577034238}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['l4W6PZwCn]Y!j)uxL76w', 'VVhC@]gd5l1)hO7qb0*J'], trackMedia: -3680080924508158}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/album/ids').query({ids: ['RbaQ0xTqXUS]kY2Y(hae', 'J3QI!1DlkV3p5d8s67O2'], trackMedia: 3232121401376767}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['qRThta', 'AHN2wQ(#S0ABpX'], trackMedia: -4981627633532929}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['IG%Mb#sZh^6rcgn1d', '7i#iyYk9Pa[Kq'], trackTag: ''}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['&uOUwm3zNXMpAzq^np', '8gAwa9UbMX2'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['[!av[KY%sl7iDy', 'l(aa]sXT'], trackTag: '$OHip(d2B'}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['^nrWMR7e', 'hjGZf'], trackTag: 'FK3JdUvnJMvdkH'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/ids').query({ids: ['ULcuiAIQvnaR!z', 'kV(iwhLrnUjM5g@mogzj'], trackTag: 4724192155009026}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['DOYaHt*Zw@', '3GMUD[C@MSeVfqn['], trackTag: 3927489592164354}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/ids').query({ids: ['Q4g4LgD', 'W5]w^NoGJr5oObi'], trackTag: 2495998836342783}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['S3LoYm4O30#hrCb', 'l8qOLfCmrI!YW^%C$yX['], trackTag: 7526244996349951}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['^Uc*M', 'UKICi2O*JM359avpP$'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['1QFmEjRf', 'q*jSE6Cf$#'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['(P&p5SN5Vvxq@^B&p', '5ueeQUh'], trackRawTag: 'wV70D7]@SOdJMjj0N#'}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['wC&xDE[BW0#EOOp8', 'RyGNQW(HXmt*()'], trackRawTag: '3aKdwN3itH'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/ids').query({ids: ['^!5rUII1UxZsDBhV1', 'UEtEl0Ib%oOJ4Bh6'], trackRawTag: 4179288509120514}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['ipBSp!S2D@()]JzOdMX', 'TKH%C'], trackRawTag: 8733859789144066}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/ids').query({ids: ['87^3Sk5Gk]jec]aaYmj', 'nPrdtixPqkco'], trackRawTag: -5217763647815681}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['UciCogYc)6k(@n8', 'do!Ftb@yIRHTCB3[0tA'], trackRawTag: 5160237401112575}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['FPBXQ18Alx', 'Zvkjxe74E[(*g8AbReU$'], trackState: ''}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['Tm$x[35f3)^Y', '9]S^Syq$'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/album/ids').query({ids: ['[EtWu6aX#', 'J4dA1'], trackState: 'ql%gP]kqxO5bnJp'}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['dI(7W2$w$BosWs*je%HW', 'Skmkr3X'], trackState: 'SD^(W16OmW@&q1'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/album/ids').query({ids: ['JI!aDI(@Nr&', 'D8DrTrBeCF'], trackState: -2009490283036670}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['G9o#z*^rh%8mM]tT', 'K)Tb05EO^r)oL@'], trackState: -2183900537290750}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/album/ids').query({ids: ['t37RPqwdkkX', 'Gq0mct4!zfL#SibCZ'], trackState: 2411332024401919}).expect(400);
+						return get('/api/v1/album/ids').query({ids: ['sHMXVLX3!l(Kqc!$]AZK', 'JnsOf'], trackState: -6896898619211777}).expect(400);
 					});
 			});
 		});
@@ -6151,250 +6181,250 @@ describe('Server', () => {
 						return get('/api/v1/album/list').query({list: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'random', offset: 'COrNc(x1UkSwW!68bx@h'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', offset: 'U3L#5u%K'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', offset: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
 						return get('/api/v1/album/list').query({list: 'faved', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', offset: 20.09}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', offset: 55.27}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/album/list').query({list: 'frequent', offset: -1}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', amount: 'iLuhAaA3$nZz6'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', amount: 'lGc0mHZ8zox4X[UD'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', amount: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
 						return get('/api/v1/album/list').query({list: 'avghighest', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', amount: 36.46}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', amount: 28.13}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/album/list').query({list: 'frequent', amount: 0}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', albumTracks: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', albumTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', albumTracks: '^tu3GTohN4d'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', albumTracks: 'MRXFoxqqZ*[F%pl0I'}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer > 1', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', albumTracks: -1222585094242302}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', albumTracks: -420354409365502}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer < 0', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', albumTracks: 6830887073218559}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', albumTracks: -8070819561340929}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', albumTrackIDs: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', albumTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', albumTrackIDs: 'zsOGHr6rQoSvKj2OF'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', albumTrackIDs: 'C*Y48hQ06^q'}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', albumTrackIDs: 138403597254658}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', albumTrackIDs: -5711494360596478}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', albumTrackIDs: 4478883030106111}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', albumTrackIDs: -5921613283328001}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value empty string', async () => {
 						return get('/api/v1/album/list').query({list: 'faved', albumState: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', albumState: 'Rsi&^XhM(PJ'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'highest', albumState: '3U@bdYL]@Q^'}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer > 1', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', albumState: -640525543669758}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', albumState: 230906031767554}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer < 0', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', albumState: -8314371532914689}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', albumState: -3854378851106817}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', albumInfo: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', albumInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', albumInfo: 'c&MHVAc0M7ylCm5'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', albumInfo: '*U]sAM'}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer > 1', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', albumInfo: -5117415016890366}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', albumInfo: -2273402320584702}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer < 0', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', albumInfo: -422754977316865}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', albumInfo: 6968123932540927}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', trackMedia: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', trackMedia: 'Bhjqd$'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', trackMedia: '[DjIrWctcmBiSBs^PBU'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/album/list').query({list: 'frequent', trackMedia: 1909944030855170}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', trackMedia: -609003675582462}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', trackMedia: -2301441502871553}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', trackMedia: 1143209514237951}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', trackTag: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', trackTag: 'xm@lR%5QlSL&JD8p6'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', trackTag: '8KtoV'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', trackTag: 2292478078091266}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', trackTag: -3515152615866366}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/list').query({list: 'frequent', trackTag: 6759325108273151}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', trackTag: -2324341442215937}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', trackRawTag: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', trackRawTag: 'hyR*ELaZdv!qxgkm^^f'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', trackRawTag: '%i5W!hC)QaEaE]F*'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/list').query({list: 'random', trackRawTag: -7827446317449214}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', trackRawTag: 2932046028603394}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', trackRawTag: 1292538405191679}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', trackRawTag: -5765225596846081}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'frequent', trackState: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'highest', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'frequent', trackState: 'sL!T^y!83Np7%(&r[1'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'highest', trackState: 'O!fKKhwr4W!'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', trackState: 6566723343876098}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', trackState: -473896134377470}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', trackState: -792478781276161}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', trackState: 8241677445627903}).expect(400);
 					});
 					it('should respond with 400 with "name" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'random', name: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', name: ''}).expect(400);
 					});
 					it('should respond with 400 with "rootID" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', rootID: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', rootID: ''}).expect(400);
 					});
 					it('should respond with 400 with "rootIDs" set to value null', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', rootIDs: null}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', rootIDs: null}).expect(400);
 					});
 					it('should respond with 400 with "rootIDs" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', rootIDs: [null, '']}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', rootIDs: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "artist" set to value empty string', async () => {
 						return get('/api/v1/album/list').query({list: 'random', artist: ''}).expect(400);
 					});
 					it('should respond with 400 with "artistID" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', artistID: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', artistID: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackID" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'random', trackID: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'highest', trackID: ''}).expect(400);
 					});
 					it('should respond with 400 with "mbAlbumID" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', mbAlbumID: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', mbAlbumID: ''}).expect(400);
 					});
 					it('should respond with 400 with "mbArtistID" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', mbArtistID: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', mbArtistID: ''}).expect(400);
 					});
 					it('should respond with 400 with "genre" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', genre: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'highest', genre: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumType" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', albumType: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', albumType: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumType" set to value invalid enum', async () => {
-						return get('/api/v1/album/list').query({list: 'frequent', albumType: 'invalid'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', albumType: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "albumTypes" set to value null', async () => {
-						return get('/api/v1/album/list').query({list: 'random', albumTypes: null}).expect(400);
+						return get('/api/v1/album/list').query({list: 'highest', albumTypes: null}).expect(400);
 					});
 					it('should respond with 400 with "albumTypes" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'frequent', albumTypes: [null, '']}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', albumTypes: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "albumTypes" set to value invalid enum', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', albumTypes: [null, 'invalid']}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', albumTypes: [null, 'invalid']}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', newerThan: 'tmq1[H'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', newerThan: 'N4Dh3#G'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', newerThan: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', newerThan: ''}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value boolean', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', newerThan: true}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/album/list').query({list: 'random', newerThan: 65.95}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', newerThan: 65.48}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
-						return get('/api/v1/album/list').query({list: 'frequent', newerThan: -1}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', newerThan: -1}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', fromYear: 'lLFFq(#5'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', fromYear: 'LfSE2mk1'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', fromYear: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', fromYear: ''}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value boolean', async () => {
-						return get('/api/v1/album/list').query({list: 'random', fromYear: true}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', fromYear: 41.02}).expect(400);
+						return get('/api/v1/album/list').query({list: 'highest', fromYear: 20.46}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value less than minimum 0', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', fromYear: -1}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', fromYear: -1}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'random', toYear: 'oESjUARK*h7^I%59'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', toYear: 'tMP)AoO%'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', toYear: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', toYear: ''}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value boolean', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', toYear: true}).expect(400);
+						return get('/api/v1/album/list').query({list: 'highest', toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/album/list').query({list: 'frequent', toYear: 38.65}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', toYear: 51.17}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value less than minimum 0', async () => {
-						return get('/api/v1/album/list').query({list: 'random', toYear: -1}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', toYear: -1}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', sortField: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', sortField: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value invalid enum', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', sortField: 'invalid'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'highest', sortField: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', id: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'recent', id: ''}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value null', async () => {
-						return get('/api/v1/album/list').query({list: 'avghighest', ids: null}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'random', ids: [null, '']}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "query" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'faved', query: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'random', query: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value empty string', async () => {
-						return get('/api/v1/album/list').query({list: 'recent', sortDescending: ''}).expect(400);
+						return get('/api/v1/album/list').query({list: 'frequent', sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/album/list').query({list: 'highest', sortDescending: 'ygk^4&d]hj!M[@)fuUS'}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', sortDescending: 'G1]gC]Q*^m'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/album/list').query({list: 'random', sortDescending: -3579897272336382}).expect(400);
+						return get('/api/v1/album/list').query({list: 'avghighest', sortDescending: -1682658421637118}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/album/list').query({list: 'random', sortDescending: -8000724621328385}).expect(400);
+						return get('/api/v1/album/list').query({list: 'faved', sortDescending: 788883289669631}).expect(400);
 					});
 			});
 		});
@@ -6406,7 +6436,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/album/search').query({offset: 'uIrAx2'}).expect(400);
+						return get('/api/v1/album/search').query({offset: 'AeZ8R5oMEIZW&b#5i'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({offset: ''}).expect(400);
@@ -6415,13 +6445,13 @@ describe('Server', () => {
 						return get('/api/v1/album/search').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/album/search').query({offset: 77.95}).expect(400);
+						return get('/api/v1/album/search').query({offset: 81.21}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/album/search').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/album/search').query({amount: 'qf4GI'}).expect(400);
+						return get('/api/v1/album/search').query({amount: '9]pN!H!r3poUVnzC]@'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({amount: ''}).expect(400);
@@ -6430,7 +6460,7 @@ describe('Server', () => {
 						return get('/api/v1/album/search').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/album/search').query({amount: 22.25}).expect(400);
+						return get('/api/v1/album/search').query({amount: 86.4}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/album/search').query({amount: 0}).expect(400);
@@ -6481,7 +6511,7 @@ describe('Server', () => {
 						return get('/api/v1/album/search').query({albumTypes: [null, 'invalid']}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/album/search').query({newerThan: 'y@B!yqSO9spEfK[L5J'}).expect(400);
+						return get('/api/v1/album/search').query({newerThan: 'Q$^C6#9$BPn'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({newerThan: ''}).expect(400);
@@ -6490,13 +6520,13 @@ describe('Server', () => {
 						return get('/api/v1/album/search').query({newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/album/search').query({newerThan: 50.23}).expect(400);
+						return get('/api/v1/album/search').query({newerThan: 58.15}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
 						return get('/api/v1/album/search').query({newerThan: -1}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/album/search').query({fromYear: 'mhG$Is0wJvZA'}).expect(400);
+						return get('/api/v1/album/search').query({fromYear: 'mnN^GrW*dK[0&frjP'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({fromYear: ''}).expect(400);
@@ -6505,13 +6535,13 @@ describe('Server', () => {
 						return get('/api/v1/album/search').query({fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/album/search').query({fromYear: 67.21}).expect(400);
+						return get('/api/v1/album/search').query({fromYear: 40.4}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/album/search').query({fromYear: -1}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/album/search').query({toYear: 'LlzXBT43XCP5NBG]'}).expect(400);
+						return get('/api/v1/album/search').query({toYear: 'zI8yfzRrj'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({toYear: ''}).expect(400);
@@ -6520,7 +6550,7 @@ describe('Server', () => {
 						return get('/api/v1/album/search').query({toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/album/search').query({toYear: 93.18}).expect(400);
+						return get('/api/v1/album/search').query({toYear: 33.42}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/album/search').query({toYear: -1}).expect(400);
@@ -6547,109 +6577,109 @@ describe('Server', () => {
 						return get('/api/v1/album/search').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/album/search').query({sortDescending: ')kRoR]!'}).expect(400);
+						return get('/api/v1/album/search').query({sortDescending: '*VGhN[s1hvt%3'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/album/search').query({sortDescending: 2951043579117570}).expect(400);
+						return get('/api/v1/album/search').query({sortDescending: -3971223704829950}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/album/search').query({sortDescending: 6928034942681087}).expect(400);
+						return get('/api/v1/album/search').query({sortDescending: 6901444254892031}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({albumTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value string', async () => {
-						return get('/api/v1/album/search').query({albumTracks: 'p$3D^2[!djEByXwew'}).expect(400);
+						return get('/api/v1/album/search').query({albumTracks: 'gXr*ot6OEqeSp6ngI'}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer > 1', async () => {
-						return get('/api/v1/album/search').query({albumTracks: 1335047625900034}).expect(400);
+						return get('/api/v1/album/search').query({albumTracks: -6639662353350654}).expect(400);
 					});
 					it('should respond with 400 with "albumTracks" set to value integer < 0', async () => {
-						return get('/api/v1/album/search').query({albumTracks: 4441866284040191}).expect(400);
+						return get('/api/v1/album/search').query({albumTracks: 1345809106862079}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({albumTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value string', async () => {
-						return get('/api/v1/album/search').query({albumTrackIDs: 'Z2#8xK@5U7q['}).expect(400);
+						return get('/api/v1/album/search').query({albumTrackIDs: 'ZKp1omdeoYeTy'}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/album/search').query({albumTrackIDs: 8356522945937410}).expect(400);
+						return get('/api/v1/album/search').query({albumTrackIDs: 6819710733647874}).expect(400);
 					});
 					it('should respond with 400 with "albumTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/album/search').query({albumTrackIDs: -8537152052789249}).expect(400);
+						return get('/api/v1/album/search').query({albumTrackIDs: 4964227634692095}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({albumState: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value string', async () => {
-						return get('/api/v1/album/search').query({albumState: '[*RNfWWonJ2L'}).expect(400);
+						return get('/api/v1/album/search').query({albumState: 'LGtF@C'}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer > 1', async () => {
-						return get('/api/v1/album/search').query({albumState: -7566690816622590}).expect(400);
+						return get('/api/v1/album/search').query({albumState: 8990984587182082}).expect(400);
 					});
 					it('should respond with 400 with "albumState" set to value integer < 0', async () => {
-						return get('/api/v1/album/search').query({albumState: 2010113216872447}).expect(400);
+						return get('/api/v1/album/search').query({albumState: -3992183443030017}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({albumInfo: ''}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value string', async () => {
-						return get('/api/v1/album/search').query({albumInfo: 'YWcXvLk$J'}).expect(400);
+						return get('/api/v1/album/search').query({albumInfo: 'LWFJQRB!Ce'}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer > 1', async () => {
-						return get('/api/v1/album/search').query({albumInfo: -23325359210494}).expect(400);
+						return get('/api/v1/album/search').query({albumInfo: -5339752668594174}).expect(400);
 					});
 					it('should respond with 400 with "albumInfo" set to value integer < 0', async () => {
-						return get('/api/v1/album/search').query({albumInfo: -4478869419589633}).expect(400);
+						return get('/api/v1/album/search').query({albumInfo: -1012247392419841}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/album/search').query({trackMedia: 'i15bQmO'}).expect(400);
+						return get('/api/v1/album/search').query({trackMedia: 'P5VCQM5L5HzN@NF'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/album/search').query({trackMedia: 7618074630946818}).expect(400);
+						return get('/api/v1/album/search').query({trackMedia: -8504547521593342}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/album/search').query({trackMedia: 4948736652345343}).expect(400);
+						return get('/api/v1/album/search').query({trackMedia: 8529216492535807}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/album/search').query({trackTag: 'zT%Ec'}).expect(400);
+						return get('/api/v1/album/search').query({trackTag: 's2jI0JxtiqL&lwuuX&wo'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/search').query({trackTag: -1814204256354302}).expect(400);
+						return get('/api/v1/album/search').query({trackTag: -6553952061489150}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/search').query({trackTag: 5145858223898623}).expect(400);
+						return get('/api/v1/album/search').query({trackTag: -4134557393616897}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/album/search').query({trackRawTag: '8b^tpmLT5[@l7a#LN'}).expect(400);
+						return get('/api/v1/album/search').query({trackRawTag: 'L6aCN9$frJ'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/search').query({trackRawTag: 5953103895461890}).expect(400);
+						return get('/api/v1/album/search').query({trackRawTag: 5075588817616898}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/search').query({trackRawTag: 7189999392915455}).expect(400);
+						return get('/api/v1/album/search').query({trackRawTag: -8771195017101313}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/album/search').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/album/search').query({trackState: 'apyTuADkoXd*]d'}).expect(400);
+						return get('/api/v1/album/search').query({trackState: '7C(FW^SQf(iQo[F'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/album/search').query({trackState: -7981667109044222}).expect(400);
+						return get('/api/v1/album/search').query({trackState: -2779469169295358}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/album/search').query({trackState: 1453231330820095}).expect(400);
+						return get('/api/v1/album/search').query({trackState: 1772689324769279}).expect(400);
 					});
 			});
 		});
@@ -6706,7 +6736,7 @@ describe('Server', () => {
 						return get('/api/v1/album/index').query({albumTypes: [null, 'invalid']}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value string', async () => {
-						return get('/api/v1/album/index').query({newerThan: 'XM$^smm*TUNw'}).expect(400);
+						return get('/api/v1/album/index').query({newerThan: '4qWK6SKhVO'}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value empty string', async () => {
 						return get('/api/v1/album/index').query({newerThan: ''}).expect(400);
@@ -6715,13 +6745,13 @@ describe('Server', () => {
 						return get('/api/v1/album/index').query({newerThan: true}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value float', async () => {
-						return get('/api/v1/album/index').query({newerThan: 57.12}).expect(400);
+						return get('/api/v1/album/index').query({newerThan: 11.01}).expect(400);
 					});
 					it('should respond with 400 with "newerThan" set to value less than minimum 0', async () => {
 						return get('/api/v1/album/index').query({newerThan: -1}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value string', async () => {
-						return get('/api/v1/album/index').query({fromYear: 'zauby8bS8Z'}).expect(400);
+						return get('/api/v1/album/index').query({fromYear: 'iXwqx]v$r@*G'}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value empty string', async () => {
 						return get('/api/v1/album/index').query({fromYear: ''}).expect(400);
@@ -6730,13 +6760,13 @@ describe('Server', () => {
 						return get('/api/v1/album/index').query({fromYear: true}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value float', async () => {
-						return get('/api/v1/album/index').query({fromYear: 34.82}).expect(400);
+						return get('/api/v1/album/index').query({fromYear: 99.9}).expect(400);
 					});
 					it('should respond with 400 with "fromYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/album/index').query({fromYear: -1}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value string', async () => {
-						return get('/api/v1/album/index').query({toYear: 'eHAqUT%$P2bCBw'}).expect(400);
+						return get('/api/v1/album/index').query({toYear: '*Ac2J2^#nx%p[vs'}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value empty string', async () => {
 						return get('/api/v1/album/index').query({toYear: ''}).expect(400);
@@ -6745,7 +6775,7 @@ describe('Server', () => {
 						return get('/api/v1/album/index').query({toYear: true}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value float', async () => {
-						return get('/api/v1/album/index').query({toYear: 59.55}).expect(400);
+						return get('/api/v1/album/index').query({toYear: 64.67}).expect(400);
 					});
 					it('should respond with 400 with "toYear" set to value less than minimum 0', async () => {
 						return get('/api/v1/album/index').query({toYear: -1}).expect(400);
@@ -6772,20 +6802,20 @@ describe('Server', () => {
 						return get('/api/v1/album/index').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/album/index').query({sortDescending: '1X6Mvw'}).expect(400);
+						return get('/api/v1/album/index').query({sortDescending: 'g$&PZ!%egTAn#A('}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/album/index').query({sortDescending: 4007311991373826}).expect(400);
+						return get('/api/v1/album/index').query({sortDescending: 2221900780535810}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/album/index').query({sortDescending: -7259745660436481}).expect(400);
+						return get('/api/v1/album/index').query({sortDescending: -4947207153254401}).expect(400);
 					});
 			});
 		});
 		describe('/album/state', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/album/state').query({id: 'c5Y@o$kLG(BsE$Pc'}).expect(401);
+						return getNotLoggedIn('/api/v1/album/state').query({id: '2C%f^0RkpF2'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -6797,7 +6827,7 @@ describe('Server', () => {
 		describe('/album/states', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/album/states').query({ids: ['eK!y(Qc', 'Eh9yyw$']}).expect(401);
+						return getNotLoggedIn('/api/v1/album/states').query({ids: ['ky1S@cy', '7^9UH']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -6812,7 +6842,7 @@ describe('Server', () => {
 		describe('/album/similar/tracks', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/album/similar/tracks').query({id: 'NIoW%mQMkRv1'}).expect(401);
+						return getNotLoggedIn('/api/v1/album/similar/tracks').query({id: 'OifsW*hoTrvF)epb'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -6820,89 +6850,89 @@ describe('Server', () => {
 						return get('/api/v1/album/similar/tracks').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'P2FgOfKqEZGSS', trackMedia: ''}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'hRy%05bEM$UcCxv)bC#', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'Swh34EVBIc(dmWr1Z^P', trackMedia: '4xID)F'}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: ']#(jokmwUDJm', trackMedia: 'RBCe4$'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: '1mj5j^zgvL0%', trackMedia: -3573484718391294}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: '7[%MJr3La]', trackMedia: -456778034708478}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'C9vVbD9e', trackMedia: 8130166609936383}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'n@R97mdM', trackMedia: -6988016362979329}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'k6uN^E94', trackTag: ''}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'K[!MS#O!zrtUgrXtXHH', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'T6lgxVZn', trackTag: 'r@bl1kx$Xq7mL5[N)OBP'}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: '(iSuenQ[zoKa(DB#zBpI', trackTag: 'xuIg!D'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'i45O$9ismhTXqJ', trackTag: 5333460289847298}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'CzeW[zBLpmd', trackTag: -4073946366345214}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'cag13fFw9VkRJf', trackTag: 5660474905460735}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'tfx%VR^C$oAHhOa(M3dm', trackTag: 6401677800243199}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'BLO5GBhCL', trackRawTag: ''}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: '%o4wSmQPM$o^', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: '6ySIhUp$XyVO5#Kr', trackRawTag: '4Kc@6qnRBVuY'}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'R##eN!', trackRawTag: 'k1HdZfAQ4Q'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'w0F)DFCQ', trackRawTag: -8737578907860990}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'Sfdc7v*JSb5l%6', trackRawTag: -3324364892143614}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'CV^B$2dN&o@SHWDBVMX', trackRawTag: 2867179171086335}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'LbeIVLOVOrNFN&30Q', trackRawTag: 1446413284147199}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: '@5I2w3Qf@Cof', trackState: ''}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'v3#&olR7MYg0N%pS', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'lBB9rU^mniuP6', trackState: 'Y7ASba@XrJ#'}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'J2#vJm0WuBnsPJ$', trackState: 'eKf7HeV9t'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'L96Xwe9cl8fE', trackState: 1778567666991106}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'hj1zpI38', trackState: -6071767839801342}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 's*WVz1epVU1Ge', trackState: -8426493306732545}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: '2[RJFc', trackState: 5069452479561727}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: '86(so(8wfef#A@)e', offset: 'P8Pjf4zCf'}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'lGXV1!', offset: 'wVhx#](7nz'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'mdAUxWXF]', offset: ''}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: '04D@5m', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: '7l[SMNB[9AS$KPaAL', offset: true}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'O2%KRpJjr42RC', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'zK1qp5HqWHTP', offset: 39.85}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: '^N&ebYmAYgahsN#Xn', offset: 74.48}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: '(XuXj', offset: -1}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'ng%0Kj6t%dY[JMMO8Gi', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'xJbTY3e4^f2lxk^uCx', amount: 'P)JM[%4[GMuJ15(O]#'}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: '&K(l@', amount: 'k*pX8gS0'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'iIw5y%Efa', amount: ''}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: '#EGdQn!', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'br(!b!a1X', amount: true}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: '2uU5A$s', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'ofW!]McVP', amount: 69.98}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'K@iZkqFV&z2', amount: 9.14}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/album/similar/tracks').query({id: 'PNm0zr', amount: 0}).expect(400);
+						return get('/api/v1/album/similar/tracks').query({id: 'a5Glgtz8C&cN9', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/album/tracks', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/album/tracks').query({ids: ['d#pG#8yfJo', 'WcV!VIvfSSdzrVZ&!']}).expect(401);
+						return getNotLoggedIn('/api/v1/album/tracks').query({ids: ['sZ]H%VGzUDSxn0j', 'lvLsD2YcXQ']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -6913,89 +6943,89 @@ describe('Server', () => {
 						return get('/api/v1/album/tracks').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['O[7DU0cN]39MFYn[5y', 'uC0s61HieYZ20b6zw'], trackMedia: ''}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['OOXkc8!M2Hp!dmQ&1)', ']K(1QkEh'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['%9DSq&D&SJj*y', '84m7G3$AC^4%0Q5'], trackMedia: 'bEKhkxn%DdlfE'}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['GkhDJLNS75Kiw%vLf', 'WGIu!g@zr5lab%Lj[G9&'], trackMedia: 'FBG@xitsqvFY)$#@)*'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['AQz^x5f$!)U)A', 'vbjH&ubMe'], trackMedia: -3323271218987006}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['@ucBLFU', 'Rg7w4X%2uI(dCteXep'], trackMedia: -4135337261531134}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['[]Z1MWu', 'JyvxaVuxtFh'], trackMedia: -5808206865498113}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['!&bvn', '%8KTT0'], trackMedia: -2672328500576257}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['rmYR5)g09iWI6&fg', '4I0unpJB#g&'], trackTag: ''}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['y3]2UcpvS', 's)7IoZBq(ci97F!uA)'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['J1K!jBV[JVx2gkB', '7q6e05TbIW8MIptTEK#'], trackTag: ']I%X#lLLaMoq36Mqwv'}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['U!FnlYtm0geUhFITEYdN', 'Us&bc3'], trackTag: 'mYplqT99]'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['lO$@0vsrAm0PN*T', '5#e)A7P*@UX@g!1fgM'], trackTag: -5821930074537982}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: [']&BK&#TiC', 'canV7'], trackTag: -6796265404760062}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['sJZbFKR', '(gwb&WvYzTQ0iqM'], trackTag: -1258083846193153}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['tHzCtBD8N1', '!xS[r0jWRQhu%Hk*rYq^'], trackTag: 6761598026776575}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['p37FbdO#9L(', '1B4$[gFQNp0)^*Zb'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['$xh&P@DrPe', 'VkuqW2vOsM(enhEWkIwz'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['0Vzf3hAha', 'kj#zRc&rd[SdStX'], trackRawTag: '@YknftSAn01o6d*OUw'}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['3tT2A', 'oQ6F(GWX'], trackRawTag: 'lY)wqj'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['CcD*kju', 'TES%E0VM'], trackRawTag: -6997503794741246}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['l7ESM[tO&kh4a', '(s13ucFchwr)IsZDiN5'], trackRawTag: 8516438708977666}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['HKhoC]k7bdFoM', 'XF*ip'], trackRawTag: 6428619647746047}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['N$#YBeaarxmd9A', 'Fe3iESDmoyoOh3Gy'], trackRawTag: 7066192707583999}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['z&CNWIS&JUO', '^ZrVWseu^vm&9obH4I'], trackState: ''}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['@oKUGV)s2fvTk]dYs9R*', 'Nq(@aE@@KGmUKC4G9Jfg'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['RG0crZkG]Q', '(37wtnF&qO5i1X6]WfQ'], trackState: '*kbtt]Z*H@@4[8Xjpspb'}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['CsMVIDiH$OXY]zs', 'sjhaHftP5Lr'], trackState: '93Vr22xgZ[7W!Nkf'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['yWk)vi', 'Pi%u*L6y1j5UT'], trackState: -2265912128307198}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['GAJYnMIhb@)', 'yez%[(%xf78JZcO]'], trackState: 7907711219924994}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['5tLwRE', '%p$n3(jP7Yq5'], trackState: 2196288615481343}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['&iT3(#NdUlxV(tcycS', 'h$6h3$EL7ht%oo0[QDAP'], trackState: -4958639546695681}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['kFkxBU]9RJy!f0Us', '8fxFU%9$5'], offset: 'cQEL]gZR7B%SJ'}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['uqzr%xra4OIaKJB^', '#CDh!Ia0Zuoq'], offset: 'osJt2TOE'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['vJ&2Z$6UoUcuPQAz', '%273jBvhfb0Uu'], offset: ''}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['oxv8ho1!c', 'IA$9%^'], offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['$wCuvw6g&F@q)X!&nP', 'km]1hUUT^$r]*x'], offset: true}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['M&gZ44]zB', '^gkOzrwVCvfk'], offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['8@kX3h%PB3k', '3](#Ixj$i9h49'], offset: 21.27}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['PYCv7ST', 'RUaQGY^fKV^3Si))nc'], offset: 29.43}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['(2XgTk2Z', '6k3I89sjoiEljl*TI'], offset: -1}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['4^y(kfSQ)4ZV&N@', 'lK48an8eknqIR^'], offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['5iGTSSUAq5MK(h234', 'Oe70NMeHJpxu4IhO'], amount: 'SB^or'}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['P2]rf', '!8k3BDdFCQ9l'], amount: '&mVs5LlVFZaZ'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['$f3D7%!4^KY', 'dn74Lr&^&J%27)zp)4!)'], amount: ''}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['Z]fzX', 'hOzMHigkCCK'], amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['fz8vHn7dJC^N', 'e5Ft]ard&8cdYvp9lu5F'], amount: true}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['yT^$a$V#i]rnIq[v', 'DmwOmD@EeB'], amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['W])P[^J1MBq4Ku#k', '37iT5!FCaEUm7$a9'], amount: 68.1}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['(VN9]$nTeE!NgBoySZn', 'K6WjSp8*#m4'], amount: 14.17}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/album/tracks').query({ids: ['EVy6s5X2J@a', 'LBtacV]EB'], amount: 0}).expect(400);
+						return get('/api/v1/album/tracks').query({ids: ['N0zB$QJqaKuR!6vSN', 'F@[WeEeGdY'], amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/album/info', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/album/info').query({id: 'bo5fy%Vs5Rk'}).expect(401);
+						return getNotLoggedIn('/api/v1/album/info').query({id: 'J%%SFc1ODIGXP7Ujv'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7007,7 +7037,7 @@ describe('Server', () => {
 		describe('/playlist/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/playlist/id').query({id: 'qD9[RT]'}).expect(401);
+						return getNotLoggedIn('/api/v1/playlist/id').query({id: ')9XeKhyHO#3OR7u(T%sI'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7015,95 +7045,95 @@ describe('Server', () => {
 						return get('/api/v1/playlist/id').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value empty string', async () => {
-						return get('/api/v1/playlist/id').query({id: 'Ih4mWNhC', playlistTracks: ''}).expect(400);
+						return get('/api/v1/playlist/id').query({id: '0wVvU7U^ZjbRhab', playlistTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value string', async () => {
-						return get('/api/v1/playlist/id').query({id: 'ne^iacG', playlistTracks: '9ER7B'}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'qojcjkJXyR', playlistTracks: '(m]Z^!MsERySMh'}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/id').query({id: 'i%*EpsSf4m$#LK7CO5', playlistTracks: 7949856739950594}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'rgOGLD6&[W', playlistTracks: 596803493822466}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/id').query({id: 'ZFnTZ', playlistTracks: -8934685161816065}).expect(400);
+						return get('/api/v1/playlist/id').query({id: '#*5Q[jaUw5M', playlistTracks: -8000496920952833}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/playlist/id').query({id: '&jR&S4TaYS', playlistTrackIDs: ''}).expect(400);
+						return get('/api/v1/playlist/id').query({id: '3UB(9sy8%%Yfgvv*3', playlistTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value string', async () => {
-						return get('/api/v1/playlist/id').query({id: '4CoSkh(YL#kD4*', playlistTrackIDs: '#%Y[!^3qsxx'}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'xqShPyLV3', playlistTrackIDs: 'rbviFDbZNd8la)YsK[lJ'}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/id').query({id: 'gs&TTpMQwuWPgHc', playlistTrackIDs: -1834058258579454}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'uLil]JK]iWdcqs[&WHF', playlistTrackIDs: -1881644159991806}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/id').query({id: '[SRzvnRY*p', playlistTrackIDs: 2906587366686719}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'r0nybK*P', playlistTrackIDs: -8179424830685185}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value empty string', async () => {
-						return get('/api/v1/playlist/id').query({id: 'S0V0KID$oMb(R', playlistState: ''}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'ffo!Vv', playlistState: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value string', async () => {
-						return get('/api/v1/playlist/id').query({id: 'fZpLro', playlistState: '9nN)wlcSM7'}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'HC%Qi14Z#46', playlistState: 'X(61zv91pTA5M8XFImJ*'}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/id').query({id: '%(ZLDO(O)hfh)bli3Xz', playlistState: 5936614610042882}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'L)P!e*uwx0', playlistState: -7185209749405694}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/id').query({id: 'XJABPs[wv5q4t]L3', playlistState: 4958469480251391}).expect(400);
+						return get('/api/v1/playlist/id').query({id: ')LtM!]0kNzVIE', playlistState: -2943820278792193}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/playlist/id').query({id: '&PB^KknejOqt', trackMedia: ''}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'p9za34kG', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/playlist/id').query({id: '8(TA9o*sEV&uu', trackMedia: 'ttSGdGtY]Ajhoyl7'}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'm*hU)*uvEU9h^7]', trackMedia: 'm7KfAhP93IwCW0'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/id').query({id: 'j!DxFAjW', trackMedia: 2503853828210690}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'U]loX$lWX#(^Y]Ck', trackMedia: 3630392095539202}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/id').query({id: '5cg*bXG#', trackMedia: 7586269395681279}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'KOmSHYu4n@0M*Wp7)D', trackMedia: -7767559805861889}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/playlist/id').query({id: '7DZ[^', trackTag: ''}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'gNGTb!a@9aaYa4Rn3', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/playlist/id').query({id: 'NihgkeBJnGd', trackTag: 'Yrr$IM'}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'g]*Qw', trackTag: ')oK!nYfk8SGZZnY'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/id').query({id: 'vKk[R@Ne0HjjfIf', trackTag: -119410551422974}).expect(400);
+						return get('/api/v1/playlist/id').query({id: ')8syKcYP', trackTag: 5270924144148482}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/id').query({id: '1W$I2(aKUS', trackTag: 7391760435118079}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'cMVZIySBdh3nu#D', trackTag: 6099958511960063}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/playlist/id').query({id: 'GaukdeGlIIB4%', trackRawTag: ''}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'MK4xHS&', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/playlist/id').query({id: 'fQW1msLehdhDWaqtS', trackRawTag: 'NL5mjYn^CTt)NJ*!a4o'}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'q6kKc(44IMAwC2', trackRawTag: '@Gt2U'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/id').query({id: 'NQ&%pShqwQv(WoBQzt', trackRawTag: 1076224575143938}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'uHmKO', trackRawTag: -6507882514219006}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/id').query({id: '8!4tw5J', trackRawTag: 82836216348671}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'y1rg7C6mEMl@qO', trackRawTag: 4209136736665599}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/playlist/id').query({id: 'yUjDpQC1LTU&t45', trackState: ''}).expect(400);
+						return get('/api/v1/playlist/id').query({id: 'UlYQIq5B', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/playlist/id').query({id: 'rHeYmex$]b', trackState: 'Lr02IVPju4h2RKu]'}).expect(400);
+						return get('/api/v1/playlist/id').query({id: '4IeOGxFv', trackState: '3Z7f1JdH92#d)eq@Tw'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/id').query({id: 'wXu0C3Z@(*Qg', trackState: 4739950213857282}).expect(400);
+						return get('/api/v1/playlist/id').query({id: '6oB2Hn', trackState: 7717654273982466}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/id').query({id: 'fg&]W^$qi', trackState: 1624189744185343}).expect(400);
+						return get('/api/v1/playlist/id').query({id: '4SUbbY!tK44[N&miM8I', trackState: 4427434556391423}).expect(400);
 					});
 			});
 		});
 		describe('/playlist/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/playlist/ids').query({ids: ['l^yAA75I4BhRt870', 'X0Wq]44j*]c[!b']}).expect(401);
+						return getNotLoggedIn('/api/v1/playlist/ids').query({ids: ['3QV3!KqZc#P9M', '#%7@$)fIna4o5m']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7114,88 +7144,88 @@ describe('Server', () => {
 						return get('/api/v1/playlist/ids').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value empty string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['0[Hx7mcebEok', 'bWZ9G5hC]L4C'], playlistTracks: ''}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['bj@SDjrX4h5@X', 'yBHQS@)[6vV@'], playlistTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['p0]28H', ')M$(Zua'], playlistTracks: 'rPA5&B'}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['tVxm2EX^hr', 'p2aMn4XfXM#021p'], playlistTracks: 'D6UvwyOeyf'}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['MOe(vQs2PkKa@', 'EnCi)ONlnZvjd3^PgnJj'], playlistTracks: -2181947749040126}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['!H1QO%R&SG@(CWXw3g[', 'tWtuTU'], playlistTracks: -6436972469944318}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['EnKl0hP', 'RasgRAdoX'], playlistTracks: -989619151699969}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['D9zcl&xd2WT)lONA4S', 'c4GbkV7N$PF'], playlistTracks: -5982158036402177}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['PC#!ogn8UfW]F#SqIC', 'aM8G4NOgqhS5H&qp6bc'], playlistTrackIDs: ''}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['2p2gMzfrMyv', 'ohf31$oC8ZP&'], playlistTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['AZKuTr*q', 'Q)WoYQHuK'], playlistTrackIDs: 'SE)KEaN1guOhj(o0gZ0'}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['*BwEs83c', 'AvCQA*OtSS!'], playlistTrackIDs: 'w4TC3cm(HNdMQL['}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['8Q4A!Yki', 'R^homj'], playlistTrackIDs: 7202562155479042}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['W3^21kyfM&Y%(iM', 'KR8G0$'], playlistTrackIDs: 2508146614468610}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['XofJ[&', 'qpgzNOIb@A&T1wXi66U9'], playlistTrackIDs: 5152196240867327}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['lJ#0HzKEygFoP^&EKY', '#TVWb]%hmzfX'], playlistTrackIDs: 7076441518768127}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value empty string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['vxwjY6H]', 'NG)@$b$oY'], playlistState: ''}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['B&BFzE', 'VaQweBSp33FEzE'], playlistState: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['0Mcu3RTsUSi', 'J(pp3Dp'], playlistState: '&FAyBx5g!5!p'}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['YOGZ1qtUA', 'uM1se1O7iSzv)r8D'], playlistState: 'is4J04SPU('}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['GVgs27n322cX5Q', 'oVatd'], playlistState: 8253956115398658}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['nv^EmGBAL9Aj', 'kX(K%G$48utn#(8N(pW'], playlistState: 4199870395056130}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['BLug]T6', '2mseFXzB4iy3AM$'], playlistState: -99340156665857}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['36#2Y6yoYI&*YQZ', 'JQ$P%]NnfN^oz'], playlistState: 7374578183569407}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['aUN4oaHAhMby*]', 'Z3JD[]!oqd3YPmTeD6'], trackMedia: ''}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['^N5@Q*#ylQt!)A)K*', 'AAa%z#taHwb9V'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['%MVbd*(t(*$&', 'JatULZWDRf'], trackMedia: '[*869rQ47Q'}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['a6Uko^YZ', 'g2BmyX4JKhps'], trackMedia: 'eA)q@QU*2yTH'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['rpdpsHATh!', 'DLp]B6PuMDKu9BifuIV'], trackMedia: 1413031716192258}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['6N7Ok4', 'fE(m(!FL'], trackMedia: -583424087687166}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['7axfnDlzdldDxz7nMs', '1NBWQMsKd*ZoTF'], trackMedia: 7296152307236863}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['qlEaepNAR4Y5nj9r%#rz', 'bjB]n74Nxz'], trackMedia: 4902038605398015}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['l@oHefPpX%mDMO', 'lz!tp]G7'], trackTag: ''}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['rp1pqJ!@A4z)2', 'ShY]q8tSHdSB%*fuU9[4'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['qX%)!B4[iq!cBJU0L', 'Kcf3ybcdhbq)%FCo'], trackTag: 'WT9mAlfjin[ZiP'}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['NMPIa2u', '&7g4#uhmP7lV*Yrn1^HM'], trackTag: 'qM2gW#qyDU'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['rFpQ2VckOo', 'V1Z[gV9'], trackTag: -1929421468467198}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['GuAWKOSIXfY^1kr', 'mS#LrGedFPljNe'], trackTag: -8384421497405438}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['uL#a[PAF0ldCwF', 'Ig5j)Mwj^q@'], trackTag: -7049704328134657}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['S@gmPXF$LgUPjo1O7aSi', 'I]Yaq6w^'], trackTag: 7964424002338815}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['E!eBPXDiILAS', 'tU%w(vcUsJ3zcoo'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['$RQuRA#05XGm!1bmfK', 'tB&ZH$Aw[*6kMutBz'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: [')n)FKax5oIILNCFQSE%t', '!fPPu5tHSTH'], trackRawTag: 'v7jCcuVRVtafJm'}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['b@HaX8d^^r3*95#@6uy]', 'w)rDESs(S'], trackRawTag: 'B[@xQO6Ds6EsI4RGvS*'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['Ps2%0q]O4qtQ%Ga8', 'bL6f]Pd4VmHohhCcr*'], trackRawTag: -6757421364019198}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['xkk9u]Hp11$jBccDHH', 'Hy6FZS3d6!$BcSpx]n('], trackRawTag: -6112209264443390}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['f7XOX2', 'jjbEs'], trackRawTag: -1855124091699201}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['!Wd5SuhmZw]dqeu', '9^nrURNm$Sz7#V'], trackRawTag: 8203866394853375}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['jhxHj)', '0)0swLhDkDG'], trackState: ''}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['y)ueKJk(NHTeBL#', 'N8BFOK(&F'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['C)g0d0N7nj5Fi0rZ]j', 'Eu@Hyg6IrlIZ0V'], trackState: '1ZW%g4!u@'}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['*[x%vJw0Df[@', 'b%S#^B3s%d%4v'], trackState: 'lCUFbVkz('}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['A]#mD@3M^&)Z', '1mFfsHKd75u'], trackState: -5156620308840446}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['W6bI1KeghpqV$iq8I(4', 'r7Oji%KW!'], trackState: 2792410920779778}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/ids').query({ids: ['cf1IdUhuKu9gReOIZjd', 'sSiO#2ffNDf0n)z'], trackState: -3144024118525953}).expect(400);
+						return get('/api/v1/playlist/ids').query({ids: ['2I56z50WqZxienqTEeH', '$8CoxkV8%'], trackState: 290743130259455}).expect(400);
 					});
 			});
 		});
@@ -7207,7 +7237,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({offset: 'wnJE4IgnNTR(%'}).expect(400);
+						return get('/api/v1/playlist/search').query({offset: '2LBFckpn0SRZ68oKet'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({offset: ''}).expect(400);
@@ -7216,13 +7246,13 @@ describe('Server', () => {
 						return get('/api/v1/playlist/search').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/playlist/search').query({offset: 1.22}).expect(400);
+						return get('/api/v1/playlist/search').query({offset: 44.85}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/playlist/search').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({amount: 'dkDsD*7nh1Xp58MUlGpA'}).expect(400);
+						return get('/api/v1/playlist/search').query({amount: ']&LrmUFnmjzt2mX$iG(S'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({amount: ''}).expect(400);
@@ -7231,7 +7261,7 @@ describe('Server', () => {
 						return get('/api/v1/playlist/search').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/playlist/search').query({amount: 51.07}).expect(400);
+						return get('/api/v1/playlist/search').query({amount: 76.25}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/playlist/search').query({amount: 0}).expect(400);
@@ -7243,13 +7273,13 @@ describe('Server', () => {
 						return get('/api/v1/playlist/search').query({isPublic: ''}).expect(400);
 					});
 					it('should respond with 400 with "isPublic" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({isPublic: 'r!K6EM[e#v]'}).expect(400);
+						return get('/api/v1/playlist/search').query({isPublic: 'MEwUYPC@H2['}).expect(400);
 					});
 					it('should respond with 400 with "isPublic" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/search').query({isPublic: 162704408969218}).expect(400);
+						return get('/api/v1/playlist/search').query({isPublic: -2215437966245886}).expect(400);
 					});
 					it('should respond with 400 with "isPublic" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/search').query({isPublic: -2277303019110401}).expect(400);
+						return get('/api/v1/playlist/search').query({isPublic: -5757280645545985}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({sortField: ''}).expect(400);
@@ -7273,104 +7303,104 @@ describe('Server', () => {
 						return get('/api/v1/playlist/search').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({sortDescending: '@G2X[3wuOAVZMl'}).expect(400);
+						return get('/api/v1/playlist/search').query({sortDescending: 'LKNX1LATJm'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/search').query({sortDescending: -5673132417351678}).expect(400);
+						return get('/api/v1/playlist/search').query({sortDescending: 8268412379725826}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/search').query({sortDescending: 8865609693528063}).expect(400);
+						return get('/api/v1/playlist/search').query({sortDescending: 2594003816022015}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({playlistTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({playlistTracks: '8yC@Ea'}).expect(400);
+						return get('/api/v1/playlist/search').query({playlistTracks: 'u6b*(G'}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/search').query({playlistTracks: -8936738160377854}).expect(400);
+						return get('/api/v1/playlist/search').query({playlistTracks: 7122698878582786}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/search').query({playlistTracks: -1787019705450497}).expect(400);
+						return get('/api/v1/playlist/search').query({playlistTracks: 5781216078856191}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({playlistTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({playlistTrackIDs: '42Sz!)hhiXAC'}).expect(400);
+						return get('/api/v1/playlist/search').query({playlistTrackIDs: '#jv^Ka[IaLM'}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/search').query({playlistTrackIDs: 1514196374126594}).expect(400);
+						return get('/api/v1/playlist/search').query({playlistTrackIDs: -2997929778348030}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/search').query({playlistTrackIDs: -2678524695543809}).expect(400);
+						return get('/api/v1/playlist/search').query({playlistTrackIDs: 1880851734331391}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({playlistState: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({playlistState: 'Cv2V6YRSOfQbr3qcYFyY'}).expect(400);
+						return get('/api/v1/playlist/search').query({playlistState: 'V]wQHM'}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/search').query({playlistState: -7789225642557438}).expect(400);
+						return get('/api/v1/playlist/search').query({playlistState: 3926408736800770}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/search').query({playlistState: -6458480449814529}).expect(400);
+						return get('/api/v1/playlist/search').query({playlistState: 2688167039729663}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({trackMedia: 'UjgckcHWusR$CW'}).expect(400);
+						return get('/api/v1/playlist/search').query({trackMedia: 'jmsqt%SB6nigaz(HS9O['}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/search').query({trackMedia: 503569396531202}).expect(400);
+						return get('/api/v1/playlist/search').query({trackMedia: 1100909497024514}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/search').query({trackMedia: 1819977501900799}).expect(400);
+						return get('/api/v1/playlist/search').query({trackMedia: 3434998392684543}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({trackTag: 'p8LqdZNFbAb'}).expect(400);
+						return get('/api/v1/playlist/search').query({trackTag: '8eox2AJCxIIS7cLt'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/search').query({trackTag: 1008266490413058}).expect(400);
+						return get('/api/v1/playlist/search').query({trackTag: -7885962671554558}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/search').query({trackTag: 3735645587505151}).expect(400);
+						return get('/api/v1/playlist/search').query({trackTag: 2217671642841087}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({trackRawTag: '32g6$tmDGeX[2i762E'}).expect(400);
+						return get('/api/v1/playlist/search').query({trackRawTag: 'W8Ag9D*ht[do3aui'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/search').query({trackRawTag: 24407896489986}).expect(400);
+						return get('/api/v1/playlist/search').query({trackRawTag: 5641214846042114}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/search').query({trackRawTag: 923134475632639}).expect(400);
+						return get('/api/v1/playlist/search').query({trackRawTag: 444041246277631}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/playlist/search').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/playlist/search').query({trackState: '5PcbdZd^0nC'}).expect(400);
+						return get('/api/v1/playlist/search').query({trackState: 'wYVTj)y'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/search').query({trackState: 6388977242210306}).expect(400);
+						return get('/api/v1/playlist/search').query({trackState: 1957787110211586}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/search').query({trackState: 8204313084035071}).expect(400);
+						return get('/api/v1/playlist/search').query({trackState: -750738594594817}).expect(400);
 					});
 			});
 		});
 		describe('/playlist/state', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/playlist/state').query({id: 'XBdJHnQlyVSKrWg4u#fD'}).expect(401);
+						return getNotLoggedIn('/api/v1/playlist/state').query({id: 'ZE78yN9Y[X)%Xb'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7382,7 +7412,7 @@ describe('Server', () => {
 		describe('/playlist/states', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/playlist/states').query({ids: ['og55*(DSEM^g%wv6', 'u)qHfy1RNnKdSI@RUAl3']}).expect(401);
+						return getNotLoggedIn('/api/v1/playlist/states').query({ids: ['I@9QAMzQjS', 'vZ07^H!I4jHdCvN']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7397,7 +7427,7 @@ describe('Server', () => {
 		describe('/playlist/tracks', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/playlist/tracks').query({ids: ['bY$@xH&0U&x*UFlAox8', 'mf*D93n8T4nFQfiSBx']}).expect(401);
+						return getNotLoggedIn('/api/v1/playlist/tracks').query({ids: ['[[JUHvLF$D@!k', 'I)N6E!3erJHC8U1INbpG']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7408,89 +7438,89 @@ describe('Server', () => {
 						return get('/api/v1/playlist/tracks').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['HFinW9yv2lQkG', 'lGzTP(3LjDUREELJQrC'], trackMedia: ''}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['jE#TC0tYYXk@', 'AeGyMyX5i#B[f(&3'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['PQqZnqno8dxyF[', 'kB#AnP3D0BW4g'], trackMedia: 'K07O%m7gef7A'}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['*rtpL26', '7muQHA@pJ**'], trackMedia: '9J5[y]lO*08y5hB&x'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['!GwWw', 'EFh@)'], trackMedia: -2884735520997374}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['9aFR2]CJ^05Co1', 'pfHViBtdoh(&E'], trackMedia: -1134192695967742}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['#moBOoMgb0AQYeD1', 'hDU&Z!^ft'], trackMedia: -6048623645163521}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['rkm1Wi#vv', '&b[aMwJleRzqWz'], trackMedia: -7912561114611713}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['aZS5I[', '#Yj135^FgHkmfKG'], trackTag: ''}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['WjwywBBh4uWs9m#o[', 'iWhJmI$ZXVl[ZpIA$vj'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['UaW$k^V1G]7Xy03fJ2@V', 'WWNw&KKeDaJeXx(('], trackTag: 'Xds(dGQe4'}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['3fdjpr1j7qGgAthU5u', '&NRqOuNn'], trackTag: 'Mccp*'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['aNHmY3mJSplUlzGah', 'Odu1ua(PMb'], trackTag: -2852004430872574}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['zGi*8LT@wbk', 'B#j97H4s5t&YldT5'], trackTag: -4795472459857918}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['vsYu*s0#', 'N&qKY['], trackTag: 3162143646023679}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['e(iSy]', 'P4zXnXJUX'], trackTag: 6059078866436095}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['06c!Qs#Y', 'Q$4(r'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['aKcl*RA51RMrAiT(', '8Ej^r01Z9O4hq'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['Bp&G7#pZGEKysm3', 'U7X#kUi'], trackRawTag: 'gg269M!VD!3sy*N9Zi'}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['Pqj@7P8DmcGgBHw9a(', '8e$MJBPJo'], trackRawTag: '83ME0&IO9$'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['VvFl*%p[%7#b)u8P', '^xEp6'], trackRawTag: -2773050831405054}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['nOd6fplmqv2', 'NNTrT2'], trackRawTag: 2142613113143298}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['pausV', 'mo&LR%9)N'], trackRawTag: 73981226909695}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['Vy5Uf', 'xk@mxrqF2y'], trackRawTag: -935703563206657}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['Vzx*2aWb', 'H2G(prSx41Ig'], trackState: ''}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['RS$dU*5VE9m)6', 'NVr%^'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['HF6d@SGjf(6z', 'wwiQtq'], trackState: 'Y!8!o4R)8Le'}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['fL8EOXqM', 'CFICiFcz]rkgvbd@'], trackState: 'v*41Hbcxq0&8(FPW'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['A5jgwM*Bp', '2R*gYo6M!s3&'], trackState: 703703182999554}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['PSQn&0JI]dv7I$', 'th]G&CoN*EPt'], trackState: 338699074142210}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['U$]g#whfdiKd9', '7S#]ZTnN'], trackState: -4482075109359617}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['OY2S$A1NW@5c*', '$fBghTF]'], trackState: 3799699400163327}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['Lkzhg@ax', ']KqwbYL'], offset: 'gi1O)RKzX'}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['XuP4(v2iltv', '#^kc6om^6(j^&]'], offset: 'bi@j0KDqjUcmw'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['eHmuVp4aMK0ZTejv', '$rOW&0YSO'], offset: ''}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['xAWT#@BhY4p10$%H]Nn', 'C)rU7#YKChm3$@'], offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['HvhnJcYqvU^e@!0', 'v]H8qKPW'], offset: true}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['md7Dki[Cw%ebG7u', 'lcHNKLpg'], offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['!SPn!Kp!#JdwA78o', 'RE2uG5[vCQi&SflaX'], offset: 26.37}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['hKtbX)', 'tUK5$W1^mLqP]WKsY9@e'], offset: 1.48}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['%^kVe2FjMsSEnA', 'BEB4A'], offset: -1}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['TKjqELjNGNW9GUns7F', '%jk2Pk*6Vwf0o[nB'], offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['D0Lh5', 'n06GTq$d'], amount: 'v)F!(()WGvQy!hFU7PQF'}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['Xlz0r9X97n)', '*(0R077%R'], amount: '0Ly9KnHvPXx6SNv9BlG'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['ObQ^]rPE90E7', ')y]lhD4#Nq@'], amount: ''}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['VNzJ8q@ZHsz$G', '!w4CAYCDxED)PWFu'], amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['vbLCxv$sKW@Er', 'ChB9vN[OU66V)BB'], amount: true}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['J9I2YY', ')h0YW'], amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['I%9CMbnyWxlQLoTb', 'q3z[J#'], amount: 49.85}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['R@(hD^oYcuIv', 'iQL7zYO5Ee01('], amount: 71.83}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/playlist/tracks').query({ids: ['37P2gEio]%50nIZ', 'ja*m1gzU[v!Zelv*vPb'], amount: 0}).expect(400);
+						return get('/api/v1/playlist/tracks').query({ids: ['*Zv1Y3^UXwf#', 'PJG%ZuX2%fvH$hBPQb'], amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/playlist/list', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/playlist/list').query({list: 'frequent'}).expect(401);
+						return getNotLoggedIn('/api/v1/playlist/list').query({list: 'recent'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7501,170 +7531,175 @@ describe('Server', () => {
 						return get('/api/v1/playlist/list').query({list: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'avghighest', offset: 'HvU4QFBeG'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', offset: 't#0jo'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', offset: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/playlist/list').query({list: 'recent', offset: true}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'random', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/playlist/list').query({list: 'recent', offset: 18.21}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', offset: 29.23}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', offset: -1}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'avghighest', amount: 'JMX(Z'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', amount: '([fM&ot$(YzOJxBHqQXU'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', amount: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', amount: true}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', amount: 14.27}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', amount: 53.95}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', amount: 0}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', amount: 0}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value empty string', async () => {
 						return get('/api/v1/playlist/list').query({list: 'frequent', playlistTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'random', playlistTracks: 'Dj3My'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', playlistTracks: 'we2z['}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', playlistTracks: 2974553995214850}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', playlistTracks: -5880111257616382}).expect(400);
 					});
 					it('should respond with 400 with "playlistTracks" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', playlistTracks: -2046775141597185}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'faved', playlistTracks: 448127022661631}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', playlistTrackIDs: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'random', playlistTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'avghighest', playlistTrackIDs: 'j]V**[Z*7c'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'random', playlistTrackIDs: 'N@M[1'}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'random', playlistTrackIDs: -5585902185218046}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'faved', playlistTrackIDs: -3143720299921406}).expect(400);
 					});
 					it('should respond with 400 with "playlistTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'avghighest', playlistTrackIDs: -2915643703689217}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', playlistTrackIDs: 4062259865190399}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'random', playlistState: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', playlistState: ''}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'recent', playlistState: '2(rZvDaWSpVmY&wCG'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', playlistState: 'KD3LvK!tt4m'}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', playlistState: 2074726507741186}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', playlistState: 7995088823123970}).expect(400);
 					});
 					it('should respond with 400 with "playlistState" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', playlistState: -3124049345511425}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', playlistState: -836824234721281}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', trackMedia: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', trackMedia: 'b%PjhGYk7DX'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'highest', trackMedia: '[cnc9T62'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', trackMedia: 2959763751043074}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'faved', trackMedia: 1245765653495810}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'avghighest', trackMedia: -6232101036752897}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', trackMedia: -3576238841004033}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/playlist/list').query({list: 'highest', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', trackTag: '&wG*(&nYN^*NtldZoSbF'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'highest', trackTag: '[(kmcfD07Y'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', trackTag: 7292240808378370}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', trackTag: 1102791577698306}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', trackTag: -1624171884838913}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', trackTag: 3419271057113087}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', trackRawTag: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', trackRawTag: 'WYlq#q![wI$)VrTFuh'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', trackRawTag: 'LebiTqXs9Wd'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'avghighest', trackRawTag: -5651591310868478}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'random', trackRawTag: 8874772129644546}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', trackRawTag: -4182811871281153}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'faved', trackRawTag: -8654431117639681}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', trackState: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', trackState: '8L3mUH]izkJXm'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'random', trackState: 'iBQM&A6H8dvRudpv'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'recent', trackState: -7699351883218942}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'random', trackState: 2879252965883906}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', trackState: -2509908633190401}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', trackState: 507451904360447}).expect(400);
 					});
 					it('should respond with 400 with "name" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'recent', name: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', name: ''}).expect(400);
 					});
 					it('should respond with 400 with "isPublic" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', isPublic: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', isPublic: ''}).expect(400);
 					});
 					it('should respond with 400 with "isPublic" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', isPublic: 'd7VRVuMJaQwWjmJjYI'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', isPublic: '4bIwVPLO]vu7l'}).expect(400);
 					});
 					it('should respond with 400 with "isPublic" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', isPublic: 4434448447700994}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'highest', isPublic: -621120717848574}).expect(400);
 					});
 					it('should respond with 400 with "isPublic" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'faved', isPublic: -1474143669190657}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', isPublic: 4854939553628159}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', sortField: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', sortField: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value invalid enum', async () => {
-						return get('/api/v1/playlist/list').query({list: 'avghighest', sortField: 'invalid'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'recent', sortField: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', id: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'faved', id: ''}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value null', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', ids: null}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', ids: [null, '']}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "query" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', query: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', query: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value empty string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', sortDescending: ''}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/playlist/list').query({list: 'frequent', sortDescending: 'bjlLG%xeRtbuf]TD'}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', sortDescending: '#i!A)'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/playlist/list').query({list: 'highest', sortDescending: 5834160807608322}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'avghighest', sortDescending: -8315478694952958}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/playlist/list').query({list: 'recent', sortDescending: 4643181975044095}).expect(400);
+						return get('/api/v1/playlist/list').query({list: 'frequent', sortDescending: -1283518076289025}).expect(400);
 					});
 			});
 		});
 		describe('/user/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/user/id').query({id: 'cm(dTVm4jKMbj'}).expect(401);
+						return getNotLoggedIn('/api/v1/user/id').query({id: 'nt1bkd[J2$K4P'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/user/id').query({id: 'nt1bkd[J2$K4P'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7676,7 +7711,12 @@ describe('Server', () => {
 		describe('/user/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/user/ids').query({ids: ['m4T%HQ0%XQV', '0RXMnRLb!WfZi']}).expect(401);
+						return getNotLoggedIn('/api/v1/user/ids').query({ids: ['OuqljJT8WfWzt', 'fk@zLOH(e]XvJ']}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/user/ids').query({ids: ['OuqljJT8WfWzt', 'fk@zLOH(e]XvJ']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7694,9 +7734,14 @@ describe('Server', () => {
 						return getNotLoggedIn('/api/v1/user/search').query({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/user/search').query({}).expect(401);
+					});
+			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/user/search').query({offset: 'LjI9t$)ca('}).expect(400);
+						return get('/api/v1/user/search').query({offset: 'gL&[R0Q@E]hK3NHO0*l$'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/user/search').query({offset: ''}).expect(400);
@@ -7705,13 +7750,13 @@ describe('Server', () => {
 						return get('/api/v1/user/search').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/user/search').query({offset: 59.35}).expect(400);
+						return get('/api/v1/user/search').query({offset: 60.66}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/user/search').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/user/search').query({amount: '@ApolL8Na[!Pc*H(zzL'}).expect(400);
+						return get('/api/v1/user/search').query({amount: 'aNeiL5(*84FT18WAHqg'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/user/search').query({amount: ''}).expect(400);
@@ -7720,7 +7765,7 @@ describe('Server', () => {
 						return get('/api/v1/user/search').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/user/search').query({amount: 18.35}).expect(400);
+						return get('/api/v1/user/search').query({amount: 36.97}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/user/search').query({amount: 0}).expect(400);
@@ -7732,13 +7777,13 @@ describe('Server', () => {
 						return get('/api/v1/user/search').query({isAdmin: ''}).expect(400);
 					});
 					it('should respond with 400 with "isAdmin" set to value string', async () => {
-						return get('/api/v1/user/search').query({isAdmin: 'IE%Xzodv3@P^%'}).expect(400);
+						return get('/api/v1/user/search').query({isAdmin: '7myln[2lN%'}).expect(400);
 					});
 					it('should respond with 400 with "isAdmin" set to value integer > 1', async () => {
-						return get('/api/v1/user/search').query({isAdmin: 4824585417523202}).expect(400);
+						return get('/api/v1/user/search').query({isAdmin: 2343952120283138}).expect(400);
 					});
 					it('should respond with 400 with "isAdmin" set to value integer < 0', async () => {
-						return get('/api/v1/user/search').query({isAdmin: 8940643954982911}).expect(400);
+						return get('/api/v1/user/search').query({isAdmin: 8011950696955903}).expect(400);
 					});
 					it('should respond with 400 with "sortField" set to value empty string', async () => {
 						return get('/api/v1/user/search').query({sortField: ''}).expect(400);
@@ -7762,13 +7807,13 @@ describe('Server', () => {
 						return get('/api/v1/user/search').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/user/search').query({sortDescending: 'QRuwbbyRiFpLy!iF'}).expect(400);
+						return get('/api/v1/user/search').query({sortDescending: 'GtPkEn3O40UT0%[A[I'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/user/search').query({sortDescending: 5011851800739842}).expect(400);
+						return get('/api/v1/user/search').query({sortDescending: 1561848537153538}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/user/search').query({sortDescending: 8306061962379263}).expect(400);
+						return get('/api/v1/user/search').query({sortDescending: -8559084190040065}).expect(400);
 					});
 			});
 		});
@@ -7783,80 +7828,80 @@ describe('Server', () => {
 						return get('/api/v1/playqueue/get').query({playQueueTracks: ''}).expect(400);
 					});
 					it('should respond with 400 with "playQueueTracks" set to value string', async () => {
-						return get('/api/v1/playqueue/get').query({playQueueTracks: 'gMrI]8B7x'}).expect(400);
+						return get('/api/v1/playqueue/get').query({playQueueTracks: 'vNjkmWSbnY'}).expect(400);
 					});
 					it('should respond with 400 with "playQueueTracks" set to value integer > 1', async () => {
-						return get('/api/v1/playqueue/get').query({playQueueTracks: -965143068409854}).expect(400);
+						return get('/api/v1/playqueue/get').query({playQueueTracks: -1310229413232638}).expect(400);
 					});
 					it('should respond with 400 with "playQueueTracks" set to value integer < 0', async () => {
-						return get('/api/v1/playqueue/get').query({playQueueTracks: 1017757084680191}).expect(400);
+						return get('/api/v1/playqueue/get').query({playQueueTracks: 2689865372139519}).expect(400);
 					});
 					it('should respond with 400 with "playQueueTrackIDs" set to value empty string', async () => {
 						return get('/api/v1/playqueue/get').query({playQueueTrackIDs: ''}).expect(400);
 					});
 					it('should respond with 400 with "playQueueTrackIDs" set to value string', async () => {
-						return get('/api/v1/playqueue/get').query({playQueueTrackIDs: '[7$02YBRZ@Do6@@'}).expect(400);
+						return get('/api/v1/playqueue/get').query({playQueueTrackIDs: 'gSCU)d'}).expect(400);
 					});
 					it('should respond with 400 with "playQueueTrackIDs" set to value integer > 1', async () => {
-						return get('/api/v1/playqueue/get').query({playQueueTrackIDs: -654305409368062}).expect(400);
+						return get('/api/v1/playqueue/get').query({playQueueTrackIDs: 4568890248003586}).expect(400);
 					});
 					it('should respond with 400 with "playQueueTrackIDs" set to value integer < 0', async () => {
-						return get('/api/v1/playqueue/get').query({playQueueTrackIDs: -1228793893093377}).expect(400);
+						return get('/api/v1/playqueue/get').query({playQueueTrackIDs: 8204932649844735}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/playqueue/get').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/playqueue/get').query({trackMedia: 'jGD#losB@aZp'}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackMedia: 'ujXFOW'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/playqueue/get').query({trackMedia: -7787012996202494}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackMedia: -4117185916043262}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/playqueue/get').query({trackMedia: -7599355972288513}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackMedia: 395043504390143}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/playqueue/get').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/playqueue/get').query({trackTag: 'aJATC^(1NYeWZsXLrXR'}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackTag: 'y[$byP%9nCGkkA#Z'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/playqueue/get').query({trackTag: -4148969005383678}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackTag: 5383779669508098}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/playqueue/get').query({trackTag: 3156125113384959}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackTag: 3826974153768959}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/playqueue/get').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/playqueue/get').query({trackRawTag: '5T63%GPkq)KWHkn]*vG'}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackRawTag: 'T39#T8pXBd4[)[0%'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/playqueue/get').query({trackRawTag: -5092393267232766}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackRawTag: -8349179701100542}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/playqueue/get').query({trackRawTag: 8390096365551615}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackRawTag: -805175136616449}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/playqueue/get').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/playqueue/get').query({trackState: '5BSw6YTIvXUqGbxpcv$'}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackState: 'e#6ruxSEW]5'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/playqueue/get').query({trackState: 5656108693716994}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackState: -171322801913854}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/playqueue/get').query({trackState: 4723810485927935}).expect(400);
+						return get('/api/v1/playqueue/get').query({trackState: 874041829228543}).expect(400);
 					});
 			});
 		});
 		describe('/bookmark/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/bookmark/id').query({id: '#W@N)gq[^l2bVkdVH'}).expect(401);
+						return getNotLoggedIn('/api/v1/bookmark/id').query({id: 'Rn!ru#oceONv1(H'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7864,71 +7909,71 @@ describe('Server', () => {
 						return get('/api/v1/bookmark/id').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value empty string', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'ecSuiL*gU0W8k95jo#Oc', bookmarkTrack: ''}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'RL37zcMEbaRF2', bookmarkTrack: ''}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value string', async () => {
-						return get('/api/v1/bookmark/id').query({id: '^Ug)o', bookmarkTrack: 'khkHc1n7X3*C!AdY'}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: '*1Eh%br8MJoB*)d', bookmarkTrack: '6t@r43I5YvSLYk5$DOl'}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/id').query({id: '[zMcV9*Uv6Iqy', bookmarkTrack: 2035559283294210}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: ']r(1y4Ndf5R&4FWI', bookmarkTrack: -6377130292150270}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'SZYVZ', bookmarkTrack: 7220764335931391}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: '[u[[9DP@^gbL@', bookmarkTrack: -2225234631458817}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/bookmark/id').query({id: '#o4W9G9^fE(D0x9', trackMedia: ''}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'FE6RvhA^ifY', trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'p7SHsjC', trackMedia: 'q^irC07rcrR'}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'V!#ad9', trackMedia: 'iW$^*z6!'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'WTNSmhqRLXYN%*oNHb', trackMedia: -8844371214467070}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: '@gXC$faUGC', trackMedia: -4650614466281470}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'XnfFpfATdzY5(a&FNrp', trackMedia: 7058945050935295}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'BFJkCRYvsh[UJgBgxS0', trackMedia: 6952271925477375}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'PDC7yZsc1NuU([0m2', trackTag: ''}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'Y7eZl5!pJ[5*WxL', trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'v7SR3Zn3cs#wFKl', trackTag: 'pNZBbE7f!qOqnv'}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: '$MK&DCG0nFZK', trackTag: 'ioYcj(6sKZy![^kZ'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/id').query({id: '*1HeOEuV', trackTag: -7397612818792446}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: '4#d*30', trackTag: 2003845467078658}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'Vd4N7CL$MZ#^4Xudrhx', trackTag: 2141710175961087}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: '6TVThDO)YG', trackTag: 7496749606240255}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'habvJ(jw1^Fnl*XTk', trackRawTag: ''}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'Rj1lPwtDI%noCc#g@hE', trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'zon[VtGVb4U9Y', trackRawTag: 'zk^iiA3'}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'cxV@L#^cV3rf)', trackRawTag: 'QGu2WYN$rdI5!P%p@h'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/id').query({id: '$4GEUd5^', trackRawTag: 1338159304540162}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'zUQt$er]ky(jx)ykm]', trackRawTag: -1064487633289214}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'n%Gsa&%w', trackRawTag: -2038363565588481}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'KZ5xeT%6&RNQ', trackRawTag: 7764768576241663}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'mvhmds6EPr(0goZi(]W', trackState: ''}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'hrO@a6EFeuR', trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'BcJ@^JaNBEP', trackState: 'x6!Pcy81'}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: '8A!b)#OGZOWVq', trackState: 'yhBeFP4nRak$#Qmrr5e'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/id').query({id: 'o93S*Gd!QrU', trackState: -4918312991457278}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'Qb8X]@N!GL@axLr4*KH!', trackState: 5794051865444354}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/id').query({id: '(3Y7chrlaPKUzTv', trackState: 3974775152050175}).expect(400);
+						return get('/api/v1/bookmark/id').query({id: 'fYJiH(qWcBUjz', trackState: -7291586274656257}).expect(400);
 					});
 			});
 		});
 		describe('/bookmark/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/bookmark/ids').query({ids: ['BVg2%TmY@X@HRIFwTm2', 'EL3tf$LwtS']}).expect(401);
+						return getNotLoggedIn('/api/v1/bookmark/ids').query({ids: ['I7MGEHFR5qWT%L', 'tTF@aJUgj#[cfao)Rsdl']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -7939,94 +7984,94 @@ describe('Server', () => {
 						return get('/api/v1/bookmark/ids').query({ids: [null, '']}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value empty string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['hhtfVW', '89f^b'], bookmarkTrack: ''}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['Q1xqQKY(SxUH6[Kp', '(q%kmaV4'], bookmarkTrack: ''}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['NLHYh', 'kF7eDAIdT%%capj!Tn&'], bookmarkTrack: 'OkJtC]9FhFh1nyGe%'}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['5Yl7J1cz4i*#hX%*32', 'ChD54CkhGHYnybecs9W'], bookmarkTrack: '*mlBxameq)T'}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['TPx4Z#6e4Am', 'TCimF0ro'], bookmarkTrack: -3290487368712190}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['aZtBU', '$6$Sr'], bookmarkTrack: -1525782413311998}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['ymmkY0k&e$zllIj%Ho(N', 's[g8ujN11hTN'], bookmarkTrack: -4881750735978497}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['r0B$DKzAlrja$Pbi', 'YhGNJmyj#X90Hk]g%I'], bookmarkTrack: 5747669167243263}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['ZG@VOnF@V4g%ni', 'E)Smw]is96PdeF'], trackMedia: ''}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['l7qBp', 'J*3iTVvYqtM3'], trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['9hRPs!1c84s', '#7KNUbD1oOuY'], trackMedia: '%mchk8'}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['1X([BzESS5aZx^#SJ', '[%jNmx('], trackMedia: 'FY([W9fI0G'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['TMnnrT3oUX(T2je', 'BtOV!ymXtsS'], trackMedia: -3524613673844734}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['Fommn]Pj5@#m%jG', '1c6K2Ins*n(8BGo%W'], trackMedia: 5416964763680770}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['QR64cxknzmtwcyzQL*en', 'd5IktR*bKR^6vu**4'], trackMedia: 1938365029023743}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['b(GR*rBiJuyS8OcHu8', '(rxw58EzLGfP^^Q9e8!B'], trackMedia: 8570573160447999}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['E]^$aOF]N$', '6dUHm)O#b%'], trackTag: ''}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['hqjE(Kew', '9rR79IB'], trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['RPjacG^0UF#ol', 'aMvJQZZQ0RPP'], trackTag: '5c&94Iq3A50UFp*#('}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['[Ib6c', '^ZOo&aHO084b9T3wh@'], trackTag: 'mMl]nLeot'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['OIKhCW', 'Or17O@gQ071hw'], trackTag: -1699196390342654}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['puo1OT[ehMpv', 'uBvtmIXNDHW3[!@e('], trackTag: -6691219006554110}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['slc6TTe[k9%*pURZN6', 'M(v68SvxE)8vzkZ'], trackTag: 1339509555855359}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['^jsk[I', '0FO0fi5'], trackTag: -4097406148804609}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['Q#74CeUzhzBpJNAwUouU', 'Z]oskvf0%'], trackRawTag: ''}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['%]%IJG2J]ZfY', 'L!bP8q2OCXFAgSB1ZlU8'], trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['wMR@25ueO44lcF$!%Er', 'F(gpVIu)'], trackRawTag: '[cwJR^sZBad3x'}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: [']Ot6t($eWJwwF!q4PH', '%YlR0S6^s#Q0KazD!16'], trackRawTag: '46)SoMC'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['6)p[Ls', 'Xm)ZUzi!hYmpVU)0'], trackRawTag: 1754252909215746}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['gUXc2OxTP#wQ%Ih', '!UQaVg5x)dM3$'], trackRawTag: 820859459600386}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['U5Q#52q', 'qID4Zl7crn4TEy*Yc#Ia'], trackRawTag: -2206432321601537}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['&ewm&', 'm(mYK%8rIYG$gU'], trackRawTag: 7824767524536319}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['l6rbDUM1Ss', 'JL*X8hcAI'], trackState: ''}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['IJkscr6!YbTI[eg', 'hQz0[]D26V(jc9'], trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['%QZ40UjP', 'fEb]&9UU(sFK6kPLgzqT'], trackState: '#YNGx4[HDe#9#'}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['9!EELUcl#dUX', 'VqHYk7aV'], trackState: 'woje9bfDZgWdgRMK#'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['LiT83(aP', 'PF@6kEpOlAZq(%5Y%NU'], trackState: -3904534044737534}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['6uKpQdQ^', '^bBovw'], trackState: 2191406437236738}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['7(3@7LL', '(3fU]'], trackState: -7421472024821761}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['WVdKv*KQ#IB', '6!VdwEJQaM@1pjc%8@'], trackState: 4888177705746431}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['I^Ek6ITz0b(]jK$3sA', '45YOifOc]FcV2l!D#'], offset: 'f[S08S9A]I'}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['Mxz#IQrj@5GNc8vEZA(k', 'ey7)am!V^1vttUFp*'], offset: 'wEf1W5C3'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['[sbCVa^V1Q%w3OAW', 's4CK16OsvF'], offset: ''}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['&IJ#aao', 'M]Pcr1KXvJ7F0I'], offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['YwmMzp', '6#uX4(^yeJ'], offset: true}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['gSMzm#h%XAZFBL', 'LTLKvGwu&!*P'], offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['zu04$bCwq6!WD5Uhq]', 'r4zbFRo'], offset: 28.93}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['Rk7UOThPIRhvCifKLvTk', ']h&^j(n[&Q0agxDO7Iyk'], offset: 95.51}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['1&DRrpI2EU@oB', 'apc2sVuBWMH9GKgq'], offset: -1}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['wHxmf]g&6CzP]LBM', 'd)[^F[Qnc7!sR'], offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['kPQ^JPw', 'xDaSx]#6fi(XI'], amount: 'J*Ct&eyY2Jm1@1MgPMr'}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['w%b&k2tj0', '^%UGDPCh'], amount: 'ldm@Q8H7'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['H^!^rb%CjS6', '0NWq$[LfS3tFIw'], amount: ''}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['8e(eLT', 'pEPw7y!SQCcoEV'], amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['b)1V1tR@S', 'MGq3HHm5T]A%Jga#S'], amount: true}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['zGiRhgy', 'ldD3m'], amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['#%9J3S$L^guvg', 'R^*D3E#G3'], amount: 79.3}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['NkHAFogZssB&I]$qo', 'oM[D8XNV'], amount: 34.47}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/bookmark/ids').query({ids: ['GdI]LtpLVuPM)O@my', 't3sxD%2@)K'], amount: 0}).expect(400);
+						return get('/api/v1/bookmark/ids').query({ids: ['Ar2S99W*U', 'et8(8Y3H'], amount: 0}).expect(400);
 					});
 			});
 		});
@@ -8041,64 +8086,64 @@ describe('Server', () => {
 						return get('/api/v1/bookmark/list').query({bookmarkTrack: ''}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value string', async () => {
-						return get('/api/v1/bookmark/list').query({bookmarkTrack: 'ZBeipOr3'}).expect(400);
+						return get('/api/v1/bookmark/list').query({bookmarkTrack: '!iHhEwoQmzvzsj3('}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/list').query({bookmarkTrack: 1711028471595010}).expect(400);
+						return get('/api/v1/bookmark/list').query({bookmarkTrack: -182411379867646}).expect(400);
 					});
 					it('should respond with 400 with "bookmarkTrack" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/list').query({bookmarkTrack: 2516154279002111}).expect(400);
+						return get('/api/v1/bookmark/list').query({bookmarkTrack: 6092176819748863}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value empty string', async () => {
 						return get('/api/v1/bookmark/list').query({trackMedia: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value string', async () => {
-						return get('/api/v1/bookmark/list').query({trackMedia: '@WvYtZmAVbw'}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackMedia: '$a81$x1hLtpRKXj'}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/list').query({trackMedia: -8136695962664958}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackMedia: -589488359211006}).expect(400);
 					});
 					it('should respond with 400 with "trackMedia" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/list').query({trackMedia: -4312851585957889}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackMedia: 3659202232844287}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value empty string', async () => {
 						return get('/api/v1/bookmark/list').query({trackTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value string', async () => {
-						return get('/api/v1/bookmark/list').query({trackTag: '(@KDSn2CKp$U(QTeu^Y'}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackTag: '2s55M'}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/list').query({trackTag: -513922503278590}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackTag: -8642930545786878}).expect(400);
 					});
 					it('should respond with 400 with "trackTag" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/list').query({trackTag: 3522656028590079}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackTag: -3858768328654849}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value empty string', async () => {
 						return get('/api/v1/bookmark/list').query({trackRawTag: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value string', async () => {
-						return get('/api/v1/bookmark/list').query({trackRawTag: 'CDBIc1ih9&&GZlip'}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackRawTag: 'xbg$[d'}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/list').query({trackRawTag: -977241018204158}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackRawTag: 7054291369984002}).expect(400);
 					});
 					it('should respond with 400 with "trackRawTag" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/list').query({trackRawTag: -8000654853275649}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackRawTag: 1775927482646527}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value empty string', async () => {
 						return get('/api/v1/bookmark/list').query({trackState: ''}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value string', async () => {
-						return get('/api/v1/bookmark/list').query({trackState: 'vqe9K7MQPDCIRSoU('}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackState: '&2(R1(tIf6Io$z0TlD^'}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer > 1', async () => {
-						return get('/api/v1/bookmark/list').query({trackState: 3735852500910082}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackState: 6307258212286466}).expect(400);
 					});
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
-						return get('/api/v1/bookmark/list').query({trackState: -7514019946561537}).expect(400);
+						return get('/api/v1/bookmark/list').query({trackState: 3667509899165695}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/bookmark/list').query({offset: 'M&7m)ObU7s(y'}).expect(400);
+						return get('/api/v1/bookmark/list').query({offset: 'ogI1WVu)iN5qHVwu'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/bookmark/list').query({offset: ''}).expect(400);
@@ -8107,13 +8152,13 @@ describe('Server', () => {
 						return get('/api/v1/bookmark/list').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/bookmark/list').query({offset: 50.88}).expect(400);
+						return get('/api/v1/bookmark/list').query({offset: 47.38}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/bookmark/list').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/bookmark/list').query({amount: 'e44NdP@z#Z^J'}).expect(400);
+						return get('/api/v1/bookmark/list').query({amount: 'ClV&NP6)ye@PzG('}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/bookmark/list').query({amount: ''}).expect(400);
@@ -8122,7 +8167,7 @@ describe('Server', () => {
 						return get('/api/v1/bookmark/list').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/bookmark/list').query({amount: 87.48}).expect(400);
+						return get('/api/v1/bookmark/list').query({amount: 42.5}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/bookmark/list').query({amount: 0}).expect(400);
@@ -8132,7 +8177,7 @@ describe('Server', () => {
 		describe('/bookmark/byTrack/list', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/bookmark/byTrack/list').query({trackID: 'gdov)0faPlLYx)K*LNQ'}).expect(401);
+						return getNotLoggedIn('/api/v1/bookmark/byTrack/list').query({trackID: 'k$3CIdpxSr]2#kXxS3'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8140,41 +8185,41 @@ describe('Server', () => {
 						return get('/api/v1/bookmark/byTrack/list').query({trackID: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: ']prUtmAA5[P4w', offset: 'Sl7Tsb'}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: '2kR]NT&b', offset: 'lP7RH$'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'twXJ0w', offset: ''}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: '&cTA39', offset: ''}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value boolean', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'Zqz2fZQS^gLXCYaaLw', offset: true}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: '4fg]nM', offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'vW60)MZ', offset: 85.13}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: '*%1uqx^N!iT*)SfE', offset: 31.81}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: '(4Me1vu', offset: -1}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: '@WTJJ', offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'gkt%v', amount: '7FFs%'}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'yOyETKI', amount: '!BAF^yG3ty'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: '*8cFE', amount: ''}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'WJbuZch9@oQuF8E', amount: ''}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value boolean', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'f3viflchG$Oj&XZJhd5!', amount: true}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'u4I&6d', amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'grhX6F6VlQ9pO2jj4', amount: 62.4}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'NS2SRBO]p', amount: 41.44}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
-						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'f1X$cES^', amount: 0}).expect(400);
+						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'aYsOj&ORZNXt1dJxyVU', amount: 0}).expect(400);
 					});
 			});
 		});
 		describe('/root/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/root/id').query({id: 'y^wMr[pR'}).expect(401);
+						return getNotLoggedIn('/api/v1/root/id').query({id: 'R$@J&KLh'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8186,7 +8231,7 @@ describe('Server', () => {
 		describe('/root/ids', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/root/ids').query({ids: ['fTD]m@AlUbxFCxJ7H', 'bPC)Jb0#[45iYuCT[']}).expect(401);
+						return getNotLoggedIn('/api/v1/root/ids').query({ids: ['43uZKyq', 'Mx2Kbz']}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8206,7 +8251,7 @@ describe('Server', () => {
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
-						return get('/api/v1/root/search').query({offset: 'StzVpo$hkeuc@rLW&'}).expect(400);
+						return get('/api/v1/root/search').query({offset: 'sp&(!ulG'}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value empty string', async () => {
 						return get('/api/v1/root/search').query({offset: ''}).expect(400);
@@ -8215,13 +8260,13 @@ describe('Server', () => {
 						return get('/api/v1/root/search').query({offset: true}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value float', async () => {
-						return get('/api/v1/root/search').query({offset: 37.56}).expect(400);
+						return get('/api/v1/root/search').query({offset: 6.27}).expect(400);
 					});
 					it('should respond with 400 with "offset" set to value less than minimum 0', async () => {
 						return get('/api/v1/root/search').query({offset: -1}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value string', async () => {
-						return get('/api/v1/root/search').query({amount: 'b4vto3tB'}).expect(400);
+						return get('/api/v1/root/search').query({amount: 'Z1[!7IWb'}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value empty string', async () => {
 						return get('/api/v1/root/search').query({amount: ''}).expect(400);
@@ -8230,7 +8275,7 @@ describe('Server', () => {
 						return get('/api/v1/root/search').query({amount: true}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value float', async () => {
-						return get('/api/v1/root/search').query({amount: 39.98}).expect(400);
+						return get('/api/v1/root/search').query({amount: 3.81}).expect(400);
 					});
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/root/search').query({amount: 0}).expect(400);
@@ -8257,20 +8302,25 @@ describe('Server', () => {
 						return get('/api/v1/root/search').query({sortDescending: ''}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value string', async () => {
-						return get('/api/v1/root/search').query({sortDescending: 'v34$10OUY@J'}).expect(400);
+						return get('/api/v1/root/search').query({sortDescending: 'F28tI7hgk9aHsW9Prn'}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer > 1', async () => {
-						return get('/api/v1/root/search').query({sortDescending: 4617475207462914}).expect(400);
+						return get('/api/v1/root/search').query({sortDescending: 4028327593508866}).expect(400);
 					});
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
-						return get('/api/v1/root/search').query({sortDescending: 3868861371777023}).expect(400);
+						return get('/api/v1/root/search').query({sortDescending: -1223798393143297}).expect(400);
 					});
 			});
 		});
 		describe('/root/scan', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/root/scan').query({id: 'i]*on'}).expect(401);
+						return getNotLoggedIn('/api/v1/root/scan').query({id: '1J[RW'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/root/scan').query({id: '1J[RW'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8285,11 +8335,16 @@ describe('Server', () => {
 						return getNotLoggedIn('/api/v1/root/scanAll').query({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/root/scanAll').query({}).expect(401);
+					});
+			});
 		});
 		describe('/root/status', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/root/status').query({id: 'BS1!PRvWAIfn3R2gS'}).expect(401);
+						return getNotLoggedIn('/api/v1/root/status').query({id: 'QEwVlW!rQHDV'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8304,11 +8359,21 @@ describe('Server', () => {
 						return getNotLoggedIn('/api/v1/admin/settings').query({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/admin/settings').query({}).expect(401);
+					});
+			});
 		});
 		describe('/admin/queue/id', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/admin/queue/id').query({id: 'LNj)y]!@8i64qgBx'}).expect(401);
+						return getNotLoggedIn('/api/v1/admin/queue/id').query({id: 'PO0xM@y@SPTEVq56'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/admin/queue/id').query({id: 'PO0xM@y@SPTEVq56'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8320,7 +8385,12 @@ describe('Server', () => {
 		describe('/folder/download', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/download').query({id: '6Mf@k(&$wImVw#'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/download').query({id: ']f]Qvk([iPs5O'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/folder/download').query({id: ']f]Qvk([iPs5O'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8328,14 +8398,14 @@ describe('Server', () => {
 						return get('/api/v1/folder/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/folder/download').query({id: 'TclhqL9$S&8U[', format: 'invalid'}).expect(400);
+						return get('/api/v1/folder/download').query({id: '[m]oDZLCw6FB22nKNnb', format: 'invalid'}).expect(400);
 					});
 			});
 		});
 		describe('/folder/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/image').query({id: 'dOeD1K&YwD7Ip69!*s$r'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/image').query({id: '1Ib@duLgzad6'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8343,35 +8413,35 @@ describe('Server', () => {
 						return get('/api/v1/folder/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/folder/image').query({id: '3yuer7%', format: ''}).expect(400);
+						return get('/api/v1/folder/image').query({id: '&HpZSl@7ek$KB)', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/folder/image').query({id: '5&cpq0CmP7[6pHOD', format: 'invalid'}).expect(400);
+						return get('/api/v1/folder/image').query({id: '7eRr%uGa[nNXp5P8', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/folder/image').query({id: 'WnC&&mMH27FTgyJf!', size: 'Eh3#zBsEbdb^a92(DWse'}).expect(400);
+						return get('/api/v1/folder/image').query({id: 'T3xP#&', size: 'b(pGJ1hL5kamJh'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/folder/image').query({id: 'SPF^z&s3^aRtoO2ED^', size: ''}).expect(400);
+						return get('/api/v1/folder/image').query({id: '$ddk7', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/folder/image').query({id: '^w3Yf2hrJLCj', size: true}).expect(400);
+						return get('/api/v1/folder/image').query({id: 'k%j3CITk#J3#^z&', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/folder/image').query({id: 'PbnoRYj]65[6', size: 124.6}).expect(400);
+						return get('/api/v1/folder/image').query({id: 'vOBUv1ei', size: 560.92}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/folder/image').query({id: '^D34rJO%QiyTh', size: 15}).expect(400);
+						return get('/api/v1/folder/image').query({id: 'cX(CsdbL4p', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/folder/image').query({id: 'eQ5KoR]0h*', size: 1025}).expect(400);
+						return get('/api/v1/folder/image').query({id: 'v^1ODi2b4&', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/folder/artwork/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/folder/artwork/image').query({id: 'sTCsbwAur%QjwcL@'}).expect(401);
+						return getNotLoggedIn('/api/v1/folder/artwork/image').query({id: 'LOv13Wv7kNWmiZ1'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8379,35 +8449,40 @@ describe('Server', () => {
 						return get('/api/v1/folder/artwork/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/folder/artwork/image').query({id: 'RL]PD[rC', format: ''}).expect(400);
+						return get('/api/v1/folder/artwork/image').query({id: 'KuVAzg*]wbnrHy6v&sG5', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/folder/artwork/image').query({id: '9GQtrqtTjUPtw', format: 'invalid'}).expect(400);
+						return get('/api/v1/folder/artwork/image').query({id: 'DfLV6!LnFGIHyBFf', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/folder/artwork/image').query({id: 'dgL7^9wXw', size: 'ck$)jo11Xekz1gep'}).expect(400);
+						return get('/api/v1/folder/artwork/image').query({id: 'HEx93C]sQ', size: '*clo(L1I)54n5!nzxYn'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/folder/artwork/image').query({id: 'OT^3T9wmF', size: ''}).expect(400);
+						return get('/api/v1/folder/artwork/image').query({id: 'E0nHCo5', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/folder/artwork/image').query({id: 'AB)rr#k%d*!sZ7W3(z4g', size: true}).expect(400);
+						return get('/api/v1/folder/artwork/image').query({id: 'd%2AgIO!0!R#f%GQ@N', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/folder/artwork/image').query({id: 'AoBNrL!EqWXP@m7n', size: 475.88}).expect(400);
+						return get('/api/v1/folder/artwork/image').query({id: 'rMHHyZxTm6vxtKSj', size: 379.61}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/folder/artwork/image').query({id: 'EZUon(z(kCzIZ6', size: 15}).expect(400);
+						return get('/api/v1/folder/artwork/image').query({id: 'lPIS2W', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/folder/artwork/image').query({id: 'Dw@Nz@%', size: 1025}).expect(400);
+						return get('/api/v1/folder/artwork/image').query({id: 'eo45NxWD$', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/track/stream', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/stream').query({id: 'FY28D'}).expect(401);
+						return getNotLoggedIn('/api/v1/track/stream').query({id: 'u[dA$URshbX'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/track/stream').query({id: 'u[dA$URshbX'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8415,29 +8490,34 @@ describe('Server', () => {
 						return get('/api/v1/track/stream').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value string', async () => {
-						return get('/api/v1/track/stream').query({id: 'B#5DPXAjrdII8)i]', maxBitRate: 'YFwO!$vYAFRl(4'}).expect(400);
+						return get('/api/v1/track/stream').query({id: 'M%uXNV0E$tanY7D', maxBitRate: '@7hJPbkCh0Q'}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value empty string', async () => {
-						return get('/api/v1/track/stream').query({id: 'EwzRyS0Kr3HMGi', maxBitRate: ''}).expect(400);
+						return get('/api/v1/track/stream').query({id: 'tI]M4', maxBitRate: ''}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value boolean', async () => {
-						return get('/api/v1/track/stream').query({id: 'OU0We', maxBitRate: true}).expect(400);
+						return get('/api/v1/track/stream').query({id: 'tv6Yb@CD)]Q6$!C7W', maxBitRate: true}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value float', async () => {
-						return get('/api/v1/track/stream').query({id: 'gc2!@[)Ff#', maxBitRate: 98.61}).expect(400);
+						return get('/api/v1/track/stream').query({id: 's4jG0R8Rn9Jt', maxBitRate: 87.93}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value less than minimum 10', async () => {
-						return get('/api/v1/track/stream').query({id: 'vu^BVU12mUXjHPR1BD', maxBitRate: 9}).expect(400);
+						return get('/api/v1/track/stream').query({id: '8kBlQuQYdSYAi^', maxBitRate: 9}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/track/stream').query({id: 'HNK4@m&As', format: 'invalid'}).expect(400);
+						return get('/api/v1/track/stream').query({id: 'UOjv0OK2tn', format: 'invalid'}).expect(400);
 					});
 			});
 		});
 		describe('/track/download', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/download').query({id: 'U&bF4Rrj@]t(xeZvVb7'}).expect(401);
+						return getNotLoggedIn('/api/v1/track/download').query({id: '$Ch*1KT#0NH'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/track/download').query({id: '$Ch*1KT#0NH'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8445,14 +8525,14 @@ describe('Server', () => {
 						return get('/api/v1/track/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/track/download').query({id: '%DLFJpj@A', format: 'invalid'}).expect(400);
+						return get('/api/v1/track/download').query({id: '!]R(b[a%p2x]*mPk', format: 'invalid'}).expect(400);
 					});
 			});
 		});
 		describe('/track/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/track/image').query({id: 'u0FMVeq&'}).expect(401);
+						return getNotLoggedIn('/api/v1/track/image').query({id: '2pg)lUMO^B%QDZP'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8460,35 +8540,40 @@ describe('Server', () => {
 						return get('/api/v1/track/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/track/image').query({id: '3(Y3ytHQ2C%', format: ''}).expect(400);
+						return get('/api/v1/track/image').query({id: '[@!FMS7Mo', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/track/image').query({id: 'FlfrSh3z7N@*VbeF]PQ', format: 'invalid'}).expect(400);
+						return get('/api/v1/track/image').query({id: 'TvxphUg)ZexPt', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/track/image').query({id: 'c0AHPn@Fi0YwUJWB[4dT', size: 'RmhgKDR#4'}).expect(400);
+						return get('/api/v1/track/image').query({id: '%ZXjXs6G[DO', size: 'CcT8cpFy6Mhq'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/track/image').query({id: '8#c&K7ZY', size: ''}).expect(400);
+						return get('/api/v1/track/image').query({id: 'I8iG![', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/track/image').query({id: '8R63N(!huOM]*', size: true}).expect(400);
+						return get('/api/v1/track/image').query({id: 'YZNja@rtv&mN(', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/track/image').query({id: 'ZJUVL8gdz', size: 328.75}).expect(400);
+						return get('/api/v1/track/image').query({id: '^X8cbz[D]F71Ua', size: 237.77}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/track/image').query({id: 'npyUdmLzstv7', size: 15}).expect(400);
+						return get('/api/v1/track/image').query({id: 'XIRdQ7G)DfPcUa&q9]go', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/track/image').query({id: 'gGF*$cVI9Pl', size: 1025}).expect(400);
+						return get('/api/v1/track/image').query({id: 'HTkN(3V00uNVdU&R[', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/episode/stream', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/stream').query({id: '4Tq@]m[cPo)wXvXC*T'}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/stream').query({id: 'wNZhwXu(5p8F'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/episode/stream').query({id: 'wNZhwXu(5p8F'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8496,29 +8581,34 @@ describe('Server', () => {
 						return get('/api/v1/episode/stream').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value string', async () => {
-						return get('/api/v1/episode/stream').query({id: 'n7fR@qNXZ$w^C#[', maxBitRate: '4KoMk'}).expect(400);
+						return get('/api/v1/episode/stream').query({id: 't5Djx1pA%8I#J2n', maxBitRate: 'oiw^b(VQPent7*[M'}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value empty string', async () => {
-						return get('/api/v1/episode/stream').query({id: 'fS!GcRgW0Rsq)', maxBitRate: ''}).expect(400);
+						return get('/api/v1/episode/stream').query({id: 'Xp#8u7(', maxBitRate: ''}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value boolean', async () => {
-						return get('/api/v1/episode/stream').query({id: 'jeMf$JkV', maxBitRate: true}).expect(400);
+						return get('/api/v1/episode/stream').query({id: 'kD5#V(0', maxBitRate: true}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value float', async () => {
-						return get('/api/v1/episode/stream').query({id: 'Xll0!Aog)BbuzQW', maxBitRate: 50.91}).expect(400);
+						return get('/api/v1/episode/stream').query({id: '@q#(Am8nT8hQItTKC', maxBitRate: 96.76}).expect(400);
 					});
 					it('should respond with 400 with "maxBitRate" set to value less than minimum 10', async () => {
-						return get('/api/v1/episode/stream').query({id: 'oFLN]jKOQhh&2yZ[', maxBitRate: 9}).expect(400);
+						return get('/api/v1/episode/stream').query({id: 'BQ*uWhM(71qHfY', maxBitRate: 9}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/episode/stream').query({id: 'cXhC9]PXKe!^6vV3', format: 'invalid'}).expect(400);
+						return get('/api/v1/episode/stream').query({id: 'pGj@3M', format: 'invalid'}).expect(400);
 					});
 			});
 		});
 		describe('/episode/download', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/download').query({id: '2R2bhDVEfT$Lf8wL^!'}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/download').query({id: '(VPQuCulR]^8u'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/episode/download').query({id: '(VPQuCulR]^8u'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8526,14 +8616,14 @@ describe('Server', () => {
 						return get('/api/v1/episode/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/episode/download').query({id: 'vdqh9', format: 'invalid'}).expect(400);
+						return get('/api/v1/episode/download').query({id: 'nZds]', format: 'invalid'}).expect(400);
 					});
 			});
 		});
 		describe('/episode/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/episode/image').query({id: '[HdCv##zlCuJZg'}).expect(401);
+						return getNotLoggedIn('/api/v1/episode/image').query({id: 'QE&f$(s3tQkkmyOZZR'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8541,35 +8631,35 @@ describe('Server', () => {
 						return get('/api/v1/episode/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/episode/image').query({id: '1BJQK6YghtDiHs$90vVt', format: ''}).expect(400);
+						return get('/api/v1/episode/image').query({id: 'e$r2TJs3', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/episode/image').query({id: 'OloJ3s)1rYgOx#Q', format: 'invalid'}).expect(400);
+						return get('/api/v1/episode/image').query({id: 'G@[YA[bD*(j(LwVvLKwL', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/episode/image').query({id: '(HC*z', size: 'wsk*s&V3Ly*'}).expect(400);
+						return get('/api/v1/episode/image').query({id: 'LxZj%QjBcBy(PZ%00&Xp', size: 'cXmYN'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/episode/image').query({id: 'I)e@$[XhcFgNJZqDcoJ', size: ''}).expect(400);
+						return get('/api/v1/episode/image').query({id: 'A%c6!50^iwpr5Gbh', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/episode/image').query({id: 'UHx&l9FTWWcPtW', size: true}).expect(400);
+						return get('/api/v1/episode/image').query({id: 'qk4P1FI$tGJL$L', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/episode/image').query({id: 'YKAMl1xI', size: 101.3}).expect(400);
+						return get('/api/v1/episode/image').query({id: '!YH8jShO%tw', size: 831.87}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/episode/image').query({id: '7wS%Sd3', size: 15}).expect(400);
+						return get('/api/v1/episode/image').query({id: 'q@JLbuGItmosai#', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/episode/image').query({id: 'KWg7BLI@AnSLeD(t', size: 1025}).expect(400);
+						return get('/api/v1/episode/image').query({id: 'fC0h[tu!aJ', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/podcast/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/podcast/image').query({id: 'n*toYCO'}).expect(401);
+						return getNotLoggedIn('/api/v1/podcast/image').query({id: 'YOt1d4vD7ZjAq'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8577,35 +8667,40 @@ describe('Server', () => {
 						return get('/api/v1/podcast/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/podcast/image').query({id: 'M)8Vog!', format: ''}).expect(400);
+						return get('/api/v1/podcast/image').query({id: 'tD)BF^4vOdOGlMS2', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/podcast/image').query({id: 'rrxJ#S', format: 'invalid'}).expect(400);
+						return get('/api/v1/podcast/image').query({id: '85sG(!w72gHl', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/podcast/image').query({id: '[pLvEQ^btfm', size: '3aujfc('}).expect(400);
+						return get('/api/v1/podcast/image').query({id: ']Lw&UPLHM3JZe', size: 'tSETdb&bovp5f8hv&3)'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/podcast/image').query({id: '6T!%Y', size: ''}).expect(400);
+						return get('/api/v1/podcast/image').query({id: 'dqJ)V#Tzatp8PuEN4W@', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/podcast/image').query({id: '3tyMS', size: true}).expect(400);
+						return get('/api/v1/podcast/image').query({id: '%tbXR%4%pr*GvC2Lc', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/podcast/image').query({id: 'lQn&8*dSeM!(j$!', size: 1010.4}).expect(400);
+						return get('/api/v1/podcast/image').query({id: '3QG*^&cAz#**md5W1q', size: 681.25}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/podcast/image').query({id: 'V[ftY6niT&uoY', size: 15}).expect(400);
+						return get('/api/v1/podcast/image').query({id: 'P60WY2)zb4', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/podcast/image').query({id: 'nY*waRu6Bi2qkkeXc6', size: 1025}).expect(400);
+						return get('/api/v1/podcast/image').query({id: 'jbabnj1&ym[U02oB4uW', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/podcast/download', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/podcast/download').query({id: 'yaKkW*pMkk^]'}).expect(401);
+						return getNotLoggedIn('/api/v1/podcast/download').query({id: ')eJ&qf$VZkLW(^cFv'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/podcast/download').query({id: ')eJ&qf$VZkLW(^cFv'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8613,14 +8708,14 @@ describe('Server', () => {
 						return get('/api/v1/podcast/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/podcast/download').query({id: 'NxkHahtvE#nRPDC]Fqp[', format: 'invalid'}).expect(400);
+						return get('/api/v1/podcast/download').query({id: '(n]A$[L9XH', format: 'invalid'}).expect(400);
 					});
 			});
 		});
 		describe('/artist/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/image').query({id: 'tIKVMYl)x9^3X%'}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/image').query({id: ']ZyZr7wKZ4'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8628,35 +8723,40 @@ describe('Server', () => {
 						return get('/api/v1/artist/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/artist/image').query({id: 'P0QIQWi88V75', format: ''}).expect(400);
+						return get('/api/v1/artist/image').query({id: '@]m!pgUz^D3)eZTVoid', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/artist/image').query({id: 'p4)!ssBk(HScK)m7P', format: 'invalid'}).expect(400);
+						return get('/api/v1/artist/image').query({id: 'QhFzf5', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/artist/image').query({id: 'ZXIwiBW', size: 'nb@mL8T9'}).expect(400);
+						return get('/api/v1/artist/image').query({id: '6dvwHve', size: 'jQ]Bk0K]vVLL#2u$Nf('}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/artist/image').query({id: 'SJ*pk', size: ''}).expect(400);
+						return get('/api/v1/artist/image').query({id: 'T&EzH%sj5PE7o', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/artist/image').query({id: 'WaYaZoC', size: true}).expect(400);
+						return get('/api/v1/artist/image').query({id: 'smI*(OiZco', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/artist/image').query({id: 'ccwt!s8ArYY3u!l6l', size: 331.38}).expect(400);
+						return get('/api/v1/artist/image').query({id: 's)$VX', size: 335.78}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/artist/image').query({id: '@@!%T&EE', size: 15}).expect(400);
+						return get('/api/v1/artist/image').query({id: 'I&$CXc', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/artist/image').query({id: '57rk9nNHx%KJahM', size: 1025}).expect(400);
+						return get('/api/v1/artist/image').query({id: 'X]XcJR*Q7', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/artist/download', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/artist/download').query({id: '[[bfc2x@ZO'}).expect(401);
+						return getNotLoggedIn('/api/v1/artist/download').query({id: '(0[Ip'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/artist/download').query({id: '(0[Ip'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8664,14 +8764,14 @@ describe('Server', () => {
 						return get('/api/v1/artist/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/artist/download').query({id: 'Pepr)Kk!PtNqL#HHtIy', format: 'invalid'}).expect(400);
+						return get('/api/v1/artist/download').query({id: 'diEvJcmzl', format: 'invalid'}).expect(400);
 					});
 			});
 		});
 		describe('/album/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/album/image').query({id: 'DL%TO'}).expect(401);
+						return getNotLoggedIn('/api/v1/album/image').query({id: 'ItMPrP](u)iM0@0ZR'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8679,35 +8779,40 @@ describe('Server', () => {
 						return get('/api/v1/album/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/album/image').query({id: '5I#gZ(ZB2PlnrtGlu', format: ''}).expect(400);
+						return get('/api/v1/album/image').query({id: 'htXv%mQuEka', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/album/image').query({id: 'pv$6gIZ', format: 'invalid'}).expect(400);
+						return get('/api/v1/album/image').query({id: '6leVNYSt*^B', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/album/image').query({id: ']&]2D', size: 'A06o(yPD8'}).expect(400);
+						return get('/api/v1/album/image').query({id: ']lQDXX4ZPnj(ZB@', size: 'AML$LL!qO43'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/album/image').query({id: 'a0icb2mE)qz[Pmk', size: ''}).expect(400);
+						return get('/api/v1/album/image').query({id: 'ITte58q^', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/album/image').query({id: 'murmsb@96GxM', size: true}).expect(400);
+						return get('/api/v1/album/image').query({id: 'UJb7a', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/album/image').query({id: '0n)EGC(&#tqi32OM&!J', size: 620.32}).expect(400);
+						return get('/api/v1/album/image').query({id: '8XnhUZAtm', size: 667.84}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/album/image').query({id: 'PdsM*5*3$^]3hQjTx', size: 15}).expect(400);
+						return get('/api/v1/album/image').query({id: 'nv0EuIx#JUNO', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/album/image').query({id: '(%g5vT5', size: 1025}).expect(400);
+						return get('/api/v1/album/image').query({id: 'KEFMuK!hL[Gd', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/album/download', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/album/download').query({id: ')txCmMlv3'}).expect(401);
+						return getNotLoggedIn('/api/v1/album/download').query({id: '@2!mS312x^m'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/album/download').query({id: '@2!mS312x^m'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8715,14 +8820,14 @@ describe('Server', () => {
 						return get('/api/v1/album/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/album/download').query({id: 'S6Ep!', format: 'invalid'}).expect(400);
+						return get('/api/v1/album/download').query({id: 'e8v^O9', format: 'invalid'}).expect(400);
 					});
 			});
 		});
 		describe('/playlist/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/playlist/image').query({id: 'aroy6KlzlX^D'}).expect(401);
+						return getNotLoggedIn('/api/v1/playlist/image').query({id: 'qS6EvpX&R2^R1'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8730,35 +8835,40 @@ describe('Server', () => {
 						return get('/api/v1/playlist/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/playlist/image').query({id: 'mHS^[3[Yr$I', format: ''}).expect(400);
+						return get('/api/v1/playlist/image').query({id: 'z*TrdAecDo', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/playlist/image').query({id: 'd6MBZzf&q0[Bu2n', format: 'invalid'}).expect(400);
+						return get('/api/v1/playlist/image').query({id: 'x$t7Ru', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/playlist/image').query({id: '3Qly6H(', size: 'NZI*oI!UVh'}).expect(400);
+						return get('/api/v1/playlist/image').query({id: '!Ae@k!Xa', size: 'Yu3(a)d'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/playlist/image').query({id: 'iiYFP6n(', size: ''}).expect(400);
+						return get('/api/v1/playlist/image').query({id: 'Od9AB&)dg@F7d![n', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/playlist/image').query({id: '1Y#*w3GopA]&hPV', size: true}).expect(400);
+						return get('/api/v1/playlist/image').query({id: 'TuBnlGQF', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/playlist/image').query({id: '4Va&P0tjB!(8H', size: 158.6}).expect(400);
+						return get('/api/v1/playlist/image').query({id: 'u86urdUCg)kXbcBY(', size: 740.95}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/playlist/image').query({id: 'sr@(08DNm7Opf*xK', size: 15}).expect(400);
+						return get('/api/v1/playlist/image').query({id: '0RJseBYoYun(hB', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/playlist/image').query({id: '%7er##kgbV*[P', size: 1025}).expect(400);
+						return get('/api/v1/playlist/image').query({id: '^U&gYvVVCR[)hX7', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/playlist/download', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/playlist/download').query({id: 'qwc^f6&Uewu'}).expect(401);
+						return getNotLoggedIn('/api/v1/playlist/download').query({id: 's1&uNzrTkHV!*Zh5'}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/playlist/download').query({id: 's1&uNzrTkHV!*Zh5'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8766,14 +8876,14 @@ describe('Server', () => {
 						return get('/api/v1/playlist/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/playlist/download').query({id: 'JkRA&]SyqOQmxd7', format: 'invalid'}).expect(400);
+						return get('/api/v1/playlist/download').query({id: 'H$k1X', format: 'invalid'}).expect(400);
 					});
 			});
 		});
 		describe('/user/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/user/image').query({id: '#!Bl$jtSvCpUk9*hIPW'}).expect(401);
+						return getNotLoggedIn('/api/v1/user/image').query({id: 'lkN4sCh*'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8781,35 +8891,35 @@ describe('Server', () => {
 						return get('/api/v1/user/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/user/image').query({id: 'lx5Sxx', format: ''}).expect(400);
+						return get('/api/v1/user/image').query({id: 'rtE2CrjrGyEoCJIKpyi', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/user/image').query({id: '**ex^!acDpxw', format: 'invalid'}).expect(400);
+						return get('/api/v1/user/image').query({id: 'MU@bDR44S(qP', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/user/image').query({id: '9r02X6lS', size: 'd#b4jxen#cw4ytm8'}).expect(400);
+						return get('/api/v1/user/image').query({id: '@cQZ1KFY[8N3H9&Ud', size: 'd!KVf17^G]sAl#rkO'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/user/image').query({id: '0Kb7)6OwMkNU8TUDJQ', size: ''}).expect(400);
+						return get('/api/v1/user/image').query({id: 'ga$p^sYfdayxWjuMsf', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/user/image').query({id: '$R%a2gnTz*hjXFO%c@hY', size: true}).expect(400);
+						return get('/api/v1/user/image').query({id: 'rrDInvyTV', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/user/image').query({id: 'zqtiBoUuLU*JDp9Xy', size: 616.75}).expect(400);
+						return get('/api/v1/user/image').query({id: 'a3[vU0', size: 766.15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/user/image').query({id: 'fq6N3G9*3jB1]7k', size: 15}).expect(400);
+						return get('/api/v1/user/image').query({id: 'r6A3hUg*fTsJG6x(7]pO', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/user/image').query({id: 'CTyr#CK', size: 1025}).expect(400);
+						return get('/api/v1/user/image').query({id: 'GN&UtZ*0bcecB5YH3Fkr', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/root/image', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/root/image').query({id: '95LE9vDHgq1k&xP%QS'}).expect(401);
+						return getNotLoggedIn('/api/v1/root/image').query({id: '3kaq8!IqN7RDIlw)4'}).expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
@@ -8817,131 +8927,136 @@ describe('Server', () => {
 						return get('/api/v1/root/image').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/root/image').query({id: '8LbU]7Y^*y8E#dY', format: ''}).expect(400);
+						return get('/api/v1/root/image').query({id: 'VdY2fW', format: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/root/image').query({id: 'kLNiA9hh9lj7@BFn&', format: 'invalid'}).expect(400);
+						return get('/api/v1/root/image').query({id: '$Kwf)S[Re[', format: 'invalid'}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/root/image').query({id: 'zLCfjTj', size: '&N8vyDw2gwVDo(F7ys'}).expect(400);
+						return get('/api/v1/root/image').query({id: 'gxFV85', size: 'VCuNGMWvZ6KB['}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/root/image').query({id: 'Hl2ngY78(ea9]Cuq$(', size: ''}).expect(400);
+						return get('/api/v1/root/image').query({id: 'jAMUUuWRspr^K&#o!klB', size: ''}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/root/image').query({id: 'vh8(G$pt60', size: true}).expect(400);
+						return get('/api/v1/root/image').query({id: 'O!18dbuAF7zDIMM', size: true}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/root/image').query({id: 'x]1hNwP5DEXKbMR^EL', size: 984.46}).expect(400);
+						return get('/api/v1/root/image').query({id: 'RknKuWB6[q4i', size: 143.25}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/root/image').query({id: 'pVghii%i', size: 15}).expect(400);
+						return get('/api/v1/root/image').query({id: '5goX&SvxI[noK(Fhc', size: 15}).expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/root/image').query({id: 'w!4y2N8B3ir', size: 1025}).expect(400);
+						return get('/api/v1/root/image').query({id: 'ubBpe&US%W7Xmm', size: 1025}).expect(400);
 					});
 			});
 		});
 		describe('/image/{id}-{size}.{format}', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/image/P%5DW%5BB%40M-504.bmp').expect(401);
+						return getNotLoggedIn('/api/v1/image/!3iGpe%23seolp)r8N2%5E-776.tiff').expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/image/bS(vt%23TZc*XL%5ERkB-433.').expect(400);
+						return get('/api/v1/image/N8(LRQ-401.').expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/image/8yX%40G5yYu3*-360.invalid').expect(400);
+						return get('/api/v1/image/%24sVs2p-345.invalid').expect(400);
 					});
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/image/HDu%261zStsCK1dMD-uAT*Abw0ZM%5EmI.tiff').expect(400);
+						return get('/api/v1/image/rzG31S%24%24Kk2(%40M%5E%26-Jk%5DdA4Ip%24Ip5SxnB5K.tiff').expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/image/noepo%5DlU%5Edx%257Sa7U%5D-.jpg').expect(400);
+						return get('/api/v1/image/fn048n(-.jpg').expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/image/aZg%5EpNyTm)kc*hk-true.jpeg').expect(400);
+						return get('/api/v1/image/)%26dlD2Lq9F%25IefMz-true.jpeg').expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/image/%5BBgVyAqkj-961.93.png').expect(400);
+						return get('/api/v1/image/rqD(B-702.02.jpeg').expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/image/JWWxuumI-15.tiff').expect(400);
+						return get('/api/v1/image/kZ38Fev0(%25I-15.jpg').expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/image/Q7cRi%40%5B%40oI-1025.png').expect(400);
+						return get('/api/v1/image/%5Bvb7U%23ihj-1025.jpg').expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/image/-535.jpeg').expect(400);
+						return get('/api/v1/image/-683.png').expect(400);
 					});
 			});
 		});
 		describe('/image/{id}-{size}', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/image/QgjE2jJafb-466').expect(401);
+						return getNotLoggedIn('/api/v1/image/(*Pm7p%237Ii8Qk-541').expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "size" set to value string', async () => {
-						return get('/api/v1/image/KIwZMXIC82Wym%25Encjl-qDJuYc%23j(%5EDuvsV)PAT').expect(400);
+						return get('/api/v1/image/%5BLU3Cyo-W!!b4EWtVG').expect(400);
 					});
 					it('should respond with 400 with "size" set to value empty string', async () => {
-						return get('/api/v1/image/OnAXr%25T%24!3W-').expect(400);
+						return get('/api/v1/image/g)AE2GFmY%25%24j1!E-').expect(400);
 					});
 					it('should respond with 400 with "size" set to value boolean', async () => {
-						return get('/api/v1/image/ocACiq-true').expect(400);
+						return get('/api/v1/image/D4itU-true').expect(400);
 					});
 					it('should respond with 400 with "size" set to value float', async () => {
-						return get('/api/v1/image/%5DqAr%23FM-1020.12').expect(400);
+						return get('/api/v1/image/OODvdF%23%40dUg%23)-950.27').expect(400);
 					});
 					it('should respond with 400 with "size" set to value less than minimum 16', async () => {
-						return get('/api/v1/image/MVS7%5E3zl))a*J-15').expect(400);
+						return get('/api/v1/image/hXaeRD%5Bx5n%25-15').expect(400);
 					});
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
-						return get('/api/v1/image/yw%5EnMv!YdF%23QQMZ4XV(5-1025').expect(400);
+						return get('/api/v1/image/p%24%5D682Ch9%5D-1025').expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/image/-155').expect(400);
+						return get('/api/v1/image/-563').expect(400);
 					});
 			});
 		});
 		describe('/image/{id}.{format}', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/image/%232Tz%26VZiZ%5D9Xe.png').expect(401);
+						return getNotLoggedIn('/api/v1/image/1v)qtPw(HDP%23U.jpeg').expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value empty string', async () => {
-						return get('/api/v1/image/0%24g9AHANY93%5Dc.').expect(400);
+						return get('/api/v1/image/8*rE4*gnzCEh)aaZHz.').expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/image/CYtki%24.invalid').expect(400);
+						return get('/api/v1/image/F1)I7X%23y*Na6KlRtie%24.invalid').expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/image/.png').expect(400);
+						return get('/api/v1/image/.jpeg').expect(400);
 					});
 			});
 		});
 		describe('/image/{id}', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/image/68w0P!4sEA46p').expect(401);
+						return getNotLoggedIn('/api/v1/image/inQUJbcx7AgdPr%5En').expect(401);
 					});
 			});
 		});
 		describe('/stream/{id}.{format}', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/stream/tv4(W3X4.mp3').expect(401);
+						return getNotLoggedIn('/api/v1/stream/jbaq%24Fulc8tSY%402YHWHG.mp3').expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/stream/jbaq%24Fulc8tSY%402YHWHG.mp3').expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/stream/Tf8%403cs1(GI3cy%5D9.invalid').expect(400);
+						return get('/api/v1/stream/o4rQjHmzUit2f%5E%25wX.invalid').expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/stream/.mp3').expect(400);
@@ -8951,41 +9066,61 @@ describe('Server', () => {
 		describe('/stream/{id}', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/stream/*U%26tJeVe%245dGl').expect(401);
+						return getNotLoggedIn('/api/v1/stream/UJsOe%40m!%25ffCBng%26pqR7').expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/stream/UJsOe%40m!%25ffCBng%26pqR7').expect(401);
 					});
 			});
 		});
 		describe('/waveform/{id}.{format}', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/waveform/ZTg%5BUmB0%40T%24.json').expect(401);
+						return getNotLoggedIn('/api/v1/waveform/szsw%24S2%25x0*z!jm1%267V.svg').expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/waveform/szsw%24S2%25x0*z!jm1%267V.svg').expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/waveform/XLUGgl9P.invalid').expect(400);
+						return get('/api/v1/waveform/SEb%26ts%5E8%243%5B.invalid').expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
-						return get('/api/v1/waveform/.json').expect(400);
+						return get('/api/v1/waveform/.dat').expect(400);
 					});
 			});
 		});
 		describe('/download/{id}', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/download/%5EAKZ%5D1XiJm').expect(401);
+						return getNotLoggedIn('/api/v1/download/jB6%24jN').expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/download/jB6%24jN').expect(401);
 					});
 			});
 		});
 		describe('/download/{id}.{format}', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
-						return getNotLoggedIn('/api/v1/download/HQep%5BJwA50%24Fce%5E%25NcN.zip').expect(401);
+						return getNotLoggedIn('/api/v1/download/8ZVXZ2nbg7s*6IrD4.tar').expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return getNoRights('/api/v1/download/8ZVXZ2nbg7s*6IrD4.tar').expect(401);
 					});
 			});
 			describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
-						return get('/api/v1/download/w7%5B%23g.invalid').expect(400);
+						return get('/api/v1/download/lOnkIe2%24%5EahbD.invalid').expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/download/.zip').expect(400);
@@ -9040,6 +9175,11 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/radio/create').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/radio/create').send({}).expect(401);
+					});
+			});
 		});
 		describe('/radio/update', () => {
 			describe('should fail without login', () => {
@@ -9047,11 +9187,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/radio/update').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/radio/update').send({}).expect(401);
+					});
+			});
 		});
 		describe('/radio/delete', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/radio/delete').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/radio/delete').send({}).expect(401);
 					});
 			});
 		});
@@ -9075,11 +9225,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/track/rawTag/update').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/track/rawTag/update').send({}).expect(401);
+					});
+			});
 		});
 		describe('/track/name/update', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/track/name/update').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/track/name/update').send({}).expect(401);
 					});
 			});
 		});
@@ -9089,11 +9249,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/track/parent/update').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/track/parent/update').send({}).expect(401);
+					});
+			});
 		});
 		describe('/track/delete', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/track/delete').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/track/delete').send({}).expect(401);
 					});
 			});
 		});
@@ -9103,11 +9273,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/track/fix').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/track/fix').send({}).expect(401);
+					});
+			});
 		});
 		describe('/folder/artworkUpload/create', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/artworkUpload/create').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/folder/artworkUpload/create').send({}).expect(401);
 					});
 			});
 		});
@@ -9117,11 +9297,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/folder/artworkUpload/update').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/folder/artworkUpload/update').send({}).expect(401);
+					});
+			});
 		});
 		describe('/folder/artwork/create', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/artwork/create').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/folder/artwork/create').send({}).expect(401);
 					});
 			});
 		});
@@ -9131,6 +9321,11 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/folder/artwork/delete').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/folder/artwork/delete').send({}).expect(401);
+					});
+			});
 		});
 		describe('/folder/artwork/name/update', () => {
 			describe('should fail without login', () => {
@@ -9138,11 +9333,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/folder/artwork/name/update').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/folder/artwork/name/update').send({}).expect(401);
+					});
+			});
 		});
 		describe('/folder/name/update', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/name/update').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/folder/name/update').send({}).expect(401);
 					});
 			});
 		});
@@ -9166,6 +9371,11 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/folder/parent/update').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/folder/parent/update').send({}).expect(401);
+					});
+			});
 		});
 		describe('/folder/delete', () => {
 			describe('should fail without login', () => {
@@ -9173,11 +9383,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/folder/delete').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/folder/delete').send({}).expect(401);
+					});
+			});
 		});
 		describe('/folder/create', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/create').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/folder/create').send({}).expect(401);
 					});
 			});
 		});
@@ -9229,6 +9449,11 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/podcast/create').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/podcast/create').send({}).expect(401);
+					});
+			});
 		});
 		describe('/podcast/fav/update', () => {
 			describe('should fail without login', () => {
@@ -9248,6 +9473,11 @@ describe('Server', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/podcast/delete').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/podcast/delete').send({}).expect(401);
 					});
 			});
 		});
@@ -9306,11 +9536,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/user/create').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/user/create').send({}).expect(401);
+					});
+			});
 		});
 		describe('/user/update', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/user/update').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/user/update').send({}).expect(401);
 					});
 			});
 		});
@@ -9341,11 +9581,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/user/delete').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/user/delete').send({}).expect(401);
+					});
+			});
 		});
 		describe('/root/create', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/root/create').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/root/create').send({}).expect(401);
 					});
 			});
 		});
@@ -9355,6 +9605,11 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/root/update').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/root/update').send({}).expect(401);
+					});
+			});
 		});
 		describe('/root/delete', () => {
 			describe('should fail without login', () => {
@@ -9362,11 +9617,21 @@ describe('Server', () => {
 						return postNotLoggedIn('/api/v1/root/delete').send({}).expect(401);
 					});
 			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/root/delete').send({}).expect(401);
+					});
+			});
 		});
 		describe('/admin/settings/update', () => {
 			describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/admin/settings/update').send({}).expect(401);
+					});
+			});
+			describe('should fail without required rights', () => {
+					it('should respond with 401 Unauth', async () => {
+						return postNoRights('/api/v1/admin/settings/update').send({}).expect(401);
 					});
 			});
 		});

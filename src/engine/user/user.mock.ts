@@ -33,13 +33,14 @@ export function mockUser(): User {
 
 export const mockUserPass2 = 'second pass';
 export const mockUserSalt2 = 'second salt';
+export const mockUserName2 = 'second name';
 
 export function mockUser2(): User {
 	const hash = hashSalt(mockUserPass2, mockUserSalt2);
 	return {
 		id: '',
 		type: DBObjectType.user,
-		name: 'second name',
+		name: mockUserName2,
 		salt: mockUserSalt2,
 		hash,
 		subsonic_pass: 'second subsonic password',

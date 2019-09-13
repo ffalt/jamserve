@@ -4,6 +4,7 @@ import refParser from 'json-schema-ref-parser';
 import Mustache from 'mustache';
 import path from 'path';
 import {OpenAPIObject, OperationObject, ParameterObject, SchemaObject} from '../../src/model/openapi-spec';
+import {ApiCall, getJamApiCalls} from './utils';
 
 const chance = new Chance();
 const basePath = path.resolve('../../src/model/');
@@ -46,7 +47,7 @@ function generateValidDataSchema(schema: SchemaObject): any {
 			generateValidDataSchema(schema.items as SchemaObject)
 		];
 	}
-	throw Error('TODO: Implement valid value for type ' + type + ' ' + JSON.stringify(schema));
+	throw Error(`TODO: Implement valid value for type ${type} ${JSON.stringify(schema)}`);
 }
 
 function generateValidDataByParameter(param: ParameterObject): { name: string, data: any } {
@@ -66,20 +67,20 @@ function generateInvalidDataBySchema(schema: SchemaObject): Array<{ data: any, i
 		}
 		result.push({data: num, invalid: 'float'});
 		if (schema.minimum !== undefined) {
-			result.push({data: schema.minimum - 1, invalid: 'less than minimum ' + schema.minimum});
+			result.push({data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}`});
 		}
 		if (schema.maximum !== undefined) {
-			result.push({data: schema.maximum + 1, invalid: 'more than minimum ' + schema.maximum});
+			result.push({data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}`});
 		}
 	} else if (type === 'number') {
 		result.push({data: chance.string(), invalid: 'string'});
 		result.push({data: '', invalid: 'empty string'});
 		result.push({data: true, invalid: 'boolean'});
 		if (schema.minimum !== undefined) {
-			result.push({data: schema.minimum - 1, invalid: 'less than minimum ' + schema.minimum});
+			result.push({data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}`});
 		}
 		if (schema.maximum !== undefined) {
-			result.push({data: schema.maximum + 1, invalid: 'more than minimum ' + schema.maximum});
+			result.push({data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}`});
 		}
 	} else if (type === 'string') {
 		if (schema.default === undefined) { // if the default value available, these parameter are always valid to omit
@@ -101,7 +102,7 @@ function generateInvalidDataBySchema(schema: SchemaObject): Array<{ data: any, i
 			result.push({data: array.concat([invalid.data]), invalid: invalid.invalid});
 		}
 	} else {
-		console.error('TODO: mock invalid data for type ' + type + ' ' + JSON.stringify(schema));
+		console.error(`TODO: mock invalid data for type ${type} ${JSON.stringify(schema)}`);
 	}
 	return result;
 }
@@ -119,11 +120,11 @@ function combineData(list: Array<{ name: string, data: any }>): any {
 }
 
 function generateValidRequestMock(params: Array<ParameterObject>, property?: string): RequestMock {
-	const queryData = combineData(params.filter(p => p.in === 'query').map(p => generateValidDataByParameter(p)));
-	const pathData = combineData(params.filter(p => p.in === 'path').map(p => generateValidDataByParameter(p)));
+	const queryData = combineData(params.filter(p => p.in === 'query').map(generateValidDataByParameter));
+	const pathData = combineData(params.filter(p => p.in === 'path').map(generateValidDataByParameter));
 	return {
 		valid: true,
-		message: 'should respond with 200 ok: ' + params.map(p => p.name).join(','),
+		message: `should respond with 200 ok: ${params.map(p => p.name).join(',')}`,
 		property,
 		data: queryData,
 		params: Object.keys(pathData).length > 0 ? pathData : undefined
@@ -136,7 +137,7 @@ function generateInvalidRequestMocks(params: Array<ParameterObject>, property: P
 		const data = combineData(params.map(p => p === property ? invalid : generateValidDataByParameter(p)));
 		return {
 			valid: false,
-			message: 'should respond with 400 with "' + property.name + '" set to value ' + invalid.invalid,
+			message: `should respond with 400 with "${property.name}" set to value ${invalid.invalid}`,
 			property: property.name,
 			data
 		};
@@ -150,34 +151,34 @@ async function generateRequestMock(op: OperationObject): Promise<Array<RequestMo
 	const queryParameters = parameters.filter(p => p.in === 'query');
 	const pathParameters = parameters.filter(p => p.in === 'path');
 	if (queryParameters.length > 0) {
-		const min_required: Array<ParameterObject> = queryParameters.filter(p => p.required);
+		const minRequired: Array<ParameterObject> = queryParameters.filter(p => p.required);
 		const optional: Array<ParameterObject> = queryParameters.filter(p => !p.required);
-		mocks.push(generateValidRequestMock(min_required));
+		mocks.push(generateValidRequestMock(minRequired));
 		for (const item of optional) {
-			mocks.push(generateValidRequestMock(min_required.concat([item]), item.name));
+			mocks.push(generateValidRequestMock(minRequired.concat([item]), item.name));
 		}
 		mocks.push(generateValidRequestMock(queryParameters));
-		for (const item of min_required) {
-			mocks = mocks.concat(generateInvalidRequestMocks(min_required, item));
+		for (const item of minRequired) {
+			mocks = mocks.concat(generateInvalidRequestMocks(minRequired, item));
 		}
 		for (const item of optional) {
-			mocks = mocks.concat(generateInvalidRequestMocks(min_required.concat([item]), item));
+			mocks = mocks.concat(generateInvalidRequestMocks(minRequired.concat([item]), item));
 		}
 	} else if (pathParameters.length === 0) {
 		mocks.push(generateValidRequestMock([]));
 	}
 	if (pathParameters.length > 0) {
-		const min_required: Array<ParameterObject> = pathParameters.filter(p => p.required);
+		const minRequired: Array<ParameterObject> = pathParameters.filter(p => p.required);
 		const optional: Array<ParameterObject> = pathParameters.filter(p => !p.required);
-		mocks.push(generateValidRequestMock(min_required));
+		mocks.push(generateValidRequestMock(minRequired));
 		for (const item of optional) {
-			mocks.push(generateValidRequestMock(min_required.concat([item]), item.name));
+			mocks.push(generateValidRequestMock(minRequired.concat([item]), item.name));
 		}
-		if (pathParameters.length !== min_required.length) {
+		if (pathParameters.length !== minRequired.length) {
 			mocks.push(generateValidRequestMock(pathParameters));
 		}
-		for (const item of min_required) {
-			const paramMocks = generateInvalidRequestMocks(min_required, item);
+		for (const item of minRequired) {
+			const paramMocks = generateInvalidRequestMocks(minRequired, item);
 			paramMocks.forEach(p => {
 				p.params = p.data;
 				p.data = undefined;
@@ -185,7 +186,7 @@ async function generateRequestMock(op: OperationObject): Promise<Array<RequestMo
 			mocks = mocks.concat(paramMocks);
 		}
 		for (const item of optional) {
-			const paramMocks = generateInvalidRequestMocks(min_required.concat([item]), item);
+			const paramMocks = generateInvalidRequestMocks(minRequired.concat([item]), item);
 			paramMocks.forEach(p => {
 				p.params = p.data;
 				p.data = undefined;
@@ -197,44 +198,44 @@ async function generateRequestMock(op: OperationObject): Promise<Array<RequestMo
 }
 
 function formatData(data: any): string {
-	return '{' + Object.keys(data).map(key => {
+	return `{${Object.keys(data).map(key => {
 		if (data[key] === undefined || data[key] === null) {
-			return key + ': null';
+			return `${key}: null`;
 		}
 		if (Array.isArray(data[key])) {
-			return key + ': [' + data[key].map((v: any) => {
+			return `${key}: [${data[key].map((v: any) => {
 				if (v === undefined || v === null) {
 					return 'null';
 				}
 				return JSON.stringify(v).replace(/"/g, '\'');
-			}).join(', ') + ']';
+			}).join(', ')}]`;
 		}
-		return key + ': ' + JSON.stringify(data[key]).replace(/"/g, '\'');
-	}).join(', ') + '}';
+		return `${key}: ${JSON.stringify(data[key]).replace(/"/g, '\'')}`;
+	}).join(', ')}}`;
 }
 
-async function generateSuccessGetRequestTest(mock: RequestMock, apiPath: string): Promise<string> {
-	if (mock.params !== undefined) {
-		let p = apiPath;
-		Object.keys(mock.params).forEach(key => {
-			p = p.replace('{' + key + '}', mock.params[key]);
-		});
-		return `				it('${mock.message.replace(/'/g, '"')}', async () => {
-					return get('/api/v1${p}').expect(200);
-				});`;
-	}
-
-	return `				it('${mock.message.replace(/'/g, '"')}', async () => {
-					return get('/api/v1${apiPath}').query(${formatData(mock.data)}).expect(200);
-				});`;
-}
+// async function generateSuccessGetRequestTest(mock: RequestMock, apiPath: string): Promise<string> {
+// 	if (mock.params !== undefined) {
+// 		let p = apiPath;
+// 		Object.keys(mock.params).forEach(key => {
+// 			p = p.replace(`{${key}}`, mock.params[key]);
+// 		});
+// 		return `				it('${mock.message.replace(/'/g, '"')}', async () => {
+// 					return get('/api/v1${p}').expect(200);
+// 				});`;
+// 	}
+//
+// 	return `				it('${mock.message.replace(/'/g, '"')}', async () => {
+// 					return get('/api/v1${apiPath}').query(${formatData(mock.data)}).expect(200);
+// 				});`;
+// }
 
 async function generateFailGetRequestTest(mock: RequestMock, apiPath: string): Promise<MustacheDataTest | undefined> {
 	if (mock.params !== undefined) {
 		const pfixed = apiPath.split('/')[1];
 		let p = apiPath.split('/')[2];
 		Object.keys(mock.params).forEach(key => {
-			p = p.replace('{' + key + '}', encodeURIComponent(mock.params[key]));
+			p = p.replace(`{${key}}`, encodeURIComponent(mock.params[key]));
 		});
 		if (p.length === 0) {
 			// without any path parameter it's not a 400, it's a 404
@@ -245,12 +246,31 @@ async function generateFailGetRequestTest(mock: RequestMock, apiPath: string): P
 	return {title: mock.message.replace(/'/g, '"'), content: `return get('/api/v1${apiPath}').query(${formatData(mock.data)}).expect(400);`};
 }
 
-async function generateFailUauthGetRequestTest(mock: RequestMock, apiPath: string, operation: string): Promise<MustacheDataTest> {
+async function generateFailNoRightsRequestTest(mock: RequestMock, apiPath: string, operation: string): Promise<MustacheDataTest> {
 	if (operation === 'get') {
 		if (mock.params !== undefined) {
 			let p = apiPath;
 			Object.keys(mock.params).forEach(key => {
-				p = p.replace('{' + key + '}', encodeURIComponent(mock.params[key]));
+				p = p.replace(`{${key}}`, encodeURIComponent(mock.params[key]));
+			});
+			return {title: 'should respond with 401 Unauth', content: `return getNoRights('/api/v1${p}').expect(401);`};
+		}
+		return {title: 'should respond with 401 Unauth', content: `return getNoRights('/api/v1${apiPath}').query(${formatData(mock.data)}).expect(401);`};
+	}
+	let postQuery = '';
+	if (mock.data && Object.keys(mock.data).length > 0) {
+		postQuery = `.query(${formatData(mock.data)})`;
+	}
+	const postData = '{}';
+	return {title: 'should respond with 401 Unauth', content: `return postNoRights('/api/v1${apiPath}')${postQuery}.send(${postData}).expect(401);`};
+}
+
+async function generateFailUauthRequestTest(mock: RequestMock, apiPath: string, operation: string): Promise<MustacheDataTest> {
+	if (operation === 'get') {
+		if (mock.params !== undefined) {
+			let p = apiPath;
+			Object.keys(mock.params).forEach(key => {
+				p = p.replace(`{${key}}`, encodeURIComponent(mock.params[key]));
 			});
 			return {title: 'should respond with 401 Unauth', content: `return getNotLoggedIn('/api/v1${p}').expect(401);`};
 		}
@@ -258,7 +278,7 @@ async function generateFailUauthGetRequestTest(mock: RequestMock, apiPath: strin
 	}
 	let postQuery = '';
 	if (mock.data && Object.keys(mock.data).length > 0) {
-		postQuery = '.query(' + formatData(mock.data) + ')';
+		postQuery = `.query(${formatData(mock.data)})`;
 	}
 	const postData = '{}';
 	return {title: 'should respond with 401 Unauth', content: `return postNotLoggedIn('/api/v1${apiPath}')${postQuery}.send(${postData}).expect(401);`};
@@ -305,6 +325,7 @@ interface MustacheDataTest {
 
 async function run(): Promise<void> {
 	const spec: OpenAPIObject = await fse.readJSON(path.join(basePath, 'jam-openapi.json'));
+	const apicalls: Array<ApiCall> = await getJamApiCalls(basePath);
 	const mocks = await generateRequestMocks(spec);
 	// await fse.writeFile(destfile + '.json', JSON.stringify(mocks));
 	const sections: Array<MustacheDataSection> = [];
@@ -317,15 +338,21 @@ async function run(): Promise<void> {
 
 					const valid = requests.filter(r => r.valid);
 					const validSection: MustacheDataSubSection = {title: 'should complete request', tests: []};
-					for (const mock of valid) {
-						// validSection.tests.push(await generateValidTest(mock, apiPath, operation));
-					}
+					// for (const mock of valid) {
+					// validSection.tests.push(await generateValidTest(mock, apiPath, operation));
+					// }
 					if (validSection.tests.length > 0) {
 						section.subsections.push(validSection);
 					}
 					if (valid.length > 0 && (!spec.paths[apiPath][operation].security || spec.paths[apiPath][operation].security.length > 0)) {
-						const noLogInFailSection: MustacheDataSubSection = {title: 'should fail without login', tests: [await generateFailUauthGetRequestTest(valid[0], apiPath, operation)]};
+						const noLogInFailSection: MustacheDataSubSection = {title: 'should fail without login', tests: [await generateFailUauthRequestTest(valid[0], apiPath, operation)]};
 						section.subsections.push(noLogInFailSection);
+						const call = apicalls.find(c => `/${c.name}` === apiPath);
+						if (call && call.roles.length > 0) {
+							const noNoRightsFailSection: MustacheDataSubSection = {title: 'should fail without required rights', tests: [await generateFailNoRightsRequestTest(valid[0], apiPath, operation)]};
+							console.log(noNoRightsFailSection);
+							section.subsections.push(noNoRightsFailSection);
+						}
 					}
 					const invalid = requests.filter(r => !r.valid);
 					const invalidSection: MustacheDataSubSection = {title: 'should fail with invalid data', tests: []};
