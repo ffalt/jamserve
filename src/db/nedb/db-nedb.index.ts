@@ -155,7 +155,6 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				}
 			});
 		});
-
 	}
 
 	async bulk(bodies: Array<T>): Promise<void> {
@@ -254,12 +253,6 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		if (sort) {
 			dbquery = dbquery.sort(sort);
 		}
-		// if (query.offset) {
-		// 	dbquery = dbquery.skip(query.offset);
-		// }
-		// if (query.amount) {
-		// 	dbquery = dbquery.limit(query.amount);
-		// }
 		return new Promise<ListResult<T>>((resolve, reject) => {
 			dbquery.exec((err, docs) => {
 				if (err) {
@@ -286,7 +279,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		});
 	}
 
-	async iterate(query: DatabaseQuery, onItems: (items: Array<T>) => Promise<void>): Promise<void> {
+	private prepareFindCursor(query: DatabaseQuery): Nedb.Cursor<T> {
 		let dbquery = this.client.find<T>(this.translateQuery(query));
 		const sort = this.translateSortQuery(query);
 		if (sort) {
@@ -298,6 +291,11 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		if (query.amount) {
 			dbquery = dbquery.limit(query.amount);
 		}
+		return dbquery;
+	}
+
+	async iterate(query: DatabaseQuery, onItems: (items: Array<T>) => Promise<void>): Promise<void> {
+		const dbquery = this.prepareFindCursor(query);
 		return new Promise<void>((resolve, reject) => {
 			dbquery.exec((err, docs) => {
 				if (err) {
@@ -310,17 +308,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 	}
 
 	async queryIds(query: DatabaseQuery): Promise<Array<string>> {
-		let dbquery = this.client.find<T>(this.translateQuery(query));
-		const sort = this.translateSortQuery(query);
-		if (sort) {
-			dbquery = dbquery.sort(sort);
-		}
-		if (query.offset) {
-			dbquery = dbquery.skip(query.offset);
-		}
-		if (query.amount) {
-			dbquery = dbquery.limit(query.amount);
-		}
+		const dbquery = this.prepareFindCursor(query);
 		return new Promise<Array<string>>((resolve, reject) => {
 			dbquery.exec((err, docs) => {
 				if (err) {
@@ -361,17 +349,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 	}
 
 	async aggregate(query: DatabaseQuery, field: string): Promise<number> {
-		let dbquery = this.client.find<T>(this.translateQuery(query));
-		const sort = this.translateSortQuery(query);
-		if (sort) {
-			dbquery = dbquery.sort(sort);
-		}
-		if (query.offset) {
-			dbquery = dbquery.skip(query.offset);
-		}
-		if (query.amount) {
-			dbquery = dbquery.limit(query.amount);
-		}
+		const dbquery = this.prepareFindCursor(query);
 		return new Promise<number>((resolve, reject) => {
 			dbquery.exec((err, docs) => {
 				if (err) {
