@@ -24,6 +24,10 @@ export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast>
 		super(podcastStore, stateService);
 	}
 
+	defaultSort(items: Array<Podcast>): Array<Podcast> {
+		return items.sort((a, b) => (a.tag && a.tag.title ? a.tag.title : a.url).localeCompare((b.tag && b.tag.title ? b.tag.title : b.url)));
+	}
+
 	isDownloading(podcastId: string): boolean {
 		return this.podcastRefreshDebounce.isPending(podcastId);
 	}

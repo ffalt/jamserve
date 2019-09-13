@@ -14,6 +14,10 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 		super(albumStore, stateService);
 	}
 
+	defaultSort(items: Array<Album>): Array<Album> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
+	}
+
 	async getAlbumFolder(album: Album): Promise<Folder | undefined> {
 		if (album.folderIDs.length === 0) {
 			return;

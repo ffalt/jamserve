@@ -48,10 +48,6 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		super(folderService, stateService, imageService, downloadService);
 	}
 
-	defaultSort(items: Array<Folder>): Array<Folder> {
-		return items.sort((a, b) => (a.tag && a.tag.title ? a.tag.title : path.basename(a.path)).localeCompare((b.tag && b.tag.title ? b.tag.title : path.basename(b.path))));
-	}
-
 	async prepare(folder: Folder, includes: JamParameters.IncludesFolderChildren, user: User): Promise<Jam.Folder> {
 		const result = formatFolder(folder, includes);
 		if (includes.folderChildren || includes.folderTracks) {

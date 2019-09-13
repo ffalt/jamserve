@@ -10,6 +10,10 @@ export class BookmarkService extends BaseStoreService<Bookmark, SearchQueryBookm
 		super(bookmarkStore);
 	}
 
+	defaultSort(items: Array<Bookmark>): Array<Bookmark> {
+		return items.sort((a, b) => b.changed - a.changed);
+	}
+
 	async byUser(userID: string, amount?: number, offset?: number): Promise<ListResult<Bookmark>> {
 		return this.bookmarkStore.search({userID, amount, offset});
 	}

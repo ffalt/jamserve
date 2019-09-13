@@ -33,8 +33,6 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 
 	abstract translateQuery(query: SEARCHQUERY, user: User): Promise<JAMQUERY>;
 
-	abstract defaultSort(items: Array<DBOBJECT>): Array<DBOBJECT>;
-
 	async byID(id?: string): Promise<DBOBJECT> {
 		if (!id) {
 			return Promise.reject(InvalidParamError());
@@ -81,7 +79,7 @@ export abstract class BaseController<OBJREQUEST extends JamParameters.ID | INCLU
 
 	async prepareByQuery(query: JAMQUERY, includes: INCLUDE, user: User): Promise<ListResult<RESULTOBJ>> {
 		const list = await this.service.store.search(query);
-		list.items = this.defaultSort(list.items);
+		list.items = this.service.defaultSort(list.items);
 		return {
 			total: list.total,
 			amount: list.amount,

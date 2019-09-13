@@ -25,10 +25,6 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		super(userService, stateService, imageService, downloadService);
 	}
 
-	defaultSort(items: Array<User>): Array<User> {
-		return items.sort((a, b) => a.name.localeCompare(b.name));
-	}
-
 	async prepare(item: User, includes: {}, user: User): Promise<Jam.User> {
 		return formatUser(item);
 	}

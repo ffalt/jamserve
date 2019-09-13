@@ -15,6 +15,10 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 		super(artistStore, stateService);
 	}
 
+	defaultSort(items: Array<Artist>): Array<Artist> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
+	}
+
 	canHaveArtistImage(artist: Artist): boolean {
 		return (artist.albumTypes.length > 0 && artist.mbArtistID !== MUSICBRAINZ_VARIOUS_ARTISTS_ID);
 	}

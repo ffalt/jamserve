@@ -25,6 +25,10 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		super(userStore);
 	}
 
+	defaultSort(items: Array<User>): Array<User> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
+	}
+
 	async getUserImage(user: User, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (!user.avatar) {
 			await this.generateAvatar(user);

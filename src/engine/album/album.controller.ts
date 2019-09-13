@@ -40,10 +40,6 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 		super(albumService, stateService, imageService, downloadService);
 	}
 
-	defaultSort(items: Array<Album>): Array<Album> {
-		return items.sort((a, b) => a.name.localeCompare(b.name));
-	}
-
 	sortAlbumTracks(a: Track, b: Track): number {
 		let res = (a.tag.disc || 0) - (b.tag.disc || 0);
 		if (res === 0) {

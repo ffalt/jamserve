@@ -12,6 +12,30 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 		super(trackStore, stateService);
 	}
 
+	defaultCompare(a: Track, b: Track): number {
+		let res = a.path.localeCompare(b.path);
+		if (res !== 0) {
+			return res;
+		}
+		if (a.tag.disc !== undefined && b.tag.disc !== undefined) {
+			res = a.tag.disc - b.tag.disc;
+			if (res !== 0) {
+				return res;
+			}
+		}
+		if (a.tag.track !== undefined && b.tag.track !== undefined) {
+			res = a.tag.track - b.tag.track;
+			if (res !== 0) {
+				return res;
+			}
+		}
+		return a.name.localeCompare(b.name);
+	}
+
+	defaultSort(tracks: Array<Track>): Array<Track> {
+		return tracks.sort((a, b) => this.defaultCompare(a, b));
+	}
+
 	async getTrackFolder(track: Track): Promise<Folder | undefined> {
 		return this.folderService.folderStore.byId(track.parentID);
 	}

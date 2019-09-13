@@ -4,7 +4,8 @@ import express from 'express';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {SubsonicParameters} from '../../model/subsonic-rest-params';
 import {ApiBinaryResult} from '../../typings';
-import {ApiOptions, SubsonicApi} from './api';
+import {SubsonicApi} from './api';
+import {ApiOptions} from './base';
 import {UserRequest} from './login';
 import {ApiResponder} from './response';
 

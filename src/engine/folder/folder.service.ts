@@ -24,6 +24,10 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		super(folderStore, stateService);
 	}
 
+	defaultSort(items: Array<Folder>): Array<Folder> {
+		return items.sort((a, b) => (a.tag && a.tag.title ? a.tag.title : path.basename(a.path)).localeCompare((b.tag && b.tag.title ? b.tag.title : path.basename(b.path))));
+	}
+
 	async collectFolderPath(folderId: string | undefined, cachedFolders?: Array<Folder>): Promise<Array<Folder>> {
 		const result: Array<Folder> = [];
 		const store = this.folderStore;

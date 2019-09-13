@@ -9,6 +9,10 @@ export class PlayQueueService extends BaseStoreService<PlayQueue, SearchQueryPla
 		super(playQueueStore);
 	}
 
+	defaultSort(items: Array<PlayQueue>): Array<PlayQueue> {
+		return items;
+	}
+
 	async getQueueOrCreate(userID: string, client?: string): Promise<PlayQueue> {
 		let playQueue = await this.get(userID);
 		if (!playQueue) {

@@ -9,6 +9,10 @@ export class RadioService extends BaseStoreService<Radio, SearchQueryRadio> {
 		super(radioStore);
 	}
 
+	defaultSort(items: Array<Radio>): Array<Radio> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
+	}
+
 	async create(name: string, url: string, homepageUrl?: string): Promise<Radio> {
 		const radio: Radio = {
 			id: '',

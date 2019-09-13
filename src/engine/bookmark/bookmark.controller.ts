@@ -15,10 +15,6 @@ export class BookmarkController {
 	constructor(public bookmarkService: BookmarkService, private trackController: TrackController) {
 	}
 
-	// defaultSort(items: Array<Bookmark>): Array<Bookmark> {
-	// 	return items.sort((a, b) => b.changed - a.changed);
-	// }
-
 	// translateQuery(query: JamParameters.BookmarkSearch, user: User): SearchQueryBookmark {
 	// 	return {
 	// 		query: query.query,

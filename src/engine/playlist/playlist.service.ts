@@ -26,6 +26,10 @@ export class PlaylistService extends BaseListService<Playlist, SearchQueryPlayli
 		super(playlistStore, stateService);
 	}
 
+	defaultSort(items: Array<Playlist>): Array<Playlist> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
+	}
+
 	async create(name: string, comment: string | undefined, isPublic: boolean, userID: string, trackIDs: Array<string>): Promise<Playlist> {
 		const now = Date.now();
 		const playlist: Playlist = {

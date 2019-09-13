@@ -26,10 +26,6 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 		super(rootService, stateService, imageService, downloadService);
 	}
 
-	defaultSort(items: Array<Root>): Array<Root> {
-		return items.sort((a, b) => a.name.localeCompare(b.name));
-	}
-
 	async prepare(root: Root, includes: {}, user: User): Promise<Jam.Root> {
 		return formatRoot(root, this.ioService.getRootStatus(root.id));
 	}

@@ -24,10 +24,6 @@ export class RadioController extends BaseController<JamParameters.Radio, JamPara
 		super(radioService, stateService, imageService, downloadService);
 	}
 
-	defaultSort(items: Array<Radio>): Array<Radio> {
-		return items.sort((a, b) => a.name.localeCompare(b.name));
-	}
-
 	async prepare(radio: Radio, includes: JamParameters.IncludesRadio, user: User): Promise<Jam.Radio> {
 		const result = formatRadio(radio);
 		if (includes.radioState) {

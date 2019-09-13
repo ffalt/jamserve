@@ -4,9 +4,9 @@ import {DBObject} from './base.model';
 import {BaseStoreService} from './base.service';
 import {BaseStore, SearchQuery} from './base.store';
 
-export class BaseListService<T extends DBObject, Q extends SearchQuery> extends BaseStoreService<T, Q> {
+export abstract class BaseListService<T extends DBObject, Q extends SearchQuery> extends BaseStoreService<T, Q> {
 
-	constructor(
+	protected constructor(
 		store: BaseStore<T, Q>,
 		public stateService: StateService
 	) {

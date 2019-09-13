@@ -9,6 +9,10 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 		super(stateStore);
 	}
 
+	defaultSort(items: Array<State>): Array<State> {
+		return items;
+	}
+
 	private emptyState(destID: string, destType: DBObjectType, userID: string): State {
 		return {
 			id: '',

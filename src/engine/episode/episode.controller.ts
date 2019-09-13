@@ -38,25 +38,6 @@ export class EpisodeController extends BaseListController<JamParameters.Episode,
 		super(episodeService, stateService, imageService, downloadService);
 	}
 
-	defaultSort(items: Array<Episode>): Array<Episode> {
-		return items.sort((a, b) => {
-				if (!a.tag) {
-					return -1;
-				}
-				if (!b.tag) {
-					return 1;
-				}
-				if (a.tag.track !== undefined && b.tag.track !== undefined) {
-					const res = a.tag.track - b.tag.track;
-					if (res !== 0) {
-						return res;
-					}
-				}
-				return b.date - a.date;
-			}
-		);
-	}
-
 	async prepare(episode: Episode, includes: JamParameters.IncludesEpisode, user: User): Promise<Jam.PodcastEpisode> {
 		const result = formatEpisode(episode, includes,
 			this.episodeService.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status

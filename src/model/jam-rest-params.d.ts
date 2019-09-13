@@ -1,3 +1,4 @@
+// tslint:disable:max-file-line-count
 import {Jam} from './jam-rest-data';
 
 export declare namespace JamParameters {

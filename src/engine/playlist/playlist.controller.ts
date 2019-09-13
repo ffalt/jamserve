@@ -38,10 +38,6 @@ export class PlaylistController extends BaseListController<JamParameters.Playlis
 
 	// TODO: filter none public playlist in base api functions?
 
-	defaultSort(items: Array<Playlist>): Array<Playlist> {
-		return items.sort((a, b) => a.name.localeCompare(b.name));
-	}
-
 	async prepare(playlist: Playlist, includes: JamParameters.IncludesPlaylist, user: User): Promise<Jam.Playlist> {
 		const result = formatPlaylist(playlist, includes);
 		if (includes.playlistState) {

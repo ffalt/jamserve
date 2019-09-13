@@ -56,30 +56,6 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		super(trackService, stateService, imageService, downloadService);
 	}
 
-	defaultCompare(a: Track, b: Track): number {
-		let res = a.path.localeCompare(b.path);
-		if (res !== 0) {
-			return res;
-		}
-		if (a.tag.disc !== undefined && b.tag.disc !== undefined) {
-			res = a.tag.disc - b.tag.disc;
-			if (res !== 0) {
-				return res;
-			}
-		}
-		if (a.tag.track !== undefined && b.tag.track !== undefined) {
-			res = a.tag.track - b.tag.track;
-			if (res !== 0) {
-				return res;
-			}
-		}
-		return a.name.localeCompare(b.name);
-	}
-
-	defaultSort(tracks: Array<Track>): Array<Track> {
-		return tracks.sort((a, b) => this.defaultCompare(a, b));
-	}
-
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
 		const result = formatTrack(track, includes);
 		if (includes.trackRawTag) {
@@ -149,7 +125,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 
 	async rawTags(req: JamRequest<JamParameters.IDs>): Promise<Jam.RawTags> {
 		let tracks = await this.byIDs(req.query.ids);
-		tracks = this.defaultSort(tracks);
+		tracks = this.service.defaultSort(tracks);
 		const result: Jam.RawTags = {};
 		for (const track of tracks) {
 			const tag = await this.getRawTag(track);
@@ -207,7 +183,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 
 	async health(req: JamRequest<JamParameters.TrackHealth>): Promise<Array<Jam.TrackHealth>> {
 		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		list.items = list.items.sort((a, b) => this.defaultCompare(a, b));
+		list.items = this.service.defaultSort(list.items);
 		const result: Array<Jam.TrackHealth> = [];
 		const roots: Array<Root> = [];
 		const folders: Array<Folder> = [];

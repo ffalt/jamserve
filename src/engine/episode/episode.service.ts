@@ -21,6 +21,25 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		super(episodeStore, stateService);
 	}
 
+	defaultSort(items: Array<Episode>): Array<Episode> {
+		return items.sort((a, b) => {
+				if (!a.tag) {
+					return -1;
+				}
+				if (!b.tag) {
+					return 1;
+				}
+				if (a.tag.track !== undefined && b.tag.track !== undefined) {
+					const res = a.tag.track - b.tag.track;
+					if (res !== 0) {
+						return res;
+					}
+				}
+				return b.date - a.date;
+			}
+		);
+	}
+
 	isDownloading(podcastEpisodeId: string): boolean {
 		return this.episodeDownloadDebounce.isPending(podcastEpisodeId);
 	}

@@ -1,3 +1,4 @@
+// tslint:disable:max-file-line-count
 import {AcousticBrainz} from './acousticbrainz-rest-data';
 import {Acoustid} from './acoustid-rest-data';
 import {CoverArtArchive} from './coverartarchive-rest-data';

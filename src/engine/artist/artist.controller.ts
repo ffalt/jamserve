@@ -63,10 +63,6 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 		return res;
 	}
 
-	defaultSort(items: Array<Artist>): Array<Artist> {
-		return items.sort((a, b) => a.name.localeCompare(b.name));
-	}
-
 	async prepare(artist: Artist, includes: JamParameters.IncludesArtist, user: User): Promise<Jam.Artist> {
 		const result = formatArtist(artist, includes);
 		if (includes.artistState) {

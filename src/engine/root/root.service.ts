@@ -8,6 +8,10 @@ export class RootService extends BaseStoreService<Root, SearchQueryRoot> {
 		super(rootStore);
 	}
 
+	defaultSort(items: Array<Root>): Array<Root> {
+		return items.sort((a, b) => a.name.localeCompare(b.name));
+	}
+
 	private async checkUsedPath(dir: string, roots: Array<Root>): Promise<void> {
 		for (const r of roots) {
 			if (dir.startsWith(r.path) || r.path.startsWith(dir)) {

@@ -38,10 +38,6 @@ export class PodcastController extends BaseListController<JamParameters.Podcast,
 		super(podcastService, stateService, imageService, downloadService);
 	}
 
-	defaultSort(items: Array<Podcast>): Array<Podcast> {
-		return items.sort((a, b) => (a.tag && a.tag.title ? a.tag.title : a.url).localeCompare((b.tag && b.tag.title ? b.tag.title : b.url)));
-	}
-
 	async prepare(podcast: Podcast, includes: JamParameters.IncludesPodcast, user: User): Promise<Jam.Podcast> {
 		const result = formatPodcast(podcast, this.podcastService.isDownloading(podcast.id) ? PodcastStatus.downloading : podcast.status);
 		if (includes.podcastState) {

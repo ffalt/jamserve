@@ -59,6 +59,10 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		super(metadataStore);
 	}
 
+	defaultSort(items: Array<MetaData>): Array<MetaData> {
+		return items;
+	}
+
 	private async getMusicBrainzIDWikipediaArtistInfo(mbArtistID: string): Promise<Jam.ExtendedInfo | undefined> {
 		const result = await this.musicbrainzLookup(MusicBrainzLookupType.artist, mbArtistID);
 		if (result && result.artist && result.artist.relations) {
