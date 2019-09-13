@@ -12032,7 +12032,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -12110,7 +12109,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -12345,7 +12343,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -12580,7 +12577,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -12658,7 +12654,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -12801,7 +12796,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -12944,7 +12938,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -13087,7 +13080,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -13230,7 +13222,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -13308,7 +13299,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -13386,7 +13376,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
@@ -13526,7 +13515,6 @@
 						"name": "format",
 						"schema": {
 							"enum": [
-								"bmp",
 								"jpeg",
 								"jpg",
 								"png",
