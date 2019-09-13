@@ -27,19 +27,6 @@ import {MetaDataType} from './metadata.types';
 
 const log = logger('Metadata');
 
-function stripInlineLastFM(content: string): string {
-	return (content || '').replace(/<a href=".*">Read more on Last\.fm<\/a>\.?/g, '')
-		.replace(/<a .* href=".*">Read more on Last\.fm<\/a>\.?/g, '')
-		.replace('User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.', '');
-}
-
-function stripInlineWikipediaHTML(content: string): string {
-	return (content || '')
-		.replace(/<p class="mw-empty-elt">\s*<\/p>/g, '')
-		.replace(/<p>/g, '')
-		.replace(/<\/p>/g, '\n');
-}
-
 interface SimilarArtist {
 	name: string;
 	url: string;
@@ -55,12 +42,61 @@ interface Song {
 
 export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaData> {
 
-	constructor(private metadataStore: MetaDataStore, private folderStore: FolderStore, private trackStore: TrackStore, private albumStore: AlbumStore, private artistStore: ArtistStore, private audioModule: AudioModule) {
+	constructor(
+		private metadataStore: MetaDataStore, private folderStore: FolderStore, private trackStore: TrackStore,
+		private albumStore: AlbumStore, private artistStore: ArtistStore, private audioModule: AudioModule
+	) {
 		super(metadataStore);
+	}
+
+	private static stripInlineLastFM(content: string): string {
+		return (content || '').replace(/<a href=".*">Read more on Last\.fm<\/a>\.?/g, '')
+			.replace(/<a .* href=".*">Read more on Last\.fm<\/a>\.?/g, '')
+			.replace('User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.', '');
+	}
+
+	private static stripInlineWikipediaHTML(content: string): string {
+		return (content || '')
+			.replace(/<p class="mw-empty-elt">\s*<\/p>/g, '')
+			.replace(/<p>/g, '')
+			.replace(/<\/p>/g, '\n');
+	}
+
+	private static formatWikipediaExtendedInfo(url: string, description: string): Jam.ExtendedInfo {
+		return {
+			url,
+			description: MetaDataService.stripInlineWikipediaHTML(description),
+			source: 'Wikipedia',
+			license: 'Creative Commons BY-SA license',
+			licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
+		};
+	}
+
+	private static formatLastFMExtendedInfo(url: string, description: string): Jam.ExtendedInfo {
+		return {
+			url,
+			description: MetaDataService.stripInlineLastFM(description),
+			source: 'LastFM',
+			license: 'Creative Commons BY-SA license',
+			licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
+		};
 	}
 
 	defaultSort(items: Array<MetaData>): Array<MetaData> {
 		return items;
+	}
+
+	private async addToStore(name: string, dataType: MetaDataType, data: any): Promise<void> {
+		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType, data, date: Date.now()});
+	}
+
+	// ExtendedInfos
+
+	private async getWikiDataExtendedInfo(id: string, lang: string): Promise<Jam.ExtendedInfo | undefined> {
+		const wiki = await this.wikidataSummary(id, lang);
+		if (wiki && wiki.summary) {
+			return MetaDataService.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
+		}
 	}
 
 	private async getMusicBrainzIDWikipediaArtistInfo(mbArtistID: string): Promise<Jam.ExtendedInfo | undefined> {
@@ -70,16 +106,9 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			if (rel && rel.url && rel.url.resource) {
 				const list = rel.url.resource.split('/');
 				const id = list[list.length - 1];
-				const wiki = await this.wikidataSummary(id, 'en');
-				if (wiki && wiki.summary) {
-					const info: Jam.ExtendedInfo = {
-						url: wiki.summary.url,
-						description: stripInlineWikipediaHTML(wiki.summary.summary),
-						source: 'Wikipedia',
-						license: 'Creative Commons BY-SA license',
-						licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
-					};
-					return info;
+				const res = this.getWikiDataExtendedInfo(id, 'en');
+				if (res) {
+					return res;
 				}
 			}
 			rel = result.artist.relations.find(r => r.type === 'wikipedia');
@@ -89,14 +118,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 				const lang = list[2].split('.')[0];
 				const wiki = await this.wikipediaSummary(title, lang);
 				if (wiki && wiki.summary) {
-					const info: Jam.ExtendedInfo = {
-						url: wiki.summary.url,
-						description: stripInlineWikipediaHTML(wiki.summary.summary),
-						source: 'Wikipedia',
-						license: 'Creative Commons BY-SA license',
-						licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
-					};
-					return info;
+					return MetaDataService.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
 				}
 			}
 		}
@@ -110,17 +132,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			if (rel && rel.url && rel.url.resource) {
 				const list = rel.url.resource.split('/');
 				const id = list[list.length - 1];
-				const wiki = await this.wikidataSummary(id, 'en');
-				if (wiki && wiki.summary) {
-					const info: Jam.ExtendedInfo = {
-						url: wiki.summary.url,
-						description: stripInlineWikipediaHTML(wiki.summary.summary),
-						source: 'Wikipedia',
-						license: 'Creative Commons BY-SA license',
-						licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
-					};
-					return info;
-				}
+				return this.getWikiDataExtendedInfo(id, 'en');
 			}
 		}
 		return;
@@ -129,14 +141,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	private async getLastFMArtistInfo(mbArtistID: string): Promise<Jam.ExtendedInfo | undefined> {
 		const result = await this.lastFMLookup(LastFMLookupType.artist, mbArtistID);
 		if (result && result.artist && result.artist.bio && result.artist.bio.content) {
-			const info: Jam.ExtendedInfo = {
-				url: result.artist.url,
-				description: stripInlineLastFM(result.artist.bio.content),
-				source: 'LastFM',
-				license: 'Creative Commons BY-SA license',
-				licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
-			};
-			return info;
+			return MetaDataService.formatLastFMExtendedInfo(result.artist.url, result.artist.bio.content);
 		}
 		return;
 	}
@@ -144,14 +149,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	private async getLastFMAlbumInfo(mbReleaseID: string): Promise<Jam.ExtendedInfo | undefined> {
 		const result = await this.lastFMLookup(LastFMLookupType.album, mbReleaseID);
 		if (result && result.album && result.album.wiki && result.album.wiki.content) {
-			const info: Jam.ExtendedInfo = {
-				url: result.album.url,
-				description: stripInlineLastFM(result.album.wiki.content),
-				source: 'LastFM',
-				license: 'Creative Commons BY-SA license',
-				licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
-			};
-			return info;
+			return MetaDataService.formatLastFMExtendedInfo(result.album.url, result.album.wiki.content);
 		}
 	}
 
@@ -164,15 +162,11 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	}
 
 	private async getAlbumInfoByMusicBrainzID(mbReleaseID: string): Promise<Jam.ExtendedInfo | undefined> {
-		let info = await this.getMusicBrainzIDWikipediaAlbumInfo(mbReleaseID);
+		const info = await this.getMusicBrainzIDWikipediaAlbumInfo(mbReleaseID);
 		if (info) {
 			return info;
 		}
-		info = await this.getLastFMAlbumInfo(mbReleaseID);
-		if (info) {
-			return info;
-		}
-		return;
+		return this.getLastFMAlbumInfo(mbReleaseID);
 	}
 
 	private async getArtistInfoByName(artistName: string): Promise<Jam.ExtendedInfo | undefined> {
@@ -185,10 +179,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		}
 		const lastfm = await this.lastFMArtistSearch(artistName);
 		if (lastfm && lastfm.artist && lastfm.artist.mbid) {
-			const info = await this.getArtistInfoByMusicBrainzID(lastfm.artist.mbid);
-			if (info) {
-				return info;
-			}
+			return this.getArtistInfoByMusicBrainzID(lastfm.artist.mbid);
 		}
 		return;
 	}
@@ -210,8 +201,6 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		}
 		return;
 	}
-
-	// ExtendedInfos
 
 	async getArtistInfo(artist: Artist): Promise<Jam.ExtendedInfo | undefined> {
 		try {
@@ -477,13 +466,12 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const brainz = await this.audioModule.musicbrainzSearch(type, query);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.musicbrainz, data: brainz, date: Date.now()});
+		await this.addToStore(name, MetaDataType.musicbrainz, brainz);
 		return brainz;
 	}
 
 	async acoustidLookupTrack(track: Track, includes: string | undefined): Promise<Array<Acoustid.Result>> {
-		const acoustid = await this.audioModule.acoustidLookup(path.join(track.path, track.name), includes);
-		return acoustid;
+		return this.audioModule.acoustidLookup(path.join(track.path, track.name), includes);
 	}
 
 	async lastFMLookup(type: string, mbid: string): Promise<LastFM.Result> {
@@ -493,7 +481,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = await this.audioModule.lastFMLookup(type, mbid);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
+		await this.addToStore(name, MetaDataType.lastfm, lastfm);
 		return lastfm;
 	}
 
@@ -504,7 +492,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {album: await this.audioModule.lastFM.album(album, artist)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
+		await this.addToStore(name, MetaDataType.lastfm, lastfm);
 		return lastfm;
 	}
 
@@ -515,7 +503,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {artist: await this.audioModule.lastFM.artist(artist)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
+		await this.addToStore(name, MetaDataType.lastfm, lastfm);
 		return lastfm;
 	}
 
@@ -526,7 +514,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {toptracks: await this.audioModule.lastFM.topArtistSongs(artist)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
+		await this.addToStore(name, MetaDataType.lastfm, lastfm);
 		return lastfm;
 	}
 
@@ -537,7 +525,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {toptracks: await this.audioModule.lastFM.topArtistSongsID(mbid)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
+		await this.addToStore(name, MetaDataType.lastfm, lastfm);
 		return lastfm;
 	}
 
@@ -548,7 +536,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lastfm = {similartracks: await this.audioModule.lastFM.similarTrackID(mbid)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lastfm, data: lastfm, date: Date.now()});
+		await this.addToStore(name, MetaDataType.lastfm, lastfm);
 		return lastfm;
 	}
 
@@ -559,7 +547,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const abrainz = await this.audioModule.acousticbrainzLookup(mbid, nr);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.acousticbrainz, data: abrainz, date: Date.now()});
+		await this.addToStore(name, MetaDataType.acousticbrainz, abrainz);
 		return abrainz;
 	}
 
@@ -570,7 +558,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const caa = await this.audioModule.coverartarchiveLookup(type, mbid);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.coverartarchive, data: caa, date: Date.now()});
+		await this.addToStore(name, MetaDataType.coverartarchive, caa);
 		return caa;
 	}
 
@@ -581,7 +569,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const brainz = await this.audioModule.musicbrainzLookup(type, mbid, inc);
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.musicbrainz, data: brainz, date: Date.now()});
+		await this.addToStore(name, MetaDataType.musicbrainz, brainz);
 		return brainz;
 	}
 
@@ -592,7 +580,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const lyrics = await this.audioModule.getLyrics(artist, song) || {};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.lyrics, data: lyrics, date: Date.now()});
+		await this.addToStore(name, MetaDataType.lyrics, lyrics);
 		return lyrics;
 	}
 
@@ -604,19 +592,19 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			return result.data;
 		}
 		const pedia = {summary: await this.audioModule.wikipediaSummary(title, lang)};
-		await this.metadataStore.add({id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.wikipedia, data: pedia, date: Date.now()});
+		await this.addToStore(name, MetaDataType.wikipedia, pedia);
 		return pedia;
 	}
 
 	async wikidataLookup(id: string): Promise<Jam.WikidataLookupResponse> {
 		const name = `wikidata-entity-${id}`;
-		let result = await this.metadataStore.searchOne({name, dataType: MetaDataType.wikidata});
+		const result = await this.metadataStore.searchOne({name, dataType: MetaDataType.wikidata});
 		if (result) {
 			return {entity: result.data};
 		}
 		const entity = await this.audioModule.wikidataID(id);
-		result = {id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now()};
-		await this.metadataStore.add(result);
+		const wikidata = {id: '', name, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now()};
+		await this.addToStore(name, MetaDataType.wikidata, wikidata);
 		return {entity};
 	}
 
@@ -636,6 +624,8 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		}
 		return {};
 	}
+
+	// general
 
 	async cleanUp(): Promise<void> {
 		const olderThan = Date.now() - moment.duration(1, 'd').asMilliseconds();
