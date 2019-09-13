@@ -14,9 +14,7 @@ import {User} from './user.model';
 import {SearchQueryUser, UserStore} from './user.store';
 
 export class UserService extends BaseStoreService<User, SearchQueryUser> {
-	private cached: {
-		[id: string]: User;
-	} = {};
+	private cachedUsers = new Map<string, User>();
 
 	constructor(
 		public userAvatarPath: string, public userStore: UserStore,
@@ -72,11 +70,11 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 
 	async update(user: User): Promise<void> {
 		await this.userStore.replace(user);
-		delete this.cached[user.id];
+		this.cachedUsers.delete(user.id);
 	}
 
 	async remove(user: User): Promise<void> {
-		delete this.cached[user.id];
+		this.cachedUsers.delete(user.id);
 		await this.stateStore.removeByQuery({userID: user.id});
 		await this.playlistStore.removeByQuery({userID: user.id});
 		await this.bookmarkStore.removeByQuery({userID: user.id});
@@ -93,27 +91,26 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		if (!name || name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const ids = Object.keys(this.cached);
-		for (const id of ids) {
-			if (this.cached[id].name === name) {
-				return this.cached[id];
+		for (const c of this.cachedUsers) {
+			if (c[1].name === name) {
+				return c[1];
 			}
 		}
 		const user = await this.userStore.searchOne({name});
 		if (user) {
-			this.cached[user.id] = user;
+			this.cachedUsers.set(user.id, user);
 		}
 		return user;
 	}
 
 	async getByID(id: string): Promise<User | undefined> {
-		let user: User | undefined = this.cached[id];
+		let user: User | undefined = this.cachedUsers.get(id);
 		if (user) {
 			return user;
 		}
 		user = await this.userStore.byId(id);
 		if (user) {
-			this.cached[id] = user;
+			this.cachedUsers.set(id, user);
 		}
 		return user;
 	}
@@ -166,7 +163,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 	}
 
 	public clearCache(): void {
-		this.cached = {};
+		this.cachedUsers.clear();
 	}
 
 	async setUserPassword(user: User, pass: string): Promise<void> {
@@ -175,7 +172,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		user.salt = pw.salt;
 		user.hash = pw.hash;
 		await this.userStore.replace(user);
-		delete this.cached[user.id];
+		this.cachedUsers.delete(user.id);
 	}
 
 	async testPassword(password: string): Promise<void> {
@@ -196,6 +193,6 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		}
 		user.email = email;
 		await this.userStore.replace(user);
-		delete this.cached[user.id];
+		this.cachedUsers.delete(user.id);
 	}
 }

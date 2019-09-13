@@ -264,11 +264,10 @@ export class ScanRequestRenameArtwork extends ScanRequest {
 export class IoService {
 	public scanning = false;
 	private scanningCount: undefined | number;
-	private rootstatus: { [id: string]: RootStatus } = {};
+	private rootstatus = new Map<string, RootStatus>();
 	private current: ScanRequest | undefined;
 	private queue: Array<ScanRequest> = [];
-	// private delayedTrackRefresh: { [rootID: string]: { request: ScanRequestRefreshTracks, timeout?: NodeJS.Timeout } } = {};
-	private delayedTrackTagWrite: { [rootID: string]: { request: ScanRequestWriteRawTags, timeout?: NodeJS.Timeout } } = {};
+	private delayedTrackTagWrite = new Map<string, { request: ScanRequestWriteRawTags, timeout?: NodeJS.Timeout }>();
 	private nextID: number = Date.now();
 	private afterScanTimeout: NodeJS.Timeout | undefined;
 	private history: Array<{
@@ -302,15 +301,16 @@ export class IoService {
 		if (done) {
 			return {id, error: done.error, done: done.date};
 		}
-		const k = Object.keys(this.delayedTrackTagWrite).find(key => this.delayedTrackTagWrite[key].request.id === id);
-		if (k) {
-			return {id};
+		for (const d of this.delayedTrackTagWrite) {
+			if (d[1].request.id === id) {
+				return {id};
+			}
 		}
 		return {id, error: 'ID not found', done: Date.now()};
 	}
 
 	getRootStatus(id: string): RootStatus {
-		let status = this.rootstatus[id];
+		let status = this.rootstatus.get(id);
 		if (!status) {
 			status = {lastScan: Date.now()};
 		}
@@ -323,11 +323,11 @@ export class IoService {
 
 	private async runRequest(cmd: ScanRequest): Promise<void> {
 		this.clearAfterRefresh();
-		this.rootstatus[cmd.rootID] = {lastScan: Date.now(), scanning: true};
+		this.rootstatus.set(cmd.rootID, {lastScan: Date.now(), scanning: true});
 		try {
 			this.current = cmd;
 			await cmd.run();
-			this.rootstatus[cmd.rootID] = {lastScan: Date.now()};
+			this.rootstatus.set(cmd.rootID, {lastScan: Date.now()});
 			this.history.push({id: cmd.id, date: Date.now()});
 			this.current = undefined;
 		} catch (e) {
@@ -336,7 +336,7 @@ export class IoService {
 			if (msg.startsWith('Error:')) {
 				msg = msg.slice(6).trim();
 			}
-			this.rootstatus[cmd.rootID] = {lastScan: Date.now(), error: msg};
+			this.rootstatus.set(cmd.rootID, {lastScan: Date.now(), error: msg});
 			this.history.push({id: cmd.id, error: msg, date: Date.now()});
 		}
 		if (this.queue.length === 0) {
@@ -555,7 +555,7 @@ export class IoService {
 			oldRequest.tags.push({trackID, tag});
 			return this.getRequestInfo(oldRequest);
 		}
-		let delayedCmd = this.delayedTrackTagWrite[rootID];
+		let delayedCmd = this.delayedTrackTagWrite.get(rootID);
 		if (delayedCmd) {
 			if (delayedCmd.timeout) {
 				clearTimeout(delayedCmd.timeout);
@@ -563,11 +563,13 @@ export class IoService {
 			delayedCmd.request.tags.push({trackID, tag});
 		} else {
 			delayedCmd = {request: new ScanRequestWriteRawTags(this.getScanID(), rootID, trackID, tag, this.scanService), timeout: undefined};
-			this.delayedTrackTagWrite[rootID] = delayedCmd;
+			this.delayedTrackTagWrite.set(rootID, delayedCmd);
 		}
 		delayedCmd.timeout = setTimeout(() => {
-			delete this.delayedTrackTagWrite[rootID];
-			this.queue.push(delayedCmd.request);
+			this.delayedTrackTagWrite.delete(rootID);
+			if (delayedCmd) {
+				this.queue.push(delayedCmd.request);
+			}
 			this.run();
 		}, 10000);
 		return this.getRequestInfo(delayedCmd.request);

@@ -43,7 +43,7 @@ export class AudioModule {
 	acousticbrainz: AcousticbrainzClient;
 	coverArtArchive: CoverArtArchiveClient;
 	wikipedia: WikipediaClient;
-	private isSaving: { [filename: string]: boolean } = {};
+	private savingBlock = new Map<string, boolean>();
 
 	constructor(tools: ThirdpartyToolsConfig, public imageModule: ImageModule) {
 		this.musicbrainz = new MusicbrainzClient({userAgent: tools.musicbrainz.userAgent, retryOn: true});
@@ -96,11 +96,11 @@ export class AudioModule {
 	}
 
 	async writeRawTag(filename: string, tag: Jam.RawTag): Promise<void> {
-		if (this.isSaving[filename]) {
+		if (this.savingBlock.get(filename)) {
 			console.error('Another save is in progress', filename);
 			return Promise.reject(Error('Another save is in progress'));
 		}
-		this.isSaving[filename] = true;
+		this.savingBlock.set(filename, true);
 		const suffix = fileSuffix(filename);
 		try {
 			if (suffix === AudioFormatType.mp3) {
@@ -108,12 +108,12 @@ export class AudioModule {
 			} else if (suffix === AudioFormatType.flac) {
 				await this.writeFlacTag(filename, tag);
 			} else {
-				delete this.isSaving[filename];
+				this.savingBlock.delete(filename);
 				return Promise.reject(new Error(`Writing to format ${suffix} is currently not supported`));
 			}
-			delete this.isSaving[filename];
+			this.savingBlock.delete(filename);
 		} catch (e) {
-			delete this.isSaving[filename];
+			this.savingBlock.delete(filename);
 			return Promise.reject(e);
 		}
 	}

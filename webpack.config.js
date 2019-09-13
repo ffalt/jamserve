@@ -8,7 +8,7 @@ const app = {
 	target: 'node',
 	externals: [nodeExternals(),
 		function (context, request, callback) {
-			if (request.indexOf('config.js') >= 0) {
+			if (request.includes('config.js')) {
 				return callback(null, 'commonjs ' + request);
 			}
 			callback();

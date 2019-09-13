@@ -3,13 +3,9 @@ import {Store} from 'express-session';
 import fse from 'fs-extra';
 import path from 'path';
 
-export interface Sessions {
-	[key: string]: Express.SessionData;
-}
-
 export class SessionJSONFileStore extends Store {
 	filename: string;
-	cache: Sessions = {};
+	cache = new Map<string, Express.SessionData>();
 
 	constructor(filename: string) {
 		super();
@@ -30,10 +26,18 @@ export class SessionJSONFileStore extends Store {
 					sessionData.cookie.expires = new Date(sessionData.cookie.expires);
 				}
 				if (!this.expired(sessionData)) {
-					this.cache[key] = sessionData;
+					this.cache.set(key, sessionData);
 				}
 			});
 		}
+	}
+
+	private cacheAsObj(): { [id: string]: Express.SessionData } {
+		const result: { [id: string]: Express.SessionData } = {};
+		for (const c of this.cache) {
+			result[c[0]] = c[1];
+		}
+		return result;
 	}
 
 	private expired(data: Express.SessionData): boolean {
@@ -44,7 +48,7 @@ export class SessionJSONFileStore extends Store {
 	}
 
 	private savejson(callback?: (err?: Error) => void): void {
-		fse.writeFile(this.filename, JSON.stringify(this.cache), err => {
+		fse.writeFile(this.filename, JSON.stringify(this.cacheAsObj()), err => {
 			if (callback) {
 				callback(err);
 			}
@@ -52,7 +56,7 @@ export class SessionJSONFileStore extends Store {
 	}
 
 	get: (sid: string, callback: (err: any, data?: Express.SessionData | null) => void) => void = (sid, callback) => {
-		const sessionData = this.cache[sid];
+		const sessionData = this.cache.get(sid);
 		if (sessionData && this.expired(sessionData)) {
 			return this.destroy(sid, err => {
 				callback(err);
@@ -62,17 +66,17 @@ export class SessionJSONFileStore extends Store {
 	};
 
 	set: (sid: string, data: Express.SessionData, callback?: (err?: any) => void) => void = (sid, data, callback) => {
-		this.cache[sid] = data;
+		this.cache.set(sid, data);
 		this.savejson(callback);
 	};
 
 	destroy: (sid: string, callback?: (err?: any) => void) => void = (sid, callback) => {
-		delete this.cache[sid];
+		this.cache.delete(sid);
 		this.savejson(callback);
 	};
 
 	all: (callback: (err: any, obj?: { [sid: string]: Express.SessionData; } | null) => void) => void = callback => {
-		callback(null, this.cache);
+		callback(null, this.cacheAsObj());
 	};
 
 	length: (callback: (err: any, length?: number | null) => void) => void = callback => {
@@ -80,7 +84,7 @@ export class SessionJSONFileStore extends Store {
 	};
 
 	clear: (callback?: (err?: any) => void) => void = callback => {
-		this.cache = {};
+		this.cache.clear();
 		this.savejson(callback);
 	};
 

@@ -1,38 +1,36 @@
 import express from 'express';
-import refParser from 'json-schema-ref-parser';
 import JamOpenApi from '../../model/jam-openapi.json';
 import {OpenAPIObject} from '../../model/openapi-spec';
 import {checkOpenApiParameters} from '../../utils/openapi-parameters-check';
 import {InvalidParamError} from './error';
 import {ApiResponder} from './response';
 
-let JamOpenApiDeref: OpenAPIObject;
+function extendOpenApi(): void {
+	const pathParameterPath = {
+		get: {
+			parameters: [
+				{
+					in: 'path',
+					name: 'pathParameter',
+					schema: {
+						type: 'string'
+					},
+					required: true
+				}
+			]
+		}
+	};
+	const paths = (JamOpenApi.paths as any);
+	paths['image/{pathParameter}'] = pathParameterPath;
+	paths['download/{pathParameter}'] = pathParameterPath;
+	paths['waveform/{pathParameter}'] = pathParameterPath;
+	paths['stream/{pathParameter}'] = pathParameterPath;
+}
 
-const pathParameterPath = {
-	get: {
-		parameters: [
-			{
-				in: 'path',
-				name: 'pathParameter',
-				schema: {
-					type: 'string'
-				},
-				required: true
-			}
-		]
-	}
-};
+extendOpenApi();
 
 async function check(name: string, req: express.Request): Promise<void> {
-	if (!JamOpenApiDeref) {
-		const paths = (JamOpenApi.paths as any);
-		paths['image/{pathParameter}'] = pathParameterPath;
-		paths['download/{pathParameter}'] = pathParameterPath;
-		paths['waveform/{pathParameter}'] = pathParameterPath;
-		paths['stream/{pathParameter}'] = pathParameterPath;
-		JamOpenApiDeref = (await refParser.dereference(JamOpenApi)) as any;
-	}
-	await checkOpenApiParameters(name, req, JamOpenApiDeref);
+	await checkOpenApiParameters(name, req, JamOpenApi as OpenAPIObject);
 }
 
 export function apiCheck(name: string): express.RequestHandler {
