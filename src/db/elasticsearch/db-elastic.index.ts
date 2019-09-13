@@ -1,4 +1,4 @@
-import elasticsearch from 'elasticsearch';
+import elasticsearch, {SearchParams, SearchResponse} from 'elasticsearch';
 import {DBObject} from '../../engine/base/base.model';
 import {ListResult} from '../../engine/base/list-result';
 import {paginate} from '../../utils/paginate';
@@ -168,8 +168,9 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		});
 	}
 
-	async getNewId(): Promise<string> {
-		return this.db.getNewId();
+	private async search(query: DatabaseQuery, params: elasticsearch.SearchParams): Promise<elasticsearch.SearchResponse<T>> {
+		params.body = {...(params.body || {}), query: this.translateElasticQuery(query)};
+		return this.db.client.search<T>({...params, index: this._index, type: this._type});
 	}
 
 	async add(body: T): Promise<string> {
@@ -180,52 +181,14 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		return body.id;
 	}
 
+	async aggregate(query: DatabaseQuery, field: string): Promise<number> {
+		const response = await this.search(query, {body: {aggs: {_count: {cardinality: {field}}}}});
+		return response.aggregations._count.value;
+	}
+
 	async bulk(bodies: Array<T>): Promise<void> {
 		for (const body of bodies) {
 			await this.add(body);
-		}
-	}
-
-	async replace(id: string, body: T): Promise<void> {
-		await this.indexItem(body, id);
-	}
-
-	async upsert(id: string, body: T): Promise<void> {
-		if (!id || id.length === 0) {
-			await this.add(body);
-			return;
-		}
-		await this.indexItem(body, id);
-	}
-
-	async removeByQuery(query: DatabaseQuery): Promise<number> {
-		const response = await this.db.client.deleteByQuery({
-			index: this._index,
-			type: this._type,
-			body: {
-				query: this.translateElasticQuery(query)
-			},
-			refresh: this.db.indexRefresh as elasticsearch.Refresh
-		});
-		return response.deleted;
-	}
-
-	async remove(id: string | Array<string>): Promise<void> {
-		if (id.length === 0) {
-			return Promise.resolve();
-		}
-		if (Array.isArray(id)) {
-			await this.db.client.deleteByQuery({
-				index: this._index,
-				type: this._type,
-				body: {query: {terms: {_id: id}}},
-				refresh: this.db.indexRefresh as elasticsearch.Refresh
-			});
-		} else {
-			await this.db.client.delete({
-				id, index: this._index, type: this._type,
-				refresh: this.db.indexRefresh as elasticsearch.Refresh
-			});
 		}
 	}
 
@@ -269,17 +232,23 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		});
 	}
 
+	async count(query: DatabaseQuery): Promise<number> {
+		const response = await this.search(query, {size: 0});
+		return response.hits.total;
+	}
+
+	async distinct(query: DatabaseQuery, field: string): Promise<Array<string>> {
+		const response = await this.search(query, {body: {aggs: {distinct: {terms: {field}}}}});
+		return response.aggregations.distinct.buckets.map((hit: any) => hit.key);
+	}
+
+	async getNewId(): Promise<string> {
+		return this.db.getNewId();
+	}
+
 	async query(query: DatabaseQuery): Promise<ListResult<T>> {
 		let docs: Array<T> = [];
-		const response = await this.db.client.search<T>({
-			index: this._index,
-			type: this._type,
-			scroll: '30s',
-			size: 100,
-			body: {
-				query: this.translateElasticQuery(query)
-			}
-		});
+		const response = await this.search(query, {scroll: '30s', size: 100});
 		await this.scroll(response, async hits => {
 			docs = docs.concat(hits);
 		});
@@ -294,82 +263,70 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 	}
 
 	async queryOne(query: DatabaseQuery): Promise<T | undefined> {
-		const response = await this.db.client.search({
-			index: this._index,
-			type: this._type,
-			size: 1,
-			body: {query: this.translateElasticQuery(query)}
-		});
+		const response = await this.search(query, {size: 1});
 		if (response.hits.total > 0) {
 			return this.hit2Obj(response.hits.hits[0]);
 		}
 		return;
 	}
 
-	async iterate(query: DatabaseQuery, onItem: (items: Array<T>) => Promise<void>): Promise<void> {
-		const response = await this.db.client.search<T>({
-			index: this._index,
-			type: this._type,
-			scroll: '30s',
-			size: 100,
-			body: {query: this.translateElasticQuery(query)}
-		});
-		await this.scroll(response, async hits => {
-			await onItem(hits.map(o => this.hit2Obj(o)));
-		});
-	}
-
 	async queryIds(query: DatabaseQuery): Promise<Array<string>> {
 		let list: Array<string> = [];
-		const response = await this.db.client.search<T>({
-			index: this._index,
-			type: this._type,
-			scroll: '30s',
-			body: {
-				query: this.translateElasticQuery(query),
-				stored_fields: []
-			}
-		});
+		const response = await this.search(query, {scroll: '30s', body: {stored_fields: []}});
 		await this.scroll(response, async hits => {
 			list = list.concat(hits.map(hit => hit._id.toString()));
 		});
 		return list;
 	}
 
-	async aggregate(query: DatabaseQuery, field: string): Promise<number> {
-		const response = await this.db.client.search({
-			index: this._index,
-			type: this._type,
-			body: {
-				query: this.translateElasticQuery(query),
-				aggs: {_count: {cardinality: {field}}}
-			}
+	async iterate(query: DatabaseQuery, onItem: (items: Array<T>) => Promise<void>): Promise<void> {
+		const response = await this.search(query, {scroll: '30s', size: 100});
+		await this.scroll(response, async hits => {
+			await onItem(hits.map(o => this.hit2Obj(o)));
 		});
-		return response.aggregations._count.value;
 	}
 
-	async count(query: DatabaseQuery): Promise<number> {
-		const response = await this.db.client.search({
+	async remove(id: string | Array<string>): Promise<void> {
+		if (id.length === 0) {
+			return Promise.resolve();
+		}
+		if (Array.isArray(id)) {
+			await this.db.client.deleteByQuery({
+				index: this._index,
+				type: this._type,
+				body: {query: {terms: {_id: id}}},
+				refresh: this.db.indexRefresh as elasticsearch.Refresh
+			});
+		} else {
+			await this.db.client.delete({
+				id, index: this._index, type: this._type,
+				refresh: this.db.indexRefresh as elasticsearch.Refresh
+			});
+		}
+	}
+
+	async removeByQuery(query: DatabaseQuery): Promise<number> {
+		const response = await this.db.client.deleteByQuery({
 			index: this._index,
 			type: this._type,
-			size: 0,
 			body: {
 				query: this.translateElasticQuery(query)
-			}
+			},
+			refresh: this.db.indexRefresh as elasticsearch.Refresh
 		});
-		return response.hits.total;
+		return response.deleted;
 	}
 
-	async distinct(query: DatabaseQuery, field: string): Promise<Array<string>> {
-		const response = await this.db.client.search({
-			index: this._index,
-			type: this._type,
-			body: {
-				query: this.translateElasticQuery(query),
-				aggs: {distinct: {terms: {field}}}
-			}
-		});
-		return response.aggregations.distinct.buckets.map((hit: any) => hit.key);
+	async replace(id: string, body: T): Promise<void> {
+		await this.indexItem(body, id);
+	}
+
+	async upsert(id: string, body: T): Promise<void> {
+		if (!id || id.length === 0) {
+			await this.add(body);
+			return;
+		}
+		await this.indexItem(body, id);
 	}
 
 }
