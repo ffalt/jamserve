@@ -1,6 +1,7 @@
 import fse from 'fs-extra';
 import path from 'path';
 import * as TJS from 'typescript-json-schema';
+// tslint:disable-next-line:no-submodule-imports
 import {Definition} from 'typescript-json-schema/typescript-json-schema';
 
 const settings: TJS.PartialArgs = {
@@ -14,7 +15,7 @@ export async function transformTS2JSONScheme(basePath: string, filename: string,
 		rootDir: basePath,
 		typeRoots: [basePath]
 	};
-	const file = path.resolve(basePath, filename + '.d.ts');
+	const file = path.resolve(basePath, `${filename}.d.ts`);
 	const program = TJS.getProgramFromFiles([file], compilerOptions, basePath);
 	const generator = TJS.buildGenerator(program, settings);
 	if (!generator) {
@@ -29,7 +30,7 @@ export async function transformTS2JSONScheme(basePath: string, filename: string,
 	if (scheme) {
 		return scheme;
 	}
-	return Promise.reject('Typescript symbol not found: ' + symbol);
+	return Promise.reject(`Typescript symbol not found: ${symbol}`);
 }
 
 export async function transformTS2NamespaceJSONScheme(basePath: string, filename: string): Promise<Definition> {
@@ -39,7 +40,7 @@ export async function transformTS2NamespaceJSONScheme(basePath: string, filename
 		resolveJsonModule: true,
 		typeRoots: [basePath]
 	};
-	const file = path.resolve(basePath, filename + '.d.ts');
+	const file = path.resolve(basePath, `${filename}.d.ts`);
 	const program = TJS.getProgramFromFiles([file], compilerOptions, basePath);
 	const generator = TJS.buildGenerator(program, settings);
 	if (!generator) {
@@ -51,21 +52,26 @@ export async function transformTS2NamespaceJSONScheme(basePath: string, filename
 	if (scheme) {
 		return scheme;
 	}
-	return Promise.reject('Typescript schema could not be created: ' + filename);
+	return Promise.reject(`Typescript schema could not be created: ${filename}`);
 }
 
 export async function saveTS2JSONScheme(basePath: string, filename: string, symbol: string): Promise<void> {
 	const scheme = await transformTS2JSONScheme(basePath, filename, symbol);
-	const destfile = path.resolve(basePath, filename + '.schema.json');
+	const destfile = path.resolve(basePath, `${filename}.schema.json`);
 	await fse.writeFile(destfile, JSON.stringify(scheme, null, '\t'));
 	console.log('👍', destfile, 'written');
 }
 
 export async function saveTS2NamespaceJSONScheme(basePath: string, filename: string): Promise<void> {
 	const scheme = await transformTS2NamespaceJSONScheme(basePath, filename);
-	const destfile = path.resolve(basePath, filename + '.schema.json');
+	const destfile = path.resolve(basePath, `${filename}.schema.json`);
 	await fse.writeFile(destfile, JSON.stringify(scheme, null, '\t'));
 	console.log('👍', destfile, 'written');
+}
+
+export interface ApiCallPathParameters {
+	paramType: string;
+	parameters?: Array<{ name: string, type: string, prefix: string, description: string, required: boolean }>;
 }
 
 export interface ApiCall {
@@ -87,16 +93,10 @@ export interface ApiCall {
 	isPublic: boolean;
 	definitions: any;
 	pathParamsSchema: any;
-	pathParams?: {
-		paramType: string;
-		parameters?: Array<{ name: string, type: string, prefix: string, description: string, required: boolean }>;
-	};
+	pathParams?: ApiCallPathParameters;
 }
 
-function getPathParamsCalls(name: string, api: any, pathParams: any): {
-	paramType: string;
-	parameters?: Array<{ name: string, type: string, prefix: string, description: string, required: boolean }>
-} | undefined {
+function getPathParamsCalls(name: string, api: any, pathParams: any): ApiCallPathParameters | undefined {
 	const paramType = pathParams && pathParams.$ref ? pathParams.$ref.split('/')[2] : undefined;
 	if (!paramType) {
 		return;
@@ -133,112 +133,110 @@ export async function getJamApiCalls(basePath: string): Promise<Array<ApiCall>> 
 	return getApiCalls(api);
 }
 
+function getResultErrors(api: any, apidef: any): Array<{ code: number, text: string }> {
+	const resultErrors: Array<{ code: number, text: string }> = [];
+	if (apidef.properties.errors) {
+		if (apidef.properties.errors.$ref) {
+			const errspec = api.definitions[apidef.properties.errors.$ref.split('/')[2]].properties;
+			const errcode = errspec.error.enum[0];
+			const errtext = errspec.text.enum[0];
+			resultErrors.push({code: errcode, text: errtext});
+		} else if (apidef.properties.errors.anyOf) {
+			apidef.properties.errors.anyOf.forEach((errspec: any) => {
+				if (!api.definitions[errspec.$ref.split('/')[2]]) {
+					console.log(Object.keys(api.definitions));
+				}
+				errspec = api.definitions[errspec.$ref.split('/')[2]].properties;
+				const errcode = errspec.error.enum[0];
+				const errtext = errspec.text.enum[0];
+				resultErrors.push({code: errcode, text: errtext});
+			});
+		} else {
+			console.error('Implement error spec', apidef.properties.errors);
+		}
+	}
+	return resultErrors;
+}
+
+function getOperationId(name: string, apidef: any): string {
+	let operationId = apidef.properties.operationId ? apidef.properties.operationId.enum[0] : undefined;
+	let splits: Array<string>;
+	if (operationId) {
+		splits = operationId.split('.');
+		if (splits.length > 1) {
+			operationId = `${splits[0]}Controller.${splits[1]}`;
+		}
+	} else {
+		splits = name.split('/');
+		operationId = splits.length > 1 ?
+			`${splits[0]}Controller.${splits[1]}` :
+			name;
+	}
+	if (splits.length > 2) {
+		operationId += splits.slice(2).map(sp => sp[0].toUpperCase() + sp.slice(1).toLowerCase()).join('');
+	}
+	return operationId;
+}
+
+function getResultType(resultdef: any): string | undefined {
+	let resultType: string | undefined;
+	if (resultdef) {
+		if (resultdef.type === 'array') {
+			resultType = resultdef.items.$ref.split('/')[2];
+			resultType = `Array<${resultType}>`;
+		} else if (resultdef.$ref) {
+			resultType = resultdef.$ref.split('/')[2];
+		}
+	}
+	return resultType;
+}
+
+function getDescriptionAndTag(name: string, apidef: any): { description?: string, tag: string } {
+	let description: string | undefined;
+	let tag = name.split('/')[0];
+	if (apidef.description) {
+		const sl = apidef.description.split(':');
+		if (sl.length > 1) {
+			tag = sl[0].trim();
+			description = sl[1].trim();
+		} else {
+			description = sl[0].trim();
+		}
+	}
+	return {description, tag};
+}
+
+function getApiCall(name: string, method: string, api: any): ApiCall {
+	const apidef = api.properties[method].properties[name];
+	const {description, tag} = getDescriptionAndTag(name, apidef);
+	return {
+		method: method.toLowerCase(),
+		name,
+		tag,
+		description,
+		paramType: apidef.properties.params && apidef.properties.params.$ref ? apidef.properties.params.$ref.split('/')[2] : undefined,
+		paramSchema: method === 'GET' ? apidef.properties.params : undefined,
+		bodySchema: method === 'POST' ? apidef.properties.params : undefined,
+		operationId: getOperationId(name, apidef),
+		upload: apidef.properties.upload ? apidef.properties.upload.enum[0] : undefined,
+		roles: apidef.properties.roles ? apidef.properties.roles.items.map((item: any) => item.enum[0]) : undefined,
+		resultErrors: getResultErrors(apidef, api),
+		pathParamsSchema: apidef.properties.pathParams,
+		definitions: api.definitions,
+		resultSchema: apidef.properties.result,
+		isPublic: !!apidef.properties.public,
+		aliasFor: apidef.properties.aliasFor ? apidef.properties.aliasFor.enum[0] : undefined,
+		binaryResult: apidef.properties.binary ? apidef.properties.binary.items.map((item: any) => item.enum[0]) : undefined,
+		pathParams: getPathParamsCalls(name, api, apidef.properties.pathParams),
+		resultType: getResultType(apidef.properties.result)
+	};
+}
+
 export function getApiCalls(api: any): Array<ApiCall> {
 	const result: Array<ApiCall> = [];
 	Object.keys(api.properties).forEach(method => {
 		Object.keys(api.properties[method].properties).forEach(name => {
-			const apidef = api.properties[method].properties[name];
-			const parasdef = apidef.properties.params;
-			const resultdef = apidef.properties.result;
-			const binarydef = apidef.properties.binary;
-			const paramType = parasdef && parasdef.$ref ? parasdef.$ref.split('/')[2] : undefined;
-			let operationId = apidef.properties.operationId ? apidef.properties.operationId.enum[0] : undefined;
-			let splits: Array<string>;
-			if (operationId) {
-				splits = operationId.split('.');
-				if (splits.length > 1) {
-					operationId = splits[0] + 'Controller.' + splits[1];
-				}
-			} else {
-				splits = name.split('/');
-				operationId = splits.length > 1 ?
-					splits[0] + 'Controller.' + splits[1] :
-					name;
-			}
-			if (splits.length > 2) {
-				operationId += splits.slice(2).map(sp => sp[0].toUpperCase() + sp.slice(1).toLowerCase()).join('');
-			}
-			const pathParams = apidef.properties.pathParams;
-			let upload: string | undefined;
-			if (apidef.properties.upload) {
-				upload = apidef.properties.upload.enum[0];
-			}
-			let resultType: string | undefined;
-			if (resultdef) {
-				if (resultdef.type === 'array') {
-					resultType = resultdef.items.$ref.split('/')[2];
-					resultType = 'Array<' + resultType + '>';
-				} else if (resultdef.$ref) {
-					resultType = resultdef.$ref.split('/')[2];
-				}
-			}
-			let aliasFor: string | undefined;
-			if (apidef.properties.aliasFor) {
-				aliasFor = apidef.properties.aliasFor.enum[0];
-			}
-			let description: string | undefined;
-			let tag = name.split('/')[0];
-
-			if (apidef.description) {
-				const sl = apidef.description.split(':');
-				if (sl.length > 1) {
-					tag = sl[0].trim();
-					description = sl[1].trim();
-				} else {
-					description = sl[0].trim();
-				}
-			}
-			let binaryResult: Array<string> | undefined;
-			if (binarydef) {
-				binaryResult = apidef.properties.binary.items.map((item: any) => item.enum[0]);
-			}
-
-			const resultErrors: Array<{ code: number, text: string }> = [];
-			if (apidef.properties.errors) {
-				if (apidef.properties.errors.$ref) {
-					const errspec = api.definitions[apidef.properties.errors.$ref.split('/')[2]].properties;
-					const errcode = errspec.error.enum[0];
-					const errtext = errspec.text.enum[0];
-					resultErrors.push({code: errcode, text: errtext});
-				} else if (apidef.properties.errors.anyOf) {
-					apidef.properties.errors.anyOf.forEach((errspec: any) => {
-						if (!api.definitions[errspec.$ref.split('/')[2]]) {
-							console.log(Object.keys(api.definitions));
-						}
-						errspec = api.definitions[errspec.$ref.split('/')[2]].properties;
-						const errcode = errspec.error.enum[0];
-						const errtext = errspec.text.enum[0];
-						resultErrors.push({code: errcode, text: errtext});
-					});
-				} else {
-					console.error('Implement error spec', apidef.properties.errors);
-				}
-			}
-			let roles: Array<string> = [];
-			if (apidef.properties.roles) {
-				roles = apidef.properties.roles.items.map((item: any) => item.enum[0]);
-			}
-			result.push({
-				method: method.toLowerCase(),
-				name,
-				tag,
-				description,
-				paramType,
-				paramSchema: method === 'GET' ? apidef.properties.params : undefined,
-				bodySchema: method === 'POST' ? apidef.properties.params : undefined,
-				operationId,
-				upload,
-				roles,
-				resultErrors,
-				pathParamsSchema: pathParams,
-				definitions: api.definitions,
-				resultSchema: resultdef,
-				isPublic: !!apidef.properties.public,
-				aliasFor,
-				binaryResult,
-				pathParams: getPathParamsCalls(name, api, pathParams),
-				resultType
-			});
+			result.push(getApiCall(name, method, api));
 		});
 	});
 	return result;
