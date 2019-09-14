@@ -54,6 +54,18 @@ export declare namespace Jam {
 		strategy: RootScanStrategy;
 	}
 
+	export interface UserSession {
+		id: string;
+		client: string;
+		expires: number;
+		agent?: string;
+		os?: string;
+	}
+
+	export interface UserSessionList extends ListResult {
+		items: Array<UserSession>;
+	}
+
 	export interface RootList extends ListResult {
 		items: Array<Root>;
 	}

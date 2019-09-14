@@ -36,7 +36,7 @@ export interface JamApi {
 		 * various: is the api online?
 		 */
 		'ping'?: {
-			operationId: 'info.ping'
+			operationId: 'session.ping'
 			result: Jam.Ping;
 			public: true;
 		};
@@ -44,7 +44,7 @@ export interface JamApi {
 		 * auth: check the login state
 		 */
 		'session'?: {
-			operationId: 'info.session'
+			operationId: 'session.session'
 			result: Jam.Session;
 			public: true;
 		};
@@ -822,6 +822,13 @@ export interface JamApi {
 			result: Jam.UserList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['admin'];
+		};
+		/**
+		 * user: get infos about the user sessions
+		 */
+		'user/sessions/list'?: {
+			operationId: 'session.sessions'
+			result: Array<Jam.UserSession>;
 		};
 
 		/**

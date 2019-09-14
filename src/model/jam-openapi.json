@@ -25,7 +25,7 @@
 	"paths": {
 		"/ping": {
 			"get": {
-				"operationId": "infoController.ping",
+				"operationId": "sessionController.ping",
 				"description": "is the api online?",
 				"tags": [
 					"various"
@@ -47,7 +47,7 @@
 		},
 		"/session": {
 			"get": {
-				"operationId": "infoController.session",
+				"operationId": "sessionController.session",
 				"description": "check the login state",
 				"tags": [
 					"auth"
@@ -11086,6 +11086,30 @@
 						"required": false
 					}
 				]
+			}
+		},
+		"/user/sessions/list": {
+			"get": {
+				"operationId": "sessionController.sessions",
+				"description": "get infos about the user sessions",
+				"tags": [
+					"user"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.UserSession"
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		},
 		"/playqueue/get": {
@@ -22715,6 +22739,31 @@
 				},
 				"required": [
 					"items"
+				]
+			},
+			"Jam.UserSession": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"client": {
+						"type": "string"
+					},
+					"expires": {
+						"type": "number"
+					},
+					"agent": {
+						"type": "string"
+					},
+					"os": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"client",
+					"expires",
+					"id"
 				]
 			},
 			"Jam.PlayQueue": {
