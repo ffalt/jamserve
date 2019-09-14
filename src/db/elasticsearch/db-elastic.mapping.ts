@@ -1,4 +1,5 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
 const typeBool = {type: 'boolean'};
 
 const typeInt = {type: 'long'};

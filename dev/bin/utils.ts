@@ -1,14 +1,12 @@
 import fse from 'fs-extra';
 import path from 'path';
 import * as TJS from 'typescript-json-schema';
-// tslint:disable-next-line:no-submodule-imports
-import {Definition} from 'typescript-json-schema/typescript-json-schema';
 
 const settings: TJS.PartialArgs = {
 	required: true
 };
 
-export async function transformTS2JSONScheme(basePath: string, filename: string, symbol: string): Promise<Definition> {
+export async function transformTS2JSONScheme(basePath: string, filename: string, symbol: string): Promise<TJS.Definition> {
 	const compilerOptions: TJS.CompilerOptions = {
 		strictNullChecks: true,
 		resolveJsonModule: true,
@@ -33,7 +31,7 @@ export async function transformTS2JSONScheme(basePath: string, filename: string,
 	return Promise.reject(`Typescript symbol not found: ${symbol}`);
 }
 
-export async function transformTS2NamespaceJSONScheme(basePath: string, filename: string): Promise<Definition> {
+export async function transformTS2NamespaceJSONScheme(basePath: string, filename: string): Promise<TJS.Definition> {
 	const compilerOptions: TJS.CompilerOptions = {
 		strictNullChecks: true,
 		rootDir: basePath,
@@ -240,4 +238,14 @@ export function getApiCalls(api: any): Array<ApiCall> {
 		});
 	});
 	return result;
+}
+
+export function run(build: () => Promise<string>): void {
+	build()
+		.then(destfile => {
+			console.log('👍', destfile, 'written');
+		})
+		.catch(e => {
+			console.error(e);
+		});
 }
