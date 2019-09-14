@@ -4,11 +4,9 @@ import refParser from 'json-schema-ref-parser';
 import Mustache from 'mustache';
 import path from 'path';
 import {OpenAPIObject, OperationObject, ParameterObject, SchemaObject} from '../../src/model/openapi-spec';
-import {ApiCall, getJamApiCalls} from './utils';
+import {ApiCalls, getJamApiCalls, run} from './utils';
 
 const chance = new Chance();
-const basePath = path.resolve('../../src/model/');
-const destfile = path.resolve('../../src/api/server.test.ts');
 
 export interface RequestMocks {
 	[apiName: string]: {
@@ -323,48 +321,49 @@ interface MustacheDataTest {
 	content: string;
 }
 
-async function run(): Promise<void> {
-	const spec: OpenAPIObject = await fse.readJSON(path.join(basePath, 'jam-openapi.json'));
-	const apicalls: Array<ApiCall> = await getJamApiCalls(basePath);
-	const mocks = await generateRequestMocks(spec);
-	// await fse.writeFile(destfile + '.json', JSON.stringify(mocks));
+async function generateTestsByPath(apiPath: string, operation: string, mocks: RequestMocks, apicalls: ApiCalls, openapi: OpenAPIObject): Promise<Array<MustacheDataSubSection>> {
+	const sections: Array<MustacheDataSubSection> = [];
+	const requests = mocks[apiPath][operation];
+	const valid = requests.filter(r => r.valid);
+	// const validSection: MustacheDataSubSection = {title: 'should complete request', tests: []};
+	// for (const mock of valid) {
+	// validSection.tests.push(await generateValidTest(mock, apiPath, operation));
+	// }
+	// if (validSection.tests.length > 0) {
+	// 	sections.push(validSection);
+	// }
+	if (valid.length > 0 && (!openapi.paths[apiPath][operation].security || openapi.paths[apiPath][operation].security.length > 0)) {
+		const noLogInFailSection: MustacheDataSubSection = {title: 'should fail without login', tests: [await generateFailUauthRequestTest(valid[0], apiPath, operation)]};
+		sections.push(noLogInFailSection);
+		const call = apicalls.calls.find(c => `/${c.name}` === apiPath);
+		if (call && call.roles.length > 0) {
+			const noNoRightsFailSection: MustacheDataSubSection = {title: 'should fail without required rights', tests: [await generateFailNoRightsRequestTest(valid[0], apiPath, operation)]};
+			console.log(noNoRightsFailSection);
+			sections.push(noNoRightsFailSection);
+		}
+	}
+	const invalid = requests.filter(r => !r.valid);
+	const invalidSection: MustacheDataSubSection = {title: 'should fail with invalid data', tests: []};
+	for (const mock of invalid) {
+		const test = await generateFailTest(mock, apiPath, operation);
+		if (test) {
+			invalidSection.tests.push(test);
+		}
+	}
+	if (invalidSection.tests.length > 0) {
+		sections.push(invalidSection);
+	}
+	return sections;
+}
+
+async function generateTests(mocks: RequestMocks, apicalls: ApiCalls, openapi: OpenAPIObject): Promise<Array<MustacheDataSection>> {
 	const sections: Array<MustacheDataSection> = [];
 	for (const apiPath in mocks) {
 		if (mocks.hasOwnProperty(apiPath)) {
 			const section: MustacheDataSection = {title: apiPath, subsections: []};
 			for (const operation in mocks[apiPath]) {
 				if (mocks[apiPath].hasOwnProperty(operation)) {
-					const requests = mocks[apiPath][operation];
-
-					const valid = requests.filter(r => r.valid);
-					const validSection: MustacheDataSubSection = {title: 'should complete request', tests: []};
-					// for (const mock of valid) {
-					// validSection.tests.push(await generateValidTest(mock, apiPath, operation));
-					// }
-					if (validSection.tests.length > 0) {
-						section.subsections.push(validSection);
-					}
-					if (valid.length > 0 && (!spec.paths[apiPath][operation].security || spec.paths[apiPath][operation].security.length > 0)) {
-						const noLogInFailSection: MustacheDataSubSection = {title: 'should fail without login', tests: [await generateFailUauthRequestTest(valid[0], apiPath, operation)]};
-						section.subsections.push(noLogInFailSection);
-						const call = apicalls.find(c => `/${c.name}` === apiPath);
-						if (call && call.roles.length > 0) {
-							const noNoRightsFailSection: MustacheDataSubSection = {title: 'should fail without required rights', tests: [await generateFailNoRightsRequestTest(valid[0], apiPath, operation)]};
-							console.log(noNoRightsFailSection);
-							section.subsections.push(noNoRightsFailSection);
-						}
-					}
-					const invalid = requests.filter(r => !r.valid);
-					const invalidSection: MustacheDataSubSection = {title: 'should fail with invalid data', tests: []};
-					for (const mock of invalid) {
-						const test = await generateFailTest(mock, apiPath, operation);
-						if (test) {
-							invalidSection.tests.push(test);
-						}
-					}
-					if (invalidSection.tests.length > 0) {
-						section.subsections.push(invalidSection);
-					}
+					section.subsections = await generateTestsByPath(apiPath, operation, mocks, apicalls, openapi);
 				}
 			}
 			if (section.subsections.length > 0) {
@@ -372,14 +371,20 @@ async function run(): Promise<void> {
 			}
 		}
 	}
-	const template = Mustache.render((await fse.readFile('../templates/server.test.ts.template')).toString(), {sections});
-	await fse.writeFile(destfile, template);
+	return sections;
 }
 
-run()
-	.then(() => {
-		console.log('👍', destfile, 'written');
-	})
-	.catch(e => {
-		console.error(e);
-	});
+async function build(): Promise<string> {
+	const basePath = path.resolve('../../src/model/');
+	const destfile = path.resolve('../../src/api/server.test.ts');
+	const openapi: OpenAPIObject = await fse.readJSON(path.join(basePath, 'jam-openapi.json'));
+	const apicalls: ApiCalls = await getJamApiCalls(basePath);
+	const mocks = await generateRequestMocks(openapi);
+	const sections = await generateTests(mocks, apicalls, openapi);
+	// await fse.writeFile(destfile + '.json', JSON.stringify(mocks));
+	const template = Mustache.render((await fse.readFile('../templates/server.test.ts.template')).toString(), {sections, version: apicalls.version});
+	await fse.writeFile(destfile, template);
+	return destfile;
+}
+
+run(build);

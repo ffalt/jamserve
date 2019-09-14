@@ -1,6 +1,8 @@
 import fse from 'fs-extra';
 import path from 'path';
 import * as TJS from 'typescript-json-schema';
+import {JAMAPI_VERSION} from '../../src/api/jam/version';
+import {SUBSONIC_VERSION} from '../../src/api/subsonic/version';
 
 const settings: TJS.PartialArgs = {
 	required: true
@@ -72,6 +74,11 @@ export interface ApiCallPathParameters {
 	parameters?: Array<{ name: string, type: string, prefix: string, description: string, required: boolean }>;
 }
 
+export interface ApiCalls {
+	calls: Array<ApiCall>;
+	version: string;
+}
+
 export interface ApiCall {
 	method: string;
 	name: string;
@@ -121,14 +128,14 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): ApiCallPat
 	return {paramType, parameters};
 }
 
-export async function getSubsonicApiCalls(basePath: string): Promise<Array<ApiCall>> {
+export async function getSubsonicApiCalls(basePath: string): Promise<ApiCalls> {
 	const api = await transformTS2JSONScheme(basePath, 'subsonic-rest-api', 'SubsonicApi');
-	return getApiCalls(api);
+	return getApiCalls(api, SUBSONIC_VERSION);
 }
 
-export async function getJamApiCalls(basePath: string): Promise<Array<ApiCall>> {
+export async function getJamApiCalls(basePath: string): Promise<ApiCalls> {
 	const api = await transformTS2JSONScheme(basePath, 'jam-rest-api', 'JamApi');
-	return getApiCalls(api);
+	return getApiCalls(api, JAMAPI_VERSION);
 }
 
 function getResultErrors(api: any, apidef: any): Array<{ code: number, text: string }> {
@@ -217,8 +224,8 @@ function getApiCall(name: string, method: string, api: any): ApiCall {
 		bodySchema: method === 'POST' ? apidef.properties.params : undefined,
 		operationId: getOperationId(name, apidef),
 		upload: apidef.properties.upload ? apidef.properties.upload.enum[0] : undefined,
-		roles: apidef.properties.roles ? apidef.properties.roles.items.map((item: any) => item.enum[0]) : undefined,
-		resultErrors: getResultErrors(apidef, api),
+		roles: apidef.properties.roles ? apidef.properties.roles.items.map((item: any) => item.enum[0]) : [],
+		resultErrors: getResultErrors(api, apidef),
 		pathParamsSchema: apidef.properties.pathParams,
 		definitions: api.definitions,
 		resultSchema: apidef.properties.result,
@@ -230,11 +237,11 @@ function getApiCall(name: string, method: string, api: any): ApiCall {
 	};
 }
 
-export function getApiCalls(api: any): Array<ApiCall> {
-	const result: Array<ApiCall> = [];
+export function getApiCalls(api: any, version: string): ApiCalls {
+	const result: ApiCalls = {calls: [], version};
 	Object.keys(api.properties).forEach(method => {
 		Object.keys(api.properties[method].properties).forEach(name => {
-			result.push(getApiCall(name, method, api));
+			result.calls.push(getApiCall(name, method, api));
 		});
 	});
 	return result;

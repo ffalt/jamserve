@@ -1,11 +1,7 @@
 import fse from 'fs-extra';
 import Mustache from 'mustache';
 import path from 'path';
-import {ApiCall, getJamApiCalls} from './utils';
-
-const destPath = '../../dist/';
-const destfile = '/Users/ffalt/Projekte/own/jam/berry/src/app/services/jam/jam.service.ts';//path.resolve(destPath, 'jam.serviceB.ts');
-const basePath = path.resolve('../../src/model/');
+import {ApiCall, ApiCalls, getJamApiCalls, run} from './utils';
 
 interface MustacheDataClientCallFunction {
 	name: string;
@@ -26,7 +22,7 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 		return [{
 			name,
 			paramsType: '',
-			paramName: 'params: ' + call.paramType + ', file: File',
+			paramName: `params: ${call.paramType}, file: File`,
 			resultType: 'Observable<HttpEvent<any>>',
 			baseFuncResultType: '',
 			baseFunc: 'upload',
@@ -37,60 +33,65 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 	}
 	if (call.binaryResult) {
 		if (call.paramType) {
-			return [{
-				name: name + '_url',
-				paramName: 'params',
-				paramsType: call.paramType || '{}',
-				resultType: 'string',
-				baseFuncResultType: '',
-				baseFunc: 'buildRequestUrl',
-				baseFuncParameters: 'params',
-				apiPath: call.name,
-				sync: true
-			}, {
-				name: name + '_binary',
-				paramName: 'params',
-				paramsType: call.paramType || '{}',
-				resultType: 'ArrayBuffer',
-				baseFuncResultType: '',
-				baseFunc: 'binary',
-				baseFuncParameters: 'params',
-				apiPath: call.name
-			}];
+			return [
+				{
+					name: `${name}_url`,
+					paramName: 'params',
+					paramsType: call.paramType || '{}',
+					resultType: 'string',
+					baseFuncResultType: '',
+					baseFunc: 'buildRequestUrl',
+					baseFuncParameters: 'params',
+					apiPath: call.name,
+					sync: true
+				},
+				{
+					name: `${name}_binary`,
+					paramName: 'params',
+					paramsType: call.paramType || '{}',
+					resultType: 'ArrayBuffer',
+					baseFuncResultType: '',
+					baseFunc: 'binary',
+					baseFuncParameters: 'params',
+					apiPath: call.name
+				}
+			];
 		}
 		if (call.pathParams && call.pathParams.parameters) {
-			const params = call.pathParams.parameters.map(para => para.name + (para.required ? '' : '?') + ': ' + para.type).join(', ');
+			const params = call.pathParams.parameters.map(para => `${para.name}${para.required ? '' : '?'}: ${para.type}`).join(', ');
 			const basename = call.name.split('/')[0];
 			const parampath = call.pathParams.parameters.map(para => {
 				if (para.required) {
-					return '${' + (para.prefix ? ' \'' + para.prefix + '\' + ' : '') + para.name + (para.type !== 'string' ? '.toString()' : '') + '}';
+					return `$\{${para.prefix ? ` '${para.prefix}' + ` : ''}${para.name}${para.type !== 'string' ? '.toString()' : ''}}`;
 				}
-				const prefix = (para.prefix ? ' \'' + para.prefix + '\' + ' : '');
+				const prefix = (para.prefix ? ` '${para.prefix}' + ` : '');
 				const type = para.type !== 'string' ? '.toString()' : '';
-				return '${(' + para.name + ' !== undefined ? ' + prefix + para.name + type + ' : \'\')}';
+				return `$\{(${para.name} !== undefined ? ${prefix}${para.name}${type} : '')}`;
 			}).join('');
-			return [{
-				name: basename + '_url',
-				paramName: params,
-				paramsType: '',
-				resultType: 'string',
-				baseFuncResultType: '',
-				baseFunc: 'buildRequestUrl',
-				baseFuncParameters: '',
-				apiPath: basename + '/' + parampath,
-				apiPathTemplate: true,
-				sync: true
-			}, {
-				name: basename + '_binary',
-				paramName: params,
-				paramsType: '',
-				resultType: 'ArrayBuffer',
-				baseFuncResultType: '',
-				baseFunc: 'binary',
-				baseFuncParameters: '',
-				apiPathTemplate: true,
-				apiPath: basename + '/' + parampath
-			}];
+			return [
+				{
+					name: `${basename}_url`,
+					paramName: params,
+					paramsType: '',
+					resultType: 'string',
+					baseFuncResultType: '',
+					baseFunc: 'buildRequestUrl',
+					baseFuncParameters: '',
+					apiPath: `${basename}/${parampath}`,
+					apiPathTemplate: true,
+					sync: true
+				},
+				{
+					name: `${basename}_binary`,
+					paramName: params,
+					paramsType: '',
+					resultType: 'ArrayBuffer',
+					baseFuncResultType: '',
+					baseFunc: 'binary',
+					baseFuncParameters: '',
+					apiPathTemplate: true,
+					apiPath: `${basename}/${parampath}`
+				}];
 			// const s = `	${basename}_url(${params}): string {
 			// 	return this.buildRequestUrl(\`${basename}/${parampath}\`);
 			// }`;
@@ -101,26 +102,29 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 			// 		resultAPI.push(s1);
 		}
 		if (call.pathParams) {
-			return [{
-				name: name + '_url',
-				paramName: 'params',
-				paramsType: call.pathParams.paramType || '{}',
-				resultType: 'string',
-				baseFuncResultType: '',
-				baseFunc: 'buildRequestUrl',
-				baseFuncParameters: 'params',
-				apiPath: call.name,
-				sync: true
-			}, {
-				name: name + '_binary',
-				paramName: 'params',
-				paramsType: call.pathParams.paramType || '{}',
-				resultType: 'ArrayBuffer',
-				baseFuncResultType: '',
-				baseFunc: 'binary',
-				baseFuncParameters: 'params',
-				apiPath: call.name
-			}];
+			return [
+				{
+					name: `${name}_url`,
+					paramName: 'params',
+					paramsType: call.pathParams.paramType || '{}',
+					resultType: 'string',
+					baseFuncResultType: '',
+					baseFunc: 'buildRequestUrl',
+					baseFuncParameters: 'params',
+					apiPath: call.name,
+					sync: true
+				},
+				{
+					name: `${name}_binary`,
+					paramName: 'params',
+					paramsType: call.pathParams.paramType || '{}',
+					resultType: 'ArrayBuffer',
+					baseFuncResultType: '',
+					baseFunc: 'binary',
+					baseFuncParameters: 'params',
+					apiPath: call.name
+				}
+			];
 		}
 		return [];
 	}
@@ -148,23 +152,19 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 	}];
 }
 
-async function run(): Promise<void> {
-	const calls: Array<ApiCall> = await getJamApiCalls(basePath);
+async function build(): Promise<string> {
+	const destfile = path.resolve('../../dist/jam.service.ts');
+	const basePath = path.resolve('../../src/model/');
+	const apiCalls: ApiCalls = await getJamApiCalls(basePath);
 	let list: Array<MustacheDataClientCallFunction> = [];
-	for (const call of calls) {
+	for (const call of apiCalls.calls) {
 		if (!call.aliasFor) {
 			list = list.concat(generateClientCall(call));
 		}
 	}
-	const template = Mustache.render((await fse.readFile('../templates/jam-client.ts.template')).toString(), {list});
+	const template = Mustache.render((await fse.readFile('../templates/jam-client.ts.template')).toString(), {list, version: apiCalls.version});
 	await fse.writeFile(destfile, template);
+	return destfile;
 }
 
-run()
-	.then(() => {
-		console.log('👍', destfile, 'written');
-	})
-	.catch(e => {
-		console.error(e);
-	});
-
+run(build);

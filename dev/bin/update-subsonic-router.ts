@@ -2,11 +2,7 @@ import fse from 'fs-extra';
 import Mustache from 'mustache';
 import path from 'path';
 import {ApiBinaryResult} from '../../src/typings';
-import {ApiCall, getSubsonicApiCalls} from './utils';
-
-const destPath = '../../src/api/subsonic/';
-const destfile = path.resolve(destPath, 'routes.ts');
-const basePath = path.resolve('../../src/model/');
+import {ApiCall, ApiCalls, getSubsonicApiCalls, run} from './utils';
 
 interface MustacheDataRegisterFunction {
 	method: string;
@@ -37,7 +33,7 @@ function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
 	if (call.resultSchema) {
 		const propname = call.resultSchema.required[0];
 		const proptype = call.resultSchema.properties[propname].$ref.split('/')[2];
-		result.resultType = '{ ' + propname + ': ' + proptype + ' }';
+		result.resultType = `{ ${propname}: ${proptype} }`;
 	}
 	// if (call.resultType) {
 	// 	console.log(call);
@@ -49,10 +45,10 @@ function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
 	if (call.pathParams) {
 		const list = call.name.split('/');
 		result.parameterSource = 'params';
-		result.apiPath = list[0] + '/:pathParameter';
+		result.apiPath = `${list[0]}/:pathParameter`;
 		result.parameterType = '{pathParameter: string}';
 		result.controllerCall += 'ByPathParameter';
-		result.apiPathCheck = list[0] + '/{pathParameter}';
+		result.apiPathCheck = `${list[0]}/{pathParameter}`;
 	}
 	if (call.roles.length > 0) {
 		result.callRoles = JSON.stringify(call.roles).replace(/"/g, '\'');
@@ -70,11 +66,13 @@ function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
 	return result;
 }
 
-async function run(): Promise<void> {
-	const apicalls: Array<ApiCall> = await getSubsonicApiCalls(basePath);
+async function build(): Promise<string> {
+	const destfile = path.resolve('../../src/api/subsonic/routes.ts');
+	const basePath = path.resolve('../../src/model/');
+	const apicalls: ApiCalls = await getSubsonicApiCalls(basePath);
 	const collectRoles: Array<string> = [];
 	const publicAccess: Array<MustacheDataRegisterFunction> = [];
-	apicalls.forEach(call => {
+	apicalls.calls.forEach(call => {
 		(call.roles || []).forEach(role => {
 			if (!collectRoles.includes(role)) {
 				collectRoles.push(role);
@@ -83,14 +81,9 @@ async function run(): Promise<void> {
 		publicAccess.push(generateRegisterFunction(call));
 	});
 	const roles = collectRoles.map(r => `'${r}'`).join(' | ');
-	const template = Mustache.render((await fse.readFile('../templates/subsonic-routes.ts.template')).toString(), {publicAccess, roles});
+	const template = Mustache.render((await fse.readFile('../templates/subsonic-routes.ts.template')).toString(), {publicAccess, roles, version: apicalls.version});
 	await fse.writeFile(destfile, template);
+	return destfile;
 }
 
-run()
-	.then(() => {
-		console.log('👍', destfile, 'written');
-	})
-	.catch(e => {
-		console.error(e);
-	});
+run(build);

@@ -2,11 +2,7 @@ import fse from 'fs-extra';
 import Mustache from 'mustache';
 import path from 'path';
 import {ApiBinaryResult} from '../../src/typings';
-import {ApiCall, getJamApiCalls} from './utils';
-
-const destPath = '../../src/api/jam/';
-const destfile = path.resolve(destPath, 'routes.ts');
-const basePath = path.resolve('../../src/model/');
+import {ApiCall, ApiCalls, getJamApiCalls, run} from './utils';
 
 function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
 	const result: MustacheDataRegisterFunction = {
@@ -64,12 +60,14 @@ interface MustacheDataRegisterFunction {
 	callRoles: string;
 }
 
-async function run(): Promise<void> {
-	const apicalls: Array<ApiCall> = await getJamApiCalls(basePath);
+async function build(): Promise<string> {
+	const destfile = path.resolve('../../src/api/jam/routes.ts');
+	const basePath = path.resolve('../../src/model/');
+	const apicalls: ApiCalls = await getJamApiCalls(basePath);
 	const publicAccess: Array<MustacheDataRegisterFunction> = [];
 	const privateAccess: Array<MustacheDataRegisterFunction> = [];
 	const collectRoles: Array<string> = [];
-	apicalls.forEach(call => {
+	apicalls.calls.forEach(call => {
 		(call.roles || []).forEach(role => {
 			if (!collectRoles.includes(role)) {
 				collectRoles.push(role);
@@ -85,14 +83,9 @@ async function run(): Promise<void> {
 		}
 	});
 	const roles = collectRoles.map(r => `'${r}'`).join(' | ');
-	const template = Mustache.render((await fse.readFile('../templates/jam-routes.ts.template')).toString(), {publicAccess, privateAccess, roles});
+	const template = Mustache.render((await fse.readFile('../templates/jam-routes.ts.template')).toString(), {publicAccess, privateAccess, roles, version: apicalls.version});
 	await fse.writeFile(destfile, template);
+	return destfile;
 }
 
-run()
-	.then(() => {
-		console.log('👍', destfile, 'written');
-	})
-	.catch(e => {
-		console.error(e);
-	});
+run(build);
