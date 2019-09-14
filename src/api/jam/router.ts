@@ -129,30 +129,25 @@ export function initJamRouter(engine: Engine): express.Router {
 			engine.userService.auth(username, password).then(user => done(null, user ? user : false)).catch(done);
 		}
 	));
-	passport.use('jwt-header', new passportJWT.Strategy(
-		{
+	const resolvePayload = (jwtPayload: any, done: passportJWT.VerifiedCallback): void => {
+		engine.userService.getByID(jwtPayload.id).then(user => done(null, user ? user : false, jwtPayload)).catch(done);
+	};
+	passport.use('jwt-header', new passportJWT.Strategy({
 			jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
 			secretOrKey: engine.config.server.jwt.secret
-		},
-		(jwtPayload, done) => {
-			engine.userService.getByID(jwtPayload.id).then(user => done(null, user ? user : false, jwtPayload)).catch(done);
-		}
+		}, resolvePayload
 	));
-	passport.use('jwt-parameter', new passportJWT.Strategy(
-		{
+	passport.use('jwt-parameter', new passportJWT.Strategy({
 			jwtFromRequest: passportJWT.ExtractJwt.fromUrlQueryParameter('bearer'),
 			secretOrKey: engine.config.server.jwt.secret
-		},
-		(jwtPayload, done) => {
-			engine.userService.getByID(jwtPayload.id).then(user => done(null, user ? user : false, jwtPayload)).catch(done);
-		}
+		}, resolvePayload
 	));
 
-	function jwtParameterAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction): void {
+	function jwtParameterAuth(name: string, req: UserRequest, res: express.Response, next: express.NextFunction): void {
 		if (req.user) {
 			return next();
 		}
-		passport.authenticate('jwt-parameter', {session: false}, (err, user, info: JWTPayload) => {
+		passport.authenticate(name, {session: false}, (err, user, info: JWTPayload) => {
 			if (err) {
 				log.error(err);
 				return next();
@@ -164,20 +159,12 @@ export function initJamRouter(engine: Engine): express.Router {
 		})(req, res, next);
 	}
 
+	function jwtParameterAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction): void {
+		jwtParameterAuth('jwt-parameter', req, res, next);
+	}
+
 	function jwtHeaderAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction): void {
-		if (req.user) {
-			return next();
-		}
-		passport.authenticate('jwt-header', {session: false}, (err, user, info: JWTPayload) => {
-			if (err) {
-				log.error(err);
-				return next();
-			}
-			req.jwt = !!user;
-			req.client = info.client;
-			req.user = user;
-			next();
-		})(req, res, next);
+		jwtParameterAuth('jwt-header', req, res, next);
 	}
 
 	router.use((req, res, next) => {
