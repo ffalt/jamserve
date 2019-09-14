@@ -16,13 +16,13 @@ import {Jam} from '../../model/jam-rest-data';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import {logger} from '../../utils/logger';
 import {getMaxAge} from '../../utils/max-age';
-import {SessionJSONFileStore} from '../../utils/session-storage';
 import {JamApi} from './api';
 import {apiCheck} from './check';
 import {NotFoundError, UnauthError} from './error';
 import {CheckAuthMiddleWare, UserRequest} from './login';
 import {ApiResponder} from './response';
 import {JamApiRole, Register, registerAccessControlApi, RegisterCallback, registerPublicApi} from './routes';
+import {ExpressSessionStore} from './session';
 import {JAMAPI_VERSION} from './version';
 
 const LoginLimiter = rateLimit({
@@ -51,6 +51,10 @@ function CallSessionLoginHandler(req: UserRequest, res: express.Response, next: 
 			}
 			const client = req.body.client || 'Unknown Client';
 			req.client = client;
+			if (req.session) {
+				req.session.client = client;
+				req.session.userAgent = req.headers['user-agent'];
+			}
 			const maxAge = getMaxAge(req.engine.config.server.jwt.maxAge);
 			const tokenData: JWTPayload = {
 				id: user.id,
@@ -105,7 +109,8 @@ export function initJamRouter(engine: Engine): express.Router {
 	router.use(session({
 		name: engine.config.server.session.cookie.name,
 		secret: engine.config.server.session.secret,
-		store: new SessionJSONFileStore(engine.config.getDataPath(['session', 'sessions.json'])),
+		// store: new SessionJSONFileStore(engine.config.getDataPath(['session', 'sessions.json'])),
+		store: new ExpressSessionStore(engine.sessionService),
 		resave: false,
 		proxy: engine.config.server.session.cookie.proxy,
 		saveUninitialized: false,

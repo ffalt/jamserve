@@ -24,12 +24,12 @@ export interface Register {
 export function registerPublicApi(register: Register, api: JamApi): void {
 	register.get('/ping', async (req, res) => {
 		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.Ping = await api.infoController.ping(options);
+		const result: Jam.Ping = await api.sessionController.ping(options);
 		ApiResponder.data(res, result);
 	});
 	register.get('/session', async (req, res) => {
 		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.Session = await api.infoController.session(options);
+		const result: Jam.Session = await api.sessionController.session(options);
 		ApiResponder.data(res, result);
 	});
 }
@@ -505,6 +505,11 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.UserList = await api.userController.search(options);
 		ApiResponder.data(res, result);
 	}, ['admin']);
+	register.get('/user/sessions/list', async (req, res) => {
+		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.UserSession> = await api.sessionController.sessions(options);
+		ApiResponder.data(res, result);
+	});
 	register.get('/playqueue/get', async (req, res) => {
 		const options: JamRequest<JamParameters.PlayQueue> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.PlayQueue = await api.playqueueController.get(options);

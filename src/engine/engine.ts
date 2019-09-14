@@ -39,6 +39,7 @@ import {TrackService} from './track/track.service';
 import {User} from './user/user.model';
 import {UserService} from './user/user.service';
 import {WaveformService} from './waveform/waveform.service';
+import {SessionService} from './session/session.service';
 
 const log = logger('Engine');
 
@@ -71,6 +72,7 @@ export class Engine {
 	public albumService: AlbumService;
 	public statsService: StatsService;
 	public settingsService: SettingsService;
+	public sessionService: SessionService;
 
 	constructor(public config: Config, public store: Store, public version: string) {
 		this.chatService = new ChatService();
@@ -106,6 +108,7 @@ export class Engine {
 		this.metaDataService = new MetaDataService(this.store.metaStore, this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
 		this.rootService = new RootService(this.store.rootStore);
 		this.radioService = new RadioService(this.store.radioStore);
+		this.sessionService = new SessionService(this.store.sessionStore);
 	}
 
 	async refresh(): Promise<void> {

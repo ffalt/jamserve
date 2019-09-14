@@ -13,5 +13,6 @@ export enum DBObjectType {
 	playqueue,
 	radio,
 	metadata,
-	settings
+	settings,
+	session
 }

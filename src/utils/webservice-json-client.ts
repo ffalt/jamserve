@@ -37,7 +37,8 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 	}
 
 	protected reqToHost(req: T): string {
-		return `${this.options.host}${this.options.port !== 80 ? `:${this.options.port}` : ''}`;
+		const port = this.options.port !== 80 ? `:${this.options.port}` : '';
+		return `${this.options.host}${port}`;
 	}
 
 	protected reqToUrl(req: T): string {
@@ -76,7 +77,7 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 	protected async get(req: T): Promise<R> {
 		const url = this.reqToUrl(req);
 
-		log.info('requesting', JSON.stringify(req));
+		log.info('requesting', url, JSON.stringify(req));
 		try {
 			const data = await this.getJson<any>(url, undefined);
 			if (this.isRateLimitError(data)) {

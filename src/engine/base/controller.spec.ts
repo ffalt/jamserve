@@ -49,7 +49,7 @@ export async function validateJamResponse(name: string, data: any, isArray?: boo
 
 export function testController(opts: {}, setup: (jam: JamApi, user: User) => Promise<void>, tests: (jam: JamApi) => void, cleanup?: () => Promise<void>): void {
 	let jam: JamApi;
-	testEngines(opts, async (testEngine) => {
+	testEngines(opts, async testEngine => {
 		jam = new JamApi(testEngine.engine);
 		const user = await jam.engine.userService.getByName(mockUserName) as User;
 		if (!user) {

@@ -1,32 +1,36 @@
 import {JamApi, JamRequest} from '../../api/jam/api';
 import {testController, validateJamResponse} from '../base/controller.spec';
+import {mockUser} from '../user/user.mock';
 import {User} from '../user/user.model';
+import {SessionController} from './session.controller';
 
-describe('InfoController', () => {
-	let jam: JamApi;
+describe('SessionController', () => {
+	let controller: SessionController;
+	let api: JamApi;
 	let user: User;
+	const dummyUser = mockUser();
 	testController({}, async (jamApi, jamUser) => {
-		jam = jamApi;
+		dummyUser.id = 'dummyInvalid';
+		controller = jamApi.sessionController;
 		user = jamUser;
+		api = jamApi;
 	}, () => {
 		it('should return ping', async () => {
-			let result = await jam.infoController.ping({query: {}} as JamRequest<{}>);
+			let result = await controller.ping({query: {}, user: undefined} as any);
 			expect(result).toBeTruthy();
 			await validateJamResponse('Jam.Ping', result);
-			result = await jam.infoController.ping({query: {}, user});
+			result = await controller.ping({query: {}, user});
 			expect(result).toBeTruthy();
 			await validateJamResponse('Jam.Ping', result);
 		});
 		it('should return session info', async () => {
-			let result = await jam.infoController.session({query: {}} as JamRequest<{}>);
+			let result = await controller.session({query: {}, user: undefined} as any);
 			expect(result).toBeTruthy();
 			await validateJamResponse('Jam.Session', result);
-			result = await jam.infoController.session({query: {}, user});
+			result = await controller.session({query: {}, user});
 			expect(result).toBeTruthy();
 			expect(result.user).toBeTruthy();
 			await validateJamResponse('Jam.Session', result);
 		});
-	}, async () => {
-
 	});
 });

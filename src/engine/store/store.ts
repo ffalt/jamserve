@@ -12,6 +12,7 @@ import {PlayQueueStore} from '../playqueue/playqueue.store';
 import {PodcastStore} from '../podcast/podcast.store';
 import {RadioStore} from '../radio/radio.store';
 import {RootStore} from '../root/root.store';
+import {SessionStore} from '../session/session.store';
 import {SettingsStore} from '../settings/settings.store';
 import {StateStore} from '../state/state.store';
 import {TrackStore} from '../track/track.store';
@@ -33,6 +34,7 @@ export class Store {
 	public playQueueStore: PlayQueueStore;
 	public radioStore: RadioStore;
 	public metaStore: MetaDataStore;
+	public sessionStore: SessionStore;
 
 	constructor(public db: Database) {
 		this.settingsStore = new SettingsStore(this.db);
@@ -50,6 +52,7 @@ export class Store {
 		this.radioStore = new RadioStore(this.db);
 		this.rootStore = new RootStore(this.db);
 		this.metaStore = new MetaDataStore(this.db);
+		this.sessionStore = new SessionStore(this.db);
 	}
 
 	async reset(): Promise<void> {

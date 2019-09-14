@@ -9,7 +9,6 @@ import {EpisodeController} from '../../engine/episode/episode.controller';
 import {FolderController} from '../../engine/folder/folder.controller';
 import {GenreController} from '../../engine/genre/genre.controller';
 import {ImageController} from '../../engine/image/image.controller';
-import {InfoController} from '../../engine/info/info.controller';
 import {MetadataController} from '../../engine/metadata/metadata.controller';
 import {NowPlayingController} from '../../engine/nowplaying/nowplaying.controller';
 import {PlaylistController} from '../../engine/playlist/playlist.controller';
@@ -17,6 +16,7 @@ import {PlayQueueController} from '../../engine/playqueue/playqueue.controller';
 import {PodcastController} from '../../engine/podcast/podcast.controller';
 import {RadioController} from '../../engine/radio/radio.controller';
 import {RootController} from '../../engine/root/root.controller';
+import {SessionController} from '../../engine/session/session.controller';
 import {SettingsController} from '../../engine/settings/settings.controller';
 import {StatsController} from '../../engine/stats/stats.controller';
 import {StreamController} from '../../engine/stream/stream.controller';
@@ -57,7 +57,7 @@ export class JamApi {
 	userController: UserController;
 	waveformController: WaveformController;
 	statsController: StatsController;
-	infoController: InfoController;
+	sessionController: SessionController;
 
 	constructor(public engine: Engine) {
 		this.settingsController = new SettingsController(this.engine.settingsService);
@@ -93,7 +93,7 @@ export class JamApi {
 		this.bookmarkController = new BookmarkController(this.engine.bookmarkService, this.trackController);
 		this.playqueueController = new PlayQueueController(this.engine.playQueueService, this.trackController);
 		this.metadataController = new MetadataController(this.engine.metaDataService, this.trackController);
-		this.infoController = new InfoController(this.engine.config);
+		this.sessionController = new SessionController(this.engine.sessionService, this.engine.config);
 	}
 
 }
