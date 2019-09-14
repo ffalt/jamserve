@@ -9,7 +9,7 @@ import {FolderStore, SearchQueryFolder} from './folder.store';
 describe('FolderStore', () => {
 	let folderStore: FolderStore;
 
-	testStore((testDB) => {
+	testStore(testDB => {
 			folderStore = new FolderStore(testDB.database);
 			return folderStore;
 		}, () => {
