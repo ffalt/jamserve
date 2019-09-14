@@ -17,7 +17,7 @@ import {JamServiceBase} from './jam.service.base';
 
 @Injectable()
 export class JamService extends JamServiceBase {
-    public readonly version = '{{{version}}}';
+	readonly version = '{{{version}}}';
 
 	constructor(http: HttpService, notify: NotificationService, auth: AuthService) {
 		super(http, notify, auth);
