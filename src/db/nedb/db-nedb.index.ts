@@ -320,7 +320,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		});
 	}
 
-	private getDotFieldValues(field: string, o: any): Array<string> {
+	private getDotFieldValues(field: string, o: T): Array<string> {
 		const result: Array<any> = [];
 
 		const getFieldValueR = (fields: Array<string>, obj: any) => {
@@ -348,6 +348,19 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		return result;
 	}
 
+	private collectDistinctValues(field: string, docs: Array<T>): Array<string> {
+		const list: Array<string> = [];
+		docs.forEach(doc => {
+			const vals = this.getDotFieldValues(field, doc);
+			vals.forEach(val => {
+				if (!list.includes(val)) {
+					list.push(val);
+				}
+			});
+		});
+		return list;
+	}
+
 	async aggregate(query: DatabaseQuery, field: string): Promise<number> {
 		const dbquery = this.prepareFindCursor(query);
 		return new Promise<number>((resolve, reject) => {
@@ -355,16 +368,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				if (err) {
 					reject(err);
 				} else {
-					const list: Array<string> = [];
-					docs.forEach(doc => {
-						const vals = this.getDotFieldValues(field, doc);
-						vals.forEach(val => {
-							if (!list.includes(val)) {
-								list.push(val);
-							}
-						});
-					});
-					resolve(list.length);
+					resolve(this.collectDistinctValues(field, docs).length);
 				}
 			});
 		});
@@ -388,16 +392,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				if (err) {
 					reject(err);
 				} else {
-					const list: Array<string> = [];
-					docs.forEach(doc => {
-						const vals = this.getDotFieldValues(field, doc);
-						vals.forEach(val => {
-							if (!list.includes(val)) {
-								list.push(val);
-							}
-						});
-					});
-					resolve(list);
+					resolve(this.collectDistinctValues(field, docs));
 				}
 			});
 		});
