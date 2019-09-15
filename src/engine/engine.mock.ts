@@ -13,6 +13,10 @@ import {Store} from './store/store';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from './store/store.mock';
 import {mockUser} from './user/user.mock';
 import {JAMSERVE_VERSION} from '../version';
+import {ImageModule} from '../modules/image/image.module';
+import {ImageModuleTest} from '../modules/image/image.module.spec';
+import {ThirdPartyConfig} from '../config/thirdparty.config';
+import {MockAudioModule} from '../modules/audio/audio.module.mock';
 
 export class EngineMock {
 	dir: tmp.DirResult;
@@ -60,13 +64,18 @@ export class TestEngine {
 	engine: Engine;
 	// @ts-ignore
 	engineMock: EngineMock;
+	// @ts-ignore
+	imageModuleTest: ImageModuleTest;
 
 	constructor(public name: string) {
 	}
 
 	protected async init(config: Config, db: Database): Promise<void> {
 		const store = new Store(db);
-		this.engine = new Engine(config, store, JAMSERVE_VERSION);
+		this.imageModuleTest = new ImageModuleTest();
+		await this.imageModuleTest.setup();
+		const audio = new MockAudioModule(ThirdPartyConfig, this.imageModuleTest.imageModule);
+		this.engine = new Engine(config, store, JAMSERVE_VERSION, {audio, image: this.imageModuleTest.imageModule});
 		this.engineMock = new EngineMock(this.engine);
 	}
 
@@ -75,6 +84,7 @@ export class TestEngine {
 	}
 
 	async cleanup(): Promise<void> {
+		await this.imageModuleTest.cleanup();
 		await this.engineMock.cleanup();
 	}
 }

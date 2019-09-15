@@ -15,7 +15,7 @@ describe('EpisodeService', () => {
 		async (store, imageModuleTest, audioModule) => {
 			dir = tmp.dirSync();
 			const stateService = new StateService(store.stateStore);
-			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModule);
+			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModule, imageModuleTest.imageModule);
 		},
 		() => {
 			it('should merge podcast episodes', async () => {

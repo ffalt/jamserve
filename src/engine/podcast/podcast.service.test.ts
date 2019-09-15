@@ -16,7 +16,7 @@ describe('PodcastService', () => {
 		async (store, imageModuleTest, audioModule) => {
 			dir = tmp.dirSync();
 			const stateService = new StateService(store.stateStore);
-			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModule);
+			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModule, imageModuleTest.imageModule);
 			podcastService = new PodcastService(dir.name, store.podcastStore, episodeService, imageModuleTest.imageModule, stateService);
 		},
 		() => {

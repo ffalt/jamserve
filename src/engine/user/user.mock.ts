@@ -18,8 +18,6 @@ export function mockUser(): User {
 		email: 'a@mail',
 		created: 1543495268,
 		scrobblingEnabled: false,
-		avatarLastChanged: 1543495269,
-		avatar: 'userID1.jpg',
 		maxBitRate: 10,
 		allowedfolder: [],
 		roles: {
@@ -47,8 +45,6 @@ export function mockUser2(): User {
 		email: 'second@mail',
 		created: 1443495268,
 		scrobblingEnabled: true,
-		avatarLastChanged: 1443495269,
-		avatar: 'userID2.jpg',
 		maxBitRate: 20,
 		allowedfolder: [],
 		roles: {

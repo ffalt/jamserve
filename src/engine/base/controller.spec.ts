@@ -1,19 +1,11 @@
-import refParser from 'json-schema-ref-parser';
 import {JamApi} from '../../api/jam/api';
 import JamOpenApi from '../../model/jam-openapi.json';
-import {JSONSchemaDefinition} from '../../model/json-schema.spec';
-import {OpenAPIObject} from '../../model/openapi-spec';
 import {jsonValidator, validateJSON} from '../../utils/validate-json';
 import {testEngines} from '../engine.spec';
 import {mockUserName} from '../user/user.mock';
 import {User} from '../user/user.model';
 
-// let JamOpenApiDeref: OpenAPIObject;
-
 export async function validateJamResponse(name: string, data: any, isArray?: boolean): Promise<void> {
-	// if (!JamOpenApiDeref) {
-	// 	JamOpenApiDeref = (await refParser.dereference(JamOpenApi)) as any;
-	// }
 	if (!JamOpenApi.components) {
 		throw new Error('Invalid Open Api Spec');
 	}
