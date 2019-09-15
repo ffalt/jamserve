@@ -58,40 +58,48 @@ export class AudioModule {
 	async read(filename: string): Promise<AudioScanResult> {
 		const suffix = fileSuffix(filename);
 		if (suffix === AudioFormatType.mp3) {
-			const mp3 = new MP3();
-			try {
-				const result = await mp3.read(filename, {mpegQuick: true, mpeg: true, id3v2: true});
-				if (!result) {
-					return {tag: {format: TrackTagFormatType.none}, media: {}};
-				}
-				if (result.id3v2) {
-					return {tag: FORMAT.packID3v2JamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
-				}
-				const id3v1 = new ID3v1();
-				const v1 = await id3v1.read(filename);
-				if (!v1) {
-					return {tag: {format: TrackTagFormatType.none}, media: FORMAT.packJamServeMedia(result.mpeg)};
-				}
-				return {tag: FORMAT.packID3v1JamServeTag(v1), media: FORMAT.packJamServeMedia(result.mpeg)};
-			} catch (e) {
-				console.error(e);
+			return this.readMP3(filename);
+		}
+		if (suffix === AudioFormatType.flac) {
+			return this.readFlac(filename);
+		}
+		const p = await probe(filename, []);
+		if (!p) {
+			return {tag: {format: TrackTagFormatType.none}, media: {}};
+		}
+		return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p, suffix as AudioFormatType)};
+	}
+
+	private async readFlac(filename: string): Promise<AudioScanResult> {
+		const flac = new Flac();
+		try {
+			const result = await flac.read(filename);
+			return {tag: FORMAT.packFlacVorbisCommentJamServeTag(result.comment, result.pictures), media: FORMAT.packFlacMediaInfoJamServeMedia(result.media)};
+		} catch (e) {
+			console.error(e);
+			return {tag: {format: TrackTagFormatType.none}, media: {}};
+		}
+	}
+
+	private async readMP3(filename: string): Promise<AudioScanResult> {
+		const mp3 = new MP3();
+		try {
+			const result = await mp3.read(filename, {mpegQuick: true, mpeg: true, id3v2: true});
+			if (!result) {
 				return {tag: {format: TrackTagFormatType.none}, media: {}};
 			}
-		} else if (suffix === AudioFormatType.flac) {
-			const flac = new Flac();
-			try {
-				const result = await flac.read(filename);
-				return {tag: FORMAT.packFlacVorbisCommentJamServeTag(result.comment), media: FORMAT.packFlacMediaInfoJamServeMedia(result.media)};
-			} catch (e) {
-				console.error(e);
-				return {tag: {format: TrackTagFormatType.none}, media: {}};
+			if (result.id3v2) {
+				return {tag: FORMAT.packID3v2JamServeTag(result.id3v2), media: FORMAT.packJamServeMedia(result.mpeg)};
 			}
-		} else {
-			const p = await probe(filename, []);
-			if (!p) {
-				return {tag: {format: TrackTagFormatType.none}, media: {}};
+			const id3v1 = new ID3v1();
+			const v1 = await id3v1.read(filename);
+			if (!v1) {
+				return {tag: {format: TrackTagFormatType.none}, media: FORMAT.packJamServeMedia(result.mpeg)};
 			}
-			return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p, suffix as AudioFormatType)};
+			return {tag: FORMAT.packID3v1JamServeTag(v1), media: FORMAT.packJamServeMedia(result.mpeg)};
+		} catch (e) {
+			console.error(e);
+			return {tag: {format: TrackTagFormatType.none}, media: {}};
 		}
 	}
 
@@ -173,7 +181,7 @@ export class AudioModule {
 		await mp3val(filename, true);
 	}
 
-	async rewriteAudio(filename: string): Promise<void> {
+	async rewriteMP3(filename: string): Promise<void> {
 		const tempFile = `${filename}.tmp`;
 		const backupFile = `${filename}.bak`;
 		try {
@@ -200,22 +208,43 @@ export class AudioModule {
 		}
 	}
 
-	async readMP3Image(filename: string, type: number): Promise<{ buffer?: Buffer, mimeType?: string }> {
+	async extractTagImageMP3(filename: string): Promise<Buffer | undefined> {
 		const id3v2 = new ID3v2();
 		const tag = await id3v2.read(filename);
-		if (!tag) {
-			return {};
-		}
-		const frame = tag.frames.find(f => {
-			if (['APIC', 'PIC'].includes(f.id)) {
-				return (f.value as IID3V2.FrameValue.Pic).pictureType === type;
+		if (tag) {
+			const frames = tag.frames.filter(f => ['APIC', 'PIC'].includes(f.id)) as Array<IID3V2.Frames.PicFrame>;
+			let frame = frames.find(f => f.value.pictureType === 3 /*ID3v2 picture type "cover front" */);
+			if (!frame) {
+				frame = frames[0];
 			}
-			return false;
-		});
-		if (!frame) {
-			return {};
+			if (frame) {
+				return (frame.value as IID3V2.FrameValue.Pic).bin;
+			}
 		}
-		return {buffer: (frame.value as IID3V2.FrameValue.Pic).bin, mimeType: (frame.value as IID3V2.FrameValue.Pic).mimeType};
+	}
+
+	async extractTagImageFLAC(filename: string): Promise<Buffer | undefined> {
+		const flac = new Flac();
+		const tag = await flac.read(filename);
+		if (tag && tag.pictures) {
+			let pic = tag.pictures.find(p => p.pictureType === 3 /*ID3v2 picture type "cover front" used in FLAC */);
+			if (!pic) {
+				pic = tag.pictures[0];
+			}
+			if (pic) {
+				return pic.pictureData;
+			}
+		}
+	}
+
+	async extractTagImage(filename: string): Promise<Buffer | undefined> {
+		const suffix = fileSuffix(filename);
+		if (suffix === AudioFormatType.mp3) {
+			return this.extractTagImageMP3(filename);
+		}
+		if (suffix === AudioFormatType.flac) {
+			return this.extractTagImageFLAC(filename);
+		}
 	}
 
 	async acoustidLookup(filename: string, includes: string | undefined): Promise<Array<Acoustid.Result>> {

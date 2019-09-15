@@ -9,6 +9,7 @@ import {Artist} from '../artist/artist.model';
 import {ArtistService} from '../artist/artist.service';
 import {DBObject} from '../base/base.model';
 import {Episode} from '../episode/episode.model';
+import {EpisodeService} from '../episode/episode.service';
 import {Folder} from '../folder/folder.model';
 import {FolderService} from '../folder/folder.service';
 import {Playlist} from '../playlist/playlist.model';
@@ -26,7 +27,7 @@ export class ImageService {
 		private imageModule: ImageModule, private trackService: TrackService,
 		private folderService: FolderService, private artistService: ArtistService,
 		private albumService: AlbumService, private userService: UserService,
-		private podcastService: PodcastService) {
+		private podcastService: PodcastService, private episodeService: EpisodeService) {
 	}
 
 	private static getCoverArtTextFolder(folder: Folder): string {
@@ -50,7 +51,10 @@ export class ImageService {
 			text = path.basename(episode.path);
 		}
 		if (!text) {
-			text = 'podcast';
+			text = episode.name;
+		}
+		if (!text) {
+			text = 'Podcast Episode';
 		}
 		return text;
 	}
@@ -107,6 +111,9 @@ export class ImageService {
 			case DBObjectType.podcast:
 				result = await this.podcastService.getPodcastImage(o as Podcast, size, format);
 				break;
+			case DBObjectType.episode:
+				result = await this.getEpisodeImage(o as Episode, size, format);
+				break;
 			case DBObjectType.root:
 				const rfolder = await this.folderService.folderStore.searchOne({rootID: (o as Root).id, level: 0});
 				if (rfolder) {
@@ -127,4 +134,15 @@ export class ImageService {
 		return this.imageModule.paint(s, size || 128, format);
 	}
 
+	private async getEpisodeImage(episode: Episode, size: number | undefined, format: string | undefined): Promise<ApiBinaryResult | undefined> {
+		const result = await this.episodeService.getEpisodeImage(episode, size, format);
+		if (!result) {
+			const podcast = await this.podcastService.podcastStore.byId(episode.podcastID);
+			if (podcast) {
+				return this.podcastService.getPodcastImage(podcast, size, format);
+			}
+		}
+		return result;
+
+	}
 }

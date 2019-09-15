@@ -3,7 +3,7 @@ import {TrackMedia, TrackTag} from '../../engine/track/track.model';
 import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
 import {cleanGenre} from '../../utils/genres';
 import {ID3TrackTagRawFormatTypes} from './audio.module';
-import {FlacComment, FlacMedia} from './formats/flac';
+import {FlacComment, FlacMedia, FlacPicture} from './formats/flac';
 import {ProbeResult} from './tools/ffprobe';
 
 export class FORMAT {
@@ -146,7 +146,8 @@ export class FORMAT {
 		// 		title: chapterTag.TITLE
 		// 	};
 		// });
-		const simple = ID3v2.simplify(data, ['CHAP']);
+		const simple = ID3v2.simplify(data, ['CHAP', 'APIC']);
+		const pics = data.frames.filter(f => f.id === 'APIC');
 		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
 		return {
 			format,
@@ -173,7 +174,8 @@ export class FORMAT {
 			mbReleaseGroupID: simple.MUSICBRAINZ_RELEASEGROUPID,
 			mbRecordingID: simple.MUSICBRAINZ_RELEASETRACKID,
 			mbAlbumStatus: simple.RELEASESTATUS,
-			mbReleaseCountry: simple.RELEASECOUNTRY
+			mbReleaseCountry: simple.RELEASECOUNTRY,
+			nrTagImages: pics.length
 			// chapters: chapters.length > 0 ? chapters : undefined
 		};
 	}
@@ -182,7 +184,7 @@ export class FORMAT {
 		return s !== undefined ? s.replace(/  /g, ' ').trim() : undefined;
 	}
 
-	static packFlacVorbisCommentJamServeTag(comment?: FlacComment): TrackTag | undefined {
+	static packFlacVorbisCommentJamServeTag(comment?: FlacComment, pictures?: Array<FlacPicture>): TrackTag | undefined {
 		if (!comment || !comment.tag) {
 			return undefined;
 		}
@@ -212,7 +214,8 @@ export class FORMAT {
 			mbReleaseGroupID: simple.MUSICBRAINZ_RELEASEGROUPID,
 			mbRecordingID: simple.MUSICBRAINZ_RELEASETRACKID,
 			mbAlbumStatus: simple.RELEASESTATUS,
-			mbReleaseCountry: simple.RELEASECOUNTRY
+			mbReleaseCountry: simple.RELEASECOUNTRY,
+			nrTagImages: pictures ? pictures.length : undefined
 		};
 
 	}

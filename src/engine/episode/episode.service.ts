@@ -2,6 +2,8 @@ import fse from 'fs-extra';
 import path from 'path';
 import {AudioFormatType, PodcastStatus} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
+import {ImageModule} from '../../modules/image/image.module';
+import {ApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {downloadFile} from '../../utils/download';
 import {SupportedAudioFormat} from '../../utils/filetype';
@@ -17,7 +19,7 @@ const log = logger('EpisodeService');
 export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode> {
 	private episodeDownloadDebounce = new DebouncePromises<void>();
 
-	constructor(private podcastsPath: string, public episodeStore: EpisodeStore, stateService: StateService, private audioModule: AudioModule) {
+	constructor(private podcastsPath: string, public episodeStore: EpisodeStore, stateService: StateService, private audioModule: AudioModule, private imageModule: ImageModule) {
 		super(episodeStore, stateService);
 	}
 
@@ -143,6 +145,20 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		}
 		await this.episodeStore.upsert(storeEpisodes);
 		return episodes;
+	}
+
+	async getEpisodeImage(episode: Episode, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+		if (episode.tag && episode.tag.nrTagImages && episode.path) {
+			const thumbnail = this.imageModule.buildThumbnailFilenamePath(episode.id, size, format);
+			if (await fse.pathExists(thumbnail)) {
+				return {file: {filename: thumbnail, name: path.basename(thumbnail)}};
+			}
+			const buffer = await this.audioModule.extractTagImage(episode.path);
+			if (buffer) {
+				return this.imageModule.getBuffer(episode.id, buffer, size, format);
+			}
+		}
+		return;
 	}
 
 }

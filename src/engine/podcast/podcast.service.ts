@@ -76,6 +76,12 @@ export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast>
 				podcast.errorMessage = (e || '').toString();
 			}
 			podcast.lastCheck = Date.now();
+			if (podcast.image) {
+				const imageFile = path.resolve(this.podcastsPath, podcast.image);
+				if (!(await fse.pathExists(imageFile))) {
+					podcast.image = undefined;
+				}
+			}
 			if (!podcast.image && podcast.tag && podcast.tag.image) {
 				log.info('Try downloading Podcast image');
 				const podcastPath = path.resolve(this.podcastsPath, podcast.id);

@@ -1,3 +1,7 @@
+import fse from 'fs-extra';
+import path from 'path';
+import {AudioModule} from '../../modules/audio/audio.module';
+import {ImageModule} from '../../modules/image/image.module';
 import {ApiBinaryResult} from '../../typings';
 import {BaseListService} from '../base/dbobject-list.service';
 import {Folder} from '../folder/folder.model';
@@ -8,7 +12,7 @@ import {SearchQueryTrack, TrackStore} from './track.store';
 
 export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 
-	constructor(public trackStore: TrackStore, private folderService: FolderService, stateService: StateService) {
+	constructor(public trackStore: TrackStore, private folderService: FolderService, private audioModule: AudioModule, private imageModule: ImageModule, stateService: StateService) {
 		super(trackStore, stateService);
 	}
 
@@ -41,6 +45,16 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 	}
 
 	async getTrackImage(track: Track, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+		if (track.tag && track.tag.nrTagImages) {
+			const thumbnail = this.imageModule.buildThumbnailFilenamePath(track.id, size, format);
+			if (await fse.pathExists(thumbnail)) {
+				return {file: {filename: thumbnail, name: path.basename(thumbnail)}};
+			}
+			const buffer = await this.audioModule.extractTagImage(track.path);
+			if (buffer) {
+				return this.imageModule.getBuffer(track.id, buffer, size, format);
+			}
+		}
 		const folder = await this.getTrackFolder(track);
 		if (folder) {
 			return this.folderService.getFolderImage(folder, size, format);

@@ -40,6 +40,7 @@ export interface TrackTag {
 	track?: number;
 	trackTotal?: number;
 	year?: number;
+	nrTagImages?: number;
 	mbTrackID?: string;
 	mbAlbumType?: string;
 	mbAlbumArtistID?: string;
