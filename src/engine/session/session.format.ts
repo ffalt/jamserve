@@ -1,18 +1,23 @@
+import useragent from 'express-useragent';
 import {Jam} from '../../model/jam-rest-data';
 import {Session} from './session.model';
 
-const useragent = require('express-useragent');
+export function parseAgent(session: Session): useragent.UserAgent | undefined {
+	try {
+		return useragent.parse(session.agent);
+	} catch (e) {
+		//
+	}
+}
 
 export function formatSession(session: Session): Jam.UserSession {
-	const ua = useragent.parse(session.agent);
-	console.log(ua);
-
-	const userAgent: any = {}; // parseUserAgent(session.agent);
+	const ua = parseAgent(session);
 	return {
 		id: session.id,
 		client: session.client,
 		expires: session.expires,
-		agent: userAgent.agent,
-		os: userAgent.os
+		agent: ua ? ua.browser : undefined,
+		os: ua ? ua.os : undefined,
+		platform: ua ? ua.platform : undefined
 	};
 }

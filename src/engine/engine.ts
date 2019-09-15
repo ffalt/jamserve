@@ -30,6 +30,7 @@ import {RadioService} from './radio/radio.service';
 import {Root} from './root/root.model';
 import {RootService} from './root/root.service';
 import {ScanService} from './scan/scan.service';
+import {SessionService} from './session/session.service';
 import {SettingsService} from './settings/settings.service';
 import {StateService} from './state/state.service';
 import {StatsService} from './stats/stats.service';
@@ -39,7 +40,6 @@ import {TrackService} from './track/track.service';
 import {User} from './user/user.model';
 import {UserService} from './user/user.service';
 import {WaveformService} from './waveform/waveform.service';
-import {SessionService} from './session/session.service';
 
 const log = logger('Engine');
 
@@ -81,7 +81,7 @@ export class Engine {
 		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
 		this.stateService = new StateService(this.store.stateStore);
 		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.stateService, this.imageModule);
-		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.stateService);
+		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.audioModule, this.imageModule, this.stateService);
 		this.albumService = new AlbumService(this.store.albumStore, this.store.trackStore, this.folderService, this.stateService);
 		this.indexService = new IndexService(this.store.artistStore, this.store.albumStore, this.store.folderStore, this.store.trackStore);
 		this.scanService = new ScanService(this.store, this.audioModule, this.imageModule, this.waveformService);
@@ -102,9 +102,9 @@ export class Engine {
 		this.playlistService = new PlaylistService(this.store.playlistStore, this.store.trackStore, this.stateService);
 		this.playQueueService = new PlayQueueService(this.store.playQueueStore);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
-		this.episodeService = new EpisodeService(config.getDataPath(['podcasts']), this.store.episodeStore, this.stateService, this.audioModule);
+		this.episodeService = new EpisodeService(config.getDataPath(['podcasts']), this.store.episodeStore, this.stateService, this.audioModule, this.imageModule);
 		this.podcastService = new PodcastService(config.getDataPath(['podcasts']), this.store.podcastStore, this.episodeService, this.imageModule, this.stateService);
-		this.imageService = new ImageService(this.imageModule, this.trackService, this.folderService, this.artistService, this.albumService, this.userService, this.podcastService);
+		this.imageService = new ImageService(this.imageModule, this.trackService, this.folderService, this.artistService, this.albumService, this.userService, this.podcastService, this.episodeService);
 		this.metaDataService = new MetaDataService(this.store.metaStore, this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
 		this.rootService = new RootService(this.store.rootStore);
 		this.radioService = new RadioService(this.store.radioStore);
@@ -182,7 +182,6 @@ export class Engine {
 			path.resolve(this.config.paths.data, 'cache', 'uploads'),
 			path.resolve(this.config.paths.data, 'cache', 'images'),
 			path.resolve(this.config.paths.data, 'images'),
-			path.resolve(this.config.paths.data, 'session'),
 			path.resolve(this.config.paths.data, 'podcasts')
 		];
 	}
