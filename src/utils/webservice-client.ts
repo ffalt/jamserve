@@ -1,5 +1,5 @@
 import rateLimiter from 'limiter';
-import request from 'request';
+import request, {Response} from 'request';
 
 export class WebserviceClient {
 	private readonly limiter: rateLimiter.RateLimiter;
@@ -8,6 +8,17 @@ export class WebserviceClient {
 	constructor(requestPerInterval: number, requestIntervalMS: number, userAgent: string) {
 		this.limiter = new rateLimiter.RateLimiter(requestPerInterval, requestIntervalMS);
 		this.userAgent = userAgent;
+	}
+
+	protected async parseResult<T>(response: request.Response, body: any): Promise<T> {
+		if (response.statusCode === 404) {
+			return Promise.reject(Error(`${response.statusCode} ${response.statusMessage || ''}`));
+		}
+		try {
+			return Promise.resolve(JSON.parse(body) as T);
+		} catch (err) {
+			return Promise.reject(err);
+		}
 	}
 
 	protected async getJson<T>(url: string, parameters?: object | undefined): Promise<T> {
@@ -24,14 +35,8 @@ export class WebserviceClient {
 					if (err) {
 						reject(err);
 					} else {
-						if (response.statusCode === 404) {
-							reject(Error(`${response.statusCode} ${response.statusMessage || ''}`));
-						}
-						try {
-							resolve(JSON.parse(body) as T);
-						} catch (err) {
-							reject(err);
-						}
+						this.parseResult<T>(response, body)
+							.then(resolve).catch(reject);
 					}
 				});
 			});
