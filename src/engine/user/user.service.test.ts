@@ -2,6 +2,7 @@ import fse from 'fs-extra';
 import {Md5} from 'md5-typescript';
 import path from 'path';
 import tmp from 'tmp';
+import {ImageModule} from '../../modules/image/image.module';
 import {mockImage} from '../../modules/image/image.module.spec';
 import {testService} from '../base/base.service.spec';
 import {mockUser, mockUser2, mockUserPass} from './user.mock';
@@ -27,15 +28,28 @@ function salt(length: number): string {
 
 describe('UserService', () => {
 	let userService: UserService;
+	let imageModule: ImageModule;
 	let dir: tmp.DirResult;
 	testService({mockData: false},
 		async (store, imageModuleTest) => {
 			dir = tmp.dirSync();
+			imageModule = imageModuleTest.imageModule;
 			userService = new UserService(dir.name, store.userStore, store.stateStore, store.playlistStore, store.bookmarkStore, store.playQueueStore, imageModuleTest.imageModule);
 		},
 		() => {
 			let userID: string;
-			const mock = mockUser();
+			let mock = mockUser();
+
+			beforeAll(async () => {
+				mock = mockUser();
+				userID = await userService.create(mock);
+				mock.id = userID;
+			});
+
+			afterAll(async () => {
+				await userService.clearCache();
+				await userService.userStore.clear();
+			});
 
 			it('should not create invalid user', async () => {
 				const notRight = mockUser2();
@@ -43,11 +57,8 @@ describe('UserService', () => {
 				await expect(userService.create(notRight)).rejects.toThrow('Invalid Username');
 			});
 
-			it('should add the user', async () => {
-				userID = await userService.create(mock);
-				mock.id = userID;
-			});
-			it('should find and compare the created user by ID', async () => {
+			it('should create the user', async () => {
+				expect(userID).toBeTruthy();
 				const user = await userService.getByID(userID);
 				expect(user).toBeTruthy();
 				expect(user).toEqual(mock);
@@ -66,7 +77,7 @@ describe('UserService', () => {
 				expect(user).toEqual(mock);
 			});
 			it('should not auth the user with the wrong password', async () => {
-				await expect(userService.auth(mock.name, mockUserPass + '_wrong')).rejects.toThrow('Invalid Password');
+				await expect(userService.auth(mock.name, `${mockUserPass}_wrong`)).rejects.toThrow('Invalid Password');
 				await expect(userService.auth(' ', mockUserPass)).rejects.toThrow('Invalid Username');
 				await expect(userService.auth(mock.name, '')).rejects.toThrow('Invalid Password');
 				await expect(userService.auth('non-existing', 'something')).rejects.toThrow('Invalid Username');
@@ -98,41 +109,34 @@ describe('UserService', () => {
 			});
 			it('should update the created user', async () => {
 				const oldname = mock.name;
-				mock.name = oldname + '_renamed';
+				mock.name = `${oldname}_renamed`;
 				await userService.update(mock);
 				const user = await userService.getByID(userID);
 				expect(user).toBeTruthy();
 				expect(user).toEqual(mock);
 				mock.name = oldname;
-				delete mock.avatar;
 				await userService.update(mock);
 				const user2 = await userService.getByID(userID);
 				expect(user2).toEqual(mock);
 			});
-			it('should return a generated avatar image, even if not set', async () => {
-				mock.avatar = undefined;
-				await userService.update(mock);
+			it('should return a generated avatar image', async () => {
 				const result = await userService.getUserImage(mock);
 				expect(result).toBeTruthy();
 			});
 			it('should return an avatar image', async () => {
-				mock.avatar = 'testget-' + mock.id + '.png';
 				const image = await mockImage('png');
-				const filename = path.resolve(userService.userAvatarPath, mock.avatar);
+				const filename = path.resolve(userService.userAvatarPath, `${mock.id}.png`);
 				await fse.writeFile(filename, image.buffer);
-				await userService.update(mock);
 				const result = await userService.getUserImage(mock);
 				expect(result).toBeTruthy();
 				await fse.remove(filename);
 			});
 			it('should set the avatar image', async () => {
-				mock.avatar = undefined;
-				await userService.update(mock);
 				const image = await mockImage('png');
-				const filename = path.resolve(userService.userAvatarPath, 'testset-' + mock.id + '.png');
+				const filename = path.resolve(userService.userAvatarPath, `testset-${mock.id}.png`);
 				await fse.writeFile(filename, image.buffer);
 				await userService.setUserImage(mock, filename);
-				await fse.remove(filename);
+				expect(await fse.pathExists(filename)).toBe(false);
 				const result = await userService.getUserImage(mock);
 				expect(result).toBeTruthy();
 			});
