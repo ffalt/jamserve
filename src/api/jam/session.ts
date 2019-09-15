@@ -2,7 +2,7 @@ import {Express} from 'express';
 import {Store} from 'express-session';
 import {DBObjectType} from '../../db/db.types';
 import {Session} from '../../engine/session/session.model';
-import {SessionService} from '../../engine/session/session.service';
+import {SessionNotifyEventObject, SessionService} from '../../engine/session/session.service';
 
 interface ExpressSession extends Express.SessionData {
 	passport: { user: string };
@@ -10,11 +10,16 @@ interface ExpressSession extends Express.SessionData {
 	userAgent: string;
 }
 
-export class ExpressSessionStore extends Store {
+export class ExpressSessionStore extends Store implements SessionNotifyEventObject {
 	private cache = new Map<string, ExpressSession>();
 
 	constructor(public sessionService: SessionService) {
 		super();
+		sessionService.registerNotify(this); // TODO: better notify system in node? use RX?
+	}
+
+	async clearCache(): Promise<void> {
+		this.cache.clear();
 	}
 
 	private expired(data: ExpressSession): boolean {

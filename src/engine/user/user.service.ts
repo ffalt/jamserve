@@ -10,6 +10,7 @@ import {BaseStoreService} from '../base/base.service';
 import {BookmarkStore} from '../bookmark/bookmark.store';
 import {PlaylistStore} from '../playlist/playlist.store';
 import {PlayQueueStore} from '../playqueue/playqueue.store';
+import {SessionStore} from '../session/session.store';
 import {StateStore} from '../state/state.store';
 import {User} from './user.model';
 import {SearchQueryUser, UserStore} from './user.store';
@@ -21,7 +22,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		public userAvatarPath: string, public userStore: UserStore,
 		private stateStore: StateStore, private playlistStore: PlaylistStore,
 		private bookmarkStore: BookmarkStore, private playQueueStore: PlayQueueStore,
-		private imageModule: ImageModule
+		private sessionStore: SessionStore, private imageModule: ImageModule
 	) {
 		super(userStore);
 	}
@@ -83,6 +84,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		await this.playlistStore.removeByQuery({userID: user.id});
 		await this.bookmarkStore.removeByQuery({userID: user.id});
 		await this.playQueueStore.removeByQuery({userID: user.id});
+		await this.sessionStore.removeByQuery({userID: user.id});
 		await this.imageModule.clearImageCacheByID(user.id);
 		await this.userStore.remove(user.id);
 		await fileDeleteIfExists(this.avatarImageFilename(user));

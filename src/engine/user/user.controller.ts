@@ -8,6 +8,7 @@ import {hashSaltPassword} from '../../utils/salthash';
 import {BaseController} from '../base/dbobject.controller';
 import {DownloadService} from '../download/download.service';
 import {ImageService} from '../image/image.service';
+import {SessionService} from '../session/session.service';
 import {StateService} from '../state/state.service';
 import {formatUser} from './user.format';
 import {User} from './user.model';
@@ -20,7 +21,8 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		public userService: UserService,
 		protected stateService: StateService,
 		protected imageService: ImageService,
-		protected downloadService: DownloadService
+		protected downloadService: DownloadService,
+		protected sessionService: SessionService
 	) {
 		super(userService, stateService, imageService, downloadService);
 	}
@@ -108,6 +110,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
 		const u = await this.byID(req.query.id);
 		await this.userService.remove(u);
+		await this.sessionService.clearCache();
 	}
 
 	async imageRandom(req: JamRequest<JamParameters.UserImageRandom>): Promise<void> {

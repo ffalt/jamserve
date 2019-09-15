@@ -86,14 +86,14 @@ export class JamApi {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.folderController = new FolderController(this.engine.folderService, this.trackController, this.engine.metaDataService, this.engine.indexService,
 			this.engine.rootService, this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.ioService);
+		this.sessionController = new SessionController(this.engine.sessionService, this.engine.config);
 		this.userController = new UserController(this.engine.userService,
-			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
+			this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.sessionService);
 		this.playlistController = new PlaylistController(this.engine.playlistService, this.trackController,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.bookmarkController = new BookmarkController(this.engine.bookmarkService, this.trackController);
 		this.playqueueController = new PlayQueueController(this.engine.playQueueService, this.trackController);
 		this.metadataController = new MetadataController(this.engine.metaDataService, this.trackController);
-		this.sessionController = new SessionController(this.engine.sessionService, this.engine.config);
 	}
 
 }

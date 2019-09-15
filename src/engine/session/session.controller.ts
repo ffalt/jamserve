@@ -27,7 +27,7 @@ export class SessionController {
 	}
 
 	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
-		const session = await this.sessionService.get(req.query.id);
+		const session = await this.sessionService.byID(req.query.id);
 		if (session && session.userID !== req.user.id) {
 			if (!req.user.roles.admin) {
 				return Promise.reject(NotFoundError());
@@ -37,5 +37,6 @@ export class SessionController {
 			return Promise.reject(NotFoundError());
 		}
 		await this.sessionService.remove(session.sessionID);
+		await this.sessionService.clearCache();
 	}
 }

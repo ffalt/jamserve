@@ -2,7 +2,12 @@ import {BaseStoreService} from '../base/base.service';
 import {Session} from './session.model';
 import {SearchQuerySession, SessionStore} from './session.store';
 
+export interface SessionNotifyEventObject {
+	clearCache(): Promise<void>;
+}
+
 export class SessionService extends BaseStoreService<Session, SearchQuerySession> {
+	private events: Array<SessionNotifyEventObject> = [];
 
 	constructor(public sessionStore: SessionStore) {
 		super(sessionStore);
@@ -47,6 +52,10 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 		return (await this.sessionStore.search({userID})).items;
 	}
 
+	async byID(id: string): Promise<Session | undefined> {
+		return this.sessionStore.byId(id);
+	}
+
 	async remove(sessionID: string): Promise<void> {
 		await this.sessionStore.removeByQuery({sessionID});
 	}
@@ -61,6 +70,16 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 
 	async count(): Promise<number> {
 		return this.sessionStore.count();
+	}
+
+	async clearCache(): Promise<void> {
+		for (const notify of this.events) {
+			await notify.clearCache();
+		}
+	}
+
+	registerNotify(notify: SessionNotifyEventObject): void {
+		this.events.push(notify);
 	}
 
 }

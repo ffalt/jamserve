@@ -88,7 +88,7 @@ export class Engine {
 		this.settingsService = new SettingsService(store.settingsStore, this.chatService, this.indexService, this.scanService, version);
 		this.artistService = new ArtistService(this.store.artistStore, this.store.trackStore, this.folderService, this.stateService);
 		this.userService = new UserService(this.config.getDataPath(['images']), this.store.userStore, this.store.stateStore, this.store.playlistStore,
-			this.store.bookmarkStore, this.store.playQueueStore, this.imageModule);
+			this.store.bookmarkStore, this.store.playQueueStore, this.store.sessionStore, this.imageModule);
 		this.genreService = new GenreService(this.store.trackStore);
 		this.statsService = new StatsService(this.store);
 		this.ioService = new IoService(this.store.rootStore, this.scanService, async () => {

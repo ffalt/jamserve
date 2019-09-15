@@ -34,7 +34,7 @@ describe('UserService', () => {
 		async (store, imageModuleTest) => {
 			dir = tmp.dirSync();
 			imageModule = imageModuleTest.imageModule;
-			userService = new UserService(dir.name, store.userStore, store.stateStore, store.playlistStore, store.bookmarkStore, store.playQueueStore, imageModuleTest.imageModule);
+			userService = new UserService(dir.name, store.userStore, store.stateStore, store.playlistStore, store.bookmarkStore, store.playQueueStore, store.sessionStore, imageModuleTest.imageModule);
 		},
 		() => {
 			let userID: string;
