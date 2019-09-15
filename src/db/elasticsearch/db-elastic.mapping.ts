@@ -133,6 +133,7 @@ const typeTrackTag = {
 		track: typeInt,
 		trackTotal: typeInt,
 		year: typeInt,
+		nrTagImages: typeInt,
 		mbTrackID: typeKey,
 		mbAlbumType: typeKey,
 		mbAlbumArtistID: typeKey,
