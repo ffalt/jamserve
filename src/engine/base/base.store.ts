@@ -28,6 +28,20 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 
 	protected abstract transformQuery(query: X): DatabaseQuery;
 
+	async exists(id: string): Promise<boolean> {
+		try {
+			const session = await this.byId(id);
+			return !!session;
+		} catch (e) {
+			return false;
+		}
+	}
+
+	async clear(): Promise<void> {
+		const ids = await this.allIds();
+		await this.remove(ids);
+	}
+
 	async getNewId(): Promise<string> {
 		return this.group.getNewId();
 	}

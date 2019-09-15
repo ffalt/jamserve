@@ -17,12 +17,7 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 	}
 
 	async exists(id: string): Promise<boolean> {
-		try {
-			const session = await this.sessionStore.byId(id);
-			return !!session;
-		} catch (e) {
-			return false;
-		}
+		return this.sessionStore.exists(id);
 	}
 
 	async set(session: Session): Promise<void> {

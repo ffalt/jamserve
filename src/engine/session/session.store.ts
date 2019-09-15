@@ -22,9 +22,4 @@ export class SessionStore extends BaseStore<Session, SearchQuerySession> {
 		return q.get(query);
 	}
 
-	async clear(): Promise<void> {
-		const ids = await this.allIds();
-		await this.remove(ids);
-	}
-
 }
