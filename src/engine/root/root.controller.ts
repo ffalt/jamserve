@@ -55,6 +55,7 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 	}
 
 	async update(req: JamRequest<JamParameters.RootUpdate>): Promise<Jam.Root> {
+		// TODO: move this to scanSevice and return Jam.AdminChangeQueueInfo;
 		const root = await this.byID(req.query.id);
 		root.name = req.query.name;
 		root.path = req.query.path;

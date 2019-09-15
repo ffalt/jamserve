@@ -1,7 +1,9 @@
 import {JamRequest} from '../../api/jam/api';
+import {NotFoundError} from '../../api/jam/error';
 import {JAMAPI_VERSION} from '../../api/jam/version';
 import {Config} from '../../config';
 import {Jam} from '../../model/jam-rest-data';
+import {JamParameters} from '../../model/jam-rest-params';
 import {formatSessionUser} from '../user/user.format';
 import {formatSession} from './session.format';
 import {SessionService} from './session.service';
@@ -24,4 +26,16 @@ export class SessionController {
 		return sessions.map(formatSession);
 	}
 
+	async delete(req: JamRequest<JamParameters.ID>): Promise<void> {
+		const session = await this.sessionService.get(req.query.id);
+		if (session && session.userID !== req.user.id) {
+			if (!req.user.roles.admin) {
+				return Promise.reject(NotFoundError());
+			}
+		}
+		if (!session) {
+			return Promise.reject(NotFoundError());
+		}
+		await this.sessionService.remove(session.sessionID);
+	}
 }

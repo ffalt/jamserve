@@ -552,13 +552,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	});
 	register.get('/root/scan', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
-		await api.rootController.scan(options);
-		ApiResponder.ok(res);
+		const result: Jam.AdminChangeQueueInfo = await api.rootController.scan(options);
+		ApiResponder.data(res, result);
 	}, ['admin']);
 	register.get('/root/scanAll', async (req, res) => {
 		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		await api.rootController.scanAll(options);
-		ApiResponder.ok(res);
+		const result: Array<Jam.AdminChangeQueueInfo> = await api.rootController.scanAll(options);
+		ApiResponder.data(res, result);
 	}, ['admin']);
 	register.get('/root/status', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
@@ -940,6 +940,11 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		await api.userController.delete(options);
 		ApiResponder.ok(res);
 	}, ['admin']);
+	register.post('/user/sessions/delete', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.sessionController.delete(options);
+		ApiResponder.ok(res);
+	});
 	register.post('/root/create', async (req, res) => {
 		const options: JamRequest<JamParameters.RootNew> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.Root = await api.rootController.create(options);
@@ -952,8 +957,8 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	}, ['admin']);
 	register.post('/root/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		await api.rootController.delete(options);
-		ApiResponder.ok(res);
+		const result: Jam.AdminChangeQueueInfo = await api.rootController.delete(options);
+		ApiResponder.data(res, result);
 	}, ['admin']);
 	register.post('/admin/settings/update', async (req, res) => {
 		const options: JamRequest<Jam.AdminSettings> = {query: req.body, user: req.user, client: req.client};

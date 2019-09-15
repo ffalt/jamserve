@@ -828,6 +828,7 @@ export interface JamApi {
 		 */
 		'user/sessions/list'?: {
 			operationId: 'session.sessions'
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			result: Array<Jam.UserSession>;
 		};
 
@@ -902,6 +903,7 @@ export interface JamApi {
 		 */
 		'root/scan'?: {
 			params: JamParameters.ID;
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -909,6 +911,7 @@ export interface JamApi {
 		 * root: start scan of all roots
 		 */
 		'root/scanAll'?: {
+			result: Array<Jam.AdminChangeQueueInfo>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 			roles: ['admin'];
 		};
@@ -1517,20 +1520,38 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * user: remove an user session
+		 */
+		'user/sessions/delete'?: {
+			operationId: 'session.delete'
+			params: JamParameters.ID;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
 
+		/**
+		 * user: create a root folder
+		 */
 		'root/create'?: {
 			params: JamParameters.RootNew;
 			result: Jam.Root;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['admin'];
 		};
+		/**
+		 * user: update root folder properties
+		 */
 		'root/update'?: {
 			params: JamParameters.RootUpdate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * user: remove a root folder
+		 */
 		'root/delete'?: {
 			params: JamParameters.ID;
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
