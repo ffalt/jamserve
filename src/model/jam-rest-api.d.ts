@@ -1498,6 +1498,13 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
+		 * user: set an random avatar image for a user (only admins can change images for other users than the current)
+		 */
+		'user/image/random'?: {
+			params: JamParameters.UserImageRandom;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
 		 * user: set an avatar image for an user
 		 */
 		'user/imageUpload/update'?: {

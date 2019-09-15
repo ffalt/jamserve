@@ -37,8 +37,6 @@ const typeUser = {
 		email: typeKey,
 		created: typeInt,
 		scrobblingEnabled: typeBool,
-		avatarLastChanged: typeInt,
-		avatar: typeKey,
 		maxBitRate: typeInt,
 		allowedfolder: typeKey,
 		roles: typeUserRoles,

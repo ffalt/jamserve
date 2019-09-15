@@ -1,4 +1,5 @@
 import commonPassword from 'common-password-checker';
+import fse from 'fs-extra';
 import {Md5} from 'md5-typescript';
 import path from 'path';
 import {ImageModule} from '../../modules/image/image.module';
@@ -29,36 +30,35 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		return items.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
+	private avatarImageFilename(user: User): string {
+		return path.join(this.userAvatarPath, `avatar-${user.id}.png`);
+	}
+
 	async getUserImage(user: User, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
-		if (!user.avatar) {
+		const filename = this.avatarImageFilename(user);
+		let exists = await fse.pathExists(filename);
+		if (!exists) {
 			await this.generateAvatar(user);
+			exists = await fse.pathExists(filename);
 		}
-		if (user.avatar) {
-			return this.imageModule.get(user.id, path.join(this.userAvatarPath, user.avatar), size, format);
+		if (exists) {
+			return this.imageModule.get(user.id, filename, size, format);
 		}
 	}
 
-	async generateAvatar(user: User): Promise<void> {
-		const destFileName = `avatar-${user.id}.png`;
-		const destName = path.join(this.userAvatarPath, destFileName);
-		await fileDeleteIfExists(destName);
+	async generateAvatar(user: User, seed?: string): Promise<void> {
+		const filename = this.avatarImageFilename(user);
+		await fileDeleteIfExists(filename);
+		await this.imageModule.generateAvatar(seed || user.name, filename);
 		await this.imageModule.clearImageCacheByID(user.id);
-		await this.imageModule.generateAvatar(user.name, destName);
-		user.avatar = destFileName;
-		user.avatarLastChanged = Date.now();
-		await this.update(user);
 	}
 
 	async setUserImage(user: User, filename: string, mimetype?: string): Promise<void> {
-		const destFileName = `avatar-${user.id}.png`;
-		const destName = path.join(this.userAvatarPath, destFileName);
+		const destName = this.avatarImageFilename(user);
 		await fileDeleteIfExists(destName);
 		await this.imageModule.createAvatar(filename, destName);
 		await fileDeleteIfExists(filename);
 		await this.imageModule.clearImageCacheByID(user.id);
-		user.avatar = destFileName;
-		user.avatarLastChanged = Date.now();
-		await this.update(user);
 	}
 
 	async create(user: User): Promise<string> {
@@ -85,10 +85,8 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		await this.playQueueStore.removeByQuery({userID: user.id});
 		await this.imageModule.clearImageCacheByID(user.id);
 		await this.userStore.remove(user.id);
+		await fileDeleteIfExists(this.avatarImageFilename(user));
 		// TODO: remove user chat msg on user.delete
-		if (user.avatar) {
-			await fileDeleteIfExists(path.join(this.userAvatarPath, user.avatar));
-		}
 	}
 
 	async getByName(name: string): Promise<User | undefined> {
@@ -199,4 +197,5 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		await this.userStore.replace(user);
 		this.cachedUsers.delete(user.id);
 	}
+
 }

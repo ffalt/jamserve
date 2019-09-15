@@ -1223,6 +1223,17 @@ export declare namespace JamParameters {
 		email: string;
 	}
 
+	export interface UserImageRandom {
+		/**
+		 * id of user (only admins can change images of other users)
+		 */
+		id?: string;
+		/**
+		 * seed for the randomizer
+		 */
+		seed?: string;
+	}
+
 	export interface UserUpdate extends ID {
 		/**
 		 * name of the user

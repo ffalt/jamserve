@@ -925,6 +925,11 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		await api.userController.emailUpdate(options);
 		ApiResponder.ok(res);
 	});
+	register.post('/user/image/random', async (req, res) => {
+		const options: JamRequest<JamParameters.UserImageRandom> = {query: req.body, user: req.user, client: req.client};
+		await api.userController.imageRandom(options);
+		ApiResponder.ok(res);
+	});
 	register.upload('/user/imageUpload/update', 'image', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined, fileType: req.file ? req.file.mimetype : undefined};
 		await api.userController.imageUploadUpdate(options);

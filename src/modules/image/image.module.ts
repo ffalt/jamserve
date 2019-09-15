@@ -114,6 +114,83 @@ export class ImageModule {
 		return {file: {filename, name}};
 	}
 
+	private async getImageBufferAs(buffer: Buffer, format: string | undefined, size: number | undefined): Promise<ApiBinaryResult> {
+		const info = await this.getImageInfo(buffer);
+		format = format || info.format;
+		const mime = mimeTypes.lookup(format);
+		if (!mime) {
+			return Promise.reject('Unknown Image Format Request');
+		}
+		if (size) {
+			return {
+				buffer: {
+					buffer: await sharp(buffer)
+						.resize(size, size,
+							{
+								fit: sharp.fit.cover,
+								position: sharp.strategy.entropy
+							}).toFormat(format)
+						.toBuffer(),
+					contentType: mime
+				}
+			};
+		}
+		if (format && info.format !== format) {
+			return {
+				buffer: {
+					buffer: await sharp(buffer)
+						.toFormat(format)
+						.toBuffer(),
+					contentType: mime
+				}
+			};
+		}
+		return {
+			buffer: {
+				buffer,
+				contentType: mimeTypes.lookup(info.format) || 'image'
+			}
+		};
+	}
+
+	buildThumbnailFilename(id: string, size: number | undefined, format?: string): string {
+		return `thumb-${id}${size ? `-${size}` : ''}.${format || this.format}`;
+	}
+
+	buildThumbnailFilenamePath(id: string, size: number | undefined, format?: string): string {
+		return path.join(this.imageCachePath, this.buildThumbnailFilename(id, size, format));
+	}
+
+	async getBuffer(id: string, buffer: Buffer, size: number | undefined, format?: string): Promise<ApiBinaryResult> {
+		if (format && !SupportedWriteImageFormat.includes(format)) {
+			return Promise.reject(Error('Invalid Format'));
+		}
+		const cacheID = this.buildThumbnailFilename(id, size, format);
+		if (this.imageCacheDebounce.isPending(cacheID)) {
+			return this.imageCacheDebounce.append(cacheID);
+		}
+		this.imageCacheDebounce.setPending(cacheID);
+		try {
+			let result: ApiBinaryResult;
+			const cachefile = path.join(this.imageCachePath, cacheID);
+			const exists = await fse.pathExists(cachefile);
+			if (exists) {
+				result = {file: {filename: cachefile, name: cacheID}};
+			} else {
+				result = await this.getImageBufferAs(buffer, format, size);
+				if (result.buffer) {
+					log.debug('Writing image cache file', cachefile);
+					await fse.writeFile(cachefile, result.buffer.buffer);
+				}
+			}
+			this.imageCacheDebounce.resolve(cacheID, result);
+			return result;
+		} catch (e) {
+			this.imageCacheDebounce.reject(cacheID, e);
+			return Promise.reject(e);
+		}
+	}
+
 	async get(id: string, filename: string, size: number | undefined, format?: string): Promise<ApiBinaryResult> {
 		if (!filename) {
 			return Promise.reject(Error('Invalid Path'));
@@ -163,6 +240,17 @@ export class ImageModule {
 			.toFile(destination);
 	}
 
+	async resizeImagePNG(filename: string, destination: string, size: number): Promise<void> {
+		await sharp(filename)
+			.resize(size, size,
+				{
+					fit: sharp.fit.cover,
+					position: sharp.strategy.entropy
+				})
+			.png()
+			.toFile(destination);
+	}
+
 	async clearImageCacheByIDs(ids: Array<string>): Promise<void> {
 		const searches = ids.filter(id => id.length > 0).map(id => `thumb-${id}`);
 		if (searches.length > 0) {
@@ -196,9 +284,10 @@ export class ImageModule {
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
 		}
-		await this.resizeImage(filename, `${filename}.new`, 64);
+		const tempFile = `${filename}.new.png`;
+		await this.resizeImagePNG(filename, tempFile, 300);
 		await fileDeleteIfExists(destination);
-		await fse.rename(`${filename}.new`, destination);
+		await fse.rename(tempFile, destination);
 	}
 
 	async generateAvatar(seed: string, destination: string): Promise<void> {
@@ -207,12 +296,13 @@ export class ImageModule {
 		await fse.writeFile(destination, avatar);
 	}
 
-	async getImageInfo(bin: Buffer, mimeType: string | undefined): Promise<{ width: number, height: number, colorDepth: number, colors: number }> {
+	async getImageInfo(bin: Buffer): Promise<{ width: number, height: number, colorDepth: number, colors: number, format: string }> {
 		try {
 			const metadata = await sharp(bin).metadata();
 			return {
 				width: metadata.width || 0,
 				height: metadata.height || 0,
+				format: metadata.format || '',
 				colorDepth: metadata.density || 0,
 				colors: 0
 			};
@@ -221,6 +311,7 @@ export class ImageModule {
 			return {
 				width: 0,
 				height: 0,
+				format: '',
 				colorDepth: 0,
 				colors: 0
 			};

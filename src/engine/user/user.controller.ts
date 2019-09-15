@@ -110,6 +110,18 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		await this.userService.remove(u);
 	}
 
+	async imageRandom(req: JamRequest<JamParameters.UserImageRandom>): Promise<void> {
+		let user = req.user;
+		if (req.query.id) {
+			if (user.roles.admin) {
+				user = await this.byID(req.query.id);
+			} else {
+				return Promise.reject(UnauthError());
+			}
+		}
+		await this.userService.generateAvatar(user, req.query.seed || randomString(42));
+	}
+
 	async imageUploadUpdate(req: JamRequest<JamParameters.ID>): Promise<void> {
 		if (!req.file) {
 			return Promise.reject(InvalidParamError('Image upload failed'));
@@ -136,4 +148,5 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		}
 		return Promise.reject(UnauthError());
 	}
+
 }

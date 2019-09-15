@@ -58,12 +58,9 @@ export declare namespace Jam {
 		id: string;
 		client: string;
 		expires: number;
+		platform?: string;
 		agent?: string;
 		os?: string;
-	}
-
-	export interface UserSessionList extends ListResult {
-		items: Array<UserSession>;
 	}
 
 	export interface RootList extends ListResult {
