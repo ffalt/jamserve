@@ -16,23 +16,25 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 		return data.expires < Date.now();
 	}
 
-	async exists(id: string): Promise<boolean> {
-		return this.sessionStore.exists(id);
+	async exists(sessionID: string): Promise<boolean> {
+		return !!(await this.sessionStore.searchOne({sessionID}));
 	}
 
 	async set(session: Session): Promise<void> {
-		if (await this.exists(session.id)) {
+		const old = await this.get(session.sessionID);
+		if (old) {
+			session.id = old.id;
 			await this.sessionStore.replace(session);
 		} else {
 			await this.sessionStore.add(session);
 		}
 	}
 
-	async get(id: string): Promise<Session | undefined> {
+	async get(sessionID: string): Promise<Session | undefined> {
 		try {
-			const session = await this.sessionStore.byId(id);
+			const session = await this.sessionStore.searchOne({sessionID});
 			if (session && this.expired(session)) {
-				await this.remove(id);
+				await this.remove(sessionID);
 				return;
 			}
 			return session;
@@ -45,8 +47,8 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 		return (await this.sessionStore.search({userID})).items;
 	}
 
-	async remove(id: string): Promise<void> {
-		await this.sessionStore.remove(id);
+	async remove(sessionID: string): Promise<void> {
+		await this.sessionStore.removeByQuery({sessionID});
 	}
 
 	async all(): Promise<Array<Session>> {

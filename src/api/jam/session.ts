@@ -21,9 +21,10 @@ export class ExpressSessionStore extends Store {
 		return (data.cookie.expires || 0) < Date.now();
 	}
 
-	private toJam(id: string, session: ExpressSession): Session {
+	private toJam(sessionID: string, session: ExpressSession): Session {
 		return {
-			id,
+			id: '',
+			sessionID,
 			agent: session.userAgent,
 			client: session.client,
 			cookie: JSON.stringify(session.cookie),
@@ -83,7 +84,7 @@ export class ExpressSessionStore extends Store {
 			.then(data => {
 				const result: { [id: string]: ExpressSession } = {};
 				for (const item of data) {
-					result[item.id] = this.toExpress(item);
+					result[item.sessionID] = this.toExpress(item);
 				}
 				callback(null, result);
 			})

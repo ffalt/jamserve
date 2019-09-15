@@ -15,21 +15,19 @@ describe('SessionService', () => {
 			describe('.set', () => {
 				it('should create a session', async () => {
 					const mock = mockSession();
-					mock.id = 'session1';
 					mock.expires = Date.now() + 60000;
 					await sessionService.set(mock);
-					const result = await sessionService.get(mock.id);
+					const result = await sessionService.get(mock.sessionID);
 					expect(result).toBeTruthy();
 				});
 				it('should overwrite a session', async () => {
 					const mock = mockSession();
-					mock.id = 'session1';
 					mock.expires = 1;
 					await sessionService.set(mock);
 					mock.expires = Date.now() + 60000;
 					await sessionService.set(mock);
 					expect(await sessionService.count()).toBe(1);
-					const result = await sessionService.get(mock.id);
+					const result = await sessionService.get(mock.sessionID);
 					expect(result).toBeTruthy();
 					if (result) {
 						expect(result.expires).toBe(mock.expires);
@@ -39,17 +37,15 @@ describe('SessionService', () => {
 			describe('.get', () => {
 				it('should not get a expired session', async () => {
 					const mock = mockSession();
-					mock.id = 'session1';
 					mock.expires = Date.now() - 60000;
 					await sessionService.set(mock);
-					const result = await sessionService.get(mock.id);
+					const result = await sessionService.get(mock.sessionID);
 					expect(result).toBeUndefined();
 				});
 			});
 			describe('.clear', () => {
 				it('should remove all', async () => {
 					const mock = mockSession();
-					mock.id = 'session1';
 					await sessionService.set(mock);
 					await sessionService.clear();
 					expect(await sessionService.count()).toBe(0);
@@ -60,7 +56,7 @@ describe('SessionService', () => {
 					await sessionService.clear();
 					for (let i = 0; i < 5; i++) {
 						const mock = mockSession();
-						mock.id = `session${i}`;
+						mock.sessionID = `session${i}`;
 						await sessionService.set(mock);
 					}
 					expect(await sessionService.count()).toBe(5);

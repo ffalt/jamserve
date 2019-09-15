@@ -6,6 +6,7 @@ const cookie = {originalMaxAge: 2592000000, expires: '2019-10-14T15:10:52.586Z',
 export function mockSession(): Session {
 	return {
 		id: '',
+		sessionID: 'sessionID1',
 		type: DBObjectType.session,
 		client: 'Jamboree',
 		userID: 'userID1',
@@ -18,6 +19,7 @@ export function mockSession(): Session {
 export function mockSession2(): Session {
 	return {
 		id: '',
+		sessionID: 'sessionID2',
 		type: DBObjectType.session,
 		client: 'Jamberry',
 		userID: 'userID2',
