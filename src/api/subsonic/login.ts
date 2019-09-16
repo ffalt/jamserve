@@ -26,7 +26,7 @@ import {User} from '../../engine/user/user.model';
 import {hexDecode} from '../../utils/hex';
 import {FORMAT} from './format';
 import {SubsonicParameterRequest} from './parameters';
-import {ApiResponder} from './response';
+import {SubsonicApiResponder} from './response';
 
 /**
  * Fill user into req.user express requests
@@ -75,5 +75,5 @@ export function CheckAuthMiddleWare(req: UserRequest, res: express.Response, nex
 	if (req.user) {
 		return next();
 	}
-	return ApiResponder.error(req, res, {fail: FORMAT.FAIL.UNAUTH});
+	return SubsonicApiResponder.error(req, res, {fail: FORMAT.FAIL.UNAUTH});
 }

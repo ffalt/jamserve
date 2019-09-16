@@ -8,6 +8,7 @@ export interface SessionNotifyEventObject {
 
 export class SessionService extends BaseStoreService<Session, SearchQuerySession> {
 	private events: Array<SessionNotifyEventObject> = [];
+	private jwthCache: Array<string> = [];
 
 	constructor(public sessionStore: SessionStore) {
 		super(sessionStore);
@@ -48,6 +49,10 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 		}
 	}
 
+	async byJwth(jwth: string): Promise<Session | undefined> {
+		return this.sessionStore.searchOne({jwth});
+	}
+
 	async byUserID(userID: string): Promise<Array<Session>> {
 		return (await this.sessionStore.search({userID})).items;
 	}
@@ -57,7 +62,13 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 	}
 
 	async remove(sessionID: string): Promise<void> {
+		this.jwthCache = [];
 		await this.sessionStore.removeByQuery({sessionID});
+	}
+
+	async removeByJwth(jwth: string): Promise<void> {
+		this.jwthCache = [];
+		await this.sessionStore.removeByQuery({jwth});
 	}
 
 	async all(): Promise<Array<Session>> {
@@ -65,6 +76,7 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 	}
 
 	async clear(): Promise<void> {
+		this.jwthCache = [];
 		return this.sessionStore.clear();
 	}
 
@@ -73,6 +85,7 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 	}
 
 	async clearCache(): Promise<void> {
+		this.jwthCache = [];
 		for (const notify of this.events) {
 			await notify.clearCache();
 		}
@@ -81,5 +94,17 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 	registerNotify(notify: SessionNotifyEventObject): void {
 		this.events.push(notify);
 	}
+
+	async isRevoked(jwth: string): Promise<boolean> {
+		if (this.jwthCache.includes(jwth)) {
+			return false;
+		}
+		const session = await this.sessionStore.searchOne({jwth});
+		if (session) {
+			this.jwthCache.push(jwth);
+		}
+		return !session;
+	}
+
 
 }

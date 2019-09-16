@@ -7,7 +7,7 @@ import {SubsonicApi} from './api';
 import {apiCheck} from './check';
 import {CheckAuthMiddleWare, SubsonicLoginMiddleWare, UserRequest} from './login';
 import {SubsonicParameterMiddleWare} from './parameters';
-import {ApiResponder} from './response';
+import {SubsonicApiResponder} from './response';
 import {Register, registerApi, RegisterCallback, SubSonicRole} from './routes';
 
 const log = logger('Subsonic.Api');
@@ -44,7 +44,7 @@ export function initSubsonicRouter(engine: Engine): express.Router {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.error(e);
-					ApiResponder.error(req, res, e);
+					SubsonicApiResponder.error(req, res, e);
 				}
 			});
 		}

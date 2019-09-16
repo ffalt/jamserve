@@ -6,5 +6,6 @@ export interface Session extends DBObject {
 	client: string;
 	agent: string;
 	expires: number;
+	jwth: string; // hashed jwt
 	cookie: string;
 }

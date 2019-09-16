@@ -1488,6 +1488,10 @@ export declare namespace JamParameters {
 		 * client name
 		 */
 		client: string;
+		/**
+		 * request a jwt token, if the client is an app or browser from another domain
+		 */
+		jwt?: boolean;
 	}
 
 	export interface RawTagUpdate {

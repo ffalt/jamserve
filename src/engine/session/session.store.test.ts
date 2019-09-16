@@ -12,7 +12,8 @@ describe('SessionStore', () => {
 			return [mockSession(), mockSession2()];
 		}, (mock: Session) => {
 			const matches: Array<SearchQuerySession> = [
-				{userID: mock.userID}
+				{userID: mock.userID}, {sessionID: mock.sessionID}, {jwth: mock.jwth},
+				{userID: mock.userID, sessionID: mock.sessionID, jwth: mock.jwth}
 			];
 			return matches;
 		},

@@ -8,21 +8,25 @@ function slugify(genre: string): string {
 	return genre.replace(/[& \-.]/g, '').toLowerCase();
 }
 
-export function getKnownGenre(genre: string): string | undefined {
-	const slug = slugify(genre);
+function buildGenreSlugs(): void {
 	if (!GenresSlugs) {
 		GenresSlugs = {};
 		Genres.forEach(g => {
 			GenresSlugs[slugify(g)] = g;
 		});
 	}
+}
+
+export function getKnownGenre(genre: string): string | undefined {
+	const slug = slugify(genre);
+	buildGenreSlugs();
 	return GenresSlugs[slug];
 }
 
 export function cleanGenre(genre: string): string {
 	const results: Array<string> = [];
 	const parts = genre.split('/');
-	parts.forEach((part: string) => {
+	parts.forEach(part => {
 		// test for (number)
 		part = part.trim();
 		const numpart = /\((\d+)\)/.exec(part);
@@ -40,12 +44,7 @@ export function cleanGenre(genre: string): string {
 		if (part.length > 0) {
 			const slug = slugify(part);
 			let result: string | undefined;
-			if (!GenresSlugs) {
-				GenresSlugs = {};
-				Genres.forEach(g => {
-					GenresSlugs[slugify(g)] = g;
-				});
-			}
+			buildGenreSlugs();
 			if (GenresSlugs && GenresSlugs[slug]) {
 				result = GenresSlugs[slug];
 			}

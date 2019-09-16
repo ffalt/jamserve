@@ -1,4 +1,5 @@
 import express from 'express';
+import {Engine} from '../../engine/engine';
 import {User} from '../../engine/user/user.model';
 import {EngineRequest} from '../server';
 import {Errors} from './error';
@@ -10,10 +11,11 @@ export interface UserRequest extends EngineRequest {
 	user: User;
 	client: string;
 	jwt: boolean;
+	jwth?: string;
 	params: any;
 }
 
-export function CheckAuthMiddleWare(req: UserRequest, res: express.Response, next: express.NextFunction): void {
+function CheckAuthMiddleWare(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 	if (!req.client && req.session && req.session.client) {
 		req.client = req.session.client;
 	}
@@ -21,4 +23,8 @@ export function CheckAuthMiddleWare(req: UserRequest, res: express.Response, nex
 		return next();
 	}
 	res.status(401).json({error: Errors.unauthorized});
+}
+
+export function registerAuthentication(router: express.Router, engine: Engine): void {
+	router.use(CheckAuthMiddleWare as express.RequestHandler);
 }

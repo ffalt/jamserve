@@ -15,31 +15,31 @@ describe('Server', () => {
 	let getNoRights: (apiPath: string) => supertest.Test;
 	let postNoRights: (apiPath: string) => supertest.Test;
 	testEngines({}, async testEngine => {
-		testEngine.engine.config.server.port = 10010;
-		testEngine.engine.config.server.listen = 'localhost';
-		server = new Server(testEngine.engine);
-		await server.start();
-		request = supertest('http://localhost:10010');
-		const res1 = await request.post('/api/v1/login')
-			.send({username: mockUserName, password: mockUserPass, client: 'supertest-tests'});
-		const user1token = res1.body.jwt;
-		get = apiPath => request.get(apiPath).set('Authorization', 'Bearer ' + user1token);
-		post = apiPath => request.post(apiPath).set('Authorization', 'Bearer ' + user1token);
-		const res2 = await request.post('/api/v1/login')
-			.send({username: mockUserName2, password: mockUserPass2, client: 'supertest-tests'});
-		const user2token = res2.body.jwt;
-		getNoRights = apiPath => request.get(apiPath).set('Authorization', 'Bearer ' + user2token);
-		postNoRights = apiPath => request.post(apiPath).set('Authorization', 'Bearer ' + user2token);
-		getNotLoggedIn = apiPath => request.post(apiPath);
-		postNotLoggedIn = apiPath => request.post(apiPath);
-	}, () => {
-		describe('/lastfm/lookup', () => {
-			describe('should fail without login', () => {
+			testEngine.engine.config.server.port = 10010;
+			testEngine.engine.config.server.listen = 'localhost';
+			server = new Server(testEngine.engine);
+			await server.start();
+			request = supertest('http://localhost:10010');
+			const res1 = await request.post('/api/v1/login')
+				.send({username: mockUserName, password: mockUserPass, client: 'supertest-tests', jwt: true});
+			const user1token = res1.body.jwt;
+			get = apiPath => request.get(apiPath).set('Authorization', 'Bearer ' + user1token);
+			post = apiPath => request.post(apiPath).set('Authorization', 'Bearer ' + user1token);
+			const res2 = await request.post('/api/v1/login')
+				.send({username: mockUserName2, password: mockUserPass2, client: 'supertest-tests', jwt: true});
+			const user2token = res2.body.jwt;
+			getNoRights = apiPath => request.get(apiPath).set('Authorization', 'Bearer ' + user2token);
+			postNoRights = apiPath => request.post(apiPath).set('Authorization', 'Bearer ' + user2token);
+			getNotLoggedIn = apiPath => request.post(apiPath);
+			postNotLoggedIn = apiPath => request.post(apiPath);
+		}, () => {
+			describe('/lastfm/lookup', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/lastfm/lookup').query({type: 'album-toptracks', id: 'EO(12qMB^&K@L'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "type" set to value empty string', async () => {
 						return get('/api/v1/lastfm/lookup').query({type: '', id: 'FaS!a'}).expect(400);
 					});
@@ -49,30 +49,30 @@ describe('Server', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/lastfm/lookup').query({type: 'track', id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/acoustid/lookup', () => {
-			describe('should fail without login', () => {
+			describe('/acoustid/lookup', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/acoustid/lookup').query({id: 'F%e3iTJT&[(JRHFGZ'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/acoustid/lookup').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "inc" set to value empty string', async () => {
 						return get('/api/v1/acoustid/lookup').query({id: 'TwJSTEJGOj0E', inc: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/musicbrainz/lookup', () => {
-			describe('should fail without login', () => {
+			describe('/musicbrainz/lookup', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/musicbrainz/lookup').query({type: 'place', id: 'DRv(b]^civaVzQ'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "type" set to value empty string', async () => {
 						return get('/api/v1/musicbrainz/lookup').query({type: '', id: '43SAF@H3m%jfL(9fP'}).expect(400);
 					});
@@ -85,15 +85,15 @@ describe('Server', () => {
 					it('should respond with 400 with "inc" set to value empty string', async () => {
 						return get('/api/v1/musicbrainz/lookup').query({type: 'instrument', id: 'nb2Vv', inc: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/musicbrainz/search', () => {
-			describe('should fail without login', () => {
+			describe('/musicbrainz/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/musicbrainz/search').query({type: 'release'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "type" set to value empty string', async () => {
 						return get('/api/v1/musicbrainz/search').query({type: ''}).expect(400);
 					});
@@ -124,15 +124,15 @@ describe('Server', () => {
 					it('should respond with 400 with "tracks" set to value float', async () => {
 						return get('/api/v1/musicbrainz/search').query({type: 'release-group', tracks: 34.45}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/acousticbrainz/lookup', () => {
-			describe('should fail without login', () => {
+			describe('/acousticbrainz/lookup', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/acousticbrainz/lookup').query({id: 'mN6e*E]u25%KsPz'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/acousticbrainz/lookup').query({id: ''}).expect(400);
 					});
@@ -145,15 +145,15 @@ describe('Server', () => {
 					it('should respond with 400 with "nr" set to value boolean', async () => {
 						return get('/api/v1/acousticbrainz/lookup').query({id: 'b!HGZtaqFfXxr', nr: true}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/coverartarchive/lookup', () => {
-			describe('should fail without login', () => {
+			describe('/coverartarchive/lookup', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/coverartarchive/lookup').query({type: 'release-group', id: '!rEcd'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "type" set to value empty string', async () => {
 						return get('/api/v1/coverartarchive/lookup').query({type: '', id: 'Qm4aVhyD^x%qg1L]'}).expect(400);
 					});
@@ -163,51 +163,51 @@ describe('Server', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/coverartarchive/lookup').query({type: 'release', id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/wikipedia/summary', () => {
-			describe('should fail without login', () => {
+			describe('/wikipedia/summary', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/wikipedia/summary').query({title: '#s7TWBJDxg1Bi6z(O'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "title" set to value empty string', async () => {
 						return get('/api/v1/wikipedia/summary').query({title: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/wikidata/summary', () => {
-			describe('should fail without login', () => {
+			describe('/wikidata/summary', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/wikidata/summary').query({id: '^[6aOH2Om@e9d'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/wikidata/summary').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/wikidata/lookup', () => {
-			describe('should fail without login', () => {
+			describe('/wikidata/lookup', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/wikidata/lookup').query({id: '%7zS1JPg)nz&S^OKK'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/wikidata/lookup').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/autocomplete', () => {
-			describe('should fail without login', () => {
+			describe('/autocomplete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/autocomplete').query({query: '3S$aqjF9D9vQW'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "query" set to value empty string', async () => {
 						return get('/api/v1/autocomplete').query({query: ''}).expect(400);
 					});
@@ -316,15 +316,15 @@ describe('Server', () => {
 					it('should respond with 400 with "episode" set to value less than minimum 0', async () => {
 						return get('/api/v1/autocomplete').query({query: 'f]97xf*', episode: -1}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/genre/list', () => {
-			describe('should fail without login', () => {
+			describe('/genre/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/genre/list').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "rootID" set to value empty string', async () => {
 						return get('/api/v1/genre/list').query({rootID: ''}).expect(400);
 					});
@@ -358,27 +358,27 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/genre/list').query({amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/stats', () => {
-			describe('should fail without login', () => {
+			describe('/stats', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/stats').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "rootID" set to value empty string', async () => {
 						return get('/api/v1/stats').query({rootID: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/nowPlaying/list', () => {
-			describe('should fail without login', () => {
+			describe('/nowPlaying/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/nowPlaying/list').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/nowPlaying/list').query({offset: '^YrUV)lv9e'}).expect(400);
 					});
@@ -409,15 +409,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/nowPlaying/list').query({amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/chat/list', () => {
-			describe('should fail without login', () => {
+			describe('/chat/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/chat/list').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "since" set to value string', async () => {
 						return get('/api/v1/chat/list').query({since: '47cUclSLgK(dBtq@'}).expect(400);
 					});
@@ -433,15 +433,15 @@ describe('Server', () => {
 					it('should respond with 400 with "since" set to value less than minimum 0', async () => {
 						return get('/api/v1/chat/list').query({since: -1}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/index', () => {
-			describe('should fail without login', () => {
+			describe('/folder/index', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/index').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "rootID" set to value empty string', async () => {
 						return get('/api/v1/folder/index').query({rootID: ''}).expect(400);
 					});
@@ -568,15 +568,15 @@ describe('Server', () => {
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
 						return get('/api/v1/folder/index').query({sortDescending: -3800271708749825}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/id', () => {
-			describe('should fail without login', () => {
+			describe('/folder/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/id').query({id: 'a42(h6O@'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/id').query({id: ''}).expect(400);
 					});
@@ -748,15 +748,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/folder/id').query({id: 'knErnW!b(xEQg2Xn', trackState: -7512642952364033}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/ids', () => {
-			describe('should fail without login', () => {
+			describe('/folder/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/ids').query({ids: ['Ts@*3tL', 'OgXTLP&']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/folder/ids').query({ids: null}).expect(400);
 					});
@@ -931,15 +931,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/folder/ids').query({ids: ['omoBb%9VKlviUSafT', '4]qAmPl@'], trackState: -6539959389388801}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/tracks', () => {
-			describe('should fail without login', () => {
+			describe('/folder/tracks', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/tracks').query({ids: [')1[RU', 'ECnvz!mZx#w']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/folder/tracks').query({ids: null}).expect(400);
 					});
@@ -1036,15 +1036,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/folder/tracks').query({ids: ['qEwqY%c%vm3y', 'dg6NVwuPe6X'], amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/subfolders', () => {
-			describe('should fail without login', () => {
+			describe('/folder/subfolders', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/subfolders').query({id: 'Om@^IAhVy'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/subfolders').query({id: ''}).expect(400);
 					});
@@ -1162,15 +1162,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/folder/subfolders').query({id: 'fo^dK]4Of41RR', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/artist/similar', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artist/similar', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/artist/similar').query({id: '345Jo3ZeM'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/artist/similar').query({id: ''}).expect(400);
 					});
@@ -1372,39 +1372,39 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/folder/artist/similar').query({id: '$QB%[gUOrDZ', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/artist/info', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artist/info', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/artist/info').query({id: 'eSpSeUHPtsXZY$O'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/artist/info').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/album/info', () => {
-			describe('should fail without login', () => {
+			describe('/folder/album/info', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/album/info').query({id: 'IhO82@aX'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/album/info').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/list', () => {
-			describe('should fail without login', () => {
+			describe('/folder/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/list').query({list: 'highest'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "list" set to value empty string', async () => {
 						return get('/api/v1/folder/list').query({list: ''}).expect(400);
 					});
@@ -1651,15 +1651,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/folder/list').query({list: 'frequent', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/search', () => {
-			describe('should fail without login', () => {
+			describe('/folder/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/search').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/folder/search').query({offset: 'ySYhjWGTrOrSiZdFG'}).expect(400);
 					});
@@ -1984,20 +1984,20 @@ describe('Server', () => {
 					it('should respond with 400 with "folderArtworks" set to value integer < 0', async () => {
 						return get('/api/v1/folder/search').query({folderArtworks: 2456485355323391}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/health', () => {
-			describe('should fail without login', () => {
+			describe('/folder/health', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/health').query({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/folder/health').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "rootID" set to value empty string', async () => {
 						return get('/api/v1/folder/health').query({rootID: ''}).expect(400);
 					});
@@ -2208,42 +2208,42 @@ describe('Server', () => {
 					it('should respond with 400 with "folderArtworks" set to value integer < 0', async () => {
 						return get('/api/v1/folder/health').query({folderArtworks: -6442111457034241}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/state', () => {
-			describe('should fail without login', () => {
+			describe('/folder/state', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/state').query({id: 'kQ1Tbxhw'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/state').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/states', () => {
-			describe('should fail without login', () => {
+			describe('/folder/states', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/states').query({ids: ['x3h&h(1sF2Jf', 'o%5vPB87Al']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/folder/states').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/folder/states').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/artist/similar/tracks', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artist/similar/tracks', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/artist/similar/tracks').query({id: ']#a!A%*C8OF3Dh[B'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/artist/similar/tracks').query({id: ''}).expect(400);
 					});
@@ -2325,27 +2325,27 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/folder/artist/similar/tracks').query({id: 'hi91JEC5[$', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/artworks', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artworks', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/artworks').query({id: 'hHslrBl'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/artworks').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/id', () => {
-			describe('should fail without login', () => {
+			describe('/track/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/id').query({id: 'F)4k5'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/track/id').query({id: ''}).expect(400);
 					});
@@ -2397,15 +2397,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/track/id').query({id: '0zch3CinGW', trackState: 5304051528892415}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/ids', () => {
-			describe('should fail without login', () => {
+			describe('/track/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/ids').query({ids: ['pDxvbC$ykFURlag', '^*l(g3%W8']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/track/ids').query({ids: null}).expect(400);
 					});
@@ -2460,42 +2460,42 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/track/ids').query({ids: ['TQkK2z&FMj9wCF', 'd#$6]]J%Xleaf'], trackState: -3878461982638081}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/rawTag', () => {
-			describe('should fail without login', () => {
+			describe('/track/rawTag', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/rawTag').query({id: '!YGfk^cQjq87t'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/track/rawTag').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/rawTags', () => {
-			describe('should fail without login', () => {
+			describe('/track/rawTags', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/rawTags').query({ids: ['cZ4&glFlgKG1Sc%ua', 'kKSAvV']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/track/rawTags').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/track/rawTags').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/search', () => {
-			describe('should fail without login', () => {
+			describe('/track/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/search').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/track/search').query({offset: 'n@v*mZRI*'}).expect(400);
 					});
@@ -2679,42 +2679,42 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/track/search').query({trackState: -3380630968598529}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/state', () => {
-			describe('should fail without login', () => {
+			describe('/track/state', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/state').query({id: 'QfMOnF5XTIlA7!$na7W'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/track/state').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/states', () => {
-			describe('should fail without login', () => {
+			describe('/track/states', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/states').query({ids: ['lW2T5@', 'fLY!0T29z']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/track/states').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/track/states').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/list', () => {
-			describe('should fail without login', () => {
+			describe('/track/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/list').query({list: 'random'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "list" set to value empty string', async () => {
 						return get('/api/v1/track/list').query({list: ''}).expect(400);
 					});
@@ -2904,15 +2904,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/track/list').query({list: 'random', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/similar', () => {
-			describe('should fail without login', () => {
+			describe('/track/similar', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/similar').query({id: 'P&u0*AmPE9'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/track/similar').query({id: ''}).expect(400);
 					});
@@ -2994,20 +2994,20 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/track/similar').query({id: 'Tj7o5MLW#[P%', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/health', () => {
-			describe('should fail without login', () => {
+			describe('/track/health', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/health').query({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/track/health').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "media" set to value empty string', async () => {
 						return get('/api/v1/track/health').query({media: ''}).expect(400);
 					});
@@ -3173,27 +3173,27 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/track/health').query({trackState: -6333573640486913}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/lyrics', () => {
-			describe('should fail without login', () => {
+			describe('/track/lyrics', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/lyrics').query({id: 'S1q1$^Ph[2'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/track/lyrics').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/id', () => {
-			describe('should fail without login', () => {
+			describe('/episode/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/id').query({id: '@W16CKBna^$]o'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/episode/id').query({id: ''}).expect(400);
 					});
@@ -3245,15 +3245,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/episode/id').query({id: 'QxiUx', trackState: -1338113838284801}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/ids', () => {
-			describe('should fail without login', () => {
+			describe('/episode/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/ids').query({ids: ['mrbKbrL@g6@vT*OO', 'Fi5&Jc*T21)P%ApXM*']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/episode/ids').query({ids: null}).expect(400);
 					});
@@ -3308,15 +3308,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/episode/ids').query({ids: ['j8XfzF@fFEP4WjrvZ0E', 'Rwh(dI&RP$xN'], trackState: -8922749984571393}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/search', () => {
-			describe('should fail without login', () => {
+			describe('/episode/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/search').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/episode/search').query({offset: 'wfIR$qfB&OG0'}).expect(400);
 					});
@@ -3434,71 +3434,71 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/episode/search').query({trackState: -5137319547895809}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/retrieve', () => {
-			describe('should fail without login', () => {
+			describe('/episode/retrieve', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/retrieve').query({id: 'YD%gF'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/episode/retrieve').query({id: 'YD%gF'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/episode/retrieve').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/state', () => {
-			describe('should fail without login', () => {
+			describe('/episode/state', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/state').query({id: 'HPPxFbT'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/episode/state').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/states', () => {
-			describe('should fail without login', () => {
+			describe('/episode/states', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/states').query({ids: ['2cbUIxvXxbi)', 'DA9[DA9Wkvh']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/episode/states').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/episode/states').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/status', () => {
-			describe('should fail without login', () => {
+			describe('/episode/status', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/status').query({id: 'WWK4z&nPji'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/episode/status').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/list', () => {
-			describe('should fail without login', () => {
+			describe('/episode/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/list').query({list: 'frequent'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "list" set to value empty string', async () => {
 						return get('/api/v1/episode/list').query({list: ''}).expect(400);
 					});
@@ -3622,15 +3622,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/episode/list').query({list: 'faved', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/id', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/id').query({id: '4ykK)$7YSnu'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/podcast/id').query({id: ''}).expect(400);
 					});
@@ -3706,15 +3706,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/podcast/id').query({id: 'Ul*cheqgiz$Hy#ooXK', trackState: 6750148008869887}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/ids', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/ids').query({ids: ['C!WvpD5DLKA53JWHR3F', '@x$y^bI']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/podcast/ids').query({ids: null}).expect(400);
 					});
@@ -3793,27 +3793,27 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/podcast/ids').query({ids: ['wezzRVXMIsFI', 'xAc3e^#[a0AL4iym(v'], trackState: 5206013472931839}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/status', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/status', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/status').query({id: '4KPPwQ6k9nChmm'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/podcast/status').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/search', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/search').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/podcast/search').query({offset: '!xiDUrX'}).expect(400);
 					});
@@ -3955,15 +3955,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/podcast/search').query({trackState: -3735458752233473}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/episodes', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/episodes', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/episodes').query({id: ')cyU4Tyc5txshlz$t#'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/podcast/episodes').query({id: ''}).expect(400);
 					});
@@ -4045,71 +4045,71 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/podcast/episodes').query({id: 'D@Skw', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/refreshAll', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/refreshAll', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/refreshAll').query({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/podcast/refreshAll').query({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/podcast/refresh', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/refresh', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/refresh').query({id: '8dG0v'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/podcast/refresh').query({id: '8dG0v'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/podcast/refresh').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/state', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/state', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/state').query({id: 'ABJc&L2@0c2q@['}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/podcast/state').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/states', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/states', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/states').query({ids: ['Z((mCne8^97en*', '4gp2t43QTC7h&E']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/podcast/states').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/podcast/states').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/list', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/list').query({list: 'highest'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "list" set to value empty string', async () => {
 						return get('/api/v1/podcast/list').query({list: ''}).expect(400);
 					});
@@ -4257,15 +4257,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/podcast/list').query({list: 'recent', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/radio/id', () => {
-			describe('should fail without login', () => {
+			describe('/radio/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/radio/id').query({id: 'l[#U8gWXHVduO%O8YA', radioState: true}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/radio/id').query({id: '', radioState: false}).expect(400);
 					});
@@ -4281,15 +4281,15 @@ describe('Server', () => {
 					it('should respond with 400 with "radioState" set to value integer < 0', async () => {
 						return get('/api/v1/radio/id').query({id: '7@[CaXq!', radioState: -2007483585396737}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/radio/ids', () => {
-			describe('should fail without login', () => {
+			describe('/radio/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/radio/ids').query({ids: ['pc@PRv!', 'W2mgs%a*'], radioState: true}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/radio/ids').query({ids: null, radioState: false}).expect(400);
 					});
@@ -4308,15 +4308,15 @@ describe('Server', () => {
 					it('should respond with 400 with "radioState" set to value integer < 0', async () => {
 						return get('/api/v1/radio/ids').query({ids: ['RDck9gwvjAGGKZ@COu', '@E!Swgu8w'], radioState: -5874938045005825}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/radio/search', () => {
-			describe('should fail without login', () => {
+			describe('/radio/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/radio/search').query({radioState: true}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "radioState" set to value empty string', async () => {
 						return get('/api/v1/radio/search').query({radioState: ''}).expect(400);
 					});
@@ -4398,42 +4398,42 @@ describe('Server', () => {
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
 						return get('/api/v1/radio/search').query({radioState: true, sortDescending: 7119121435066367}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/radio/state', () => {
-			describe('should fail without login', () => {
+			describe('/radio/state', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/radio/state').query({id: 'XWyzFYKY$u%QDV2)tQ'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/radio/state').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/radio/states', () => {
-			describe('should fail without login', () => {
+			describe('/radio/states', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/radio/states').query({ids: ['sBB1%G0F', '*c1eHqOVwt!#s%U[eqzA']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/radio/states').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/radio/states').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/id', () => {
-			describe('should fail without login', () => {
+			describe('/artist/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/id').query({id: '8gwloeGHuEDiD05J(U0k'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/artist/id').query({id: ''}).expect(400);
 					});
@@ -4620,15 +4620,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/artist/id').query({id: 'gzKI^', trackState: 2478058623729663}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/ids', () => {
-			describe('should fail without login', () => {
+			describe('/artist/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/ids').query({ids: ['zp^6FQvCJ', 'wa#0NAmbQmVlS5k&0jX']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/artist/ids').query({ids: null}).expect(400);
 					});
@@ -4815,15 +4815,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/artist/ids').query({ids: ['ZCL0ZAjL3ju!boYR', 'o4MI5[qIIeJ'], trackState: -4129327159443457}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/search', () => {
-			describe('should fail without login', () => {
+			describe('/artist/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/search').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/artist/search').query({offset: 'xBR[qKZBK'}).expect(400);
 					});
@@ -5112,42 +5112,42 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/artist/search').query({trackState: -3023760105930753}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/state', () => {
-			describe('should fail without login', () => {
+			describe('/artist/state', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/state').query({id: 'S!ido9'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/artist/state').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/states', () => {
-			describe('should fail without login', () => {
+			describe('/artist/states', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/states').query({ids: ['VOeYE*VX2*85[buX5q3b', 's0PRd2RPl']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/artist/states').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/artist/states').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/list', () => {
-			describe('should fail without login', () => {
+			describe('/artist/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/list').query({list: 'avghighest'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "list" set to value empty string', async () => {
 						return get('/api/v1/artist/list').query({list: ''}).expect(400);
 					});
@@ -5442,15 +5442,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/artist/list').query({list: 'highest', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/similar/tracks', () => {
-			describe('should fail without login', () => {
+			describe('/artist/similar/tracks', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/similar/tracks').query({id: '4$j86f'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/artist/similar/tracks').query({id: ''}).expect(400);
 					});
@@ -5532,15 +5532,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/artist/similar/tracks').query({id: 'F][$jnF8q', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/similar', () => {
-			describe('should fail without login', () => {
+			describe('/artist/similar', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/similar').query({id: 'n!N@WXsbI(vdFSk'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/artist/similar').query({id: ''}).expect(400);
 					});
@@ -5754,15 +5754,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/artist/similar').query({id: '#XFq(Wt4dXwW', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/index', () => {
-			describe('should fail without login', () => {
+			describe('/artist/index', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/index').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "name" set to value empty string', async () => {
 						return get('/api/v1/artist/index').query({name: ''}).expect(400);
 					});
@@ -5841,15 +5841,15 @@ describe('Server', () => {
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
 						return get('/api/v1/artist/index').query({sortDescending: -2530539009474561}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/tracks', () => {
-			describe('should fail without login', () => {
+			describe('/artist/tracks', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/tracks').query({ids: ['6tf5j[vZ[wL&&4#', 'XbrFW*1O[CJ%#^[*l']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/artist/tracks').query({ids: null}).expect(400);
 					});
@@ -5934,27 +5934,27 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/artist/tracks').query({ids: ['cJLU4UE0xeb', 'k^kk!xYN(0TyjC'], amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/info', () => {
-			describe('should fail without login', () => {
+			describe('/artist/info', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/info').query({id: 'ilw0OGC'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/artist/info').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/id', () => {
-			describe('should fail without login', () => {
+			describe('/album/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/id').query({id: 'YTQ8IyE'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/album/id').query({id: ''}).expect(400);
 					});
@@ -6054,15 +6054,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/album/id').query({id: 'ov)2ZXH!u%(RSoWa%', trackState: 6063391407865855}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/ids', () => {
-			describe('should fail without login', () => {
+			describe('/album/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/ids').query({ids: ['rpj!1Nq!gd41C', 'tVQb%dN48^pF!(']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/album/ids').query({ids: null}).expect(400);
 					});
@@ -6165,15 +6165,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/album/ids').query({ids: ['sHMXVLX3!l(Kqc!$]AZK', 'JnsOf'], trackState: -6896898619211777}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/list', () => {
-			describe('should fail without login', () => {
+			describe('/album/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/list').query({list: 'avghighest'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "list" set to value empty string', async () => {
 						return get('/api/v1/album/list').query({list: ''}).expect(400);
 					});
@@ -6426,15 +6426,15 @@ describe('Server', () => {
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
 						return get('/api/v1/album/list').query({list: 'faved', sortDescending: 788883289669631}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/search', () => {
-			describe('should fail without login', () => {
+			describe('/album/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/search').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/album/search').query({offset: 'AeZ8R5oMEIZW&b#5i'}).expect(400);
 					});
@@ -6681,15 +6681,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/album/search').query({trackState: 1772689324769279}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/index', () => {
-			describe('should fail without login', () => {
+			describe('/album/index', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/index').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "name" set to value empty string', async () => {
 						return get('/api/v1/album/index').query({name: ''}).expect(400);
 					});
@@ -6810,42 +6810,42 @@ describe('Server', () => {
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
 						return get('/api/v1/album/index').query({sortDescending: -4947207153254401}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/state', () => {
-			describe('should fail without login', () => {
+			describe('/album/state', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/state').query({id: '2C%f^0RkpF2'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/album/state').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/states', () => {
-			describe('should fail without login', () => {
+			describe('/album/states', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/states').query({ids: ['ky1S@cy', '7^9UH']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/album/states').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/album/states').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/similar/tracks', () => {
-			describe('should fail without login', () => {
+			describe('/album/similar/tracks', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/similar/tracks').query({id: 'OifsW*hoTrvF)epb'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/album/similar/tracks').query({id: ''}).expect(400);
 					});
@@ -6927,15 +6927,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/album/similar/tracks').query({id: 'a5Glgtz8C&cN9', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/tracks', () => {
-			describe('should fail without login', () => {
+			describe('/album/tracks', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/tracks').query({ids: ['sZ]H%VGzUDSxn0j', 'lvLsD2YcXQ']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/album/tracks').query({ids: null}).expect(400);
 					});
@@ -7020,27 +7020,27 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/album/tracks').query({ids: ['N0zB$QJqaKuR!6vSN', 'F@[WeEeGdY'], amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/info', () => {
-			describe('should fail without login', () => {
+			describe('/album/info', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/info').query({id: 'J%%SFc1ODIGXP7Ujv'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/album/info').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playlist/id', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playlist/id').query({id: ')9XeKhyHO#3OR7u(T%sI'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/playlist/id').query({id: ''}).expect(400);
 					});
@@ -7128,15 +7128,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/playlist/id').query({id: '4SUbbY!tK44[N&miM8I', trackState: 4427434556391423}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playlist/ids', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playlist/ids').query({ids: ['3QV3!KqZc#P9M', '#%7@$)fIna4o5m']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/playlist/ids').query({ids: null}).expect(400);
 					});
@@ -7227,15 +7227,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/playlist/ids').query({ids: ['2I56z50WqZxienqTEeH', '$8CoxkV8%'], trackState: 290743130259455}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playlist/search', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playlist/search').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/playlist/search').query({offset: '2LBFckpn0SRZ68oKet'}).expect(400);
 					});
@@ -7395,42 +7395,42 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/playlist/search').query({trackState: -750738594594817}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playlist/state', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/state', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playlist/state').query({id: 'ZE78yN9Y[X)%Xb'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/playlist/state').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playlist/states', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/states', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playlist/states').query({ids: ['I@9QAMzQjS', 'vZ07^H!I4jHdCvN']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/playlist/states').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/playlist/states').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playlist/tracks', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/tracks', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playlist/tracks').query({ids: ['[[JUHvLF$D@!k', 'I)N6E!3erJHC8U1INbpG']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/playlist/tracks').query({ids: null}).expect(400);
 					});
@@ -7515,15 +7515,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/playlist/tracks').query({ids: ['*Zv1Y3^UXwf#', 'PJG%ZuX2%fvH$hBPQb'], amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playlist/list', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playlist/list').query({list: 'recent'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "list" set to value empty string', async () => {
 						return get('/api/v1/playlist/list').query({list: ''}).expect(400);
 					});
@@ -7689,57 +7689,57 @@ describe('Server', () => {
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
 						return get('/api/v1/playlist/list').query({list: 'frequent', sortDescending: -1283518076289025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/user/id', () => {
-			describe('should fail without login', () => {
+			describe('/user/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/user/id').query({id: 'nt1bkd[J2$K4P'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/user/id').query({id: 'nt1bkd[J2$K4P'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/user/id').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/user/ids', () => {
-			describe('should fail without login', () => {
+			describe('/user/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/user/ids').query({ids: ['OuqljJT8WfWzt', 'fk@zLOH(e]XvJ']}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/user/ids').query({ids: ['OuqljJT8WfWzt', 'fk@zLOH(e]XvJ']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/user/ids').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/user/ids').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/user/search', () => {
-			describe('should fail without login', () => {
+			describe('/user/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/user/search').query({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/user/search').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/user/search').query({offset: 'gL&[R0Q@E]hK3NHO0*l$'}).expect(400);
 					});
@@ -7815,15 +7815,15 @@ describe('Server', () => {
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
 						return get('/api/v1/user/search').query({sortDescending: -8559084190040065}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playqueue/get', () => {
-			describe('should fail without login', () => {
+			describe('/playqueue/get', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playqueue/get').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "playQueueTracks" set to value empty string', async () => {
 						return get('/api/v1/playqueue/get').query({playQueueTracks: ''}).expect(400);
 					});
@@ -7896,15 +7896,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/playqueue/get').query({trackState: 874041829228543}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/bookmark/id', () => {
-			describe('should fail without login', () => {
+			describe('/bookmark/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/bookmark/id').query({id: 'Rn!ru#oceONv1(H'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/bookmark/id').query({id: ''}).expect(400);
 					});
@@ -7968,15 +7968,15 @@ describe('Server', () => {
 					it('should respond with 400 with "trackState" set to value integer < 0', async () => {
 						return get('/api/v1/bookmark/id').query({id: 'fYJiH(qWcBUjz', trackState: -7291586274656257}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/bookmark/ids', () => {
-			describe('should fail without login', () => {
+			describe('/bookmark/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/bookmark/ids').query({ids: ['I7MGEHFR5qWT%L', 'tTF@aJUgj#[cfao)Rsdl']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/bookmark/ids').query({ids: null}).expect(400);
 					});
@@ -8073,15 +8073,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/bookmark/ids').query({ids: ['Ar2S99W*U', 'et8(8Y3H'], amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/bookmark/list', () => {
-			describe('should fail without login', () => {
+			describe('/bookmark/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/bookmark/list').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "bookmarkTrack" set to value empty string', async () => {
 						return get('/api/v1/bookmark/list').query({bookmarkTrack: ''}).expect(400);
 					});
@@ -8172,15 +8172,15 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/bookmark/list').query({amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/bookmark/byTrack/list', () => {
-			describe('should fail without login', () => {
+			describe('/bookmark/byTrack/list', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/bookmark/byTrack/list').query({trackID: 'k$3CIdpxSr]2#kXxS3'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "trackID" set to value empty string', async () => {
 						return get('/api/v1/bookmark/byTrack/list').query({trackID: ''}).expect(400);
 					});
@@ -8214,42 +8214,42 @@ describe('Server', () => {
 					it('should respond with 400 with "amount" set to value less than minimum 1', async () => {
 						return get('/api/v1/bookmark/byTrack/list').query({trackID: 'aYsOj&ORZNXt1dJxyVU', amount: 0}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/root/id', () => {
-			describe('should fail without login', () => {
+			describe('/root/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/root/id').query({id: 'R$@J&KLh'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/root/id').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/root/ids', () => {
-			describe('should fail without login', () => {
+			describe('/root/ids', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/root/ids').query({ids: ['43uZKyq', 'Mx2Kbz']}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "ids" set to value null', async () => {
 						return get('/api/v1/root/ids').query({ids: null}).expect(400);
 					});
 					it('should respond with 400 with "ids" set to value empty string', async () => {
 						return get('/api/v1/root/ids').query({ids: [null, '']}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/root/search', () => {
-			describe('should fail without login', () => {
+			describe('/root/search', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/root/search').query({}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "offset" set to value string', async () => {
 						return get('/api/v1/root/search').query({offset: 'sp&(!ulG'}).expect(400);
 					});
@@ -8310,105 +8310,105 @@ describe('Server', () => {
 					it('should respond with 400 with "sortDescending" set to value integer < 0', async () => {
 						return get('/api/v1/root/search').query({sortDescending: -1223798393143297}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/root/scan', () => {
-			describe('should fail without login', () => {
+			describe('/root/scan', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/root/scan').query({id: '1J[RW'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/root/scan').query({id: '1J[RW'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/root/scan').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/root/scanAll', () => {
-			describe('should fail without login', () => {
+			describe('/root/scanAll', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/root/scanAll').query({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/root/scanAll').query({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/root/status', () => {
-			describe('should fail without login', () => {
+			describe('/root/status', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/root/status').query({id: 'QEwVlW!rQHDV'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/root/status').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/admin/settings', () => {
-			describe('should fail without login', () => {
+			describe('/admin/settings', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/admin/settings').query({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/admin/settings').query({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/admin/queue/id', () => {
-			describe('should fail without login', () => {
+			describe('/admin/queue/id', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/admin/queue/id').query({id: 'PO0xM@y@SPTEVq56'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/admin/queue/id').query({id: 'PO0xM@y@SPTEVq56'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/admin/queue/id').query({id: ''}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/download', () => {
-			describe('should fail without login', () => {
+			describe('/folder/download', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/download').query({id: ']f]Qvk([iPs5O'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/folder/download').query({id: ']f]Qvk([iPs5O'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/folder/download').query({id: '[m]oDZLCw6FB22nKNnb', format: 'invalid'}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/image', () => {
-			describe('should fail without login', () => {
+			describe('/folder/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/image').query({id: '1Ib@duLgzad6'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/image').query({id: ''}).expect(400);
 					});
@@ -8436,15 +8436,15 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/folder/image').query({id: 'v^1ODi2b4&', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/folder/artwork/image', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artwork/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/folder/artwork/image').query({id: 'LOv13Wv7kNWmiZ1'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/folder/artwork/image').query({id: ''}).expect(400);
 					});
@@ -8472,20 +8472,20 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/folder/artwork/image').query({id: 'eo45NxWD$', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/stream', () => {
-			describe('should fail without login', () => {
+			describe('/track/stream', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/stream').query({id: 'u[dA$URshbX'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/track/stream').query({id: 'u[dA$URshbX'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/track/stream').query({id: ''}).expect(400);
 					});
@@ -8507,35 +8507,35 @@ describe('Server', () => {
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/track/stream').query({id: 'UOjv0OK2tn', format: 'invalid'}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/download', () => {
-			describe('should fail without login', () => {
+			describe('/track/download', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/download').query({id: '$Ch*1KT#0NH'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/track/download').query({id: '$Ch*1KT#0NH'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/track/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/track/download').query({id: '!]R(b[a%p2x]*mPk', format: 'invalid'}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/track/image', () => {
-			describe('should fail without login', () => {
+			describe('/track/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/track/image').query({id: '2pg)lUMO^B%QDZP'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/track/image').query({id: ''}).expect(400);
 					});
@@ -8563,20 +8563,20 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/track/image').query({id: 'HTkN(3V00uNVdU&R[', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/stream', () => {
-			describe('should fail without login', () => {
+			describe('/episode/stream', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/stream').query({id: 'wNZhwXu(5p8F'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/episode/stream').query({id: 'wNZhwXu(5p8F'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/episode/stream').query({id: ''}).expect(400);
 					});
@@ -8598,35 +8598,35 @@ describe('Server', () => {
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/episode/stream').query({id: 'pGj@3M', format: 'invalid'}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/download', () => {
-			describe('should fail without login', () => {
+			describe('/episode/download', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/download').query({id: '(VPQuCulR]^8u'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/episode/download').query({id: '(VPQuCulR]^8u'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/episode/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/episode/download').query({id: 'nZds]', format: 'invalid'}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/episode/image', () => {
-			describe('should fail without login', () => {
+			describe('/episode/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/episode/image').query({id: 'QE&f$(s3tQkkmyOZZR'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/episode/image').query({id: ''}).expect(400);
 					});
@@ -8654,15 +8654,15 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/episode/image').query({id: 'fC0h[tu!aJ', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/image', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/image').query({id: 'YOt1d4vD7ZjAq'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/podcast/image').query({id: ''}).expect(400);
 					});
@@ -8690,35 +8690,35 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/podcast/image').query({id: 'jbabnj1&ym[U02oB4uW', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/podcast/download', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/download', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/podcast/download').query({id: ')eJ&qf$VZkLW(^cFv'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/podcast/download').query({id: ')eJ&qf$VZkLW(^cFv'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/podcast/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/podcast/download').query({id: '(n]A$[L9XH', format: 'invalid'}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/image', () => {
-			describe('should fail without login', () => {
+			describe('/artist/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/image').query({id: ']ZyZr7wKZ4'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/artist/image').query({id: ''}).expect(400);
 					});
@@ -8746,35 +8746,35 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/artist/image').query({id: 'X]XcJR*Q7', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/artist/download', () => {
-			describe('should fail without login', () => {
+			describe('/artist/download', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/artist/download').query({id: '(0[Ip'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/artist/download').query({id: '(0[Ip'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/artist/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/artist/download').query({id: 'diEvJcmzl', format: 'invalid'}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/image', () => {
-			describe('should fail without login', () => {
+			describe('/album/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/image').query({id: 'ItMPrP](u)iM0@0ZR'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/album/image').query({id: ''}).expect(400);
 					});
@@ -8802,35 +8802,35 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/album/image').query({id: 'KEFMuK!hL[Gd', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/album/download', () => {
-			describe('should fail without login', () => {
+			describe('/album/download', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/album/download').query({id: '@2!mS312x^m'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/album/download').query({id: '@2!mS312x^m'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/album/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/album/download').query({id: 'e8v^O9', format: 'invalid'}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playlist/image', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playlist/image').query({id: 'qS6EvpX&R2^R1'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/playlist/image').query({id: ''}).expect(400);
 					});
@@ -8858,35 +8858,35 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/playlist/image').query({id: '^U&gYvVVCR[)hX7', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/playlist/download', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/download', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/playlist/download').query({id: 's1&uNzrTkHV!*Zh5'}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/playlist/download').query({id: 's1&uNzrTkHV!*Zh5'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/playlist/download').query({id: ''}).expect(400);
 					});
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/playlist/download').query({id: 'H$k1X', format: 'invalid'}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/user/image', () => {
-			describe('should fail without login', () => {
+			describe('/user/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/user/image').query({id: 'lkN4sCh*'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/user/image').query({id: ''}).expect(400);
 					});
@@ -8914,15 +8914,15 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/user/image').query({id: 'GN&UtZ*0bcecB5YH3Fkr', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/root/image', () => {
-			describe('should fail without login', () => {
+			describe('/root/image', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/root/image').query({id: '3kaq8!IqN7RDIlw)4'}).expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/root/image').query({id: ''}).expect(400);
 					});
@@ -8950,15 +8950,15 @@ describe('Server', () => {
 					it('should respond with 400 with "size" set to value more than minimum 1024', async () => {
 						return get('/api/v1/root/image').query({id: 'ubBpe&US%W7Xmm', size: 1025}).expect(400);
 					});
+				});
 			});
-		});
-		describe('/image/{id}-{size}.{format}', () => {
-			describe('should fail without login', () => {
+			describe('/image/{id}-{size}.{format}', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/image/!3iGpe%23seolp)r8N2%5E-776.tiff').expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value empty string', async () => {
 						return get('/api/v1/image/N8(LRQ-401.').expect(400);
 					});
@@ -8986,15 +8986,15 @@ describe('Server', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/image/-683.png').expect(400);
 					});
+				});
 			});
-		});
-		describe('/image/{id}-{size}', () => {
-			describe('should fail without login', () => {
+			describe('/image/{id}-{size}', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/image/(*Pm7p%237Ii8Qk-541').expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "size" set to value string', async () => {
 						return get('/api/v1/image/%5BLU3Cyo-W!!b4EWtVG').expect(400);
 					});
@@ -9016,15 +9016,15 @@ describe('Server', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/image/-563').expect(400);
 					});
+				});
 			});
-		});
-		describe('/image/{id}.{format}', () => {
-			describe('should fail without login', () => {
+			describe('/image/{id}.{format}', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/image/1v)qtPw(HDP%23U.jpeg').expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value empty string', async () => {
 						return get('/api/v1/image/8*rE4*gnzCEh)aaZHz.').expect(400);
 					});
@@ -9034,610 +9034,609 @@ describe('Server', () => {
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/image/.jpeg').expect(400);
 					});
+				});
 			});
-		});
-		describe('/image/{id}', () => {
-			describe('should fail without login', () => {
+			describe('/image/{id}', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/image/inQUJbcx7AgdPr%5En').expect(401);
 					});
+				});
 			});
-		});
-		describe('/stream/{id}.{format}', () => {
-			describe('should fail without login', () => {
+			describe('/stream/{id}.{format}', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/stream/jbaq%24Fulc8tSY%402YHWHG.mp3').expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/stream/jbaq%24Fulc8tSY%402YHWHG.mp3').expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/stream/o4rQjHmzUit2f%5E%25wX.invalid').expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/stream/.mp3').expect(400);
 					});
+				});
 			});
-		});
-		describe('/stream/{id}', () => {
-			describe('should fail without login', () => {
+			describe('/stream/{id}', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/stream/UJsOe%40m!%25ffCBng%26pqR7').expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/stream/UJsOe%40m!%25ffCBng%26pqR7').expect(401);
 					});
+				});
 			});
-		});
-		describe('/waveform/{id}.{format}', () => {
-			describe('should fail without login', () => {
+			describe('/waveform/{id}.{format}', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/waveform/szsw%24S2%25x0*z!jm1%267V.svg').expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/waveform/szsw%24S2%25x0*z!jm1%267V.svg').expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/waveform/SEb%26ts%5E8%243%5B.invalid').expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/waveform/.dat').expect(400);
 					});
+				});
 			});
-		});
-		describe('/download/{id}', () => {
-			describe('should fail without login', () => {
+			describe('/download/{id}', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/download/jB6%24jN').expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/download/jB6%24jN').expect(401);
 					});
+				});
 			});
-		});
-		describe('/download/{id}.{format}', () => {
-			describe('should fail without login', () => {
+			describe('/download/{id}.{format}', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNotLoggedIn('/api/v1/download/8ZVXZ2nbg7s*6IrD4.tar').expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return getNoRights('/api/v1/download/8ZVXZ2nbg7s*6IrD4.tar').expect(401);
 					});
-			});
-			describe('should fail with invalid data', () => {
+				});
+				describe('should fail with invalid data', () => {
 					it('should respond with 400 with "format" set to value invalid enum', async () => {
 						return get('/api/v1/download/lOnkIe2%24%5EahbD.invalid').expect(400);
 					});
 					it('should respond with 400 with "id" set to value empty string', async () => {
 						return get('/api/v1/download/.zip').expect(400);
 					});
+				});
 			});
-		});
-		describe('/logout', () => {
-			describe('should fail without login', () => {
+			describe('/logout', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/logout').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/bookmark/create', () => {
-			describe('should fail without login', () => {
+			describe('/bookmark/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/bookmark/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/bookmark/delete', () => {
-			describe('should fail without login', () => {
+			describe('/bookmark/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/bookmark/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/bookmark/byTrack/delete', () => {
-			describe('should fail without login', () => {
+			describe('/bookmark/byTrack/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/bookmark/byTrack/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/chat/create', () => {
-			describe('should fail without login', () => {
+			describe('/chat/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/chat/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/chat/delete', () => {
-			describe('should fail without login', () => {
+			describe('/chat/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/chat/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/radio/create', () => {
-			describe('should fail without login', () => {
+			describe('/radio/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/radio/create').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/radio/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/radio/update', () => {
-			describe('should fail without login', () => {
+			describe('/radio/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/radio/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/radio/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/radio/delete', () => {
-			describe('should fail without login', () => {
+			describe('/radio/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/radio/delete').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/radio/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/track/fav/update', () => {
-			describe('should fail without login', () => {
+			describe('/track/fav/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/track/fav/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/track/rate/update', () => {
-			describe('should fail without login', () => {
+			describe('/track/rate/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/track/rate/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/track/rawTag/update', () => {
-			describe('should fail without login', () => {
+			describe('/track/rawTag/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/track/rawTag/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/track/rawTag/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/track/name/update', () => {
-			describe('should fail without login', () => {
+			describe('/track/name/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/track/name/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/track/name/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/track/parent/update', () => {
-			describe('should fail without login', () => {
+			describe('/track/parent/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/track/parent/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/track/parent/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/track/delete', () => {
-			describe('should fail without login', () => {
+			describe('/track/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/track/delete').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/track/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/track/fix', () => {
-			describe('should fail without login', () => {
+			describe('/track/fix', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/track/fix').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/track/fix').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/artworkUpload/create', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artworkUpload/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/artworkUpload/create').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/folder/artworkUpload/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/artworkUpload/update', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artworkUpload/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/artworkUpload/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/folder/artworkUpload/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/artwork/create', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artwork/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/artwork/create').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/folder/artwork/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/artwork/delete', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artwork/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/artwork/delete').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/folder/artwork/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/artwork/name/update', () => {
-			describe('should fail without login', () => {
+			describe('/folder/artwork/name/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/artwork/name/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/folder/artwork/name/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/name/update', () => {
-			describe('should fail without login', () => {
+			describe('/folder/name/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/name/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/folder/name/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/fav/update', () => {
-			describe('should fail without login', () => {
+			describe('/folder/fav/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/fav/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/rate/update', () => {
-			describe('should fail without login', () => {
+			describe('/folder/rate/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/rate/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/parent/update', () => {
-			describe('should fail without login', () => {
+			describe('/folder/parent/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/parent/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/folder/parent/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/delete', () => {
-			describe('should fail without login', () => {
+			describe('/folder/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/delete').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/folder/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/folder/create', () => {
-			describe('should fail without login', () => {
+			describe('/folder/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/folder/create').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/folder/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/album/fav/update', () => {
-			describe('should fail without login', () => {
+			describe('/album/fav/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/album/fav/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/album/rate/update', () => {
-			describe('should fail without login', () => {
+			describe('/album/rate/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/album/rate/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/artist/fav/update', () => {
-			describe('should fail without login', () => {
+			describe('/artist/fav/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/artist/fav/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/artist/rate/update', () => {
-			describe('should fail without login', () => {
+			describe('/artist/rate/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/artist/rate/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/episode/fav/update', () => {
-			describe('should fail without login', () => {
+			describe('/episode/fav/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/episode/fav/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/episode/rate/update', () => {
-			describe('should fail without login', () => {
+			describe('/episode/rate/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/episode/rate/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/podcast/create', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/podcast/create').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/podcast/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/podcast/fav/update', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/fav/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/podcast/fav/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/podcast/rate/update', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/rate/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/podcast/rate/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/podcast/delete', () => {
-			describe('should fail without login', () => {
+			describe('/podcast/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/podcast/delete').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/podcast/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/playlist/create', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/playlist/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/playlist/update', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/playlist/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/playlist/fav/update', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/fav/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/playlist/fav/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/playlist/rate/update', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/rate/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/playlist/rate/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/playlist/delete', () => {
-			describe('should fail without login', () => {
+			describe('/playlist/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/playlist/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/playqueue/update', () => {
-			describe('should fail without login', () => {
+			describe('/playqueue/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/playqueue/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/playqueue/delete', () => {
-			describe('should fail without login', () => {
+			describe('/playqueue/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/playqueue/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/user/create', () => {
-			describe('should fail without login', () => {
+			describe('/user/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/user/create').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/user/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/user/update', () => {
-			describe('should fail without login', () => {
+			describe('/user/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/user/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/user/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/user/password/update', () => {
-			describe('should fail without login', () => {
+			describe('/user/password/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/user/password/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/user/email/update', () => {
-			describe('should fail without login', () => {
+			describe('/user/email/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/user/email/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/user/imageUpload/update', () => {
-			describe('should fail without login', () => {
+			describe('/user/imageUpload/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/user/imageUpload/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/user/delete', () => {
-			describe('should fail without login', () => {
+			describe('/user/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/user/delete').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/user/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/root/create', () => {
-			describe('should fail without login', () => {
+			describe('/root/create', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/root/create').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/root/create').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/root/update', () => {
-			describe('should fail without login', () => {
+			describe('/root/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/root/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/root/update').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/root/delete', () => {
-			describe('should fail without login', () => {
+			describe('/root/delete', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/root/delete').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/root/delete').send({}).expect(401);
 					});
+				});
 			});
-		});
-		describe('/admin/settings/update', () => {
-			describe('should fail without login', () => {
+			describe('/admin/settings/update', () => {
+				describe('should fail without login', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNotLoggedIn('/api/v1/admin/settings/update').send({}).expect(401);
 					});
-			});
-			describe('should fail without required rights', () => {
+				});
+				describe('should fail without required rights', () => {
 					it('should respond with 401 Unauth', async () => {
 						return postNoRights('/api/v1/admin/settings/update').send({}).expect(401);
 					});
+				});
 			});
+		},
+		async () => {
+			await server.stop();
 		});
-	},
-	async () => {
-		await server.stop();
-	});
 });
-
