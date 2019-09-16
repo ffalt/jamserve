@@ -5,10 +5,10 @@ import {FORMAT} from './format';
 import {SubsonicParameterRequest} from './parameters';
 import {xml} from './xml';
 
-export class SubsonicApiResponder {
+export class ApiResponder {
 
 	public static ok(req: express.Request, res: express.Response): void {
-		SubsonicApiResponder.send(req, res, FORMAT.packOK());
+		ApiResponder.send(req, res, FORMAT.packOK());
 	}
 
 	private static send(req: express.Request, res: express.Response, data: any): void {
@@ -25,14 +25,14 @@ export class SubsonicApiResponder {
 	}
 
 	public static data(req: express.Request, res: express.Response, data: any): void {
-		SubsonicApiResponder.send(req, res, FORMAT.packResponse(data));
+		ApiResponder.send(req, res, FORMAT.packResponse(data));
 	}
 
 	public static error(req: express.Request, res: express.Response, err: NodeError): void {
 		if (err.fail) {
-			SubsonicApiResponder.send(req, res, FORMAT.packFail(err.fail, err.text));
+			ApiResponder.send(req, res, FORMAT.packFail(err.fail, err.text));
 		} else {
-			SubsonicApiResponder.send(req, res, FORMAT.packFail(FORMAT.FAIL.GENERIC, (typeof err === 'string' ? err : (err.message || 'Unknown Error')).toString()));
+			ApiResponder.send(req, res, FORMAT.packFail(FORMAT.FAIL.GENERIC, (typeof err === 'string' ? err : (err.message || 'Unknown Error')).toString()));
 		}
 	}
 

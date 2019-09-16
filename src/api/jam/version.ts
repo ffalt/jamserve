@@ -1,1 +1,1 @@
-export const JAMAPI_VERSION = '0.1.4';
+export const JAMAPI_VERSION = '0.1.5';

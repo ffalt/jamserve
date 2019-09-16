@@ -2,7 +2,7 @@
 	"openapi": "3.0.0",
 	"info": {
 		"description": "Api for JamServe",
-		"version": "0.1.4",
+		"version": "0.1.5",
 		"title": "JamApi",
 		"license": {
 			"name": "MIT"
@@ -23154,6 +23154,10 @@
 					"client": {
 						"description": "client name",
 						"type": "string"
+					},
+					"jwt": {
+						"description": "request a jwt token, if the client is an app or browser from another domain",
+						"type": "boolean"
 					}
 				},
 				"required": [
