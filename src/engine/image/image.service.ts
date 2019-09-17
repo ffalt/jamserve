@@ -85,6 +85,8 @@ export class ImageService {
 				return (o as Artist).name;
 			case DBObjectType.user:
 				return (o as User).name;
+			case DBObjectType.root:
+				return (o as Root).name;
 			default:
 				return DBObjectType[o.type];
 		}

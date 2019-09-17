@@ -75,7 +75,7 @@ export class Store {
 		return [
 			this.folderStore, this.trackStore, this.albumStore, this.artistStore,
 			this.podcastStore, this.episodeStore, this.playlistStore, this.artistStore,
-			this.albumStore, this.radioStore, this.userStore
+			this.albumStore, this.radioStore, this.userStore, this.rootStore
 		];
 	}
 
