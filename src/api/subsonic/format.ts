@@ -23,14 +23,8 @@ import {LastFM} from '../../model/lastfm-rest-data';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {fileSuffix} from '../../utils/fs-utils';
 
-export interface SubsonicExtResponse extends Subsonic.Response {
-	[name: string]: any;
-
-	xmlns: string;
-}
-
 export interface SubsonicAPIResponse {
-	'subsonic-response': SubsonicExtResponse;
+	'subsonic-response': Subsonic.Response;
 }
 
 export class FORMAT {
@@ -43,6 +37,13 @@ export class FORMAT {
 		UNAUTH: 50,
 		NOTFOUND: 70
 	};
+
+	static defaultProperties(): Subsonic.Response {
+		return {
+			status: 'ok',
+			version: '1.16.0'
+		};
+	}
 
 	static packFail(code: number, txt?: string): SubsonicAPIResponse {
 		/*
@@ -76,35 +77,23 @@ export class FORMAT {
 
 		return {
 			'subsonic-response': {
-				status: 'failed',
-				xmlns: 'http://subsonic.org/restapi',
-				error: {
+				...FORMAT.defaultProperties(), status: 'failed', error: {
 					code,
 					message: txt || codeStrings[code]
-				},
-				version: '1.16.0'
+				}
 			}
 		};
 	}
 
 	static packResponse<T>(o: Subsonic.Response): SubsonicAPIResponse {
-		const response: SubsonicExtResponse = {
-			status: 'ok',
-			xmlns: 'http://subsonic.org/restapi',
-			version: '1.16.0'
-		};
 		return {
-			'subsonic-response': {...response, ...o}
+			'subsonic-response': {...FORMAT.defaultProperties(), ...o}
 		};
 	}
 
 	static packOK(): SubsonicAPIResponse {
 		return {
-			'subsonic-response': {
-				status: 'ok',
-				xmlns: 'http://subsonic.org/restapi',
-				version: '1.16.0'
-			}
+			'subsonic-response': FORMAT.defaultProperties()
 		};
 	}
 
@@ -241,7 +230,7 @@ export class FORMAT {
 			artistId: album.artistID,
 			coverArt: album.id,
 			songCount: album.trackIDs.length,
-			duration: album.duration,
+			duration: Math.trunc(album.duration),
 			year: album.year,
 			genre: album.genre,
 			created: FORMAT.formatSubSonicDate(album.created),
@@ -310,7 +299,7 @@ export class FORMAT {
 			biography: info.bio ? info.bio.content : undefined,
 			musicBrainzId: info.mbid,
 			lastFmUrl: info.url,
-			similarArtist: similar
+			similarArtist: similar || []
 		};
 		(info.image || []).forEach(i => {
 			if (i.size === 'small') {
@@ -370,14 +359,14 @@ export class FORMAT {
 			genre: track.tag.genre,
 			year: track.tag.year,
 			created: FORMAT.formatSubSonicDate(track.stat.created),
-			duration: (track.media.duration !== undefined && !isNaN(track.media.duration)) ? Math.round(track.media.duration) : -1,
+			duration: (track.media.duration !== undefined && !isNaN(track.media.duration)) ? Math.trunc(track.media.duration) : -1,
 			bitRate: (track.media.bitRate !== undefined) ? Math.round(track.media.bitRate / 1000) : -1,
 			track: track.tag.track,
 			size: track.stat.size,
 			suffix,
 			contentType: AudioMimeTypes[suffix],
 			isVideo: false,
-			path: `${track.path}/${track.name}`,
+			path: track.name, // TODO: add parent folders until root
 			discNumber: track.tag.disc,
 			albumId: track.albumID,
 			artistId: track.artistID,
@@ -502,7 +491,7 @@ export class FORMAT {
 				result.created = FORMAT.formatSubSonicDate(episode.stat.created);
 			}
 			if (episode.media) {
-				result.duration = episode.media.duration;
+				result.duration = episode.media.duration ? Math.trunc(episode.media.duration) : undefined;
 				result.bitRate = episode.media.bitRate !== undefined ? Math.round(episode.media.bitRate / 1000) : -1;
 			}
 		}
@@ -518,7 +507,7 @@ export class FORMAT {
 			name: playlist.name,
 			comment: playlist.comment || '',
 			public: playlist.isPublic,
-			duration: playlist.duration,
+			duration: Math.trunc(playlist.duration),
 			created: FORMAT.formatSubSonicDate(playlist.created),
 			changed: FORMAT.formatSubSonicDate(playlist.changed),
 			coverArt: playlist.coverArt,

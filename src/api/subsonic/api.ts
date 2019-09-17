@@ -42,7 +42,7 @@ export class SubsonicApi extends SubsonicApiBase {
 	 * @return  Returns a <subsonic-response> element with a nested <license> element on success.
 	 */
 	async getLicense(req: ApiOptions<{}>): Promise<{ license: Subsonic.License }> {
-		return {license: {valid: true, email: 'dummy', licenseExpires: '', trialExpires: ''}};
+		return {license: {valid: true, email: 'dummy@email.nonexistingtld', licenseExpires: '0', trialExpires: '0'}};
 	}
 
 	/**
@@ -453,15 +453,15 @@ export class SubsonicApi extends SubsonicApiBase {
 		// 		});
 		// 	}
 		// });
-		const artist = await this.engine.store.folderStore.byId(req.query.id);
+		const artist = await this.engine.store.artistStore.byId(req.query.id);
 		if (artist) {
-			if (artist.tag.mbArtistID) {
-				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.artist, artist.tag.mbArtistID);
+			if (artist.mbArtistID) {
+				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.artist, artist.mbArtistID);
 				if (lastfm && lastfm.artist) {
 					return {artistInfo2: FORMAT.packArtistInfo2(lastfm.artist)};
 				}
-			} else if (artist.tag.artist) {
-				const al = await this.engine.metaDataService.lastFMArtistSearch(artist.tag.artist);
+			} else if (artist.name) {
+				const al = await this.engine.metaDataService.lastFMArtistSearch(artist.name);
 				if (al && al.artist) {
 					const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.artist, al.artist.mbid);
 					if (lastfm && lastfm.artist) {
@@ -589,11 +589,11 @@ export class SubsonicApi extends SubsonicApiBase {
 		}
 		switch (o.type) {
 			case DBObjectType.track:
-				const res = await this.engine.streamService.streamTrack(o as Track, req.query.format, req.query.maxBitRate, req.user);
+				const res = await this.engine.streamService.streamTrack(o as Track, req.query.format, req.query.maxBitRate, req.query.estimateContentLength, req.user);
 				this.engine.nowPlayingService.reportTrack(o as Track, req.user).catch(e => log.error(e)); // do not wait
 				return res;
 			case DBObjectType.episode:
-				const result = await this.engine.streamService.streamEpisode(o as Episode, req.query.format, req.query.maxBitRate, req.user);
+				const result = await this.engine.streamService.streamEpisode(o as Episode, req.query.format, req.query.maxBitRate, req.query.estimateContentLength, req.user);
 				this.engine.nowPlayingService.reportEpisode(o as Episode, req.user).catch(e => log.error(e)); // do not wait
 				return result;
 			default:

@@ -9,15 +9,9 @@ import {TranscoderStream} from './transcoder-stream';
 const log = logger('audio.transcoder.pre');
 
 export class PreTranscoderStream extends TranscoderStream {
-	filename: string;
-	format: string;
-	maxBitRate: number;
 
-	constructor(filename: string, format: string, maxBitRate: number) {
+	constructor(public filename: string, public format: string, public maxBitRate: number) {
 		super();
-		this.filename = filename;
-		this.format = format;
-		this.maxBitRate = maxBitRate;
 		if (maxBitRate <= 0) {
 			this.maxBitRate = 128;
 		}
@@ -34,6 +28,7 @@ export class PreTranscoderStream extends TranscoderStream {
 			if (this.format === AudioFormatType.mp3) {
 				proc.withAudioCodec('libmp3lame');
 			}
+			console.log(options);
 			proc.withNoVideo()
 				.toFormat(this.format)
 				.withAudioBitrate(`${this.maxBitRate}k`)

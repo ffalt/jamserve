@@ -20,6 +20,7 @@ export class ApiResponder {
 			res.status(200).json(data);
 		} else {
 			res.set('Content-Type', 'application/xml');
+			data['subsonic-response'].xmlns = 'http://subsonic.org/restapi';
 			res.status(200).send(xml(data));
 		}
 	}
@@ -37,16 +38,15 @@ export class ApiResponder {
 	}
 
 	public static binary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {
+		res.setHeader('Access-Control-Allow-Origin', '*');
 		if (data.pipe) {
 			data.pipe.pipe(res);
 		} else if (data.buffer) {
 			res.set('Content-Type', data.buffer.contentType);
 			res.set('Content-Length', data.buffer.buffer.length.toString());
 // 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
-			res.setHeader('Access-Control-Allow-Origin', '*');
 			res.status(200).send(data.buffer.buffer);
 		} else if (data.file) {
-			res.setHeader('Access-Control-Allow-Origin', '*');
 			res.sendFile(data.file.filename, data.file.name || path.basename(data.file.filename));
 		}
 	}

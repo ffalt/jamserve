@@ -7,37 +7,13 @@ import {TranscoderStream} from './transcoder-stream';
 const log = logger('audio.transcoder.live');
 
 export class LiveTranscoderStream extends TranscoderStream {
-	filename: string;
-	format: string;
-	maxBitRate: number;
-	duration?: number;
 
-	constructor(filename: string, format: string, maxBitRate: number, duration?: number) {
+	constructor(public filename: string, public format: string, public maxBitRate: number, public duration?: number) {
 		super();
-		this.filename = filename;
-		this.format = format;
-		this.maxBitRate = maxBitRate;
-		this.duration = duration;
 		if (maxBitRate <= 0) {
 			this.maxBitRate = 128;
 		}
 	}
-
-	//
-	// private getSize(cb: (length: number) => void) {
-	// 	if (this.duration !== undefined && this.duration > 0) {
-	// 		const length = Math.round((this.maxBitRate * 1000 * this.duration) / 8);
-	// 		return cb(length);
-	// 	}
-	// 	ffmpeg.ffprobe(this.filename, (err, metadata) => {
-	// 		let length = 0;
-	// 		if (metadata && metadata.format && metadata.format.duration) {
-	// 			const duration = metadata.format ? parseInt(metadata.format.duration, 10) : 0;
-	// 			length = Math.round((this.maxBitRate * 1000 * duration) / 8);
-	// 		}
-	// 		cb(length);
-	// 	});
-	// }
 
 	pipe(stream: express.Response): void {
 		log.info('Start transcode streaming', this.format, this.maxBitRate);
