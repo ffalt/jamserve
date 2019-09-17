@@ -54,7 +54,7 @@ export class StreamController {
 				return Promise.reject(InvalidParamError());
 			}
 		}
-		const obj = await this.store.findInAll(id);
+		const obj = await this.store.findInStreamStores(id);
 		if (!obj) {
 			return Promise.reject(NotFoundError());
 		}

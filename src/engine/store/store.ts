@@ -79,6 +79,19 @@ export class Store {
 		];
 	}
 
+	streamStores(): Array<BaseStore<DBObject, SearchQuery>> {
+		return [this.trackStore,  this.episodeStore];
+	}
+
+	async findInStreamStores(id: string): Promise<DBObject | undefined> {
+		for (const store of this.streamStores()) {
+			const obj = await store.byId(id);
+			if (obj) {
+				return obj;
+			}
+		}
+	}
+
 	async findInAll(id: string): Promise<DBObject | undefined> {
 		for (const store of this.allStores()) {
 			const obj = await store.byId(id);

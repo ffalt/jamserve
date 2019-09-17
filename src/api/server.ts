@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import * as http from 'http';
 import path from 'path';
@@ -37,18 +38,27 @@ export class Server {
 			next();
 		}
 
+		const limiter = rateLimit({
+			windowMs: 60 * 1000, // 1 minute window
+			max: 100, // start blocking after 100 requests
+			message: 'Too many requests from this IP, please try again after an hour'
+		});
+		app.use(limiter);
+
 		app.use(EngineMiddleWare);
 		app.use('/api/v1', initJamRouter(engine));
 		app.use('/rest', initSubsonicRouter(engine));
 
 		// frontend (jamberry config file)
+		const configFile = path.resolve('./config/jamberry.config.js');
 		app.get('/assets/config/config.js', (req, res) => {
-			res.sendFile(path.resolve('./config/jamberry.config.js'));
+			res.sendFile(configFile);
 		});
 		// frontend (any)
 		app.get('/*', express.static(path.resolve(engine.config.paths.frontend)));
+		const indexFile = path.resolve(engine.config.paths.frontend, 'index.html');
 		app.get('/*', (req: express.Request, res: express.Response) => {
-			res.sendFile(path.join(path.resolve(engine.config.paths.frontend), 'index.html'));
+			res.sendFile(indexFile);
 		});
 
 		this.app = app;

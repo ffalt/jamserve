@@ -34,7 +34,7 @@ export class WaveformController {
 		if (!id || id.length === 0) {
 			return Promise.reject(InvalidParamError());
 		}
-		const obj = await this.store.findInAll(id);
+		const obj = await this.store.findInStreamStores(id);
 		if (!obj) {
 			return Promise.reject(NotFoundError());
 		}
