@@ -106,5 +106,4 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 		return !session;
 	}
 
-
 }

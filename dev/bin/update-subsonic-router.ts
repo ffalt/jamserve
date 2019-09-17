@@ -1,7 +1,6 @@
 import fse from 'fs-extra';
 import Mustache from 'mustache';
 import path from 'path';
-import {ApiBinaryResult} from '../../src/typings';
 import {ApiCall, ApiCalls, getSubsonicApiCalls, run} from './utils';
 
 interface MustacheDataRegisterFunction {

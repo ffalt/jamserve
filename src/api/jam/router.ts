@@ -6,7 +6,7 @@ import {logger} from '../../utils/logger';
 import {JamApi} from './api';
 import {apiCheck} from './check';
 import {registerAuthenticatedCors, registerPublicCORS} from './cors';
-import {NotFoundError, UnauthError} from './error';
+import {NotFoundError} from './error';
 import {registerAuthentication, UserRequest} from './login';
 import {CallSessionLoginHandler, CallSessionLogoutHandler, registerPassPort} from './passport';
 import {ApiResponder} from './response';

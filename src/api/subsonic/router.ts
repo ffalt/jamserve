@@ -8,7 +8,7 @@ import {apiCheck} from './check';
 import {CheckAuthMiddleWare, SubsonicLoginMiddleWare, UserRequest} from './login';
 import {SubsonicParameterMiddleWare} from './parameters';
 import {ApiResponder} from './response';
-import {Register, registerApi, RegisterCallback, SubSonicRole} from './routes';
+import {Register, registerApi, SubSonicRole} from './routes';
 
 const log = logger('Subsonic.Api');
 

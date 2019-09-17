@@ -218,7 +218,7 @@ export class AudioModule {
 				frame = frames[0];
 			}
 			if (frame) {
-				return (frame.value as IID3V2.FrameValue.Pic).bin;
+				return (frame.value).bin;
 			}
 		}
 	}

@@ -1,10 +1,14 @@
 import tmp from 'tmp';
 import {BaseConfig, Config, extendConfig} from '../config';
+import {ThirdPartyConfig} from '../config/thirdparty.config';
 import {Database} from '../db/db.model';
 import {DBObjectType} from '../db/db.types';
 import {mockElasticDBConfig, TestDBElastic} from '../db/elasticsearch/db-elastic.spec';
 import {TestNeDB} from '../db/nedb/db-nedb.spec';
 import {RootScanStrategy} from '../model/jam-types';
+import {MockAudioModule} from '../modules/audio/audio.module.mock';
+import {ImageModuleTest} from '../modules/image/image.module.spec';
+import {JAMSERVE_VERSION} from '../version';
 import {Engine} from './engine';
 import {mockEpisode, mockEpisode2} from './episode/episode.mock';
 import {mockPlaylist} from './playlist/playlist.mock';
@@ -12,11 +16,6 @@ import {mockPodcast} from './podcast/podcast.mock';
 import {Store} from './store/store';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from './store/store.mock';
 import {mockUser} from './user/user.mock';
-import {JAMSERVE_VERSION} from '../version';
-import {ImageModule} from '../modules/image/image.module';
-import {ImageModuleTest} from '../modules/image/image.module.spec';
-import {ThirdPartyConfig} from '../config/thirdparty.config';
-import {MockAudioModule} from '../modules/audio/audio.module.mock';
 
 export class EngineMock {
 	dir: tmp.DirResult;

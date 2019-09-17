@@ -19,7 +19,7 @@ export class AcousticbrainzClient extends WebserviceJSONClient<AcousticbrainzCli
 
 	async highLevel(mbid: string, nr?: number): Promise<AcousticBrainz.Response> {
 		return this.get({
-			path: `${this.options.basePath + mbid}/high-level`,
+			path: `${this.options.basePath}${mbid}/high-level`,
 			query: {n: (nr !== undefined ? nr.toString() : undefined)},
 			retry: 0
 		});

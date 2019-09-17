@@ -1,4 +1,4 @@
-import elasticsearch, {SearchParams, SearchResponse} from 'elasticsearch';
+import elasticsearch from 'elasticsearch';
 import {DBObject} from '../../engine/base/base.model';
 import {ListResult} from '../../engine/base/list-result';
 import {paginate} from '../../utils/paginate';

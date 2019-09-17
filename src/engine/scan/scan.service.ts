@@ -174,7 +174,7 @@ export class ScanService {
 	}
 
 	async newFolder(rootID: string, parentID: string, name: string): Promise<MergeChanges> {
-		const {root, changes} = await this.start(rootID);
+		const {changes} = await this.start(rootID);
 		const newParent = await this.store.folderStore.byId(parentID);
 		if (!newParent) {
 			return Promise.reject(Error('Destination Folder not found'));
@@ -386,7 +386,7 @@ export class ScanService {
 	}
 
 	async renameFolder(rootID: string, folderID: string, newName: string): Promise<MergeChanges> {
-		const {root, changes} = await this.start(rootID);
+		const {changes} = await this.start(rootID);
 
 		if (containsFolderSystemChars(newName)) {
 			return Promise.reject(Error('Invalid Directory Name'));

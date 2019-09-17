@@ -10,7 +10,6 @@ import {User} from '../../engine/user/user.model';
 import {Jam} from '../../model/jam-rest-data';
 import {logger} from '../../utils/logger';
 import {getMaxAge} from '../../utils/max-age';
-import {UnauthError} from './error';
 import {UserRequest} from './login';
 import {ApiResponder} from './response';
 import {JAMAPI_VERSION} from './version';
@@ -96,6 +95,9 @@ export function registerPassPort(router: express.Router, engine: Engine): void {
 						req.user = user;
 					}
 					next();
+				})
+				.catch(e => {
+					throw e;
 				});
 		})(req, res, next);
 	}
@@ -114,7 +116,7 @@ function generateJWT(userID: string, client: string, req: UserRequest): string {
 }
 
 export function CallSessionLoginHandler(req: UserRequest, res: express.Response, next: express.NextFunction): void {
-	passport.authenticate('local', (err, user, info) => {
+	passport.authenticate('local', (err, user) => {
 		if (err || !user) {
 			return next();
 		}
@@ -139,18 +141,26 @@ export function CallSessionLoginHandler(req: UserRequest, res: express.Response,
 	})(req, res, next);
 }
 
+async function destroySession(req: UserRequest): Promise<void> {
+	return new Promise<void>((resolve, reject) => {
+		if (!req.session) {
+			return resolve();
+		}
+		req.session.destroy(err => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve();
+		});
+	});
+}
+
 async function clearSession(req: UserRequest): Promise<void> {
 	if (req.jwth) {
 		await req.engine.sessionService.removeByJwth(req.jwth);
 	}
-	if (req.session) { // express session control obj
-		req.session.destroy(err => {
-			req.engine.sessionService.clearCache();
-			if (err) {
-				console.log(err);
-			}
-		});
-	}
+	await destroySession(req);
+	await req.engine.sessionService.clearCache();
 }
 
 export function CallSessionLogoutHandler(req: UserRequest, res: express.Response, next: express.NextFunction): void {

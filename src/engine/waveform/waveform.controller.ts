@@ -2,7 +2,6 @@ import {JamRequest} from '../../api/jam/api';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
-import WaveformFormatType = JamParameters.WaveformFormatType;
 import {WaveformDefaultFormat, WaveformFormats} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {Episode} from '../episode/episode.model';

@@ -16,7 +16,7 @@ function xmlContent(o: any): string {
 }
 
 function xmlTag(key: string, val: string, parameter: string): string {
-	return `<${key}${parameter}` + (val.length > 0) ? `>${val}</${key}>` : ' />';
+	return (val.length === 0) ? `<${key}${parameter} />` : `<${key}${parameter}>${val}</${key}>`;
 }
 
 function xmlParameters(o: any): string {

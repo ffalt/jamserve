@@ -73,7 +73,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 
 	async search(params: MusicbrainzClientApi.ParameterSearch): Promise<MusicBrainz.Response> {
 		const data = await this.get({
-			path: `${this.options.basePath + params.type}/`,
+			path: `${this.options.basePath}${params.type}/`,
 			query: {query: this.concatSearchQuery(params.query || {})},
 			retry: 0,
 			limit: params.limit,
@@ -92,7 +92,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 			return Promise.reject(Error('Invalid Lookup'));
 		}
 		const data = await this.get({
-			path: `${this.options.basePath + params.type}/${params.id}`,
+			path: `${this.options.basePath}${params.type}/${params.id}`,
 			query: {
 				mbid: params.id,
 				inc
@@ -113,7 +113,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 		}
 		const query = {inc: params.inc, ...params.lookupIds};
 		const data = await this.get({
-			path: this.options.basePath + params.type,
+			path: `${this.options.basePath}${params.type}/`,
 			query,
 			retry: 0,
 			limit: params.limit,
@@ -130,7 +130,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 			return Promise.reject(Error(`Invalid query for type ${params.type}`));
 		}
 		const data = await this.get({
-			path: `${this.options.basePath + params.type}/`,
+			path: `${this.options.basePath}${params.type}/`,
 			query: {
 				query: encodeURIComponent(params.query || '')
 			},

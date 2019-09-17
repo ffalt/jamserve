@@ -1,5 +1,5 @@
 import rateLimiter from 'limiter';
-import request, {Response} from 'request';
+import request from 'request';
 
 export class WebserviceClient {
 	private readonly limiter: rateLimiter.RateLimiter;
