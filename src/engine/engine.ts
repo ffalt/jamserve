@@ -9,7 +9,7 @@ import {ImageModule} from '../modules/image/image.module';
 import {pathDeleteIfExists} from '../utils/fs-utils';
 import {logger} from '../utils/logger';
 import {randomString} from '../utils/random';
-import {hashSaltPassword} from '../utils/salthash';
+import {hashAndSaltSHA512} from '../utils/hash';
 import {AlbumService} from './album/album.service';
 import {ArtistService} from './artist/artist.service';
 import {BookmarkService} from './bookmark/bookmark.service';
@@ -127,7 +127,7 @@ export class Engine {
 			const count = await this.store.userStore.count();
 			if (count === 0) {
 				const adminUser = this.config.firstStart.adminUser;
-				const pw = hashSaltPassword(adminUser.pass || '');
+				const pw = hashAndSaltSHA512(adminUser.pass || '');
 				const user: User = {
 					id: '',
 					name: adminUser.name,

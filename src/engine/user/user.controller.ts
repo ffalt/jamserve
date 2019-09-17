@@ -4,7 +4,7 @@ import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {randomString} from '../../utils/random';
-import {hashSaltPassword} from '../../utils/salthash';
+import {hashAndSaltSHA512} from '../../utils/hash';
 import {BaseController} from '../base/dbobject.controller';
 import {DownloadService} from '../download/download.service';
 import {ImageService} from '../image/image.service';
@@ -46,7 +46,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 
 	async create(req: JamRequest<JamParameters.UserNew>): Promise<Jam.User> {
 		const pass = randomString(10);
-		const pw = hashSaltPassword(pass);
+		const pw = hashAndSaltSHA512(pass);
 		const u: User = {
 			id: '',
 			name: req.query.name || '',

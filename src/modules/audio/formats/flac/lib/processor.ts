@@ -38,13 +38,8 @@ export class FlacProcessorStream extends Transform {
 	mdbPush = false;
 	mdbLastWritten = false;
 
-	parseMetaDataBlocks = true;
-	reportID3 = true;
-
-	constructor(reportID3: boolean = false, parseMetaDataBlocks: boolean = false, options?: TransformOptions) {
+	constructor(private reportID3: boolean = false, private parseMetaDataBlocks: boolean = false, options?: TransformOptions) {
 		super(options);
-		this.reportID3 = reportID3;
-		this.parseMetaDataBlocks = parseMetaDataBlocks;
 	}
 
 	_transform(chunk: any, encoding: string, callback: TransformCallback): void {

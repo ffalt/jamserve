@@ -1,6 +1,5 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import {Md5} from 'md5-typescript';
 import passport from 'passport';
 import passportJWT from 'passport-jwt';
 import passportLocal from 'passport-local';
@@ -13,6 +12,7 @@ import {getMaxAge} from '../../utils/max-age';
 import {UserRequest} from './login';
 import {ApiResponder} from './response';
 import {JAMAPI_VERSION} from './version';
+import {hashMD5} from '../../utils/hash';
 
 const log = logger('Jam.Api.Passport');
 
@@ -23,7 +23,7 @@ interface JWTPayload {
 }
 
 function jwthash(token: string): string {
-	return Md5.init(token);
+	return hashMD5(token);
 }
 
 export function registerPassPort(router: express.Router, engine: Engine): void {

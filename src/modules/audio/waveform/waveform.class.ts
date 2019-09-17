@@ -32,14 +32,11 @@ export interface WaveDataResponse {
 }
 
 export class Waveform {
+	opts: WaveformOptions;
+	samples: Array<number> = [];
 
-	_samples: Array<number> = [];
-
-	constructor(private stream: Stream, private opts: WaveformOptions) {
-		this.opts = {
-			samplesPerPixel: 256,
-			sampleRate: 44100, ...(opts || {})
-		};
+	constructor(private stream: Stream, opts: WaveformOptions) {
+		this.opts = {samplesPerPixel: 256, sampleRate: 44100, ...(opts || {})};
 	}
 
 	run(cb: (err?: Error) => void): void {
@@ -47,8 +44,8 @@ export class Waveform {
 		ws.on('readable', () => {
 			let px = ws.read();
 			while (px && px.length > 0) {
-				this._samples.push(px[0]);
-				this._samples.push(px[1]);
+				this.samples.push(px[0]);
+				this.samples.push(px[1]);
 				px = ws.read();
 			}
 		});
@@ -60,14 +57,14 @@ export class Waveform {
 
 	asBinary(): Buffer {
 		// https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md
-		const result = Buffer.alloc((this._samples.length * 2) + 20);
+		const result = Buffer.alloc((this.samples.length * 2) + 20);
 		result.writeInt32LE(1, 0); // version
 		result.writeUInt32LE(0, 4); // flags 0 (lsb) 	0: 16-bit resolution, 1: 8-bit resolution 1-31 	Unused
 		result.writeInt32LE(this.opts.sampleRate, 8); // Sample rate
 		result.writeInt32LE(this.opts.samplesPerPixel, 12); // Samples per pixel
-		result.writeInt32LE(this._samples.length / 2, 16); // Length of waveform data (number of minimum and maximum value pairs)
+		result.writeInt32LE(this.samples.length / 2, 16); // Length of waveform data (number of minimum and maximum value pairs)
 		let pos = 20;
-		this._samples.forEach(num => {
+		this.samples.forEach(num => {
 			result.writeInt16LE(num, pos);
 			pos += 2;
 		});
@@ -81,8 +78,8 @@ export class Waveform {
 			sample_rate: this.opts.sampleRate,
 			samples_per_pixel: this.opts.samplesPerPixel,
 			bits: 16,
-			length: this._samples.length / 2,
-			data: this._samples
+			length: this.samples.length / 2,
+			data: this.samples
 		};
 	}
 

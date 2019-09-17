@@ -4,8 +4,6 @@ export class MetaDataBlock {
 	removed = false;
 
 	constructor(public isLast: boolean, public type: number) {
-		this.isLast = isLast;
-		this.type = type;
 		this.error = null;
 		this.hasData = false;
 		this.removed = false;

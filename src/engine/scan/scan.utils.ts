@@ -1,7 +1,7 @@
 import path from 'path';
 import {deepCompare} from '../../utils/deep-compare';
-import {md5string} from '../../utils/md5';
 import {MatchDir, MatchFile} from './scan.match-dir';
+import {hashMD5} from '../../utils/hash';
 
 export function slugify(s: string): string {
 	return s.replace(/[\[\]. -]/g, '').toLowerCase();
@@ -41,7 +41,7 @@ export function trackHasChanged(file: MatchFile): boolean {
 }
 
 export function generateArtworkId(folderID: string, filename: string): string {
-	return `${folderID}-${md5string(filename + filename)}`;
+	return `${folderID}-${hashMD5(filename + filename)}`;
 }
 
 export function extractAlbumName(name: string): string {

@@ -1,5 +1,4 @@
 import fse from 'fs-extra';
-import {Md5} from 'md5-typescript';
 import path from 'path';
 import tmp from 'tmp';
 import {ImageModule} from '../../modules/image/image.module';
@@ -7,6 +6,7 @@ import {mockImage} from '../../modules/image/image.module.spec';
 import {testService} from '../base/base.service.spec';
 import {mockUser, mockUser2, mockUserPass} from './user.mock';
 import {UserService} from './user.service';
+import {hashMD5} from '../../utils/hash';
 
 function salt(length: number): string {
 	let s = '';
@@ -84,7 +84,7 @@ describe('UserService', () => {
 			});
 			it('should auth the user by token', async () => {
 				const s = salt(6);
-				const token = Md5.init(mock.subsonic_pass + s);
+				const token = hashMD5(mock.subsonic_pass + s);
 				const user = await userService.authToken(mock.name, token, s);
 				expect(user).toBeTruthy();
 				expect(user).toEqual(mock);

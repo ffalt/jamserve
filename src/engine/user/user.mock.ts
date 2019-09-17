@@ -1,13 +1,13 @@
 import {User} from './user.model';
 import {DBObjectType} from '../../db/db.types';
-import {hashSalt} from '../../utils/salthash';
+import {hashSaltSHA512} from '../../utils/hash';
 
 export const mockUserSalt = 'a salt';
 export const mockUserPass = 'a pass';
 export const mockUserName = 'testuser';
 
 export function mockUser(): User {
-	const hash = hashSalt(mockUserPass, mockUserSalt);
+	const hash = hashSaltSHA512(mockUserPass, mockUserSalt);
 	return {
 		id: '',
 		type: DBObjectType.user,
@@ -34,7 +34,7 @@ export const mockUserSalt2 = 'second salt';
 export const mockUserName2 = 'second name';
 
 export function mockUser2(): User {
-	const hash = hashSalt(mockUserPass2, mockUserSalt2);
+	const hash = hashSaltSHA512(mockUserPass2, mockUserSalt2);
 	return {
 		id: '',
 		type: DBObjectType.user,

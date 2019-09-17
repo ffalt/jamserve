@@ -198,6 +198,9 @@ export class ImageModule {
 		if (format && !SupportedWriteImageFormat.includes(format)) {
 			return Promise.reject(Error('Invalid Format'));
 		}
+		if (format && format === this.format) {
+			format = undefined;
+		}
 		if (format || size) {
 			const cacheID = `thumb-${id}${size ? `-${size}` : ''}.${format || this.format}`;
 			if (this.imageCacheDebounce.isPending(cacheID)) {
@@ -226,7 +229,7 @@ export class ImageModule {
 				return Promise.reject(e);
 			}
 		} else {
-			return this.getImage(filename, size, `${id}.${format || this.format}`);
+			return this.getImage(filename, size, `${id}.${this.format}`);
 		}
 	}
 

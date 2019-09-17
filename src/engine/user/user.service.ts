@@ -1,11 +1,10 @@
 import commonPassword from 'common-password-checker';
 import fse from 'fs-extra';
-import {Md5} from 'md5-typescript';
 import path from 'path';
 import {ImageModule} from '../../modules/image/image.module';
 import {ApiBinaryResult} from '../../typings';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
-import {hashSalt, hashSaltPassword} from '../../utils/salthash';
+import {hashSaltSHA512, hashAndSaltSHA512, hashMD5} from '../../utils/hash';
 import {BaseStoreService} from '../base/base.service';
 import {BookmarkStore} from '../bookmark/bookmark.store';
 import {PlaylistStore} from '../playlist/playlist.store';
@@ -127,7 +126,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		if (!user) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const hash = hashSalt(pass, user.salt);
+		const hash = hashSaltSHA512(pass, user.salt);
 		if (hash !== user.hash) {
 			return Promise.reject(Error('Invalid Password'));
 		}
@@ -159,7 +158,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		if (!user) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const t = Md5.init(user.subsonic_pass + salt);
+		const t = hashMD5(user.subsonic_pass + salt);
 		if (token !== t) {
 			return Promise.reject(Error('Invalid Token'));
 		}
@@ -172,7 +171,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 
 	async setUserPassword(user: User, pass: string): Promise<void> {
 		await this.testPassword(pass);
-		const pw = hashSaltPassword(pass);
+		const pw = hashAndSaltSHA512(pass);
 		user.salt = pw.salt;
 		user.hash = pw.hash;
 		await this.userStore.replace(user);
