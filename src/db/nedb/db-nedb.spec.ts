@@ -1,15 +1,13 @@
 import tmp from 'tmp';
+import {TestDB} from '../db.spec';
 import {DBNedb} from './db-nedb';
 
-export class TestNeDB {
+export class TestNeDB implements TestDB {
 	name = 'nedb';
 	// @ts-ignore
 	database: DBNedb;
 	// @ts-ignore
 	dir: tmp.DirResult;
-
-	constructor() {
-	}
 
 	async setup(): Promise<void> {
 		this.dir = tmp.dirSync();

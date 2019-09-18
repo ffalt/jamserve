@@ -1,3 +1,4 @@
+import {TestDB} from '../db.spec';
 import {DBElastic} from './db-elastic';
 import {ElasticsearchConfig} from './db-elastic.types';
 
@@ -9,7 +10,7 @@ export function mockElasticDBConfig(): ElasticsearchConfig {
 	};
 }
 
-export class TestDBElastic {
+export class TestDBElastic implements TestDB {
 	database: DBElastic;
 	name = 'elastic';
 

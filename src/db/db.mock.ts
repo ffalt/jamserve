@@ -1,18 +1,9 @@
 import {initTestFramework} from '../engine/base/common.spec';
-import {Database} from './db.model';
+import {TestDB} from './db.spec';
 import {TestDBElastic} from './elasticsearch/db-elastic.spec';
 import {TestNeDB} from './nedb/db-nedb.spec';
 
 initTestFramework();
-
-export interface TestDB {
-	name: string;
-	database: Database;
-
-	setup(): Promise<void>;
-
-	cleanup(): Promise<void>;
-}
 
 export function testDatabases(setup: (testDB: TestDB) => Promise<void>, cleanup: () => Promise<void>, tests: () => void): void {
 	const dbs: Array<TestDB> = [];

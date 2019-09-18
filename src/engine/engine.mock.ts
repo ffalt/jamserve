@@ -1,10 +1,11 @@
 import tmp from 'tmp';
-import {BaseConfig, Config, extendConfig} from '../config';
+import {Config, extendConfig} from '../config/config';
+import {DBType, JamServeConfig} from '../config/jamserve.config';
 import {ThirdPartyConfig} from '../config/thirdparty.config';
 import {Database} from '../db/db.model';
+import {TestDB} from '../db/db.spec';
 import {DBObjectType} from '../db/db.types';
-import {mockElasticDBConfig, TestDBElastic} from '../db/elasticsearch/db-elastic.spec';
-import {TestNeDB} from '../db/nedb/db-nedb.spec';
+import {mockElasticDBConfig} from '../db/elasticsearch/db-elastic.spec';
 import {RootScanStrategy} from '../model/jam-types';
 import {MockAudioModule} from '../modules/audio/audio.module.mock';
 import {ImageModuleTest} from '../modules/image/image.module.spec';
@@ -17,7 +18,7 @@ import {Store} from './store/store';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from './store/store.mock';
 import {mockUser} from './user/user.mock';
 
-export class EngineMock {
+export class TestEngineDataMock {
 	dir: tmp.DirResult;
 	mockRoot: MockRoot;
 
@@ -62,34 +63,41 @@ export class TestEngine {
 	// @ts-ignore
 	engine: Engine;
 	// @ts-ignore
-	engineMock: EngineMock;
+	engineMock: TestEngineDataMock;
 	// @ts-ignore
 	imageModuleTest: ImageModuleTest;
+	// @ts-ignore
+	dir: tmp.DirResult;
 
-	constructor(public name: string) {
+	constructor(public name: string, public useDB: DBType, public testDB: TestDB) {
+		this.dir = tmp.dirSync();
 	}
 
 	protected async init(config: Config, db: Database): Promise<void> {
-		const store = new Store(db);
 		this.imageModuleTest = new ImageModuleTest();
 		await this.imageModuleTest.setup();
 		const audio = new MockAudioModule(ThirdPartyConfig, this.imageModuleTest.imageModule);
-		this.engine = new Engine(config, store, JAMSERVE_VERSION, {audio, image: this.imageModuleTest.imageModule});
-		this.engineMock = new EngineMock(this.engine);
+		this.engine = new Engine(config, new Store(db), JAMSERVE_VERSION, {audio, image: this.imageModuleTest.imageModule});
+		this.engineMock = new TestEngineDataMock(this.engine);
 	}
 
 	async setup(): Promise<void> {
+		await this.testDB.setup();
+		const config = mockupConfig(this.dir.name, this.useDB);
+		await this.init(config, this.testDB.database);
 		await this.engineMock.setup();
 	}
 
 	async cleanup(): Promise<void> {
+		await this.testDB.cleanup();
 		await this.imageModuleTest.cleanup();
 		await this.engineMock.cleanup();
+		this.dir.removeCallback();
 	}
 }
 
-function mockupConfig(testPath: string, useDB: string): Config {
-	const mockBaseConfig: BaseConfig = {
+function mockupConfig(testPath: string, useDB: DBType): Config {
+	const mockBaseConfig: JamServeConfig = {
 		log: {level: 'warn'},
 		server: {
 			listen: '0.0.0.0',
@@ -107,7 +115,8 @@ function mockupConfig(testPath: string, useDB: string): Config {
 			jwt: {
 				secret: 'fksdjf4rk3j4b3k3bj45hv3j45hv3j4534534',
 				maxAge: {value: 5, unit: 'minute'}
-			}
+			},
+			limit: {login: {max: 5, window: 60}, api: {max: 4000, window: 60}}
 		},
 		paths: {
 			data: testPath,
@@ -121,61 +130,5 @@ function mockupConfig(testPath: string, useDB: string): Config {
 			}
 		}
 	};
-	return extendConfig(mockBaseConfig as Config);
-}
-
-export class TestEngineElastic extends TestEngine {
-	dir: tmp.DirResult;
-	testDB = new TestDBElastic();
-
-	constructor() {
-		super('elastic engine');
-		this.dir = tmp.dirSync();
-	}
-
-	async setup(): Promise<void> {
-		await this.testDB.setup();
-		const config = mockupConfig(this.dir.name, 'elasticsearch');
-		await this.init(config, this.testDB.database);
-		await super.setup();
-	}
-
-	async cleanup(): Promise<void> {
-		await this.testDB.cleanup();
-		this.dir.removeCallback();
-	}
-
-}
-
-export class TestEngineNeDB extends TestEngine {
-	dir: tmp.DirResult;
-	testDB = new TestNeDB();
-
-	constructor() {
-		super('nedb engine');
-		this.dir = tmp.dirSync();
-	}
-
-	async setup(): Promise<void> {
-		await this.testDB.setup();
-		const config = mockupConfig(this.dir.name, 'nedb');
-		await super.init(config, this.testDB.database);
-		await super.setup();
-	}
-
-	async cleanup(): Promise<void> {
-		await this.testDB.cleanup();
-		this.dir.removeCallback();
-	}
-
-}
-
-export class TestEngines {
-	engines: Array<TestEngine> = [];
-
-	constructor() {
-		// this.engines.push(new TestEngineElastic());
-		this.engines.push(new TestEngineNeDB());
-	}
-
+	return extendConfig(mockBaseConfig, {});
 }
