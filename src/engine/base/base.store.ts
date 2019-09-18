@@ -18,12 +18,10 @@ export interface SearchQuerySort<T> {
 }
 
 export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
-	protected group: DatabaseIndex<T>;
-	type: DBObjectType;
+	protected client: DatabaseIndex<T>;
 
-	protected constructor(type: DBObjectType, db: Database) {
-		this.group = db.getDBIndex<T>(type);
-		this.type = type;
+	protected constructor(public type: DBObjectType, db: Database) {
+		this.client = db.getDBIndex<T>(type);
 	}
 
 	protected abstract transformQuery(query: X): DatabaseQuery;
@@ -43,87 +41,87 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 	}
 
 	async getNewId(): Promise<string> {
-		return this.group.getNewId();
+		return this.client.getNewId();
 	}
 
 	async add(item: T): Promise<string> {
-		return this.group.add(item);
+		return this.client.add(item);
 	}
 
 	async bulk(items: Array<T>): Promise<void> {
-		return this.group.bulk(items);
+		return this.client.bulk(items);
 	}
 
 	async replace(item: T): Promise<void> {
-		return this.group.replace(item.id, item);
+		return this.client.replace(item.id, item);
 	}
 
 	async remove(idOrIds: string | Array<string>): Promise<void> {
-		return this.group.remove(idOrIds);
+		return this.client.remove(idOrIds);
 	}
 
 	async replaceMany(items: Array<T>): Promise<void> {
 		for (const item of items) {
-			await this.group.replace(item.id, item);
+			await this.client.replace(item.id, item);
 		}
 	}
 
 	async byId(id: string): Promise<T | undefined> {
-		return this.group.byId(id);
+		return this.client.byId(id);
 	}
 
 	async byIds(ids: Array<string>): Promise<Array<T>> {
-		return this.group.byIds(ids);
+		return this.client.byIds(ids);
 	}
 
 	async random(): Promise<T | undefined> {
-		return this.group.queryOne({all: true});
+		return this.client.queryOne({all: true});
 	}
 
 	async all(): Promise<Array<T>> {
-		return (await this.group.query({all: true})).items;
+		return (await this.client.query({all: true})).items;
 	}
 
 	async allIds(): Promise<Array<string>> {
-		return this.group.queryIds({all: true});
+		return this.client.queryIds({all: true});
 	}
 
 	async count(): Promise<number> {
-		return this.group.count({all: true});
+		return this.client.count({all: true});
 	}
 
 	async iterate(onItems: (items: Array<T>) => Promise<void>): Promise<void> {
-		await this.group.iterate({all: true}, onItems);
+		await this.client.iterate({all: true}, onItems);
 	}
 
 	async upsert(items: Array<T>): Promise<void> {
 		for (const item of items) {
-			await this.group.upsert(item.id, item);
+			await this.client.upsert(item.id, item);
 		}
 	}
 
 	async removeByQuery(query: X): Promise<number> {
-		return this.group.removeByQuery(this.transformQuery(query));
+		return this.client.removeByQuery(this.transformQuery(query));
 	}
 
 	async searchIDs(query: X): Promise<Array<string>> {
-		return this.group.queryIds(this.transformQuery(query));
+		return this.client.queryIds(this.transformQuery(query));
 	}
 
 	async search(query: X): Promise<ListResult<T>> {
-		return this.group.query(this.transformQuery(query));
+		return this.client.query(this.transformQuery(query));
 	}
 
 	async searchOne(query: X): Promise<T | undefined> {
-		return this.group.queryOne(this.transformQuery(query));
+		return this.client.queryOne(this.transformQuery(query));
 	}
 
 	async searchCount(query: X): Promise<number> {
-		return this.group.count(this.transformQuery(query));
+		return this.client.count(this.transformQuery(query));
 	}
 
 	async searchDistinct(query: X, field: string): Promise<Array<string>> {
-		return this.group.distinct(this.transformQuery(query), field);
+		return this.client.distinct(this.transformQuery(query), field);
 	}
 
 }
