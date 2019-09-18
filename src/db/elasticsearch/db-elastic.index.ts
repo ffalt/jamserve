@@ -247,18 +247,27 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 	}
 
 	async query(query: DatabaseQuery): Promise<ListResult<T>> {
+		if (query.amount && query.offset) {
+			const response = await this.search(query, {from: query.offset, size: query.amount});
+			return {
+				amount: query.amount,
+				offset: query.offset,
+				total: response.hits.total,
+				items: response.hits.hits.map(o => this.hit2Obj(o))
+			};
+		}
+		return this.queryScroll(query);
+	}
+
+	private async queryScroll(query: DatabaseQuery): Promise<ListResult<T>> {
 		let docs: Array<T> = [];
 		const response = await this.search(query, {scroll: '30s', size: 100});
 		await this.scroll(response, async hits => {
 			docs = docs.concat(hits);
 		});
-		// TODO: paginate in db if query.amount is specified
-		const list = paginate(docs, query.amount, query.offset);
 		return {
-			amount: list.amount,
-			offset: list.offset,
-			total: list.total,
-			items: list.items.map(o => this.hit2Obj(o))
+			total: docs.length,
+			items: docs.map(o => this.hit2Obj(o))
 		};
 	}
 
