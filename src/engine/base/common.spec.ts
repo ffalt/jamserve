@@ -6,3 +6,4 @@ nock.enableNetConnect('localhost'); // database, test api
 export function initTestFramework(): void {
 	configureLogger('warn');
 }
+jest.setTimeout(30000);
