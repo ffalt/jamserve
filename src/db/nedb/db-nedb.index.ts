@@ -6,8 +6,6 @@ import {paginate} from '../../utils/paginate';
 import {DatabaseIndex, DatabaseQuery} from '../db.model';
 import {DBObjectType} from '../db.types';
 
-let globaltempid = Date.now();
-
 function regExpEscape(literal: string): string {
 	return literal.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
 }
@@ -15,8 +13,11 @@ function regExpEscape(literal: string): string {
 export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 	protected _index: string;
 	protected _type: string;
-	type: DBObjectType;
-	client: Nedb;
+
+	constructor(public type: DBObjectType, public client: Nedb, private getGlobalNewID: () => string) {
+		this._type = DBObjectType[type];
+		this._index = `jam_${DBObjectType[type]}`;
+	}
 
 	private hit2Obj(hit: T): T {
 		delete (hit as any)._id;
@@ -29,17 +30,8 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		});
 	}
 
-	constructor(type: DBObjectType, client: Nedb) {
-		this.type = type;
-		this._type = DBObjectType[type];
-		this._index = `jam_${DBObjectType[type]}`;
-		this.client = client;
-	}
-
 	async getNewId(): Promise<string> {
-		// TODO: implement real sequence id in nedb
-		globaltempid++;
-		return globaltempid.toString();
+		return this.getGlobalNewID();
 	}
 
 	private translateSortQuery(query: DatabaseQuery): { [name: string]: number } | undefined {

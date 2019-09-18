@@ -6,16 +6,24 @@ import {Database} from '../db.model';
 import {DBObjectType} from '../db.types';
 import {DBIndexNedb} from './db-nedb.index';
 
+interface NebDBClient {
+	client: Nedb;
+	filename: string;
+}
+
 export class DBNedb implements Database {
-	clients: {
-		[type: string]: { client: Nedb; filename: string };
-	} = {};
+	clients: { [type: string]: NebDBClient; } = {};
+	sequenceId = 99999;
 
 	constructor(dbPath: string) {
-		this.getTypes().forEach(type => {
-			const filename = path.resolve(dbPath, `${DBObjectType[type]}.db`);
-			this.clients[DBObjectType[type]] = {client: new Nedb({filename}), filename};
+		this.getTypes().map(type => DBObjectType[type]).forEach(type => {
+			this.clients[type] = this.initClient(type, dbPath);
 		});
+	}
+
+	private initClient(type: string, dbPath: string): NebDBClient {
+		const filename = path.resolve(dbPath, `${type}.db`);
+		return {client: new Nedb({filename}), filename};
 	}
 
 	async drop(): Promise<void> {
@@ -25,9 +33,26 @@ export class DBNedb implements Database {
 		}
 	}
 
-	private async loadDatabase(db: Nedb): Promise<void> {
+	private async checkMaxSequence(db: NebDBClient): Promise<void> {
 		return new Promise((resolve, reject) => {
-			db.loadDatabase(err => {
+			db.client.find({}).sort({id: -1}).exec((err, docs) => {
+				if (err) {
+					return reject(err);
+				}
+				if (docs.length > 0) {
+					const nr = Number(docs[0].id);
+					if (!isNaN(nr)) {
+						this.sequenceId = Math.max(this.sequenceId, nr);
+					}
+				}
+				resolve();
+			});
+		});
+	}
+
+	private async loadDatabase(db: NebDBClient): Promise<void> {
+		return new Promise((resolve, reject) => {
+			db.client.loadDatabase(err => {
 				if (err) {
 					return reject(err);
 				}
@@ -39,7 +64,8 @@ export class DBNedb implements Database {
 	async open(): Promise<void> {
 		for (const type of this.getTypes()) {
 			const db = this.clients[DBObjectType[type]];
-			await this.loadDatabase(db.client);
+			await this.loadDatabase(db);
+			await this.checkMaxSequence(db);
 		}
 		await this.check();
 	}
@@ -88,7 +114,12 @@ export class DBNedb implements Database {
 		}
 	}
 
+	getNewID(): string {
+		this.sequenceId++;
+		return this.sequenceId.toString();
+	}
+
 	getDBIndex<T extends DBObject>(type: DBObjectType): DBIndexNedb<T> {
-		return new DBIndexNedb<T>(type, this.clients[DBObjectType[type]].client);
+		return new DBIndexNedb<T>(type, this.clients[DBObjectType[type]].client, () => this.getNewID());
 	}
 }
