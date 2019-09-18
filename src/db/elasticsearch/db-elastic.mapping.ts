@@ -355,6 +355,20 @@ const typeSettings = {
 	}
 };
 
+const typeSession = {
+	properties: {
+		sessionID: typeKey,
+		userID: typeKey,
+		client: typeKey,
+		agent: typeKey,
+		expires: typeInt,
+		jwth: typeKey,
+		cookie: typeKey,
+		id: typeKey,
+		type: typeInt
+	}
+};
+
 export const mapping: any = {
 	root: typeRoot,
 	user: typeUser,
@@ -370,5 +384,6 @@ export const mapping: any = {
 	episode: typeEpisode,
 	bookmark: typeBookmark,
 	metadata: typeMetaData,
-	settings: typeSettings
+	settings: typeSettings,
+	session: typeSession
 };

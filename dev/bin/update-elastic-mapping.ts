@@ -70,7 +70,7 @@ const typeString = {type: 'text', fields: {keyword: {type: 'keyword'}}};
 const typeKey = {type: 'keyword'};
 `];
 	const done: Array<string> = [];
-	const symbols = ['Root', 'User', 'Folder', 'PlayQueue', 'Track', 'Album', 'Artist', 'Radio', 'State', 'Playlist', 'Podcast', 'Episode', 'Bookmark', 'MetaData', 'Settings'];
+	const symbols = ['Root', 'User', 'Folder', 'PlayQueue', 'Track', 'Album', 'Artist', 'Radio', 'State', 'Playlist', 'Podcast', 'Episode', 'Bookmark', 'MetaData', 'Settings', 'Session'];
 	const object: any = {};
 	for (const symbol of symbols) {
 		const baseP = path.resolve(basePath, `engine/${symbol.toLowerCase()}`);
