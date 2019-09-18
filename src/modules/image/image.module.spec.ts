@@ -1,8 +1,8 @@
-import {ImageModule} from './image.module';
-import tmp from 'tmp';
 import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
 import path from 'path';
+import tmp from 'tmp';
+import {ImageModule} from './image.module';
 
 export interface MockImage {
 	buffer: Buffer;
@@ -22,12 +22,12 @@ export class ImageModuleTest {
 	// @ts-ignore
 	dir: tmp.DirResult;
 
-	async setup() {
+	async setup(): Promise<void> {
 		this.dir = tmp.dirSync();
 		this.imageModule = new ImageModule(this.dir.name, path.join(__dirname, 'avatar-generator'));
 	}
 
-	async cleanup() {
+	async cleanup(): Promise<void> {
 		this.dir.removeCallback();
 	}
 

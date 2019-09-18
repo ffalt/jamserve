@@ -139,14 +139,13 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 			});
 			describe('.image', () => {
 				it('should get an image for an object', async () => {
-					jest.setTimeout(30000);
 					for (const obj of objs) {
 						const req: JamRequest<JamParameters.Image> = {query: {id: obj.id}, user};
 						const result = await controller.image(req);
 						expect(result).toBeTruthy();
 						expect(result.buffer || result.file).toBeTruthy();
 					}
-				}, 30000);
+				});
 			});
 			tests();
 		}, async () => {

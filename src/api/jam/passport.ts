@@ -7,12 +7,12 @@ import {Engine} from '../../engine/engine';
 import {formatUser} from '../../engine/user/user.format';
 import {User} from '../../engine/user/user.model';
 import {Jam} from '../../model/jam-rest-data';
+import {hashMD5} from '../../utils/hash';
 import {logger} from '../../utils/logger';
 import {getMaxAge} from '../../utils/max-age';
 import {UserRequest} from './login';
 import {ApiResponder} from './response';
 import {JAMAPI_VERSION} from './version';
-import {hashMD5} from '../../utils/hash';
 
 const log = logger('Jam.Api.Passport');
 

@@ -4,7 +4,7 @@ import path from 'path';
 import {ImageModule} from '../../modules/image/image.module';
 import {ApiBinaryResult} from '../../typings';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
-import {hashSaltSHA512, hashAndSaltSHA512, hashMD5} from '../../utils/hash';
+import {hashAndSaltSHA512, hashMD5, hashSaltSHA512} from '../../utils/hash';
 import {BaseStoreService} from '../base/base.service';
 import {BookmarkStore} from '../bookmark/bookmark.store';
 import {PlaylistStore} from '../playlist/playlist.store';

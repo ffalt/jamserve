@@ -3,12 +3,12 @@ import {Server} from './api/server';
 import {loadConfig} from './config/config';
 import {Database} from './db/db.model';
 import {DBElastic} from './db/elasticsearch/db-elastic';
+import {ElasticsearchConfig} from './db/elasticsearch/db-elastic.types';
 import {DBNedb} from './db/nedb/db-nedb';
 import {Engine} from './engine/engine';
 import {Store} from './engine/store/store';
 import {configureLogger, logger} from './utils/logger';
 import {JAMSERVE_VERSION} from './version';
-// import memwatch from 'node-memwatch';
 
 program
 	.version(JAMSERVE_VERSION, '-v, --version')
@@ -22,13 +22,9 @@ const config = loadConfig(program.config);
 configureLogger(config.log.level);
 const log = logger('JamServe');
 
-// memwatch.on('leak', (info) => {
-// 	console.log('leak', JSON.stringify(info, null, '\t'));
-// });
-
 const db: Database =
 	(config.database.use === 'elasticsearch') ?
-		new DBElastic(config.database.options.elasticsearch) :
+		new DBElastic(config.database.options.elasticsearch as ElasticsearchConfig) :
 		new DBNedb(config.getDataPath(['nedb']));
 const store = new Store(db);
 const engine = new Engine(config, store, JAMSERVE_VERSION);

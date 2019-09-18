@@ -1,7 +1,7 @@
 import path from 'path';
 import {deepCompare} from '../../utils/deep-compare';
-import {MatchDir, MatchFile} from './scan.match-dir';
 import {hashMD5} from '../../utils/hash';
+import {MatchDir, MatchFile} from './scan.match-dir';
 
 export function slugify(s: string): string {
 	return s.replace(/[\[\]. -]/g, '').toLowerCase();

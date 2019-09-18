@@ -1,4 +1,5 @@
-import {testDatabases, TestDB} from '../../db/db.mock';
+import {testDatabases} from '../../db/db.mock';
+import {TestDB} from '../../db/db.spec';
 import {DBObject} from './base.model';
 import {BaseStore, SearchQuery} from './base.store';
 
@@ -6,10 +7,10 @@ export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery
 
 	let store: BaseStore<DBObject, SearchQuery>;
 
-	testDatabases(async (testDB) => {
+	testDatabases(async testDB => {
 		store = setup(testDB);
 	}, async () => {
-
+		// nope
 	}, () => {
 
 		const ids: Array<string> = [];

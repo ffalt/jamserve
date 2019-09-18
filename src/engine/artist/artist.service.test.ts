@@ -54,7 +54,6 @@ describe('ArtistService', () => {
 			});
 			describe('.getArtistImage', () => {
 				it('should return an artist image', async () => {
-					jest.setTimeout(30000);
 					const artists = await artistService.artistStore.all();
 					expect(artists.length > 0).toBe(true); //  'Wrong Test Setup');
 					for (const artist of artists) {
