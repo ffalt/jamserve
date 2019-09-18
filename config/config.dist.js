@@ -85,6 +85,34 @@ module.exports = {
 				 */
 				unit: 'day'
 			}
+		},
+		/*
+			access rate limiting
+		 */
+		limit: {
+			/*
+				limiter for fail login attempts
+		 	*/
+			login: {
+				/*
+					${max} requests
+				 */
+				max: 5,
+				/*
+					time ${window} in seconds
+				 */
+				window: 60 // 1 minute
+			},
+			api: {
+				/*
+					${max} requests
+				 */
+				max: 100,
+				/*
+					time ${window} in seconds
+				 */
+				window: 60 // 1 minute
+			}
 		}
 	},
 	database: {

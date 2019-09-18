@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {Config} from '../config';
+import {Config} from '../config/config';
 import {ThirdPartyConfig} from '../config/thirdparty.config';
 import {DBObjectType} from '../db/db.types';
 import {RootScanStrategy} from '../model/jam-types';

@@ -39,8 +39,8 @@ export class Server {
 		}
 
 		const limiter = rateLimit({
-			windowMs: 60 * 1000, // 1 minute window
-			max: 100, // start blocking after 100 requests
+			windowMs: engine.config.server.limit.api.window * 1000,
+			max: engine.config.server.limit.api.max,
 			message: 'Too many requests from this IP, please try again after an hour'
 		});
 		app.use(limiter);

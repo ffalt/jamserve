@@ -1,6 +1,6 @@
 import program from 'commander';
 import {Server} from './api/server';
-import {loadConfig} from './config';
+import {loadConfig} from './config/config';
 import {Database} from './db/db.model';
 import {DBElastic} from './db/elasticsearch/db-elastic';
 import {DBNedb} from './db/nedb/db-nedb';
