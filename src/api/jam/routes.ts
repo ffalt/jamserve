@@ -1,13 +1,8 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
 import express from 'express';
-import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
-import {Acoustid} from '../../model/acoustid-rest-data';
-import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
-import {LastFM} from '../../model/lastfm-rest-data';
-import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {ApiBinaryResult} from '../../typings';
 import {JamApi, JamRequest} from './api';
 import {UserRequest} from './login';
@@ -37,32 +32,32 @@ export function registerPublicApi(register: Register, api: JamApi): void {
 export function registerAccessControlApi(register: Register, api: JamApi): void {
 	register.get('/lastfm/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.LastFMLookup> = {query: req.query, user: req.user, client: req.client};
-		const result: LastFM.Result = await api.metadataController.lastfmLookup(options);
+		const result: Jam.LastFMResponse = await api.metadataController.lastfmLookup(options);
 		ApiResponder.data(res, result);
 	});
 	register.get('/acoustid/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.AcoustidLookup> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Acoustid.Result> = await api.metadataController.acoustidLookup(options);
+		const result: Array<Jam.AcoustidResponse> = await api.metadataController.acoustidLookup(options);
 		ApiResponder.data(res, result);
 	});
 	register.get('/musicbrainz/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.MusicBrainzLookup> = {query: req.query, user: req.user, client: req.client};
-		const result: MusicBrainz.Response = await api.metadataController.musicbrainzLookup(options);
+		const result: Jam.MusicBrainzResponse = await api.metadataController.musicbrainzLookup(options);
 		ApiResponder.data(res, result);
 	});
 	register.get('/musicbrainz/search', async (req, res) => {
 		const options: JamRequest<JamParameters.MusicBrainzSearch> = {query: req.query, user: req.user, client: req.client};
-		const result: MusicBrainz.Response = await api.metadataController.musicbrainzSearch(options);
+		const result: Jam.MusicBrainzResponse = await api.metadataController.musicbrainzSearch(options);
 		ApiResponder.data(res, result);
 	});
 	register.get('/acousticbrainz/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.AcousticBrainzLookup> = {query: req.query, user: req.user, client: req.client};
-		const result: AcousticBrainz.Response = await api.metadataController.acousticbrainzLookup(options);
+		const result: Jam.AcousticBrainzResponse = await api.metadataController.acousticbrainzLookup(options);
 		ApiResponder.data(res, result);
 	});
 	register.get('/coverartarchive/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.CoverArtArchiveLookup> = {query: req.query, user: req.user, client: req.client};
-		const result: CoverArtArchive.Response = await api.metadataController.coverartarchiveLookup(options);
+		const result: Jam.CoverArtArchiveResponse = await api.metadataController.coverartarchiveLookup(options);
 		ApiResponder.data(res, result);
 	});
 	register.get('/wikipedia/summary', async (req, res) => {

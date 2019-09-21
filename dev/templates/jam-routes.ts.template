@@ -1,13 +1,8 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
 import express from 'express';
-import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
-import {Acoustid} from '../../model/acoustid-rest-data';
-import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
-import {LastFM} from '../../model/lastfm-rest-data';
-import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {ApiBinaryResult} from '../../typings';
 import {JamApi, JamRequest} from './api';
 import {UserRequest} from './login';
