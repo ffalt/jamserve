@@ -33,7 +33,7 @@ export interface JamApi {
 
 	GET: {
 		/**
-		 * various: is the api online?
+		 * access: is the api online?
 		 */
 		'ping'?: {
 			operationId: 'session.ping'
@@ -41,7 +41,7 @@ export interface JamApi {
 			public: true;
 		};
 		/**
-		 * auth: check the login state
+		 * access: check the login state
 		 */
 		'session'?: {
 			operationId: 'session.session'
@@ -113,7 +113,7 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
-		 * metadata: wikipedia summary
+		 * metadata: wikidata summary
 		 */
 		'wikidata/summary'?: {
 			operationId: 'metadata.wikidataSummary'
@@ -121,6 +121,9 @@ export interface JamApi {
 			result: Jam.WikipediaSummaryResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * metadata: wikidata lookup
+		 */
 		'wikidata/lookup'?: {
 			operationId: 'metadata.wikidataLookup'
 			params: JamParameters.WikidataLookup;
@@ -642,7 +645,7 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
-		 * album: get tracks of an artist by artist id
+		 * artist: get tracks of an artist by artist id
 		 */
 		'artist/tracks'?: {
 			params: JamParameters.ArtistTracks;
@@ -1189,7 +1192,7 @@ export interface JamApi {
 		};
 
 		/**
-		 * download: download object as binary archive by id
+		 * media: download object as binary archive by id
 		 */
 		'download/{id}'?: {
 			operationId: 'download.download';
@@ -1200,7 +1203,7 @@ export interface JamApi {
 			roles: ['stream'];
 		};
 		/**
-		 * download: download object as binary archive by id
+		 * media: download object as binary archive by id
 		 */
 		'download/{id}.{format}'?: {
 			operationId: 'download.download';
@@ -1213,7 +1216,7 @@ export interface JamApi {
 
 	POST: {
 		/**
-		 * auth: login an user
+		 * access: login an user
 		 *
 		 */
 		'login'?: {
@@ -1226,7 +1229,7 @@ export interface JamApi {
 			public: true;
 		};
 		/**
-		 * auth: logout an user
+		 * access: logout an user
 		 */
 		'logout'?: {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
@@ -1433,23 +1436,38 @@ export interface JamApi {
 			roles: ['podcast'];
 		};
 
+		/**
+		 * playlist: create a playlist
+		 */
 		'playlist/create'?: {
 			params: JamParameters.PlaylistNew;
 			result: Jam.Playlist;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * playlist: update a playlist
+		 */
 		'playlist/update'?: {
 			params: JamParameters.PlaylistUpdate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * playlist: fav/unfav a playlist
+		 */
 		'playlist/fav/update'?: {
 			params: JamParameters.Fav;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * playlist: rate a playlist
+		 */
 		'playlist/rate/update'?: {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * playlist: delete a playlist
+		 */
 		'playlist/delete'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
@@ -1515,6 +1533,9 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			upload: 'image'
 		};
+		/**
+		 * user: delete an user
+		 */
 		'user/delete'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
@@ -1530,7 +1551,7 @@ export interface JamApi {
 		};
 
 		/**
-		 * user: create a root folder
+		 * root: create a root folder
 		 */
 		'root/create'?: {
 			params: JamParameters.RootNew;
@@ -1539,7 +1560,7 @@ export interface JamApi {
 			roles: ['admin'];
 		};
 		/**
-		 * user: update root folder properties
+		 * root: update root folder properties
 		 */
 		'root/update'?: {
 			params: JamParameters.RootUpdate;
@@ -1547,7 +1568,7 @@ export interface JamApi {
 			roles: ['admin'];
 		};
 		/**
-		 * user: remove a root folder
+		 * root: remove a root folder
 		 */
 		'root/delete'?: {
 			params: JamParameters.ID;

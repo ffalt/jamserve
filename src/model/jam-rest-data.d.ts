@@ -16,18 +16,9 @@ export declare namespace Jam {
 	export type ArtworkImageType = 'front' | 'back' | 'booklet' | 'medium' | 'tray' | 'obi' | 'spine' | 'track' | 'liner' | 'sticker' | 'poster' | 'watermark' | 'raw' | 'unedited' | 'other' | 'artist';
 	export type RootScanStrategy = 'auto' | 'artistalbum' | 'compilation' | 'audiobook';
 
-	export interface Ping {
-		version: Version;
-	}
-
-	export type Version = string; // \d+\.\d+\.\d+
-
-	export interface Session {
-		version: Version;
-		user?: SessionUser;
-		jwt?: string;
-		allowedCookieDomains: Array<string>;
-	}
+	/*
+	 * Base Data
+	 */
 
 	export interface ListResult {
 		offset?: number;
@@ -42,16 +33,66 @@ export declare namespace Jam {
 		created: number;
 	}
 
-	export interface RootStatus {
-		lastScan: number;
-		error?: string;
-		scanning?: boolean;
+	/*
+	 * State Data
+	 */
+
+	export interface State {
+		played?: number;
+		lastplayed?: number;
+		faved?: number;
+		rated?: number;
 	}
 
-	export interface Root extends Base {
-		path: string;
-		status: RootStatus;
-		strategy: RootScanStrategy;
+	export interface States {
+		[id: string]: State;
+	}
+
+	/*
+	 * Track/Folder Health Data
+	 */
+
+	export interface HealthHint {
+		id: string;
+		name: string;
+		details?: Array<{ reason: string, expected?: string, actual?: string }>;
+	}
+
+	/*
+	 * Track/Folder/Artist/Album Info Data
+	 */
+
+	export interface ExtendedInfo {
+		description: string;
+		source: string;
+		license: string;
+		url: string;
+		licenseUrl: string;
+	}
+
+	export interface Info {
+		info?: ExtendedInfo;
+	}
+
+	/*
+	 * Ping Data
+	 */
+
+	export interface Ping {
+		version: Version;
+	}
+
+	export type Version = string; // \d+\.\d+\.\d+
+
+	/*
+	 * Session Data
+	 */
+
+	export interface Session {
+		version: Version;
+		user?: SessionUser;
+		jwt?: string;
+		allowedCookieDomains: Array<string>;
 	}
 
 	export interface UserSession {
@@ -63,9 +104,61 @@ export declare namespace Jam {
 		os?: string;
 	}
 
+	/*
+	 * Root Data
+	 */
+
+	export interface Root extends Base {
+		path: string;
+		status: RootStatus;
+		strategy: RootScanStrategy;
+	}
+
+	export interface RootStatus {
+		lastScan: number;
+		error?: string;
+		scanning?: boolean;
+	}
+
 	export interface RootList extends ListResult {
 		items: Array<Root>;
 	}
+
+	/*
+	 * Bookmark Data
+	 */
+
+	export interface Bookmark {
+		id: string;
+		track?: Track;
+		trackID: string;
+		position: number;
+		comment?: string;
+		created: number;
+		changed: number;
+	}
+
+	export interface BookmarkList extends ListResult {
+		items: Array<Bookmark>;
+	}
+
+	/*
+	 * NowPlaying Data
+	 */
+
+	export interface NowPlaying {
+		username: string;
+		minutesAgo: number;
+		track?: Track;
+	}
+
+	export interface NowPlayingList extends ListResult {
+		items: Array<NowPlaying>;
+	}
+
+	/*
+	 * Track Data
+	 */
 
 	export interface TrackMBTag {
 		trackID?: string;
@@ -94,30 +187,6 @@ export declare namespace Jam {
 		sampleRate: number;
 	}
 
-	export interface Bookmark {
-		id: string;
-		track?: Track;
-		trackID: string;
-		position: number;
-		comment?: string;
-		created: number;
-		changed: number;
-	}
-
-	export interface BookmarkList extends ListResult {
-		items: Array<Bookmark>;
-	}
-
-	export interface NowPlaying {
-		username: string;
-		minutesAgo: number;
-		track?: Track;
-	}
-
-	export interface NowPlayingList extends ListResult {
-		items: Array<NowPlaying>;
-	}
-
 	export interface Track extends Base {
 		duration: number;
 		tag?: TrackTag;
@@ -132,6 +201,29 @@ export declare namespace Jam {
 	export interface TrackList extends ListResult {
 		items: Array<Track>;
 	}
+
+	export interface RawTag {
+		version: number;
+		frames: ID3v2Frames.Frames;
+	}
+
+	export interface RawTags {
+		[trackID: string]: RawTag;
+	}
+
+	export interface TrackHealth {
+		track: Track;
+		health: Array<HealthHint>;
+	}
+
+	export interface TrackLyrics {
+		lyrics?: string;
+		source?: string;
+	}
+
+	/*
+	 * PodcastEpisode Data
+	 */
 
 	export interface PodcastEpisodeChapter {
 		start: number;
@@ -164,6 +256,10 @@ export declare namespace Jam {
 		lastCheck?: number;
 	}
 
+	/*
+	 * Podcast Data
+	 */
+
 	export interface Podcast extends Base {
 		url: string;
 		status: PodcastStatusType;
@@ -177,6 +273,10 @@ export declare namespace Jam {
 		items: Array<Podcast>;
 	}
 
+	/*
+	 * Radio Data
+	 */
+
 	export interface Radio extends Base {
 		url: string;
 		homepage?: string;
@@ -188,25 +288,9 @@ export declare namespace Jam {
 		items: Array<Radio>;
 	}
 
-	export interface RawTag {
-		version: number;
-		frames: ID3v2Frames.Frames;
-	}
-
-	export interface State {
-		played?: number;
-		lastplayed?: number;
-		faved?: number;
-		rated?: number;
-	}
-
-	export interface States {
-		[id: string]: State;
-	}
-
-	export interface RawTags {
-		[trackID: string]: RawTag;
-	}
+	/*
+	 * Folder Data
+	 */
 
 	export interface Folder extends Base {
 		parentID?: string;
@@ -230,16 +314,6 @@ export declare namespace Jam {
 	export interface FolderHealth {
 		folder: Folder;
 		health: Array<HealthHint>;
-	}
-
-	export interface TrackHealth {
-		track: Track;
-		health: Array<HealthHint>;
-	}
-
-	export interface TrackLyrics {
-		lyrics?: string;
-		source?: string;
 	}
 
 	export interface FolderParent {
@@ -273,15 +347,40 @@ export declare namespace Jam {
 		musicbrainz?: FolderMBTag;
 	}
 
-	export interface HealthHint {
-		id: string;
-		name: string;
-		details?: Array<{ reason: string, expected?: string, actual?: string }>;
-	}
-
 	export interface FolderChildren {
 		folders: Array<Folder>;
 		tracks: Array<Track>;
+	}
+
+	export interface FolderIndexEntry {
+		name: string;
+		folderID: string;
+		trackCount: number;
+	}
+
+	export interface FolderIndexGroup {
+		name: string;
+		entries: Array<FolderIndexEntry>;
+	}
+
+	export interface FolderIndex {
+		lastModified: number;
+		groups: Array<FolderIndexGroup>;
+	}
+
+	/*
+	 * Album Data
+	 */
+
+	export interface Album extends Base {
+		artist?: string;
+		tag?: AlbumTag;
+		albumType: AlbumType;
+		trackCount: number;
+		artistID: string;
+		trackIDs?: Array<string>;
+		tracks?: Array<Track>;
+		info?: ExtendedInfo;
 	}
 
 	export interface AlbumTag {
@@ -295,32 +394,31 @@ export declare namespace Jam {
 		};
 	}
 
-	export interface ExtendedInfo {
-		description: string;
-		source: string;
-		license: string;
-		url: string;
-		licenseUrl: string;
-	}
-
-	export interface Info {
-		info?: ExtendedInfo;
-	}
-
-	export interface Album extends Base {
-		artist?: string;
-		tag?: AlbumTag;
-		albumType: AlbumType;
-		trackCount: number;
-		artistID: string;
-		trackIDs?: Array<string>;
-		tracks?: Array<Track>;
-		info?: ExtendedInfo;
-	}
-
 	export interface AlbumList extends ListResult {
 		items: Array<Album>;
 	}
+
+	export interface AlbumIndexEntry {
+		id: string;
+		name: string;
+		artist: string;
+		artistID: string;
+		trackCount: number;
+	}
+
+	export interface AlbumIndexGroup {
+		name: string;
+		entries: Array<AlbumIndexEntry>;
+	}
+
+	export interface AlbumIndex {
+		lastModified: number;
+		groups: Array<AlbumIndexGroup>;
+	}
+
+	/*
+	 * Artist Data
+	 */
 
 	export interface Artist extends Base {
 		albumCount: number;
@@ -341,37 +439,6 @@ export declare namespace Jam {
 		items: Array<Artist>;
 	}
 
-	export interface Playlist extends Base {
-		userID: string;
-		isPublic: boolean;
-		comment?: string;
-		duration: number;
-		trackCount: number;
-		changed: number;
-		tracks?: Array<Track>;
-		trackIDs?: Array<string>;
-	}
-
-	export interface PlaylistList extends ListResult {
-		items: Array<Playlist>;
-	}
-
-	export interface FolderIndexEntry {
-		name: string;
-		folderID: string;
-		trackCount: number;
-	}
-
-	export interface FolderIndexGroup {
-		name: string;
-		entries: Array<FolderIndexEntry>;
-	}
-
-	export interface FolderIndex {
-		lastModified: number;
-		groups: Array<FolderIndexGroup>;
-	}
-
 	export interface ArtistIndexEntry {
 		name: string;
 		artistID: string;
@@ -388,23 +455,28 @@ export declare namespace Jam {
 		groups: Array<ArtistIndexGroup>;
 	}
 
-	export interface AlbumIndexEntry {
-		id: string;
-		name: string;
-		artist: string;
-		artistID: string;
+	/*
+	 * Playlist Data
+	 */
+
+	export interface Playlist extends Base {
+		userID: string;
+		isPublic: boolean;
+		comment?: string;
+		duration: number;
 		trackCount: number;
+		changed: number;
+		tracks?: Array<Track>;
+		trackIDs?: Array<string>;
 	}
 
-	export interface AlbumIndexGroup {
-		name: string;
-		entries: Array<AlbumIndexEntry>;
+	export interface PlaylistList extends ListResult {
+		items: Array<Playlist>;
 	}
 
-	export interface AlbumIndex {
-		lastModified: number;
-		groups: Array<AlbumIndexGroup>;
-	}
+	/*
+	 * Stats Data
+	 */
 
 	export interface Stats {
 		rootID?: string;
@@ -430,24 +502,24 @@ export declare namespace Jam {
 		};
 	}
 
+	/*
+	 * Session User Data
+	 */
+
 	export interface Roles {
 		stream?: boolean;
 		upload?: boolean;
 		podcast?: boolean;
 		admin?: boolean;
-		// coverArt?: boolean;
-		// settings?: boolean;
-		// download?: boolean;
-		// playlist?: boolean;
-		// comment?: boolean;
-		// jukebox?: boolean;
-		// share?: boolean;
-		// videoConversion?: boolean;
 	}
 
 	export interface SessionUser extends Base {
 		roles: Roles;
 	}
+
+	/*
+	 * User Data
+	 */
 
 	export interface User extends Base {
 		email: string;
@@ -457,6 +529,10 @@ export declare namespace Jam {
 	export interface UserList extends ListResult {
 		items: Array<User>;
 	}
+
+	/*
+	 * Genre Data
+	 */
 
 	export interface Genre {
 		name: string;
@@ -469,12 +545,20 @@ export declare namespace Jam {
 		items: Array<Genre>;
 	}
 
+	/*
+	 * Chat Data
+	 */
+
 	export interface ChatMessage {
 		username: string;
 		userID: string;
 		time: number;
 		message: string;
 	}
+
+	/*
+	 * PlayQueue Data
+	 */
 
 	export interface PlayQueue {
 		trackIDs?: Array<string>;
@@ -485,6 +569,10 @@ export declare namespace Jam {
 		changedBy: string;
 	}
 
+	/*
+	 * AutoComplete Data
+	 */
+
 	export interface AutoComplete {
 		tracks?: Array<{ id: string; name: string; }>;
 		artists?: Array<{ id: string; name: string; }>;
@@ -494,6 +582,10 @@ export declare namespace Jam {
 		podcasts?: Array<{ id: string; name: string; }>;
 		episodes?: Array<{ id: string; name: string; }>;
 	}
+
+	/*
+	 * AdminSettings Data
+	 */
 
 	export interface AdminSettingsChat {
 		maxMessages: number;
@@ -517,6 +609,10 @@ export declare namespace Jam {
 		library: AdminSettingsLibrary;
 	}
 
+	/*
+	 * AdminChangeQueueInfo Data
+	 */
+
 	export interface AdminChangeQueueInfo {
 		id: string;
 		pos?: number;
@@ -524,9 +620,9 @@ export declare namespace Jam {
 		done?: number;
 	}
 
-	export type CoverArtArchiveResponse = CoverArtArchive.Response;
-	export type AcousticBrainzResponse = AcousticBrainz.Response;
-	export type MusicBrainzResponse = MusicBrainz.Response;
+	/*
+	 * Metadata Data
+	 */
 
 	export interface WikipediaSummary {
 		title: string;
@@ -542,8 +638,20 @@ export declare namespace Jam {
 		entity?: WikiData.Entity;
 	}
 
-	export type LastFMResponse = LastFM.Result;
-	export type AcoustidResponse = Acoustid.Result;
+	export interface LastFMResponse extends LastFM.Result {
+	}
+
+	export interface AcoustidResponse extends Acoustid.Result {
+	}
+
+	export interface MusicBrainzResponse extends MusicBrainz.Response {
+	}
+
+	export interface AcousticBrainzResponse extends AcousticBrainz.Response {
+	}
+
+	export interface CoverArtArchiveResponse extends CoverArtArchive.Response {
+	}
 
 	export interface ExternalFormats {
 		coverartarchive: CoverArtArchiveResponse;

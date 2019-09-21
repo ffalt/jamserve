@@ -28,7 +28,7 @@
 				"operationId": "sessionController.ping",
 				"description": "is the api online?",
 				"tags": [
-					"various"
+					"access"
 				],
 				"responses": {
 					"200": {
@@ -50,7 +50,7 @@
 				"operationId": "sessionController.session",
 				"description": "check the login state",
 				"tags": [
-					"auth"
+					"access"
 				],
 				"responses": {
 					"200": {
@@ -80,7 +80,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/LastFM.Result"
+									"$ref": "#/components/schemas/Jam.LastFMResponse"
 								}
 							}
 						}
@@ -132,7 +132,7 @@
 								"schema": {
 									"type": "array",
 									"items": {
-										"$ref": "#/components/schemas/Acoustid.Result"
+										"$ref": "#/components/schemas/Jam.AcoustidResponse"
 									}
 								}
 							}
@@ -183,7 +183,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MusicBrainz.Response"
+									"$ref": "#/components/schemas/Jam.MusicBrainzResponse"
 								}
 							}
 						}
@@ -242,7 +242,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MusicBrainz.Response"
+									"$ref": "#/components/schemas/Jam.MusicBrainzResponse"
 								}
 							}
 						}
@@ -328,7 +328,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/AcousticBrainz.Response"
+									"$ref": "#/components/schemas/Jam.AcousticBrainzResponse"
 								}
 							}
 						}
@@ -378,7 +378,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CoverArtArchive.Response"
+									"$ref": "#/components/schemas/Jam.CoverArtArchiveResponse"
 								}
 							}
 						}
@@ -469,7 +469,7 @@
 		"/wikidata/summary": {
 			"get": {
 				"operationId": "metadataController.wikidataSummary",
-				"description": "wikipedia summary",
+				"description": "wikidata summary",
 				"tags": [
 					"metadata"
 				],
@@ -520,8 +520,9 @@
 		"/wikidata/lookup": {
 			"get": {
 				"operationId": "metadataController.wikidataLookup",
+				"description": "wikidata lookup",
 				"tags": [
-					"wikidata"
+					"metadata"
 				],
 				"responses": {
 					"200": {
@@ -8348,7 +8349,7 @@
 				"operationId": "artistController.tracks",
 				"description": "get tracks of an artist by artist id",
 				"tags": [
-					"album"
+					"artist"
 				],
 				"responses": {
 					"200": {
@@ -13842,7 +13843,7 @@
 				"operationId": "downloadController.download",
 				"description": "download object as binary archive by id",
 				"tags": [
-					"download"
+					"media"
 				],
 				"responses": {
 					"200": {
@@ -13887,7 +13888,7 @@
 				"operationId": "downloadController.download2",
 				"description": "download object as binary archive by id",
 				"tags": [
-					"download"
+					"media"
 				],
 				"responses": {
 					"200": {
@@ -13952,7 +13953,7 @@
 				"operationId": "login",
 				"description": "login an user",
 				"tags": [
-					"auth"
+					"access"
 				],
 				"responses": {
 					"200": {
@@ -14001,7 +14002,7 @@
 				"operationId": "logout",
 				"description": "logout an user",
 				"tags": [
-					"auth"
+					"access"
 				],
 				"responses": {
 					"200": {
@@ -15465,6 +15466,7 @@
 		"/playlist/create": {
 			"post": {
 				"operationId": "playlistController.create",
+				"description": "create a playlist",
 				"tags": [
 					"playlist"
 				],
@@ -15504,6 +15506,7 @@
 		"/playlist/update": {
 			"post": {
 				"operationId": "playlistController.update",
+				"description": "update a playlist",
 				"tags": [
 					"playlist"
 				],
@@ -15539,6 +15542,7 @@
 		"/playlist/fav/update": {
 			"post": {
 				"operationId": "playlistController.favUpdate",
+				"description": "fav/unfav a playlist",
 				"tags": [
 					"playlist"
 				],
@@ -15575,6 +15579,7 @@
 		"/playlist/rate/update": {
 			"post": {
 				"operationId": "playlistController.rateUpdate",
+				"description": "rate a playlist",
 				"tags": [
 					"playlist"
 				],
@@ -15611,6 +15616,7 @@
 		"/playlist/delete": {
 			"post": {
 				"operationId": "playlistController.delete",
+				"description": "delete a playlist",
 				"tags": [
 					"playlist"
 				],
@@ -15956,6 +15962,7 @@
 		"/user/delete": {
 			"post": {
 				"operationId": "userController.delete",
+				"description": "delete an user",
 				"tags": [
 					"user"
 				],
@@ -16029,7 +16036,7 @@
 				"operationId": "rootController.create",
 				"description": "create a root folder",
 				"tags": [
-					"user"
+					"root"
 				],
 				"responses": {
 					"200": {
@@ -16069,7 +16076,7 @@
 				"operationId": "rootController.update",
 				"description": "update root folder properties",
 				"tags": [
-					"user"
+					"root"
 				],
 				"responses": {
 					"200": {
@@ -16105,7 +16112,7 @@
 				"operationId": "rootController.delete",
 				"description": "remove a root folder",
 				"tags": [
-					"user"
+					"root"
 				],
 				"responses": {
 					"200": {
@@ -16289,7 +16296,7 @@
 					}
 				}
 			},
-			"LastFM.Result": {
+			"Jam.LastFMResponse": {
 				"type": "object",
 				"properties": {
 					"similartracks": {
@@ -16735,7 +16742,7 @@
 				],
 				"type": "string"
 			},
-			"Acoustid.Result": {
+			"Jam.AcoustidResponse": {
 				"type": "object",
 				"properties": {
 					"recordings": {
@@ -16983,7 +16990,7 @@
 					"year"
 				]
 			},
-			"MusicBrainz.Response": {
+			"Jam.MusicBrainzResponse": {
 				"type": "object",
 				"properties": {
 					"artist": {
@@ -18188,7 +18195,7 @@
 				],
 				"type": "string"
 			},
-			"AcousticBrainz.Response": {
+			"Jam.AcousticBrainzResponse": {
 				"type": "object",
 				"properties": {
 					"highlevel": {
@@ -18699,7 +18706,7 @@
 					"version"
 				]
 			},
-			"CoverArtArchive.Response": {
+			"Jam.CoverArtArchiveResponse": {
 				"type": "object",
 				"properties": {
 					"images": {
