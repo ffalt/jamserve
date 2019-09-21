@@ -1,0 +1,31 @@
+// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
+{{#withHttpEvent}}
+import {HttpEvent} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+{{/withHttpEvent}}
+{{^withHttpEvent}}
+import {Injectable} from '@angular/core';
+{{/withHttpEvent}}
+
+import {JamBaseService} from './jam.base.service';
+import {Jam} from './model/jam-rest-data';
+import {JamParameters} from './model/jam-rest-params';
+
+@Injectable()
+export class Jam{{part}}Service {
+
+	constructor(private base: JamBaseService) {
+	}
+
+	{{#list}}
+	/**
+	 * {{{description}}}
+	 */
+	{{^sync}}async {{/sync}}{{{name}}}({{{paramName}}}{{#paramsType}}: {{{paramsType}}}{{/paramsType}}): {{^sync}}Promise<{{/sync}}{{{resultType}}}{{^sync}}>{{/sync}} {
+		return this.base.{{{baseFunc}}}{{#baseFuncResultType}}<{{{baseFuncResultType}}}>{{/baseFuncResultType}}({{#apiPathTemplate}}`{{/apiPathTemplate}}{{^apiPathTemplate}}'{{/apiPathTemplate}}{{{apiPath}}}{{#apiPathTemplate}}`{{/apiPathTemplate}}{{^apiPathTemplate}}'{{/apiPathTemplate}}{{#baseFuncParameters}}, {{{baseFuncParameters}}}{{/baseFuncParameters}});
+	}
+
+	{{/list}}
+}

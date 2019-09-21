@@ -76,6 +76,7 @@ export interface ApiCallPathParameters {
 
 export interface ApiCalls {
 	calls: Array<ApiCall>;
+	apiPrefix: string;
 	version: string;
 }
 
@@ -130,12 +131,12 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): ApiCallPat
 
 export async function getSubsonicApiCalls(basePath: string): Promise<ApiCalls> {
 	const api = await transformTS2JSONScheme(basePath, 'subsonic-rest-api', 'SubsonicApi');
-	return getApiCalls(api, SUBSONIC_VERSION);
+	return getApiCalls(api, SUBSONIC_VERSION, '/rest/');
 }
 
 export async function getJamApiCalls(basePath: string): Promise<ApiCalls> {
 	const api = await transformTS2JSONScheme(basePath, 'jam-rest-api', 'JamApi');
-	return getApiCalls(api, JAMAPI_VERSION);
+	return getApiCalls(api, JAMAPI_VERSION, '/api/v1/');
 }
 
 function getResultErrors(api: any, apidef: any): Array<{ code: number, text: string }> {
@@ -237,8 +238,8 @@ function getApiCall(name: string, method: string, api: any): ApiCall {
 	};
 }
 
-export function getApiCalls(api: any, version: string): ApiCalls {
-	const result: ApiCalls = {calls: [], version};
+export function getApiCalls(api: any, version: string, apiPrefix: string): ApiCalls {
+	const result: ApiCalls = {calls: [], version, apiPrefix};
 	Object.keys(api.properties).forEach(method => {
 		Object.keys(api.properties[method].properties).forEach(name => {
 			result.calls.push(getApiCall(name, method, api));

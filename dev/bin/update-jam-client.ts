@@ -12,6 +12,7 @@ interface MustacheDataClientCallFunction {
 	baseFuncResultType: string,
 	baseFuncParameters: string;
 	apiPath: string;
+	description?: string;
 	apiPathTemplate?: boolean;
 	sync?: boolean;
 }
@@ -28,6 +29,7 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 			baseFunc: 'upload',
 			baseFuncParameters: `${call.paramType ? 'params' : '{}'}, '${call.upload}', file`,
 			apiPath: call.name,
+			description: call.description,
 			sync: true
 		}];
 	}
@@ -42,6 +44,7 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 					baseFuncResultType: '',
 					baseFunc: 'buildRequestUrl',
 					baseFuncParameters: 'params',
+					description: call.description,
 					apiPath: call.name,
 					sync: true
 				},
@@ -53,6 +56,7 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 					baseFuncResultType: '',
 					baseFunc: 'binary',
 					baseFuncParameters: 'params',
+					description: call.description,
 					apiPath: call.name
 				}
 			];
@@ -79,6 +83,7 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 					baseFuncParameters: '',
 					apiPath: `${basename}/${parampath}`,
 					apiPathTemplate: true,
+					description: call.description,
 					sync: true
 				},
 				{
@@ -90,7 +95,8 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 					baseFunc: 'binary',
 					baseFuncParameters: '',
 					apiPathTemplate: true,
-					apiPath: `${basename}/${parampath}`
+					apiPath: `${basename}/${parampath}`,
+					description: call.description
 				}];
 			// const s = `	${basename}_url(${params}): string {
 			// 	return this.buildRequestUrl(\`${basename}/${parampath}\`);
@@ -112,6 +118,7 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 					baseFunc: 'buildRequestUrl',
 					baseFuncParameters: 'params',
 					apiPath: call.name,
+					description: call.description,
 					sync: true
 				},
 				{
@@ -122,7 +129,8 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 					baseFuncResultType: '',
 					baseFunc: 'binary',
 					baseFuncParameters: 'params',
-					apiPath: call.name
+					apiPath: call.name,
+					description: call.description
 				}
 			];
 		}
@@ -137,7 +145,8 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 			baseFuncResultType: '',
 			baseFunc: (call.method === 'post' ? 'requestPostDataOK' : 'requestOK'),
 			baseFuncParameters: call.paramType ? 'params' : '{}',
-			apiPath: call.name
+			apiPath: call.name,
+			description: call.description
 		}];
 	}
 	return [{
@@ -148,23 +157,120 @@ function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction
 		baseFuncResultType: call.resultType,
 		baseFunc: (call.method === 'post' ? 'requestPostData' : 'requestData'),
 		baseFuncParameters: call.paramType ? 'params' : '{}',
-		apiPath: call.name
+		apiPath: call.name,
+		description: call.description
 	}];
 }
 
+interface Part {
+	name: string;
+	part: string;
+	isLast?: boolean;
+}
+
+async function writeService(destPath: string, serviceParts: Array<Part>): Promise<void> {
+	const list: Array<Part> = [{name: 'auth', part: 'Auth'}, {name: 'base', part: 'Base'}]
+		.concat(serviceParts)
+		.sort((a, b) => a.name.localeCompare(b.name));
+	list.forEach((p, i) => {
+		p.isLast = i === list.length - 1;
+	});
+	const template = Mustache.render((await fse.readFile('../templates/client/jam.service.ts.template')).toString(), {list});
+	const destfile = path.resolve(destPath, 'jam.service.ts');
+	await fse.writeFile(destfile, template);
+}
+
+async function writeModule(destPath: string, serviceParts: Array<Part>): Promise<void> {
+	const list: Array<Part> = [{name: 'http', part: 'Http'}, {name: 'auth', part: 'Auth'}, {name: 'base', part: 'Base'}]
+		.concat(serviceParts)
+		.sort((a, b) => a.name.localeCompare(b.name));
+	list.forEach((p, i) => {
+		p.isLast = i === list.length - 1;
+	});
+	const template = Mustache.render((await fse.readFile('../templates/client/jam.module.ts.template')).toString(), {list});
+	const destfile = path.resolve(destPath, 'jam.module.ts');
+	await fse.writeFile(destfile, template);
+}
+
+async function writePartService(destPath: string, key: string, part: string, calls: Array<MustacheDataClientCallFunction>): Promise<void> {
+	const partfile = path.resolve(destPath, `jam.${key}.service.ts`);
+	const l = calls.map(call => {
+		return {...call, name: call.name.replace(key + '_', '')};
+	});
+	const withHttpEvent = calls.find(c => c.resultType.includes('HttpEvent'));
+	const t = Mustache.render((await fse.readFile('../templates/client/jam.part.service.ts.template')).toString(), {list: l, part, withHttpEvent});
+	await fse.writeFile(partfile, t);
+}
+
+async function writeAuthService(destPath: string, calls: ApiCalls): Promise<void> {
+	const t = Mustache.render((await fse.readFile('../templates/client/jam.auth.service.ts.template')).toString(), {apiPrefix: calls.apiPrefix, version: calls.version});
+	await fse.writeFile(path.resolve(destPath, `jam.auth.service.ts`), t);
+}
+
+async function writeBaseService(destPath: string): Promise<void> {
+	const t = Mustache.render((await fse.readFile('../templates/client/jam.base.service.ts.template')).toString(), {});
+	await fse.writeFile(path.resolve(destPath, `jam.base.service.ts`), t);
+}
+
+async function writeHttpService(destPath: string): Promise<void> {
+	const t = Mustache.render((await fse.readFile('../templates/client/jam.http.service.ts.template')).toString(), {});
+	await fse.writeFile(path.resolve(destPath, `jam.http.service.ts`), t);
+}
+
+async function writeJamConfiguration(destPath: string): Promise<void> {
+	const t = Mustache.render((await fse.readFile('../templates/client/jam.configuration.ts.template')).toString(), {});
+	await fse.writeFile(path.resolve(destPath, `jam.configuration.ts`), t);
+}
+
 async function build(): Promise<string> {
-	const destfile = path.resolve('../../dist/jam.service.ts');
+	const destPath = path.resolve('../../dist/jam/');
+	if (await fse.pathExists(destPath)) {
+		await fse.remove(destPath);
+	}
+	await fse.mkdirp(destPath);
 	const basePath = path.resolve('../../src/model/');
 	const apiCalls: ApiCalls = await getJamApiCalls(basePath);
-	let list: Array<MustacheDataClientCallFunction> = [];
+	const sections: { [name: string]: Array<MustacheDataClientCallFunction> } = {};
 	for (const call of apiCalls.calls) {
 		if (!call.aliasFor) {
-			list = list.concat(generateClientCall(call));
+			sections[call.tag] = (sections[call.tag] || []).concat(generateClientCall(call));
 		}
 	}
-	const template = Mustache.render((await fse.readFile('../templates/jam-client.ts.template')).toString(), {list, version: apiCalls.version});
-	await fse.writeFile(destfile, template);
-	return destfile;
+	const keys = Object.keys(sections);
+	const list: Array<Part> = [];
+	for (const key of keys) {
+		const part = key[0].toUpperCase() + key.slice(1);
+		list.push({name: key, part});
+		await writePartService(destPath, key, part, sections[key]);
+	}
+	await writeService(destPath, list);
+	await writeModule(destPath, list);
+	await writeAuthService(destPath, apiCalls);
+	await writeBaseService(destPath);
+	await writeHttpService(destPath);
+	await writeJamConfiguration(destPath);
+
+	const models: Array<string> = [
+		'jam-rest-api.d.ts',
+		'jam-rest-params.d.ts',
+		'jam-rest-data.d.ts',
+		'jam-types.ts',
+		'lastfm-rest-data.d.ts',
+		'wikidata-rest-data.d.ts',
+		'musicbrainz-rest-data.d.ts',
+		'acousticbrainz-rest-data.d.ts',
+		'acoustid-rest-data.d.ts',
+		'coverartarchive-rest-data.d.ts',
+		'id3v2-frames.d.ts'
+	];
+	const modelDestPath = path.resolve(destPath, 'model');
+	await fse.mkdirp(modelDestPath);
+
+	for (const model of models) {
+		await fse.copy(path.resolve(basePath, model), path.resolve(modelDestPath, model));
+	}
+
+	return destPath;
 }
 
 run(build);
