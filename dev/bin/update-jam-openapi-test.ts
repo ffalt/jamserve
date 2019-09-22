@@ -135,7 +135,7 @@ function generateInvalidRequestMocks(params: Array<ParameterObject>, property: P
 		const data = combineData(params.map(p => p === property ? invalid : generateValidDataByParameter(p)));
 		return {
 			valid: false,
-			message: `should respond with 400 with "${property.name}" set to value ${invalid.invalid}`,
+			message: `"${property.name}" set to "${invalid.invalid}"`,
 			property: property.name,
 			data
 		};
@@ -230,8 +230,7 @@ function formatData(data: any): string {
 
 async function generateFailGetRequestTest(mock: RequestMock, apiPath: string): Promise<MustacheDataTest | undefined> {
 	if (mock.params !== undefined) {
-		const pfixed = apiPath.split('/')[1];
-		let p = apiPath.split('/')[2];
+		let p = apiPath;
 		Object.keys(mock.params).forEach(key => {
 			p = p.replace(`{${key}}`, encodeURIComponent(mock.params[key]));
 		});
@@ -239,9 +238,9 @@ async function generateFailGetRequestTest(mock: RequestMock, apiPath: string): P
 			// without any path parameter it's not a 400, it's a 404
 			return undefined;
 		}
-		return {title: mock.message.replace(/'/g, '"'), content: `return get('/api/v1/${pfixed}/${p}').expect(400);`};
+		return {title: mock.message.replace(/'/g, '"'), content: `await get('${p}', {}, 400);`};
 	}
-	return {title: mock.message.replace(/'/g, '"'), content: `return get('/api/v1${apiPath}').query(${formatData(mock.data)}).expect(400);`};
+	return {title: mock.message.replace(/'/g, '"'), content: `await get('${apiPath}', ${formatData(mock.data)}, 400);`};
 }
 
 async function generateFailNoRightsRequestTest(mock: RequestMock, apiPath: string, operation: string): Promise<MustacheDataTest> {
@@ -251,16 +250,15 @@ async function generateFailNoRightsRequestTest(mock: RequestMock, apiPath: strin
 			Object.keys(mock.params).forEach(key => {
 				p = p.replace(`{${key}}`, encodeURIComponent(mock.params[key]));
 			});
-			return {title: 'should respond with 401 Unauth', content: `return getNoRights('/api/v1${p}').expect(401);`};
+			return {title: 'should respond with 401 Unauth', content: `await getNoRights('${p}', {}, 401);`};
 		}
-		return {title: 'should respond with 401 Unauth', content: `return getNoRights('/api/v1${apiPath}').query(${formatData(mock.data)}).expect(401);`};
+		return {title: 'should respond with 401 Unauth', content: `await getNoRights('${apiPath}', ${formatData(mock.data)}, 401);`};
 	}
-	let postQuery = '';
+	let postQuery = '{}';
 	if (mock.data && Object.keys(mock.data).length > 0) {
-		postQuery = `.query(${formatData(mock.data)})`;
+		postQuery = `${formatData(mock.data)}`;
 	}
-	const postData = '{}';
-	return {title: 'should respond with 401 Unauth', content: `return postNoRights('/api/v1${apiPath}')${postQuery}.send(${postData}).expect(401);`};
+	return {title: 'should respond with 401 Unauth', content: `await postNoRights('${apiPath}', ${postQuery}, {}, 401);`};
 }
 
 async function generateFailUauthRequestTest(mock: RequestMock, apiPath: string, operation: string): Promise<MustacheDataTest> {
@@ -270,16 +268,12 @@ async function generateFailUauthRequestTest(mock: RequestMock, apiPath: string, 
 			Object.keys(mock.params).forEach(key => {
 				p = p.replace(`{${key}}`, encodeURIComponent(mock.params[key]));
 			});
-			return {title: 'should respond with 401 Unauth', content: `return getNotLoggedIn('/api/v1${p}').expect(401);`};
+			return {title: 'should respond with 401 Unauth', content: `await getNotLoggedIn('${p}', {}, 401);`};
 		}
-		return {title: 'should respond with 401 Unauth', content: `return getNotLoggedIn('/api/v1${apiPath}').query(${formatData(mock.data)}).expect(401);`};
+		return {title: 'should respond with 401 Unauth', content: `await getNotLoggedIn('${apiPath}', ${formatData(mock.data)}, 401);`};
 	}
-	let postQuery = '';
-	if (mock.data && Object.keys(mock.data).length > 0) {
-		postQuery = `.query(${formatData(mock.data)})`;
-	}
-	const postData = '{}';
-	return {title: 'should respond with 401 Unauth', content: `return postNotLoggedIn('/api/v1${apiPath}')${postQuery}.send(${postData}).expect(401);`};
+	const postQuery = (mock.data && Object.keys(mock.data).length > 0) ? formatData(mock.data) : '{}';
+	return {title: 'should respond with 401 Unauth', content: `await postNotLoggedIn('${apiPath}', ${postQuery}, {}, 401);`};
 }
 
 async function generateFailTest(mock: RequestMock, apiPath: string, operation: string): Promise<MustacheDataTest | undefined> {
@@ -291,10 +285,11 @@ async function generateRequestMocks(spec: OpenAPIObject): Promise<RequestMocks> 
 	const requestMocks: RequestMocks = {};
 	for (const apiPath in derefSpec.paths) {
 		if (derefSpec.paths.hasOwnProperty(apiPath)) {
-			requestMocks[apiPath] = {};
+			const api = apiPath.slice(1);
+			requestMocks[api] = {};
 			for (const operation in derefSpec.paths[apiPath]) {
 				if (derefSpec.paths[apiPath].hasOwnProperty(operation)) {
-					requestMocks[apiPath][operation] = await generateRequestMock(derefSpec.paths[apiPath][operation] as OperationObject);
+					requestMocks[api][operation] = await generateRequestMock(derefSpec.paths[apiPath][operation] as OperationObject);
 				}
 			}
 		}
@@ -332,18 +327,18 @@ async function generateTestsByPath(apiPath: string, operation: string, mocks: Re
 	// if (validSection.tests.length > 0) {
 	// 	sections.push(validSection);
 	// }
-	if (valid.length > 0 && (!openapi.paths[apiPath][operation].security || openapi.paths[apiPath][operation].security.length > 0)) {
+	if (valid.length > 0 && (!openapi.paths['/' + apiPath][operation].security || openapi.paths['/' + apiPath][operation].security.length > 0)) {
 		const noLogInFailSection: MustacheDataSubSection = {title: 'should fail without login', tests: [await generateFailUauthRequestTest(valid[0], apiPath, operation)]};
 		sections.push(noLogInFailSection);
-		const call = apicalls.calls.find(c => `/${c.name}` === apiPath);
+		const call = apicalls.calls.find(c => c.name === apiPath);
 		if (call && call.roles.length > 0) {
 			const noNoRightsFailSection: MustacheDataSubSection = {title: 'should fail without required rights', tests: [await generateFailNoRightsRequestTest(valid[0], apiPath, operation)]};
-			console.log(noNoRightsFailSection);
+			// console.log(noNoRightsFailSection);
 			sections.push(noNoRightsFailSection);
 		}
 	}
 	const invalid = requests.filter(r => !r.valid);
-	const invalidSection: MustacheDataSubSection = {title: 'should fail with invalid data', tests: []};
+	const invalidSection: MustacheDataSubSection = {title: 'should respond with 400 invalid/missing parameter', tests: []};
 	for (const mock of invalid) {
 		const test = await generateFailTest(mock, apiPath, operation);
 		if (test) {
@@ -382,7 +377,7 @@ async function build(): Promise<string> {
 	const mocks = await generateRequestMocks(openapi);
 	const sections = await generateTests(mocks, apicalls, openapi);
 	// await fse.writeFile(destfile + '.json', JSON.stringify(mocks));
-	const template = Mustache.render((await fse.readFile('../templates/server.test.ts.template')).toString(), {sections, version: apicalls.version});
+	const template = Mustache.render((await fse.readFile('../templates/server.test.ts.template')).toString(), {sections, version: apicalls.version, apiPrefix: apicalls.apiPrefix});
 	await fse.writeFile(destfile, template);
 	return destfile;
 }

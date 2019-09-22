@@ -8,39 +8,47 @@ import {Server} from './server';
 describe('Server', () => {
 	let server: Server;
 	let request: supertest.SuperTest<supertest.Test>;
-	let get: (apiPath: string) => supertest.Test;
-	let post: (apiPath: string) => supertest.Test;
-	let getNotLoggedIn: (apiPath: string) => supertest.Test;
-	let postNotLoggedIn: (apiPath: string) => supertest.Test;
-	let getNoRights: (apiPath: string) => supertest.Test;
-	let postNoRights: (apiPath: string) => supertest.Test;
+	let get: (apiPath: string, query: any, expect: number) => supertest.Test;
+	let post: (apiPath: string, query: any, body: any, expect: number) => supertest.Test;
+	let getNotLoggedIn: (apiPath: string, query: any, expect: number) => supertest.Test;
+	let postNotLoggedIn: (apiPath: string, query: any, body: any, expect: number) => supertest.Test;
+	let getNoRights: (apiPath: string, query: any, expect: number) => supertest.Test;
+	let postNoRights: (apiPath: string, query: any, body: any, expect: number) => supertest.Test;
 	testEngines({}, async testEngine => {
-		testEngine.engine.config.server.port = 10010;
-		testEngine.engine.config.server.listen = 'localhost';
-		server = new Server(testEngine.engine);
-		await server.start();
-		request = supertest('http://localhost:10010');
-		const res1 = await request.post('/api/v1/login')
-			.send({username: mockUserName, password: mockUserPass, client: 'supertest-tests', jwt: true});
-		const user1token = res1.body.jwt;
-		get = apiPath => request.get(apiPath).set('Authorization', 'Bearer ' + user1token);
-		post = apiPath => request.post(apiPath).set('Authorization', 'Bearer ' + user1token);
-		const res2 = await request.post('/api/v1/login')
-			.send({username: mockUserName2, password: mockUserPass2, client: 'supertest-tests', jwt: true});
-		const user2token = res2.body.jwt;
-		getNoRights = apiPath => request.get(apiPath).set('Authorization', 'Bearer ' + user2token);
-		postNoRights = apiPath => request.post(apiPath).set('Authorization', 'Bearer ' + user2token);
-		getNotLoggedIn = apiPath => request.post(apiPath);
-		postNotLoggedIn = apiPath => request.post(apiPath);
+			testEngine.engine.config.server.port = 10010;
+			testEngine.engine.config.server.listen = 'localhost';
+			server = new Server(testEngine.engine);
+			await server.start();
+			request = supertest('http://localhost:10010');
+			const apiPrefix = '/api/v1/';
+			const res1 = await request.post(apiPrefix + 'login')
+				.send({username: mockUserName, password: mockUserPass, client: 'supertest-tests', jwt: true});
+			const user1token = res1.body.jwt;
+			const res2 = await request.post(apiPrefix + 'login')
+				.send({username: mockUserName2, password: mockUserPass2, client: 'supertest-tests', jwt: true});
+			const user2token = res2.body.jwt;
+
+			get = (apiPath, query, expect) => request.get(apiPath).set('Authorization', 'Bearer ' + user1token)
+				.query(query).expect(expect);
+			post = (apiPath, query, body, expect) => request.post(apiPath).set('Authorization', 'Bearer ' + user1token)
+				.query(query).send(body).expect(expect);
+			getNoRights = (apiPath, query, expect) => request.get(apiPrefix + apiPath).set('Authorization', 'Bearer ' + user2token)
+				.query(query).expect(expect);
+			postNoRights = (apiPath, query, body, expect) => request.post(apiPrefix + apiPath).set('Authorization', 'Bearer ' + user2token)
+				.query(query).send(body).expect(expect);
+			getNotLoggedIn = (apiPath, query, expect) => request.post(apiPrefix + apiPath)
+				.query(query).expect(expect);
+			postNotLoggedIn = (apiPath, query, body, expect) => request.post(apiPrefix + apiPath)
+				.query(query).send(body).expect(expect);
 	}, () => {
 	{{#sections}}
 		describe('{{{title}}}', () => {
 			{{#subsections}}
 			describe('{{{title}}}', () => {
 				{{#tests}}
-					it('{{{title}}}', async () => {
-						{{{content}}}
-					});
+				it('{{{title}}}', async () => {
+					{{{content}}}
+				});
 				{{/tests}}
 			});
 			{{/subsections}}
