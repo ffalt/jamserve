@@ -123,6 +123,22 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): ApiCallPat
 			if (type === 'integer') {
 				type = 'number';
 			}
+			if (prop.enum) {
+				// hackerty hardcode hack! ts2jsonschema seems to destroys Union String Enum Types that are optional
+				// (eg. format?: DownloadFormatType ==> format: 'zip'|'tar'|'undefined')
+				// restore the type here
+				if (prop.enum.includes('zip')) {
+					type = 'JamParameters.DownloadFormatType';
+				} else if (prop.enum.includes('jpeg')) {
+					type = 'JamParameters.ImageFormatType';
+				} else if (prop.enum.includes('svg')) {
+					type = 'JamParameters.WaveformFormatType';
+				} else if (prop.enum.includes('mp3')) {
+					type = 'JamParameters.AudioFormatType';
+				} else {
+					console.log('restore destroyed union enum type', prop.enum, id);
+				}
+			}
 			const required = (paramDef.required || []).includes(id);
 			return {name: id, prefix, type, required, description: prop.description};
 		});
