@@ -6,7 +6,7 @@ export declare namespace JamParameters {
 	export type ListType = 'random' | 'highest' | 'avghighest' | 'frequent' | 'faved' | 'recent';
 	export type ImageFormatType = 'png' | 'jpeg' | 'jpg' | 'tiff';
 	export type WaveformFormatType = 'svg' | 'json' | 'dat';
-	export type AudioFormatType = 'mp3';
+	export type AudioFormatType = 'mp3' | 'flac' | 'ogg' | 'oga' | 'm4a' | 'flv' | 'webma' | 'webm' | 'wav';
 	export type DownloadFormatType = 'zip' | 'tar';
 	export type LastFMLookupType = 'album' | 'album-toptracks' | 'artist' | 'track' | 'track-similar' | 'artist-toptracks';
 	export type MusicBrainzLookupType = 'area' | 'artist' | 'collection' | 'event' | 'instrument' | 'label' | 'place' | 'recording' | 'release' | 'release-group' | 'series' | 'work' | 'url';

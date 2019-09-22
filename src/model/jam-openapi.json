@@ -12266,7 +12266,13 @@
 						"schema": {
 							"default": "mp3",
 							"enum": [
-								"mp3"
+								"flac",
+								"flv",
+								"m4a",
+								"mp3",
+								"oga",
+								"ogg",
+								"webma"
 							],
 							"type": "string"
 						},
@@ -12500,7 +12506,13 @@
 						"schema": {
 							"default": "mp3",
 							"enum": [
-								"mp3"
+								"flac",
+								"flv",
+								"m4a",
+								"mp3",
+								"oga",
+								"ogg",
+								"webma"
 							],
 							"type": "string"
 						},
@@ -13702,7 +13714,13 @@
 						"schema": {
 							"default": "mp3",
 							"enum": [
-								"mp3"
+								"flac",
+								"flv",
+								"m4a",
+								"mp3",
+								"oga",
+								"ogg",
+								"webma"
 							],
 							"type": "string"
 						},
