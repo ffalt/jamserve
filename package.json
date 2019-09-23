@@ -64,7 +64,7 @@
     "feedparser": "2.2.9",
     "fluent-ffmpeg": "2.1.2",
     "fs-extra": "8.1.0",
-    "helmet": "3.21.0",
+    "helmet": "3.21.1",
     "iconv-lite": "0.5.0",
     "jamp3": "0.4.0",
     "jimp": "0.7.0",
