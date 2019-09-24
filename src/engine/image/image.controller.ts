@@ -37,6 +37,9 @@ export class ImageController {
 		const split = pathParameter.split('.');
 		const idsplit = split[0].split('-');
 		const id = idsplit[0];
+		if (!id || id.length === 0) {
+			return Promise.reject(InvalidParamError());
+		}
 		const size = idsplit[1] !== undefined ? Number(idsplit[1]) : undefined;
 		if (size !== undefined) {
 			if (isNaN(size)) {

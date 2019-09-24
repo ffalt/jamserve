@@ -21,6 +21,9 @@ export class WaveformController {
 		}
 		const split = pathParameter.split('.');
 		const id = split[0];
+		if (!id || id.length === 0) {
+			return Promise.reject(InvalidParamError());
+		}
 		const format = split[1];
 		if (format !== undefined && !WaveformFormats.includes(format)) {
 			return Promise.reject(InvalidParamError());

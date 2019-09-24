@@ -230,7 +230,8 @@ function formatData(data: any): string {
 
 async function generateFailGetRequestTest(mock: RequestMock, apiPath: string): Promise<MustacheDataTest | undefined> {
 	if (mock.params !== undefined) {
-		let p = apiPath;
+		const split = apiPath.split('/');
+		let p = split[1];
 		Object.keys(mock.params).forEach(key => {
 			p = p.replace(`{${key}}`, encodeURIComponent(mock.params[key]));
 		});
@@ -238,7 +239,7 @@ async function generateFailGetRequestTest(mock: RequestMock, apiPath: string): P
 			// without any path parameter it's not a 400, it's a 404
 			return undefined;
 		}
-		return {title: mock.message.replace(/'/g, '"'), content: `await get('${p}', {}, 400);`};
+		return {title: mock.message.replace(/'/g, '"'), content: `await get('${split[0]}/${p}', {}, 400);`};
 	}
 	return {title: mock.message.replace(/'/g, '"'), content: `await get('${apiPath}', ${formatData(mock.data)}, 400);`};
 }

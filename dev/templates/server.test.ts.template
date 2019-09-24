@@ -28,9 +28,9 @@ describe('Server', () => {
 				.send({username: mockUserName2, password: mockUserPass2, client: 'supertest-tests', jwt: true});
 			const user2token = res2.body.jwt;
 
-			get = (apiPath, query, expect) => request.get(apiPath).set('Authorization', 'Bearer ' + user1token)
+			get = (apiPath, query, expect) => request.get(apiPrefix + apiPath).set('Authorization', 'Bearer ' + user1token)
 				.query(query).expect(expect);
-			post = (apiPath, query, body, expect) => request.post(apiPath).set('Authorization', 'Bearer ' + user1token)
+			post = (apiPath, query, body, expect) => request.post(apiPrefix + apiPath).set('Authorization', 'Bearer ' + user1token)
 				.query(query).send(body).expect(expect);
 			getNoRights = (apiPath, query, expect) => request.get(apiPrefix + apiPath).set('Authorization', 'Bearer ' + user2token)
 				.query(query).expect(expect);
