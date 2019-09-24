@@ -24,6 +24,7 @@ export enum RootScanStrategy {
 export const AudioMimeTypes: { [ext: string]: string } = {
 	mp3: 'audio/mpeg',
 	m4a: 'audio/mp4',
+	mp4: 'audio/mp4',
 	ogg: 'audio/ogg',
 	oga: 'audio/ogg',
 	flv: 'aaudio/x-flv',
@@ -36,6 +37,7 @@ export const AudioMimeTypes: { [ext: string]: string } = {
 export enum AudioFormatType {
 	mp3 = 'mp3',
 	m4a = 'm4a',
+	mp4 = 'mp4',
 	ogg = 'ogg',
 	oga = 'oga',
 	flv = 'flv',
