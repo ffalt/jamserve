@@ -1,4 +1,4 @@
-import elasticsearch from 'elasticsearch';
+import {ApiResponse, Client} from '@elastic/elasticsearch';
 import {DBObject} from '../../engine/base/base.model';
 import {logger} from '../../utils/logger';
 import {wait} from '../../utils/wait';
@@ -7,21 +7,21 @@ import {DBObjectType} from '../db.types';
 import {DBIndexElastic} from './db-elastic.index';
 import {mapping} from './db-elastic.mapping';
 import {DbElasticSequence} from './db-elastic.sequence';
-import {ElasticsearchConfig} from './db-elastic.types';
+import {ElasticIndexRefresh, ElasticsearchConfig} from './db-elastic.types';
 
 const log = logger('DB.elastic');
 
 export class DBElastic implements Database {
-	client: elasticsearch.Client;
+	client: Client;
 	sequence: DbElasticSequence;
 	indexPrefix: string;
-	indexRefresh: string | undefined;
+	indexRefresh?: ElasticIndexRefresh;
 
 	constructor(config: ElasticsearchConfig) {
-		this.client = new elasticsearch.Client({host: config.host, log: config.log});
+		this.client = new Client({node: config.host});
 		this.sequence = new DbElasticSequence(this.client);
 		this.indexPrefix = config.indexPrefix;
-		this.indexRefresh = config.indexRefresh;
+		this.indexRefresh = config.indexRefresh as ElasticIndexRefresh;
 	}
 
 	async drop(): Promise<void> {
@@ -31,12 +31,12 @@ export class DBElastic implements Database {
 	}
 
 	async close(): Promise<void> {
-		this.client.close();
+		await this.client.close();
 	}
 
 	async ping(): Promise<void> {
 		try {
-			await this.client.ping({requestTimeout: 10000});
+			await this.client.ping({});
 		} catch (e) {
 			log.error('elasticsearch could not be contacted', e);
 			return Promise.reject(e);
@@ -94,8 +94,8 @@ export class DBElastic implements Database {
 	private async checkIndex(type: DBObjectType): Promise<boolean> {
 		const name = DBObjectType[type];
 		const index = this.indexName(name);
-		const exists = await this.client.indices.exists({index});
-		if (!exists) {
+		const res: ApiResponse<boolean> = await this.client.indices.exists({index});
+		if (!res.body) {
 			await this.createIndex(type);
 			return true;
 		}

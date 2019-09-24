@@ -3,7 +3,7 @@
  * MIT
  */
 
-import elasticsearch from 'elasticsearch';
+import {ApiResponse, Client} from '@elastic/elasticsearch';
 
 const esTypeMapping = {
 	_source: {enabled: false},
@@ -12,7 +12,6 @@ const esTypeMapping = {
 };
 
 export class DbElasticSequence {
-	client: elasticsearch.Client;
 	private initPromise: Promise<any> | null = null;
 	private initError: Promise<any> | null = null;
 	private cacheFillPromise: Promise<any> | null = null;
@@ -20,41 +19,21 @@ export class DbElasticSequence {
 	private cacheSize = 100;
 	private options = {esIndex: 'sequences', esType: 'sequence'};
 
+	constructor(private client: Client) {
+	}
+
 	private static isObject(val: any): boolean {
 		return typeof val === 'object';
-	}
-
-	private static isFunction(val: any): boolean {
-		return typeof val === 'function';
-	}
-
-	private static isInjectedClientValid(client: any): boolean {
-		return (
-			(DbElasticSequence.isObject(client) || DbElasticSequence.isFunction(client)) &&
-			(DbElasticSequence.isObject(client.indices) || DbElasticSequence.isFunction(client.indices)) &&
-			DbElasticSequence.isFunction(client.indices.create) && DbElasticSequence.isFunction(client.indices.exists) &&
-			DbElasticSequence.isFunction(client.indices.putMapping) && DbElasticSequence.isFunction(client.bulk)
-		);
 	}
 
 	private static isInjectedCacheSizeValid(cacheSize: number | any): boolean {
 		return ((cacheSize === undefined) || (typeof cacheSize === 'number' && isFinite(cacheSize) && Math.floor(cacheSize) === cacheSize));
 	}
 
-	constructor(client: elasticsearch.Client) {
-		this.client = client;
-		if (!DbElasticSequence.isInjectedClientValid(client)) {
-			throw new Error('Init was called with an invalid client parameter value.');
-		}
-	}
-
 	async init(options?: any, cacheSize?: number): Promise<any> {
 		// The following checks are done before the init promise is created
 		// because errors thrown in the init promise are stored in _initError.
 		// If a check fails it should look as if init was not called.
-		if (!DbElasticSequence.isInjectedClientValid(this.client)) {
-			return Promise.reject(new Error('Init was called with an invalid client parameter value.'));
-		}
 		if (this.initPromise !== null) {
 			return Promise.reject(new Error('Init was called while a previous init is pending.'));
 		}
@@ -86,7 +65,7 @@ export class DbElasticSequence {
 		return this.initPromise;
 	}
 
-	async addMappingToEsIndexIfMissing(): Promise<any> {
+	async addMappingToEsIndexIfMissing(): Promise<ApiResponse<any>> {
 		const mapping: any = {};
 		mapping[this.options.esType] = esTypeMapping;
 		return this.client.indices.putMapping({
@@ -97,9 +76,9 @@ export class DbElasticSequence {
 		});
 	}
 
-	async initEsIndexIfNeeded(): Promise<any> {
-		const response = await this.client.indices.exists({index: this.options.esIndex});
-		if (response) {
+	async initEsIndexIfNeeded(): Promise<ApiResponse<any>> {
+		const response: ApiResponse<boolean> = await this.client.indices.exists({index: this.options.esIndex});
+		if (response.body) {
 			return this.addMappingToEsIndexIfMissing();
 		}
 		const config: any = {
@@ -121,7 +100,7 @@ export class DbElasticSequence {
 			if (!this.cache[sequenceName]) {
 				this.cache[sequenceName] = [];
 			}
-			const bulkParams: elasticsearch.BulkIndexDocumentsParams = {body: []};
+			const bulkParams: any = {body: []}; // todo: new elastic types for Bulkparameter
 			for (let i = 0; i < this.cacheSize; i += 1) {
 				// Action
 				bulkParams.body.push({index: {_index: this.options.esIndex, _type: this.options.esType, _id: sequenceName}});
@@ -130,7 +109,7 @@ export class DbElasticSequence {
 			}
 			resolve(
 				this.client.bulk(bulkParams).then(response => {
-					for (const item of response.items) {
+					for (const item of response.body.items) {
 						// This is the core trick: The document's version is an auto-incrementing integer.
 						this.cache[sequenceName].push(item.index._version);
 					}

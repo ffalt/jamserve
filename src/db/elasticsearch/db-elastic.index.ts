@@ -1,11 +1,11 @@
-import elasticsearch from 'elasticsearch';
+import {ApiResponse, RequestParams} from '@elastic/elasticsearch';
 import {DBObject} from '../../engine/base/base.model';
 import {ListResult} from '../../engine/base/list-result';
-import {paginate} from '../../utils/paginate';
 import {DatabaseIndex, DatabaseQuery} from '../db.model';
 import {DBObjectType} from '../db.types';
 import {DBElastic} from './db-elastic';
 import {mapping} from './db-elastic.mapping';
+import {DeleteByQueryResponse, GetResponse, Hit, MgetResponse, SearchResponse} from './db-elastic.types';
 
 export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 	protected _index: string;
@@ -27,7 +27,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		this.db = db;
 	}
 
-	private hit2Obj(hit: any): T {
+	private hit2Obj(hit: Hit<any>): T {
 		hit._source.id = hit._source.id.toString();
 		hit._source.type = this.type;
 		return hit._source as T;
@@ -141,19 +141,18 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		};
 	}
 
-	private async scroll(response: elasticsearch.SearchResponse<T>, onHits: (hits: Array<any>) => Promise<void>): Promise<void> {
+	private async scroll(response: SearchResponse<T>, onHits: (hits: Array<any>) => Promise<void>): Promise<void> {
 		let count = 0;
-		const client = this.db.client;
 
-		async function getMoreUntilDone(res: elasticsearch.SearchResponse<T>): Promise<void> {
+		const getMoreUntilDone = async (res: SearchResponse<T>): Promise<void> => {
 			count += res.hits.hits.length;
 			await onHits(res.hits.hits);
 			if (res.hits.total !== count && res._scroll_id) {
 				// now we can call scroll over and over
-				const next = await client.scroll<T>({scrollId: res._scroll_id, scroll: '30s'});
-				await getMoreUntilDone(next);
+				const next: ApiResponse<SearchResponse<T>> = await this.db.client.scroll({scroll_id: res._scroll_id, scroll: '30s'});
+				await getMoreUntilDone(next.body);
 			}
-		}
+		};
 
 		await getMoreUntilDone(response);
 	}
@@ -164,13 +163,14 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			type: this._type,
 			body: this.filterProperties(body),
 			id,
-			refresh: this.db.indexRefresh as elasticsearch.Refresh
+			refresh: this.db.indexRefresh
 		});
 	}
 
-	private async search(query: DatabaseQuery, params: elasticsearch.SearchParams): Promise<elasticsearch.SearchResponse<T>> {
+	private async search(query: DatabaseQuery, params: RequestParams.Search): Promise<SearchResponse<T>> {
 		params.body = {...(params.body || {}), query: this.translateElasticQuery(query)};
-		return this.db.client.search<T>({...params, index: this._index, type: this._type});
+		const res: ApiResponse<SearchResponse<T>> = await this.db.client.search({...params, index: this._index, type: this._type});
+		return res.body;
 	}
 
 	async add(body: T): Promise<string> {
@@ -197,15 +197,15 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 			return this.queryOne({term: {id}});
 		}
 		try {
-			const response = await this.db.client.get({
+			const response: ApiResponse<GetResponse<T>> = await this.db.client.get({
 				index: this._index,
 				type: this._type,
 				id
 			});
-			if (!response.found) {
+			if (!response.body.found) {
 				return;
 			}
-			return this.hit2Obj(response);
+			return this.hit2Obj(response.body);
 		} catch (e) {
 			if (e.statusCode !== 404) {
 				return Promise.reject(e);
@@ -217,19 +217,17 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		if (ids.length === 0) {
 			return [];
 		}
-		const response = await this.db.client.mget({
+		const response: ApiResponse<MgetResponse<T>> = await this.db.client.mget({
 			index: this._index,
 			type: this._type,
 			body: {ids}
 		});
-		if (!response.docs) {
+		if (!response.body.docs) {
 			return [];
 		}
-		return response.docs.filter(doc => {
-			return doc.found;
-		}).map(doc => {
-			return this.hit2Obj(doc);
-		});
+		return response.body.docs
+			.filter(doc => doc.found)
+			.map(doc => this.hit2Obj(doc));
 	}
 
 	async count(query: DatabaseQuery): Promise<number> {
@@ -260,7 +258,7 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 	}
 
 	private async queryScroll(query: DatabaseQuery): Promise<ListResult<T>> {
-		let docs: Array<T> = [];
+		let docs: Array<Hit<T>> = [];
 		const response = await this.search(query, {scroll: '30s', size: 100});
 		await this.scroll(response, async hits => {
 			docs = docs.concat(hits);
@@ -295,35 +293,36 @@ export class DBIndexElastic<T extends DBObject> implements DatabaseIndex<T> {
 		});
 	}
 
-	async remove(id: string | Array<string>): Promise<void> {
+	async remove(id: string | Array<string>): Promise<number> {
 		if (id.length === 0) {
-			return Promise.resolve();
+			return Promise.resolve(0);
 		}
 		if (Array.isArray(id)) {
-			await this.db.client.deleteByQuery({
+			const response: ApiResponse<DeleteByQueryResponse> = await this.db.client.deleteByQuery({
 				index: this._index,
 				type: this._type,
 				body: {query: {terms: {_id: id}}},
-				refresh: this.db.indexRefresh as elasticsearch.Refresh
+				refresh: !this.db.indexRefresh || this.db.indexRefresh !== 'false'
 			});
-		} else {
-			await this.db.client.delete({
-				id, index: this._index, type: this._type,
-				refresh: this.db.indexRefresh as elasticsearch.Refresh
-			});
+			return response.body.deleted;
 		}
+		await this.db.client.delete({
+			id, index: this._index, type: this._type,
+			refresh: this.db.indexRefresh
+		});
+		return 1;
 	}
 
 	async removeByQuery(query: DatabaseQuery): Promise<number> {
-		const response = await this.db.client.deleteByQuery({
+		const response: ApiResponse<DeleteByQueryResponse> = await this.db.client.deleteByQuery({
 			index: this._index,
 			type: this._type,
 			body: {
 				query: this.translateElasticQuery(query)
 			},
-			refresh: this.db.indexRefresh as elasticsearch.Refresh
+			refresh: !this.db.indexRefresh || this.db.indexRefresh !== 'false'
 		});
-		return response.deleted;
+		return response.body.deleted;
 	}
 
 	async replace(id: string, body: T): Promise<void> {
