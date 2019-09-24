@@ -2,7 +2,7 @@ import useragent from 'express-useragent';
 import {Jam} from '../../model/jam-rest-data';
 import {Session} from './session.model';
 
-export function parseAgent(session: Session): useragent.UserAgent | undefined {
+export function parseAgent(session: Session): useragent.Details | undefined {
 	try {
 		return useragent.parse(session.agent);
 	} catch (e) {
