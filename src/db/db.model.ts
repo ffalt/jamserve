@@ -28,7 +28,7 @@ export interface DatabaseIndex<T extends DBObject> {
 
 	replace(id: string, body: T): Promise<void>;
 
-	remove(id: string | Array<string>): Promise<void>;
+	remove(id: string | Array<string>): Promise<number>;
 
 	removeByQuery(query: DatabaseQuery): Promise<number>;
 

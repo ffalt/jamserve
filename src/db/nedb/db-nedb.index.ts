@@ -177,19 +177,19 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 		await this.replace(id, body);
 	}
 
-	async remove(id: string | Array<string>): Promise<void> {
+	async remove(id: string | Array<string>): Promise<number> {
 		const ids = Array.isArray(id) ? id : [id];
 		if (ids.length === 0) {
-			return;
+			return 0;
 		}
-		return new Promise<void>((resolve, reject) => {
+		return new Promise<number>((resolve, reject) => {
 			this.client.remove({id: {$in: ids}}, {multi: true}, (err, count) => {
 				if (err) {
 					reject(err);
 				} else if (count !== ids.length) {
 					reject(Error(`Found nr of items ${count} does not match nr. of ids ${ids.length}`));
 				} else {
-					resolve();
+					resolve(count);
 				}
 			});
 		});
