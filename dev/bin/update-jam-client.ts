@@ -9,7 +9,7 @@ interface MustacheDataClientCallFunction {
 	paramsType: string;
 	resultType: string;
 	baseFunc: string;
-	baseFuncResultType: string,
+	baseFuncResultType: string;
 	baseFuncParameters: string;
 	apiPath: string;
 	description?: string;
@@ -17,155 +17,139 @@ interface MustacheDataClientCallFunction {
 	sync?: boolean;
 }
 
-function generateClientCall(call: ApiCall): Array<MustacheDataClientCallFunction> {
-	const name = call.name.replace(/\//g, '_');
-	if (call.upload) {
-		return [{
-			name,
-			paramsType: '',
-			paramName: `params: ${call.paramType}, file: File`,
-			resultType: 'Observable<HttpEvent<any>>',
-			baseFuncResultType: '',
-			baseFunc: 'upload',
-			baseFuncParameters: `${call.paramType ? 'params' : '{}'}, '${call.upload}', file`,
-			apiPath: call.name,
-			description: call.description,
-			sync: true
-		}];
-	}
-	if (call.binaryResult) {
-		if (call.paramType) {
-			return [
-				{
-					name: `${name}_url`,
-					paramName: 'params',
-					paramsType: call.paramType || '{}',
-					resultType: 'string',
-					baseFuncResultType: '',
-					baseFunc: 'buildRequestUrl',
-					baseFuncParameters: 'params',
-					description: call.description,
-					apiPath: call.name,
-					sync: true
-				},
-				{
-					name: `${name}_binary`,
-					paramName: 'params',
-					paramsType: call.paramType || '{}',
-					resultType: 'ArrayBuffer',
-					baseFuncResultType: '',
-					baseFunc: 'binary',
-					baseFuncParameters: 'params',
-					description: call.description,
-					apiPath: call.name
-				}
-			];
-		}
-		if (call.pathParams && call.pathParams.parameters) {
-			const params = call.pathParams.parameters.map(para => `${para.name}${para.required ? '' : '?'}: ${para.type}`).join(', ');
-			const basename = call.name.split('/')[0];
-			const parampath = call.pathParams.parameters.map(para => {
-				if (para.required) {
-					return `$\{${para.prefix ? ` '${para.prefix}' + ` : ''}${para.name}${para.type !== 'string' ? '.toString()' : ''}}`;
-				}
-				const prefix = (para.prefix ? ` '${para.prefix}' + ` : '');
-				const type = para.type !== 'string' ? '.toString()' : '';
-				return `$\{(${para.name} !== undefined ? ${prefix}${para.name}${type} : '')}`;
-			}).join('');
-			return [
-				{
-					name: `${basename}_url`,
-					paramName: params,
-					paramsType: '',
-					resultType: 'string',
-					baseFuncResultType: '',
-					baseFunc: 'buildRequestUrl',
-					baseFuncParameters: '',
-					apiPath: `${basename}/${parampath}`,
-					apiPathTemplate: true,
-					description: call.description,
-					sync: true
-				},
-				{
-					name: `${basename}_binary`,
-					paramName: params,
-					paramsType: '',
-					resultType: 'ArrayBuffer',
-					baseFuncResultType: '',
-					baseFunc: 'binary',
-					baseFuncParameters: '',
-					apiPathTemplate: true,
-					apiPath: `${basename}/${parampath}`,
-					description: call.description
-				}];
-			// const s = `	${basename}_url(${params}): string {
-			// 	return this.buildRequestUrl(\`${basename}/${parampath}\`);
-			// }`;
-			// 		resultAPI.push(s);
-			// 		const s1 = `	async ${basename}_binary(${params}): Promise<ArrayBuffer> {
-			// 	return this.binary(\`${basename}/${parampath}\`);
-			// }`;
-			// 		resultAPI.push(s1);
-		}
-		if (call.pathParams) {
-			return [
-				{
-					name: `${name}_url`,
-					paramName: 'params',
-					paramsType: call.pathParams.paramType || '{}',
-					resultType: 'string',
-					baseFuncResultType: '',
-					baseFunc: 'buildRequestUrl',
-					baseFuncParameters: 'params',
-					apiPath: call.name,
-					description: call.description,
-					sync: true
-				},
-				{
-					name: `${name}_binary`,
-					paramName: 'params',
-					paramsType: call.pathParams.paramType || '{}',
-					resultType: 'ArrayBuffer',
-					baseFuncResultType: '',
-					baseFunc: 'binary',
-					baseFuncParameters: 'params',
-					apiPath: call.name,
-					description: call.description
-				}
-			];
-		}
+interface Part {
+	name: string;
+	part: string;
+	isLast?: boolean;
+}
+
+function generateUploadClientCalls(call: ApiCall, name: string): Array<MustacheDataClientCallFunction> {
+	return [{
+		name,
+		paramsType: '',
+		paramName: `params: ${call.paramType}, file: File`,
+		resultType: 'Observable<HttpEvent<any>>',
+		baseFuncResultType: '',
+		baseFunc: 'upload',
+		baseFuncParameters: `${call.paramType ? 'params' : '{}'}, '${call.upload}', file`,
+		apiPath: call.name,
+		description: call.description,
+		sync: true
+	}];
+}
+
+function generateUrlClientCall(call: ApiCall, name: string, paramsType: string): MustacheDataClientCallFunction {
+	return {
+		name: `${name}_url`,
+		paramName: 'params',
+		paramsType: paramsType || '{}',
+		resultType: 'string',
+		baseFuncResultType: '',
+		baseFunc: 'buildRequestUrl',
+		baseFuncParameters: 'params',
+		apiPath: call.name,
+		description: call.description,
+		sync: true
+	};
+}
+
+function generatBinClientCall(call: ApiCall, name: string, paramsType: string): MustacheDataClientCallFunction {
+	return {
+		name: `${name}_binary`,
+		paramName: 'params',
+		paramsType: paramsType || '{}',
+		resultType: 'ArrayBuffer',
+		baseFuncResultType: '',
+		baseFunc: 'binary',
+		baseFuncParameters: 'params',
+		apiPath: call.name,
+		description: call.description
+	};
+}
+
+function generatePathParamBinaryClientCalls(call: ApiCall): Array<MustacheDataClientCallFunction> {
+	if (!call.pathParams || !call.pathParams.parameters) {
 		return [];
 	}
-	if (!call.resultType) {
-		return [{
-			name,
-			paramName: call.paramType ? 'params' : '',
-			paramsType: call.paramType || '',
-			resultType: 'void',
+	const params = call.pathParams.parameters.map(para => `${para.name}${para.required ? '' : '?'}: ${para.type}`).join(', ');
+	const basename = call.name.split('/')[0];
+	const parampath = call.pathParams.parameters.map(para => {
+		if (para.required) {
+			return `$\{${para.prefix ? ` '${para.prefix}' + ` : ''}${para.name}${para.type !== 'string' ? '.toString()' : ''}}`;
+		}
+		const prefix = (para.prefix ? ` '${para.prefix}' + ` : '');
+		const type = para.type !== 'string' ? '.toString()' : '';
+		return `$\{(${para.name} !== undefined ? ${prefix}${para.name}${type} : '')}`;
+	}).join('');
+	return [
+		{
+			name: `${basename}_url`,
+			paramName: params,
+			paramsType: '',
+			resultType: 'string',
 			baseFuncResultType: '',
-			baseFunc: (call.method === 'post' ? 'requestPostDataOK' : 'requestOK'),
-			baseFuncParameters: call.paramType ? 'params' : '{}',
-			apiPath: call.name,
+			baseFunc: 'buildRequestUrl',
+			baseFuncParameters: '',
+			apiPath: `${basename}/${parampath}`,
+			apiPathTemplate: true,
+			description: call.description,
+			sync: true
+		},
+		{
+			name: `${basename}_binary`,
+			paramName: params,
+			paramsType: '',
+			resultType: 'ArrayBuffer',
+			baseFuncResultType: '',
+			baseFunc: 'binary',
+			baseFuncParameters: '',
+			apiPathTemplate: true,
+			apiPath: `${basename}/${parampath}`,
 			description: call.description
 		}];
+}
+
+function generateBinaryClientCalls(call: ApiCall, name: string): Array<MustacheDataClientCallFunction> {
+	if (call.paramType) {
+		return [
+			generateUrlClientCall(call, name, call.paramType),
+			generatBinClientCall(call, name, call.paramType)
+		];
+	}
+	if (call.pathParams && call.pathParams.parameters) {
+		return generatePathParamBinaryClientCalls(call);
+	}
+	if (call.pathParams) {
+		return [
+			generateUrlClientCall(call, name, call.pathParams.paramType),
+			generatBinClientCall(call, name, call.pathParams.paramType)
+		];
+	}
+	return [];
+}
+
+function generateClientCalls(call: ApiCall): Array<MustacheDataClientCallFunction> {
+	const name = call.name.replace(/\//g, '_');
+	if (call.upload) {
+		return generateUploadClientCalls(call, name);
+	}
+	if (call.binaryResult) {
+		return generateBinaryClientCalls(call, name);
 	}
 	return [{
 		name,
 		paramName: call.paramType ? 'params' : '',
 		paramsType: call.paramType || '',
-		resultType: call.resultType,
-		baseFuncResultType: call.resultType,
-		baseFunc: (call.method === 'post' ? 'requestPostData' : 'requestData'),
+		resultType: call.resultType ? call.resultType : 'void',
+		baseFuncResultType: call.resultType || '',
+		baseFunc:
+			call.resultType
+				? (call.method === 'post' ? 'requestPostData' : 'requestData')
+				: (call.method === 'post' ? 'requestPostDataOK' : 'requestOK'),
 		baseFuncParameters: call.paramType ? 'params' : '{}',
 		apiPath: call.name,
 		description: call.description
 	}];
-}
-
-interface Part {
-	name: string;
-	part: string;
-	isLast?: boolean;
 }
 
 async function writeService(destPath: string, serviceParts: Array<Part>): Promise<void> {
@@ -233,7 +217,7 @@ async function build(): Promise<string> {
 	const sections: { [name: string]: Array<MustacheDataClientCallFunction> } = {};
 	for (const call of apiCalls.calls) {
 		if (!call.aliasFor) {
-			sections[call.tag] = (sections[call.tag] || []).concat(generateClientCall(call));
+			sections[call.tag] = (sections[call.tag] || []).concat(generateClientCalls(call));
 		}
 	}
 	const keys = Object.keys(sections);
