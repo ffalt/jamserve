@@ -55,6 +55,6 @@ export class PlaylistService extends BaseListService<Playlist, SearchQueryPlayli
 	}
 
 	async remove(playlist: Playlist): Promise<void> {
-		return this.playlistStore.remove(playlist.id);
+		await this.playlistStore.remove(playlist.id);
 	}
 }

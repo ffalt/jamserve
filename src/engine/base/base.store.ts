@@ -56,7 +56,7 @@ export abstract class BaseStore<T extends DBObject, X extends SearchQuery> {
 		return this.client.replace(item.id, item);
 	}
 
-	async remove(idOrIds: string | Array<string>): Promise<void> {
+	async remove(idOrIds: string | Array<string>): Promise<number> {
 		return this.client.remove(idOrIds);
 	}
 
