@@ -28,10 +28,10 @@ export const jamProviders: Array<Provider> =
 })
 export class JamModule {
 
-	static forRoot(providers: Array<Provider>): ModuleWithProviders {
+	static forRoot(provider: Provider): ModuleWithProviders {
 		return {
 			ngModule: JamModule,
-			providers: providers.concat(jamProviders)
+			providers: [provider, ...jamProviders]
 		};
 	}
 }
