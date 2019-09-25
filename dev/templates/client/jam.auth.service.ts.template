@@ -82,6 +82,9 @@ export class JamAuthService {
 			await this.configuration.userChangeNotify(this.user);
 		} catch (e) {
 			this.clear();
+			if (e.error && e.error.error) {
+				return Promise.reject({error: e.error.error});
+			}
 			if (e instanceof HttpErrorResponse) {
 				return Promise.reject({error: e.statusText});
 			}
