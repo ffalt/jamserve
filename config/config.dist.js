@@ -95,7 +95,7 @@ module.exports = {
 		 	*/
 			login: {
 				/*
-					${max} requests
+					${max} failed requests
 				 */
 				max: 5,
 				/*
@@ -105,9 +105,9 @@ module.exports = {
 			},
 			api: {
 				/*
-					${max} requests
+					${max} failed requests
 				 */
-				max: 100,
+				max: 20,
 				/*
 					time ${window} in seconds
 				 */

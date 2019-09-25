@@ -38,12 +38,16 @@ export class Server {
 			next();
 		}
 
+		/*
+		TODO: rateLimit limits normal use, since it's counting and blocking 200 requests
 		const limiter = rateLimit({
 			windowMs: engine.config.server.limit.api.window * 1000,
 			max: engine.config.server.limit.api.max,
-			message: 'Too many requests from this IP, please try again after an hour'
+			skipSuccessfulRequests: true,
+			message: 'Too many request fails from this IP, please try again after an hour'
 		});
 		app.use(limiter);
+		 */
 
 		app.use(EngineMiddleWare);
 		app.use('/api/v1', initJamRouter(engine));

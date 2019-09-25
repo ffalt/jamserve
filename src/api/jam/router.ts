@@ -34,8 +34,9 @@ function register404Error(router: express.Router, engine: Engine): void {
 function registerLogin(router: express.Router, api: JamApi): void {
 	const LoginLimiter = rateLimit({
 		windowMs: api.engine.config.server.limit.login.window * 1000,
+		skipSuccessfulRequests: true,
 		max: api.engine.config.server.limit.login.max,
-		message: 'Too many login requests from this IP, please try again later'
+		message: 'Too many login fails from this IP, please try again later'
 	});
 	router.post('/login', LoginLimiter, apiCheck('/login'), CallSessionLoginHandler as express.RequestHandler);
 }

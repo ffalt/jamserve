@@ -18,7 +18,7 @@ export function validateConfig(config: Config): void {
 	}
 	if (!config.server.limit) {
 		console.error('JamServe Config: Missing server limit settings, using default values');
-		config.server.limit = {login: {max: 5, window: 60}, api: {max: 100, window: 60}};
+		config.server.limit = {login: {max: 5, window: 60}, api: {max: 20, window: 60}};
 	}
 }
 
