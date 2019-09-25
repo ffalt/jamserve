@@ -119,12 +119,12 @@ export class JamBaseService {
 		await this.requestPostDataOK(`${type}/rate/update`, params);
 	}
 
-	image_url(id: string, size?: number): string {
+	image_url(id: string, size?: number, format?: JamParameters.ImageFormatType): string {
 		if ((!id) || (id.length === 0)) {
 			return '';
 		}
 		const s = (size !== undefined ? `-${size.toString()}` : '');
-		return this.buildRequestUrl(`image/${id}${s}`);
+		return this.buildRequestUrl(`image/${id}${s}` + (format ? '.' + format : ''));
 	}
 
 }
