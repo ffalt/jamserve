@@ -80,7 +80,7 @@ export class Store {
 	}
 
 	streamStores(): Array<BaseStore<DBObject, SearchQuery>> {
-		return [this.trackStore,  this.episodeStore];
+		return [this.trackStore, this.episodeStore];
 	}
 
 	async findInStreamStores(id: string): Promise<DBObject | undefined> {

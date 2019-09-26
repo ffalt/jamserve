@@ -159,5 +159,4 @@ export class DbElasticSequence {
 		}
 		return this.cache[sequenceName].length;
 	}
-
 }
