@@ -19,12 +19,13 @@ export class WaveformGenerator {
 		return wf.asJSON();
 	}
 
-	async svg(filename: string): Promise<string> {
+	async svg(filename: string, width?: number): Promise<string> {
 		const data = await this.json(filename);
-		const svg = this.buildSvg(data);
-		const svgo = new SVGO();
-		const optimized = await svgo.optimize(svg);
-		return optimized.data;
+		const svg = this.buildSvg(data, width);
+		// const svgo = new SVGO();
+		// const optimized = await svgo.optimize(svg);
+		// return optimized.data;
+		return svg;
 	}
 
 	private async generateWaveform(filename: string): Promise<Waveform> {
@@ -44,28 +45,27 @@ export class WaveformGenerator {
 		});
 	}
 
-	private buildSvg(data: WaveDataResponse): string {
-		const width = 4000;
+	private buildSvg(data: WaveDataResponse, width?: number): string {
+		width = width || 4000;
 		const height = 256;
 		const x = scaleLinear();
 		const y = scaleLinear();
-		const offsetX = height / 2;
-		const wfd = WaveformData.create(data);
+		let wfd = WaveformData.create(data);
+		wfd = wfd.resample({width: width * 2});
 		const channel = wfd.channel(0);
 		const minArray = channel.min_array();
 		const maxArray = channel.max_array();
 		x.domain([0, wfd.length]).rangeRound([0, width]);
-		y.domain([min(minArray) as any, max(maxArray) as any]).rangeRound([offsetX, -offsetX]);
+		y.domain([min(minArray) as any, max(maxArray) as any]).rangeRound([0, height]);
 		const waveArea = area()
 			.x((a, i) => x(i))
 			.y0((b, i) => y(minArray[i]))
 			.y1((c, i) => y(c as any));
 		const d3n = new D3Node();
-		const svg = d3n.createSVG(null, null, {preserveAspectRatio: 'none', width: '100%', viewBox: `0 0 ${width} ${height}`});
+		const svg = d3n.createSVG(null, null, {preserveAspectRatio: 'none', width: '100%', height: '100%', viewBox: `0 0 ${width} ${height}`});
 		svg
 			.append('path')
 			.datum(maxArray)
-			.attr('transform', () => `translate(0, ${offsetX})`)
 			.attr('stroke', 'green')
 			.attr('fill', 'darkgreen')
 			.attr('d', waveArea);

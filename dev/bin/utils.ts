@@ -71,7 +71,7 @@ export async function saveTS2NamespaceJSONScheme(basePath: string, filename: str
 
 export interface ApiCallPathParameters {
 	paramType: string;
-	parameters?: Array<{ name: string, type: string, prefix: string, description: string, required: boolean }>;
+	parameters?: Array<{ name: string, type: string, prefix: string, suffix: string, description: string, required: boolean }>;
 }
 
 export interface ApiCalls {
@@ -112,9 +112,15 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): ApiCallPat
 	if (!paramParts) {
 		return {paramType};
 	}
-	const parameters: Array<{ name: string, type: string, prefix: string, description: string, required: boolean }> = paramParts
-		.split('}')
-		.filter(s => s.length > 0).map(s => {
+	const parameters: Array<{ name: string, type: string, prefix: string, suffix: string, description: string, required: boolean }> = [];
+
+	paramParts.split('}')
+		.filter(s => s.length > 0)
+		.forEach(s => {
+			if (!s.includes('{')) {
+				parameters[parameters.length - 1].suffix = s;
+				return;
+			}
 			const defs = s.split('{');
 			const prefix = defs[0];
 			const id = defs[1];
@@ -140,7 +146,7 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): ApiCallPat
 				}
 			}
 			const required = (paramDef.required || []).includes(id);
-			return {name: id, prefix, type, required, description: prop.description};
+			parameters.push({name: id, prefix, suffix: '', type, required, description: prop.description});
 		});
 	return {paramType, parameters};
 }

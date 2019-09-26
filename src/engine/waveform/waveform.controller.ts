@@ -14,6 +14,44 @@ export class WaveformController {
 
 	}
 
+	async svgByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
+		const pathParameter = (req.query.pathParameter || '').trim();
+		if (!pathParameter || pathParameter.length === 0) {
+			return Promise.reject(InvalidParamError());
+		}
+		const split = pathParameter.split('.');
+		const idsplit = split[0].split('-');
+		const id = idsplit[0];
+		if (!id || id.length === 0) {
+			return Promise.reject(InvalidParamError());
+		}
+		const width = idsplit[1] !== undefined ? Number(idsplit[1]) : undefined;
+		if (width !== undefined) {
+			if (isNaN(width)) {
+				return Promise.reject(InvalidParamError('parameter width is invalid'));
+			}
+			if (width < 1 || width > 6000) {
+				return Promise.reject(InvalidParamError('parameter width not in allowed range'));
+			}
+		}
+		const format = split[1];
+		if (format !== 'svg') {
+			return Promise.reject(InvalidParamError());
+		}
+		const obj = await this.store.findInStreamStores(id);
+		if (!obj) {
+			return Promise.reject(NotFoundError());
+		}
+		switch (obj.type) {
+			case DBObjectType.track:
+				return this.waveformService.getTrackWaveform(obj as Track, format, width);
+			case DBObjectType.episode:
+				return this.waveformService.getEpisodeWaveform(obj as Episode, format, width);
+			default:
+		}
+		return Promise.reject(Error('Invalid Object Type for Waveform generation'));
+	}
+
 	async waveformByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
 		const pathParameter = (req.query.pathParameter || '').trim();
 		if (!pathParameter || pathParameter.length === 0) {

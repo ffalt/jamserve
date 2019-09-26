@@ -569,6 +569,13 @@ export declare namespace JamParameters {
 		format?: WaveformFormatType;
 	}
 
+	export interface WaveformSVG extends ID {
+		/**
+		 * width
+		 */
+		width: number;
+	}
+
 	export interface SimilarTracks extends ID, IncludesTrack, Paginate {
 	}
 

@@ -17,15 +17,15 @@ export class WaveformService {
 	constructor(private waveformCachePath: string) {
 	}
 
-	private getCacheID(id: string, format: string): string {
-		return `waveform-${id}.${format}`;
+	private getCacheID(id: string, format: string, width?: number): string {
+		return `waveform-${id}${width !== undefined ? `-${width}` : ''}.${format}`;
 	}
 
-	private async generateWaveform(filename: string, format: WaveformFormatType): Promise<ApiBinaryResult> {
+	private async generateWaveform(filename: string, format: WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
 		const wf = new WaveformGenerator();
 		switch (format) {
 			case 'svg':
-				const svg = await wf.svg(filename);
+				const svg = await wf.svg(filename, width);
 				return {buffer: {buffer: Buffer.from(svg, 'ascii'), contentType: 'image/svg+xml'}};
 			case 'json':
 				return {json: await wf.json(filename)};
@@ -49,11 +49,11 @@ export class WaveformService {
 		}
 	}
 
-	private async get(id: string, filename: string, format: WaveformFormatType): Promise<ApiBinaryResult> {
+	private async get(id: string, filename: string, format: WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
 		if (!filename || !(await fse.pathExists(filename))) {
 			return Promise.reject(Error('Invalid filename for waveform generation'));
 		}
-		const cacheID = this.getCacheID(id, format);
+		const cacheID = this.getCacheID(id, format, width);
 		if (this.waveformCacheDebounce.isPending(cacheID)) {
 			return this.waveformCacheDebounce.append(cacheID);
 		}
@@ -65,7 +65,7 @@ export class WaveformService {
 			if (exists) {
 				result = {file: {filename: cachefile, name: cacheID}};
 			} else {
-				result = await this.generateWaveform(filename, format);
+				result = await this.generateWaveform(filename, format, width);
 				if (result.buffer) {
 					log.debug('Writing waveform cache file', cachefile);
 					await fse.writeFile(cachefile, result.buffer.buffer);
@@ -82,13 +82,13 @@ export class WaveformService {
 		}
 	}
 
-	async getTrackWaveform(track: Track, format: WaveformFormatType): Promise<ApiBinaryResult> {
-		return this.get(track.id, path.join(track.path, track.name), format);
+	async getTrackWaveform(track: Track, format: WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
+		return this.get(track.id, path.join(track.path, track.name), format, width);
 	}
 
-	async getEpisodeWaveform(episode: Episode, format: WaveformFormatType): Promise<ApiBinaryResult> {
+	async getEpisodeWaveform(episode: Episode, format: WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
 		if (episode.path && episode.media) {
-			return this.get(episode.id, episode.path, format);
+			return this.get(episode.id, episode.path, format, width);
 		}
 		return Promise.reject(Error('Podcast episode not ready'));
 	}

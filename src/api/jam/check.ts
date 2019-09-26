@@ -24,6 +24,7 @@ function extendOpenApi(): void {
 	paths['image/{pathParameter}'] = pathParameterPath;
 	paths['download/{pathParameter}'] = pathParameterPath;
 	paths['waveform/{pathParameter}'] = pathParameterPath;
+	paths['waveform_svg/{pathParameter}'] = pathParameterPath;
 	paths['stream/{pathParameter}'] = pathParameterPath;
 }
 

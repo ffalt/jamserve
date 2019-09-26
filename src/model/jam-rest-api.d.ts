@@ -1190,6 +1190,16 @@ export interface JamApi {
 			binary: JamApiWaveformTypes;
 			roles: ['stream'];
 		};
+		/**
+		 * media: get peaks waveform data as svg with a width
+		 */
+		'waveform_svg/{id}-{width}.svg'?: {
+			operationId: 'waveform.svg';
+			pathParams: JamParameters.WaveformSVG;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			binary: JamApiWaveformTypes;
+			roles: ['stream'];
+		};
 
 		/**
 		 * media: download object as binary archive by id
