@@ -211,7 +211,7 @@ function buildTrackSlugs(dir: MatchDir, builder: MetaStatBuilder): number {
 				builder.statSlugValue('album', tracktag.album ? extractAlbumName(tracktag.album) : undefined);
 				builder.statNumber('year', tracktag.year);
 				builder.statTrackCount('albumTrackCount', tracktag.trackTotal, tracktag.disc);
-				builder.statSlugValue('mbAlbumType', tracktag.mbAlbumType);
+				builder.statSlugValue('mbAlbumType', `${tracktag.mbAlbumType || ''}/${tracktag.mbAlbumStatus || ''}`);
 				builder.statID('mbArtistID', tracktag.mbArtistID);
 				builder.statID('mbAlbumID', tracktag.mbAlbumID);
 				builder.statID('mbReleaseGroupID', tracktag.mbReleaseGroupID);
