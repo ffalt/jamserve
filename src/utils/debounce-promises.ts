@@ -28,18 +28,18 @@ export class DebouncePromises<T> {
 
 	resolve(id: string, result: T): void {
 		const pending = this.getPendingArray(id);
+		this.pendingPromises.delete(id);
 		for (const cb of pending) {
 			cb(null, result);
 		}
-		this.pendingPromises.delete(id);
 	}
 
 	reject(id: string, error: Error): void {
 		const pending = this.getPendingArray(id);
+		this.pendingPromises.delete(id);
 		for (const cb of pending) {
 			cb(error);
 		}
-		this.pendingPromises.delete(id);
 	}
 
 }

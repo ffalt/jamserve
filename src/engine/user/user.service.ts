@@ -55,7 +55,6 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 
 	async setUserImage(user: User, filename: string, mimetype?: string): Promise<void> {
 		const destName = this.avatarImageFilename(user);
-		await fileDeleteIfExists(destName);
 		await this.imageModule.createAvatar(filename, destName);
 		await fileDeleteIfExists(filename);
 		await this.imageModule.clearImageCacheByID(user.id);

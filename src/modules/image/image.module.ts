@@ -10,10 +10,12 @@ import {SupportedWriteImageFormat} from '../../utils/filetype';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {logger} from '../../utils/logger';
 import {AvatarGen} from './image.avatar';
+import {randomString} from '../../utils/random';
 
 type JimpFont = any;
 
 const log = logger('Images');
+sharp.cache(false);
 
 /**
  * Handles image access/reading/writing/transforming
@@ -88,28 +90,13 @@ export class ImageModule {
 			if (!mime) {
 				return Promise.reject('Unknown Image Format Request');
 			}
+			const sharpy = await sharp(filename);
 			if (size) {
-				return {
-					buffer: {
-						buffer: await sharp(filename)
-							.resize(size, size,
-								{
-									fit: sharp.fit.cover,
-									position: sharp.strategy.entropy
-								}).toFormat(format)
-							.toBuffer(),
-						contentType: mime
-					}
-				};
+				sharpy.resize(size, size, {fit: sharp.fit.cover, position: sharp.strategy.entropy});
 			}
-			return {
-				buffer: {
-					buffer: await sharp(filename)
-						.toFormat(format)
-						.toBuffer(),
-					contentType: mime
-				}
-			};
+			sharpy.toFormat(format);
+			const buffer = await sharpy.toBuffer();
+			return {buffer: {buffer, contentType: mime}};
 		}
 		return {file: {filename, name}};
 	}
@@ -204,6 +191,7 @@ export class ImageModule {
 		if (format || size) {
 			const cacheID = `thumb-${id}${size ? `-${size}` : ''}.${format || this.format}`;
 			if (this.imageCacheDebounce.isPending(cacheID)) {
+				console.log('is waiting');
 				return this.imageCacheDebounce.append(cacheID);
 			}
 			this.imageCacheDebounce.setPending(cacheID);
@@ -233,23 +221,15 @@ export class ImageModule {
 		}
 	}
 
-	async resizeImage(filename: string, destination: string, size: number): Promise<void> {
-		await sharp(filename)
-			.resize(size, size,
-				{
-					fit: sharp.fit.cover,
-					position: sharp.strategy.entropy
-				})
-			.toFile(destination);
-	}
+	// async resizeImage(filename: string, destination: string, size: number): Promise<void> {
+	// 	await sharp(filename)
+	// 		.resize(size, size, {fit: sharp.fit.cover})
+	// 		.toFile(destination);
+	// }
 
 	async resizeImagePNG(filename: string, destination: string, size: number): Promise<void> {
 		await sharp(filename)
-			.resize(size, size,
-				{
-					fit: sharp.fit.cover,
-					position: sharp.strategy.entropy
-				})
+			.resize(size, size, {fit: sharp.fit.cover})
 			.png()
 			.toFile(destination);
 	}
@@ -273,9 +253,9 @@ export class ImageModule {
 		}
 		const search = `thumb-${id}`;
 		let list = await fse.readdir(this.imageCachePath);
-		list = list.filter(name => name.startsWith(search));
+		list = list.filter(name => name.startsWith(search)).map(name => path.resolve(this.imageCachePath, name));
 		for (const filename of list) {
-			await fse.unlink(path.resolve(this.imageCachePath, filename));
+			await fse.unlink(filename);
 		}
 	}
 
@@ -287,7 +267,7 @@ export class ImageModule {
 		if (!exists) {
 			return Promise.reject(Error('File not found'));
 		}
-		const tempFile = `${filename}.new.png`;
+		const tempFile = `${filename}.new${randomString(8)}.png`;
 		await this.resizeImagePNG(filename, tempFile, 300);
 		await fileDeleteIfExists(destination);
 		await fse.rename(tempFile, destination);
