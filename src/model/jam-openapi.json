@@ -19366,69 +19366,13 @@
 						"type": "number"
 					},
 					"artistTypes": {
-						"type": "object",
-						"properties": {
-							"album": {
-								"type": "number"
-							},
-							"compilation": {
-								"type": "number"
-							},
-							"audiobook": {
-								"type": "number"
-							},
-							"audiodrama": {
-								"type": "number"
-							},
-							"soundtrack": {
-								"type": "number"
-							},
-							"bootleg": {
-								"type": "number"
-							}
-						},
-						"required": [
-							"album",
-							"audiobook",
-							"audiodrama",
-							"bootleg",
-							"compilation",
-							"soundtrack"
-						]
+						"$ref": "#/components/schemas/Jam.StatsAlbumTypes"
 					},
 					"album": {
 						"type": "number"
 					},
 					"albumTypes": {
-						"type": "object",
-						"properties": {
-							"album": {
-								"type": "number"
-							},
-							"compilation": {
-								"type": "number"
-							},
-							"audiobook": {
-								"type": "number"
-							},
-							"audiodrama": {
-								"type": "number"
-							},
-							"soundtrack": {
-								"type": "number"
-							},
-							"bootleg": {
-								"type": "number"
-							}
-						},
-						"required": [
-							"album",
-							"audiobook",
-							"audiodrama",
-							"bootleg",
-							"compilation",
-							"soundtrack"
-						]
+						"$ref": "#/components/schemas/Jam.StatsAlbumTypes"
 					}
 				},
 				"required": [
@@ -19438,6 +19382,57 @@
 					"artistTypes",
 					"folder",
 					"track"
+				]
+			},
+			"Jam.StatsAlbumTypes": {
+				"type": "object",
+				"properties": {
+					"album": {
+						"type": "number"
+					},
+					"compilation": {
+						"type": "number"
+					},
+					"artist_compilation": {
+						"type": "number"
+					},
+					"unknown": {
+						"type": "number"
+					},
+					"live": {
+						"type": "number"
+					},
+					"audiobook": {
+						"type": "number"
+					},
+					"audiodrama": {
+						"type": "number"
+					},
+					"soundtrack": {
+						"type": "number"
+					},
+					"bootleg": {
+						"type": "number"
+					},
+					"ep": {
+						"type": "number"
+					},
+					"single": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"album",
+					"artist_compilation",
+					"audiobook",
+					"audiodrama",
+					"bootleg",
+					"compilation",
+					"ep",
+					"live",
+					"single",
+					"soundtrack",
+					"unknown"
 				]
 			},
 			"Jam.NowPlayingList": {

@@ -21,22 +21,32 @@ export class StatsService {
 				albumTypes: {
 					album: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.album}),
 					compilation: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation, mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}),
+					artist_compilation:
+						await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation}) -
+						await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation, mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}),
 					audiobook: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.audiobook}),
 					audiodrama: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.audiodrama}),
 					soundtrack: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.soundtrack}),
 					bootleg: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.bootleg}),
+					live: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.live}),
 					ep: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.ep}),
+					unknown: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.unknown}),
 					single: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.single})
 				},
 				artist: await this.store.artistStore.searchCount({rootID}),
 				artistTypes: {
 					album: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.album}),
 					compilation: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation, mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}),
+					artist_compilation:
+						await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation}) -
+						await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation, mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}),
 					audiobook: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.audiobook}),
 					audiodrama: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.audiodrama}),
 					soundtrack: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.soundtrack}),
 					bootleg: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.bootleg}),
+					live: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.live}),
 					ep: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.ep}),
+					unknown: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.unknown}),
 					single: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.single})
 				},
 				folder: await this.store.folderStore.searchCount({rootID}),

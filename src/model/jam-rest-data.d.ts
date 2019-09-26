@@ -478,28 +478,28 @@ export declare namespace Jam {
 	 * Stats Data
 	 */
 
+	export interface StatsAlbumTypes {
+		album: number;
+		compilation: number;
+		artist_compilation: number;
+		unknown: number;
+		live: number;
+		audiobook: number;
+		audiodrama: number;
+		soundtrack: number;
+		bootleg: number;
+		ep: number;
+		single: number;
+	}
+
 	export interface Stats {
 		rootID?: string;
 		track: number;
 		folder: number;
 		artist: number;
-		artistTypes: {
-			album: number;
-			compilation: number;
-			audiobook: number;
-			audiodrama: number;
-			soundtrack: number;
-			bootleg: number;
-		};
+		artistTypes: StatsAlbumTypes;
 		album: number;
-		albumTypes: {
-			album: number;
-			compilation: number;
-			audiobook: number;
-			audiodrama: number;
-			soundtrack: number;
-			bootleg: number;
-		};
+		albumTypes: StatsAlbumTypes;
 	}
 
 	/*

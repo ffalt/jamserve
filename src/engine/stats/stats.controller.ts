@@ -7,7 +7,6 @@ import {StatsService} from './stats.service';
 export class StatsController {
 
 	constructor(private statsService: StatsService) {
-
 	}
 
 	async get(req: JamRequest<JamParameters.Stats>): Promise<Jam.Stats> {

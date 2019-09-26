@@ -1,6 +1,9 @@
 export interface AlbumTypeStats {
 	album: number;
 	compilation: number;
+	artist_compilation: number;
+	unknown: number;
+	live: number;
 	audiobook: number;
 	audiodrama: number;
 	soundtrack: number;
