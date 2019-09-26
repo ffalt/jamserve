@@ -74,12 +74,12 @@ function generatePathParamBinaryClientCalls(call: ApiCall): Array<MustacheDataCl
 	const params = call.pathParams.parameters.map(para => `${para.name}${para.required ? '' : '?'}: ${para.type}`).join(', ');
 	const basename = call.name.split('/')[0];
 	const parampath = call.pathParams.parameters.map(para => {
+		const prefix = para.prefix || '';
+		const suffix = para.suffix || '';
 		if (para.required) {
-			return `$\{${para.prefix ? ` '${para.prefix}' + ` : ''}${para.name}${para.type !== 'string' ? '.toString()' : ''}}`;
+			return `${prefix}$\{${para.name}}${suffix}`;
 		}
-		const prefix = (para.prefix ? ` '${para.prefix}' + ` : '');
-		const type = para.type !== 'string' ? '.toString()' : '';
-		return `$\{(${para.name} !== undefined ? ${prefix}${para.name}${type} : '')}`;
+		return `$\{${para.name} !== undefined ? \`${prefix}$\{${para.name}}\` : ''}${suffix}`;
 	}).join('');
 	return [
 		{
