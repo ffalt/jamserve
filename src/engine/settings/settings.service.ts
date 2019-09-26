@@ -5,6 +5,7 @@ import {ChatService} from '../chat/chat.service';
 import {IndexService} from '../index/index.service';
 import {ScanService} from '../scan/scan.service';
 import {SettingsStore} from './settings.store';
+import {Settings} from './settings.model';
 
 export class SettingsService {
 	public settings: Jam.AdminSettings = defaultSettings;
@@ -16,23 +17,45 @@ export class SettingsService {
 		return this.settings;
 	}
 
-	async loadSettings(): Promise<void> {
+	async settingsVersion(): Promise<string | undefined> {
+		const settings = await this.getSettings();
+		return settings.version;
+	}
+
+	async saveSettings(): Promise<void> {
+		const settings = await this.getSettings();
+		settings.version = this.version;
+		settings.data = this.settings;
+		await this.settingsStore.upsert([settings]);
+	}
+
+	private initSettingsStoreObj(): Settings {
+		return {
+			id: '',
+			type: DBObjectType.settings,
+			section: 'jamserve',
+			data: defaultSettings,
+			version: this.version
+		};
+	}
+
+	private async getSettings(): Promise<Settings> {
 		let settings = await this.settingsStore.searchOne({section: 'jamserve'});
 		if (!settings) {
-			settings = {
-				id: '',
-				type: DBObjectType.settings,
-				section: 'jamserve',
-				data: defaultSettings,
-				version: this.version
-			};
-			await this.settingsStore.add(settings);
+			settings = this.initSettingsStoreObj();
+			settings.id = await this.settingsStore.add(settings);
 		}
+		return settings;
+	}
+
+	async loadSettings(): Promise<void> {
+		const settings = await this.getSettings();
 		this.setSettings(settings.data);
 	}
 
 	async updateSettings(settings: Jam.AdminSettings): Promise<void> {
 		this.setSettings(settings);
+		await this.saveSettings();
 	}
 
 	private setSettings(settings: Jam.AdminSettings): void {

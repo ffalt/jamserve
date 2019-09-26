@@ -35,8 +35,15 @@ async function run(): Promise<void> {
 		log.info(`Jamserve ${engine.version} starting`);
 		await engine.start();
 		await server.start();
-		if (engine.settingsService.settings.library.scanAtStart) {
-			engine.ioService.refresh(false).catch(e => {
+		const version = await engine.settingsService.settingsVersion();
+		const forceRescan = !!version && version !== engine.version;
+		if (forceRescan) {
+			log.info(`Updating from version ${version || '-'}`);
+		}
+		if (forceRescan || engine.settingsService.settings.library.scanAtStart) {
+			engine.ioService.refresh(forceRescan).then(() => {
+				return forceRescan ? engine.settingsService.saveSettings() : undefined;
+			}).catch(e => {
 				console.error('Error on startup scanning', e);
 			});
 		}
