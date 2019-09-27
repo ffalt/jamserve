@@ -1,9 +1,9 @@
-import {testService} from '../base/base.service.spec';
-import {WaveformService} from './waveform.service';
-import tmp from 'tmp';
 import path from 'path';
-import {TrackStore} from '../track/track.store';
+import tmp from 'tmp';
+import {testService} from '../base/base.service.spec';
 import {mockEpisode} from '../episode/episode.mock';
+import {TrackStore} from '../track/track.store';
+import {WaveformService} from './waveform.service';
 
 describe('WaveformService', () => {
 	let waveformService: WaveformService;
@@ -95,7 +95,7 @@ describe('WaveformService', () => {
 				if (!track) {
 					return;
 				}
-				await expect(waveformService.getTrackWaveform(track, <any>'invalid')).rejects.toThrow('Invalid Format for Waveform generation');
+				await expect(waveformService.getTrackWaveform(track, 'invalid' as any)).rejects.toThrow('Invalid Format for Waveform generation');
 				track.name = 'invalid.invalid.invalid';
 				await expect(waveformService.getTrackWaveform(track, 'svg')).rejects.toThrow('Invalid filename for waveform generation');
 				const episode = mockEpisode();

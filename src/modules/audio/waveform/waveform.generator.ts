@@ -46,12 +46,16 @@ export class WaveformGenerator {
 	}
 
 	private buildSvg(data: WaveDataResponse, width?: number): string {
-		width = width || 4000;
 		const height = 256;
 		const x = scaleLinear();
 		const y = scaleLinear();
 		let wfd = WaveformData.create(data);
-		wfd = wfd.resample({width: width * 2});
+		if (width !== undefined) {
+			const samplesPerPixel = Math.floor(wfd.duration * wfd.sample_rate / width);
+			wfd = wfd.resample({width: width * 2, scale: (samplesPerPixel < wfd.scale) ? wfd.scale : undefined});
+		} else {
+			width = 4000;
+		}
 		const channel = wfd.channel(0);
 		const minArray = channel.min_array();
 		const maxArray = channel.max_array();
