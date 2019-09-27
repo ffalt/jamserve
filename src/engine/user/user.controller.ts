@@ -45,6 +45,10 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	}
 
 	async create(req: JamRequest<JamParameters.UserNew>): Promise<Jam.User> {
+		const admin = await this.userService.auth(req.user.name, req.query.password);
+		if (!admin) {
+			return Promise.reject(UnauthError());
+		}
 		const pass = randomString(10);
 		const pw = hashAndSaltSHA512(pass);
 		const u: User = {
@@ -56,21 +60,12 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 			subsonic_pass: randomString(10),
 			type: DBObjectType.user,
 			created: Date.now(),
-			// ldapAuthenticated: false,
 			scrobblingEnabled: false,
 			roles: {
 				admin: req.query.roleAdmin !== undefined ? req.query.roleAdmin : false,
 				stream: req.query.roleStream !== undefined ? req.query.roleStream : true,
 				upload: req.query.roleUpload !== undefined ? req.query.roleUpload : false,
 				podcast: req.query.rolePodcast !== undefined ? req.query.rolePodcast : false
-				// settingsRole: false,
-				// jukeboxRole: false,
-				// downloadRole: false,
-				// playlistRole: false,
-				// coverArtRole: false,
-				// commentRole: false,
-				// shareRole: false,
-				// videoConversionRole: false
 			}
 		};
 		u.id = await this.userService.create(u);
@@ -79,6 +74,10 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 
 	async update(req: JamRequest<JamParameters.UserUpdate>): Promise<Jam.User> {
 		const u = await this.byID(req.query.id);
+		const admin = await this.userService.auth(req.user.name, req.query.password);
+		if (!admin) {
+			return Promise.reject(UnauthError());
+		}
 		if (req.query.name) {
 			if (req.query.name !== u.name) {
 				const u2 = await this.userService.getByName(req.query.name);
@@ -139,7 +138,10 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	async passwordUpdate(req: JamRequest<JamParameters.UserPasswordUpdate>): Promise<void> {
 		const u = await this.byID(req.query.id);
 		if (u.id === req.user.id || req.user.roles.admin) {
-			return this.userService.setUserPassword(u, req.query.password);
+			const user = await this.userService.auth(req.user.name, req.query.password);
+			if (user) {
+				return this.userService.setUserPassword(u, req.query.newPassword);
+			}
 		}
 		return Promise.reject(UnauthError());
 	}
@@ -147,7 +149,10 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	async emailUpdate(req: JamRequest<JamParameters.UserEmailUpdate>): Promise<void> {
 		const u = await this.byID(req.query.id);
 		if (u.id === req.user.id || req.user.roles.admin) {
-			return this.userService.setUserEmail(u, req.query.email);
+			const user = await this.userService.auth(req.user.name, req.query.password);
+			if (user) {
+				return this.userService.setUserEmail(u, req.query.email);
+			}
 		}
 		return Promise.reject(UnauthError());
 	}

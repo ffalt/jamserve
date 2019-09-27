@@ -1183,6 +1183,10 @@ export declare namespace JamParameters {
 
 	export interface UserNew {
 		/**
+		 * current password of calling user (or admin) is required to create the user. this is NOT the user password
+		 */
+		password: string;
+		/**
 		 * name of the user
 		 */
 		name: string;
@@ -1218,14 +1222,22 @@ export declare namespace JamParameters {
 
 	export interface UserPasswordUpdate extends ID {
 		/**
-		 * new password of user
+		 * current password of calling user (or admin) is required to change the password
 		 */
 		password: string;
+		/**
+		 * new password of user
+		 */
+		newPassword: string;
 	}
 
 	export interface UserEmailUpdate extends ID {
 		/**
-		 * new email of user
+		 * password of calling user (or admin) is required to change the email address
+		 */
+		password: string;
+		/**
+		 * new email address of user
 		 */
 		email: string;
 	}
@@ -1242,6 +1254,10 @@ export declare namespace JamParameters {
 	}
 
 	export interface UserUpdate extends ID {
+		/**
+		 * password of calling user (or admin) is required to change user settings
+		 */
+		password: string;
 		/**
 		 * name of the user
 		 */

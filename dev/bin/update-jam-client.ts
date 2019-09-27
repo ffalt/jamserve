@@ -23,6 +23,10 @@ interface Part {
 	isLast?: boolean;
 }
 
+function callDescription(call: ApiCall): string | undefined {
+	return (call.description || '') + (call.roles && call.roles.length > 0 ? ` // Rights needed: ${call.roles.join('.')}` : '');
+}
+
 function generateUploadClientCalls(call: ApiCall, name: string): Array<MustacheDataClientCallFunction> {
 	return [{
 		name,
@@ -33,7 +37,7 @@ function generateUploadClientCalls(call: ApiCall, name: string): Array<MustacheD
 		baseFunc: 'upload',
 		baseFuncParameters: `${call.paramType ? 'params' : '{}'}, '${call.upload}', file`,
 		apiPath: call.name,
-		description: call.description,
+		description: callDescription(call),
 		sync: true
 	}];
 }
@@ -48,7 +52,7 @@ function generateUrlClientCall(call: ApiCall, name: string, paramsType: string):
 		baseFunc: 'buildRequestUrl',
 		baseFuncParameters: 'params',
 		apiPath: call.name,
-		description: call.description,
+		description: callDescription(call),
 		sync: true
 	};
 }
@@ -63,7 +67,7 @@ function generatBinClientCall(call: ApiCall, name: string, paramsType: string): 
 		baseFunc: 'binary',
 		baseFuncParameters: 'params',
 		apiPath: call.name,
-		description: call.description
+		description: callDescription(call)
 	};
 }
 
@@ -92,7 +96,7 @@ function generatePathParamBinaryClientCalls(call: ApiCall): Array<MustacheDataCl
 			baseFuncParameters: '',
 			apiPath: `${basename}/${parampath}`,
 			apiPathTemplate: true,
-			description: call.description,
+			description: callDescription(call),
 			sync: true
 		},
 		{
@@ -105,7 +109,7 @@ function generatePathParamBinaryClientCalls(call: ApiCall): Array<MustacheDataCl
 			baseFuncParameters: '',
 			apiPathTemplate: true,
 			apiPath: `${basename}/${parampath}`,
-			description: call.description
+			description: callDescription(call)
 		}];
 }
 
@@ -148,7 +152,7 @@ function generateClientCalls(call: ApiCall): Array<MustacheDataClientCallFunctio
 				: (call.method === 'post' ? 'requestPostDataOK' : 'requestOK'),
 		baseFuncParameters: call.paramType ? 'params' : '{}',
 		apiPath: call.name,
-		description: call.description
+		description: callDescription(call)
 	}];
 }
 

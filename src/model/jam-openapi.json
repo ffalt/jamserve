@@ -23753,6 +23753,10 @@
 			"JamParameters.UserNew": {
 				"type": "object",
 				"properties": {
+					"password": {
+						"description": "current password of calling user (or admin) is required to create the user. this is NOT the user password",
+						"type": "string"
+					},
 					"name": {
 						"description": "name of the user",
 						"type": "string"
@@ -23783,12 +23787,17 @@
 					}
 				},
 				"required": [
-					"name"
+					"name",
+					"password"
 				]
 			},
 			"JamParameters.UserUpdate": {
 				"type": "object",
 				"properties": {
+					"password": {
+						"description": "password of calling user (or admin) is required to change user settings",
+						"type": "string"
+					},
 					"name": {
 						"description": "name of the user",
 						"type": "string"
@@ -23819,13 +23828,18 @@
 					}
 				},
 				"required": [
-					"id"
+					"id",
+					"password"
 				]
 			},
 			"JamParameters.UserPasswordUpdate": {
 				"type": "object",
 				"properties": {
 					"password": {
+						"description": "current password of calling user (or admin) is required to change the password",
+						"type": "string"
+					},
+					"newPassword": {
 						"description": "new password of user",
 						"type": "string"
 					},
@@ -23836,14 +23850,19 @@
 				},
 				"required": [
 					"id",
+					"newPassword",
 					"password"
 				]
 			},
 			"JamParameters.UserEmailUpdate": {
 				"type": "object",
 				"properties": {
+					"password": {
+						"description": "password of calling user (or admin) is required to change the email address",
+						"type": "string"
+					},
 					"email": {
-						"description": "new email of user",
+						"description": "new email address of user",
 						"type": "string"
 					},
 					"id": {
@@ -23853,7 +23872,8 @@
 				},
 				"required": [
 					"email",
-					"id"
+					"id",
+					"password"
 				]
 			},
 			"JamParameters.UserImageRandom": {
