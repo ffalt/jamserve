@@ -104,7 +104,7 @@ export class ElasticLocal {
 		if (!(await fse.pathExists(esBin))) {
 			const downloadFilename = path.resolve(this.localPath, `elasticsearch-${this.version}.zip`);
 			if (!(await fse.pathExists(downloadFilename))) {
-				const downloadUrl = `https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${this.version}.zip`;
+				const downloadUrl = `https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${this.version}-windows-x86_64.zip`;
 				await downloadFile(downloadUrl, downloadFilename);
 			}
 			if (!(await fse.pathExists(esBin))) {

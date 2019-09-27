@@ -21,7 +21,7 @@ export class TestDBElastic implements TestDB {
 	}
 
 	async setupElastic(): Promise<void> {
-		this.elasticInstance = new ElasticLocal('6.8.2', 9500, './local/.elastic/');
+		this.elasticInstance = new ElasticLocal('7.3.2', 9500, './local/.elastic/');
 		await this.elasticInstance.start();
 	}
 
