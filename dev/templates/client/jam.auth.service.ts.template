@@ -81,7 +81,7 @@ export class JamAuthService {
 			await this.configuration.toStorage({auth: this.auth, user: this.user});
 			await this.configuration.userChangeNotify(this.user);
 		} catch (e) {
-			this.clear();
+			await this.clear();
 			if (e.error && e.error.error) {
 				return Promise.reject({error: e.error.error});
 			}
