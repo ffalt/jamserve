@@ -43,7 +43,7 @@
     "build:subsonic:api:docs": "redoc-cli bundle src/model/subsonic-openapi.json --output ./dist/docs/api/subsonic/index.html"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^6.8.2",
+    "@elastic/elasticsearch": "^7.3.0",
     "ajv": "6.10.2",
     "archiver": "3.1.1",
     "body-parser": "1.19.0",
