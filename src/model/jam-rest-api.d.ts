@@ -1664,7 +1664,7 @@ export interface JamApi {
 		 */
 		'root/create'?: {
 			params: JamParameters.RootNew;
-			result: Jam.Root;
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['admin'];
 		};
@@ -1673,6 +1673,7 @@ export interface JamApi {
 		 */
 		'root/update'?: {
 			params: JamParameters.RootUpdate;
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};

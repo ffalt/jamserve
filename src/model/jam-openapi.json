@@ -2,7 +2,7 @@
 	"openapi": "3.0.0",
 	"info": {
 		"description": "Api for JamServe",
-		"version": "0.1.5",
+		"version": "0.1.6",
 		"title": "JamApi",
 		"license": {
 			"name": "MIT"
@@ -16198,7 +16198,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Jam.Root"
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
 								}
 							}
 						}
@@ -16234,7 +16234,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"

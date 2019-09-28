@@ -947,13 +947,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	});
 	register.post('/root/create', async (req, res) => {
 		const options: JamRequest<JamParameters.RootNew> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.Root = await api.rootController.create(options);
+		const result: Jam.AdminChangeQueueInfo = await api.rootController.create(options);
 		ApiResponder.data(res, result);
 	}, ['admin']);
 	register.post('/root/update', async (req, res) => {
 		const options: JamRequest<JamParameters.RootUpdate> = {query: req.body, user: req.user, client: req.client};
-		await api.rootController.update(options);
-		ApiResponder.ok(res);
+		const result: Jam.AdminChangeQueueInfo = await api.rootController.update(options);
+		ApiResponder.data(res, result);
 	}, ['admin']);
 	register.post('/root/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
