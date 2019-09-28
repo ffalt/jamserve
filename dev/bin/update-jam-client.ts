@@ -24,7 +24,8 @@ interface Part {
 }
 
 function callDescription(call: ApiCall): string | undefined {
-	return (call.description || '') + (call.roles && call.roles.length > 0 ? ` // Rights needed: ${call.roles.join('.')}` : '');
+	const result = (call.description || '') + (call.roles && call.roles.length > 0 ? ` // Rights needed: ${call.roles.join('.')}` : '');
+	return result.trim();
 }
 
 function generateUploadClientCalls(call: ApiCall, name: string): Array<MustacheDataClientCallFunction> {
@@ -186,7 +187,8 @@ async function writePartService(destPath: string, key: string, part: string, cal
 		return {...call, name: call.name.replace(key + '_', '')};
 	});
 	const withHttpEvent = calls.find(c => c.resultType.includes('HttpEvent'));
-	const t = Mustache.render((await fse.readFile('../templates/client/jam.part.service.ts.template')).toString(), {list: l, part, withHttpEvent});
+	const withJam = calls.find(c => c.resultType.includes('Jam.'));
+	const t = Mustache.render((await fse.readFile('../templates/client/jam.part.service.ts.template')).toString(), {list: l, part, withHttpEvent, withJam});
 	await fse.writeFile(partfile, t);
 }
 

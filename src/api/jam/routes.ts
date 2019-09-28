@@ -765,16 +765,6 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.AdminChangeQueueInfo = await api.trackController.fix(options);
 		ApiResponder.data(res, result);
 	}, ['admin']);
-	register.upload('/folder/artworkUpload/create', 'image', async (req, res) => {
-		const options: JamRequest<JamParameters.FolderArtworkUpload> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined, fileType: req.file ? req.file.mimetype : undefined};
-		const result: Jam.AdminChangeQueueInfo = await api.folderController.artworkUploadCreate(options);
-		ApiResponder.data(res, result);
-	}, ['admin']);
-	register.upload('/folder/artworkUpload/update', 'image', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined, fileType: req.file ? req.file.mimetype : undefined};
-		const result: Jam.AdminChangeQueueInfo = await api.folderController.artworkUploadUpdate(options);
-		ApiResponder.data(res, result);
-	}, ['admin']);
 	register.post('/folder/artwork/create', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderArtworkNew> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.AdminChangeQueueInfo = await api.folderController.artworkCreate(options);
@@ -788,6 +778,16 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	register.post('/folder/artwork/name/update', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderArtworkEditName> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.AdminChangeQueueInfo = await api.folderController.artworkNameUpdate(options);
+		ApiResponder.data(res, result);
+	}, ['admin']);
+	register.upload('/folder/artworkUpload/create', 'image', async (req, res) => {
+		const options: JamRequest<JamParameters.FolderArtworkUpload> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined, fileType: req.file ? req.file.mimetype : undefined};
+		const result: Jam.AdminChangeQueueInfo = await api.folderController.artworkUploadCreate(options);
+		ApiResponder.data(res, result);
+	}, ['admin']);
+	register.upload('/folder/artworkUpload/update', 'image', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client, file: req.file ? req.file.path : undefined, fileType: req.file ? req.file.mimetype : undefined};
+		const result: Jam.AdminChangeQueueInfo = await api.folderController.artworkUploadUpdate(options);
 		ApiResponder.data(res, result);
 	}, ['admin']);
 	register.post('/folder/name/update', async (req, res) => {

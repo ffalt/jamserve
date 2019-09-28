@@ -14253,6 +14253,7 @@
 		"/chat/create": {
 			"post": {
 				"operationId": "chatController.create",
+				"description": "create a chat message",
 				"tags": [
 					"chat"
 				],
@@ -14285,6 +14286,7 @@
 		"/chat/delete": {
 			"post": {
 				"operationId": "chatController.delete",
+				"description": "delete a chat message",
 				"tags": [
 					"chat"
 				],
@@ -14320,6 +14322,7 @@
 		"/radio/create": {
 			"post": {
 				"operationId": "radioController.create",
+				"description": "create an internet radio entry",
 				"tags": [
 					"radio"
 				],
@@ -14359,6 +14362,7 @@
 		"/radio/update": {
 			"post": {
 				"operationId": "radioController.update",
+				"description": "update an internet radio entry",
 				"tags": [
 					"radio"
 				],
@@ -14394,6 +14398,7 @@
 		"/radio/delete": {
 			"post": {
 				"operationId": "radioController.delete",
+				"description": "delete an internet radio entry",
 				"tags": [
 					"radio"
 				],
@@ -14429,6 +14434,7 @@
 		"/track/fav/update": {
 			"post": {
 				"operationId": "trackController.favUpdate",
+				"description": "fav/unfav a track",
 				"tags": [
 					"track"
 				],
@@ -14465,6 +14471,7 @@
 		"/track/rate/update": {
 			"post": {
 				"operationId": "trackController.rateUpdate",
+				"description": "rate a track",
 				"tags": [
 					"track"
 				],
@@ -14501,6 +14508,7 @@
 		"/track/rawTag/update": {
 			"post": {
 				"operationId": "trackController.rawTagUpdate",
+				"description": "write a raw tag to a track",
 				"tags": [
 					"track"
 				],
@@ -14543,6 +14551,7 @@
 		"/track/name/update": {
 			"post": {
 				"operationId": "trackController.nameUpdate",
+				"description": "rename a track",
 				"tags": [
 					"track"
 				],
@@ -14586,6 +14595,7 @@
 		"/track/parent/update": {
 			"post": {
 				"operationId": "trackController.parentUpdate",
+				"description": "move a track to a new parent folder",
 				"tags": [
 					"track"
 				],
@@ -14629,6 +14639,7 @@
 		"/track/delete": {
 			"post": {
 				"operationId": "trackController.delete",
+				"description": "delete a track",
 				"tags": [
 					"track"
 				],
@@ -14671,6 +14682,7 @@
 		"/track/fix": {
 			"post": {
 				"operationId": "trackController.fix",
+				"description": "fix a track by health warning id",
 				"tags": [
 					"track"
 				],
@@ -14710,9 +14722,141 @@
 				}
 			}
 		},
+		"/folder/artwork/create": {
+			"post": {
+				"operationId": "folderController.artworkCreate",
+				"description": "create an artwork by url",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"requestBody": {
+					"description": "Add an artwork to a folder by url",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.FolderArtworkNew"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/folder/artwork/delete": {
+			"post": {
+				"operationId": "folderController.artworkDelete",
+				"description": "delete an artwork",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/folder/artwork/name/update": {
+			"post": {
+				"operationId": "folderController.artworkNameUpdate",
+				"description": "rename an artwork",
+				"tags": [
+					"folder"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"requestBody": {
+					"description": "Rename an artwork in a folder",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.FolderArtworkEditName"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/folder/artworkUpload/create": {
 			"post": {
 				"operationId": "folderController.artworkUploadCreate",
+				"description": "create an artwork by upload",
 				"tags": [
 					"folder"
 				],
@@ -14784,6 +14928,7 @@
 		"/folder/artworkUpload/update": {
 			"post": {
 				"operationId": "folderController.artworkUploadUpdate",
+				"description": "update an artwork by upload",
 				"tags": [
 					"folder"
 				],
@@ -14851,137 +14996,10 @@
 				}
 			}
 		},
-		"/folder/artwork/create": {
-			"post": {
-				"operationId": "folderController.artworkCreate",
-				"tags": [
-					"folder"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Invalid/Missing parameter"
-					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"404": {
-						"description": "Item not found"
-					},
-					"500": {
-						"description": "Guru Meditation"
-					}
-				},
-				"requestBody": {
-					"description": "Add an artwork to a folder by url",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.FolderArtworkNew"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/folder/artwork/delete": {
-			"post": {
-				"operationId": "folderController.artworkDelete",
-				"tags": [
-					"folder"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Invalid/Missing parameter"
-					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"404": {
-						"description": "Item not found"
-					},
-					"500": {
-						"description": "Guru Meditation"
-					}
-				},
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.ID"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/folder/artwork/name/update": {
-			"post": {
-				"operationId": "folderController.artworkNameUpdate",
-				"tags": [
-					"folder"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Invalid/Missing parameter"
-					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"404": {
-						"description": "Item not found"
-					},
-					"500": {
-						"description": "Guru Meditation"
-					}
-				},
-				"requestBody": {
-					"description": "Rename an artwork in a folder",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/JamParameters.FolderArtworkEditName"
-							}
-						}
-					}
-				}
-			}
-		},
 		"/folder/name/update": {
 			"post": {
 				"operationId": "folderController.nameUpdate",
+				"description": "rename a folder",
 				"tags": [
 					"folder"
 				],
@@ -15025,6 +15043,7 @@
 		"/folder/fav/update": {
 			"post": {
 				"operationId": "folderController.favUpdate",
+				"description": "fav/unfav a folder",
 				"tags": [
 					"folder"
 				],
@@ -15061,6 +15080,7 @@
 		"/folder/rate/update": {
 			"post": {
 				"operationId": "folderController.rateUpdate",
+				"description": "rate a folder",
 				"tags": [
 					"folder"
 				],
@@ -15097,6 +15117,7 @@
 		"/folder/parent/update": {
 			"post": {
 				"operationId": "folderController.parentUpdate",
+				"description": "move a folder to a new parent folder",
 				"tags": [
 					"folder"
 				],
@@ -15140,6 +15161,7 @@
 		"/folder/delete": {
 			"post": {
 				"operationId": "folderController.delete",
+				"description": "delete a folder",
 				"tags": [
 					"folder"
 				],
@@ -15182,6 +15204,7 @@
 		"/folder/create": {
 			"post": {
 				"operationId": "folderController.create",
+				"description": "create a folder",
 				"tags": [
 					"folder"
 				],
@@ -15225,6 +15248,7 @@
 		"/album/fav/update": {
 			"post": {
 				"operationId": "albumController.favUpdate",
+				"description": "fav/unfav an album",
 				"tags": [
 					"album"
 				],
@@ -15261,6 +15285,7 @@
 		"/album/rate/update": {
 			"post": {
 				"operationId": "albumController.rateUpdate",
+				"description": "rate an album",
 				"tags": [
 					"album"
 				],
@@ -15297,6 +15322,7 @@
 		"/artist/fav/update": {
 			"post": {
 				"operationId": "artistController.favUpdate",
+				"description": "fav/unfav an artist",
 				"tags": [
 					"artist"
 				],
@@ -15333,6 +15359,7 @@
 		"/artist/rate/update": {
 			"post": {
 				"operationId": "artistController.rateUpdate",
+				"description": "rate an artist",
 				"tags": [
 					"artist"
 				],
@@ -15369,6 +15396,7 @@
 		"/episode/fav/update": {
 			"post": {
 				"operationId": "episodeController.favUpdate",
+				"description": "fav/unfav an episode",
 				"tags": [
 					"episode"
 				],
@@ -15405,6 +15433,7 @@
 		"/episode/rate/update": {
 			"post": {
 				"operationId": "episodeController.rateUpdate",
+				"description": "rate an episode",
 				"tags": [
 					"episode"
 				],
@@ -15441,6 +15470,7 @@
 		"/podcast/create": {
 			"post": {
 				"operationId": "podcastController.create",
+				"description": "create a podcast",
 				"tags": [
 					"podcast"
 				],
@@ -15480,6 +15510,7 @@
 		"/podcast/fav/update": {
 			"post": {
 				"operationId": "podcastController.favUpdate",
+				"description": "fav/unfav a podcast",
 				"tags": [
 					"podcast"
 				],
@@ -15516,6 +15547,7 @@
 		"/podcast/rate/update": {
 			"post": {
 				"operationId": "podcastController.rateUpdate",
+				"description": "rate a podcast",
 				"tags": [
 					"podcast"
 				],
@@ -15552,6 +15584,7 @@
 		"/podcast/delete": {
 			"post": {
 				"operationId": "podcastController.delete",
+				"description": "delete a podcast",
 				"tags": [
 					"podcast"
 				],
@@ -23526,45 +23559,6 @@
 					"id"
 				]
 			},
-			"JamParameters.FolderArtworkUpload": {
-				"description": "Add an artwork to a folder by upload",
-				"type": "object",
-				"properties": {
-					"id": {
-						"description": "id of folder",
-						"type": "string"
-					},
-					"types": {
-						"description": "types of the image",
-						"type": "array",
-						"items": {
-							"enum": [
-								"artist",
-								"back",
-								"booklet",
-								"front",
-								"liner",
-								"medium",
-								"obi",
-								"other",
-								"poster",
-								"raw",
-								"spine",
-								"sticker",
-								"track",
-								"tray",
-								"unedited",
-								"watermark"
-							],
-							"type": "string"
-						}
-					}
-				},
-				"required": [
-					"id",
-					"types"
-				]
-			},
 			"JamParameters.FolderArtworkNew": {
 				"description": "Add an artwork to a folder by url",
 				"type": "object",
@@ -23625,6 +23619,45 @@
 				"required": [
 					"id",
 					"name"
+				]
+			},
+			"JamParameters.FolderArtworkUpload": {
+				"description": "Add an artwork to a folder by upload",
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "id of folder",
+						"type": "string"
+					},
+					"types": {
+						"description": "types of the image",
+						"type": "array",
+						"items": {
+							"enum": [
+								"artist",
+								"back",
+								"booklet",
+								"front",
+								"liner",
+								"medium",
+								"obi",
+								"other",
+								"poster",
+								"raw",
+								"spine",
+								"sticker",
+								"track",
+								"tray",
+								"unedited",
+								"watermark"
+							],
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"types"
 				]
 			},
 			"JamParameters.FolderEditName": {

@@ -1268,64 +1268,100 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+		/**
+		 * chat: create a chat message
+		 */
 		'chat/create'?: {
 			params: JamParameters.ChatNew;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
+		/**
+		 * chat: delete a chat message
+		 */
 		'chat/delete'?: {
 			params: JamParameters.ChatDelete;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+		/**
+		 * radio: create an internet radio entry
+		 */
 		'radio/create'?: {
 			params: JamParameters.RadioNew;
 			result: Jam.Radio;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['admin'];
 		};
+		/**
+		 * radio: update an internet radio entry
+		 */
 		'radio/update'?: {
 			params: JamParameters.RadioUpdate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * radio: delete an internet radio entry
+		 */
 		'radio/delete'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
 
+		/**
+		 * track: fav/unfav a track
+		 */
 		'track/fav/update'?: {
 			params: JamParameters.Fav;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * track: rate a track
+		 */
 		'track/rate/update'?: {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * track: write a raw tag to a track
+		 */
 		'track/rawTag/update'?: {
 			params: JamParameters.RawTagUpdate;
 			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * track: rename a track
+		 */
 		'track/name/update'?: {
 			params: JamParameters.TrackEditName;
 			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * track: move a track to a new parent folder
+		 */
 		'track/parent/update'?: {
 			params: JamParameters.TrackMoveParent;
 			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * track: delete a track
+		 */
 		'track/delete'?: {
 			params: JamParameters.ID;
 			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * track: fix a track by health warning id
+		 */
 		'track/fix'?: {
 			params: JamParameters.TrackFix;
 			result: Jam.AdminChangeQueueInfo,
@@ -1333,6 +1369,36 @@ export interface JamApi {
 			roles: ['admin'];
 		};
 
+		/**
+		 * folder: create an artwork by url
+		 */
+		'folder/artwork/create'?: {
+			params: JamParameters.FolderArtworkNew;
+			result: Jam.AdminChangeQueueInfo,
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		/**
+		 * folder: delete an artwork
+		 */
+		'folder/artwork/delete'?: {
+			params: JamParameters.ID;
+			result: Jam.AdminChangeQueueInfo,
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		/**
+		 * folder: rename an artwork
+		 */
+		'folder/artwork/name/update'?: {
+			params: JamParameters.FolderArtworkEditName;
+			result: Jam.AdminChangeQueueInfo,
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		/**
+		 * folder: create an artwork by upload
+		 */
 		'folder/artworkUpload/create'?: {
 			params: JamParameters.FolderArtworkUpload;
 			result: Jam.AdminChangeQueueInfo,
@@ -1340,7 +1406,9 @@ export interface JamApi {
 			roles: ['admin'];
 			upload: 'image'
 		};
-
+		/**
+		 * folder: update an artwork by upload
+		 */
 		'folder/artworkUpload/update'?: {
 			params: JamParameters.ID;
 			result: Jam.AdminChangeQueueInfo,
@@ -1348,50 +1416,51 @@ export interface JamApi {
 			roles: ['admin'];
 			upload: 'image'
 		};
-		'folder/artwork/create'?: {
-			params: JamParameters.FolderArtworkNew;
-			result: Jam.AdminChangeQueueInfo,
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['admin'];
-		};
-		'folder/artwork/delete'?: {
-			params: JamParameters.ID;
-			result: Jam.AdminChangeQueueInfo,
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['admin'];
-		};
-		'folder/artwork/name/update'?: {
-			params: JamParameters.FolderArtworkEditName;
-			result: Jam.AdminChangeQueueInfo,
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['admin'];
-		};
+
+		/**
+		 * folder: rename a folder
+		 */
 		'folder/name/update'?: {
 			params: JamParameters.FolderEditName;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			result: Jam.AdminChangeQueueInfo,
 			roles: ['admin'];
 		};
+		/**
+		 * folder: fav/unfav a folder
+		 */
 		'folder/fav/update'?: {
 			params: JamParameters.Fav;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * folder: rate a folder
+		 */
 		'folder/rate/update'?: {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * folder: move a folder to a new parent folder
+		 */
 		'folder/parent/update'?: {
 			params: JamParameters.FolderMoveParent;
 			result: Jam.AdminChangeQueueInfo,
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
+		/**
+		 * folder: delete a folder
+		 */
 		'folder/delete'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			result: Jam.AdminChangeQueueInfo,
 			roles: ['admin'];
 		};
+		/**
+		 * folder: create a folder
+		 */
 		'folder/create'?: {
 			params: JamParameters.FolderCreate;
 			result: Jam.AdminChangeQueueInfo;
@@ -1399,47 +1468,77 @@ export interface JamApi {
 			roles: ['admin'];
 		};
 
+		/**
+		 * album: fav/unfav an album
+		 */
 		'album/fav/update'?: {
 			params: JamParameters.Fav;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * album: rate an album
+		 */
 		'album/rate/update'?: {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+		/**
+		 * artist: fav/unfav an artist
+		 */
 		'artist/fav/update'?: {
 			params: JamParameters.Fav;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * artist: rate an artist
+		 */
 		'artist/rate/update'?: {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+		/**
+		 * episode: fav/unfav an episode
+		 */
 		'episode/fav/update'?: {
 			params: JamParameters.Fav;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * episode: rate an episode
+		 */
 		'episode/rate/update'?: {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 
+		/**
+		 * podcast: create a podcast
+		 */
 		'podcast/create'?: {
 			params: JamParameters.PodcastNew;
 			result: Jam.Podcast;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			roles: ['podcast'];
 		};
+		/**
+		 * podcast: fav/unfav a podcast
+		 */
 		'podcast/fav/update'?: {
 			params: JamParameters.Fav;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * podcast: rate a podcast
+		 */
 		'podcast/rate/update'?: {
 			params: JamParameters.Rate;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * podcast: delete a podcast
+		 */
 		'podcast/delete'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
