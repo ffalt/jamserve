@@ -1,4 +1,5 @@
 import {JamRequest} from '../../api/jam/api';
+import {validatePathParameterIDFormat} from '../../api/jam/check';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {JamParameters} from '../../model/jam-rest-params';
 import {DefaultDownloadFormat, DownloadFormats} from '../../model/jam-types';
@@ -15,19 +16,7 @@ export class DownloadController {
 	}
 
 	async downloadByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
-		const pathParameter = (req.query.pathParameter || '').trim();
-		if (!pathParameter || pathParameter.length === 0) {
-			return Promise.reject(InvalidParamError('parameters are missing'));
-		}
-		const split = pathParameter.split('.');
-		const id = split[0];
-		if (!id || id.length === 0) {
-			return Promise.reject(InvalidParamError());
-		}
-		const format = split[1] || DefaultDownloadFormat;
-		if (!DownloadFormats.includes(format)) {
-			return Promise.reject(InvalidParamError('parameter format is invalid'));
-		}
+		const {id, format} = await validatePathParameterIDFormat(req.query.pathParameter, DownloadFormats, DefaultDownloadFormat);
 		return this.download({query: {id, format: format as JamParameters.DownloadFormatType}, user: req.user});
 	}
 
@@ -36,14 +25,13 @@ export class DownloadController {
 		if (!id || id.length === 0) {
 			return Promise.reject(InvalidParamError());
 		}
-		const obj = await this.store.findInAll(id);
-		if (!obj) {
-			return Promise.reject(NotFoundError());
+		const obj = await this.store.findInStores(id, this.store.downloadStores());
+		if (obj) {
+			const result = await this.downloadService.getObjDownload(obj, req.query.format, req.user);
+			if (result) {
+				return result;
+			}
 		}
-		const result = await this.downloadService.getObjDownload(obj, req.query.format, req.user);
-		if (!result) {
-			return Promise.reject(NotFoundError());
-		}
-		return result;
+		return Promise.reject(NotFoundError());
 	}
 }

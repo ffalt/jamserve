@@ -74,8 +74,8 @@ export class Store {
 	allStores(): Array<BaseStore<DBObject, SearchQuery>> {
 		return [
 			this.folderStore, this.trackStore, this.albumStore, this.artistStore,
-			this.podcastStore, this.episodeStore, this.playlistStore, this.artistStore,
-			this.albumStore, this.radioStore, this.userStore, this.rootStore
+			this.podcastStore, this.episodeStore, this.playlistStore,
+			this.radioStore, this.userStore, this.rootStore
 		];
 	}
 
@@ -83,8 +83,15 @@ export class Store {
 		return [this.trackStore, this.episodeStore];
 	}
 
-	async findInStreamStores(id: string): Promise<DBObject | undefined> {
-		for (const store of this.streamStores()) {
+	downloadStores(): Array<BaseStore<DBObject, SearchQuery>> {
+		return [
+			this.folderStore, this.trackStore, this.albumStore, this.artistStore,
+			this.podcastStore, this.episodeStore, this.playlistStore
+		];
+	}
+
+	async findInStores(id: string, stores: Array<BaseStore<DBObject, SearchQuery>>): Promise<DBObject | undefined> {
+		for (const store of stores) {
 			const obj = await store.byId(id);
 			if (obj) {
 				return obj;
