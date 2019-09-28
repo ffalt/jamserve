@@ -4,7 +4,6 @@ import {OpenAPIObject} from '../../model/openapi-spec';
 import {checkOpenApiParameters} from '../../utils/openapi-parameters-check';
 import {InvalidParamError} from './error';
 import {ApiResponder} from './response';
-import {WaveformFormats} from '../../model/jam-types';
 
 function extendOpenApi(): void {
 	const pathParameterPath = {
@@ -51,10 +50,10 @@ export function apiCheck(name: string): express.RequestHandler {
 
 export interface IDFormat {
 	id: string;
-	format: string;
+	format?: string;
 }
 
-export async function validatePathParameterIDFormat(pathParameter: string, validFormats: Array<string>, defaultFormat: string): Promise<IDFormat> {
+export async function validatePathParameterIDFormat(pathParameter: string, validFormats: Array<string>, defaultFormat: string | undefined): Promise<IDFormat> {
 	const p = (pathParameter || '').trim();
 	if (!p || p.length === 0) {
 		return Promise.reject(InvalidParamError());
@@ -64,8 +63,8 @@ export async function validatePathParameterIDFormat(pathParameter: string, valid
 	if (!id || id.length === 0) {
 		return Promise.reject(InvalidParamError());
 	}
-	const format = split[1] || defaultFormat;
-	if (format !== undefined && !WaveformFormats.includes(format)) {
+	const format = split[1] !== undefined ? split[1] : defaultFormat;
+	if (format !== undefined && !validFormats.includes(format)) {
 		return Promise.reject(InvalidParamError());
 	}
 	return {id, format};
@@ -74,20 +73,16 @@ export async function validatePathParameterIDFormat(pathParameter: string, valid
 export interface IDSizeFormat {
 	id: string;
 	size?: number;
-	format: string;
+	format?: string;
 }
 
 export async function validatePathParameterIDSizeFormat(
 	pathParameter: string, validFormats: Array<string>,
-	defaultFormat: string, minSize: number, maxSize: number): Promise<IDSizeFormat> {
-	const p = (pathParameter || '').trim();
-	if (!p || p.length === 0) {
-		return Promise.reject(InvalidParamError());
-	}
-	const split = p.split('.');
-	const idsplit = split[0].split('-');
-	const id = idsplit[0];
-	if (!id || id.length === 0) {
+	defaultFormat: string | undefined, minSize: number, maxSize: number): Promise<IDSizeFormat> {
+	const {id, format} = await validatePathParameterIDFormat(pathParameter, validFormats, defaultFormat);
+	const idsplit = id.split('-');
+	const iid = idsplit[0];
+	if (!iid || iid.length === 0) {
 		return Promise.reject(InvalidParamError());
 	}
 	const size = idsplit[1] !== undefined ? Number(idsplit[1]) : undefined;
@@ -99,9 +94,5 @@ export async function validatePathParameterIDSizeFormat(
 			return Promise.reject(InvalidParamError('parameter number not in allowed range'));
 		}
 	}
-	const format = split[1] || defaultFormat;
-	if (!validFormats.includes(format)) {
-		return Promise.reject(InvalidParamError());
-	}
-	return {id, format, size};
+	return {id: iid, format, size};
 }

@@ -240,6 +240,7 @@ export enum FolderHealthID {
 	artistImageValid = 'folder.artist.image.valid'
 }
 
+export const AudioFormats = ['mp3', 'm4a', 'mp4', 'ogg', 'oga', 'flv', 'flac', 'webma', 'wav'];
 export const DownloadFormats = ['zip', 'tar'];
 export const DefaultDownloadFormat = 'zip';
 export const WaveformFormats = ['svg', 'json', 'dat'];

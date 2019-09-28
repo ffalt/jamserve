@@ -1,8 +1,9 @@
 import {JamRequest} from '../../api/jam/api';
+import {validatePathParameterIDFormat} from '../../api/jam/check';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
-import {AudioMimeTypes} from '../../model/jam-types';
+import {AudioFormats} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {logger} from '../../utils/logger';
 import {DBObject} from '../base/base.model';
@@ -45,37 +46,30 @@ export class StreamController {
 	}
 
 	async stream(req: JamRequest<JamParameters.PathStream>): Promise<ApiBinaryResult> {
-		const id = req.query.id;
-		if (!id || id.length === 0) {
+		if (req.query.format !== undefined && !AudioFormats.includes(req.query.format)) {
 			return Promise.reject(InvalidParamError());
 		}
-		if (req.query.format !== undefined) {
-			if (!AudioMimeTypes[req.query.format]) {
-				return Promise.reject(InvalidParamError());
-			}
+		const obj = await this.byID(req.query.id);
+		const result = await this.streamDBObject(obj, req.query.format, undefined, req.user);
+		if (result) {
+			return result;
+		}
+		return Promise.reject(NotFoundError());
+	}
+
+	private async byID(id: string): Promise<DBObject> {
+		if (!id || id.length === 0) {
+			return Promise.reject(InvalidParamError());
 		}
 		const obj = await this.store.findInStores(id, this.store.streamStores());
 		if (!obj) {
 			return Promise.reject(NotFoundError());
 		}
-		const result = await this.streamDBObject(obj, req.query.format, undefined, req.user);
-		if (!result) {
-			return Promise.reject(NotFoundError());
-		}
-		return result;
+		return obj;
 	}
 
 	async streamByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
-		const pathParameter = (req.query.pathParameter || '').trim();
-		if (!pathParameter || pathParameter.length === 0) {
-			return Promise.reject(InvalidParamError());
-		}
-		const split = pathParameter.split('.');
-		const id = split[0];
-		if (!id || id.length === 0) {
-			return Promise.reject(InvalidParamError());
-		}
-		const format = split[1];
+		const {id, format} = await validatePathParameterIDFormat(req.query.pathParameter, AudioFormats, undefined);
 		return this.stream({query: {id, format: format as JamParameters.AudioFormatType}, user: req.user});
 	}
 }
