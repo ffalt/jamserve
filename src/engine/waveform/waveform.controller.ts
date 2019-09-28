@@ -1,77 +1,48 @@
 import {JamRequest} from '../../api/jam/api';
+import {validatePathParameterIDFormat, validatePathParameterIDSizeFormat} from '../../api/jam/check';
 import {InvalidParamError, NotFoundError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
-import {WaveformDefaultFormat, WaveformFormats} from '../../model/jam-types';
+import {WaveformDefaultFormat, WaveformFormats, WaveformFormatType} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
+import {DBObject} from '../base/base.model';
 import {Episode} from '../episode/episode.model';
 import {Store} from '../store/store';
 import {Track} from '../track/track.model';
 import {WaveformService} from './waveform.service';
 
 export class WaveformController {
-	constructor(private store: Store, private waveformService: WaveformService) {
 
+	constructor(private store: Store, private waveformService: WaveformService) {
 	}
 
 	async svgByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
-		const pathParameter = (req.query.pathParameter || '').trim();
-		if (!pathParameter || pathParameter.length === 0) {
-			return Promise.reject(InvalidParamError());
-		}
-		const split = pathParameter.split('.');
-		const idsplit = split[0].split('-');
-		const id = idsplit[0];
-		if (!id || id.length === 0) {
-			return Promise.reject(InvalidParamError());
-		}
-		const width = idsplit[1] !== undefined ? Number(idsplit[1]) : undefined;
-		if (width !== undefined) {
-			if (isNaN(width)) {
-				return Promise.reject(InvalidParamError('parameter width is invalid'));
-			}
-			if (width < 1 || width > 6000) {
-				return Promise.reject(InvalidParamError('parameter width not in allowed range'));
-			}
-		}
-		const format = split[1];
-		if (format !== 'svg') {
-			return Promise.reject(InvalidParamError());
-		}
-		const obj = await this.store.findInStreamStores(id);
-		if (!obj) {
-			return Promise.reject(NotFoundError());
-		}
-		switch (obj.type) {
-			case DBObjectType.track:
-				return this.waveformService.getTrackWaveform(obj as Track, format, width);
-			case DBObjectType.episode:
-				return this.waveformService.getEpisodeWaveform(obj as Episode, format, width);
-			default:
-		}
-		return Promise.reject(Error('Invalid Object Type for Waveform generation'));
+		const {id, size, format} = await validatePathParameterIDSizeFormat(req.query.pathParameter,
+			[WaveformFormatType.svg], WaveformFormatType.svg, 1, 6000);
+		const query: JamParameters.Waveform = {id, format: format as JamParameters.WaveformFormatType, width: size};
+		return this.waveform({query, user: req.user});
 	}
 
 	async waveformByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
-		const pathParameter = (req.query.pathParameter || '').trim();
-		if (!pathParameter || pathParameter.length === 0) {
-			return Promise.reject(InvalidParamError());
-		}
-		const split = pathParameter.split('.');
-		const id = split[0];
-		if (!id || id.length === 0) {
-			return Promise.reject(InvalidParamError());
-		}
-		const format = split[1];
-		if (format !== undefined && !WaveformFormats.includes(format)) {
-			return Promise.reject(InvalidParamError());
-		}
+		const {id, format} = await validatePathParameterIDFormat(req.query.pathParameter, WaveformFormats, WaveformDefaultFormat);
 		const query: JamParameters.Waveform = {id, format: format as JamParameters.WaveformFormatType};
 		return this.waveform({query, user: req.user});
 	}
 
 	async waveform(req: JamRequest<JamParameters.Waveform>): Promise<ApiBinaryResult> {
-		const id = req.query.id;
+		const obj = await this.byID(req.query.id);
+		const format = (req.query.format || WaveformDefaultFormat);
+		switch (obj.type) {
+			case DBObjectType.track:
+				return this.waveformService.getTrackWaveform(obj as Track, format as WaveformFormatType, req.query.width);
+			case DBObjectType.episode:
+				return this.waveformService.getEpisodeWaveform(obj as Episode, format as WaveformFormatType, req.query.width);
+			default:
+		}
+		return Promise.reject(Error('Invalid Object Type for Waveform generation'));
+	}
+
+	private async byID(id: string | undefined): Promise<DBObject> {
 		if (!id || id.length === 0) {
 			return Promise.reject(InvalidParamError());
 		}
@@ -79,14 +50,6 @@ export class WaveformController {
 		if (!obj) {
 			return Promise.reject(NotFoundError());
 		}
-		const format = (req.query.format || WaveformDefaultFormat);
-		switch (obj.type) {
-			case DBObjectType.track:
-				return this.waveformService.getTrackWaveform(obj as Track, format);
-			case DBObjectType.episode:
-				return this.waveformService.getEpisodeWaveform(obj as Episode, format);
-			default:
-		}
-		return Promise.reject(Error('Invalid Object Type for Waveform generation'));
+		return obj;
 	}
 }

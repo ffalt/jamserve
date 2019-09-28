@@ -1,13 +1,13 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {JamParameters} from '../../model/jam-rest-params';
+import {WaveformFormatType} from '../../model/jam-types';
 import {WaveformGenerator} from '../../modules/audio/waveform/waveform.generator';
 import {ApiBinaryResult} from '../../typings';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {logger} from '../../utils/logger';
 import {Episode} from '../episode/episode.model';
 import {Track} from '../track/track.model';
-import WaveformFormatType = JamParameters.WaveformFormatType;
 
 const log = logger('WaveformService');
 
@@ -21,15 +21,15 @@ export class WaveformService {
 		return `waveform-${id}${width !== undefined ? `-${width}` : ''}.${format}`;
 	}
 
-	private async generateWaveform(filename: string, format: WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
+	private async generateWaveform(filename: string, format: JamParameters.WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
 		const wf = new WaveformGenerator();
 		switch (format) {
-			case 'svg':
+			case WaveformFormatType.svg:
 				const svg = await wf.svg(filename, width);
 				return {buffer: {buffer: Buffer.from(svg, 'ascii'), contentType: 'image/svg+xml'}};
-			case 'json':
+			case WaveformFormatType.json:
 				return {json: await wf.json(filename)};
-			case 'dat':
+			case WaveformFormatType.dat:
 				return {buffer: {buffer: await wf.binary(filename), contentType: 'application/binary'}};
 			default:
 		}

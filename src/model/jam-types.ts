@@ -34,6 +34,12 @@ export const AudioMimeTypes: { [ext: string]: string } = {
 	wav: 'audio/wav'
 };
 
+export enum WaveformFormatType {
+	svg = 'svg',
+	json = 'json',
+	dat = 'dat'
+}
+
 export enum AudioFormatType {
 	mp3 = 'mp3',
 	m4a = 'm4a',
@@ -237,4 +243,4 @@ export enum FolderHealthID {
 export const DownloadFormats = ['zip', 'tar'];
 export const DefaultDownloadFormat = 'zip';
 export const WaveformFormats = ['svg', 'json', 'dat'];
-export const WaveformDefaultFormat = 'svg';
+export const WaveformDefaultFormat = WaveformFormatType.svg;

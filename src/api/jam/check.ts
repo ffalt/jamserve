@@ -4,6 +4,7 @@ import {OpenAPIObject} from '../../model/openapi-spec';
 import {checkOpenApiParameters} from '../../utils/openapi-parameters-check';
 import {InvalidParamError} from './error';
 import {ApiResponder} from './response';
+import {WaveformFormats} from '../../model/jam-types';
 
 function extendOpenApi(): void {
 	const pathParameterPath = {
@@ -46,4 +47,61 @@ export function apiCheck(name: string): express.RequestHandler {
 	}
 
 	return CheckApiParametersHandler;
+}
+
+export interface IDFormat {
+	id: string;
+	format: string;
+}
+
+export async function validatePathParameterIDFormat(pathParameter: string, validFormats: Array<string>, defaultFormat: string): Promise<IDFormat> {
+	const p = (pathParameter || '').trim();
+	if (!p || p.length === 0) {
+		return Promise.reject(InvalidParamError());
+	}
+	const split = p.split('.');
+	const id = split[0];
+	if (!id || id.length === 0) {
+		return Promise.reject(InvalidParamError());
+	}
+	const format = split[1] || defaultFormat;
+	if (format !== undefined && !WaveformFormats.includes(format)) {
+		return Promise.reject(InvalidParamError());
+	}
+	return {id, format};
+}
+
+export interface IDSizeFormat {
+	id: string;
+	size?: number;
+	format: string;
+}
+
+export async function validatePathParameterIDSizeFormat(
+	pathParameter: string, validFormats: Array<string>,
+	defaultFormat: string, minSize: number, maxSize: number): Promise<IDSizeFormat> {
+	const p = (pathParameter || '').trim();
+	if (!p || p.length === 0) {
+		return Promise.reject(InvalidParamError());
+	}
+	const split = p.split('.');
+	const idsplit = split[0].split('-');
+	const id = idsplit[0];
+	if (!id || id.length === 0) {
+		return Promise.reject(InvalidParamError());
+	}
+	const size = idsplit[1] !== undefined ? Number(idsplit[1]) : undefined;
+	if (size !== undefined) {
+		if (isNaN(size)) {
+			return Promise.reject(InvalidParamError('parameter is not a number'));
+		}
+		if (size < minSize || size > maxSize) {
+			return Promise.reject(InvalidParamError('parameter number not in allowed range'));
+		}
+	}
+	const format = split[1] || defaultFormat;
+	if (!validFormats.includes(format)) {
+		return Promise.reject(InvalidParamError());
+	}
+	return {id, format, size};
 }

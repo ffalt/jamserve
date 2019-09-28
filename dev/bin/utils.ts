@@ -3,6 +3,7 @@ import path from 'path';
 import * as TJS from 'typescript-json-schema';
 import {JAMAPI_VERSION} from '../../src/api/jam/version';
 import {SUBSONIC_VERSION} from '../../src/api/subsonic/version';
+import {AudioFormatType, WaveformFormatType} from '../../src/model/jam-types';
 
 const settings: TJS.PartialArgs = {
 	required: true
@@ -137,9 +138,9 @@ function getPathParamsCalls(name: string, api: any, pathParams: any): ApiCallPat
 					type = 'JamParameters.DownloadFormatType';
 				} else if (prop.enum.includes('jpeg')) {
 					type = 'JamParameters.ImageFormatType';
-				} else if (prop.enum.includes('svg')) {
+				} else if (prop.enum.includes(WaveformFormatType.svg)) {
 					type = 'JamParameters.WaveformFormatType';
-				} else if (prop.enum.includes('mp3')) {
+				} else if (prop.enum.includes(AudioFormatType.mp3)) {
 					type = 'JamParameters.AudioFormatType';
 				} else {
 					console.log('restore destroyed union enum type', prop.enum, id);

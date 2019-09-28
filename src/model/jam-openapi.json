@@ -307,6 +307,7 @@
 						"in": "query",
 						"name": "tracks",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "search by number of release tracks",
@@ -348,7 +349,8 @@
 						"in": "query",
 						"name": "nr",
 						"schema": {
-							"type": "number"
+							"minimum": 0,
+							"type": "integer"
 						},
 						"description": "page parameter if more than one acousticbrainz info is available",
 						"required": false
@@ -985,7 +987,8 @@
 						"in": "query",
 						"name": "level",
 						"schema": {
-							"type": "number"
+							"minimum": 0,
+							"type": "integer"
 						},
 						"description": "filter by level",
 						"required": false
@@ -2143,7 +2146,8 @@
 						"in": "query",
 						"name": "level",
 						"schema": {
-							"type": "number"
+							"minimum": 0,
+							"type": "integer"
 						},
 						"description": "filter by level",
 						"required": false
@@ -2505,7 +2509,8 @@
 						"in": "query",
 						"name": "level",
 						"schema": {
-							"type": "number"
+							"minimum": 0,
+							"type": "integer"
 						},
 						"description": "filter by level",
 						"required": false
@@ -2889,7 +2894,8 @@
 						"in": "query",
 						"name": "level",
 						"schema": {
-							"type": "number"
+							"minimum": 0,
+							"type": "integer"
 						},
 						"description": "filter by level",
 						"required": false
@@ -3753,6 +3759,7 @@
 						"in": "query",
 						"name": "newerThan",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by creation date",
@@ -3762,6 +3769,7 @@
 						"in": "query",
 						"name": "fromYear",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by year",
@@ -3771,6 +3779,7 @@
 						"in": "query",
 						"name": "toYear",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by year",
@@ -4107,6 +4116,7 @@
 						"in": "query",
 						"name": "newerThan",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by creation date",
@@ -4116,6 +4126,7 @@
 						"in": "query",
 						"name": "fromYear",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by year",
@@ -4125,6 +4136,7 @@
 						"in": "query",
 						"name": "toYear",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by year",
@@ -4517,6 +4529,7 @@
 						"in": "query",
 						"name": "newerThan",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by creation date",
@@ -4526,6 +4539,7 @@
 						"in": "query",
 						"name": "fromYear",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by year",
@@ -4535,6 +4549,7 @@
 						"in": "query",
 						"name": "toYear",
 						"schema": {
+							"minimum": 0,
 							"type": "integer"
 						},
 						"description": "filter by year",
@@ -13855,6 +13870,17 @@
 					},
 					{
 						"in": "path",
+						"name": "width",
+						"schema": {
+							"minimum": 1,
+							"maximum": 6000,
+							"type": "integer"
+						},
+						"description": "width (for svg)",
+						"required": true
+					},
+					{
+						"in": "path",
 						"name": "id",
 						"schema": {
 							"type": "string"
@@ -13914,7 +13940,9 @@
 						"in": "path",
 						"name": "width",
 						"schema": {
-							"type": "number"
+							"minimum": 1,
+							"maximum": 6000,
+							"type": "integer"
 						},
 						"description": "width",
 						"required": true

@@ -499,18 +499,21 @@ export declare namespace JamParameters {
 		/**
 		 * filter by creation date
 		 *
+		 * @minimum 0
 		 * @TJS-type integer
 		 */
 		newerThan?: number;
 		/**
 		 * filter by year
 		 *
+		 * @minimum 0
 		 * @TJS-type integer
 		 */
 		fromYear?: number;
 		/**
 		 * filter by year
 		 *
+		 * @minimum 0
 		 * @TJS-type integer
 		 */
 		toYear?: number;
@@ -567,11 +570,23 @@ export declare namespace JamParameters {
 		 * @default svg
 		 */
 		format?: WaveformFormatType;
+		/**
+		 * width (for svg)
+		 *
+		 * @minimum 1
+		 * @maximum 6000
+		 * @TJS-type integer
+		 */
+		width?: number;
 	}
 
 	export interface WaveformSVG extends ID {
 		/**
 		 * width
+		 *
+		 * @minimum 1
+		 * @maximum 6000
+		 * @TJS-type integer
 		 */
 		width: number;
 	}
@@ -626,6 +641,9 @@ export declare namespace JamParameters {
 		genre?: string;
 		/**
 		 * filter by level
+		 *
+		 * @minimum 0
+		 * @TJS-type integer
 		 */
 		level?: number;
 		/**
@@ -1369,6 +1387,7 @@ export declare namespace JamParameters {
 		/**
 		 * search by number of release tracks
 		 *
+		 * @minimum 0
 		 * @TJS-type integer
 		 */
 		tracks?: number;
@@ -1377,6 +1396,9 @@ export declare namespace JamParameters {
 	export interface AcousticBrainzLookup extends ID {
 		/**
 		 * page parameter if more than one acousticbrainz info is available
+		 *
+		 * @minimum 0
+		 * @TJS-type integer
 		 */
 		nr?: number;
 	}

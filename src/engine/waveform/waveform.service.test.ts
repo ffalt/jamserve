@@ -1,5 +1,6 @@
 import path from 'path';
 import tmp from 'tmp';
+import {WaveformFormatType} from '../../model/jam-types';
 import {testService} from '../base/base.service.spec';
 import {mockEpisode} from '../episode/episode.mock';
 import {TrackStore} from '../track/track.store';
@@ -21,14 +22,14 @@ describe('WaveformService', () => {
 				if (!track) {
 					throw Error('Wrong Test Setup');
 				}
-				let result = await waveformService.getTrackWaveform(track, 'svg');
+				let result = await waveformService.getTrackWaveform(track, WaveformFormatType.svg);
 				expect(result).toBeTruthy();
 				expect(result.buffer).toBeTruthy();
 				if (!result.buffer) {
 					return;
 				}
 				expect(result.buffer.contentType).toBe('image/svg+xml');
-				result = await waveformService.getTrackWaveform(track, 'svg');
+				result = await waveformService.getTrackWaveform(track, WaveformFormatType.svg);
 				expect(result).toBeTruthy();
 				expect(result.file).toBeTruthy();
 				await waveformService.clearWaveformCacheByIDs([track.id]);
@@ -42,14 +43,14 @@ describe('WaveformService', () => {
 				const episode = mockEpisode();
 				episode.path = path.resolve(track.path, track.name);
 				episode.id = 'testEpisodeID';
-				let result = await waveformService.getEpisodeWaveform(episode, 'svg');
+				let result = await waveformService.getEpisodeWaveform(episode, WaveformFormatType.svg);
 				expect(result).toBeTruthy();
 				expect(result.buffer).toBeTruthy();
 				if (!result.buffer) {
 					return;
 				}
 				expect(result.buffer.contentType).toBe('image/svg+xml');
-				result = await waveformService.getEpisodeWaveform(episode, 'svg');
+				result = await waveformService.getEpisodeWaveform(episode, WaveformFormatType.svg);
 				expect(result).toBeTruthy();
 				expect(result.file).toBeTruthy();
 				await waveformService.clearWaveformCacheByIDs([episode.id]);
@@ -60,13 +61,13 @@ describe('WaveformService', () => {
 				if (!track) {
 					return;
 				}
-				let result = await waveformService.getTrackWaveform(track, 'json');
+				let result = await waveformService.getTrackWaveform(track, WaveformFormatType.json);
 				expect(result).toBeTruthy();
 				expect(result.json).toBeTruthy();
 				if (!result.json) {
 					return;
 				}
-				result = await waveformService.getTrackWaveform(track, 'json');
+				result = await waveformService.getTrackWaveform(track, WaveformFormatType.json);
 				expect(result).toBeTruthy();
 				expect(result.file).toBeTruthy();
 				await waveformService.clearWaveformCacheByIDs([track.id]);
@@ -77,14 +78,14 @@ describe('WaveformService', () => {
 				if (!track) {
 					return;
 				}
-				let result = await waveformService.getTrackWaveform(track, 'dat');
+				let result = await waveformService.getTrackWaveform(track, WaveformFormatType.dat);
 				expect(result).toBeTruthy();
 				expect(result.buffer).toBeTruthy();
 				if (!result.buffer) {
 					return;
 				}
 				expect(result.buffer.contentType).toBe('application/binary');
-				result = await waveformService.getTrackWaveform(track, 'dat');
+				result = await waveformService.getTrackWaveform(track, WaveformFormatType.dat);
 				expect(result).toBeTruthy();
 				expect(result.file).toBeTruthy();
 				await waveformService.clearWaveformCacheByIDs([track.id]);
@@ -97,11 +98,11 @@ describe('WaveformService', () => {
 				}
 				await expect(waveformService.getTrackWaveform(track, 'invalid' as any)).rejects.toThrow('Invalid Format for Waveform generation');
 				track.name = 'invalid.invalid.invalid';
-				await expect(waveformService.getTrackWaveform(track, 'svg')).rejects.toThrow('Invalid filename for waveform generation');
+				await expect(waveformService.getTrackWaveform(track, WaveformFormatType.svg)).rejects.toThrow('Invalid filename for waveform generation');
 				const episode = mockEpisode();
 				episode.path = undefined;
 				episode.id = 'testEpisodeID';
-				await expect(waveformService.getEpisodeWaveform(episode, 'svg')).rejects.toThrow('Podcast episode not ready');
+				await expect(waveformService.getEpisodeWaveform(episode, WaveformFormatType.svg)).rejects.toThrow('Podcast episode not ready');
 			});
 			it('should block creating a waveform while creating a waveform', async () => {
 				const track = await trackStore.random();
@@ -109,8 +110,8 @@ describe('WaveformService', () => {
 				if (!track) {
 					return;
 				}
-				const promise = waveformService.getTrackWaveform(track, 'svg');
-				const result = await waveformService.getTrackWaveform(track, 'svg');
+				const promise = waveformService.getTrackWaveform(track, WaveformFormatType.svg);
+				const result = await waveformService.getTrackWaveform(track, WaveformFormatType.svg);
 				const result2 = await promise;
 				expect(result).toBeTruthy();
 				expect(result.buffer).toBeTruthy();
