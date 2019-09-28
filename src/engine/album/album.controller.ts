@@ -55,7 +55,7 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 		}
 		if (includes.albumInfo) {
 			try {
-				result.info = await this.metaDataService.getAlbumInfo(album);
+				result.info = await this.metaDataService.extInfo.byAlbum(album);
 			} catch (e) {
 				result.info = undefined;
 			}
@@ -94,7 +94,7 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 	async similarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const album = await this.byID(req.query.id);
 		try {
-			const tracks = await this.metaDataService.getAlbumSimilarTracks(album);
+			const tracks = await this.metaDataService.similarTracks.byAlbum(album);
 			const list = paginate(tracks, req.query.amount, req.query.offset);
 			return {
 				total: list.total,
@@ -118,7 +118,7 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
 		const album = await this.byID(req.query.id);
-		return {info: await this.metaDataService.getAlbumInfo(album)};
+		return {info: await this.metaDataService.extInfo.byAlbum(album)};
 	}
 
 	async index(req: JamRequest<JamParameters.AlbumSearch>): Promise<Jam.AlbumIndex> {

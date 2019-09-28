@@ -66,15 +66,15 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		}
 		if (includes.folderInfo) {
 			if (folder.tag.type === FolderType.artist) {
-				result.info = await this.metadataService.getFolderArtistInfo(folder);
+				result.info = await this.metadataService.extInfo.byFolderArtist(folder);
 			} else if (FolderTypesAlbum.includes(folder.tag.type)) {
-				result.info = await this.metadataService.getFolderAlbumInfo(folder);
+				result.info = await this.metadataService.extInfo.byFolderAlbum(folder);
 			}
 		}
 		if (includes.folderSimilar) {
 			if (folder.tag.type === FolderType.artist) {
 				// TODO: introduce children includes?
-				result.similar = await this.prepareList(await this.metadataService.getSimilarArtistFolders(folder),
+				result.similar = await this.prepareList(await this.metadataService.similarArtists.byFolder(folder),
 					{folderState: includes.folderState, folderCounts: includes.folderCounts, folderTag: includes.folderTag}
 					, user);
 			}
@@ -154,12 +154,12 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 
 	async artistInfo(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
 		const folder = await this.byID(req.query.id);
-		return {info: await this.metadataService.getFolderArtistInfo(folder)};
+		return {info: await this.metadataService.extInfo.byFolderArtist(folder)};
 	}
 
 	async artistSimilar(req: JamRequest<JamParameters.SimilarFolders>): Promise<ListResult<Jam.Folder>> {
 		const folder = await this.byID(req.query.id);
-		const folders = await this.metadataService.getSimilarArtistFolders(folder);
+		const folders = await this.metadataService.similarArtists.byFolder(folder);
 		const list = paginate(folders, req.query.amount, req.query.offset);
 		return {
 			total: list.total,
@@ -171,12 +171,12 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 
 	async albumInfo(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
 		const folder = await this.byID(req.query.id);
-		return {info: await this.metadataService.getFolderAlbumInfo(folder)};
+		return {info: await this.metadataService.extInfo.byFolderAlbum(folder)};
 	}
 
 	async artistSimilarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const folder = await this.byID(req.query.id);
-		const tracks = await this.metadataService.getFolderSimilarTracks(folder);
+		const tracks = await this.metadataService.similarTracks.byFolder(folder);
 		const list = paginate(tracks, req.query.amount, req.query.offset);
 		return {
 			total: list.total,

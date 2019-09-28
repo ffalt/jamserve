@@ -71,14 +71,14 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 		}
 		if (includes.artistInfo) {
 			try {
-				result.info = await this.metaDataService.getArtistInfo(artist);
+				result.info = await this.metaDataService.extInfo.byArtist(artist);
 			} catch (e) {
 				result.info = undefined;
 			}
 		}
 		if (includes.artistSimilar) {
 			try {
-				result.similar = await this.prepareList(await this.metaDataService.getSimilarArtists(artist), {}, user);
+				result.similar = await this.prepareList(await this.metaDataService.similarArtists.byArtist(artist), {}, user);
 			} catch (e) {
 				result.similar = undefined;
 			}
@@ -117,7 +117,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 	async similar(req: JamRequest<JamParameters.SimilarArtists>): Promise<ListResult<Jam.Artist>> {
 		const artist = await this.byID(req.query.id);
 		try {
-			const artists = await this.metaDataService.getSimilarArtists(artist);
+			const artists = await this.metaDataService.similarArtists.byArtist(artist);
 			const list = paginate(artists, req.query.amount, req.query.offset);
 			return {
 				total: list.total,
@@ -133,7 +133,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 	async similarTracks(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const artist = await this.byID(req.query.id);
 		try {
-			const tracks = await this.metaDataService.getArtistSimilarTracks(artist);
+			const tracks = await this.metaDataService.similarTracks.byArtist(artist);
 			const list = paginate(tracks, req.query.amount, req.query.offset);
 			return {
 				total: list.total,
@@ -167,6 +167,6 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
 		const artist = await this.byID(req.query.id);
-		return {info: await this.metaDataService.getArtistInfo(artist)};
+		return {info: await this.metaDataService.extInfo.byArtist(artist)};
 	}
 }

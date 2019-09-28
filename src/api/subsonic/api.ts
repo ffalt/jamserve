@@ -486,7 +486,7 @@ export class SubsonicApi extends SubsonicApiBase {
 		count 	No 	50 	Max number of songs to return.
 		*/
 		const limitCount = req.query.count || 50;
-		let tracks = await this.engine.metaDataService.getTopTracks(req.query.artist);
+		let tracks = await this.engine.metaDataService.topTracks.byArtistName(req.query.artist);
 		tracks = tracks.slice(0, limitCount);
 		const childs = await this.prepareTracks(tracks, req.user);
 		return {topSongs: {song: childs}};
@@ -511,16 +511,16 @@ export class SubsonicApi extends SubsonicApiBase {
 		let tracks: Array<Track> = [];
 		switch (o.type) {
 			case DBObjectType.track:
-				tracks = await this.engine.metaDataService.getTrackSimilarTracks(o as Track);
+				tracks = await this.engine.metaDataService.similarTracks.byTrack(o as Track);
 				break;
 			case DBObjectType.folder:
-				tracks = await this.engine.metaDataService.getFolderSimilarTracks(o as Folder);
+				tracks = await this.engine.metaDataService.similarTracks.byFolder(o as Folder);
 				break;
 			case DBObjectType.artist:
-				tracks = await this.engine.metaDataService.getArtistSimilarTracks(o as Artist);
+				tracks = await this.engine.metaDataService.similarTracks.byArtist(o as Artist);
 				break;
 			case DBObjectType.album:
-				tracks = await this.engine.metaDataService.getAlbumSimilarTracks(o as Album);
+				tracks = await this.engine.metaDataService.similarTracks.byAlbum(o as Album);
 				break;
 			default:
 		}
@@ -542,7 +542,7 @@ export class SubsonicApi extends SubsonicApiBase {
 		count 	No 	50 	Max number of songs to return.
 		 */
 		const artist = await this.byID<Artist>(req.query.id, this.engine.store.artistStore);
-		const tracks = await this.engine.metaDataService.getArtistSimilarTracks(artist);
+		const tracks = await this.engine.metaDataService.similarTracks.byArtist(artist);
 		const limit = paginate(tracks, req.query.count || 50, 0);
 		const childs = await this.prepareTracks(limit.items, req.user);
 		return {similarSongs2: FORMAT.packSimilarSongs2(childs)};

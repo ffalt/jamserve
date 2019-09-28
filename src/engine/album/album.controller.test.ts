@@ -31,12 +31,12 @@ describe('AlbumController', () => {
 				if (!album) {
 					throw new Error('Wrong Test Setup');
 				}
-				const org = api.metadataController.metadataService.getAlbumSimilarTracks;
-				api.metadataController.metadataService.getAlbumSimilarTracks = async (a: Album): Promise<Array<Track>> => {
+				const org = api.metadataController.metadataService.similarTracks.byAlbum;
+				api.metadataController.metadataService.similarTracks.byAlbum = async (a: Album): Promise<Array<Track>> => {
 					return Promise.reject(Error('not available'));
 				};
 				const list = await controller.similarTracks({query: {id: album.id}, user});
-				api.metadataController.metadataService.getAlbumSimilarTracks = org;
+				api.metadataController.metadataService.similarTracks.byAlbum = org;
 				expect(list).toBeTruthy();
 				expect(list.items.length).toBe(0);
 			});
@@ -45,12 +45,12 @@ describe('AlbumController', () => {
 				if (!album) {
 					throw new Error('Wrong Test Setup');
 				}
-				const org = api.metadataController.metadataService.getAlbumSimilarTracks;
-				api.metadataController.metadataService.getAlbumSimilarTracks = async (a: Album): Promise<Array<Track>> => {
+				const org = api.metadataController.metadataService.similarTracks.byAlbum;
+				api.metadataController.metadataService.similarTracks.byAlbum = async (a: Album): Promise<Array<Track>> => {
 					return [];
 				};
 				const list = await controller.similarTracks({query: {id: album.id}, user});
-				api.metadataController.metadataService.getAlbumSimilarTracks = org;
+				api.metadataController.metadataService.similarTracks.byAlbum = org;
 				expect(list).toBeTruthy();
 				expect(list.items.length).toBe(0);
 			});
@@ -59,12 +59,12 @@ describe('AlbumController', () => {
 				if (!album) {
 					throw new Error('Wrong Test Setup');
 				}
-				const org = api.metadataController.metadataService.getAlbumSimilarTracks;
-				api.metadataController.metadataService.getAlbumSimilarTracks = async (a: Album): Promise<Array<Track>> => {
+				const org = api.metadataController.metadataService.similarTracks.byAlbum;
+				api.metadataController.metadataService.similarTracks.byAlbum = async (a: Album): Promise<Array<Track>> => {
 					return [mockTrack()];
 				};
 				const list = await controller.similarTracks({query: {id: album.id}, user});
-				api.metadataController.metadataService.getAlbumSimilarTracks = org;
+				api.metadataController.metadataService.similarTracks.byAlbum = org;
 				expect(list).toBeTruthy();
 				expect(list.items.length).toBe(1);
 			});
@@ -118,7 +118,7 @@ describe('AlbumController', () => {
 				if (!album) {
 					throw new Error('Wrong Test Setup');
 				}
-				const org = api.metadataController.metadataService.getAlbumInfo;
+				const org = api.metadataController.metadataService.extInfo.byAlbum;
 				const extended: Jam.ExtendedInfo = {
 					description: 'dummy',
 					source: 'dummy',
@@ -126,11 +126,11 @@ describe('AlbumController', () => {
 					url: 'dummy',
 					licenseUrl: 'dummy'
 				};
-				api.metadataController.metadataService.getAlbumInfo = async (a: Album): Promise<Jam.ExtendedInfo | undefined> => {
+				api.metadataController.metadataService.extInfo.byAlbum = async (a: Album): Promise<Jam.ExtendedInfo | undefined> => {
 					return extended;
 				};
 				const result = await controller.id({query: {id: album.id, albumInfo: true}, user});
-				api.metadataController.metadataService.getAlbumInfo = org;
+				api.metadataController.metadataService.extInfo.byAlbum = org;
 				expect(result).toBeTruthy();
 				expect(result.info).toEqual(extended);
 			});
@@ -139,12 +139,12 @@ describe('AlbumController', () => {
 				if (!album) {
 					throw new Error('Wrong Test Setup');
 				}
-				const org = api.metadataController.metadataService.getAlbumInfo;
-				api.metadataController.metadataService.getAlbumInfo = async (a: Album): Promise<Jam.ExtendedInfo | undefined> => {
+				const org = api.metadataController.metadataService.extInfo.byAlbum;
+				api.metadataController.metadataService.extInfo.byAlbum = async (a: Album): Promise<Jam.ExtendedInfo | undefined> => {
 					return Promise.reject(Error('Dummy'));
 				};
 				const result = await controller.id({query: {id: album.id, albumInfo: true}, user});
-				api.metadataController.metadataService.getAlbumInfo = org;
+				api.metadataController.metadataService.extInfo.byAlbum = org;
 				expect(result).toBeTruthy();
 				expect(result.info).toBeUndefined();
 			});
@@ -155,7 +155,7 @@ describe('AlbumController', () => {
 				if (!album) {
 					throw new Error('Wrong Test Setup');
 				}
-				const org = api.metadataController.metadataService.getAlbumInfo;
+				const org = api.metadataController.metadataService.extInfo.byAlbum;
 				const extended: Jam.ExtendedInfo = {
 					description: 'dummy',
 					source: 'dummy',
@@ -163,11 +163,11 @@ describe('AlbumController', () => {
 					url: 'dummy',
 					licenseUrl: 'dummy'
 				};
-				api.metadataController.metadataService.getAlbumInfo = async (a: Album): Promise<Jam.ExtendedInfo | undefined> => {
+				api.metadataController.metadataService.extInfo.byAlbum = async (a: Album): Promise<Jam.ExtendedInfo | undefined> => {
 					return extended;
 				};
 				const result = await controller.info({query: {id: album.id}, user});
-				api.metadataController.metadataService.getAlbumInfo = org;
+				api.metadataController.metadataService.extInfo.byAlbum = org;
 				expect(result).toBeTruthy();
 				expect(result.info).toEqual(extended);
 			});

@@ -148,7 +148,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 
 	async similar(req: JamRequest<JamParameters.SimilarTracks>): Promise<ListResult<Jam.Track>> {
 		const track = await this.byID(req.query.id);
-		const tracks = await this.metaService.getTrackSimilarTracks(track);
+		const tracks = await this.metaService.similarTracks.byTrack(track);
 		const list = paginate(tracks, req.query.amount, req.query.offset);
 		return {
 			total: list.total,
