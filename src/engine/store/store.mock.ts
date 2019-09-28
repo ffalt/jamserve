@@ -6,7 +6,7 @@ import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
 import {Root} from '../root/root.model';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {writeMP3Track} from '../../modules/audio/audio.mock';
-import {ScanService} from '../scan/scan.service';
+import {WorkerService} from '../worker/worker.service';
 import {ImageModule} from '../../modules/image/image.module';
 import {WaveformServiceTest} from '../waveform/waveform.service.spec';
 import {DBObjectType} from '../../db/db.types';
@@ -353,8 +353,8 @@ export class StoreMock {
 			strategy: RootScanStrategy.auto
 		};
 		await this.store.rootStore.add(root);
-		const scanService = new ScanService(this.store, audioModule, imageModule, this.waveformServiceTest.waveformService);
-		await scanService.scanRoot(root.id, false);
+		const workerService = new WorkerService(this.store, audioModule, imageModule, this.waveformServiceTest.waveformService);
+		await workerService.refreshRoot({rootID: root.id, forceMetaRefresh: false});
 	}
 
 	async cleanup(): Promise<void> {

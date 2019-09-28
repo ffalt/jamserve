@@ -3,11 +3,11 @@ import {ApiBinaryResult} from '../../typings';
 import {BaseListService} from '../base/dbobject-list.service';
 import {Folder} from '../folder/folder.model';
 import {FolderService} from '../folder/folder.service';
-import {slugify} from '../scan/scan.utils';
 import {StateService} from '../state/state.service';
 import {TrackStore} from '../track/track.store';
 import {Artist} from './artist.model';
 import {ArtistStore, SearchQueryArtist} from './artist.store';
+import {slugify} from '../../utils/slug';
 
 export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 

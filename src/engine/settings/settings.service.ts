@@ -3,14 +3,14 @@ import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {ChatService} from '../chat/chat.service';
 import {IndexService} from '../index/index.service';
-import {ScanService} from '../scan/scan.service';
-import {SettingsStore} from './settings.store';
+import {WorkerService} from '../worker/worker.service';
 import {Settings} from './settings.model';
+import {SettingsStore} from './settings.store';
 
 export class SettingsService {
 	public settings: Jam.AdminSettings = defaultSettings;
 
-	constructor(public settingsStore: SettingsStore, private chatService: ChatService, private indexService: IndexService, private scanService: ScanService, private version: string) {
+	constructor(public settingsStore: SettingsStore, private chatService: ChatService, private indexService: IndexService, private workerService: WorkerService, private version: string) {
 	}
 
 	async get(): Promise<Jam.AdminSettings> {
@@ -62,6 +62,6 @@ export class SettingsService {
 		this.settings = settings;
 		this.chatService.setSettings(this.settings.chat);
 		this.indexService.setSettings(this.settings.index);
-		this.scanService.setSettings(this.settings.library);
+		this.workerService.setSettings(this.settings.library);
 	}
 }

@@ -1,12 +1,12 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {FileTyp} from '../../model/jam-types';
-import {Folder} from '../folder/folder.model';
-import {Store} from '../store/store';
-import {Track} from '../track/track.model';
-import {MatchDir, MatchFile} from './scan.match-dir';
+import {FileTyp} from '../../../model/jam-types';
+import {Folder} from '../../folder/folder.model';
+import {Store} from '../../store/store';
+import {Track} from '../../track/track.model';
+import {MatchDir, MatchFile} from './match-dir.types';
 
-export class DBMatcher {
+export class MatchDirBuilderDB {
 
 	constructor(public store: Store) {
 	}
@@ -116,7 +116,7 @@ export class DBMatcher {
 		}
 	}
 
-	async match(folderIDs: Array<string>, changedTrackIDs: Array<string>): Promise<{ rootMatch: MatchDir; changedDirs: Array<MatchDir> }> {
+	async build(folderIDs: Array<string>, changedTrackIDs: Array<string>): Promise<{ rootMatch: MatchDir; changedDirs: Array<MatchDir> }> {
 		const folders = await this.store.folderStore.byIds(folderIDs);
 		const loadedMatches: Array<MatchDir> = [];
 		const changedDirs: Array<MatchDir> = [];

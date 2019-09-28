@@ -3,7 +3,7 @@ import {Store} from '../store/store';
 import tmp from 'tmp';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from '../store/store.mock';
 import {IoService} from './io.service';
-import {ScanService} from '../scan/scan.service';
+import {WorkerService} from '../worker/worker.service';
 import {WaveformServiceTest} from '../waveform/waveform.service.spec';
 
 describe('IOService', () => {
@@ -19,8 +19,8 @@ describe('IOService', () => {
 			dir = tmp.dirSync();
 			await waveFormServiceTest.setup();
 			mockRoot = buildMockRoot(dir.name, 1, 'rootID');
-			const scanService = new ScanService(store, audioModule, imageModuleTest.imageModule, waveFormServiceTest.waveformService);
-			ioService = new IoService(store.rootStore, scanService, async () => {});
+			const workerService = new WorkerService(store, audioModule, imageModuleTest.imageModule, waveFormServiceTest.waveformService);
+			ioService = new IoService(store.rootStore, workerService, async () => {});
 			await writeMockRoot(mockRoot);
 		},
 		() => {

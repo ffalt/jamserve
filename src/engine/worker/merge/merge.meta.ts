@@ -1,16 +1,14 @@
-import {DBObjectType} from '../../db/db.types';
-import {AlbumType, cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../model/jam-types';
-import {logger} from '../../utils/logger';
-import {Album} from '../album/album.model';
-import {Artist} from '../artist/artist.model';
-import {Folder} from '../folder/folder.model';
-import {Store} from '../store/store';
-import {Track} from '../track/track.model';
-import {MergeChanges} from './scan.changes';
-import {MetaStatBuilder} from './scan.metastats';
-import {extractAlbumName, slugify} from './scan.utils';
-
-const log = logger('IO.MetaMerge');
+import {DBObjectType} from '../../../db/db.types';
+import {AlbumType, cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../model/jam-types';
+import {Album} from '../../album/album.model';
+import {Artist} from '../../artist/artist.model';
+import {Folder} from '../../folder/folder.model';
+import {Store} from '../../store/store';
+import {Track} from '../../track/track.model';
+import {MetaStatBuilder} from '../match-dir/match-dir.meta-stats';
+import {Changes} from '../changes/changes';
+import {slugify} from '../../../utils/slug';
+import {extractAlbumName} from '../../../utils/album-name';
 
 export interface MetaMergeTrackInfo {
 	track: Track;
@@ -32,7 +30,7 @@ export function getAlbumSlug(trackInfo: MetaMergeTrackInfo): string {
 	return slugify(getAlbumName(trackInfo));
 }
 
-export class ScanMetaMerger {
+export class MetaMerger {
 	private artistCache: Array<{ artist: Artist, slugs: Array<string> }> = [];
 	private albumCache: Array<Album> = [];
 	private folderCache: Array<Folder> = [];
@@ -117,7 +115,7 @@ export class ScanMetaMerger {
 		}
 	}
 
-	private async findOrCreateAlbum(trackInfo: MetaMergeTrackInfo, artistID: string, changes: MergeChanges): Promise<Album> {
+	private async findOrCreateAlbum(trackInfo: MetaMergeTrackInfo, artistID: string, changes: Changes): Promise<Album> {
 		let album = await this.findAlbumInCache(trackInfo, artistID);
 		if (album) {
 			return album;
@@ -133,7 +131,7 @@ export class ScanMetaMerger {
 		return album;
 	}
 
-	private async getAlbumByID(id: string, changes?: MergeChanges): Promise<Album | undefined> {
+	private async getAlbumByID(id: string, changes?: Changes): Promise<Album | undefined> {
 		let album = this.albumCache.find(a => a.id === id);
 		if (album) {
 			return album;
@@ -148,7 +146,7 @@ export class ScanMetaMerger {
 		return album;
 	}
 
-	private async getArtistByID(id: string, changes: MergeChanges): Promise<Artist | undefined> {
+	private async getArtistByID(id: string, changes: Changes): Promise<Artist | undefined> {
 		const artistCache = this.artistCache.find(a => a.artist.id === id);
 		if (artistCache) {
 			return artistCache.artist;
@@ -181,7 +179,7 @@ export class ScanMetaMerger {
 		};
 	}
 
-	private async findCompilationArtist(changes: MergeChanges): Promise<Artist | undefined> {
+	private async findCompilationArtist(changes: Changes): Promise<Artist | undefined> {
 		const artistCache = this.artistCache.find(a => a.artist.mbArtistID === MUSICBRAINZ_VARIOUS_ARTISTS_ID);
 		if (artistCache) {
 			return artistCache.artist;
@@ -194,7 +192,7 @@ export class ScanMetaMerger {
 		return artist;
 	}
 
-	private async findOrCreateCompilationArtist(changes: MergeChanges): Promise<Artist> {
+	private async findOrCreateCompilationArtist(changes: Changes): Promise<Artist> {
 		let artist = await this.findCompilationArtist(changes);
 		if (!artist) {
 			artist = {
@@ -217,7 +215,7 @@ export class ScanMetaMerger {
 		return artist;
 	}
 
-	private async findOrCreateArtist(trackInfo: MetaMergeTrackInfo, albumArtist: boolean, changes: MergeChanges): Promise<Artist> {
+	private async findOrCreateArtist(trackInfo: MetaMergeTrackInfo, albumArtist: boolean, changes: Changes): Promise<Artist> {
 		let artist = await this.findArtistInCache(trackInfo, albumArtist);
 		if (artist) {
 			return artist;
@@ -237,7 +235,7 @@ export class ScanMetaMerger {
 		return artist;
 	}
 
-	private async addMeta(trackInfo: MetaMergeTrackInfo, changes: MergeChanges): Promise<void> {
+	private async addMeta(trackInfo: MetaMergeTrackInfo, changes: Changes): Promise<void> {
 		if (trackInfo.parent) {
 			const artist = await this.findOrCreateArtist(trackInfo, false, changes);
 			trackInfo.track.artistID = artist.id;
@@ -251,7 +249,7 @@ export class ScanMetaMerger {
 		}
 	}
 
-	private async removeMeta(track: Track, changes: MergeChanges): Promise<void> {
+	private async removeMeta(track: Track, changes: Changes): Promise<void> {
 		let artist = await this.getArtistByID(track.artistID, changes);
 		if (artist && !changes.updateArtists.includes(artist)) {
 			changes.updateArtists.push(artist);
@@ -268,7 +266,7 @@ export class ScanMetaMerger {
 		}
 	}
 
-	async findFolder(id: string, changes: MergeChanges): Promise<Folder | undefined> {
+	private async findFolder(id: string, changes: Changes): Promise<Folder | undefined> {
 		let folder = changes.newFolders.find(f => f.id === id);
 		if (!folder) {
 			folder = changes.updateFolders.find(f => f.id === id);
@@ -285,59 +283,11 @@ export class ScanMetaMerger {
 		return folder;
 	}
 
-	async mergeMeta(forceMetaRefresh: boolean, rootID: string, changes: MergeChanges): Promise<void> {
-		// merge new
-		const newTracks: Array<MetaMergeTrackInfo> = [];
-		const updateTracks: Array<UpdateMetaMergeTrackInfo> = [];
-		for (const track of changes.newTracks) {
-			const parent = await this.findFolder(track.parentID, changes);
-			if (parent) {
-				newTracks.push({track, parent});
-			}
-		}
-		for (const trackInfo of changes.updateTracks) {
-			const parent = await this.findFolder(trackInfo.track.parentID, changes);
-			if (parent) {
-				updateTracks.push({track: trackInfo.track, oldTrack: trackInfo.oldTrack, parent});
-			}
-		}
-		log.debug('merge meta tracks new', newTracks.length);
-		for (const trackInfo of newTracks) {
-			await this.addMeta(trackInfo, changes);
-		}
-		// remove missing
-		log.debug('merge meta tracks remove', changes.removedTracks.length);
-		for (const track of changes.removedTracks) {
-			await this.removeMeta(track, changes);
-		}
-		// update updated
-		log.debug('merge meta tracks update', updateTracks.length);
-		for (const trackInfo of updateTracks) {
-			await this.removeMeta(trackInfo.oldTrack, changes);
-			await this.addMeta(trackInfo, changes);
-		}
-		if (forceMetaRefresh) {
-			const allArtistIDs = await this.store.artistStore.searchIDs({rootID});
-			for (const id of allArtistIDs) {
-				await this.getArtistByID(id, changes);
-			}
-			const allAlbumIDs = await this.store.albumStore.searchIDs({rootID});
-			for (const id of allAlbumIDs) {
-				await this.getAlbumByID(id, changes);
-			}
-		}
-		const removedTrackIDs = changes.removedTracks.map(t => t.id);
-		await this.refreshAlbums(changes, removedTrackIDs, updateTracks, newTracks);
-		await this.refreshArtists(changes, removedTrackIDs, updateTracks, newTracks);
-	}
-
-	private async refreshArtists(changes: MergeChanges, removedTrackIDs: Array<string>, updateTracks: Array<UpdateMetaMergeTrackInfo>, newTracks: Array<MetaMergeTrackInfo>): Promise<void> {
+	private async refreshArtists(changes: Changes, removedTrackIDs: Array<string>, updateTracks: Array<UpdateMetaMergeTrackInfo>, newTracks: Array<MetaMergeTrackInfo>): Promise<void> {
 		const checkArtists = changes.updateArtists.concat(changes.newArtists);
-		log.debug('refresh artists', checkArtists.length);
 		changes.removedArtists = [];
 		changes.updateArtists = [];
 		for (const artist of checkArtists) {
-			log.debug('refresh artist', artist.name, artist.id);
 			// get the db state
 			let trackIDs = await this.store.trackStore.searchIDs({artistID: artist.id});
 			const tracksAlbumsIDs = await this.store.trackStore.searchIDs({albumArtistID: artist.id});
@@ -359,7 +309,7 @@ export class ScanMetaMerger {
 				.concat(newTracks.filter(t => t.track.artistID === artist.id || t.track.albumArtistID === artist.id));
 			if (refreshedTracks.length + trackIDs.length === 0) {
 				if (changes.newArtists.includes(artist)) {
-					log.error('new artist without tracks', artist);
+					console.error('new artist without tracks', artist);
 				} else {
 					changes.removedArtists.push(artist);
 				}
@@ -419,13 +369,11 @@ export class ScanMetaMerger {
 		}
 	}
 
-	private async refreshAlbums(changes: MergeChanges, removedTrackIDs: Array<string>, updateTracks: Array<UpdateMetaMergeTrackInfo>, newTracks: Array<MetaMergeTrackInfo>): Promise<void> {
+	private async refreshAlbums(changes: Changes, removedTrackIDs: Array<string>, updateTracks: Array<UpdateMetaMergeTrackInfo>, newTracks: Array<MetaMergeTrackInfo>): Promise<void> {
 		const checkAlbums = changes.updateAlbums.concat(changes.newAlbums);
-		log.debug('refresh albums', checkAlbums.length);
 		changes.removedAlbums = [];
 		changes.updateAlbums = [];
 		for (const album of checkAlbums) {
-			log.debug('refresh album', album.name, album.id, album.artist);
 			// get the db state
 			let trackIDs = await this.store.trackStore.searchIDs({albumID: album.id});
 			// filter out removed tracks
@@ -441,7 +389,7 @@ export class ScanMetaMerger {
 				if (!changes.removedAlbums.includes(album)) {
 					changes.removedAlbums.push(album);
 				} else {
-					log.error('new album without tracks', album);
+					console.error('new album without tracks', album);
 				}
 			} else {
 				let duration = 0;
@@ -490,5 +438,48 @@ export class ScanMetaMerger {
 				}
 			}
 		}
+	}
+
+	async mergeMeta(forceMetaRefresh: boolean, rootID: string, changes: Changes): Promise<void> {
+		// merge new
+		const newTracks: Array<MetaMergeTrackInfo> = [];
+		const updateTracks: Array<UpdateMetaMergeTrackInfo> = [];
+		for (const track of changes.newTracks) {
+			const parent = await this.findFolder(track.parentID, changes);
+			if (parent) {
+				newTracks.push({track, parent});
+			}
+		}
+		for (const trackInfo of changes.updateTracks) {
+			const parent = await this.findFolder(trackInfo.track.parentID, changes);
+			if (parent) {
+				updateTracks.push({track: trackInfo.track, oldTrack: trackInfo.oldTrack, parent});
+			}
+		}
+		for (const trackInfo of newTracks) {
+			await this.addMeta(trackInfo, changes);
+		}
+		// remove missing
+		for (const track of changes.removedTracks) {
+			await this.removeMeta(track, changes);
+		}
+		// update updated
+		for (const trackInfo of updateTracks) {
+			await this.removeMeta(trackInfo.oldTrack, changes);
+			await this.addMeta(trackInfo, changes);
+		}
+		if (forceMetaRefresh) {
+			const allArtistIDs = await this.store.artistStore.searchIDs({rootID});
+			for (const id of allArtistIDs) {
+				await this.getArtistByID(id, changes);
+			}
+			const allAlbumIDs = await this.store.albumStore.searchIDs({rootID});
+			for (const id of allAlbumIDs) {
+				await this.getAlbumByID(id, changes);
+			}
+		}
+		const removedTrackIDs = changes.removedTracks.map(t => t.id);
+		await this.refreshAlbums(changes, removedTrackIDs, updateTracks, newTracks);
+		await this.refreshArtists(changes, removedTrackIDs, updateTracks, newTracks);
 	}
 }

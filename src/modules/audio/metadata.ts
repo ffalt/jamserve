@@ -165,7 +165,7 @@ export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageMod
 	const pics = tag.frames.filter(frame => frame.id === 'APIC') as Array<{ id: string; value: IID3V2.FrameValue.Pic }>;
 	for (const pic of pics) {
 		if (pic.value.bin && pic.value.mimeType) {
-			const imageInfo = await imageModule.getImageInfo(pic.value.bin);
+			const imageInfo = await imageModule.getImageInfoBuffer(pic.value.bin);
 			const picBlock = MetaDataBlockPicture.createPictureBlock(pic.value.pictureType, pic.value.mimeType, pic.value.description,
 				imageInfo.width, imageInfo.height, imageInfo.colorDepth, imageInfo.colors, pic.value.bin);
 			result.push(picBlock);

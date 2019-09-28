@@ -39,7 +39,7 @@ export class TestEngineDataMock {
 				strategy: RootScanStrategy.auto,
 				created: Date.now()
 			});
-		await this.engine.scanService.scanRoot(this.mockRoot.id, false);
+		await this.engine.workerService.refreshRoot({rootID: this.mockRoot.id, forceMetaRefresh: false});
 		const podcastID = await this.engine.podcastService.podcastStore.add(mockPodcast());
 		const episode = mockEpisode();
 		episode.podcastID = podcastID;

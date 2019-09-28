@@ -86,7 +86,7 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 	}
 
 	async queueId(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {
-		return this.ioService.getScanActionStatus(req.query.id);
+		return this.ioService.getAdminChangeQueueInfoStatus(req.query.id);
 	}
 
 }

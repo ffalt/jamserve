@@ -1,15 +1,11 @@
 import path from 'path';
-import {logger} from '../../utils/logger';
-import {Folder} from '../folder/folder.model';
-import {Store} from '../store/store';
-import {Track} from '../track/track.model';
-import {MergeChanges} from './scan.changes';
-import {MatchDir} from './scan.match-dir';
-import {ScanDir} from './scan.scan-dir';
+import {Folder} from '../../folder/folder.model';
+import {Store} from '../../store/store';
+import {Track} from '../../track/track.model';
+import {ScanDir} from '../scan-dir/scan-dir';
+import {MatchDir} from './match-dir.types';
 
-const log = logger('IO.Scan.Matcher');
-
-export class ScanMatcher {
+export class MatchDirBuilderScan {
 
 	constructor(public store: Store) {
 	}
@@ -31,8 +27,7 @@ export class ScanMatcher {
 		return result;
 	}
 
-	private async matchDirR(dir: MatchDir, changes: MergeChanges): Promise<void> {
-		log.debug('Comparing:', dir.name);
+	private async matchDirR(dir: MatchDir, removedFolders: Array<Folder>, removedTracks: Array<Track>): Promise<void> {
 		const tracks = await this.store.trackStore.search({path: dir.name});
 		tracks.items.forEach(track => {
 			const filename = path.join(track.path, track.name);
@@ -40,7 +35,7 @@ export class ScanMatcher {
 			if (file) {
 				file.track = track;
 			} else {
-				changes.removedTracks.push(track);
+				removedTracks.push(track);
 			}
 		});
 		if (dir.folder) {
@@ -49,23 +44,22 @@ export class ScanMatcher {
 			for (const subFolder of folders.items) {
 				const subDir = dir.directories.find(sd => sd.name === subFolder.path);
 				if (!subDir) {
-					changes.removedFolders.push(subFolder);
+					removedFolders.push(subFolder);
 				} else {
 					subDir.folder = subFolder;
-					await this.matchDirR(subDir, changes);
+					await this.matchDirR(subDir, removedFolders, removedTracks);
 				}
 			}
 		}
 	}
 
-	async match(dir: ScanDir, changes: MergeChanges): Promise<MatchDir> {
-		log.info('Matching:', dir.name);
-		const result: MatchDir = this.cloneScanDir(dir, undefined, 0);
-		result.folder = await this.store.folderStore.searchOne({path: dir.name});
-		await this.matchDirR(result, changes);
-		const removedFolders: Array<Folder> = changes.removedFolders;
-		const removedTracks: Array<Track> = changes.removedTracks;
-		for (const sub of changes.removedFolders) {
+	async match(dir: ScanDir): Promise<{ rootMatch: MatchDir, removedFolders: Array<Folder>, removedTracks: Array<Track> }> {
+		const rootMatch: MatchDir = this.cloneScanDir(dir, undefined, 0);
+		rootMatch.folder = await this.store.folderStore.searchOne({path: dir.name});
+		const removedFolders: Array<Folder> = [];
+		const removedTracks: Array<Track> = [];
+		await this.matchDirR(rootMatch, removedFolders, removedTracks);
+		for (const sub of removedFolders) {
 			const folderList = await this.store.folderStore.search({inPath: sub.path});
 			for (const folder of folderList.items) {
 				if (!removedFolders.find(f => f.id === folder.id)) {
@@ -79,9 +73,7 @@ export class ScanMatcher {
 				}
 			}
 		}
-		changes.removedTracks = removedTracks;
-		changes.removedFolders = removedFolders;
-		return result;
+		return {rootMatch, removedTracks, removedFolders};
 	}
 
 }

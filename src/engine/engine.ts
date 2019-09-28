@@ -29,7 +29,7 @@ import {PodcastService} from './podcast/podcast.service';
 import {RadioService} from './radio/radio.service';
 import {Root} from './root/root.model';
 import {RootService} from './root/root.service';
-import {ScanService} from './scan/scan.service';
+import {WorkerService} from './worker/worker.service';
 import {SessionService} from './session/session.service';
 import {SettingsService} from './settings/settings.service';
 import {StateService} from './state/state.service';
@@ -50,7 +50,7 @@ export class Engine {
 	public waveformService: WaveformService;
 	public metaDataService: MetaDataService;
 	public indexService: IndexService;
-	public scanService: ScanService;
+	public workerService: WorkerService;
 	public userService: UserService;
 	public rootService: RootService;
 	public chatService: ChatService;
@@ -84,14 +84,14 @@ export class Engine {
 		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.audioModule, this.imageModule, this.stateService);
 		this.albumService = new AlbumService(this.store.albumStore, this.store.trackStore, this.folderService, this.stateService);
 		this.indexService = new IndexService(this.store.artistStore, this.store.albumStore, this.store.folderStore, this.store.trackStore);
-		this.scanService = new ScanService(this.store, this.audioModule, this.imageModule, this.waveformService);
-		this.settingsService = new SettingsService(store.settingsStore, this.chatService, this.indexService, this.scanService, version);
+		this.workerService = new WorkerService(this.store, this.audioModule, this.imageModule, this.waveformService);
+		this.settingsService = new SettingsService(store.settingsStore, this.chatService, this.indexService, this.workerService, version);
 		this.artistService = new ArtistService(this.store.artistStore, this.store.trackStore, this.folderService, this.stateService);
 		this.userService = new UserService(this.config.getDataPath(['images']), this.store.userStore, this.store.stateStore, this.store.playlistStore,
 			this.store.bookmarkStore, this.store.playQueueStore, this.store.sessionStore, this.imageModule);
 		this.genreService = new GenreService(this.store.trackStore);
 		this.statsService = new StatsService(this.store);
-		this.ioService = new IoService(this.store.rootStore, this.scanService, async () => {
+		this.ioService = new IoService(this.store.rootStore, this.workerService, async () => {
 			this.refresh().catch(e => {
 				log.error('Error on Refresh Indexes & Stats', e);
 			});

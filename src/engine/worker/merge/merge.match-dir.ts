@@ -1,25 +1,45 @@
 import path from 'path';
-import {DBObjectType} from '../../db/db.types';
-import {Jam} from '../../model/jam-rest-data';
-import {FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../model/jam-types';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
-import {logger} from '../../utils/logger';
-import {artWorkImageNameToType} from '../folder/folder.format';
-import {Artwork, Folder, FolderTag} from '../folder/folder.model';
-import {Store} from '../store/store';
-import {Track, TrackTag} from '../track/track.model';
-import {getImageInfo} from './scan.artwork';
-import {MergeChanges} from './scan.changes';
-import {MatchDir, MatchFile} from './scan.match-dir';
-import {buildMetaStat, MetaStat} from './scan.metastats';
-import {folderHasChanged, generateArtworkId, splitDirectoryName, trackHasChanged} from './scan.utils';
+import {DBObjectType} from '../../../db/db.types';
+import {Jam} from '../../../model/jam-rest-data';
+import {FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../../model/jam-types';
+import {AudioModule} from '../../../modules/audio/audio.module';
+import {ImageModule} from '../../../modules/image/image.module';
+import {ensureTrailingPathSeparator} from '../../../utils/fs-utils';
+import {artWorkImageNameToType} from '../../folder/folder.format';
+import {Artwork, Folder, FolderTag} from '../../folder/folder.model';
+import {generateArtworkId} from '../../../utils/artwork-id';
+import {Store} from '../../store/store';
+import {Track, TrackTag} from '../../track/track.model';
+import {buildMetaStat, MetaStat} from '../match-dir/match-dir.meta-stats';
+import {MatchDir, MatchFile} from '../match-dir/match-dir.types';
+import {Changes} from '../changes/changes';
+import {deepCompare} from '../../../utils/deep-compare';
 
-const log = logger('IO.Merge');
+export class MatchDirMerge {
 
-export class ScanMerger {
+	constructor(
+		private audioModule: AudioModule, private imageModule: ImageModule,
+		private store: Store, private settings: Jam.AdminSettingsLibrary, private strategy: RootScanStrategy
+	) {
+	}
 
-	constructor(private  audioModule: AudioModule, private store: Store, private settings: Jam.AdminSettingsLibrary, private strategy: RootScanStrategy) {
+	private splitDirectoryName(name: string): { title: string; year?: number; } {
+		const result: { title: string; year?: number; } = {title: path.basename(name).trim()};
+		// year title | year - title | (year) title | [year] title
+		const parts = result.title.split(' ');
+		const s = parts[0].replace(/[^\w\s]/gi, '');
+		if (s.length === 4) {
+			const y = Number(s);
+			if (!isNaN(y)) {
+				result.year = y;
+				parts.shift();
+				if (parts[0] === '-') {
+					parts.shift();
+				}
+				result.title = parts.join(' ');
+			}
+		}
+		return result;
 	}
 
 	private buildDefaultTag(dir: MatchDir): FolderTag {
@@ -46,7 +66,14 @@ export class ScanMerger {
 		};
 	}
 
-	private async buildMerge(dir: MatchDir, changes: MergeChanges): Promise<void> {
+	private trackHasChanged(file: MatchFile): boolean {
+		return (!file.track) ||
+			(file.stat.mtime !== file.track.stat.modified) ||
+			(file.stat.ctime !== file.track.stat.created) ||
+			(file.stat.size !== file.track.stat.size);
+	}
+
+	private async buildMerge(dir: MatchDir, changes: Changes): Promise<void> {
 		if (!dir.folder) {
 			const folder = this.buildFolder(dir);
 			folder.id = await this.store.trackStore.getNewId();
@@ -63,7 +90,7 @@ export class ScanMerger {
 					track.id = await this.store.trackStore.getNewId();
 					file.track = track;
 					changes.newTracks.push(track);
-				} else if (trackHasChanged(file)) {
+				} else if (this.trackHasChanged(file)) {
 					const old = file.track;
 					if (!old) {
 						return;
@@ -78,7 +105,6 @@ export class ScanMerger {
 	}
 
 	private async buildTrack(file: MatchFile, parent: Folder): Promise<Track> {
-		log.info('Reading Track:', file.name);
 		const data = await this.audioModule.read(file.name);
 		const tag: TrackTag = data.tag || {format: TrackTagFormatType.none};
 		if (!tag.title) {
@@ -104,9 +130,16 @@ export class ScanMerger {
 		};
 	}
 
-	private async mergeR(dir: MatchDir, changes: MergeChanges): Promise<void> {
+	private folderHasChanged(dir: MatchDir): boolean {
+		return (!dir.folder) ||
+			(dir.stat.mtime !== dir.folder.stat.modified) ||
+			(dir.stat.ctime !== dir.folder.stat.created) ||
+			(!deepCompare(dir.folder.tag, dir.tag));
+	}
+
+	private async mergeR(dir: MatchDir, changes: Changes): Promise<void> {
 		if (dir.folder) {
-			if (folderHasChanged(dir)) {
+			if (this.folderHasChanged(dir)) {
 				const folder = this.buildFolder(dir);
 				folder.id = dir.folder.id;
 				dir.folder = folder;
@@ -131,7 +164,7 @@ export class ScanMerger {
 		if (!metaStat) {
 			throw Error('internal error, metastat must exist');
 		}
-		const nameSplit = splitDirectoryName(dir.name);
+		const nameSplit = this.splitDirectoryName(dir.name);
 		const images = await this.collectFolderArtworks(dir);
 		return {
 			trackCount: metaStat.trackCount,
@@ -206,7 +239,7 @@ export class ScanMerger {
 
 	private async collectFolderArtworks(dir: MatchDir): Promise<Array<Artwork>> {
 		if (!dir.folder) {
-			log.error('folder obj must exist at this point');
+			// log.error('folder obj must exist at this point');
 			return [];
 		}
 		const folderID = dir.folder.id;
@@ -215,14 +248,14 @@ export class ScanMerger {
 		const oldArtworks = dir.folder && dir.folder.tag && dir.folder.tag.artworks ? dir.folder.tag.artworks : [];
 		for (const file of files) {
 			const name = path.basename(file.name);
-			const id = generateArtworkId(folderID, name);
+			const id = generateArtworkId(folderID, name, file.stat.size);
 			const oldArtwork = oldArtworks.find(o => o.name === name);
 			if (!oldArtwork || oldArtwork.stat.modified !== file.stat.mtime) {
 				result.push({
 					id,
 					name,
 					types: artWorkImageNameToType(name),
-					image: await getImageInfo(file.name),
+					image: await this.imageModule.getImageInfo(file.name),
 					stat: {created: file.stat.ctime, modified: file.stat.mtime, size: file.stat.size}
 				});
 			} else {
@@ -297,8 +330,7 @@ export class ScanMerger {
 		this.applyFolderTagType(dir);
 	}
 
-	async merge(dir: MatchDir, rootID: string, rebuildTag: (dir: MatchDir) => boolean, changes: MergeChanges): Promise<void> {
-		log.info('Merging:', dir.name);
+	async merge(dir: MatchDir, rootID: string, rebuildTag: (dir: MatchDir) => boolean, changes: Changes): Promise<void> {
 		await this.buildMerge(dir, changes);
 		await this.buildMergeTags(dir, rebuildTag);
 		await this.mergeR(dir, changes);

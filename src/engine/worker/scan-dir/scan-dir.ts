@@ -1,9 +1,9 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {FileTyp} from '../../model/jam-types';
-import {getFileType} from '../../utils/filetype';
-import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
-import {logger} from '../../utils/logger';
+import {FileTyp} from '../../../model/jam-types';
+import {getFileType} from '../../../utils/filetype';
+import {ensureTrailingPathSeparator} from '../../../utils/fs-utils';
+import {logger} from '../../../utils/logger';
 
 const log = logger('IO.DirScanner');
 

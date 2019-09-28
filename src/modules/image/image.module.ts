@@ -9,8 +9,16 @@ import {downloadFile} from '../../utils/download';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {logger} from '../../utils/logger';
-import {AvatarGen} from './image.avatar';
 import {randomString} from '../../utils/random';
+import {AvatarGen} from './image.avatar';
+
+export interface ImageInfo {
+	width: number;
+	height: number;
+	colorDepth: number;
+	colors: number;
+	format: string;
+}
 
 type JimpFont = any;
 
@@ -102,7 +110,7 @@ export class ImageModule {
 	}
 
 	private async getImageBufferAs(buffer: Buffer, format: string | undefined, size: number | undefined): Promise<ApiBinaryResult> {
-		const info = await this.getImageInfo(buffer);
+		const info = await this.getImageInfoBuffer(buffer);
 		format = format || info.format;
 		const mime = mimeTypes.lookup(format);
 		if (!mime) {
@@ -279,9 +287,9 @@ export class ImageModule {
 		await fse.writeFile(destination, avatar);
 	}
 
-	async getImageInfo(bin: Buffer): Promise<{ width: number, height: number, colorDepth: number, colors: number, format: string }> {
+	private async formatImageInfo(sharpy: sharp.Sharp): Promise<ImageInfo> {
 		try {
-			const metadata = await sharp(bin).metadata();
+			const metadata = await sharpy.metadata();
 			return {
 				width: metadata.width || 0,
 				height: metadata.height || 0,
@@ -294,10 +302,18 @@ export class ImageModule {
 			return {
 				width: 0,
 				height: 0,
-				format: '',
+				format: 'invalid',
 				colorDepth: 0,
 				colors: 0
 			};
 		}
+	}
+
+	async getImageInfo(filename: string): Promise<ImageInfo> {
+		return this.formatImageInfo(sharp(filename));
+	}
+
+	async getImageInfoBuffer(bin: Buffer): Promise<ImageInfo> {
+		return this.formatImageInfo(sharp(bin));
 	}
 }
