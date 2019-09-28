@@ -1,3 +1,5 @@
+import {DBObjectType} from '../../../db/db.types';
+import {RootScanStrategy} from '../../../model/jam-types';
 import {Folder} from '../../folder/folder.model';
 import {Root} from '../../root/root.model';
 import {Store} from '../../store/store';
@@ -12,17 +14,44 @@ export class RootWorker {
 
 	}
 
-	public async remove(root: Root): Promise<{ removedFolders: Array<Folder>, removedTracks: Array<Track> }> {
+	private async checkUsedPath(dir: string): Promise<void> {
+		const roots = await this.store.rootStore.all();
+		for (const r of roots) {
+			if (dir.startsWith(r.path) || r.path.startsWith(dir)) {
+				return Promise.reject(Error('Root path already used'));
+			}
+		}
+	}
+
+	async remove(root: Root): Promise<{ removedFolders: Array<Folder>, removedTracks: Array<Track> }> {
 		const removedTracks = (await this.store.trackStore.search({rootID: root.id})).items;
 		const removedFolders = (await this.store.folderStore.search({rootID: root.id})).items;
 		await this.store.rootStore.remove(root.id);
 		return {removedTracks, removedFolders};
 	}
 
-	public async scan(root: Root): Promise<{ rootMatch: MatchDir, removedFolders: Array<Folder>, removedTracks: Array<Track> }> {
+	async scan(root: Root): Promise<{ rootMatch: MatchDir, removedFolders: Array<Folder>, removedTracks: Array<Track> }> {
 		const dirScanner = new DirScanner();
 		const scanDir = await dirScanner.scan(root.path, root.id);
 		const scanMatcher = new MatchDirBuilderScan(this.store);
 		return scanMatcher.match(scanDir);
+	}
+
+	async create(name: string, path: string, strategy: RootScanStrategy): Promise<{ root: Root }> {
+		await this.checkUsedPath(path);
+		const root: Root = {id: '', created: Date.now(), type: DBObjectType.root, name, path, strategy};
+		root.id = await this.store.rootStore.add(root);
+		return {root};
+	}
+
+	async update(root: Root, name: string, path: string, strategy: RootScanStrategy): Promise<{ rootMatch: MatchDir, removedFolders: Array<Folder>, removedTracks: Array<Track> }> {
+		root.name = name;
+		if (root.path !== path) {
+			await this.checkUsedPath(path);
+			root.path = path;
+		}
+		root.strategy = strategy;
+		await this.store.rootStore.replace(root);
+		return this.scan(root);
 	}
 }

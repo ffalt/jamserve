@@ -41,29 +41,13 @@ export class RootController extends BaseController<JamParameters.ID, JamParamete
 		};
 	}
 
-	async create(req: JamRequest<JamParameters.RootNew>): Promise<Jam.Root> {
-		const root: Root = {
-			id: '',
-			created: Date.now(),
-			type: DBObjectType.root,
-			name: req.query.name,
-			path: req.query.path,
-			strategy: req.query.strategy as RootScanStrategy
-		};
-		root.id = await this.rootService.create(root);
-		return this.prepare(root, {}, req.user);
+	async create(req: JamRequest<JamParameters.RootNew>): Promise<Jam.AdminChangeQueueInfo> {
+		return this.ioService.createRoot(req.query.name, req.query.path, req.query.strategy as RootScanStrategy);
 	}
 
-	async update(req: JamRequest<JamParameters.RootUpdate>): Promise<Jam.Root> {
-		// TODO: move this to scanSevice and return Jam.AdminChangeQueueInfo;
+	async update(req: JamRequest<JamParameters.RootUpdate>): Promise<Jam.AdminChangeQueueInfo> {
 		const root = await this.byID(req.query.id);
-		root.name = req.query.name;
-		root.path = req.query.path;
-		const forceRefreshMeta = root.strategy !== req.query.strategy;
-		root.strategy = req.query.strategy as RootScanStrategy;
-		await this.rootService.update(root);
-		this.ioService.refreshRoot(root.id, forceRefreshMeta);
-		return this.prepare(root, {}, req.user);
+		return this.ioService.updateRoot(root.id, req.query.name, req.query.path, req.query.strategy as RootScanStrategy);
 	}
 
 	async delete(req: JamRequest<JamParameters.ID>): Promise<Jam.AdminChangeQueueInfo> {

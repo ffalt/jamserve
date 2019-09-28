@@ -1,9 +1,9 @@
 import path from 'path';
 import {Jam} from '../../../model/jam-rest-data';
 import {AlbumType, FileTyp, FolderType, MUSICBRAINZ_VARIOUS_ARTISTS_NAME, RootScanStrategy} from '../../../model/jam-types';
-import {MatchDir} from './match-dir.types';
-import {slugify} from '../../../utils/slug';
 import {extractAlbumName} from '../../../utils/album-name';
+import {slugify} from '../../../utils/slug';
+import {MatchDir} from './match-dir.types';
 
 export interface MetaStatValue<T> {
 	count: number;

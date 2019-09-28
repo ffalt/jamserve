@@ -4,16 +4,16 @@ import {Jam} from '../../../model/jam-rest-data';
 import {FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../../model/jam-types';
 import {AudioModule} from '../../../modules/audio/audio.module';
 import {ImageModule} from '../../../modules/image/image.module';
+import {generateArtworkId} from '../../../utils/artwork-id';
+import {deepCompare} from '../../../utils/deep-compare';
 import {ensureTrailingPathSeparator} from '../../../utils/fs-utils';
 import {artWorkImageNameToType} from '../../folder/folder.format';
 import {Artwork, Folder, FolderTag} from '../../folder/folder.model';
-import {generateArtworkId} from '../../../utils/artwork-id';
 import {Store} from '../../store/store';
 import {Track, TrackTag} from '../../track/track.model';
+import {Changes} from '../changes/changes';
 import {buildMetaStat, MetaStat} from '../match-dir/match-dir.meta-stats';
 import {MatchDir, MatchFile} from '../match-dir/match-dir.types';
-import {Changes} from '../changes/changes';
-import {deepCompare} from '../../../utils/deep-compare';
 
 export class MatchDirMerge {
 

@@ -1,14 +1,14 @@
-import {AudioModule} from '../../../modules/audio/audio.module';
-import {ImageModule} from '../../../modules/image/image.module';
-import {Store} from '../../store/store';
-import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFolderSystemChars} from '../../../utils/fs-utils';
-import path from 'path';
 import fse from 'fs-extra';
-import {Folder} from '../../folder/folder.model';
+import path from 'path';
 import {DBObjectType} from '../../../db/db.types';
 import {FolderType} from '../../../model/jam-types';
-import {Track} from '../../track/track.model';
+import {AudioModule} from '../../../modules/audio/audio.module';
+import {ImageModule} from '../../../modules/image/image.module';
+import {containsFolderSystemChars, ensureTrailingPathSeparator, replaceFolderSystemChars} from '../../../utils/fs-utils';
+import {Folder} from '../../folder/folder.model';
 import {Root} from '../../root/root.model';
+import {Store} from '../../store/store';
+import {Track} from '../../track/track.model';
 
 export class FolderWorker {
 

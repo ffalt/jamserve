@@ -1,6 +1,6 @@
 import moment from 'moment';
 import {Jam} from '../../model/jam-rest-data';
-import {ArtworkImageType, TrackHealthID} from '../../model/jam-types';
+import {ArtworkImageType, RootScanStrategy, TrackHealthID} from '../../model/jam-types';
 import {Subsonic} from '../../model/subsonic-rest-data';
 import {logger} from '../../utils/logger';
 import {RootStatus} from '../root/root.model';
@@ -9,6 +9,7 @@ import {Changes} from '../worker/changes/changes';
 import {
 	WorkerRequestCreateArtwork,
 	WorkerRequestCreateFolder,
+	WorkerRequestCreateRoot,
 	WorkerRequestDeleteArtwork,
 	WorkerRequestDeleteFolders,
 	WorkerRequestDownloadArtwork,
@@ -23,6 +24,7 @@ import {
 	WorkerRequestRenameFolder,
 	WorkerRequestRenameTrack,
 	WorkerRequestUpdateArtwork,
+	WorkerRequestUpdateRoot,
 	WorkerRequestWriteTrackTags,
 	WorkerService
 } from '../worker/worker.service';
@@ -32,6 +34,8 @@ const log = logger('IO');
 export enum WorkerRequestMode {
 	refreshRoot,
 	removeRoot,
+	updateRoot,
+	createRoot,
 
 	fixTrack,
 	moveTracks,
@@ -264,7 +268,7 @@ export class IoService {
 			return this.getRequestInfo(oldRequest);
 		}
 		return this.newRequest<WorkerRequestRefreshRoot>(
-			WorkerRequestMode.refreshRoot, this.workerService.refreshRoot, {rootID, forceMetaRefresh: !!forceMetaRefresh}
+			WorkerRequestMode.refreshRoot, p => this.workerService.refreshRoot(p), {rootID, forceMetaRefresh: !!forceMetaRefresh}
 		);
 	}
 
@@ -274,7 +278,7 @@ export class IoService {
 			return this.getRequestInfo(oldRequest);
 		}
 		return this.newRequest<WorkerRequestRemoveRoot>(
-			WorkerRequestMode.removeRoot, this.workerService.removeRoot, {rootID}
+			WorkerRequestMode.removeRoot, p => this.workerService.removeRoot(p), {rootID}
 		);
 	}
 
@@ -292,7 +296,7 @@ export class IoService {
 			return this.getRequestInfo(oldRequest);
 		}
 		return this.newRequest<WorkerRequestMoveFolders>(
-			WorkerRequestMode.moveFolders, this.workerService.moveFolders, {rootID, newParentID, folderIDs}
+			WorkerRequestMode.moveFolders, p => this.workerService.moveFolders(p), {rootID, newParentID, folderIDs}
 		);
 	}
 
@@ -305,37 +309,37 @@ export class IoService {
 			return this.getRequestInfo(oldRequest);
 		}
 		return this.newRequest<WorkerRequestDeleteFolders>(
-			WorkerRequestMode.deleteFolders, this.workerService.deleteFolders, {rootID, folderIDs: [id]}
+			WorkerRequestMode.deleteFolders, p => this.workerService.deleteFolders(p), {rootID, folderIDs: [id]}
 		);
 	}
 
 	async renameArtwork(folderID: string, artworkID: string, newname: string, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
 		return this.newRequest<WorkerRequestRenameArtwork>(
-			WorkerRequestMode.renameArtwork, this.workerService.renameArtwork, {rootID, folderID, artworkID, name: newname}
+			WorkerRequestMode.renameArtwork, p => this.workerService.renameArtwork(p), {rootID, folderID, artworkID, name: newname}
 		);
 	}
 
 	async updateArtwork(folderID: string, artworkID: string, artworkFilename: string, artworkMimeType: string, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
 		return this.newRequest<WorkerRequestUpdateArtwork>(
-			WorkerRequestMode.updateArtwork, this.workerService.updateArtwork, {rootID, folderID, artworkID, artworkFilename, artworkMimeType}
+			WorkerRequestMode.updateArtwork, p => this.workerService.updateArtwork(p), {rootID, folderID, artworkID, artworkFilename, artworkMimeType}
 		);
 	}
 
 	async createArtwork(folderID: string, artworkFilename: string, artworkMimeType: string, types: Array<ArtworkImageType>, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
 		return this.newRequest<WorkerRequestCreateArtwork>(
-			WorkerRequestMode.createArtwork, this.workerService.createArtwork, {rootID, folderID, artworkFilename, artworkMimeType, types}
+			WorkerRequestMode.createArtwork, p => this.workerService.createArtwork(p), {rootID, folderID, artworkFilename, artworkMimeType, types}
 		);
 	}
 
 	async downloadArtwork(folderID: string, artworkURL: string, types: Array<ArtworkImageType>, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
 		return this.newRequest<WorkerRequestDownloadArtwork>(
-			WorkerRequestMode.downloadArtwork, this.workerService.downloadArtwork, {rootID, folderID, artworkURL, types}
+			WorkerRequestMode.downloadArtwork, p => this.workerService.downloadArtwork(p), {rootID, folderID, artworkURL, types}
 		);
 	}
 
 	async deleteArtwork(folderID: string, artworkID: string, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
 		return this.newRequest<WorkerRequestDeleteArtwork>(
-			WorkerRequestMode.deleteArtwork, this.workerService.deleteArtwork, {rootID, folderID, artworkID}
+			WorkerRequestMode.deleteArtwork, p => this.workerService.deleteArtwork(p), {rootID, folderID, artworkID}
 		);
 	}
 
@@ -348,7 +352,7 @@ export class IoService {
 			return this.getRequestInfo(oldRequest);
 		}
 		return this.newRequest<WorkerRequestRemoveTracks>(
-			WorkerRequestMode.removeTracks, this.workerService.removeTracks, {rootID, trackIDs: [id]}
+			WorkerRequestMode.removeTracks, p => this.workerService.removeTracks(p), {rootID, trackIDs: [id]}
 		);
 	}
 
@@ -366,13 +370,13 @@ export class IoService {
 			return this.getRequestInfo(oldRequest);
 		}
 		return this.newRequest<WorkerRequestMoveTracks>(
-			WorkerRequestMode.moveTracks, this.workerService.moveTracks, {rootID, trackIDs, newParentID}
+			WorkerRequestMode.moveTracks, p => this.workerService.moveTracks(p), {rootID, trackIDs, newParentID}
 		);
 	}
 
 	async renameTrack(trackID: string, newName: string, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
 		return this.newRequest<WorkerRequestRenameTrack>(
-			WorkerRequestMode.renameTrack, this.workerService.renameTrack, {rootID, trackID, newName}
+			WorkerRequestMode.renameTrack, p => this.workerService.renameTrack(p), {rootID, trackID, newName}
 		);
 	}
 
@@ -387,12 +391,12 @@ export class IoService {
 			if (delayedCmd.timeout) {
 				clearTimeout(delayedCmd.timeout);
 			}
-			(delayedCmd.request.parameters as WorkerRequestWriteTrackTags).tags.push({trackID, tag});
+			(delayedCmd.request.parameters).tags.push({trackID, tag});
 		} else {
 			delayedCmd = {
 				request:
 					new WorkerRequest<WorkerRequestWriteTrackTags>(this.generateRequestID(),
-						WorkerRequestMode.writeTrackTags, this.workerService.writeTrackTags, {rootID, tags: [{trackID, tag}]}),
+						WorkerRequestMode.writeTrackTags, p => this.workerService.writeTrackTags(p), {rootID, tags: [{trackID, tag}]}),
 				timeout: undefined
 			};
 			this.delayedTrackTagWrite.set(rootID, delayedCmd);
@@ -408,19 +412,31 @@ export class IoService {
 
 	async fixTrack(trackID: string, fixID: TrackHealthID, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
 		return this.newRequest<WorkerRequestFixTrack>(
-			WorkerRequestMode.fixTrack, this.workerService.fixTrack, {rootID, trackID, fixID}
+			WorkerRequestMode.fixTrack, p => this.workerService.fixTrack(p), {rootID, trackID, fixID}
 		);
 	}
 
 	async renameFolder(folderID: string, newName: string, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
 		return this.newRequest<WorkerRequestRenameFolder>(
-			WorkerRequestMode.renameFolder, this.workerService.renameFolder, {rootID, folderID, newName}
+			WorkerRequestMode.renameFolder, p => this.workerService.renameFolder(p), {rootID, folderID, newName}
 		);
 	}
 
 	async newFolder(parentID: string, name: string, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
 		return this.newRequest<WorkerRequestCreateFolder>(
-			WorkerRequestMode.createFolder, this.workerService.createFolder, {rootID, parentID, name}
+			WorkerRequestMode.createFolder, p => this.workerService.createFolder(p), {rootID, parentID, name}
+		);
+	}
+
+	async updateRoot(rootID: string, name: string, path: string, strategy: RootScanStrategy): Promise<Jam.AdminChangeQueueInfo> {
+		return this.newRequest<WorkerRequestUpdateRoot>(
+			WorkerRequestMode.updateRoot, p => this.workerService.updateRoot(p), {rootID, name, path, strategy}
+		);
+	}
+
+	async createRoot(name: string, path: string, strategy: RootScanStrategy): Promise<Jam.AdminChangeQueueInfo> {
+		return this.newRequest<WorkerRequestCreateRoot>(
+			WorkerRequestMode.createRoot, p => this.workerService.createRoot(p), {rootID: '', name, path, strategy}
 		);
 	}
 }

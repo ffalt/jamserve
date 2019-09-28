@@ -1,5 +1,5 @@
 import {Jam} from '../../model/jam-rest-data';
-import {ArtworkImageType, TrackHealthID} from '../../model/jam-types';
+import {ArtworkImageType, RootScanStrategy, TrackHealthID} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
 import {Root} from '../root/root.model';
@@ -40,6 +40,18 @@ export interface WorkerRequestRenameFolder extends WorkerRequestParameters {
 export interface WorkerRequestCreateFolder extends WorkerRequestParameters {
 	parentID: string;
 	name: string;
+}
+
+export interface WorkerRequestUpdateRoot extends WorkerRequestParameters {
+	name: string;
+	path: string;
+	strategy: RootScanStrategy;
+}
+
+export interface WorkerRequestCreateRoot extends WorkerRequestParameters {
+	path: string;
+	name: string;
+	strategy: RootScanStrategy;
 }
 
 export interface WorkerRequestWriteTrackTags extends WorkerRequestParameters {
@@ -143,6 +155,22 @@ export class WorkerService {
 		changes.removedTracks = removedTracks;
 		await this.changes.mergeMatch(root, rootMatch, () => true, changes);
 		return this.changes.finish(changes, root.id, parameters.forceMetaRefresh);
+	}
+
+	async updateRoot(parameters: WorkerRequestUpdateRoot): Promise<Changes> {
+		const {root, changes} = await this.changes.start(parameters.rootID);
+		const forceRefreshMeta = root.strategy !== parameters.strategy;
+		const {rootMatch, removedFolders, removedTracks} = await this.root.update(root, parameters.name, parameters.path, parameters.strategy);
+		changes.removedFolders = removedFolders;
+		changes.removedTracks = removedTracks;
+		await this.changes.mergeMatch(root, rootMatch, () => true, changes);
+		return this.changes.finish(changes, root.id, forceRefreshMeta);
+	}
+
+	async createRoot(parameters: WorkerRequestCreateRoot): Promise<Changes> {
+		const {root} = await this.root.create(parameters.name, parameters.path, parameters.strategy);
+		const {changes} = await this.changes.start(root.id);
+		return this.changes.finish(changes, root.id, false);
 	}
 
 	async removeRoot(parameters: WorkerRequestRemoveRoot): Promise<Changes> {

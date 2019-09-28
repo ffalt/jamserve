@@ -455,7 +455,7 @@ export class FORMAT {
 			description: episode.summary,
 			publishDate: episode.date !== undefined ? FORMAT.formatSubSonicDate(episode.date) : undefined,
 			title: episode.name,
-			status: status ? PodcastStatus[status] : PodcastStatus[episode.status],
+			status: status ? status : episode.status,
 			id: episode.id,
 			parent: episode.podcastID,
 			artist: episode.tag ? episode.tag.artist : episode.author,
@@ -494,9 +494,6 @@ export class FORMAT {
 				result.duration = episode.media.duration ? Math.trunc(episode.media.duration) : undefined;
 				result.bitRate = episode.media.bitRate !== undefined ? Math.round(episode.media.bitRate / 1000) : -1;
 			}
-		}
-		if (status) {
-			result.status = status;
 		}
 		return result;
 	}

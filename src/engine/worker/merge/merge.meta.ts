@@ -1,14 +1,14 @@
 import {DBObjectType} from '../../../db/db.types';
 import {AlbumType, cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../model/jam-types';
+import {extractAlbumName} from '../../../utils/album-name';
+import {slugify} from '../../../utils/slug';
 import {Album} from '../../album/album.model';
 import {Artist} from '../../artist/artist.model';
 import {Folder} from '../../folder/folder.model';
 import {Store} from '../../store/store';
 import {Track} from '../../track/track.model';
-import {MetaStatBuilder} from '../match-dir/match-dir.meta-stats';
 import {Changes} from '../changes/changes';
-import {slugify} from '../../../utils/slug';
-import {extractAlbumName} from '../../../utils/album-name';
+import {MetaStatBuilder} from '../match-dir/match-dir.meta-stats';
 
 export interface MetaMergeTrackInfo {
 	track: Track;

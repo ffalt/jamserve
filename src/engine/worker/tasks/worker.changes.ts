@@ -120,5 +120,4 @@ export class ChangesWorker {
 		return changes;
 	}
 
-
 }

@@ -65,7 +65,7 @@ export class DbElasticSequence {
 		return this.initPromise;
 	}
 
-	async addMappingToEsIndexIfMissing(): Promise<ApiResponse<any>> {
+	async addMappingToEsIndexIfMissing(): Promise<ApiResponse> {
 		const mapping: any = {};
 		mapping[this.options.esType] = esTypeMapping;
 		return this.client.indices.putMapping({
@@ -76,7 +76,7 @@ export class DbElasticSequence {
 		});
 	}
 
-	async initEsIndexIfNeeded(): Promise<ApiResponse<any>> {
+	async initEsIndexIfNeeded(): Promise<ApiResponse> {
 		const response: ApiResponse<boolean> = await this.client.indices.exists({index: this.options.esIndex});
 		if (response.body) {
 			return this.addMappingToEsIndexIfMissing();

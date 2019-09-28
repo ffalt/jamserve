@@ -12,27 +12,4 @@ export class RootService extends BaseStoreService<Root, SearchQueryRoot> {
 		return items.sort((a, b) => a.name.localeCompare(b.name));
 	}
 
-	private async checkUsedPath(dir: string, roots: Array<Root>): Promise<void> {
-		for (const r of roots) {
-			if (dir.startsWith(r.path) || r.path.startsWith(dir)) {
-				return Promise.reject(Error('Root path already used'));
-			}
-		}
-	}
-
-	async create(root: Root): Promise<string> {
-		const roots = await this.rootStore.all();
-		await this.checkUsedPath(root.path, roots);
-		return this.rootStore.add(root);
-	}
-
-	async update(root: Root): Promise<void> {
-		const roots = await this.rootStore.all();
-		await this.checkUsedPath(root.path, roots.filter(r => r.id !== root.id));
-		await this.rootStore.replace(root);
-	}
-
-	async remove(root: Root): Promise<void> {
-		await this.rootStore.remove(root.id);
-	}
 }

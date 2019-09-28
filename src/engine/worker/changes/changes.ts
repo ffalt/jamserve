@@ -30,4 +30,3 @@ export interface Changes {
 	start: number;
 	end: number;
 }
-

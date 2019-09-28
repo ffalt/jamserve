@@ -1,13 +1,13 @@
+import fse from 'fs-extra';
 import path from 'path';
 import {Jam} from '../../../model/jam-rest-data';
+import {TrackHealthID} from '../../../model/jam-types';
 import {AudioModule} from '../../../modules/audio/audio.module';
 import {ImageModule} from '../../../modules/image/image.module';
-import {Store} from '../../store/store';
-import {TrackHealthID} from '../../../model/jam-types';
 import {ensureTrailingPathSeparator, fileExt, replaceFileSystemChars} from '../../../utils/fs-utils';
-import fse from 'fs-extra';
-import {Track} from '../../track/track.model';
 import {Root} from '../../root/root.model';
+import {Store} from '../../store/store';
+import {Track} from '../../track/track.model';
 
 export class TrackWorker {
 

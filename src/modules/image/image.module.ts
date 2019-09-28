@@ -98,7 +98,7 @@ export class ImageModule {
 			if (!mime) {
 				return Promise.reject('Unknown Image Format Request');
 			}
-			const sharpy = await sharp(filename);
+			const sharpy = sharp(filename);
 			if (size) {
 				sharpy.resize(size, size, {fit: sharp.fit.cover, position: sharp.strategy.entropy});
 			}

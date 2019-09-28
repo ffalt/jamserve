@@ -29,7 +29,6 @@ import {PodcastService} from './podcast/podcast.service';
 import {RadioService} from './radio/radio.service';
 import {Root} from './root/root.model';
 import {RootService} from './root/root.service';
-import {WorkerService} from './worker/worker.service';
 import {SessionService} from './session/session.service';
 import {SettingsService} from './settings/settings.service';
 import {StateService} from './state/state.service';
@@ -40,6 +39,7 @@ import {TrackService} from './track/track.service';
 import {User} from './user/user.model';
 import {UserService} from './user/user.service';
 import {WaveformService} from './waveform/waveform.service';
+import {WorkerService} from './worker/worker.service';
 
 const log = logger('Engine');
 

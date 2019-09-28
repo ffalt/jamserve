@@ -2,12 +2,12 @@ import fse from 'fs-extra';
 import path from 'path';
 import {ArtworkImageType, FolderTypeImageName} from '../../../model/jam-types';
 import {ImageModule} from '../../../modules/image/image.module';
+import {generateArtworkId} from '../../../utils/artwork-id';
 import {containsFolderSystemChars, fileDeleteIfExists, fileExt, replaceFolderSystemChars} from '../../../utils/fs-utils';
 import {artWorkImageNameToType} from '../../folder/folder.format';
 import {Artwork, Folder} from '../../folder/folder.model';
 import {Store} from '../../store/store';
 import {Changes} from '../changes/changes';
-import {generateArtworkId} from '../../../utils/artwork-id';
 
 export class ArtworkWorker {
 
