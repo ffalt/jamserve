@@ -3,6 +3,7 @@ import {Engine} from '../../engine/engine';
 import {User} from '../../engine/user/user.model';
 import {logger} from '../../utils/logger';
 import {UnauthError} from '../jam/error';
+import {ApiBaseResponder} from '../response';
 import {SubsonicApi} from './api';
 import {apiCheck} from './check';
 import {CheckAuthMiddleWare, SubsonicLoginMiddleWare, UserRequest} from './login';
@@ -63,7 +64,7 @@ export function initSubsonicRouter(engine: Engine): express.Router {
 	registerApi(register, api);
 
 	router.use((req, res, next) => {
-		res.status(404).send('subsonic api cmd not found');
+		ApiBaseResponder.sendErrorMsg(res, 404, 'subsonic api cmd not found');
 	});
 
 	return router;

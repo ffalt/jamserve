@@ -1,6 +1,7 @@
 import express from 'express';
 import {Engine} from '../../engine/engine';
 import {User} from '../../engine/user/user.model';
+import {ApiBaseResponder} from '../response';
 import {EngineRequest} from '../server';
 import {Errors} from './error';
 
@@ -22,7 +23,7 @@ function CheckAuthMiddleWare(req: UserRequest, res: express.Response, next: expr
 	if (req.user) {
 		return next();
 	}
-	res.status(401).json({error: Errors.unauthorized});
+	ApiBaseResponder.sendErrorMsg(res, 401, Errors.unauthorized);
 }
 
 export function registerAuthentication(router: express.Router, engine: Engine): void {

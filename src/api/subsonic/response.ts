@@ -1,28 +1,27 @@
 import express from 'express';
-import path from 'path';
 import {ApiBinaryResult, NodeError} from '../../typings';
+import {ApiBaseResponder} from '../response';
 import {FORMAT} from './format';
 import {SubsonicParameterRequest} from './parameters';
 import {xml} from './xml';
 
 export class ApiResponder {
 
-	public static ok(req: express.Request, res: express.Response): void {
-		ApiResponder.send(req, res, FORMAT.packOK());
-	}
-
 	private static send(req: express.Request, res: express.Response, data: any): void {
 		res.setHeader('Access-Control-Allow-Origin', '*');
 		const params = (req as SubsonicParameterRequest).parameters;
 		if ((params.format === 'jsonp') && (params.callback)) {
-			res.status(200).send(`${params.callback}(${JSON.stringify(data)});`);
+			ApiBaseResponder.sendJSONP(res, params.callback, data);
 		} else if (params.format === 'json') {
-			res.status(200).json(data);
+			ApiBaseResponder.sendJSON(res, data);
 		} else {
-			res.set('Content-Type', 'application/xml');
 			data['subsonic-response'].xmlns = 'http://subsonic.org/restapi';
-			res.status(200).send(xml(data));
+			ApiBaseResponder.sendXML(res, xml(data));
 		}
+	}
+
+	public static ok(req: express.Request, res: express.Response): void {
+		ApiResponder.send(req, res, FORMAT.packOK());
 	}
 
 	public static data(req: express.Request, res: express.Response, data: any): void {
@@ -39,15 +38,6 @@ export class ApiResponder {
 
 	public static binary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {
 		res.setHeader('Access-Control-Allow-Origin', '*');
-		if (data.pipe) {
-			data.pipe.pipe(res);
-		} else if (data.buffer) {
-			res.set('Content-Type', data.buffer.contentType);
-			res.set('Content-Length', data.buffer.buffer.length.toString());
-// 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
-			res.status(200).send(data.buffer.buffer);
-		} else if (data.file) {
-			res.sendFile(data.file.filename, data.file.name || path.basename(data.file.filename));
-		}
+		ApiBaseResponder.sendBinary(res, data);
 	}
 }
