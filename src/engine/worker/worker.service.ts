@@ -121,17 +121,17 @@ export class WorkerService {
 	private settings: Jam.AdminSettingsLibrary = {
 		scanAtStart: true
 	};
-	private artwork: ArtworkWorker;
-	private track: TrackWorker;
-	private folder: FolderWorker;
-	private root: RootWorker;
+	public artworkWorker: ArtworkWorker;
+	public trackWorker: TrackWorker;
+	public folderWorker: FolderWorker;
+	public rootWorker: RootWorker;
 	private changes: ChangesWorker;
 
 	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
-		this.artwork = new ArtworkWorker(store, imageModule);
-		this.track = new TrackWorker(store, imageModule, audioModule);
-		this.folder = new FolderWorker(store, imageModule, audioModule);
-		this.root = new RootWorker(store);
+		this.artworkWorker = new ArtworkWorker(store, imageModule);
+		this.trackWorker = new TrackWorker(store, imageModule, audioModule);
+		this.folderWorker = new FolderWorker(store, imageModule, audioModule);
+		this.rootWorker = new RootWorker(store);
 		this.changes = new ChangesWorker(store, audioModule, imageModule, waveformService, this.settings);
 	}
 
@@ -150,7 +150,7 @@ export class WorkerService {
 
 	async refreshRoot(parameters: WorkerRequestRefreshRoot): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {rootMatch, removedFolders, removedTracks} = await this.root.scan(root);
+		const {rootMatch, removedFolders, removedTracks} = await this.rootWorker.scan(root);
 		changes.removedFolders = removedFolders;
 		changes.removedTracks = removedTracks;
 		await this.changes.mergeMatch(root, rootMatch, () => true, changes);
@@ -160,7 +160,8 @@ export class WorkerService {
 	async updateRoot(parameters: WorkerRequestUpdateRoot): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
 		const forceRefreshMeta = root.strategy !== parameters.strategy;
-		const {rootMatch, removedFolders, removedTracks} = await this.root.update(root, parameters.name, parameters.path, parameters.strategy);
+		await this.rootWorker.update(root, parameters.name, parameters.path, parameters.strategy);
+		const {rootMatch, removedFolders, removedTracks} = await this.rootWorker.scan(root);
 		changes.removedFolders = removedFolders;
 		changes.removedTracks = removedTracks;
 		await this.changes.mergeMatch(root, rootMatch, () => true, changes);
@@ -168,14 +169,14 @@ export class WorkerService {
 	}
 
 	async createRoot(parameters: WorkerRequestCreateRoot): Promise<Changes> {
-		const {root} = await this.root.create(parameters.name, parameters.path, parameters.strategy);
+		const root = await this.rootWorker.create(parameters.name, parameters.path, parameters.strategy);
 		const {changes} = await this.changes.start(root.id);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async removeRoot(parameters: WorkerRequestRemoveRoot): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {removedFolders, removedTracks} = await this.root.remove(root);
+		const {removedFolders, removedTracks} = await this.rootWorker.remove(root);
 		changes.removedFolders = removedFolders;
 		changes.removedTracks = removedTracks;
 		await this.mergeDBMatch(root, [], [], changes);
@@ -186,7 +187,7 @@ export class WorkerService {
 
 	async deleteFolders(parameters: WorkerRequestDeleteFolders): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {removedFolders, removedTracks, changedFolderIDs, changedTrackIDs} = await this.folder.delete(root, parameters.folderIDs);
+		const {removedFolders, removedTracks, changedFolderIDs, changedTrackIDs} = await this.folderWorker.delete(root, parameters.folderIDs);
 		changes.removedFolders = removedFolders;
 		changes.removedTracks = removedTracks;
 		await this.mergeDBMatch(root, changedFolderIDs, changedTrackIDs, changes);
@@ -201,21 +202,21 @@ export class WorkerService {
 
 	async createFolder(parameters: WorkerRequestCreateFolder): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {folder} = await this.folder.create(parameters.parentID, name);
+		const {folder} = await this.folderWorker.create(parameters.parentID, name);
 		changes.newFolders.push(folder);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async moveFolders(parameters: WorkerRequestMoveFolders): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {changedFolderIDs, changedTrackIDs} = await this.folder.move(parameters.newParentID, parameters.folderIDs);
+		const {changedFolderIDs, changedTrackIDs} = await this.folderWorker.move(parameters.newParentID, parameters.folderIDs);
 		await this.mergeDBMatch(root, changedFolderIDs, changedTrackIDs, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async renameFolder(parameters: WorkerRequestRenameFolder): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {changedFolderIDs, changedTrackIDs} = await this.folder.rename(parameters.folderID, parameters.newName);
+		const {changedFolderIDs, changedTrackIDs} = await this.folderWorker.rename(parameters.folderID, parameters.newName);
 		await this.mergeDBMatch(root, changedFolderIDs, changedTrackIDs, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
@@ -224,14 +225,14 @@ export class WorkerService {
 
 	async refreshTracks(parameters: WorkerRequestRefreshTracks): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {changedFolderIDs, changedTrackIDs} = await this.track.refresh(parameters.trackIDs);
+		const {changedFolderIDs, changedTrackIDs} = await this.trackWorker.refresh(parameters.trackIDs);
 		await this.mergeDBMatch(root, changedFolderIDs, changedTrackIDs, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async removeTracks(parameters: WorkerRequestRemoveTracks): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {changedFolderIDs, changedTrackIDs, removedTracks} = await this.track.delete(root, parameters.trackIDs);
+		const {changedFolderIDs, changedTrackIDs, removedTracks} = await this.trackWorker.delete(root, parameters.trackIDs);
 		changes.removedTracks = removedTracks;
 		await this.mergeDBMatch(root, changedFolderIDs, changedTrackIDs, changes);
 		return this.changes.finish(changes, root.id, false);
@@ -239,27 +240,27 @@ export class WorkerService {
 
 	async moveTracks(parameters: WorkerRequestMoveTracks): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {changedFolderIDs, changedTrackIDs} = await this.track.move(parameters.trackIDs, parameters.newParentID);
+		const {changedFolderIDs, changedTrackIDs} = await this.trackWorker.move(parameters.trackIDs, parameters.newParentID);
 		await this.mergeDBMatch(root, changedFolderIDs, changedTrackIDs, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async renameTrack(parameters: WorkerRequestRenameTrack): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		await this.track.rename(parameters.trackID, parameters.newName);
+		await this.trackWorker.rename(parameters.trackID, parameters.newName);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async fixTrack(parameters: WorkerRequestFixTrack): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {changedFolderIDs, changedTrackIDs} = await this.track.fix(parameters.trackID, parameters.fixID);
+		const {changedFolderIDs, changedTrackIDs} = await this.trackWorker.fix(parameters.trackID, parameters.fixID);
 		await this.mergeDBMatch(root, changedFolderIDs, changedTrackIDs, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async writeTrackTags(parameters: WorkerRequestWriteTrackTags): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {changedFolderIDs, changedTrackIDs} = await this.track.writeTags(parameters.tags);
+		const {changedFolderIDs, changedTrackIDs} = await this.trackWorker.writeTags(parameters.tags);
 		await this.mergeDBMatch(root, changedFolderIDs, changedTrackIDs, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
@@ -268,31 +269,31 @@ export class WorkerService {
 
 	async renameArtwork(parameters: WorkerRequestRenameArtwork): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		await this.artwork.rename(parameters.folderID, parameters.artworkID, name, changes);
+		await this.artworkWorker.rename(parameters.folderID, parameters.artworkID, name, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async createArtwork(parameters: WorkerRequestCreateArtwork): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		await this.artwork.create(parameters.folderID, parameters.artworkFilename, parameters.artworkMimeType, parameters.types, changes);
+		await this.artworkWorker.create(parameters.folderID, parameters.artworkFilename, parameters.artworkMimeType, parameters.types, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async updateArtwork(parameters: WorkerRequestUpdateArtwork): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		await this.artwork.update(parameters.folderID, parameters.artworkID, parameters.artworkFilename, parameters.artworkMimeType, changes);
+		await this.artworkWorker.update(parameters.folderID, parameters.artworkID, parameters.artworkFilename, parameters.artworkMimeType, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async downloadArtwork(parameters: WorkerRequestDownloadArtwork): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		await this.artwork.download(parameters.folderID, parameters.folderID, parameters.artworkURL, parameters.types, changes);
+		await this.artworkWorker.download(parameters.folderID, parameters.folderID, parameters.artworkURL, parameters.types, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 
 	async deleteArtwork(parameters: WorkerRequestDeleteArtwork): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		await this.artwork.delete(parameters.folderID, parameters.artworkID, changes);
+		await this.artworkWorker.delete(parameters.folderID, parameters.artworkID, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 }

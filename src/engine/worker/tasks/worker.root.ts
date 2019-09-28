@@ -37,14 +37,19 @@ export class RootWorker {
 		return scanMatcher.match(scanDir);
 	}
 
-	async create(name: string, path: string, strategy: RootScanStrategy): Promise<{ root: Root }> {
-		await this.checkUsedPath(path);
+	async create(name: string, path: string, strategy: RootScanStrategy): Promise<Root> {
 		const root: Root = {id: '', created: Date.now(), type: DBObjectType.root, name, path, strategy};
-		root.id = await this.store.rootStore.add(root);
-		return {root};
+		await this.addRoot(root);
+		return root;
 	}
 
-	async update(root: Root, name: string, path: string, strategy: RootScanStrategy): Promise<{ rootMatch: MatchDir, removedFolders: Array<Folder>, removedTracks: Array<Track> }> {
+	async addRoot(root: Root): Promise<string> {
+		await this.checkUsedPath(root.path);
+		root.id = await this.store.rootStore.add(root);
+		return root.id;
+	}
+
+	async update(root: Root, name: string, path: string, strategy: RootScanStrategy): Promise<void> {
 		root.name = name;
 		if (root.path !== path) {
 			await this.checkUsedPath(path);
@@ -52,6 +57,5 @@ export class RootWorker {
 		}
 		root.strategy = strategy;
 		await this.store.rootStore.replace(root);
-		return this.scan(root);
 	}
 }
