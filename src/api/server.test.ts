@@ -3,6 +3,7 @@
 import supertest from 'supertest';
 import {testEngines} from '../engine/engine.spec';
 import {mockUserName, mockUserName2, mockUserPass, mockUserPass2} from '../engine/user/user.mock';
+import {wait} from '../utils/wait';
 import {Server} from './server';
 
 describe('Server', () => {
@@ -19,6 +20,7 @@ describe('Server', () => {
 			testEngine.engine.config.server.listen = 'localhost';
 			server = new Server(testEngine.engine);
 			await server.start();
+			await wait(100);
 			request = supertest('http://localhost:10010');
 			const apiPrefix = '/api/v1/';
 			const res1 = await request.post(apiPrefix + 'login')
