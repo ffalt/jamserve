@@ -5,8 +5,8 @@ import {Artist} from '../../artist/artist.model';
 import {Store} from '../../store/store';
 import {Track} from '../../track/track.model';
 import {Changes} from '../changes/changes';
-import {MetaStatBuilder} from '../match-dir/match-dir.meta-stats';
 import {getAlbumName, MetaMergerCache, MetaMergeTrackInfo, UpdateMetaMergeTrackInfo} from './merge.meta.cache';
+import {MetaStatBuilder} from '../match-dir/match-dir.meta-stats.builder';
 
 export class MetaMerger {
 	cache: MetaMergerCache;

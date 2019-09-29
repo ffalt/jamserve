@@ -12,7 +12,7 @@ import {Artwork, Folder, FolderTag} from '../../folder/folder.model';
 import {Store} from '../../store/store';
 import {Track, TrackTag} from '../../track/track.model';
 import {Changes} from '../changes/changes';
-import {buildMetaStat, MetaStat} from '../match-dir/match-dir.meta-stats';
+import {MatchDirMetaStats, MetaStat} from '../match-dir/match-dir.meta-stats';
 import {MatchDir, MatchFile} from '../match-dir/match-dir.types';
 
 export class MatchDirMerge {
@@ -324,7 +324,7 @@ export class MatchDirMerge {
 			await this.buildMergeTags(sub, rebuildTag);
 		}
 		if (dir.folder && rebuildTag(dir)) {
-			dir.metaStat = buildMetaStat(dir, this.settings, this.strategy);
+			dir.metaStat = MatchDirMetaStats.buildMetaStat(dir, this.settings, this.strategy);
 			dir.tag = await this.buildFolderTag(dir);
 		}
 		this.applyFolderTagType(dir);
