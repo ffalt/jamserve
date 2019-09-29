@@ -54,7 +54,7 @@ export class Flac {
 			processor.on('postprocess', (mdb: MetaDataBlock) => {
 				if (mdb.type === MDB_TYPE.STREAMINFO) {
 					result.media = this.formatMediaBlock(mdb as MetaDataBlockStreamInfo);
-				} else if (mdb.type ===MDB_TYPE.VORBIS_COMMENT) {
+				} else if (mdb.type === MDB_TYPE.VORBIS_COMMENT) {
 					result.comment = this.formatMediaComment(mdb as BlockVorbiscomment);
 				} else if (mdb.type === MDB_TYPE.PICTURE) {
 					if ((mdb as MetaDataBlockPicture).pictureData) {
