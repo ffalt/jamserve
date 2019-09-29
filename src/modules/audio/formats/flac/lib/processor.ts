@@ -78,21 +78,25 @@ export class FlacProcessorStream extends Transform {
 		callback();
 	}
 
+	private scanSetFlac(chunk: Chunk, pos: number): void {
+		if (this.reportID3) {
+			let rest = chunk.buffer.slice(0, pos);
+			if (this.buf) {
+				rest = Buffer.concat([this.buf, rest]);
+			}
+			this.emit('id3', rest);
+		}
+		this.isFlac = true;
+		chunk.pos = pos;
+		this.bufPos = 0;
+		this.buf = undefined;
+	}
+
 	private scan(chunk: Chunk): void {
 		for (let i = chunk.pos; i < chunk.length; i++) {
 			const slice = chunk.buffer.slice(i, i + 4).toString('utf8', 0);
 			if (slice === 'fLaC') {
-				if (this.reportID3) {
-					let rest = chunk.buffer.slice(0, i);
-					if (this.buf) {
-						rest = Buffer.concat([this.buf, rest]);
-					}
-					this.emit('id3', rest);
-				}
-				this.isFlac = true;
-				chunk.pos = i;
-				this.bufPos = 0;
-				this.buf = undefined;
+				this.scanSetFlac(chunk, i);
 				return;
 			}
 		}
@@ -101,47 +105,53 @@ export class FlacProcessorStream extends Transform {
 		}
 	}
 
-	private safePush(chunk: Chunk, minCapacity: number, persist: boolean, validate?: (slice: Buffer, isDone: boolean) => boolean): boolean {
+	private safePushFull(chunk: Chunk, minCapacity: number, persist: boolean, validate: (slice: Buffer, isDone: boolean) => boolean): void {
 		let slice;
-		const chunkAvailable = chunk.length - chunk.pos;
-		const isDone = (chunkAvailable + this.bufPos >= minCapacity);
-		const _validate = (typeof validate === 'function') ? validate : () => true;
-		if (isDone) {
-			// Enough data available
-			if (persist) {
-				// Persist the entire block so it can be parsed
-				if (this.bufPos > 0 && this.buf) {
-					// Part of this block's data is in backup buffer, copy rest over
-					chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.pos + minCapacity - this.bufPos);
-					slice = this.buf.slice(0, minCapacity);
-				} else {
-					// Entire block fits in current chunk
-					slice = chunk.buffer.slice(chunk.pos, chunk.pos + minCapacity);
-				}
+		// Enough data available
+		if (persist) {
+			// Persist the entire block so it can be parsed
+			if (this.bufPos > 0 && this.buf) {
+				// Part of this block's data is in backup buffer, copy rest over
+				chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.pos + minCapacity - this.bufPos);
+				slice = this.buf.slice(0, minCapacity);
 			} else {
-				slice = chunk.buffer.slice(chunk.pos, chunk.pos + minCapacity - this.bufPos);
+				// Entire block fits in current chunk
+				slice = chunk.buffer.slice(chunk.pos, chunk.pos + minCapacity);
 			}
-			// Push block after validation
-			if (_validate(slice, isDone)) {
+		} else {
+			slice = chunk.buffer.slice(chunk.pos, chunk.pos + minCapacity - this.bufPos);
+		}
+		// Push block after validation
+		if (validate(slice, true)) {
+			this.push(slice);
+		}
+		chunk.pos += minCapacity - this.bufPos;
+		this.bufPos = 0;
+		this.buf = undefined;
+	}
+
+	private safePushIncomplete(chunk: Chunk, minCapacity: number, persist: boolean, validate: (slice: Buffer, isDone: boolean) => boolean): void {
+		// Not enough data available
+		if (persist) {
+			// Copy/append incomplete block to backup buffer
+			this.buf = this.buf || Buffer.alloc(minCapacity);
+			chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.length);
+		} else {
+			// Push incomplete block after validation
+			const slice = chunk.buffer.slice(chunk.pos, chunk.length);
+			if (validate(slice, false)) {
 				this.push(slice);
 			}
-			chunk.pos += minCapacity - this.bufPos;
-			this.bufPos = 0;
-			this.buf = undefined;
+		}
+		this.bufPos += chunk.length - chunk.pos;
+	}
+
+	private safePush(chunk: Chunk, minCapacity: number, persist: boolean, validate: (slice: Buffer, isDone: boolean) => boolean): boolean {
+		const isDone = (chunk.length - chunk.pos + this.bufPos >= minCapacity);
+		if (isDone) {
+			this.safePushFull(chunk, minCapacity, persist, validate);
 		} else {
-			// Not enough data available
-			if (persist) {
-				// Copy/append incomplete block to backup buffer
-				this.buf = this.buf || Buffer.alloc(minCapacity);
-				chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.length);
-			} else {
-				// Push incomplete block after validation
-				slice = chunk.buffer.slice(chunk.pos, chunk.length);
-				if (_validate(slice, isDone)) {
-					this.push(slice);
-				}
-			}
-			this.bufPos += chunk.length - chunk.pos;
+			this.safePushIncomplete(chunk, minCapacity, persist, validate);
 		}
 		return isDone;
 	}
@@ -192,7 +202,7 @@ export class FlacProcessorStream extends Transform {
 	}
 
 	private processPASSTHROUGH(chunk: Chunk): void {
-		this.safePush(chunk, chunk.length - chunk.pos, false);
+		this.safePush(chunk, chunk.length - chunk.pos, false, () => true);
 		chunk.done = true;
 	}
 
@@ -233,35 +243,27 @@ export class FlacProcessorStream extends Transform {
 		return true;
 	}
 
-	private validateMDBHeader(slice: Buffer): boolean {
-		// Parse MDB header
-		let header = slice.readUInt32BE(0);
-		const type = (header >>> 24) & 0x7F;
-		this.mdbLast = (((header >>> 24) & 0x80) !== 0);
-		this.mdbLen = header & 0xFFFFFF;
-
+	private initMDB(type: MDB_TYPE): MetaDataBlock {
 		// Create appropriate MDB object
 		// (data is injected later in _validateMDB, if parseMetaDataBlocks option is set to true)
 		switch (type) {
 			case MDB_TYPE.STREAMINFO:
-				this.mdb = new MetaDataBlockStreamInfo(this.mdbLast);
-				break;
+				return new MetaDataBlockStreamInfo(this.mdbLast);
 			case MDB_TYPE.VORBIS_COMMENT:
-				this.mdb = new BlockVorbiscomment(this.mdbLast);
-				break;
+				return new BlockVorbiscomment(this.mdbLast);
 			case MDB_TYPE.PICTURE:
-				this.mdb = new MetaDataBlockPicture(this.mdbLast);
-				break;
+				return new MetaDataBlockPicture(this.mdbLast);
 			// case MDB_TYPE.PADDING:
 			// case MDB_TYPE.APPLICATION:
 			// case MDB_TYPE.SEEKTABLE:
 			// case MDB_TYPE.CUESHEET:
 			// case MDB_TYPE.INVALID:
 			default:
-				this.mdb = new MetaDataBlock(this.mdbLast, type);
-				break;
+				return new MetaDataBlock(this.mdbLast, type);
 		}
-		this.emit('preprocess', this.mdb);
+	}
+
+	private preProcess(slice: Buffer, header: number): boolean {
 		if (this.mdbLastWritten) {
 			// A previous MDB had the isLast flag set to true.
 			// Ignore all following MDBs.
@@ -278,6 +280,17 @@ export class FlacProcessorStream extends Transform {
 		}
 		this.mdbPush = !this.mdb.removed;
 		return this.mdbPush;
+	}
+
+	private validateMDBHeader(slice: Buffer): boolean {
+		// Parse MDB header
+		const header = slice.readUInt32BE(0);
+		const type = (header >>> 24) & 0x7F;
+		this.mdbLast = (((header >>> 24) & 0x80) !== 0);
+		this.mdbLen = header & 0xFFFFFF;
+		this.mdb = this.initMDB(type);
+		this.emit('preprocess', this.mdb);
+		return this.preProcess(slice, header);
 	}
 
 	private validateMDB(slice: Buffer, isDone: boolean): boolean {
