@@ -1,47 +1,57 @@
 import fse from 'fs-extra';
 import Mustache from 'mustache';
 import path from 'path';
-import {ApiCall, ApiCalls, getJamApiCalls, run} from './utils';
+import {ApiCall, ApiCalls, getJamApiCalls} from '../lib/api-calls';
+import {run} from '../lib/run';
+
+function getResultType(call: ApiCall): string {
+	if (call.resultType) {
+		return call.resultType;
+	}
+	if (call.binaryResult) {
+		return 'ApiBinaryResult';
+	}
+	return '';
+}
+
+function getCallRoles(call: ApiCall, hasPathParameter: boolean): string {
+	let result = '';
+	if (call.roles.length > 0) {
+		result = JSON.stringify(call.roles).replace(/"/g, '\'');
+	}
+	if (result.length === 0 && hasPathParameter) {
+		return '[]';
+	}
+	return result;
+}
+
+function getRespondCall(call: ApiCall, hasResultType: boolean): string {
+	return (call.binaryResult) ?
+		'binary(res, result)' :
+		(hasResultType ? 'data(res, result)' : 'ok(res)');
+}
 
 function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
+	const resultType = getResultType(call);
 	const result: MustacheDataRegisterFunction = {
 		method: call.upload ? 'upload' : call.method,
 		apiPath: call.name,
 		apiPathCheck: '',
 		parameterType: call.paramType || '{}',
 		parameterSource: (call.method === 'post') ? 'body' : 'query',
-		resultType: '',
+		resultType,
 		controllerCall: call.operationId,
-		respondCall: '',
-		callRoles: '',
+		respondCall: getRespondCall(call, resultType.length > 0),
+		callRoles: getCallRoles(call, !!call.pathParams),
 		upload: call.upload || ''
 	};
-	if (call.resultType) {
-		result.resultType = call.resultType;
-	}
-	if (call.binaryResult) {
-		result.resultType = 'ApiBinaryResult';
-	}
 	if (call.pathParams) {
-		const list = call.name.split('/');
+		const base = call.name.split('/')[0];
+		result.apiPathCheck = `${base}/{pathParameter}`;
+		result.apiPath = `${base}/:pathParameter`;
 		result.parameterSource = 'params';
-		result.apiPath = list[0] + '/:pathParameter';
 		result.parameterType = '{pathParameter: string}';
 		result.controllerCall += 'ByPathParameter';
-		result.apiPathCheck = list[0] + '/{pathParameter}';
-	}
-	if (call.roles.length > 0) {
-		result.callRoles = JSON.stringify(call.roles).replace(/"/g, '\'');
-	}
-	if (result.callRoles.length === 0 && result.apiPathCheck.length > 0) {
-		result.callRoles = '[]';
-	}
-	if (call.binaryResult) {
-		result.respondCall = 'binary(res, result)';
-	} else if (!call.resultType) {
-		result.respondCall = 'ok(res)';
-	} else {
-		result.respondCall = 'data(res, result)';
 	}
 	return result;
 }
@@ -60,31 +70,25 @@ interface MustacheDataRegisterFunction {
 }
 
 async function build(): Promise<string> {
-	const destfile = path.resolve('../../src/api/jam/routes.ts');
+	const destFile = path.resolve('../../src/api/jam/routes.ts');
 	const basePath = path.resolve('../../src/model/');
-	const apicalls: ApiCalls = await getJamApiCalls(basePath);
+	const apiCalls: ApiCalls = await getJamApiCalls(basePath);
 	const publicAccess: Array<MustacheDataRegisterFunction> = [];
 	const privateAccess: Array<MustacheDataRegisterFunction> = [];
-	const collectRoles: Array<string> = [];
-	apicalls.calls.forEach(call => {
-		(call.roles || []).forEach(role => {
-			if (!collectRoles.includes(role)) {
-				collectRoles.push(role);
-			}
-		});
+	const collectRoles = new Set<string>();
+	for (const call of apiCalls.calls) {
+		for (const role of (call.roles || [])) {
+			collectRoles.add(role);
+		}
 		if (call.aliasFor || ['login', 'logout'].includes(call.name)) {
-			return;
+			continue;
 		}
-		if (call.isPublic) {
-			publicAccess.push(generateRegisterFunction(call));
-		} else {
-			privateAccess.push(generateRegisterFunction(call));
-		}
-	});
-	const roles = collectRoles.map(r => `'${r}'`).join(' | ');
-	const template = Mustache.render((await fse.readFile('../templates/jam-routes.ts.template')).toString(), {publicAccess, privateAccess, roles, version: apicalls.version});
-	await fse.writeFile(destfile, template);
-	return destfile;
+		(call.isPublic ? publicAccess : privateAccess).push(generateRegisterFunction(call));
+	}
+	const roles = [...collectRoles].map(r => `'${r}'`).join(' | ');
+	const template = Mustache.render((await fse.readFile('../templates/jam-routes.ts.template')).toString(), {publicAccess, privateAccess, roles, version: apiCalls.version});
+	await fse.writeFile(destFile, template);
+	return destFile;
 }
 
 run(build);

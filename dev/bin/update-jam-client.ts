@@ -1,7 +1,8 @@
 import fse from 'fs-extra';
 import Mustache from 'mustache';
 import path from 'path';
-import {ApiCall, ApiCalls, getJamApiCalls, run} from './utils';
+import {ApiCall, ApiCalls, getJamApiCalls} from '../lib/api-calls';
+import {run} from '../lib/run';
 
 interface MustacheDataClientCallFunction {
 	name: string;

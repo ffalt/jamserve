@@ -137,7 +137,7 @@ export interface PathsObject extends ISpecificationExtension {
  * @deprecated
  * Create a type alias for backward compatibility
  */
-// export type PathObject = PathsObject;
+export type PathObject = PathsObject;
 //
 // export function getPath(pathsObject: PathsObject, path: string): PathItemObject {
 // 	if (SpecificationExtension.isValidExtension(path)) {
@@ -311,7 +311,19 @@ export interface LinkParametersObject {
 	[name: string]: any | string;
 }
 
-export interface HeaderObject extends ParameterObject {
+export interface HeaderObject {
+	description?: string;
+	required?: boolean;
+	deprecated?: boolean;
+	allowEmptyValue?: boolean;
+
+	style?: ParameterStyle; // "matrix" | "label" | "form" | "simple" | "spaceDelimited" | "pipeDelimited" | "deepObject";
+	explode?: boolean;
+	allowReserved?: boolean;
+	schema?: SchemaObject | ReferenceObject;
+	examples?: { [param: string]: ExampleObject | ReferenceObject };
+	example?: any;
+	content?: ContentObject;
 }
 
 export interface TagObject extends ISpecificationExtension {

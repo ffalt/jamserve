@@ -1,71 +1,29 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {OpenAPIObject} from '../../src/model/openapi-spec';
-import {ApiCall, ApiCalls, getSubsonicApiCalls, run, transformTS2JSONScheme} from './utils';
+import {OpenAPIObject, OperationObject, PathItemObject, PathsObject, RequestBodyObject, ResponseObject, ResponsesObject, SchemaObject} from '../../src/model/openapi-spec';
+import {ApiCall, ApiCalls, getSubsonicApiCalls} from '../lib/api-calls';
+import {Definitions} from '../lib/json-schema';
+import {buildBinaryResponse, buildOpenApiParameters, collectSchema, listToObject} from '../lib/open-api';
+import {run} from '../lib/run';
+import {transformTS2JSONScheme} from '../lib/ts2scheme';
 
 function buildOpenApi(version: string): OpenAPIObject {
 	return {
 		openapi: '3.0.0',
 		info: {
-			description: 'Api for Subsonic',
-			version,
-			title: 'SubsonicApi'
+			description: 'Api for Subsonic', version, title: 'SubsonicApi'
 		},
-		servers: [{
-			url: 'http://localhost:4040/rest/',
-			description: 'A local Subsonic API'
-		}],
+		servers: [{url: 'http://localhost:4040/rest/', description: 'A local Subsonic API'}],
 		paths: {},
-		security:
-			[
-				{
-					userAuth: [],
-					passwdAuth: [],
-					tokenAuth: [],
-					saltAuth: [],
-					versionAuth: [],
-					clientAuth: [],
-					formatAuth: []
-				}
-			],
+		security: [{userAuth: [], passwdAuth: [], tokenAuth: [], saltAuth: [], versionAuth: [], clientAuth: [], formatAuth: []}],
 		components: {
 			securitySchemes: {
-				userAuth: {
-					type: 'apiKey',
-					in: 'query',
-					name: 'u',
-					description: 'The username.'
-				},
-				passwdAuth: {
-					type: 'apiKey',
-					in: 'query',
-					name: 'p',
-					description: 'The password, either in clear text or hex-encoded with a "enc:" prefix.'
-				},
-				tokenAuth: {
-					type: 'apiKey',
-					in: 'query',
-					name: 't',
-					description: 'The authentication token computed as md5(password + salt).'
-				},
-				saltAuth: {
-					type: 'apiKey',
-					in: 'query',
-					name: 's',
-					description: 'A random string ("salt") used as input for computing the password hash. See below for details.'
-				},
-				versionAuth: {
-					type: 'apiKey',
-					in: 'query',
-					name: 'v',
-					description: 'The protocol version implemented by the client'
-				},
-				clientAuth: {
-					type: 'apiKey',
-					in: 'query',
-					name: 'c',
-					description: 'A unique string identifying the client application.'
-				},
+				userAuth: {type: 'apiKey', in: 'query', name: 'u', description: 'The username.'},
+				passwdAuth: {type: 'apiKey', in: 'query', name: 'p', description: 'The password, either in clear text or hex-encoded with a "enc:" prefix.'},
+				tokenAuth: {type: 'apiKey', in: 'query', name: 't', description: 'The authentication token computed as md5(password + salt).'},
+				saltAuth: {type: 'apiKey', in: 'query', name: 's', description: 'A random string ("salt") used as input for computing the password hash. See below for details.'},
+				versionAuth: {type: 'apiKey', in: 'query', name: 'v', description: 'The protocol version implemented by the client'},
+				clientAuth: {type: 'apiKey', in: 'query', name: 'c', description: 'A unique string identifying the client application.'},
 				formatAuth: {
 					type: 'apiKey',
 					in: 'query',
@@ -78,61 +36,6 @@ function buildOpenApi(version: string): OpenAPIObject {
 	};
 }
 
-function collectSchema(p: any, definitions: any, openapi: OpenAPIObject): void {
-	if (p.$ref) {
-		const proptype = p.$ref.split('/')[2];
-		p = definitions[proptype];
-		if (!p) {
-			console.error(`collectSchema: type ${proptype} not found`);
-			return;
-		}
-		if (openapi.components && openapi.components.schemas && !openapi.components.schemas[proptype]) {
-			openapi.components.schemas[proptype] = p;
-			if (p.properties) {
-				Object.keys(p.properties).forEach(key => {
-					collectSchema(p.properties[key], definitions, openapi);
-				});
-			}
-		}
-	} else if (p.items) {
-		collectSchema(p.items, definitions, openapi);
-	} else if (p.properties) {
-		Object.keys(p.properties).forEach(key => {
-			collectSchema(p.properties[key], definitions, openapi);
-		});
-	} else if (!p.type) {
-		console.error('unknown schema structure', p);
-	}
-}
-
-function collectParams(p: any, definitions: any, inPart: string, openapi: OpenAPIObject): Array<any> {
-	const result: Array<any> = [];
-	if (!p.$ref) {
-		console.log(p);
-	}
-	const proptype = p.$ref.split('/')[2];
-	p = definitions[proptype];
-	Object.keys(p.properties).forEach(key => {
-		const prop = {...p.properties[key]};
-		const description = prop.description;
-		delete prop.description;
-		if (prop.$ref) {
-			const ptype = prop.$ref.split('/')[2];
-			if (openapi.components && openapi.components.schemas && !openapi.components.schemas[ptype]) {
-				openapi.components.schemas[ptype] = definitions[ptype];
-			}
-		}
-		result.push({
-			in: inPart,
-			name: key,
-			schema: prop,
-			description,
-			required: (inPart === 'path') || ((p.required || []).includes(key))
-		});
-	});
-	return result;
-}
-
 function fillResponse(p: any, definitions: any, openapi: OpenAPIObject): any {
 	const o = {...p};
 	o.properties.status = {$ref: '#/definitions/Subsonic.ResponseStatus'};
@@ -143,64 +46,55 @@ function fillResponse(p: any, definitions: any, openapi: OpenAPIObject): any {
 	return o;
 }
 
-async function buildOpenApiPath(call: ApiCall, openapi: OpenAPIObject, usedIDs: Array<string>, definitions: any): Promise<void> {
-	const cmd: any = {
+async function buildResponse(call: ApiCall, openapi: OpenAPIObject, definitions: Definitions): Promise<ResponseObject> {
+	const content = {schema: fillResponse(call.resultSchema ? call.resultSchema : {type: 'object', properties: {}, required: []}, definitions, openapi)};
+	return {
+		description: 'ok',
+		content: {'application/json': content, 'application/xml': content}
+	};
+}
+
+async function buildOpenApiResponse(call: ApiCall, openapi: OpenAPIObject, definitions: Definitions): Promise<ResponseObject> {
+	return call.binaryResult ? buildBinaryResponse(call.binaryResult) : buildResponse(call, openapi, definitions);
+}
+
+async function buildOpenApiRequestBody(call: ApiCall, openapi: OpenAPIObject): Promise<RequestBodyObject | undefined> {
+	if (!call.bodySchema || !call.bodySchema.$ref) {
+		return;
+	}
+	collectSchema(call.bodySchema, call.definitions, openapi);
+	const proptype = call.bodySchema.$ref.split('/')[2];
+	const p = call.definitions[proptype];
+	return {
+		description: p.description,
+		required: true,
+		content: {
+			'application/json': {schema: call.bodySchema as SchemaObject}
+		}
+	};
+}
+
+async function buildOpenApiPath(call: ApiCall, openapi: OpenAPIObject, definitions: Definitions): Promise<PathItemObject> {
+	const cmd: OperationObject = {
 		operationId: call.operationId,
 		summary: call.description,
 		tags: [call.tag],
-		responses: {}
+		responses: {
+			200: await buildOpenApiResponse(call, openapi, definitions)
+		},
+		parameters: await buildOpenApiParameters(call, openapi),
+		security: call.isPublic ? [] : undefined,
+		requestBody: await buildOpenApiRequestBody(call, openapi)
 	};
-	if (call.binaryResult) {
-		const success: any = {description: 'binary data', content: {}};
-		call.binaryResult.forEach(ct => {
-			success.content[ct] = {
-				schema: {
-					type: 'string',
-					format: 'binary'
-				}
-			};
-		});
-		cmd.responses['200'] = success;
-	} else {
-		const success: any = {description: 'ok'};
-		success.content = {'application/json': {schema: fillResponse(call.resultSchema ? call.resultSchema : {type: 'object', properties: {}, required: []}, definitions, openapi)}};
-		success.content['application/xml'] = success.content['application/json'];
-		cmd.responses['200'] = success;
-	}
-	if (call.isPublic) {
-		cmd.security = [];
-	}
-	call.resultErrors.forEach(re => {
-		cmd.responses[re.code.toString()] = {description: re.text};
-	});
-	if (call.paramSchema) {
-		cmd.parameters = collectParams(call.paramSchema, call.definitions, 'query', openapi);
-	}
-	if (call.pathParamsSchema) {
-		const parameters = collectParams(call.pathParamsSchema, call.definitions, 'path', openapi);
-		cmd.parameters = (cmd.parameters || []).concat(parameters);
-	}
-	if (call.bodySchema) {
-		collectSchema(call.bodySchema, call.definitions, openapi);
-		const proptype = call.bodySchema.$ref.split('/')[2];
-		const p = call.definitions[proptype];
-		cmd.requestBody = {
-			description: p.description,
-			required: true,
-			content: {
-				'application/json': {schema: call.bodySchema}
-			}
-		};
-	}
-	const name = `/${call.name}`;
-	openapi.paths[name] = openapi.paths[name] || {};
-	(openapi.paths[name] as any)[call.method] = cmd;
+	cmd.responses = await listToObject<{ code: number, text: string }, ResponseObject, ResponsesObject>(call.resultErrors,
+		async item => ({key: item.code.toString(), value: {description: item.text}}),
+		cmd.responses);
+	const result: PathItemObject = {};
+	result[call.method] = cmd;
+	return result;
 }
 
-async function build(): Promise<string> {
-	const basePath = path.resolve('../../src/model/');
-	const destfile = path.resolve(basePath, 'subsonic-openapi.json');
-	const apicalls: ApiCalls = await getSubsonicApiCalls(basePath);
+async function buildCalls(basePath: string, openapi: OpenAPIObject, apicalls: ApiCalls): Promise<void> {
 	const data = await transformTS2JSONScheme(basePath, 'subsonic-rest-data', 'Subsonic.Response');
 	data.definitions = data.definitions || {};
 	data.definitions['Subsonic.ResponseStatus'] = {
@@ -211,10 +105,18 @@ async function build(): Promise<string> {
 		enum: [apicalls.version],
 		type: 'string'
 	};
+	openapi.paths = await listToObject<ApiCall, PathItemObject, PathsObject>(apicalls.calls, async call => ({
+		key: `/${call.name}`,
+		value: await buildOpenApiPath(call, openapi, data.definitions as Definitions)
+	}), {});
+}
+
+async function build(): Promise<string> {
+	const basePath = path.resolve('../../src/model/');
+	const destfile = path.resolve(basePath, 'subsonic-openapi.json');
+	const apicalls: ApiCalls = await getSubsonicApiCalls(basePath);
 	const openapi: OpenAPIObject = buildOpenApi(apicalls.version);
-	for (const call of apicalls.calls) {
-		await buildOpenApiPath(call, openapi, [], data.definitions);
-	}
+	await buildCalls(basePath, openapi, apicalls);
 	const oa = JSON.stringify(openapi, null, '\t').replace(/\/definitions/g, '/components/schemas');
 	await fse.writeFile(destfile, oa);
 	return destfile;

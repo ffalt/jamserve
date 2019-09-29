@@ -4,7 +4,8 @@ import refParser from 'json-schema-ref-parser';
 import Mustache from 'mustache';
 import path from 'path';
 import {OpenAPIObject, OperationObject, ParameterObject, SchemaObject} from '../../src/model/openapi-spec';
-import {ApiCalls, getJamApiCalls, run} from './utils';
+import {ApiCalls, getJamApiCalls} from '../lib/api-calls';
+import {run} from '../lib/run';
 
 const chance = new Chance();
 
