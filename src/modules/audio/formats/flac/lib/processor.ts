@@ -2,167 +2,62 @@
  based on https://github.com/claus/flac-metadata
  License: MIT
  **/
+
 import {Transform, TransformCallback, TransformOptions} from 'stream';
 import {MetaDataBlock} from './block';
 import {MetaDataBlockPicture} from './block.picture';
 import {MetaDataBlockStreamInfo} from './block.streaminfo';
 import {BlockVorbiscomment} from './block.vorbiscomment';
 
-const STATE_IDLE = 0;
-const STATE_MARKER = 1;
-const STATE_MDB_HEADER = 2;
-const STATE_MDB = 3;
-const STATE_PASS_THROUGH = 4;
-const STATE_SCAN_MARKER = 5;
+const enum STATE {
+	IDLE = 0,
+	MARKER = 1,
+	MDB_HEADER = 2,
+	MDB = 3,
+	PASS_THROUGH = 4,
+	SCAN_MARKER = 5
+}
 
-export const MDB_TYPE_STREAMINFO = 0;
-export const MDB_TYPE_PADDING = 1;
-export const MDB_TYPE_APPLICATION = 2;
-export const MDB_TYPE_SEEKTABLE = 3;
-export const MDB_TYPE_VORBIS_COMMENT = 4;
-export const MDB_TYPE_CUESHEET = 5;
-export const MDB_TYPE_PICTURE = 6;
-export const MDB_TYPE_INVALID = 127;
+export const enum MDB_TYPE {
+	STREAMINFO = 0,
+	PADDING = 1,
+	APPLICATION = 2,
+	SEEKTABLE = 3,
+	VORBIS_COMMENT = 4,
+	CUESHEET = 5,
+	PICTURE = 6,
+	INVALID = 127
+}
+
+interface Chunk {
+	buffer: Buffer;
+	pos: number;
+	length: number;
+	done: boolean;
+}
 
 export class FlacProcessorStream extends Transform {
-	state = STATE_IDLE;
-	hasError = false;
-	hasID3 = false;
-	isFlac = false;
-	buf?: Buffer;
-	bufPos = 0;
+	private hasError = false;
+	private hasID3 = false;
+	private isFlac = false;
+	private state = STATE.IDLE;
+	private buf?: Buffer;
+	private bufPos = 0;
 
-	mdb: any;
-	mdbLen = 0;
-	mdbLast = false;
-	mdbPush = false;
-	mdbLastWritten = false;
+	private mdb: any;
+	private mdbLen = 0;
+	private mdbLast = false;
+	private mdbPush = false;
+	private mdbLastWritten = false;
 
 	constructor(private reportID3: boolean = false, private parseMetaDataBlocks: boolean = false, options?: TransformOptions) {
 		super(options);
 	}
 
-	_transform(chunk: any, encoding: string, callback: TransformCallback): void {
-		let chunkPos = 0;
-		const chunkLen = chunk.length;
-		let isChunkProcessed = false;
-
-		const scan = () => {
-			for (let i = chunkPos; i < chunkLen; i++) {
-				const slice = chunk.slice(i, i + 4).toString('utf8', 0);
-				if (slice === 'fLaC') {
-					if (this.reportID3) {
-						let rest = chunk.slice(0, i);
-						if (this.buf) {
-							rest = Buffer.concat([this.buf, rest]);
-						}
-						this.emit('id3', rest);
-					}
-					this.isFlac = true;
-					chunkPos = i;
-					this.bufPos = 0;
-					this.buf = undefined;
-					return;
-				}
-			}
-			if (this.reportID3) {
-				this.buf = !this.buf ? chunk : Buffer.concat([this.buf, chunk]);
-			}
-		};
-
-		const safePush = (minCapacity: number, persist: boolean, validate?: (slice: Buffer, isDone: boolean) => boolean) => {
-			let slice;
-			const chunkAvailable = chunkLen - chunkPos;
-			const isDone = (chunkAvailable + this.bufPos >= minCapacity);
-			const _validate = (typeof validate === 'function') ? validate : () => true;
-			if (isDone) {
-				// Enough data available
-				if (persist) {
-					// Persist the entire block so it can be parsed
-					if (this.bufPos > 0 && this.buf) {
-						// Part of this block's data is in backup buffer, copy rest over
-						chunk.copy(this.buf, this.bufPos, chunkPos, chunkPos + minCapacity - this.bufPos);
-						slice = this.buf.slice(0, minCapacity);
-					} else {
-						// Entire block fits in current chunk
-						slice = chunk.slice(chunkPos, chunkPos + minCapacity);
-					}
-				} else {
-					slice = chunk.slice(chunkPos, chunkPos + minCapacity - this.bufPos);
-				}
-				// Push block after validation
-				if (_validate(slice, isDone)) {
-					this.push(slice);
-				}
-				chunkPos += minCapacity - this.bufPos;
-				this.bufPos = 0;
-				this.buf = undefined;
-			} else {
-				// Not enough data available
-				if (persist) {
-					// Copy/append incomplete block to backup buffer
-					this.buf = this.buf || Buffer.alloc(minCapacity);
-					chunk.copy(this.buf, this.bufPos, chunkPos, chunkLen);
-				} else {
-					// Push incomplete block after validation
-					slice = chunk.slice(chunkPos, chunkLen);
-					if (_validate(slice, isDone)) {
-						this.push(slice);
-					}
-				}
-				this.bufPos += chunkLen - chunkPos;
-			}
-			return isDone;
-		};
-
-		while (!isChunkProcessed) {
-			switch (this.state) {
-				case STATE_IDLE:
-					this.state = STATE_MARKER;
-					break;
-				case STATE_SCAN_MARKER:
-					scan();
-					if (this.isFlac) {
-						this.state = STATE_MARKER;
-					} else {
-						isChunkProcessed = true;
-					}
-					break;
-				case STATE_MARKER:
-					if (safePush(4, true, this._validateMarker.bind(this))) {
-						this.state = (!this.isFlac && this.hasID3) ?
-							STATE_SCAN_MARKER :
-							(this.isFlac ? STATE_MDB_HEADER : STATE_PASS_THROUGH);
-					} else {
-						isChunkProcessed = true;
-					}
-					break;
-				case STATE_MDB_HEADER:
-					if (safePush(4, true, this._validateMDBHeader.bind(this))) {
-						this.state = STATE_MDB;
-					} else {
-						isChunkProcessed = true;
-					}
-					break;
-				case STATE_MDB:
-					if (safePush(this.mdbLen, this.parseMetaDataBlocks, this._validateMDB.bind(this))) {
-						if (this.mdb.isLast) {
-							// This MDB has the isLast flag set to true.
-							// Ignore all following MDBs.
-							this.mdbLastWritten = true;
-						}
-						this.emit('postprocess', this.mdb);
-						this.state = this.mdbLast ? STATE_PASS_THROUGH : STATE_MDB_HEADER;
-					} else {
-						isChunkProcessed = true;
-					}
-					break;
-				default:
-				case STATE_PASS_THROUGH:
-					safePush(chunkLen - chunkPos, false);
-					isChunkProcessed = true;
-					break;
-			}
+	_transform(buffer: any, encoding: string, callback: TransformCallback): void {
+		const chunk: Chunk = {buffer, pos: 0, length: buffer.length, done: false};
+		while (!chunk.done) {
+			this.process(chunk);
 		}
 		if (!this.hasError) {
 			this.emit('done');
@@ -170,7 +65,162 @@ export class FlacProcessorStream extends Transform {
 		callback();
 	}
 
-	_validateMarker(slice: Buffer): boolean {
+	_flush(callback: TransformCallback): void {
+		// All chunks have been processed
+		// Clean up
+		this.state = STATE.IDLE;
+		this.mdbLastWritten = false;
+		this.hasID3 = false;
+		this.isFlac = false;
+		this.bufPos = 0;
+		this.buf = undefined;
+		this.mdb = null;
+		callback();
+	}
+
+	private scan(chunk: Chunk): void {
+		for (let i = chunk.pos; i < chunk.length; i++) {
+			const slice = chunk.buffer.slice(i, i + 4).toString('utf8', 0);
+			if (slice === 'fLaC') {
+				if (this.reportID3) {
+					let rest = chunk.buffer.slice(0, i);
+					if (this.buf) {
+						rest = Buffer.concat([this.buf, rest]);
+					}
+					this.emit('id3', rest);
+				}
+				this.isFlac = true;
+				chunk.pos = i;
+				this.bufPos = 0;
+				this.buf = undefined;
+				return;
+			}
+		}
+		if (this.reportID3) {
+			this.buf = !this.buf ? chunk.buffer : Buffer.concat([this.buf, chunk.buffer]);
+		}
+	}
+
+	private safePush(chunk: Chunk, minCapacity: number, persist: boolean, validate?: (slice: Buffer, isDone: boolean) => boolean): boolean {
+		let slice;
+		const chunkAvailable = chunk.length - chunk.pos;
+		const isDone = (chunkAvailable + this.bufPos >= minCapacity);
+		const _validate = (typeof validate === 'function') ? validate : () => true;
+		if (isDone) {
+			// Enough data available
+			if (persist) {
+				// Persist the entire block so it can be parsed
+				if (this.bufPos > 0 && this.buf) {
+					// Part of this block's data is in backup buffer, copy rest over
+					chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.pos + minCapacity - this.bufPos);
+					slice = this.buf.slice(0, minCapacity);
+				} else {
+					// Entire block fits in current chunk
+					slice = chunk.buffer.slice(chunk.pos, chunk.pos + minCapacity);
+				}
+			} else {
+				slice = chunk.buffer.slice(chunk.pos, chunk.pos + minCapacity - this.bufPos);
+			}
+			// Push block after validation
+			if (_validate(slice, isDone)) {
+				this.push(slice);
+			}
+			chunk.pos += minCapacity - this.bufPos;
+			this.bufPos = 0;
+			this.buf = undefined;
+		} else {
+			// Not enough data available
+			if (persist) {
+				// Copy/append incomplete block to backup buffer
+				this.buf = this.buf || Buffer.alloc(minCapacity);
+				chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.length);
+			} else {
+				// Push incomplete block after validation
+				slice = chunk.buffer.slice(chunk.pos, chunk.length);
+				if (_validate(slice, isDone)) {
+					this.push(slice);
+				}
+			}
+			this.bufPos += chunk.length - chunk.pos;
+		}
+		return isDone;
+	}
+
+	private processIDLE(): void {
+		this.state = STATE.MARKER;
+	}
+
+	private processSCANMARKER(chunk: Chunk): void {
+		this.scan(chunk);
+		if (this.isFlac) {
+			this.state = STATE.MARKER;
+		} else {
+			chunk.done = true;
+		}
+	}
+
+	private processMARKER(chunk: Chunk): void {
+		if (this.safePush(chunk, 4, true, slice => this.validateMarker(slice))) {
+			this.state = (!this.isFlac && this.hasID3) ?
+				STATE.SCAN_MARKER :
+				(this.isFlac ? STATE.MDB_HEADER : STATE.PASS_THROUGH);
+		} else {
+			chunk.done = true;
+		}
+	}
+
+	private processMDBHEADER(chunk: Chunk): void {
+		if (this.safePush(chunk, 4, true, slice => this.validateMDBHeader(slice))) {
+			this.state = STATE.MDB;
+		} else {
+			chunk.done = true;
+		}
+	}
+
+	private processMDB(chunk: Chunk): void {
+		if (this.safePush(chunk, this.mdbLen, this.parseMetaDataBlocks, (slice, isDone) => this.validateMDB(slice, isDone))) {
+			if (this.mdb.isLast) {
+				// This MDB has the isLast flag set to true.
+				// Ignore all following MDBs.
+				this.mdbLastWritten = true;
+			}
+			this.emit('postprocess', this.mdb);
+			this.state = this.mdbLast ? STATE.PASS_THROUGH : STATE.MDB_HEADER;
+		} else {
+			chunk.done = true;
+		}
+	}
+
+	private processPASSTHROUGH(chunk: Chunk): void {
+		this.safePush(chunk, chunk.length - chunk.pos, false);
+		chunk.done = true;
+	}
+
+	private process(chunk: Chunk): void {
+		switch (this.state) {
+			case STATE.IDLE:
+				this.processIDLE();
+				break;
+			case STATE.SCAN_MARKER:
+				this.processSCANMARKER(chunk);
+				break;
+			case STATE.MARKER:
+				this.processMARKER(chunk);
+				break;
+			case STATE.MDB_HEADER:
+				this.processMDBHEADER(chunk);
+				break;
+			case STATE.MDB:
+				this.processMDB(chunk);
+				break;
+			default:
+			case STATE.PASS_THROUGH:
+				this.processPASSTHROUGH(chunk);
+				break;
+		}
+	}
+
+	private validateMarker(slice: Buffer): boolean {
 		this.isFlac = (slice.toString('utf8', 0) === 'fLaC');
 		if (!this.isFlac) {
 			this.hasID3 = slice.slice(0, 3).toString('utf8', 0) === 'ID3';
@@ -183,7 +233,7 @@ export class FlacProcessorStream extends Transform {
 		return true;
 	}
 
-	_validateMDBHeader(slice: Buffer, isDone: boolean): boolean {
+	private validateMDBHeader(slice: Buffer): boolean {
 		// Parse MDB header
 		let header = slice.readUInt32BE(0);
 		const type = (header >>> 24) & 0x7F;
@@ -193,66 +243,49 @@ export class FlacProcessorStream extends Transform {
 		// Create appropriate MDB object
 		// (data is injected later in _validateMDB, if parseMetaDataBlocks option is set to true)
 		switch (type) {
-			case MDB_TYPE_STREAMINFO:
+			case MDB_TYPE.STREAMINFO:
 				this.mdb = new MetaDataBlockStreamInfo(this.mdbLast);
 				break;
-			case MDB_TYPE_VORBIS_COMMENT:
+			case MDB_TYPE.VORBIS_COMMENT:
 				this.mdb = new BlockVorbiscomment(this.mdbLast);
 				break;
-			case MDB_TYPE_PICTURE:
+			case MDB_TYPE.PICTURE:
 				this.mdb = new MetaDataBlockPicture(this.mdbLast);
 				break;
-			// case MDB_TYPE_PADDING:
-			// case MDB_TYPE_APPLICATION:
-			// case MDB_TYPE_SEEKTABLE:
-			// case MDB_TYPE_CUESHEET:
-			// case MDB_TYPE_INVALID:
+			// case MDB_TYPE.PADDING:
+			// case MDB_TYPE.APPLICATION:
+			// case MDB_TYPE.SEEKTABLE:
+			// case MDB_TYPE.CUESHEET:
+			// case MDB_TYPE.INVALID:
 			default:
 				this.mdb = new MetaDataBlock(this.mdbLast, type);
 				break;
 		}
-
 		this.emit('preprocess', this.mdb);
-
 		if (this.mdbLastWritten) {
 			// A previous MDB had the isLast flag set to true.
 			// Ignore all following MDBs.
 			this.mdb.remove();
-		} else {
+		} else if (this.mdbLast !== this.mdb.isLast) {
 			// The consumer may change the MDB's isLast flag in the preprocess handler.
 			// Here that flag is updated in the MDB header.
-			if (this.mdbLast !== this.mdb.isLast) {
-				if (this.mdb.isLast) {
-					header |= 0x80000000;
-				} else {
-					header &= 0x7FFFFFFF;
-				}
-				slice.writeUInt32BE(header >>> 0, 0);
+			if (this.mdb.isLast) {
+				header |= 0x80000000;
+			} else {
+				header &= 0x7FFFFFFF;
 			}
+			slice.writeUInt32BE(header, 0);
 		}
 		this.mdbPush = !this.mdb.removed;
 		return this.mdbPush;
 	}
 
-	_validateMDB(slice: Buffer, isDone: boolean): boolean {
+	private validateMDB(slice: Buffer, isDone: boolean): boolean {
 		// Parse the MDB if parseMetaDataBlocks option is set to true
 		if (this.parseMetaDataBlocks && isDone) {
 			this.mdb.parse(slice);
 		}
 		return this.mdbPush;
-	}
-
-	_flush(callback: TransformCallback): void {
-		// All chunks have been processed
-		// Clean up
-		this.state = STATE_IDLE;
-		this.mdbLastWritten = false;
-		this.hasID3 = false;
-		this.isFlac = false;
-		this.bufPos = 0;
-		this.buf = undefined;
-		this.mdb = null;
-		callback();
 	}
 
 }
