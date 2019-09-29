@@ -3,6 +3,7 @@ import path from 'path';
 import {Config} from '../config/config';
 import {ThirdPartyConfig} from '../config/thirdparty.config';
 import {DBObjectType} from '../db/db.types';
+import {Jam} from '../model/jam-rest-data';
 import {RootScanStrategy} from '../model/jam-types';
 import {AudioModule} from '../modules/audio/audio.module';
 import {ImageModule} from '../modules/image/image.module';
@@ -119,6 +120,37 @@ export class Engine {
 		await this.metaDataService.cleanUp();
 	}
 
+	private async buildAdminUser(admin: { name: string, pass: string, mail: string }): Promise<void> {
+		const pw = hashAndSaltSHA512(admin.pass || '');
+		const user: User = {
+			id: '',
+			name: admin.name,
+			salt: pw.salt,
+			hash: pw.hash,
+			subsonic_pass: randomString(10),
+			email: admin.mail || '',
+			type: DBObjectType.user,
+			scrobblingEnabled: true,
+			created: Date.now(),
+			roles: {stream: true, upload: true, admin: true, podcast: true}
+		};
+		await this.userService.create(user);
+	}
+
+	private async buildRoots(roots: Array<{ name: string; path: string; strategy?: Jam.RootScanStrategy }>): Promise<void> {
+		for (const first of roots) {
+			const root: Root = {
+				id: '',
+				created: Date.now(),
+				type: DBObjectType.root,
+				name: first.name,
+				path: first.path,
+				strategy: first.strategy as RootScanStrategy || RootScanStrategy.auto
+			};
+			await this.store.rootStore.add(root);
+		}
+	}
+
 	private async checkFirstStart(): Promise<void> {
 		if (!this.config.firstStart) {
 			return;
@@ -126,52 +158,13 @@ export class Engine {
 		if (this.config.firstStart.adminUser) {
 			const count = await this.store.userStore.count();
 			if (count === 0) {
-				const adminUser = this.config.firstStart.adminUser;
-				const pw = hashAndSaltSHA512(adminUser.pass || '');
-				const user: User = {
-					id: '',
-					name: adminUser.name,
-					salt: pw.salt,
-					hash: pw.hash,
-					subsonic_pass: randomString(10),
-					email: adminUser.mail || '',
-					type: DBObjectType.user,
-					// ldapAuthenticated: true,
-					scrobblingEnabled: true,
-					created: Date.now(),
-					roles: {
-						stream: true,
-						upload: true,
-						admin: true,
-						podcast: true
-						// coverArtRole: true,
-						// settingsRole: true,
-						// downloadRole: true,
-						// playlistRole: true,
-						// commentRole: true,
-						// jukeboxRole: true,
-						// videoConversionRole: true,
-						// shareRole: true
-					}
-				};
-				await this.userService.create(user);
+				await this.buildAdminUser(this.config.firstStart.adminUser);
 			}
 		}
 		if (this.config.firstStart.roots) {
 			const count = await this.store.rootStore.count();
 			if (count === 0) {
-				const firstStartRoots = this.config.firstStart.roots;
-				for (const first of firstStartRoots) {
-					const root: Root = {
-						id: '',
-						created: Date.now(),
-						type: DBObjectType.root,
-						name: first.name,
-						path: first.path,
-						strategy: first.strategy as RootScanStrategy || RootScanStrategy.auto
-					};
-					await this.store.rootStore.add(root);
-				}
+				await this.buildRoots(this.config.firstStart.roots);
 			}
 		}
 	}
