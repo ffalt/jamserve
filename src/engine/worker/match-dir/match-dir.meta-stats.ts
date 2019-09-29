@@ -24,11 +24,23 @@ export interface MetaStat {
 	albumType: AlbumType;
 }
 
-const typeByGenreNames: { [name: string]: AlbumType } = {
+const typeByGenreNames: { [name: string]: AlbumType; } = {
 	audiobook: AlbumType.audiobook,
 	'audio theater': AlbumType.audiodrama,
 	soundtrack: AlbumType.soundtrack
 };
+
+const typeByMusicbrainzString: Array<{ type: AlbumType; names: Array<string>; }> = [
+	{type: AlbumType.audiobook, names: ['audiobook', 'spokenword']},
+	{type: AlbumType.bootleg, names: ['bootleg']},
+	{type: AlbumType.compilation, names: ['compilation']},
+	{type: AlbumType.live, names: ['live']},
+	{type: AlbumType.soundtrack, names: ['soundtrack']},
+	{type: AlbumType.audiobook, names: ['audiodrama', 'audio drama']},
+	{type: AlbumType.ep, names: ['ep']},
+	{type: AlbumType.single, names: ['single']},
+	{type: AlbumType.album, names: ['album']}
+];
 
 export class MatchDirMetaStats {
 
@@ -38,32 +50,12 @@ export class MatchDirMetaStats {
 
 	private static getMusicbrainzAlbumType(mbAlbumType: string): AlbumType {
 		const t = mbAlbumType.toLowerCase();
-		if (t.includes('audiobook') || t.includes('spokenword')) {
-			return AlbumType.audiobook;
-		}
-		if (t.includes('bootleg')) {
-			return AlbumType.bootleg;
-		}
-		if (t.includes('compilation')) {
-			return AlbumType.compilation;
-		}
-		if (t.includes('live')) {
-			return AlbumType.live;
-		}
-		if (t.includes('soundtrack')) {
-			return AlbumType.soundtrack;
-		}
-		if (t.includes('audiodrama') || t.includes('audio drama')) {
-			return AlbumType.audiodrama;
-		}
-		if (t.includes('ep')) {
-			return AlbumType.ep;
-		}
-		if (t.includes('single')) {
-			return AlbumType.single;
-		}
-		if (t.includes('album')) {
-			return AlbumType.album;
+		for (const type of typeByMusicbrainzString) {
+			for (const name of type.names) {
+				if (t.includes(name)) {
+					return type.type;
+				}
+			}
 		}
 		return AlbumType.unknown;
 	}
@@ -71,10 +63,7 @@ export class MatchDirMetaStats {
 	private static getStrategyAlbumType(strategy: RootScanStrategy, hasMultipleArtists: boolean): AlbumType {
 		switch (strategy) {
 			case RootScanStrategy.auto:
-				if (hasMultipleArtists) {
-					return AlbumType.compilation;
-				}
-				return AlbumType.album;
+				return hasMultipleArtists ? AlbumType.compilation : AlbumType.album;
 			case RootScanStrategy.artistalbum:
 				return AlbumType.album;
 			case RootScanStrategy.compilation:
