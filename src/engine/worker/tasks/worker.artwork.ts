@@ -53,7 +53,7 @@ export class ArtworkWorker {
 		if (name.length === 0) {
 			return Promise.reject(Error('Invalid Image File Name'));
 		}
-		const ext = path.extname(artwork.name).toLowerCase();
+		const ext = fileExt(artwork.name);
 		const newName = name + ext;
 		await fse.rename(path.join(folder.path, artwork.name), path.join(folder.path, newName));
 		await this.buildArtworkImageFile(folder, newName, artworkID);

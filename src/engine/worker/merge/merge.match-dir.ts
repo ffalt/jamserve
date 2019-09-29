@@ -6,7 +6,7 @@ import {AudioModule} from '../../../modules/audio/audio.module';
 import {ImageModule} from '../../../modules/image/image.module';
 import {generateArtworkId} from '../../../utils/artwork-id';
 import {deepCompare} from '../../../utils/deep-compare';
-import {ensureTrailingPathSeparator} from '../../../utils/fs-utils';
+import {basenameStripExt, ensureTrailingPathSeparator} from '../../../utils/fs-utils';
 import {artWorkImageNameToType} from '../../folder/folder.format';
 import {Artwork, Folder, FolderTag} from '../../folder/folder.model';
 import {Store} from '../../store/store';
@@ -209,9 +209,7 @@ export class MatchDirMerge {
 	private async buildTrack(file: MatchFile, parent: Folder): Promise<Track> {
 		const data = await this.audioModule.read(file.name);
 		const tag: TrackTag = data.tag || {format: TrackTagFormatType.none};
-		if (!tag.title) {
-			tag.title = path.basename(file.name);
-		}
+		tag.title = tag.title || basenameStripExt(file.name);
 		return {
 			id: '',
 			rootID: file.rootID,
@@ -238,7 +236,6 @@ export class MatchDirMerge {
 			throw Error('internal error, metastat must exist');
 		}
 		const nameSplit = MatchDirMerge.splitDirectoryName(dir.name);
-		const images = await this.buildFolderArtworks(dir);
 		return {
 			trackCount: metaStat.trackCount,
 			folderCount: dir.directories.length,
@@ -250,7 +247,7 @@ export class MatchDirMerge {
 			artist: metaStat.artist,
 			artistSort: metaStat.artistSort,
 			title: nameSplit.title,
-			artworks: images,
+			artworks: await this.buildFolderArtworks(dir),
 			genre: metaStat.genre,
 			mbAlbumID: metaStat.mbAlbumID,
 			mbReleaseGroupID: metaStat.mbReleaseGroupID,
@@ -260,61 +257,61 @@ export class MatchDirMerge {
 		};
 	}
 
+	private async buildFolderArtwork(file: MatchFile, folderID: string): Promise<Artwork> {
+		const name = path.basename(file.name);
+		return {
+			id: generateArtworkId(folderID, name, file.stat.size),
+			name,
+			types: artWorkImageNameToType(name),
+			image: await this.imageModule.getImageInfo(file.name),
+			stat: {created: file.stat.ctime, modified: file.stat.mtime, size: file.stat.size}
+		};
+	}
+
 	private async buildFolderArtworks(dir: MatchDir): Promise<Array<Artwork>> {
 		if (!dir.folder) {
-			// log.error('folder obj must exist at this point');
 			return [];
 		}
-		const folderID = dir.folder.id;
 		const files = dir.files.filter(file => file.type === FileTyp.IMAGE);
 		const result: Array<Artwork> = [];
 		const oldArtworks = dir.folder && dir.folder.tag && dir.folder.tag.artworks ? dir.folder.tag.artworks : [];
 		for (const file of files) {
 			const name = path.basename(file.name);
-			const id = generateArtworkId(folderID, name, file.stat.size);
 			const oldArtwork = oldArtworks.find(o => o.name === name);
-			if (!oldArtwork || oldArtwork.stat.modified !== file.stat.mtime) {
-				result.push({
-					id,
-					name,
-					types: artWorkImageNameToType(name),
-					image: await this.imageModule.getImageInfo(file.name),
-					stat: {created: file.stat.ctime, modified: file.stat.mtime, size: file.stat.size}
-				});
-			} else {
+			if (oldArtwork && oldArtwork.stat.modified === file.stat.mtime) {
 				result.push(oldArtwork);
+			} else {
+				result.push(await this.buildFolderArtwork(file, dir.folder.id));
 			}
 		}
 		return result;
 	}
 
+	private async buildMergeTrack(file: MatchFile, folder: Folder, changes: Changes): Promise<void> {
+		if (!file.track) {
+			file.track = await this.buildTrack(file, folder);
+			file.track.id = await this.store.trackStore.getNewId();
+			changes.newTracks.push(file.track);
+		} else if (MatchDirMerge.trackHasChanged(file)) {
+			const oldTrack = file.track;
+			file.track = await this.buildTrack(file, folder);
+			file.track.id = oldTrack.id;
+			changes.updateTracks.push({track: file.track, oldTrack});
+		}
+	}
+
 	private async buildMerge(dir: MatchDir, changes: Changes): Promise<void> {
 		if (!dir.folder) {
-			const folder = MatchDirMerge.buildFolder(dir);
-			folder.id = await this.store.trackStore.getNewId();
-			dir.folder = folder;
-			changes.newFolders.push(folder);
+			dir.folder = MatchDirMerge.buildFolder(dir);
+			dir.folder.id = await this.store.trackStore.getNewId();
+			changes.newFolders.push(dir.folder);
 		}
 		for (const sub of dir.directories) {
 			await this.buildMerge(sub, changes);
 		}
 		for (const file of dir.files) {
 			if (file.type === FileTyp.AUDIO && dir.folder) {
-				if (!file.track) {
-					const track = await this.buildTrack(file, dir.folder);
-					track.id = await this.store.trackStore.getNewId();
-					file.track = track;
-					changes.newTracks.push(track);
-				} else if (MatchDirMerge.trackHasChanged(file)) {
-					const old = file.track;
-					if (!old) {
-						return;
-					}
-					const track = await this.buildTrack(file, dir.folder);
-					track.id = old.id;
-					file.track = track;
-					changes.updateTracks.push({track, oldTrack: old});
-				}
+				await this.buildMergeTrack(file, dir.folder, changes);
 			}
 		}
 	}

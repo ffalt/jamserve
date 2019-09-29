@@ -23,6 +23,10 @@ export function fileExt(filename: string): string {
 	return path.extname(filename).toLowerCase();
 }
 
+export function basenameStripExt(filename: string): string {
+	return path.basename(filename, path.extname(filename));
+}
+
 export function replaceFileSystemChars(s: string, replace: string): string {
 	return s.toString()
 		.replace(/:/g, ' - ')

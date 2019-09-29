@@ -283,8 +283,8 @@ describe('FolderWorker', () => {
 								expect(res.buffer.contentType).toBe(mime);
 							}
 							if (res.file) {
-								expect(path.extname(res.file.filename)).toBe('.' + format);
-								expect(path.extname(res.file.name)).toBe('.' + format);
+								expect(fileExt(res.file.filename)).toBe('.' + format);
+								expect(fileExt(res.file.name)).toBe('.' + format);
 							}
 						}
 					}
