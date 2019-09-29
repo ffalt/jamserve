@@ -1,4 +1,3 @@
-import moment from 'moment';
 import {Jam} from '../../model/jam-rest-data';
 import {ArtworkImageType, RootScanStrategy, TrackHealthID} from '../../model/jam-types';
 import {Subsonic} from '../../model/subsonic-rest-data';
@@ -6,6 +5,7 @@ import {logger} from '../../utils/logger';
 import {RootStatus} from '../root/root.model';
 import {RootStore} from '../root/root.store';
 import {Changes} from '../worker/changes/changes';
+import {logChanges} from '../worker/changes/changes.logger';
 import {
 	WorkerRequestCreateArtwork,
 	WorkerRequestCreateFolder,
@@ -61,7 +61,6 @@ class WorkerRequest<T extends WorkerRequestParameters> {
 		public id: string, public mode: WorkerRequestMode,
 		public execute: (parameters: T) => Promise<Changes>, public parameters: T
 	) {
-
 	}
 
 	async run(): Promise<Changes> {
@@ -87,11 +86,7 @@ export class IoService {
 	private delayedTrackTagWrite = new Map<string, { request: WorkerRequest<WorkerRequestWriteTrackTags>, timeout?: NodeJS.Timeout }>();
 	private nextID: number = Date.now();
 	private afterScanTimeout: NodeJS.Timeout | undefined;
-	private history: Array<{
-		id: string;
-		error?: string;
-		date: number;
-	}> = [];
+	private history: Array<{ id: string; error?: string; date: number; }> = [];
 
 	constructor(private rootStore: RootStore, private workerService: WorkerService, private onRefresh: () => Promise<void>) {
 	}
@@ -101,37 +96,13 @@ export class IoService {
 		return this.nextID.toString();
 	}
 
-	private logChanges(changes: Changes): void {
-
-		function logChange(name: string, list: Array<any>): void {
-			if (list.length > 0) {
-				log.info(name, list.length);
-			}
-		}
-
-		const v = moment.utc(changes.end - changes.start).format('HH:mm:ss.SSS');
-		log.info('Duration:', v);
-		logChange('Added Tracks', changes.newTracks);
-		logChange('Updated Tracks', changes.updateTracks);
-		logChange('Removed Tracks', changes.removedTracks);
-		logChange('Added Folders', changes.newFolders);
-		logChange('Updated Folders', changes.updateFolders);
-		logChange('Removed Folders', changes.removedFolders);
-		logChange('Added Artists', changes.newArtists);
-		logChange('Updated Artists', changes.updateArtists);
-		logChange('Removed Artists', changes.removedArtists);
-		logChange('Added Albums', changes.newAlbums);
-		logChange('Updated Albums', changes.updateAlbums);
-		logChange('Removed Albums', changes.removedAlbums);
-	}
-
 	private async runRequest(cmd: WorkerRequest<WorkerRequestParameters>): Promise<void> {
 		this.clearAfterRefresh();
 		this.rootstatus.set(cmd.parameters.rootID, {lastScan: Date.now(), scanning: true});
 		try {
 			this.current = cmd;
 			const changes = await cmd.run();
-			this.logChanges(changes);
+			logChanges(changes);
 			this.rootstatus.set(cmd.parameters.rootID, {lastScan: Date.now()});
 			this.history.push({id: cmd.id, date: Date.now()});
 			this.current = undefined;
