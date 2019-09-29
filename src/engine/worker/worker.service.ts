@@ -130,7 +130,7 @@ export class WorkerService {
 	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
 		this.artworkWorker = new ArtworkWorker(store, imageModule);
 		this.trackWorker = new TrackWorker(store, imageModule, audioModule);
-		this.folderWorker = new FolderWorker(store, imageModule, audioModule);
+		this.folderWorker = new FolderWorker(store);
 		this.rootWorker = new RootWorker(store);
 		this.changes = new ChangesWorker(store, audioModule, imageModule, waveformService, this.settings);
 	}
