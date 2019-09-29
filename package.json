@@ -30,7 +30,7 @@
     "build:dev:watch": "webpack --watch --mode development",
     "build:docs": "npm run build:jam:api:docs && npm run build:subsonic:api:docs",
     "build:model": "npm run build:model:jam && npm run build:model:subsonic",
-    "build:model:jam": "npm run build:jam:openapi && npm run build:jam:elastic && npm run build:jam:client && npm run build:jam:router",
+    "build:model:jam": "npm run build:jam:openapi && npm run build:jam:elastic && npm run build:jam:client && npm run build:jam:router && npm run build:jam:tests",
     "build:model:subsonic": "npm run build:subsonic:openapi && npm run build:subsonic:router",
     "build:jam:tests": "cd dev/bin && ts-node update-jam-openapi-test.ts",
     "build:jam:openapi": "cd dev/bin && ts-node update-jam-openapi.ts",
