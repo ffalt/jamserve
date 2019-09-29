@@ -13870,17 +13870,6 @@
 					},
 					{
 						"in": "path",
-						"name": "width",
-						"schema": {
-							"minimum": 1,
-							"maximum": 6000,
-							"type": "integer"
-						},
-						"description": "width (for svg)",
-						"required": true
-					},
-					{
-						"in": "path",
 						"name": "id",
 						"schema": {
 							"type": "string"

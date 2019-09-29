@@ -570,14 +570,6 @@ export declare namespace JamParameters {
 		 * @default svg
 		 */
 		format?: WaveformFormatType;
-		/**
-		 * width (for svg)
-		 *
-		 * @minimum 1
-		 * @maximum 6000
-		 * @TJS-type integer
-		 */
-		width?: number;
 	}
 
 	export interface WaveformSVG extends ID {

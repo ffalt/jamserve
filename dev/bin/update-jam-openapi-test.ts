@@ -23,87 +23,137 @@ export interface RequestMock {
 	property?: string;
 }
 
+function generateValidStringData(schema: SchemaObject): any {
+	if (schema.enum) {
+		return schema.enum[chance.integer({min: 0, max: schema.enum.length - 1})];
+	}
+	return chance.string();
+}
+
+function generateValidIntegerData(schema: SchemaObject): any {
+	return chance.integer({min: schema.minimum !== undefined ? schema.minimum : 1, max: schema.maximum !== undefined ? schema.maximum - 1 : 100});
+}
+
+function generateValidNumberData(schema: SchemaObject): any {
+	return chance.floating({min: schema.minimum !== undefined ? schema.minimum : 1, max: schema.maximum !== undefined ? schema.maximum - 1 : 100, fixed: 2});
+}
+
+function generateValidBooleanData(schema: SchemaObject): any {
+	return chance.bool();
+}
+
+function generateValidArrayData(schema: SchemaObject): any {
+	if (!schema.items) {
+		return [];
+	}
+	return [
+		generateValidDataSchema(schema.items as SchemaObject),
+		generateValidDataSchema(schema.items as SchemaObject)
+	];
+}
+
 function generateValidDataSchema(schema: SchemaObject): any {
-	const type = schema.type ? schema.type : 'null';
-	if (type === 'string') {
-		if (schema.enum) {
-			return schema.enum[chance.integer({min: 0, max: schema.enum.length - 1})];
-		}
-		return chance.string();
+	switch (schema.type) {
+		case 'integer':
+			return generateValidIntegerData(schema);
+		case 'number':
+			return generateValidNumberData(schema);
+		case 'string':
+			return generateValidStringData(schema);
+		case 'boolean':
+			return generateValidBooleanData(schema);
+		case 'array':
+			return generateValidArrayData(schema);
+		default:
+			console.error(`TODO: mock valid data for type ${schema.type} ${JSON.stringify(schema)}`);
+			return [];
 	}
-	if (type === 'number') {
-		return chance.floating({min: schema.minimum !== undefined ? schema.minimum : 1, max: schema.maximum !== undefined ? schema.maximum - 1 : 100, fixed: 2});
-	}
-	if (type === 'integer') {
-		return chance.integer({min: schema.minimum !== undefined ? schema.minimum : 1, max: schema.maximum !== undefined ? schema.maximum - 1 : 100});
-	}
-	if (type === 'boolean') {
-		return chance.bool();
-	}
-	if (type === 'array' && schema.items) {
-		return [
-			generateValidDataSchema(schema.items as SchemaObject),
-			generateValidDataSchema(schema.items as SchemaObject)
-		];
-	}
-	throw Error(`TODO: Implement valid value for type ${type} ${JSON.stringify(schema)}`);
 }
 
 function generateValidDataByParameter(param: ParameterObject): { name: string, data: any } {
 	return {name: param.name, data: generateValidDataSchema(param.schema as SchemaObject)};
 }
 
-function generateInvalidDataBySchema(schema: SchemaObject): Array<{ data: any, invalid: string }> {
+function generateInvalidIntegerData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
 	const result: Array<{ data: any, invalid: string }> = [];
-	const type = schema.type;
-	if (type === 'integer') {
-		result.push({data: chance.string(), invalid: 'string'});
-		result.push({data: '', invalid: 'empty string'});
-		result.push({data: true, invalid: 'boolean'});
-		let num = 0;
-		while (Number.isInteger(num)) {
-			num = chance.floating({min: schema.minimum || 1, max: schema.maximum || 100, fixed: 2});
-		}
-		result.push({data: num, invalid: 'float'});
-		if (schema.minimum !== undefined) {
-			result.push({data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}`});
-		}
-		if (schema.maximum !== undefined) {
-			result.push({data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}`});
-		}
-	} else if (type === 'number') {
-		result.push({data: chance.string(), invalid: 'string'});
-		result.push({data: '', invalid: 'empty string'});
-		result.push({data: true, invalid: 'boolean'});
-		if (schema.minimum !== undefined) {
-			result.push({data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}`});
-		}
-		if (schema.maximum !== undefined) {
-			result.push({data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}`});
-		}
-	} else if (type === 'string') {
-		if (schema.default === undefined) { // if the default value available, these parameter are always valid to omit
-			result.push({data: '', invalid: 'empty string'});
-		}
-		if (schema.enum) {
-			result.push({data: 'invalid', invalid: 'invalid enum'});
-		}
-	} else if (type === 'boolean') {
-		result.push({data: '', invalid: 'empty string'});
-		result.push({data: chance.string(), invalid: 'string'});
-		result.push({data: chance.integer() + 2, invalid: 'integer > 1'});
-		result.push({data: -(chance.integer() + 1), invalid: 'integer < 0'});
-	} else if (type === 'array') {
-		result.push({data: null, invalid: 'null'});
-		const array = [generateValidDataSchema(schema.items as SchemaObject).data];
-		const invalids = generateInvalidDataBySchema(schema.items as SchemaObject);
-		for (const invalid of invalids) {
-			result.push({data: array.concat([invalid.data]), invalid: invalid.invalid});
-		}
-	} else {
-		console.error(`TODO: mock invalid data for type ${type} ${JSON.stringify(schema)}`);
+	result.push({data: chance.string(), invalid: 'string'});
+	result.push({data: '', invalid: 'empty string'});
+	result.push({data: true, invalid: 'boolean'});
+	let num = 0;
+	while (Number.isInteger(num)) {
+		num = chance.floating({min: schema.minimum || 1, max: schema.maximum || 100, fixed: 2});
+	}
+	result.push({data: num, invalid: 'float'});
+	if (schema.minimum !== undefined) {
+		result.push({data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}`});
+	}
+	if (schema.maximum !== undefined) {
+		result.push({data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}`});
 	}
 	return result;
+}
+
+function generateInvalidNumberData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
+	const result: Array<{ data: any, invalid: string }> = [];
+	result.push({data: chance.string(), invalid: 'string'});
+	result.push({data: '', invalid: 'empty string'});
+	result.push({data: true, invalid: 'boolean'});
+	if (schema.minimum !== undefined) {
+		result.push({data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}`});
+	}
+	if (schema.maximum !== undefined) {
+		result.push({data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}`});
+	}
+	return result;
+}
+
+function generateInvalidStringData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
+	const result: Array<{ data: any, invalid: string }> = [];
+	if (schema.default === undefined) { // if the default value available, these parameter are always valid to omit
+		result.push({data: '', invalid: 'empty string'});
+	}
+	if (schema.enum) {
+		result.push({data: 'invalid', invalid: 'invalid enum'});
+	}
+	return result;
+}
+
+function generateInvalidBooleanData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
+	const result: Array<{ data: any, invalid: string }> = [];
+	result.push({data: '', invalid: 'empty string'});
+	result.push({data: chance.string(), invalid: 'string'});
+	result.push({data: chance.integer() + 2, invalid: 'integer > 1'});
+	result.push({data: -(chance.integer() + 1), invalid: 'integer < 0'});
+	return result;
+}
+
+function generateInvalidArrayData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
+	const result: Array<{ data: any, invalid: string }> = [];
+	result.push({data: null, invalid: 'null'});
+	const array = [generateValidDataSchema(schema.items as SchemaObject).data];
+	const invalids = generateInvalidDataBySchema(schema.items as SchemaObject);
+	for (const invalid of invalids) {
+		result.push({data: array.concat([invalid.data]), invalid: invalid.invalid});
+	}
+	return result;
+}
+
+function generateInvalidDataBySchema(schema: SchemaObject): Array<{ data: any, invalid: string }> {
+	switch (schema.type) {
+		case 'integer':
+			return generateInvalidIntegerData(schema);
+		case 'number':
+			return generateInvalidNumberData(schema);
+		case 'string':
+			return generateInvalidStringData(schema);
+		case 'boolean':
+			return generateInvalidBooleanData(schema);
+		case 'array':
+			return generateInvalidArrayData(schema);
+		default:
+			console.error(`TODO: mock invalid data for type ${schema.type} ${JSON.stringify(schema)}`);
+			return [];
+	}
 }
 
 function generateInvalidDataByParameter(param: ParameterObject): Array<{ name: string, data: any, invalid?: string }> {
@@ -146,7 +196,6 @@ function generateInvalidRequestMocks(params: Array<ParameterObject>, property: P
 async function generateRequestMock(op: OperationObject): Promise<Array<RequestMock>> {
 	let mocks: Array<RequestMock> = [];
 	const parameters: Array<ParameterObject> = (op.parameters || []) as Array<ParameterObject>;
-
 	const queryParameters = parameters.filter(p => p.in === 'query');
 	const pathParameters = parameters.filter(p => p.in === 'path');
 	if (queryParameters.length > 0) {
@@ -378,8 +427,8 @@ async function build(): Promise<string> {
 	const apicalls: ApiCalls = await getJamApiCalls(basePath);
 	const mocks = await generateRequestMocks(openapi);
 	const sections = await generateTests(mocks, apicalls, openapi);
-	// await fse.writeFile(destfile + '.json', JSON.stringify(mocks));
-	const template = Mustache.render((await fse.readFile('../templates/server.test.ts.template')).toString(), {sections, version: apicalls.version, apiPrefix: apicalls.apiPrefix});
+	const template = Mustache.render((await fse.readFile('../templates/server.test.ts.template')).toString(),
+		{sections, version: apicalls.version, apiPrefix: apicalls.apiPrefix});
 	await fse.writeFile(destfile, template);
 	return destfile;
 }

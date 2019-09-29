@@ -19,27 +19,29 @@ export class WaveformController {
 	async svgByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
 		const {id, size, format} = await validatePathParameterIDSizeFormat(req.query.pathParameter,
 			[WaveformFormatType.svg], WaveformFormatType.svg, 1, 6000);
-		const query: JamParameters.Waveform = {id, format: format as JamParameters.WaveformFormatType, width: size};
-		return this.waveform({query, user: req.user});
+		return this.getWaveform(id, format as JamParameters.WaveformFormatType, size);
 	}
 
 	async waveformByPathParameter(req: JamRequest<{ pathParameter: string }>): Promise<ApiBinaryResult> {
 		const {id, format} = await validatePathParameterIDFormat(req.query.pathParameter, WaveformFormats, WaveformDefaultFormat);
-		const query: JamParameters.Waveform = {id, format: format as JamParameters.WaveformFormatType};
-		return this.waveform({query, user: req.user});
+		return this.getWaveform(id, format as JamParameters.WaveformFormatType);
 	}
 
-	async waveform(req: JamRequest<JamParameters.Waveform>): Promise<ApiBinaryResult> {
-		const obj = await this.byID(req.query.id);
-		const format = (req.query.format || WaveformDefaultFormat);
+	private async getWaveform(id: string, format?: JamParameters.WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
+		const obj = await this.byID(id);
+		format = (format || WaveformDefaultFormat);
 		switch (obj.type) {
 			case DBObjectType.track:
-				return this.waveformService.getTrackWaveform(obj as Track, format as WaveformFormatType, req.query.width);
+				return this.waveformService.getTrackWaveform(obj as Track, format as WaveformFormatType, width);
 			case DBObjectType.episode:
-				return this.waveformService.getEpisodeWaveform(obj as Episode, format as WaveformFormatType, req.query.width);
+				return this.waveformService.getEpisodeWaveform(obj as Episode, format as WaveformFormatType, width);
 			default:
 		}
 		return Promise.reject(Error('Invalid Object Type for Waveform generation'));
+	}
+
+	async waveform(req: JamRequest<JamParameters.Waveform>): Promise<ApiBinaryResult> {
+		return this.getWaveform(req.query.id, req.query.format);
 	}
 
 	private async byID(id: string | undefined): Promise<DBObject> {
