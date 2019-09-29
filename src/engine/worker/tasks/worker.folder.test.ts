@@ -4,6 +4,7 @@ import tmp from 'tmp';
 import {DBObjectType} from '../../../db/db.types';
 import {FolderType, RootScanStrategy} from '../../../model/jam-types';
 import {testService} from '../../base/base.service.spec';
+import {Folder} from '../../folder/folder.model';
 import {Store} from '../../store/store';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from '../../store/store.mock';
 import {WaveformServiceTest} from '../../waveform/waveform.service.spec';
@@ -35,12 +36,11 @@ describe('FolderWorker', () => {
 					await removeMockRoot(mockRoot);
 					dir.removeCallback();
 				} catch (e) {
-					console.error(e);
+					console.error('teardown error', e);
 				}
 				await store.reset();
 				await store.check();
 			});
-
 			describe('renameFolder', () => {
 				it('should handle invalid parameters', async () => {
 					const folder = await store.folderStore.random();
@@ -50,13 +50,27 @@ describe('FolderWorker', () => {
 					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: ''})).rejects.toThrow('Invalid Directory Name');
 					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: '.'})).rejects.toThrow('Invalid Directory Name');
 					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: '//..*\.'})).rejects.toThrow('Invalid Directory Name');
-					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: path.basename(folder.path)})).rejects.toThrow('Directory already exists');
+					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: path.basename(folder.path)})).rejects.toThrow('Folder name already used in Destination');
 				});
+
 				it('should rename and update all folder & track paths', async () => {
 					const folderIds = await store.folderStore.searchIDs({rootID: mockRoot.id});
 					if (folderIds.length === 0) {
 						throw Error('Invalid Test Setup');
 					}
+
+					async function testRename(folder: Folder, newName: string): Promise<void> {
+						await workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName});
+						const all = await store.folderStore.search({inPath: folder.path});
+						for (const f of all.items) {
+							expect(await fse.pathExists(f.path)).toBe(true);
+						}
+						const tracks = await store.trackStore.search({inPath: folder.path});
+						for (const t of tracks.items) {
+							expect(await fse.pathExists(t.path + t.name)).toBe(true);
+						}
+					}
+
 					for (const id of folderIds) {
 						const folder = await store.folderStore.byId(id);
 						expect(folder).toBeTruthy();
@@ -64,21 +78,12 @@ describe('FolderWorker', () => {
 							return;
 						}
 						const name = path.basename(folder.path);
-						let changes = await workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: name + '_renamed'});
-						const all = await store.folderStore.search({inPath: folder.path});
-						for (const f of all.items) {
-							expect(await fse.pathExists(f.path)).toBe(true); // path does not exist ' + f.path);
-						}
-						const tracks = await store.trackStore.search({inPath: folder.path});
-						for (const t of tracks.items) {
-							expect(await fse.pathExists(t.path + t.name)).toBe(true); // file does not exist ' + t.path + t.name);
-						}
-						changes = await workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: name});
+						await testRename(folder, name + '_renamed');
+						await testRename(folder, name);
 					}
 				});
 
 			});
-
 			it('should remove folders', async () => {
 				const folders = await store.folderStore.search({rootID: mockRoot.id});
 				let folder = folders.items.find(f => f.tag.level === 0);
@@ -120,7 +125,7 @@ describe('FolderWorker', () => {
 				if (!artistFolder) {
 					throw Error('Invalid Test Setup');
 				}
-				await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: rootFolder.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder is already in Destination');
+				await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: rootFolder.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder name already used in Destination');
 				await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [rootFolder.id]})).rejects.toThrow('Folder moving failed');
 				await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder cannot be moved to itself');
 				const albumFolder = await store.folderStore.searchOne({rootID: mockRoot.id, types: [FolderType.album], artist: 'artist 2', album: 'album 1'});

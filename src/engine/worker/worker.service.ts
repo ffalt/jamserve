@@ -141,6 +141,9 @@ export class WorkerService {
 	}
 
 	private async mergeDBMatch(root: Root, folderIDs: Array<string>, trackIDs: Array<string>, changes: Changes): Promise<void> {
+		if (folderIDs.length + trackIDs.length === 0) {
+			return;
+		}
 		const dbMatcher = new MatchDirBuilderDB(this.store);
 		const {rootMatch, changedDirs} = await dbMatcher.build(folderIDs, trackIDs);
 		await this.changes.mergeMatch(root, rootMatch, dir => changedDirs.includes(dir), changes);
