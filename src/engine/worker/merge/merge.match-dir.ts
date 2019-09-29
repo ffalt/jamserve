@@ -23,7 +23,20 @@ export class MatchDirMerge {
 	) {
 	}
 
-	private splitDirectoryName(name: string): { title: string; year?: number; } {
+	private static findMultiAlbumFolderType(dir: MatchDir): FolderType {
+		const a = dir.directories.find(d => {
+			return (!!d.tag && d.tag.type === FolderType.artist);
+		});
+		return a ? FolderType.collection : FolderType.multialbum;
+	}
+
+	private static isExtraFolder(dir: MatchDir): boolean {
+		// TODO: generalise extra folder detection (an admin setting?)
+		const name = path.basename(dir.name).toLowerCase();
+		return !!name.match(/(\[(extra|various)]|^(extra|various)$)/);
+	}
+
+	private static splitDirectoryName(name: string): { title: string; year?: number; } {
 		const result: { title: string; year?: number; } = {title: path.basename(name).trim()};
 		// year title | year - title | (year) title | [year] title
 		const parts = result.title.split(' ');
@@ -42,7 +55,7 @@ export class MatchDirMerge {
 		return result;
 	}
 
-	private buildDefaultTag(dir: MatchDir): FolderTag {
+	private static buildDefaultTag(dir: MatchDir): FolderTag {
 		return {
 			level: dir.level,
 			type: FolderType.unknown,
@@ -51,7 +64,7 @@ export class MatchDirMerge {
 		};
 	}
 
-	private buildFolder(dir: MatchDir): Folder {
+	private static buildFolder(dir: MatchDir): Folder {
 		return {
 			id: '',
 			rootID: dir.rootID,
@@ -61,45 +74,134 @@ export class MatchDirMerge {
 				created: dir.stat.ctime,
 				modified: dir.stat.mtime
 			},
-			tag: dir.tag || this.buildDefaultTag(dir),
+			tag: dir.tag || MatchDirMerge.buildDefaultTag(dir),
 			type: DBObjectType.folder
 		};
 	}
 
-	private trackHasChanged(file: MatchFile): boolean {
+	private static trackHasChanged(file: MatchFile): boolean {
 		return (!file.track) ||
 			(file.stat.mtime !== file.track.stat.modified) ||
 			(file.stat.ctime !== file.track.stat.created) ||
 			(file.stat.size !== file.track.stat.size);
 	}
 
-	private async buildMerge(dir: MatchDir, changes: Changes): Promise<void> {
-		if (!dir.folder) {
-			const folder = this.buildFolder(dir);
-			folder.id = await this.store.trackStore.getNewId();
-			dir.folder = folder;
-			changes.newFolders.push(folder);
-		}
-		for (const sub of dir.directories) {
-			await this.buildMerge(sub, changes);
-		}
-		for (const file of dir.files) {
-			if (file.type === FileTyp.AUDIO && dir.folder) {
-				if (!file.track) {
-					const track = await this.buildTrack(file, dir.folder);
-					track.id = await this.store.trackStore.getNewId();
-					file.track = track;
-					changes.newTracks.push(track);
-				} else if (this.trackHasChanged(file)) {
-					const old = file.track;
-					if (!old) {
-						return;
-					}
-					const track = await this.buildTrack(file, dir.folder);
-					track.id = old.id;
-					file.track = track;
-					changes.updateTracks.push({track, oldTrack: old});
+	private static folderHasChanged(dir: MatchDir): boolean {
+		return (!dir.folder) ||
+			(dir.stat.mtime !== dir.folder.stat.modified) ||
+			(dir.stat.ctime !== dir.folder.stat.created) ||
+			(!deepCompare(dir.folder.tag, dir.tag));
+	}
+
+	private static async mergeRecursive(dir: MatchDir, changes: Changes): Promise<void> {
+		if (dir.folder) {
+			if (MatchDirMerge.folderHasChanged(dir)) {
+				const folder = MatchDirMerge.buildFolder(dir);
+				folder.id = dir.folder.id;
+				dir.folder = folder;
+				const newFolder = changes.newFolders.find(f => f.id === folder.id);
+				if (!newFolder) {
+					changes.updateFolders.push(folder);
+				} else {
+					changes.newFolders = changes.newFolders.filter(f => f.id !== folder.id);
+					changes.newFolders.push(folder);
 				}
+			}
+			for (const d of dir.directories) {
+				await MatchDirMerge.mergeRecursive(d, changes);
+			}
+		} else {
+			return Promise.reject(Error(`db entry must exists to compare ${dir.name}`));
+		}
+	}
+
+	private static markMultiAlbumChildDirs(dir: MatchDir): void {
+		if (dir.tag && dir.tag.type !== FolderType.extras) {
+			MatchDirMerge.setTagType(dir.tag, FolderType.multialbum);
+		}
+		dir.directories.forEach(d => {
+			if (dir.tag && d.tag && d.tag.type !== FolderType.extras) {
+				// parent multialbum gets same album type as child multialbum folder
+				dir.tag.albumType = d.tag.albumType;
+			}
+			MatchDirMerge.markMultiAlbumChildDirs(d);
+		});
+	}
+
+	private static setTagType(tag: FolderTag, type: FolderType): void {
+		tag.type = type;
+		switch (type) {
+			case FolderType.collection:
+				tag.albumType = undefined;
+				tag.genre = undefined;
+				tag.mbArtistID = undefined;
+				tag.mbAlbumID = undefined;
+				tag.mbAlbumType = undefined;
+				tag.mbReleaseGroupID = undefined;
+				tag.artist = undefined;
+				tag.artistSort = undefined;
+				tag.album = undefined;
+				tag.year = undefined;
+				break;
+			case FolderType.artist:
+				tag.albumType = undefined;
+				tag.genre = undefined;
+				tag.mbAlbumID = undefined;
+				tag.mbAlbumType = undefined;
+				tag.mbReleaseGroupID = undefined;
+				tag.album = undefined;
+				tag.year = undefined;
+				break;
+			default:
+		}
+	}
+
+	private static markArtistChildDirs(dir: MatchDir): void {
+		if (dir.tag && dir.tag.type === FolderType.artist) {
+			MatchDirMerge.setTagType(dir.tag, FolderType.collection);
+		}
+		dir.directories.forEach(d => {
+			MatchDirMerge.markArtistChildDirs(d);
+		});
+	}
+
+	private static findFolderType(dir: MatchDir, metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
+		if (dir.level === 0) {
+			return FolderType.collection;
+		}
+		if (MatchDirMerge.isExtraFolder(dir)) {
+			return FolderType.extras;
+		}
+		if (metaStat.trackCount > 0) {
+			const dirCount = dir.directories.filter(d => !!d.tag && d.tag.type !== FolderType.extras).length;
+			return (dirCount === 0) ? FolderType.album : MatchDirMerge.findMultiAlbumFolderType(dir);
+		}
+		if (dir.directories.length === 0) {
+			return (dir.files.filter(f => f.type === FileTyp.AUDIO).length === 0) ? FolderType.extras : FolderType.album;
+		}
+		if (metaStat.hasMultipleAlbums) {
+			return (metaStat.hasMultipleArtists || strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
+		}
+		if (dir.directories.length === 1) {
+			return (strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
+		}
+		if (!metaStat.hasMultipleArtists && dir.directories.filter(d => d.tag && d.tag.type === FolderType.artist).length > 0) {
+			return FolderType.artist;
+		}
+		return MatchDirMerge.findMultiAlbumFolderType(dir);
+	}
+
+	private static applyFolderTagType(dir: MatchDir, strategy: RootScanStrategy): void {
+		if (!dir.tag || !dir.metaStat) {
+			return;
+		}
+		const result = MatchDirMerge.findFolderType(dir, dir.metaStat, strategy);
+		MatchDirMerge.setTagType(dir.tag, result);
+		if (result === FolderType.multialbum) {
+			MatchDirMerge.markMultiAlbumChildDirs(dir);
+		} else if (result === FolderType.artist) {
+			for (const sub of dir.directories) {
+				MatchDirMerge.markArtistChildDirs(sub);
 			}
 		}
 	}
@@ -130,42 +232,13 @@ export class MatchDirMerge {
 		};
 	}
 
-	private folderHasChanged(dir: MatchDir): boolean {
-		return (!dir.folder) ||
-			(dir.stat.mtime !== dir.folder.stat.modified) ||
-			(dir.stat.ctime !== dir.folder.stat.created) ||
-			(!deepCompare(dir.folder.tag, dir.tag));
-	}
-
-	private async mergeR(dir: MatchDir, changes: Changes): Promise<void> {
-		if (dir.folder) {
-			if (this.folderHasChanged(dir)) {
-				const folder = this.buildFolder(dir);
-				folder.id = dir.folder.id;
-				dir.folder = folder;
-				const newFolder = changes.newFolders.find(f => f.id === folder.id);
-				if (!newFolder) {
-					changes.updateFolders.push(folder);
-				} else {
-					changes.newFolders = changes.newFolders.filter(f => f.id !== folder.id);
-					changes.newFolders.push(folder);
-				}
-			}
-			for (const d of dir.directories) {
-				await this.mergeR(d, changes);
-			}
-		} else {
-			return Promise.reject(Error(`db entry must exists to compare ${dir.name}`));
-		}
-	}
-
 	private async buildFolderTag(dir: MatchDir): Promise<FolderTag> {
 		const metaStat = dir.metaStat;
 		if (!metaStat) {
 			throw Error('internal error, metastat must exist');
 		}
-		const nameSplit = this.splitDirectoryName(dir.name);
-		const images = await this.collectFolderArtworks(dir);
+		const nameSplit = MatchDirMerge.splitDirectoryName(dir.name);
+		const images = await this.buildFolderArtworks(dir);
 		return {
 			trackCount: metaStat.trackCount,
 			folderCount: dir.directories.length,
@@ -187,57 +260,7 @@ export class MatchDirMerge {
 		};
 	}
 
-	private markMultiAlbumChilds(dir: MatchDir): void {
-		if (dir.tag && dir.tag.type !== FolderType.extras) {
-			this.setTagType(dir.tag, FolderType.multialbum);
-		}
-		dir.directories.forEach(d => {
-			if (dir.tag && d.tag && d.tag.type !== FolderType.extras) {
-				// parent multialbum gets same album type as child multialbum folder
-				dir.tag.albumType = d.tag.albumType;
-			}
-			this.markMultiAlbumChilds(d);
-		});
-	}
-
-	private markArtistChilds(dir: MatchDir): void {
-		if (dir.tag && dir.tag.type === FolderType.artist) {
-			this.setTagType(dir.tag, FolderType.collection);
-		}
-		dir.directories.forEach(d => {
-			this.markArtistChilds(d);
-		});
-	}
-
-	private setTagType(tag: FolderTag, type: FolderType): void {
-		tag.type = type;
-		switch (type) {
-			case FolderType.collection:
-				tag.albumType = undefined;
-				tag.genre = undefined;
-				tag.mbArtistID = undefined;
-				tag.mbAlbumID = undefined;
-				tag.mbAlbumType = undefined;
-				tag.mbReleaseGroupID = undefined;
-				tag.artist = undefined;
-				tag.artistSort = undefined;
-				tag.album = undefined;
-				tag.year = undefined;
-				break;
-			case FolderType.artist:
-				tag.albumType = undefined;
-				tag.genre = undefined;
-				tag.mbAlbumID = undefined;
-				tag.mbAlbumType = undefined;
-				tag.mbReleaseGroupID = undefined;
-				tag.album = undefined;
-				tag.year = undefined;
-				break;
-			default:
-		}
-	}
-
-	private async collectFolderArtworks(dir: MatchDir): Promise<Array<Artwork>> {
+	private async buildFolderArtworks(dir: MatchDir): Promise<Array<Artwork>> {
 		if (!dir.folder) {
 			// log.error('folder obj must exist at this point');
 			return [];
@@ -265,58 +288,35 @@ export class MatchDirMerge {
 		return result;
 	}
 
-	private applyFolderTagType(dir: MatchDir): void {
-		if (!dir.tag || !dir.metaStat) {
-			return;
+	private async buildMerge(dir: MatchDir, changes: Changes): Promise<void> {
+		if (!dir.folder) {
+			const folder = MatchDirMerge.buildFolder(dir);
+			folder.id = await this.store.trackStore.getNewId();
+			dir.folder = folder;
+			changes.newFolders.push(folder);
 		}
-		const result = this.findFolderType(dir, dir.metaStat);
-		this.setTagType(dir.tag, result);
-		if (result === FolderType.multialbum) {
-			this.markMultiAlbumChilds(dir);
-		} else if (result === FolderType.artist) {
-			for (const sub of dir.directories) {
-				this.markArtistChilds(sub);
+		for (const sub of dir.directories) {
+			await this.buildMerge(sub, changes);
+		}
+		for (const file of dir.files) {
+			if (file.type === FileTyp.AUDIO && dir.folder) {
+				if (!file.track) {
+					const track = await this.buildTrack(file, dir.folder);
+					track.id = await this.store.trackStore.getNewId();
+					file.track = track;
+					changes.newTracks.push(track);
+				} else if (MatchDirMerge.trackHasChanged(file)) {
+					const old = file.track;
+					if (!old) {
+						return;
+					}
+					const track = await this.buildTrack(file, dir.folder);
+					track.id = old.id;
+					file.track = track;
+					changes.updateTracks.push({track, oldTrack: old});
+				}
 			}
 		}
-	}
-
-	private findMultiAlbumFolderType(dir: MatchDir, metaStat: MetaStat): FolderType {
-		let result: FolderType = FolderType.multialbum;
-		const a = dir.directories.find(d => {
-			return (!!d.tag && d.tag.type === FolderType.artist);
-		});
-		if (a) {
-			result = FolderType.collection;
-		}
-		return result;
-	}
-
-	private findFolderType(dir: MatchDir, metaStat: MetaStat): FolderType {
-		const name = path.basename(dir.name).toLowerCase();
-		if (dir.level === 0) {
-			return FolderType.collection;
-		}
-		if (name.match(/\[(extra|various)]/) || name.match(/^(extra|various)$/)) {
-			// TODO: generalise extra folder detection
-			return FolderType.extras;
-		}
-		if (metaStat.trackCount > 0) {
-			const dirCount = dir.directories.filter(d => !!d.tag && d.tag.type !== FolderType.extras).length;
-			return (dirCount === 0) ? FolderType.album : this.findMultiAlbumFolderType(dir, metaStat);
-		}
-		if (dir.directories.length > 0) {
-			if (metaStat.hasMultipleAlbums) {
-				return (metaStat.hasMultipleArtists || this.strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
-			}
-			if (dir.directories.length === 1) {
-				return (this.strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
-			}
-			if (!metaStat.hasMultipleArtists && dir.directories.filter(d => d.tag && d.tag.type === FolderType.artist).length > 0) {
-				return FolderType.artist;
-			}
-			return this.findMultiAlbumFolderType(dir, metaStat);
-		}
-		return (dir.directories.length === 0 && dir.files.filter(f => f.type === FileTyp.AUDIO).length === 0) ? FolderType.extras : FolderType.album;
 	}
 
 	private async buildMergeTags(dir: MatchDir, rebuildTag: (dir: MatchDir) => boolean): Promise<void> {
@@ -327,13 +327,13 @@ export class MatchDirMerge {
 			dir.metaStat = MatchDirMetaStats.buildMetaStat(dir, this.settings, this.strategy);
 			dir.tag = await this.buildFolderTag(dir);
 		}
-		this.applyFolderTagType(dir);
+		MatchDirMerge.applyFolderTagType(dir, this.strategy);
 	}
 
 	async merge(dir: MatchDir, rootID: string, rebuildTag: (dir: MatchDir) => boolean, changes: Changes): Promise<void> {
 		await this.buildMerge(dir, changes);
 		await this.buildMergeTags(dir, rebuildTag);
-		await this.mergeR(dir, changes);
+		await MatchDirMerge.mergeRecursive(dir, changes);
 	}
 
 }
