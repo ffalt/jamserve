@@ -5,7 +5,7 @@ import {MetaDataBlockPicture} from './lib/block.picture';
 import {MetaDataBlockStreamInfo} from './lib/block.streaminfo';
 import {BlockVorbiscomment} from './lib/block.vorbiscomment';
 import {MetaWriteableDataBlock} from './lib/block.writeable';
-import {FlacProcessorStream, MDB_TYPE_PADDING, MDB_TYPE_PICTURE, MDB_TYPE_STREAMINFO, MDB_TYPE_VORBIS_COMMENT} from './lib/processor';
+import {FlacProcessorStream, MDB_TYPE} from './lib/processor';
 
 export interface FlacComment {
 	vendor: string;
@@ -52,11 +52,11 @@ export class Flac {
 			const reader = fs.createReadStream(filename);
 			const processor = new FlacProcessorStream(true, true);
 			processor.on('postprocess', (mdb: MetaDataBlock) => {
-				if (mdb.type === MDB_TYPE_STREAMINFO) {
+				if (mdb.type === MDB_TYPE.STREAMINFO) {
 					result.media = this.formatMediaBlock(mdb as MetaDataBlockStreamInfo);
-				} else if (mdb.type === MDB_TYPE_VORBIS_COMMENT) {
+				} else if (mdb.type ===MDB_TYPE.VORBIS_COMMENT) {
 					result.comment = this.formatMediaComment(mdb as BlockVorbiscomment);
-				} else if (mdb.type === MDB_TYPE_PICTURE) {
+				} else if (mdb.type === MDB_TYPE.PICTURE) {
 					if ((mdb as MetaDataBlockPicture).pictureData) {
 						result.pictures = result.pictures || [];
 						result.pictures.push(this.formatMediaPicture(mdb as MetaDataBlockPicture));
@@ -95,7 +95,7 @@ export class Flac {
 		const processor = new FlacProcessorStream(false, false);
 		return new Promise<void>((resolve, reject) => {
 			processor.on('preprocess', mdb => {
-				if (mdb.type === MDB_TYPE_VORBIS_COMMENT || mdb.type === MDB_TYPE_PICTURE || mdb.type === MDB_TYPE_PADDING) {
+				if (mdb.type === MDB_TYPE.VORBIS_COMMENT || mdb.type === MDB_TYPE.PICTURE || mdb.type === MDB_TYPE.PADDING) {
 					mdb.remove();
 				}
 				if (mdb.isLast) {
