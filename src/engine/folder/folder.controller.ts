@@ -117,7 +117,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 			toYear: query.toYear,
 			offset: query.offset,
 			amount: query.amount,
-			types: query.type ? [query.type] : undefined,
+			type: query.type ? (query.type as FolderType) : undefined,
 			sorts: query.sortField ? [{field: query.sortField, descending: !!query.sortDescending}] : undefined
 		};
 	}

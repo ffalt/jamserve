@@ -35,18 +35,27 @@ async function checkRoles(user?: User, roles?: Array<SubSonicRole>): Promise<voi
 	}
 }
 
+async function runSubsonic(req: UserRequest, res: express.Response, execute: (req: UserRequest, res: express.Response) => Promise<void>, roles?: Array<SubSonicRole>): Promise<void> {
+	try {
+		await checkRoles(req.user, roles || []);
+		await execute(req as UserRequest, res);
+	} catch (e) {
+		log.error(e);
+		ApiResponder.error(req, res, e);
+	}
+}
+
 export function initSubsonicRouter(engine: Engine): express.Router {
 	const api = new SubsonicApi(engine);
+
 	const register: Register = {
 		all(name: string, execute: (req: UserRequest, res: express.Response) => Promise<void>, roles?: Array<SubSonicRole>): void {
-			router.all(name, apiCheck(name), async (req, res) => {
-				try {
-					await checkRoles((req as UserRequest).user, roles || []);
-					await execute(req as UserRequest, res);
-				} catch (e) {
-					log.error(e);
-					ApiResponder.error(req, res, e);
-				}
+			const shortName = name.split('.view')[0];
+			router.all(shortName, apiCheck(name), async (req, res) => {
+				return runSubsonic(req as UserRequest, res, execute, roles);
+			});
+			router.all(name, apiCheck(name),  async (req, res) => {
+				return runSubsonic(req as UserRequest, res, execute, roles);
 			});
 		}
 	};

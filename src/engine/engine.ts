@@ -10,7 +10,6 @@ import {ImageModule} from '../modules/image/image.module';
 import {pathDeleteIfExists} from '../utils/fs-utils';
 import {hashAndSaltSHA512} from '../utils/hash';
 import {logger} from '../utils/logger';
-import {randomString} from '../utils/random';
 import {AlbumService} from './album/album.service';
 import {ArtistService} from './artist/artist.service';
 import {BookmarkService} from './bookmark/bookmark.service';

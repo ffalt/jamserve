@@ -58,7 +58,7 @@ function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {
 		parameterType: call.paramType || '{}',
 		parameterSource: (call.method === 'post') ? 'body' : 'query',
 		resultType,
-		controllerCall: call.operationId.replace('.view', ''),
+		controllerCall: `${call.tag.toLowerCase()}.${call.operationId.replace('.view', '')}`,
 		respondCall: getRespondCall(call, resultType.length > 0),
 		callRoles: getCallRoles(call, !!call.pathParams),
 		upload: call.upload || ''

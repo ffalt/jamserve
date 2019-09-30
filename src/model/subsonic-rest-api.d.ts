@@ -233,7 +233,7 @@ export interface SubsonicApi {
 		 */
 		'getVideos.view'?: { result: { videos: Subsonic.Videos } };
 		/**
-		 * Jukebox: Controls the jukebox, i.e., playback directly on the server's audio hardware. Note: The user must be authorized to control the jukebox.
+		 * System: Controls the jukebox, i.e., playback directly on the server's audio hardware. Note: The user must be authorized to control the jukebox.
 		 */
 		'jukeboxControl.view'?: { params: SubsonicParameters.Jukebox, result: { jukeboxStatus: Subsonic.JukeboxStatus }, roles: ['jukebox'] };
 		/**

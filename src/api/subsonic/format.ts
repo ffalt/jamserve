@@ -362,7 +362,7 @@ export class FORMAT {
 			duration: (track.media.duration !== undefined && !isNaN(track.media.duration)) ? Math.trunc(track.media.duration) : -1,
 			bitRate: (track.media.bitRate !== undefined) ? Math.round(track.media.bitRate / 1000) : -1,
 			track: track.tag.track,
-			size: track.stat.size,
+			size: Math.trunc(track.stat.size / 10),
 			suffix,
 			contentType: AudioMimeTypes[suffix],
 			isVideo: false,

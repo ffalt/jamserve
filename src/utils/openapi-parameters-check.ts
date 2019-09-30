@@ -70,6 +70,18 @@ function validateArrayParameter(query: any, param: { name: string, required?: bo
 	}
 }
 
+function validateAnyOfParameter(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
+	const results: Array<string> = [];
+	for (const entry of (schema.anyOf || [])) {
+		const res = validOAParameterValueBySchema(query, param, value, entry);
+		if (!res) {
+			return;
+		}
+		results.push(res);
+	}
+	return results.join('/');
+}
+
 function validOAParameterValueBySchema(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
 	if (value === undefined || value === null) {
 		if (schema && schema.default !== undefined) {
@@ -83,6 +95,9 @@ function validOAParameterValueBySchema(query: any, param: { name: string, requir
 			return `Missing required parameter ${param.name}`;
 		}
 		return;
+	}
+	if (schema.anyOf) {
+		return validateAnyOfParameter(query, param, value, schema);
 	}
 	// sanitize & check string parameter type
 	switch (schema.type) {
@@ -99,7 +114,7 @@ function validOAParameterValueBySchema(query: any, param: { name: string, requir
 		case 'integer':
 			return validateNumberParameter(query, param, value, schema);
 		default:
-			log.debug(`Unknown schema type ${schema.type}`);
+			log.debug(`Unknown schema type ${JSON.stringify(schema)}`);
 	}
 }
 

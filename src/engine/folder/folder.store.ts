@@ -1,6 +1,7 @@
 import {Database, DatabaseQuery} from '../../db/db.model';
 import {DBObjectType} from '../../db/db.types';
 import {JamParameters} from '../../model/jam-rest-params';
+import {FolderType} from '../../model/jam-types';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import {QueryHelper} from '../base/base.query.helper';
 import {BaseStore, SearchQuery, SearchQuerySort} from '../base/base.store';
@@ -25,7 +26,8 @@ export interface SearchQueryFolder extends SearchQuery {
 	toYear?: number;
 	mbAlbumID?: string;
 	mbArtistID?: string;
-	types?: Array<string>;
+	type?: FolderType;
+	types?: Array<FolderType>;
 	sorts?: Array<SearchQuerySort<JamParameters.FolderSortField>>;
 }
 
@@ -62,6 +64,7 @@ export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 		q.term('tag.level', query.level);
 		q.term('tag.artist', query.artist);
 		q.terms('tag.artist', query.artists);
+		q.term('tag.type', query.type);
 		q.terms('tag.type', query.types);
 		q.range('tag.year', query.toYear, query.fromYear);
 		q.range('stat.created', undefined, query.newerThan);
