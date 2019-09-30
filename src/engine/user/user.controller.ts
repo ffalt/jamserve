@@ -49,7 +49,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		if (!admin) {
 			return Promise.reject(UnauthError());
 		}
-		const pass = randomString(10);
+		const pass = randomString(16);
 		const pw = hashAndSaltSHA512(pass);
 		const u: User = {
 			id: '',

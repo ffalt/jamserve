@@ -126,7 +126,7 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 				cookie: '{}', jwth: '', subsonic: ''
 			};
 		}
-		session.subsonic = randomString(10);
+		session.subsonic = randomString(16);
 		await this.sessionStore.upsert([session]);
 		return session;
 	}
