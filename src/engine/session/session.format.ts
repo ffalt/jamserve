@@ -16,6 +16,7 @@ export function formatSession(session: Session): Jam.UserSession {
 		id: session.id,
 		client: session.client,
 		expires: session.expires,
+		mode: session.mode,
 		agent: ua ? ua.browser : undefined,
 		os: ua ? ua.os : undefined,
 		platform: ua ? ua.platform : undefined

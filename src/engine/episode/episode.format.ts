@@ -33,7 +33,8 @@ export function formatEpisode(episode: Episode, includes: JamParameters.Includes
 			bitRate: episode.media.bitRate || -1,
 			format: episode.media.format || '',
 			channels: episode.media.channels || -1,
-			sampleRate: episode.media.sampleRate || -1
+			sampleRate: episode.media.sampleRate || -1,
+			size: (episode.stat ? episode.stat.size : -1) || -1
 		} : undefined,
 		tag: includes.trackTag && episode.tag ? formatTrackTag(episode.tag) : undefined,
 		chapters: episode.chapters && episode.chapters.length > 0 ? formatChapters(episode.chapters) : undefined

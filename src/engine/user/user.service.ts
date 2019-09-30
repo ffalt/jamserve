@@ -10,6 +10,7 @@ import {BookmarkStore} from '../bookmark/bookmark.store';
 import {PlaylistStore} from '../playlist/playlist.store';
 import {PlayQueueStore} from '../playqueue/playqueue.store';
 import {SessionStore} from '../session/session.store';
+import {SessionMode} from '../session/session.types';
 import {StateStore} from '../state/state.store';
 import {User} from './user.model';
 import {SearchQueryUser, UserStore} from './user.store';
@@ -132,7 +133,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		return user;
 	}
 
-	async authSubsonic(name: string, pass: string): Promise<User> {
+	async authSubsonicPassword(name: string, pass: string): Promise<User> {
 		if ((!pass) || (!pass.length)) {
 			return Promise.reject(Error('Invalid Password'));
 		}
@@ -140,13 +141,17 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		if (!user) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		if (pass !== user.subsonic_pass) {
+		const session = await this.sessionStore.searchOne({userID: user.id, mode: SessionMode.subsonic});
+		if (!session) {
+			return Promise.reject(Error('No Jam Token for Subsonic available'));
+		}
+		if (pass !== session.subsonic) {
 			return Promise.reject(Error('Invalid Password'));
 		}
 		return user;
 	}
 
-	async authToken(name: string, token: string, salt: string): Promise<User> {
+	async authSubsonicToken(name: string, token: string, salt: string): Promise<User> {
 		if (!name || name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));
 		}
@@ -157,7 +162,11 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		if (!user) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const t = hashMD5(user.subsonic_pass + salt);
+		const session = await this.sessionStore.searchOne({userID: user.id, mode: SessionMode.subsonic});
+		if (!session) {
+			return Promise.reject(Error('No Jam Token for Subsonic available'));
+		}
+		const t = hashMD5(session.subsonic + salt);
 		if (token !== t) {
 			return Promise.reject(Error('Invalid Token'));
 		}

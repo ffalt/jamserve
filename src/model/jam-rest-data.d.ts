@@ -15,6 +15,7 @@ export declare namespace Jam {
 	export type PodcastEpisodeStatusType = 'new' | 'downloading' | 'completed' | 'error' | 'deleted';
 	export type ArtworkImageType = 'front' | 'back' | 'booklet' | 'medium' | 'tray' | 'obi' | 'spine' | 'track' | 'liner' | 'sticker' | 'poster' | 'watermark' | 'raw' | 'unedited' | 'other' | 'artist';
 	export type RootScanStrategy = 'auto' | 'artistalbum' | 'compilation' | 'audiobook';
+	export type SessionMode = 'browser' | 'jwt' | 'subsonic';
 
 	/*
 	 * Base Data
@@ -99,9 +100,14 @@ export declare namespace Jam {
 		id: string;
 		client: string;
 		expires: number;
+		mode: SessionMode;
 		platform?: string;
 		agent?: string;
 		os?: string;
+	}
+
+	export interface SubsonicToken {
+		token?: string;
 	}
 
 	/*
@@ -185,6 +191,7 @@ export declare namespace Jam {
 		format: string;
 		channels: number;
 		sampleRate: number;
+		size: number;
 	}
 
 	export interface Track extends Base {

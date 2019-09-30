@@ -41,7 +41,7 @@ export function apiCheck(name: string): express.RequestHandler {
 				next();
 			}).catch(e => {
 			// console.log(e.message);
-			ApiResponder.error(res, InvalidParamError(e.message));
+			ApiResponder.error(req, res, InvalidParamError(e.message));
 		});
 	}
 

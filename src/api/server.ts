@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser';
 import express from 'express';
-import rateLimit from 'express-rate-limit';
+// import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import * as http from 'http';
 import path from 'path';

@@ -33,12 +33,11 @@ const typeUser = {
 		name: typeString,
 		salt: typeKey,
 		hash: typeKey,
-		subsonic_pass: typeKey,
 		email: typeKey,
 		created: typeInt,
 		scrobblingEnabled: typeBool,
 		maxBitRate: typeInt,
-		allowedfolder: typeKey,
+		allowedFolder: typeKey,
 		roles: typeUserRoles,
 		id: typeKey,
 		type: typeInt
@@ -357,13 +356,15 @@ const typeSettings = {
 
 const typeSession = {
 	properties: {
-		sessionID: typeKey,
 		userID: typeKey,
 		client: typeKey,
 		agent: typeKey,
 		expires: typeInt,
-		jwth: typeKey,
+		mode: typeKey,
+		sessionID: typeKey,
 		cookie: typeKey,
+		jwth: typeKey,
+		subsonic: typeKey,
 		id: typeKey,
 		type: typeInt
 	}

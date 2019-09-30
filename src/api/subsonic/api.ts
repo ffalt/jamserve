@@ -81,7 +81,7 @@ export class SubsonicApi extends SubsonicApiBase {
 		 musicFolderId 	No 		If specified, only return artists in the music folder with the given ID. See getMusicFolders.
 		 ifModifiedSince 	No 		If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
 		 */
-		const folderIndex = await this.engine.indexService.getFolderIndex({rootID: req.query.musicFolderId ? req.query.musicFolderId.toString() : undefined});
+		const folderIndex = await this.engine.indexService.getFolderIndex({rootID: req.query.musicFolderId ? req.query.musicFolderId.toString() : undefined, level: 1});
 		if (req.query.ifModifiedSince && req.query.ifModifiedSince > 0 && (folderIndex.lastModified <= req.query.ifModifiedSince)) {
 			const empty: any = {};
 			return empty;
@@ -586,13 +586,14 @@ export class SubsonicApi extends SubsonicApiBase {
 		if (!o) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
+		const maxBitRate = req.query.maxBitRate !== undefined && req.query.maxBitRate > 0 ? req.query.maxBitRate : undefined;
 		switch (o.type) {
 			case DBObjectType.track:
-				const res = await this.engine.streamService.streamTrack(o as Track, req.query.format, req.query.maxBitRate, req.query.estimateContentLength, req.user);
+				const res = await this.engine.streamService.streamTrack(o as Track, req.query.format, maxBitRate, req.query.estimateContentLength, req.user);
 				this.engine.nowPlayingService.reportTrack(o as Track, req.user).catch(e => log.error(e)); // do not wait
 				return res;
 			case DBObjectType.episode:
-				const result = await this.engine.streamService.streamEpisode(o as Episode, req.query.format, req.query.maxBitRate, req.query.estimateContentLength, req.user);
+				const result = await this.engine.streamService.streamEpisode(o as Episode, req.query.format, maxBitRate, req.query.estimateContentLength, req.user);
 				this.engine.nowPlayingService.reportEpisode(o as Episode, req.user).catch(e => log.error(e)); // do not wait
 				return result;
 			default:
@@ -774,6 +775,7 @@ export class SubsonicApi extends SubsonicApiBase {
 	 * @return  Returns an empty <subsonic-response> element on success.
 	 */
 	async updateUser(req: ApiOptions<SubsonicParameters.UpdateUser>): Promise<void> {
+		return Promise.reject('disabled');
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	Yes 		The name of the user.
@@ -794,6 +796,7 @@ export class SubsonicApi extends SubsonicApiBase {
 		 musicFolderId 	No 		(Since 1.12.0) IDs of the music folders the user is allowed access to. Include the parameter once for each folder.
 		 maxBitRate 	No 		(Since 1.13.0) The maximum bit rate (in Kbps) for the user. Audio streams of higher bit rates are automatically downsampled to this bit rate. Legal values: 0 (no limit), 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320.
 		 */
+		/*
 		const getBool = (b: boolean | undefined, def: boolean): boolean => {
 			return b === undefined ? def : b;
 		};
@@ -809,7 +812,7 @@ export class SubsonicApi extends SubsonicApiBase {
 			u.subsonic_pass = req.query.password;
 		}
 		if (req.query.musicFolderId) {
-			u.allowedfolder = (Array.isArray(req.query.musicFolderId) ? req.query.musicFolderId : [req.query.musicFolderId]).map(id => id.toString());
+			u.allowedFolder = (Array.isArray(req.query.musicFolderId) ? req.query.musicFolderId : [req.query.musicFolderId]).map(id => id.toString());
 		}
 		if (req.query.maxBitRate !== undefined) {
 			u.maxBitRate = req.query.maxBitRate || 0;
@@ -832,6 +835,7 @@ export class SubsonicApi extends SubsonicApiBase {
 		// u.roles.shareRole = getBool(req.query.shareRole, u.roles.shareRole);
 		// u.roles.videoConversionRole = getBool(req.query.videoConversionRole, u.roles.videoConversionRole);
 		await this.engine.userService.update(u);
+		 */
 	}
 
 	/**

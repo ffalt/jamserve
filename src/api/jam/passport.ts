@@ -136,7 +136,7 @@ export function CallSessionLoginHandler(req: UserRequest, res: express.Response,
 				}
 			}
 			const result: Jam.Session = {version: JAMAPI_VERSION, allowedCookieDomains: req.engine.config.server.session.allowedCookieDomains, jwt: token, user: formatUser(req.user)};
-			ApiResponder.data(res, result);
+			ApiResponder.data(req, res, result);
 		});
 	})(req, res, next);
 }
@@ -169,5 +169,5 @@ export function CallSessionLogoutHandler(req: UserRequest, res: express.Response
 		console.error(e);
 	});
 	res.clearCookie(req.engine.config.server.session.cookie.name, {path: '/'});
-	ApiResponder.ok(res);
+	ApiResponder.ok(req, res);
 }

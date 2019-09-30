@@ -1,5 +1,5 @@
 import {JamRequest} from '../../api/jam/api';
-import {GenericError, InvalidParamError, UnauthError} from '../../api/jam/error';
+import {GenericError, InvalidParamError, NotFoundError, UnauthError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
@@ -57,7 +57,6 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 			salt: pw.salt,
 			hash: pw.hash,
 			email: '',
-			subsonic_pass: randomString(10),
 			type: DBObjectType.user,
 			created: Date.now(),
 			scrobblingEnabled: false,
@@ -73,11 +72,7 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 	}
 
 	async update(req: JamRequest<JamParameters.UserUpdate>): Promise<Jam.User> {
-		const u = await this.byID(req.query.id);
-		const admin = await this.userService.auth(req.user.name, req.query.password);
-		if (!admin) {
-			return Promise.reject(UnauthError());
-		}
+		const u = await this.checkUserAccess(req.query.id, req.query.password, req.user);
 		if (req.query.name) {
 			if (req.query.name !== u.name) {
 				const u2 = await this.userService.getByName(req.query.name);
@@ -135,26 +130,40 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		return Promise.reject(UnauthError());
 	}
 
-	async passwordUpdate(req: JamRequest<JamParameters.UserPasswordUpdate>): Promise<void> {
-		const u = await this.byID(req.query.id);
-		if (u.id === req.user.id || req.user.roles.admin) {
-			const user = await this.userService.auth(req.user.name, req.query.password);
-			if (user) {
-				return this.userService.setUserPassword(u, req.query.newPassword);
+	private async checkUserAccess(userID: string, password: string, user: User): Promise<User> {
+		const u = await this.byID(userID);
+		if (u.id === user.id || user.roles.admin) {
+			const result = await this.userService.auth(user.name, password);
+			if (result) {
+				return u;
 			}
 		}
 		return Promise.reject(UnauthError());
 	}
 
+	async passwordUpdate(req: JamRequest<JamParameters.UserPasswordUpdate>): Promise<void> {
+		const user = await this.checkUserAccess(req.query.id, req.query.password, req.user);
+		return this.userService.setUserPassword(user, req.query.newPassword);
+	}
+
 	async emailUpdate(req: JamRequest<JamParameters.UserEmailUpdate>): Promise<void> {
-		const u = await this.byID(req.query.id);
-		if (u.id === req.user.id || req.user.roles.admin) {
-			const user = await this.userService.auth(req.user.name, req.query.password);
-			if (user) {
-				return this.userService.setUserEmail(u, req.query.email);
-			}
+		const user = await this.checkUserAccess(req.query.id, req.query.password, req.user);
+		return this.userService.setUserEmail(user, req.query.email);
+	}
+
+	async subsonicView(req: JamRequest<JamParameters.SubsonicToken>): Promise<Jam.SubsonicToken> {
+		const user = await this.checkUserAccess(req.query.id, req.query.password, req.user);
+		const session = await this.sessionService.subsonicByUser(user.id);
+		return {token: session ? session.subsonic : undefined};
+	}
+
+	async subsonicGenerate(req: JamRequest<JamParameters.SubsonicToken>): Promise<Jam.SubsonicToken> {
+		const user = await this.checkUserAccess(req.query.id, req.query.password, req.user);
+		const session = await this.sessionService.createSubsonic(user.id);
+		if (!session) {
+			return Promise.reject(NotFoundError());
 		}
-		return Promise.reject(UnauthError());
+		return {token: session.subsonic};
 	}
 
 }

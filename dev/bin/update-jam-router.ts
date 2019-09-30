@@ -27,8 +27,8 @@ function getCallRoles(call: ApiCall, hasPathParameter: boolean): string {
 
 function getRespondCall(call: ApiCall, hasResultType: boolean): string {
 	return (call.binaryResult) ?
-		'binary(res, result)' :
-		(hasResultType ? 'data(res, result)' : 'ok(res)');
+		'binary(req, res, result)' :
+		(hasResultType ? 'data(req, res, result)' : 'ok(req, res)');
 }
 
 function generateRegisterFunction(call: ApiCall): MustacheDataRegisterFunction {

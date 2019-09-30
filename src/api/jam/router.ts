@@ -27,7 +27,7 @@ function registerLog(router: express.Router, engine: Engine): void {
 
 function register404Error(router: express.Router, engine: Engine): void {
 	router.use((req, res) => {
-		ApiResponder.error(res, NotFoundError('jam api cmd not found'));
+		ApiResponder.error(req, res, NotFoundError('jam api cmd not found'));
 	});
 }
 
@@ -50,7 +50,7 @@ function registerApiPublic(router: express.Router, api: JamApi): void {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.error(e);
-					ApiResponder.error(res, e);
+					ApiResponder.error(req, res, e);
 				}
 			});
 		},
@@ -78,7 +78,7 @@ function registerApiAuthenticated(router: express.Router, api: JamApi): void {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.debug(e);
-					ApiResponder.error(res, e);
+					ApiResponder.error(req, res, e);
 				}
 			});
 		},
@@ -89,7 +89,7 @@ function registerApiAuthenticated(router: express.Router, api: JamApi): void {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.debug(e);
-					ApiResponder.error(res, e);
+					ApiResponder.error(req, res, e);
 				}
 			});
 		},
@@ -100,7 +100,7 @@ function registerApiAuthenticated(router: express.Router, api: JamApi): void {
 					await execute(req as UserRequest, res);
 				} catch (e) {
 					log.debug(e);
-					ApiResponder.error(res, e);
+					ApiResponder.error(req, res, e);
 				}
 			});
 		}

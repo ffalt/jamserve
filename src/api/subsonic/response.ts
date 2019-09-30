@@ -11,12 +11,12 @@ export class ApiResponder {
 		res.setHeader('Access-Control-Allow-Origin', '*');
 		const params = (req as SubsonicParameterRequest).parameters;
 		if ((params.format === 'jsonp') && (params.callback)) {
-			ApiBaseResponder.sendJSONP(res, params.callback, data);
+			ApiBaseResponder.sendJSONP(req, res, params.callback, data);
 		} else if (params.format === 'json') {
-			ApiBaseResponder.sendJSON(res, data);
+			ApiBaseResponder.sendJSON(req, res, data);
 		} else {
 			data['subsonic-response'].xmlns = 'http://subsonic.org/restapi';
-			ApiBaseResponder.sendXML(res, xml(data));
+			ApiBaseResponder.sendXML(req, res, xml(data));
 		}
 	}
 
@@ -38,6 +38,6 @@ export class ApiResponder {
 
 	public static binary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {
 		res.setHeader('Access-Control-Allow-Origin', '*');
-		ApiBaseResponder.sendBinary(res, data);
+		ApiBaseResponder.sendBinary(req, res, data);
 	}
 }

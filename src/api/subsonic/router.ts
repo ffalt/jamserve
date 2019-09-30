@@ -64,7 +64,7 @@ export function initSubsonicRouter(engine: Engine): express.Router {
 	registerApi(register, api);
 
 	router.use((req, res, next) => {
-		ApiBaseResponder.sendErrorMsg(res, 404, 'subsonic api cmd not found');
+		ApiBaseResponder.sendErrorMsg(req, res, 404, 'subsonic api cmd not found');
 	});
 
 	return router;

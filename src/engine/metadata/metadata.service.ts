@@ -169,7 +169,7 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		return this.searchInStore<Jam.WikidataLookupResponse>(`wikidata-entity-${id}`,
 			MetaDataType.wikidata, async () => {
 				const entity = await this.audioModule.wikidataID(id);
-				return {id, name, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now()};
+				return {id, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now()};
 			});
 	}
 

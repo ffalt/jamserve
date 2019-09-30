@@ -23,7 +23,7 @@ function CheckAuthMiddleWare(req: UserRequest, res: express.Response, next: expr
 	if (req.user) {
 		return next();
 	}
-	ApiBaseResponder.sendErrorMsg(res, 401, Errors.unauthorized);
+	ApiBaseResponder.sendErrorMsg(req, res, 401, Errors.unauthorized);
 }
 
 export function registerAuthentication(router: express.Router, engine: Engine): void {

@@ -127,7 +127,6 @@ export class Engine {
 			name: admin.name,
 			salt: pw.salt,
 			hash: pw.hash,
-			subsonic_pass: randomString(10),
 			email: admin.mail || '',
 			type: DBObjectType.user,
 			scrobblingEnabled: true,

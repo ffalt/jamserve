@@ -111,7 +111,7 @@ export class FORMAT {
 			email: user.email,
 			maxBitRate: user.maxBitRate,
 			avatarLastChanged: undefined, // user.avatarLastChanged !== undefined ? FORMAT.formatSubSonicDate(user.avatarLastChanged) : undefined,
-			folder: user.allowedfolder ? user.allowedfolder.map(s => parseInt(s, 10)) : undefined,
+			folder: user.allowedFolder ? user.allowedFolder.map(s => parseInt(s, 10)) : undefined,
 			scrobblingEnabled: user.scrobblingEnabled,
 			adminRole: user.roles.admin,
 			settingsRole: user.roles.admin, // user.roles.settingsRole,

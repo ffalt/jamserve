@@ -85,16 +85,16 @@ describe('UserService', () => {
 			it('should auth the user by token', async () => {
 				const s = salt(6);
 				const token = hashMD5(mock.subsonic_pass + s);
-				const user = await userService.authToken(mock.name, token, s);
+				const user = await userService.authSubsonicToken(mock.name, token, s);
 				expect(user).toBeTruthy();
 				expect(user).toEqual(mock);
 			});
 			it('should not auth the user with the wrong token', async () => {
-				await expect(userService.authToken(mock.name, 'wrong', 'wrong')).rejects.toThrow('Invalid Token');
-				await expect(userService.authToken(' ', 'wrong', 'wrong')).rejects.toThrow('Invalid Username');
-				await expect(userService.authToken(mock.name, '', 'wrong')).rejects.toThrow('Invalid Token');
-				await expect(userService.authToken(mock.name, 'wrong', '')).rejects.toThrow('Invalid Token');
-				await expect(userService.authToken('non-existing', 'wrong', 'wrong')).rejects.toThrow('Invalid Username');
+				await expect(userService.authSubsonicToken(mock.name, 'wrong', 'wrong')).rejects.toThrow('Invalid Token');
+				await expect(userService.authSubsonicToken(' ', 'wrong', 'wrong')).rejects.toThrow('Invalid Username');
+				await expect(userService.authSubsonicToken(mock.name, '', 'wrong')).rejects.toThrow('Invalid Token');
+				await expect(userService.authSubsonicToken(mock.name, 'wrong', '')).rejects.toThrow('Invalid Token');
+				await expect(userService.authSubsonicToken('non-existing', 'wrong', 'wrong')).rejects.toThrow('Invalid Username');
 			});
 
 			it('should use the cache', async () => {

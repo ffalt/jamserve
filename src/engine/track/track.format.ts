@@ -41,7 +41,8 @@ export function formatTrack(track: Track, includes: JamParameters.IncludesTrack)
 			bitRate: track.media.bitRate || -1,
 			format: track.media.format || '',
 			channels: track.media.channels || -1,
-			sampleRate: track.media.sampleRate || -1
+			sampleRate: track.media.sampleRate || -1,
+			size: track.stat.size || -1
 		} : undefined,
 		tag: includes.trackTag ? formatTrackTag(track.tag) : undefined
 	};

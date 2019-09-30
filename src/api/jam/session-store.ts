@@ -3,6 +3,7 @@ import {Store} from 'express-session';
 import {DBObjectType} from '../../db/db.types';
 import {Session} from '../../engine/session/session.model';
 import {SessionNotifyEventObject, SessionService} from '../../engine/session/session.service';
+import {SessionMode} from '../../engine/session/session.types';
 
 interface ExpressSession extends Express.SessionData {
 	passport: { user: string };
@@ -33,6 +34,8 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 			sessionID,
 			jwth: session.jwth,
 			agent: session.userAgent,
+			mode: !!session.jwth ? SessionMode.jwt : SessionMode.browser,
+			subsonic: '',
 			client: session.client,
 			cookie: JSON.stringify(session.cookie),
 			type: DBObjectType.session,

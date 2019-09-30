@@ -45,10 +45,10 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 		if (pass.startsWith('enc:')) {
 			pass = hexDecode(pass.slice(4)).trim();
 		}
-		return req.engine.userService.authSubsonic(req.parameters.username, pass);
+		return req.engine.userService.authSubsonicPassword(req.parameters.username, pass);
 	}
 	if (req.parameters.token && req.parameters.salt) {
-		return req.engine.userService.authToken(req.parameters.username, req.parameters.token, req.parameters.salt);
+		return req.engine.userService.authSubsonicToken(req.parameters.username, req.parameters.token, req.parameters.salt);
 	}
 	return Promise.reject('Invalid Login Type');
 }
