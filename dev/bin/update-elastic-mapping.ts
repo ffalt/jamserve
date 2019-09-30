@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {transformTS2JSONScheme} from '../lib/ts2scheme';
 import {run} from '../lib/run';
+import {transformTS2JSONScheme} from '../lib/ts2scheme';
 
 function transformProperty(name: string, parent: string, prop: any, definitions: any, paths: Array<string>, done: Array<string>, result: Array<string>): string {
 	let key = '';

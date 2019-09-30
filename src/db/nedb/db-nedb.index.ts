@@ -161,7 +161,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				if (err) {
 					reject(err);
 				} else if (numReplaced !== 1) {
-					return reject(Error(`Could not find ${this._type} doc with id ${id}`));
+					reject(Error(`Could not find ${this._type} doc with id ${id}`));
 				} else {
 					resolve();
 				}

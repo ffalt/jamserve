@@ -25,6 +25,7 @@ export declare namespace JamParameters {
 	export type UserSortField = 'name' | 'created';
 	export type RootSortField = 'name' | 'created';
 
+	// tslint:disable-next-line:interface-name
 	export interface ID {
 		/**
 		 * the item id

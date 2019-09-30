@@ -48,6 +48,7 @@ export function apiCheck(name: string): express.RequestHandler {
 	return CheckApiParametersHandler;
 }
 
+// tslint:disable-next-line:interface-name
 export interface IDFormat {
 	id: string;
 	format?: string;
@@ -70,6 +71,7 @@ export async function validatePathParameterIDFormat(pathParameter: string, valid
 	return {id, format};
 }
 
+// tslint:disable-next-line:interface-name
 export interface IDSizeFormat {
 	id: string;
 	size?: number;

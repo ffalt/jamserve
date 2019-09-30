@@ -5,6 +5,77 @@ import {LastFMClientApi} from './lastfm-client.interface';
 
 const log = logger('LastFM');
 
+class LastFMClientBeautify {
+
+	private static ensureList(name: string, sub: any): any {
+		if (sub[name]) {
+			return Array.isArray(sub[name]) ? sub[name] : [sub[name]];
+		}
+		return sub;
+	}
+
+	private static buildSubValue(key: string, sub: any, result: any): void {
+		switch (key) {
+			case '#text':
+				result.url = sub;
+				break;
+			case '@attr':
+				Object.keys(sub).forEach(subkey => {
+					result[subkey] = sub[subkey];
+				});
+				break;
+			case 'tags':
+				result[key] = LastFMClientBeautify.ensureList('tag', sub);
+				break;
+			case 'streamable':
+				result[key] = {sample: sub['#text'], fulltrack: sub.fulltrack};
+				break;
+			case 'image':
+				const images = Array.isArray(sub) ? sub : [sub];
+				result[key] = images.filter(img => img.url && img.url.length > 0);
+				break;
+			case 'tracks':
+				result[key] = LastFMClientBeautify.ensureList('track', sub);
+				break;
+			case  'links':
+				result[key] = LastFMClientBeautify.ensureList('link', sub);
+				break;
+			default:
+				result[key] = sub;
+		}
+
+	}
+
+	private static walkBeautifyObject(o: any): any {
+		const result: any = {};
+		Object.keys(o).forEach(key => {
+			const sub = LastFMClientBeautify.walk(o[key], o);
+			if (sub !== undefined) {
+				LastFMClientBeautify.buildSubValue(key, sub, result);
+			}
+		});
+		return result;
+	}
+
+	private static walk(o: any, parent: any): any {
+		if (o === null || o === undefined) {
+			return undefined;
+		}
+		if (Array.isArray(o)) {
+			return o.map((sub: any) => LastFMClientBeautify.walk(sub, parent)).filter((sub: any) => sub !== undefined);
+		}
+		if (typeof o === 'object') {
+			return LastFMClientBeautify.walkBeautifyObject(o);
+		}
+		return o;
+	}
+
+	static beautify(obj: any): any {
+		return LastFMClientBeautify.walk(obj, {});
+	}
+
+}
+
 export class LastFMClient extends WebserviceClient {
 	options: LastFMClientApi.LastFMClientApiOptions;
 
@@ -12,84 +83,6 @@ export class LastFMClient extends WebserviceClient {
 		// "not make more than 5 requests per originating IP address per second" https://www.last.fm/api/tos
 		super(5, 1000, options.userAgent);
 		this.options = options;
-	}
-
-	private beautify(obj: any): any {
-
-		const walk = (o: any, parent: any): any => {
-			if (o === null) {
-				return undefined;
-			}
-			if (o === undefined) {
-				return undefined;
-			}
-			if (Array.isArray(o)) {
-				return o.map((sub: any) => walk(sub, parent)).filter((sub: any) => sub !== undefined);
-			}
-			if (typeof o === 'object') {
-				const result: any = {};
-				Object.keys(o).forEach(key => {
-					const sub = walk(o[key], o);
-					if (sub !== undefined) {
-						if (key === '#text') {
-							result.url = sub;
-						} else if (key === '@attr') {
-							Object.keys(sub).forEach(subkey => {
-								result[subkey] = sub[subkey];
-							});
-						} else if (key === 'tags') {
-							if (sub.tag) {
-								if (!Array.isArray(sub.tag)) {
-									sub.tag = [sub.tag];
-								}
-								result[key] = sub.tag;
-							} else {
-								result[key] = sub;
-							}
-						} else if (key === 'streamable') {
-							result[key] = {
-								sample: sub['#text'],
-								fulltrack: sub.fulltrack
-							};
-							if (sub.tag) {
-								if (!Array.isArray(sub.tag)) {
-									sub.tag = [sub.tag];
-								}
-								result[key] = sub.tag;
-							} else {
-								result[key] = sub;
-							}
-						} else if (key === 'image') {
-							const images = Array.isArray(sub) ? sub : [sub];
-							result[key] = images.filter(img => img.url && img.url.length > 0);
-						} else if (key === 'tracks') {
-							if (sub.track) {
-								if (!Array.isArray(sub.track)) {
-									sub.track = [sub.track];
-								}
-								result[key] = sub.track;
-							} else {
-								result[key] = sub;
-							}
-						} else if (key === 'links') {
-							if (sub.link) {
-								if (!Array.isArray(sub.link)) {
-									sub.link = [sub.link];
-								}
-								result[key] = sub.link;
-							} else {
-								result[key] = sub;
-							}
-						} else {
-							result[key] = sub;
-						}
-					}
-				});
-				return result;
-			}
-			return o;
-		};
-		return walk(obj, {});
 	}
 
 	private async get(api: string, params: { [name: string]: string; }): Promise<LastFM.Result> {
@@ -103,7 +96,7 @@ export class LastFMClient extends WebserviceClient {
 		sortedParams.format = 'json';
 		try {
 			const data = await this.getJson('https://ws.audioscrobbler.com/2.0/', sortedParams);
-			return this.beautify(data) as LastFM.Result;
+			return LastFMClientBeautify.beautify(data) as LastFM.Result;
 		} catch (e) {
 			log.error(e);
 			return Promise.reject(e);
@@ -112,90 +105,71 @@ export class LastFMClient extends WebserviceClient {
 
 	async artist(artist: string): Promise<LastFM.Artist | undefined> {
 		// https://www.last.fm/api/show/artist.getInfo
-		const data = await this.get('artist.getInfo', {artist});
-		return data.artist;
+		return (await this.get('artist.getInfo', {artist})).artist;
 	}
 
 	async trackID(mbid: string): Promise<LastFM.Track | undefined> {
 		// https://www.last.fm/api/show/artist.getInfo
-		const data = await this.get('artist.getInfo', {mbid});
-		return data.track;
+		return (await this.get('artist.getInfo', {mbid})).track;
 	}
 
 	async artistID(mbid: string): Promise<LastFM.Artist | undefined> {
 		// https://www.last.fm/api/show/artist.getInfo
-		const data = await this.get('artist.getInfo', {mbid});
-		return data.artist;
+		return (await this.get('artist.getInfo', {mbid})).artist;
 	}
 
 	async album(album: string, artist: string): Promise<LastFM.Album | undefined> {
 		// https://www.last.fm/api/show/album.getInfo
-		const data = await this.get('album.getInfo', {artist, album});
-		return data.album;
+		return (await this.get('album.getInfo', {artist, album})).album;
 	}
 
 	async albumID(mbid: string): Promise<LastFM.Album | undefined> {
 		// https://www.last.fm/api/show/album.getInfo
-		const data = await this.get('album.getInfo', {mbid});
-		return data.album;
+		return (await this.get('album.getInfo', {mbid})).album;
 	}
 
 	async albumIDTopTags(mbid: string): Promise<LastFM.TopTracks | undefined> {
 		// https://www.last.fm/api/show/album.getTopTags
-		const data = await this.get('album.getTopTags', {mbid});
-		return data.toptracks;
+		return (await this.get('album.getTopTags', {mbid})).toptracks;
 	}
 
 	async similarTrack(track: string, artist: string): Promise<LastFM.SimilarTracks | undefined> {
 		// https://www.last.fm/api/show/track.getSimilar
-		const data = await this.get('track.getSimilar', {track, artist});
-		return data.similartracks;
+		return (await this.get('track.getSimilar', {track, artist})).similartracks;
 	}
 
 	async similarTrackID(mbid: string): Promise<LastFM.SimilarTracks | undefined> {
 		// https://www.last.fm/api/show/track.getSimilar
-		const data = await this.get('track.getSimilar', {mbid});
-		return data.similartracks;
+		return (await this.get('track.getSimilar', {mbid})).similartracks;
 	}
 
 	async topArtistSongs(artist: string): Promise<LastFM.TopTracks | undefined> {
 		// https://www.last.fm/api/show/artist.getTopTracks
-		const data = await this.get('artist.getTopTracks', {artist});
-		return data.toptracks;
+		return (await this.get('artist.getTopTracks', {artist})).toptracks;
 	}
 
 	async topArtistSongsID(mbid: string): Promise<LastFM.TopTracks | undefined> {
 		// https://www.last.fm/api/show/artist.getTopTracks
-		const data = await this.get('artist.getTopTracks', {mbid});
-		return data.toptracks;
+		return (await this.get('artist.getTopTracks', {mbid})).toptracks;
 	}
 
 	async lookup(type: string, id: string): Promise<LastFM.Result> {
-		if (type === 'album') {
-			const album = await this.albumID(id);
-			return {album};
+		switch (type) {
+			case'album' :
+				return {album: await this.albumID(id)};
+			case'artist' :
+				return {artist: await this.artistID(id)};
+			case'track' :
+				return {track: await this.trackID(id)};
+			case'artist-toptracks' :
+				return {toptracks: await this.topArtistSongsID(id)};
+			case'track-similar' :
+				return {similartracks: await this.similarTrackID(id)};
+			case'album-toptracks' :
+				return {toptracks: await this.albumIDTopTags(id)};
+			default:
+				return Promise.reject(Error('Invalid LastFM lookup type parameter'));
 		}
-		if (type === 'album-toptracks') {
-			const toptracks = await this.albumIDTopTags(id);
-			return {toptracks};
-		}
-		if (type === 'artist') {
-			const artist = await this.artistID(id);
-			return {artist};
-		}
-		if (type === 'track') {
-			const track = await this.trackID(id);
-			return {track};
-		}
-		if (type === 'track-similar') {
-			const similartracks = await this.similarTrackID(id);
-			return {similartracks};
-		}
-		if (type === 'artist-toptracks') {
-			const toptracks = await this.topArtistSongsID(id);
-			return {toptracks};
-		}
-		return Promise.reject(Error('Invalid LastFM lookup type parameter'));
 	}
 
 }

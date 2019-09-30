@@ -1,4 +1,3 @@
-// tslint:disable:max-file-line-count
 import {DBObjectType} from '../../db/db.types';
 import {Album} from '../../engine/album/album.model';
 import {Artist} from '../../engine/artist/artist.model';

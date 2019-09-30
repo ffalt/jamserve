@@ -1,11 +1,11 @@
 import fse from 'fs-extra';
 import path from 'path';
 import {ContentObject, HeadersObject, OpenAPIObject, OperationObject, PathItemObject, PathsObject, RequestBodyObject, ResponseObject, ResponsesObject, SchemaObject} from '../../src/model/openapi-spec';
-import {buildBinaryResponse, buildOpenApiParameters, collectSchema, listToObject} from '../lib/open-api';
-import {Definitions} from '../lib/json-schema';
-import {transformTS2NamespaceJSONScheme} from '../lib/tsd2scheme';
 import {ApiCall, ApiCalls, getJamApiCalls} from '../lib/api-calls';
+import {Definitions} from '../lib/json-schema';
+import {buildBinaryResponse, buildOpenApiParameters, collectSchema, listToObject} from '../lib/open-api';
 import {run} from '../lib/run';
+import {transformTS2NamespaceJSONScheme} from '../lib/tsd2scheme';
 
 function buildOpenApi(version: string): OpenAPIObject {
 	return {

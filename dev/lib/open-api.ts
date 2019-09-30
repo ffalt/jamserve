@@ -1,6 +1,6 @@
 import {ContentObject, MediaTypeObject, OpenAPIObject, ParameterObject, ResponseObject, SchemaObject} from '../../src/model/openapi-spec';
-import {Definition, Definitions} from './json-schema';
 import {ApiCall} from './api-calls';
+import {Definition, Definitions} from './json-schema';
 
 export function collectSchema(p: Definition, definitions: Definitions, openapi: OpenAPIObject): void {
 	if (p.$ref) {
