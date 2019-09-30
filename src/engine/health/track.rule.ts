@@ -8,6 +8,7 @@ import {Folder} from '../folder/folder.model';
 import {Root} from '../root/root.model';
 import {Track} from '../track/track.model';
 import {RuleResult} from './rule.model';
+import path from "path";
 
 const log = logger('TrackHealth');
 
@@ -252,7 +253,7 @@ export class TrackRulesChecker {
 	async run(track: Track, parent: Folder, root: Root, checkMedia: boolean): Promise<Array<Jam.HealthHint>> {
 		const result: Array<Jam.HealthHint> = [];
 		const mediaCache: MediaCache = {};
-		const filename = track.path + track.name;
+		const filename = path.join(track.path, track.name);
 		if (checkMedia) {
 			if (isMP3(track)) {
 				log.debug('Check MPEG', filename);

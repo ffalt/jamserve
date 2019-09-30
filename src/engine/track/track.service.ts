@@ -50,7 +50,7 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 			if (await fse.pathExists(thumbnail)) {
 				return {file: {filename: thumbnail, name: path.basename(thumbnail)}};
 			}
-			const buffer = await this.audioModule.extractTagImage(track.path);
+			const buffer = await this.audioModule.extractTagImage(path.join(track.path, track.name));
 			if (buffer) {
 				return this.imageModule.getBuffer(track.id, buffer, size, format);
 			}
