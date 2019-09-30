@@ -1,11 +1,11 @@
-import {testService} from '../base/base.service.spec';
-import {TrackService} from './track.service';
-import {FolderService} from '../folder/folder.service';
+import fse from 'fs-extra';
+import path from 'path';
 import {ArtworkImageType, FolderTypesAlbum} from '../../model/jam-types';
 import {mockImage} from '../../modules/image/image.module.spec';
-import path from 'path';
-import fse from 'fs-extra';
+import {testService} from '../base/base.service.spec';
+import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
+import {TrackService} from './track.service';
 
 describe('TrackService', () => {
 	let trackService: TrackService;
@@ -19,7 +19,7 @@ describe('TrackService', () => {
 		() => {
 			it('should return the track folder', async () => {
 				const tracks = await trackService.trackStore.all();
-				expect(tracks.length > 0).toBe(true); // , 'Wrong Test Setup');
+				expect(tracks.length > 0).toBe(true); // , 'Invalid Test Setup');
 				for (const track of tracks) {
 					const folder = await trackService.getTrackFolder(track);
 					expect(folder).toBeTruthy();
@@ -30,7 +30,7 @@ describe('TrackService', () => {
 			});
 			it('should return a track image', async () => {
 				const track = await trackService.trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
@@ -66,6 +66,7 @@ describe('TrackService', () => {
 			});
 		},
 		async () => {
+			// nope
 		}
 	);
 });

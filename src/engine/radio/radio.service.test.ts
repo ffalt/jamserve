@@ -14,7 +14,7 @@ describe('RadioService', () => {
 			});
 			it('should update a radio', async () => {
 				const radio = await radioService.radioStore.random();
-				expect(radio).toBeTruthy(); // 'Wrong Test Setup');
+				expect(radio).toBeTruthy(); // 'Invalid Test Setup');
 				if (!radio) {
 					return;
 				}
@@ -30,7 +30,7 @@ describe('RadioService', () => {
 			});
 			it('should remove a radio', async () => {
 				const radio = await radioService.radioStore.random();
-				expect(radio).toBeTruthy(); // 'Wrong Test Setup');
+				expect(radio).toBeTruthy(); // 'Invalid Test Setup');
 				if (!radio) {
 					return;
 				}
@@ -40,6 +40,7 @@ describe('RadioService', () => {
 			});
 		},
 		async () => {
+			// nope
 		}
 	);
 });

@@ -1,12 +1,12 @@
-import {PlayQueueStore, SearchQueryPlayQueue} from './playqueue.store';
-import {PlayQueue} from './playqueue.model';
 import {testStore} from '../base/base.store.spec';
 import {mockPlayQueue, mockPlayQueue2} from './playqueue.mock';
+import {PlayQueue} from './playqueue.model';
+import {PlayQueueStore, SearchQueryPlayQueue} from './playqueue.store';
 
 describe('PlayQueueStore', () => {
 	let playqueueStore: PlayQueueStore;
 
-	testStore((testDB) => {
+	testStore(testDB => {
 			playqueueStore = new PlayQueueStore(testDB.database);
 			return playqueueStore;
 		}, () => {
@@ -18,7 +18,7 @@ describe('PlayQueueStore', () => {
 			return matches;
 		},
 		() => {
-
+			// nope
 		}
 	);
 });

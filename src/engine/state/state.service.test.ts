@@ -12,15 +12,15 @@ describe('StateService', () => {
 			it('should find or create empty states', async () => {
 				let states = await stateService.findOrCreateMany(['trackID1', 'trackID2'], 'userID1', DBObjectType.track);
 				expect(Object.keys(states).length).toBe(2);
-				expect(states['trackID1']).toBeTruthy();
-				expect(states['trackID2']).toBeTruthy();
+				expect(states.trackID1).toBeTruthy();
+				expect(states.trackID2).toBeTruthy();
 				const list = Object.keys(states).map(key => states[key]);
 				await stateService.stateStore.upsert(list);
 				states = await stateService.findOrCreateMany(['trackID1', 'trackID2', 'trackID3'], 'userID1', DBObjectType.track);
 				expect(Object.keys(states).length).toBe(3);
-				expect(states['trackID1']).toBeTruthy();
-				expect(states['trackID2']).toBeTruthy();
-				expect(states['trackID3']).toBeTruthy();
+				expect(states.trackID1).toBeTruthy();
+				expect(states.trackID2).toBeTruthy();
+				expect(states.trackID3).toBeTruthy();
 				states = await stateService.findOrCreateMany([], 'userID1', DBObjectType.track);
 				expect(Object.keys(states).length).toBe(0);
 			});
@@ -144,6 +144,7 @@ describe('StateService', () => {
 			});
 		},
 		async () => {
+			// nope
 		}
 	);
 });

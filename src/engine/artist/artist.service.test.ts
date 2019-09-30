@@ -1,12 +1,12 @@
-import {FolderService} from '../folder/folder.service';
-import {ArtistService} from './artist.service';
-import {testService} from '../base/base.service.spec';
+import fse from 'fs-extra';
+import path from 'path';
+import {DBObjectType} from '../../db/db.types';
 import {AlbumType, ArtworkImageType, FolderType} from '../../model/jam-types';
 import {mockImage} from '../../modules/image/image.module.spec';
-import path from 'path';
-import fse from 'fs-extra';
+import {testService} from '../base/base.service.spec';
+import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
-import {DBObjectType} from '../../db/db.types';
+import {ArtistService} from './artist.service';
 
 describe('ArtistService', () => {
 	let artistService: ArtistService;
@@ -37,7 +37,7 @@ describe('ArtistService', () => {
 				});
 				it('should return the artist folder', async () => {
 					const artists = await artistService.artistStore.all();
-					expect(artists.length > 0).toBe(true); // 'Wrong Test Setup');
+					expect(artists.length > 0).toBe(true); // 'Invalid Test Setup');
 					for (const artist of artists) {
 						if (artistService.canHaveArtistImage(artist)) {
 							const folder = await artistService.getArtistFolder(artist);
@@ -55,7 +55,7 @@ describe('ArtistService', () => {
 			describe('.getArtistImage', () => {
 				it('should return an artist image', async () => {
 					const artists = await artistService.artistStore.all();
-					expect(artists.length > 0).toBe(true); //  'Wrong Test Setup');
+					expect(artists.length > 0).toBe(true); //  'Invalid Test Setup');
 					for (const artist of artists) {
 						if (artistService.canHaveArtistImage(artist)) {
 							const folder = await artistService.getArtistFolder(artist);

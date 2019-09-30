@@ -10,10 +10,11 @@ describe('RootService', () => {
 		() => {
 			it('should find roots', async () => {
 				const roots = await rootService.rootStore.allIds();
-				expect(roots.length > 0).toBe(true); // 'Wrong Test Setup');
+				expect(roots.length > 0).toBe(true); // 'Invalid Test Setup');
 			});
 		},
 		async () => {
+			// nope
 		}
 	);
 });

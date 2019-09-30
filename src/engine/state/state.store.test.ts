@@ -1,12 +1,12 @@
-import {SearchQueryState, StateStore} from './state.store';
-import {State} from './state.model';
 import {testStore} from '../base/base.store.spec';
 import {mockState, mockState2} from './state.mock';
+import {State} from './state.model';
+import {SearchQueryState, StateStore} from './state.store';
 
 describe('StateStore', () => {
 	let stateStore: StateStore;
 
-	testStore((testDB) => {
+	testStore(testDB => {
 			stateStore = new StateStore(testDB.database);
 			return stateStore;
 		}, () => {
@@ -25,6 +25,6 @@ describe('StateStore', () => {
 			];
 			return matches;
 		}, () => {
+			// nope
 		});
 });
-

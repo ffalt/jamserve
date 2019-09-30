@@ -1,5 +1,6 @@
 import fse from 'fs-extra';
 import path from 'path';
+import {DBObjectType} from '../../db/db.types';
 import {AlbumType, ArtworkImageType, FolderTypesAlbum} from '../../model/jam-types';
 import {mockImage} from '../../modules/image/image.module.spec';
 import {testService} from '../base/base.service.spec';
@@ -7,7 +8,6 @@ import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
 import {TrackStore} from '../track/track.store';
 import {AlbumService} from './album.service';
-import {DBObjectType} from '../../db/db.types';
 
 describe('AlbumService', () => {
 	let albumService: AlbumService;
@@ -41,7 +41,7 @@ describe('AlbumService', () => {
 				it('should return the album folder', async () => {
 					const albums = await albumService.albumStore.all();
 					if (albums.length === 0) {
-						throw new Error('Wrong Test Setup');
+						throw new Error('Invalid Test Setup');
 					}
 					for (const album of albums) {
 						const folder = await albumService.getAlbumFolder(album);
@@ -56,7 +56,7 @@ describe('AlbumService', () => {
 				it('should return an album image', async () => {
 					const album = await albumService.albumStore.random();
 					if (!album) {
-						throw new Error('Wrong Test Setup');
+						throw new Error('Invalid Test Setup');
 					}
 					const folder = await albumService.getAlbumFolder(album);
 					expect(folder).toBeTruthy();

@@ -1,15 +1,15 @@
-import {Store} from './store';
 import fse from 'fs-extra';
 import path from 'path';
 import tmp from 'tmp';
-import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
-import {Root} from '../root/root.model';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {writeMP3Track} from '../../modules/audio/audio.mock';
-import {WorkerService} from '../worker/worker.service';
-import {ImageModule} from '../../modules/image/image.module';
-import {WaveformServiceTest} from '../waveform/waveform.service.spec';
 import {DBObjectType} from '../../db/db.types';
+import {AlbumType, FolderType, RootScanStrategy} from '../../model/jam-types';
+import {writeMP3Track} from '../../modules/audio/audio.mock';
+import {AudioModule} from '../../modules/audio/audio.module';
+import {ImageModule} from '../../modules/image/image.module';
+import {Root} from '../root/root.model';
+import {WaveformServiceTest} from '../waveform/waveform.service.spec';
+import {WorkerService} from '../worker/worker.service';
+import {Store} from './store';
 
 export interface MockTrack {
 	path: string;
@@ -47,11 +47,11 @@ export interface MockRoot extends MockFolder {
 }
 
 export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
-	const rootDir = path.join(dir, 'root' + nr);
+	const rootDir = path.join(dir, `root${nr}`);
 	return {
 		id,
 		path: rootDir,
-		name: 'root' + nr,
+		name: `root${nr}`,
 		folders: [
 			{
 				path: path.join(rootDir, 'artist 1'),
@@ -331,10 +331,8 @@ export async function removeMockRoot(root: MockRoot): Promise<void> {
 
 export class StoreMock {
 	waveformServiceTest = new WaveformServiceTest();
-	// @ts-ignore
-	dir: tmp.DirResult;
-	// @ts-ignore
-	mockRoot: MockRoot;
+	dir!: tmp.DirResult;
+	mockRoot!: MockRoot;
 
 	constructor(public store: Store) {
 	}

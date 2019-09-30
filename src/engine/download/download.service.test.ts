@@ -1,3 +1,4 @@
+import {Errors} from '../../api/jam/error';
 import {testService} from '../base/base.service.spec';
 import {mockEpisode} from '../episode/episode.mock';
 import {mockFolder} from '../folder/folder.mock';
@@ -5,13 +6,12 @@ import {mockPlaylist} from '../playlist/playlist.mock';
 import {Store} from '../store/store';
 import {mockUser} from '../user/user.mock';
 import {DownloadService} from './download.service';
-import {Errors} from '../../api/jam/error';
 
 describe('DownloadService', () => {
 	let downloadService: DownloadService;
 	let store: Store;
 	testService({mockData: true},
-		async (storeTest) => {
+		async storeTest => {
 			store = storeTest;
 			downloadService = new DownloadService(store.trackStore, store.episodeStore);
 		},

@@ -60,13 +60,9 @@ export class TestEngineDataMock {
 }
 
 export class TestEngine {
-	// @ts-ignore
-	engine: Engine;
-	// @ts-ignore
-	engineMock: TestEngineDataMock;
-	// @ts-ignore
-	imageModuleTest: ImageModuleTest;
-	// @ts-ignore
+	engine!: Engine;
+	engineMock!: TestEngineDataMock;
+	imageModuleTest!: ImageModuleTest;
 	dir: tmp.DirResult;
 
 	constructor(public name: string, public useDB: DBType, public testDB: TestDB) {

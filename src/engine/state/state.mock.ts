@@ -1,5 +1,5 @@
-import {State} from './state.model';
 import {DBObjectType} from '../../db/db.types';
+import {State} from './state.model';
 
 export function mockState(): State {
 	return {

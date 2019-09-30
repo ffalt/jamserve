@@ -1,6 +1,6 @@
-import {Podcast} from './podcast.model';
-import {PodcastStatus} from '../../model/jam-types';
 import {DBObjectType} from '../../db/db.types';
+import {PodcastStatus} from '../../model/jam-types';
+import {Podcast} from './podcast.model';
 
 export function mockPodcast(): Podcast {
 	return {
@@ -43,7 +43,6 @@ export function mockPodcast2(): Podcast {
 		}
 	};
 }
-
 
 export function mockPodcastXML(): { feed: string, nrOfItems: number } {
 	// https://raw.githubusercontent.com/danmactough/node-feedparser/master/test/feeds/rss2sample.xml

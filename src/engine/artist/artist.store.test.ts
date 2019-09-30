@@ -1,12 +1,12 @@
-import {ArtistStore, SearchQueryArtist} from './artist.store';
-import {Artist} from './artist.model';
 import {testStore} from '../base/base.store.spec';
 import {mockArtist, mockArtist2} from './artist.mock';
+import {Artist} from './artist.model';
+import {ArtistStore, SearchQueryArtist} from './artist.store';
 
 describe('ArtistStore', () => {
 	let artistStore: ArtistStore;
 
-	testStore((testDB) => {
+	testStore(testDB => {
 			artistStore = new ArtistStore(testDB.database);
 			return artistStore;
 		}, () => {
@@ -31,5 +31,6 @@ describe('ArtistStore', () => {
 			return matches;
 		},
 		() => {
+			// nope
 		});
 });

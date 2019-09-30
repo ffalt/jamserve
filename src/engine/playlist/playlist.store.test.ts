@@ -1,12 +1,11 @@
-import {PlaylistStore, SearchQueryPlaylist} from './playlist.store';
-import {Playlist} from './playlist.model';
 import {testStore} from '../base/base.store.spec';
 import {mockPlaylist, mockPlaylist2} from './playlist.mock';
+import {Playlist} from './playlist.model';
+import {PlaylistStore, SearchQueryPlaylist} from './playlist.store';
 
 describe('PlaylistStore', () => {
 	let playlistStore: PlaylistStore;
-
-	testStore((testDB) => {
+	testStore(testDB => {
 		playlistStore = new PlaylistStore(testDB.database);
 		return playlistStore;
 	}, () => {
@@ -25,6 +24,6 @@ describe('PlaylistStore', () => {
 		mock.trackIDs.forEach(trackID => matches.push({trackID}));
 		return matches;
 	}, () => {
-
+		// nope
 	});
 });

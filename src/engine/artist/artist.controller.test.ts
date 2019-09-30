@@ -29,7 +29,7 @@ describe('ArtistController', () => {
 			it('should handle error if metadata is not available', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarTracks.byArtist;
 				api.metadataController.metadataService.similarTracks.byArtist = async (a: Artist): Promise<Array<Track>> => {
@@ -43,7 +43,7 @@ describe('ArtistController', () => {
 			it('should handle empty metadata data', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarTracks.byArtist;
 				api.metadataController.metadataService.similarTracks.byArtist = async (a: Artist): Promise<Array<Track>> => {
@@ -57,7 +57,7 @@ describe('ArtistController', () => {
 			it('should return similar tracks', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarTracks.byArtist;
 				api.metadataController.metadataService.similarTracks.byArtist = async (a: Artist): Promise<Array<Track>> => {
@@ -77,7 +77,7 @@ describe('ArtistController', () => {
 			it('should return tracks', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist || artist.trackIDs.length === 0) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const list = await controller.tracks({query: {ids: [artist.id]}, user});
 				expect(list).toBeTruthy();
@@ -104,7 +104,7 @@ describe('ArtistController', () => {
 			it('should return artist info', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.extInfo.byArtist;
 				const extended: Jam.ExtendedInfo = {
@@ -131,7 +131,7 @@ describe('ArtistController', () => {
 			it('should handle error if metadata is not available', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarArtists.byArtist;
 				api.metadataController.metadataService.similarArtists.byArtist = async (a: Artist): Promise<Array<Artist>> => {
@@ -145,7 +145,7 @@ describe('ArtistController', () => {
 			it('should handle empty metadata data', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarArtists.byArtist;
 				api.metadataController.metadataService.similarArtists.byArtist = async (a: Artist): Promise<Array<Artist>> => {
@@ -159,7 +159,7 @@ describe('ArtistController', () => {
 			it('should return similar artists', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarArtists.byArtist;
 				api.metadataController.metadataService.similarArtists.byArtist = async (a: Artist): Promise<Array<Artist>> => {
@@ -175,7 +175,7 @@ describe('ArtistController', () => {
 			it('should return sub items', async () => {
 				const artists = await controller.artistService.artistStore.all();
 				if (artists.length === 0) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				for (const artist of artists) {
 					const result = await controller.id({query: {id: artist.id, artistState: true, artistAlbumIDs: true, artistAlbums: true, artistTrackIDs: true, artistTracks: true}, user});
@@ -189,7 +189,7 @@ describe('ArtistController', () => {
 			it('should return artist info in sub-object', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.extInfo.byArtist;
 				const extended: Jam.ExtendedInfo = {
@@ -210,7 +210,7 @@ describe('ArtistController', () => {
 			it('should handle metadata not available for artist artist info in sub-object', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.extInfo.byArtist;
 				api.metadataController.metadataService.extInfo.byArtist = async (a: Artist): Promise<Jam.ExtendedInfo | undefined> => {
@@ -224,7 +224,7 @@ describe('ArtistController', () => {
 			it('should return artist similar in sub-object', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarArtists.byArtist;
 				api.metadataController.metadataService.similarArtists.byArtist = async (a: Artist): Promise<Array<Artist>> => {
@@ -239,7 +239,7 @@ describe('ArtistController', () => {
 			it('should handle metadata not available for artist similar in sub-object', async () => {
 				const artist = await controller.artistService.artistStore.random();
 				if (!artist) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarArtists.byArtist;
 				api.metadataController.metadataService.similarArtists.byArtist = async (a: Artist): Promise<Array<Artist>> => {

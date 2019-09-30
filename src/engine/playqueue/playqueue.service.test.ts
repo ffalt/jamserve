@@ -19,7 +19,7 @@ describe('PlayQueueService', () => {
 			it('should remove the playqueue', async () => {
 				await playQueueService.remove('userID1');
 				const playQueue = await playQueueService.get('userID1');
-				expect(playQueue).toBeUndefined()
+				expect(playQueue).toBeUndefined();
 			});
 			it('should get or create the playqueue', async () => {
 				await playQueueService.getQueueOrCreate('userID1', 'testClient');

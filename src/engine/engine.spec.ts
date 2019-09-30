@@ -18,7 +18,6 @@ export class TestEngines {
 	}
 }
 
-
 export function testEngines(opts: {}, setup: (testEngine: TestEngine) => Promise<void>, tests: (testEngine: TestEngine) => void, cleanup?: () => Promise<void>): void {
 	const engines = new TestEngines();
 	for (const testEngine of engines.engines) {

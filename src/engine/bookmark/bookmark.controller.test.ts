@@ -24,7 +24,7 @@ describe('BookmarkController', () => {
 			it('should create a bookmark', async () => {
 				const track = await api.trackController.trackService.trackStore.random();
 				if (!track) {
-					throw Error('Wrong Test Setup');
+					throw Error('Invalid Test Setup');
 				}
 				const bookmark = await controller.create({query: {trackID: track.id, comment: 'hello', position: 12345}, user});
 				expect(bookmark).toBeTruthy();
@@ -37,7 +37,7 @@ describe('BookmarkController', () => {
 			it('should delete a bookmark', async () => {
 				const track = await api.trackController.trackService.trackStore.random();
 				if (!track) {
-					throw Error('Wrong Test Setup');
+					throw Error('Invalid Test Setup');
 				}
 				const bookmark = await controller.create({query: {trackID: track.id, comment: 'delete', position: 54321}, user});
 				expect(bookmark).toBeTruthy();
@@ -53,7 +53,7 @@ describe('BookmarkController', () => {
 			it('should delete all bookmark', async () => {
 				const track = await api.trackController.trackService.trackStore.random();
 				if (!track) {
-					throw Error('Wrong Test Setup');
+					throw Error('Invalid Test Setup');
 				}
 				let bookmark = await controller.create({query: {trackID: track.id, comment: 'byTrackDelete', position: 54321}, user});
 				const mustStay = await controller.create({query: {trackID: track.id, comment: 'byTrackDelete', position: 54321}, user: dummyUser});
@@ -70,7 +70,7 @@ describe('BookmarkController', () => {
 			it('should list bookmarks', async () => {
 				const track = await api.trackController.trackService.trackStore.random();
 				if (!track) {
-					throw Error('Wrong Test Setup');
+					throw Error('Invalid Test Setup');
 				}
 				const list = await controller.list({query: {}, user});
 				await controller.create({query: {trackID: track.id, comment: 'list', position: 55555}, user});
@@ -86,7 +86,7 @@ describe('BookmarkController', () => {
 			it('should list bookmarks', async () => {
 				const track = await api.trackController.trackService.trackStore.random();
 				if (!track) {
-					throw Error('Wrong Test Setup');
+					throw Error('Invalid Test Setup');
 				}
 				const list = await controller.byTrackList({query: {trackID: track.id}, user});
 				await controller.create({query: {trackID: track.id, comment: 'byTrackList', position: 99999}, user});
@@ -114,7 +114,7 @@ describe('BookmarkController', () => {
 			it('should return an bookmark', async () => {
 				const track = await api.trackController.trackService.trackStore.random();
 				if (!track) {
-					throw Error('Wrong Test Setup');
+					throw Error('Invalid Test Setup');
 				}
 				const bookmark = await controller.create({query: {trackID: track.id, comment: 'byTrackList', position: 33333}, user});
 				const req: JamRequest<JamParameters.Bookmark> = {query: {id: bookmark.id, bookmarkTrack: true}, user};

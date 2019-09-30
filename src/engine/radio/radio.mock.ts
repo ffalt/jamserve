@@ -1,5 +1,5 @@
-import {Radio} from './radio.model';
 import {DBObjectType} from '../../db/db.types';
+import {Radio} from './radio.model';
 
 export function mockRadio(): Radio {
 	return {

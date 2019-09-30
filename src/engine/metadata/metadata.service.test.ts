@@ -50,17 +50,16 @@
 // };
 // await api.metadataController.metadataService.clear();
 
-
 // // TODO: move this into metaDataService.test.ts
 // const artists = (await api.artistController.artistService.artistStore.all()).filter(a => a.id !== album.artistID && a.trackIDs.length > 0);
 // if (artists.length === 0) {
-// 	throw new Error('Wrong Test Setup');
+// 	throw new Error('Invalid Test Setup');
 // }
 // const artist = artists[0];
 // const mdbID = artist.mbArtistID || 'dummyMDBID2';
 // const tracks = await api.trackController.trackService.trackStore.search({artistID: artist.id});
 // if (tracks.items.length === 0) {
-// 	throw new Error('Wrong Test Setup');
+// 	throw new Error('Invalid Test Setup');
 // }
 // const track = tracks.items[0];
 // const list = await controller.similarTracks({query: {id: album.id}, user});
@@ -106,139 +105,168 @@ describe('MetaDataService', () => {
 		() => {
 			describe('.', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 			/*
 			describe('.getArtistInfo', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getAlbumInfo', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getFolderArtistInfo', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getFolderAlbumInfo', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getSimilarArtists', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getSimilarArtistFolders', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getTopTracks', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getAlbumSimilarTracks', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getArtistSimilarTracks', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getFolderSimilarTracks', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.getTrackSimilarTracks', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.musicbrainzSearch', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.acoustidLookupTrack', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.lastFMLookup', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.lastFMAlbumSearch', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.lastFMArtistSearch', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.lastFMTopTracksArtist', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.lastFMTopTracksArtistID', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.lastFMSimilarTracks', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			describe('.acousticbrainzLookup', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 			describe('.coverartarchiveLookup', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 			describe('.musicbrainzLookup', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 			describe('.lyrics', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 			describe('.wikipediaSummary', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 			describe('.wikidataLookup', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 			describe('.wikidataSummary', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 			describe('.cleanUp', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 			describe('.clear', () => {
 				it('should', async () => {
-				});
+			// nope
+		});
 			});
 
 			 */

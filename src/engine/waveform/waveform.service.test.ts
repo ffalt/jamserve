@@ -20,7 +20,7 @@ describe('WaveformService', () => {
 			it('should return svg for a track', async () => {
 				const track = await trackStore.random();
 				if (!track) {
-					throw Error('Wrong Test Setup');
+					throw Error('Invalid Test Setup');
 				}
 				let result = await waveformService.getTrackWaveform(track, WaveformFormatType.svg);
 				expect(result).toBeTruthy();
@@ -36,7 +36,7 @@ describe('WaveformService', () => {
 			});
 			it('should return svg for an episode', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
@@ -57,7 +57,7 @@ describe('WaveformService', () => {
 			});
 			it('should return json', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
@@ -74,7 +74,7 @@ describe('WaveformService', () => {
 			});
 			it('should return binary', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
@@ -92,7 +92,7 @@ describe('WaveformService', () => {
 			});
 			it('should throw errors', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
@@ -106,7 +106,7 @@ describe('WaveformService', () => {
 			});
 			it('should block creating a waveform while creating a waveform', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}

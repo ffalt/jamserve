@@ -26,14 +26,14 @@ describe('EpisodeService', () => {
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				let count = await episodeService.episodeStore.searchCount({podcastID});
 				expect(count).toBe(1);
-				const mock_same = mockEpisode();
-				mock_same.podcastID = podcastID;
-				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock_same]);
+				const mockSame = mockEpisode();
+				mockSame.podcastID = podcastID;
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mockSame]);
 				count = await episodeService.episodeStore.searchCount({podcastID});
 				expect(count).toBe(1);
 				const mock2 = mockEpisode2();
 				mock2.podcastID = podcastID;
-				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock_same, mock2]);
+				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mockSame, mock2]);
 				count = await episodeService.episodeStore.searchCount({podcastID});
 				expect(count).toBe(2);
 				await episodeService.removeEpisodes(podcastID);
@@ -131,7 +131,9 @@ describe('EpisodeService', () => {
 				if (!episode) {
 					return;
 				}
-				episodeService.downloadEpisode(episode);
+				episodeService.downloadEpisode(episode).catch(e => {
+					// nope
+				});
 				expect(episodeService.isDownloading(episode.id)).toBe(true);
 				const id = episode.id;
 
@@ -143,12 +145,14 @@ describe('EpisodeService', () => {
 					} else {
 						expect(scope.isDone()).toBe(true); // 'no request has been made');
 						file.removeCallback();
-						episodeService.removeEpisodes(podcastID).then(cb);
+						episodeService.removeEpisodes(podcastID).then(cb).catch(e => {
+							// nope
+						});
 					}
 				}
 
 				return new Promise((resolve, reject) => {
-					wait(() => resolve());
+					wait(resolve);
 				});
 			});
 			it('should block downloading a podcast while download already running', async () => {
@@ -164,7 +168,9 @@ describe('EpisodeService', () => {
 				mock.podcastID = podcastID;
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
-				episodeService.downloadEpisode(mock);
+				episodeService.downloadEpisode(mock).catch(e => {
+					// nope
+				});
 				expect(episodeService.isDownloading(mock.id)).toBe(true);
 				await episodeService.downloadEpisode(mock);
 				expect(episodeService.isDownloading(mock.id)).toBe(false);
@@ -185,7 +191,7 @@ describe('EpisodeService', () => {
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				const org = episodeService.episodeStore.replace;
-				episodeService.episodeStore.replace = async (p) => {
+				episodeService.episodeStore.replace = async p => {
 					return Promise.reject(Error('test error'));
 				};
 				await expect(episodeService.downloadEpisode(mock)).rejects.toThrow('error');

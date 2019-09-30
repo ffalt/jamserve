@@ -1,10 +1,10 @@
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import {testDatabases} from '../../db/db.mock';
 import {AudioModule} from '../../modules/audio/audio.module';
+import {MockAudioModule} from '../../modules/audio/audio.module.mock';
 import {ImageModuleTest} from '../../modules/image/image.module.spec';
 import {Store} from '../store/store';
 import {StoreMock} from '../store/store.mock';
-import {MockAudioModule} from '../../modules/audio/audio.module.mock';
 
 export function testService(opts: { mockData: boolean }, setup: (store: Store, testImageModule: ImageModuleTest, audioModule: AudioModule) => Promise<void>, tests: () => void, cleanup?: () => Promise<void>): void {
 	let imageModuleTest: ImageModuleTest;

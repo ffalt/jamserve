@@ -1,5 +1,5 @@
-import {PlayQueue} from './playqueue.model';
 import {DBObjectType} from '../../db/db.types';
+import {PlayQueue} from './playqueue.model';
 
 export function mockPlayQueue(): PlayQueue {
 	return {

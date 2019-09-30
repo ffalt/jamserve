@@ -3,10 +3,10 @@ import path from 'path';
 import tmp from 'tmp';
 import {ImageModule} from '../../modules/image/image.module';
 import {mockImage} from '../../modules/image/image.module.spec';
+import {hashMD5} from '../../utils/hash';
 import {testService} from '../base/base.service.spec';
 import {mockUser, mockUser2, mockUserPass} from './user.mock';
 import {UserService} from './user.service';
-import {hashMD5} from '../../utils/hash';
 
 function salt(length: number): string {
 	let s = '';
@@ -47,7 +47,7 @@ describe('UserService', () => {
 			});
 
 			afterAll(async () => {
-				await userService.clearCache();
+				userService.clearCache();
 				await userService.userStore.clear();
 			});
 

@@ -1,10 +1,10 @@
-import {NowPlayingService} from './nowplaying.service';
-import {testService} from '../base/base.service.spec';
-import {StateService} from '../state/state.service';
-import {mockEpisode} from '../episode/episode.mock';
-import {mockUser} from '../user/user.mock';
 import {DBObjectType} from '../../db/db.types';
+import {testService} from '../base/base.service.spec';
+import {mockEpisode} from '../episode/episode.mock';
+import {StateService} from '../state/state.service';
 import {mockTrack} from '../track/track.mock';
+import {mockUser} from '../user/user.mock';
+import {NowPlayingService} from './nowplaying.service';
 
 describe('NowPlayingService', () => {
 	let nowPlayingService: NowPlayingService;

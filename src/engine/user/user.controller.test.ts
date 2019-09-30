@@ -1,6 +1,6 @@
+import {ImageModuleTest} from '../../modules/image/image.module.spec';
 import {testBaseController} from '../base/dbobject.controller.spec';
 import {UserController} from './user.controller';
-import {ImageModuleTest} from '../../modules/image/image.module.spec';
 
 describe('UserController', () => {
 	let controller: UserController;

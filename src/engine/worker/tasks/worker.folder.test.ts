@@ -182,7 +182,7 @@ describe('FolderWorker', () => {
 			describe('setFolderImage', () => {
 				it('should handle invalid parameters', async () => {
 					const folder = await folderService.folderStore.random();
-					should().exist(folder, 'Wrong Test Setup');
+					should().exist(folder, 'Invalid Test Setup');
 					if (!folder) {
 						return;
 					}
@@ -191,7 +191,7 @@ describe('FolderWorker', () => {
 				});
 				it('should set an image', async () => {
 					const folder = await folderService.folderStore.random();
-					should().exist(folder, 'Wrong Test Setup');
+					should().exist(folder, 'Invalid Test Setup');
 					if (!folder) {
 						return;
 					}
@@ -217,7 +217,7 @@ describe('FolderWorker', () => {
 			describe('downloadFolderImage', () => {
 				it('should handle invalid parameters', async () => {
 					const folder = await folderService.folderStore.random();
-					should().exist(folder, 'Wrong Test Setup');
+					should().exist(folder, 'Invalid Test Setup');
 					if (!folder) {
 						return;
 					}
@@ -230,7 +230,7 @@ describe('FolderWorker', () => {
 				});
 				it('should download an image', async () => {
 					const folder = await folderService.folderStore.random();
-					should().exist(folder, 'Wrong Test Setup');
+					should().exist(folder, 'Invalid Test Setup');
 					if (!folder) {
 						return;
 					}
@@ -252,7 +252,7 @@ describe('FolderWorker', () => {
 			});
 				it('should deliver local images', async () => {
 					const folder = await folderService.folderStore.random();
-					should().exist(folder, 'Wrong Test Setup');
+					should().exist(folder, 'Invalid Test Setup');
 					if (!folder) {
 						return;
 					}

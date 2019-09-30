@@ -1,5 +1,5 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
-
+// tslint:disable:max-file-line-count
 import supertest from 'supertest';
 import {testEngines} from '../engine/engine.spec';
 import {mockUserName, mockUserName2, mockUserPass, mockUserPass2} from '../engine/user/user.mock';
@@ -30,13 +30,13 @@ describe('Server', () => {
 				.send({username: mockUserName2, password: mockUserPass2, client: 'supertest-tests', jwt: true});
 			const user2token = res2.body.jwt;
 
-			get = (apiPath, query, expect) => request.get(apiPrefix + apiPath).set('Authorization', 'Bearer ' + user1token)
+			get = (apiPath, query, expect) => request.get(apiPrefix + apiPath).set('Authorization', `Bearer ${user1token}`)
 				.query(query).expect(expect);
-			post = (apiPath, query, body, expect) => request.post(apiPrefix + apiPath).set('Authorization', 'Bearer ' + user1token)
+			post = (apiPath, query, body, expect) => request.post(apiPrefix + apiPath).set('Authorization', `Bearer ${user1token}`)
 				.query(query).send(body).expect(expect);
-			getNoRights = (apiPath, query, expect) => request.get(apiPrefix + apiPath).set('Authorization', 'Bearer ' + user2token)
+			getNoRights = (apiPath, query, expect) => request.get(apiPrefix + apiPath).set('Authorization', `Bearer ${user2token}`)
 				.query(query).expect(expect);
-			postNoRights = (apiPath, query, body, expect) => request.post(apiPrefix + apiPath).set('Authorization', 'Bearer ' + user2token)
+			postNoRights = (apiPath, query, body, expect) => request.post(apiPrefix + apiPath).set('Authorization', `Bearer ${user2token}`)
 				.query(query).send(body).expect(expect);
 			getNotLoggedIn = (apiPath, query, expect) => request.post(apiPrefix + apiPath)
 				.query(query).expect(expect);

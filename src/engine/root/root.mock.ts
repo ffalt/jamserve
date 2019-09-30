@@ -1,7 +1,7 @@
-import {Root} from './root.model';
 import {DBObjectType} from '../../db/db.types';
-import {mockPath} from '../../utils/testutils.spec';
 import {RootScanStrategy} from '../../model/jam-types';
+import {mockPath} from '../../utils/testutils.spec';
+import {Root} from './root.model';
 
 export function mockRoot(): Root {
 	return {

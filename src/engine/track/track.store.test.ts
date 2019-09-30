@@ -8,7 +8,7 @@ import {SearchQueryTrack, TrackStore} from './track.store';
 describe('TrackStore', () => {
 	let trackStore: TrackStore;
 
-	testStore((testDB) => {
+	testStore(testDB => {
 			trackStore = new TrackStore(testDB.database);
 			return trackStore;
 		}, () => {
@@ -38,5 +38,6 @@ describe('TrackStore', () => {
 			return matches;
 		},
 		() => {
+			// TODO
 		});
 });

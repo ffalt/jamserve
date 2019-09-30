@@ -21,7 +21,7 @@ describe('StreamService', () => {
 		() => {
 			it('should stream a track', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
@@ -46,7 +46,7 @@ describe('StreamService', () => {
 			});
 			it('should not stream invalid settings', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
@@ -55,7 +55,7 @@ describe('StreamService', () => {
 			});
 			it('should stream a episode', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Wrong Test Setup');
+				expect(track).toBeTruthy(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}

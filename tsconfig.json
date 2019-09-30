@@ -1,34 +1,6 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "outDir": "./dist",
-    "sourceMap": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "moduleResolution": "node",
-    "baseUrl": "./",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "typeRoots": [
-      "node_modules/@types",
-      "src/@types"
-    ]
-  },
-  "include": [
-    "src/**/*"
-  ],
+  "extends": "./tsconfig.base.json",
   "exclude": [
-    "bin",
-    "data",
-    "dev",
-    "dist",
-    "local",
-    "node_modules",
-    ".git",
-    ".idea",
     "**/*.test.ts",
     "**/*.mock.ts",
     "**/*.spec.ts"

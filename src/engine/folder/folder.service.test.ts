@@ -20,7 +20,7 @@ describe('FolderService', () => {
 				it('should return an empty response for not available images', async () => {
 					const folder = await folderService.folderStore.random();
 					if (!folder) {
-						throw new Error('Wrong Test Setup');
+						throw new Error('Invalid Test Setup');
 					}
 					folder.tag.artworks = undefined;
 					const res = await folderService.getFolderImage(folder);

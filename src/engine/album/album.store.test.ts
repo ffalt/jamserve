@@ -6,7 +6,7 @@ import {AlbumStore, SearchQueryAlbum} from './album.store';
 describe('AlbumStore', () => {
 	let albumStore: AlbumStore;
 
-	testStore((testDB) => {
+	testStore(testDB => {
 			albumStore = new AlbumStore(testDB.database);
 			return albumStore;
 		}, generateMockObjects,
@@ -33,5 +33,6 @@ describe('AlbumStore', () => {
 			return matches;
 		},
 		() => {
+			// nope
 		});
 });

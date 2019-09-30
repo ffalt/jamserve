@@ -1,7 +1,7 @@
 import {testService} from '../base/base.service.spec';
-import {PlaylistService} from './playlist.service';
-import {TrackStore} from '../track/track.store';
 import {StateService} from '../state/state.service';
+import {TrackStore} from '../track/track.store';
+import {PlaylistService} from './playlist.service';
 
 describe('PlaylistService', () => {
 	let playlistService: PlaylistService;

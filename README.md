@@ -11,30 +11,34 @@ It's heavily inspired by the now closed source Java Server [Subsonic](http://www
 This is the backend development repository. Web-Client, Installation & Usage Scripts (e.g. with Docker) will be published soon® in different repositories.
 
 Features:
-* API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
-* API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/master/src/model/jam-openapi.json)
-* Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
-* Database Support for NeDB or ElasticSearch
+
+*   API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
+
+*   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/master/src/model/jam-openapi.json)
+
+*   Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
+
+*   Database Support for NeDB or ElasticSearch
 
 ## Requirements
 
-- install [NodeJS](https://nodejs.org/) >= 8.x and [NPM](https://www.npmjs.com/)
-- install [FFMPEG](https://ffmpeg.org/) 
-  and set [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe) FFPROBE_PATH and FFMPEG_PATH
+*   install [NodeJS](https://nodejs.org/) >= 8.x and [NPM](https://www.npmjs.com/)
 
- optional for meta data matching & mp3 repair support
-- install [fpcalc](https://github.com/acoustid/chromaprint/releases/) and set environment variable: FPCALC_PATH
-- install [mp3val](http://mp3val.sourceforge.net/) and set environment variable: MP3VAL_PATH
+*   install [FFMPEG](https://ffmpeg.org/) and set [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe) FFPROBE_PATH and FFMPEG_PATH
 
+optional for meta data matching & mp3 repair support
+
+*   install [fpcalc](https://github.com/acoustid/chromaprint/releases/) and set environment variable: FPCALC_PATH
+
+*   install [mp3val](http://mp3val.sourceforge.net/) and set environment variable: MP3VAL_PATH
 
 ## Installation
 
-- run command `npm install` in the root folder of this repository
+*   run command `npm install` in the root folder of this repository
 
-- in folder 'config': copy file 'config.dist.js' to 'config.js' and make the changes to reflect your infrastructure
+*   in folder 'config': copy file 'config.dist.js' to 'config.js' and make the changes to reflect your infrastructure
 
-- in folder 'config': copy file 'firststart.config.dist.js' to 'firststart.config.js' and add a first user / add some media folders
-
+*   in folder 'config': copy file 'firststart.config.dist.js' to 'firststart.config.js' and add a first user / add some media folders
 
 Example **config/config.js** for debugging on localhost (no elastic search):
 
@@ -205,7 +209,6 @@ module.exports = {
 ```
 
 ## Commands
-
 
 ### Start
 

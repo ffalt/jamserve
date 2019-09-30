@@ -22,7 +22,7 @@ describe('FolderController', () => {
 			it('should return subfolders', async () => {
 				const folders = await controller.folderService.folderStore.all();
 				if (folders.length === 0) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				for (const folder of folders) {
 					const result = await controller.subfolders({query: {id: folder.id}, user});
@@ -40,7 +40,7 @@ describe('FolderController', () => {
 			it('should return tracks', async () => {
 				const folders = await controller.folderService.folderStore.all();
 				if (folders.length === 0) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				for (const folder of folders) {
 					const result = await controller.tracks({query: {ids: [folder.id]}, user});
@@ -59,7 +59,7 @@ describe('FolderController', () => {
 			it('should return children', async () => {
 				const folders = await controller.folderService.folderStore.all();
 				if (folders.length === 0) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				for (const folder of folders) {
 					const result = await controller.children({query: {id: folder.id}, user});

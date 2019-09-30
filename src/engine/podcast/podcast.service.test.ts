@@ -89,7 +89,9 @@ describe('PodcastService', () => {
 				const mock = mockPodcastXML();
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/feed6').delayConnection(1000).reply(200, mock.feed);
-				podcastService.refresh(podcast);
+				podcastService.refresh(podcast).catch(e => {
+					// nope
+				});
 				expect(podcastService.isDownloading(podcast.id)).toBe(true);
 
 				function wait(cb: () => void): void {
@@ -99,12 +101,14 @@ describe('PodcastService', () => {
 						}, 100);
 					} else {
 						expect(scope.isDone()).toBe(true); // , 'no request has been made');
-						podcastService.remove(podcast).then(cb);
+						podcastService.remove(podcast).then(cb).catch(e => {
+							// nope
+						});
 					}
 				}
 
 				return new Promise((resolve, reject) => {
-					wait(() => resolve());
+					wait(resolve);
 				});
 			});
 			it('should block refreshing a podcast while refreshing already running', async () => {
@@ -112,7 +116,9 @@ describe('PodcastService', () => {
 				const mock = mockPodcastXML();
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/feed7').delayConnection(1000).reply(200, mock.feed);
-				podcastService.refresh(podcast);
+				podcastService.refresh(podcast).catch(e => {
+					// nope
+				});
 				await podcastService.refresh(podcast);
 				expect(scope.isDone()).toBe(true); // , 'no request has been made');
 				expect(podcastService.isDownloading(podcast.id)).toBe(false);
@@ -124,7 +130,7 @@ describe('PodcastService', () => {
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/feed8').reply(200, mock.feed);
 				const org = podcastService.podcastStore.replace;
-				podcastService.podcastStore.replace = async (p) => {
+				podcastService.podcastStore.replace = async p => {
 					return Promise.reject(Error('test error'));
 				};
 				await expect(podcastService.refresh(podcast)).rejects.toThrow('error');

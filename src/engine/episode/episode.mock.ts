@@ -1,6 +1,6 @@
-import {Episode} from './episode.model';
-import {AudioFormatType, PodcastStatus, TrackTagFormatType} from '../../model/jam-types';
 import {DBObjectType} from '../../db/db.types';
+import {AudioFormatType, PodcastStatus, TrackTagFormatType} from '../../model/jam-types';
+import {Episode} from './episode.model';
 
 export function mockEpisode(): Episode {
 	return {
@@ -20,7 +20,7 @@ export function mockEpisode(): Episode {
 		chapters: [{
 			start: 0,
 			title: 'a chapter title 1'
-		}, {
+		},         {
 			start: 2000,
 			title: 'a chapter title 2'
 		}],
@@ -86,7 +86,7 @@ export function mockEpisode2(): Episode {
 		chapters: [{
 			start: 10,
 			title: 'another chapter title 1'
-		}, {
+		},         {
 			start: 3000,
 			title: 'another chapter title 2'
 		}],

@@ -1,12 +1,12 @@
-import {BookmarkStore, SearchQueryBookmark} from './bookmark.store';
-import {Bookmark} from './bookmark.model';
 import {testStore} from '../base/base.store.spec';
 import {mockBookmark, mockBookmark2} from './bookmark.mock';
+import {Bookmark} from './bookmark.model';
+import {BookmarkStore, SearchQueryBookmark} from './bookmark.store';
 
 describe('BookmarkStore', () => {
 	let bookmarkStore: BookmarkStore;
 
-	testStore((testDB) => {
+	testStore(testDB => {
 			bookmarkStore = new BookmarkStore(testDB.database);
 			return bookmarkStore;
 		}, () => {
@@ -21,5 +21,6 @@ describe('BookmarkStore', () => {
 			return matches;
 		},
 		() => {
+			// nope
 		});
 });

@@ -1,6 +1,6 @@
-import {User} from './user.model';
 import {DBObjectType} from '../../db/db.types';
 import {hashSaltSHA512} from '../../utils/hash';
+import {User} from './user.model';
 
 export const mockUserSalt = 'a salt';
 export const mockUserPass = 'a pass';

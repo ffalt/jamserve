@@ -1,11 +1,11 @@
-import {RootStore, SearchQueryRoot} from './root.store';
-import {Root} from './root.model';
 import {testStore} from '../base/base.store.spec';
 import {mockRoot, mockRoot2} from './root.mock';
+import {Root} from './root.model';
+import {RootStore, SearchQueryRoot} from './root.store';
 
 describe('RootStore', () => {
 	let rootStore: RootStore;
-	testStore((testDB) => {
+	testStore(testDB => {
 			rootStore = new RootStore(testDB.database);
 			return rootStore;
 		}, () => {
@@ -21,7 +21,7 @@ describe('RootStore', () => {
 			return matches;
 		},
 		() => {
+			// nope
 		}
 	);
 });
-

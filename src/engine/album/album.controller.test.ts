@@ -29,7 +29,7 @@ describe('AlbumController', () => {
 			it('should handle error if lastfm is not available', async () => {
 				const album = await controller.albumService.albumStore.random();
 				if (!album) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarTracks.byAlbum;
 				api.metadataController.metadataService.similarTracks.byAlbum = async (a: Album): Promise<Array<Track>> => {
@@ -43,7 +43,7 @@ describe('AlbumController', () => {
 			it('should handle empty metadata data', async () => {
 				const album = await controller.albumService.albumStore.random();
 				if (!album) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarTracks.byAlbum;
 				api.metadataController.metadataService.similarTracks.byAlbum = async (a: Album): Promise<Array<Track>> => {
@@ -57,7 +57,7 @@ describe('AlbumController', () => {
 			it('should return similar tracks', async () => {
 				const album = await controller.albumService.albumStore.random();
 				if (!album) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.similarTracks.byAlbum;
 				api.metadataController.metadataService.similarTracks.byAlbum = async (a: Album): Promise<Array<Track>> => {
@@ -77,7 +77,7 @@ describe('AlbumController', () => {
 			it('should return tracks', async () => {
 				const album = await controller.albumService.albumStore.random();
 				if (!album || album.trackIDs.length === 0) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const list = await controller.tracks({query: {ids: [album.id]}, user});
 				expect(list).toBeTruthy();
@@ -104,7 +104,7 @@ describe('AlbumController', () => {
 			it('should return sub items', async () => {
 				const albums = await controller.albumService.albumStore.all();
 				if (albums.length === 0) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				for (const album of albums) {
 					const result = await controller.id({query: {id: album.id, albumState: true, albumTrackIDs: true, albumTracks: true}, user});
@@ -116,7 +116,7 @@ describe('AlbumController', () => {
 			it('should return album info in sub-object', async () => {
 				const album = await controller.albumService.albumStore.random();
 				if (!album) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.extInfo.byAlbum;
 				const extended: Jam.ExtendedInfo = {
@@ -137,7 +137,7 @@ describe('AlbumController', () => {
 			it('should handle metadata not available for  album info in sub-object', async () => {
 				const album = await controller.albumService.albumStore.random();
 				if (!album) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.extInfo.byAlbum;
 				api.metadataController.metadataService.extInfo.byAlbum = async (a: Album): Promise<Jam.ExtendedInfo | undefined> => {
@@ -153,7 +153,7 @@ describe('AlbumController', () => {
 			it('should return album info', async () => {
 				const album = await controller.albumService.albumStore.random();
 				if (!album) {
-					throw new Error('Wrong Test Setup');
+					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.extInfo.byAlbum;
 				const extended: Jam.ExtendedInfo = {

@@ -1,10 +1,10 @@
+import tmp from 'tmp';
 import {testService} from '../base/base.service.spec';
 import {Store} from '../store/store';
-import tmp from 'tmp';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from '../store/store.mock';
-import {IoService} from './io.service';
-import {WorkerService} from '../worker/worker.service';
 import {WaveformServiceTest} from '../waveform/waveform.service.spec';
+import {WorkerService} from '../worker/worker.service';
+import {IoService} from './io.service';
 
 describe('IOService', () => {
 	let store: Store;
@@ -20,13 +20,13 @@ describe('IOService', () => {
 			await waveFormServiceTest.setup();
 			mockRoot = buildMockRoot(dir.name, 1, 'rootID');
 			const workerService = new WorkerService(store, audioModule, imageModuleTest.imageModule, waveFormServiceTest.waveformService);
-			ioService = new IoService(store.rootStore, workerService, async () => {});
+			ioService = new IoService(store.rootStore, workerService, async () => {
+				// nope
+			});
 			await writeMockRoot(mockRoot);
 		},
 		() => {
-			it('should', async () => {
-
-			});
+			// TODO
 		},
 		async () => {
 			await removeMockRoot(mockRoot);

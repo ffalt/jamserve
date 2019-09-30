@@ -1,5 +1,5 @@
-import {BookmarkService} from './bookmark.service';
 import {testService} from '../base/base.service.spec';
+import {BookmarkService} from './bookmark.service';
 
 describe('BookmarkService', () => {
 	let bookmarkService: BookmarkService;

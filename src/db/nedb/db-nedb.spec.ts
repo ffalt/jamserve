@@ -4,10 +4,8 @@ import {DBNedb} from './db-nedb';
 
 export class TestNeDB implements TestDB {
 	name = 'nedb';
-	// @ts-ignore
-	database: DBNedb;
-	// @ts-ignore
-	dir: tmp.DirResult;
+	database!: DBNedb;
+	dir!: tmp.DirResult;
 
 	async setup(): Promise<void> {
 		this.dir = tmp.dirSync();

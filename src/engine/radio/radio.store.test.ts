@@ -1,11 +1,11 @@
-import {RadioStore, SearchQueryRadio} from './radio.store';
-import {Radio} from './radio.model';
 import {testStore} from '../base/base.store.spec';
 import {generateMockObjects} from './radio.mock';
+import {Radio} from './radio.model';
+import {RadioStore, SearchQueryRadio} from './radio.store';
 
 describe('RadioStore', () => {
 	let radioStore: RadioStore;
-	testStore((testDB) => {
+	testStore(testDB => {
 			radioStore = new RadioStore(testDB.database);
 			return radioStore;
 		},
@@ -19,6 +19,7 @@ describe('RadioStore', () => {
 			return matches;
 		},
 		() => {
+			// nope
 		}
 	);
 });

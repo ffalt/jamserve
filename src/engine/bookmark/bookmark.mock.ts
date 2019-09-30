@@ -1,5 +1,5 @@
-import {Bookmark} from './bookmark.model';
 import {DBObjectType} from '../../db/db.types';
+import {Bookmark} from './bookmark.model';
 
 export function mockBookmark(): Bookmark {
 	return {

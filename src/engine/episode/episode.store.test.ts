@@ -6,7 +6,7 @@ import {EpisodeStore, SearchQueryEpisode} from './episode.store';
 describe('EpisodeStore', () => {
 	let episodeStore: EpisodeStore;
 
-	testStore((testDB) => {
+	testStore(testDB => {
 		episodeStore = new EpisodeStore(testDB.database);
 		return episodeStore;
 	}, () => {
@@ -24,5 +24,6 @@ describe('EpisodeStore', () => {
 		];
 		return matches;
 	}, () => {
+		// nope
 	});
 });

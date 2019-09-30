@@ -17,10 +17,8 @@ export async function mockImage(format: string): Promise<MockImage> {
 }
 
 export class ImageModuleTest {
-	// @ts-ignore
-	imageModule: ImageModule;
-	// @ts-ignore
-	dir: tmp.DirResult;
+	imageModule!: ImageModule;
+	dir!: tmp.DirResult;
 
 	async setup(): Promise<void> {
 		this.dir = tmp.dirSync();
