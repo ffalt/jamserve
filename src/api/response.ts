@@ -39,11 +39,7 @@ export class ApiBaseResponder {
 // 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
 			res.status(200).send(data.buffer.buffer);
 		} else if (data.file) {
-			const range = req.range(0);
-			res.sendFile(data.file.filename, {
-				filename: data.file.name || path.basename(data.file.filename),
-				acceptRanges: range !== -1
-			});
+			res.sendFile(data.file.filename, {filename: data.file.name || path.basename(data.file.filename)});
 		}
 	}
 }
