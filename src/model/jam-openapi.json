@@ -2,7 +2,7 @@
 	"openapi": "3.0.0",
 	"info": {
 		"description": "Api for JamServe",
-		"version": "0.1.6",
+		"version": "0.1.7",
 		"title": "JamApi",
 		"license": {
 			"name": "MIT"
@@ -11809,80 +11809,6 @@
 				]
 			}
 		},
-		"/root/scan": {
-			"get": {
-				"operationId": "rootController.scan",
-				"description": "start a root scan by root id",
-				"tags": [
-					"root"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Invalid/Missing parameter"
-					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"404": {
-						"description": "Item not found"
-					},
-					"500": {
-						"description": "Guru Meditation"
-					}
-				},
-				"parameters": [
-					{
-						"in": "query",
-						"name": "id",
-						"schema": {
-							"type": "string"
-						},
-						"description": "the item id",
-						"required": true
-					}
-				]
-			}
-		},
-		"/root/scanAll": {
-			"get": {
-				"operationId": "rootController.scanAll",
-				"description": "start scan of all roots",
-				"tags": [
-					"root"
-				],
-				"responses": {
-					"200": {
-						"description": "ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "array",
-									"items": {
-										"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
-									}
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"500": {
-						"description": "Guru Meditation"
-					}
-				}
-			}
-		},
 		"/root/status": {
 			"get": {
 				"operationId": "rootController.status",
@@ -16376,6 +16302,79 @@
 								"$ref": "#/components/schemas/JamParameters.ID"
 							}
 						}
+					}
+				}
+			}
+		},
+		"/root/scan": {
+			"post": {
+				"operationId": "rootController.scan",
+				"description": "start a root scan by root id",
+				"tags": [
+					"root"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/root/scanAll": {
+			"post": {
+				"operationId": "rootController.scanAll",
+				"description": "start scan of all roots",
+				"tags": [
+					"root"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/Jam.AdminChangeQueueInfo"
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"500": {
+						"description": "Guru Meditation"
 					}
 				}
 			}
@@ -23297,26 +23296,6 @@
 					"items"
 				]
 			},
-			"Jam.AdminChangeQueueInfo": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"pos": {
-						"type": "number"
-					},
-					"error": {
-						"type": "string"
-					},
-					"done": {
-						"type": "number"
-					}
-				},
-				"required": [
-					"id"
-				]
-			},
 			"Jam.AdminSettings": {
 				"type": "object",
 				"properties": {
@@ -23386,6 +23365,26 @@
 				},
 				"required": [
 					"scanAtStart"
+				]
+			},
+			"Jam.AdminChangeQueueInfo": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"pos": {
+						"type": "number"
+					},
+					"error": {
+						"type": "string"
+					},
+					"done": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"id"
 				]
 			},
 			"JamParameters.Login": {

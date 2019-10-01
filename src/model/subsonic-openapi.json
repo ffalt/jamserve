@@ -4520,7 +4520,7 @@
 				"operationId": "jukeboxControl.view",
 				"summary": "Controls the jukebox, i.e., playback directly on the server's audio hardware. Note",
 				"tags": [
-					"Jukebox"
+					"System"
 				],
 				"responses": {
 					"200": {

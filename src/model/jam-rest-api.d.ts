@@ -902,23 +902,6 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
-		 * root: start a root scan by root id
-		 */
-		'root/scan'?: {
-			params: JamParameters.ID;
-			result: Jam.AdminChangeQueueInfo;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['admin'];
-		};
-		/**
-		 * root: start scan of all roots
-		 */
-		'root/scanAll'?: {
-			result: Array<Jam.AdminChangeQueueInfo>;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
-			roles: ['admin'];
-		};
-		/**
 		 * root: scanning status of a root scan by root id
 		 */
 		'root/status'?: {
@@ -1702,6 +1685,23 @@ export interface JamApi {
 			params: JamParameters.ID;
 			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		/**
+		 * root: start a root scan by root id
+		 */
+		'root/scan'?: {
+			params: JamParameters.ID;
+			result: Jam.AdminChangeQueueInfo;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['admin'];
+		};
+		/**
+		 * root: start scan of all roots
+		 */
+		'root/scanAll'?: {
+			result: Array<Jam.AdminChangeQueueInfo>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 			roles: ['admin'];
 		};
 

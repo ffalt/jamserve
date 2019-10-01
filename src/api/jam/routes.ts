@@ -545,16 +545,6 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.RootList = await api.rootController.search(options);
 		ApiResponder.data(req, res, result);
 	});
-	register.get('/root/scan', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
-		const result: Jam.AdminChangeQueueInfo = await api.rootController.scan(options);
-		ApiResponder.data(req, res, result);
-	}, ['admin']);
-	register.get('/root/scanAll', async (req, res) => {
-		const options: JamRequest<{}> = {query: req.query, user: req.user, client: req.client};
-		const result: Array<Jam.AdminChangeQueueInfo> = await api.rootController.scanAll(options);
-		ApiResponder.data(req, res, result);
-	}, ['admin']);
 	register.get('/root/status', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.RootStatus = await api.rootController.status(options);
@@ -968,6 +958,16 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	register.post('/root/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.AdminChangeQueueInfo = await api.rootController.delete(options);
+		ApiResponder.data(req, res, result);
+	}, ['admin']);
+	register.post('/root/scan', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.AdminChangeQueueInfo = await api.rootController.scan(options);
+		ApiResponder.data(req, res, result);
+	}, ['admin']);
+	register.post('/root/scanAll', async (req, res) => {
+		const options: JamRequest<{}> = {query: req.body, user: req.user, client: req.client};
+		const result: Array<Jam.AdminChangeQueueInfo> = await api.rootController.scanAll(options);
 		ApiResponder.data(req, res, result);
 	}, ['admin']);
 	register.post('/admin/settings/update', async (req, res) => {
