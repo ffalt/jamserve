@@ -1,11 +1,9 @@
 import {DBObjectType} from '../../../db/db.types';
-import {FolderType} from '../../../model/jam-types';
+import {Playlist} from '../../../engine/playlist/playlist.model';
 import {Subsonic} from '../../../model/subsonic-rest-data';
 import {SubsonicParameters} from '../../../model/subsonic-rest-params';
-import {paginate} from '../../../utils/paginate';
 import {ApiOptions, SubsonicApiBase} from '../base';
 import {FORMAT} from '../format';
-import {Playlist} from '../../../engine/playlist/playlist.model';
 
 export class SubsonicPlaylistsApi extends SubsonicApiBase {
 

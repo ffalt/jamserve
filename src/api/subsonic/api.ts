@@ -11,23 +11,22 @@ import {ApiBinaryResult} from '../../typings';
 import {logger} from '../../utils/logger';
 import {paginate} from '../../utils/paginate';
 import {randomItems} from '../../utils/random';
-import {ApiOptions, SubsonicApiBase} from './base';
-import {FORMAT} from './format';
-import {SubsonicSearchApi} from './api/api.search';
-import {SubsonicChatApi} from './api/api.chat';
-import {SubsonicUserApi} from './api/api.user';
+import {SubsonicAnnotationApi} from './api/api.annotation';
 import {SubsonicBookmarkApi} from './api/api.bookmarks';
+import {SubsonicBrowsingApi} from './api/api.browsing';
+import {SubsonicChatApi} from './api/api.chat';
+import {SubsonicInternetRadioApi} from './api/api.internetradio';
+import {SubsonicLibraryApi} from './api/api.library';
+import {SubsonicListsApi} from './api/api.lists';
+import {SubsonicMediaRetrievalApi} from './api/api.mediaretrieval';
 import {SubsonicPlaylistsApi} from './api/api.playlists';
 import {SubsonicPodcastApi} from './api/api.podcast';
-import {SubsonicInternetRadioApi} from './api/api.internetradio';
+import {SubsonicSearchApi} from './api/api.search';
 import {SubsonicSharingApi} from './api/api.sharing';
-import {SubsonicBrowsingApi} from './api/api.browsing';
 import {SubsonicSystemApi} from './api/api.system';
-import {SubsonicMediaRetrievalApi} from './api/api.mediaretrieval';
-import {SubsonicAnnotationApi} from './api/api.annotation';
-import {SubsonicListsApi} from './api/api.lists';
-import {SubsonicLibraryApi} from './api/api.library';
-
+import {SubsonicUserApi} from './api/api.user';
+import {ApiOptions, SubsonicApiBase} from './base';
+import {FORMAT} from './format';
 
 /**
  * api functions

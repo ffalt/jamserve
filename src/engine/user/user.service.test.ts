@@ -7,6 +7,7 @@ import {hashMD5} from '../../utils/hash';
 import {testService} from '../base/base.service.spec';
 import {mockUser, mockUser2, mockUserPass} from './user.mock';
 import {UserService} from './user.service';
+import {SessionService} from '../session/session.service';
 
 function salt(length: number): string {
 	let s = '';
@@ -28,6 +29,7 @@ function salt(length: number): string {
 
 describe('UserService', () => {
 	let userService: UserService;
+	let sessionService: SessionService;
 	let imageModule: ImageModule;
 	let dir: tmp.DirResult;
 	testService({mockData: false},
@@ -35,6 +37,7 @@ describe('UserService', () => {
 			dir = tmp.dirSync();
 			imageModule = imageModuleTest.imageModule;
 			userService = new UserService(dir.name, store.userStore, store.stateStore, store.playlistStore, store.bookmarkStore, store.playQueueStore, store.sessionStore, imageModuleTest.imageModule);
+			sessionService = new SessionService(store.sessionStore);
 		},
 		() => {
 			let userID: string;
@@ -83,8 +86,9 @@ describe('UserService', () => {
 				await expect(userService.auth('non-existing', 'something')).rejects.toThrow('Invalid Username');
 			});
 			it('should auth the user by token', async () => {
+				const session = await sessionService.createSubsonic(userID);
 				const s = salt(6);
-				const token = hashMD5(mock.subsonic_pass + s);
+				const token = hashMD5(session.subsonic + s);
 				const user = await userService.authSubsonicToken(mock.name, token, s);
 				expect(user).toBeTruthy();
 				expect(user).toEqual(mock);

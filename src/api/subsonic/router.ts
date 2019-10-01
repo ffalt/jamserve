@@ -38,7 +38,7 @@ async function checkRoles(user?: User, roles?: Array<SubSonicRole>): Promise<voi
 async function runSubsonic(req: UserRequest, res: express.Response, execute: (req: UserRequest, res: express.Response) => Promise<void>, roles?: Array<SubSonicRole>): Promise<void> {
 	try {
 		await checkRoles(req.user, roles || []);
-		await execute(req as UserRequest, res);
+		await execute(req, res);
 	} catch (e) {
 		log.error(e);
 		ApiResponder.error(req, res, e);

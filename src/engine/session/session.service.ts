@@ -1,9 +1,9 @@
+import {DBObjectType} from '../../db/db.types';
+import {randomString} from '../../utils/random';
 import {BaseStoreService} from '../base/base.service';
 import {Session} from './session.model';
 import {SearchQuerySession, SessionStore} from './session.store';
 import {SessionMode} from './session.types';
-import {DBObjectType} from '../../db/db.types';
-import {randomString} from '../../utils/random';
 
 export interface SessionNotifyEventObject {
 	clearCache(): Promise<void>;
