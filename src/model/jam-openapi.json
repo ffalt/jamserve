@@ -21827,10 +21827,7 @@
 					}
 				},
 				"required": [
-					"bitRate",
-					"channels",
 					"format",
-					"sampleRate",
 					"size"
 				]
 			},

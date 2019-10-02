@@ -187,10 +187,10 @@ export declare namespace Jam {
 	}
 
 	export interface TrackMedia {
-		bitRate: number;
+		bitRate?: number;
 		format: string;
-		channels: number;
-		sampleRate: number;
+		channels?: number;
+		sampleRate?: number;
 		size: number;
 	}
 

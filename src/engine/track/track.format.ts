@@ -38,11 +38,11 @@ export function formatTrack(track: Track, includes: JamParameters.IncludesTrack)
 		created: track.stat.created,
 		duration: track.media.duration || -1,
 		media: includes.trackMedia ? {
-			bitRate: track.media.bitRate || -1,
+			bitRate: track.media.bitRate,
 			format: track.media.format || '',
-			channels: track.media.channels || -1,
-			sampleRate: track.media.sampleRate || -1,
-			size: track.stat.size || -1
+			channels: track.media.channels,
+			sampleRate: track.media.sampleRate,
+			size: track.stat.size
 		} : undefined,
 		tag: includes.trackTag ? formatTrackTag(track.tag) : undefined
 	};
