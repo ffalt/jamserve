@@ -98,7 +98,7 @@ export class ImageModule {
 			if (!mime) {
 				return Promise.reject('Unknown Image Format Request');
 			}
-			const sharpy = sharp(filename);
+			const sharpy = sharp(filename, {failOnError: false});
 			if (size) {
 				sharpy.resize(size, size, {fit: sharp.fit.cover, position: sharp.strategy.entropy});
 			}
@@ -119,11 +119,10 @@ export class ImageModule {
 		if (size) {
 			return {
 				buffer: {
-					buffer: await sharp(buffer)
+					buffer: await sharp(buffer, {failOnError: false})
 						.resize(size, size,
 							{
-								fit: sharp.fit.cover,
-								position: sharp.strategy.entropy
+								fit: sharp.fit.cover // ,position: sharp.strategy.entropy
 							}).toFormat(format)
 						.toBuffer(),
 					contentType: mime
@@ -133,7 +132,7 @@ export class ImageModule {
 		if (format && info.format !== format) {
 			return {
 				buffer: {
-					buffer: await sharp(buffer)
+					buffer: await sharp(buffer, {failOnError: false})
 						.toFormat(format)
 						.toBuffer(),
 					contentType: mime
@@ -236,7 +235,7 @@ export class ImageModule {
 	// }
 
 	async resizeImagePNG(filename: string, destination: string, size: number): Promise<void> {
-		await sharp(filename)
+		await sharp(filename, {failOnError: false})
 			.resize(size, size, {fit: sharp.fit.cover})
 			.png()
 			.toFile(destination);
@@ -310,10 +309,10 @@ export class ImageModule {
 	}
 
 	async getImageInfo(filename: string): Promise<ImageInfo> {
-		return this.formatImageInfo(sharp(filename));
+		return this.formatImageInfo(sharp(filename, {failOnError: false}));
 	}
 
 	async getImageInfoBuffer(bin: Buffer): Promise<ImageInfo> {
-		return this.formatImageInfo(sharp(bin));
+		return this.formatImageInfo(sharp(bin, {failOnError: false}));
 	}
 }
