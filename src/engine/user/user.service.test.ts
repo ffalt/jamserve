@@ -5,9 +5,9 @@ import {ImageModule} from '../../modules/image/image.module';
 import {mockImage} from '../../modules/image/image.module.spec';
 import {hashMD5} from '../../utils/hash';
 import {testService} from '../base/base.service.spec';
+import {SessionService} from '../session/session.service';
 import {mockUser, mockUser2, mockUserPass} from './user.mock';
 import {UserService} from './user.service';
-import {SessionService} from '../session/session.service';
 
 function salt(length: number): string {
 	let s = '';
