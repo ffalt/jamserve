@@ -92,7 +92,7 @@
   },
   "devDependencies": {
     "@types/archiver": "3.0.0",
-    "@types/chance": "1.0.6",
+    "@types/chance": "1.0.7",
     "@types/cookie-parser": "1.4.2",
     "@types/cors": "2.8.6",
     "@types/d3": "5.7.2",
