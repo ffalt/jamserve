@@ -1,5 +1,6 @@
 import {DBObjectType} from '../../db/db.types';
 import {Session} from './session.model';
+import {SessionMode} from './session.types';
 
 const cookie = {originalMaxAge: 2592000000, expires: '2019-10-14T15:10:52.586Z', secure: false, httpOnly: true, path: '/'};
 
@@ -8,8 +9,10 @@ export function mockSession(): Session {
 		id: '',
 		sessionID: 'sessionID1',
 		type: DBObjectType.session,
+		mode: SessionMode.jwt,
 		jwth: 'bearer1',
 		client: 'Jamboree',
+		subsonic: '',
 		userID: 'userID1',
 		expires: 1543495269,
 		cookie: JSON.stringify(cookie),
@@ -22,8 +25,10 @@ export function mockSession2(): Session {
 		id: '',
 		sessionID: 'sessionID2',
 		type: DBObjectType.session,
-		client: 'Jamberry',
+		mode: SessionMode.jwt,
 		jwth: 'bearer2',
+		client: 'Jamberry',
+		subsonic: '',
 		userID: 'userID2',
 		expires: 1443495269,
 		cookie: JSON.stringify(cookie),

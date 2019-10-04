@@ -276,7 +276,7 @@ export function buildMockRoot(dir: string, nr: number, id: string): MockRoot {
 		expected: {
 			folders: 10,
 			tracks: 16,
-			artists: 7,
+			artists: 7, // ['artist 1', 'artist 1 with another artist', 'artist 2', 'artist c1', 'Various Artists', 'artist c2', 'artist c3']
 			albums: 5,
 			folderType: FolderType.collection
 		}

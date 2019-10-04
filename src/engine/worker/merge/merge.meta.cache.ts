@@ -114,17 +114,19 @@ export class MetaMergerCache {
 	}
 
 	private async buildArtist(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist> {
-		const name = (albumArtist ? (trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist) : trackInfo.track.tag.artist) || cUnknownArtist;
-		const nameSort = albumArtist ? (trackInfo.track.tag.albumArtistSort || trackInfo.track.tag.artistSort) : trackInfo.track.tag.artistSort;
-		const mbArtistID = albumArtist ? (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID) : trackInfo.track.tag.mbArtistID;
+		let aa = {mbArtistID: trackInfo.track.tag.mbArtistID, name: trackInfo.track.tag.artist, nameSort: trackInfo.track.tag.artistSort};
+		if (albumArtist && (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.albumArtist)) {
+			aa = {mbArtistID: trackInfo.track.tag.mbAlbumArtistID, name: trackInfo.track.tag.albumArtist, nameSort: trackInfo.track.tag.albumArtistSort};
+		}
+		aa.name = aa.name || cUnknownArtist;
 		return {
 			id: await this.store.artistStore.getNewId(),
 			type: DBObjectType.artist,
 			rootIDs: [],
-			slug: slugify(name),
-			name,
-			nameSort,
-			mbArtistID,
+			slug: slugify(aa.name),
+			name: aa.name,
+			nameSort: aa.nameSort,
+			mbArtistID: aa.mbArtistID,
 			albumTypes: [],
 			albumIDs: [],
 			folderIDs: [],
@@ -146,22 +148,28 @@ export class MetaMergerCache {
 	}
 
 	private async findArtistInCache(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
-		const mbArtistID = albumArtist ? (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID) : trackInfo.track.tag.mbArtistID;
-		const slug = slugify((albumArtist ? (trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist) : trackInfo.track.tag.artist) || cUnknownArtist);
-		if (mbArtistID) {
-			const artist = this.artistCache.find(a => a.artist.mbArtistID === mbArtistID);
+		let aa = {mbArtistID: trackInfo.track.tag.mbArtistID, name: trackInfo.track.tag.artist};
+		if (albumArtist && (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.albumArtist)) {
+			aa = {mbArtistID: trackInfo.track.tag.mbAlbumArtistID, name: trackInfo.track.tag.albumArtist};
+		}
+		const slug = slugify(aa.name || cUnknownArtist);
+		if (aa.mbArtistID) {
+			const artist = this.artistCache.find(a => a.artist.mbArtistID === aa.mbArtistID);
 			if (artist) {
-				if (!artist.slugs.includes(slug)) {
-					artist.slugs.push(slug);
-				}
+				// disabled merging with id AND slug. if aa.mbArtistID is wrong, it's causing wrongly combined artists
+				// in all following new tracks of those artists all over the place, which is worse than duplicated artist entries
+				// not sure how to handle invalid data better in this stage
 
+				// if (!artist.slugs.includes(slug)) {
+				// 	artist.slugs.push(slug);
+				// }
 				return artist.artist;
 			}
 		}
 		const slugArtist = this.artistCache.find(a => a.slugs.includes(slug));
 		if (slugArtist) {
-			if (!slugArtist.artist.mbArtistID) {
-				slugArtist.artist.mbArtistID = mbArtistID;
+			if (!slugArtist.artist.mbArtistID && aa.mbArtistID) {
+				slugArtist.artist.mbArtistID = aa.mbArtistID;
 			}
 			return slugArtist.artist;
 		}
