@@ -100,7 +100,7 @@
     "@types/express-session": "1.15.14",
     "@types/express-useragent": "1.0.0",
     "@types/feedparser": "2.2.3",
-    "@types/fluent-ffmpeg": "2.1.10",
+    "@types/fluent-ffmpeg": "2.1.11",
     "@types/fs-extra": "8.0.0",
     "@types/helmet": "0.0.44",
     "@types/jest": "24.0.18",
