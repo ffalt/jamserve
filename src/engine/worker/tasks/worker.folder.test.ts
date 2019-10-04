@@ -106,6 +106,7 @@ describe('FolderWorker', () => {
 				expect(changes.removedFolders.length).toBe(removedFolderCount); // Removed Folders count doesnt match');
 				expect(changes.newArtists.length).toBe(0); // New Artist count doesnt match');
 				expect(changes.updateArtists.length).toBe(0); // Update Artist count doesnt match');
+				// ['artist 1', 'artist 1 with another artist']
 				expect(changes.removedArtists.length).toBe(2); // Removed Artists count doesnt match');
 				expect(changes.newAlbums.length).toBe(0); // New Album count doesnt match');
 				expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
