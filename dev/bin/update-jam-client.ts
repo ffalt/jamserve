@@ -213,6 +213,11 @@ async function writeJamConfiguration(destPath: string): Promise<void> {
 	await fse.writeFile(path.resolve(destPath, `jam.configuration.ts`), t);
 }
 
+async function writeIndex(destPath: string): Promise<void> {
+	const t = Mustache.render((await fse.readFile('../templates/client/index.ts.template')).toString(), {});
+	await fse.writeFile(path.resolve(destPath, `index.ts`), t);
+}
+
 async function build(): Promise<string> {
 	const destPath = path.resolve('../../dist/jam/');
 	if (await fse.pathExists(destPath)) {
@@ -240,6 +245,7 @@ async function build(): Promise<string> {
 	await writeBaseService(destPath);
 	await writeHttpService(destPath);
 	await writeJamConfiguration(destPath);
+	await writeIndex(destPath);
 
 	const models: Array<string> = [
 		'jam-rest-api.d.ts',
