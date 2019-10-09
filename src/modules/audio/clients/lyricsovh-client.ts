@@ -1,5 +1,7 @@
 import request from 'request';
+import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
+const log = logger('LyricsOVHClient');
 
 export interface LyricsResult {
 	lyrics: string;
@@ -25,11 +27,16 @@ export class LyricsOVHClient extends WebserviceClient {
 	}
 
 	async search(artistName: string, songName: string): Promise<LyricsResult | undefined> {
-		const url = `https://api.lyrics.ovh/v1/${encodeURIComponent(artistName)}/${encodeURIComponent(songName)}`;
+		const url = `https://api.lyrics.ovh/v1/${this.cleanString(artistName)}/${this.cleanString(songName)}`;
+		log.info('requesting', url);
 		const data = await this.getJson<LyricsOVHResult | undefined>(url);
 		if (!data || !data.lyrics) {
 			return;
 		}
 		return {lyrics: data.lyrics, source: url};
+	}
+
+	private cleanString(s: string): string {
+		return encodeURIComponent(s.replace(/[’´`]/g, '\''));
 	}
 }
