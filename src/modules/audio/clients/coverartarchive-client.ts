@@ -1,5 +1,6 @@
 import {CoverArtArchive} from '../../../model/coverartarchive-rest-data';
 import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client';
+import request from 'request';
 
 declare namespace CoverArtArchiveClientApi {
 	export type Request = JSONRequest;
@@ -19,9 +20,16 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<CoverArtArchiveC
 		super(10, 1000, options.userAgent, {...defaultOptions, ...options});
 	}
 
+	protected async parseResult<T>(response: request.Response, body: any): Promise<T> {
+		if (response.statusCode === 404) {
+			return Promise.resolve({images: []} as any);
+		}
+		return super.parseResult<T>(response, body);
+	}
+
 	protected async processError(e: any, req: CoverArtArchiveClientApi.Request): Promise<CoverArtArchive.Response> {
 		if (e instanceof SyntaxError) {
-			// coverartarchive response is html on empty data
+			// coverartarchive response may be code 200 with html on empty data
 			// <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 			// <title>404 Not Found</title>
 			// <h1>Not Found</h1>
