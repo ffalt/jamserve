@@ -70,7 +70,6 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 		}
 		if (includes.albumTracks) {
 			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user, (a, b) => this.sortAlbumTracks(a, b));
-			console.log(result.tracks.map(t => (t.tag || {}).trackNr));
 		}
 		return result;
 	}

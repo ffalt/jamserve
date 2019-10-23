@@ -297,14 +297,7 @@ export class ImageModule {
 				colors: 0
 			};
 		} catch (e) {
-			log.error('Error reading image dimensions from Buffer', e);
-			return {
-				width: 0,
-				height: 0,
-				format: 'invalid',
-				colorDepth: 0,
-				colors: 0
-			};
+			return {width: 0, height: 0, format: 'invalid', colorDepth: 0, colors: 0};
 		}
 	}
 
