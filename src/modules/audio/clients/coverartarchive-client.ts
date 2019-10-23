@@ -1,6 +1,6 @@
+import request from 'request';
 import {CoverArtArchive} from '../../../model/coverartarchive-rest-data';
 import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client';
-import request from 'request';
 
 declare namespace CoverArtArchiveClientApi {
 	export type Request = JSONRequest;
