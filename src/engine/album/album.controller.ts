@@ -18,6 +18,7 @@ import {formatAlbum} from './album.format';
 import {Album} from './album.model';
 import {AlbumService} from './album.service';
 import {SearchQueryAlbum} from './album.store';
+import {formatState} from '../state/state.format';
 
 export class AlbumController extends BaseListController<JamParameters.Album,
 	JamParameters.Albums,
@@ -59,7 +60,8 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 	async prepare(album: Album, includes: JamParameters.IncludesAlbum, user: User): Promise<Jam.Album> {
 		const result = formatAlbum(album, includes);
 		if (includes.albumState) {
-			result.state = await this.stateService.findOrCreate(album.id, user.id, DBObjectType.album);
+			const state = await this.stateService.findOrCreate(album.id, user.id, DBObjectType.album);
+			result.state = formatState(state);
 		}
 		if (includes.albumInfo) {
 			try {
