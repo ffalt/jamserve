@@ -45,7 +45,8 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 		const q = Object.keys(req.query)
 			.filter(key => (req.query[key] !== undefined && req.query[key] !== null))
 			.map(key => `${key}=${req.query[key]}`);
-		return `${this.reqToHost(req)}${req.path}?${q.join('&')}`;
+		const params = q.length > 0 ? `?${q.join('&')}` : '';
+		return `${this.reqToHost(req)}${req.path}${params}`;
 	}
 
 	protected async retry(error: Error, req: T): Promise<any> {
