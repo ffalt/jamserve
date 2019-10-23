@@ -22752,7 +22752,7 @@
 					"year": {
 						"type": "number"
 					},
-					"seriesNr": {
+					"albumNr": {
 						"type": "number"
 					},
 					"musicbrainz": {

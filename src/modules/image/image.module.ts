@@ -198,7 +198,6 @@ export class ImageModule {
 		if (format || size) {
 			const cacheID = `thumb-${id}${size ? `-${size}` : ''}.${format || this.format}`;
 			if (this.imageCacheDebounce.isPending(cacheID)) {
-				console.log('is waiting');
 				return this.imageCacheDebounce.append(cacheID);
 			}
 			this.imageCacheDebounce.setPending(cacheID);

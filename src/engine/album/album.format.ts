@@ -20,7 +20,7 @@ export function formatAlbum(album: Album, includes: JamParameters.IncludesAlbum)
 		trackCount: album.trackIDs.length,
 		tag: {
 			genre: album.genre,
-			seriesNr: album.seriesNr,
+			albumNr: album.albumNr,
 			year: album.year,
 			duration: album.duration,
 			created: album.created,

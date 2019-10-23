@@ -185,7 +185,7 @@ const typeAlbum = {
 		trackIDs: typeKey,
 		folderIDs: typeKey,
 		albumType: typeKey,
-		seriesNr: typeInt,
+		albumNr: typeInt,
 		artistID: typeKey,
 		artist: typeKey,
 		genre: typeKey,
