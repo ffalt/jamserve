@@ -51,7 +51,7 @@ export class JamAuthService {
 				this.user = undefined;
 			}
 		} catch (e) {
-			return Promise.reject(e || 'Server error');
+			return Promise.reject(e || Error('Server error'));
 		}
 	}
 
@@ -83,12 +83,12 @@ export class JamAuthService {
 		} catch (e) {
 			await this.clear();
 			if (e.error && e.error.error) {
-				return Promise.reject({error: e.error.error});
+				return Promise.reject(Error(e.error.error));
 			}
 			if (e instanceof HttpErrorResponse) {
-				return Promise.reject({error: e.statusText});
+				return Promise.reject(Error(e.statusText));
 			}
-			return Promise.reject({error: 'Server Error'});
+			return Promise.reject(Error('Server Error'));
 		}
 	}
 
