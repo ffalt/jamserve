@@ -205,7 +205,7 @@ export class WorkerService {
 
 	async createFolder(parameters: WorkerRequestCreateFolder): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {folder} = await this.folderWorker.create(parameters.parentID, name);
+		const {folder} = await this.folderWorker.create(parameters.parentID, parameters.name);
 		changes.newFolders.push(folder);
 		return this.changes.finish(changes, root.id, false);
 	}
@@ -272,7 +272,7 @@ export class WorkerService {
 
 	async renameArtwork(parameters: WorkerRequestRenameArtwork): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		await this.artworkWorker.rename(parameters.folderID, parameters.artworkID, name, changes);
+		await this.artworkWorker.rename(parameters.folderID, parameters.artworkID, parameters.name, changes);
 		return this.changes.finish(changes, root.id, false);
 	}
 
