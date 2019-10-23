@@ -86,17 +86,15 @@ export class FORMAT {
 		Object.keys(data.format.tags).forEach(key => {
 			simple[key.toUpperCase().replace(/ /g, '_')] = FORMAT.cleanText(data.format.tags[key]);
 		});
-		const track = Number(simple.TRACK);
-		const year = Number(simple.DATE);
-		const disc = Number(simple.DISC);
 		return {
 			format: TrackTagFormatType.ffmpeg,
 			artist: simple.ARTIST,
 			title: simple.TITLE,
 			album: simple.ALBUM,
-			year: isNaN(year) ? undefined : year,
-			track: isNaN(track) ? undefined : track,
-			disc: isNaN(disc) ? undefined : disc,
+			year: FORMAT.parseNum(simple.DATE),
+			track: FORMAT.parseNum(simple.TRACK),
+			disc: FORMAT.parseNum(simple.DISC),
+			seriesNr: FORMAT.parseNum(simple.WORK),
 			genre: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
 			albumArtist: simple.ALBUM_ARTIST,
 			albumSort: simple.ALBUM_SORT || simple.ALBUM_SORT_ORDER,
@@ -126,7 +124,7 @@ export class FORMAT {
 			artist: FORMAT.cleanText(simple.artist),
 			title: FORMAT.cleanText(simple.title),
 			album: FORMAT.cleanText(simple.album),
-			year: isNaN(Number(simple.year)) ? undefined : Number(simple.year),
+			year: FORMAT.parseNum(simple.year),
 			track: simple.track,
 			genre: (simple.genreIndex !== undefined && !!ID3v1_GENRES[simple.genreIndex]) ? ID3v1_GENRES[simple.genreIndex] : undefined
 		};
@@ -164,6 +162,7 @@ export class FORMAT {
 			discTotal: FORMAT.parseNum(simple.DISCTOTAL),
 			track: FORMAT.parseNum(simple.TRACKNUMBER),
 			trackTotal: FORMAT.parseNum(simple.TRACKTOTAL),
+			seriesNr: FORMAT.parseNum(simple.WORK),
 			year: FORMAT.parseYear(simple.ORIGINALDATE) || FORMAT.parseYear(simple.DATE) || FORMAT.parseYear(simple.RELEASETIME),
 			mbTrackID: simple.MUSICBRAINZ_TRACKID,
 			mbAlbumType: simple.RELEASETYPE,
@@ -205,6 +204,7 @@ export class FORMAT {
 			track: FORMAT.parseNum(simple.TRACKNUMBER) || FORMAT.parseNum(simple.TRACK),
 			trackTotal: FORMAT.parseNum(simple.TRACKTOTAL) || FORMAT.parseNum(simple.TOTALTRACKS),
 			year: FORMAT.parseYear(simple.ORIGINALYEAR) || FORMAT.parseYear(simple.ORIGINALDATE) || FORMAT.parseYear(simple.DATE),
+			seriesNr: FORMAT.parseNum(simple.WORK),
 			mbTrackID: simple.MUSICBRAINZ_TRACKID,
 			mbAlbumType: simple.RELEASETYPE,
 			mbAlbumArtistID: simple.MUSICBRAINZ_ALBUMARTISTID,

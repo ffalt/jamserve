@@ -51,6 +51,7 @@ export class MetaMergerCache {
 			artistID,
 			mbArtistID: trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID,
 			mbAlbumID: trackInfo.track.tag.mbAlbumID,
+			seriesNr: trackInfo.track.tag.seriesNr,
 			genre: trackInfo.track.tag.genre,
 			folderIDs: [],
 			trackIDs: [],

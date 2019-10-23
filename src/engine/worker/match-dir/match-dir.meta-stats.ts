@@ -36,7 +36,7 @@ const typeByMusicbrainzString: Array<{ type: AlbumType; names: Array<string>; }>
 	{type: AlbumType.compilation, names: ['compilation']},
 	{type: AlbumType.live, names: ['live']},
 	{type: AlbumType.soundtrack, names: ['soundtrack']},
-	{type: AlbumType.audiobook, names: ['audiodrama', 'audio drama']},
+	{type: AlbumType.audiodrama, names: ['audiodrama', 'audio drama']},
 	{type: AlbumType.ep, names: ['ep']},
 	{type: AlbumType.single, names: ['single']},
 	{type: AlbumType.album, names: ['album']}

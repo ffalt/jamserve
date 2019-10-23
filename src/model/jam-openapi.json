@@ -22752,6 +22752,9 @@
 					"year": {
 						"type": "number"
 					},
+					"seriesNr": {
+						"type": "number"
+					},
 					"musicbrainz": {
 						"type": "object",
 						"properties": {
