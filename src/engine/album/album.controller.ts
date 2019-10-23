@@ -41,11 +41,19 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 	}
 
 	sortAlbumTracks(a: Track, b: Track): number {
-		let res = (a.tag.disc || 0) - (b.tag.disc || 0);
-		if (res === 0) {
-			res = (a.tag.track || 0) - (b.tag.track || 0);
+		if (a.tag.discTotal !== undefined && a.tag.disc !== undefined && b.tag.discTotal !== undefined && b.tag.disc !== undefined) {
+			const res = a.tag.disc - b.tag.disc;
+			if (res !== 0) {
+				return res;
+			}
 		}
-		return res;
+		if (a.tag.track !== undefined && b.tag.track !== undefined) {
+			const res = a.tag.track - b.tag.track;
+			if (res !== 0) {
+				return res;
+			}
+		}
+		return a.name.localeCompare(b.name);
 	}
 
 	async prepare(album: Album, includes: JamParameters.IncludesAlbum, user: User): Promise<Jam.Album> {
@@ -62,6 +70,7 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 		}
 		if (includes.albumTracks) {
 			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user, (a, b) => this.sortAlbumTracks(a, b));
+			console.log(result.tracks.map(t => (t.tag || {}).trackNr));
 		}
 		return result;
 	}
