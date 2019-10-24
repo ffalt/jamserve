@@ -82,7 +82,7 @@ const trackRules: Array<TrackRuleInfo> = [
 			if (!track.tag.track) {
 				missing.push('track nr');
 			}
-			if (parent.tag.albumType !== undefined && parent.tag.albumType !== AlbumType.audiodrama) {
+			if (parent.tag.albumType !== undefined && parent.tag.albumType !== AlbumType.series) {
 				if (!track.tag.trackTotal) {
 					missing.push('total track count');
 				}

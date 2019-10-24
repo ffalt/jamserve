@@ -26,7 +26,9 @@ export interface MetaStat {
 
 const typeByGenreNames: { [name: string]: AlbumType; } = {
 	audiobook: AlbumType.audiobook,
-	'audio theater': AlbumType.audiodrama,
+	'audio theater': AlbumType.series,
+	'audio drama': AlbumType.series,
+	'audio series': AlbumType.series,
 	soundtrack: AlbumType.soundtrack
 };
 
@@ -36,7 +38,7 @@ const typeByMusicbrainzString: Array<{ type: AlbumType; names: Array<string>; }>
 	{type: AlbumType.compilation, names: ['compilation']},
 	{type: AlbumType.live, names: ['live']},
 	{type: AlbumType.soundtrack, names: ['soundtrack']},
-	{type: AlbumType.audiodrama, names: ['audiodrama', 'audio drama']},
+	{type: AlbumType.series, names: ['audiodrama', 'audio drama', 'audio theater', 'audio series']},
 	{type: AlbumType.ep, names: ['ep']},
 	{type: AlbumType.single, names: ['single']},
 	{type: AlbumType.album, names: ['album']}

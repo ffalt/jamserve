@@ -5,7 +5,7 @@ export interface AlbumTypeStats {
 	unknown: number;
 	live: number;
 	audiobook: number;
-	audiodrama: number;
+	series: number;
 	soundtrack: number;
 	bootleg: number;
 	ep: number;

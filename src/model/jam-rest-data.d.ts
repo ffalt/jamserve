@@ -9,7 +9,7 @@ import {WikiData} from './wikidata-rest-data';
 
 export declare namespace Jam {
 
-	export type AlbumType = 'unknown' | 'album' | 'compilation' | 'live' | 'bootleg' | 'soundtrack' | 'audiobook' | 'ep' | 'single' | 'audiodrama';
+	export type AlbumType = 'unknown' | 'album' | 'compilation' | 'live' | 'bootleg' | 'soundtrack' | 'audiobook' | 'ep' | 'single' | 'series';
 	export type FolderType = 'unknown' | 'artist' | 'collection' | 'album' | 'multialbum' | 'extras';
 	export type PodcastStatusType = 'new' | 'downloading' | 'completed' | 'error';
 	export type PodcastEpisodeStatusType = 'new' | 'downloading' | 'completed' | 'error' | 'deleted';
@@ -493,7 +493,7 @@ export declare namespace Jam {
 		unknown: number;
 		live: number;
 		audiobook: number;
-		audiodrama: number;
+		series: number;
 		soundtrack: number;
 		bootleg: number;
 		ep: number;

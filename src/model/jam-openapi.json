@@ -7129,11 +7129,11 @@
 							"enum": [
 								"album",
 								"audiobook",
-								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
 								"live",
+								"series",
 								"single",
 								"soundtrack",
 								"unknown"
@@ -7152,11 +7152,11 @@
 								"enum": [
 									"album",
 									"audiobook",
-									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
 									"live",
+									"series",
 									"single",
 									"soundtrack",
 									"unknown"
@@ -7558,11 +7558,11 @@
 							"enum": [
 								"album",
 								"audiobook",
-								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
 								"live",
+								"series",
 								"single",
 								"soundtrack",
 								"unknown"
@@ -7581,11 +7581,11 @@
 								"enum": [
 									"album",
 									"audiobook",
-									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
 									"live",
+									"series",
 									"single",
 									"soundtrack",
 									"unknown"
@@ -8246,11 +8246,11 @@
 							"enum": [
 								"album",
 								"audiobook",
-								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
 								"live",
+								"series",
 								"single",
 								"soundtrack",
 								"unknown"
@@ -8269,11 +8269,11 @@
 								"enum": [
 									"album",
 									"audiobook",
-									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
 									"live",
+									"series",
 									"single",
 									"soundtrack",
 									"unknown"
@@ -8992,11 +8992,11 @@
 							"enum": [
 								"album",
 								"audiobook",
-								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
 								"live",
+								"series",
 								"single",
 								"soundtrack",
 								"unknown"
@@ -9015,11 +9015,11 @@
 								"enum": [
 									"album",
 									"audiobook",
-									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
 									"live",
+									"series",
 									"single",
 									"soundtrack",
 									"unknown"
@@ -9260,11 +9260,11 @@
 							"enum": [
 								"album",
 								"audiobook",
-								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
 								"live",
+								"series",
 								"single",
 								"soundtrack",
 								"unknown"
@@ -9283,11 +9283,11 @@
 								"enum": [
 									"album",
 									"audiobook",
-									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
 									"live",
+									"series",
 									"single",
 									"soundtrack",
 									"unknown"
@@ -9587,11 +9587,11 @@
 							"enum": [
 								"album",
 								"audiobook",
-								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
 								"live",
+								"series",
 								"single",
 								"soundtrack",
 								"unknown"
@@ -9610,11 +9610,11 @@
 								"enum": [
 									"album",
 									"audiobook",
-									"audiodrama",
 									"bootleg",
 									"compilation",
 									"ep",
 									"live",
+									"series",
 									"single",
 									"soundtrack",
 									"unknown"
@@ -19541,7 +19541,7 @@
 					"audiobook": {
 						"type": "number"
 					},
-					"audiodrama": {
+					"series": {
 						"type": "number"
 					},
 					"soundtrack": {
@@ -19561,11 +19561,11 @@
 					"album",
 					"artist_compilation",
 					"audiobook",
-					"audiodrama",
 					"bootleg",
 					"compilation",
 					"ep",
 					"live",
+					"series",
 					"single",
 					"soundtrack",
 					"unknown"
@@ -22005,11 +22005,11 @@
 						"enum": [
 							"album",
 							"audiobook",
-							"audiodrama",
 							"bootleg",
 							"compilation",
 							"ep",
 							"live",
+							"series",
 							"single",
 							"soundtrack",
 							"unknown"
@@ -22615,11 +22615,11 @@
 							"enum": [
 								"album",
 								"audiobook",
-								"audiodrama",
 								"bootleg",
 								"compilation",
 								"ep",
 								"live",
+								"series",
 								"single",
 								"soundtrack",
 								"unknown"
@@ -22776,11 +22776,11 @@
 				"enum": [
 					"album",
 					"audiobook",
-					"audiodrama",
 					"bootleg",
 					"compilation",
 					"ep",
 					"live",
+					"series",
 					"single",
 					"soundtrack",
 					"unknown"

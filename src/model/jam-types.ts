@@ -122,7 +122,7 @@ export enum AlbumType {
 	audiobook = 'audiobook',
 	ep = 'ep',
 	single = 'single',
-	audiodrama = 'audiodrama'
+	series = 'series'
 }
 
 export const AlbumTypesArtistMusic = [AlbumType.album, AlbumType.live, AlbumType.bootleg, AlbumType.ep, AlbumType.single];

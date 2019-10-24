@@ -46,25 +46,25 @@ describe('Server', () => {
 		describe('lastfm/lookup', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('lastfm/lookup', {type: 'artist', id: 'xUP][n32Ibomjc0D&Gu@'}, 401);
+					await getNotLoggedIn('lastfm/lookup', {type: 'album-toptracks', id: 'gMCuokGVKro$p8'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"type" set to "empty string"', async () => {
-					await get('lastfm/lookup', {type: '', id: 'y850Y'}, 400);
+					await get('lastfm/lookup', {type: '', id: 'uJHQ*20QwC6X61&b'}, 400);
 				});
 				it('"type" set to "invalid enum"', async () => {
-					await get('lastfm/lookup', {type: 'invalid', id: 'z25TR$sinqT*x'}, 400);
+					await get('lastfm/lookup', {type: 'invalid', id: '3QIsdY!j@R('}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('lastfm/lookup', {type: 'album', id: ''}, 400);
+					await get('lastfm/lookup', {type: 'artist-toptracks', id: ''}, 400);
 				});
 			});
 		});
 		describe('acoustid/lookup', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('acoustid/lookup', {id: '*M#VA2)%VNJEg[]z!j'}, 401);
+					await getNotLoggedIn('acoustid/lookup', {id: '8tSdq'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -72,35 +72,35 @@ describe('Server', () => {
 					await get('acoustid/lookup', {id: ''}, 400);
 				});
 				it('"inc" set to "empty string"', async () => {
-					await get('acoustid/lookup', {id: 'aBo3*tm@', inc: ''}, 400);
+					await get('acoustid/lookup', {id: '!8RXGNLL$0T', inc: ''}, 400);
 				});
 			});
 		});
 		describe('musicbrainz/lookup', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('musicbrainz/lookup', {type: 'area', id: ')@*V3WucPUdSQZyqfG'}, 401);
+					await getNotLoggedIn('musicbrainz/lookup', {type: 'release-group', id: 'w2MQfZ'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"type" set to "empty string"', async () => {
-					await get('musicbrainz/lookup', {type: '', id: 'bfGOT1]ONMiDXvxg3j8S'}, 400);
+					await get('musicbrainz/lookup', {type: '', id: 'ArI0Q*zbSLNQJqc'}, 400);
 				});
 				it('"type" set to "invalid enum"', async () => {
-					await get('musicbrainz/lookup', {type: 'invalid', id: 'uevIO1U&uCcROlDmh0'}, 400);
+					await get('musicbrainz/lookup', {type: 'invalid', id: 'sh[@%)m%*azv[hF5cB@8'}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('musicbrainz/lookup', {type: 'recording', id: ''}, 400);
+					await get('musicbrainz/lookup', {type: 'event', id: ''}, 400);
 				});
 				it('"inc" set to "empty string"', async () => {
-					await get('musicbrainz/lookup', {type: 'release', id: '2C89mTk1Yh2MNlIq', inc: ''}, 400);
+					await get('musicbrainz/lookup', {type: 'recording', id: 'w%QniJJzG)Iigph7', inc: ''}, 400);
 				});
 			});
 		});
 		describe('musicbrainz/search', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('musicbrainz/search', {type: 'artist'}, 401);
+					await getNotLoggedIn('musicbrainz/search', {type: 'area'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -114,35 +114,35 @@ describe('Server', () => {
 					await get('musicbrainz/search', {type: 'area', recording: ''}, 400);
 				});
 				it('"releasegroup" set to "empty string"', async () => {
-					await get('musicbrainz/search', {type: 'label', releasegroup: ''}, 400);
+					await get('musicbrainz/search', {type: 'release', releasegroup: ''}, 400);
 				});
 				it('"release" set to "empty string"', async () => {
-					await get('musicbrainz/search', {type: 'work', release: ''}, 400);
+					await get('musicbrainz/search', {type: 'label', release: ''}, 400);
 				});
 				it('"artist" set to "empty string"', async () => {
-					await get('musicbrainz/search', {type: 'recording', artist: ''}, 400);
+					await get('musicbrainz/search', {type: 'label', artist: ''}, 400);
 				});
 				it('"tracks" set to "string"', async () => {
-					await get('musicbrainz/search', {type: 'release-group', tracks: '@JtX1JSLeQalY&xJl'}, 400);
+					await get('musicbrainz/search', {type: 'release', tracks: 'x2o$NqAqZXLUqS'}, 400);
 				});
 				it('"tracks" set to "empty string"', async () => {
-					await get('musicbrainz/search', {type: 'recording', tracks: ''}, 400);
+					await get('musicbrainz/search', {type: 'release-group', tracks: ''}, 400);
 				});
 				it('"tracks" set to "boolean"', async () => {
-					await get('musicbrainz/search', {type: 'artist', tracks: true}, 400);
+					await get('musicbrainz/search', {type: 'area', tracks: true}, 400);
 				});
 				it('"tracks" set to "float"', async () => {
-					await get('musicbrainz/search', {type: 'label', tracks: 56.15}, 400);
+					await get('musicbrainz/search', {type: 'release-group', tracks: 95.9}, 400);
 				});
 				it('"tracks" set to "less than minimum 0"', async () => {
-					await get('musicbrainz/search', {type: 'release-group', tracks: -1}, 400);
+					await get('musicbrainz/search', {type: 'artist', tracks: -1}, 400);
 				});
 			});
 		});
 		describe('acousticbrainz/lookup', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('acousticbrainz/lookup', {id: '0XAc3q!O#oDBZ'}, 401);
+					await getNotLoggedIn('acousticbrainz/lookup', {id: 'sO]otw0c#P*'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -150,44 +150,44 @@ describe('Server', () => {
 					await get('acousticbrainz/lookup', {id: ''}, 400);
 				});
 				it('"nr" set to "string"', async () => {
-					await get('acousticbrainz/lookup', {id: '^SD6QW*brX', nr: '1UR5&AV'}, 400);
+					await get('acousticbrainz/lookup', {id: '%MNLoWRf*9M5BlBNqRf', nr: 'K))Jh$kO'}, 400);
 				});
 				it('"nr" set to "empty string"', async () => {
-					await get('acousticbrainz/lookup', {id: 'XE!2GED)mkSq(wmCsGoZ', nr: ''}, 400);
+					await get('acousticbrainz/lookup', {id: '%ZlTV5', nr: ''}, 400);
 				});
 				it('"nr" set to "boolean"', async () => {
-					await get('acousticbrainz/lookup', {id: 'jWD72)', nr: true}, 400);
+					await get('acousticbrainz/lookup', {id: '(n)VA#u3jv89Pm5c', nr: true}, 400);
 				});
 				it('"nr" set to "float"', async () => {
-					await get('acousticbrainz/lookup', {id: '85DrMAzcJK', nr: 2.15}, 400);
+					await get('acousticbrainz/lookup', {id: '%rx$RQB9UV&BGo90w$uF', nr: 14.73}, 400);
 				});
 				it('"nr" set to "less than minimum 0"', async () => {
-					await get('acousticbrainz/lookup', {id: 'CUQ)NHaD7MQ&*qd1', nr: -1}, 400);
+					await get('acousticbrainz/lookup', {id: 'z[q(j', nr: -1}, 400);
 				});
 			});
 		});
 		describe('coverartarchive/lookup', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('coverartarchive/lookup', {type: 'release', id: 'c24o*608%HT#e]V7'}, 401);
+					await getNotLoggedIn('coverartarchive/lookup', {type: 'release-group', id: 'E#@YDwji$'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"type" set to "empty string"', async () => {
-					await get('coverartarchive/lookup', {type: '', id: '8nQ4vBfb3hmPJjpnr'}, 400);
+					await get('coverartarchive/lookup', {type: '', id: 'U%vuznF6#yvV2MzgS'}, 400);
 				});
 				it('"type" set to "invalid enum"', async () => {
-					await get('coverartarchive/lookup', {type: 'invalid', id: 'au93iPokp'}, 400);
+					await get('coverartarchive/lookup', {type: 'invalid', id: 'Cop2#w]7yfx]o'}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('coverartarchive/lookup', {type: 'release', id: ''}, 400);
+					await get('coverartarchive/lookup', {type: 'release-group', id: ''}, 400);
 				});
 			});
 		});
 		describe('wikipedia/summary', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('wikipedia/summary', {title: '5BICauqLVh78zYQ'}, 401);
+					await getNotLoggedIn('wikipedia/summary', {title: '&D9X2$'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -199,7 +199,7 @@ describe('Server', () => {
 		describe('wikidata/summary', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('wikidata/summary', {id: '!ezhC9a'}, 401);
+					await getNotLoggedIn('wikidata/summary', {id: 'V%soJ&[as'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -211,7 +211,7 @@ describe('Server', () => {
 		describe('wikidata/lookup', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('wikidata/lookup', {id: 'LV1F%7$P[SWPv'}, 401);
+					await getNotLoggedIn('wikidata/lookup', {id: 'mMsc$x4wTFC1E*DY'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -223,7 +223,7 @@ describe('Server', () => {
 		describe('autocomplete', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('autocomplete', {query: 'z5@36kdb5N#Bt8YZ'}, 401);
+					await getNotLoggedIn('autocomplete', {query: 'nJFETBPv&ThVXK'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -231,109 +231,109 @@ describe('Server', () => {
 					await get('autocomplete', {query: ''}, 400);
 				});
 				it('"track" set to "string"', async () => {
-					await get('autocomplete', {query: 'uWIXEI&@n!IMdvR', track: 'Q(%o3LFraNjpToCF'}, 400);
+					await get('autocomplete', {query: 'zimeP1k2@#Uyju[w', track: 'TZ)[28$Zl4M^YRXw8n'}, 400);
 				});
 				it('"track" set to "empty string"', async () => {
-					await get('autocomplete', {query: 'A*yNW41AAHeq$fj$L[', track: ''}, 400);
+					await get('autocomplete', {query: 'Kck[YG', track: ''}, 400);
 				});
 				it('"track" set to "boolean"', async () => {
-					await get('autocomplete', {query: 'j7vM5BUlxaI!Tgk', track: true}, 400);
+					await get('autocomplete', {query: 'cFN)j$CAVp9w%F#%3Zo', track: true}, 400);
 				});
 				it('"track" set to "float"', async () => {
-					await get('autocomplete', {query: '&yYnMcoLoN)2$pg3', track: 75.31}, 400);
+					await get('autocomplete', {query: '^O!Z69z*bplpQ', track: 41.51}, 400);
 				});
 				it('"track" set to "less than minimum 0"', async () => {
-					await get('autocomplete', {query: ']hcMSZ2a%R%9*DemlHyY', track: -1}, 400);
+					await get('autocomplete', {query: 'UUj1Y5VK7dKqmNW[)0h2', track: -1}, 400);
 				});
 				it('"artist" set to "string"', async () => {
-					await get('autocomplete', {query: 'XMvdz5s', artist: 'rCj2Lt@]vtM3rt@#'}, 400);
+					await get('autocomplete', {query: 'UuaSkhs9', artist: 'o8aW6j5'}, 400);
 				});
 				it('"artist" set to "empty string"', async () => {
-					await get('autocomplete', {query: '^GcWpwTNa*N7VY', artist: ''}, 400);
+					await get('autocomplete', {query: 'JF9e0QsWk0jvRJ', artist: ''}, 400);
 				});
 				it('"artist" set to "boolean"', async () => {
-					await get('autocomplete', {query: '93PK1Mi559dNo2a@', artist: true}, 400);
+					await get('autocomplete', {query: 'u[%XR2(2z5J', artist: true}, 400);
 				});
 				it('"artist" set to "float"', async () => {
-					await get('autocomplete', {query: 'Y$1pnLU%z$sVQ1cml2', artist: 14.7}, 400);
+					await get('autocomplete', {query: 'GbXp@Kg7$p2HSA#', artist: 69.22}, 400);
 				});
 				it('"artist" set to "less than minimum 0"', async () => {
-					await get('autocomplete', {query: 'xBHu#o@w^Po$', artist: -1}, 400);
+					await get('autocomplete', {query: 'ZetPs', artist: -1}, 400);
 				});
 				it('"album" set to "string"', async () => {
-					await get('autocomplete', {query: '$d]pkC5L', album: '3$cMa'}, 400);
+					await get('autocomplete', {query: '336*Vhq(', album: 'KqZEcGq%!&om'}, 400);
 				});
 				it('"album" set to "empty string"', async () => {
-					await get('autocomplete', {query: 'te()R', album: ''}, 400);
+					await get('autocomplete', {query: '0b#)nA4z6G8Eq[!j3A', album: ''}, 400);
 				});
 				it('"album" set to "boolean"', async () => {
-					await get('autocomplete', {query: 'fNg%B8quF', album: true}, 400);
+					await get('autocomplete', {query: '*Jd3LXlh4^dT#2)$kL%l', album: true}, 400);
 				});
 				it('"album" set to "float"', async () => {
-					await get('autocomplete', {query: 'zbU]0fg', album: 82.96}, 400);
+					await get('autocomplete', {query: 'Dq#@$(XBo&', album: 71.51}, 400);
 				});
 				it('"album" set to "less than minimum 0"', async () => {
-					await get('autocomplete', {query: 'Z0oP^AtjwUf', album: -1}, 400);
+					await get('autocomplete', {query: 'G8cZ*p)l4', album: -1}, 400);
 				});
 				it('"folder" set to "string"', async () => {
-					await get('autocomplete', {query: 'P4SdPll(]D8q09Zx8zmS', folder: 'B&E54E'}, 400);
+					await get('autocomplete', {query: 'zP]]1JrX@B4tM', folder: '(ECF&PzDeyrhaV$jcA'}, 400);
 				});
 				it('"folder" set to "empty string"', async () => {
-					await get('autocomplete', {query: 'EJW*i*nY4LBH@', folder: ''}, 400);
+					await get('autocomplete', {query: 'sl%l@IBQ5w&zs3[]R', folder: ''}, 400);
 				});
 				it('"folder" set to "boolean"', async () => {
-					await get('autocomplete', {query: 'Ko(%jskc[9&24Z', folder: true}, 400);
+					await get('autocomplete', {query: 'fwHMa^Hc0MmT5cgEM', folder: true}, 400);
 				});
 				it('"folder" set to "float"', async () => {
-					await get('autocomplete', {query: '9^RWrKuOdA', folder: 23.54}, 400);
+					await get('autocomplete', {query: 'SsGC5MFNd', folder: 68.91}, 400);
 				});
 				it('"folder" set to "less than minimum 0"', async () => {
-					await get('autocomplete', {query: '8R)TQ#!HX2I*I', folder: -1}, 400);
+					await get('autocomplete', {query: 'KfBjT0h0*m7yP79#3Y', folder: -1}, 400);
 				});
 				it('"playlist" set to "string"', async () => {
-					await get('autocomplete', {query: 'qkZ!Ag)@j!68WHUoRp*G', playlist: 'wzM4neZon6oceeyr@'}, 400);
+					await get('autocomplete', {query: '7QSMlrU[^JP05', playlist: 'p[QQr'}, 400);
 				});
 				it('"playlist" set to "empty string"', async () => {
-					await get('autocomplete', {query: ')f84Us3&', playlist: ''}, 400);
+					await get('autocomplete', {query: 'QRK4ibKGmK(iPuxZVrKD', playlist: ''}, 400);
 				});
 				it('"playlist" set to "boolean"', async () => {
-					await get('autocomplete', {query: 'C!)P(wj^q5j', playlist: true}, 400);
+					await get('autocomplete', {query: 'Xc!abvod8', playlist: true}, 400);
 				});
 				it('"playlist" set to "float"', async () => {
-					await get('autocomplete', {query: 'qzrw%yeziMU)0', playlist: 74.55}, 400);
+					await get('autocomplete', {query: '2hCqoArOsEc)G8q', playlist: 79.76}, 400);
 				});
 				it('"playlist" set to "less than minimum 0"', async () => {
-					await get('autocomplete', {query: 'J3TC[ovSma1)Bn', playlist: -1}, 400);
+					await get('autocomplete', {query: '6VbAr[FZ@VO', playlist: -1}, 400);
 				});
 				it('"podcast" set to "string"', async () => {
-					await get('autocomplete', {query: '4180vJeug3D!1CM2D0v', podcast: 'j6O)i$w7!B($!#y'}, 400);
+					await get('autocomplete', {query: 'f95pmaZQ1', podcast: 'D(tK#c'}, 400);
 				});
 				it('"podcast" set to "empty string"', async () => {
-					await get('autocomplete', {query: 'y^zftXM7^OryQOP0d', podcast: ''}, 400);
+					await get('autocomplete', {query: 'ZTeiGg', podcast: ''}, 400);
 				});
 				it('"podcast" set to "boolean"', async () => {
-					await get('autocomplete', {query: 'h#d9!5T!!u&G*&vX', podcast: true}, 400);
+					await get('autocomplete', {query: '7l%435R', podcast: true}, 400);
 				});
 				it('"podcast" set to "float"', async () => {
-					await get('autocomplete', {query: 'U5*F0eDskZ9SNlQ^pW', podcast: 60.01}, 400);
+					await get('autocomplete', {query: '4n1tO4UcZ7zvEHtxSg', podcast: 30.85}, 400);
 				});
 				it('"podcast" set to "less than minimum 0"', async () => {
-					await get('autocomplete', {query: 'OxNpZ', podcast: -1}, 400);
+					await get('autocomplete', {query: '#ZPl&[D1', podcast: -1}, 400);
 				});
 				it('"episode" set to "string"', async () => {
-					await get('autocomplete', {query: 'yPhRV[!%n%@', episode: '7dKkLamb@@SM'}, 400);
+					await get('autocomplete', {query: 'huM$Z]t&KOBbr', episode: 'pPKujyF[86)aOr90[ea'}, 400);
 				});
 				it('"episode" set to "empty string"', async () => {
-					await get('autocomplete', {query: 'A17G%!', episode: ''}, 400);
+					await get('autocomplete', {query: 'yoDI&)5^n$1feCGf$bu', episode: ''}, 400);
 				});
 				it('"episode" set to "boolean"', async () => {
-					await get('autocomplete', {query: '!)u53*cIw[q9q4E7IHt', episode: true}, 400);
+					await get('autocomplete', {query: 'sM1m#674nB23RAZ', episode: true}, 400);
 				});
 				it('"episode" set to "float"', async () => {
-					await get('autocomplete', {query: 'zYTu(KUvmv7cQawaMlM', episode: 36.9}, 400);
+					await get('autocomplete', {query: 'w&dmlN4', episode: 81.37}, 400);
 				});
 				it('"episode" set to "less than minimum 0"', async () => {
-					await get('autocomplete', {query: 'ru1M(', episode: -1}, 400);
+					await get('autocomplete', {query: 'izcEQE5egO1W%mz&%', episode: -1}, 400);
 				});
 			});
 		});
@@ -348,7 +348,7 @@ describe('Server', () => {
 					await get('genre/list', {rootID: ''}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('genre/list', {offset: 'Jne6hQ'}, 400);
+					await get('genre/list', {offset: 'n731gm7rz24eV'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('genre/list', {offset: ''}, 400);
@@ -357,13 +357,13 @@ describe('Server', () => {
 					await get('genre/list', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('genre/list', {offset: 29.16}, 400);
+					await get('genre/list', {offset: 83.53}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('genre/list', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('genre/list', {amount: '87J)pZ5KN(]2QfR*Y'}, 400);
+					await get('genre/list', {amount: 'canGhiXU'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('genre/list', {amount: ''}, 400);
@@ -372,7 +372,7 @@ describe('Server', () => {
 					await get('genre/list', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('genre/list', {amount: 14.29}, 400);
+					await get('genre/list', {amount: 10.66}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('genre/list', {amount: 0}, 400);
@@ -399,7 +399,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('nowPlaying/list', {offset: 'QSR&lyCiICeF7P&K2He'}, 400);
+					await get('nowPlaying/list', {offset: '$^[9%I))RLsmqZoVgp%'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('nowPlaying/list', {offset: ''}, 400);
@@ -408,13 +408,13 @@ describe('Server', () => {
 					await get('nowPlaying/list', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('nowPlaying/list', {offset: 1.04}, 400);
+					await get('nowPlaying/list', {offset: 49.19}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('nowPlaying/list', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('nowPlaying/list', {amount: 'S*RVRTY'}, 400);
+					await get('nowPlaying/list', {amount: '5Y](ey[8'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('nowPlaying/list', {amount: ''}, 400);
@@ -423,7 +423,7 @@ describe('Server', () => {
 					await get('nowPlaying/list', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('nowPlaying/list', {amount: 12.02}, 400);
+					await get('nowPlaying/list', {amount: 82.65}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('nowPlaying/list', {amount: 0}, 400);
@@ -438,7 +438,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"since" set to "string"', async () => {
-					await get('chat/list', {since: 'KN$Kph2JJI6r4pJx#T]['}, 400);
+					await get('chat/list', {since: '^R0ZE'}, 400);
 				});
 				it('"since" set to "empty string"', async () => {
 					await get('chat/list', {since: ''}, 400);
@@ -447,7 +447,7 @@ describe('Server', () => {
 					await get('chat/list', {since: true}, 400);
 				});
 				it('"since" set to "float"', async () => {
-					await get('chat/list', {since: 8.96}, 400);
+					await get('chat/list', {since: 40.62}, 400);
 				});
 				it('"since" set to "less than minimum 0"', async () => {
 					await get('chat/list', {since: -1}, 400);
@@ -489,7 +489,7 @@ describe('Server', () => {
 					await get('folder/index', {genre: ''}, 400);
 				});
 				it('"level" set to "string"', async () => {
-					await get('folder/index', {level: 'l[X[%iWHZ16QL*SP6k'}, 400);
+					await get('folder/index', {level: 'DnOg&Kig$8%'}, 400);
 				});
 				it('"level" set to "empty string"', async () => {
 					await get('folder/index', {level: ''}, 400);
@@ -498,13 +498,13 @@ describe('Server', () => {
 					await get('folder/index', {level: true}, 400);
 				});
 				it('"level" set to "float"', async () => {
-					await get('folder/index', {level: 71.81}, 400);
+					await get('folder/index', {level: 51.75}, 400);
 				});
 				it('"level" set to "less than minimum 0"', async () => {
 					await get('folder/index', {level: -1}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('folder/index', {newerThan: '&4]ww*0l2d%vc!6F'}, 400);
+					await get('folder/index', {newerThan: '!4qVb!O'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
 					await get('folder/index', {newerThan: ''}, 400);
@@ -513,13 +513,13 @@ describe('Server', () => {
 					await get('folder/index', {newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('folder/index', {newerThan: 11.54}, 400);
+					await get('folder/index', {newerThan: 96.32}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
 					await get('folder/index', {newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('folder/index', {fromYear: 'muU6aueXipwliCQ^*a'}, 400);
+					await get('folder/index', {fromYear: 'm%)5YTH(Ql!JV*Z9b%'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
 					await get('folder/index', {fromYear: ''}, 400);
@@ -528,13 +528,13 @@ describe('Server', () => {
 					await get('folder/index', {fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('folder/index', {fromYear: 62.29}, 400);
+					await get('folder/index', {fromYear: 97.02}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
 					await get('folder/index', {fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('folder/index', {toYear: 'l5B7ZEP&@GD$)d#4g9$L'}, 400);
+					await get('folder/index', {toYear: 'fJhrb#yF8b'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
 					await get('folder/index', {toYear: ''}, 400);
@@ -543,7 +543,7 @@ describe('Server', () => {
 					await get('folder/index', {toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('folder/index', {toYear: 41.2}, 400);
+					await get('folder/index', {toYear: 62.2}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
 					await get('folder/index', {toYear: -1}, 400);
@@ -585,20 +585,20 @@ describe('Server', () => {
 					await get('folder/index', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('folder/index', {sortDescending: 's1d7)nVxYfg*s8y'}, 400);
+					await get('folder/index', {sortDescending: 'tJv7dUFEj1i5Abvxt8'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('folder/index', {sortDescending: 1122903571562498}, 400);
+					await get('folder/index', {sortDescending: -1505937143627774}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('folder/index', {sortDescending: -8994160203792385}, 400);
+					await get('folder/index', {sortDescending: -2997270140157953}, 400);
 				});
 			});
 		});
 		describe('folder/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/id', {id: 'jp60e^ll#tYl'}, 401);
+					await getNotLoggedIn('folder/id', {id: 'C]fMi07J7(rfmaUT$Q'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -606,179 +606,179 @@ describe('Server', () => {
 					await get('folder/id', {id: ''}, 400);
 				});
 				it('"folderTag" set to "empty string"', async () => {
-					await get('folder/id', {id: '&3fIb', folderTag: ''}, 400);
+					await get('folder/id', {id: 'pqXW3v4l]PJkbL', folderTag: ''}, 400);
 				});
 				it('"folderTag" set to "string"', async () => {
-					await get('folder/id', {id: 'BQ78LM29z', folderTag: 'YS4Yi]lb'}, 400);
+					await get('folder/id', {id: 'j$k&Xe', folderTag: 'CP&2t9Dkd6YMw7AE6i8G'}, 400);
 				});
 				it('"folderTag" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'C4)Z0gsgIH$', folderTag: -661759346081790}, 400);
+					await get('folder/id', {id: 'JgPKL', folderTag: -705228433260542}, 400);
 				});
 				it('"folderTag" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'v#swjSh', folderTag: 8178996516749311}, 400);
+					await get('folder/id', {id: '@J9g*h*Q2', folderTag: -4595719860125697}, 400);
 				});
 				it('"folderState" set to "empty string"', async () => {
-					await get('folder/id', {id: 'bk@iau', folderState: ''}, 400);
+					await get('folder/id', {id: 'KsRV69345Dr$LFhVz@2a', folderState: ''}, 400);
 				});
 				it('"folderState" set to "string"', async () => {
-					await get('folder/id', {id: 'Df0q)!n45G(bQY)', folderState: 'sEsPo$0v4!'}, 400);
+					await get('folder/id', {id: 'QF*zjvCyf^Ys)FV', folderState: 'ncBiuxn1'}, 400);
 				});
 				it('"folderState" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'guhEKUsxl4zfKNwp7', folderState: 8032756428701698}, 400);
+					await get('folder/id', {id: 'JceR&kkW4geSL', folderState: -8808535559241726}, 400);
 				});
 				it('"folderState" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'ImAo9UxL9', folderState: 6112049507598335}, 400);
+					await get('folder/id', {id: 'rHfM7hgPE7Ovz@oV&J', folderState: -1891992254545921}, 400);
 				});
 				it('"folderCounts" set to "empty string"', async () => {
-					await get('folder/id', {id: 'Kn[^p60x1wezS5Pod', folderCounts: ''}, 400);
+					await get('folder/id', {id: 'I55)Y&', folderCounts: ''}, 400);
 				});
 				it('"folderCounts" set to "string"', async () => {
-					await get('folder/id', {id: '(aP&@Mb1W@n7NG', folderCounts: 'D7^1aqbgtblQ]fkq6U6'}, 400);
+					await get('folder/id', {id: 'CFcVwO^yu^[&py', folderCounts: 'oX@vvnmWBLnonNPiED'}, 400);
 				});
 				it('"folderCounts" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'MMCCrH50hoIV', folderCounts: -1393748890091518}, 400);
+					await get('folder/id', {id: '3HZPX7', folderCounts: -5828621839106046}, 400);
 				});
 				it('"folderCounts" set to "integer < 0"', async () => {
-					await get('folder/id', {id: '%x]T[0BC6twiz3', folderCounts: -6677324405669889}, 400);
+					await get('folder/id', {id: '$Oxp*3)ruq3DWj7TE45', folderCounts: 256013026459647}, 400);
 				});
 				it('"folderParents" set to "empty string"', async () => {
-					await get('folder/id', {id: 'xai@ZVAOfkr21ZeoHyy', folderParents: ''}, 400);
+					await get('folder/id', {id: 'CtEy3%i)spqXS', folderParents: ''}, 400);
 				});
 				it('"folderParents" set to "string"', async () => {
-					await get('folder/id', {id: 'ybH9E4r[K2*s^', folderParents: '^j&5p!e2ykeF*L'}, 400);
+					await get('folder/id', {id: '^[a9%yWCbB', folderParents: 'Ozp^wYFN2uhgs'}, 400);
 				});
 				it('"folderParents" set to "integer > 1"', async () => {
-					await get('folder/id', {id: '%*Apobz#D5t3O', folderParents: -1763132179480574}, 400);
+					await get('folder/id', {id: 'WHzu)e]DPYzD', folderParents: 6489163050254338}, 400);
 				});
 				it('"folderParents" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'SlOe1', folderParents: -3798948053516289}, 400);
+					await get('folder/id', {id: 'PEzs54rJS!gG@m', folderParents: 13244735422463}, 400);
 				});
 				it('"folderInfo" set to "empty string"', async () => {
-					await get('folder/id', {id: 'xKV9bPS@G4Df', folderInfo: ''}, 400);
+					await get('folder/id', {id: 'o[Bh6dBIRL51vJl', folderInfo: ''}, 400);
 				});
 				it('"folderInfo" set to "string"', async () => {
-					await get('folder/id', {id: 'm6OurxGJo8d', folderInfo: '0N![jf!5B5GAn'}, 400);
+					await get('folder/id', {id: '^GV#9QU96m6iJoe#hC7', folderInfo: 'N$Ldvt'}, 400);
 				});
 				it('"folderInfo" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'jF950OWzk', folderInfo: -1815928182407166}, 400);
+					await get('folder/id', {id: '^HGd&&oIL0zW)kUx7z3', folderInfo: -271775199920126}, 400);
 				});
 				it('"folderInfo" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'UIiy1n&jnGJ51ZSN', folderInfo: -2916241735942145}, 400);
+					await get('folder/id', {id: 'TJ3@[OXxq', folderInfo: -2139847913373697}, 400);
 				});
 				it('"folderSimilar" set to "empty string"', async () => {
-					await get('folder/id', {id: 'q0pJN6', folderSimilar: ''}, 400);
+					await get('folder/id', {id: 'ZjdCn', folderSimilar: ''}, 400);
 				});
 				it('"folderSimilar" set to "string"', async () => {
-					await get('folder/id', {id: 'aJTY5ockA9', folderSimilar: 'lFd%cRPP*FNA8'}, 400);
+					await get('folder/id', {id: '&c$ly0hvo%AT', folderSimilar: 'wE3OUmjQaFVRoe'}, 400);
 				});
 				it('"folderSimilar" set to "integer > 1"', async () => {
-					await get('folder/id', {id: '%e^3bCtQIj0qZ]AJCYIx', folderSimilar: 962114160164866}, 400);
+					await get('folder/id', {id: 'vB!E6ZX!0fWdHeKV2Q', folderSimilar: -2209287451443198}, 400);
 				});
 				it('"folderSimilar" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'JWY$6&Is(7jN$JTaYt', folderSimilar: 5239657885335551}, 400);
+					await get('folder/id', {id: 't9eTA', folderSimilar: 6359679550619647}, 400);
 				});
 				it('"folderArtworks" set to "empty string"', async () => {
-					await get('folder/id', {id: 'uBM!YYxoeNi^Do', folderArtworks: ''}, 400);
+					await get('folder/id', {id: '0lDbANtMw(', folderArtworks: ''}, 400);
 				});
 				it('"folderArtworks" set to "string"', async () => {
-					await get('folder/id', {id: ')s8vX#xRqx[X]kW', folderArtworks: '2%Y50xY^'}, 400);
+					await get('folder/id', {id: ']H0dDr', folderArtworks: '2qXXTnz(k^'}, 400);
 				});
 				it('"folderArtworks" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'Ec355XCJWqyH0!&mDD$9', folderArtworks: 682397565714434}, 400);
+					await get('folder/id', {id: '&rm7@Vu#7UP$or1V]', folderArtworks: -8682874551140350}, 400);
 				});
 				it('"folderArtworks" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'wNfg5gu&USwfnwL]', folderArtworks: 4726793130999807}, 400);
+					await get('folder/id', {id: '(hJa@', folderArtworks: -6614334075568129}, 400);
 				});
 				it('"folderChildren" set to "empty string"', async () => {
-					await get('folder/id', {id: '#fe5eTx', folderChildren: ''}, 400);
+					await get('folder/id', {id: 'D$uD)lhNu', folderChildren: ''}, 400);
 				});
 				it('"folderChildren" set to "string"', async () => {
-					await get('folder/id', {id: 'E2Ck&726f0H8VlZ5*x1', folderChildren: 'zF!ty%4E$LiW'}, 400);
+					await get('folder/id', {id: '^ebDzlcpDqFrsmdEZ', folderChildren: '56s1YxoU$o'}, 400);
 				});
 				it('"folderChildren" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'QM7YBlmR)', folderChildren: 7611316407631874}, 400);
+					await get('folder/id', {id: '[#7[0QD4Q', folderChildren: -739522413330430}, 400);
 				});
 				it('"folderChildren" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'IGw6cukfNgm2aY8mds7', folderChildren: -2347903750242305}, 400);
+					await get('folder/id', {id: 'Lppo&q3]#9VK]mS&7', folderChildren: 7387112403894271}, 400);
 				});
 				it('"folderSubfolders" set to "empty string"', async () => {
-					await get('folder/id', {id: 'Qnmk!n%qd1iaWO)$IK$', folderSubfolders: ''}, 400);
+					await get('folder/id', {id: '9YQGPf', folderSubfolders: ''}, 400);
 				});
 				it('"folderSubfolders" set to "string"', async () => {
-					await get('folder/id', {id: 'c8joy8l', folderSubfolders: 'oeuI3ng1zBoOtyf8'}, 400);
+					await get('folder/id', {id: ')n]mR2rIgAvyqhipJ*T', folderSubfolders: '&xGtfea#$$)VdRWDIW'}, 400);
 				});
 				it('"folderSubfolders" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'OSM2Gh', folderSubfolders: -8626759616430078}, 400);
+					await get('folder/id', {id: 'NpA3FOTE', folderSubfolders: -5944425494609918}, 400);
 				});
 				it('"folderSubfolders" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'l0P0g@$fgT@v^(m', folderSubfolders: 8860428943753215}, 400);
+					await get('folder/id', {id: 'em2jR7O#v', folderSubfolders: -1192362604756993}, 400);
 				});
 				it('"folderTracks" set to "empty string"', async () => {
-					await get('folder/id', {id: '#9#Z&MNgxRveLFRt6VM!', folderTracks: ''}, 400);
+					await get('folder/id', {id: '(V0oUw3#E0F3zqwNtR(b', folderTracks: ''}, 400);
 				});
 				it('"folderTracks" set to "string"', async () => {
-					await get('folder/id', {id: 'Oq6duH71fn', folderTracks: 'dvf0I35FPp'}, 400);
+					await get('folder/id', {id: 'DtO15bRp7)', folderTracks: '7Ng0MdeaF3#*GoC'}, 400);
 				});
 				it('"folderTracks" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'NPs%4gjknFHXXkhtju', folderTracks: 7033093105909762}, 400);
+					await get('folder/id', {id: 'FMoqXcc8CR', folderTracks: -4985760348372990}, 400);
 				});
 				it('"folderTracks" set to "integer < 0"', async () => {
-					await get('folder/id', {id: '1zmTQ]UAt#wX)38R', folderTracks: -5022869788557313}, 400);
+					await get('folder/id', {id: 'pAbUiP)l2wHu', folderTracks: -3244699863220225}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('folder/id', {id: 'E%wYygL', trackMedia: ''}, 400);
+					await get('folder/id', {id: 'CZJ(3AV11J#', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('folder/id', {id: '&(40&Vy%Al', trackMedia: 'lyR(hsloo'}, 400);
+					await get('folder/id', {id: 'l2Bq$i]VLdi7EKJq]', trackMedia: 'ZQAWcC6EG#rFmhf'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('folder/id', {id: '$NvV5xY', trackMedia: -2352051803652094}, 400);
+					await get('folder/id', {id: 's^)kW&Hy0Sx]3Bj]B', trackMedia: -3003120766418942}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'qa7@RZj2', trackMedia: 6257145536315391}, 400);
+					await get('folder/id', {id: 'e#A^$[', trackMedia: -8255005500899329}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('folder/id', {id: 't8V]LYQn', trackTag: ''}, 400);
+					await get('folder/id', {id: 'sDSREHD', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('folder/id', {id: 'U!hYwaO2varTN', trackTag: '76Vv^!)^CN[i8[Frh[$'}, 400);
+					await get('folder/id', {id: 'ra#)b!6', trackTag: 'a8O(U0fPl$VGZpl['}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'HcjZlImno2', trackTag: 5514695746256898}, 400);
+					await get('folder/id', {id: 'VDrKQIE]fkxVWDP', trackTag: 7026563266641922}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'ObYW7IFPRtxp*Vq', trackTag: 5839087567110143}, 400);
+					await get('folder/id', {id: '7r0waabk', trackTag: 8505827182772223}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('folder/id', {id: 'w(r4rt^^Vzx&ba^', trackRawTag: ''}, 400);
+					await get('folder/id', {id: '^Vs]LkK8i3X4n1E', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('folder/id', {id: 's3^K]i^(]MJ5vgZD*VM(', trackRawTag: '0X&3[wBm'}, 400);
+					await get('folder/id', {id: '$X@f1M^@vg)R(J', trackRawTag: 'Kp]V6'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'mD&f4j6BFoygJcA', trackRawTag: 832449605009410}, 400);
+					await get('folder/id', {id: '8CqDAm[bVkk', trackRawTag: 2002045833838594}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('folder/id', {id: 'GwD5aFM3Fr(Fb]w(r8yO', trackRawTag: 2582055208615935}, 400);
+					await get('folder/id', {id: 'FDrqQr80*', trackRawTag: 2950100489863167}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('folder/id', {id: '3KtvP@LMa', trackState: ''}, 400);
+					await get('folder/id', {id: 'sxHNoM!l!joAplSSOoH', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('folder/id', {id: 'kic]m', trackState: 'HWaDmAyhbOHX6xCPd'}, 400);
+					await get('folder/id', {id: 'kQG0CtVoEuwj2m', trackState: 'jD$a6$[tA2meYDuIT3'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('folder/id', {id: 'MI7&9Ku&1]N7I', trackState: -4708791949983742}, 400);
+					await get('folder/id', {id: 'w$uxQtrtlLFb', trackState: 4364026142261250}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('folder/id', {id: '$r8%0R)7*XKm', trackState: -689854656544769}, 400);
+					await get('folder/id', {id: '4wJzx4^ka', trackState: -2985316709302273}, 400);
 				});
 			});
 		});
 		describe('folder/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/ids', {ids: ['Od@K7', '5qsqxoBkQ']}, 401);
+					await getNotLoggedIn('folder/ids', {ids: [']8N&wFYYTxYECNN%CXX', 'qF9lF!57ohj([2o@yPA']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -789,179 +789,179 @@ describe('Server', () => {
 					await get('folder/ids', {ids: [null, '']}, 400);
 				});
 				it('"folderTag" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['8&I^01790N9!)*J', 'wR]24'], folderTag: ''}, 400);
+					await get('folder/ids', {ids: ['xG!je38zvWdw$y', '*tkUTt'], folderTag: ''}, 400);
 				});
 				it('"folderTag" set to "string"', async () => {
-					await get('folder/ids', {ids: ['AV3pNBLp[^ZdPBdXQ%', '(Iaw1ffFT1V'], folderTag: 'Vk$E0Q@'}, 400);
+					await get('folder/ids', {ids: ['5M$g$4oylU4Kw', 'YDVIogSYR$'], folderTag: 'e@^Ci^TVJP'}, 400);
 				});
 				it('"folderTag" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['JK6qJzbj^6nvk&J&0X', 'EZZ0*z1F'], folderTag: 420250252214274}, 400);
+					await get('folder/ids', {ids: ['6YhQvi', '5B$9EJaJRED5wa&'], folderTag: -2365988859281406}, 400);
 				});
 				it('"folderTag" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['h8xKSYrIiccLiy', '^b&ufgb!$'], folderTag: -761047879254017}, 400);
+					await get('folder/ids', {ids: ['CypVtI0', 'y#F!Njg8^D4!6$@S'], folderTag: -4826455468933121}, 400);
 				});
 				it('"folderState" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['xZ7y@8DH%wQr&', 'hz][le$uS@nf6HP2O@'], folderState: ''}, 400);
+					await get('folder/ids', {ids: ['d3#Oo$6T%O1YfNMMaGn', 'Ipuu&UMqASMN4mhoH1R*'], folderState: ''}, 400);
 				});
 				it('"folderState" set to "string"', async () => {
-					await get('folder/ids', {ids: ['&hwNcKPrv*#CB&', 'imag7l31pb5qHa'], folderState: 'oFpNYhM55*wnxMK^)HPQ'}, 400);
+					await get('folder/ids', {ids: ['*qKiWz(a0VoB9C', 'Luk$7'], folderState: 'YLnbIJGTpD'}, 400);
 				});
 				it('"folderState" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['12JwLOIZp', 'PFuo22%BBqMwcC&'], folderState: -4389943933665278}, 400);
+					await get('folder/ids', {ids: ['6P#)DD0qFm3*^!lk&gz', '&Fy4k'], folderState: -8369999039168510}, 400);
 				});
 				it('"folderState" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['#W943SOp', 'S[NC]S7Y'], folderState: -1741477096980481}, 400);
+					await get('folder/ids', {ids: ['kvwG]', '3#yWt)FaZJp'], folderState: -7753879206756353}, 400);
 				});
 				it('"folderCounts" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['^EIsiotQ^$%', '*^)rAk4'], folderCounts: ''}, 400);
+					await get('folder/ids', {ids: ['CH)&bO0SIW', 'E9F7a18@FzPiAw]('], folderCounts: ''}, 400);
 				});
 				it('"folderCounts" set to "string"', async () => {
-					await get('folder/ids', {ids: ['1n994AYiOCZ&7LkwV#3', '!%zDKq7eJE]Be'], folderCounts: '7*WtnyClm'}, 400);
+					await get('folder/ids', {ids: ['rR#]SUp', 'BR)UnXS&ko&g'], folderCounts: 'Rw)jL#2ER%9%6'}, 400);
 				});
 				it('"folderCounts" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['u4[RG]VeGbgIdbJ', '3ZQeNgkqKh'], folderCounts: 4341770322182146}, 400);
+					await get('folder/ids', {ids: ['8IgA92o2tsUh5j)DY6c1', 'yI[xH'], folderCounts: 8083837657546754}, 400);
 				});
 				it('"folderCounts" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['*$H@h[TRavy', 'KISlXS1td3t)Lm'], folderCounts: -7713566211702785}, 400);
+					await get('folder/ids', {ids: ['XBxVV2CJ', 'aKQM@YpJyv'], folderCounts: 1611167692750847}, 400);
 				});
 				it('"folderParents" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['6$8IK4n2', '$2h^7qBg9'], folderParents: ''}, 400);
+					await get('folder/ids', {ids: ['9X]IA2L4)ueqT76', 'y$5N0uZg)LzKqY%MK@$'], folderParents: ''}, 400);
 				});
 				it('"folderParents" set to "string"', async () => {
-					await get('folder/ids', {ids: ['B2mRwYoi9X^tql', '9zce('], folderParents: 'eHHlG8kH$tmZSnE%o^z]'}, 400);
+					await get('folder/ids', {ids: [')&O8u8^Oz6G', 'zNtNqn!gyu5KwpejBo'], folderParents: 'E@1MbVJy0Ph2dA9k@rSR'}, 400);
 				});
 				it('"folderParents" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['0$))CS#kJ', 'e^oO6A3Io'], folderParents: 1493424922427394}, 400);
+					await get('folder/ids', {ids: ['2mGTGDrT!8', 'zaQ91PCDFp5k4Fh5O(K'], folderParents: -8407186426298366}, 400);
 				});
 				it('"folderParents" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['1ZV9%x', 'n%A1bmvfk2'], folderParents: 5210459296759807}, 400);
+					await get('folder/ids', {ids: ['[mOr)KOPlXWBn]l4!9', '9]E5]qdxOkRGPkeN'], folderParents: 8599533768409087}, 400);
 				});
 				it('"folderInfo" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['*d@dDlNKKhjhktz&hhDi', '!O0ziOvmO4(ys@v6Eab'], folderInfo: ''}, 400);
+					await get('folder/ids', {ids: ['EwHb!N14TG!OgsxA', 'NjY7h4srRYJjoq8iW'], folderInfo: ''}, 400);
 				});
 				it('"folderInfo" set to "string"', async () => {
-					await get('folder/ids', {ids: ['hHv!gXY', 'u%gi[uSWD&$ASZ'], folderInfo: '6IBGRIvfusMQIZi0Y%'}, 400);
+					await get('folder/ids', {ids: ['sonYGtV)ZCkFEAHSeM', 'wEY^4!v2TsmX*0i'], folderInfo: 'GtyI@q%%tWl(a'}, 400);
 				});
 				it('"folderInfo" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['M)T!suq^mXDxKj*lx', 'u5t]phCPy2N5LFDk9s'], folderInfo: 8960963705307138}, 400);
+					await get('folder/ids', {ids: ['pYeyh(UDdn#poolU', 'J2lAmM]2#&Y8xl*3H1'], folderInfo: -6477248957775870}, 400);
 				});
 				it('"folderInfo" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: [']&!y$Ul7', 'ZbglC75#JkV&r(BhoP'], folderInfo: 7108384675332095}, 400);
+					await get('folder/ids', {ids: ['ONyb)lgMvCZjZZw2h[j', 'PVf%!sXHG#G0lnG'], folderInfo: 6151701820080127}, 400);
 				});
 				it('"folderSimilar" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['EyIl3%&Xf)(Ce(YI7UY4', 'IUs369zS(80*'], folderSimilar: ''}, 400);
+					await get('folder/ids', {ids: ['4@76c', '(6VCKi*($taw!lzcRS6'], folderSimilar: ''}, 400);
 				});
 				it('"folderSimilar" set to "string"', async () => {
-					await get('folder/ids', {ids: ['P)NG*NODB3G#zN0', 'Cbj2zKTHq]FG!!ZIMP&K'], folderSimilar: 'p$YwSRZCxWzlspq^'}, 400);
+					await get('folder/ids', {ids: ['6yoay*g)&', 'l9#RQlP@qDh8zaDcBg%'], folderSimilar: 'V!FK#099Ax'}, 400);
 				});
 				it('"folderSimilar" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['cVOBs*dt', 'dMAeX5f#^$'], folderSimilar: -1894883765780478}, 400);
+					await get('folder/ids', {ids: ['rJLW%XI&HqYQ@pF&T@T', ']r!BemHCdPLfw'], folderSimilar: -3451857800265726}, 400);
 				});
 				it('"folderSimilar" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['n@j6xG#k', '6z5acCjMn@wifFzlrn'], folderSimilar: 8079453024419839}, 400);
+					await get('folder/ids', {ids: ['5tjjg9JdpLnId1', 'xMu0(a'], folderSimilar: -1201368702386177}, 400);
 				});
 				it('"folderArtworks" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['Y08NRD%IZxZhZAi', 'Dn]dMIQ&xe'], folderArtworks: ''}, 400);
+					await get('folder/ids', {ids: ['pOTkvIEuHblc!87YNT', 'Yz4EtnOI!'], folderArtworks: ''}, 400);
 				});
 				it('"folderArtworks" set to "string"', async () => {
-					await get('folder/ids', {ids: ['[kfWH0P0Qk^Uvre%uX5', 'QBBrlmkYHA)LM%'], folderArtworks: '@r88jEFmNlqWr[9G('}, 400);
+					await get('folder/ids', {ids: ['hlh@I[m2', 'SwwZMcj5A)cM&IuPV'], folderArtworks: '9KKlLuFVh*y0$FbFkBIV'}, 400);
 				});
 				it('"folderArtworks" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['iZEJCJ', 'Iv2lV'], folderArtworks: -779468645859326}, 400);
+					await get('folder/ids', {ids: ['8vb3&P[OSzYg3', 'Eeyhw0OV(@a'], folderArtworks: 8664981226651650}, 400);
 				});
 				it('"folderArtworks" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['eDEmdKzrg!$4m@UL!p', '[0MrhxA15K3H)T'], folderArtworks: -811843849289729}, 400);
+					await get('folder/ids', {ids: ['L(BKN&DOiocCu]', 'g%9UH9urO@zVrTdAv'], folderArtworks: 8779557498781695}, 400);
 				});
 				it('"folderChildren" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['MKQ3u5', '(2$Qf5G$2&FJ'], folderChildren: ''}, 400);
+					await get('folder/ids', {ids: ['**1c4)L#V0F', '^0A7w)e'], folderChildren: ''}, 400);
 				});
 				it('"folderChildren" set to "string"', async () => {
-					await get('folder/ids', {ids: ['Mb58#v)gJPqm', 'CjWD#H53UGrWggbBPt'], folderChildren: ')]]arFc'}, 400);
+					await get('folder/ids', {ids: ['5irZ3bEmxX', 'v^j0oNa'], folderChildren: 'utIy5IEIQlxSK'}, 400);
 				});
 				it('"folderChildren" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['7x[IG](]xg', 'qFk&A'], folderChildren: -5118281945972734}, 400);
+					await get('folder/ids', {ids: ['N^X*Fj5eJ[', 'AU3ea'], folderChildren: 5770717408788482}, 400);
 				});
 				it('"folderChildren" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['!y#gUaKwB', 'y6Z!JBY!v'], folderChildren: 3715315464667135}, 400);
+					await get('folder/ids', {ids: ['EX19fuf]#vz5L1bH2t', 'rNO63ST4ZSp'], folderChildren: -6863698983387137}, 400);
 				});
 				it('"folderSubfolders" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['Op^LcrB', 'BNDoA5^D1oEqcJ%m'], folderSubfolders: ''}, 400);
+					await get('folder/ids', {ids: ['1LGOt(o!eqf5', '6l[VICskeZS2c9(r'], folderSubfolders: ''}, 400);
 				});
 				it('"folderSubfolders" set to "string"', async () => {
-					await get('folder/ids', {ids: ['KVg4Su^%', 'ddI%gq*BHP8'], folderSubfolders: 'Je$Pb'}, 400);
+					await get('folder/ids', {ids: ['ooYbqm[k1', 'zsNS[xiI'], folderSubfolders: 'eA3dG7b1n4M*8^'}, 400);
 				});
 				it('"folderSubfolders" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['84R%WGzkU9U!B*j', 'DUMvxO1Y4a78VFXYp!Di'], folderSubfolders: -8770711027974142}, 400);
+					await get('folder/ids', {ids: ['$J(b*x', 'Rpt8U)Go2u1^x8'], folderSubfolders: 2491632922394626}, 400);
 				});
 				it('"folderSubfolders" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['bnV*!x9iCqaWJB', '1uVVClY4PwXq)d@'], folderSubfolders: 1215129110708223}, 400);
+					await get('folder/ids', {ids: ['RF^lxM(Tov&kc', 'YTed5E*gI^Mt'], folderSubfolders: 8775735871275007}, 400);
 				});
 				it('"folderTracks" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['62$df', 'VJ(VN]n][^JFs[bES'], folderTracks: ''}, 400);
+					await get('folder/ids', {ids: ['E0%ycTo]6A', 'Ravf@cH0n'], folderTracks: ''}, 400);
 				});
 				it('"folderTracks" set to "string"', async () => {
-					await get('folder/ids', {ids: ['1KZT$CcT3jFyN4F', 'xIAHx3#zPl4KVexRbfyU'], folderTracks: 'PWbOT6PdboKU'}, 400);
+					await get('folder/ids', {ids: ['fX6a1$SC)3v$YsFBO*%&', 'hWcSt)PZ]'], folderTracks: 'r5m!b4xj#WFPSuWO'}, 400);
 				});
 				it('"folderTracks" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['OjHqod2z', '6jXg7%nt'], folderTracks: 7646159082356738}, 400);
+					await get('folder/ids', {ids: ['uohpO5MJWAQskX*1', '628qzriD'], folderTracks: -561755902181374}, 400);
 				});
 				it('"folderTracks" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['QM7HaNpe7V#$ynX2b', ')8bpC%#w!*'], folderTracks: -8984418270052353}, 400);
+					await get('folder/ids', {ids: ['cPBK%TWeFb7u', '1KAQEXV@'], folderTracks: -4745555439779841}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['ljrJm0q[4kN0', 'Vp9JMH]SVK*D46wmfwy'], trackMedia: ''}, 400);
+					await get('folder/ids', {ids: ['zyz0T', 'UBGv1kG'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('folder/ids', {ids: ['#Ry)jMxdguK', 'YDV0m)gxC$U6J['], trackMedia: 'aa*KQjb1ug'}, 400);
+					await get('folder/ids', {ids: ['Z4X[u4dHUMEX', 'q6$8))AXF^SM6FRZd'], trackMedia: 'yxo4idKmc2VYQq(OOS'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['RQam%i3#Sq(ws5hBP5LF', 'Gq!sqo@d5R[Yz'], trackMedia: 2516593477156866}, 400);
+					await get('folder/ids', {ids: ['9kkVOQgmJ^%B%mN$', 'f&3O1%Q'], trackMedia: -3898594293710846}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['*NK]]#4n!8]uk3', 'ks4hLxJ#I#AmnUa'], trackMedia: -185012511047681}, 400);
+					await get('folder/ids', {ids: ['eZe2cD@oY5ij^', 'IBQ9HRNpE0bMi'], trackMedia: 417845435432959}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['%!BM)qz', '31Ut1EeS)st'], trackTag: ''}, 400);
+					await get('folder/ids', {ids: ['I%Q0S@u0(4L)CVFH*P00', 'iu@C$xn&7aXB7d6kqv$'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('folder/ids', {ids: ['jEWtK37Bk', 'pN@g9VVd[uCGBu'], trackTag: '9cR#gj^zOB[o%6'}, 400);
+					await get('folder/ids', {ids: ['M$#3i2@L', 'b2X3KBt8ZK$iN5'], trackTag: 'XBRlj@wEocE3$'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['NJ*pbKo8$D6', 'OlKo6cn@e1DXQ!RgjTA'], trackTag: 1548749155336194}, 400);
+					await get('folder/ids', {ids: ['m0o$$VB', '[sVObWzB*$CzDM!Rm9Yn'], trackTag: 4996632131141634}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['Ywhwr3n', 'LP55u!3siYtmhEUf'], trackTag: -5047167211274241}, 400);
+					await get('folder/ids', {ids: ['f^m#PZ(6BK!VvABLxef', 'HrY%x'], trackTag: -6197616924688385}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['iDKpPzaU(1R&O', 'HE0MtbJHr06z'], trackRawTag: ''}, 400);
+					await get('folder/ids', {ids: ['2Su&&IgQ', 'XEZ3U2%k9hO'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('folder/ids', {ids: ['oiUTC^F*tM8', '8H4a[1!PW!QwBbke'], trackRawTag: 'iB!LWrHf#kUtJcvj'}, 400);
+					await get('folder/ids', {ids: ['lo3ik2Kn', '2P%n%6]%ABsjvn$F8g'], trackRawTag: 'wYH@LD]Cqj(E3)a'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['Eswn@(Q', 'Ft1[J6y'], trackRawTag: -4511036661039102}, 400);
+					await get('folder/ids', {ids: ['N%Nsd]Ki10Ag4%DGL', 'ebTtKOnFz8mP*^J'], trackRawTag: 5175851100405762}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['TYgfnX8yZ^H1', 'cYVq[($'], trackRawTag: -560534827040769}, 400);
+					await get('folder/ids', {ids: ['eVh[j)', 'lc@afQw'], trackRawTag: -781114985676801}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('folder/ids', {ids: ['j1kbpzoOq!LJC', '#FEUeW2g)Q7[%0ghu'], trackState: ''}, 400);
+					await get('folder/ids', {ids: ['88FPBD$0Q]H9#vwMJh', ']ygcM@]IQIA'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('folder/ids', {ids: ['s8ba&', '!QxG]UEU]ub&ODK'], trackState: 'k6aeeJzrEX&ReTj$J&a4'}, 400);
+					await get('folder/ids', {ids: ['A8]&FQ@k', 'AT$&oue#@N@#A8In'], trackState: 'b1ygRgyB'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('folder/ids', {ids: ['OaEcv&]9V*@HZd9ev^1U', 'sjTOxRn1[pVGf3qib!0#'], trackState: 6279621527994370}, 400);
+					await get('folder/ids', {ids: ['pF2iya]y6Ew', 'yB)P#Nw7y8'], trackState: -1682636560924670}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('folder/ids', {ids: ['arx2!ce1J', 'C@umZY4V'], trackState: -3860132408590337}, 400);
+					await get('folder/ids', {ids: ['lcIcJy0RHFKO%aJblK', '3vUYjbm'], trackState: 7872883300761599}, 400);
 				});
 			});
 		});
 		describe('folder/tracks', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/tracks', {ids: ['b4X#[oWT6d@4Q', 'bw7v7!ge^E211E']}, 401);
+					await getNotLoggedIn('folder/tracks', {ids: ['!aOlU#W3Fjz7&F9U9#P', 'a(8lJwV8']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -972,101 +972,101 @@ describe('Server', () => {
 					await get('folder/tracks', {ids: [null, '']}, 400);
 				});
 				it('"recursive" set to "empty string"', async () => {
-					await get('folder/tracks', {ids: ['Sl5I3Gmaxi', 'Ccudi!lY[u'], recursive: ''}, 400);
+					await get('folder/tracks', {ids: ['s1@7()1hM%Q4E', 'Mx@Ae'], recursive: ''}, 400);
 				});
 				it('"recursive" set to "string"', async () => {
-					await get('folder/tracks', {ids: ['cI5Em(6)J(uAbJWi', '9[o6w045)CyoX6u*'], recursive: 'EZ1XD1q%dH)AYdWtAm'}, 400);
+					await get('folder/tracks', {ids: ['x#jH8&&t95eF', 'ND69$'], recursive: 'zzt2Bnna7@KjIiu2Qvz'}, 400);
 				});
 				it('"recursive" set to "integer > 1"', async () => {
-					await get('folder/tracks', {ids: ['AyJeAD@8LUMlLvZ', 'D@Ykty)GzBLvFtdv'], recursive: -3506997538324478}, 400);
+					await get('folder/tracks', {ids: ['HU1gYGtSka]%7LdY', 'NtT&IEt]T0TxO'], recursive: -828115408388094}, 400);
 				});
 				it('"recursive" set to "integer < 0"', async () => {
-					await get('folder/tracks', {ids: ['vgL)7*JNsnw', '[g78tQWq!lW&vJHK&'], recursive: -8080690696421377}, 400);
+					await get('folder/tracks', {ids: ['(Po!#mq', '6Ss1sG'], recursive: -481716598734849}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('folder/tracks', {ids: ['g&yQ^', 'fWj66SlxJA6quk#D1'], trackMedia: ''}, 400);
+					await get('folder/tracks', {ids: ['B$iZafndVxJi#I%w]bs', '4OJYjcryb'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('folder/tracks', {ids: ['$R9MhMk', '9gBV@uGqJ)B7oYkk'], trackMedia: '3R[t[Y^'}, 400);
+					await get('folder/tracks', {ids: ['2UVmtgG*e$o^b', 'lJnjP'], trackMedia: 'B]gh(&xp4Y'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('folder/tracks', {ids: ['ubaFTfPtkgJLtjrR*Ubi', 'qoI6YOK5[D7gjl'], trackMedia: -4222082661482494}, 400);
+					await get('folder/tracks', {ids: ['rpe@f@C7fs9GUJ)1', '0waopZYKr'], trackMedia: 4425947977613314}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('folder/tracks', {ids: ['D905YX', '9fL&vwtPapAH^(v*'], trackMedia: 7978681976750079}, 400);
+					await get('folder/tracks', {ids: [']xtIR#vaUV[F', '&8T*]6^Sf*^2zaJ'], trackMedia: 2517716887928831}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('folder/tracks', {ids: ['^labpo92Tamh0xAFr7tN', '1Ka47BU%7'], trackTag: ''}, 400);
+					await get('folder/tracks', {ids: ['VK!@G', '(kQ8[^2t5]BMK0#1^q'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('folder/tracks', {ids: ['P^TWT1#pfs', 'Yq6RMyQ1)WPCE&0q'], trackTag: '![^Fr^'}, 400);
+					await get('folder/tracks', {ids: ['4Q@cP@Z*PsmGkt^B', 'S45#2#LHI'], trackTag: 's4JMgbJYf)rZUY'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('folder/tracks', {ids: ['$M[HRkGs^', ')HQs21^'], trackTag: -1738151424950270}, 400);
+					await get('folder/tracks', {ids: ['(3]s#Td', 'tH@Q8cHFCz4i(ow'], trackTag: 4369919164547074}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('folder/tracks', {ids: ['gBBJcNe%Qs&%t', 'zQ4T$DbFta]'], trackTag: -4649490317312001}, 400);
+					await get('folder/tracks', {ids: ['Yw^(aoxjgOQE', 'frRiXzKj'], trackTag: 7346535784251391}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('folder/tracks', {ids: ['yN4l*Vous#ADsVg)2w', 'J%41AW9%n'], trackRawTag: ''}, 400);
+					await get('folder/tracks', {ids: ['*2WS@MB', '86f[C1)4bMIW2RKzCcg'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('folder/tracks', {ids: ['JoH704', 'zzK7rU'], trackRawTag: 'ge53@x'}, 400);
+					await get('folder/tracks', {ids: ['K3uAZRz', 'Ps(Hb47'], trackRawTag: '74MkxSWkPtUTFjvmq'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('folder/tracks', {ids: ['rQFF[UU#24Ylj8', 'aRfxLC!R3rb'], trackRawTag: -3730911761793022}, 400);
+					await get('folder/tracks', {ids: ['%eD5a2g8(7dl4OZG3Vo6', '@V3U3'], trackRawTag: -1558546139316222}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('folder/tracks', {ids: ['oOkXMQ', 'HKsr00)$Hu$t!4PTQ6n'], trackRawTag: 5128339056492543}, 400);
+					await get('folder/tracks', {ids: ['6sh[V', 't9@47zQ]6X)z)Ynkk'], trackRawTag: -6350580003897345}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('folder/tracks', {ids: ['yI7%fhdWkY1HwyC(M', '9]]P3)4DENh*UD9E7V'], trackState: ''}, 400);
+					await get('folder/tracks', {ids: ['SucygM', '0P4u5@$'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('folder/tracks', {ids: ['3NlDD4$JXcDQwlmO6#m4', 'n&661Lea#jFDbHd'], trackState: 'fgcvX^p%pUqop!)MOgN'}, 400);
+					await get('folder/tracks', {ids: ['4Qe(rd)mJA', 'RxkB0P)5B[OJi'], trackState: 'f&JET'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('folder/tracks', {ids: ['uHsg9rH[U9', 'oz#g9q[d9h'], trackState: -1307588452941822}, 400);
+					await get('folder/tracks', {ids: ['49Yx0DSQx0T6wu8', ')@qw2$tbxsvd'], trackState: -975303224590334}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('folder/tracks', {ids: ['MtJN3w0[', 'q]l!8t273#qw'], trackState: -7971867201634305}, 400);
+					await get('folder/tracks', {ids: ['huTjumun06V', 'hsaA9Qia@lrc'], trackState: -8296365159350273}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('folder/tracks', {ids: ['pc%A1SfLgouN3P', 'x1dGK@qj^qVvCn@8)ec'], offset: 'Sf**n9cLJO#Ixg'}, 400);
+					await get('folder/tracks', {ids: ['E0I&FvldjA)qi', 'or5rT$^V%W]sEn'], offset: '83dGzK7'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('folder/tracks', {ids: ['ofNTr', 'pQ!JqtWzZQZH(6Y'], offset: ''}, 400);
+					await get('folder/tracks', {ids: ['E])X3R0[X', 'g&CaR[^uMGQ'], offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('folder/tracks', {ids: ['FyRDE^TfME6X%]Bsz', 'cBHnwI5$t6)lB[b'], offset: true}, 400);
+					await get('folder/tracks', {ids: ['s&fPY[)@2J', 'FHhNBvFiPO#'], offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('folder/tracks', {ids: ['tEEu1', 'Dx]AZ'], offset: 86.41}, 400);
+					await get('folder/tracks', {ids: ['e&8Ax8[DldAbhBVKpC*', 's5E7PkN['], offset: 89.57}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('folder/tracks', {ids: ['HyeyN9p]iKNTs3G', '4djkdRGOSgxu'], offset: -1}, 400);
+					await get('folder/tracks', {ids: ['oC%3Y(aL', '#j@jmJoB[Lh'], offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('folder/tracks', {ids: ['J%P5#DpvdR[Skc', '7O$1ZI0Tamdm%qh3WI'], amount: 'sq^4%F3*CRsHzwFSUqTv'}, 400);
+					await get('folder/tracks', {ids: ['oXcvpY', 'D2V]ri1#zj41I[Fz2$'], amount: 'pARQpw(Dh7H)#x'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('folder/tracks', {ids: ['gO(#f)I', 'OdiH0M6]WCe5'], amount: ''}, 400);
+					await get('folder/tracks', {ids: ['1$Ug9U', 'EqH0kUU&'], amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('folder/tracks', {ids: ['0w672IkhU&r*xTe4wnQP', '6gy8fc'], amount: true}, 400);
+					await get('folder/tracks', {ids: ['Sj#^b@pt', '%ez9QS&V[ygUZ1K#hn4u'], amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('folder/tracks', {ids: ['jj$JiC$cFK1A', 'TpnxxdriOXc9q*4'], amount: 65.41}, 400);
+					await get('folder/tracks', {ids: ['!klX^NmwR$HCZlwwiCG', '340tnMmmU4I4%'], amount: 29.81}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('folder/tracks', {ids: ['Vxt4w7&KBXoG]8R', 'gRTdabtWNOMPOu7'], amount: 0}, 400);
+					await get('folder/tracks', {ids: ['9JIN[^k9WZ9$lu(Ta^0i', 'LO(8uNIPS%Jjt(zDQ'], amount: 0}, 400);
 				});
 			});
 		});
 		describe('folder/subfolders', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/subfolders', {id: 'G6fKebUAZv0NKd'}, 401);
+					await getNotLoggedIn('folder/subfolders', {id: 'w5#MJPD[VfluPqysc'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -1074,125 +1074,125 @@ describe('Server', () => {
 					await get('folder/subfolders', {id: ''}, 400);
 				});
 				it('"folderTag" set to "empty string"', async () => {
-					await get('folder/subfolders', {id: 'ZuOp&#AplupMr!', folderTag: ''}, 400);
+					await get('folder/subfolders', {id: 'htmsFOaS71ocLFMs&', folderTag: ''}, 400);
 				});
 				it('"folderTag" set to "string"', async () => {
-					await get('folder/subfolders', {id: 'Knp6KGVtKO', folderTag: '5LKbb%m'}, 400);
+					await get('folder/subfolders', {id: 'L39%wLXBi', folderTag: 'myWATNs#@!p7#h'}, 400);
 				});
 				it('"folderTag" set to "integer > 1"', async () => {
-					await get('folder/subfolders', {id: 'NAxCn#T&!n[NUNKwNKl@', folderTag: 1660053161508866}, 400);
+					await get('folder/subfolders', {id: '0FdEv1', folderTag: 7313758871355394}, 400);
 				});
 				it('"folderTag" set to "integer < 0"', async () => {
-					await get('folder/subfolders', {id: 'jQqgD4Z)e3F)6TEo]', folderTag: 4766618840203263}, 400);
+					await get('folder/subfolders', {id: '%h3nE6Qqf)i0Kb', folderTag: 291418979434495}, 400);
 				});
 				it('"folderState" set to "empty string"', async () => {
-					await get('folder/subfolders', {id: 'BQw*Q', folderState: ''}, 400);
+					await get('folder/subfolders', {id: '0(u4i8(GVmMfp[jI8#GP', folderState: ''}, 400);
 				});
 				it('"folderState" set to "string"', async () => {
-					await get('folder/subfolders', {id: 'x!$36ltT7P7', folderState: '*)2j(gchHwZw2'}, 400);
+					await get('folder/subfolders', {id: '6Luh!tKdtUc', folderState: '$pT4SFp(N8'}, 400);
 				});
 				it('"folderState" set to "integer > 1"', async () => {
-					await get('folder/subfolders', {id: 'g)KVApp3R6', folderState: 3682743028285442}, 400);
+					await get('folder/subfolders', {id: '5OrTNN@k]kVu(e', folderState: 5861309899866114}, 400);
 				});
 				it('"folderState" set to "integer < 0"', async () => {
-					await get('folder/subfolders', {id: '6T@i1gZUpv', folderState: -8038388233928705}, 400);
+					await get('folder/subfolders', {id: '0Q)2Z3', folderState: 2354555819917311}, 400);
 				});
 				it('"folderCounts" set to "empty string"', async () => {
-					await get('folder/subfolders', {id: 'U2CMbutYY&8f3gEShO', folderCounts: ''}, 400);
+					await get('folder/subfolders', {id: 'fZ4if!C4G[Fb*oNC^%lg', folderCounts: ''}, 400);
 				});
 				it('"folderCounts" set to "string"', async () => {
-					await get('folder/subfolders', {id: 'JlqoG', folderCounts: '0T6q%V'}, 400);
+					await get('folder/subfolders', {id: '%FZ9lmFi)I90J&o5%i', folderCounts: '6JT#*fpEZ'}, 400);
 				});
 				it('"folderCounts" set to "integer > 1"', async () => {
-					await get('folder/subfolders', {id: '%gElKIl4CB$$d8yx[i', folderCounts: 6599086950055938}, 400);
+					await get('folder/subfolders', {id: '940UoC#G(Sx*', folderCounts: 3940383633440770}, 400);
 				});
 				it('"folderCounts" set to "integer < 0"', async () => {
-					await get('folder/subfolders', {id: 'fPH1ZieouMXWZ#vh!s', folderCounts: -860775568637953}, 400);
+					await get('folder/subfolders', {id: 'jzhKq$LpFydn#', folderCounts: -6033619042697217}, 400);
 				});
 				it('"folderParents" set to "empty string"', async () => {
-					await get('folder/subfolders', {id: 'chzGZ3GW', folderParents: ''}, 400);
+					await get('folder/subfolders', {id: 'VB%7b]6W%Wh6kKK*esx', folderParents: ''}, 400);
 				});
 				it('"folderParents" set to "string"', async () => {
-					await get('folder/subfolders', {id: '4^o]eu', folderParents: ')DKlJtm'}, 400);
+					await get('folder/subfolders', {id: 's5vY]0I[', folderParents: 'uryPnGEar'}, 400);
 				});
 				it('"folderParents" set to "integer > 1"', async () => {
-					await get('folder/subfolders', {id: '^ws^KoBuJXvHisoewimo', folderParents: -3516389931352062}, 400);
+					await get('folder/subfolders', {id: '*Ppdcxa((*U9Fcpa', folderParents: -1083973874745342}, 400);
 				});
 				it('"folderParents" set to "integer < 0"', async () => {
-					await get('folder/subfolders', {id: 'ME0J^', folderParents: 7297898098196479}, 400);
+					await get('folder/subfolders', {id: '@h4^3hAE[Mugsk@i', folderParents: -3940367762194433}, 400);
 				});
 				it('"folderInfo" set to "empty string"', async () => {
-					await get('folder/subfolders', {id: 'b@OpFEX]Fums', folderInfo: ''}, 400);
+					await get('folder/subfolders', {id: 'I89l!*6@0@id', folderInfo: ''}, 400);
 				});
 				it('"folderInfo" set to "string"', async () => {
-					await get('folder/subfolders', {id: 'gOAy9s[k9m2Ai', folderInfo: '2Phb6If4Or%jwdtM('}, 400);
+					await get('folder/subfolders', {id: 'ILKqJuaKi!h%V', folderInfo: '28D352D'}, 400);
 				});
 				it('"folderInfo" set to "integer > 1"', async () => {
-					await get('folder/subfolders', {id: '%JKcJdX', folderInfo: -6837001382789118}, 400);
+					await get('folder/subfolders', {id: '(bsnbc@MCw', folderInfo: -1064495648604158}, 400);
 				});
 				it('"folderInfo" set to "integer < 0"', async () => {
-					await get('folder/subfolders', {id: 'bc[@O[qox', folderInfo: -7094116735254529}, 400);
+					await get('folder/subfolders', {id: '*TbpkI6k1DZ]Qc)AVyH(', folderInfo: -8106960855498753}, 400);
 				});
 				it('"folderSimilar" set to "empty string"', async () => {
-					await get('folder/subfolders', {id: 'Rqy]QCze', folderSimilar: ''}, 400);
+					await get('folder/subfolders', {id: 'l%Of*jl!1@v6RNzY7a', folderSimilar: ''}, 400);
 				});
 				it('"folderSimilar" set to "string"', async () => {
-					await get('folder/subfolders', {id: 'Uh)Oghu5GWOpJm', folderSimilar: 'KXIzAw8S'}, 400);
+					await get('folder/subfolders', {id: '[9CEtt2', folderSimilar: '#@kpd%Kc'}, 400);
 				});
 				it('"folderSimilar" set to "integer > 1"', async () => {
-					await get('folder/subfolders', {id: 'CErk$D98pQ4Wr$vlxO#', folderSimilar: 6822590098178050}, 400);
+					await get('folder/subfolders', {id: 'tq9n0j6Y', folderSimilar: -540500486520830}, 400);
 				});
 				it('"folderSimilar" set to "integer < 0"', async () => {
-					await get('folder/subfolders', {id: '0!&[mC7NYAG32$Nw!o', folderSimilar: 4504073554362367}, 400);
+					await get('folder/subfolders', {id: 'Nm3ny*S$O(m', folderSimilar: 5417038008811519}, 400);
 				});
 				it('"folderArtworks" set to "empty string"', async () => {
-					await get('folder/subfolders', {id: '!fZEw^', folderArtworks: ''}, 400);
+					await get('folder/subfolders', {id: 'zeNt(LIwEkEP35j', folderArtworks: ''}, 400);
 				});
 				it('"folderArtworks" set to "string"', async () => {
-					await get('folder/subfolders', {id: 'RWW4VOYK', folderArtworks: 'cMltPSRZ'}, 400);
+					await get('folder/subfolders', {id: '*ys#hEl', folderArtworks: 'GC@V1kHZb29ym789Fpb'}, 400);
 				});
 				it('"folderArtworks" set to "integer > 1"', async () => {
-					await get('folder/subfolders', {id: 'Px)s!!3M', folderArtworks: -8038682699235326}, 400);
+					await get('folder/subfolders', {id: 'vDbMV]S', folderArtworks: -6969664517177342}, 400);
 				});
 				it('"folderArtworks" set to "integer < 0"', async () => {
-					await get('folder/subfolders', {id: '&AVsy', folderArtworks: 2973511953940479}, 400);
+					await get('folder/subfolders', {id: 'kfTm3bj', folderArtworks: 6563324015673343}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('folder/subfolders', {id: 'Wt1)!9Lo', offset: '8i8%vClZU%J[ailvH5M'}, 400);
+					await get('folder/subfolders', {id: 'Lz74j&N%$Vj9Y%@U(', offset: 'o*D4!FE'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('folder/subfolders', {id: 'DkwdoJOk', offset: ''}, 400);
+					await get('folder/subfolders', {id: 'fta2CDk#z1N1an)', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('folder/subfolders', {id: 'Sa(oP*Y9y0QT0A8w', offset: true}, 400);
+					await get('folder/subfolders', {id: 'bGCKpZ', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('folder/subfolders', {id: 'NO]@E]HoEB[4)[d8', offset: 23.51}, 400);
+					await get('folder/subfolders', {id: 'Z@RJxcdUq', offset: 52.67}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('folder/subfolders', {id: 'Th6O!ZhFTC', offset: -1}, 400);
+					await get('folder/subfolders', {id: 'wqFmxWLfC91C9CayPp', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('folder/subfolders', {id: 'dmNQzjn!%', amount: 'sd^dTn!]k2x#u)5[te]h'}, 400);
+					await get('folder/subfolders', {id: 'V^Xs1yw3', amount: 'qVLsP7Tn!4F'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('folder/subfolders', {id: 'vul)IoI@0hwcvJ96l$4e', amount: ''}, 400);
+					await get('folder/subfolders', {id: 'G!F5R^', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('folder/subfolders', {id: 'zRp(AQ', amount: true}, 400);
+					await get('folder/subfolders', {id: 'wwu4jkGr[)u)P19EZtT!', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('folder/subfolders', {id: 'WfKBu#2TUJ', amount: 26.53}, 400);
+					await get('folder/subfolders', {id: '*]y2K^q&nL[vN#T[AlBg', amount: 4.2}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('folder/subfolders', {id: 'zrqdVQ', amount: 0}, 400);
+					await get('folder/subfolders', {id: 'AUs0gP8Y1@%y@9%*[2!u', amount: 0}, 400);
 				});
 			});
 		});
 		describe('folder/artist/similar', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/artist/similar', {id: 'op)gDzTsD'}, 401);
+					await getNotLoggedIn('folder/artist/similar', {id: '1AvxyAE'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -1200,209 +1200,209 @@ describe('Server', () => {
 					await get('folder/artist/similar', {id: ''}, 400);
 				});
 				it('"folderTag" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'YaCzQvD', folderTag: ''}, 400);
+					await get('folder/artist/similar', {id: ')Ut1H8HqED6(EE', folderTag: ''}, 400);
 				});
 				it('"folderTag" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'D^p4J%P787a0X6iI', folderTag: 'Kh@oD3uQFKlZ^s8SgQTd'}, 400);
+					await get('folder/artist/similar', {id: '$!U93E]0KS)9l', folderTag: 'zH1cOhLs'}, 400);
 				});
 				it('"folderTag" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'c#QR(eps', folderTag: 1976424768471042}, 400);
+					await get('folder/artist/similar', {id: '575#glQT5XGNAxju', folderTag: -2479269166972926}, 400);
 				});
 				it('"folderTag" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: '!w0^s', folderTag: 581061293637631}, 400);
+					await get('folder/artist/similar', {id: 'dv4GgKd]#xBQ', folderTag: -6639765218656257}, 400);
 				});
 				it('"folderState" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'XZbNYhV*@Q19', folderState: ''}, 400);
+					await get('folder/artist/similar', {id: 'tkPw!vZQM4Y', folderState: ''}, 400);
 				});
 				it('"folderState" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'SBtzCYNF0&CSgK0hA', folderState: 'w(#KB'}, 400);
+					await get('folder/artist/similar', {id: 'L8IKCORUFhj52', folderState: 'jE^zWNk58q]]Lwb)(gH9'}, 400);
 				});
 				it('"folderState" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'QM)Olkh@', folderState: 7646743843831810}, 400);
+					await get('folder/artist/similar', {id: 'TKhjYF0w%!)TmM!Y', folderState: 6520024692948994}, 400);
 				});
 				it('"folderState" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: 'TrmDWOcpRX5V8*m', folderState: -1912421144854529}, 400);
+					await get('folder/artist/similar', {id: 'V49p4QOmvfI27F6YCBu', folderState: 6273061733007359}, 400);
 				});
 				it('"folderCounts" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'e@Zbd', folderCounts: ''}, 400);
+					await get('folder/artist/similar', {id: 'A%ug&uF7Y', folderCounts: ''}, 400);
 				});
 				it('"folderCounts" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'B3Hjqnr', folderCounts: '4@By0fFlI2Qn3Qjx!mf'}, 400);
+					await get('folder/artist/similar', {id: 'DjS6fy0KnELYNA8#Dc', folderCounts: 's@HNM[vNX'}, 400);
 				});
 				it('"folderCounts" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'PMj4&bVsGeDX', folderCounts: 3327663972286466}, 400);
+					await get('folder/artist/similar', {id: 'nbh!z%4IGYez13Z]4', folderCounts: 7512037353586690}, 400);
 				});
 				it('"folderCounts" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: 'GrB!8zeJrAnQv@!3', folderCounts: 2629416828010495}, 400);
+					await get('folder/artist/similar', {id: '3(&^4]bUq4rq', folderCounts: -1993516913786881}, 400);
 				});
 				it('"folderParents" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'AGBATrJWRCqPp49INZ', folderParents: ''}, 400);
+					await get('folder/artist/similar', {id: 'lAC%[B!#xpGF', folderParents: ''}, 400);
 				});
 				it('"folderParents" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'O2DUuc', folderParents: 'WOLdDJniXN&8(#'}, 400);
+					await get('folder/artist/similar', {id: 'KEO^x&x*', folderParents: 'bR1[P*%u$kysSGu$'}, 400);
 				});
 				it('"folderParents" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: ']oOJQk4Z5&gz$f[3', folderParents: 7348643757555714}, 400);
+					await get('folder/artist/similar', {id: 'BLnhKdOM1T)LeQn', folderParents: -1731503784460286}, 400);
 				});
 				it('"folderParents" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: '7(Z(q^l$lrV7s1i', folderParents: 5815312960192511}, 400);
+					await get('folder/artist/similar', {id: '&Rk1*oO4hXyb1[9)ZvH', folderParents: 8358003061293055}, 400);
 				});
 				it('"folderInfo" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: '$8%w6VEEIn33@F2&Iyk*', folderInfo: ''}, 400);
+					await get('folder/artist/similar', {id: 'DWA3dPQIV6N)TFEFx', folderInfo: ''}, 400);
 				});
 				it('"folderInfo" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'pOTDuxfjvFz', folderInfo: 'n2!FONLx$zUIJ9)'}, 400);
+					await get('folder/artist/similar', {id: 'V5zi#^et6BXve]TpIR', folderInfo: 'n9)kMwMJ$l'}, 400);
 				});
 				it('"folderInfo" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'Zxqr(5TcxG', folderInfo: 2487574719365122}, 400);
+					await get('folder/artist/similar', {id: 'SmhNhUGHzH$Ng5jxG*', folderInfo: -7303605455421438}, 400);
 				});
 				it('"folderInfo" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: 'N53y9f', folderInfo: 1369647177793535}, 400);
+					await get('folder/artist/similar', {id: 'i!dge(jCJwN', folderInfo: -2636371957121025}, 400);
 				});
 				it('"folderSimilar" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: '1KZ*R&w@4b', folderSimilar: ''}, 400);
+					await get('folder/artist/similar', {id: 'EVy29^ToqO&C!va', folderSimilar: ''}, 400);
 				});
 				it('"folderSimilar" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'x#lvId', folderSimilar: 'LN&&7DydC'}, 400);
+					await get('folder/artist/similar', {id: '[0[%bMTtDIi3$', folderSimilar: 'SWbqk#'}, 400);
 				});
 				it('"folderSimilar" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: '2wUyk@lJUz6lU', folderSimilar: 3594649251872770}, 400);
+					await get('folder/artist/similar', {id: 'wms*ds(l5aS3@GMW', folderSimilar: -3261688119820286}, 400);
 				});
 				it('"folderSimilar" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: 'ZhvDm', folderSimilar: -8548193658732545}, 400);
+					await get('folder/artist/similar', {id: 'm#um883', folderSimilar: 142434386313215}, 400);
 				});
 				it('"folderArtworks" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'xhlwWxsxx[*U]o0y', folderArtworks: ''}, 400);
+					await get('folder/artist/similar', {id: 'wqmHWf&%iCqR@b8^l70$', folderArtworks: ''}, 400);
 				});
 				it('"folderArtworks" set to "string"', async () => {
-					await get('folder/artist/similar', {id: '!VJth0L', folderArtworks: '6N3cWfTo'}, 400);
+					await get('folder/artist/similar', {id: 'obEXXV1fMcO7Gv5', folderArtworks: 'S%x]oLH]$'}, 400);
 				});
 				it('"folderArtworks" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'V#Z#$v', folderArtworks: 5265693662511106}, 400);
+					await get('folder/artist/similar', {id: 'Ba!*2*S*sc0wAy8Lh%', folderArtworks: 1689431924801538}, 400);
 				});
 				it('"folderArtworks" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: '5#R@ZQ3K]qvVdzDvn1', folderArtworks: 373956624252927}, 400);
+					await get('folder/artist/similar', {id: '1(1FL98WY^9*GWcBP', folderArtworks: 7264002639921151}, 400);
 				});
 				it('"folderChildren" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'QcvGr', folderChildren: ''}, 400);
+					await get('folder/artist/similar', {id: 'ro1SwYS40yzg9dkaX', folderChildren: ''}, 400);
 				});
 				it('"folderChildren" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'LJKCd[[Nf(ErT)m', folderChildren: 'CVyWrzr7CQ4dSt8$]o'}, 400);
+					await get('folder/artist/similar', {id: 'z@b[x', folderChildren: 'z[0YsOMIKydVz1uQ@mk8'}, 400);
 				});
 				it('"folderChildren" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: '0OiblZLE8Etx', folderChildren: -8444084163182590}, 400);
+					await get('folder/artist/similar', {id: 'lHiF*3fntK', folderChildren: -8356639899910142}, 400);
 				});
 				it('"folderChildren" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: '[%26g**9(YM7lvpRa[P%', folderChildren: 416435310428159}, 400);
+					await get('folder/artist/similar', {id: '7i2h$)3YsY8o^y', folderChildren: 2168657140514815}, 400);
 				});
 				it('"folderSubfolders" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'f5Qi81tlS', folderSubfolders: ''}, 400);
+					await get('folder/artist/similar', {id: '$eBUs7iPW@', folderSubfolders: ''}, 400);
 				});
 				it('"folderSubfolders" set to "string"', async () => {
-					await get('folder/artist/similar', {id: '^5P&!R0M#WCo', folderSubfolders: '%F#buFdM'}, 400);
+					await get('folder/artist/similar', {id: 'ooAYlQrOiA15', folderSubfolders: 'fMxNtlcjk[GlsEe#8'}, 400);
 				});
 				it('"folderSubfolders" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'GVxg*[Y9Y', folderSubfolders: -8824220662366206}, 400);
+					await get('folder/artist/similar', {id: 'ki)PJrvAR5', folderSubfolders: -2632652796461054}, 400);
 				});
 				it('"folderSubfolders" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: 'aL78sUXGZr(kZ1noPWJ4', folderSubfolders: 2051398933938175}, 400);
+					await get('folder/artist/similar', {id: '0i^hhg7BzL@nU6z', folderSubfolders: -2412317576790017}, 400);
 				});
 				it('"folderTracks" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: '#q53od]9LMvFQU^K', folderTracks: ''}, 400);
+					await get('folder/artist/similar', {id: 'MmUHkduU%YWr[yqWNvfo', folderTracks: ''}, 400);
 				});
 				it('"folderTracks" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'AqQ&1Bos2WKS$1(', folderTracks: 'dB&dB5XL##E*wR'}, 400);
+					await get('folder/artist/similar', {id: 'ssFUW', folderTracks: 'RV70Y^'}, 400);
 				});
 				it('"folderTracks" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'yy7E2aCg!^', folderTracks: 397715896795138}, 400);
+					await get('folder/artist/similar', {id: 'knt)PWI^*)hny$vwKxJ', folderTracks: -2964121372852222}, 400);
 				});
 				it('"folderTracks" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: 'Vt!3E', folderTracks: 7588669707780095}, 400);
+					await get('folder/artist/similar', {id: '7^25RqzMyv(I@va3', folderTracks: -7544086114336769}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'FFswg6CKpPs@G', trackMedia: ''}, 400);
+					await get('folder/artist/similar', {id: 'dbOAG]s!2P@Lr2HFp', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'IklVxlQxt%DGEX[d', trackMedia: 'FRr2d#bDI6bv21sN0o'}, 400);
+					await get('folder/artist/similar', {id: '@*s959Q', trackMedia: '24CZ!^5G[@ujSFCtnP'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'UnJkEAd44B))TAV', trackMedia: -5405618210865150}, 400);
+					await get('folder/artist/similar', {id: '@^gLn', trackMedia: 4490414455259138}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: '@xdhIcfJo!]3^', trackMedia: 5392769287716863}, 400);
+					await get('folder/artist/similar', {id: 'Uv^RK8Uz#KN[7k', trackMedia: -1671294189830145}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'l[gG0wiGtx[Tvlkt', trackTag: ''}, 400);
+					await get('folder/artist/similar', {id: 'Q#S&ret(#S9A8L', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'Zv3ag*vOlbz6*1', trackTag: 'kddK^DFdyAQ)C'}, 400);
+					await get('folder/artist/similar', {id: 'e!6C(0*wn', trackTag: 'my])Ry^jYCpOakDmHn'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'vap0A*V', trackTag: -8934775045750782}, 400);
+					await get('folder/artist/similar', {id: '95bRmbFWd08daO', trackTag: -1427853400866814}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: 'zF601e$SQb#FW3M$)#8', trackTag: 3265884906848255}, 400);
+					await get('folder/artist/similar', {id: 'jd[Lc5EcL9k@J2sfnv*g', trackTag: 3323389162815487}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: 'YpHJ!MXSNNv', trackRawTag: ''}, 400);
+					await get('folder/artist/similar', {id: 'j(5ZWs9OIpwZ', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'PxGiCSqQOgR', trackRawTag: '7G1EUsi]QOF]$x'}, 400);
+					await get('folder/artist/similar', {id: 'YaDejsYRl', trackRawTag: 'zjUuZ1B]s'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'Kz2%q0H#Odp', trackRawTag: -2113265966514174}, 400);
+					await get('folder/artist/similar', {id: '9AEREQ*3]t!p!jbi', trackRawTag: 8017021614686210}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: '#%IF1#a!eHn', trackRawTag: -2928502303096833}, 400);
+					await get('folder/artist/similar', {id: 'sn^#lv', trackRawTag: 7863883695915007}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: '$Frr5OagjpGp^HYf$Vn', trackState: ''}, 400);
+					await get('folder/artist/similar', {id: 'NH&RzZEHy', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'mtIw1c7T]fe8vCh9i', trackState: 'wz))9q0Qiv5Ovf(0Ao(q'}, 400);
+					await get('folder/artist/similar', {id: '@XsOUzEzHoZqmLo', trackState: 'Q7XY20ML$DksSt'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('folder/artist/similar', {id: 'ku[d2iSN99^WOLxe', trackState: 6363472438755330}, 400);
+					await get('folder/artist/similar', {id: '35jO9', trackState: 8749868247941122}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('folder/artist/similar', {id: '0J%0rtA#k[', trackState: -5634966952083457}, 400);
+					await get('folder/artist/similar', {id: 'SjQxEH17fvv', trackState: -5585969965170689}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('folder/artist/similar', {id: '8)sqC)', offset: '8eo(VR&Izz#PwRR@2h'}, 400);
+					await get('folder/artist/similar', {id: 'PlNV8de5y', offset: 'w(vJ5)AMj@4ysc@'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: '64bUtr2(!@X(', offset: ''}, 400);
+					await get('folder/artist/similar', {id: 'a$*0K', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('folder/artist/similar', {id: 'w#WsH', offset: true}, 400);
+					await get('folder/artist/similar', {id: 'N9zsZ3LT7B', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('folder/artist/similar', {id: 'akfdGKQ#W*$', offset: 60.12}, 400);
+					await get('folder/artist/similar', {id: '3Q5dGdN%h@', offset: 31.02}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('folder/artist/similar', {id: '9COPRy^', offset: -1}, 400);
+					await get('folder/artist/similar', {id: 'dJJg49L#EenG', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('folder/artist/similar', {id: 'b5b^$U&JtC', amount: ')[H]wq0c&K2uSjNbwL'}, 400);
+					await get('folder/artist/similar', {id: 'AGeJIh', amount: '1agRO4!BTkejF*A]17G9'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('folder/artist/similar', {id: '3pHPoj[Iks)8E', amount: ''}, 400);
+					await get('folder/artist/similar', {id: 'u6Ixg', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('folder/artist/similar', {id: 'FS(cR', amount: true}, 400);
+					await get('folder/artist/similar', {id: '])&qoM', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('folder/artist/similar', {id: '!i$7ap7@gD!L#P', amount: 98.3}, 400);
+					await get('folder/artist/similar', {id: '1]jri]kT3a34', amount: 73.61}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('folder/artist/similar', {id: 'OhjxFYHRmWNd', amount: 0}, 400);
+					await get('folder/artist/similar', {id: 'mEkWt7]HMXRnLg', amount: 0}, 400);
 				});
 			});
 		});
 		describe('folder/artist/info', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/artist/info', {id: 'E&JM84rKuy$FQJOsbI$c'}, 401);
+					await getNotLoggedIn('folder/artist/info', {id: 'cnl9qF$J]MgFuIoGew'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -1414,7 +1414,7 @@ describe('Server', () => {
 		describe('folder/album/info', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/album/info', {id: 'DRAsEe$s^y!]GRC'}, 401);
+					await getNotLoggedIn('folder/album/info', {id: 'F)!pCH%jeb)Er'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -1426,7 +1426,7 @@ describe('Server', () => {
 		describe('folder/list', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/list', {list: 'faved'}, 401);
+					await getNotLoggedIn('folder/list', {list: 'frequent'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -1437,250 +1437,250 @@ describe('Server', () => {
 					await get('folder/list', {list: 'invalid'}, 400);
 				});
 				it('"rootID" set to "empty string"', async () => {
-					await get('folder/list', {list: 'avghighest', rootID: ''}, 400);
+					await get('folder/list', {list: 'frequent', rootID: ''}, 400);
 				});
 				it('"rootIDs" set to "null"', async () => {
-					await get('folder/list', {list: 'recent', rootIDs: null}, 400);
+					await get('folder/list', {list: 'frequent', rootIDs: null}, 400);
 				});
 				it('"rootIDs" set to "empty string"', async () => {
-					await get('folder/list', {list: 'highest', rootIDs: [null, '']}, 400);
+					await get('folder/list', {list: 'frequent', rootIDs: [null, '']}, 400);
 				});
 				it('"parentID" set to "empty string"', async () => {
-					await get('folder/list', {list: 'faved', parentID: ''}, 400);
+					await get('folder/list', {list: 'frequent', parentID: ''}, 400);
 				});
 				it('"childOfID" set to "empty string"', async () => {
 					await get('folder/list', {list: 'frequent', childOfID: ''}, 400);
 				});
 				it('"artist" set to "empty string"', async () => {
-					await get('folder/list', {list: 'recent', artist: ''}, 400);
+					await get('folder/list', {list: 'random', artist: ''}, 400);
 				});
 				it('"title" set to "empty string"', async () => {
-					await get('folder/list', {list: 'avghighest', title: ''}, 400);
+					await get('folder/list', {list: 'recent', title: ''}, 400);
 				});
 				it('"album" set to "empty string"', async () => {
-					await get('folder/list', {list: 'recent', album: ''}, 400);
+					await get('folder/list', {list: 'avghighest', album: ''}, 400);
 				});
 				it('"genre" set to "empty string"', async () => {
-					await get('folder/list', {list: 'random', genre: ''}, 400);
+					await get('folder/list', {list: 'highest', genre: ''}, 400);
 				});
 				it('"level" set to "string"', async () => {
-					await get('folder/list', {list: 'avghighest', level: 'BzQbSjTZSkYGg'}, 400);
+					await get('folder/list', {list: 'recent', level: '7[CtH*kVBqjp#'}, 400);
 				});
 				it('"level" set to "empty string"', async () => {
-					await get('folder/list', {list: 'recent', level: ''}, 400);
+					await get('folder/list', {list: 'highest', level: ''}, 400);
 				});
 				it('"level" set to "boolean"', async () => {
-					await get('folder/list', {list: 'highest', level: true}, 400);
+					await get('folder/list', {list: 'avghighest', level: true}, 400);
 				});
 				it('"level" set to "float"', async () => {
-					await get('folder/list', {list: 'highest', level: 65.53}, 400);
+					await get('folder/list', {list: 'recent', level: 67.8}, 400);
 				});
 				it('"level" set to "less than minimum 0"', async () => {
-					await get('folder/list', {list: 'frequent', level: -1}, 400);
+					await get('folder/list', {list: 'highest', level: -1}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('folder/list', {list: 'recent', newerThan: '%ve4&NkBUgH8xl$S'}, 400);
+					await get('folder/list', {list: 'recent', newerThan: 'ds8r6&nAuid'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
-					await get('folder/list', {list: 'random', newerThan: ''}, 400);
+					await get('folder/list', {list: 'faved', newerThan: ''}, 400);
 				});
 				it('"newerThan" set to "boolean"', async () => {
 					await get('folder/list', {list: 'highest', newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('folder/list', {list: 'highest', newerThan: 90.83}, 400);
+					await get('folder/list', {list: 'avghighest', newerThan: 32.71}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
-					await get('folder/list', {list: 'recent', newerThan: -1}, 400);
+					await get('folder/list', {list: 'highest', newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('folder/list', {list: 'recent', fromYear: 'rHnN(1J'}, 400);
+					await get('folder/list', {list: 'highest', fromYear: '08U$ayBd'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
-					await get('folder/list', {list: 'avghighest', fromYear: ''}, 400);
+					await get('folder/list', {list: 'highest', fromYear: ''}, 400);
 				});
 				it('"fromYear" set to "boolean"', async () => {
-					await get('folder/list', {list: 'recent', fromYear: true}, 400);
+					await get('folder/list', {list: 'highest', fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('folder/list', {list: 'recent', fromYear: 70.89}, 400);
+					await get('folder/list', {list: 'avghighest', fromYear: 95.13}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
-					await get('folder/list', {list: 'avghighest', fromYear: -1}, 400);
+					await get('folder/list', {list: 'highest', fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('folder/list', {list: 'avghighest', toYear: 'hbpRn4X'}, 400);
+					await get('folder/list', {list: 'frequent', toYear: 'VdQ4zQKQOAqepFf)'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
-					await get('folder/list', {list: 'recent', toYear: ''}, 400);
+					await get('folder/list', {list: 'random', toYear: ''}, 400);
 				});
 				it('"toYear" set to "boolean"', async () => {
-					await get('folder/list', {list: 'recent', toYear: true}, 400);
+					await get('folder/list', {list: 'frequent', toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('folder/list', {list: 'highest', toYear: 69.3}, 400);
+					await get('folder/list', {list: 'random', toYear: 95.62}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
-					await get('folder/list', {list: 'recent', toYear: -1}, 400);
+					await get('folder/list', {list: 'faved', toYear: -1}, 400);
 				});
 				it('"type" set to "empty string"', async () => {
-					await get('folder/list', {list: 'frequent', type: ''}, 400);
+					await get('folder/list', {list: 'faved', type: ''}, 400);
 				});
 				it('"type" set to "invalid enum"', async () => {
 					await get('folder/list', {list: 'faved', type: 'invalid'}, 400);
 				});
 				it('"types" set to "null"', async () => {
-					await get('folder/list', {list: 'frequent', types: null}, 400);
+					await get('folder/list', {list: 'random', types: null}, 400);
 				});
 				it('"types" set to "empty string"', async () => {
-					await get('folder/list', {list: 'random', types: [null, '']}, 400);
+					await get('folder/list', {list: 'avghighest', types: [null, '']}, 400);
 				});
 				it('"types" set to "invalid enum"', async () => {
 					await get('folder/list', {list: 'random', types: [null, 'invalid']}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
-					await get('folder/list', {list: 'frequent', sortField: ''}, 400);
+					await get('folder/list', {list: 'avghighest', sortField: ''}, 400);
 				});
 				it('"sortField" set to "invalid enum"', async () => {
 					await get('folder/list', {list: 'avghighest', sortField: 'invalid'}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('folder/list', {list: 'avghighest', id: ''}, 400);
+					await get('folder/list', {list: 'highest', id: ''}, 400);
 				});
 				it('"ids" set to "null"', async () => {
 					await get('folder/list', {list: 'highest', ids: null}, 400);
 				});
 				it('"ids" set to "empty string"', async () => {
-					await get('folder/list', {list: 'highest', ids: [null, '']}, 400);
+					await get('folder/list', {list: 'avghighest', ids: [null, '']}, 400);
 				});
 				it('"query" set to "empty string"', async () => {
-					await get('folder/list', {list: 'faved', query: ''}, 400);
+					await get('folder/list', {list: 'highest', query: ''}, 400);
 				});
 				it('"sortDescending" set to "empty string"', async () => {
-					await get('folder/list', {list: 'random', sortDescending: ''}, 400);
+					await get('folder/list', {list: 'frequent', sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('folder/list', {list: 'frequent', sortDescending: '8c21M8B8T21'}, 400);
+					await get('folder/list', {list: 'highest', sortDescending: ']o9SZfy5Z'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('folder/list', {list: 'avghighest', sortDescending: 1294470788153346}, 400);
+					await get('folder/list', {list: 'faved', sortDescending: -3258233879789566}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('folder/list', {list: 'frequent', sortDescending: 3074205641867263}, 400);
+					await get('folder/list', {list: 'avghighest', sortDescending: -3880993601617921}, 400);
 				});
 				it('"folderTag" set to "empty string"', async () => {
-					await get('folder/list', {list: 'avghighest', folderTag: ''}, 400);
+					await get('folder/list', {list: 'frequent', folderTag: ''}, 400);
 				});
 				it('"folderTag" set to "string"', async () => {
-					await get('folder/list', {list: 'avghighest', folderTag: 'az3G(f'}, 400);
+					await get('folder/list', {list: 'frequent', folderTag: 'fC[r9gMypjg!6WBhJ'}, 400);
 				});
 				it('"folderTag" set to "integer > 1"', async () => {
-					await get('folder/list', {list: 'random', folderTag: -2032418819145726}, 400);
+					await get('folder/list', {list: 'frequent', folderTag: -3261656469602302}, 400);
 				});
 				it('"folderTag" set to "integer < 0"', async () => {
-					await get('folder/list', {list: 'faved', folderTag: -8927604547518465}, 400);
+					await get('folder/list', {list: 'recent', folderTag: 724118827696127}, 400);
 				});
 				it('"folderState" set to "empty string"', async () => {
 					await get('folder/list', {list: 'highest', folderState: ''}, 400);
 				});
 				it('"folderState" set to "string"', async () => {
-					await get('folder/list', {list: 'faved', folderState: 'uFcIWvpQVFLUzd1PI!N'}, 400);
+					await get('folder/list', {list: 'recent', folderState: 'Q^p3wLg)kVhAUtg0H)N'}, 400);
 				});
 				it('"folderState" set to "integer > 1"', async () => {
-					await get('folder/list', {list: 'avghighest', folderState: 8871306439163906}, 400);
+					await get('folder/list', {list: 'faved', folderState: 1704273805049858}, 400);
 				});
 				it('"folderState" set to "integer < 0"', async () => {
-					await get('folder/list', {list: 'frequent', folderState: 325448202452991}, 400);
+					await get('folder/list', {list: 'avghighest', folderState: 3031229146333183}, 400);
 				});
 				it('"folderCounts" set to "empty string"', async () => {
-					await get('folder/list', {list: 'random', folderCounts: ''}, 400);
+					await get('folder/list', {list: 'frequent', folderCounts: ''}, 400);
 				});
 				it('"folderCounts" set to "string"', async () => {
-					await get('folder/list', {list: 'frequent', folderCounts: 'MDuW2djV#2KCbgg8[7L'}, 400);
+					await get('folder/list', {list: 'faved', folderCounts: 'ESd4y@N'}, 400);
 				});
 				it('"folderCounts" set to "integer > 1"', async () => {
-					await get('folder/list', {list: 'recent', folderCounts: 5770342270238722}, 400);
+					await get('folder/list', {list: 'highest', folderCounts: 3529741323730946}, 400);
 				});
 				it('"folderCounts" set to "integer < 0"', async () => {
-					await get('folder/list', {list: 'highest', folderCounts: 3706622232756223}, 400);
+					await get('folder/list', {list: 'recent', folderCounts: 2854312334065663}, 400);
 				});
 				it('"folderParents" set to "empty string"', async () => {
-					await get('folder/list', {list: 'avghighest', folderParents: ''}, 400);
+					await get('folder/list', {list: 'faved', folderParents: ''}, 400);
 				});
 				it('"folderParents" set to "string"', async () => {
-					await get('folder/list', {list: 'frequent', folderParents: 'O^#7CSS4F#Z]JJ'}, 400);
+					await get('folder/list', {list: 'frequent', folderParents: 'SYMSP%4(1WO[HTX$*'}, 400);
 				});
 				it('"folderParents" set to "integer > 1"', async () => {
-					await get('folder/list', {list: 'frequent', folderParents: -7950532081614846}, 400);
+					await get('folder/list', {list: 'random', folderParents: 4052768180404226}, 400);
 				});
 				it('"folderParents" set to "integer < 0"', async () => {
-					await get('folder/list', {list: 'highest', folderParents: -7179215178825729}, 400);
+					await get('folder/list', {list: 'avghighest', folderParents: 4995179962433535}, 400);
 				});
 				it('"folderInfo" set to "empty string"', async () => {
-					await get('folder/list', {list: 'highest', folderInfo: ''}, 400);
+					await get('folder/list', {list: 'avghighest', folderInfo: ''}, 400);
 				});
 				it('"folderInfo" set to "string"', async () => {
-					await get('folder/list', {list: 'faved', folderInfo: 'j#Skax6!B)7KhAszP0A'}, 400);
+					await get('folder/list', {list: 'highest', folderInfo: 'qT!Oz35c]Sq'}, 400);
 				});
 				it('"folderInfo" set to "integer > 1"', async () => {
-					await get('folder/list', {list: 'highest', folderInfo: -3875696325689342}, 400);
+					await get('folder/list', {list: 'avghighest', folderInfo: 210574101184514}, 400);
 				});
 				it('"folderInfo" set to "integer < 0"', async () => {
-					await get('folder/list', {list: 'highest', folderInfo: -5362579757072385}, 400);
+					await get('folder/list', {list: 'highest', folderInfo: 3491663678799871}, 400);
 				});
 				it('"folderSimilar" set to "empty string"', async () => {
-					await get('folder/list', {list: 'recent', folderSimilar: ''}, 400);
+					await get('folder/list', {list: 'avghighest', folderSimilar: ''}, 400);
 				});
 				it('"folderSimilar" set to "string"', async () => {
-					await get('folder/list', {list: 'avghighest', folderSimilar: 'CkDOTHuFqP2)e!(]'}, 400);
+					await get('folder/list', {list: 'recent', folderSimilar: 'P&yk4o'}, 400);
 				});
 				it('"folderSimilar" set to "integer > 1"', async () => {
-					await get('folder/list', {list: 'faved', folderSimilar: 3363668204978178}, 400);
+					await get('folder/list', {list: 'recent', folderSimilar: -1526873813155838}, 400);
 				});
 				it('"folderSimilar" set to "integer < 0"', async () => {
-					await get('folder/list', {list: 'random', folderSimilar: -6669334348824577}, 400);
+					await get('folder/list', {list: 'frequent', folderSimilar: -6053959412219905}, 400);
 				});
 				it('"folderArtworks" set to "empty string"', async () => {
-					await get('folder/list', {list: 'faved', folderArtworks: ''}, 400);
+					await get('folder/list', {list: 'recent', folderArtworks: ''}, 400);
 				});
 				it('"folderArtworks" set to "string"', async () => {
-					await get('folder/list', {list: 'frequent', folderArtworks: 'b!V3FENZ)T2L'}, 400);
+					await get('folder/list', {list: 'random', folderArtworks: 'WkjEnHS^$'}, 400);
 				});
 				it('"folderArtworks" set to "integer > 1"', async () => {
-					await get('folder/list', {list: 'random', folderArtworks: -7891715981574142}, 400);
+					await get('folder/list', {list: 'highest', folderArtworks: 3633235502301186}, 400);
 				});
 				it('"folderArtworks" set to "integer < 0"', async () => {
-					await get('folder/list', {list: 'avghighest', folderArtworks: -6687937676705793}, 400);
+					await get('folder/list', {list: 'random', folderArtworks: 8991312409788415}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('folder/list', {list: 'random', offset: '#Hkp7xzzj83'}, 400);
+					await get('folder/list', {list: 'avghighest', offset: 'b#7L^PwgmG'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('folder/list', {list: 'random', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('folder/list', {list: 'recent', offset: true}, 400);
+					await get('folder/list', {list: 'avghighest', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('folder/list', {list: 'avghighest', offset: 45.25}, 400);
+					await get('folder/list', {list: 'frequent', offset: 76.1}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('folder/list', {list: 'recent', offset: -1}, 400);
+					await get('folder/list', {list: 'frequent', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('folder/list', {list: 'random', amount: 'm9kHzP6zf&78'}, 400);
+					await get('folder/list', {list: 'faved', amount: 'MFHISC872wO#mwEzE4'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('folder/list', {list: 'faved', amount: ''}, 400);
+					await get('folder/list', {list: 'recent', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('folder/list', {list: 'faved', amount: true}, 400);
+					await get('folder/list', {list: 'recent', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('folder/list', {list: 'recent', amount: 89.4}, 400);
+					await get('folder/list', {list: 'recent', amount: 6.02}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('folder/list', {list: 'recent', amount: 0}, 400);
+					await get('folder/list', {list: 'faved', amount: 0}, 400);
 				});
 			});
 		});
@@ -1692,7 +1692,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('folder/search', {offset: 'gHDSGq#nvgL2]9MUl(]A'}, 400);
+					await get('folder/search', {offset: 'ZfzlO23X8uw1^QEj'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('folder/search', {offset: ''}, 400);
@@ -1701,13 +1701,13 @@ describe('Server', () => {
 					await get('folder/search', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('folder/search', {offset: 92.61}, 400);
+					await get('folder/search', {offset: 70.7}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('folder/search', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('folder/search', {amount: 'BvWl7%'}, 400);
+					await get('folder/search', {amount: 'Mf1S#9tsg%mLHZy'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('folder/search', {amount: ''}, 400);
@@ -1716,7 +1716,7 @@ describe('Server', () => {
 					await get('folder/search', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('folder/search', {amount: 43.17}, 400);
+					await get('folder/search', {amount: 3.9}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('folder/search', {amount: 0}, 400);
@@ -1749,7 +1749,7 @@ describe('Server', () => {
 					await get('folder/search', {genre: ''}, 400);
 				});
 				it('"level" set to "string"', async () => {
-					await get('folder/search', {level: 'wOStv0Vt*FZKj39V'}, 400);
+					await get('folder/search', {level: 'x6JKG'}, 400);
 				});
 				it('"level" set to "empty string"', async () => {
 					await get('folder/search', {level: ''}, 400);
@@ -1758,13 +1758,13 @@ describe('Server', () => {
 					await get('folder/search', {level: true}, 400);
 				});
 				it('"level" set to "float"', async () => {
-					await get('folder/search', {level: 10.92}, 400);
+					await get('folder/search', {level: 78.22}, 400);
 				});
 				it('"level" set to "less than minimum 0"', async () => {
 					await get('folder/search', {level: -1}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('folder/search', {newerThan: 'sFZ@q'}, 400);
+					await get('folder/search', {newerThan: 'f7SjM[)'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
 					await get('folder/search', {newerThan: ''}, 400);
@@ -1773,13 +1773,13 @@ describe('Server', () => {
 					await get('folder/search', {newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('folder/search', {newerThan: 21.02}, 400);
+					await get('folder/search', {newerThan: 14.32}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
 					await get('folder/search', {newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('folder/search', {fromYear: '#2HILdt4'}, 400);
+					await get('folder/search', {fromYear: '&wJZZ]6SxrVl44'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
 					await get('folder/search', {fromYear: ''}, 400);
@@ -1788,13 +1788,13 @@ describe('Server', () => {
 					await get('folder/search', {fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('folder/search', {fromYear: 11.28}, 400);
+					await get('folder/search', {fromYear: 6.89}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
 					await get('folder/search', {fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('folder/search', {toYear: '$9Eo5w'}, 400);
+					await get('folder/search', {toYear: 'xkfK^[vWYjt6KBHDk'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
 					await get('folder/search', {toYear: ''}, 400);
@@ -1803,7 +1803,7 @@ describe('Server', () => {
 					await get('folder/search', {toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('folder/search', {toYear: 86.37}, 400);
+					await get('folder/search', {toYear: 78.91}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
 					await get('folder/search', {toYear: -1}, 400);
@@ -1845,181 +1845,181 @@ describe('Server', () => {
 					await get('folder/search', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('folder/search', {sortDescending: '20!LZpclOlIgi^UzVoV'}, 400);
+					await get('folder/search', {sortDescending: 'y23TD'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('folder/search', {sortDescending: 7424910364246018}, 400);
+					await get('folder/search', {sortDescending: -2624351585173502}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('folder/search', {sortDescending: -7486502149816321}, 400);
+					await get('folder/search', {sortDescending: 2906177096646655}, 400);
 				});
 				it('"folderChildren" set to "empty string"', async () => {
 					await get('folder/search', {folderChildren: ''}, 400);
 				});
 				it('"folderChildren" set to "string"', async () => {
-					await get('folder/search', {folderChildren: '*TQYR$&1vLQ4aOqP%GY['}, 400);
+					await get('folder/search', {folderChildren: 'YUXWx&dw386#KHxP2s'}, 400);
 				});
 				it('"folderChildren" set to "integer > 1"', async () => {
-					await get('folder/search', {folderChildren: 4351006095704066}, 400);
+					await get('folder/search', {folderChildren: 4739917313736706}, 400);
 				});
 				it('"folderChildren" set to "integer < 0"', async () => {
-					await get('folder/search', {folderChildren: -7082236042018817}, 400);
+					await get('folder/search', {folderChildren: 8487358173282303}, 400);
 				});
 				it('"folderSubfolders" set to "empty string"', async () => {
 					await get('folder/search', {folderSubfolders: ''}, 400);
 				});
 				it('"folderSubfolders" set to "string"', async () => {
-					await get('folder/search', {folderSubfolders: 'kF[%yX2vaVQx)LpQ'}, 400);
+					await get('folder/search', {folderSubfolders: '5WxxRTB2Gsyp!vr13E[y'}, 400);
 				});
 				it('"folderSubfolders" set to "integer > 1"', async () => {
-					await get('folder/search', {folderSubfolders: 2431937645903874}, 400);
+					await get('folder/search', {folderSubfolders: -6725411237003262}, 400);
 				});
 				it('"folderSubfolders" set to "integer < 0"', async () => {
-					await get('folder/search', {folderSubfolders: -6511131891859457}, 400);
+					await get('folder/search', {folderSubfolders: 2436910890876927}, 400);
 				});
 				it('"folderTracks" set to "empty string"', async () => {
 					await get('folder/search', {folderTracks: ''}, 400);
 				});
 				it('"folderTracks" set to "string"', async () => {
-					await get('folder/search', {folderTracks: '*Kjyr3((ts'}, 400);
+					await get('folder/search', {folderTracks: 'iSizUafkLKbWf*'}, 400);
 				});
 				it('"folderTracks" set to "integer > 1"', async () => {
-					await get('folder/search', {folderTracks: 6676048540336130}, 400);
+					await get('folder/search', {folderTracks: 1595482484768770}, 400);
 				});
 				it('"folderTracks" set to "integer < 0"', async () => {
-					await get('folder/search', {folderTracks: 2550060575358975}, 400);
+					await get('folder/search', {folderTracks: 7484248558665727}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('folder/search', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('folder/search', {trackMedia: 'BBt3K1sVIXDiq9u9D!z^'}, 400);
+					await get('folder/search', {trackMedia: 'Emodo^6'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('folder/search', {trackMedia: -3256281179619326}, 400);
+					await get('folder/search', {trackMedia: -5226521287458814}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('folder/search', {trackMedia: -5752692953579521}, 400);
+					await get('folder/search', {trackMedia: 2489781216870399}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('folder/search', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('folder/search', {trackTag: 'Qfe*u3aV95ftu*w@HsGF'}, 400);
+					await get('folder/search', {trackTag: 'E]W#eXF6]IA7AL1'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('folder/search', {trackTag: -6698274748628990}, 400);
+					await get('folder/search', {trackTag: 8683561636855810}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('folder/search', {trackTag: 1545618459721727}, 400);
+					await get('folder/search', {trackTag: 226958667415551}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('folder/search', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('folder/search', {trackRawTag: '&@JOKF8GsS7Dv%Xm'}, 400);
+					await get('folder/search', {trackRawTag: '5#*in#e(kJHllO$RNX&'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('folder/search', {trackRawTag: 5937551072296962}, 400);
+					await get('folder/search', {trackRawTag: 7494383100231682}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('folder/search', {trackRawTag: 1319769726779391}, 400);
+					await get('folder/search', {trackRawTag: -442563068690433}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('folder/search', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('folder/search', {trackState: '@tShv%pMOWtQ#'}, 400);
+					await get('folder/search', {trackState: '9a4eWOtaqm##cGp%'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('folder/search', {trackState: 5962406484246530}, 400);
+					await get('folder/search', {trackState: 4439834240221186}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('folder/search', {trackState: 7907056136749055}, 400);
+					await get('folder/search', {trackState: 7751571798491135}, 400);
 				});
 				it('"folderTag" set to "empty string"', async () => {
 					await get('folder/search', {folderTag: ''}, 400);
 				});
 				it('"folderTag" set to "string"', async () => {
-					await get('folder/search', {folderTag: 'e1P4Z'}, 400);
+					await get('folder/search', {folderTag: 'sariNJ]#iwvKvCI[Ip'}, 400);
 				});
 				it('"folderTag" set to "integer > 1"', async () => {
-					await get('folder/search', {folderTag: -6610561370423294}, 400);
+					await get('folder/search', {folderTag: -3092063230885886}, 400);
 				});
 				it('"folderTag" set to "integer < 0"', async () => {
-					await get('folder/search', {folderTag: -6669278455529473}, 400);
+					await get('folder/search', {folderTag: 688764192030719}, 400);
 				});
 				it('"folderState" set to "empty string"', async () => {
 					await get('folder/search', {folderState: ''}, 400);
 				});
 				it('"folderState" set to "string"', async () => {
-					await get('folder/search', {folderState: 'rcfX2ZoiQ%'}, 400);
+					await get('folder/search', {folderState: ')E)&6bwW('}, 400);
 				});
 				it('"folderState" set to "integer > 1"', async () => {
-					await get('folder/search', {folderState: 8375523201777666}, 400);
+					await get('folder/search', {folderState: -8395863416111102}, 400);
 				});
 				it('"folderState" set to "integer < 0"', async () => {
-					await get('folder/search', {folderState: -978458498826241}, 400);
+					await get('folder/search', {folderState: 5458985486385151}, 400);
 				});
 				it('"folderCounts" set to "empty string"', async () => {
 					await get('folder/search', {folderCounts: ''}, 400);
 				});
 				it('"folderCounts" set to "string"', async () => {
-					await get('folder/search', {folderCounts: ']b44sL()@'}, 400);
+					await get('folder/search', {folderCounts: 'k0OzZ1puzIH)s'}, 400);
 				});
 				it('"folderCounts" set to "integer > 1"', async () => {
-					await get('folder/search', {folderCounts: 1933443873112066}, 400);
+					await get('folder/search', {folderCounts: -1438209321992190}, 400);
 				});
 				it('"folderCounts" set to "integer < 0"', async () => {
-					await get('folder/search', {folderCounts: 5054166300884991}, 400);
+					await get('folder/search', {folderCounts: -3072452691230721}, 400);
 				});
 				it('"folderParents" set to "empty string"', async () => {
 					await get('folder/search', {folderParents: ''}, 400);
 				});
 				it('"folderParents" set to "string"', async () => {
-					await get('folder/search', {folderParents: '@FWNT@C'}, 400);
+					await get('folder/search', {folderParents: 'ycWM3yXib'}, 400);
 				});
 				it('"folderParents" set to "integer > 1"', async () => {
-					await get('folder/search', {folderParents: 5606288381706242}, 400);
+					await get('folder/search', {folderParents: -295535978217470}, 400);
 				});
 				it('"folderParents" set to "integer < 0"', async () => {
-					await get('folder/search', {folderParents: 3943353292947455}, 400);
+					await get('folder/search', {folderParents: 7385079311499263}, 400);
 				});
 				it('"folderInfo" set to "empty string"', async () => {
 					await get('folder/search', {folderInfo: ''}, 400);
 				});
 				it('"folderInfo" set to "string"', async () => {
-					await get('folder/search', {folderInfo: 'YM9uK'}, 400);
+					await get('folder/search', {folderInfo: '4#[Lp#'}, 400);
 				});
 				it('"folderInfo" set to "integer > 1"', async () => {
-					await get('folder/search', {folderInfo: -6425629452926974}, 400);
+					await get('folder/search', {folderInfo: -2965477848514558}, 400);
 				});
 				it('"folderInfo" set to "integer < 0"', async () => {
-					await get('folder/search', {folderInfo: 5402854642679807}, 400);
+					await get('folder/search', {folderInfo: 5376198691520511}, 400);
 				});
 				it('"folderSimilar" set to "empty string"', async () => {
 					await get('folder/search', {folderSimilar: ''}, 400);
 				});
 				it('"folderSimilar" set to "string"', async () => {
-					await get('folder/search', {folderSimilar: 'VbgH]d'}, 400);
+					await get('folder/search', {folderSimilar: ')m$s@G]EQCd1('}, 400);
 				});
 				it('"folderSimilar" set to "integer > 1"', async () => {
-					await get('folder/search', {folderSimilar: -6180739141861374}, 400);
+					await get('folder/search', {folderSimilar: -134696725905406}, 400);
 				});
 				it('"folderSimilar" set to "integer < 0"', async () => {
-					await get('folder/search', {folderSimilar: -5813628968108033}, 400);
+					await get('folder/search', {folderSimilar: -4582681773867009}, 400);
 				});
 				it('"folderArtworks" set to "empty string"', async () => {
 					await get('folder/search', {folderArtworks: ''}, 400);
 				});
 				it('"folderArtworks" set to "string"', async () => {
-					await get('folder/search', {folderArtworks: '1LY(&'}, 400);
+					await get('folder/search', {folderArtworks: 'NlGA3b6I4r3&OY'}, 400);
 				});
 				it('"folderArtworks" set to "integer > 1"', async () => {
-					await get('folder/search', {folderArtworks: -2667624185987070}, 400);
+					await get('folder/search', {folderArtworks: 1735434828775426}, 400);
 				});
 				it('"folderArtworks" set to "integer < 0"', async () => {
-					await get('folder/search', {folderArtworks: -4777123956916225}, 400);
+					await get('folder/search', {folderArtworks: 760712330739711}, 400);
 				});
 			});
 		});
@@ -2063,7 +2063,7 @@ describe('Server', () => {
 					await get('folder/health', {genre: ''}, 400);
 				});
 				it('"level" set to "string"', async () => {
-					await get('folder/health', {level: 'f1TMd$)1jVT#E3#1'}, 400);
+					await get('folder/health', {level: 'LkjymzkgWww'}, 400);
 				});
 				it('"level" set to "empty string"', async () => {
 					await get('folder/health', {level: ''}, 400);
@@ -2072,13 +2072,13 @@ describe('Server', () => {
 					await get('folder/health', {level: true}, 400);
 				});
 				it('"level" set to "float"', async () => {
-					await get('folder/health', {level: 64.85}, 400);
+					await get('folder/health', {level: 56.02}, 400);
 				});
 				it('"level" set to "less than minimum 0"', async () => {
 					await get('folder/health', {level: -1}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('folder/health', {newerThan: 'Z%(MCg#YLatA'}, 400);
+					await get('folder/health', {newerThan: 'En$lrER2]0W!XyeYBQ'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
 					await get('folder/health', {newerThan: ''}, 400);
@@ -2087,13 +2087,13 @@ describe('Server', () => {
 					await get('folder/health', {newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('folder/health', {newerThan: 74.51}, 400);
+					await get('folder/health', {newerThan: 26.62}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
 					await get('folder/health', {newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('folder/health', {fromYear: '7Gqki3xL!*X8*(R&%IaH'}, 400);
+					await get('folder/health', {fromYear: 'uR(NmmGhe'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
 					await get('folder/health', {fromYear: ''}, 400);
@@ -2102,13 +2102,13 @@ describe('Server', () => {
 					await get('folder/health', {fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('folder/health', {fromYear: 60.41}, 400);
+					await get('folder/health', {fromYear: 24.99}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
 					await get('folder/health', {fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('folder/health', {toYear: '@JCIZn7'}, 400);
+					await get('folder/health', {toYear: 'Ge&71tkWp(@9O2AQvd'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
 					await get('folder/health', {toYear: ''}, 400);
@@ -2117,7 +2117,7 @@ describe('Server', () => {
 					await get('folder/health', {toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('folder/health', {toYear: 5.8}, 400);
+					await get('folder/health', {toYear: 64.73}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
 					await get('folder/health', {toYear: -1}, 400);
@@ -2159,104 +2159,104 @@ describe('Server', () => {
 					await get('folder/health', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('folder/health', {sortDescending: 'ULQ&RhAvi9Er'}, 400);
+					await get('folder/health', {sortDescending: 'f4abH^&YY'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('folder/health', {sortDescending: 5578912922861570}, 400);
+					await get('folder/health', {sortDescending: 4310551895212034}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('folder/health', {sortDescending: 3734478795046911}, 400);
+					await get('folder/health', {sortDescending: -2656655451881473}, 400);
 				});
 				it('"folderTag" set to "empty string"', async () => {
 					await get('folder/health', {folderTag: ''}, 400);
 				});
 				it('"folderTag" set to "string"', async () => {
-					await get('folder/health', {folderTag: 'Okcyb'}, 400);
+					await get('folder/health', {folderTag: 'k4xy9Me&&T!fBC6'}, 400);
 				});
 				it('"folderTag" set to "integer > 1"', async () => {
-					await get('folder/health', {folderTag: -5885765150048254}, 400);
+					await get('folder/health', {folderTag: 3986560080936962}, 400);
 				});
 				it('"folderTag" set to "integer < 0"', async () => {
-					await get('folder/health', {folderTag: 3364400295575551}, 400);
+					await get('folder/health', {folderTag: -92246074458113}, 400);
 				});
 				it('"folderState" set to "empty string"', async () => {
 					await get('folder/health', {folderState: ''}, 400);
 				});
 				it('"folderState" set to "string"', async () => {
-					await get('folder/health', {folderState: '(991z(nUlR'}, 400);
+					await get('folder/health', {folderState: ']UGmN44i(ufzpl$%O'}, 400);
 				});
 				it('"folderState" set to "integer > 1"', async () => {
-					await get('folder/health', {folderState: 1058759241629698}, 400);
+					await get('folder/health', {folderState: -5019257570066430}, 400);
 				});
 				it('"folderState" set to "integer < 0"', async () => {
-					await get('folder/health', {folderState: 7410637747519487}, 400);
+					await get('folder/health', {folderState: -5005214759256065}, 400);
 				});
 				it('"folderCounts" set to "empty string"', async () => {
 					await get('folder/health', {folderCounts: ''}, 400);
 				});
 				it('"folderCounts" set to "string"', async () => {
-					await get('folder/health', {folderCounts: 'LT!KS$P[nVMpVfi4m'}, 400);
+					await get('folder/health', {folderCounts: 'Pt5##$WNLRTxhJj%k5'}, 400);
 				});
 				it('"folderCounts" set to "integer > 1"', async () => {
-					await get('folder/health', {folderCounts: -4320155207204862}, 400);
+					await get('folder/health', {folderCounts: 6686198311419906}, 400);
 				});
 				it('"folderCounts" set to "integer < 0"', async () => {
-					await get('folder/health', {folderCounts: 7191125790031871}, 400);
+					await get('folder/health', {folderCounts: -6169647120384001}, 400);
 				});
 				it('"folderParents" set to "empty string"', async () => {
 					await get('folder/health', {folderParents: ''}, 400);
 				});
 				it('"folderParents" set to "string"', async () => {
-					await get('folder/health', {folderParents: '7Mrs63^RZTxYlTH7ee'}, 400);
+					await get('folder/health', {folderParents: 'EnPabU(A6vs'}, 400);
 				});
 				it('"folderParents" set to "integer > 1"', async () => {
-					await get('folder/health', {folderParents: 1123024132636674}, 400);
+					await get('folder/health', {folderParents: 86431292719106}, 400);
 				});
 				it('"folderParents" set to "integer < 0"', async () => {
-					await get('folder/health', {folderParents: 393234488492031}, 400);
+					await get('folder/health', {folderParents: -6030919295041537}, 400);
 				});
 				it('"folderInfo" set to "empty string"', async () => {
 					await get('folder/health', {folderInfo: ''}, 400);
 				});
 				it('"folderInfo" set to "string"', async () => {
-					await get('folder/health', {folderInfo: 'wWlgFy!w#sF'}, 400);
+					await get('folder/health', {folderInfo: '8nQ9yC9SDf7B1'}, 400);
 				});
 				it('"folderInfo" set to "integer > 1"', async () => {
-					await get('folder/health', {folderInfo: 714227396378626}, 400);
+					await get('folder/health', {folderInfo: -368553618309118}, 400);
 				});
 				it('"folderInfo" set to "integer < 0"', async () => {
-					await get('folder/health', {folderInfo: 6708118880780287}, 400);
+					await get('folder/health', {folderInfo: 7246845625499647}, 400);
 				});
 				it('"folderSimilar" set to "empty string"', async () => {
 					await get('folder/health', {folderSimilar: ''}, 400);
 				});
 				it('"folderSimilar" set to "string"', async () => {
-					await get('folder/health', {folderSimilar: 'Rjv]HwH8hn'}, 400);
+					await get('folder/health', {folderSimilar: 'vfpR78N]'}, 400);
 				});
 				it('"folderSimilar" set to "integer > 1"', async () => {
-					await get('folder/health', {folderSimilar: 5823295714754562}, 400);
+					await get('folder/health', {folderSimilar: -233122671099902}, 400);
 				});
 				it('"folderSimilar" set to "integer < 0"', async () => {
-					await get('folder/health', {folderSimilar: 5021268583645183}, 400);
+					await get('folder/health', {folderSimilar: -411010674458625}, 400);
 				});
 				it('"folderArtworks" set to "empty string"', async () => {
 					await get('folder/health', {folderArtworks: ''}, 400);
 				});
 				it('"folderArtworks" set to "string"', async () => {
-					await get('folder/health', {folderArtworks: '5Qv5[tudUte9cZJP38w^'}, 400);
+					await get('folder/health', {folderArtworks: 'Crr9t6Gzm8UzM'}, 400);
 				});
 				it('"folderArtworks" set to "integer > 1"', async () => {
-					await get('folder/health', {folderArtworks: 7066723102490626}, 400);
+					await get('folder/health', {folderArtworks: -1410227702333438}, 400);
 				});
 				it('"folderArtworks" set to "integer < 0"', async () => {
-					await get('folder/health', {folderArtworks: -6965887982632961}, 400);
+					await get('folder/health', {folderArtworks: 5071265685569535}, 400);
 				});
 			});
 		});
 		describe('folder/state', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/state', {id: 'jM@Nel*Hcg6CJXp@!'}, 401);
+					await getNotLoggedIn('folder/state', {id: 'bQCDE#vYTZ'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2268,7 +2268,7 @@ describe('Server', () => {
 		describe('folder/states', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/states', {ids: ['*LlohS]QK^lDjbiZ!U', '3#hJK$*9A8ccG(wA']}, 401);
+					await getNotLoggedIn('folder/states', {ids: ['SZiK&3cP[iB$k', '5N2O!rANUDTv^sj']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2283,7 +2283,7 @@ describe('Server', () => {
 		describe('folder/artist/similar/tracks', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/artist/similar/tracks', {id: ')dKgNJFzQOV%0rDajzfM'}, 401);
+					await getNotLoggedIn('folder/artist/similar/tracks', {id: 'g%QJFly['}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2291,89 +2291,89 @@ describe('Server', () => {
 					await get('folder/artist/similar/tracks', {id: ''}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'KTsZ3UMaOSGg!s24Qq', trackMedia: ''}, 400);
+					await get('folder/artist/similar/tracks', {id: '^BLA1', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'zmQV]BEA#cHJ', trackMedia: ')LND605Z1'}, 400);
+					await get('folder/artist/similar/tracks', {id: 'K$tFCja!mff0', trackMedia: 'EgSC(3kPlY8Z&3Q'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'FUiHrb#R', trackMedia: 1122332928114690}, 400);
+					await get('folder/artist/similar/tracks', {id: 'xpmSzocbF*C7vU[Om', trackMedia: -7015300511825918}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'hZuUu1G2cegAE', trackMedia: 8286784765034495}, 400);
+					await get('folder/artist/similar/tracks', {id: '@3ux[^]pp)lao!pC', trackMedia: -4685133567229953}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('folder/artist/similar/tracks', {id: '3GAwtUFSvM!xXhJy#', trackTag: ''}, 400);
+					await get('folder/artist/similar/tracks', {id: 'NbKX$k]mtw%nS', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'z!0CVlRer4g&8', trackTag: 'OP@zG%P'}, 400);
+					await get('folder/artist/similar/tracks', {id: ')kXS!', trackTag: '&MG^Yl%JBo9lkuRVf0Gh'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'yM35TbD24OT1B^Z', trackTag: -5023719709736958}, 400);
+					await get('folder/artist/similar/tracks', {id: 'x*g9lAT2G', trackTag: 4206553884262402}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'aaq8d3!TGek66*', trackTag: 8909586551537663}, 400);
+					await get('folder/artist/similar/tracks', {id: 'u00zhrw8Z', trackTag: -7078708443611137}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'T3wbufc*^NlsYt1WRX2', trackRawTag: ''}, 400);
+					await get('folder/artist/similar/tracks', {id: '&xG%(EljsYg@crMBwh)z', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'q7ZSz4e4agQu2x', trackRawTag: '!GJ^)1iMdz'}, 400);
+					await get('folder/artist/similar/tracks', {id: 'a%eEO510ZF', trackRawTag: 'mHjOnjD@^mrt'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'w[rSpGU60!5&[E', trackRawTag: 368549428199426}, 400);
+					await get('folder/artist/similar/tracks', {id: 'AE[aBh$', trackRawTag: 3075802937688066}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'ia2V)LhRMOkl', trackRawTag: 6672486859014143}, 400);
+					await get('folder/artist/similar/tracks', {id: 'gV@Yrvg*fR]', trackRawTag: -1533030942375937}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('folder/artist/similar/tracks', {id: '0AuJwoQf5*wN4', trackState: ''}, 400);
+					await get('folder/artist/similar/tracks', {id: 'LbGI$lIUE(X', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('folder/artist/similar/tracks', {id: '*Hv%0DOpSduq75QrI', trackState: 'yEXW[IbqGa3H'}, 400);
+					await get('folder/artist/similar/tracks', {id: 'cNNCWTNTfW^j', trackState: 'EEbf8E!z('}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('folder/artist/similar/tracks', {id: '^af(oi!$xd1wCmEpr', trackState: -3099010546008062}, 400);
+					await get('folder/artist/similar/tracks', {id: 'QUIMamAz8wn6F', trackState: -5933617096163326}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'oSh*g', trackState: -2892354545516545}, 400);
+					await get('folder/artist/similar/tracks', {id: 'PyD%*E*bq^', trackState: 2577040461004799}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('folder/artist/similar/tracks', {id: '4Y35y$TqxXkL&wHM', offset: 'zp]aI'}, 400);
+					await get('folder/artist/similar/tracks', {id: '$1tKY@', offset: 'HLWh2'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('folder/artist/similar/tracks', {id: '7h%[U(xPcFVt]S', offset: ''}, 400);
+					await get('folder/artist/similar/tracks', {id: 'dchMwkX0[FBe9s1RZjes', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'MueqPj&', offset: true}, 400);
+					await get('folder/artist/similar/tracks', {id: '$MgrS20!LfTTe', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'WkhuG', offset: 36.71}, 400);
+					await get('folder/artist/similar/tracks', {id: 'Y^hQ)zR[bqZsnFOxCs', offset: 9.55}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('folder/artist/similar/tracks', {id: '3$d4PHQoqaSmmwEI', offset: -1}, 400);
+					await get('folder/artist/similar/tracks', {id: '4@QQ7Jg6ra1', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'GjtzElw', amount: '2VGrYO87AX'}, 400);
+					await get('folder/artist/similar/tracks', {id: '4NpeN2a1nPSc6IX', amount: 'WX8^T'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('folder/artist/similar/tracks', {id: '&he12*(e)D', amount: ''}, 400);
+					await get('folder/artist/similar/tracks', {id: 'lcYMt&%Y^DQO', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('folder/artist/similar/tracks', {id: '#nTP2QOYXywS', amount: true}, 400);
+					await get('folder/artist/similar/tracks', {id: 'LN0E8P92UG4zIn8', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('folder/artist/similar/tracks', {id: 'qsakZRvKe[Ed)Ign0[*)', amount: 73.82}, 400);
+					await get('folder/artist/similar/tracks', {id: '0wq%s$kQ0bZ3vd', amount: 17.05}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('folder/artist/similar/tracks', {id: '*$gGfg8GjN', amount: 0}, 400);
+					await get('folder/artist/similar/tracks', {id: 'OAugxD]s!NXnzr7V1', amount: 0}, 400);
 				});
 			});
 		});
 		describe('folder/artworks', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/artworks', {id: '7v%[#43PmjQq*s'}, 401);
+					await getNotLoggedIn('folder/artworks', {id: 'qT$n5hIQCC*9e$^lt4dY'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2385,7 +2385,7 @@ describe('Server', () => {
 		describe('track/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/id', {id: '@sNx9S'}, 401);
+					await getNotLoggedIn('track/id', {id: 'Ek8WLHYV9K5cTP!m'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2393,59 +2393,59 @@ describe('Server', () => {
 					await get('track/id', {id: ''}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('track/id', {id: '#3*cd4vuz4K', trackMedia: ''}, 400);
+					await get('track/id', {id: 'bbbbH', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('track/id', {id: 'TNUTu6Y', trackMedia: 'Zl@%F$EeMcIF'}, 400);
+					await get('track/id', {id: 'm5hGTVWEtL', trackMedia: 'pANhnRQHAL6G*e$#D@'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('track/id', {id: 'CHK2FA8[(4fj7wKi', trackMedia: 6518234979237890}, 400);
+					await get('track/id', {id: '#g7m$Fxr$w', trackMedia: 2152268568723458}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('track/id', {id: 'YWQ3YPLyx(Kx*^8', trackMedia: 691949401014271}, 400);
+					await get('track/id', {id: 'L(rm*7Sat6YgwiVOtz[1', trackMedia: -7768232555446273}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('track/id', {id: 'qPZ8$', trackTag: ''}, 400);
+					await get('track/id', {id: 'NLm(li', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('track/id', {id: 'VfkOHPBE*[h5wAkkBhmo', trackTag: 'cpo5qY^))P'}, 400);
+					await get('track/id', {id: ']%SIf#O[7x$%w^sQ', trackTag: 'vMo5NbV4tYZb5B%Gghl'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('track/id', {id: 'bjHm2Hkqw$', trackTag: -6932563306217470}, 400);
+					await get('track/id', {id: 'LR[^Dc%O', trackTag: 2469837884358658}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('track/id', {id: 'cLKcT8^wFtSmTb#Em&*', trackTag: 3202995969851391}, 400);
+					await get('track/id', {id: 'rnM%l', trackTag: -4349664509820929}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('track/id', {id: 'sq0&lv18P1qzbv8OPo!Z', trackRawTag: ''}, 400);
+					await get('track/id', {id: 'tQ*8j', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('track/id', {id: 'gIMQO!5Z7a', trackRawTag: '#yZ6[7d['}, 400);
+					await get('track/id', {id: '2ro@0uP)', trackRawTag: 'n#MSrFVC0KMa(d*$]t'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('track/id', {id: 'osLfZA&s(ovzu', trackRawTag: -1541269792751614}, 400);
+					await get('track/id', {id: 'SL%ia6np8Y*IoA', trackRawTag: 6990149946703874}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('track/id', {id: 'SMgu^oZlQZrD', trackRawTag: 3298328267718655}, 400);
+					await get('track/id', {id: 'iNH]LmtF!', trackRawTag: 1828015096987647}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('track/id', {id: '*eauQYPh27sNU][F', trackState: ''}, 400);
+					await get('track/id', {id: 'Ddes0[GKc6vG7&X', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('track/id', {id: 'Ys2x[j!Z', trackState: 'Tumq2X9Axdw0YUKv*^F'}, 400);
+					await get('track/id', {id: 'cJ^%vZ1qA9JOP&7s', trackState: 'GlXwS]bZb'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('track/id', {id: '$Kp6U^^K', trackState: -5607456315015166}, 400);
+					await get('track/id', {id: 'j#ssMiy@X@p^K0OmRq%', trackState: -7995305114992638}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('track/id', {id: 'f#fl5WH3%gS*UHAZj(n', trackState: -5414830307540993}, 400);
+					await get('track/id', {id: '6GcO^T0x%l1#EXBXEw', trackState: -558419874414593}, 400);
 				});
 			});
 		});
 		describe('track/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/ids', {ids: ['*Q^e#!zG(', 't!kSAV9rdB)VMnX']}, 401);
+					await getNotLoggedIn('track/ids', {ids: ['f(IS[C[6pPW5ps2a0', 'dfQ4b#x&5YEla2tYQz(']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2456,59 +2456,59 @@ describe('Server', () => {
 					await get('track/ids', {ids: [null, '']}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('track/ids', {ids: ['zLmkDq6ZhTa', 'UWrRa09'], trackMedia: ''}, 400);
+					await get('track/ids', {ids: ['tbley1)IMY%J8', 'O0g#kczGV8WFdzNP9zp'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('track/ids', {ids: ['B2q13p', '5nUP(oQ@Y)u#5UtkycJg'], trackMedia: 'vGbq4*WPsJg6h'}, 400);
+					await get('track/ids', {ids: ['pEdpZvPcOBWSWa', 'l@GA7n4I]ATPXw6eSr'], trackMedia: 'W)bY[gWY[DK8QW^ju'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('track/ids', {ids: ['!yyBzbWw', 'BOtYoXEtQIeH(N'], trackMedia: -739400837234686}, 400);
+					await get('track/ids', {ids: ['6jDW3J3', 'e(GH68buA5QlQA2!!'], trackMedia: 2165573697929218}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('track/ids', {ids: ['38(HHE', 'D]HYsG'], trackMedia: 1431640446337023}, 400);
+					await get('track/ids', {ids: ['J%zawes(rUYf', 'yh&GAiAfPO'], trackMedia: 2595373549879295}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('track/ids', {ids: ['OE1kP4o', '^Gc^]Mzb6)9w!'], trackTag: ''}, 400);
+					await get('track/ids', {ids: ['IkfYun9y', 'PuBsgEM^LP'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('track/ids', {ids: ['2koj0&*cW%ZCD[K6', 'IFWVOnrg7HW'], trackTag: 'HmSRQfHG#I$cp9fhKI'}, 400);
+					await get('track/ids', {ids: ['9e[[1I@Cftl9]U', 'J)xp887neGmzu%3]'], trackTag: 't@8MO1'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('track/ids', {ids: ['!*FuV1&%BoSk^k9U', 'uGOwHD!X*ZDaWRoxK9'], trackTag: 2358663163412482}, 400);
+					await get('track/ids', {ids: ['DYt8ZYedWTEV', 'gN0#Rn6P'], trackTag: 4788599312613378}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('track/ids', {ids: ['KEmzNIcqPmG)5wlet', 'OMH2yn#[k'], trackTag: 508484093214719}, 400);
+					await get('track/ids', {ids: ['*5pnyl8', 'EHsbcBD['], trackTag: -8314875096858625}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('track/ids', {ids: ['%X(#Zib7zqQ*)ifs7x', 'LAniWDcRDb7REKtONF'], trackRawTag: ''}, 400);
+					await get('track/ids', {ids: ['f$hmvIqiRZf(C4gbVkjG', 'v5)DtPTy'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('track/ids', {ids: ['k@@lA', 'lL(cI%4'], trackRawTag: '1[#zb$1d8x3bSgNyQX0'}, 400);
+					await get('track/ids', {ids: ['wDam^#c', 'rQ]kSd(jk$'], trackRawTag: 'vpa8%'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('track/ids', {ids: ['6zQZ@', 'Ftyyf2Q%IgI[S4%8]!I'], trackRawTag: 5609952697647106}, 400);
+					await get('track/ids', {ids: ['Vyou^%LHuC8%K#GH@H@', '86sVq3i'], trackRawTag: -2067876034904062}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('track/ids', {ids: ['d78O]([', 'GVzEimhwWYe$LwAV%'], trackRawTag: -3933844751253505}, 400);
+					await get('track/ids', {ids: ['vO9wOXb%v7[E#1', 'Sn2vI'], trackRawTag: 1742531209461759}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('track/ids', {ids: ['aQi#8&qLT5]FYdP#AhQA', 'qMCiVb[ydZ0g6'], trackState: ''}, 400);
+					await get('track/ids', {ids: ['7c&SEYoc', '0jU]OB!sdh$m'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('track/ids', {ids: ['3wp]JvlANbE', 'H9)Zlf'], trackState: 'bzFOh^%xygh6fjD5W'}, 400);
+					await get('track/ids', {ids: ['Y0Tu(WVi%O^#sF5dt19', '7So84c'], trackState: 'a%@b1U!B*d'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('track/ids', {ids: ['W6a88xc%UE$R', 'TWzr(c!MY5]O'], trackState: 3681719592943618}, 400);
+					await get('track/ids', {ids: ['pO##t', 'PII@rlr&bn$Hz'], trackState: 8198158983102466}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('track/ids', {ids: ['GSo6q]Q*yI1Alv%GHe', 'MWP*wMZav(&zHuMl'], trackState: -1641623834329089}, 400);
+					await get('track/ids', {ids: ['XeAx2B$!', 'NpJL[geJY4W6!'], trackState: 5952649262268415}, 400);
 				});
 			});
 		});
 		describe('track/rawTag', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/rawTag', {id: '^[D()a^otWnGp]'}, 401);
+					await getNotLoggedIn('track/rawTag', {id: 'EY*fIsYqMBS8l]6fN'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2520,7 +2520,7 @@ describe('Server', () => {
 		describe('track/rawTags', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/rawTags', {ids: ['4W&lFrj%gjSfnydTkB', 'clgpF6U']}, 401);
+					await getNotLoggedIn('track/rawTags', {ids: ['3PAP#otFKtCleCPbBWC', 'wtDuxg%RpXRj*2pf6']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2540,7 +2540,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('track/search', {offset: '4rrNLuLyJQLn'}, 400);
+					await get('track/search', {offset: 'Nes3OZBOv@lc'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('track/search', {offset: ''}, 400);
@@ -2549,13 +2549,13 @@ describe('Server', () => {
 					await get('track/search', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('track/search', {offset: 98.35}, 400);
+					await get('track/search', {offset: 89.86}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('track/search', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('track/search', {amount: 'P9QpUKchkM7BMJm'}, 400);
+					await get('track/search', {amount: 'Z)G@J4Sa&tWxGaiLm'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('track/search', {amount: ''}, 400);
@@ -2564,7 +2564,7 @@ describe('Server', () => {
 					await get('track/search', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('track/search', {amount: 60.36}, 400);
+					await get('track/search', {amount: 34.72}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('track/search', {amount: 0}, 400);
@@ -2609,7 +2609,7 @@ describe('Server', () => {
 					await get('track/search', {genre: ''}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('track/search', {newerThan: 'TRD5ip$CS'}, 400);
+					await get('track/search', {newerThan: '*@[fh9olklCHHhcw'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
 					await get('track/search', {newerThan: ''}, 400);
@@ -2618,13 +2618,13 @@ describe('Server', () => {
 					await get('track/search', {newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('track/search', {newerThan: 60.78}, 400);
+					await get('track/search', {newerThan: 91.51}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
 					await get('track/search', {newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('track/search', {fromYear: '6od(Q*QU[XMo'}, 400);
+					await get('track/search', {fromYear: 'rsTX*'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
 					await get('track/search', {fromYear: ''}, 400);
@@ -2633,13 +2633,13 @@ describe('Server', () => {
 					await get('track/search', {fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('track/search', {fromYear: 58.8}, 400);
+					await get('track/search', {fromYear: 89.87}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
 					await get('track/search', {fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('track/search', {toYear: 'OXoShjB'}, 400);
+					await get('track/search', {toYear: '5SMGu)%DmJ'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
 					await get('track/search', {toYear: ''}, 400);
@@ -2648,7 +2648,7 @@ describe('Server', () => {
 					await get('track/search', {toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('track/search', {toYear: 37.66}, 400);
+					await get('track/search', {toYear: 69.04}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
 					await get('track/search', {toYear: -1}, 400);
@@ -2675,68 +2675,68 @@ describe('Server', () => {
 					await get('track/search', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('track/search', {sortDescending: '%!MvU0C7b6wEXsoBIH]'}, 400);
+					await get('track/search', {sortDescending: 'iN8$lu'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('track/search', {sortDescending: 3445049400492034}, 400);
+					await get('track/search', {sortDescending: -3028428039127038}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('track/search', {sortDescending: -4087199087722497}, 400);
+					await get('track/search', {sortDescending: -1037862606733313}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('track/search', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('track/search', {trackMedia: 'utv7)e@nQ%BrVgI5i9'}, 400);
+					await get('track/search', {trackMedia: 'VpJi$RN2CRFL7A&'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('track/search', {trackMedia: -4223570917982206}, 400);
+					await get('track/search', {trackMedia: 2415447672619010}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('track/search', {trackMedia: 3601125307580415}, 400);
+					await get('track/search', {trackMedia: 3267248114368511}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('track/search', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('track/search', {trackTag: 'SIqg1DgjJ[TQAH%SBLiy'}, 400);
+					await get('track/search', {trackTag: '3vMIbKT9PjWU'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('track/search', {trackTag: -5367858087329790}, 400);
+					await get('track/search', {trackTag: -5910428517400574}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('track/search', {trackTag: -4296085799436289}, 400);
+					await get('track/search', {trackTag: -6879412226097153}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('track/search', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('track/search', {trackRawTag: '0gHEp!yzMpxVB8mpZIQ'}, 400);
+					await get('track/search', {trackRawTag: 'XYj9@]W0lP9SY'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('track/search', {trackRawTag: -3264251066056702}, 400);
+					await get('track/search', {trackRawTag: 4478952181596162}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('track/search', {trackRawTag: 1696405655650303}, 400);
+					await get('track/search', {trackRawTag: 5090308408737791}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('track/search', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('track/search', {trackState: 'exclyN)'}, 400);
+					await get('track/search', {trackState: '^JPptuphYT!Z@zK'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('track/search', {trackState: 4234782787502082}, 400);
+					await get('track/search', {trackState: 1915441266032642}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('track/search', {trackState: -8800181411643393}, 400);
+					await get('track/search', {trackState: -4966424812453889}, 400);
 				});
 			});
 		});
 		describe('track/state', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/state', {id: 'CPnFv(6iygp'}, 401);
+					await getNotLoggedIn('track/state', {id: 'pfiabK'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2748,7 +2748,7 @@ describe('Server', () => {
 		describe('track/states', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/states', {ids: ['hB%66L!ndM1xIp1GlWI*', 'iq#hk@@cV']}, 401);
+					await getNotLoggedIn('track/states', {ids: [')dc7i', 'KXl(zjrr&tSQR]dE']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2763,7 +2763,7 @@ describe('Server', () => {
 		describe('track/list', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/list', {list: 'avghighest'}, 401);
+					await getNotLoggedIn('track/list', {list: 'recent'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2777,200 +2777,200 @@ describe('Server', () => {
 					await get('track/list', {list: 'avghighest', artist: ''}, 400);
 				});
 				it('"artistID" set to "empty string"', async () => {
-					await get('track/list', {list: 'avghighest', artistID: ''}, 400);
+					await get('track/list', {list: 'faved', artistID: ''}, 400);
 				});
 				it('"albumArtistID" set to "empty string"', async () => {
-					await get('track/list', {list: 'random', albumArtistID: ''}, 400);
+					await get('track/list', {list: 'faved', albumArtistID: ''}, 400);
 				});
 				it('"parentID" set to "empty string"', async () => {
-					await get('track/list', {list: 'avghighest', parentID: ''}, 400);
+					await get('track/list', {list: 'faved', parentID: ''}, 400);
 				});
 				it('"parentIDs" set to "null"', async () => {
-					await get('track/list', {list: 'recent', parentIDs: null}, 400);
+					await get('track/list', {list: 'faved', parentIDs: null}, 400);
 				});
 				it('"parentIDs" set to "empty string"', async () => {
-					await get('track/list', {list: 'highest', parentIDs: [null, '']}, 400);
+					await get('track/list', {list: 'avghighest', parentIDs: [null, '']}, 400);
 				});
 				it('"childOfID" set to "empty string"', async () => {
-					await get('track/list', {list: 'random', childOfID: ''}, 400);
+					await get('track/list', {list: 'highest', childOfID: ''}, 400);
 				});
 				it('"rootID" set to "empty string"', async () => {
-					await get('track/list', {list: 'faved', rootID: ''}, 400);
+					await get('track/list', {list: 'frequent', rootID: ''}, 400);
 				});
 				it('"rootIDs" set to "null"', async () => {
-					await get('track/list', {list: 'random', rootIDs: null}, 400);
+					await get('track/list', {list: 'recent', rootIDs: null}, 400);
 				});
 				it('"rootIDs" set to "empty string"', async () => {
-					await get('track/list', {list: 'highest', rootIDs: [null, '']}, 400);
+					await get('track/list', {list: 'recent', rootIDs: [null, '']}, 400);
 				});
 				it('"title" set to "empty string"', async () => {
-					await get('track/list', {list: 'frequent', title: ''}, 400);
+					await get('track/list', {list: 'highest', title: ''}, 400);
 				});
 				it('"album" set to "empty string"', async () => {
-					await get('track/list', {list: 'frequent', album: ''}, 400);
+					await get('track/list', {list: 'random', album: ''}, 400);
 				});
 				it('"genre" set to "empty string"', async () => {
 					await get('track/list', {list: 'frequent', genre: ''}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('track/list', {list: 'highest', newerThan: 'V9f)i)n(i(YUgC'}, 400);
+					await get('track/list', {list: 'avghighest', newerThan: 'zO)w90GN6S^wJW@'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
-					await get('track/list', {list: 'highest', newerThan: ''}, 400);
+					await get('track/list', {list: 'random', newerThan: ''}, 400);
 				});
 				it('"newerThan" set to "boolean"', async () => {
-					await get('track/list', {list: 'avghighest', newerThan: true}, 400);
+					await get('track/list', {list: 'faved', newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('track/list', {list: 'random', newerThan: 73.23}, 400);
+					await get('track/list', {list: 'recent', newerThan: 95.6}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
-					await get('track/list', {list: 'random', newerThan: -1}, 400);
+					await get('track/list', {list: 'highest', newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('track/list', {list: 'avghighest', fromYear: '33m1vro%@95u[jvVEW'}, 400);
+					await get('track/list', {list: 'faved', fromYear: 'It@N(r'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
-					await get('track/list', {list: 'faved', fromYear: ''}, 400);
+					await get('track/list', {list: 'highest', fromYear: ''}, 400);
 				});
 				it('"fromYear" set to "boolean"', async () => {
-					await get('track/list', {list: 'avghighest', fromYear: true}, 400);
+					await get('track/list', {list: 'highest', fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('track/list', {list: 'recent', fromYear: 69.31}, 400);
+					await get('track/list', {list: 'frequent', fromYear: 37.02}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
-					await get('track/list', {list: 'avghighest', fromYear: -1}, 400);
+					await get('track/list', {list: 'random', fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('track/list', {list: 'frequent', toYear: '(h*E4Mf@]oD)7d%h'}, 400);
+					await get('track/list', {list: 'frequent', toYear: 'WxaIuA!Ic%'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
 					await get('track/list', {list: 'faved', toYear: ''}, 400);
 				});
 				it('"toYear" set to "boolean"', async () => {
-					await get('track/list', {list: 'recent', toYear: true}, 400);
+					await get('track/list', {list: 'random', toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('track/list', {list: 'recent', toYear: 62.05}, 400);
+					await get('track/list', {list: 'faved', toYear: 96.39}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
-					await get('track/list', {list: 'highest', toYear: -1}, 400);
+					await get('track/list', {list: 'avghighest', toYear: -1}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
-					await get('track/list', {list: 'faved', sortField: ''}, 400);
+					await get('track/list', {list: 'highest', sortField: ''}, 400);
 				});
 				it('"sortField" set to "invalid enum"', async () => {
-					await get('track/list', {list: 'highest', sortField: 'invalid'}, 400);
+					await get('track/list', {list: 'random', sortField: 'invalid'}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('track/list', {list: 'random', id: ''}, 400);
+					await get('track/list', {list: 'frequent', id: ''}, 400);
 				});
 				it('"ids" set to "null"', async () => {
-					await get('track/list', {list: 'highest', ids: null}, 400);
+					await get('track/list', {list: 'random', ids: null}, 400);
 				});
 				it('"ids" set to "empty string"', async () => {
-					await get('track/list', {list: 'recent', ids: [null, '']}, 400);
+					await get('track/list', {list: 'frequent', ids: [null, '']}, 400);
 				});
 				it('"query" set to "empty string"', async () => {
-					await get('track/list', {list: 'recent', query: ''}, 400);
+					await get('track/list', {list: 'faved', query: ''}, 400);
 				});
 				it('"sortDescending" set to "empty string"', async () => {
 					await get('track/list', {list: 'frequent', sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('track/list', {list: 'frequent', sortDescending: 'TpQrjLjq[TcJ7v'}, 400);
+					await get('track/list', {list: 'frequent', sortDescending: 'E41DPW6]Hg'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('track/list', {list: 'faved', sortDescending: -8472687030566910}, 400);
+					await get('track/list', {list: 'random', sortDescending: -4447773466296318}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('track/list', {list: 'highest', sortDescending: -2165509143396353}, 400);
+					await get('track/list', {list: 'frequent', sortDescending: -2423159730995201}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('track/list', {list: 'recent', trackMedia: ''}, 400);
+					await get('track/list', {list: 'random', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('track/list', {list: 'faved', trackMedia: '(*#Ez6T&Tep*I8eRTM)I'}, 400);
+					await get('track/list', {list: 'faved', trackMedia: 'CGP6I%bTdSt5K'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('track/list', {list: 'random', trackMedia: 4760847897329666}, 400);
+					await get('track/list', {list: 'avghighest', trackMedia: 5049589828681730}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('track/list', {list: 'frequent', trackMedia: 4690855818428415}, 400);
+					await get('track/list', {list: 'random', trackMedia: 816775763591167}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('track/list', {list: 'avghighest', trackTag: ''}, 400);
+					await get('track/list', {list: 'recent', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('track/list', {list: 'faved', trackTag: 'SlayM'}, 400);
+					await get('track/list', {list: 'avghighest', trackTag: 'mtJ48$t'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('track/list', {list: 'faved', trackTag: -1698565600575486}, 400);
+					await get('track/list', {list: 'avghighest', trackTag: -4916622368178174}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('track/list', {list: 'recent', trackTag: 3579860794474495}, 400);
+					await get('track/list', {list: 'avghighest', trackTag: -7510793218162689}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('track/list', {list: 'frequent', trackRawTag: ''}, 400);
+					await get('track/list', {list: 'recent', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('track/list', {list: 'highest', trackRawTag: '1*ymwco!wNM*AlIKuJh7'}, 400);
+					await get('track/list', {list: 'frequent', trackRawTag: '@Y(lDR'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('track/list', {list: 'highest', trackRawTag: 3037447537557506}, 400);
+					await get('track/list', {list: 'random', trackRawTag: -7400124355444734}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('track/list', {list: 'random', trackRawTag: 7436749311574015}, 400);
+					await get('track/list', {list: 'frequent', trackRawTag: -3370389719744513}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('track/list', {list: 'frequent', trackState: ''}, 400);
+					await get('track/list', {list: 'avghighest', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('track/list', {list: 'faved', trackState: 'KkH1&Ut'}, 400);
+					await get('track/list', {list: 'highest', trackState: ']sbJk4VAHHd2c'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('track/list', {list: 'random', trackState: 2231112717828098}, 400);
+					await get('track/list', {list: 'highest', trackState: -3343144871526398}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('track/list', {list: 'faved', trackState: -2992603465252865}, 400);
+					await get('track/list', {list: 'recent', trackState: -4713979108655105}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('track/list', {list: 'highest', offset: 'PXyv$fyMWtnB9(ul'}, 400);
+					await get('track/list', {list: 'highest', offset: 'SLU0%%^McfD]zl[)J'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('track/list', {list: 'avghighest', offset: ''}, 400);
+					await get('track/list', {list: 'highest', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('track/list', {list: 'recent', offset: true}, 400);
+					await get('track/list', {list: 'frequent', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('track/list', {list: 'frequent', offset: 38.26}, 400);
+					await get('track/list', {list: 'avghighest', offset: 87.46}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('track/list', {list: 'frequent', offset: -1}, 400);
+					await get('track/list', {list: 'highest', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('track/list', {list: 'avghighest', amount: 'n(*7@OnTJ@qSRl^dOR'}, 400);
+					await get('track/list', {list: 'frequent', amount: '6ZTv6Uxp3MXObb'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('track/list', {list: 'faved', amount: ''}, 400);
+					await get('track/list', {list: 'highest', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('track/list', {list: 'highest', amount: true}, 400);
+					await get('track/list', {list: 'avghighest', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('track/list', {list: 'avghighest', amount: 41.38}, 400);
+					await get('track/list', {list: 'random', amount: 1.7}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('track/list', {list: 'avghighest', amount: 0}, 400);
+					await get('track/list', {list: 'highest', amount: 0}, 400);
 				});
 			});
 		});
 		describe('track/similar', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/similar', {id: '4Ik(m@p$^Y'}, 401);
+					await getNotLoggedIn('track/similar', {id: '!e3wU#'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -2978,82 +2978,82 @@ describe('Server', () => {
 					await get('track/similar', {id: ''}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('track/similar', {id: 'chbnAVF$Xb3skn!6Y&', trackMedia: ''}, 400);
+					await get('track/similar', {id: '1Xy#vv#yXfzv', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('track/similar', {id: '^2$3Qme#O', trackMedia: 'azD#WmS9M1k3G%'}, 400);
+					await get('track/similar', {id: 'm4&dO', trackMedia: 'pk%*x(TtAhz%t^gCM'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('track/similar', {id: 'zh9]53#Ke', trackMedia: -8425466432061438}, 400);
+					await get('track/similar', {id: '%klG)*YyzAG!6T2Jyn', trackMedia: 8219817261662210}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('track/similar', {id: 'OZ5BOwdn', trackMedia: -8383421390782465}, 400);
+					await get('track/similar', {id: 'usY29Wu89O0tNG', trackMedia: 8577460085981183}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('track/similar', {id: 'vfg1sflye5%', trackTag: ''}, 400);
+					await get('track/similar', {id: '%RWpmYVp&mw6nIQE', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('track/similar', {id: 'hPZO#nZOL', trackTag: '7SE9KXaw^0n'}, 400);
+					await get('track/similar', {id: 'P[fb]V5VA57kGYk', trackTag: '&iYG73uDz'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('track/similar', {id: 'by9HDm8b&71', trackTag: 8707495144980482}, 400);
+					await get('track/similar', {id: 'wmOdSB@^)o(', trackTag: -8554348946653182}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('track/similar', {id: 'r8#tURl(GuVm', trackTag: 3374104518328319}, 400);
+					await get('track/similar', {id: 'eFp^bN]My&', trackTag: -3496508582264833}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('track/similar', {id: 'wCIY8b5R]M3Z0$', trackRawTag: ''}, 400);
+					await get('track/similar', {id: ']TshOxVeaKRZx', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('track/similar', {id: 'QGL^UbuJ4]Pt4', trackRawTag: 'D0mE6R1yREsfPZSU'}, 400);
+					await get('track/similar', {id: 'l81VC', trackRawTag: 'z1Du(cUKvA2v'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('track/similar', {id: 'bp%3wqF@kJr', trackRawTag: -6356791650680830}, 400);
+					await get('track/similar', {id: '1[!B)hdquN', trackRawTag: -8896739700375550}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('track/similar', {id: 'SPKiin0', trackRawTag: 1142998159065087}, 400);
+					await get('track/similar', {id: 't6HkKOH0W6', trackRawTag: 8716312578621439}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('track/similar', {id: 'rv2V9b@', trackState: ''}, 400);
+					await get('track/similar', {id: 'daNt^r]OWIvT[n[MJU', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('track/similar', {id: 'jK(AJ5y$BD%9Y', trackState: 'zfM&r[['}, 400);
+					await get('track/similar', {id: 'mwxTuF2Fd[AHm', trackState: 'ACKtNWjJ@k'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('track/similar', {id: '%mGgR^]kq$AMrF$ww8[', trackState: -207256792596478}, 400);
+					await get('track/similar', {id: '9Rbrgzr7M', trackState: 840298183786498}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('track/similar', {id: '9Y4Bb5', trackState: -7611212133040129}, 400);
+					await get('track/similar', {id: 'V2ESQK9', trackState: 2398938078380031}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('track/similar', {id: 'tQ5$7cCiFS#p1)6)F2%4', offset: 'D6NapLExk]]]@Cxgi'}, 400);
+					await get('track/similar', {id: 'jaRa0cRlEH1xcJB', offset: '@ik*ff%l'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('track/similar', {id: 'X8)XKOJ!c^JYilT%7b3i', offset: ''}, 400);
+					await get('track/similar', {id: 's[5w2PyhNA', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('track/similar', {id: 'ljULmaDL3yU2', offset: true}, 400);
+					await get('track/similar', {id: 'e3OOfed0c6$1JG2^)', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('track/similar', {id: 'leyfz914v]B@h5olk9[T', offset: 77.19}, 400);
+					await get('track/similar', {id: 'juPAm#V', offset: 27.58}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('track/similar', {id: 'RW#MbsV)slW*', offset: -1}, 400);
+					await get('track/similar', {id: 'bNbDSZ@XOp^ENpqnMN', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('track/similar', {id: '%(H@D2bw%[*zoGsMpM&', amount: 'D[F)*(#jEeGDua^H@'}, 400);
+					await get('track/similar', {id: 'wfsI0Aw', amount: '(%0j]@pK8#jkQ'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('track/similar', {id: 'cARqtp8&uPt)OJ', amount: ''}, 400);
+					await get('track/similar', {id: ')ngn)RWg[f$fJk', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('track/similar', {id: 'QEbWQiG$KGCCW', amount: true}, 400);
+					await get('track/similar', {id: 'Qeg^R&8v', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('track/similar', {id: 'ZJu@M*1', amount: 71.04}, 400);
+					await get('track/similar', {id: 'Tt!yT@(zAL', amount: 42.65}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('track/similar', {id: 'BTPB@u]R)eW#F^k^Tqid', amount: 0}, 400);
+					await get('track/similar', {id: 'V9Yuzz]tjO3RNTR[', amount: 0}, 400);
 				});
 			});
 		});
@@ -3073,13 +3073,13 @@ describe('Server', () => {
 					await get('track/health', {media: ''}, 400);
 				});
 				it('"media" set to "string"', async () => {
-					await get('track/health', {media: 'oN#]uoY^QCc'}, 400);
+					await get('track/health', {media: 'UlC6O&@M1OgfV6['}, 400);
 				});
 				it('"media" set to "integer > 1"', async () => {
-					await get('track/health', {media: -5323470577598462}, 400);
+					await get('track/health', {media: -8641686901096446}, 400);
 				});
 				it('"media" set to "integer < 0"', async () => {
-					await get('track/health', {media: -4581802991681537}, 400);
+					await get('track/health', {media: -6318640085336065}, 400);
 				});
 				it('"artist" set to "empty string"', async () => {
 					await get('track/health', {artist: ''}, 400);
@@ -3121,7 +3121,7 @@ describe('Server', () => {
 					await get('track/health', {genre: ''}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('track/health', {newerThan: 'FZ9ZerIDNCT*e&5b'}, 400);
+					await get('track/health', {newerThan: 'GMAziGZ(0HKt)aV#L&m$'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
 					await get('track/health', {newerThan: ''}, 400);
@@ -3130,13 +3130,13 @@ describe('Server', () => {
 					await get('track/health', {newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('track/health', {newerThan: 48.82}, 400);
+					await get('track/health', {newerThan: 11.99}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
 					await get('track/health', {newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('track/health', {fromYear: 'eXq]wY[u(@3DHZUF'}, 400);
+					await get('track/health', {fromYear: 'D37kx9q)L5QO'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
 					await get('track/health', {fromYear: ''}, 400);
@@ -3145,13 +3145,13 @@ describe('Server', () => {
 					await get('track/health', {fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('track/health', {fromYear: 42.6}, 400);
+					await get('track/health', {fromYear: 55.55}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
 					await get('track/health', {fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('track/health', {toYear: 'OdUPX#[q'}, 400);
+					await get('track/health', {toYear: 'x$B806EX7UJV[T#Y&W$'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
 					await get('track/health', {toYear: ''}, 400);
@@ -3160,7 +3160,7 @@ describe('Server', () => {
 					await get('track/health', {toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('track/health', {toYear: 38.58}, 400);
+					await get('track/health', {toYear: 57.05}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
 					await get('track/health', {toYear: -1}, 400);
@@ -3187,68 +3187,68 @@ describe('Server', () => {
 					await get('track/health', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('track/health', {sortDescending: '(%^Y[KU'}, 400);
+					await get('track/health', {sortDescending: '22bVz3Y$v'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('track/health', {sortDescending: -576678262734846}, 400);
+					await get('track/health', {sortDescending: 4567381368111106}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('track/health', {sortDescending: 3719770641793023}, 400);
+					await get('track/health', {sortDescending: -1580434219597825}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('track/health', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('track/health', {trackMedia: 'V[b2cJQ]@%Y'}, 400);
+					await get('track/health', {trackMedia: 'kT]OaxsrhJ9kFR'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('track/health', {trackMedia: -8906604896321534}, 400);
+					await get('track/health', {trackMedia: 5242051989864450}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('track/health', {trackMedia: -4500790173499393}, 400);
+					await get('track/health', {trackMedia: -5927958392864769}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('track/health', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('track/health', {trackTag: 'Gcg@wH0Xi'}, 400);
+					await get('track/health', {trackTag: 'XAJ86Riok'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('track/health', {trackTag: -1571060344422398}, 400);
+					await get('track/health', {trackTag: -6877579264917502}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('track/health', {trackTag: 3541988460724223}, 400);
+					await get('track/health', {trackTag: 6286706009440255}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('track/health', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('track/health', {trackRawTag: 'PeLzxgIty'}, 400);
+					await get('track/health', {trackRawTag: 'yvVkjwfjLi[Q3NI'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('track/health', {trackRawTag: -5806092697206782}, 400);
+					await get('track/health', {trackRawTag: -4265073539284990}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('track/health', {trackRawTag: 716298556276735}, 400);
+					await get('track/health', {trackRawTag: 264616684814335}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('track/health', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('track/health', {trackState: 'VMNUP6nPVkm[fL'}, 400);
+					await get('track/health', {trackState: '@NT3(Qze8qNu^d'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('track/health', {trackState: 5677696470220802}, 400);
+					await get('track/health', {trackState: -8182783109234686}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('track/health', {trackState: 1097792269320191}, 400);
+					await get('track/health', {trackState: 6399757727563775}, 400);
 				});
 			});
 		});
 		describe('track/lyrics', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/lyrics', {id: 'kT7[v56'}, 401);
+					await getNotLoggedIn('track/lyrics', {id: '1Dmk^7!y8Ik!N$gT'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3260,7 +3260,7 @@ describe('Server', () => {
 		describe('episode/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/id', {id: 'E@k9ewxEPuHNaT]yv'}, 401);
+					await getNotLoggedIn('episode/id', {id: 'tJblZMS$q'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3268,59 +3268,59 @@ describe('Server', () => {
 					await get('episode/id', {id: ''}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('episode/id', {id: '#@njKeWxEwS@b$', trackMedia: ''}, 400);
+					await get('episode/id', {id: '*4CYF%]@Zv!lCHilw', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('episode/id', {id: 'N6p#*utE&', trackMedia: '0Gv8zjguLno#k1Nw3'}, 400);
+					await get('episode/id', {id: '!7XOcLE7AIAx', trackMedia: '@DVbrKUbu%GST'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('episode/id', {id: 'QlNDmyo!XWvM&m(v^w5', trackMedia: 6987023248261122}, 400);
+					await get('episode/id', {id: '5DGjrC4', trackMedia: 2885258764615682}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('episode/id', {id: 's7wb7', trackMedia: 4128252079636479}, 400);
+					await get('episode/id', {id: '!(5D3$ehACL', trackMedia: 5820433450401791}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('episode/id', {id: 'YJay[pm#1V9', trackTag: ''}, 400);
+					await get('episode/id', {id: 'MkDrvh9Gak', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('episode/id', {id: 'QiNtffdyKc*!#eXsZzK', trackTag: ')vZp1JmnrW9hcz'}, 400);
+					await get('episode/id', {id: 'ln@8lAm%$ZB1Lal4D[', trackTag: 'Dnz7eFg1jd7RLF^'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('episode/id', {id: 'CRm@JUrkp28', trackTag: -1735869866180606}, 400);
+					await get('episode/id', {id: '9IVkXeBG$ONd1VvzI1', trackTag: 6039141762465794}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('episode/id', {id: 'CwI]4wenel[y^)p', trackTag: -6706663662813185}, 400);
+					await get('episode/id', {id: 'JwQIn', trackTag: -7453922272739329}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('episode/id', {id: '#RXn(eWwBnqfA)BFlK@D', trackRawTag: ''}, 400);
+					await get('episode/id', {id: '$9rbv4)@1Lo1W*Mmoq', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('episode/id', {id: 'G4VCWgBqqxcZkLbd$S', trackRawTag: '1*y!MK'}, 400);
+					await get('episode/id', {id: 'gZZgaCc[x9]a!1V', trackRawTag: 'qbRSxqnV'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('episode/id', {id: 'h&GcAU980nm', trackRawTag: 5337247716999170}, 400);
+					await get('episode/id', {id: '1rDQ]ouGX^&', trackRawTag: -6960209217978366}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('episode/id', {id: '7@BIcbsttDdC', trackRawTag: -6961288659861505}, 400);
+					await get('episode/id', {id: 'dcdJ&6b^v7b*N!1', trackRawTag: -4490776222367745}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('episode/id', {id: '1fl8Z3', trackState: ''}, 400);
+					await get('episode/id', {id: 'qg0w3Wsy8)&OA1N0opvp', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('episode/id', {id: 't#fNy', trackState: 'XWrmth1Q@mgnzMWtn'}, 400);
+					await get('episode/id', {id: '!uVj#%@X[u&Iao7de', trackState: 'mo]S$UX6'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('episode/id', {id: '2C3mQX9EM*2', trackState: -6923722178953214}, 400);
+					await get('episode/id', {id: '$LP#DpGyFmu1XvKChg', trackState: -2388929051361278}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('episode/id', {id: 'K@Dxqqjg!07qL', trackState: 6975774078795775}, 400);
+					await get('episode/id', {id: '6ekQU', trackState: -446264701353985}, 400);
 				});
 			});
 		});
 		describe('episode/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/ids', {ids: ['eikGHb9', '!gr6O6']}, 401);
+					await getNotLoggedIn('episode/ids', {ids: ['0Slut9X#', 'bZe1aWHQ!o4kDk']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3331,52 +3331,52 @@ describe('Server', () => {
 					await get('episode/ids', {ids: [null, '']}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('episode/ids', {ids: ['#HehMzQ', 'DCI!#y'], trackMedia: ''}, 400);
+					await get('episode/ids', {ids: ['%w^A%W4XJulx', '4hYuzn@B'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('episode/ids', {ids: ['byst5*0', ']QzgRF*0@j$1Zpp4N'], trackMedia: 'KtuO]]e)lpuqN'}, 400);
+					await get('episode/ids', {ids: ['jGZi46B1ZA2O', '8c%bsC2J(b'], trackMedia: 'Y&JXQ)HA9ytRBo@[qS'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('episode/ids', {ids: ['VmWb7', 'pq&KS4W8mQL'], trackMedia: 8090093403242498}, 400);
+					await get('episode/ids', {ids: ['feiA)*)xF&OLxgC', 'Ib6sgO])f'], trackMedia: 4862472599109634}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('episode/ids', {ids: ['EVdBANy0nS2zk3', '^#T2CwI8'], trackMedia: 8542953244983295}, 400);
+					await get('episode/ids', {ids: ['dOI]XOGG*q', '7Sto[g[osBu6'], trackMedia: 4029910733553663}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('episode/ids', {ids: ['Nq[ZiCc', '(dtTgb*HjabI4[2ZevhG'], trackTag: ''}, 400);
+					await get('episode/ids', {ids: ['Nh$8JvWf8', 'xMvgaxrsF)'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('episode/ids', {ids: ['[p)an', 'RI[LHFT9'], trackTag: 'JnRey'}, 400);
+					await get('episode/ids', {ids: ['Gjipq4cX#ss%', '9QY@P[DRzMwNVpu'], trackTag: 'dkXok@qvt'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('episode/ids', {ids: ['DGTAcaOVxH)A%@', 'Eu9eEiitaMJdqx)GmU'], trackTag: 3192642737274882}, 400);
+					await get('episode/ids', {ids: ['n[gGEB[fH&P@I2by', 'ofg3CKcdckNQC]rN6Qb'], trackTag: 4686078980128770}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('episode/ids', {ids: ['@4IURDl#^OVhj!Pbs&(', 'EcErzii'], trackTag: 867725719109631}, 400);
+					await get('episode/ids', {ids: ['wRviWF]RI^9Sh0)r2', 'bzSiN1q$qF0J#Mx['], trackTag: 2364613622497279}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('episode/ids', {ids: ['mGAxAZ*Yo', 'jWw5M6z@'], trackRawTag: ''}, 400);
+					await get('episode/ids', {ids: ['g9sO)nOX01LLf', 'Ljt@6n(%Yc&Skfl2'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('episode/ids', {ids: ['o1ifwf*5iFJeM', 'syKxuiTN#@'], trackRawTag: '$PZf5uS'}, 400);
+					await get('episode/ids', {ids: ['(1(US[pE5k@Z3cRrO', 'pJ8VkK'], trackRawTag: 'YivvG#l1uYt]3K!DN6Y'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('episode/ids', {ids: ['4SxMQuf6F9F@4H7wB', 'TtrAq0^!l@c$Spz]k'], trackRawTag: 2771359394430978}, 400);
+					await get('episode/ids', {ids: ['fJaL%^1bWZOJl', 'F1K4Zj6CHDMzhBm'], trackRawTag: -3703449313083390}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('episode/ids', {ids: [']BGRzDs', '0PtyITiaBp&iW%(I)e^A'], trackRawTag: 1624768176455679}, 400);
+					await get('episode/ids', {ids: ['QoAK(lAS&*JY2', 'TBx)m^&EhnfpHW'], trackRawTag: 2386297700220927}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('episode/ids', {ids: ['B%Q6kW(7g(Sxg', 'ylE2Eu1)'], trackState: ''}, 400);
+					await get('episode/ids', {ids: ['OcgN34ZT8ipH3mqg', '$b)xqB0ZL[Wc'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('episode/ids', {ids: ['PDYefkoY4CDdk1a', 'Hc2!OeqA7ce'], trackState: 'SPR%XNhKv$AsSD'}, 400);
+					await get('episode/ids', {ids: ['FO71LeSCW0Yd9m!', 'W]sKWKqdL]H*'], trackState: '(D]s3IY^8rz'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('episode/ids', {ids: ['$&Yc[8%t0]Ai#JX#', 'nfYxQ'], trackState: -4050899487948798}, 400);
+					await get('episode/ids', {ids: ['[awSLgprL', 'Q1Flyj)$u0$g(Tq4'], trackState: -5706394078543870}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('episode/ids', {ids: ['GVkSVdV92dg5)xO4y', 'F1E#LDa'], trackState: -2005610031742977}, 400);
+					await get('episode/ids', {ids: ['2(xzn6piEus@ngpg5ady', 'q]VKPO6N3B4][&fVI'], trackState: 6220754337136639}, 400);
 				});
 			});
 		});
@@ -3388,7 +3388,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('episode/search', {offset: 'D5z*r9))U9V#s'}, 400);
+					await get('episode/search', {offset: 'lcugDV7'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('episode/search', {offset: ''}, 400);
@@ -3397,13 +3397,13 @@ describe('Server', () => {
 					await get('episode/search', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('episode/search', {offset: 16.92}, 400);
+					await get('episode/search', {offset: 40.11}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('episode/search', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('episode/search', {amount: 'F*G1T0w5NTD)fH)oqCXM'}, 400);
+					await get('episode/search', {amount: 'ej1b*Wk'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('episode/search', {amount: ''}, 400);
@@ -3412,7 +3412,7 @@ describe('Server', () => {
 					await get('episode/search', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('episode/search', {amount: 26.52}, 400);
+					await get('episode/search', {amount: 62.23}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('episode/search', {amount: 0}, 400);
@@ -3448,73 +3448,73 @@ describe('Server', () => {
 					await get('episode/search', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('episode/search', {sortDescending: 'JMBe!v'}, 400);
+					await get('episode/search', {sortDescending: 'z6BLh&nC!DnO'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('episode/search', {sortDescending: -8070826318364670}, 400);
+					await get('episode/search', {sortDescending: -3779373505183742}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('episode/search', {sortDescending: 8111927024680959}, 400);
+					await get('episode/search', {sortDescending: -5498181789941761}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('episode/search', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('episode/search', {trackMedia: 'Z!Fb^sC'}, 400);
+					await get('episode/search', {trackMedia: 'oFycalLrxlqu4e('}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('episode/search', {trackMedia: -6417723735146494}, 400);
+					await get('episode/search', {trackMedia: 844161406205954}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('episode/search', {trackMedia: 1294236016181247}, 400);
+					await get('episode/search', {trackMedia: 6055355217870847}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('episode/search', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('episode/search', {trackTag: '#dl3UUl1jU)a9L4cHUE'}, 400);
+					await get('episode/search', {trackTag: 'WqEpTN6iaG)xo'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('episode/search', {trackTag: -7576445861756926}, 400);
+					await get('episode/search', {trackTag: -2218849076248574}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('episode/search', {trackTag: -1077548901466113}, 400);
+					await get('episode/search', {trackTag: 2543374498267135}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('episode/search', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('episode/search', {trackRawTag: 'BM1EY(iCdQ]pXj*Cnc'}, 400);
+					await get('episode/search', {trackRawTag: 'b)2GxFQ'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('episode/search', {trackRawTag: -6671292354789374}, 400);
+					await get('episode/search', {trackRawTag: 4378102834659330}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('episode/search', {trackRawTag: -6462455773396993}, 400);
+					await get('episode/search', {trackRawTag: 7928077342474239}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('episode/search', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('episode/search', {trackState: 'CCH1bu$i4L4V'}, 400);
+					await get('episode/search', {trackState: 'Ur7u5'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('episode/search', {trackState: -5365746087493630}, 400);
+					await get('episode/search', {trackState: 1857434347896834}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('episode/search', {trackState: -5133757434560513}, 400);
+					await get('episode/search', {trackState: 8347768493965311}, 400);
 				});
 			});
 		});
 		describe('episode/retrieve', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/retrieve', {id: 'eB7H]2W[CJmJ6Dj'}, 401);
+					await getNotLoggedIn('episode/retrieve', {id: 'XpD7sXAq'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('episode/retrieve', {id: 'eB7H]2W[CJmJ6Dj'}, 401);
+					await getNoRights('episode/retrieve', {id: 'XpD7sXAq'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3526,7 +3526,7 @@ describe('Server', () => {
 		describe('episode/state', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/state', {id: '^ce^jmWvYtwr*'}, 401);
+					await getNotLoggedIn('episode/state', {id: '$)m13[pe[&UK'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3538,7 +3538,7 @@ describe('Server', () => {
 		describe('episode/states', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/states', {ids: ['oRObL4', 'h3d6W*wo2u5S5!']}, 401);
+					await getNotLoggedIn('episode/states', {ids: ['cC!jl', 'G4mHm6nzoKe[']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3553,7 +3553,7 @@ describe('Server', () => {
 		describe('episode/status', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/status', {id: 'k)%fkHsPDp!qLw7X7'}, 401);
+					await getNotLoggedIn('episode/status', {id: 'q42sKG*Y72Wf'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3565,7 +3565,7 @@ describe('Server', () => {
 		describe('episode/list', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/list', {list: 'recent'}, 401);
+					await getNotLoggedIn('episode/list', {list: 'highest'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3576,16 +3576,16 @@ describe('Server', () => {
 					await get('episode/list', {list: 'invalid'}, 400);
 				});
 				it('"podcastID" set to "empty string"', async () => {
-					await get('episode/list', {list: 'frequent', podcastID: ''}, 400);
+					await get('episode/list', {list: 'avghighest', podcastID: ''}, 400);
 				});
 				it('"name" set to "empty string"', async () => {
-					await get('episode/list', {list: 'frequent', name: ''}, 400);
+					await get('episode/list', {list: 'avghighest', name: ''}, 400);
 				});
 				it('"status" set to "empty string"', async () => {
-					await get('episode/list', {list: 'avghighest', status: ''}, 400);
+					await get('episode/list', {list: 'frequent', status: ''}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
-					await get('episode/list', {list: 'avghighest', sortField: ''}, 400);
+					await get('episode/list', {list: 'frequent', sortField: ''}, 400);
 				});
 				it('"sortField" set to "invalid enum"', async () => {
 					await get('episode/list', {list: 'avghighest', sortField: 'invalid'}, 400);
@@ -3594,110 +3594,110 @@ describe('Server', () => {
 					await get('episode/list', {list: 'avghighest', id: ''}, 400);
 				});
 				it('"ids" set to "null"', async () => {
-					await get('episode/list', {list: 'recent', ids: null}, 400);
+					await get('episode/list', {list: 'random', ids: null}, 400);
 				});
 				it('"ids" set to "empty string"', async () => {
 					await get('episode/list', {list: 'faved', ids: [null, '']}, 400);
 				});
 				it('"query" set to "empty string"', async () => {
-					await get('episode/list', {list: 'avghighest', query: ''}, 400);
+					await get('episode/list', {list: 'recent', query: ''}, 400);
 				});
 				it('"sortDescending" set to "empty string"', async () => {
-					await get('episode/list', {list: 'avghighest', sortDescending: ''}, 400);
+					await get('episode/list', {list: 'frequent', sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('episode/list', {list: 'recent', sortDescending: 'p!DVO4)NTuPY3IA&'}, 400);
+					await get('episode/list', {list: 'highest', sortDescending: 'ePoEg'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('episode/list', {list: 'faved', sortDescending: -5187712621477886}, 400);
+					await get('episode/list', {list: 'faved', sortDescending: 8159152530522114}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('episode/list', {list: 'faved', sortDescending: -3945519072149505}, 400);
+					await get('episode/list', {list: 'faved', sortDescending: 317670423527423}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('episode/list', {list: 'frequent', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('episode/list', {list: 'recent', trackMedia: 'AbF]oR9]497*4SrMn'}, 400);
+					await get('episode/list', {list: 'frequent', trackMedia: 'GQ$K!SYDAg5@c40Pq4'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('episode/list', {list: 'highest', trackMedia: -3577408191987710}, 400);
+					await get('episode/list', {list: 'random', trackMedia: -6810713712492542}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('episode/list', {list: 'frequent', trackMedia: -2156914494406657}, 400);
+					await get('episode/list', {list: 'highest', trackMedia: -7491326845124609}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('episode/list', {list: 'avghighest', trackTag: ''}, 400);
+					await get('episode/list', {list: 'faved', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('episode/list', {list: 'faved', trackTag: '8n*F&EoPvz#kc0[S&b'}, 400);
+					await get('episode/list', {list: 'random', trackTag: '1vBG75m0&axfY5I&*i#V'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('episode/list', {list: 'highest', trackTag: -4689673779675134}, 400);
+					await get('episode/list', {list: 'highest', trackTag: 8952904689909762}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('episode/list', {list: 'avghighest', trackTag: 6061878778265599}, 400);
+					await get('episode/list', {list: 'avghighest', trackTag: -6440293465325569}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('episode/list', {list: 'avghighest', trackRawTag: ''}, 400);
+					await get('episode/list', {list: 'highest', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('episode/list', {list: 'highest', trackRawTag: 'PcrkwUQYr'}, 400);
+					await get('episode/list', {list: 'avghighest', trackRawTag: 'Qb!iztk]WXNwu3o'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('episode/list', {list: 'random', trackRawTag: 4065732862148610}, 400);
+					await get('episode/list', {list: 'frequent', trackRawTag: 7583036220637186}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('episode/list', {list: 'recent', trackRawTag: 6362832673177599}, 400);
+					await get('episode/list', {list: 'frequent', trackRawTag: 3245151694618623}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('episode/list', {list: 'random', trackState: ''}, 400);
+					await get('episode/list', {list: 'avghighest', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('episode/list', {list: 'random', trackState: 'R2*JURf2onglNsI(DL'}, 400);
+					await get('episode/list', {list: 'frequent', trackState: '^6J3*Z[Rti'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('episode/list', {list: 'random', trackState: 1801600469303298}, 400);
+					await get('episode/list', {list: 'random', trackState: -3198816375275518}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('episode/list', {list: 'frequent', trackState: -8766065257480193}, 400);
+					await get('episode/list', {list: 'random', trackState: 1543078301138943}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('episode/list', {list: 'faved', offset: 'xUD*FuiggpNF3fj!4h(5'}, 400);
+					await get('episode/list', {list: 'random', offset: '!pL#%!c'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('episode/list', {list: 'recent', offset: ''}, 400);
+					await get('episode/list', {list: 'frequent', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('episode/list', {list: 'highest', offset: true}, 400);
+					await get('episode/list', {list: 'faved', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('episode/list', {list: 'frequent', offset: 97.7}, 400);
+					await get('episode/list', {list: 'frequent', offset: 7.87}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('episode/list', {list: 'frequent', offset: -1}, 400);
+					await get('episode/list', {list: 'highest', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('episode/list', {list: 'faved', amount: 'woPhQhgGgMKBH8zGkv'}, 400);
+					await get('episode/list', {list: 'faved', amount: '@pfq7$wgQ'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('episode/list', {list: 'frequent', amount: ''}, 400);
+					await get('episode/list', {list: 'random', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('episode/list', {list: 'recent', amount: true}, 400);
+					await get('episode/list', {list: 'highest', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('episode/list', {list: 'highest', amount: 73.31}, 400);
+					await get('episode/list', {list: 'frequent', amount: 79.22}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('episode/list', {list: 'highest', amount: 0}, 400);
+					await get('episode/list', {list: 'faved', amount: 0}, 400);
 				});
 			});
 		});
 		describe('podcast/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/id', {id: 'IeIwPpKk8wj2yG2e7sTe'}, 401);
+					await getNotLoggedIn('podcast/id', {id: ')kTw7VsMn!MDY'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3705,83 +3705,83 @@ describe('Server', () => {
 					await get('podcast/id', {id: ''}, 400);
 				});
 				it('"podcastState" set to "empty string"', async () => {
-					await get('podcast/id', {id: 'dY4zeksU0I(s^Ox&1', podcastState: ''}, 400);
+					await get('podcast/id', {id: '3jk&iOJ', podcastState: ''}, 400);
 				});
 				it('"podcastState" set to "string"', async () => {
-					await get('podcast/id', {id: 'mHcVzf2(cp', podcastState: '0udRvqJPK04*Y%T'}, 400);
+					await get('podcast/id', {id: '@Q%Cx64', podcastState: 'U[P*Z@LT^bo'}, 400);
 				});
 				it('"podcastState" set to "integer > 1"', async () => {
-					await get('podcast/id', {id: 'H&t]FuHQl', podcastState: -6677619055525886}, 400);
+					await get('podcast/id', {id: 'F*QJ4khn7sr$CF2', podcastState: -6598820884381694}, 400);
 				});
 				it('"podcastState" set to "integer < 0"', async () => {
-					await get('podcast/id', {id: 'YuVdK', podcastState: -3437385886990337}, 400);
+					await get('podcast/id', {id: 'ydiTVV*)fKsX', podcastState: -6256567523475457}, 400);
 				});
 				it('"podcastEpisodes" set to "empty string"', async () => {
-					await get('podcast/id', {id: 'MRYiPRg2eyqAxAs9qDTI', podcastEpisodes: ''}, 400);
+					await get('podcast/id', {id: '@5#Q[*$oZB[w$0', podcastEpisodes: ''}, 400);
 				});
 				it('"podcastEpisodes" set to "string"', async () => {
-					await get('podcast/id', {id: '7XvbKWknekn', podcastEpisodes: 'V0$*66p'}, 400);
+					await get('podcast/id', {id: 'FBAr7s@5HvKT$E&(G', podcastEpisodes: 'o1TeURScxK]9p9(D'}, 400);
 				});
 				it('"podcastEpisodes" set to "integer > 1"', async () => {
-					await get('podcast/id', {id: 'Jqriw!vdr3hjN', podcastEpisodes: 1246574629879810}, 400);
+					await get('podcast/id', {id: ')qKeyf$r%qT*QqtV', podcastEpisodes: -7428878142275582}, 400);
 				});
 				it('"podcastEpisodes" set to "integer < 0"', async () => {
-					await get('podcast/id', {id: 'qO%@Z91xiOQF3VY', podcastEpisodes: -5915716259676161}, 400);
+					await get('podcast/id', {id: '8buhWsn9kouam1V!DXIo', podcastEpisodes: -3965680357474305}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('podcast/id', {id: 'e754^', trackMedia: ''}, 400);
+					await get('podcast/id', {id: 'a#M3pLQMt', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('podcast/id', {id: 'i5sErSXNxC(xct$Uvx', trackMedia: 'wuGu%gH5Dqzn'}, 400);
+					await get('podcast/id', {id: 'e0ARXL9', trackMedia: 'Ub8ibB0]^Guy1Me(W6&'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('podcast/id', {id: 's*osKr1NUlxp8Bnx5JC', trackMedia: 769111504191490}, 400);
+					await get('podcast/id', {id: 'IZULfNgEyiF9MAHgS&o', trackMedia: -24458832117758}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('podcast/id', {id: '9EYA0ar', trackMedia: -3394218630316033}, 400);
+					await get('podcast/id', {id: '$@yaj225)xzuZ41eud8', trackMedia: 1150784167215103}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('podcast/id', {id: 'Jz4QAvO#@', trackTag: ''}, 400);
+					await get('podcast/id', {id: '2ECR29v6OpJJoIWDTFT1', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('podcast/id', {id: ')cpiDMhIwO8S]o%oWO', trackTag: 'bTav3Jz$6$y!u!cNy'}, 400);
+					await get('podcast/id', {id: '#r(qLlPnq', trackTag: 'u39qZ0obgdyeL5av3sa'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('podcast/id', {id: '4q!*gRIBESvAqFsrx', trackTag: -3978320454615038}, 400);
+					await get('podcast/id', {id: '6Grr6G$HI', trackTag: 8154202052231170}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('podcast/id', {id: '%!Ua3y@Fv2BP', trackTag: -2076258234007553}, 400);
+					await get('podcast/id', {id: 'LUc!@cRUfImh@nq@', trackTag: -5037854317084673}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('podcast/id', {id: 'lr$dR)#wN@mD%6F!U', trackRawTag: ''}, 400);
+					await get('podcast/id', {id: 'R9YUgsVrlsbH9bu', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('podcast/id', {id: 'MZx#^57LO%Z1!', trackRawTag: 'O(GleX0a3AfUB%r!'}, 400);
+					await get('podcast/id', {id: 'KmHgo1MEqR', trackRawTag: 'xu9!iP8Tf'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('podcast/id', {id: 'io3Xy!@%m6pi', trackRawTag: 7770844491153410}, 400);
+					await get('podcast/id', {id: 'nW1AIh2Q8QylY', trackRawTag: 1724935802191874}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('podcast/id', {id: '4o%aJ5wfOxK!', trackRawTag: 732265650847743}, 400);
+					await get('podcast/id', {id: ']1MY91', trackRawTag: 7728134904348671}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('podcast/id', {id: 'aDCWmrB2pF', trackState: ''}, 400);
+					await get('podcast/id', {id: 'BKK#miRrX*xESfYfD', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('podcast/id', {id: 'qfU1laZW*QzI)bde%o', trackState: 'VbGB8x9E^IhZy63E'}, 400);
+					await get('podcast/id', {id: 'zM$yEveKmzQ!hchZn', trackState: 'y&Dmk!4)$bBhUL(%'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('podcast/id', {id: '7FB]Z^', trackState: -7102601422176254}, 400);
+					await get('podcast/id', {id: 'pl]hxLys7AQSqMNOTh', trackState: 4468325589450754}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('podcast/id', {id: '(bkhrli2l]m8[@do5NA', trackState: -2597729293303809}, 400);
+					await get('podcast/id', {id: 'dW84@X', trackState: -3730700305956865}, 400);
 				});
 			});
 		});
 		describe('podcast/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/ids', {ids: ['HXvcQcb#7Y*m]L1', 'oFeJx8demh3v3']}, 401);
+					await getNotLoggedIn('podcast/ids', {ids: ['80x%4*Or0f8og%isooE', 'm8IMzA2$stm0F']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3792,83 +3792,83 @@ describe('Server', () => {
 					await get('podcast/ids', {ids: [null, '']}, 400);
 				});
 				it('"podcastState" set to "empty string"', async () => {
-					await get('podcast/ids', {ids: ['DYp8WlQg', '0ue@(L5XhElWv'], podcastState: ''}, 400);
+					await get('podcast/ids', {ids: ['l(WQ^u^Ass', '^Ccz)X(6FqXkX#bJM'], podcastState: ''}, 400);
 				});
 				it('"podcastState" set to "string"', async () => {
-					await get('podcast/ids', {ids: ['KmTU@9H9t6W1&MQ', '5o$zyYm'], podcastState: 'wpm18dUARw8Y!j'}, 400);
+					await get('podcast/ids', {ids: ['tWDxfSSn!]3&CB[7[D#X', '4L0#FI*&57w&'], podcastState: ']9J3WE4PIu]4P^rP'}, 400);
 				});
 				it('"podcastState" set to "integer > 1"', async () => {
-					await get('podcast/ids', {ids: ['OC94t4k&UtQ', 'AmzdEokFz7C&*Mnh'], podcastState: -312873901359102}, 400);
+					await get('podcast/ids', {ids: ['qhS^u', 'tSD%!roa0'], podcastState: 1335674254917634}, 400);
 				});
 				it('"podcastState" set to "integer < 0"', async () => {
-					await get('podcast/ids', {ids: ['!Rj5*73G', '(m@z1Q6diQrLhRfHAb'], podcastState: -7130044581281793}, 400);
+					await get('podcast/ids', {ids: ['y35tOWrDg[)Nj4IQGs', ')Pf2EEomq8CGao'], podcastState: 9004837714788351}, 400);
 				});
 				it('"podcastEpisodes" set to "empty string"', async () => {
-					await get('podcast/ids', {ids: ['ojBOOYLb[K822e1', '&f[S1gY'], podcastEpisodes: ''}, 400);
+					await get('podcast/ids', {ids: ['NBehP)iw&^', '%7Z$2Ha2&8g'], podcastEpisodes: ''}, 400);
 				});
 				it('"podcastEpisodes" set to "string"', async () => {
-					await get('podcast/ids', {ids: ['C$Ol1(IC4&oZ^WZp8v&*', '(Pm7uvSt'], podcastEpisodes: '$Sse[$OKRFjY)B8F5S'}, 400);
+					await get('podcast/ids', {ids: ['[suzDypEz7nzdXcJUd6', '#VWkfCnkZ'], podcastEpisodes: 'Z[DH8VuqQ'}, 400);
 				});
 				it('"podcastEpisodes" set to "integer > 1"', async () => {
-					await get('podcast/ids', {ids: ['Gnf#rF', '2y(zRTN'], podcastEpisodes: 5388581145149442}, 400);
+					await get('podcast/ids', {ids: ['VG@k5QV1H*K', 'wJt!&4'], podcastEpisodes: -1099475116359678}, 400);
 				});
 				it('"podcastEpisodes" set to "integer < 0"', async () => {
-					await get('podcast/ids', {ids: ['IetozhPt[(3LSZwRAiK', 'y7)T#qy3P1wnCt$wQ'], podcastEpisodes: 359997959569407}, 400);
+					await get('podcast/ids', {ids: ['XrPZi2!66jSq%UU', 'yCgElMTL[Vdqhhi8EO!'], podcastEpisodes: -2790760537653249}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('podcast/ids', {ids: ['ozmFcLSOoECuxu0k', 'v]e[DL29O8eEUgSNlI4'], trackMedia: ''}, 400);
+					await get('podcast/ids', {ids: ['&M4%Cc*YjZ5kE', '(OmhH&U0'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('podcast/ids', {ids: ['GB&thmQ(z', 'rEythZLmQDOQwr[4'], trackMedia: 't8mWF36nFu$J'}, 400);
+					await get('podcast/ids', {ids: ['kRLIBDVAuLjgn^!k0vO1', 'f#eWU(J'], trackMedia: '1JVM1^71)a!r'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('podcast/ids', {ids: ['f@2(VNf6J$brK3aM', 'R$XI9biN^Zc4henV'], trackMedia: 4451820743163906}, 400);
+					await get('podcast/ids', {ids: ['i]F@V#', 'uUEDd!l7m]'], trackMedia: -1603095331078142}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('podcast/ids', {ids: ['@c8)bqo9bR1vRl[SAZ', '1S5$%coR8#fBk1wK'], trackMedia: 5848246475816959}, 400);
+					await get('podcast/ids', {ids: ['4w^UhFq', '!Rs9$r93b'], trackMedia: 515294942461951}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('podcast/ids', {ids: [']IeE0*', '7OXpp]sdQBJdKCL%'], trackTag: ''}, 400);
+					await get('podcast/ids', {ids: ['RBYG1&XqAQY$y', 'a31NcXxH53y(HK2'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('podcast/ids', {ids: ['A^e%uHI6tFSrRe0&f', 'uGcpRiv^Qh)!(lMA'], trackTag: 'mWxEAexs)'}, 400);
+					await get('podcast/ids', {ids: ['x&dJ9SlX#', 'S9c2WMy]LZw2JH[Jzf'], trackTag: '$YMAVm'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('podcast/ids', {ids: ['j@@bP]w^$#KkXz6j', '7A(9MZINlcDNT!C'], trackTag: -5303387834810366}, 400);
+					await get('podcast/ids', {ids: ['tg8mAvmUGJkD%R', 'H8gj@lNn7(eODXvx'], trackTag: -717504699695102}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('podcast/ids', {ids: ['Cu#@MBWux2cWH&hd', 'LAdF#4CPp8vF%G]dY9ER'], trackTag: 4500003246571519}, 400);
+					await get('podcast/ids', {ids: ['UiwNLW)A0UE$(q@Jwm', 'Jrol%bQe]rfK3Z7uQ'], trackTag: 6271466119102463}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('podcast/ids', {ids: ['v$uGQ@MoYuI&n%1Ro%m', 'e^RUN8E6$Eh7Cl'], trackRawTag: ''}, 400);
+					await get('podcast/ids', {ids: ['aAGa[g!hN', 'PBDIAsu8es'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('podcast/ids', {ids: ['wG5votowZ9)[3N', 'A%Sq[g1l[f'], trackRawTag: '$v)W@1nj23B0'}, 400);
+					await get('podcast/ids', {ids: ['Aew]Y$i@TnmvWu$ng', 'TSAs$u'], trackRawTag: 'MF(lCT'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('podcast/ids', {ids: ['HajN7qE#9c2Y]**jC', 'JZElaRThhI0(HT5e'], trackRawTag: 3447713005830146}, 400);
+					await get('podcast/ids', {ids: ['fYW(eZ@Bd)$Y&sMre(', 'XV7if[b#'], trackRawTag: -1457919069519870}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('podcast/ids', {ids: ['EhVWXm', 'RQCz5'], trackRawTag: -540030120493057}, 400);
+					await get('podcast/ids', {ids: ['Bf3P5avfz', 'xsj!*'], trackRawTag: -2934847219695617}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('podcast/ids', {ids: ['[#Ik2W5Du4', ')V($V%mR'], trackState: ''}, 400);
+					await get('podcast/ids', {ids: ['BnzLw%8*ieZh@t', 'SBvfpB00g5Dedy'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('podcast/ids', {ids: ['y2sjByZZBvr&8!Gd@', '3FPjMyya!'], trackState: ']esv#XfgyNMI['}, 400);
+					await get('podcast/ids', {ids: ['Tqu$][', 'nT6vX!jR'], trackState: '@@ki(^[9Ry]4y'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('podcast/ids', {ids: ['!*^L0kbXYg4zIC', 'h5@LSLnw)K9arF94'], trackState: 1979149514178562}, 400);
+					await get('podcast/ids', {ids: ['HBa%GhGv01nsTDo$kUXj', 'OJ^eyn'], trackState: -1652286677843966}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('podcast/ids', {ids: ['B60bSPP5MSF8Ch', 'Qct!#yJ8a!L5pmI'], trackState: 4457861992153087}, 400);
+					await get('podcast/ids', {ids: ['cVZOZ8F3K5', 'tylDc5'], trackState: 2318820920262655}, 400);
 				});
 			});
 		});
 		describe('podcast/status', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/status', {id: 'FIxpup2yr0sz%'}, 401);
+					await getNotLoggedIn('podcast/status', {id: 'v9tQSQ]xlb(Eli%oILY'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -3885,7 +3885,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('podcast/search', {offset: '94)UC@BnGa6'}, 400);
+					await get('podcast/search', {offset: 'mbZJW'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('podcast/search', {offset: ''}, 400);
@@ -3894,13 +3894,13 @@ describe('Server', () => {
 					await get('podcast/search', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('podcast/search', {offset: 83.84}, 400);
+					await get('podcast/search', {offset: 68.34}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('podcast/search', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('podcast/search', {amount: '(9mlsDfh'}, 400);
+					await get('podcast/search', {amount: 'Zc*3ggb@(gMNouLdfow'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('podcast/search', {amount: ''}, 400);
@@ -3909,7 +3909,7 @@ describe('Server', () => {
 					await get('podcast/search', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('podcast/search', {amount: 21.15}, 400);
+					await get('podcast/search', {amount: 28.21}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('podcast/search', {amount: 0}, 400);
@@ -3945,92 +3945,92 @@ describe('Server', () => {
 					await get('podcast/search', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('podcast/search', {sortDescending: 'T0#Y(BKG'}, 400);
+					await get('podcast/search', {sortDescending: 'A]Ge)$Z5WzLD'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('podcast/search', {sortDescending: 7786221820444674}, 400);
+					await get('podcast/search', {sortDescending: 3518599339704322}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('podcast/search', {sortDescending: 3887712788545535}, 400);
+					await get('podcast/search', {sortDescending: -7371428017995777}, 400);
 				});
 				it('"podcastState" set to "empty string"', async () => {
 					await get('podcast/search', {podcastState: ''}, 400);
 				});
 				it('"podcastState" set to "string"', async () => {
-					await get('podcast/search', {podcastState: 'YFm*j'}, 400);
+					await get('podcast/search', {podcastState: '1^EP&4mJoirB1XWK*Vs'}, 400);
 				});
 				it('"podcastState" set to "integer > 1"', async () => {
-					await get('podcast/search', {podcastState: -8061103363850238}, 400);
+					await get('podcast/search', {podcastState: -2733638542163966}, 400);
 				});
 				it('"podcastState" set to "integer < 0"', async () => {
-					await get('podcast/search', {podcastState: -1287593807314945}, 400);
+					await get('podcast/search', {podcastState: -3236189658152961}, 400);
 				});
 				it('"podcastEpisodes" set to "empty string"', async () => {
 					await get('podcast/search', {podcastEpisodes: ''}, 400);
 				});
 				it('"podcastEpisodes" set to "string"', async () => {
-					await get('podcast/search', {podcastEpisodes: 'G6Qf)x)UPGu3Y1ASx'}, 400);
+					await get('podcast/search', {podcastEpisodes: 'XV0hz3]&hS2Lp1hL'}, 400);
 				});
 				it('"podcastEpisodes" set to "integer > 1"', async () => {
-					await get('podcast/search', {podcastEpisodes: 7069729348911106}, 400);
+					await get('podcast/search', {podcastEpisodes: -3709112181325822}, 400);
 				});
 				it('"podcastEpisodes" set to "integer < 0"', async () => {
-					await get('podcast/search', {podcastEpisodes: 5315199863095295}, 400);
+					await get('podcast/search', {podcastEpisodes: -2766112945078273}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('podcast/search', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('podcast/search', {trackMedia: 'cPxaAr4'}, 400);
+					await get('podcast/search', {trackMedia: 'QhT)s'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('podcast/search', {trackMedia: -7398585901514750}, 400);
+					await get('podcast/search', {trackMedia: -1275339229626366}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('podcast/search', {trackMedia: 579698446827519}, 400);
+					await get('podcast/search', {trackMedia: 7986395113062399}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('podcast/search', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('podcast/search', {trackTag: 'fo@&8h2(zu^s&&mW8Ez'}, 400);
+					await get('podcast/search', {trackTag: '7jb#bfP)*[Lz'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('podcast/search', {trackTag: -8184892705734654}, 400);
+					await get('podcast/search', {trackTag: -6183146273898494}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('podcast/search', {trackTag: 2650911813926911}, 400);
+					await get('podcast/search', {trackTag: 6290923071733759}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('podcast/search', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('podcast/search', {trackRawTag: 'G18E%M@4T2M*$pQB1Q[b'}, 400);
+					await get('podcast/search', {trackRawTag: '[gx6]'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('podcast/search', {trackRawTag: -6602517244805118}, 400);
+					await get('podcast/search', {trackRawTag: 7207598155628546}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('podcast/search', {trackRawTag: 6629103025258495}, 400);
+					await get('podcast/search', {trackRawTag: 2742095756394495}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('podcast/search', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('podcast/search', {trackState: 'Fb@8S9Gjt'}, 400);
+					await get('podcast/search', {trackState: 'opSdc!KPY&76Fxc'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('podcast/search', {trackState: 5699833604079618}, 400);
+					await get('podcast/search', {trackState: 3969320375812098}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('podcast/search', {trackState: -1272477674110977}, 400);
+					await get('podcast/search', {trackState: 1814630187925503}, 400);
 				});
 			});
 		});
 		describe('podcast/episodes', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/episodes', {id: 's27#rwNLB7Fsy6&'}, 401);
+					await getNotLoggedIn('podcast/episodes', {id: 'k)mZ2Utv4ApZ'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4038,82 +4038,82 @@ describe('Server', () => {
 					await get('podcast/episodes', {id: ''}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('podcast/episodes', {id: '$zTd%K]415y(%F32%W', trackMedia: ''}, 400);
+					await get('podcast/episodes', {id: 'HFNLbU]oe@v', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('podcast/episodes', {id: 'a(Ny#J^U)BiAV', trackMedia: '(i%xCW55s1K9eMM'}, 400);
+					await get('podcast/episodes', {id: 'Vs)#E1Gt!#', trackMedia: '9xqcq19dU#tY'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('podcast/episodes', {id: '(GU&*nr$', trackMedia: 6884616711438338}, 400);
+					await get('podcast/episodes', {id: 'OP]tDa(Bz4VO33V', trackMedia: 4941228483280898}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('podcast/episodes', {id: 'Up5ZXDLl#HjK', trackMedia: 2049201714233343}, 400);
+					await get('podcast/episodes', {id: '64W)RwnQb^gnS0PSBb', trackMedia: 5239022129512447}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('podcast/episodes', {id: 'QoHU1J%kShX@RTx#&W', trackTag: ''}, 400);
+					await get('podcast/episodes', {id: 'k)y&9%WsP%', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('podcast/episodes', {id: '8UZQ@nqh]LZ@pXq8', trackTag: '!&OMQFAappWDX'}, 400);
+					await get('podcast/episodes', {id: '9*WAD', trackTag: '^wZw(4ns*wpprhl#Z'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('podcast/episodes', {id: 'IkGa!6vgXtPEqjmpPmJu', trackTag: 1883296380223490}, 400);
+					await get('podcast/episodes', {id: '93%^I9!x3', trackTag: -4894145734770686}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('podcast/episodes', {id: 'nMn2zX7l3R', trackTag: -4609065506308097}, 400);
+					await get('podcast/episodes', {id: 'swz2rL^TIErX6OvU', trackTag: -5565154406170625}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('podcast/episodes', {id: '(7Lv%AToQ4ncEJ', trackRawTag: ''}, 400);
+					await get('podcast/episodes', {id: 'M*Y(ji6]ULBsPa$4R)lW', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('podcast/episodes', {id: 'j2xdNwkRWnR4', trackRawTag: 'FINpHgLQkAwTwj02cl'}, 400);
+					await get('podcast/episodes', {id: 'fKtmJ&LtCYB7AzU', trackRawTag: ')SVN%z&0J%0'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('podcast/episodes', {id: 'eMUUn', trackRawTag: -8281750010593278}, 400);
+					await get('podcast/episodes', {id: '@e^UG&ya00W', trackRawTag: 8189649910497282}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('podcast/episodes', {id: 'OJTDZmI0vhY', trackRawTag: 2076979616546815}, 400);
+					await get('podcast/episodes', {id: '8EZGVw', trackRawTag: -3311464232255489}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('podcast/episodes', {id: 'yFRIkuw', trackState: ''}, 400);
+					await get('podcast/episodes', {id: 'B5)P(I!Ci)DsL)6y', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('podcast/episodes', {id: 'SO*ZBOXcn81RB]', trackState: 'LD2YsDW3dzKfYfCoe'}, 400);
+					await get('podcast/episodes', {id: 'Nuu5bc#m02iynelgX', trackState: 'B*Qoe7Wzk$7'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('podcast/episodes', {id: 'aRLamH!]S]tybT22', trackState: 3216725155774466}, 400);
+					await get('podcast/episodes', {id: '@HRwTibc5erS[b', trackState: 4028929052508162}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('podcast/episodes', {id: 'zfh6tuo%whcs%', trackState: 4147757967212543}, 400);
+					await get('podcast/episodes', {id: '[CzqjSMhQpnTP#9w', trackState: -3718937552355329}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('podcast/episodes', {id: 'T86gEnf*', offset: '(rmZ8Yhc54P9*'}, 400);
+					await get('podcast/episodes', {id: '2m5CjS*2zJQ8TXd', offset: '1RVUXMIC#'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('podcast/episodes', {id: '*#FIT6U^5RD8H', offset: ''}, 400);
+					await get('podcast/episodes', {id: '%17C&6y', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('podcast/episodes', {id: 'eQU6HKS[Qv', offset: true}, 400);
+					await get('podcast/episodes', {id: 'EFxNbT8', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('podcast/episodes', {id: 'T]6Q%8rFz(t', offset: 52.03}, 400);
+					await get('podcast/episodes', {id: 'U3mR3rWjc', offset: 50.47}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('podcast/episodes', {id: 'gXALgK!FQxJyk%iY', offset: -1}, 400);
+					await get('podcast/episodes', {id: 'z8GSPywlMsD', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('podcast/episodes', {id: 'VJQNS&fgDrv', amount: '8pf#Xg*'}, 400);
+					await get('podcast/episodes', {id: 'O54Dl^DYdY', amount: 'J!2WoCruje!'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('podcast/episodes', {id: 'JSS4&kSH]qX', amount: ''}, 400);
+					await get('podcast/episodes', {id: 'Pq(H%5&N', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('podcast/episodes', {id: 'x5I]Xyr#[fY6', amount: true}, 400);
+					await get('podcast/episodes', {id: 'e!&SS&vY', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('podcast/episodes', {id: 'br$odaNtHL!OmaH*', amount: 27.43}, 400);
+					await get('podcast/episodes', {id: 'Kf2zLSWFPt4$@GFy^$', amount: 58.82}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('podcast/episodes', {id: '^k[gBfi', amount: 0}, 400);
+					await get('podcast/episodes', {id: '6N056QU2AFn&*WklzrOV', amount: 0}, 400);
 				});
 			});
 		});
@@ -4132,12 +4132,12 @@ describe('Server', () => {
 		describe('podcast/refresh', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/refresh', {id: '$*y3qfQ!A[GavDgS'}, 401);
+					await getNotLoggedIn('podcast/refresh', {id: 'AKm(vIECg@[FD5]vp'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('podcast/refresh', {id: '$*y3qfQ!A[GavDgS'}, 401);
+					await getNoRights('podcast/refresh', {id: 'AKm(vIECg@[FD5]vp'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4149,7 +4149,7 @@ describe('Server', () => {
 		describe('podcast/state', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/state', {id: '$#fuoEfmtI8DilmM'}, 401);
+					await getNotLoggedIn('podcast/state', {id: 'zwmUZaRpax'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4161,7 +4161,7 @@ describe('Server', () => {
 		describe('podcast/states', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/states', {ids: ['*E]D6FSZWQStiXSY', 'Bhz5I%4qpPP']}, 401);
+					await getNotLoggedIn('podcast/states', {ids: ['$CG1GCC[YI%@7[uPHP[', 'BoZOH@']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4176,7 +4176,7 @@ describe('Server', () => {
 		describe('podcast/list', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/list', {list: 'recent'}, 401);
+					await getNotLoggedIn('podcast/list', {list: 'random'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4187,152 +4187,152 @@ describe('Server', () => {
 					await get('podcast/list', {list: 'invalid'}, 400);
 				});
 				it('"url" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'recent', url: ''}, 400);
+					await get('podcast/list', {list: 'random', url: ''}, 400);
 				});
 				it('"title" set to "empty string"', async () => {
 					await get('podcast/list', {list: 'avghighest', title: ''}, 400);
 				});
 				it('"status" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'frequent', status: ''}, 400);
+					await get('podcast/list', {list: 'recent', status: ''}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'frequent', sortField: ''}, 400);
+					await get('podcast/list', {list: 'highest', sortField: ''}, 400);
 				});
 				it('"sortField" set to "invalid enum"', async () => {
 					await get('podcast/list', {list: 'frequent', sortField: 'invalid'}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'faved', id: ''}, 400);
+					await get('podcast/list', {list: 'highest', id: ''}, 400);
 				});
 				it('"ids" set to "null"', async () => {
-					await get('podcast/list', {list: 'random', ids: null}, 400);
+					await get('podcast/list', {list: 'recent', ids: null}, 400);
 				});
 				it('"ids" set to "empty string"', async () => {
 					await get('podcast/list', {list: 'recent', ids: [null, '']}, 400);
 				});
 				it('"query" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'faved', query: ''}, 400);
+					await get('podcast/list', {list: 'recent', query: ''}, 400);
 				});
 				it('"sortDescending" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'frequent', sortDescending: ''}, 400);
+					await get('podcast/list', {list: 'avghighest', sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('podcast/list', {list: 'faved', sortDescending: '@5tL4MSGeB0WA#lS&V'}, 400);
+					await get('podcast/list', {list: 'faved', sortDescending: '5hOg53AerJKFrCq'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('podcast/list', {list: 'avghighest', sortDescending: 2016123927134210}, 400);
+					await get('podcast/list', {list: 'avghighest', sortDescending: 4338203381202946}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('podcast/list', {list: 'recent', sortDescending: 7061109529903103}, 400);
+					await get('podcast/list', {list: 'faved', sortDescending: 7965665734426623}, 400);
 				});
 				it('"podcastState" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'faved', podcastState: ''}, 400);
+					await get('podcast/list', {list: 'recent', podcastState: ''}, 400);
 				});
 				it('"podcastState" set to "string"', async () => {
-					await get('podcast/list', {list: 'highest', podcastState: 'kxCg]LP@1aRs3'}, 400);
+					await get('podcast/list', {list: 'frequent', podcastState: 'bZ]mZ'}, 400);
 				});
 				it('"podcastState" set to "integer > 1"', async () => {
-					await get('podcast/list', {list: 'random', podcastState: -1335043528065022}, 400);
+					await get('podcast/list', {list: 'highest', podcastState: 5849923958341634}, 400);
 				});
 				it('"podcastState" set to "integer < 0"', async () => {
-					await get('podcast/list', {list: 'highest', podcastState: -6016196591747073}, 400);
+					await get('podcast/list', {list: 'frequent', podcastState: -1879747235676161}, 400);
 				});
 				it('"podcastEpisodes" set to "empty string"', async () => {
 					await get('podcast/list', {list: 'highest', podcastEpisodes: ''}, 400);
 				});
 				it('"podcastEpisodes" set to "string"', async () => {
-					await get('podcast/list', {list: 'recent', podcastEpisodes: '7x#bPgNKH'}, 400);
+					await get('podcast/list', {list: 'frequent', podcastEpisodes: '0OMk1iXv3P'}, 400);
 				});
 				it('"podcastEpisodes" set to "integer > 1"', async () => {
-					await get('podcast/list', {list: 'random', podcastEpisodes: 5606118051020802}, 400);
+					await get('podcast/list', {list: 'faved', podcastEpisodes: -4412373444067326}, 400);
 				});
 				it('"podcastEpisodes" set to "integer < 0"', async () => {
-					await get('podcast/list', {list: 'random', podcastEpisodes: 7698274471378943}, 400);
+					await get('podcast/list', {list: 'random', podcastEpisodes: -8566142096375809}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'faved', trackMedia: ''}, 400);
+					await get('podcast/list', {list: 'recent', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('podcast/list', {list: 'avghighest', trackMedia: 'U]PqO*OaY'}, 400);
+					await get('podcast/list', {list: 'frequent', trackMedia: 'RdH71fC@H'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('podcast/list', {list: 'faved', trackMedia: -3911591263207422}, 400);
+					await get('podcast/list', {list: 'avghighest', trackMedia: -213106949095422}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('podcast/list', {list: 'highest', trackMedia: 1259107445112831}, 400);
+					await get('podcast/list', {list: 'faved', trackMedia: -1028918085681153}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('podcast/list', {list: 'highest', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('podcast/list', {list: 'random', trackTag: 'hXvS8f6jDWH'}, 400);
+					await get('podcast/list', {list: 'frequent', trackTag: 'j$zpb'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('podcast/list', {list: 'frequent', trackTag: 7045864031780866}, 400);
+					await get('podcast/list', {list: 'faved', trackTag: 5460674146729986}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('podcast/list', {list: 'frequent', trackTag: 8915927697457151}, 400);
+					await get('podcast/list', {list: 'faved', trackTag: 8895269676515327}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'recent', trackRawTag: ''}, 400);
+					await get('podcast/list', {list: 'frequent', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('podcast/list', {list: 'avghighest', trackRawTag: 'Q^J%fRUdnsi'}, 400);
+					await get('podcast/list', {list: 'faved', trackRawTag: '4baR['}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('podcast/list', {list: 'recent', trackRawTag: 2011580568961026}, 400);
+					await get('podcast/list', {list: 'avghighest', trackRawTag: -8200323730505726}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('podcast/list', {list: 'highest', trackRawTag: 8521412914446335}, 400);
+					await get('podcast/list', {list: 'recent', trackRawTag: -8233477325455361}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'highest', trackState: ''}, 400);
+					await get('podcast/list', {list: 'recent', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('podcast/list', {list: 'frequent', trackState: 'ye(LJFOZEwSp%Oh[tTs'}, 400);
+					await get('podcast/list', {list: 'frequent', trackState: 'RgfoiVqxChJPP'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('podcast/list', {list: 'avghighest', trackState: 1669506283864066}, 400);
+					await get('podcast/list', {list: 'random', trackState: -1931226252312574}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('podcast/list', {list: 'recent', trackState: -7524751304032257}, 400);
+					await get('podcast/list', {list: 'avghighest', trackState: -410949857050625}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('podcast/list', {list: 'highest', offset: 'lK%818L5Z04c2%mMsgVb'}, 400);
+					await get('podcast/list', {list: 'highest', offset: 'QYjvrtaq9T)h*'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'frequent', offset: ''}, 400);
+					await get('podcast/list', {list: 'recent', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('podcast/list', {list: 'frequent', offset: true}, 400);
+					await get('podcast/list', {list: 'recent', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('podcast/list', {list: 'recent', offset: 54.14}, 400);
+					await get('podcast/list', {list: 'frequent', offset: 80.56}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('podcast/list', {list: 'avghighest', offset: -1}, 400);
+					await get('podcast/list', {list: 'random', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('podcast/list', {list: 'highest', amount: 'C[QD4&cw'}, 400);
+					await get('podcast/list', {list: 'random', amount: 'U%ygko'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('podcast/list', {list: 'random', amount: ''}, 400);
+					await get('podcast/list', {list: 'avghighest', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('podcast/list', {list: 'highest', amount: true}, 400);
+					await get('podcast/list', {list: 'recent', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('podcast/list', {list: 'avghighest', amount: 68.81}, 400);
+					await get('podcast/list', {list: 'random', amount: 43.29}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('podcast/list', {list: 'random', amount: 0}, 400);
+					await get('podcast/list', {list: 'faved', amount: 0}, 400);
 				});
 			});
 		});
 		describe('radio/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('radio/id', {id: 'C@AuGs%DH', radioState: false}, 401);
+					await getNotLoggedIn('radio/id', {id: '(JXdu%XYyk%a#', radioState: true}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4340,23 +4340,23 @@ describe('Server', () => {
 					await get('radio/id', {id: '', radioState: false}, 400);
 				});
 				it('"radioState" set to "empty string"', async () => {
-					await get('radio/id', {id: 'Gk%gjuRnIv890oao', radioState: ''}, 400);
+					await get('radio/id', {id: '&PfHiupmVbV7', radioState: ''}, 400);
 				});
 				it('"radioState" set to "string"', async () => {
-					await get('radio/id', {id: 'C4hrn(lF#obR2kKc', radioState: 'uog58mw)RpZmVKsB'}, 400);
+					await get('radio/id', {id: 'O$IOtrck', radioState: 'JE^UwVeWAFD8Gg!ICOE'}, 400);
 				});
 				it('"radioState" set to "integer > 1"', async () => {
-					await get('radio/id', {id: 'nN6EO1SDC]vJUX(YJ39', radioState: -6851550521589758}, 400);
+					await get('radio/id', {id: '%LS)l5', radioState: -995894216359934}, 400);
 				});
 				it('"radioState" set to "integer < 0"', async () => {
-					await get('radio/id', {id: 'Wliqq6', radioState: 1258671086501887}, 400);
+					await get('radio/id', {id: 'EsEeQ7Od^BO5ida', radioState: 8551135845548031}, 400);
 				});
 			});
 		});
 		describe('radio/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('radio/ids', {ids: ['QPnJb9f[VnW', 'VYB[U@d)4)UZC'], radioState: true}, 401);
+					await getNotLoggedIn('radio/ids', {ids: ['vFa3$mj%h5g[Y]$!', 'Zanyrd58)uj4c'], radioState: true}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4364,26 +4364,26 @@ describe('Server', () => {
 					await get('radio/ids', {ids: null, radioState: true}, 400);
 				});
 				it('"ids" set to "empty string"', async () => {
-					await get('radio/ids', {ids: [null, ''], radioState: true}, 400);
+					await get('radio/ids', {ids: [null, ''], radioState: false}, 400);
 				});
 				it('"radioState" set to "empty string"', async () => {
-					await get('radio/ids', {ids: ['hDF%dtXIaraA8h&3', 'jL!hbLY%1QU1zk'], radioState: ''}, 400);
+					await get('radio/ids', {ids: ['mPLr%4lOuQI0ju)YYE2', '#60Xoy#nG'], radioState: ''}, 400);
 				});
 				it('"radioState" set to "string"', async () => {
-					await get('radio/ids', {ids: ['LqfZmQLuw*R^a^*', 'LwnmBdm7Gh[7oW2hYY63'], radioState: 'Rh(zYK75yMqY)'}, 400);
+					await get('radio/ids', {ids: ['9GD^c)cD1sELQK70akI&', '[nge$cOY&L'], radioState: '1mDY*]*r1'}, 400);
 				});
 				it('"radioState" set to "integer > 1"', async () => {
-					await get('radio/ids', {ids: ['GjZCpye', 'kFRv^PdCsbaH49'], radioState: 1632977926750210}, 400);
+					await get('radio/ids', {ids: ['6[kwD@qF', 'w74[#Q'], radioState: -7394725464113150}, 400);
 				});
 				it('"radioState" set to "integer < 0"', async () => {
-					await get('radio/ids', {ids: ['dU^DPBKXGlfNRRt%', '6xExuJiBEQAZdBR$4M'], radioState: -8562446956494849}, 400);
+					await get('radio/ids', {ids: ['N]&6ZwcbU', 'd%r9QY3yNxCOz'], radioState: -6226885495226369}, 400);
 				});
 			});
 		});
 		describe('radio/search', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('radio/search', {radioState: true}, 401);
+					await getNotLoggedIn('radio/search', {radioState: false}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4391,16 +4391,16 @@ describe('Server', () => {
 					await get('radio/search', {radioState: ''}, 400);
 				});
 				it('"radioState" set to "string"', async () => {
-					await get('radio/search', {radioState: 'CVyfy7U)jC'}, 400);
+					await get('radio/search', {radioState: 'j9wDL14)11Oc]'}, 400);
 				});
 				it('"radioState" set to "integer > 1"', async () => {
-					await get('radio/search', {radioState: 2331094674309122}, 400);
+					await get('radio/search', {radioState: 7087602964365314}, 400);
 				});
 				it('"radioState" set to "integer < 0"', async () => {
-					await get('radio/search', {radioState: -2560571031420929}, 400);
+					await get('radio/search', {radioState: -2661163590483969}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('radio/search', {radioState: true, offset: 'TFEyfDpw*Jh'}, 400);
+					await get('radio/search', {radioState: false, offset: 'andoiw5j@TjnV'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('radio/search', {radioState: false, offset: ''}, 400);
@@ -4409,25 +4409,25 @@ describe('Server', () => {
 					await get('radio/search', {radioState: true, offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('radio/search', {radioState: true, offset: 34.64}, 400);
+					await get('radio/search', {radioState: true, offset: 25.64}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('radio/search', {radioState: true, offset: -1}, 400);
+					await get('radio/search', {radioState: false, offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('radio/search', {radioState: false, amount: 'j)6UC6OMG2JehE]OAaJD'}, 400);
+					await get('radio/search', {radioState: true, amount: '2kgu3FoET)ZjA)D6V0'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('radio/search', {radioState: false, amount: ''}, 400);
+					await get('radio/search', {radioState: true, amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
 					await get('radio/search', {radioState: true, amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('radio/search', {radioState: true, amount: 62.39}, 400);
+					await get('radio/search', {radioState: false, amount: 76.1}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('radio/search', {radioState: true, amount: 0}, 400);
+					await get('radio/search', {radioState: false, amount: 0}, 400);
 				});
 				it('"url" set to "empty string"', async () => {
 					await get('radio/search', {radioState: true, url: ''}, 400);
@@ -4439,16 +4439,16 @@ describe('Server', () => {
 					await get('radio/search', {radioState: true, name: ''}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
-					await get('radio/search', {radioState: true, sortField: ''}, 400);
+					await get('radio/search', {radioState: false, sortField: ''}, 400);
 				});
 				it('"sortField" set to "invalid enum"', async () => {
 					await get('radio/search', {radioState: true, sortField: 'invalid'}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('radio/search', {radioState: false, id: ''}, 400);
+					await get('radio/search', {radioState: true, id: ''}, 400);
 				});
 				it('"ids" set to "null"', async () => {
-					await get('radio/search', {radioState: false, ids: null}, 400);
+					await get('radio/search', {radioState: true, ids: null}, 400);
 				});
 				it('"ids" set to "empty string"', async () => {
 					await get('radio/search', {radioState: true, ids: [null, '']}, 400);
@@ -4457,23 +4457,23 @@ describe('Server', () => {
 					await get('radio/search', {radioState: false, query: ''}, 400);
 				});
 				it('"sortDescending" set to "empty string"', async () => {
-					await get('radio/search', {radioState: true, sortDescending: ''}, 400);
+					await get('radio/search', {radioState: false, sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('radio/search', {radioState: true, sortDescending: 'MU66eqJUbUAe%SeBq)'}, 400);
+					await get('radio/search', {radioState: false, sortDescending: ']ab$)Hs@k9FW2tY#TQ%'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('radio/search', {radioState: true, sortDescending: -5706842416087038}, 400);
+					await get('radio/search', {radioState: false, sortDescending: 7094065984176130}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('radio/search', {radioState: false, sortDescending: -3521183987269633}, 400);
+					await get('radio/search', {radioState: false, sortDescending: 7811074447376383}, 400);
 				});
 			});
 		});
 		describe('radio/state', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('radio/state', {id: 'nkwB&xF9Px!6rjO#0)'}, 401);
+					await getNotLoggedIn('radio/state', {id: 'Z3nus0BZB'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4485,7 +4485,7 @@ describe('Server', () => {
 		describe('radio/states', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('radio/states', {ids: ['0bT#Utn', 'i)]jWK9rBT']}, 401);
+					await getNotLoggedIn('radio/states', {ids: ['pojl8', 'K@xy8hy']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4500,7 +4500,7 @@ describe('Server', () => {
 		describe('artist/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/id', {id: 'm9!@fHh4)3'}, 401);
+					await getNotLoggedIn('artist/id', {id: 'dalr4N6i8(&IXlHYCw'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4508,194 +4508,194 @@ describe('Server', () => {
 					await get('artist/id', {id: ''}, 400);
 				});
 				it('"rootID" set to "empty string"', async () => {
-					await get('artist/id', {id: 'Eq51mk#d', rootID: ''}, 400);
+					await get('artist/id', {id: '6*acMnl$6J[dRp', rootID: ''}, 400);
 				});
 				it('"artistAlbums" set to "empty string"', async () => {
-					await get('artist/id', {id: ')EzBUm', artistAlbums: ''}, 400);
+					await get('artist/id', {id: 'Ns1n#@N', artistAlbums: ''}, 400);
 				});
 				it('"artistAlbums" set to "string"', async () => {
-					await get('artist/id', {id: ']a1bbcX[Pk', artistAlbums: 'jG6dz2ug'}, 400);
+					await get('artist/id', {id: 'uZGSp&cUL', artistAlbums: '$hGUpFsU][0nn'}, 400);
 				});
 				it('"artistAlbums" set to "integer > 1"', async () => {
-					await get('artist/id', {id: 'SX76W', artistAlbums: -8080059495612414}, 400);
+					await get('artist/id', {id: '%v*I8WZVa', artistAlbums: -6262603844157438}, 400);
 				});
 				it('"artistAlbums" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'Kb]^qSJ93d(zPQrgR2YS', artistAlbums: -2143966459854849}, 400);
+					await get('artist/id', {id: '@H8wQs$(eP', artistAlbums: 4711666361040895}, 400);
 				});
 				it('"artistAlbumIDs" set to "empty string"', async () => {
-					await get('artist/id', {id: 'yDZfeIocF^n[', artistAlbumIDs: ''}, 400);
+					await get('artist/id', {id: 'dghxf@2J3BKki(44Xf', artistAlbumIDs: ''}, 400);
 				});
 				it('"artistAlbumIDs" set to "string"', async () => {
-					await get('artist/id', {id: ']^MBHGb%gHf9#Rtr9[h', artistAlbumIDs: '7FVK(vY]dKPJ4r'}, 400);
+					await get('artist/id', {id: '81(v#jBaHj83', artistAlbumIDs: 'zCCve'}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer > 1"', async () => {
-					await get('artist/id', {id: 'b(BdGvPUlzvaH!d', artistAlbumIDs: -454256763076606}, 400);
+					await get('artist/id', {id: 'tzmKdp*IW1ZRjWUXC06', artistAlbumIDs: -2225768268562430}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'vt$6VG4S*HOIgk', artistAlbumIDs: 8437337495175167}, 400);
+					await get('artist/id', {id: '@YEh%!7!X&Dd', artistAlbumIDs: 5634096386539519}, 400);
 				});
 				it('"artistState" set to "empty string"', async () => {
-					await get('artist/id', {id: 't[M$VYN', artistState: ''}, 400);
+					await get('artist/id', {id: 'yG$tgKvEzuPsYvUFXr', artistState: ''}, 400);
 				});
 				it('"artistState" set to "string"', async () => {
-					await get('artist/id', {id: 'k5sDdduEePJOQp2*', artistState: '^fKBd8S*pgq'}, 400);
+					await get('artist/id', {id: '0jzj^oD1%6#KS', artistState: 'mz[*kO@lPbHBF'}, 400);
 				});
 				it('"artistState" set to "integer > 1"', async () => {
-					await get('artist/id', {id: '7dZX^]!', artistState: 3269651647692802}, 400);
+					await get('artist/id', {id: 'KyB8dF0#AHN6*n&G', artistState: -3492494708834302}, 400);
 				});
 				it('"artistState" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'LxHg^FtLC7gnJ4(ZYl^1', artistState: -1918747463909377}, 400);
+					await get('artist/id', {id: 'vrv[t', artistState: 4012764389441535}, 400);
 				});
 				it('"artistTracks" set to "empty string"', async () => {
-					await get('artist/id', {id: '6ILJiy5dO(o5efMM', artistTracks: ''}, 400);
+					await get('artist/id', {id: 'oFLyV9a7iywui', artistTracks: ''}, 400);
 				});
 				it('"artistTracks" set to "string"', async () => {
-					await get('artist/id', {id: 'QZLnzM67ByEb)9Ct', artistTracks: 'U!35G*4KKMknw4C'}, 400);
+					await get('artist/id', {id: '(u^JIi(B42v', artistTracks: 'YjMrQNNo$Asp3Q*)'}, 400);
 				});
 				it('"artistTracks" set to "integer > 1"', async () => {
-					await get('artist/id', {id: '[w$FKg3)0$rBlhF', artistTracks: 1318757997740034}, 400);
+					await get('artist/id', {id: 'Q2ck7B#YKDoaY@EPS', artistTracks: -4464405131558910}, 400);
 				});
 				it('"artistTracks" set to "integer < 0"', async () => {
-					await get('artist/id', {id: ']LplUEk(zuAa', artistTracks: -2768382092902401}, 400);
+					await get('artist/id', {id: 'YRtIOc8UU4cs1', artistTracks: -1998490020347905}, 400);
 				});
 				it('"artistTrackIDs" set to "empty string"', async () => {
-					await get('artist/id', {id: 'jB&islxF', artistTrackIDs: ''}, 400);
+					await get('artist/id', {id: 'okr!@]', artistTrackIDs: ''}, 400);
 				});
 				it('"artistTrackIDs" set to "string"', async () => {
-					await get('artist/id', {id: 'Ztcan$)ci9', artistTrackIDs: 'E&fiy!%C*paGjMe'}, 400);
+					await get('artist/id', {id: '2RkSAY^0TW', artistTrackIDs: 'znU]sS'}, 400);
 				});
 				it('"artistTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/id', {id: 'TDqbo6(@xH1Deb)7Q', artistTrackIDs: 8543849160900610}, 400);
+					await get('artist/id', {id: 'EBjL]KN2VWKVn2F', artistTrackIDs: -534120929165310}, 400);
 				});
 				it('"artistTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'Xov8%U5', artistTrackIDs: 367470070202367}, 400);
+					await get('artist/id', {id: 'EI#F0$^@g', artistTrackIDs: 3459145990668287}, 400);
 				});
 				it('"artistInfo" set to "empty string"', async () => {
-					await get('artist/id', {id: '%vWk0e808(F$3KJT1Wd', artistInfo: ''}, 400);
+					await get('artist/id', {id: '7P0QJrUA#270tX', artistInfo: ''}, 400);
 				});
 				it('"artistInfo" set to "string"', async () => {
-					await get('artist/id', {id: 'BBhDURR(!uxIqBW2', artistInfo: 'wjaX4oKrkHiFT'}, 400);
+					await get('artist/id', {id: 'XxkB$jbuUt5', artistInfo: 'zaPZ90ds@z!UY'}, 400);
 				});
 				it('"artistInfo" set to "integer > 1"', async () => {
-					await get('artist/id', {id: '*QlHO]', artistInfo: -4897594178273278}, 400);
+					await get('artist/id', {id: 'dSy[iibsyLWXmnJF%x[P', artistInfo: 8057321036972034}, 400);
 				});
 				it('"artistInfo" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'D*TMF', artistInfo: 7499933351411711}, 400);
+					await get('artist/id', {id: 'TQ#VHAIo9', artistInfo: -4080645881987073}, 400);
 				});
 				it('"artistSimilar" set to "empty string"', async () => {
-					await get('artist/id', {id: 'JWHGVUa&', artistSimilar: ''}, 400);
+					await get('artist/id', {id: 'nUQJelf@h[msSzrwY]S5', artistSimilar: ''}, 400);
 				});
 				it('"artistSimilar" set to "string"', async () => {
-					await get('artist/id', {id: 'F]#gjaX6fLfsb(D^K%', artistSimilar: 'QBMS!KS!n%IK#zOcmv'}, 400);
+					await get('artist/id', {id: '6Jlc8SHo4tyQ', artistSimilar: '()]EETY'}, 400);
 				});
 				it('"artistSimilar" set to "integer > 1"', async () => {
-					await get('artist/id', {id: 'z#[hAgeGXtKI4!0x&w6', artistSimilar: -6122043368013822}, 400);
+					await get('artist/id', {id: 'vx9Mu6UnHEz%cph)', artistSimilar: -4712299260542974}, 400);
 				});
 				it('"artistSimilar" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'O3Ref]cM*$7xGv!zH', artistSimilar: 2010966225059839}, 400);
+					await get('artist/id', {id: 'nB&]GngwxI$Wb]^0*qDZ', artistSimilar: 4933294588166143}, 400);
 				});
 				it('"albumTracks" set to "empty string"', async () => {
-					await get('artist/id', {id: 'MYQdj[S', albumTracks: ''}, 400);
+					await get('artist/id', {id: 'i&uYpE[Fmqv', albumTracks: ''}, 400);
 				});
 				it('"albumTracks" set to "string"', async () => {
-					await get('artist/id', {id: '(zW8nLKdOWSgzBLTqJBY', albumTracks: 'pS^eQysxxGfGEgPM'}, 400);
+					await get('artist/id', {id: 'HNxRhmJGshh', albumTracks: 'K&AskrgwXlkhV#hSc$hi'}, 400);
 				});
 				it('"albumTracks" set to "integer > 1"', async () => {
-					await get('artist/id', {id: 'Cx)5ryze2ha5o)#@y^', albumTracks: -3941480913698814}, 400);
+					await get('artist/id', {id: '0t@GRI5THmfM', albumTracks: 5362737555177474}, 400);
 				});
 				it('"albumTracks" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'I%u[H*cJ^j%8O', albumTracks: -5874750735777793}, 400);
+					await get('artist/id', {id: 'u]FwrSkLjjjZkj', albumTracks: -7811886229749761}, 400);
 				});
 				it('"albumTrackIDs" set to "empty string"', async () => {
-					await get('artist/id', {id: 'b!y3X4ff', albumTrackIDs: ''}, 400);
+					await get('artist/id', {id: '3JljfXOU2*', albumTrackIDs: ''}, 400);
 				});
 				it('"albumTrackIDs" set to "string"', async () => {
-					await get('artist/id', {id: '^[^GV*BxeiYXI2qjtg', albumTrackIDs: '5^@rl*'}, 400);
+					await get('artist/id', {id: 'Xb#Jn', albumTrackIDs: 'PI4mrHG@u9KDC!k!ml0'}, 400);
 				});
 				it('"albumTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/id', {id: '@G*Y[', albumTrackIDs: 8151674908573698}, 400);
+					await get('artist/id', {id: '!V4snVer]@Zh', albumTrackIDs: 1261149634953218}, 400);
 				});
 				it('"albumTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'LYng$cixp([tr', albumTrackIDs: 5166886983565311}, 400);
+					await get('artist/id', {id: 'N%CS1cx', albumTrackIDs: 6696772046946303}, 400);
 				});
 				it('"albumState" set to "empty string"', async () => {
-					await get('artist/id', {id: 'Zu6)9$Bldwq', albumState: ''}, 400);
+					await get('artist/id', {id: 'Fud#ANL6DE4^lZ', albumState: ''}, 400);
 				});
 				it('"albumState" set to "string"', async () => {
-					await get('artist/id', {id: '*)ClC$%[17$op3eW', albumState: 'X]UosLOL#8$K)'}, 400);
+					await get('artist/id', {id: '49GgdPZ', albumState: 'VbU&[ADHW2!6'}, 400);
 				});
 				it('"albumState" set to "integer > 1"', async () => {
-					await get('artist/id', {id: '05Zrl2Z5XLPFC!iO%', albumState: -111439977119742}, 400);
+					await get('artist/id', {id: '&xJfQsv%', albumState: -4350210960523262}, 400);
 				});
 				it('"albumState" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'K(OncOIAcQS', albumState: 2882732275269631}, 400);
+					await get('artist/id', {id: 'G[!t1U(eE(Wo', albumState: -6027163866234881}, 400);
 				});
 				it('"albumInfo" set to "empty string"', async () => {
-					await get('artist/id', {id: 'Tm6L6)P8xom5PWaE14', albumInfo: ''}, 400);
+					await get('artist/id', {id: '47famD0Gr[^JE&S7', albumInfo: ''}, 400);
 				});
 				it('"albumInfo" set to "string"', async () => {
-					await get('artist/id', {id: '8[WajYby75X&(q7G]SNZ', albumInfo: '4]E8J^y][N1'}, 400);
+					await get('artist/id', {id: 's06QGkybQPZAVwOF', albumInfo: 'T]UTK(j2Q%'}, 400);
 				});
 				it('"albumInfo" set to "integer > 1"', async () => {
-					await get('artist/id', {id: '*Rjjf65kp&%M', albumInfo: -4700541284253694}, 400);
+					await get('artist/id', {id: 'yGRA1@4J@', albumInfo: -521827076014078}, 400);
 				});
 				it('"albumInfo" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'KEYh0UKv*8eVqC&PB&s', albumInfo: 807867842035711}, 400);
+					await get('artist/id', {id: 'hxje2)%hE$QAx', albumInfo: 1325872137109503}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('artist/id', {id: 'n3D89t[Ajwp', trackMedia: ''}, 400);
+					await get('artist/id', {id: '((QJK&U#fcxHjOEM(lIC', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('artist/id', {id: '@MEwHAc@[rMX3^ZjON', trackMedia: 'p%IDfB'}, 400);
+					await get('artist/id', {id: ')rP6sy3B6IGj508VV', trackMedia: '@BFkPkj'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('artist/id', {id: '1nDBn', trackMedia: -3323894035382270}, 400);
+					await get('artist/id', {id: '$FXNM@Vt*VK1vI4', trackMedia: -753922939551742}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('artist/id', {id: '#PeV]', trackMedia: 3741493638463487}, 400);
+					await get('artist/id', {id: '*20az#Sa83mU', trackMedia: -6628748342329345}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('artist/id', {id: 'QS4pjkY64o5', trackTag: ''}, 400);
+					await get('artist/id', {id: 'RALTDhlp4axJ!VXO', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('artist/id', {id: 'uBlGn]K]QL!)aOQMrO9', trackTag: 'of^sj09HoVs*iM'}, 400);
+					await get('artist/id', {id: 'I2p7$!k', trackTag: 'Dk![JjHq'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('artist/id', {id: '4q8Z^O', trackTag: -8137680730718206}, 400);
+					await get('artist/id', {id: 'X&S#PPKbT', trackTag: -2558650614808574}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'rDE8%w!', trackTag: 8843060909703167}, 400);
+					await get('artist/id', {id: '[(zxeEH9Mr', trackTag: 7387744338706431}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('artist/id', {id: 'Qazol3oYvn', trackRawTag: ''}, 400);
+					await get('artist/id', {id: 'Tvy)hbuk4cuknv', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('artist/id', {id: '0MUS2PwB*JCz)%EF[aF', trackRawTag: 'eV@mRUpk6C'}, 400);
+					await get('artist/id', {id: '1EMYAp', trackRawTag: '8qf*kf4%Joumvt7E'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('artist/id', {id: 'f1Qm4y%q(OgoFpoOkpr]', trackRawTag: -1128235660214270}, 400);
+					await get('artist/id', {id: 'jihESCwW@Wk1A!!th$f', trackRawTag: -1922561436811262}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'Ue4VrM^01t&z93Q%0', trackRawTag: -3841806890434561}, 400);
+					await get('artist/id', {id: 'V]3F]v829c)QeW', trackRawTag: -1827123559923713}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('artist/id', {id: 'bPYTfa61)Z58', trackState: ''}, 400);
+					await get('artist/id', {id: 'ZjZIOKj5B9mXK9', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('artist/id', {id: 'pyFI85xKur@HfP$9!ur#', trackState: 'NAYd35L'}, 400);
+					await get('artist/id', {id: ']mNNTI#x]at*PPcvi*WU', trackState: 'CZ4uZB$ejQ'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('artist/id', {id: 'qi(IgkS[EOQon(UD', trackState: -7702987455594494}, 400);
+					await get('artist/id', {id: 'nw1IptD8f5', trackState: 8099656798044162}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('artist/id', {id: 'hD4KJo8w(Pdh', trackState: 6397448054374399}, 400);
+					await get('artist/id', {id: '4XZH1G', trackState: 7328483151708159}, 400);
 				});
 			});
 		});
 		describe('artist/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/ids', {ids: ['#E$qtK8sX3j]o2Y1', 'q$46F*BX@']}, 401);
+					await getNotLoggedIn('artist/ids', {ids: ['d!ybPM', 'lzt(N29uW$$)Fj']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -4706,184 +4706,184 @@ describe('Server', () => {
 					await get('artist/ids', {ids: [null, '']}, 400);
 				});
 				it('"artistAlbums" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['VsvN%1OeS!R6My', 'ctZj(4APA0Q'], artistAlbums: ''}, 400);
+					await get('artist/ids', {ids: ['bQq96Y0iQwW@^S', 'KoPHDrM661zFC2qGvf'], artistAlbums: ''}, 400);
 				});
 				it('"artistAlbums" set to "string"', async () => {
-					await get('artist/ids', {ids: ['$O^0FuhkBr]fX1%@[Ul', 'W&Ag[H*1g4x3Po'], artistAlbums: 'GAY[uW9xUvd%fEf&9G'}, 400);
+					await get('artist/ids', {ids: ['Hh(ME]5&auCIE)PF', 'yq^HTK'], artistAlbums: 'sg$]AaaA]jj'}, 400);
 				});
 				it('"artistAlbums" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['YkQlm', 'vks#B0C[Iq'], artistAlbums: -386852884316158}, 400);
+					await get('artist/ids', {ids: ['3)BlfCf0rmEV', 'A(&aaKdZ%9'], artistAlbums: 1514950145081346}, 400);
 				});
 				it('"artistAlbums" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['mYOvqbLARd', '6]cajPod'], artistAlbums: -3652268045893633}, 400);
+					await get('artist/ids', {ids: ['bIf]8J[sa9bWl3]@C', '7yPC8EmoAkryH5A'], artistAlbums: 1620926433067007}, 400);
 				});
 				it('"artistAlbumIDs" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['YXuWPfrV5ib', 'cTkYVzdLt$^Pdlegie'], artistAlbumIDs: ''}, 400);
+					await get('artist/ids', {ids: ['jBrvK', 'LgjhKnoNGYk'], artistAlbumIDs: ''}, 400);
 				});
 				it('"artistAlbumIDs" set to "string"', async () => {
-					await get('artist/ids', {ids: ['n^bYMNU9', 'WAnV4YL^b5YhcJ'], artistAlbumIDs: '*mV1s'}, 400);
+					await get('artist/ids', {ids: ['m&p[Sctcrb]', 'dlNZVY)mQ5Zk@mFIddy'], artistAlbumIDs: 'ao2Qqnmb(a3WlWNmgy'}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['9#(GoOpMfBdw$MyW', 'Z3mTAunG#L&bo*QF!'], artistAlbumIDs: -702373534105598}, 400);
+					await get('artist/ids', {ids: ['Iw7wSg74QdnMr4RGW', '9F*#rFAyZK&^'], artistAlbumIDs: -5790932033077246}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['9slQ]W#', '@Wx*VE99)jVj#Ya(BUI^'], artistAlbumIDs: -4087353362612225}, 400);
+					await get('artist/ids', {ids: ['3X0M#Huaz)*4J', 'dL)8@R'], artistAlbumIDs: -86241487880193}, 400);
 				});
 				it('"artistState" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['Xw3*P1l@f7Wus14Y*W', 'fW8@d6(USbHw'], artistState: ''}, 400);
+					await get('artist/ids', {ids: ['1JvL#*', '3lruCCC'], artistState: ''}, 400);
 				});
 				it('"artistState" set to "string"', async () => {
-					await get('artist/ids', {ids: ['[xLWV@oWVKFv%M', 'XF!d#6BT'], artistState: 'FOhZ)kd'}, 400);
+					await get('artist/ids', {ids: ['c)wmUtuSCE^)ky', 'i!zT]8&IkOB$#]C&0'], artistState: 'Dtin48zQZ#@5E[2Ld#W'}, 400);
 				});
 				it('"artistState" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['i2&uhC(Rv', 'vVcj*JxxQeRw@A'], artistState: -5289889402716158}, 400);
+					await get('artist/ids', {ids: ['nqmAUa', 'rM3o4bout'], artistState: 2307045193678850}, 400);
 				});
 				it('"artistState" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['dlqjEQ4e*6(!dWd8DG', 'cmRH%dyNmJF3WB'], artistState: -2586091202805761}, 400);
+					await get('artist/ids', {ids: ['Ja2rr6Z1', ']e@C9%W'], artistState: -1024254648778753}, 400);
 				});
 				it('"artistTracks" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['#cfZDbjXaPU4&o', 'ZiFd5B'], artistTracks: ''}, 400);
+					await get('artist/ids', {ids: ['GSVn5BjTsK', '8O)MiX5i'], artistTracks: ''}, 400);
 				});
 				it('"artistTracks" set to "string"', async () => {
-					await get('artist/ids', {ids: ['oc[!Hv6Tjd', '%t1N3zxf$lCF[bb'], artistTracks: 'xHG]x3yKj'}, 400);
+					await get('artist/ids', {ids: ['YkT)KFY', 'gZh6eJT^r'], artistTracks: 'UNkPOjjWj5$R'}, 400);
 				});
 				it('"artistTracks" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['T@Sq]X', 'vTiC7v*aEyZHMx(g)'], artistTracks: 5172012058148866}, 400);
+					await get('artist/ids', {ids: ['9ZV%7XRbvEj15mpr', 'pAn2@Pluk%a2EMEUO'], artistTracks: 7977886170480642}, 400);
 				});
 				it('"artistTracks" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['QngC&Gb%E3', '1kfCkxZ4bpynLwEg'], artistTracks: -3346476944064513}, 400);
+					await get('artist/ids', {ids: ['WSdH4ZxRC', 'dAW0&Eu4RO6HFX!g6d7'], artistTracks: 1376615661567999}, 400);
 				});
 				it('"artistTrackIDs" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['aHZkH', '8MAV&Y(G35E(g)w'], artistTrackIDs: ''}, 400);
+					await get('artist/ids', {ids: ['yCd[vTXr@gK*iB4', 'zGuytv^Z'], artistTrackIDs: ''}, 400);
 				});
 				it('"artistTrackIDs" set to "string"', async () => {
-					await get('artist/ids', {ids: ['k)nu9^%*22)9uKYBjl#U', 'SFLT45OMr'], artistTrackIDs: '^ROqUnZ0CPxl7'}, 400);
+					await get('artist/ids', {ids: ['YsoCI9(3E', '^SA3P%&r'], artistTrackIDs: 'CT%UcsunTj@MaYxKVOY'}, 400);
 				});
 				it('"artistTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['$9!uBb', 'Bpr!4S1('], artistTrackIDs: 7205945973145602}, 400);
+					await get('artist/ids', {ids: ['X5vrO', '&y0M30STFQat&EOJU1U'], artistTrackIDs: 2683332177428482}, 400);
 				});
 				it('"artistTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['BW#eP]nlkw', 'G*t%sb'], artistTrackIDs: 8440341350842367}, 400);
+					await get('artist/ids', {ids: ['bR13O3GEy3V&Vf', 'gPK$D4g[qlFGVvK!Hl[n'], artistTrackIDs: -4139053922385921}, 400);
 				});
 				it('"artistInfo" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['7CTEFrFfRjrI', 'yYVnityfXLOm#Mz'], artistInfo: ''}, 400);
+					await get('artist/ids', {ids: ['Te3TrPRWMM5]&LHZ7[k', 'rnjWN@GkcN!ep4KFaqe5'], artistInfo: ''}, 400);
 				});
 				it('"artistInfo" set to "string"', async () => {
-					await get('artist/ids', {ids: ['p5yjC%K]h(', 'MD0LSomgn]'], artistInfo: '9#2X1[Yl%E[s'}, 400);
+					await get('artist/ids', {ids: ['59(1OczOQFB', '5SkZ(p('], artistInfo: 'hMk%e9izKMc3ignnT88'}, 400);
 				});
 				it('"artistInfo" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['*hiTRdsO2x8jT0x@6k!K', 'V4J9m!T'], artistInfo: 1767442258853890}, 400);
+					await get('artist/ids', {ids: ['h#AD%XCzF', 'RNn@vyr$D[^'], artistInfo: -7020296355708926}, 400);
 				});
 				it('"artistInfo" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['n!xD7niGnU3%N4t@Fvk8', 'hCMWY0)aR#kO3W'], artistInfo: -1908085639610369}, 400);
+					await get('artist/ids', {ids: ['Dl7(KIIu^0B4a6FbS9S', 's%p8X(AQ0G!I2sx'], artistInfo: -3010815158386689}, 400);
 				});
 				it('"artistSimilar" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['hN^X*$pbg8TOP(Taoi$', '(KHpFE3'], artistSimilar: ''}, 400);
+					await get('artist/ids', {ids: ['#yOJX5#w)hd]0rL2Mq', 'bYaam4MrxJA6LLhM%V6'], artistSimilar: ''}, 400);
 				});
 				it('"artistSimilar" set to "string"', async () => {
-					await get('artist/ids', {ids: ['*iwC(%e(*', 'mttVqDNnDA(2R['], artistSimilar: 'gDxg4PwxDHP4^ZD'}, 400);
+					await get('artist/ids', {ids: ['s@$*w@1fk8rVNVFl1IQU', 'Rm!gJ(!Ns*%fjtx2y'], artistSimilar: '&XeyT(8'}, 400);
 				});
 				it('"artistSimilar" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['vn6%Kw5x8wfU', '^hReANF'], artistSimilar: 447846100762626}, 400);
+					await get('artist/ids', {ids: ['mVAAkt6U$FH92(', 'sZp@Lq%P'], artistSimilar: 5532124039872514}, 400);
 				});
 				it('"artistSimilar" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['XuuqWFB', 'GwLI(7^g!62Je'], artistSimilar: 8027734580133887}, 400);
+					await get('artist/ids', {ids: ['08Rr5zyD7&jVy6T1zclw', 'we(fa)'], artistSimilar: 7245094813958143}, 400);
 				});
 				it('"albumTracks" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['DB]1]T*Svihi[', '@T4pUF'], albumTracks: ''}, 400);
+					await get('artist/ids', {ids: ['Cby#P', ']h7QHdR1ssPCujHVP'], albumTracks: ''}, 400);
 				});
 				it('"albumTracks" set to "string"', async () => {
-					await get('artist/ids', {ids: ['G@j^kPd', '!mY2Hy'], albumTracks: 'AR0&CVX'}, 400);
+					await get('artist/ids', {ids: ['IJ03UOZ9ZHcd1Q%', 'hLuYNNO[*[LbQCUXGX'], albumTracks: '8eDcUkcE!'}, 400);
 				});
 				it('"albumTracks" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['#npDTO6Ihb&OtMAi', '&6QR9bQz59@^Kn'], albumTracks: 8194432260112386}, 400);
+					await get('artist/ids', {ids: ['^8P(mB#]Lr4E', '^Xyq*(KK'], albumTracks: 483145463889922}, 400);
 				});
 				it('"albumTracks" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['P$O1XDSp#nih%Pb@hZi', ')Y!@l73'], albumTracks: -4901951821053953}, 400);
+					await get('artist/ids', {ids: ['HWiX1u', 'OLw]ty'], albumTracks: -5219234112077825}, 400);
 				});
 				it('"albumTrackIDs" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['JFlI7', 'PW&J(qvSzoPlmOP$j'], albumTrackIDs: ''}, 400);
+					await get('artist/ids', {ids: ['P@pkwzre8]', 'EtvXI62iFC&(IUP'], albumTrackIDs: ''}, 400);
 				});
 				it('"albumTrackIDs" set to "string"', async () => {
-					await get('artist/ids', {ids: ['^FQDv]qExw', 'SEkAYp]0Zh6o'], albumTrackIDs: 'SSJWM5%L(9gkYL#('}, 400);
+					await get('artist/ids', {ids: ['^BmBBjj00vyaYDkFeyC', 'qp*@0^J'], albumTrackIDs: 'X%*F)nrQeMGb'}, 400);
 				});
 				it('"albumTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['FI%v^Z0', 'pxjM]'], albumTrackIDs: 2894463265406978}, 400);
+					await get('artist/ids', {ids: ['H))Si#I&d', 'GP&nzw6ut^G'], albumTrackIDs: -1307866145226750}, 400);
 				});
 				it('"albumTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['YPQ)G7Bx8gptC*7', '0xvLOwt'], albumTrackIDs: -2548051470188545}, 400);
+					await get('artist/ids', {ids: [']XvM]O]', 'qq4]T]GYkLcte!'], albumTrackIDs: -8502314050519041}, 400);
 				});
 				it('"albumState" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['7%AFHqj6wU', '9jYhjCdqV]WJoR5pQ5z'], albumState: ''}, 400);
+					await get('artist/ids', {ids: ['z4t&1me!mU$tcMyW&', 'd8c6u7wF'], albumState: ''}, 400);
 				});
 				it('"albumState" set to "string"', async () => {
-					await get('artist/ids', {ids: ['(6x4]uYt6$&VI', 'J48Zq(J145%*'], albumState: 'VY0ZEM3Of)ColtF)joTt'}, 400);
+					await get('artist/ids', {ids: ['iqk3p4vuOf', 'PoSJ1'], albumState: 'w9a2bO9O)'}, 400);
 				});
 				it('"albumState" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['rDwBZM7Qmz8', 'Z2U!*T*7PbtSu[9S5E5'], albumState: -361855151243262}, 400);
+					await get('artist/ids', {ids: ['T7ipj5(2wXAiq', '#KX0$8iRlU5SG'], albumState: -8189989531680766}, 400);
 				});
 				it('"albumState" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['%GnXY)PQq', 'HBP)!$J9]nA'], albumState: 3120964095180799}, 400);
+					await get('artist/ids', {ids: ['tZ4vC%Kg0', 'y3YGxKF'], albumState: -1239414726459393}, 400);
 				});
 				it('"albumInfo" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['6n4@dcGdtHnMoV0r', '5PY#vYNlYD0kiv'], albumInfo: ''}, 400);
+					await get('artist/ids', {ids: ['uafBrVHq(q', 'QVt%ZLzyAjRUU9'], albumInfo: ''}, 400);
 				});
 				it('"albumInfo" set to "string"', async () => {
-					await get('artist/ids', {ids: ['Xi7&fp8o)7q)ntr', 'EBXmy(A6Kb0dS'], albumInfo: '1hLXGf]h8U'}, 400);
+					await get('artist/ids', {ids: ['(&IEby$DBb^', '@2r(XRpm%&R'], albumInfo: '*7ry)[Y!w4HaSLcu6J$'}, 400);
 				});
 				it('"albumInfo" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['a0l7J#6xNXy', 'in3nX$m#'], albumInfo: -3931009762459646}, 400);
+					await get('artist/ids', {ids: ['It8^R)', 'fLZ6Ma#'], albumInfo: 7539485046734850}, 400);
 				});
 				it('"albumInfo" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['ctXl0QR)%Z]#Ux(Gv', 'pgaZaro#6x'], albumInfo: 807085637894143}, 400);
+					await get('artist/ids', {ids: ['IMA3QW6Be%eh', 'dP785Sc0&H$$0Z#FZi6'], albumInfo: -2754233606602753}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['@uGo1mP5', 'lbVxfQ&OTH*E(Q1tMlh'], trackMedia: ''}, 400);
+					await get('artist/ids', {ids: ['V^(ywur^M', 'aT4nlzW'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('artist/ids', {ids: ['uWNxfb', 'ORx5BRRN[Kub0%Q1QN'], trackMedia: 'X*b9ITwE%['}, 400);
+					await get('artist/ids', {ids: ['DPg08HO!^5yao#FQe', 'v5x0EAy(gf^&Tcf#lwp'], trackMedia: 'up^ek]zd2y'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['B8#ue', 'xSoukP'], trackMedia: -2791503185313790}, 400);
+					await get('artist/ids', {ids: ['rxsjRE7xV0MZljt', '#HWr(VIs'], trackMedia: -3024455823523838}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['(R7gIt%1bQMtF3Y', 'ncqTf]gsBaiAJrwwxr*N'], trackMedia: 979074121990143}, 400);
+					await get('artist/ids', {ids: ['O[jb6nxaqgQG#', 'XqjOkFaNuu'], trackMedia: 22016954466303}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('artist/ids', {ids: [']jDWZ(C$nl9b', 'Z7LYeIb5a69e'], trackTag: ''}, 400);
+					await get('artist/ids', {ids: ['8)*O!cJq%sj[#adGg67', '3#bluio5MLCs4yW'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('artist/ids', {ids: ['T5pBR&rjo%D]', 'Zi]zuGJgq2'], trackTag: 'vJ5t$4YyRIJB'}, 400);
+					await get('artist/ids', {ids: ['(IP[@K#pm7e', 't8%]2o$i4$#'], trackTag: 't!1DuGa7yY)*Y9L%rHr'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['A7no[O&(rXetI', '905Vq*58sAlsI12762'], trackTag: -3661312022282238}, 400);
+					await get('artist/ids', {ids: ['KyZMOtg0UInFg', 'v!1$8W1'], trackTag: 2102486110306306}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['5*YS[GAmR', 'Qqi(Ir)u'], trackTag: -7003357390569473}, 400);
+					await get('artist/ids', {ids: ['^g7B@3OSjmlAkS]g', 'dV4BkOJ8Hcvy0b7JWeuW'], trackTag: -4858314370318337}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['4YEqzPD#hBj]]zBZE', 'UMjAX#Y'], trackRawTag: ''}, 400);
+					await get('artist/ids', {ids: ['MI[bCuPLHM3P6)S', 'dsPu1$9'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('artist/ids', {ids: ['2%8QRtK[gRsz9', 'bIf29oootnDbe[8'], trackRawTag: '2y6Jhz'}, 400);
+					await get('artist/ids', {ids: ['R*5F*ZJVh', 'p1fi]w10gd4dyDj$7pO'], trackRawTag: 'e0Wz@(!yJz(M[I#r@ofN'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['LUPZcr#&', 'Eugz*&8XxTMPd*'], trackRawTag: 6647402765221890}, 400);
+					await get('artist/ids', {ids: ['&UW$$DR6f', 'CB[9aFkWvrpqCJ'], trackRawTag: -1681410192572414}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['(sI(#7VO7X', 'Jo2catoHC'], trackRawTag: -6095127080599553}, 400);
+					await get('artist/ids', {ids: ['*BBvjZvWL80VL[qb&S', 'DqP3ESDk'], trackRawTag: -3925943231971329}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('artist/ids', {ids: ['amyAWRBcKb', 'Im]@3vQ7VgTl0N'], trackState: ''}, 400);
+					await get('artist/ids', {ids: ['WKah2xT6Plp&lr#', '9iAP9'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('artist/ids', {ids: ['tG6OPu(59^G]jn*f', 'odz]qOj!gQ6qly'], trackState: 'Fd8^i$&e4ZDDa'}, 400);
+					await get('artist/ids', {ids: ['&M5QZ!!pGt[', 'u)alT$rTm'], trackState: 'WM#b[9e6AGCQ0'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('artist/ids', {ids: ['1NPC]yru$i#TZV(aGz6', '2!vSxGw]bhYpu6[]Np%H'], trackState: 536229175099394}, 400);
+					await get('artist/ids', {ids: ['cz77*U4[JBG2n(nIaP3M', 'uNJoRz&2)oy4u](@k'], trackState: 8430354268422146}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('artist/ids', {ids: ['FG$w*D', 'u5F)e[K3fSlIkM3$xTBo'], trackState: -4546672075997185}, 400);
+					await get('artist/ids', {ids: ['F$)2tsA^^6IMJb)ksj', 'u!r5&]HzJQM4oA'], trackState: 2907494754025471}, 400);
 				});
 			});
 		});
@@ -4895,7 +4895,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('artist/search', {offset: 'EGCpsqn48'}, 400);
+					await get('artist/search', {offset: 'n@AMK0x4'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('artist/search', {offset: ''}, 400);
@@ -4904,13 +4904,13 @@ describe('Server', () => {
 					await get('artist/search', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('artist/search', {offset: 17.89}, 400);
+					await get('artist/search', {offset: 92.56}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('artist/search', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('artist/search', {amount: '7uwRxheDM6$n%'}, 400);
+					await get('artist/search', {amount: 'GVzbh8hin9'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('artist/search', {amount: ''}, 400);
@@ -4919,7 +4919,7 @@ describe('Server', () => {
 					await get('artist/search', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('artist/search', {amount: 90.03}, 400);
+					await get('artist/search', {amount: 3.52}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('artist/search', {amount: 0}, 400);
@@ -4958,7 +4958,7 @@ describe('Server', () => {
 					await get('artist/search', {mbArtistID: ''}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('artist/search', {newerThan: 'IV3IIq4h'}, 400);
+					await get('artist/search', {newerThan: 'RQzplfx2A!heYGwfN1O'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
 					await get('artist/search', {newerThan: ''}, 400);
@@ -4967,7 +4967,7 @@ describe('Server', () => {
 					await get('artist/search', {newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('artist/search', {newerThan: 63.54}, 400);
+					await get('artist/search', {newerThan: 98.12}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
 					await get('artist/search', {newerThan: -1}, 400);
@@ -4994,200 +4994,200 @@ describe('Server', () => {
 					await get('artist/search', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('artist/search', {sortDescending: '[W215]7agNAsc5(u'}, 400);
+					await get('artist/search', {sortDescending: '018kHBE[v7Kj8xs)'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('artist/search', {sortDescending: 6927503184625666}, 400);
+					await get('artist/search', {sortDescending: 5117700435083266}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('artist/search', {sortDescending: 2381488955850751}, 400);
+					await get('artist/search', {sortDescending: -3812114397396993}, 400);
 				});
 				it('"artistAlbums" set to "empty string"', async () => {
 					await get('artist/search', {artistAlbums: ''}, 400);
 				});
 				it('"artistAlbums" set to "string"', async () => {
-					await get('artist/search', {artistAlbums: ')5Jyo6]BCM%%'}, 400);
+					await get('artist/search', {artistAlbums: 'uwTw!6X#j&rN'}, 400);
 				});
 				it('"artistAlbums" set to "integer > 1"', async () => {
-					await get('artist/search', {artistAlbums: 1426043118288898}, 400);
+					await get('artist/search', {artistAlbums: 5268563837321218}, 400);
 				});
 				it('"artistAlbums" set to "integer < 0"', async () => {
-					await get('artist/search', {artistAlbums: 6740301368524799}, 400);
+					await get('artist/search', {artistAlbums: -7124920970510337}, 400);
 				});
 				it('"artistAlbumIDs" set to "empty string"', async () => {
 					await get('artist/search', {artistAlbumIDs: ''}, 400);
 				});
 				it('"artistAlbumIDs" set to "string"', async () => {
-					await get('artist/search', {artistAlbumIDs: '5XF&AiV$&9IjstzQ6)'}, 400);
+					await get('artist/search', {artistAlbumIDs: 'TwkIMm3Fv!$Mg#ul(I'}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer > 1"', async () => {
-					await get('artist/search', {artistAlbumIDs: 6360640784433154}, 400);
+					await get('artist/search', {artistAlbumIDs: 2145120988168194}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer < 0"', async () => {
-					await get('artist/search', {artistAlbumIDs: 8026962782060543}, 400);
+					await get('artist/search', {artistAlbumIDs: -8358777052987393}, 400);
 				});
 				it('"artistState" set to "empty string"', async () => {
 					await get('artist/search', {artistState: ''}, 400);
 				});
 				it('"artistState" set to "string"', async () => {
-					await get('artist/search', {artistState: 'LHB8qE!Y!XhhU&5p8eKN'}, 400);
+					await get('artist/search', {artistState: '5Y7oJljG!'}, 400);
 				});
 				it('"artistState" set to "integer > 1"', async () => {
-					await get('artist/search', {artistState: 3371950789361666}, 400);
+					await get('artist/search', {artistState: -6624093541498878}, 400);
 				});
 				it('"artistState" set to "integer < 0"', async () => {
-					await get('artist/search', {artistState: 1939311691825151}, 400);
+					await get('artist/search', {artistState: 5774099590676479}, 400);
 				});
 				it('"artistTracks" set to "empty string"', async () => {
 					await get('artist/search', {artistTracks: ''}, 400);
 				});
 				it('"artistTracks" set to "string"', async () => {
-					await get('artist/search', {artistTracks: 'P4XXarurFQMQM]XUS4L@'}, 400);
+					await get('artist/search', {artistTracks: 'WCJYn%Af1Q8Ja06M['}, 400);
 				});
 				it('"artistTracks" set to "integer > 1"', async () => {
-					await get('artist/search', {artistTracks: -4992912936927230}, 400);
+					await get('artist/search', {artistTracks: -940942244708350}, 400);
 				});
 				it('"artistTracks" set to "integer < 0"', async () => {
-					await get('artist/search', {artistTracks: 2270778305282047}, 400);
+					await get('artist/search', {artistTracks: 5020637399613439}, 400);
 				});
 				it('"artistTrackIDs" set to "empty string"', async () => {
 					await get('artist/search', {artistTrackIDs: ''}, 400);
 				});
 				it('"artistTrackIDs" set to "string"', async () => {
-					await get('artist/search', {artistTrackIDs: 'Gf(R5'}, 400);
+					await get('artist/search', {artistTrackIDs: '3y!nTe5'}, 400);
 				});
 				it('"artistTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/search', {artistTrackIDs: -8743942350700542}, 400);
+					await get('artist/search', {artistTrackIDs: 3821333653749762}, 400);
 				});
 				it('"artistTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/search', {artistTrackIDs: 5049262253539327}, 400);
+					await get('artist/search', {artistTrackIDs: 4196890799243263}, 400);
 				});
 				it('"artistInfo" set to "empty string"', async () => {
 					await get('artist/search', {artistInfo: ''}, 400);
 				});
 				it('"artistInfo" set to "string"', async () => {
-					await get('artist/search', {artistInfo: 'LUXsQIu$Fy*6vItU]U'}, 400);
+					await get('artist/search', {artistInfo: '3lmEc'}, 400);
 				});
 				it('"artistInfo" set to "integer > 1"', async () => {
-					await get('artist/search', {artistInfo: 7568660184956930}, 400);
+					await get('artist/search', {artistInfo: 1020688295002114}, 400);
 				});
 				it('"artistInfo" set to "integer < 0"', async () => {
-					await get('artist/search', {artistInfo: 6146596538417151}, 400);
+					await get('artist/search', {artistInfo: 1060105877454847}, 400);
 				});
 				it('"artistSimilar" set to "empty string"', async () => {
 					await get('artist/search', {artistSimilar: ''}, 400);
 				});
 				it('"artistSimilar" set to "string"', async () => {
-					await get('artist/search', {artistSimilar: 'qFeMtg8D[w%CNi%t'}, 400);
+					await get('artist/search', {artistSimilar: 'm!]n(^X6]l['}, 400);
 				});
 				it('"artistSimilar" set to "integer > 1"', async () => {
-					await get('artist/search', {artistSimilar: -6968998872743934}, 400);
+					await get('artist/search', {artistSimilar: -8919734238052350}, 400);
 				});
 				it('"artistSimilar" set to "integer < 0"', async () => {
-					await get('artist/search', {artistSimilar: 1092434679300095}, 400);
+					await get('artist/search', {artistSimilar: 4755042561163263}, 400);
 				});
 				it('"albumTracks" set to "empty string"', async () => {
 					await get('artist/search', {albumTracks: ''}, 400);
 				});
 				it('"albumTracks" set to "string"', async () => {
-					await get('artist/search', {albumTracks: 'Cc4EXutQ24b'}, 400);
+					await get('artist/search', {albumTracks: ')&nODV0r^SS*Mmfo'}, 400);
 				});
 				it('"albumTracks" set to "integer > 1"', async () => {
-					await get('artist/search', {albumTracks: 8174225923768322}, 400);
+					await get('artist/search', {albumTracks: -459360320880638}, 400);
 				});
 				it('"albumTracks" set to "integer < 0"', async () => {
-					await get('artist/search', {albumTracks: 3200934406520831}, 400);
+					await get('artist/search', {albumTracks: -7708380839804929}, 400);
 				});
 				it('"albumTrackIDs" set to "empty string"', async () => {
 					await get('artist/search', {albumTrackIDs: ''}, 400);
 				});
 				it('"albumTrackIDs" set to "string"', async () => {
-					await get('artist/search', {albumTrackIDs: 'QB8H['}, 400);
+					await get('artist/search', {albumTrackIDs: 'bycy(K^fP2b3%%7CL'}, 400);
 				});
 				it('"albumTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/search', {albumTrackIDs: 5778099782287362}, 400);
+					await get('artist/search', {albumTrackIDs: 8490405888786434}, 400);
 				});
 				it('"albumTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/search', {albumTrackIDs: 8206701148766207}, 400);
+					await get('artist/search', {albumTrackIDs: -6625142197190657}, 400);
 				});
 				it('"albumState" set to "empty string"', async () => {
 					await get('artist/search', {albumState: ''}, 400);
 				});
 				it('"albumState" set to "string"', async () => {
-					await get('artist/search', {albumState: '%v4S&QREkKu'}, 400);
+					await get('artist/search', {albumState: 'Z(solA#yU&R'}, 400);
 				});
 				it('"albumState" set to "integer > 1"', async () => {
-					await get('artist/search', {albumState: 2291553745764354}, 400);
+					await get('artist/search', {albumState: 3115843584000002}, 400);
 				});
 				it('"albumState" set to "integer < 0"', async () => {
-					await get('artist/search', {albumState: 5259319691968511}, 400);
+					await get('artist/search', {albumState: 5062910766219263}, 400);
 				});
 				it('"albumInfo" set to "empty string"', async () => {
 					await get('artist/search', {albumInfo: ''}, 400);
 				});
 				it('"albumInfo" set to "string"', async () => {
-					await get('artist/search', {albumInfo: 'ji%EDIgHQcxcf'}, 400);
+					await get('artist/search', {albumInfo: 'Q^clU^50Bp]'}, 400);
 				});
 				it('"albumInfo" set to "integer > 1"', async () => {
-					await get('artist/search', {albumInfo: 8439695285420034}, 400);
+					await get('artist/search', {albumInfo: -585621458386942}, 400);
 				});
 				it('"albumInfo" set to "integer < 0"', async () => {
-					await get('artist/search', {albumInfo: 7381724535193599}, 400);
+					await get('artist/search', {albumInfo: -2279183958933505}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('artist/search', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('artist/search', {trackMedia: 'd0kR$nGr)U&kPx(Crb)0'}, 400);
+					await get('artist/search', {trackMedia: 'f@bLQ(UZT0L'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('artist/search', {trackMedia: 2727206723780610}, 400);
+					await get('artist/search', {trackMedia: 1253772726632450}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('artist/search', {trackMedia: 5820692654194687}, 400);
+					await get('artist/search', {trackMedia: 3654599592378367}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('artist/search', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('artist/search', {trackTag: '9WIQwULL&nK%'}, 400);
+					await get('artist/search', {trackTag: 'S5S3yD'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('artist/search', {trackTag: 7465977318998018}, 400);
+					await get('artist/search', {trackTag: -8367005686038526}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('artist/search', {trackTag: -4518111537528833}, 400);
+					await get('artist/search', {trackTag: -2707441829543937}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('artist/search', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('artist/search', {trackRawTag: '[1[WdVuX7[dHUe'}, 400);
+					await get('artist/search', {trackRawTag: 'd5&tE&RlIzxBzr'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('artist/search', {trackRawTag: 7029963177852930}, 400);
+					await get('artist/search', {trackRawTag: -2529257171451902}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('artist/search', {trackRawTag: -5403727527673857}, 400);
+					await get('artist/search', {trackRawTag: -7743612985016321}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('artist/search', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('artist/search', {trackState: 'GhBv7l^R^[Tj3Q'}, 400);
+					await get('artist/search', {trackState: 'baDmt!ydG@LI3ZE'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('artist/search', {trackState: 2366132681965570}, 400);
+					await get('artist/search', {trackState: 4693800635072514}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('artist/search', {trackState: -501557225324545}, 400);
+					await get('artist/search', {trackState: -4727492715741185}, 400);
 				});
 			});
 		});
 		describe('artist/state', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/state', {id: 'HE@y*J'}, 401);
+					await getNotLoggedIn('artist/state', {id: 'OAd4FvMrR'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -5199,7 +5199,7 @@ describe('Server', () => {
 		describe('artist/states', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/states', {ids: ['1eM8We@Gx(txCNLFg&y', 'OJ8m5Ov']}, 401);
+					await getNotLoggedIn('artist/states', {ids: ['D3TGj', 'fIZFD7']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -5214,7 +5214,7 @@ describe('Server', () => {
 		describe('artist/list', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/list', {list: 'faved'}, 401);
+					await getNotLoggedIn('artist/list', {list: 'random'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -5225,299 +5225,299 @@ describe('Server', () => {
 					await get('artist/list', {list: 'invalid'}, 400);
 				});
 				it('"name" set to "empty string"', async () => {
-					await get('artist/list', {list: 'recent', name: ''}, 400);
+					await get('artist/list', {list: 'random', name: ''}, 400);
 				});
 				it('"rootID" set to "empty string"', async () => {
-					await get('artist/list', {list: 'recent', rootID: ''}, 400);
+					await get('artist/list', {list: 'frequent', rootID: ''}, 400);
 				});
 				it('"rootIDs" set to "null"', async () => {
-					await get('artist/list', {list: 'faved', rootIDs: null}, 400);
+					await get('artist/list', {list: 'avghighest', rootIDs: null}, 400);
 				});
 				it('"rootIDs" set to "empty string"', async () => {
-					await get('artist/list', {list: 'avghighest', rootIDs: [null, '']}, 400);
+					await get('artist/list', {list: 'random', rootIDs: [null, '']}, 400);
 				});
 				it('"albumID" set to "empty string"', async () => {
-					await get('artist/list', {list: 'highest', albumID: ''}, 400);
+					await get('artist/list', {list: 'random', albumID: ''}, 400);
 				});
 				it('"albumType" set to "empty string"', async () => {
-					await get('artist/list', {list: 'frequent', albumType: ''}, 400);
+					await get('artist/list', {list: 'avghighest', albumType: ''}, 400);
 				});
 				it('"albumType" set to "invalid enum"', async () => {
-					await get('artist/list', {list: 'random', albumType: 'invalid'}, 400);
+					await get('artist/list', {list: 'highest', albumType: 'invalid'}, 400);
 				});
 				it('"albumTypes" set to "null"', async () => {
-					await get('artist/list', {list: 'highest', albumTypes: null}, 400);
+					await get('artist/list', {list: 'recent', albumTypes: null}, 400);
 				});
 				it('"albumTypes" set to "empty string"', async () => {
-					await get('artist/list', {list: 'frequent', albumTypes: [null, '']}, 400);
+					await get('artist/list', {list: 'highest', albumTypes: [null, '']}, 400);
 				});
 				it('"albumTypes" set to "invalid enum"', async () => {
-					await get('artist/list', {list: 'faved', albumTypes: [null, 'invalid']}, 400);
+					await get('artist/list', {list: 'recent', albumTypes: [null, 'invalid']}, 400);
 				});
 				it('"mbArtistID" set to "empty string"', async () => {
 					await get('artist/list', {list: 'random', mbArtistID: ''}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('artist/list', {list: 'highest', newerThan: 'D(N4s'}, 400);
+					await get('artist/list', {list: 'recent', newerThan: 'fPu!O#'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
-					await get('artist/list', {list: 'recent', newerThan: ''}, 400);
+					await get('artist/list', {list: 'highest', newerThan: ''}, 400);
 				});
 				it('"newerThan" set to "boolean"', async () => {
-					await get('artist/list', {list: 'frequent', newerThan: true}, 400);
+					await get('artist/list', {list: 'recent', newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('artist/list', {list: 'faved', newerThan: 48.49}, 400);
+					await get('artist/list', {list: 'avghighest', newerThan: 44.41}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
-					await get('artist/list', {list: 'frequent', newerThan: -1}, 400);
+					await get('artist/list', {list: 'recent', newerThan: -1}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
-					await get('artist/list', {list: 'frequent', sortField: ''}, 400);
+					await get('artist/list', {list: 'avghighest', sortField: ''}, 400);
 				});
 				it('"sortField" set to "invalid enum"', async () => {
-					await get('artist/list', {list: 'random', sortField: 'invalid'}, 400);
+					await get('artist/list', {list: 'highest', sortField: 'invalid'}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('artist/list', {list: 'highest', id: ''}, 400);
+					await get('artist/list', {list: 'recent', id: ''}, 400);
 				});
 				it('"ids" set to "null"', async () => {
-					await get('artist/list', {list: 'faved', ids: null}, 400);
+					await get('artist/list', {list: 'avghighest', ids: null}, 400);
 				});
 				it('"ids" set to "empty string"', async () => {
-					await get('artist/list', {list: 'frequent', ids: [null, '']}, 400);
+					await get('artist/list', {list: 'recent', ids: [null, '']}, 400);
 				});
 				it('"query" set to "empty string"', async () => {
-					await get('artist/list', {list: 'frequent', query: ''}, 400);
+					await get('artist/list', {list: 'recent', query: ''}, 400);
 				});
 				it('"sortDescending" set to "empty string"', async () => {
-					await get('artist/list', {list: 'faved', sortDescending: ''}, 400);
+					await get('artist/list', {list: 'avghighest', sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('artist/list', {list: 'avghighest', sortDescending: 'b%BF0co)XqfDPe3Mj'}, 400);
+					await get('artist/list', {list: 'faved', sortDescending: '685]WJ$*^)'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'recent', sortDescending: 7961378027470850}, 400);
+					await get('artist/list', {list: 'random', sortDescending: 1130472004386818}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'highest', sortDescending: 2767678456463359}, 400);
+					await get('artist/list', {list: 'avghighest', sortDescending: -2119874469953537}, 400);
 				});
 				it('"artistAlbums" set to "empty string"', async () => {
-					await get('artist/list', {list: 'recent', artistAlbums: ''}, 400);
+					await get('artist/list', {list: 'highest', artistAlbums: ''}, 400);
 				});
 				it('"artistAlbums" set to "string"', async () => {
-					await get('artist/list', {list: 'faved', artistAlbums: 'lnO4W3*b]u8SQAo7vE'}, 400);
+					await get('artist/list', {list: 'recent', artistAlbums: '*o54klpfz$kx9qLR'}, 400);
 				});
 				it('"artistAlbums" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'avghighest', artistAlbums: -4840509893771262}, 400);
+					await get('artist/list', {list: 'random', artistAlbums: 8000282784956418}, 400);
 				});
 				it('"artistAlbums" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'frequent', artistAlbums: 5138795754160127}, 400);
+					await get('artist/list', {list: 'recent', artistAlbums: 3857632943144959}, 400);
 				});
 				it('"artistAlbumIDs" set to "empty string"', async () => {
-					await get('artist/list', {list: 'random', artistAlbumIDs: ''}, 400);
+					await get('artist/list', {list: 'frequent', artistAlbumIDs: ''}, 400);
 				});
 				it('"artistAlbumIDs" set to "string"', async () => {
-					await get('artist/list', {list: 'random', artistAlbumIDs: 'HTrMTm15q3b'}, 400);
+					await get('artist/list', {list: 'highest', artistAlbumIDs: 'xsnW!Mbt*&Z['}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'faved', artistAlbumIDs: -5608464411787262}, 400);
+					await get('artist/list', {list: 'frequent', artistAlbumIDs: 8386222095335426}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'recent', artistAlbumIDs: -262502512328705}, 400);
+					await get('artist/list', {list: 'highest', artistAlbumIDs: 7926709756100607}, 400);
 				});
 				it('"artistState" set to "empty string"', async () => {
-					await get('artist/list', {list: 'random', artistState: ''}, 400);
+					await get('artist/list', {list: 'avghighest', artistState: ''}, 400);
 				});
 				it('"artistState" set to "string"', async () => {
-					await get('artist/list', {list: 'frequent', artistState: 'P5Gy%)7AREOZlsLuPvm1'}, 400);
+					await get('artist/list', {list: 'highest', artistState: '#@(##PkTCRO'}, 400);
 				});
 				it('"artistState" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'random', artistState: -4481110071312382}, 400);
+					await get('artist/list', {list: 'avghighest', artistState: 6453206024454146}, 400);
 				});
 				it('"artistState" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'faved', artistState: -3926162321440769}, 400);
+					await get('artist/list', {list: 'recent', artistState: 8368463408005119}, 400);
 				});
 				it('"artistTracks" set to "empty string"', async () => {
 					await get('artist/list', {list: 'highest', artistTracks: ''}, 400);
 				});
 				it('"artistTracks" set to "string"', async () => {
-					await get('artist/list', {list: 'recent', artistTracks: 'o*4Y*GI8IuI'}, 400);
+					await get('artist/list', {list: 'random', artistTracks: 'wXYI%mp0@'}, 400);
 				});
 				it('"artistTracks" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'faved', artistTracks: 852748211847170}, 400);
+					await get('artist/list', {list: 'highest', artistTracks: 628248882970626}, 400);
 				});
 				it('"artistTracks" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'highest', artistTracks: -5892527848685569}, 400);
+					await get('artist/list', {list: 'highest', artistTracks: 346724958732287}, 400);
 				});
 				it('"artistTrackIDs" set to "empty string"', async () => {
-					await get('artist/list', {list: 'recent', artistTrackIDs: ''}, 400);
+					await get('artist/list', {list: 'faved', artistTrackIDs: ''}, 400);
 				});
 				it('"artistTrackIDs" set to "string"', async () => {
-					await get('artist/list', {list: 'random', artistTrackIDs: 'CCX4J$gf7%Kc9'}, 400);
+					await get('artist/list', {list: 'recent', artistTrackIDs: 'LpEvDM@xcTEns2J'}, 400);
 				});
 				it('"artistTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'random', artistTrackIDs: 7798941559029762}, 400);
+					await get('artist/list', {list: 'faved', artistTrackIDs: -864322993520638}, 400);
 				});
 				it('"artistTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'faved', artistTrackIDs: 1325283814670335}, 400);
+					await get('artist/list', {list: 'random', artistTrackIDs: -7325577274982401}, 400);
 				});
 				it('"artistInfo" set to "empty string"', async () => {
 					await get('artist/list', {list: 'highest', artistInfo: ''}, 400);
 				});
 				it('"artistInfo" set to "string"', async () => {
-					await get('artist/list', {list: 'frequent', artistInfo: '6TBDQ%9HOZo^RWW^][a'}, 400);
+					await get('artist/list', {list: 'avghighest', artistInfo: '!u$p88LePf9)1sa'}, 400);
 				});
 				it('"artistInfo" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'highest', artistInfo: -8940328195194878}, 400);
+					await get('artist/list', {list: 'avghighest', artistInfo: -404493694926846}, 400);
 				});
 				it('"artistInfo" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'random', artistInfo: 5920764658188287}, 400);
+					await get('artist/list', {list: 'random', artistInfo: -8950779008253953}, 400);
 				});
 				it('"artistSimilar" set to "empty string"', async () => {
-					await get('artist/list', {list: 'faved', artistSimilar: ''}, 400);
+					await get('artist/list', {list: 'random', artistSimilar: ''}, 400);
 				});
 				it('"artistSimilar" set to "string"', async () => {
-					await get('artist/list', {list: 'avghighest', artistSimilar: 'CUGNa[OmV]'}, 400);
+					await get('artist/list', {list: 'avghighest', artistSimilar: 'p5c)!l9r(7'}, 400);
 				});
 				it('"artistSimilar" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'avghighest', artistSimilar: -6074570683449342}, 400);
+					await get('artist/list', {list: 'frequent', artistSimilar: 3256436847017986}, 400);
 				});
 				it('"artistSimilar" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'highest', artistSimilar: -455838825185281}, 400);
+					await get('artist/list', {list: 'random', artistSimilar: -6541043113656321}, 400);
 				});
 				it('"albumTracks" set to "empty string"', async () => {
-					await get('artist/list', {list: 'faved', albumTracks: ''}, 400);
+					await get('artist/list', {list: 'random', albumTracks: ''}, 400);
 				});
 				it('"albumTracks" set to "string"', async () => {
-					await get('artist/list', {list: 'recent', albumTracks: 'Lf$yY)O)PS'}, 400);
+					await get('artist/list', {list: 'avghighest', albumTracks: 'iCV]dFGWsSg7*&'}, 400);
 				});
 				it('"albumTracks" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'recent', albumTracks: 5605744284008450}, 400);
+					await get('artist/list', {list: 'avghighest', albumTracks: -769458532515838}, 400);
 				});
 				it('"albumTracks" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'random', albumTracks: -4350676826062849}, 400);
+					await get('artist/list', {list: 'highest', albumTracks: 2800775734493183}, 400);
 				});
 				it('"albumTrackIDs" set to "empty string"', async () => {
-					await get('artist/list', {list: 'highest', albumTrackIDs: ''}, 400);
+					await get('artist/list', {list: 'faved', albumTrackIDs: ''}, 400);
 				});
 				it('"albumTrackIDs" set to "string"', async () => {
-					await get('artist/list', {list: 'frequent', albumTrackIDs: 'ASqo3JSyolIUgU'}, 400);
+					await get('artist/list', {list: 'avghighest', albumTrackIDs: '*[*7q#Bs6(h[4fFdo'}, 400);
 				});
 				it('"albumTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'random', albumTrackIDs: 5550824587526146}, 400);
+					await get('artist/list', {list: 'faved', albumTrackIDs: 3242282224451586}, 400);
 				});
 				it('"albumTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'recent', albumTrackIDs: -2013225835036673}, 400);
+					await get('artist/list', {list: 'faved', albumTrackIDs: -5617708271927297}, 400);
 				});
 				it('"albumState" set to "empty string"', async () => {
-					await get('artist/list', {list: 'random', albumState: ''}, 400);
+					await get('artist/list', {list: 'highest', albumState: ''}, 400);
 				});
 				it('"albumState" set to "string"', async () => {
-					await get('artist/list', {list: 'random', albumState: 'aJ!EcC2Mu'}, 400);
+					await get('artist/list', {list: 'frequent', albumState: 'oj@lRhmJD'}, 400);
 				});
 				it('"albumState" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'faved', albumState: -7813245318463486}, 400);
+					await get('artist/list', {list: 'highest', albumState: 3519091667107842}, 400);
 				});
 				it('"albumState" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'highest', albumState: -6770320279076865}, 400);
+					await get('artist/list', {list: 'frequent', albumState: 8242687610191871}, 400);
 				});
 				it('"albumInfo" set to "empty string"', async () => {
-					await get('artist/list', {list: 'faved', albumInfo: ''}, 400);
+					await get('artist/list', {list: 'avghighest', albumInfo: ''}, 400);
 				});
 				it('"albumInfo" set to "string"', async () => {
-					await get('artist/list', {list: 'frequent', albumInfo: '6#&(5V#VT$Vy1'}, 400);
+					await get('artist/list', {list: 'recent', albumInfo: 'kQsfeZU$'}, 400);
 				});
 				it('"albumInfo" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'frequent', albumInfo: -779701131935742}, 400);
+					await get('artist/list', {list: 'recent', albumInfo: -4588280402149374}, 400);
 				});
 				it('"albumInfo" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'frequent', albumInfo: -8677993543106561}, 400);
+					await get('artist/list', {list: 'highest', albumInfo: -5998085943590913}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('artist/list', {list: 'recent', trackMedia: ''}, 400);
+					await get('artist/list', {list: 'highest', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('artist/list', {list: 'faved', trackMedia: 'n)EH4m1vTY'}, 400);
+					await get('artist/list', {list: 'recent', trackMedia: 'I4!WUJ'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'recent', trackMedia: 5829714551767042}, 400);
+					await get('artist/list', {list: 'frequent', trackMedia: 1912014771322882}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'faved', trackMedia: 5702736200859647}, 400);
+					await get('artist/list', {list: 'faved', trackMedia: -6671712120733697}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('artist/list', {list: 'highest', trackTag: ''}, 400);
+					await get('artist/list', {list: 'avghighest', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('artist/list', {list: 'faved', trackTag: 'z#erdDgWcblnJNO'}, 400);
+					await get('artist/list', {list: 'frequent', trackTag: 'PM43hDoSEBkkxWbvQ#'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'highest', trackTag: -239025461919742}, 400);
+					await get('artist/list', {list: 'avghighest', trackTag: 1653625172525058}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'frequent', trackTag: 2368157478027263}, 400);
+					await get('artist/list', {list: 'avghighest', trackTag: 7541470726717439}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('artist/list', {list: 'faved', trackRawTag: ''}, 400);
+					await get('artist/list', {list: 'random', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('artist/list', {list: 'frequent', trackRawTag: 'YD7U&4]@&cDo'}, 400);
+					await get('artist/list', {list: 'random', trackRawTag: 'irOkm@#VhVO$H*'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'random', trackRawTag: 6245897834856450}, 400);
+					await get('artist/list', {list: 'frequent', trackRawTag: -4357263665922046}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'recent', trackRawTag: -7031540605255681}, 400);
+					await get('artist/list', {list: 'avghighest', trackRawTag: -6088842243211265}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('artist/list', {list: 'avghighest', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('artist/list', {list: 'highest', trackState: 'GySU4yzO0'}, 400);
+					await get('artist/list', {list: 'avghighest', trackState: '9roo#q3V*#'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('artist/list', {list: 'faved', trackState: 8835766478176258}, 400);
+					await get('artist/list', {list: 'highest', trackState: 3278038720577538}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('artist/list', {list: 'highest', trackState: 5202221171998719}, 400);
+					await get('artist/list', {list: 'avghighest', trackState: -1031994683162625}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('artist/list', {list: 'frequent', offset: 'E4U72C'}, 400);
+					await get('artist/list', {list: 'recent', offset: 'MNnm]Zf!is'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('artist/list', {list: 'faved', offset: ''}, 400);
+					await get('artist/list', {list: 'avghighest', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('artist/list', {list: 'faved', offset: true}, 400);
+					await get('artist/list', {list: 'frequent', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('artist/list', {list: 'highest', offset: 34.53}, 400);
+					await get('artist/list', {list: 'avghighest', offset: 37.08}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('artist/list', {list: 'avghighest', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('artist/list', {list: 'recent', amount: 'UxZT[)pLgw]#e!u1z'}, 400);
+					await get('artist/list', {list: 'recent', amount: ']d[[aT$O4f'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('artist/list', {list: 'random', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('artist/list', {list: 'recent', amount: true}, 400);
+					await get('artist/list', {list: 'avghighest', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('artist/list', {list: 'avghighest', amount: 52.48}, 400);
+					await get('artist/list', {list: 'recent', amount: 16.54}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('artist/list', {list: 'recent', amount: 0}, 400);
+					await get('artist/list', {list: 'highest', amount: 0}, 400);
 				});
 			});
 		});
 		describe('artist/similar/tracks', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/similar/tracks', {id: ']W^!!'}, 401);
+					await getNotLoggedIn('artist/similar/tracks', {id: 'OJoJDrO9akp9LTj'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -5525,89 +5525,89 @@ describe('Server', () => {
 					await get('artist/similar/tracks', {id: ''}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('artist/similar/tracks', {id: 'MnDx*aohP[J5cRhgobxy', trackMedia: ''}, 400);
+					await get('artist/similar/tracks', {id: 'deaX%m#', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('artist/similar/tracks', {id: 'h49g5CxRCoGY(WM$', trackMedia: 'xpOIKoqElp@o7x'}, 400);
+					await get('artist/similar/tracks', {id: 'LsF1qiUPPeqTAK', trackMedia: '6!o6h*ecZ%'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('artist/similar/tracks', {id: 'hs1gAdY', trackMedia: -7067353246334974}, 400);
+					await get('artist/similar/tracks', {id: 'wND5(o', trackMedia: -3750921636937726}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('artist/similar/tracks', {id: 'uo73ScQ5ln$9FbGSy', trackMedia: 1218483597606911}, 400);
+					await get('artist/similar/tracks', {id: '8I(NrN8h4P[02%mk', trackMedia: -8675848999665665}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('artist/similar/tracks', {id: 'KD&b$muw^RsgAJ]7@f', trackTag: ''}, 400);
+					await get('artist/similar/tracks', {id: '!m3*gEG^%8KH*2^$', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('artist/similar/tracks', {id: 'kiSw3X%WLFlh2TULLryC', trackTag: 'fy8pggQdBF4wG'}, 400);
+					await get('artist/similar/tracks', {id: 'KGGg[tE1%gwtVjI$P^!W', trackTag: 'Nczj3(o'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('artist/similar/tracks', {id: 'dGqfS8w^k@Ri]', trackTag: 2630372315627522}, 400);
+					await get('artist/similar/tracks', {id: 'O&jTuK&Q0Zi', trackTag: -7839575011491838}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('artist/similar/tracks', {id: 'igHz#!92LiBJl', trackTag: 6202474700472319}, 400);
+					await get('artist/similar/tracks', {id: '&%pK5AGfi$L$o&S1@z5', trackTag: -7147299717251073}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('artist/similar/tracks', {id: 'Bw$gYyWUrvXw', trackRawTag: ''}, 400);
+					await get('artist/similar/tracks', {id: 'OHGh@ChB&ZhM6QDrsT', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('artist/similar/tracks', {id: 'I%xHLW0wAIp', trackRawTag: 'QVpmXS^e@OYW%'}, 400);
+					await get('artist/similar/tracks', {id: '*GE[G6nsL#9Nh)sY', trackRawTag: '5QeiwvlrI@JsL'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('artist/similar/tracks', {id: '%x*&&FP*', trackRawTag: 4490421703016450}, 400);
+					await get('artist/similar/tracks', {id: '[%rwTI4E0Ht7$DBW', trackRawTag: -7960702144741374}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('artist/similar/tracks', {id: 'vMbXzMTL', trackRawTag: -1224310416998401}, 400);
+					await get('artist/similar/tracks', {id: '0uQiw%!C1C6wF5rkyM2X', trackRawTag: 6156671290179583}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('artist/similar/tracks', {id: '1jiGqs^IVi4NZ(1(', trackState: ''}, 400);
+					await get('artist/similar/tracks', {id: 'oxBjvCr)3QxeufxVaqG', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('artist/similar/tracks', {id: '$t$muKiy', trackState: 'XHJTI*xNPe6Jc&v'}, 400);
+					await get('artist/similar/tracks', {id: 'QO[jQWwEsTTz', trackState: 'v@)Jjkb]qy%'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('artist/similar/tracks', {id: 'erN37N)eYBPfbYL', trackState: -703049815293950}, 400);
+					await get('artist/similar/tracks', {id: ')FG@%YJ', trackState: -5519370675552254}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('artist/similar/tracks', {id: 'Y^zN]w', trackState: 8778249941286911}, 400);
+					await get('artist/similar/tracks', {id: '5uaJY]Er', trackState: -2500283380793345}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('artist/similar/tracks', {id: '(Ece3$0N!JoeoLYnj', offset: 'fVyUiN6W&%'}, 400);
+					await get('artist/similar/tracks', {id: '^ZVo%BbBk*', offset: 'w0PO3s7'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('artist/similar/tracks', {id: 'Vfjv3ug6k]D4M', offset: ''}, 400);
+					await get('artist/similar/tracks', {id: 'pOqZCnWo]', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('artist/similar/tracks', {id: 'DeE82', offset: true}, 400);
+					await get('artist/similar/tracks', {id: '2KWbA4', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('artist/similar/tracks', {id: ')!PZeL[*neW(y5', offset: 48.71}, 400);
+					await get('artist/similar/tracks', {id: 'mgZtR5E', offset: 15.58}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('artist/similar/tracks', {id: 'bFznDjFKULh', offset: -1}, 400);
+					await get('artist/similar/tracks', {id: 'Ngix8ws1sGWo', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('artist/similar/tracks', {id: '!L@syE2#7tEfiy2', amount: 'u0toT7Havj^aFfTcl2'}, 400);
+					await get('artist/similar/tracks', {id: 'u9jKsz#[Z]K', amount: 'Zl^F$sJFM6yR9sDm'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('artist/similar/tracks', {id: 'Fhl[S8nw7^!eT', amount: ''}, 400);
+					await get('artist/similar/tracks', {id: '!VDn0vz$4FAl)Bcxwo2m', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('artist/similar/tracks', {id: 'kcC%MWj^&FDBY7w81l', amount: true}, 400);
+					await get('artist/similar/tracks', {id: ']Vz&Qa3X!&xQczvb', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('artist/similar/tracks', {id: '[Wtr)EjM', amount: 11.99}, 400);
+					await get('artist/similar/tracks', {id: 'A%lW]TjQm', amount: 52.36}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('artist/similar/tracks', {id: 'N&xnNPm5qKKpYM#Z58rS', amount: 0}, 400);
+					await get('artist/similar/tracks', {id: 'gwM%5xXQOHi4yox[R', amount: 0}, 400);
 				});
 			});
 		});
 		describe('artist/similar', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/similar', {id: '@[*K0%v1aYV@'}, 401);
+					await getNotLoggedIn('artist/similar', {id: 'qh1#CT8VVEd'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -5615,214 +5615,214 @@ describe('Server', () => {
 					await get('artist/similar', {id: ''}, 400);
 				});
 				it('"artistAlbums" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'QWmh3!!PZqQC', artistAlbums: ''}, 400);
+					await get('artist/similar', {id: '0pm3k9V', artistAlbums: ''}, 400);
 				});
 				it('"artistAlbums" set to "string"', async () => {
-					await get('artist/similar', {id: '3Uhy7GqsrWs', artistAlbums: 'hyKpu[5AOG4'}, 400);
+					await get('artist/similar', {id: 'pcgHAghoECrLW', artistAlbums: 'Em(aMF]w'}, 400);
 				});
 				it('"artistAlbums" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: 'w5B6KM2*FfTt$rzm9wg)', artistAlbums: -3809186815148030}, 400);
+					await get('artist/similar', {id: 'iw!XL]C', artistAlbums: 5909108771258370}, 400);
 				});
 				it('"artistAlbums" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: '!h4GDlgJ$Ay8AQqsZ', artistAlbums: -1792026014121985}, 400);
+					await get('artist/similar', {id: '&qXCj#e&JlMMry44%%', artistAlbums: -7038820142809089}, 400);
 				});
 				it('"artistAlbumIDs" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'JM8lNGx4fiG^SOsK@J', artistAlbumIDs: ''}, 400);
+					await get('artist/similar', {id: 'wPr1QC[s', artistAlbumIDs: ''}, 400);
 				});
 				it('"artistAlbumIDs" set to "string"', async () => {
-					await get('artist/similar', {id: 'H0zLmAZnBsvfBia&T]PV', artistAlbumIDs: 'uPbAM(e'}, 400);
+					await get('artist/similar', {id: 'LQThlV&wHoq6]JFq$a', artistAlbumIDs: 'cIV0$7FA^[y'}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: 'qjRaYdGIw8wPm*', artistAlbumIDs: -2340950181412862}, 400);
+					await get('artist/similar', {id: 'Ht%II5qG4$', artistAlbumIDs: 6429473767424002}, 400);
 				});
 				it('"artistAlbumIDs" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'eT4%L]gxVjiY7jC(7LV', artistAlbumIDs: -50701208125441}, 400);
+					await get('artist/similar', {id: 'YRUcyWhze(', artistAlbumIDs: 2323729493262335}, 400);
 				});
 				it('"artistState" set to "empty string"', async () => {
-					await get('artist/similar', {id: ']wcmMHAqf', artistState: ''}, 400);
+					await get('artist/similar', {id: 'K1nK7&v', artistState: ''}, 400);
 				});
 				it('"artistState" set to "string"', async () => {
-					await get('artist/similar', {id: 'IeeCsl', artistState: 'wt%RYOoJVIeqIokAoF6'}, 400);
+					await get('artist/similar', {id: '7(JknO', artistState: 'V1lVe%ou!WgE!(h[$EA'}, 400);
 				});
 				it('"artistState" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: 't2x@9DEvk%6DE', artistState: -3445391982854142}, 400);
+					await get('artist/similar', {id: 'F*Rw#dkP3D)', artistState: -5389794691514366}, 400);
 				});
 				it('"artistState" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'n(BHRG', artistState: -1648080613015553}, 400);
+					await get('artist/similar', {id: 'k]CXrV', artistState: 6077633175486463}, 400);
 				});
 				it('"artistTracks" set to "empty string"', async () => {
-					await get('artist/similar', {id: '0JmULHGW', artistTracks: ''}, 400);
+					await get('artist/similar', {id: 'MopmA]8m^6Mul8UnWH', artistTracks: ''}, 400);
 				});
 				it('"artistTracks" set to "string"', async () => {
-					await get('artist/similar', {id: 'Yw*j5GbuG)toKR&qYh', artistTracks: 'rKGuo2#h^Aq*O6XP%Pw'}, 400);
+					await get('artist/similar', {id: '7qnvV6OlpuC', artistTracks: 'L]52mRbvO0'}, 400);
 				});
 				it('"artistTracks" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: ']Ehr&fE)', artistTracks: -1541401393233918}, 400);
+					await get('artist/similar', {id: 'nvQTgibiv(J#g$doU%z3', artistTracks: 8937130998890498}, 400);
 				});
 				it('"artistTracks" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'bx1NsHY9k)q)8ugH', artistTracks: 3301395247661055}, 400);
+					await get('artist/similar', {id: 'i2]IXoAqn!Xk', artistTracks: -6666229985050625}, 400);
 				});
 				it('"artistTrackIDs" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'MU(aqr2s#f6iW2ASIV', artistTrackIDs: ''}, 400);
+					await get('artist/similar', {id: 'Rviy97xSW4ls', artistTrackIDs: ''}, 400);
 				});
 				it('"artistTrackIDs" set to "string"', async () => {
-					await get('artist/similar', {id: 'wpej&47V', artistTrackIDs: '^xwE($'}, 400);
+					await get('artist/similar', {id: 'mO2Ozy2v^DD]', artistTrackIDs: 'pOm@yy)ZL*L994D@0'}, 400);
 				});
 				it('"artistTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: 'pW94kZ)pBBZB*25', artistTrackIDs: 8154578352603138}, 400);
+					await get('artist/similar', {id: '3R!4UxJOcZ2%QWUB[UjX', artistTrackIDs: -6328877538344958}, 400);
 				});
 				it('"artistTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'BdUb)Jl6LL', artistTrackIDs: 8131030170992639}, 400);
+					await get('artist/similar', {id: 'cA4NXy9VGx@TbaGD0l', artistTrackIDs: -7500777543172097}, 400);
 				});
 				it('"artistInfo" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'u!B#$1jW6Soc', artistInfo: ''}, 400);
+					await get('artist/similar', {id: '72o]0Ux86&5Ofdwz', artistInfo: ''}, 400);
 				});
 				it('"artistInfo" set to "string"', async () => {
-					await get('artist/similar', {id: 'nnz0BfSxgy&7qtIu', artistInfo: 'MvtR#)El*81VaVbZ'}, 400);
+					await get('artist/similar', {id: 'vVXDEOis)', artistInfo: '8S!UMuA(G%&Hv'}, 400);
 				});
 				it('"artistInfo" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: 'k(p)sU', artistInfo: 5607540259815426}, 400);
+					await get('artist/similar', {id: 'nd6IXmxBwv44FqHM$', artistInfo: 7014508795002882}, 400);
 				});
 				it('"artistInfo" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'yUKOu]&wsdtbeMu&x', artistInfo: 6003157595324415}, 400);
+					await get('artist/similar', {id: 'kn(9li5E', artistInfo: -4722923478712321}, 400);
 				});
 				it('"artistSimilar" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'a2)5^Nwau#tGbKfVV', artistSimilar: ''}, 400);
+					await get('artist/similar', {id: 'YW)ty3oXrtS3Q8#', artistSimilar: ''}, 400);
 				});
 				it('"artistSimilar" set to "string"', async () => {
-					await get('artist/similar', {id: 'tPu]j', artistSimilar: '9B((&#S&FZVg#1hUh'}, 400);
+					await get('artist/similar', {id: 'PIu6#wGyfrSSiJ8C', artistSimilar: 'EP5SBpHrJ[CjPx$8Nm'}, 400);
 				});
 				it('"artistSimilar" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: 'gKyCUeY8WLKC7f3c#', artistSimilar: -2473315851567102}, 400);
+					await get('artist/similar', {id: 'xy0C3#F!mA', artistSimilar: 6264783095463938}, 400);
 				});
 				it('"artistSimilar" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: '()53wbT%UHd$@&j', artistSimilar: 3290166223437823}, 400);
+					await get('artist/similar', {id: 'c]V96*FiPhOMWHQ37Vu', artistSimilar: -2413321244377089}, 400);
 				});
 				it('"albumTracks" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'sUiOM', albumTracks: ''}, 400);
+					await get('artist/similar', {id: 'JZtd2*EuTTZ3@Rgffy@', albumTracks: ''}, 400);
 				});
 				it('"albumTracks" set to "string"', async () => {
-					await get('artist/similar', {id: 'T@14XX$4@8y@o', albumTracks: 'vhi0bU%11Gn0pyG'}, 400);
+					await get('artist/similar', {id: 'iZY8*gzp5rrggW', albumTracks: 'Com28LY2c5j)j8Qi33l'}, 400);
 				});
 				it('"albumTracks" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: 'rQ)ky5', albumTracks: 4117175635804162}, 400);
+					await get('artist/similar', {id: ']war@7WI!eHzL)E)', albumTracks: 5929148618899458}, 400);
 				});
 				it('"albumTracks" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'Lr#QU0m7vgtKKx8L8Ut', albumTracks: -687061833089025}, 400);
+					await get('artist/similar', {id: 'lvgiHr*Je[mXoTdCsRb', albumTracks: -7926317303463937}, 400);
 				});
 				it('"albumTrackIDs" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'PD](1ejVmO', albumTrackIDs: ''}, 400);
+					await get('artist/similar', {id: 'yS$dzvZb', albumTrackIDs: ''}, 400);
 				});
 				it('"albumTrackIDs" set to "string"', async () => {
-					await get('artist/similar', {id: 'VdQS39XPjm', albumTrackIDs: '2]vVXKnoE66Xlj('}, 400);
+					await get('artist/similar', {id: 'A8Qkd', albumTrackIDs: 'm@OeYw'}, 400);
 				});
 				it('"albumTrackIDs" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: '[p]koHI$!%Q', albumTrackIDs: -5491320965562366}, 400);
+					await get('artist/similar', {id: 'v!&lY!AXhCfv2CkL', albumTrackIDs: -8239776687718398}, 400);
 				});
 				it('"albumTrackIDs" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'xx#JVEmuenw]npNrvh', albumTrackIDs: 217986262630399}, 400);
+					await get('artist/similar', {id: '#EwiYCekMd$D$[', albumTrackIDs: 7101999728295935}, 400);
 				});
 				it('"albumState" set to "empty string"', async () => {
-					await get('artist/similar', {id: 's(G1Jh&5', albumState: ''}, 400);
+					await get('artist/similar', {id: '7kAj6jWiHaKEw5n', albumState: ''}, 400);
 				});
 				it('"albumState" set to "string"', async () => {
-					await get('artist/similar', {id: 'fxEl$azlw', albumState: '!MN(JilCwX'}, 400);
+					await get('artist/similar', {id: 'xH0IZwdE3qqHYm', albumState: 'cZ)w[FVp'}, 400);
 				});
 				it('"albumState" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: 'kqo4AjofoxtTL0knv', albumState: -4853273102123006}, 400);
+					await get('artist/similar', {id: 'T0%F4', albumState: -2807782843613182}, 400);
 				});
 				it('"albumState" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'AljV[x07wVxcCx)57ku)', albumState: -5165612854673409}, 400);
+					await get('artist/similar', {id: 'Myj6qE8', albumState: -1142396901392385}, 400);
 				});
 				it('"albumInfo" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'y1mY]fp)!Vq78jf', albumInfo: ''}, 400);
+					await get('artist/similar', {id: '6%b*jzb', albumInfo: ''}, 400);
 				});
 				it('"albumInfo" set to "string"', async () => {
-					await get('artist/similar', {id: 'rGoAr3ad8xyFffq$L8I', albumInfo: 'N3Ngsv6cvBZt#0BDmEZ8'}, 400);
+					await get('artist/similar', {id: ']m*Lu7jV6g^y', albumInfo: 'P^&XWZfGCg(&MigPHK!R'}, 400);
 				});
 				it('"albumInfo" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: 'IHUcT6kCvzPtc![Y9^1X', albumInfo: 7353638884212738}, 400);
+					await get('artist/similar', {id: 'p45Hw$', albumInfo: -8666345025568766}, 400);
 				});
 				it('"albumInfo" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: '12vsfj3ISnFpM8R', albumInfo: -673618686115841}, 400);
+					await get('artist/similar', {id: 'zOTQOHumFXkRE@8X)', albumInfo: -1863472673456129}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'kqNQcwLMPfpAM', trackMedia: ''}, 400);
+					await get('artist/similar', {id: 'a&K94xY0', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('artist/similar', {id: '!vkHC77q3s', trackMedia: '(l$n@bUNZ'}, 400);
+					await get('artist/similar', {id: 'G9OL#o1!*hXQ^Zf7Y', trackMedia: 's]GxYve#kRfm)Ee*'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: '^0IIp)', trackMedia: 5057477582258178}, 400);
+					await get('artist/similar', {id: '(h*B6)73*tN*Mp', trackMedia: -5433763089612798}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: '&qaEXa1CX^bWK(5sz', trackMedia: 3076696831950847}, 400);
+					await get('artist/similar', {id: 'J@0uIBK8l[', trackMedia: 5336497637031935}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('artist/similar', {id: '0M[H@(upaCGmXBQ', trackTag: ''}, 400);
+					await get('artist/similar', {id: 'l#$VUUVSshK^HK(', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('artist/similar', {id: 'bcyRlpA4*FS', trackTag: 'IyPrDsYU2kyg'}, 400);
+					await get('artist/similar', {id: 'VoV12dCs9xehs9K', trackTag: 'nofO%!Q^'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: '6unAv5th$az@Bg0kS&', trackTag: 4292532187955202}, 400);
+					await get('artist/similar', {id: 'iyPPG37sKYb', trackTag: 6289862164480002}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'OTPH7J[I])', trackTag: -6922925588348929}, 400);
+					await get('artist/similar', {id: 'x0Ts!O(510(Wb', trackTag: 5956989330915327}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('artist/similar', {id: '8EGyvVjrT', trackRawTag: ''}, 400);
+					await get('artist/similar', {id: 'c6$)Z3f#octmwZv', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('artist/similar', {id: 'K@Z9k4HS*$Y', trackRawTag: '^oTgPXt7fgLyr'}, 400);
+					await get('artist/similar', {id: 'WYBsb87mG)jvjpWrN)M', trackRawTag: '(Rcr(a^QT'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: '3qC$)t&j4', trackRawTag: -814538194681854}, 400);
+					await get('artist/similar', {id: '8(@LBzN$l$U[ShB', trackRawTag: 4135334283575298}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: ')GF@n[z5', trackRawTag: 508903909490687}, 400);
+					await get('artist/similar', {id: 'xxS52ax[', trackRawTag: -8005745786224641}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'hJU($cc0Y(n1', trackState: ''}, 400);
+					await get('artist/similar', {id: 'cXrUQ4m^', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('artist/similar', {id: 'Q@dz6!VSH', trackState: 'e##2)uEDNC8Tb'}, 400);
+					await get('artist/similar', {id: '1HlRVg9WM]*p$@Hj', trackState: 'WICjpb'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('artist/similar', {id: '4kWpgLK(aqRur', trackState: -8127801915867134}, 400);
+					await get('artist/similar', {id: 'y2oQSHrnk]', trackState: -3791611813167102}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('artist/similar', {id: 'U$irS&', trackState: -3310197468561409}, 400);
+					await get('artist/similar', {id: 'Rz2RUUiXE', trackState: 8079478269935615}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('artist/similar', {id: '2sESMR', offset: 'brt#u'}, 400);
+					await get('artist/similar', {id: 'WYMkN', offset: 'T7Fix0O@[[N&*A&SsA'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('artist/similar', {id: '5VN2iW46cUdsFmu6zA', offset: ''}, 400);
+					await get('artist/similar', {id: '9QnKkR', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('artist/similar', {id: 'A$mKtiIgi^&$V[', offset: true}, 400);
+					await get('artist/similar', {id: '9FMu3ygkxkh', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('artist/similar', {id: 'DPoNy*kVko164', offset: 38.91}, 400);
+					await get('artist/similar', {id: 'o]FCBQWTBld@f(Lg', offset: 79.14}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('artist/similar', {id: '20Ps%sfP4B', offset: -1}, 400);
+					await get('artist/similar', {id: 'HXl#1wSQXGc*A', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('artist/similar', {id: '5L2oNIx9Hh4GPD0]^06#', amount: 'KTUQtgQmrkcUNXtve!7'}, 400);
+					await get('artist/similar', {id: 'F9t$yG7E5B]F&K^s9', amount: '9adFZ^5kER3P!gAU(fa'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('artist/similar', {id: 'HXaJZrqLz4SWVW', amount: ''}, 400);
+					await get('artist/similar', {id: '6#Y784', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('artist/similar', {id: 'L^D4r9Tp*Snq', amount: true}, 400);
+					await get('artist/similar', {id: 'GXhW*2ot7Bp06o@q)N', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('artist/similar', {id: '@9rp2nUTX9&fal(Cs7', amount: 43.77}, 400);
+					await get('artist/similar', {id: 'T)8ZTp%tOMXS0I&sQK&B', amount: 80.56}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('artist/similar', {id: 'hcz6tu8^fb&C$a', amount: 0}, 400);
+					await get('artist/similar', {id: 'kCqq#)T', amount: 0}, 400);
 				});
 			});
 		});
@@ -5867,7 +5867,7 @@ describe('Server', () => {
 					await get('artist/index', {mbArtistID: ''}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('artist/index', {newerThan: 'M61lt*l!qbXbF!MC$rg4'}, 400);
+					await get('artist/index', {newerThan: '6Oyl@Hm0x@#'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
 					await get('artist/index', {newerThan: ''}, 400);
@@ -5876,7 +5876,7 @@ describe('Server', () => {
 					await get('artist/index', {newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('artist/index', {newerThan: 80.64}, 400);
+					await get('artist/index', {newerThan: 21.02}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
 					await get('artist/index', {newerThan: -1}, 400);
@@ -5903,20 +5903,20 @@ describe('Server', () => {
 					await get('artist/index', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('artist/index', {sortDescending: 'mfLnwB[txVYn$J'}, 400);
+					await get('artist/index', {sortDescending: 'sYjRDn(gNEPVyXb7oY#J'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('artist/index', {sortDescending: -956152208687102}, 400);
+					await get('artist/index', {sortDescending: 1083115736924162}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('artist/index', {sortDescending: -7812760343674881}, 400);
+					await get('artist/index', {sortDescending: 5928732162260991}, 400);
 				});
 			});
 		});
 		describe('artist/tracks', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/tracks', {ids: ['Z!4i!sWGXA', 'N[*L@]uGL6E8BKH7Hk']}, 401);
+					await getNotLoggedIn('artist/tracks', {ids: ['m!2TZIi8uI', 'v(q47#pIWQu6Gjs^IU']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -5927,89 +5927,89 @@ describe('Server', () => {
 					await get('artist/tracks', {ids: [null, '']}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('artist/tracks', {ids: ['gi8DnHfOmpy$t', '[Y)&i]VC4K94Gu8VB2Z'], trackMedia: ''}, 400);
+					await get('artist/tracks', {ids: ['&*1WO', 'wN!f*'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('artist/tracks', {ids: ['QEnnhVmT', 'xtK1$'], trackMedia: 'abX7xK'}, 400);
+					await get('artist/tracks', {ids: ['pSvW^3wRARQd)T)ZXIGK', 'GZ#DBc'], trackMedia: 'I21%r2&464uSo8b'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('artist/tracks', {ids: ['#bIIC2hY', '1qhxlwA6TQiSMZN'], trackMedia: -2530198352297982}, 400);
+					await get('artist/tracks', {ids: ['fYDTgiDGknCH4', 'wT9tI'], trackMedia: -7521630523752446}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('artist/tracks', {ids: ['v!ZZi2sOG5e]', 'E[H&wi&l42WC!p'], trackMedia: -2392933764431873}, 400);
+					await get('artist/tracks', {ids: [']sndqmo@!', '1eD7Ox'], trackMedia: 6383217682677759}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('artist/tracks', {ids: ['H4skqH2xVP]13T059', 'En*xfA#lVpCrPyfFRLKM'], trackTag: ''}, 400);
+					await get('artist/tracks', {ids: [']K]IB1]3y[Ni9B07wMI', 'g(%RTf!Gfd@1i6b$)qr'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('artist/tracks', {ids: ['A8aJuGdI%3T', 'eHxF0l8GJwS[FKMAx)&$'], trackTag: '$gO)P'}, 400);
+					await get('artist/tracks', {ids: ['(b&q6IM[nKjdBFKGs&*t', '4BA5D'], trackTag: 'z2Oz!#J2emGpMo'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('artist/tracks', {ids: ['W9B62!ePOMNApX(7L3F', '17ivl53('], trackTag: -1339780398841854}, 400);
+					await get('artist/tracks', {ids: ['7tH3x%4tj', '7JM8yKA6]9Az$'], trackTag: -2682348416008190}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('artist/tracks', {ids: ['UR3%PlP]M6aOdF', 'yExlvZ2Sb&'], trackTag: -642234789658625}, 400);
+					await get('artist/tracks', {ids: ['49$av$c6H3@Df', 'lkLB6s'], trackTag: -1118652661235713}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('artist/tracks', {ids: ['dGuf[hJ1DaR&Gu!ja', '^yj3lGyP0$oiAUQ%tlT'], trackRawTag: ''}, 400);
+					await get('artist/tracks', {ids: ['a[BvBLfUa', 'Tl0DhNTjfimpztAP$#5'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('artist/tracks', {ids: ['xtf$Q', '[rq!vqiTES#'], trackRawTag: 'ay@]2#&]gf6cjS'}, 400);
+					await get('artist/tracks', {ids: ['cwVChZoqw', '%3[Pk*X$^e@PMw'], trackRawTag: 'Fc1h]i'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('artist/tracks', {ids: [')%H8TFHsBO', '&IrxttV^Fq#PXHVdNaSK'], trackRawTag: 2520876712984578}, 400);
+					await get('artist/tracks', {ids: ['#F7RIc5vH^0)Kd', 'v92k9T6mEFcgsRu4Q'], trackRawTag: 117753998475266}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('artist/tracks', {ids: ['gdjhohZb]@l', 'TecNKF4'], trackRawTag: 6418960287268863}, 400);
+					await get('artist/tracks', {ids: ['TpCx)oMs4', 'PKPveM47'], trackRawTag: 1317295502655487}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('artist/tracks', {ids: ['(F#k4]', 's&VZ#T^GHn1[&$2kD9'], trackState: ''}, 400);
+					await get('artist/tracks', {ids: ['WmM8(Zh[Jr6bqI^s', 'I7u2ro'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('artist/tracks', {ids: ['XutcZrITtv[UfQ', 'uZ1Fu*YnB'], trackState: 'J$39&[pMgl2F&k^M#c'}, 400);
+					await get('artist/tracks', {ids: ['@h*h#vMqAS3zkP6', 'bHTLc39%i!)yg'], trackState: 'dvvKbVaQ@fqsi'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('artist/tracks', {ids: ['%nQi#]', 'vKxdE1dweXt'], trackState: -7779670007218174}, 400);
+					await get('artist/tracks', {ids: ['uh0^xx!9jLywSj', 'qU!HkuWSn$V*V'], trackState: 7830629123096578}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('artist/tracks', {ids: ['X6kIh', '9Os(rQ2d61He@'], trackState: -8472187346354177}, 400);
+					await get('artist/tracks', {ids: ['Kl4Jhg', 'Iufp[xXsHO'], trackState: -2267135619366913}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('artist/tracks', {ids: ['(!oD%B*ZFEGJp', 'U3rqF9s[*lxczXi$'], offset: 'qQsnG*N1^)XR#e80#eFC'}, 400);
+					await get('artist/tracks', {ids: [']0dFL[@sDLeVc4', 'KCCtWaez6h^e'], offset: 'zV&QqYiZwAxS2c'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('artist/tracks', {ids: ['3)Tqa', 'y3i0N6Fy8w'], offset: ''}, 400);
+					await get('artist/tracks', {ids: ['5@EqsT2d^Zw^t', '5Mp55BbcAS8Qt'], offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('artist/tracks', {ids: ['wrc1^I5PQdY', '$C@HpzuM!zZbYbVvP5'], offset: true}, 400);
+					await get('artist/tracks', {ids: ['VsO2rtxzIzf^Z', 'W(8&vac'], offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('artist/tracks', {ids: ['8^RB5AANE*R', '7n&]hmO2v'], offset: 52.59}, 400);
+					await get('artist/tracks', {ids: [')JRh]hwFTdz', 'C!YdRC26KY53#jzT'], offset: 13.34}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('artist/tracks', {ids: ['%utFi1^KtTJFYjzQJT', '^(yBv9^ss$@E*tP'], offset: -1}, 400);
+					await get('artist/tracks', {ids: ['&umWv5', 'D!rR&U#H'], offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('artist/tracks', {ids: ['1C]zQy', 'tpa2MUHl8^Uo'], amount: 'UD(Dj(NRP06D#sx2bCWo'}, 400);
+					await get('artist/tracks', {ids: ['BuD3b00m', 'A)V6Ns*KbZqTNJjs'], amount: '@uJ@]rO*B8Hk'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('artist/tracks', {ids: ['J7YucC', 'f0g(hDLTYKfV0'], amount: ''}, 400);
+					await get('artist/tracks', {ids: ['Q)QxXuJCv^UARg9Pw', ']G((YvWY0DidH'], amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('artist/tracks', {ids: ['A!I#kuQ', 'fLJuqiA[#$0KJq*GQe'], amount: true}, 400);
+					await get('artist/tracks', {ids: ['zTh2Kssca1iefWbk8O', '81kH]vFeR'], amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('artist/tracks', {ids: ['h6vVffA5C37yg]Z!j1', 'tM82MAk'], amount: 90.17}, 400);
+					await get('artist/tracks', {ids: ['qIsEx]BSwH', 'sHb8su)JqpZvz&yKx'], amount: 37.08}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('artist/tracks', {ids: ['wAWBt(bWmg1AVU8]FY70', 'gAsyTWDw%DEnAn(tx9'], amount: 0}, 400);
+					await get('artist/tracks', {ids: ['u3Ah7K8LGk98#![g$TM', 'Y9h]$rj'], amount: 0}, 400);
 				});
 			});
 		});
 		describe('artist/info', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/info', {id: '(moRiF7xt!#mkgyO'}, 401);
+					await getNotLoggedIn('artist/info', {id: 'pPeKITRFlH'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -6021,7 +6021,7 @@ describe('Server', () => {
 		describe('album/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/id', {id: 'zNl&66jl&@u]ANCawJN'}, 401);
+					await getNotLoggedIn('album/id', {id: 'qOrJ3HE0MEtxU)qY)RJB'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -6029,107 +6029,107 @@ describe('Server', () => {
 					await get('album/id', {id: ''}, 400);
 				});
 				it('"albumTracks" set to "empty string"', async () => {
-					await get('album/id', {id: '5NDTu', albumTracks: ''}, 400);
+					await get('album/id', {id: '(]xvwI%Nr%lD7@b5D', albumTracks: ''}, 400);
 				});
 				it('"albumTracks" set to "string"', async () => {
-					await get('album/id', {id: '[!T$c4xw@C$#NsI27#vY', albumTracks: 'goR(x)IvmyS)dY7'}, 400);
+					await get('album/id', {id: '#NrgFV', albumTracks: 'PIxhr5R[YtB9iLfuCD]5'}, 400);
 				});
 				it('"albumTracks" set to "integer > 1"', async () => {
-					await get('album/id', {id: 'VpL&slCX)7', albumTracks: -4957261747191806}, 400);
+					await get('album/id', {id: '7qs^5wi(QUO5q', albumTracks: -3412858951958526}, 400);
 				});
 				it('"albumTracks" set to "integer < 0"', async () => {
-					await get('album/id', {id: 'b7^y4PgzfGpWRTGuK@GP', albumTracks: 7266576919166975}, 400);
+					await get('album/id', {id: '!#^^r', albumTracks: 8685898237476863}, 400);
 				});
 				it('"albumTrackIDs" set to "empty string"', async () => {
-					await get('album/id', {id: 'wtY0iHw16[5lD4riG2(S', albumTrackIDs: ''}, 400);
+					await get('album/id', {id: 'e]K[1FfjSX*r&M7InN', albumTrackIDs: ''}, 400);
 				});
 				it('"albumTrackIDs" set to "string"', async () => {
-					await get('album/id', {id: 'PgbmVqZ@04E[JAxwU', albumTrackIDs: 'WPpJcvjNTZE3F*Wd'}, 400);
+					await get('album/id', {id: '$Fw7hZ7u(W(ClNzIv8e)', albumTrackIDs: ')0FN@&mJz'}, 400);
 				});
 				it('"albumTrackIDs" set to "integer > 1"', async () => {
-					await get('album/id', {id: 'jszZCybdT94*sN%', albumTrackIDs: 1128715081744386}, 400);
+					await get('album/id', {id: 'aWf6Y)q@RV@1Y%Q', albumTrackIDs: -4200506457063422}, 400);
 				});
 				it('"albumTrackIDs" set to "integer < 0"', async () => {
-					await get('album/id', {id: '5$gpItR', albumTrackIDs: -1194655995658241}, 400);
+					await get('album/id', {id: 'H#6kMEbor%2ycxs', albumTrackIDs: -4312896494370817}, 400);
 				});
 				it('"albumState" set to "empty string"', async () => {
-					await get('album/id', {id: ']GSMKiOk9Oo9^M', albumState: ''}, 400);
+					await get('album/id', {id: 'zrh#0$L$s^bqI', albumState: ''}, 400);
 				});
 				it('"albumState" set to "string"', async () => {
-					await get('album/id', {id: 'yz%pET', albumState: '$E)X^#6FXpC6tFpd'}, 400);
+					await get('album/id', {id: 'nq#S8A', albumState: 'ES6%73LSK%9IV'}, 400);
 				});
 				it('"albumState" set to "integer > 1"', async () => {
-					await get('album/id', {id: '%nuJpW4DJ67lQ3T', albumState: -6707152433446910}, 400);
+					await get('album/id', {id: 'fKPd0(N', albumState: -5521352614215678}, 400);
 				});
 				it('"albumState" set to "integer < 0"', async () => {
-					await get('album/id', {id: 'R!oiD6GG', albumState: -7925990713982977}, 400);
+					await get('album/id', {id: 'amlij[wL7h(b', albumState: 6996168823275519}, 400);
 				});
 				it('"albumInfo" set to "empty string"', async () => {
-					await get('album/id', {id: '(4%d42DQ8^X', albumInfo: ''}, 400);
+					await get('album/id', {id: 'oS0XEgBBHal%OiFA$YT', albumInfo: ''}, 400);
 				});
 				it('"albumInfo" set to "string"', async () => {
-					await get('album/id', {id: 'vs)RpMQyl@irsr', albumInfo: 'a1pcEor3ECfkGxsUOJo&'}, 400);
+					await get('album/id', {id: 'I^]IdUtYJ', albumInfo: 'yrQi@IaoAi)1$5'}, 400);
 				});
 				it('"albumInfo" set to "integer > 1"', async () => {
-					await get('album/id', {id: 'i7LY*a6O', albumInfo: -7389601140310014}, 400);
+					await get('album/id', {id: '[NYP7Au39&xnf%%)', albumInfo: 1663465131343874}, 400);
 				});
 				it('"albumInfo" set to "integer < 0"', async () => {
-					await get('album/id', {id: '#bgfLmTMzy&x&4SNHX', albumInfo: 5393275074641919}, 400);
+					await get('album/id', {id: 'IhKgAy#oom(XhhJ(', albumInfo: 280375658020863}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('album/id', {id: 'YMifRycTPHupXV2pJ%', trackMedia: ''}, 400);
+					await get('album/id', {id: 'KGSBCf51SLiNDzYRu', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('album/id', {id: '4bb]5Pf4&wz', trackMedia: 'R7$GmuDT&IakWu3hx'}, 400);
+					await get('album/id', {id: 'PPOL85gJTBM#pzNT', trackMedia: ']L%tB^SoD'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('album/id', {id: 'Uo$0lzPVcfVqHs', trackMedia: -3683680144850942}, 400);
+					await get('album/id', {id: 'e#BxKEUm[e#zWh', trackMedia: 2209883491401730}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('album/id', {id: 'UJ5LP#qvA4gSHIq9', trackMedia: 6129261085720575}, 400);
+					await get('album/id', {id: 'F6pjqxCqCeotl9gtu0nn', trackMedia: 3597761622573055}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('album/id', {id: '8bHZqDJ8BHP]uNh0!9Tt', trackTag: ''}, 400);
+					await get('album/id', {id: 'PwW*4JvdvZ2', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('album/id', {id: 'b]i*TU)(s7aY4YbDa9', trackTag: 'rumTOKpBh'}, 400);
+					await get('album/id', {id: 'C@97lilhd!', trackTag: 'pb81(S^Qf*'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('album/id', {id: '[P(4$)kuP', trackTag: -5591981145194494}, 400);
+					await get('album/id', {id: 'ah#!cY7pHV9&)ALG2RI5', trackTag: 6200596172374018}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('album/id', {id: '9kiq]', trackTag: -7625468983377921}, 400);
+					await get('album/id', {id: 'gHJGe9RKk&Ud*bT', trackTag: 129439606243327}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('album/id', {id: '*C2nq!ZffAFsVPYDHz', trackRawTag: ''}, 400);
+					await get('album/id', {id: 'B%3!E17EO^ZmW%E)jC#6', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('album/id', {id: '0H$f%!Kv)I)d8UY', trackRawTag: '8hdaaYUNSA!D^'}, 400);
+					await get('album/id', {id: '$%rYs', trackRawTag: 't^rj(9yMq2Hx'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('album/id', {id: 'QI!l3sLKg$!Yv3j!*Ve', trackRawTag: -4057642217504766}, 400);
+					await get('album/id', {id: '%Hke!VhoOn(2', trackRawTag: -6268842992992254}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('album/id', {id: 'ujT(E^8', trackRawTag: 7735342652194815}, 400);
+					await get('album/id', {id: 'aCjeHwkFuT10O^A(4cRq', trackRawTag: -8304015708258305}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('album/id', {id: 'Anwu17I*dC3', trackState: ''}, 400);
+					await get('album/id', {id: 'G!jdRG$7Y%uZ', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('album/id', {id: 'g7Ji3S8', trackState: 'TMtm8QInwnc@rsNCJ'}, 400);
+					await get('album/id', {id: 'w]fbjH@lIs*P@m2@&J', trackState: 'RIxs)gi$4lTe'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('album/id', {id: '1zB#TY1!vCtmmPgL', trackState: -6291773672390654}, 400);
+					await get('album/id', {id: '9MI9&iSY9f5N', trackState: -5531932393734142}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('album/id', {id: 'Zy[wcU&*x[WKM', trackState: 2268255582420991}, 400);
+					await get('album/id', {id: 'It%%T', trackState: -1255470941601793}, 400);
 				});
 			});
 		});
 		describe('album/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/ids', {ids: ['KuhcN', 'XxM]1oPG2RRmpo']}, 401);
+					await getNotLoggedIn('album/ids', {ids: ['Ob1AR7bSI0[p', 'lhb$u5PfE']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -6140,107 +6140,107 @@ describe('Server', () => {
 					await get('album/ids', {ids: [null, '']}, 400);
 				});
 				it('"albumTracks" set to "empty string"', async () => {
-					await get('album/ids', {ids: ['I$cd9V])kFQKwKetb', 'ladERuNi'], albumTracks: ''}, 400);
+					await get('album/ids', {ids: ['rKKah6pR', 'veC0RAf^z#WYv]'], albumTracks: ''}, 400);
 				});
 				it('"albumTracks" set to "string"', async () => {
-					await get('album/ids', {ids: ['1FjQbrIVfs@VTF[DH9)', '0ujUH'], albumTracks: 'VLJGC#'}, 400);
+					await get('album/ids', {ids: ['p%7)A', 'VenJVg'], albumTracks: 'I)uqycw00A(*LciLT'}, 400);
 				});
 				it('"albumTracks" set to "integer > 1"', async () => {
-					await get('album/ids', {ids: ['SO!#P)D]Zn8@idpq6b@n', '^iTST(fFq8IGqv'], albumTracks: -3545129696624638}, 400);
+					await get('album/ids', {ids: ['wmlZOl(c', 'zHaGF4a)b3f4AR$wo['], albumTracks: 7653606203326466}, 400);
 				});
 				it('"albumTracks" set to "integer < 0"', async () => {
-					await get('album/ids', {ids: ['L!9wSaI]]S*o!K8KTR6', 'v^G6aytZntwTO$b'], albumTracks: -2545291911757825}, 400);
+					await get('album/ids', {ids: ['&]@]GNWdM2F', 'ndp[#)Z50C)l96Ias'], albumTracks: 638987349786623}, 400);
 				});
 				it('"albumTrackIDs" set to "empty string"', async () => {
-					await get('album/ids', {ids: ['hxCNK[zR8aBiCLslkTzX', 'cK&PPh6DGf]!TvUUN9mq'], albumTrackIDs: ''}, 400);
+					await get('album/ids', {ids: ['@qC4tH[Dr&EsM(uz', 'dZYam'], albumTrackIDs: ''}, 400);
 				});
 				it('"albumTrackIDs" set to "string"', async () => {
-					await get('album/ids', {ids: ['!sq4eDaz', 'raF@Ad)yJ$d*D*^T(c'], albumTrackIDs: 'x^DvmvR21aY90y3'}, 400);
+					await get('album/ids', {ids: ['Hh2SQc8', 'YaCd^'], albumTrackIDs: 'l2VlTxjHxkZ%S$'}, 400);
 				});
 				it('"albumTrackIDs" set to "integer > 1"', async () => {
-					await get('album/ids', {ids: ['yzW7OenVnZ7X%XV7', 'LVBXY'], albumTrackIDs: -5128814250164222}, 400);
+					await get('album/ids', {ids: ['@AXSt', 'O76V('], albumTrackIDs: -3804144229941246}, 400);
 				});
 				it('"albumTrackIDs" set to "integer < 0"', async () => {
-					await get('album/ids', {ids: ['$nG!6yhNCw', 'NHlO)ucU44F'], albumTrackIDs: 8999252722188287}, 400);
+					await get('album/ids', {ids: ['c^HdzCr', 'veWlqC'], albumTrackIDs: 489656189714431}, 400);
 				});
 				it('"albumState" set to "empty string"', async () => {
-					await get('album/ids', {ids: ['r*g28x', 'GJ$EktL0RXXQ#9XAj'], albumState: ''}, 400);
+					await get('album/ids', {ids: ['t@eMc)32q%EmF', 'cHvJ0)lTk'], albumState: ''}, 400);
 				});
 				it('"albumState" set to "string"', async () => {
-					await get('album/ids', {ids: ['BLaDZ9!chJyX)Q8', 'tYGC3SkpmM*&6Zkg['], albumState: 'NMkRxeE7D*vc&cNnAJv'}, 400);
+					await get('album/ids', {ids: ['h5P^b4KRx4GyPuLN', 'n%#ANgMssB6n5'], albumState: 'C&&B(a)q(c'}, 400);
 				});
 				it('"albumState" set to "integer > 1"', async () => {
-					await get('album/ids', {ids: ['g&^t7pQtSsuWJ!7Cccb', 'zLb4MCAISr0jo[8BwN'], albumState: 7596917533966338}, 400);
+					await get('album/ids', {ids: ['gk4CWroU^&RP', 'tFkHBS4mGEuFhqqD'], albumState: -2744566146924542}, 400);
 				});
 				it('"albumState" set to "integer < 0"', async () => {
-					await get('album/ids', {ids: ['$)p6SSyAyo[lOQ', ']YSco^b2'], albumState: -791588468948993}, 400);
+					await get('album/ids', {ids: ['ao$CRJ', 'IO4nF'], albumState: -2303261289742337}, 400);
 				});
 				it('"albumInfo" set to "empty string"', async () => {
-					await get('album/ids', {ids: ['i*N9NjkElp$YBQt(g', 'UMUw^&)5WQDf[gH)L'], albumInfo: ''}, 400);
+					await get('album/ids', {ids: ['#g5GcCV%DjJnU1HJp', 'qPir3'], albumInfo: ''}, 400);
 				});
 				it('"albumInfo" set to "string"', async () => {
-					await get('album/ids', {ids: [')KdPWE4tvd29dQ7%lCx]', 'G7idQR^cls'], albumInfo: 'WOmWo0cXyACWNNs4'}, 400);
+					await get('album/ids', {ids: ['YrUGy1', 'jFK)ZTj#'], albumInfo: '0eDtre%b3BP'}, 400);
 				});
 				it('"albumInfo" set to "integer > 1"', async () => {
-					await get('album/ids', {ids: ['#ztq0!W', 'mH78G'], albumInfo: -1516978816679934}, 400);
+					await get('album/ids', {ids: ['2P&CfB0r)NPA!0#Q@E', '*f*P&VQ)cYmV'], albumInfo: 3078516211974146}, 400);
 				});
 				it('"albumInfo" set to "integer < 0"', async () => {
-					await get('album/ids', {ids: ['RRKZy6i*x6MV#S&a', 'i!SbO'], albumInfo: -5317674707976193}, 400);
+					await get('album/ids', {ids: ['(z[BU', 'ZL6pb'], albumInfo: -4004889982140417}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('album/ids', {ids: ['d0%g4Tl%lROjU^b#$JE', 'byA9Vo6]7Ng$Af8kYKY'], trackMedia: ''}, 400);
+					await get('album/ids', {ids: ['OQdB^PIc^X', 'xigN$U$83mydx&uDj'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('album/ids', {ids: ['wy2@Blj(S[0z3r6', 'aZDxy2]K'], trackMedia: '3LFYx&OE]'}, 400);
+					await get('album/ids', {ids: ['p9J1t7Htq9H061@pIcba', 'QOM9CIzs7Kyvj)Ih&'], trackMedia: '[ejL(Rg5('}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('album/ids', {ids: ['9!g$nX#3V]Z#[CKsOdOf', 'z7iWH[cqr'], trackMedia: -4846101869887486}, 400);
+					await get('album/ids', {ids: ['n6@vV', 'EoNye'], trackMedia: 8821023667388418}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('album/ids', {ids: ['2jkBq', 'wTWoyT)9@EGq7aE'], trackMedia: 7316439492984831}, 400);
+					await get('album/ids', {ids: ['0zy&dJJ&Nw3Hz97Jwaj0', 'EspXeLv5'], trackMedia: 5847038646288383}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('album/ids', {ids: ['M%lwUs$Pgbb#FAAPUr', '2KIgBLxHnsJ'], trackTag: ''}, 400);
+					await get('album/ids', {ids: ['RR@Ed4xW1KM0', '4N(*$[Ns'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('album/ids', {ids: ['@GW&BybH8Bx7Lk5$k2', ']29R)(3&^Yb5!'], trackTag: 'XYX6BSkBcBba0xUL)Aa'}, 400);
+					await get('album/ids', {ids: ['(em^ElU!ZV7J1B3', 'c2n2t]QS'], trackTag: 'h@bKJF'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('album/ids', {ids: ['qomwyWUL*#&IMubMF', '%RvUJM#[4H(@utTyxJ&M'], trackTag: -681071217737726}, 400);
+					await get('album/ids', {ids: ['ksY(Q', '9Tz4QoIvA0'], trackTag: -7781924688887806}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('album/ids', {ids: ['$&rRLV]DB#IV&c%yE%', 'Uyj#7&*$'], trackTag: -166868262322177}, 400);
+					await get('album/ids', {ids: ['bWz2@yHm1j#ln5U', ']07830G2s^3su'], trackTag: -7146640376856577}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('album/ids', {ids: ['L^dBrv', 'y0stla92Kxy[j*j'], trackRawTag: ''}, 400);
+					await get('album/ids', {ids: ['1qlyuhA', 'acdEEOnmU['], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('album/ids', {ids: ['uhL7TN4R(PkPs', ')dD^x9R9'], trackRawTag: ')3[]I'}, 400);
+					await get('album/ids', {ids: ['Yia@AUDZ', 'U4Ui^ds*'], trackRawTag: 'ymCKpifE#vwEh'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('album/ids', {ids: ['h^s#C^J4nAubrTy#W&Rd', '(TXOGf^%K6'], trackRawTag: -4994322722193406}, 400);
+					await get('album/ids', {ids: ['1dp4v^o]39', 'p#2U6ISZcTlg4X*'], trackRawTag: 6443496533655554}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('album/ids', {ids: [']7)]&F1ZkR]', 'MzR%b'], trackRawTag: 1910162466013183}, 400);
+					await get('album/ids', {ids: ['OUJDFTZ&CJCzMPCbz(', 'U*f$nxHLn*FEd*c22'], trackRawTag: 132962066628607}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('album/ids', {ids: ['zwZ69TFRe', 'L^Fo(Gl4rMUOi'], trackState: ''}, 400);
+					await get('album/ids', {ids: ['V%Hs4aW2]$zgZT4ghEPk', 'DUhrV0p'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('album/ids', {ids: ['VJniZoIo7k&I^', 'F2EQqJI[5&'], trackState: '#X!0L!Xf4vsTKsU'}, 400);
+					await get('album/ids', {ids: ['nLiHU8)fvj13ti', 'DUoD(ZzgF0F'], trackState: 'H2P3J9VY^9k'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('album/ids', {ids: ['*qY0@2%mPh3jTQFUS6C', '&1Zv['], trackState: 3708996116545538}, 400);
+					await get('album/ids', {ids: ['$]&#(32Fb@]%vq', 'RZQRC'], trackState: -5916334776909822}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('album/ids', {ids: ['UdpM$i)N#OuNK3DwpW%', 'vmP)FB3Lp@piB)'], trackState: -2970356021198849}, 400);
+					await get('album/ids', {ids: ['Lw^hFn1#CqUEJ', '4NWI&05D1JXt4'], trackState: -7709136674357249}, 400);
 				});
 			});
 		});
 		describe('album/list', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/list', {list: 'highest'}, 401);
+					await getNotLoggedIn('album/list', {list: 'frequent'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -6251,250 +6251,250 @@ describe('Server', () => {
 					await get('album/list', {list: 'invalid'}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('album/list', {list: 'avghighest', offset: 'f0ioAZeL&'}, 400);
+					await get('album/list', {list: 'frequent', offset: 'z04PFDI7Mmq^YrHXA7!)'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('album/list', {list: 'avghighest', offset: ''}, 400);
+					await get('album/list', {list: 'frequent', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('album/list', {list: 'recent', offset: true}, 400);
+					await get('album/list', {list: 'frequent', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('album/list', {list: 'random', offset: 15.24}, 400);
+					await get('album/list', {list: 'faved', offset: 99.27}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('album/list', {list: 'highest', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('album/list', {list: 'faved', amount: 'aG#wuCAkI)BS'}, 400);
+					await get('album/list', {list: 'faved', amount: 'g6vmCb[%kp&8Bk'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('album/list', {list: 'frequent', amount: ''}, 400);
+					await get('album/list', {list: 'recent', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('album/list', {list: 'avghighest', amount: true}, 400);
+					await get('album/list', {list: 'recent', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('album/list', {list: 'faved', amount: 26.02}, 400);
+					await get('album/list', {list: 'highest', amount: 37.4}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('album/list', {list: 'recent', amount: 0}, 400);
+					await get('album/list', {list: 'faved', amount: 0}, 400);
 				});
 				it('"albumTracks" set to "empty string"', async () => {
-					await get('album/list', {list: 'avghighest', albumTracks: ''}, 400);
+					await get('album/list', {list: 'random', albumTracks: ''}, 400);
 				});
 				it('"albumTracks" set to "string"', async () => {
-					await get('album/list', {list: 'faved', albumTracks: 'JmwCUesGKZ'}, 400);
+					await get('album/list', {list: 'avghighest', albumTracks: '[tK!Q@OzbHjTJgc8wL'}, 400);
 				});
 				it('"albumTracks" set to "integer > 1"', async () => {
-					await get('album/list', {list: 'frequent', albumTracks: -8888055909842942}, 400);
+					await get('album/list', {list: 'faved', albumTracks: 1211313179066370}, 400);
 				});
 				it('"albumTracks" set to "integer < 0"', async () => {
-					await get('album/list', {list: 'highest', albumTracks: 4535798036692991}, 400);
+					await get('album/list', {list: 'random', albumTracks: 2076765602185215}, 400);
 				});
 				it('"albumTrackIDs" set to "empty string"', async () => {
 					await get('album/list', {list: 'faved', albumTrackIDs: ''}, 400);
 				});
 				it('"albumTrackIDs" set to "string"', async () => {
-					await get('album/list', {list: 'recent', albumTrackIDs: 'XMTfU39w6aIS'}, 400);
+					await get('album/list', {list: 'recent', albumTrackIDs: '(mozCU9#^nruBQ$N'}, 400);
 				});
 				it('"albumTrackIDs" set to "integer > 1"', async () => {
-					await get('album/list', {list: 'random', albumTrackIDs: -3587550484627454}, 400);
+					await get('album/list', {list: 'faved', albumTrackIDs: 4188658819137538}, 400);
 				});
 				it('"albumTrackIDs" set to "integer < 0"', async () => {
-					await get('album/list', {list: 'random', albumTrackIDs: -186320383115265}, 400);
+					await get('album/list', {list: 'recent', albumTrackIDs: -4101170704416769}, 400);
 				});
 				it('"albumState" set to "empty string"', async () => {
-					await get('album/list', {list: 'random', albumState: ''}, 400);
+					await get('album/list', {list: 'recent', albumState: ''}, 400);
 				});
 				it('"albumState" set to "string"', async () => {
-					await get('album/list', {list: 'avghighest', albumState: '6vb5eR*56^PIh)z'}, 400);
+					await get('album/list', {list: 'frequent', albumState: '3p]eEI)'}, 400);
 				});
 				it('"albumState" set to "integer > 1"', async () => {
-					await get('album/list', {list: 'random', albumState: 7785429679996930}, 400);
+					await get('album/list', {list: 'avghighest', albumState: 4749253620531202}, 400);
 				});
 				it('"albumState" set to "integer < 0"', async () => {
-					await get('album/list', {list: 'highest', albumState: -2805970518409217}, 400);
+					await get('album/list', {list: 'avghighest', albumState: 801314263007231}, 400);
 				});
 				it('"albumInfo" set to "empty string"', async () => {
-					await get('album/list', {list: 'avghighest', albumInfo: ''}, 400);
+					await get('album/list', {list: 'recent', albumInfo: ''}, 400);
 				});
 				it('"albumInfo" set to "string"', async () => {
-					await get('album/list', {list: 'highest', albumInfo: 'N[6e4#2ZARaVow8Ottc'}, 400);
+					await get('album/list', {list: 'random', albumInfo: 'jM4GbzDfWI'}, 400);
 				});
 				it('"albumInfo" set to "integer > 1"', async () => {
-					await get('album/list', {list: 'faved', albumInfo: 4811863963467778}, 400);
+					await get('album/list', {list: 'highest', albumInfo: 6964640374325250}, 400);
 				});
 				it('"albumInfo" set to "integer < 0"', async () => {
-					await get('album/list', {list: 'random', albumInfo: 7555542348201983}, 400);
+					await get('album/list', {list: 'random', albumInfo: -6726807428530177}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('album/list', {list: 'highest', trackMedia: ''}, 400);
+					await get('album/list', {list: 'recent', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('album/list', {list: 'frequent', trackMedia: '0SG@Th0qwQ(1i4'}, 400);
+					await get('album/list', {list: 'random', trackMedia: 'ay2iTBM54yF3IN8th6ZZ'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('album/list', {list: 'highest', trackMedia: -4362629158010878}, 400);
+					await get('album/list', {list: 'avghighest', trackMedia: -947477096169470}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('album/list', {list: 'avghighest', trackMedia: 3283905419411455}, 400);
+					await get('album/list', {list: 'highest', trackMedia: -6144656345661441}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('album/list', {list: 'random', trackTag: ''}, 400);
+					await get('album/list', {list: 'avghighest', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('album/list', {list: 'faved', trackTag: 'azGst2L'}, 400);
+					await get('album/list', {list: 'frequent', trackTag: 'g3QYiNrIj2Hf5$Q'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('album/list', {list: 'frequent', trackTag: 6497796496556034}, 400);
+					await get('album/list', {list: 'recent', trackTag: 1649482420715522}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('album/list', {list: 'highest', trackTag: 8064283661303807}, 400);
+					await get('album/list', {list: 'recent', trackTag: -7045686545612801}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('album/list', {list: 'random', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('album/list', {list: 'faved', trackRawTag: '33CiORK0V7'}, 400);
+					await get('album/list', {list: 'random', trackRawTag: 'E919CZL9j9^'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('album/list', {list: 'highest', trackRawTag: -7390322686427134}, 400);
+					await get('album/list', {list: 'faved', trackRawTag: 3366538828578818}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('album/list', {list: 'recent', trackRawTag: -6523870173462529}, 400);
+					await get('album/list', {list: 'frequent', trackRawTag: -5501747694927873}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('album/list', {list: 'faved', trackState: ''}, 400);
+					await get('album/list', {list: 'avghighest', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('album/list', {list: 'random', trackState: 'XHwgqVo1u^V@7RHF'}, 400);
+					await get('album/list', {list: 'avghighest', trackState: 'q38t)]LpnLqdTLLk$Iar'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('album/list', {list: 'faved', trackState: 6277082896138242}, 400);
+					await get('album/list', {list: 'recent', trackState: 5753106532925442}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('album/list', {list: 'highest', trackState: 6807060071055359}, 400);
+					await get('album/list', {list: 'recent', trackState: 1664690425954303}, 400);
 				});
 				it('"name" set to "empty string"', async () => {
 					await get('album/list', {list: 'faved', name: ''}, 400);
 				});
 				it('"rootID" set to "empty string"', async () => {
-					await get('album/list', {list: 'frequent', rootID: ''}, 400);
+					await get('album/list', {list: 'random', rootID: ''}, 400);
 				});
 				it('"rootIDs" set to "null"', async () => {
-					await get('album/list', {list: 'random', rootIDs: null}, 400);
+					await get('album/list', {list: 'recent', rootIDs: null}, 400);
 				});
 				it('"rootIDs" set to "empty string"', async () => {
 					await get('album/list', {list: 'recent', rootIDs: [null, '']}, 400);
 				});
 				it('"artist" set to "empty string"', async () => {
-					await get('album/list', {list: 'recent', artist: ''}, 400);
+					await get('album/list', {list: 'highest', artist: ''}, 400);
 				});
 				it('"artistID" set to "empty string"', async () => {
-					await get('album/list', {list: 'random', artistID: ''}, 400);
+					await get('album/list', {list: 'recent', artistID: ''}, 400);
 				});
 				it('"trackID" set to "empty string"', async () => {
-					await get('album/list', {list: 'frequent', trackID: ''}, 400);
+					await get('album/list', {list: 'highest', trackID: ''}, 400);
 				});
 				it('"mbAlbumID" set to "empty string"', async () => {
-					await get('album/list', {list: 'random', mbAlbumID: ''}, 400);
+					await get('album/list', {list: 'frequent', mbAlbumID: ''}, 400);
 				});
 				it('"mbArtistID" set to "empty string"', async () => {
-					await get('album/list', {list: 'frequent', mbArtistID: ''}, 400);
+					await get('album/list', {list: 'random', mbArtistID: ''}, 400);
 				});
 				it('"genre" set to "empty string"', async () => {
-					await get('album/list', {list: 'recent', genre: ''}, 400);
+					await get('album/list', {list: 'frequent', genre: ''}, 400);
 				});
 				it('"albumType" set to "empty string"', async () => {
-					await get('album/list', {list: 'frequent', albumType: ''}, 400);
+					await get('album/list', {list: 'highest', albumType: ''}, 400);
 				});
 				it('"albumType" set to "invalid enum"', async () => {
-					await get('album/list', {list: 'recent', albumType: 'invalid'}, 400);
+					await get('album/list', {list: 'random', albumType: 'invalid'}, 400);
 				});
 				it('"albumTypes" set to "null"', async () => {
-					await get('album/list', {list: 'random', albumTypes: null}, 400);
+					await get('album/list', {list: 'highest', albumTypes: null}, 400);
 				});
 				it('"albumTypes" set to "empty string"', async () => {
-					await get('album/list', {list: 'random', albumTypes: [null, '']}, 400);
+					await get('album/list', {list: 'faved', albumTypes: [null, '']}, 400);
 				});
 				it('"albumTypes" set to "invalid enum"', async () => {
-					await get('album/list', {list: 'faved', albumTypes: [null, 'invalid']}, 400);
+					await get('album/list', {list: 'random', albumTypes: [null, 'invalid']}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('album/list', {list: 'faved', newerThan: 'Rt2ank8@w5aKk'}, 400);
+					await get('album/list', {list: 'recent', newerThan: 'SgtM7lD'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
-					await get('album/list', {list: 'avghighest', newerThan: ''}, 400);
+					await get('album/list', {list: 'random', newerThan: ''}, 400);
 				});
 				it('"newerThan" set to "boolean"', async () => {
-					await get('album/list', {list: 'frequent', newerThan: true}, 400);
+					await get('album/list', {list: 'avghighest', newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('album/list', {list: 'faved', newerThan: 82.32}, 400);
+					await get('album/list', {list: 'recent', newerThan: 59.3}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
-					await get('album/list', {list: 'faved', newerThan: -1}, 400);
+					await get('album/list', {list: 'highest', newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('album/list', {list: 'frequent', fromYear: 'x1N^Pi*CY'}, 400);
+					await get('album/list', {list: 'faved', fromYear: 't2Cbec94[l6tEFU'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
-					await get('album/list', {list: 'avghighest', fromYear: ''}, 400);
+					await get('album/list', {list: 'highest', fromYear: ''}, 400);
 				});
 				it('"fromYear" set to "boolean"', async () => {
 					await get('album/list', {list: 'random', fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('album/list', {list: 'avghighest', fromYear: 96.89}, 400);
+					await get('album/list', {list: 'recent', fromYear: 31.74}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
-					await get('album/list', {list: 'frequent', fromYear: -1}, 400);
+					await get('album/list', {list: 'faved', fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('album/list', {list: 'avghighest', toYear: '4QYX4'}, 400);
+					await get('album/list', {list: 'frequent', toYear: 'ez*5o23OP9)avDU4HWal'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
-					await get('album/list', {list: 'frequent', toYear: ''}, 400);
+					await get('album/list', {list: 'recent', toYear: ''}, 400);
 				});
 				it('"toYear" set to "boolean"', async () => {
-					await get('album/list', {list: 'avghighest', toYear: true}, 400);
+					await get('album/list', {list: 'random', toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('album/list', {list: 'avghighest', toYear: 46.75}, 400);
+					await get('album/list', {list: 'highest', toYear: 90.55}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
-					await get('album/list', {list: 'random', toYear: -1}, 400);
+					await get('album/list', {list: 'frequent', toYear: -1}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
-					await get('album/list', {list: 'faved', sortField: ''}, 400);
+					await get('album/list', {list: 'recent', sortField: ''}, 400);
 				});
 				it('"sortField" set to "invalid enum"', async () => {
-					await get('album/list', {list: 'faved', sortField: 'invalid'}, 400);
+					await get('album/list', {list: 'frequent', sortField: 'invalid'}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('album/list', {list: 'recent', id: ''}, 400);
+					await get('album/list', {list: 'random', id: ''}, 400);
 				});
 				it('"ids" set to "null"', async () => {
-					await get('album/list', {list: 'random', ids: null}, 400);
+					await get('album/list', {list: 'recent', ids: null}, 400);
 				});
 				it('"ids" set to "empty string"', async () => {
-					await get('album/list', {list: 'avghighest', ids: [null, '']}, 400);
+					await get('album/list', {list: 'highest', ids: [null, '']}, 400);
 				});
 				it('"query" set to "empty string"', async () => {
-					await get('album/list', {list: 'avghighest', query: ''}, 400);
+					await get('album/list', {list: 'random', query: ''}, 400);
 				});
 				it('"sortDescending" set to "empty string"', async () => {
-					await get('album/list', {list: 'recent', sortDescending: ''}, 400);
+					await get('album/list', {list: 'avghighest', sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('album/list', {list: 'highest', sortDescending: '@)!tS@U#rx7T%5'}, 400);
+					await get('album/list', {list: 'faved', sortDescending: 'QdTb@sd@3ZGv3X7]@[l0'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('album/list', {list: 'highest', sortDescending: -532425662791678}, 400);
+					await get('album/list', {list: 'recent', sortDescending: 2646781015883778}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('album/list', {list: 'highest', sortDescending: 4686055915651071}, 400);
+					await get('album/list', {list: 'random', sortDescending: -4095188104380417}, 400);
 				});
 			});
 		});
@@ -6506,7 +6506,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('album/search', {offset: '3iAdstrfj7GZLfY1z&b'}, 400);
+					await get('album/search', {offset: '%Rew@vi'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('album/search', {offset: ''}, 400);
@@ -6515,13 +6515,13 @@ describe('Server', () => {
 					await get('album/search', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('album/search', {offset: 34.12}, 400);
+					await get('album/search', {offset: 66.81}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('album/search', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('album/search', {amount: '4wP#Skf8'}, 400);
+					await get('album/search', {amount: 'hfwEMI#($@0'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('album/search', {amount: ''}, 400);
@@ -6530,7 +6530,7 @@ describe('Server', () => {
 					await get('album/search', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('album/search', {amount: 43.76}, 400);
+					await get('album/search', {amount: 48.3}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('album/search', {amount: 0}, 400);
@@ -6581,7 +6581,7 @@ describe('Server', () => {
 					await get('album/search', {albumTypes: [null, 'invalid']}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('album/search', {newerThan: '6Fz(O4'}, 400);
+					await get('album/search', {newerThan: '&@gutdLq'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
 					await get('album/search', {newerThan: ''}, 400);
@@ -6590,13 +6590,13 @@ describe('Server', () => {
 					await get('album/search', {newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('album/search', {newerThan: 96.26}, 400);
+					await get('album/search', {newerThan: 16.14}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
 					await get('album/search', {newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('album/search', {fromYear: 'duAb1Kz2DP'}, 400);
+					await get('album/search', {fromYear: 'OgZ^)c^(a'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
 					await get('album/search', {fromYear: ''}, 400);
@@ -6605,13 +6605,13 @@ describe('Server', () => {
 					await get('album/search', {fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('album/search', {fromYear: 97.58}, 400);
+					await get('album/search', {fromYear: 76.38}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
 					await get('album/search', {fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('album/search', {toYear: '3!B7L'}, 400);
+					await get('album/search', {toYear: 'CdI&O5q9Uy$jei'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
 					await get('album/search', {toYear: ''}, 400);
@@ -6620,7 +6620,7 @@ describe('Server', () => {
 					await get('album/search', {toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('album/search', {toYear: 52.89}, 400);
+					await get('album/search', {toYear: 1.33}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
 					await get('album/search', {toYear: -1}, 400);
@@ -6647,109 +6647,109 @@ describe('Server', () => {
 					await get('album/search', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('album/search', {sortDescending: '9zQjy&iijs!h9'}, 400);
+					await get('album/search', {sortDescending: 'oWOD[ziI])@u3UijQt6'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('album/search', {sortDescending: 7989907733610498}, 400);
+					await get('album/search', {sortDescending: 702388319027202}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('album/search', {sortDescending: -4422916846387201}, 400);
+					await get('album/search', {sortDescending: -1788056231215105}, 400);
 				});
 				it('"albumTracks" set to "empty string"', async () => {
 					await get('album/search', {albumTracks: ''}, 400);
 				});
 				it('"albumTracks" set to "string"', async () => {
-					await get('album/search', {albumTracks: 'Fqx6BI]'}, 400);
+					await get('album/search', {albumTracks: 'MZX*Au#ef7gL$zQ%3BF'}, 400);
 				});
 				it('"albumTracks" set to "integer > 1"', async () => {
-					await get('album/search', {albumTracks: 5109590446309378}, 400);
+					await get('album/search', {albumTracks: -7819685126995966}, 400);
 				});
 				it('"albumTracks" set to "integer < 0"', async () => {
-					await get('album/search', {albumTracks: -3858104349360129}, 400);
+					await get('album/search', {albumTracks: -7064553103818753}, 400);
 				});
 				it('"albumTrackIDs" set to "empty string"', async () => {
 					await get('album/search', {albumTrackIDs: ''}, 400);
 				});
 				it('"albumTrackIDs" set to "string"', async () => {
-					await get('album/search', {albumTrackIDs: 'C1qz^A[$EYBNvIF('}, 400);
+					await get('album/search', {albumTrackIDs: 'bvAwfzZdSJm'}, 400);
 				});
 				it('"albumTrackIDs" set to "integer > 1"', async () => {
-					await get('album/search', {albumTrackIDs: 1911648310788098}, 400);
+					await get('album/search', {albumTrackIDs: -4496833581678590}, 400);
 				});
 				it('"albumTrackIDs" set to "integer < 0"', async () => {
-					await get('album/search', {albumTrackIDs: -1549912512659457}, 400);
+					await get('album/search', {albumTrackIDs: -88625349918721}, 400);
 				});
 				it('"albumState" set to "empty string"', async () => {
 					await get('album/search', {albumState: ''}, 400);
 				});
 				it('"albumState" set to "string"', async () => {
-					await get('album/search', {albumState: 'VUDPif'}, 400);
+					await get('album/search', {albumState: 'Huebv0e3dj'}, 400);
 				});
 				it('"albumState" set to "integer > 1"', async () => {
-					await get('album/search', {albumState: 8881263620390914}, 400);
+					await get('album/search', {albumState: -4868621687848958}, 400);
 				});
 				it('"albumState" set to "integer < 0"', async () => {
-					await get('album/search', {albumState: -993162524884993}, 400);
+					await get('album/search', {albumState: 2572934648430591}, 400);
 				});
 				it('"albumInfo" set to "empty string"', async () => {
 					await get('album/search', {albumInfo: ''}, 400);
 				});
 				it('"albumInfo" set to "string"', async () => {
-					await get('album/search', {albumInfo: '[dCDVqM@[*oVzW&9'}, 400);
+					await get('album/search', {albumInfo: 'oKHT%3j0('}, 400);
 				});
 				it('"albumInfo" set to "integer > 1"', async () => {
-					await get('album/search', {albumInfo: 8898285288816642}, 400);
+					await get('album/search', {albumInfo: 3969896232779778}, 400);
 				});
 				it('"albumInfo" set to "integer < 0"', async () => {
-					await get('album/search', {albumInfo: 5062768768057343}, 400);
+					await get('album/search', {albumInfo: 8341499636875263}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('album/search', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('album/search', {trackMedia: 'pXUQnp'}, 400);
+					await get('album/search', {trackMedia: 'Q@TFiRg$V'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('album/search', {trackMedia: -4058299162951678}, 400);
+					await get('album/search', {trackMedia: 5723617560100866}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('album/search', {trackMedia: 21087286984703}, 400);
+					await get('album/search', {trackMedia: 5742563579396095}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('album/search', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('album/search', {trackTag: 'oh7EnSU4qIj&EF2p@AK'}, 400);
+					await get('album/search', {trackTag: 'os]JM#ua'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('album/search', {trackTag: 2110672989061122}, 400);
+					await get('album/search', {trackTag: 230369337016322}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('album/search', {trackTag: -1378833395613697}, 400);
+					await get('album/search', {trackTag: 3999194356383743}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('album/search', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('album/search', {trackRawTag: '7%Mlm!iJq'}, 400);
+					await get('album/search', {trackRawTag: '42Z*R3pXW'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('album/search', {trackRawTag: -862334801149950}, 400);
+					await get('album/search', {trackRawTag: -6240197922521086}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('album/search', {trackRawTag: -4140699175878657}, 400);
+					await get('album/search', {trackRawTag: -1291645165240321}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('album/search', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('album/search', {trackState: 'iZ&IaNS'}, 400);
+					await get('album/search', {trackState: 'ffqjyHxdKj6#yNAc22'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('album/search', {trackState: 7857289654435842}, 400);
+					await get('album/search', {trackState: -5765636290510846}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('album/search', {trackState: -3286517493530625}, 400);
+					await get('album/search', {trackState: 2499406989361151}, 400);
 				});
 			});
 		});
@@ -6806,7 +6806,7 @@ describe('Server', () => {
 					await get('album/index', {albumTypes: [null, 'invalid']}, 400);
 				});
 				it('"newerThan" set to "string"', async () => {
-					await get('album/index', {newerThan: 'MerH@VWr#x4UmNX'}, 400);
+					await get('album/index', {newerThan: 'Rbe0q79#Ox]'}, 400);
 				});
 				it('"newerThan" set to "empty string"', async () => {
 					await get('album/index', {newerThan: ''}, 400);
@@ -6815,13 +6815,13 @@ describe('Server', () => {
 					await get('album/index', {newerThan: true}, 400);
 				});
 				it('"newerThan" set to "float"', async () => {
-					await get('album/index', {newerThan: 24.79}, 400);
+					await get('album/index', {newerThan: 32.84}, 400);
 				});
 				it('"newerThan" set to "less than minimum 0"', async () => {
 					await get('album/index', {newerThan: -1}, 400);
 				});
 				it('"fromYear" set to "string"', async () => {
-					await get('album/index', {fromYear: 'hmEx*rOs1MWDfAYN3TU'}, 400);
+					await get('album/index', {fromYear: '4o0BjcYyhXpNi'}, 400);
 				});
 				it('"fromYear" set to "empty string"', async () => {
 					await get('album/index', {fromYear: ''}, 400);
@@ -6830,13 +6830,13 @@ describe('Server', () => {
 					await get('album/index', {fromYear: true}, 400);
 				});
 				it('"fromYear" set to "float"', async () => {
-					await get('album/index', {fromYear: 66.29}, 400);
+					await get('album/index', {fromYear: 19.76}, 400);
 				});
 				it('"fromYear" set to "less than minimum 0"', async () => {
 					await get('album/index', {fromYear: -1}, 400);
 				});
 				it('"toYear" set to "string"', async () => {
-					await get('album/index', {toYear: 'izAi!sZIWZL3&XC'}, 400);
+					await get('album/index', {toYear: '5y1kr3'}, 400);
 				});
 				it('"toYear" set to "empty string"', async () => {
 					await get('album/index', {toYear: ''}, 400);
@@ -6845,7 +6845,7 @@ describe('Server', () => {
 					await get('album/index', {toYear: true}, 400);
 				});
 				it('"toYear" set to "float"', async () => {
-					await get('album/index', {toYear: 93.12}, 400);
+					await get('album/index', {toYear: 67.69}, 400);
 				});
 				it('"toYear" set to "less than minimum 0"', async () => {
 					await get('album/index', {toYear: -1}, 400);
@@ -6872,20 +6872,20 @@ describe('Server', () => {
 					await get('album/index', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('album/index', {sortDescending: '8LtR6@xHmT'}, 400);
+					await get('album/index', {sortDescending: ']5^R5IGvJ$L]y29mb$4'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('album/index', {sortDescending: -1755611024850942}, 400);
+					await get('album/index', {sortDescending: 3016278205792258}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('album/index', {sortDescending: -6792623062777857}, 400);
+					await get('album/index', {sortDescending: -3306413254246401}, 400);
 				});
 			});
 		});
 		describe('album/state', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/state', {id: 'xYoUmF70xkVe'}, 401);
+					await getNotLoggedIn('album/state', {id: 'S3l*s%k0NYZNH0'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -6897,7 +6897,7 @@ describe('Server', () => {
 		describe('album/states', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/states', {ids: ['MyR2vPoa]Z64eg', 'M1rEIu8IIVJToOiO']}, 401);
+					await getNotLoggedIn('album/states', {ids: ['AQblq%pMTF)(TD#kgjh', 'mVPs]FA4!)]OA']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -6912,7 +6912,7 @@ describe('Server', () => {
 		describe('album/similar/tracks', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/similar/tracks', {id: '0P]rflSZsp[cwTkL'}, 401);
+					await getNotLoggedIn('album/similar/tracks', {id: 'G1zDRK5KclKiJWh'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -6920,89 +6920,89 @@ describe('Server', () => {
 					await get('album/similar/tracks', {id: ''}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('album/similar/tracks', {id: '6Q$xv]km5)p9Nc@', trackMedia: ''}, 400);
+					await get('album/similar/tracks', {id: 'pbdF]Q3cz', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('album/similar/tracks', {id: 'NE2sL$za1[!GEJj', trackMedia: 'SENrk3!Db4'}, 400);
+					await get('album/similar/tracks', {id: 'I0g0^Xt4', trackMedia: 'Z]FDVVST4'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('album/similar/tracks', {id: '@X]&ED3fYUls!', trackMedia: 3150142169415682}, 400);
+					await get('album/similar/tracks', {id: 'y5M0F)gj#&N', trackMedia: -3900846907588606}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('album/similar/tracks', {id: 'o$Y!lB%G)^Cn', trackMedia: -2503069304619009}, 400);
+					await get('album/similar/tracks', {id: '@&0PraI7', trackMedia: -584736644792321}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('album/similar/tracks', {id: 'O%k)O1NnBI)&', trackTag: ''}, 400);
+					await get('album/similar/tracks', {id: '(gZNcf^kdwRZFPM', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('album/similar/tracks', {id: '[qDtsfPJ3DP60#]!', trackTag: 'qO#22KR^'}, 400);
+					await get('album/similar/tracks', {id: ']qfiycRnzIfC)(]3', trackTag: 'C(0Cgp'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('album/similar/tracks', {id: ')2BAjypY!', trackTag: -887343888203774}, 400);
+					await get('album/similar/tracks', {id: 'aiS^Zx[bE*S', trackTag: 3984214852632578}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('album/similar/tracks', {id: 'OQORMfo!p$Co3WKQ56E', trackTag: 7552917984772095}, 400);
+					await get('album/similar/tracks', {id: 'S!65P@^u)6t', trackTag: 5611557266391039}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('album/similar/tracks', {id: 'MQ]Nagck)', trackRawTag: ''}, 400);
+					await get('album/similar/tracks', {id: 'lYrh2G9F$L5LKLNnqHCk', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('album/similar/tracks', {id: 'BHp)(&2yT%', trackRawTag: '*o6WDvlPm#p2W8'}, 400);
+					await get('album/similar/tracks', {id: 'v%w0AbFf', trackRawTag: '88OWF@EgTMCBU3TA6^'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('album/similar/tracks', {id: 'zu!%Q*N[hC0Q', trackRawTag: 30217171107842}, 400);
+					await get('album/similar/tracks', {id: 'lIBk35j!!CE!PYV5', trackRawTag: -3778046234460158}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('album/similar/tracks', {id: 'M!QCc)Ox', trackRawTag: -2380627450003457}, 400);
+					await get('album/similar/tracks', {id: '7GCewX2(Mhx2X)', trackRawTag: -6929820466282497}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('album/similar/tracks', {id: 'ZOP!x!bx', trackState: ''}, 400);
+					await get('album/similar/tracks', {id: 'HsMOU9J[%q2d(m5$*', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('album/similar/tracks', {id: 'neUgTfqio#', trackState: '8aJv2kCrB4Lbgx]@DE'}, 400);
+					await get('album/similar/tracks', {id: '*3[E9c2devFn$&', trackState: 'N!kq(TDaQFOPFi]]h5Bz'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('album/similar/tracks', {id: 'm3#(Wtr(rNx^&@', trackState: -3555599379857406}, 400);
+					await get('album/similar/tracks', {id: '^l4RY^*4eOedEdGE', trackState: 1594951171309570}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('album/similar/tracks', {id: 'n!E[YW@n', trackState: 4918104643600383}, 400);
+					await get('album/similar/tracks', {id: 'jHi6EOC&@bwF8S', trackState: -8126214325665793}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('album/similar/tracks', {id: 'CR58[29gTx[818[uQoa', offset: 'lQ(9ZR0p'}, 400);
+					await get('album/similar/tracks', {id: 'hzd5hY*]W#p0PulY', offset: ')!GLFI[$s]Tg'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('album/similar/tracks', {id: '8g90DUlfwP%[rz9jO', offset: ''}, 400);
+					await get('album/similar/tracks', {id: '1Ki#KDt&wd7oI0Gl', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('album/similar/tracks', {id: 'mhV%G%xu&f80V!4Vu', offset: true}, 400);
+					await get('album/similar/tracks', {id: '5SLGoh', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('album/similar/tracks', {id: '*#CjCm4Kr', offset: 28.66}, 400);
+					await get('album/similar/tracks', {id: '6VTGxblnHMs', offset: 27.74}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('album/similar/tracks', {id: 'y$SGNuLU', offset: -1}, 400);
+					await get('album/similar/tracks', {id: 'WAneoFO1p%TS36', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('album/similar/tracks', {id: 'XhQ7xUaw', amount: 'G!9w6m*(3xsZt%b'}, 400);
+					await get('album/similar/tracks', {id: '%a*&lb@2NaOr', amount: 'JJq4Yz%PmV('}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('album/similar/tracks', {id: 'F(17S%^7', amount: ''}, 400);
+					await get('album/similar/tracks', {id: 'emp3e', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('album/similar/tracks', {id: 'H4rAi', amount: true}, 400);
+					await get('album/similar/tracks', {id: 'Lvm8zZ', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('album/similar/tracks', {id: 'I$(#O', amount: 94.82}, 400);
+					await get('album/similar/tracks', {id: 's0lXVZq#1SQhce', amount: 11.58}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('album/similar/tracks', {id: 'aUMCDhoKs08', amount: 0}, 400);
+					await get('album/similar/tracks', {id: 'kFwWPCQJj', amount: 0}, 400);
 				});
 			});
 		});
 		describe('album/tracks', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/tracks', {ids: ['361FgBWqtd#NK^5v', 'rdAaJB9!g%u#nYk']}, 401);
+					await getNotLoggedIn('album/tracks', {ids: ['H%(0aKy&RIx1]4nDgc', 'Ga6J@jqhZe[g9']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7013,89 +7013,89 @@ describe('Server', () => {
 					await get('album/tracks', {ids: [null, '']}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('album/tracks', {ids: ['h2sj$Xfg6UZWBe', '[B#Pf2q2lk'], trackMedia: ''}, 400);
+					await get('album/tracks', {ids: ['!Q!w(tPF%cWLtQ', '25zKyZ'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('album/tracks', {ids: ['4Vkpuubff25Ihw^j[AY', '*PfpZFuvUb'], trackMedia: '%sNQSTwdc'}, 400);
+					await get('album/tracks', {ids: ['EU!]At(ZwT', '$s#3AwsixnZmXvSAo'], trackMedia: 'iFP[QGHnomS'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('album/tracks', {ids: ['hfDq8', 'v1C*Cpc!'], trackMedia: 8970319163293698}, 400);
+					await get('album/tracks', {ids: ['!gCf8qw#Sj(G)ybW', '!diN0dqNV!'], trackMedia: -823406974992382}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('album/tracks', {ids: ['G(iCe2YW', 'G^7eBg3@Ia6C!Z^f!'], trackMedia: 3128952415584255}, 400);
+					await get('album/tracks', {ids: ['LFNQTH', 'mbRX2RvTx@A8rtU'], trackMedia: 3500366331117567}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('album/tracks', {ids: ['BK!D@rov9z[8', '&R0^G*ln*'], trackTag: ''}, 400);
+					await get('album/tracks', {ids: ['5htyugd*x', '6GCy%xt$fwDN4^EkVs'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('album/tracks', {ids: ['2jrhfoq[', 'N2kLq77qFl06As9'], trackTag: 'oCIb5Zzq)kkU%['}, 400);
+					await get('album/tracks', {ids: ['QvxgXcqicQku[b9)czN', 'AUj&DXZ#*'], trackTag: 'mh8zW&j$j&j1'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('album/tracks', {ids: ['EDL4E', 'b*H!*'], trackTag: 1411617979891714}, 400);
+					await get('album/tracks', {ids: ['^o@VmZ', 'ye0BY3O@L%9^jf0dPof'], trackTag: 4703571857637378}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('album/tracks', {ids: ['FQ16gYp7LEGsqW', 'dJ]dfYaGh6L)IF'], trackTag: 5957664550944767}, 400);
+					await get('album/tracks', {ids: ['Sw%bIi%GFFWTQoC2dqz', 'wet#GS[@iAny46*mk7^E'], trackTag: -1662005425471489}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('album/tracks', {ids: ['ayH]fqbaJ9', '[niZRk9eo2)wl1Mr34C'], trackRawTag: ''}, 400);
+					await get('album/tracks', {ids: ['#fo#)ldt1ShXKT@', 'J0AN%'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('album/tracks', {ids: ['$cPPjr1NBxq^DC%n2IZ%', 'BNc5]Z0IJ(iSJilm5'], trackRawTag: '(0(BqL%d'}, 400);
+					await get('album/tracks', {ids: ['Zz6$)A#&', 'hLfM2QOa2*YVG)U'], trackRawTag: 'yZkeWr8G^CBZV'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('album/tracks', {ids: ['Qf%Sd8ll', '13I4K(hO0&J2w'], trackRawTag: -2409276488286206}, 400);
+					await get('album/tracks', {ids: ['MsXGRrMV]4#', '6DVpNIQgFXWa38tS5Mv5'], trackRawTag: -6601361781161982}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('album/tracks', {ids: ['rdM(*!38v]S', 'nhY(QCZ'], trackRawTag: -1358228008992769}, 400);
+					await get('album/tracks', {ids: ['R6sGCH', '2Ieu#9&SFp0vO&K'], trackRawTag: -4254835763314689}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('album/tracks', {ids: ['XDE(D', 'VuGL@q(r]6IwZ'], trackState: ''}, 400);
+					await get('album/tracks', {ids: ['I)dF0!p2X5bAakEs&', 'mKNN[Qz4xy9zK9y4'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('album/tracks', {ids: ['(ByND6B3V(D7$(j', 'v*]nQ'], trackState: ')gxozksXeWn)VL14cADB'}, 400);
+					await get('album/tracks', {ids: ['o@ao&pN8lR!A7D]wqp)', 'ieklP*h'], trackState: 'jWbG[hs7GofrNlHH'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('album/tracks', {ids: ['5*gso0#zs6', 'eTVPWc'], trackState: -8544840736309246}, 400);
+					await get('album/tracks', {ids: ['9^hphIf', '3]XgLVK*gZ[9]Je'], trackState: 4053519845818370}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('album/tracks', {ids: ['L0Oi7TG', 'rWqVmb9pOKWr'], trackState: -3756022132899841}, 400);
+					await get('album/tracks', {ids: ['Zd5y&J5j)T', 'tjlWkXUuJJZG%'], trackState: -1925935070707713}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('album/tracks', {ids: ['gSI5]Q', 'S7n$pdbjesL0tN'], offset: '13Zy1IaRode[^dT)'}, 400);
+					await get('album/tracks', {ids: ['G7Mm#F0yvb^)C0huD', 'qOE(2tA'], offset: 'hHFtM0lz]ydn(0'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('album/tracks', {ids: ['1OJKCIVYKE1v^QaT05', 'SlW2lwmacgO524oMBJ'], offset: ''}, 400);
+					await get('album/tracks', {ids: ['t71hQR!uDZ#C88wl', 'xN(XC42DOGHKokY'], offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('album/tracks', {ids: ['$8i^4PwU!VlROQmnUb', '1y7*X0Z'], offset: true}, 400);
+					await get('album/tracks', {ids: ['RaBQ@]', 'u83]X#8i'], offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('album/tracks', {ids: ['YCOLJkG7&r*3w7BdIvU', 'X5bwyITCE4S!DeRid#'], offset: 29.42}, 400);
+					await get('album/tracks', {ids: [']f@]s#yloj', 'Y)H0tSWq7'], offset: 81.73}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('album/tracks', {ids: ['nCT2Bqp)SE8hC', 'ul)GkrcKc(gryDNTZx@'], offset: -1}, 400);
+					await get('album/tracks', {ids: ['qCsO7ec', 'n])6904N7zUedlusB5'], offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('album/tracks', {ids: ['rBC15as02QgQ)', 'W6rYD5wCc2z)9G'], amount: '*Bb#P1HT(6'}, 400);
+					await get('album/tracks', {ids: ['*%e!75', 'Zz3ztSo48Ua%rXT'], amount: 'KBdCP'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('album/tracks', {ids: ['&Ql8s)8]wBmty]', 'W9Du($NdQ@udQ!d'], amount: ''}, 400);
+					await get('album/tracks', {ids: ['S$Y!%hlTm#', ')lG&zhpCtetHMDHEaJ'], amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('album/tracks', {ids: ['2gZAOPR)]r', 'oz23#9DIcrd6%'], amount: true}, 400);
+					await get('album/tracks', {ids: ['P44@Wrsf)Aov', '45mXBU!tc!GYfxj'], amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('album/tracks', {ids: ['Ms8HL@', 'McSk@8&ubB'], amount: 48.87}, 400);
+					await get('album/tracks', {ids: ['#w%4x9TmKrYIPef55Kew', '#H#dU8qx'], amount: 82.92}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('album/tracks', {ids: ['P2&6k24sh^KYvhW', '#0f5)FNWpo8UEnKw'], amount: 0}, 400);
+					await get('album/tracks', {ids: ['%$tUhHb!dpc@N*!3', 'bdn%gJ4xi['], amount: 0}, 400);
 				});
 			});
 		});
 		describe('album/info', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/info', {id: 'KRwrucsvNp9PdORaD4'}, 401);
+					await getNotLoggedIn('album/info', {id: 'I3(LdRd2'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7107,7 +7107,7 @@ describe('Server', () => {
 		describe('playlist/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('playlist/id', {id: '(i^#&XA'}, 401);
+					await getNotLoggedIn('playlist/id', {id: 'XbD2o4]OwO@WIWGSy$lQ'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7115,95 +7115,95 @@ describe('Server', () => {
 					await get('playlist/id', {id: ''}, 400);
 				});
 				it('"playlistTracks" set to "empty string"', async () => {
-					await get('playlist/id', {id: 'qk%5zq)60X)T', playlistTracks: ''}, 400);
+					await get('playlist/id', {id: 'U8(%f[[kU', playlistTracks: ''}, 400);
 				});
 				it('"playlistTracks" set to "string"', async () => {
-					await get('playlist/id', {id: '1BKo&([Y', playlistTracks: '6k[aiBo1Xt[S'}, 400);
+					await get('playlist/id', {id: '&MJC2ZPrwv', playlistTracks: 'vIO[)'}, 400);
 				});
 				it('"playlistTracks" set to "integer > 1"', async () => {
-					await get('playlist/id', {id: 'I&kys8SDP', playlistTracks: -5368641948221438}, 400);
+					await get('playlist/id', {id: 'J0jitTSbj', playlistTracks: 2239097024282626}, 400);
 				});
 				it('"playlistTracks" set to "integer < 0"', async () => {
-					await get('playlist/id', {id: 'BeEcG8XFj%oTe5ijz0', playlistTracks: 4691755739906047}, 400);
+					await get('playlist/id', {id: 'MI85CE', playlistTracks: 4610979233005567}, 400);
 				});
 				it('"playlistTrackIDs" set to "empty string"', async () => {
-					await get('playlist/id', {id: 'jVyuZnQI3$52c6H', playlistTrackIDs: ''}, 400);
+					await get('playlist/id', {id: 'A1%5ledlAA', playlistTrackIDs: ''}, 400);
 				});
 				it('"playlistTrackIDs" set to "string"', async () => {
-					await get('playlist/id', {id: 'r*AlCpK!K)]3$Uve0', playlistTrackIDs: 'cZlu58!A7O4qanc'}, 400);
+					await get('playlist/id', {id: '[or74y!M#', playlistTrackIDs: 'lzKbH8J#qG%6([%qg7'}, 400);
 				});
 				it('"playlistTrackIDs" set to "integer > 1"', async () => {
-					await get('playlist/id', {id: 'NoBxWEZVd*a#I&sV', playlistTrackIDs: -2819933670998014}, 400);
+					await get('playlist/id', {id: '**MmjWcbZN[L&mu1k@O', playlistTrackIDs: 5927025592238082}, 400);
 				});
 				it('"playlistTrackIDs" set to "integer < 0"', async () => {
-					await get('playlist/id', {id: 'SNFqDq', playlistTrackIDs: -6102828825182209}, 400);
+					await get('playlist/id', {id: '!3idD@XVxou', playlistTrackIDs: 2092268802539519}, 400);
 				});
 				it('"playlistState" set to "empty string"', async () => {
-					await get('playlist/id', {id: 'ppWU8$7ONQjx8vTeTWef', playlistState: ''}, 400);
+					await get('playlist/id', {id: 'YJ5k1#x', playlistState: ''}, 400);
 				});
 				it('"playlistState" set to "string"', async () => {
-					await get('playlist/id', {id: 'hxTv!2nzsUwF7qNL', playlistState: 'rj8A09We'}, 400);
+					await get('playlist/id', {id: ']teREnKs4l0%', playlistState: 'HT(h3%Dc1)(Q6bh&nWp'}, 400);
 				});
 				it('"playlistState" set to "integer > 1"', async () => {
-					await get('playlist/id', {id: 'LMwu&OyRuLBNLp', playlistState: -516202770202622}, 400);
+					await get('playlist/id', {id: 'l5&HIrJ6%#KN]a', playlistState: 8914630378258434}, 400);
 				});
 				it('"playlistState" set to "integer < 0"', async () => {
-					await get('playlist/id', {id: '1@!1NoGT9', playlistState: -6739159590895617}, 400);
+					await get('playlist/id', {id: 'gQpm(fZxt0@jEe', playlistState: 4622632121008127}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('playlist/id', {id: 'TWr1u%bMK1e', trackMedia: ''}, 400);
+					await get('playlist/id', {id: 'tIUdGx)HTK#[8G', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('playlist/id', {id: '(@Ngvm9Dqsu9', trackMedia: 'ywlCq'}, 400);
+					await get('playlist/id', {id: '5JWkK!MSR)RMRc]aiM1j', trackMedia: 'F@!HDI#D'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('playlist/id', {id: '^MwJ%C%s', trackMedia: -4044800416284670}, 400);
+					await get('playlist/id', {id: '2ToyH', trackMedia: 837545755672578}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('playlist/id', {id: 'V#okI8SxWt4Y*NCn', trackMedia: -4359450274037761}, 400);
+					await get('playlist/id', {id: 'XU25qAZf', trackMedia: 648867892690943}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('playlist/id', {id: 'GFsNlNhRK7otf1$', trackTag: ''}, 400);
+					await get('playlist/id', {id: 'H3)XVJE6WxOTFZG0xX]l', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('playlist/id', {id: 'Cp3hii2iOE6Q', trackTag: 't8%eOcBS1Z#R9qa'}, 400);
+					await get('playlist/id', {id: '3V5$8876Ht[5u', trackTag: 'H4c%rH#UUs5'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('playlist/id', {id: 'cQjwZB$Ga7', trackTag: -6503386681704446}, 400);
+					await get('playlist/id', {id: '5!f$NU', trackTag: 5959742849548290}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('playlist/id', {id: 'Jm^k!brJ8UZTTT*T#', trackTag: -3094908994846721}, 400);
+					await get('playlist/id', {id: 'DY(nguxOfoiWX', trackTag: 1238498757574655}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('playlist/id', {id: '4ArxFD^uhQ#%g4CW', trackRawTag: ''}, 400);
+					await get('playlist/id', {id: 'DcJYjh4Rz6I3h', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('playlist/id', {id: '7]h[7O!q5', trackRawTag: 'QB]6zw**aoII'}, 400);
+					await get('playlist/id', {id: '($qE[H#(M#pTijP', trackRawTag: ']aspKXcNw[(j[&Vx'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('playlist/id', {id: 'Kiov5RhP[W(wl$', trackRawTag: 6517441081376770}, 400);
+					await get('playlist/id', {id: 'YCmUYx8', trackRawTag: -3569700499881982}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('playlist/id', {id: '7bB]F7N#P', trackRawTag: -7632368214999041}, 400);
+					await get('playlist/id', {id: 'UydDl(*@nOr^GOs%', trackRawTag: -3818887648903169}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('playlist/id', {id: 'bPDYwuC3(@d95ptjs', trackState: ''}, 400);
+					await get('playlist/id', {id: 'QBypXdPInB9(p7', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('playlist/id', {id: 'Z1bPYS&tQt)7p]*]', trackState: 'lCBRgdjDjC6!P'}, 400);
+					await get('playlist/id', {id: '^a0rIOJRPeu', trackState: 'N4eHZiP'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('playlist/id', {id: 'jb!9ZXzY@i', trackState: 721580837568514}, 400);
+					await get('playlist/id', {id: 'lClhhtFf7%x', trackState: 879951964274690}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('playlist/id', {id: '4pE&dN%4x[', trackState: -5348321849769985}, 400);
+					await get('playlist/id', {id: 'Yb886*mAL[C', trackState: 820662365061119}, 400);
 				});
 			});
 		});
 		describe('playlist/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('playlist/ids', {ids: ['UWV7kQo', 'gu@u[kx^pJyDbxXQH4K']}, 401);
+					await getNotLoggedIn('playlist/ids', {ids: ['McBgkY1pM960DJ$WFax', 'wag(V^tO3k9dvgHoWaE']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7214,88 +7214,88 @@ describe('Server', () => {
 					await get('playlist/ids', {ids: [null, '']}, 400);
 				});
 				it('"playlistTracks" set to "empty string"', async () => {
-					await get('playlist/ids', {ids: ['04M0ck', 'm3N6MwO^EPZ29ksMp$l'], playlistTracks: ''}, 400);
+					await get('playlist/ids', {ids: ['a)8ZY$1eBFT0&$Q9', 'fkIyusV'], playlistTracks: ''}, 400);
 				});
 				it('"playlistTracks" set to "string"', async () => {
-					await get('playlist/ids', {ids: ['f*6Ao^yWdt6BLmqtec', 'V@bu4Pm@mX[P]#[b'], playlistTracks: '&jKRrIHLX4vB'}, 400);
+					await get('playlist/ids', {ids: ['(I2LEaPA0ergDdIUT0', 'iiYf*YKeuc'], playlistTracks: 'RU79q7KX^w^C#jY9dict'}, 400);
 				});
 				it('"playlistTracks" set to "integer > 1"', async () => {
-					await get('playlist/ids', {ids: ['PSy!OkI3wqrZ3ox7PuMM', 'W(bxlg8Zon'], playlistTracks: 3452223308693506}, 400);
+					await get('playlist/ids', {ids: ['KV8qAlDp&', 'RiCpxH#!1'], playlistTracks: 1943759243706370}, 400);
 				});
 				it('"playlistTracks" set to "integer < 0"', async () => {
-					await get('playlist/ids', {ids: ['ENbXrI*Pa!SZcOa@R3M#', 'l7PPQJ]fo6E*4[LiQ('], playlistTracks: 3995137906573311}, 400);
+					await get('playlist/ids', {ids: ['p)QBpr*LlUGX1QiM7', 'MPMuCx]#X0QEJNjNVuA7'], playlistTracks: -2783247800991745}, 400);
 				});
 				it('"playlistTrackIDs" set to "empty string"', async () => {
-					await get('playlist/ids', {ids: ['jKE2t', '1#m(GDWWyB7'], playlistTrackIDs: ''}, 400);
+					await get('playlist/ids', {ids: ['e^0(O$1ekVwS', 'TVsT8&^WIv[J!]afbX'], playlistTrackIDs: ''}, 400);
 				});
 				it('"playlistTrackIDs" set to "string"', async () => {
-					await get('playlist/ids', {ids: ['!prl!@DuXeRG*', 'JkAfz4#cg(D4v'], playlistTrackIDs: 'cwRUt'}, 400);
+					await get('playlist/ids', {ids: ['5uPQoR5', 'cwBR5'], playlistTrackIDs: '@kkY*Cv&Ws7'}, 400);
 				});
 				it('"playlistTrackIDs" set to "integer > 1"', async () => {
-					await get('playlist/ids', {ids: ['%[zWEutbf!^4jo8k65c', 'oRWqdH5ZAaDlb&8'], playlistTrackIDs: -2967766294331390}, 400);
+					await get('playlist/ids', {ids: ['Q(yvM*xyZ#rvw', 'VGz1g%U#'], playlistTrackIDs: -3833294034567166}, 400);
 				});
 				it('"playlistTrackIDs" set to "integer < 0"', async () => {
-					await get('playlist/ids', {ids: ['M#Gy^O1Nw0Dwp', 'AXn(AsEcQvrsf)nuD@Ij'], playlistTrackIDs: -3101987746873345}, 400);
+					await get('playlist/ids', {ids: ['1qN$OEt9p@0H12', ']3JGy&Q5%U'], playlistTrackIDs: 1681213811064831}, 400);
 				});
 				it('"playlistState" set to "empty string"', async () => {
-					await get('playlist/ids', {ids: ['*R@$^n@myPV(v@Rz', 'dW3pzy#Fer[P#W'], playlistState: ''}, 400);
+					await get('playlist/ids', {ids: ['[BLxKM', 'Cx#HlN%9cSF@v9m'], playlistState: ''}, 400);
 				});
 				it('"playlistState" set to "string"', async () => {
-					await get('playlist/ids', {ids: ['h68CBKR#2$Kr)aSu', 'TN9qJLr]Wau7!nkPeK)m'], playlistState: '4Snjc0)Lrp*X'}, 400);
+					await get('playlist/ids', {ids: ['i][gP', 'UzXOCq'], playlistState: 'siF0*keg65S@c)d'}, 400);
 				});
 				it('"playlistState" set to "integer > 1"', async () => {
-					await get('playlist/ids', {ids: ['JC9b$D#O', 'EIXPp$A42$652d!YA7cE'], playlistState: 4311654992969730}, 400);
+					await get('playlist/ids', {ids: ['K$HoQ[u#6h4', '[BsV$njf*wAx1'], playlistState: -7562026234675198}, 400);
 				});
 				it('"playlistState" set to "integer < 0"', async () => {
-					await get('playlist/ids', {ids: ['x]SHO', 'ne%GBI]LxchJb(1'], playlistState: 5773457694392319}, 400);
+					await get('playlist/ids', {ids: ['Yd@QbovLi@BnifubRD)', 'P!qSlx8LLdL$1igE%z7'], playlistState: 2194685909008383}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('playlist/ids', {ids: ['d9cJE3iD]0ejwX)SCbY', '6dn@VzR86v'], trackMedia: ''}, 400);
+					await get('playlist/ids', {ids: ['*Fzm$JCxpb', 'A^d(6&MzmxJl8p]Hlpr'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('playlist/ids', {ids: ['4IW&%ZR62eJU', 'l3@93aYiYfUe48!OOQt7'], trackMedia: 'j%8kw4fx^fYEUer9K$2C'}, 400);
+					await get('playlist/ids', {ids: ['L4qQK(GHb0Ocn5)eY', 'KysonMX1u2'], trackMedia: '9V9gA06p*Fa!ikf'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('playlist/ids', {ids: ['c6[0$v[Z@c', '%aM9nPt2bPmqdC$dBw!*'], trackMedia: -8079089747361790}, 400);
+					await get('playlist/ids', {ids: ['I%p^4Kbm7ZyskFcJ8', 'fbE%*1xfki@o0%8&'], trackMedia: 6503469179469826}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('playlist/ids', {ids: ['4$0JOrFLqaLC', 'PLmbE'], trackMedia: 6299388431302655}, 400);
+					await get('playlist/ids', {ids: ['hoF^Xudp!jrC5p5EQ', 'gW&(&D8Q7J'], trackMedia: -2719255464247297}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('playlist/ids', {ids: ['JF^KCinCaG6F[9WU5', 'jgdqnBdTXd&1AAh*%'], trackTag: ''}, 400);
+					await get('playlist/ids', {ids: ['uRf9$7Na!y', 'KBht*tkhJmCQwz0]fM'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('playlist/ids', {ids: ['VeUX@', '(^zNSG8M^5xt'], trackTag: 'K3NVNm8'}, 400);
+					await get('playlist/ids', {ids: ['4lW5Tf!', 'SF7$o9Ph[EUv*Tt'], trackTag: 'yC%Ck%Rq98dff$E7fW'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('playlist/ids', {ids: ['nR6cXuVbqwcWiN2jK%', 'W]3D4@tZ$s0aFisF7^So'], trackTag: -7110048929021950}, 400);
+					await get('playlist/ids', {ids: ['a(&qPu[1$sg$ygQI%', 'Zem%54*0LBXy1'], trackTag: -4990424708022270}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('playlist/ids', {ids: ['*D&%Ql', 'KCR(#$LTAI0rk)T'], trackTag: -1030015034589185}, 400);
+					await get('playlist/ids', {ids: ['TzbUq1tO3ojhMLImX', 'qJ9^WMj'], trackTag: 174013791862783}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('playlist/ids', {ids: ['LFfsM8zm04[b&VTkj@x', 'a]xQ1'], trackRawTag: ''}, 400);
+					await get('playlist/ids', {ids: ['#)5BEV', 'Wl7%8(lZ'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('playlist/ids', {ids: ['eC^0MdvEEwh', 'I3b30VIz]y*h'], trackRawTag: 'YEZRFKo)cpu#yX#s'}, 400);
+					await get('playlist/ids', {ids: ['L8nDVcGGMTwrt', '26twndPT&i[1Ff#d'], trackRawTag: '4bWK@C#ksx'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('playlist/ids', {ids: ['(c)Uphk1', 'hz[I7cSL3yfD^'], trackRawTag: -4996656349052926}, 400);
+					await get('playlist/ids', {ids: ['I%%z8C%', 'ZgF(jS6(qa(IFoTNy'], trackRawTag: 1442135127621634}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('playlist/ids', {ids: ['Mb)VjdI2uXUH^(', 'UMlx%2tXJba^rdug'], trackRawTag: -3948912620601345}, 400);
+					await get('playlist/ids', {ids: ['6Jn%Enq14sGfBAnf!Lp', '#Jfv]#V@[*E*Eu$*@mpI'], trackRawTag: -6370552331632641}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('playlist/ids', {ids: ['IefQx)RmZCsaRLz#mrdP', '8L8$hR6'], trackState: ''}, 400);
+					await get('playlist/ids', {ids: ['^BOmBw$nhKp5Sqfa0', 'Wkr*OT9r#0a34fp8tD8'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('playlist/ids', {ids: ['EC8MOfh', 'sF0c[Tq48'], trackState: '[*0kF2]5F1(ZNMMn'}, 400);
+					await get('playlist/ids', {ids: ['MYD3z5%fve)J3pTi6a[h', 'coReJ5p7qb*Mu[57w'], trackState: 'npYNQ'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('playlist/ids', {ids: ['L5*b3&)bSCVIpH^IC)', '!hPC*fxTKqucnW9k'], trackState: -7341963997085694}, 400);
+					await get('playlist/ids', {ids: ['x5bNsCiaR]', '[%*8aAb'], trackState: -4838783740542974}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('playlist/ids', {ids: ['rCx04Xnk', 'J1bu*zS@b!YL'], trackState: -4880576431521793}, 400);
+					await get('playlist/ids', {ids: ['HhnGxlZyTeGM', '6vQKHo2k9z&rH8FJ'], trackState: 849809191731199}, 400);
 				});
 			});
 		});
@@ -7307,7 +7307,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('playlist/search', {offset: '0cO#NDO@Q8UPrRkJWMTW'}, 400);
+					await get('playlist/search', {offset: ']&o!57pQ9Ko4hKsp'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('playlist/search', {offset: ''}, 400);
@@ -7316,13 +7316,13 @@ describe('Server', () => {
 					await get('playlist/search', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('playlist/search', {offset: 54.67}, 400);
+					await get('playlist/search', {offset: 19.86}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('playlist/search', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('playlist/search', {amount: 'KeMYdtJeYC(!thIafL$v'}, 400);
+					await get('playlist/search', {amount: 'jGSK6w'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('playlist/search', {amount: ''}, 400);
@@ -7331,7 +7331,7 @@ describe('Server', () => {
 					await get('playlist/search', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('playlist/search', {amount: 68.83}, 400);
+					await get('playlist/search', {amount: 19.35}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('playlist/search', {amount: 0}, 400);
@@ -7343,13 +7343,13 @@ describe('Server', () => {
 					await get('playlist/search', {isPublic: ''}, 400);
 				});
 				it('"isPublic" set to "string"', async () => {
-					await get('playlist/search', {isPublic: 'PWWSVIkuzSV&O&mCJXx'}, 400);
+					await get('playlist/search', {isPublic: 'nswAptMZY'}, 400);
 				});
 				it('"isPublic" set to "integer > 1"', async () => {
-					await get('playlist/search', {isPublic: 1188437226946562}, 400);
+					await get('playlist/search', {isPublic: 6509145662423042}, 400);
 				});
 				it('"isPublic" set to "integer < 0"', async () => {
-					await get('playlist/search', {isPublic: -8767997158096897}, 400);
+					await get('playlist/search', {isPublic: -1092963081912321}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
 					await get('playlist/search', {sortField: ''}, 400);
@@ -7373,104 +7373,104 @@ describe('Server', () => {
 					await get('playlist/search', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('playlist/search', {sortDescending: '7s5Hi4@kB'}, 400);
+					await get('playlist/search', {sortDescending: '^PyeU*DD)!idEL'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('playlist/search', {sortDescending: -7535989153071102}, 400);
+					await get('playlist/search', {sortDescending: 7416242415599618}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('playlist/search', {sortDescending: 2263132936339455}, 400);
+					await get('playlist/search', {sortDescending: -7545875836436481}, 400);
 				});
 				it('"playlistTracks" set to "empty string"', async () => {
 					await get('playlist/search', {playlistTracks: ''}, 400);
 				});
 				it('"playlistTracks" set to "string"', async () => {
-					await get('playlist/search', {playlistTracks: '&JyUG9yXu'}, 400);
+					await get('playlist/search', {playlistTracks: 'tLgR]c5i17sxuq7NiUj'}, 400);
 				});
 				it('"playlistTracks" set to "integer > 1"', async () => {
-					await get('playlist/search', {playlistTracks: -2623230368022526}, 400);
+					await get('playlist/search', {playlistTracks: -7203483069448190}, 400);
 				});
 				it('"playlistTracks" set to "integer < 0"', async () => {
-					await get('playlist/search', {playlistTracks: -4995229371334657}, 400);
+					await get('playlist/search', {playlistTracks: -8468662323249153}, 400);
 				});
 				it('"playlistTrackIDs" set to "empty string"', async () => {
 					await get('playlist/search', {playlistTrackIDs: ''}, 400);
 				});
 				it('"playlistTrackIDs" set to "string"', async () => {
-					await get('playlist/search', {playlistTrackIDs: '8DCR^mQgiePIfqvo&U'}, 400);
+					await get('playlist/search', {playlistTrackIDs: 'mPREcbpbotXesSQAQ'}, 400);
 				});
 				it('"playlistTrackIDs" set to "integer > 1"', async () => {
-					await get('playlist/search', {playlistTrackIDs: 2881719300521986}, 400);
+					await get('playlist/search', {playlistTrackIDs: 4169252554670082}, 400);
 				});
 				it('"playlistTrackIDs" set to "integer < 0"', async () => {
-					await get('playlist/search', {playlistTrackIDs: -1104414630739969}, 400);
+					await get('playlist/search', {playlistTrackIDs: -2347745599815681}, 400);
 				});
 				it('"playlistState" set to "empty string"', async () => {
 					await get('playlist/search', {playlistState: ''}, 400);
 				});
 				it('"playlistState" set to "string"', async () => {
-					await get('playlist/search', {playlistState: '[VPv!onf9@'}, 400);
+					await get('playlist/search', {playlistState: '0&h892rZhC8BfYjPTr'}, 400);
 				});
 				it('"playlistState" set to "integer > 1"', async () => {
-					await get('playlist/search', {playlistState: 3090529277444098}, 400);
+					await get('playlist/search', {playlistState: -5646828880003070}, 400);
 				});
 				it('"playlistState" set to "integer < 0"', async () => {
-					await get('playlist/search', {playlistState: 4543378171625471}, 400);
+					await get('playlist/search', {playlistState: 7160387178856447}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('playlist/search', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('playlist/search', {trackMedia: 'FZ^o5eic3$tLy&jmg9'}, 400);
+					await get('playlist/search', {trackMedia: '@(Wx0XK&j'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('playlist/search', {trackMedia: 7687928977293314}, 400);
+					await get('playlist/search', {trackMedia: -8221130456301566}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('playlist/search', {trackMedia: -3241237842755585}, 400);
+					await get('playlist/search', {trackMedia: -8388812908527617}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('playlist/search', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('playlist/search', {trackTag: '5k8&R2OPml'}, 400);
+					await get('playlist/search', {trackTag: 'z(W@g^'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('playlist/search', {trackTag: 4085915207073794}, 400);
+					await get('playlist/search', {trackTag: -2114252655558654}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('playlist/search', {trackTag: -6581381861736449}, 400);
+					await get('playlist/search', {trackTag: -4287907263152129}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('playlist/search', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('playlist/search', {trackRawTag: 'vIx*d561B&eK0$rk%O42'}, 400);
+					await get('playlist/search', {trackRawTag: 'Gb#lG'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('playlist/search', {trackRawTag: -5288426240737278}, 400);
+					await get('playlist/search', {trackRawTag: -7558398686003198}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('playlist/search', {trackRawTag: -4556820353908737}, 400);
+					await get('playlist/search', {trackRawTag: -3823867906752513}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('playlist/search', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('playlist/search', {trackState: ']Qw6A2ZTvKtAWBAiNt!T'}, 400);
+					await get('playlist/search', {trackState: '5a(Su5wEH9JB!$YH1]'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('playlist/search', {trackState: 6903169669922818}, 400);
+					await get('playlist/search', {trackState: -4093577785245694}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('playlist/search', {trackState: 838032173301759}, 400);
+					await get('playlist/search', {trackState: -5388210343510017}, 400);
 				});
 			});
 		});
 		describe('playlist/state', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('playlist/state', {id: '0f4&IkM'}, 401);
+					await getNotLoggedIn('playlist/state', {id: 'G0dB3Nyeb[2sq!'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7482,7 +7482,7 @@ describe('Server', () => {
 		describe('playlist/states', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('playlist/states', {ids: [']C8dwP0H)Q9)6F1RUT', 'zH#mzlKr(l']}, 401);
+					await getNotLoggedIn('playlist/states', {ids: ['JOO4)Fs[g3A@^2', 'Gyh#%h']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7497,7 +7497,7 @@ describe('Server', () => {
 		describe('playlist/tracks', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('playlist/tracks', {ids: [')H@uq#Bfo9h)', '5a^&u*88DY0yPK!YI']}, 401);
+					await getNotLoggedIn('playlist/tracks', {ids: ['q*nZs&', 'zMuta']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7508,89 +7508,89 @@ describe('Server', () => {
 					await get('playlist/tracks', {ids: [null, '']}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('playlist/tracks', {ids: ['gOmjAD@CZ5', '8lR9zvx6IdNmpK02E2X7'], trackMedia: ''}, 400);
+					await get('playlist/tracks', {ids: ['s[gCqalbY)IxmDl2cw', 'oz&53wGr9J]eZF7nH'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('playlist/tracks', {ids: ['#i1Q]n', 'DJRcSgioF(Zw'], trackMedia: 'Wg4nJwUdlgW!M[w'}, 400);
+					await get('playlist/tracks', {ids: ['0cihWyM!I', 'O&!Ca'], trackMedia: '5XrPEb$'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('playlist/tracks', {ids: ['!zuGemIHU!U$I*gN', '8E^JtN)21NHs5J'], trackMedia: -3846275728408574}, 400);
+					await get('playlist/tracks', {ids: ['fo)!q)I$Ji', 'lSSpHA0UF2'], trackMedia: 5863648568279042}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('playlist/tracks', {ids: ['a58^r3YL%2)lS', 'GsiP[9LG'], trackMedia: -7625672868495361}, 400);
+					await get('playlist/tracks', {ids: ['yJTo(s', 'v4PiR7i1#c8yv1J7lOr'], trackMedia: -3677850741768193}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('playlist/tracks', {ids: ['GF!HruM0sp5bzHzs', 'NBLerJ3zAXFh^5HruO'], trackTag: ''}, 400);
+					await get('playlist/tracks', {ids: ['wEGXG', '*sPuV%We3#'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('playlist/tracks', {ids: ['sLqUrru[Jiz2dw8', 'sbytUtZ'], trackTag: '&F5V*z^N55O82U$jBk'}, 400);
+					await get('playlist/tracks', {ids: ['wGA]74*TO&dlqem*c&', '@Gt5]'], trackTag: 'y@T[u'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('playlist/tracks', {ids: ['BrxK!S(!]I68[I', 'pUmbv2KIF[vop#@1xk'], trackTag: 8172510969331714}, 400);
+					await get('playlist/tracks', {ids: ['*NqR^wdo]jD4xpPbM#', 'hfY27whsfM52N'], trackTag: 5338523783659522}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('playlist/tracks', {ids: ['48v9xE0]Im7', 'EJi*wX0GmCjI6mKGOq'], trackTag: 8767835916468223}, 400);
+					await get('playlist/tracks', {ids: ['tLhDDcLVDDxnIY!', '@l(ru#7iSfm4W'], trackTag: 907796451164159}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('playlist/tracks', {ids: ['^6rofDc(ze[KM4su&w', ')urf9'], trackRawTag: ''}, 400);
+					await get('playlist/tracks', {ids: ['0iKo7%([', 'X$LfaPYY%[t'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('playlist/tracks', {ids: ['Z)Tpdezs', 'G0Za&uS9LoEK2eI'], trackRawTag: 'QmE#!8$pIOM8uQG0'}, 400);
+					await get('playlist/tracks', {ids: ['01H@RhO0EW2lua%@', '7^7*AaCP#7Z'], trackRawTag: 'Uj&OiK7HSE!OIXqU)'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('playlist/tracks', {ids: ['*8dsRuu^^1*6Apb1iR2', 'W7AS$'], trackRawTag: 2547657251749890}, 400);
+					await get('playlist/tracks', {ids: ['xFjSCZ#1rbagG$Gb6Bj', 'y)7@VPhYhm0JRHIog'], trackRawTag: -534539214520318}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('playlist/tracks', {ids: ['Hlqip]uqZX7d0', '%(w%M'], trackRawTag: -5879678338334721}, 400);
+					await get('playlist/tracks', {ids: ['QDD^I]](x)ONNwRX]u', '!I90zf'], trackRawTag: -3483289851527169}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('playlist/tracks', {ids: ['wqg8&JNvkjsa86r0GpKE', 'IJ$5)12'], trackState: ''}, 400);
+					await get('playlist/tracks', {ids: ['&l#yHiOMojaz70[Z', 'EeqBNOzZFIUZQK'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('playlist/tracks', {ids: ['T@xUEuGybr', '@vt)r'], trackState: 'ecRQu^z4u9Ck'}, 400);
+					await get('playlist/tracks', {ids: ['feHOflfPjO', 'Fw5Iom7](v[KgufHKH'], trackState: 'lZg7kBrbUip'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('playlist/tracks', {ids: ['(t(y^lav', 'W*Gn2dfr^wCpsu$@5s'], trackState: -4913472051609598}, 400);
+					await get('playlist/tracks', {ids: ['zwjoB14bdwA(bHI$', '$oSnmkWRapw]cnNzTGly'], trackState: -7470801951391742}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('playlist/tracks', {ids: ['IbtyF2yoybO', '%$fkJH42U]rn)3Rcam@i'], trackState: 1274121472180223}, 400);
+					await get('playlist/tracks', {ids: ['dPPIe(zx#UOXqs4', '^0qQJC*KUn(yx'], trackState: 39539779305471}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('playlist/tracks', {ids: ['WxoBWw^Rlq!$', 'SYcMqmF$VK'], offset: 'KY9oJ$Z%fUNNsE'}, 400);
+					await get('playlist/tracks', {ids: ['R^kkS4TCqq', 'DCs^*joI6'], offset: 'YYh]i5r5FE5kf9WK9'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('playlist/tracks', {ids: ['P#7wXIN3YD!uLSP', 'PlHl*R5Ef'], offset: ''}, 400);
+					await get('playlist/tracks', {ids: ['a6(##Oa', '%2$mQKDSg$'], offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('playlist/tracks', {ids: ['BVxDga81', 'p1IhBb3w)04zv9SeS[j'], offset: true}, 400);
+					await get('playlist/tracks', {ids: ['xHJXr^KN!', 'm8B(2&XGwsj'], offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('playlist/tracks', {ids: ['SNi1K^8bc', 'Td@v@6sKD^weo!kkRt[0'], offset: 55.72}, 400);
+					await get('playlist/tracks', {ids: ['qjxPFkS!qgR)XVDAR0', '3]gpMFjH)RN%'], offset: 74.66}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('playlist/tracks', {ids: ['SCb84k^C&cwu', '**XQg72Q2'], offset: -1}, 400);
+					await get('playlist/tracks', {ids: ['jemcRx', '%xeUPDs7'], offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('playlist/tracks', {ids: ['*l1yx!TnixEuev', 'c67mgKs*d)'], amount: 'ypGX7$MgyxR59FBdygX'}, 400);
+					await get('playlist/tracks', {ids: ['a9H$1]kW4odvTWRPwz', 'A@V8h[MchZM#x'], amount: 'CNbKZ&HqAY$3pNMpG'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('playlist/tracks', {ids: ['ucyDo@h', 'KuySnZ4T5B^L&BZM*A*'], amount: ''}, 400);
+					await get('playlist/tracks', {ids: ['&Rm([KJmRIiR5s', '0LM!J5B1$pS&sGgb'], amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('playlist/tracks', {ids: ['*[N%NomKM)rC6', 'z9CMtomP)gswo$cFy%'], amount: true}, 400);
+					await get('playlist/tracks', {ids: ['@#ZhnGK]BxdiSV@', '08g6E5(BPH8KXf%7'], amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('playlist/tracks', {ids: ['b3X6t4w', 'wg!JzuEgu0zsasn'], amount: 36.25}, 400);
+					await get('playlist/tracks', {ids: ['$dI1$1', '&4xFO'], amount: 93.79}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('playlist/tracks', {ids: ['E(Mtuv%l!f', '#aw4Lu#gv]XYo]iW'], amount: 0}, 400);
+					await get('playlist/tracks', {ids: ['xEe3DY&FC(JyRWEww', '06&eM2*RN&vxfx&)'], amount: 0}, 400);
 				});
 			});
 		});
 		describe('playlist/list', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('playlist/list', {list: 'highest'}, 401);
+					await getNotLoggedIn('playlist/list', {list: 'recent'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7601,175 +7601,175 @@ describe('Server', () => {
 					await get('playlist/list', {list: 'invalid'}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('playlist/list', {list: 'faved', offset: 'dkGckfX0ZupuKym*olV'}, 400);
+					await get('playlist/list', {list: 'avghighest', offset: 'r*C9HU2k%[m#]^57j'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'random', offset: ''}, 400);
+					await get('playlist/list', {list: 'highest', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('playlist/list', {list: 'highest', offset: true}, 400);
+					await get('playlist/list', {list: 'avghighest', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('playlist/list', {list: 'faved', offset: 56.71}, 400);
+					await get('playlist/list', {list: 'faved', offset: 15.78}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('playlist/list', {list: 'random', offset: -1}, 400);
+					await get('playlist/list', {list: 'recent', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('playlist/list', {list: 'faved', amount: 'X(quh7llZ)n$BRXO'}, 400);
+					await get('playlist/list', {list: 'faved', amount: '&WaKLRJZh*E&XgP'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'highest', amount: ''}, 400);
+					await get('playlist/list', {list: 'faved', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('playlist/list', {list: 'faved', amount: true}, 400);
+					await get('playlist/list', {list: 'highest', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('playlist/list', {list: 'faved', amount: 57.07}, 400);
+					await get('playlist/list', {list: 'random', amount: 74.59}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('playlist/list', {list: 'highest', amount: 0}, 400);
+					await get('playlist/list', {list: 'random', amount: 0}, 400);
 				});
 				it('"playlistTracks" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'frequent', playlistTracks: ''}, 400);
+					await get('playlist/list', {list: 'faved', playlistTracks: ''}, 400);
 				});
 				it('"playlistTracks" set to "string"', async () => {
-					await get('playlist/list', {list: 'avghighest', playlistTracks: '1yPsQjT^OF]xiJpP1Rm'}, 400);
+					await get('playlist/list', {list: 'frequent', playlistTracks: 'mce4$B@7ODjGnhU'}, 400);
 				});
 				it('"playlistTracks" set to "integer > 1"', async () => {
-					await get('playlist/list', {list: 'recent', playlistTracks: -867419249704958}, 400);
+					await get('playlist/list', {list: 'avghighest', playlistTracks: 4985751355785218}, 400);
 				});
 				it('"playlistTracks" set to "integer < 0"', async () => {
-					await get('playlist/list', {list: 'avghighest', playlistTracks: 7267882715054079}, 400);
+					await get('playlist/list', {list: 'random', playlistTracks: -7349071299739649}, 400);
 				});
 				it('"playlistTrackIDs" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'highest', playlistTrackIDs: ''}, 400);
+					await get('playlist/list', {list: 'avghighest', playlistTrackIDs: ''}, 400);
 				});
 				it('"playlistTrackIDs" set to "string"', async () => {
-					await get('playlist/list', {list: 'avghighest', playlistTrackIDs: 'tXeuE^pcu77[XEGnB'}, 400);
+					await get('playlist/list', {list: 'highest', playlistTrackIDs: '!q&K8eAbpr'}, 400);
 				});
 				it('"playlistTrackIDs" set to "integer > 1"', async () => {
-					await get('playlist/list', {list: 'avghighest', playlistTrackIDs: 5420876803604482}, 400);
+					await get('playlist/list', {list: 'random', playlistTrackIDs: 2965753305235458}, 400);
 				});
 				it('"playlistTrackIDs" set to "integer < 0"', async () => {
-					await get('playlist/list', {list: 'frequent', playlistTrackIDs: -6780125622304769}, 400);
+					await get('playlist/list', {list: 'random', playlistTrackIDs: 6610108050046975}, 400);
 				});
 				it('"playlistState" set to "empty string"', async () => {
 					await get('playlist/list', {list: 'recent', playlistState: ''}, 400);
 				});
 				it('"playlistState" set to "string"', async () => {
-					await get('playlist/list', {list: 'highest', playlistState: '@r#r9WY5OvA)z9Q6zV'}, 400);
+					await get('playlist/list', {list: 'random', playlistState: 'nLEns#dsZ11w!fwu'}, 400);
 				});
 				it('"playlistState" set to "integer > 1"', async () => {
-					await get('playlist/list', {list: 'frequent', playlistState: 4118035321323522}, 400);
+					await get('playlist/list', {list: 'highest', playlistState: 6936436532051970}, 400);
 				});
 				it('"playlistState" set to "integer < 0"', async () => {
-					await get('playlist/list', {list: 'avghighest', playlistState: -7309330332254209}, 400);
+					await get('playlist/list', {list: 'frequent', playlistState: -4403395754459137}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'frequent', trackMedia: ''}, 400);
+					await get('playlist/list', {list: 'avghighest', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('playlist/list', {list: 'frequent', trackMedia: 'L5HVs4UyhvtRM)F'}, 400);
+					await get('playlist/list', {list: 'avghighest', trackMedia: 'FU6QGL^41CqaquAQcd6'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('playlist/list', {list: 'avghighest', trackMedia: -8170078952488958}, 400);
+					await get('playlist/list', {list: 'random', trackMedia: -2041322353459198}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('playlist/list', {list: 'frequent', trackMedia: -7486018475261953}, 400);
+					await get('playlist/list', {list: 'highest', trackMedia: 4322316863406079}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'faved', trackTag: ''}, 400);
+					await get('playlist/list', {list: 'frequent', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('playlist/list', {list: 'highest', trackTag: 'ZiNCuBGHj7#nN$p#2s'}, 400);
+					await get('playlist/list', {list: 'random', trackTag: 'NOqV8qQ@*c@3H6p#y'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('playlist/list', {list: 'faved', trackTag: 28642247704578}, 400);
+					await get('playlist/list', {list: 'highest', trackTag: 4633933840908290}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('playlist/list', {list: 'frequent', trackTag: -8884461554892801}, 400);
+					await get('playlist/list', {list: 'avghighest', trackTag: -7044557095043073}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'highest', trackRawTag: ''}, 400);
+					await get('playlist/list', {list: 'faved', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('playlist/list', {list: 'random', trackRawTag: '(9taza&t^QdbBJIF)'}, 400);
+					await get('playlist/list', {list: 'recent', trackRawTag: 'jasDR%FJp@8gi2@u'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('playlist/list', {list: 'highest', trackRawTag: -1076464036347902}, 400);
+					await get('playlist/list', {list: 'avghighest', trackRawTag: -8661958228180990}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('playlist/list', {list: 'faved', trackRawTag: 5621124171825151}, 400);
+					await get('playlist/list', {list: 'faved', trackRawTag: 3251697837146111}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'faved', trackState: ''}, 400);
+					await get('playlist/list', {list: 'frequent', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('playlist/list', {list: 'recent', trackState: 'cLTH&tL'}, 400);
+					await get('playlist/list', {list: 'avghighest', trackState: 'v5z9CsWOz'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('playlist/list', {list: 'highest', trackState: 4009247511674882}, 400);
+					await get('playlist/list', {list: 'faved', trackState: -76383145426942}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('playlist/list', {list: 'avghighest', trackState: 8649430169288703}, 400);
+					await get('playlist/list', {list: 'recent', trackState: 1894130695274495}, 400);
 				});
 				it('"name" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'faved', name: ''}, 400);
+					await get('playlist/list', {list: 'frequent', name: ''}, 400);
 				});
 				it('"isPublic" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'highest', isPublic: ''}, 400);
+					await get('playlist/list', {list: 'recent', isPublic: ''}, 400);
 				});
 				it('"isPublic" set to "string"', async () => {
-					await get('playlist/list', {list: 'frequent', isPublic: '!H#c%S6eCKxQSy*&'}, 400);
+					await get('playlist/list', {list: 'frequent', isPublic: 'O]ME^9EDdpnqhNgQbUK'}, 400);
 				});
 				it('"isPublic" set to "integer > 1"', async () => {
-					await get('playlist/list', {list: 'frequent', isPublic: -6063289482084350}, 400);
+					await get('playlist/list', {list: 'avghighest', isPublic: 4713721238650882}, 400);
 				});
 				it('"isPublic" set to "integer < 0"', async () => {
-					await get('playlist/list', {list: 'avghighest', isPublic: -2253003499241473}, 400);
+					await get('playlist/list', {list: 'faved', isPublic: -7099914857218049}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'avghighest', sortField: ''}, 400);
+					await get('playlist/list', {list: 'recent', sortField: ''}, 400);
 				});
 				it('"sortField" set to "invalid enum"', async () => {
-					await get('playlist/list', {list: 'frequent', sortField: 'invalid'}, 400);
+					await get('playlist/list', {list: 'random', sortField: 'invalid'}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'frequent', id: ''}, 400);
+					await get('playlist/list', {list: 'recent', id: ''}, 400);
 				});
 				it('"ids" set to "null"', async () => {
-					await get('playlist/list', {list: 'highest', ids: null}, 400);
+					await get('playlist/list', {list: 'frequent', ids: null}, 400);
 				});
 				it('"ids" set to "empty string"', async () => {
 					await get('playlist/list', {list: 'avghighest', ids: [null, '']}, 400);
 				});
 				it('"query" set to "empty string"', async () => {
-					await get('playlist/list', {list: 'frequent', query: ''}, 400);
+					await get('playlist/list', {list: 'recent', query: ''}, 400);
 				});
 				it('"sortDescending" set to "empty string"', async () => {
 					await get('playlist/list', {list: 'avghighest', sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('playlist/list', {list: 'highest', sortDescending: '8B!JFI8rsD7(27'}, 400);
+					await get('playlist/list', {list: 'frequent', sortDescending: 'I7THlZ&c'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('playlist/list', {list: 'avghighest', sortDescending: 7402883108569090}, 400);
+					await get('playlist/list', {list: 'frequent', sortDescending: -2197970481053694}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('playlist/list', {list: 'random', sortDescending: -7130919118831617}, 400);
+					await get('playlist/list', {list: 'highest', sortDescending: -217528961859585}, 400);
 				});
 			});
 		});
 		describe('user/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('user/id', {id: 'bIQjD]wcqL(G(C(8@vy'}, 401);
+					await getNotLoggedIn('user/id', {id: 'uG!XJwRd'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('user/id', {id: 'bIQjD]wcqL(G(C(8@vy'}, 401);
+					await getNoRights('user/id', {id: 'uG!XJwRd'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7781,12 +7781,12 @@ describe('Server', () => {
 		describe('user/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('user/ids', {ids: ['LD$WayMQ[F$JaF', '%kV0aDsw']}, 401);
+					await getNotLoggedIn('user/ids', {ids: ['!UG[GgM@n4xFeWSX5', 'Hd3kVD^QzL4pV@3[q1']}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('user/ids', {ids: ['LD$WayMQ[F$JaF', '%kV0aDsw']}, 401);
+					await getNoRights('user/ids', {ids: ['!UG[GgM@n4xFeWSX5', 'Hd3kVD^QzL4pV@3[q1']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7811,7 +7811,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('user/search', {offset: 'os%Ki4VMgFs4UQLUP'}, 400);
+					await get('user/search', {offset: 'BvuNYig'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('user/search', {offset: ''}, 400);
@@ -7820,13 +7820,13 @@ describe('Server', () => {
 					await get('user/search', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('user/search', {offset: 56.37}, 400);
+					await get('user/search', {offset: 85.4}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('user/search', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('user/search', {amount: 'e57PMRG4We6r!xyb'}, 400);
+					await get('user/search', {amount: 'qoMAbl'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('user/search', {amount: ''}, 400);
@@ -7835,7 +7835,7 @@ describe('Server', () => {
 					await get('user/search', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('user/search', {amount: 69.29}, 400);
+					await get('user/search', {amount: 66.89}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('user/search', {amount: 0}, 400);
@@ -7847,13 +7847,13 @@ describe('Server', () => {
 					await get('user/search', {isAdmin: ''}, 400);
 				});
 				it('"isAdmin" set to "string"', async () => {
-					await get('user/search', {isAdmin: 'UpiD4*'}, 400);
+					await get('user/search', {isAdmin: '!M80y*nKbp4Rs'}, 400);
 				});
 				it('"isAdmin" set to "integer > 1"', async () => {
-					await get('user/search', {isAdmin: -5620990574854142}, 400);
+					await get('user/search', {isAdmin: -547020548866046}, 400);
 				});
 				it('"isAdmin" set to "integer < 0"', async () => {
-					await get('user/search', {isAdmin: -2876887164518401}, 400);
+					await get('user/search', {isAdmin: 5584966524076031}, 400);
 				});
 				it('"sortField" set to "empty string"', async () => {
 					await get('user/search', {sortField: ''}, 400);
@@ -7877,13 +7877,13 @@ describe('Server', () => {
 					await get('user/search', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('user/search', {sortDescending: '7ed7Cw]Vv'}, 400);
+					await get('user/search', {sortDescending: '[YP7d'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('user/search', {sortDescending: -8785571358965758}, 400);
+					await get('user/search', {sortDescending: 3906614109143042}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('user/search', {sortDescending: 4696448721485823}, 400);
+					await get('user/search', {sortDescending: 2798617546981375}, 400);
 				});
 			});
 		});
@@ -7905,80 +7905,80 @@ describe('Server', () => {
 					await get('playqueue/get', {playQueueTracks: ''}, 400);
 				});
 				it('"playQueueTracks" set to "string"', async () => {
-					await get('playqueue/get', {playQueueTracks: 'b9DHW[^1b*OjCNUs8ow'}, 400);
+					await get('playqueue/get', {playQueueTracks: 'SqNTem92$P]1HS'}, 400);
 				});
 				it('"playQueueTracks" set to "integer > 1"', async () => {
-					await get('playqueue/get', {playQueueTracks: 7767191009099778}, 400);
+					await get('playqueue/get', {playQueueTracks: -3849559868440574}, 400);
 				});
 				it('"playQueueTracks" set to "integer < 0"', async () => {
-					await get('playqueue/get', {playQueueTracks: -5085442806382593}, 400);
+					await get('playqueue/get', {playQueueTracks: 8939479528112127}, 400);
 				});
 				it('"playQueueTrackIDs" set to "empty string"', async () => {
 					await get('playqueue/get', {playQueueTrackIDs: ''}, 400);
 				});
 				it('"playQueueTrackIDs" set to "string"', async () => {
-					await get('playqueue/get', {playQueueTrackIDs: 'XvVkkhUJlYg(m*i'}, 400);
+					await get('playqueue/get', {playQueueTrackIDs: 'DX$7p]94bnZU7((J'}, 400);
 				});
 				it('"playQueueTrackIDs" set to "integer > 1"', async () => {
-					await get('playqueue/get', {playQueueTrackIDs: -2738554283229182}, 400);
+					await get('playqueue/get', {playQueueTrackIDs: -2821569395032062}, 400);
 				});
 				it('"playQueueTrackIDs" set to "integer < 0"', async () => {
-					await get('playqueue/get', {playQueueTrackIDs: 8754281272311807}, 400);
+					await get('playqueue/get', {playQueueTrackIDs: -8271666786336769}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('playqueue/get', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('playqueue/get', {trackMedia: 'lDcUb2W'}, 400);
+					await get('playqueue/get', {trackMedia: 'Ftzyn2(Yq41aGm^SB^f'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('playqueue/get', {trackMedia: -7578785897512958}, 400);
+					await get('playqueue/get', {trackMedia: -4708703823462398}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('playqueue/get', {trackMedia: 3971890607554559}, 400);
+					await get('playqueue/get', {trackMedia: -6886296685379585}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('playqueue/get', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('playqueue/get', {trackTag: 'aI[XGfJe'}, 400);
+					await get('playqueue/get', {trackTag: 'Ea&O5oA5'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('playqueue/get', {trackTag: -2153228233867262}, 400);
+					await get('playqueue/get', {trackTag: -1489306124287998}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('playqueue/get', {trackTag: 1889432160436223}, 400);
+					await get('playqueue/get', {trackTag: -7514700757598209}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('playqueue/get', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('playqueue/get', {trackRawTag: 'cZ0qRWymM3'}, 400);
+					await get('playqueue/get', {trackRawTag: 'Pqi51gU)gmrXE[J1C!&'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('playqueue/get', {trackRawTag: -1660796400566270}, 400);
+					await get('playqueue/get', {trackRawTag: -4042090359029758}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('playqueue/get', {trackRawTag: -5556889370755073}, 400);
+					await get('playqueue/get', {trackRawTag: 8595549670342655}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('playqueue/get', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('playqueue/get', {trackState: 'CCYNg^d!5!gPvsvI'}, 400);
+					await get('playqueue/get', {trackState: 'e!0m3m^RS'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('playqueue/get', {trackState: 3952919095279618}, 400);
+					await get('playqueue/get', {trackState: 3305591510401026}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('playqueue/get', {trackState: 2187238834175999}, 400);
+					await get('playqueue/get', {trackState: -3232116250771457}, 400);
 				});
 			});
 		});
 		describe('bookmark/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('bookmark/id', {id: 'XatVgMWTh%HV5qi%^$7Z'}, 401);
+					await getNotLoggedIn('bookmark/id', {id: 'ejvIfiGqqxu&]U(Z(qBh'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -7986,71 +7986,71 @@ describe('Server', () => {
 					await get('bookmark/id', {id: ''}, 400);
 				});
 				it('"bookmarkTrack" set to "empty string"', async () => {
-					await get('bookmark/id', {id: 'C@sXj$FHBBYgwEWj&!B', bookmarkTrack: ''}, 400);
+					await get('bookmark/id', {id: 'xpov(q', bookmarkTrack: ''}, 400);
 				});
 				it('"bookmarkTrack" set to "string"', async () => {
-					await get('bookmark/id', {id: '7(@2c@z)9uY&@Yp', bookmarkTrack: 'sg%NwtSLTjk&'}, 400);
+					await get('bookmark/id', {id: 'sf7o*1*W#duDQ67]d', bookmarkTrack: '!nWB&6V8'}, 400);
 				});
 				it('"bookmarkTrack" set to "integer > 1"', async () => {
-					await get('bookmark/id', {id: 'Fa]KLj6j5^UcbHpx', bookmarkTrack: 3408973977878530}, 400);
+					await get('bookmark/id', {id: 'T%USWb8$2qVf7]y9s@&', bookmarkTrack: -978960519266302}, 400);
 				});
 				it('"bookmarkTrack" set to "integer < 0"', async () => {
-					await get('bookmark/id', {id: 'KV7QvsCJsK66XxF', bookmarkTrack: 875507717505023}, 400);
+					await get('bookmark/id', {id: ')abNb1nY', bookmarkTrack: -5125631322882049}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('bookmark/id', {id: 'EO!aK2^nGR4HB6', trackMedia: ''}, 400);
+					await get('bookmark/id', {id: 'RvBlZ7*x5Zv6rG*aUh', trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('bookmark/id', {id: 'N%6N@JE*nN@!of4zFB', trackMedia: 'Vb!4#3vky@!vmXF'}, 400);
+					await get('bookmark/id', {id: 'fNEgvNIsVQ)', trackMedia: 'XhoUp*GlF&kpmNC#'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('bookmark/id', {id: 'PR8M5hNu6*G131', trackMedia: 7123273808609282}, 400);
+					await get('bookmark/id', {id: 'ZA!Mb!24CprJKZ$e', trackMedia: 8021601224228866}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('bookmark/id', {id: 'nSa^qMA)Z@liwRf', trackMedia: 1593986380726271}, 400);
+					await get('bookmark/id', {id: '[wrtFtDjXO', trackMedia: -4184301117636609}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('bookmark/id', {id: 'e8nUlM^zhyaOeO5W$', trackTag: ''}, 400);
+					await get('bookmark/id', {id: '!RFXv*DY@@(', trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('bookmark/id', {id: 'KQJ]K5', trackTag: 'FndNF4ASr0lCLiqDcC'}, 400);
+					await get('bookmark/id', {id: '$)Uyc#A&6q1JYZa', trackTag: 'AL)HnPK2Q1RJCX'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('bookmark/id', {id: '8@H1(', trackTag: 8785850192101378}, 400);
+					await get('bookmark/id', {id: 'zWCnP*Rq3^yKiLNspMN', trackTag: -7879514457636862}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('bookmark/id', {id: 'NaLZ(1ftcfQRCcs]!H', trackTag: 7606913365704703}, 400);
+					await get('bookmark/id', {id: '&RN#gXl)@M&%4', trackTag: 5094222701002751}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('bookmark/id', {id: 'mottR%[nw', trackRawTag: ''}, 400);
+					await get('bookmark/id', {id: 'PV%sQ*KEAWtEr', trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('bookmark/id', {id: 'qM]o]bL5mJ8', trackRawTag: 'vB^#*lgUQq'}, 400);
+					await get('bookmark/id', {id: 'ydR&6GU@Vhc]HD[R', trackRawTag: 'hZ0wNs!6'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('bookmark/id', {id: 'Z^KY2F9zO[', trackRawTag: -8968522193436670}, 400);
+					await get('bookmark/id', {id: '$(2hzgCsjq%027^e24J', trackRawTag: 577192593457154}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('bookmark/id', {id: 'O(F7h6ci(q', trackRawTag: -2515211684675585}, 400);
+					await get('bookmark/id', {id: 'NEw3D%9gt0C!1*T', trackRawTag: -7845215285018625}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('bookmark/id', {id: 'vi8](', trackState: ''}, 400);
+					await get('bookmark/id', {id: '6kj6^Wb1', trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('bookmark/id', {id: 'uIqdP', trackState: 'R)nXIxR3k)76Xl[Uoa'}, 400);
+					await get('bookmark/id', {id: 'uGtSMbR&JPOdZP', trackState: 'p81O^JZlno0F^5)'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('bookmark/id', {id: 'V1[Bb&Tw#!h1DOW8', trackState: 6225899972198402}, 400);
+					await get('bookmark/id', {id: '*RmBksLs5$k', trackState: -6316574604525566}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('bookmark/id', {id: 'T(brzry[I2', trackState: 1463737038929919}, 400);
+					await get('bookmark/id', {id: '%9!%c#n', trackState: 8093996320555007}, 400);
 				});
 			});
 		});
 		describe('bookmark/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('bookmark/ids', {ids: ['Cv5[)ZDlCXrhsw#', '%x0n1Ny!Z*M&X&']}, 401);
+					await getNotLoggedIn('bookmark/ids', {ids: ['DtqGfiBNj', 'aH]CPn(t0p#iE(sL94']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8061,94 +8061,94 @@ describe('Server', () => {
 					await get('bookmark/ids', {ids: [null, '']}, 400);
 				});
 				it('"bookmarkTrack" set to "empty string"', async () => {
-					await get('bookmark/ids', {ids: ['$i7VLi7QDDngvjA', '55G6b^R'], bookmarkTrack: ''}, 400);
+					await get('bookmark/ids', {ids: ['RcOEQ25TC03', 'D[QtW'], bookmarkTrack: ''}, 400);
 				});
 				it('"bookmarkTrack" set to "string"', async () => {
-					await get('bookmark/ids', {ids: ['sFEKR1TcMAT(]MSjr', 'PmHtAKksI%5An'], bookmarkTrack: 'AVYt!X2UhF'}, 400);
+					await get('bookmark/ids', {ids: ['hxi^8J', 'hW(#JMKu7]V'], bookmarkTrack: 'i@sY[%YFL*p@'}, 400);
 				});
 				it('"bookmarkTrack" set to "integer > 1"', async () => {
-					await get('bookmark/ids', {ids: ['k0W([4D&x@F0S879Jl', 'MbSgnLM]e#ND'], bookmarkTrack: 3269383107379202}, 400);
+					await get('bookmark/ids', {ids: ['G1En4A[sMoJ$Vsg', 'I]NyLvE6'], bookmarkTrack: -1201515486248958}, 400);
 				});
 				it('"bookmarkTrack" set to "integer < 0"', async () => {
-					await get('bookmark/ids', {ids: ['t9scu]2', '@b5(Qn@QAiW$2QF)c)'], bookmarkTrack: 4760589893107711}, 400);
+					await get('bookmark/ids', {ids: ['Qe8otI', 'TdI9GEY&4D6A)'], bookmarkTrack: -7892609741619201}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
-					await get('bookmark/ids', {ids: ['uQu!Oi3hzF]', '1[Z5X7BeZB*'], trackMedia: ''}, 400);
+					await get('bookmark/ids', {ids: ['bxWtE[Z', 'Hg^#Bka'], trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('bookmark/ids', {ids: ['upWE4[x2DDOwXem', '*Z@NkfSnFL*)juuCOCY'], trackMedia: 'jO)4a1EhN&j'}, 400);
+					await get('bookmark/ids', {ids: ['8a@s()', '8M@fFmVE0B'], trackMedia: 'a^ZfctnDd'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('bookmark/ids', {ids: ['ktg^%t', '!Ae$m5xvJ5(a'], trackMedia: 7903946022584322}, 400);
+					await get('bookmark/ids', {ids: ['PVKHd$6', 'uP*QWv3HkIu[Lb'], trackMedia: 701480273182722}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('bookmark/ids', {ids: ['i)KZOH', '%G36XXf'], trackMedia: -4162887169867777}, 400);
+					await get('bookmark/ids', {ids: ['@u1X5Tabq%C52pJh&W8', 'XMw^I27QzvA6@N'], trackMedia: 2500209934335999}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
-					await get('bookmark/ids', {ids: ['PyW@uGrLzDCAb$sct', 'E5R@(fQW#cSo7'], trackTag: ''}, 400);
+					await get('bookmark/ids', {ids: ['RAQRaF', 'lTk5%0'], trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('bookmark/ids', {ids: ['cbftaF', '2xve#BK4%@fp'], trackTag: 'AYjK#4ZY]@HV'}, 400);
+					await get('bookmark/ids', {ids: ['ZZ@f7zYbEuL', 'EeY3b[JS&6'], trackTag: 'M9FzU$o1%xbhGNr('}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('bookmark/ids', {ids: ['6Zn98', 'qITW2mR5rOHk'], trackTag: 2485081335660546}, 400);
+					await get('bookmark/ids', {ids: ['TB&3sOmHAQXP)', 'uuV6j2XST#1E)'], trackTag: -600130252177406}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('bookmark/ids', {ids: ['2SbJtCUwvVVh%hBc(#s', '[ABdYQ'], trackTag: 6397223302594559}, 400);
+					await get('bookmark/ids', {ids: ['O^rz*I', '@Wo29(eBF5Bf'], trackTag: 5033941287305215}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
-					await get('bookmark/ids', {ids: ['7fo%RA]k9(5', 'A*!!$5Ey!y[6'], trackRawTag: ''}, 400);
+					await get('bookmark/ids', {ids: ['fbHo4tRqYW[HmC', 'xGsxc'], trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('bookmark/ids', {ids: ['(ca1PrW8Uh@(N', 's!U2N5'], trackRawTag: '8@M(Ij'}, 400);
+					await get('bookmark/ids', {ids: ['OOnP&jWtrqB%r', 'buBlm5g&rc'], trackRawTag: 'PbN]Vdj'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('bookmark/ids', {ids: ['42i0p0%)ZcLn*x', '#iLl$bW3@o'], trackRawTag: 719586903195650}, 400);
+					await get('bookmark/ids', {ids: ['zV#[ySPCP7[#bNW', 'D$2qsSXHFiAX'], trackRawTag: -1486047494012926}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('bookmark/ids', {ids: ['Bq5iSU5yvMY3CVfoYORA', 'ezSqbZ'], trackRawTag: -3985808553934849}, 400);
+					await get('bookmark/ids', {ids: ['qtso^)No]ap1vXCs!3ea', '5!gA7@ts4W!'], trackRawTag: -8728041802956801}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
-					await get('bookmark/ids', {ids: ['88OO&^g*T', 'Oo0iBIu!zeH&FLuFeK@['], trackState: ''}, 400);
+					await get('bookmark/ids', {ids: ['Zps])g(9oxdmxW8nv', 'X2pMUPu3j'], trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('bookmark/ids', {ids: ['IQ3pMC', 'GjyU5I9HKsIHL3vF8'], trackState: 'RgNegPGX$T2LPgY!b'}, 400);
+					await get('bookmark/ids', {ids: ['[DklA58', 'x*8gFspjO'], trackState: '7#u1QJir857D7j39p'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('bookmark/ids', {ids: ['VELFHk', 'b8v(QdodmD#S62'], trackState: 213551591456770}, 400);
+					await get('bookmark/ids', {ids: ['L^X*!Dn2ol7X7DJKU#m', 'lh$r(Ah)xQ'], trackState: 3612570552369154}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('bookmark/ids', {ids: ['o3MfVD$P', '2KMWI'], trackState: -5646128745807873}, 400);
+					await get('bookmark/ids', {ids: ['IuQ3#MFtEXo', 'DulM5s39j$NJ'], trackState: -4401289454682113}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('bookmark/ids', {ids: ['#g$JJ', 'aE2#]CjfM2'], offset: 'lQJz4b2y784qog(%$T'}, 400);
+					await get('bookmark/ids', {ids: ['XsW^uIfvYnRR8I$xlrFG', 'zrp$TjuBeOUlN'], offset: 'TSfk['}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('bookmark/ids', {ids: ['hV^57WZ)gbhoRPVaHh', 'mAGr2lf^UBvBgjA0f'], offset: ''}, 400);
+					await get('bookmark/ids', {ids: ['ygXKC^iCF[g', 'AeqafJ'], offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('bookmark/ids', {ids: ['XKEqrPwNs', 'wA&d1k#k'], offset: true}, 400);
+					await get('bookmark/ids', {ids: ['HmZ%uHth8CD[XBzeLB7', 'W79J4'], offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('bookmark/ids', {ids: ['VFvnjiXz7rX2&M', 'NqV7i@rF62v'], offset: 12.91}, 400);
+					await get('bookmark/ids', {ids: ['K3LbDcR8Ti', 'iD3f2'], offset: 93.1}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('bookmark/ids', {ids: ['fIhevOF0', 'VxqtsdTVQvj1(jaM[5'], offset: -1}, 400);
+					await get('bookmark/ids', {ids: ['OcBhLaQAwCkC1&&bf', 'H8qn[$^jD'], offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('bookmark/ids', {ids: ['biiskX%!1tovss', 'XDXkv8rxf559dBOZmB]'], amount: 'KCOYliwm2N'}, 400);
+					await get('bookmark/ids', {ids: ['Rcyq%pd&af@B)', '(Ezy09IO8kEZ9x&F%T)'], amount: 'Mrv*7WUV2r8Y&5OZp9m'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('bookmark/ids', {ids: ['OuPwjUTnoc%zxZfhQa*]', 'yv0K4SIfQ8sok9uvp)W8'], amount: ''}, 400);
+					await get('bookmark/ids', {ids: ['JatN0dzcKG', 'B3tuhLTRV95&t&K'], amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('bookmark/ids', {ids: ['k&m1U9', '9TxGz&m82DJKonF'], amount: true}, 400);
+					await get('bookmark/ids', {ids: ['ERB)RPl)b(E', 'e#s%tY6SfIB!ys'], amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('bookmark/ids', {ids: ['J#PPAeG]2pq9]oTN', 'eoIVs('], amount: 3.36}, 400);
+					await get('bookmark/ids', {ids: ['DjB00gx0H6PqKgF9AaG)', 'lujOqQ'], amount: 76.97}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('bookmark/ids', {ids: ['RBr6nfJQZ%QKnn', 'pkkkjke@z&d@0hz*h'], amount: 0}, 400);
+					await get('bookmark/ids', {ids: ['$6V9g#BVNX9X9G!b', 'u54fHo!KmUIx)A[d9e'], amount: 0}, 400);
 				});
 			});
 		});
@@ -8163,64 +8163,64 @@ describe('Server', () => {
 					await get('bookmark/list', {bookmarkTrack: ''}, 400);
 				});
 				it('"bookmarkTrack" set to "string"', async () => {
-					await get('bookmark/list', {bookmarkTrack: 'GS1l([Yr'}, 400);
+					await get('bookmark/list', {bookmarkTrack: '4&sFeOBTIYkQZ$mX'}, 400);
 				});
 				it('"bookmarkTrack" set to "integer > 1"', async () => {
-					await get('bookmark/list', {bookmarkTrack: -8801455016247294}, 400);
+					await get('bookmark/list', {bookmarkTrack: -5600799413501950}, 400);
 				});
 				it('"bookmarkTrack" set to "integer < 0"', async () => {
-					await get('bookmark/list', {bookmarkTrack: -5467496991686657}, 400);
+					await get('bookmark/list', {bookmarkTrack: -5796589209649153}, 400);
 				});
 				it('"trackMedia" set to "empty string"', async () => {
 					await get('bookmark/list', {trackMedia: ''}, 400);
 				});
 				it('"trackMedia" set to "string"', async () => {
-					await get('bookmark/list', {trackMedia: 'qDkE^2[%6[1Sf^'}, 400);
+					await get('bookmark/list', {trackMedia: '**cYLXV)'}, 400);
 				});
 				it('"trackMedia" set to "integer > 1"', async () => {
-					await get('bookmark/list', {trackMedia: 1801621583429634}, 400);
+					await get('bookmark/list', {trackMedia: -1325329993957374}, 400);
 				});
 				it('"trackMedia" set to "integer < 0"', async () => {
-					await get('bookmark/list', {trackMedia: 6792648085995519}, 400);
+					await get('bookmark/list', {trackMedia: -8644472002838529}, 400);
 				});
 				it('"trackTag" set to "empty string"', async () => {
 					await get('bookmark/list', {trackTag: ''}, 400);
 				});
 				it('"trackTag" set to "string"', async () => {
-					await get('bookmark/list', {trackTag: 'hGPHR43#ip'}, 400);
+					await get('bookmark/list', {trackTag: 'Rl2q7Nh0J'}, 400);
 				});
 				it('"trackTag" set to "integer > 1"', async () => {
-					await get('bookmark/list', {trackTag: 4547757742227458}, 400);
+					await get('bookmark/list', {trackTag: -3587581849632766}, 400);
 				});
 				it('"trackTag" set to "integer < 0"', async () => {
-					await get('bookmark/list', {trackTag: 3424824911200255}, 400);
+					await get('bookmark/list', {trackTag: 5694816914505727}, 400);
 				});
 				it('"trackRawTag" set to "empty string"', async () => {
 					await get('bookmark/list', {trackRawTag: ''}, 400);
 				});
 				it('"trackRawTag" set to "string"', async () => {
-					await get('bookmark/list', {trackRawTag: 'x)bGB(7(%vmd4ml'}, 400);
+					await get('bookmark/list', {trackRawTag: 'o2e)lVh2&Ws^Ai'}, 400);
 				});
 				it('"trackRawTag" set to "integer > 1"', async () => {
-					await get('bookmark/list', {trackRawTag: -3388226207219710}, 400);
+					await get('bookmark/list', {trackRawTag: 1342617027608578}, 400);
 				});
 				it('"trackRawTag" set to "integer < 0"', async () => {
-					await get('bookmark/list', {trackRawTag: -251728733667329}, 400);
+					await get('bookmark/list', {trackRawTag: 304054366371839}, 400);
 				});
 				it('"trackState" set to "empty string"', async () => {
 					await get('bookmark/list', {trackState: ''}, 400);
 				});
 				it('"trackState" set to "string"', async () => {
-					await get('bookmark/list', {trackState: 'S9W%Uq96Eo#RgTd2*g&'}, 400);
+					await get('bookmark/list', {trackState: 'vzwA2J)TtJJ'}, 400);
 				});
 				it('"trackState" set to "integer > 1"', async () => {
-					await get('bookmark/list', {trackState: 2600054107930626}, 400);
+					await get('bookmark/list', {trackState: -1801886407589886}, 400);
 				});
 				it('"trackState" set to "integer < 0"', async () => {
-					await get('bookmark/list', {trackState: 4180513677901823}, 400);
+					await get('bookmark/list', {trackState: -8064718547714049}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('bookmark/list', {offset: '!COjn1pr'}, 400);
+					await get('bookmark/list', {offset: 'f%H&cjM'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('bookmark/list', {offset: ''}, 400);
@@ -8229,13 +8229,13 @@ describe('Server', () => {
 					await get('bookmark/list', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('bookmark/list', {offset: 47.1}, 400);
+					await get('bookmark/list', {offset: 87.31}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('bookmark/list', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('bookmark/list', {amount: 'Ok*mdzGCPW^q26V*2&'}, 400);
+					await get('bookmark/list', {amount: 'uq!&7d'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('bookmark/list', {amount: ''}, 400);
@@ -8244,7 +8244,7 @@ describe('Server', () => {
 					await get('bookmark/list', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('bookmark/list', {amount: 76.07}, 400);
+					await get('bookmark/list', {amount: 87.01}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('bookmark/list', {amount: 0}, 400);
@@ -8254,7 +8254,7 @@ describe('Server', () => {
 		describe('bookmark/byTrack/list', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('bookmark/byTrack/list', {trackID: 'yy61$EtgMQ'}, 401);
+					await getNotLoggedIn('bookmark/byTrack/list', {trackID: 'wlb&Se3rWaTVQ'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8262,41 +8262,41 @@ describe('Server', () => {
 					await get('bookmark/byTrack/list', {trackID: ''}, 400);
 				});
 				it('"offset" set to "string"', async () => {
-					await get('bookmark/byTrack/list', {trackID: '2mM!9QPMREe(q!ma', offset: 'FqT1F%'}, 400);
+					await get('bookmark/byTrack/list', {trackID: 'fq%U%MJ11n#FbLq', offset: 'HOSRZZTT^xnm[xPoN6'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
-					await get('bookmark/byTrack/list', {trackID: 'n6tt88BSq', offset: ''}, 400);
+					await get('bookmark/byTrack/list', {trackID: 'MDUlGjw5RgE', offset: ''}, 400);
 				});
 				it('"offset" set to "boolean"', async () => {
-					await get('bookmark/byTrack/list', {trackID: 'rv(nL14Fu#HgyLCPb[wu', offset: true}, 400);
+					await get('bookmark/byTrack/list', {trackID: '8j9ET)*2PBx', offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('bookmark/byTrack/list', {trackID: '4kJRxMGC]YjB$J4o&', offset: 46.43}, 400);
+					await get('bookmark/byTrack/list', {trackID: 'Djq]9e!QTV[[', offset: 60.25}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
-					await get('bookmark/byTrack/list', {trackID: 'SI2cCrDMD[MnQ', offset: -1}, 400);
+					await get('bookmark/byTrack/list', {trackID: '@T5zC5D&h5TcP409', offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('bookmark/byTrack/list', {trackID: 'vokwwYCJgyKr', amount: 'j4jXlLuxPx#oyL'}, 400);
+					await get('bookmark/byTrack/list', {trackID: 'eKkYT&]!9gNLe]iMm', amount: 'TmWCjm'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
-					await get('bookmark/byTrack/list', {trackID: 'A&GJfRlP]', amount: ''}, 400);
+					await get('bookmark/byTrack/list', {trackID: 'TY%uZXHQd#d7E1o', amount: ''}, 400);
 				});
 				it('"amount" set to "boolean"', async () => {
-					await get('bookmark/byTrack/list', {trackID: 'VB^Fw16b', amount: true}, 400);
+					await get('bookmark/byTrack/list', {trackID: '9z!1rly])pF4R', amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('bookmark/byTrack/list', {trackID: '(BB@3!T*[w8MD', amount: 47.45}, 400);
+					await get('bookmark/byTrack/list', {trackID: '!3zY*LKU0$EV[w!Rkc1i', amount: 65.49}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
-					await get('bookmark/byTrack/list', {trackID: 'T5[dvvY(inQDet', amount: 0}, 400);
+					await get('bookmark/byTrack/list', {trackID: 'LKUYuF', amount: 0}, 400);
 				});
 			});
 		});
 		describe('root/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('root/id', {id: 'ymZ@Ih$)zv]PBzJCGw'}, 401);
+					await getNotLoggedIn('root/id', {id: 'tmVJWNzn84od'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8308,7 +8308,7 @@ describe('Server', () => {
 		describe('root/ids', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('root/ids', {ids: ['mO^%n', 'c5hj**CH6StH%RjE2y']}, 401);
+					await getNotLoggedIn('root/ids', {ids: ['$2q]Zt0kVt4&@]QRfbf', 'TM3p[&&^lGG0NKZMsc$']}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8328,7 +8328,7 @@ describe('Server', () => {
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"offset" set to "string"', async () => {
-					await get('root/search', {offset: '@lkD*kYCTl#'}, 400);
+					await get('root/search', {offset: 'K5hDlGK5*Zi'}, 400);
 				});
 				it('"offset" set to "empty string"', async () => {
 					await get('root/search', {offset: ''}, 400);
@@ -8337,13 +8337,13 @@ describe('Server', () => {
 					await get('root/search', {offset: true}, 400);
 				});
 				it('"offset" set to "float"', async () => {
-					await get('root/search', {offset: 76.86}, 400);
+					await get('root/search', {offset: 79.64}, 400);
 				});
 				it('"offset" set to "less than minimum 0"', async () => {
 					await get('root/search', {offset: -1}, 400);
 				});
 				it('"amount" set to "string"', async () => {
-					await get('root/search', {amount: '3$i69%IhAPVdVag'}, 400);
+					await get('root/search', {amount: 'jA$xj9P!PYb8Fy3Oa'}, 400);
 				});
 				it('"amount" set to "empty string"', async () => {
 					await get('root/search', {amount: ''}, 400);
@@ -8352,7 +8352,7 @@ describe('Server', () => {
 					await get('root/search', {amount: true}, 400);
 				});
 				it('"amount" set to "float"', async () => {
-					await get('root/search', {amount: 22.98}, 400);
+					await get('root/search', {amount: 29.02}, 400);
 				});
 				it('"amount" set to "less than minimum 1"', async () => {
 					await get('root/search', {amount: 0}, 400);
@@ -8379,20 +8379,20 @@ describe('Server', () => {
 					await get('root/search', {sortDescending: ''}, 400);
 				});
 				it('"sortDescending" set to "string"', async () => {
-					await get('root/search', {sortDescending: '(1T(iMso]hYm(bv8JDpI'}, 400);
+					await get('root/search', {sortDescending: '%s!0ytQXC'}, 400);
 				});
 				it('"sortDescending" set to "integer > 1"', async () => {
-					await get('root/search', {sortDescending: -3346181996412926}, 400);
+					await get('root/search', {sortDescending: -6127522534129662}, 400);
 				});
 				it('"sortDescending" set to "integer < 0"', async () => {
-					await get('root/search', {sortDescending: 5633246993842175}, 400);
+					await get('root/search', {sortDescending: 8629099270504447}, 400);
 				});
 			});
 		});
 		describe('root/status', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('root/status', {id: 'wiefCd&rDY6nTvQ%CL'}, 401);
+					await getNotLoggedIn('root/status', {id: 'itRMNH'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8416,12 +8416,12 @@ describe('Server', () => {
 		describe('admin/queue/id', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('admin/queue/id', {id: '(1]WAC'}, 401);
+					await getNotLoggedIn('admin/queue/id', {id: 'S29ZBX*9%q'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('admin/queue/id', {id: '(1]WAC'}, 401);
+					await getNoRights('admin/queue/id', {id: 'S29ZBX*9%q'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8433,12 +8433,12 @@ describe('Server', () => {
 		describe('folder/download', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/download', {id: 'H(K4]mf$l2H$YEQb0'}, 401);
+					await getNotLoggedIn('folder/download', {id: 'xR3NrDT0K[x5L8w'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('folder/download', {id: 'H(K4]mf$l2H$YEQb0'}, 401);
+					await getNoRights('folder/download', {id: 'xR3NrDT0K[x5L8w'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8446,14 +8446,14 @@ describe('Server', () => {
 					await get('folder/download', {id: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('folder/download', {id: 'mavl(#3^xD$7q6', format: 'invalid'}, 400);
+					await get('folder/download', {id: 'PzoyamQQq)aRAsf]b8T(', format: 'invalid'}, 400);
 				});
 			});
 		});
 		describe('folder/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/image', {id: '7C7awRlGk1(QdyhiGbX2'}, 401);
+					await getNotLoggedIn('folder/image', {id: 'ezzK1BMBmB[Da$NeZI'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8461,35 +8461,35 @@ describe('Server', () => {
 					await get('folder/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('folder/image', {id: 'Fd3OfIlLaMy**X[', format: ''}, 400);
+					await get('folder/image', {id: 'X)h3tp04lpc$aHH', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('folder/image', {id: '82ShHLFg$4X$y', format: 'invalid'}, 400);
+					await get('folder/image', {id: '4)gFcnE', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('folder/image', {id: 'wngUWYOe', size: '^*ig(%j1bR'}, 400);
+					await get('folder/image', {id: 'K&uuMJumvzv', size: 'R0cjfu[h%'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('folder/image', {id: '$D@ovLgMs#TEV', size: ''}, 400);
+					await get('folder/image', {id: '$^UIX', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('folder/image', {id: 'Qad6qamE', size: true}, 400);
+					await get('folder/image', {id: '8hUZ#)Okf#Exx5', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('folder/image', {id: ')eqLH6US1EfPHJY1X', size: 812.57}, 400);
+					await get('folder/image', {id: 'ZP^0!dLl^8@Rg', size: 202.66}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('folder/image', {id: 'BC]ayPJ&fD6Io%yvpA%', size: 15}, 400);
+					await get('folder/image', {id: 'XpetU$#(uNxF@p', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('folder/image', {id: 'X9Nus4OV0IjQ', size: 1025}, 400);
+					await get('folder/image', {id: 'QlVJFDlR', size: 1025}, 400);
 				});
 			});
 		});
 		describe('folder/artwork/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('folder/artwork/image', {id: 'g!Sv)yNRDtuas^y0a(!H'}, 401);
+					await getNotLoggedIn('folder/artwork/image', {id: 'Ejt4YvQtO[)D'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8497,40 +8497,40 @@ describe('Server', () => {
 					await get('folder/artwork/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('folder/artwork/image', {id: 'k6[qizdHc1PnNcdqj@04', format: ''}, 400);
+					await get('folder/artwork/image', {id: 'c6O1]MEZFC', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('folder/artwork/image', {id: 'z21P]PXS5ULYVwO1', format: 'invalid'}, 400);
+					await get('folder/artwork/image', {id: 'H4cths1WSA]Tj]bIA', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('folder/artwork/image', {id: 'gU3uri!g5', size: 'j)#L4qo4vc^'}, 400);
+					await get('folder/artwork/image', {id: 'MYR12s@*)a!N', size: 'xwV@tc34nUMu^'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('folder/artwork/image', {id: '0QuCVF', size: ''}, 400);
+					await get('folder/artwork/image', {id: 'jlWwX', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('folder/artwork/image', {id: 'SjpGw5Fy1bhdeDscR', size: true}, 400);
+					await get('folder/artwork/image', {id: 'UjsFZXAX9xp@5Hpg)', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('folder/artwork/image', {id: 'VM8c7UeJDB#$H[ztwU', size: 456.17}, 400);
+					await get('folder/artwork/image', {id: '!0zN$^9', size: 470.08}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('folder/artwork/image', {id: 'O0&w^h1v52Dj4l&', size: 15}, 400);
+					await get('folder/artwork/image', {id: ')N9pBII6$aZ!xW6IzX', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('folder/artwork/image', {id: '@SF2Ux[z0mOQ767jN', size: 1025}, 400);
+					await get('folder/artwork/image', {id: 'PW@RV!3n&Ma!no4#0gz', size: 1025}, 400);
 				});
 			});
 		});
 		describe('track/stream', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/stream', {id: '@oaOi]'}, 401);
+					await getNotLoggedIn('track/stream', {id: 'j]w$U'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('track/stream', {id: '@oaOi]'}, 401);
+					await getNoRights('track/stream', {id: 'j]w$U'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8538,34 +8538,34 @@ describe('Server', () => {
 					await get('track/stream', {id: ''}, 400);
 				});
 				it('"maxBitRate" set to "string"', async () => {
-					await get('track/stream', {id: 'OtzY4anEtIjXBt%c(', maxBitRate: '60gwsQs6g&A'}, 400);
+					await get('track/stream', {id: 'ZtLyY9QXnbf0@9Sl', maxBitRate: ']c#2hb'}, 400);
 				});
 				it('"maxBitRate" set to "empty string"', async () => {
-					await get('track/stream', {id: 'p@o^TU%l', maxBitRate: ''}, 400);
+					await get('track/stream', {id: 'WXQwKp8(f&9cWu3FJ', maxBitRate: ''}, 400);
 				});
 				it('"maxBitRate" set to "boolean"', async () => {
-					await get('track/stream', {id: 'sGBin2ibiN%keb', maxBitRate: true}, 400);
+					await get('track/stream', {id: 'D7Wsyl@dpZoeM]Brm', maxBitRate: true}, 400);
 				});
 				it('"maxBitRate" set to "float"', async () => {
-					await get('track/stream', {id: 'jt@nUFEfXDW6O^FdcL[', maxBitRate: 54.99}, 400);
+					await get('track/stream', {id: 'WFJnK!uE4i^s^RaZ[U', maxBitRate: 90.91}, 400);
 				});
 				it('"maxBitRate" set to "less than minimum 10"', async () => {
-					await get('track/stream', {id: 'aHk7uk*!dY4Cm6zK', maxBitRate: 9}, 400);
+					await get('track/stream', {id: '7!5rWAZiB9A', maxBitRate: 9}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('track/stream', {id: 'VQl)rM(OIr!U', format: 'invalid'}, 400);
+					await get('track/stream', {id: 'T]e^VUh*9jB', format: 'invalid'}, 400);
 				});
 			});
 		});
 		describe('track/download', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/download', {id: 'mN097F%]$26)CX48Sy'}, 401);
+					await getNotLoggedIn('track/download', {id: 'MZ0hP%VY(8kX6'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('track/download', {id: 'mN097F%]$26)CX48Sy'}, 401);
+					await getNoRights('track/download', {id: 'MZ0hP%VY(8kX6'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8573,14 +8573,14 @@ describe('Server', () => {
 					await get('track/download', {id: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('track/download', {id: 'r7xw)OJ(rZDr%Dc^L^kF', format: 'invalid'}, 400);
+					await get('track/download', {id: '#YJ52okcxGh', format: 'invalid'}, 400);
 				});
 			});
 		});
 		describe('track/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('track/image', {id: 'Il5XvGu[UCsibcFdf21'}, 401);
+					await getNotLoggedIn('track/image', {id: '*Lj)qHgMsc4(3['}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8588,40 +8588,40 @@ describe('Server', () => {
 					await get('track/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('track/image', {id: 'HxWvJaihOnxEiG7', format: ''}, 400);
+					await get('track/image', {id: 'pMO%R', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('track/image', {id: ']9#AYNTft', format: 'invalid'}, 400);
+					await get('track/image', {id: 'z1tXYyRzP@JV8rEIWk0f', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('track/image', {id: '7TJM&KZ%wLguqy^hgKC', size: 'us62o247D8&yaef(#w'}, 400);
+					await get('track/image', {id: 'H0gOAAS]NGADKsOt3Bu', size: '1ok44xZ8t'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('track/image', {id: '%p1!XcFp&iXw$s#NYBo', size: ''}, 400);
+					await get('track/image', {id: ')(tpELms0om3Q52Yz', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('track/image', {id: 'NxgGz$K#Y', size: true}, 400);
+					await get('track/image', {id: 'MIQ2gsI', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('track/image', {id: '[m[SeyZL#5$@x4n4]S1W', size: 672.87}, 400);
+					await get('track/image', {id: 'Mv)pc', size: 312.31}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('track/image', {id: '3xK1hN)Pex3Hr8YyoPe', size: 15}, 400);
+					await get('track/image', {id: 'QR6UHKVnXKqKF', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('track/image', {id: 'pZN@F)Hbw)q1', size: 1025}, 400);
+					await get('track/image', {id: 'oiWa#lZxli#w3', size: 1025}, 400);
 				});
 			});
 		});
 		describe('episode/stream', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/stream', {id: 'yDEqS9'}, 401);
+					await getNotLoggedIn('episode/stream', {id: '0FYmmfg[A4RLn7'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('episode/stream', {id: 'yDEqS9'}, 401);
+					await getNoRights('episode/stream', {id: '0FYmmfg[A4RLn7'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8629,34 +8629,34 @@ describe('Server', () => {
 					await get('episode/stream', {id: ''}, 400);
 				});
 				it('"maxBitRate" set to "string"', async () => {
-					await get('episode/stream', {id: 'dltuy', maxBitRate: 'vXfi2oL'}, 400);
+					await get('episode/stream', {id: ']XlIR4E!SJU', maxBitRate: 'FcbfYMNw^oYB!l1eW'}, 400);
 				});
 				it('"maxBitRate" set to "empty string"', async () => {
-					await get('episode/stream', {id: 'vGNFwIY)%OJiq4Rat)', maxBitRate: ''}, 400);
+					await get('episode/stream', {id: 'w&753n0ANwDD][R', maxBitRate: ''}, 400);
 				});
 				it('"maxBitRate" set to "boolean"', async () => {
-					await get('episode/stream', {id: 'uSqeXH16%CY^T!MP1KC', maxBitRate: true}, 400);
+					await get('episode/stream', {id: '@!tAzo#Y*T65@Oi6BT', maxBitRate: true}, 400);
 				});
 				it('"maxBitRate" set to "float"', async () => {
-					await get('episode/stream', {id: 'OM0X#1ycyv970', maxBitRate: 21.6}, 400);
+					await get('episode/stream', {id: '#dgZ(750)lN0To2EHQ9', maxBitRate: 15.18}, 400);
 				});
 				it('"maxBitRate" set to "less than minimum 10"', async () => {
-					await get('episode/stream', {id: 'd*WQuy96My(', maxBitRate: 9}, 400);
+					await get('episode/stream', {id: 'h3l&@VY#94C&%zR3Mnu', maxBitRate: 9}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('episode/stream', {id: 'm8TVO^Z(e', format: 'invalid'}, 400);
+					await get('episode/stream', {id: 'QyNuTj[S$if8L', format: 'invalid'}, 400);
 				});
 			});
 		});
 		describe('episode/download', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/download', {id: 'mmF*n1J'}, 401);
+					await getNotLoggedIn('episode/download', {id: 'wMQ3Zz'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('episode/download', {id: 'mmF*n1J'}, 401);
+					await getNoRights('episode/download', {id: 'wMQ3Zz'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8664,14 +8664,14 @@ describe('Server', () => {
 					await get('episode/download', {id: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('episode/download', {id: 'cikUsNG&3xB3DiiS', format: 'invalid'}, 400);
+					await get('episode/download', {id: '25@2zf7vt*fMM6', format: 'invalid'}, 400);
 				});
 			});
 		});
 		describe('episode/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('episode/image', {id: 'OcBl@B'}, 401);
+					await getNotLoggedIn('episode/image', {id: 'L2T)4Mt^biL(2'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8679,35 +8679,35 @@ describe('Server', () => {
 					await get('episode/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('episode/image', {id: 'E%9wf9FF%$p(Xx@i#P7', format: ''}, 400);
+					await get('episode/image', {id: 'ZDTrGY(4', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('episode/image', {id: 'qSAiQRyELm1mr', format: 'invalid'}, 400);
+					await get('episode/image', {id: '$VvZvHjetu5K', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('episode/image', {id: 'au]^I', size: 'n@Ssc'}, 400);
+					await get('episode/image', {id: '!0lsVJ', size: '#RiVM]W^@]gGTm2*@WCq'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('episode/image', {id: 'ttuqD1##zA', size: ''}, 400);
+					await get('episode/image', {id: 'NWnw#', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('episode/image', {id: 'MbJ7GUW9z@NwoD', size: true}, 400);
+					await get('episode/image', {id: 'oP&%^Z$LCHN]i', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('episode/image', {id: '%1GjJ3w#TvC', size: 814.03}, 400);
+					await get('episode/image', {id: 'dHQXYycEVR', size: 241.64}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('episode/image', {id: 'Q4ca7T', size: 15}, 400);
+					await get('episode/image', {id: 'g!^yz@$[gPQGHhz', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('episode/image', {id: 'IYc9psr', size: 1025}, 400);
+					await get('episode/image', {id: 'P7h9m(', size: 1025}, 400);
 				});
 			});
 		});
 		describe('podcast/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/image', {id: 'NBoAqWaA'}, 401);
+					await getNotLoggedIn('podcast/image', {id: '6W9g*@uImJFK(whEoQo'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8715,40 +8715,40 @@ describe('Server', () => {
 					await get('podcast/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('podcast/image', {id: 'w4Bj(M7YO3CWfyWPRI', format: ''}, 400);
+					await get('podcast/image', {id: 'l3e8A^tFzZHTTM73', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('podcast/image', {id: 'i85@XCce50U#cJqP)QgX', format: 'invalid'}, 400);
+					await get('podcast/image', {id: 'KDRMwN', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('podcast/image', {id: 'vuNtM$az6%hnO5e8PIUR', size: 'z$QEOr6b$7Ts'}, 400);
+					await get('podcast/image', {id: 'FoB8rAm', size: 'JKx!Rx[s'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('podcast/image', {id: 'BUPZ5vGn!QJa$N[Sa', size: ''}, 400);
+					await get('podcast/image', {id: 'hKoPpBh8#Fa&B', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('podcast/image', {id: '[CSCRs]wUB6KXuO(J5Z', size: true}, 400);
+					await get('podcast/image', {id: 'h4INTFsiwpNWI]@*[XD@', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('podcast/image', {id: 'v$sv9x]Xd#MLQQdlLj', size: 215.01}, 400);
+					await get('podcast/image', {id: 'RkYep', size: 487.09}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('podcast/image', {id: 'AGrJO6fqN1a', size: 15}, 400);
+					await get('podcast/image', {id: '3S)41HMTMN6vLKiRQA', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('podcast/image', {id: 'ZF0^lQ&Fze#HDwqKDo1V', size: 1025}, 400);
+					await get('podcast/image', {id: 'nG#lN$4!]', size: 1025}, 400);
 				});
 			});
 		});
 		describe('podcast/download', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('podcast/download', {id: '6c2[NrnBBu5E4l'}, 401);
+					await getNotLoggedIn('podcast/download', {id: '$!mL8f'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('podcast/download', {id: '6c2[NrnBBu5E4l'}, 401);
+					await getNoRights('podcast/download', {id: '$!mL8f'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8756,14 +8756,14 @@ describe('Server', () => {
 					await get('podcast/download', {id: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('podcast/download', {id: '717IV#m', format: 'invalid'}, 400);
+					await get('podcast/download', {id: 'RHU%7n^', format: 'invalid'}, 400);
 				});
 			});
 		});
 		describe('artist/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/image', {id: 'CFakHj6&$gR$gOhH6muU'}, 401);
+					await getNotLoggedIn('artist/image', {id: 'mdDU(JkNz#g'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8771,40 +8771,40 @@ describe('Server', () => {
 					await get('artist/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('artist/image', {id: 't(AtR', format: ''}, 400);
+					await get('artist/image', {id: 'RxPRMksno', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('artist/image', {id: 'bYXG(iWF1', format: 'invalid'}, 400);
+					await get('artist/image', {id: 'svzN2ZpR^(i[f]TF]DFp', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('artist/image', {id: 'Uy5kf@($XI9^gb', size: 'MsC8kco7[W*biBLAt'}, 400);
+					await get('artist/image', {id: ']@5n@@@)A8e', size: 'dUYo0R'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('artist/image', {id: '7j[vlp#wxMZ6IIgG!', size: ''}, 400);
+					await get('artist/image', {id: 'H90kZ]*hikniAy', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('artist/image', {id: '5YZ&mUPv*6', size: true}, 400);
+					await get('artist/image', {id: '5vz4bof', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('artist/image', {id: 'ddJKEW#6)Wm%yqI', size: 600.52}, 400);
+					await get('artist/image', {id: 'MY4Y03TmsUY9Q#nZ', size: 425.65}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('artist/image', {id: 'VyY1#dZQF', size: 15}, 400);
+					await get('artist/image', {id: '@XYr5b5', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('artist/image', {id: 'Rb#&!ohOymxJvNXf%Mmu', size: 1025}, 400);
+					await get('artist/image', {id: 'QM)sUptlx!x$W1^cNai', size: 1025}, 400);
 				});
 			});
 		});
 		describe('artist/download', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('artist/download', {id: 'i!wCQb^u$h!!*J$kmK'}, 401);
+					await getNotLoggedIn('artist/download', {id: 'U5OVPn'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('artist/download', {id: 'i!wCQb^u$h!!*J$kmK'}, 401);
+					await getNoRights('artist/download', {id: 'U5OVPn'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8812,14 +8812,14 @@ describe('Server', () => {
 					await get('artist/download', {id: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('artist/download', {id: 'M1$p[bmvBUsc', format: 'invalid'}, 400);
+					await get('artist/download', {id: 'vpz4sf7', format: 'invalid'}, 400);
 				});
 			});
 		});
 		describe('album/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/image', {id: 'k%V&%c'}, 401);
+					await getNotLoggedIn('album/image', {id: ']Dvv2'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8827,40 +8827,40 @@ describe('Server', () => {
 					await get('album/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('album/image', {id: '%IC*SrN#1!8$lW2TJ(b5', format: ''}, 400);
+					await get('album/image', {id: 'ERVJe0YM)0q', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('album/image', {id: 'dI]gnNL]ZX@', format: 'invalid'}, 400);
+					await get('album/image', {id: 'z0dJWMsJA^fa', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('album/image', {id: 'w^aJHH1f', size: 'oH%PB'}, 400);
+					await get('album/image', {id: 'x!#AGTpTnt@&]ULYh5kn', size: 'VG^xOGK)'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('album/image', {id: 'RL^NbUF!uhPyQ08]0)', size: ''}, 400);
+					await get('album/image', {id: 'Lionx(FJ', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('album/image', {id: 'Zm&Cz', size: true}, 400);
+					await get('album/image', {id: '7)P6Umq0AXozWpN*wP', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('album/image', {id: ']ZQU!Owotc#M', size: 167.08}, 400);
+					await get('album/image', {id: '0AY2TAgN5om8OupuzLm9', size: 813.7}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('album/image', {id: 'yu5]*t]', size: 15}, 400);
+					await get('album/image', {id: 'zx!C2RLMc', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('album/image', {id: 'eQY8!V44v$c&%mv1k5', size: 1025}, 400);
+					await get('album/image', {id: 'UF6P]BWcr1y5i', size: 1025}, 400);
 				});
 			});
 		});
 		describe('album/download', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('album/download', {id: '](ZIjP93N0vd9sr])1vH'}, 401);
+					await getNotLoggedIn('album/download', {id: 'sS3TYHUqTK8o5j9'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('album/download', {id: '](ZIjP93N0vd9sr])1vH'}, 401);
+					await getNoRights('album/download', {id: 'sS3TYHUqTK8o5j9'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8868,14 +8868,14 @@ describe('Server', () => {
 					await get('album/download', {id: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('album/download', {id: 'IpHP44b4tP*wZ%7d', format: 'invalid'}, 400);
+					await get('album/download', {id: 'f*7XW(7', format: 'invalid'}, 400);
 				});
 			});
 		});
 		describe('playlist/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('playlist/image', {id: 'Hqi]vXqOBZCM%Dim@'}, 401);
+					await getNotLoggedIn('playlist/image', {id: 'k!uydeS)d#ZvM$'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8883,40 +8883,40 @@ describe('Server', () => {
 					await get('playlist/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('playlist/image', {id: 'opgeU1W1', format: ''}, 400);
+					await get('playlist/image', {id: 'Rsr!I6w%dJ9z', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('playlist/image', {id: 'fYwKJ*D*', format: 'invalid'}, 400);
+					await get('playlist/image', {id: 'Chc^zUi48QiGMWub2', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('playlist/image', {id: 'gYzB2iYlCuJ5wnSvAw', size: 'pC1fZiAv*HewI[EbV()'}, 400);
+					await get('playlist/image', {id: '9BgX#zP[Vi)dS8I', size: 'zrjt$'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('playlist/image', {id: 'kV#GR62Z)!PaW7y', size: ''}, 400);
+					await get('playlist/image', {id: 'nByU2tBdN!V[i', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('playlist/image', {id: 'TE6nx%qwCn9yn9wYtYUc', size: true}, 400);
+					await get('playlist/image', {id: '#cNBATS5Bj*&', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('playlist/image', {id: 'h#gN8kIFvm2n3y3p', size: 651.67}, 400);
+					await get('playlist/image', {id: '5q7e5Zo)XiK', size: 193.89}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('playlist/image', {id: 'cPpZHpnFUb7bxh', size: 15}, 400);
+					await get('playlist/image', {id: 'j]ZEOAY3&7%l)ijyH]V', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('playlist/image', {id: ']!P9Qj!mG#33pb', size: 1025}, 400);
+					await get('playlist/image', {id: '@8igIU3jZrWC9J&G', size: 1025}, 400);
 				});
 			});
 		});
 		describe('playlist/download', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('playlist/download', {id: 'yOrRUzOc'}, 401);
+					await getNotLoggedIn('playlist/download', {id: '0tg[&pSQG'}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('playlist/download', {id: 'yOrRUzOc'}, 401);
+					await getNoRights('playlist/download', {id: '0tg[&pSQG'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8924,14 +8924,14 @@ describe('Server', () => {
 					await get('playlist/download', {id: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('playlist/download', {id: 'ycKe7', format: 'invalid'}, 400);
+					await get('playlist/download', {id: 'Tm[qUQE294RY9s', format: 'invalid'}, 400);
 				});
 			});
 		});
 		describe('user/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('user/image', {id: 'ByK3d'}, 401);
+					await getNotLoggedIn('user/image', {id: '&weou'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8939,35 +8939,35 @@ describe('Server', () => {
 					await get('user/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('user/image', {id: 'zm)Z1boX', format: ''}, 400);
+					await get('user/image', {id: '4(9TFI', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('user/image', {id: 'eynx4Eclo', format: 'invalid'}, 400);
+					await get('user/image', {id: 'x6m!$8LJy*o', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('user/image', {id: 'V@kSlQ5$!AR[8S8[(DxQ', size: 'wY)!KOnQoO(5T'}, 400);
+					await get('user/image', {id: 'MkCQWSkGHeF5', size: '5^u@W7P'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('user/image', {id: 'pIZvahKr79!jF34u0ERj', size: ''}, 400);
+					await get('user/image', {id: '*096&O@qYNXAu', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('user/image', {id: '[JlmrMh9Qo', size: true}, 400);
+					await get('user/image', {id: 'd9PtAxEYabUSCU', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('user/image', {id: '^W%J!Yd0ySra1x*ki$', size: 748.03}, 400);
+					await get('user/image', {id: 'CV$H2@sAwUu^', size: 384.74}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('user/image', {id: '^rdjBOhc8Yvl(N', size: 15}, 400);
+					await get('user/image', {id: 'f$ul7cUtiCB)CYtq]#pk', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('user/image', {id: 'z$gQb&bOf5P1q', size: 1025}, 400);
+					await get('user/image', {id: 'Y[NJ[BXA]Vg', size: 1025}, 400);
 				});
 			});
 		});
 		describe('root/image', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('root/image', {id: ']vIfxTE#P'}, 401);
+					await getNotLoggedIn('root/image', {id: '(XVRbWV'}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
@@ -8975,238 +8975,238 @@ describe('Server', () => {
 					await get('root/image', {id: ''}, 400);
 				});
 				it('"format" set to "empty string"', async () => {
-					await get('root/image', {id: '4mv$Pw*oZErt', format: ''}, 400);
+					await get('root/image', {id: '(9CNLoR7', format: ''}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('root/image', {id: 'zx]D)*KbZEx', format: 'invalid'}, 400);
+					await get('root/image', {id: '@Rd4!zhUK7V7X70W*', format: 'invalid'}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('root/image', {id: 'Plcuv5K0V4vtLB8$', size: '[]5SDxLyAN4W'}, 400);
+					await get('root/image', {id: '$T3Z[&Z$KC&', size: 'vjipGv^Y7'}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('root/image', {id: 'TxvoUkvDMkFSe(zNMh', size: ''}, 400);
+					await get('root/image', {id: 'os!HDXN1', size: ''}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('root/image', {id: 'Q@f2jcPSR9E', size: true}, 400);
+					await get('root/image', {id: 'QDOUObm#', size: true}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('root/image', {id: 'HylwVBxGoyotJKq9', size: 745.26}, 400);
+					await get('root/image', {id: 'nI9&$GbkZV#8pr', size: 142.4}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('root/image', {id: 'aOEd*RDH5jK5&2At3b', size: 15}, 400);
+					await get('root/image', {id: 'vCUHN8FC$', size: 15}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('root/image', {id: '7fihF!puUV6Sth!8T3fl', size: 1025}, 400);
+					await get('root/image', {id: '9C0$#lFT', size: 1025}, 400);
 				});
 			});
 		});
 		describe('image/{id}-{size}.{format}', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('image/tnftQqS-636.tiff', {}, 401);
+					await getNotLoggedIn('image/d2GSRgz%5BRLh0-212.jpeg', {}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"format" set to "empty string"', async () => {
-					await get('image/aL*E722-71.', {}, 400);
+					await get('image/FBVEjv1q-320.', {}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('image/5fAbeOngj-829.invalid', {}, 400);
+					await get('image/%40NExjdp%23%25Myh5m!NB%25f-1010.invalid', {}, 400);
 				});
 				it('"size" set to "string"', async () => {
-					await get('image/aL%26c)GA%40Cs-VcgwCAiT%40.png', {}, 400);
+					await get('image/1KB!rTAsd%26ZWf-II6gg%234%403WH17Y%5B%26%40h.png', {}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('image/%235%5EfN%40%25jM-.jpg', {}, 400);
+					await get('image/DbjD%23Q0MyBAq-.tiff', {}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('image/X3%40%23%24Em5X1dm-true.jpg', {}, 400);
+					await get('image/oZtMuVWAN4vMvQ2ih-true.tiff', {}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('image/g%238fGl%25V%5EPi4%24MmgcV8O-951.95.jpg', {}, 400);
+					await get('image/Li%5BL99C%5BEfO-623.8.jpg', {}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('image/JO%23Lde04*5j%25I(HjrD-15.png', {}, 400);
+					await get('image/fo3EUf%26mWhY-15.jpeg', {}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('image/ujAcRxskkl%5BOI-1025.tiff', {}, 400);
+					await get('image/aoPoN-1025.jpg', {}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('image/-666.png', {}, 400);
+					await get('image/-196.jpg', {}, 400);
 				});
 			});
 		});
 		describe('image/{id}-{size}', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('image/xFszb%24hx1)-476', {}, 401);
+					await getNotLoggedIn('image/%24O58lklVP*VkXvhPRa-108', {}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"size" set to "string"', async () => {
-					await get('image/c%23aT%40y-h%5ByuZS3rm', {}, 400);
+					await get('image/A4%5DbVx7v%26eSYgV0N6!Z%24-%5DfVZ1Ct(f(4', {}, 400);
 				});
 				it('"size" set to "empty string"', async () => {
-					await get('image/wf)cB%5B-', {}, 400);
+					await get('image/%40%40ry(W%5D4y%25ENBVt4%5Dnk-', {}, 400);
 				});
 				it('"size" set to "boolean"', async () => {
-					await get('image/7*%24e%5DMO5C-true', {}, 400);
+					await get('image/XrI7%25jyw6vnP-true', {}, 400);
 				});
 				it('"size" set to "float"', async () => {
-					await get('image/2dhLDy)*-947.32', {}, 400);
+					await get('image/eF57JPd-621.08', {}, 400);
 				});
 				it('"size" set to "less than minimum 16"', async () => {
-					await get('image/w%23)GQ!xYH%23zY5%5EwaQ-15', {}, 400);
+					await get('image/sE%23Eu-15', {}, 400);
 				});
 				it('"size" set to "more than minimum 1024"', async () => {
-					await get('image/Ieqt7!ZVS)L%23YA%40%5E-1025', {}, 400);
+					await get('image/NHF!Ew!d*e-1025', {}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('image/-674', {}, 400);
+					await get('image/-631', {}, 400);
 				});
 			});
 		});
 		describe('image/{id}.{format}', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('image/P3JD0EkIY%40jm.jpeg', {}, 401);
+					await getNotLoggedIn('image/H(Lx%40PX.jpeg', {}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"format" set to "empty string"', async () => {
-					await get('image/rWy(%404Ckgr6s.', {}, 400);
+					await get('image/o!ekAefBUcD!H7Zqr.', {}, 400);
 				});
 				it('"format" set to "invalid enum"', async () => {
-					await get('image/j4pKR3ZkA4h.invalid', {}, 400);
+					await get('image/%5E4j%5DJfg%23A.invalid', {}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('image/.png', {}, 400);
+					await get('image/.jpeg', {}, 400);
 				});
 			});
 		});
 		describe('image/{id}', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('image/sIOTjsX5bIg', {}, 401);
+					await getNotLoggedIn('image/dKChUm**8l)7kk%26B%26fp', {}, 401);
 				});
 			});
 		});
 		describe('stream/{id}.{format}', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('stream/%23%40bQ)z.flv', {}, 401);
+					await getNotLoggedIn('stream/b95P(vk.oga', {}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('stream/%23%40bQ)z.flv', {}, 401);
+					await getNoRights('stream/b95P(vk.oga', {}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"format" set to "invalid enum"', async () => {
-					await get('stream/ukP%5BuL%25NKV%24)A%23z.invalid', {}, 400);
+					await get('stream/2VqkpB1d.invalid', {}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('stream/.wav', {}, 400);
+					await get('stream/.ogg', {}, 400);
 				});
 			});
 		});
 		describe('stream/{id}', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('stream/19ntfo', {}, 401);
+					await getNotLoggedIn('stream/K4s2%5ECs5%26Z', {}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('stream/19ntfo', {}, 401);
+					await getNoRights('stream/K4s2%5ECs5%26Z', {}, 401);
 				});
 			});
 		});
 		describe('waveform/{id}.{format}', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('waveform/%25R%40s3%23XdGM%26nq.dat', {}, 401);
+					await getNotLoggedIn('waveform/iVkrMVV(cDj%40pfVQjBOG.svg', {}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('waveform/%25R%40s3%23XdGM%26nq.dat', {}, 401);
+					await getNoRights('waveform/iVkrMVV(cDj%40pfVQjBOG.svg', {}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"format" set to "invalid enum"', async () => {
-					await get('waveform/NDQ(u%25HgfM3DWQ0.invalid', {}, 400);
+					await get('waveform/9XAcW44I.invalid', {}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('waveform/.dat', {}, 400);
+					await get('waveform/.json', {}, 400);
 				});
 			});
 		});
 		describe('waveform_svg/{id}-{width}.svg', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('waveform_svg/*h%5DY2S*1-3981.svg', {}, 401);
+					await getNotLoggedIn('waveform_svg/ZnDoDLMAW-1185.svg', {}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('waveform_svg/*h%5DY2S*1-3981.svg', {}, 401);
+					await getNoRights('waveform_svg/ZnDoDLMAW-1185.svg', {}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"width" set to "string"', async () => {
-					await get('waveform_svg/Z*1(wsd)D-DGgCc3z%5EOCX7AZ2%244Gn8.svg', {}, 400);
+					await get('waveform_svg/x%5B9pLOgONnvCgI%5EwIunJ-5N(Fd%25%24U.svg', {}, 400);
 				});
 				it('"width" set to "empty string"', async () => {
-					await get('waveform_svg/A5e%25(hCZrpUT-.svg', {}, 400);
+					await get('waveform_svg/8NU!SwlDnw!%5D%25w-.svg', {}, 400);
 				});
 				it('"width" set to "boolean"', async () => {
-					await get('waveform_svg/eTJxBZ-true.svg', {}, 400);
+					await get('waveform_svg/AXAHI!cJd-true.svg', {}, 400);
 				});
 				it('"width" set to "float"', async () => {
-					await get('waveform_svg/STFVvJ%26uGc9-3970.78.svg', {}, 400);
+					await get('waveform_svg/2pSiZf5a49oP%5DI-4306.79.svg', {}, 400);
 				});
 				it('"width" set to "less than minimum 1"', async () => {
-					await get('waveform_svg/JwtvdEvoMignE4V7bk-0.svg', {}, 400);
+					await get('waveform_svg/0!Mf%2593!-0.svg', {}, 400);
 				});
 				it('"width" set to "more than minimum 6000"', async () => {
-					await get('waveform_svg/X7MoG7hH%5DmDTrK%24%26-6001.svg', {}, 400);
+					await get('waveform_svg/L%40F49sH5c-6001.svg', {}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('waveform_svg/-594.svg', {}, 400);
+					await get('waveform_svg/-2143.svg', {}, 400);
 				});
 			});
 		});
 		describe('download/{id}', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('download/m1)%23z%25iBv', {}, 401);
+					await getNotLoggedIn('download/V2B8zuahV7%24', {}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('download/m1)%23z%25iBv', {}, 401);
+					await getNoRights('download/V2B8zuahV7%24', {}, 401);
 				});
 			});
 		});
 		describe('download/{id}.{format}', () => {
 			describe('should fail without login', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNotLoggedIn('download/%26RjI8jBuV%5Ba)JR%40s0rS.tar', {}, 401);
+					await getNotLoggedIn('download/p9u%248%5EA59B0Yg.tar', {}, 401);
 				});
 			});
 			describe('should fail without required rights', () => {
 				it('should respond with 401 Unauth', async () => {
-					await getNoRights('download/%26RjI8jBuV%5Ba)JR%40s0rS.tar', {}, 401);
+					await getNoRights('download/p9u%248%5EA59B0Yg.tar', {}, 401);
 				});
 			});
 			describe('should respond with 400 invalid/missing parameter', () => {
 				it('"format" set to "invalid enum"', async () => {
-					await get('download/Jrhc%25m2fOX(QyerV8C.invalid', {}, 400);
+					await get('download/l4B*maz%24aY%23DM.invalid', {}, 400);
 				});
 				it('"id" set to "empty string"', async () => {
-					await get('download/.tar', {}, 400);
+					await get('download/.zip', {}, 400);
 				});
 			});
 		});
