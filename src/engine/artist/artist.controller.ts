@@ -49,7 +49,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 		if (res === 0) {
 			res = (a.grouping !== undefined && b.grouping !== undefined) ?
 				(b.grouping || '').localeCompare(a.grouping || '') :
-				((a.grouping === undefined) ? -1 : 1);
+				((a.grouping === undefined) ? 1 : -1);
 		}
 		if (res === 0) {
 			res = (b.year || 0) - (a.year || 0);

@@ -190,6 +190,7 @@ export class MetaMerger {
 			metaStatBuilder.statID('mbArtistID', track.tag.mbAlbumArtistID || track.tag.mbArtistID);
 			metaStatBuilder.statID('mbAlbumID', track.tag.mbAlbumID);
 			metaStatBuilder.statSlugValue('genre', track.tag.genre);
+			metaStatBuilder.statSlugValue('grouping', track.tag.grouping);
 			metaStatBuilder.statNumber('year', track.tag.year);
 			duration += (track.media.duration || 0);
 			metaStatBuilder.statSlugValue('name', getAlbumName(trackInfo));
@@ -200,6 +201,7 @@ export class MetaMerger {
 		album.folderIDs = [...folderIDs];
 		album.artist = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
 		album.name = metaStatBuilder.mostUsed('name') || cUnknownAlbum;
+		album.grouping = metaStatBuilder.mostUsed('grouping');
 		album.mbArtistID = metaStatBuilder.mostUsed('mbArtistID');
 		album.mbAlbumID = metaStatBuilder.mostUsed('mbAlbumID');
 		album.genre = metaStatBuilder.mostUsed('genre');
