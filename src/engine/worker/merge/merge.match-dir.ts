@@ -45,9 +45,9 @@ export class MatchDirMerge {
 		}
 	}
 
-	async merge(dir: MatchDir, rootID: string, rebuildTag: (dir: MatchDir) => boolean, changes: Changes): Promise<void> {
-		const mergeMatchDir = await this.folderBuilder.buildMerge(dir, changes);
-		await this.tagBuilder.buildMergeTags(mergeMatchDir, rebuildTag);
+	async merge(dir: MatchDir, rootID: string, rebuildDirTag: (dir: MatchDir) => boolean, forceTrackMetaRefresh: boolean, changes: Changes): Promise<void> {
+		const mergeMatchDir = await this.folderBuilder.buildMerge(dir, changes, forceTrackMetaRefresh);
+		await this.tagBuilder.buildMergeTags(mergeMatchDir, rebuildDirTag);
 		await MatchDirMerge.mergeRecursive(mergeMatchDir, changes);
 	}
 

@@ -80,12 +80,12 @@ export class MatchDirMergeBuilder {
 		};
 	}
 
-	private async buildMergeTrack(file: MatchFile, folder: Folder, changes: Changes): Promise<void> {
+	private async buildMergeTrack(file: MatchFile, folder: Folder, changes: Changes, forceTrackMetaRefresh: boolean): Promise<void> {
 		if (!file.track) {
 			file.track = await this.buildTrack(file, folder);
 			file.track.id = await this.store.trackStore.getNewId();
 			changes.newTracks.push(file.track);
-		} else if (MatchDirMergeBuilder.trackHasChanged(file)) {
+		} else if (forceTrackMetaRefresh || MatchDirMergeBuilder.trackHasChanged(file)) {
 			const oldTrack = file.track;
 			file.track = await this.buildTrack(file, folder);
 			file.track.id = oldTrack.id;
@@ -93,18 +93,18 @@ export class MatchDirMergeBuilder {
 		}
 	}
 
-	async buildMerge(dir: MatchDir, changes: Changes): Promise<MergeMatchDir> {
+	async buildMerge(dir: MatchDir, changes: Changes, forceTrackMetaRefresh: boolean): Promise<MergeMatchDir> {
 		if (!dir.folder) {
 			dir.folder = MatchDirMergeBuilder.buildFolder(dir);
 			dir.folder.id = await this.store.trackStore.getNewId();
 			changes.newFolders.push(dir.folder);
 		}
 		for (const sub of dir.directories) {
-			await this.buildMerge(sub, changes);
+			await this.buildMerge(sub, changes, forceTrackMetaRefresh);
 		}
 		for (const file of dir.files) {
 			if (file.type === FileTyp.AUDIO && dir.folder) {
-				await this.buildMergeTrack(file, dir.folder, changes);
+				await this.buildMergeTrack(file, dir.folder, changes, forceTrackMetaRefresh);
 			}
 		}
 		return dir as MergeMatchDir;

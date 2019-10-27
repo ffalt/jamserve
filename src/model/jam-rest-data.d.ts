@@ -395,7 +395,7 @@ export declare namespace Jam {
 		created: number;
 		genre?: string;
 		year?: number;
-		albumNr?: number;
+		grouping?: string;
 		musicbrainz?: {
 			artistID?: string;
 			albumID?: string;

@@ -143,7 +143,7 @@ const typeTrackTag = {
 		mbRecordingID: typeKey,
 		mbAlbumStatus: typeKey,
 		mbReleaseCountry: typeKey,
-		seriesNr: typeInt,
+		grouping: typeKey,
 		chapters: typeTrackTagChapter
 	}
 };
@@ -185,7 +185,7 @@ const typeAlbum = {
 		trackIDs: typeKey,
 		folderIDs: typeKey,
 		albumType: typeKey,
-		albumNr: typeInt,
+		grouping: typeKey,
 		artistID: typeKey,
 		artist: typeKey,
 		genre: typeKey,
