@@ -146,7 +146,7 @@ export class WorkerService {
 		}
 		const dbMatcher = new MatchDirBuilderDB(this.store);
 		const {rootMatch, changedDirs} = await dbMatcher.build(folderIDs, trackIDs);
-		await this.changes.mergeMatch(root, rootMatch, dir => changedDirs.includes(dir), changes);
+		await this.changes.mergeMatch(root, rootMatch, dir => changedDirs.includes(dir), false, changes);
 	}
 
 	// root
@@ -156,7 +156,7 @@ export class WorkerService {
 		const {rootMatch, removedFolders, removedTracks} = await this.rootWorker.scan(root);
 		changes.removedFolders = removedFolders;
 		changes.removedTracks = removedTracks;
-		await this.changes.mergeMatch(root, rootMatch, () => true, changes);
+		await this.changes.mergeMatch(root, rootMatch, () => true, parameters.forceMetaRefresh, changes);
 		return this.changes.finish(changes, root.id, parameters.forceMetaRefresh);
 	}
 
@@ -167,7 +167,7 @@ export class WorkerService {
 		const {rootMatch, removedFolders, removedTracks} = await this.rootWorker.scan(root);
 		changes.removedFolders = removedFolders;
 		changes.removedTracks = removedTracks;
-		await this.changes.mergeMatch(root, rootMatch, () => true, changes);
+		await this.changes.mergeMatch(root, rootMatch, () => true, false, changes);
 		return this.changes.finish(changes, root.id, forceRefreshMeta);
 	}
 

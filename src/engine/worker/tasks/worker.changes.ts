@@ -17,6 +17,7 @@ export class ChangesWorker {
 	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService, public settings: Jam.AdminSettingsLibrary) {
 
 	}
+
 	private emptyChanges(): Changes {
 		const changes: Changes = {
 			newArtists: [],
@@ -96,9 +97,9 @@ export class ChangesWorker {
 		await this.store.artistStore.upsert(changes.updateArtists);
 	}
 
-	async mergeMatch(root: Root, rootMatch: MatchDir, rebuildTag: (dir: MatchDir) => boolean, changes: Changes): Promise<void> {
+	async mergeMatch(root: Root, rootMatch: MatchDir, rebuildDirTag: (dir: MatchDir) => boolean, forceTrackMetaRefresh: boolean, changes: Changes): Promise<void> {
 		const merger = new MatchDirMerge(this.audioModule, this.imageModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-		await merger.merge(rootMatch, root.id, rebuildTag, changes);
+		await merger.merge(rootMatch, root.id, rebuildDirTag, forceTrackMetaRefresh, changes);
 	}
 
 	async start(rootID: string): Promise<{ changes: Changes, root: Root }> {
