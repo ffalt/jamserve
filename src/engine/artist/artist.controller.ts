@@ -44,11 +44,20 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 		super(artistService, stateService, imageService, downloadService);
 	}
 
+	static sortGrouping(a: string, b: string): number {
+		const aNr = Number(a);
+		const bNr = Number(b);
+		if (isNaN(aNr) || isNaN(bNr)) {
+			return (a || '').localeCompare(b || '');
+		}
+		return aNr - bNr;
+	}
+
 	static sortArtistAlbums(a: Album, b: Album): number {
 		let res = a.albumType.localeCompare(b.albumType);
 		if (res === 0) {
 			res = (a.grouping !== undefined && b.grouping !== undefined) ?
-				(b.grouping || '').localeCompare(a.grouping || '') :
+				ArtistController.sortGrouping(a.grouping, b.grouping) :
 				((a.grouping === undefined) ? 1 : -1);
 		}
 		if (res === 0) {
