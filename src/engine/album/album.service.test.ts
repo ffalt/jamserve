@@ -6,19 +6,19 @@ import {mockImage} from '../../modules/image/image.module.spec';
 import {testService} from '../base/base.service.spec';
 import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
-import {TrackStore} from '../track/track.store';
+import {TrackService} from '../track/track.service';
 import {AlbumService} from './album.service';
 
 describe('AlbumService', () => {
 	let albumService: AlbumService;
 	let folderService: FolderService;
-	let trackStore: TrackStore;
+	let trackService: TrackService;
 	testService({mockData: true},
-		async (store, imageModuleTest) => {
-			trackStore = store.trackStore;
+		async (store, imageModuleTest, audioModuleTest) => {
 			const stateService = new StateService(store.stateStore);
 			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
-			albumService = new AlbumService(store.albumStore, store.trackStore, folderService, stateService);
+			trackService = new TrackService(store.trackStore, folderService, audioModuleTest, imageModuleTest.imageModule, stateService);
+			albumService = new AlbumService(store.albumStore, trackService, folderService, stateService);
 		},
 		() => {
 			describe('getAlbumFolder', () => {
