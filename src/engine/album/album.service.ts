@@ -1,16 +1,16 @@
-import {FolderTypesAlbum} from '../../model/jam-types';
+import {AlbumType, FolderTypesAlbum} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {BaseListService} from '../base/dbobject-list.service';
 import {Folder} from '../folder/folder.model';
 import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
-import {TrackStore} from '../track/track.store';
+import {TrackService} from '../track/track.service';
 import {Album} from './album.model';
 import {AlbumStore, SearchQueryAlbum} from './album.store';
 
 export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 
-	constructor(public albumStore: AlbumStore, private trackStore: TrackStore, private folderService: FolderService, stateService: StateService) {
+	constructor(public albumStore: AlbumStore, private trackService: TrackService, private folderService: FolderService, stateService: StateService) {
 		super(albumStore, stateService);
 	}
 
@@ -55,6 +55,12 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 	}
 
 	async getAlbumImage(album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+		if (album.albumType === AlbumType.series && album.trackIDs.length === 1) {
+			const track = await this.trackService.trackStore.byId(album.trackIDs[0]);
+			if (track) {
+				return this.trackService.getTrackImage(track, size, format);
+			}
+		}
 		const folder = await this.getAlbumFolder(album);
 		if (folder) {
 			return this.folderService.getFolderImage(folder, size, format);
