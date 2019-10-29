@@ -3,7 +3,7 @@ import path from 'path';
 import {ArtworkImageType, FolderTypeImageName} from '../../../model/jam-types';
 import {ImageModule} from '../../../modules/image/image.module';
 import {generateArtworkId} from '../../../utils/artwork-id';
-import {containsFolderSystemChars, fileDeleteIfExists, fileExt, replaceFolderSystemChars} from '../../../utils/fs-utils';
+import {containsFolderSystemChars, fileDeleteIfExists, fileExt, fileSuffix, replaceFolderSystemChars} from '../../../utils/fs-utils';
 import {artWorkImageNameToType} from '../../folder/folder.format';
 import {Artwork, Folder} from '../../folder/folder.model';
 import {Store} from '../../store/store';
@@ -65,14 +65,18 @@ export class ArtworkWorker {
 			return Promise.reject(Error(`Folder ${folderID} not found`));
 		}
 		const name = FolderTypeImageName[folder.tag.type];
-		const imageext = fileExt(artworkFilename);
-		if (imageext.length === 0) {
-			return Promise.reject(Error('Invalid Image Filename'));
+		let suffix = fileSuffix(artworkFilename);
+		if (suffix.length === 0) {
+			const info = await this.imageModule.getImageInfo(artworkFilename);
+			suffix = info.format;
 		}
-		let dest = name + imageext;
+		if (!suffix || suffix.length === 0) {
+			return Promise.reject(Error('Image Format not known'));
+		}
+		let dest = `${name}.${suffix}`;
 		let nr = 2;
 		while (await fse.pathExists(path.join(folder.path, dest))) {
-			dest = `${name}-${nr}${imageext}`;
+			dest = `${name}-${nr}.${suffix}`;
 			nr++;
 		}
 		const destFile = path.join(folder.path, dest);
