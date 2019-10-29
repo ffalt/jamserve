@@ -152,10 +152,12 @@ export class MetaMerger {
 		// filter out updated tracks which are no longer part of the album
 		const removedFromAlbum = updateTracks.filter(t => (t.oldTrack.albumID === album.id && t.track.albumID !== album.id)).map(t => t.track.id);
 		trackIDs = trackIDs.filter(t => !removedFromAlbum.includes(t));
-		// rest trackIDs are untouched tracks
 		// get all new and updated tracks which are part of the album
 		const refreshedTracks: Array<MetaMergeTrackInfo> = (updateTracks.filter(t => t.track && t.track.albumID === album.id) as Array<MetaMergeTrackInfo>)
 			.concat(newTracks.filter(t => t.track.albumID === album.id));
+		const refreshIDs = refreshedTracks.map(t => t.track.id);
+		trackIDs = trackIDs.filter(t => !refreshIDs.includes(t));
+		// unchanged tracks
 		const tracks = await this.store.trackStore.byIds(trackIDs);
 		for (const track of tracks) {
 			const folder = await this.cache.getFolderByID(track.parentID, changes);
