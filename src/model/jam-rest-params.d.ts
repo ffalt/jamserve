@@ -439,6 +439,9 @@ export declare namespace JamParameters {
 	export interface ArtistTracks extends IDs, IncludesTrack, Paginate {
 	}
 
+	export interface ArtistAlbums extends IDs, IncludesAlbum, Paginate {
+	}
+
 	export interface AlbumTracks extends IDs, IncludesTrack, Paginate {
 	}
 

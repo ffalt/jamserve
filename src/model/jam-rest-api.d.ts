@@ -653,6 +653,14 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
+		 * artist: get albums of an artist by artist id
+		 */
+		'artist/albums'?: {
+			params: JamParameters.ArtistAlbums;
+			result: Jam.AlbumList;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
 		 * artist: get external artist description by id
 		 */
 		'artist/info'?: {

@@ -184,6 +184,21 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 		};
 	}
 
+	async albums(req: JamRequest<JamParameters.ArtistAlbums>): Promise<ListResult<Jam.Album>> {
+		const artists = await this.byIDs(req.query.ids);
+		let albumIDs: Array<string> = [];
+		artists.forEach(artist => {
+			albumIDs = albumIDs.concat(artist.albumIDs);
+		});
+		const list = paginate(albumIDs, req.query.amount, req.query.offset);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.albumController.prepareListByIDs(list.items, req.query, req.user, ArtistController.sortArtistAlbums)
+		};
+	}
+
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
 		const artist = await this.byID(req.query.id);
 		return {info: await this.metaDataService.extInfo.byArtist(artist)};

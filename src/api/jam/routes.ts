@@ -395,6 +395,11 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.TrackList = await api.artistController.tracks(options);
 		ApiResponder.data(req, res, result);
 	});
+	register.get('/artist/albums', async (req, res) => {
+		const options: JamRequest<JamParameters.ArtistAlbums> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.AlbumList = await api.artistController.albums(options);
+		ApiResponder.data(req, res, result);
+	});
 	register.get('/artist/info', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Info = await api.artistController.info(options);
