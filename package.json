@@ -134,7 +134,7 @@
     "nodemon": "1.19.4",
     "redoc-cli": "0.9.2",
     "rimraf": "3.0.0",
-    "source-map-support": "0.5.13",
+    "source-map-support": "0.5.16",
     "supertest": "4.0.2",
     "ts-jest": "24.1.0",
     "ts-loader": "6.2.1",
