@@ -143,7 +143,7 @@
     "typescript": "3.6.4",
     "typescript-json-schema": "0.40.0",
     "webpack": "4.41.2",
-    "webpack-cli": "3.3.9",
+    "webpack-cli": "3.3.10",
     "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-node-externals": "1.7.2"
   },
