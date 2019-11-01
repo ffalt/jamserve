@@ -130,7 +130,7 @@
     "deplokay": "0.0.9",
     "jest": "24.9.0",
     "mustache": "3.1.0",
-    "nock": "11.6.0",
+    "nock": "11.7.0",
     "nodemon": "1.19.4",
     "redoc-cli": "0.9.2",
     "rimraf": "3.0.0",
