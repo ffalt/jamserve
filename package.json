@@ -112,7 +112,7 @@
     "@types/node": "12.12.5",
     "@types/on-finished": "2.3.1",
     "@types/passport": "1.0.1",
-    "@types/passport-jwt": "3.0.2",
+    "@types/passport-jwt": "3.0.3",
     "@types/passport-local": "1.0.33",
     "@types/request": "2.48.3",
     "@types/rimraf": "2.0.3",
