@@ -12,7 +12,7 @@ describe('NowPlayingService', () => {
 	const user = mockUser();
 	user.id = 'nowPlayingUserID1';
 	testService({mockData: false},
-		async (store, imageModuleTest) => {
+		async store => {
 			stateService = new StateService(store.stateStore);
 			nowPlayingService = new NowPlayingService(stateService);
 		},

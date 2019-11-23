@@ -5,7 +5,7 @@ import {StateService} from './state.service';
 describe('StateService', () => {
 	let stateService: StateService;
 	testService({mockData: false},
-		async (store, imageModuleTest) => {
+		async store => {
 			stateService = new StateService(store.stateStore);
 		},
 		() => {

@@ -12,6 +12,7 @@ import {ChangesWorker} from './tasks/worker.changes';
 import {FolderWorker} from './tasks/worker.folder';
 import {RootWorker} from './tasks/worker.root';
 import {TrackWorker} from './tasks/worker.track';
+import {StreamService} from '../stream/stream.service';
 
 export interface WorkerRequestParameters {
 	rootID: string;
@@ -127,12 +128,12 @@ export class WorkerService {
 	public rootWorker: RootWorker;
 	private changes: ChangesWorker;
 
-	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService) {
+	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule) {
 		this.artworkWorker = new ArtworkWorker(store, imageModule);
 		this.trackWorker = new TrackWorker(store, imageModule, audioModule);
 		this.folderWorker = new FolderWorker(store);
 		this.rootWorker = new RootWorker(store);
-		this.changes = new ChangesWorker(store, audioModule, imageModule, waveformService, this.settings);
+		this.changes = new ChangesWorker(store, audioModule, imageModule, this.settings);
 	}
 
 	public setSettings(settings: Jam.AdminSettingsLibrary): void {

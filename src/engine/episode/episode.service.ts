@@ -149,16 +149,15 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 
 	async getEpisodeImage(episode: Episode, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (episode.tag && episode.tag.nrTagImages && episode.path) {
-			const thumbnail = this.imageModule.buildThumbnailFilenamePath(episode.id, size, format);
-			if (await fse.pathExists(thumbnail)) {
-				return {file: {filename: thumbnail, name: path.basename(thumbnail)}};
+			const result = await this.imageModule.getExisting(episode.id, size, format);
+			if (result) {
+				return result;
 			}
 			const buffer = await this.audioModule.extractTagImage(episode.path);
 			if (buffer) {
 				return this.imageModule.getBuffer(episode.id, buffer, size, format);
 			}
 		}
-		return;
 	}
 
 }

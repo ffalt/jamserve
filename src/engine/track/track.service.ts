@@ -46,9 +46,9 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 
 	async getTrackImage(track: Track, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (track.tag && track.tag.nrTagImages) {
-			const thumbnail = this.imageModule.buildThumbnailFilenamePath(track.id, size, format);
-			if (await fse.pathExists(thumbnail)) {
-				return {file: {filename: thumbnail, name: path.basename(thumbnail)}};
+			const result = await this.imageModule.getExisting(track.id, size, format);
+			if (result) {
+				return result;
 			}
 			const buffer = await this.audioModule.extractTagImage(path.join(track.path, track.name));
 			if (buffer) {

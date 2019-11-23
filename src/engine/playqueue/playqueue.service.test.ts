@@ -4,7 +4,7 @@ import {PlayQueueService} from './playqueue.service';
 describe('PlayQueueService', () => {
 	let playQueueService: PlayQueueService;
 	testService({mockData: false},
-		async (store, imageModuleTest) => {
+		async store => {
 			playQueueService = new PlayQueueService(store.playQueueStore);
 		},
 		() => {

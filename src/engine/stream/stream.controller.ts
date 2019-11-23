@@ -23,13 +23,13 @@ export class StreamController {
 	}
 
 	async streamTrack(track: Track, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
-		const result = await this.streamService.streamTrack(track, format, maxBitRate, false, user);
+		const result = await this.streamService.streamTrack(track, format, maxBitRate, user);
 		this.nowPlayingService.reportTrack(track, user).catch(e => log.error(e)); // do not wait
 		return result;
 	}
 
 	async streamEpisode(episode: Episode, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
-		const result = await this.streamService.streamEpisode(episode, format, maxBitRate, false, user);
+		const result = await this.streamService.streamEpisode(episode, format, maxBitRate, user);
 		this.nowPlayingService.reportEpisode(episode, user).catch(e => log.error(e)); // do not wait
 		return result;
 	}

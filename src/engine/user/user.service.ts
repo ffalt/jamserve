@@ -51,14 +51,14 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		const filename = this.avatarImageFilename(user);
 		await fileDeleteIfExists(filename);
 		await this.imageModule.generateAvatar(seed || user.name, filename);
-		await this.imageModule.clearImageCacheByID(user.id);
+		await this.imageModule.clearImageCacheByIDs([user.id]);
 	}
 
 	async setUserImage(user: User, filename: string, mimetype?: string): Promise<void> {
 		const destName = this.avatarImageFilename(user);
 		await this.imageModule.createAvatar(filename, destName);
 		await fileDeleteIfExists(filename);
-		await this.imageModule.clearImageCacheByID(user.id);
+		await this.imageModule.clearImageCacheByIDs([user.id]);
 	}
 
 	async create(user: User): Promise<string> {
@@ -84,7 +84,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		await this.bookmarkStore.removeByQuery({userID: user.id});
 		await this.playQueueStore.removeByQuery({userID: user.id});
 		await this.sessionStore.removeByQuery({userID: user.id});
-		await this.imageModule.clearImageCacheByID(user.id);
+		await this.imageModule.clearImageCacheByIDs([user.id]);
 		await this.userStore.remove(user.id);
 		await fileDeleteIfExists(this.avatarImageFilename(user));
 		// TODO: remove user chat msg on user.delete

@@ -6,11 +6,15 @@ import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {Acoustid} from '../../model/acoustid-rest-data';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {Jam} from '../../model/jam-rest-data';
-import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType} from '../../model/jam-types';
+import {JamParameters} from '../../model/jam-rest-params';
+import {AudioFormatType, CoverArtArchiveLookupType, TrackTagFormatType, WaveformFormatType} from '../../model/jam-types';
 import {LastFM} from '../../model/lastfm-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {WikiData} from '../../model/wikidata-rest-data';
+import {ApiBinaryResult} from '../../typings';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
+import {IDFolderCache} from '../../utils/id-file-cache';
+import {logger} from '../../utils/logger';
 import {ImageModule} from '../image/image.module';
 import {FORMAT} from './audio.format';
 import {AcousticbrainzClient} from './clients/acousticbrainz-client';
@@ -27,6 +31,10 @@ import {flacToRawTag, id3v2ToFlacMetaData, id3v2ToRawTag, rawTagToID3v2} from '.
 import {rewriteWriteFFmpeg} from './tools/ffmpeg-rewrite';
 import {probe} from './tools/ffprobe';
 import {mp3val} from './tools/mp3val';
+import {TranscoderStream} from './transcoder/transcoder-stream';
+import {WaveformGenerator} from './waveform/waveform.generator';
+
+const log = logger('Audio');
 
 export interface AudioScanResult {
 	media?: TrackMedia;
@@ -43,9 +51,11 @@ export class AudioModule {
 	acousticbrainz: AcousticbrainzClient;
 	coverArtArchive: CoverArtArchiveClient;
 	wikipedia: WikipediaClient;
+	private waveformCache: IDFolderCache<{ width?: number, format: string }>;
+	private transcodeCache: IDFolderCache<{ maxBitRate?: number, format: string }>;
 	private savingBlock = new Map<string, boolean>();
 
-	constructor(tools: ThirdpartyToolsConfig, public imageModule: ImageModule) {
+	constructor(waveformCachePath: string, transcodeCachePath: string, tools: ThirdpartyToolsConfig, public imageModule: ImageModule) {
 		this.musicbrainz = new MusicbrainzClient({userAgent: tools.musicbrainz.userAgent, retryOn: true});
 		this.acousticbrainz = new AcousticbrainzClient({userAgent: tools.acousticbrainz.userAgent, retryOn: true});
 		this.lastFM = new LastFMClient({key: tools.lastfm.apiKey, userAgent: tools.lastfm.userAgent});
@@ -53,6 +63,56 @@ export class AudioModule {
 		this.lyricsOVH = new LyricsOVHClient(tools.chartlyrics.userAgent);
 		this.wikipedia = new WikipediaClient(tools.wikipedia.userAgent);
 		this.coverArtArchive = new CoverArtArchiveClient({userAgent: tools.coverartarchive.userAgent, retryOn: true});
+		this.waveformCache = new IDFolderCache<{ width?: number, format: string }>(waveformCachePath, 'waveform', (params: { width?: number, format: string }) => {
+			return `${params.width !== undefined ? `-${params.width}` : ''}.${params.format}`;
+		});
+		this.transcodeCache = new IDFolderCache<{ maxBitRate?: number, format: string }>(transcodeCachePath, 'transcode',
+			(params: { maxBitRate?: number, format: string }) => `${params.maxBitRate ? `-${params.maxBitRate}` : ''}.${params.format}`);
+	}
+
+	private async generateWaveform(filename: string, format: JamParameters.WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
+		const wf = new WaveformGenerator();
+		switch (format) {
+			case WaveformFormatType.svg:
+				const svg = await wf.svg(filename, width);
+				return {buffer: {buffer: Buffer.from(svg, 'ascii'), contentType: 'image/svg+xml'}};
+			case WaveformFormatType.json:
+				return {json: await wf.json(filename)};
+			case WaveformFormatType.dat:
+				return {buffer: {buffer: await wf.binary(filename), contentType: 'application/binary'}};
+			default:
+		}
+		return Promise.reject(Error('Invalid Format for Waveform generation'));
+	}
+
+	async getWaveForm(id: string, filename: string, format: WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
+		if (!filename || !(await fse.pathExists(filename))) {
+			return Promise.reject(Error('Invalid filename for waveform generation'));
+		}
+		return this.waveformCache.get(id, {format, width}, async cacheFilename => {
+			const result = await this.generateWaveform(filename, format, width);
+			log.debug('Writing waveform cache file', cacheFilename);
+			if (result.buffer) {
+				await fse.writeFile(cacheFilename, result.buffer.buffer);
+			} else if (result.json) {
+				await fse.writeFile(cacheFilename, JSON.stringify(result.json));
+			} else {
+				throw  new Error('Invalid waveform generation result');
+			}
+		});
+	}
+
+	async getTranscode(filename: string, id: string, format: string, maxBitRate: number): Promise<ApiBinaryResult> {
+		if (!TranscoderStream.validTranscoding(format as AudioFormatType)) {
+			return Promise.reject(Error('Unsupported transcoding format'));
+		}
+		// if (live) {
+		// 	return {pipe: new LiveTranscoderStream(filename, destFormat, maxBitRate)};
+		// }
+		return this.transcodeCache.get(id, {format, maxBitRate}, async cacheFilename => {
+			log.debug('Writing transcode cache file', cacheFilename);
+			await TranscoderStream.transcodeToFile(filename, cacheFilename, format, maxBitRate);
+		});
 	}
 
 	async read(filename: string): Promise<AudioScanResult> {
@@ -288,6 +348,11 @@ export class AudioModule {
 
 	async wikidataID(id: string): Promise<WikiData.Entity | undefined> {
 		return this.wikipedia.wikidata(id);
+	}
+
+	async clearCacheByIDs(ids: Array<string>): Promise<void> {
+		await this.transcodeCache.removeByIDs(ids);
+		await this.waveformCache.removeByIDs(ids);
 	}
 
 }

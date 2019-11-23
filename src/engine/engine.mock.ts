@@ -1,13 +1,12 @@
 import tmp from 'tmp';
 import {Config, extendConfig} from '../config/config';
 import {DBType, JamServeConfig} from '../config/jamserve.config';
-import {ThirdPartyConfig} from '../config/thirdparty.config';
 import {Database} from '../db/db.model';
 import {TestDB} from '../db/db.spec';
 import {DBObjectType} from '../db/db.types';
 import {mockElasticDBConfig} from '../db/elasticsearch/db-elastic.spec';
 import {RootScanStrategy} from '../model/jam-types';
-import {MockAudioModule} from '../modules/audio/audio.module.mock';
+import {AudioModuleTest} from '../modules/audio/audio.module.spec';
 import {ImageModuleTest} from '../modules/image/image.module.spec';
 import {JAMSERVE_VERSION} from '../version';
 import {Engine} from './engine';
@@ -63,6 +62,7 @@ export class TestEngine {
 	engine!: Engine;
 	engineMock!: TestEngineDataMock;
 	imageModuleTest!: ImageModuleTest;
+	audioModuleTest!: AudioModuleTest;
 	dir: tmp.DirResult;
 
 	constructor(public name: string, public useDB: DBType, public testDB: TestDB) {
@@ -72,8 +72,9 @@ export class TestEngine {
 	protected async init(config: Config, db: Database): Promise<void> {
 		this.imageModuleTest = new ImageModuleTest();
 		await this.imageModuleTest.setup();
-		const audio = new MockAudioModule(ThirdPartyConfig, this.imageModuleTest.imageModule);
-		this.engine = new Engine(config, new Store(db), JAMSERVE_VERSION, {audio, image: this.imageModuleTest.imageModule});
+		this.audioModuleTest = new AudioModuleTest(this.imageModuleTest.imageModule);
+		await this.audioModuleTest.setup();
+		this.engine = new Engine(config, new Store(db), JAMSERVE_VERSION, {audio: this.audioModuleTest.audioModule, image: this.imageModuleTest.imageModule});
 		this.engineMock = new TestEngineDataMock(this.engine);
 	}
 
@@ -87,6 +88,7 @@ export class TestEngine {
 	async cleanup(): Promise<void> {
 		await this.testDB.cleanup();
 		await this.imageModuleTest.cleanup();
+		await this.audioModuleTest.cleanup();
 		await this.engineMock.cleanup();
 		this.dir.removeCallback();
 	}

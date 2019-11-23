@@ -4,10 +4,10 @@ import mimeTypes from 'mime-types';
 import path from 'path';
 import sharp from 'sharp';
 import {ApiBinaryResult} from '../../typings';
-import {DebouncePromises} from '../../utils/debounce-promises';
 import {downloadFile} from '../../utils/download';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
+import {IDFolderCache} from '../../utils/id-file-cache';
 import {logger} from '../../utils/logger';
 import {randomString} from '../../utils/random';
 import {AvatarGen} from './image.avatar';
@@ -32,11 +32,14 @@ sharp.cache(false);
 export class ImageModule {
 	private format = 'png';
 	private font: JimpFont | undefined;
-	private imageCacheDebounce = new DebouncePromises<ApiBinaryResult>();
+	private cache: IDFolderCache<{ size?: number, format?: string }>;
 	private readonly avatarPartsLocation: string;
 
 	constructor(private imageCachePath: string, avatarPartsLocation?: string) {
 		this.avatarPartsLocation = avatarPartsLocation || path.join(__dirname, 'static', 'avatar');
+		this.cache = new IDFolderCache<{ size?: number, format?: string }>(imageCachePath, 'thumb', (params: { size?: number, format?: string }) => {
+			return `${params.size !== undefined ? `-${params.size}` : ''}.${params.format || this.format}`;
+		});
 	}
 
 	async storeImage(filepath: string, name: string, imageUrl: string): Promise<string> {
@@ -147,42 +150,23 @@ export class ImageModule {
 		};
 	}
 
-	buildThumbnailFilename(id: string, size: number | undefined, format?: string): string {
-		return `thumb-${id}${size ? `-${size}` : ''}.${format || this.format}`;
-	}
-
-	buildThumbnailFilenamePath(id: string, size: number | undefined, format?: string): string {
-		return path.join(this.imageCachePath, this.buildThumbnailFilename(id, size, format));
+	async getExisting(id: string, size: number | undefined, format?: string): Promise<ApiBinaryResult | undefined> {
+		return this.cache.getExisting(id, {size, format});
 	}
 
 	async getBuffer(id: string, buffer: Buffer, size: number | undefined, format?: string): Promise<ApiBinaryResult> {
 		if (format && !SupportedWriteImageFormat.includes(format)) {
 			return Promise.reject(Error('Invalid Format'));
 		}
-		const cacheID = this.buildThumbnailFilename(id, size, format);
-		if (this.imageCacheDebounce.isPending(cacheID)) {
-			return this.imageCacheDebounce.append(cacheID);
-		}
-		this.imageCacheDebounce.setPending(cacheID);
-		try {
-			let result: ApiBinaryResult;
-			const cachefile = path.join(this.imageCachePath, cacheID);
-			const exists = await fse.pathExists(cachefile);
-			if (exists) {
-				result = {file: {filename: cachefile, name: cacheID}};
+		return this.cache.get(id, {size, format}, async cachefile => {
+			const result = await this.getImageBufferAs(buffer, format, size);
+			if (result.buffer) {
+				log.debug('Writing image cache file', cachefile);
+				await fse.writeFile(cachefile, result.buffer.buffer);
 			} else {
-				result = await this.getImageBufferAs(buffer, format, size);
-				if (result.buffer) {
-					log.debug('Writing image cache file', cachefile);
-					await fse.writeFile(cachefile, result.buffer.buffer);
-				}
+				return Promise.reject(Error('Error while writing image cache file'));
 			}
-			this.imageCacheDebounce.resolve(cacheID, result);
-			return result;
-		} catch (e) {
-			this.imageCacheDebounce.reject(cacheID, e);
-			return Promise.reject(e);
-		}
+		});
 	}
 
 	async get(id: string, filename: string, size: number | undefined, format?: string): Promise<ApiBinaryResult> {
@@ -196,35 +180,18 @@ export class ImageModule {
 			format = undefined;
 		}
 		if (format || size) {
-			const cacheID = `thumb-${id}${size ? `-${size}` : ''}.${format || this.format}`;
-			if (this.imageCacheDebounce.isPending(cacheID)) {
-				return this.imageCacheDebounce.append(cacheID);
-			}
-			this.imageCacheDebounce.setPending(cacheID);
-			try {
-				let result: ApiBinaryResult;
-				const cachefile = path.join(this.imageCachePath, cacheID);
-				const exists = await fse.pathExists(cachefile);
-				if (exists) {
-					result = {file: {filename: cachefile, name: cacheID}};
-				} else {
-					result = format ?
-						await this.getImageAs(filename, format, size, cacheID) :
-						await this.getImage(filename, size, cacheID);
-					if (result.buffer) {
-						log.debug('Writing image cache file', cachefile);
-						await fse.writeFile(cachefile, result.buffer.buffer);
-					}
+			return this.cache.get(id, {size, format}, async cachefile => {
+				const name = path.basename(cachefile);
+				const result = format ?
+					await this.getImageAs(filename, format, size, name) :
+					await this.getImage(filename, size, name);
+				if (result.buffer) {
+					log.debug('Writing image cache file', cachefile);
+					await fse.writeFile(cachefile, result.buffer.buffer);
 				}
-				this.imageCacheDebounce.resolve(cacheID, result);
-				return result;
-			} catch (e) {
-				this.imageCacheDebounce.reject(cacheID, e);
-				return Promise.reject(e);
-			}
-		} else {
-			return this.getImage(filename, size, `${id}.${this.format}`);
+			});
 		}
+		return this.getImage(filename, size, `${id}.${this.format}`);
 	}
 
 	// async resizeImage(filename: string, destination: string, size: number): Promise<void> {
@@ -241,28 +208,7 @@ export class ImageModule {
 	}
 
 	async clearImageCacheByIDs(ids: Array<string>): Promise<void> {
-		const searches = ids.filter(id => id.length > 0).map(id => `thumb-${id}`);
-		if (searches.length > 0) {
-			let list = await fse.readdir(this.imageCachePath);
-			list = list.filter(name => {
-				return searches.findIndex(s => name.startsWith(s)) >= 0;
-			});
-			for (const filename of list) {
-				await fse.unlink(path.resolve(this.imageCachePath, filename));
-			}
-		}
-	}
-
-	async clearImageCacheByID(id: string): Promise<void> {
-		if (id.length === 0) {
-			return;
-		}
-		const search = `thumb-${id}`;
-		let list = await fse.readdir(this.imageCachePath);
-		list = list.filter(name => name.startsWith(search)).map(name => path.resolve(this.imageCachePath, name));
-		for (const filename of list) {
-			await fse.unlink(filename);
-		}
+		await this.cache.removeByIDs(ids);
 	}
 
 	async createAvatar(filename: string, destination: string): Promise<void> {

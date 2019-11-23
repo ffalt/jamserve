@@ -4,7 +4,7 @@ import {BookmarkService} from './bookmark.service';
 describe('BookmarkService', () => {
 	let bookmarkService: BookmarkService;
 	testService({mockData: false},
-		async (store, imageModuleTest) => {
+		async store => {
 			bookmarkService = new BookmarkService(store.bookmarkStore);
 		},
 		() => {

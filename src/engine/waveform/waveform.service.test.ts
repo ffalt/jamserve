@@ -1,6 +1,6 @@
 import path from 'path';
-import tmp from 'tmp';
 import {WaveformFormatType} from '../../model/jam-types';
+import {AudioModule} from '../../modules/audio/audio.module';
 import {testService} from '../base/base.service.spec';
 import {mockEpisode} from '../episode/episode.mock';
 import {TrackStore} from '../track/track.store';
@@ -8,13 +8,13 @@ import {WaveformService} from './waveform.service';
 
 describe('WaveformService', () => {
 	let waveformService: WaveformService;
-	let dir: tmp.DirResult;
 	let trackStore: TrackStore;
+	let audioModule: AudioModule;
 	testService({mockData: true},
-		async (store, imageModuleTest) => {
-			dir = tmp.dirSync();
-			waveformService = new WaveformService(dir.name);
+		async (store, imageModuleTest, audioModuleTest) => {
+			waveformService = new WaveformService(audioModuleTest.audioModule);
 			trackStore = store.trackStore;
+			audioModule = audioModuleTest.audioModule;
 		},
 		() => {
 			it('should return svg for a track', async () => {
@@ -22,17 +22,10 @@ describe('WaveformService', () => {
 				if (!track) {
 					throw Error('Invalid Test Setup');
 				}
-				let result = await waveformService.getTrackWaveform(track, WaveformFormatType.svg);
-				expect(result).toBeTruthy();
-				expect(result.buffer).toBeTruthy();
-				if (!result.buffer) {
-					return;
-				}
-				expect(result.buffer.contentType).toBe('image/svg+xml');
-				result = await waveformService.getTrackWaveform(track, WaveformFormatType.svg);
+				const result = await waveformService.getTrackWaveform(track, WaveformFormatType.svg);
 				expect(result).toBeTruthy();
 				expect(result.file).toBeTruthy();
-				await waveformService.clearWaveformCacheByIDs([track.id]);
+				await audioModule.clearCacheByIDs([track.id]);
 			});
 			it('should return svg for an episode', async () => {
 				const track = await trackStore.random();
@@ -43,17 +36,10 @@ describe('WaveformService', () => {
 				const episode = mockEpisode();
 				episode.path = path.resolve(track.path, track.name);
 				episode.id = 'testEpisodeID';
-				let result = await waveformService.getEpisodeWaveform(episode, WaveformFormatType.svg);
-				expect(result).toBeTruthy();
-				expect(result.buffer).toBeTruthy();
-				if (!result.buffer) {
-					return;
-				}
-				expect(result.buffer.contentType).toBe('image/svg+xml');
-				result = await waveformService.getEpisodeWaveform(episode, WaveformFormatType.svg);
+				const result = await waveformService.getEpisodeWaveform(episode, WaveformFormatType.svg);
 				expect(result).toBeTruthy();
 				expect(result.file).toBeTruthy();
-				await waveformService.clearWaveformCacheByIDs([episode.id]);
+				await audioModule.clearCacheByIDs([track.id]);
 			});
 			it('should return json', async () => {
 				const track = await trackStore.random();
@@ -61,16 +47,10 @@ describe('WaveformService', () => {
 				if (!track) {
 					return;
 				}
-				let result = await waveformService.getTrackWaveform(track, WaveformFormatType.json);
-				expect(result).toBeTruthy();
-				expect(result.json).toBeTruthy();
-				if (!result.json) {
-					return;
-				}
-				result = await waveformService.getTrackWaveform(track, WaveformFormatType.json);
+				const result = await waveformService.getTrackWaveform(track, WaveformFormatType.json);
 				expect(result).toBeTruthy();
 				expect(result.file).toBeTruthy();
-				await waveformService.clearWaveformCacheByIDs([track.id]);
+				await audioModule.clearCacheByIDs([track.id]);
 			});
 			it('should return binary', async () => {
 				const track = await trackStore.random();
@@ -78,17 +58,10 @@ describe('WaveformService', () => {
 				if (!track) {
 					return;
 				}
-				let result = await waveformService.getTrackWaveform(track, WaveformFormatType.dat);
-				expect(result).toBeTruthy();
-				expect(result.buffer).toBeTruthy();
-				if (!result.buffer) {
-					return;
-				}
-				expect(result.buffer.contentType).toBe('application/binary');
-				result = await waveformService.getTrackWaveform(track, WaveformFormatType.dat);
+				const result = await waveformService.getTrackWaveform(track, WaveformFormatType.dat);
 				expect(result).toBeTruthy();
 				expect(result.file).toBeTruthy();
-				await waveformService.clearWaveformCacheByIDs([track.id]);
+				await audioModule.clearCacheByIDs([track.id]);
 			});
 			it('should throw errors', async () => {
 				const track = await trackStore.random();
@@ -114,14 +87,13 @@ describe('WaveformService', () => {
 				const result = await waveformService.getTrackWaveform(track, WaveformFormatType.svg);
 				const result2 = await promise;
 				expect(result).toBeTruthy();
-				expect(result.buffer).toBeTruthy();
+				expect(result.file).toBeTruthy();
 				expect(result2).toBeTruthy();
-				expect(result2.buffer).toBeTruthy();
-				await waveformService.clearWaveformCacheByIDs([track.id]);
+				expect(result2.file).toBeTruthy();
+				await audioModule.clearCacheByIDs([track.id]);
 			});
 		},
 		async () => {
-			dir.removeCallback();
 		}
 	);
 });

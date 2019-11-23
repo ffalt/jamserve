@@ -1,0 +1,69 @@
+import fse from 'fs-extra';
+import path from 'path';
+import {ApiBinaryResult} from '../typings';
+import {DebouncePromises} from './debounce-promises';
+
+export class IDFolderCache<T> {
+	private cacheDebounce = new DebouncePromises<ApiBinaryResult>();
+
+	constructor(public dataPath: string, public filePrefix: string, private resolveParams: (params: T) => string) {
+
+	}
+
+	prefixCacheFilename(id: string): string {
+		return `${this.filePrefix}-${id}`;
+	}
+
+	cacheFilename(id: string, params: T): string {
+		return `${this.prefixCacheFilename(id)}${this.resolveParams(params)}`;
+	}
+
+	async removeByIDs(ids: Array<string>): Promise<void> {
+		const searches = ids.filter(id => id.length > 0).map(id => this.prefixCacheFilename(id));
+		if (searches.length > 0) {
+			let list = await fse.readdir(this.dataPath);
+			list = list.filter(name => {
+				return searches.findIndex(s => name.startsWith(s)) >= 0;
+			});
+			for (const filename of list) {
+				await fse.unlink(path.resolve(this.dataPath, filename));
+			}
+		}
+	}
+
+	async getExisting(id: string, params: T): Promise<ApiBinaryResult | undefined> {
+		const cacheID = this.cacheFilename(id, params);
+		if (this.cacheDebounce.isPending(cacheID)) {
+			return this.cacheDebounce.append(cacheID);
+		}
+		const cachefile = path.join(this.dataPath, cacheID);
+		const exists = await fse.pathExists(cachefile);
+		if (exists) {
+			return {file: {filename: cachefile, name: cacheID}};
+		}
+	}
+
+	async get(id: string, params: T, build: (cacheFilename: string) => Promise<void>): Promise<ApiBinaryResult> {
+		const cacheID = this.cacheFilename(id, params);
+		if (this.cacheDebounce.isPending(cacheID)) {
+			return this.cacheDebounce.append(cacheID);
+		}
+		this.cacheDebounce.setPending(cacheID);
+		try {
+			let result: ApiBinaryResult;
+			const cachefile = path.join(this.dataPath, cacheID);
+			const exists = await fse.pathExists(cachefile);
+			if (!exists) {
+				await build(cachefile);
+			}
+			result = {file: {filename: cachefile, name: cacheID}};
+			this.cacheDebounce.resolve(cacheID, result);
+			return result;
+		} catch (e) {
+			this.cacheDebounce.reject(cacheID, e);
+			return Promise.reject(e);
+		}
+
+	}
+
+}

@@ -6,7 +6,6 @@ import {ImageModule} from '../../../modules/image/image.module';
 import {updatePlayListTracks} from '../../playlist/playlist.service';
 import {Root} from '../../root/root.model';
 import {Store} from '../../store/store';
-import {WaveformService} from '../../waveform/waveform.service';
 import {Changes} from '../changes/changes';
 import {MatchDir} from '../match-dir/match-dir.types';
 import {MatchDirMerge} from '../merge/merge.match-dir';
@@ -14,7 +13,10 @@ import {MetaMerger} from '../merge/merge.meta';
 
 export class ChangesWorker {
 
-	constructor(private store: Store, private audioModule: AudioModule, private imageModule: ImageModule, private waveformService: WaveformService, public settings: Jam.AdminSettingsLibrary) {
+	constructor(
+		private store: Store, private audioModule: AudioModule, private imageModule: ImageModule,
+		public settings: Jam.AdminSettingsLibrary
+	) {
 
 	}
 
@@ -81,7 +83,7 @@ export class ChangesWorker {
 		}
 		if (ids.length > 0) {
 			await this.imageModule.clearImageCacheByIDs(ids);
-			await this.waveformService.clearWaveformCacheByIDs(ids);
+			await this.audioModule.clearCacheByIDs(ids);
 		}
 	}
 

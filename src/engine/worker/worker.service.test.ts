@@ -11,7 +11,6 @@ import {randomItem} from '../../utils/random';
 import {testService} from '../base/base.service.spec';
 import {Store} from '../store/store';
 import {buildMockRoot, MockFolder, MockRoot, removeMockFolder, removeMockRoot, writeMockFolder, writeMockRoot} from '../store/store.mock';
-import {WaveformServiceTest} from '../waveform/waveform.service.spec';
 import {Changes} from './changes/changes';
 import {WorkerService} from './worker.service';
 
@@ -71,13 +70,11 @@ describe('WorkerService', () => {
 	let dir: tmp.DirResult;
 	let mockRoot: MockRoot;
 	let workerService: WorkerService;
-	const waveformServiceTest = new WaveformServiceTest();
 
 	testService({mockData: false},
-		async (storeTest, imageModuleTest, audioModule) => {
+		async (storeTest, imageModuleTest, audioModuleTest) => {
 			store = storeTest;
-			await waveformServiceTest.setup();
-			workerService = new WorkerService(store, audioModule, imageModuleTest.imageModule, waveformServiceTest.waveformService);
+			workerService = new WorkerService(store, audioModuleTest.audioModule, imageModuleTest.imageModule);
 		},
 		() => {
 			beforeEach(async () => {
@@ -460,7 +457,6 @@ describe('WorkerService', () => {
 			});
 		},
 		async () => {
-			await waveformServiceTest.cleanup();
 		}
 	);
 

@@ -26,5 +26,52 @@ export abstract class TranscoderStream implements StreamData {
 		});
 	}
 
+	static getTranscodeProc(source: string, format: string, maxBitRate: number): ffmpeg.FfmpegCommand {
+		const proc = ffmpeg({source})
+			.withNoVideo();
+		switch (format) {
+			case AudioFormatType.flv:
+				return proc.toFormat(format).addOptions(['-ar 44100', `-maxrate ${maxBitRate || 128}k`]);
+			case AudioFormatType.ogg:
+			case AudioFormatType.oga:
+				return proc.toFormat(format)
+					.withAudioCodec('libvorbis')
+					.addOptions([`-maxrate ${maxBitRate || 128}k`]);
+			case AudioFormatType.mp3:
+				return proc
+					.toFormat(format)
+					.withAudioBitrate(`${maxBitRate || 128}k`)
+					.withAudioCodec('libmp3lame');
+			case  AudioFormatType.m4a:
+				return proc
+					.toFormat('mp4')
+					.withAudioBitrate(`${maxBitRate || 128}k`);
+			default:
+				return proc
+					.toFormat(format)
+					.withAudioBitrate(`${maxBitRate || 128}k`);
+		}
+	}
+
+	static async transcodeToFile(source: string, destination: string, format: string, maxBitRate: number): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const proc = TranscoderStream.getTranscodeProc(source, format, maxBitRate);
+			proc
+				// .on('start', msg => {
+				// 	console.log('start: ' + msg);
+				// })
+				// .on('stderr', stderrLine => {
+				// 	console.log('Stderr output: ' + stderrLine);
+				// })
+				.on('end', () => {
+					resolve();
+				})
+				.on('error', (err: Error) => {
+					reject(err);
+				})
+				.save(destination);
+		});
+	}
+
 	abstract pipe(stream: express.Response): void;
 }

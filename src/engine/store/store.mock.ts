@@ -7,7 +7,6 @@ import {writeMP3Track} from '../../modules/audio/audio.mock';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
 import {Root} from '../root/root.model';
-import {WaveformServiceTest} from '../waveform/waveform.service.spec';
 import {WorkerService} from '../worker/worker.service';
 import {Store} from './store';
 
@@ -330,7 +329,6 @@ export async function removeMockRoot(root: MockRoot): Promise<void> {
 }
 
 export class StoreMock {
-	waveformServiceTest = new WaveformServiceTest();
 	dir!: tmp.DirResult;
 	mockRoot!: MockRoot;
 
@@ -339,7 +337,6 @@ export class StoreMock {
 
 	async setup(imageModule: ImageModule, audioModule: AudioModule): Promise<void> {
 		this.dir = tmp.dirSync();
-		await this.waveformServiceTest.setup();
 		this.mockRoot = buildMockRoot(this.dir.name, 1, 'rootID1');
 		await writeMockRoot(this.mockRoot);
 		const root: Root = {
@@ -351,13 +348,12 @@ export class StoreMock {
 			strategy: RootScanStrategy.auto
 		};
 		await this.store.rootStore.add(root);
-		const workerService = new WorkerService(this.store, audioModule, imageModule, this.waveformServiceTest.waveformService);
+		const workerService = new WorkerService(this.store, audioModule, imageModule);
 		await workerService.refreshRoot({rootID: root.id, forceMetaRefresh: false});
 	}
 
 	async cleanup(): Promise<void> {
 		await removeMockRoot(this.mockRoot);
-		await this.waveformServiceTest.cleanup();
 		this.dir.removeCallback();
 	}
 }

@@ -1,19 +1,16 @@
 import {testService} from '../../base/base.service.spec';
 import {mockRoot} from '../../root/root.mock';
 import {Store} from '../../store/store';
-import {WaveformServiceTest} from '../../waveform/waveform.service.spec';
 import {WorkerService} from '../worker.service';
 
 describe('RootWorker', () => {
 	let store: Store;
 	let workerService: WorkerService;
-	const waveformServiceTest = new WaveformServiceTest();
 
 	testService({mockData: false},
-		async (storeTest, imageModuleTest, audioModule) => {
+		async (storeTest, imageModuleTest, audioModuleTest) => {
 			store = storeTest;
-			await waveformServiceTest.setup();
-			workerService = new WorkerService(store, audioModule, imageModuleTest.imageModule, waveformServiceTest.waveformService);
+			workerService = new WorkerService(store, audioModuleTest.audioModule, imageModuleTest.imageModule);
 		},
 		() => {
 
@@ -58,7 +55,6 @@ describe('RootWorker', () => {
 			});
 		},
 		async () => {
-			await waveformServiceTest.cleanup();
 		}
 	);
 

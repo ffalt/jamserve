@@ -50,7 +50,7 @@ export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast>
 		await this.episodeService.removeEpisodes(podcast.id);
 		const p = path.resolve(this.podcastsPath, podcast.id);
 		await pathDeleteIfExists(p);
-		await this.imageModule.clearImageCacheByID(podcast.id);
+		await this.imageModule.clearImageCacheByIDs([podcast.id]);
 	}
 
 	async refresh(podcast: Podcast): Promise<void> {

@@ -11,10 +11,10 @@ describe('TrackService', () => {
 	let trackService: TrackService;
 	let folderService: FolderService;
 	testService({mockData: true},
-		async (store, imageModuleTest, audioModule) => {
+		async (store, imageModuleTest, audioModuleTest) => {
 			const stateService = new StateService(store.stateStore);
 			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
-			trackService = new TrackService(store.trackStore, folderService, audioModule, imageModuleTest.imageModule, stateService);
+			trackService = new TrackService(store.trackStore, folderService, audioModuleTest.audioModule, imageModuleTest.imageModule, stateService);
 		},
 		() => {
 			it('should return the track folder', async () => {

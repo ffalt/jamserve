@@ -5,7 +5,7 @@ import {SessionService} from './session.service';
 describe('SessionService', () => {
 	let sessionService: SessionService;
 	testService({mockData: false},
-		async (store, imageModuleTest) => {
+		async store => {
 			sessionService = new SessionService(store.sessionStore);
 		},
 		() => {

@@ -13,10 +13,10 @@ describe('PodcastService', () => {
 	let episodeService: EpisodeService;
 	let dir: tmp.DirResult;
 	testService({mockData: false},
-		async (store, imageModuleTest, audioModule) => {
+		async (store, imageModuleTest, audioModuleTest) => {
 			dir = tmp.dirSync();
 			const stateService = new StateService(store.stateStore);
-			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModule, imageModuleTest.imageModule);
+			episodeService = new EpisodeService(dir.name, store.episodeStore, stateService, audioModuleTest.audioModule, imageModuleTest.imageModule);
 			podcastService = new PodcastService(dir.name, store.podcastStore, episodeService, imageModuleTest.imageModule, stateService);
 		},
 		() => {

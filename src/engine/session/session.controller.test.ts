@@ -1,4 +1,4 @@
-import {JamApi, JamRequest} from '../../api/jam/api';
+import {JamApi} from '../../api/jam/api';
 import {testController, validateJamResponse} from '../base/controller.spec';
 import {mockUser} from '../user/user.mock';
 import {User} from '../user/user.model';

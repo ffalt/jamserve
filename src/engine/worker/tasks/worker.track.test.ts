@@ -4,22 +4,19 @@ import {FolderType, RootScanStrategy} from '../../../model/jam-types';
 import {testService} from '../../base/base.service.spec';
 import {Store} from '../../store/store';
 import {buildMockRoot, MockRoot, removeMockRoot, writeMockRoot} from '../../store/store.mock';
-import {WaveformServiceTest} from '../../waveform/waveform.service.spec';
 import {WorkerService} from '../worker.service';
 import {validateMock} from '../worker.service.test';
 
 describe('TrackWorker', () => {
 	let store: Store;
 	let workerService: WorkerService;
-	const waveformServiceTest = new WaveformServiceTest();
 	let dir: tmp.DirResult;
 	let mockRoot: MockRoot;
 
 	testService({mockData: false},
-		async (storeTest, imageModuleTest, audioModule) => {
+		async (storeTest, imageModuleTest, audioModuleTest) => {
 			store = storeTest;
-			await waveformServiceTest.setup();
-			workerService = new WorkerService(store, audioModule, imageModuleTest.imageModule, waveformServiceTest.waveformService);
+			workerService = new WorkerService(store, audioModuleTest.audioModule, imageModuleTest.imageModule);
 		},
 		() => {
 			beforeEach(async () => {
@@ -92,7 +89,6 @@ describe('TrackWorker', () => {
 
 		},
 		async () => {
-			await waveformServiceTest.cleanup();
 		}
 	);
 

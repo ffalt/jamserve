@@ -76,15 +76,20 @@ export class Engine {
 
 	constructor(public config: Config, public store: Store, public version: string, modules?: { image: ImageModule, audio: AudioModule }) {
 		this.imageModule = modules && modules.image ? modules.image : new ImageModule(config.getDataPath(['cache', 'images']));
-		this.audioModule = modules && modules.audio ? modules.audio : new AudioModule(ThirdPartyConfig, this.imageModule);
+		this.audioModule = modules && modules.audio ? modules.audio : new AudioModule(
+			config.getDataPath(['cache', 'waveforms']),
+			config.getDataPath(['cache', 'transcode']),
+			ThirdPartyConfig, this.imageModule
+		);
 		this.chatService = new ChatService();
-		this.waveformService = new WaveformService(config.getDataPath(['cache', 'waveforms']));
+		this.waveformService = new WaveformService(this.audioModule);
+		this.streamService = new StreamService(this.audioModule);
 		this.stateService = new StateService(this.store.stateStore);
 		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.stateService, this.imageModule);
 		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.audioModule, this.imageModule, this.stateService);
 		this.albumService = new AlbumService(this.store.albumStore, this.trackService, this.folderService, this.stateService);
 		this.indexService = new IndexService(this.store.artistStore, this.store.albumStore, this.store.folderStore, this.store.trackStore);
-		this.workerService = new WorkerService(this.store, this.audioModule, this.imageModule, this.waveformService);
+		this.workerService = new WorkerService(this.store, this.audioModule, this.imageModule);
 		this.settingsService = new SettingsService(store.settingsStore, this.chatService, this.indexService, this.workerService, version);
 		this.artistService = new ArtistService(this.store.artistStore, this.store.trackStore, this.folderService, this.stateService);
 		this.userService = new UserService(this.config.getDataPath(['images']), this.store.userStore, this.store.stateStore, this.store.playlistStore,
@@ -98,7 +103,6 @@ export class Engine {
 		});
 		this.downloadService = new DownloadService(this.store.trackStore, this.store.episodeStore);
 		this.nowPlayingService = new NowPlayingService(this.stateService);
-		this.streamService = new StreamService();
 		this.playlistService = new PlaylistService(this.store.playlistStore, this.store.trackStore, this.stateService);
 		this.playQueueService = new PlayQueueService(this.store.playQueueStore);
 		this.bookmarkService = new BookmarkService(this.store.bookmarkStore);
@@ -172,6 +176,7 @@ export class Engine {
 			path.resolve(this.config.paths.data, 'cache', 'waveforms'),
 			path.resolve(this.config.paths.data, 'cache', 'uploads'),
 			path.resolve(this.config.paths.data, 'cache', 'images'),
+			path.resolve(this.config.paths.data, 'cache', 'transcode'),
 			path.resolve(this.config.paths.data, 'images'),
 			path.resolve(this.config.paths.data, 'podcasts')
 		];

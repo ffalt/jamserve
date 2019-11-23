@@ -17,7 +17,7 @@ describe('AlbumService', () => {
 		async (store, imageModuleTest, audioModuleTest) => {
 			const stateService = new StateService(store.stateStore);
 			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
-			trackService = new TrackService(store.trackStore, folderService, audioModuleTest, imageModuleTest.imageModule, stateService);
+			trackService = new TrackService(store.trackStore, folderService, audioModuleTest.audioModule, imageModuleTest.imageModule, stateService);
 			albumService = new AlbumService(store.albumStore, trackService, folderService, stateService);
 		},
 		() => {
