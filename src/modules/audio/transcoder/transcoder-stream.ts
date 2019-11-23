@@ -3,6 +3,9 @@ import ffmpeg from 'fluent-ffmpeg';
 import {AudioFormatType} from '../../../model/jam-types';
 import {StreamData} from '../../../typings';
 import {SupportedTranscodeAudioFormat} from '../../../utils/filetype';
+import {logger} from '../../../utils/logger';
+
+const log = logger('transcoder.stream');
 
 export abstract class TranscoderStream implements StreamData {
 	static needsTranscoding(mediaFormat: string, format: string, maxBitRate: number): boolean {
@@ -57,12 +60,9 @@ export abstract class TranscoderStream implements StreamData {
 		return new Promise((resolve, reject) => {
 			const proc = TranscoderStream.getTranscodeProc(source, format, maxBitRate);
 			proc
-				// .on('start', msg => {
-				// 	console.log('start: ' + msg);
-				// })
-				// .on('stderr', stderrLine => {
-				// 	console.log('Stderr output: ' + stderrLine);
-				// })
+				.on('start', cmd => {
+					log.debug(`ffmpeg started with ${cmd}`);
+				})
 				.on('end', () => {
 					resolve();
 				})
