@@ -77,7 +77,7 @@ export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast>
 			}
 			podcast.lastCheck = Date.now();
 			if (podcast.image) {
-				const imageFile = path.resolve(this.podcastsPath, podcast.image);
+				const imageFile = path.resolve(this.podcastsPath, podcast.id, podcast.image);
 				if (!(await fse.pathExists(imageFile))) {
 					podcast.image = undefined;
 				}

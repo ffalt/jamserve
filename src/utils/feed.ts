@@ -157,7 +157,7 @@ export class Feed {
 				type: DBObjectType.episode,
 				author: post.author,
 				link: post.link,
-				guid: post.guid,
+				guid: post.guid || post.link,
 				summary: post.summary,
 				enclosures: post.enclosures as any, // TODO: validate podcast enclosures (wrong interface description?)
 				date: post.date ? post.date.valueOf() : 0,

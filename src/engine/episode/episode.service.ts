@@ -124,9 +124,10 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 			return [];
 		}
 		const storeEpisodes: Array<Episode> = [];
+		const newEpisodes: Array<Episode> = [];
 		const oldEpisodes = await this.episodeStore.search({podcastID});
 		for (const epi of episodes) {
-			const update = oldEpisodes.items.find(e => e.link === epi.link);
+			const update = oldEpisodes.items.find(e => e.guid === epi.guid);
 			if (update) {
 				update.podcast = podcast;
 				update.duration = epi.duration;
@@ -141,10 +142,11 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 			} else {
 				epi.podcast = podcast;
 				storeEpisodes.push(epi);
+				newEpisodes.push(epi);
 			}
 		}
 		await this.episodeStore.upsert(storeEpisodes);
-		return episodes;
+		return newEpisodes;
 	}
 
 	async getEpisodeImage(episode: Episode, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
