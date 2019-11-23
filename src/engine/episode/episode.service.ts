@@ -53,9 +53,9 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		} else {
 			throw new Error('No podcast episode url found');
 		}
-		const suffix = fileSuffix(url);
+		const suffix = fileSuffix(url.slice(0, url.indexOf('?')));
 		if (!SupportedAudioFormat.includes(suffix as AudioFormatType)) {
-			throw new Error('Unsupported Podcast audio format');
+			throw new Error(`Unsupported Podcast audio format .${suffix}`);
 		}
 		const p = path.resolve(this.podcastsPath, episode.podcastID);
 		await fse.ensureDir(p);
