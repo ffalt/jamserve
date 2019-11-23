@@ -117,6 +117,56 @@
 				]
 			}
 		},
+		"/lyricsovh/search": {
+			"get": {
+				"operationId": "metadataController.lyricsovhSearch",
+				"description": "search lyrics.ovh data",
+				"tags": [
+					"metadata"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.LyricsOVHResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "title",
+						"schema": {
+							"type": "string"
+						},
+						"description": "lookup by song title",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"type": "string"
+						},
+						"description": "lookup by song artist",
+						"required": true
+					}
+				]
+			}
+		},
 		"/acoustid/lookup": {
 			"get": {
 				"operationId": "metadataController.acoustidLookup",
@@ -308,7 +358,7 @@
 						"name": "tracks",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "search by number of release tracks",
 						"required": false
@@ -350,7 +400,7 @@
 						"name": "nr",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "page parameter if more than one acousticbrainz info is available",
 						"required": false
@@ -607,7 +657,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "amount of track names to complete",
 						"required": false
@@ -618,7 +668,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "amount of artist names to complete",
 						"required": false
@@ -629,7 +679,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "amount of album names to complete",
 						"required": false
@@ -640,7 +690,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "amount of folder names to complete",
 						"required": false
@@ -651,7 +701,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "amount of playlist names to complete",
 						"required": false
@@ -662,7 +712,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "amount of podcast names to complete",
 						"required": false
@@ -673,7 +723,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "amount of episode names to complete",
 						"required": false
@@ -725,7 +775,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -735,7 +785,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -816,7 +866,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -826,7 +876,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -871,7 +921,7 @@
 						"name": "since",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by post time (unix time)",
 						"required": false
@@ -988,7 +1038,7 @@
 						"name": "level",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by level",
 						"required": false
@@ -998,7 +1048,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -1008,7 +1058,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -1018,7 +1068,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -1592,7 +1642,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -1602,7 +1652,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -1727,7 +1777,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -1737,7 +1787,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -1932,7 +1982,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -1942,7 +1992,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -2147,7 +2197,7 @@
 						"name": "level",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by level",
 						"required": false
@@ -2157,7 +2207,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -2167,7 +2217,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -2177,7 +2227,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -2362,7 +2412,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -2372,7 +2422,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -2415,7 +2465,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -2425,7 +2475,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -2510,7 +2560,7 @@
 						"name": "level",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by level",
 						"required": false
@@ -2520,7 +2570,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -2530,7 +2580,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -2540,7 +2590,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -2895,7 +2945,7 @@
 						"name": "level",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by level",
 						"required": false
@@ -2905,7 +2955,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -2915,7 +2965,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -2925,7 +2975,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -3276,7 +3326,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -3286,7 +3336,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -3635,7 +3685,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -3645,7 +3695,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -3760,7 +3810,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date",
 						"required": false
@@ -3770,7 +3820,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -3780,7 +3830,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -4117,7 +4167,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date",
 						"required": false
@@ -4127,7 +4177,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -4137,7 +4187,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -4256,7 +4306,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -4266,7 +4316,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -4361,7 +4411,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -4371,7 +4421,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -4530,7 +4580,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date",
 						"required": false
@@ -4540,7 +4590,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -4550,7 +4600,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -4904,7 +4954,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -4914,7 +4964,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -5379,7 +5429,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -5389,7 +5439,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -5684,7 +5734,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -5694,7 +5744,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -5926,7 +5976,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -5936,7 +5986,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -6270,7 +6320,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -6280,7 +6330,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -6434,7 +6484,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -6444,7 +6494,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -7068,7 +7118,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -7078,7 +7128,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -7181,7 +7231,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -7610,7 +7660,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -7833,7 +7883,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -7843,7 +7893,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -7938,7 +7988,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -7948,7 +7998,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -8153,7 +8203,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -8163,7 +8213,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -8298,7 +8348,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -8449,7 +8499,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -8459,7 +8509,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -8597,7 +8647,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -8607,7 +8657,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -8954,7 +9004,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -8964,7 +9014,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -9183,7 +9233,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -9193,7 +9243,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -9203,7 +9253,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -9302,7 +9352,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -9312,7 +9362,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -9451,7 +9501,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -9461,7 +9511,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -9471,7 +9521,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -9778,7 +9828,7 @@
 						"name": "newerThan",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by creation date (unix time)",
 						"required": false
@@ -9788,7 +9838,7 @@
 						"name": "fromYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -9798,7 +9848,7 @@
 						"name": "toYear",
 						"schema": {
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "filter by year",
 						"required": false
@@ -10040,7 +10090,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -10050,7 +10100,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -10148,7 +10198,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -10158,7 +10208,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -10476,7 +10526,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -10486,7 +10536,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -10816,7 +10866,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -10826,7 +10876,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -10878,7 +10928,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -10888,7 +10938,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -11163,7 +11213,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -11173,7 +11223,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -11571,7 +11621,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -11581,7 +11631,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -11677,7 +11727,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -11687,7 +11737,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -11742,7 +11792,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -11752,7 +11802,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -11886,7 +11936,7 @@
 						"schema": {
 							"default": 0,
 							"minimum": 0,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back items from position",
 						"required": false
@@ -11896,7 +11946,7 @@
 						"name": "amount",
 						"schema": {
 							"minimum": 1,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "get back number of items",
 						"required": false
@@ -12188,7 +12238,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -12265,7 +12315,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -12344,7 +12394,7 @@
 						"name": "maxBitRate",
 						"schema": {
 							"minimum": 10,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "maximal bitrate if transcoding (in Kbps)",
 						"required": false
@@ -12508,7 +12558,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -12587,7 +12637,7 @@
 						"name": "maxBitRate",
 						"schema": {
 							"minimum": 10,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "maximal bitrate if transcoding (in Kbps)",
 						"required": false
@@ -12751,7 +12801,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -12828,7 +12878,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -12970,7 +13020,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -13112,7 +13162,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -13254,7 +13304,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -13396,7 +13446,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -13473,7 +13523,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": false
@@ -13550,7 +13600,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": true
@@ -13612,7 +13662,7 @@
 						"schema": {
 							"minimum": 16,
 							"maximum": 1024,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "size of the image",
 						"required": true
@@ -14005,7 +14055,7 @@
 						"schema": {
 							"minimum": 1,
 							"maximum": 6000,
-							"type": "integer"
+							"type": "number"
 						},
 						"description": "width",
 						"required": true
@@ -17118,6 +17168,17 @@
 					"track-similar"
 				],
 				"type": "string"
+			},
+			"Jam.LyricsOVHResponse": {
+				"type": "object",
+				"properties": {
+					"lyrics": {
+						"type": "string"
+					},
+					"source": {
+						"type": "string"
+					}
+				}
 			},
 			"Jam.AcoustidResponse": {
 				"type": "object",
@@ -23575,7 +23636,7 @@
 					"position": {
 						"description": "the position of the bookmark (in ms)",
 						"minimum": 0,
-						"type": "integer"
+						"type": "number"
 					}
 				},
 				"required": [
@@ -23624,7 +23685,7 @@
 					"time": {
 						"description": "time of the post (unix time)",
 						"minimum": 0,
-						"type": "integer"
+						"type": "number"
 					}
 				},
 				"required": [
@@ -23714,7 +23775,7 @@
 						"description": "the rating for the item",
 						"minimum": 0,
 						"maximum": 5,
-						"type": "integer"
+						"type": "number"
 					},
 					"id": {
 						"description": "the item id",
@@ -24043,7 +24104,7 @@
 					"position": {
 						"description": "the position in the current playing track",
 						"minimum": 0,
-						"type": "integer"
+						"type": "number"
 					}
 				},
 				"required": [

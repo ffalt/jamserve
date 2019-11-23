@@ -1406,6 +1406,17 @@ export declare namespace JamParameters {
 		type: CoverArtArchiveLookupType;
 	}
 
+	export interface LyricsOVHSearch {
+		/**
+		 * lookup by song title
+		 */
+		title: string;
+		/**
+		 * lookup by song artist
+		 */
+		artist: string;
+	}
+
 	export interface WikipediaSummary {
 		/**
 		 * lookup by page title

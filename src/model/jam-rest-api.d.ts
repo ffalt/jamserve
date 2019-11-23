@@ -59,6 +59,15 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
+		 * metadata: search lyrics.ovh data
+		 */
+		'lyricsovh/search'?: {
+			operationId: 'metadata.lyricsovhSearch'
+			params: JamParameters.LyricsOVHSearch;
+			result: Jam.LyricsOVHResponse;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
 		 * metadata: lookup acoustid data
 		 */
 		'acoustid/lookup'?: {

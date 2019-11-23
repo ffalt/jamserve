@@ -646,6 +646,11 @@ export declare namespace Jam {
 		entity?: WikiData.Entity;
 	}
 
+	export interface LyricsOVHResponse {
+		lyrics?: string;
+		source?: string;
+	}
+
 	export interface LastFMResponse extends LastFM.Result {
 	}
 

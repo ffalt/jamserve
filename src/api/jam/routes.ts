@@ -35,6 +35,11 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.LastFMResponse = await api.metadataController.lastfmLookup(options);
 		ApiResponder.data(req, res, result);
 	});
+	register.get('/lyricsovh/search', async (req, res) => {
+		const options: JamRequest<JamParameters.LyricsOVHSearch> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.LyricsOVHResponse = await api.metadataController.lyricsovhSearch(options);
+		ApiResponder.data(req, res, result);
+	});
 	register.get('/acoustid/lookup', async (req, res) => {
 		const options: JamRequest<JamParameters.AcoustidLookup> = {query: req.query, user: req.user, client: req.client};
 		const result: Array<Jam.AcoustidResponse> = await api.metadataController.acoustidLookup(options);

@@ -144,6 +144,7 @@ const typeTrackTag = {
 		mbAlbumStatus: typeKey,
 		mbReleaseCountry: typeKey,
 		grouping: typeKey,
+		lyrics: typeKey,
 		chapters: typeTrackTagChapter
 	}
 };

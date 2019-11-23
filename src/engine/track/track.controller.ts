@@ -220,6 +220,9 @@ export class TrackController extends BaseListController<JamParameters.Track,
 
 	async lyrics(req: JamRequest<JamParameters.ID>): Promise<Jam.TrackLyrics> {
 		const track = await this.byID(req.query.id);
+		if (track.tag.lyrics) {
+			return {lyrics: track.tag.lyrics};
+		}
 		const artist = track.tag.artist;
 		const song = track.tag.title;
 		if (!artist || !song) {
