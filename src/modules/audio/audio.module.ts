@@ -339,7 +339,24 @@ export class AudioModule {
 	}
 
 	async getLyrics(artist: string, song: string): Promise<LyricsResult | undefined> {
-		return this.lyricsOVH.search(artist, song);
+		let result = await this.lyricsOVH.search(artist, song);
+		if (!result || !result.lyrics) {
+			if (song.includes('(')) {
+				const title = song.slice(0, song.indexOf('(')).trim();
+				if (title.length > 0) {
+					result = await this.lyricsOVH.search(artist, title);
+				}
+			}
+		}
+		if (!result || !result.lyrics) {
+			if (song.includes('(')) {
+				const title = song.replace(/[()]/g, '').trim();
+				if (title.length > 0) {
+					result = await this.lyricsOVH.search(artist, title);
+				}
+			}
+		}
+		return result;
 	}
 
 	async wikipediaSummary(title: string, lang: string | undefined): Promise<{ title: string, url: string, summary: string } | undefined> {
