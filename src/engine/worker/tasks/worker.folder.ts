@@ -145,20 +145,18 @@ export class FolderWorker {
 		return {changedFolderIDs: [], changedTrackIDs: []};
 	}
 
-	public async create(parentID: string, name: string): Promise<{ folder: Folder }> {
-		const newParent = await this.store.folderStore.byId(parentID);
-		if (!newParent) {
+	public async create(parentID: string, name: string): Promise<{ folder: Folder, parent: Folder }> {
+		const parent = await this.store.folderStore.byId(parentID);
+		if (!parent) {
 			return Promise.reject(Error('Destination Folder not found'));
 		}
 		name = await FolderWorker.validateFolderName(name);
-		const destination = path.join(newParent.path, name);
-		await FolderWorker.validateFolderTask(newParent.path, newParent.path, name);
+		const destination = path.join(parent.path, name);
+		await FolderWorker.validateFolderTask(parent.path, parent.path, name);
 		await fse.mkdir(destination);
-		const folder = await FolderWorker.buildNewFolder(destination, newParent);
-		folder.id = await this.store.folderStore.add(folder);
-		newParent.tag.folderCount += newParent.tag.folderCount;
-		await this.store.folderStore.replace(newParent);
-		return {folder};
+		const folder = await FolderWorker.buildNewFolder(destination, parent);
+		parent.tag.folderCount += 1;
+		return {folder, parent};
 	}
 
 	public async delete(root: Root, folderIDs: Array<string>): Promise<{ removedFolders: Array<Folder>, removedTracks: Array<Track>, changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {

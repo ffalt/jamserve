@@ -206,8 +206,9 @@ export class WorkerService {
 
 	async createFolder(parameters: WorkerRequestCreateFolder): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {folder} = await this.folderWorker.create(parameters.parentID, parameters.name);
+		const {folder, parent} = await this.folderWorker.create(parameters.parentID, parameters.name);
 		changes.newFolders.push(folder);
+		changes.updateFolders.push(parent);
 		return this.changes.finish(changes, root.id, false);
 	}
 
