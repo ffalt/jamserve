@@ -79,6 +79,16 @@ async function prepareMockRoot(mockRoot: MockRoot, workerService: WorkerService,
 	expect(changes.removedArtists.length, 'Removed Artists count doesnt match').toBe(0);
 	expect(changes.updateAlbums.length, 'Update Album count doesnt match').toBe(0);
 	expect(changes.removedAlbums.length, 'Removed Album count doesnt match').toBe(0);
+	if (mockRoot.albums) {
+		expect(changes.newAlbums.length, 'Album count doesnt match').toBe(mockRoot.albums.length);
+		for (const album of mockRoot.albums) {
+			const b = changes.newAlbums.find(a => a.name === album.name && a.artist === album.artist);
+			expect(b, `Album not found ${album.name} - ${album.artist}`).toBeTruthy();
+			if (b) {
+				expect(b.albumType, `Album Type doesnt match ${album.name} - ${album.artist}`).toBe(album.albumType);
+			}
+		}
+	}
 	await validateMock(mockRoot, store);
 }
 

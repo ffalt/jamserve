@@ -219,7 +219,6 @@ export class MatchDirMergeTagBuilder {
 				tag.year = undefined;
 				break;
 			case FolderType.artist:
-				tag.albumType = undefined;
 				tag.genre = undefined;
 				tag.mbAlbumID = undefined;
 				tag.mbAlbumType = undefined;

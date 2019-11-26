@@ -33,6 +33,7 @@ export interface MockSpecFolder {
 
 export interface MockSpecRoot extends MockSpecFolder {
 	id: string;
+	albums?: Array<MockSpecAlbum>;
 	expected: {
 		folders: number;
 		tracks: number;
@@ -44,6 +45,12 @@ export interface MockSpecRoot extends MockSpecFolder {
 
 export interface MockTrack extends MockSpecTrack {
 	path: string;
+}
+
+export interface MockSpecAlbum {
+	artist: string;
+	name: string;
+	albumType: AlbumType;
 }
 
 export interface MockFolder extends MockSpecFolder {
@@ -496,71 +503,73 @@ export function buildSeriesMockRoot(dir: string, nr: number, id: string): MockRo
 			{
 				name: 'audiobook series 3',
 				genre: 'audio series',
-				folders: [{
-					name: 'album 4',
-					genre: 'audio series',
-					folders: [
-						{
-							name: 'cd 1',
-							genre: 'audio series',
-							folders: [],
-							tracks: [
-								{
-									name: '1 - cd 1 - title 1 - audiobook series 3.mp3',
-									artist: 'audiobook series 3',
-									album: 'album 4',
-									number: 1,
-									group: 'episode 4',
-									genre: 'audio series'
-								},
-								{
-									name: '2 - cd 1 - title 2 - audiobook series 3.mp3',
-									artist: 'audiobook series 3',
-									album: 'album 4',
-									group: 'episode 4',
-									number: 2,
-									genre: 'audio series'
+				folders: [
+					{
+						name: 'album 4',
+						genre: 'audio series',
+						folders: [
+							{
+								name: 'cd 1',
+								genre: 'audio series',
+								folders: [],
+								tracks: [
+									{
+										name: '1 - cd 1 - title 1 - audiobook series 3.mp3',
+										artist: 'audiobook series 3',
+										album: 'album 4',
+										number: 1,
+										group: 'episode 4',
+										genre: 'audio series'
+									},
+									{
+										name: '2 - cd 1 - title 2 - audiobook series 3.mp3',
+										artist: 'audiobook series 3',
+										album: 'album 4',
+										group: 'episode 4',
+										number: 2,
+										genre: 'audio series'
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.series
 								}
-							],
-							expected: {
-								folderType: FolderType.multialbum,
-								albumType: AlbumType.series
-							}
-						},
-						{
-							name: 'cd 2',
-							genre: 'audio series',
-							folders: [],
-							tracks: [
-								{
-									name: '1 - cd 2 - title 1 - audiobook series 3.mp3',
-									artist: 'audiobook series 3',
-									album: 'album 4',
-									group: 'episode 4',
-									number: 1,
-									genre: 'audio series'
-								},
-								{
-									name: '2 - cd 2 - title 2 - audiobook series 3.mp3',
-									artist: 'audiobook series 3',
-									album: 'album 4',
-									group: 'episode 4',
-									number: 2,
-									genre: 'audio series'
+							},
+							{
+								name: 'cd 2',
+								genre: 'audio series',
+								folders: [],
+								tracks: [
+									{
+										name: '1 - cd 2 - title 1 - audiobook series 3.mp3',
+										artist: 'audiobook series 3',
+										album: 'album 4',
+										group: 'episode 4',
+										number: 1,
+										genre: 'audio series'
+									},
+									{
+										name: '2 - cd 2 - title 2 - audiobook series 3.mp3',
+										artist: 'audiobook series 3',
+										album: 'album 4',
+										group: 'episode 4',
+										number: 2,
+										genre: 'audio series'
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.series
 								}
-							],
-							expected: {
-								folderType: FolderType.multialbum,
-								albumType: AlbumType.series
 							}
+						],
+						tracks: [],
+						expected: {
+							folderType: FolderType.multialbum,
+							albumType: AlbumType.series
 						}
-					],
-					tracks: [],
-					expected: {
-						folderType: FolderType.multialbum,
-						albumType: AlbumType.series
 					}
-				}],
+				],
 				tracks: [
 					{
 						name: '1 - title 1 - audiobook series 3.mp3',
@@ -572,7 +581,7 @@ export function buildSeriesMockRoot(dir: string, nr: number, id: string): MockRo
 					},
 					{
 						name: '2 - title 2 - audiobook series 3.mp3',
-						artist: 'audiobook series 2',
+						artist: 'audiobook series 3',
 						album: 'album 2',
 						group: 'episode 2',
 						number: 2,
@@ -592,11 +601,23 @@ export function buildSeriesMockRoot(dir: string, nr: number, id: string): MockRo
 			}
 		],
 		tracks: [],
+		albums: [
+			{artist: 'audiobook series 1', name: 'album 1', albumType: AlbumType.series},
+			{artist: 'audiobook series 1', name: 'album 2', albumType: AlbumType.series},
+			{artist: 'audiobook series 1', name: 'album 3', albumType: AlbumType.series},
+			{artist: 'audiobook series 2', name: 'album 1', albumType: AlbumType.series},
+			{artist: 'audiobook series 2', name: 'album 2', albumType: AlbumType.series},
+			{artist: 'audiobook series 2', name: 'album 3', albumType: AlbumType.series},
+			{artist: 'audiobook series 3', name: 'album 1', albumType: AlbumType.series},
+			{artist: 'audiobook series 3', name: 'album 2', albumType: AlbumType.series},
+			{artist: 'audiobook series 3', name: 'album 3', albumType: AlbumType.series},
+			{artist: 'audiobook series 3', name: 'album 4', albumType: AlbumType.series},
+		],
 		expected: {
 			folders: 12,
 			tracks: 20,
 			artists: 3,
-			albums: 9,
+			albums: 10,
 			folderType: FolderType.collection
 		}
 	};
