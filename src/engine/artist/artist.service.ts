@@ -1,4 +1,4 @@
-import {FolderType, MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
+import {AlbumType, FolderType, MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {slugify} from '../../utils/slug';
 import {BaseListService} from '../base/dbobject-list.service';
@@ -33,13 +33,16 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 			if (folders.length === 0) {
 				return;
 			}
-			return folders.find(f => f.tag.type === FolderType.artist);
+			const artistFolder = folders.find(f => f.tag.type === FolderType.artist);
+			if (artistFolder &&
+				((artistFolder.tag.mbArtistID && artistFolder.tag.mbArtistID === artist.mbArtistID) || (artistFolder.tag.artist && slugify(artistFolder.tag.artist) === artist.slug))
+			) {
+				return artistFolder;
+			}
 		};
 		for (const folderID of artist.folderIDs) {
 			const folder = await tryFolderID(folderID);
-			if (folder && (
-				(folder.tag.mbArtistID && folder.tag.mbArtistID === artist.mbArtistID) || (folder.tag.artist && slugify(folder.tag.artist) === artist.slug))
-			) {
+			if (folder) {
 				return folder;
 			}
 		}

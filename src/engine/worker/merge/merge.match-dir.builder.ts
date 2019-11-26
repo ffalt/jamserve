@@ -1,7 +1,7 @@
 import path from 'path';
 import {DBObjectType} from '../../../db/db.types';
 import {Jam} from '../../../model/jam-rest-data';
-import {FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../../model/jam-types';
+import {AlbumType, FileTyp, FolderType, RootScanStrategy, TrackTagFormatType} from '../../../model/jam-types';
 import {AudioModule} from '../../../modules/audio/audio.module';
 import {ImageModule} from '../../../modules/image/image.module';
 import {generateArtworkId} from '../../../utils/artwork-id';
@@ -123,6 +123,11 @@ export class MatchDirMergeTagBuilder {
 		return !!name.match(/(\[(extra|various)]|^(extra|various)$)/);
 	}
 
+	private static getMixedFolderType(dir: MergeMatchDir, metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
+		// if (metaStat.albumType === AlbumType.series && dir.)
+		return MatchDirMergeTagBuilder.getMultiAlbumFolderType(dir);
+	}
+
 	private static getFolderType(dir: MergeMatchDir, metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
 		if (dir.level === 0) {
 			return FolderType.collection;
@@ -131,8 +136,14 @@ export class MatchDirMergeTagBuilder {
 			return FolderType.extras;
 		}
 		if (metaStat.trackCount > 0) {
+			if (metaStat.hasMultipleAlbums && dir.tag && dir.tag.albumType === AlbumType.series) {
+				return FolderType.artist;
+			}
 			const dirCount = dir.directories.filter(d => !!d.tag && d.tag.type !== FolderType.extras).length;
-			return (dirCount === 0) ? FolderType.album : MatchDirMergeTagBuilder.getMultiAlbumFolderType(dir);
+			if (dirCount > 0) {
+				return MatchDirMergeTagBuilder.getMixedFolderType(dir, metaStat, strategy);
+			}
+			return FolderType.album;
 		}
 		if (dir.directories.length === 0) {
 			return (dir.files.filter(f => f.type === FileTyp.AUDIO).length === 0) ? FolderType.extras : FolderType.album;
@@ -161,6 +172,7 @@ export class MatchDirMergeTagBuilder {
 			return;
 		}
 		const result = MatchDirMergeTagBuilder.getFolderType(dir, dir.metaStat, strategy);
+		// console.log('check', dir.name, result);
 		MatchDirMergeTagBuilder.setFolderTagType(dir.tag, result);
 		if (result === FolderType.multialbum) {
 			MatchDirMergeTagBuilder.markMultiAlbumChildDirs(dir);
