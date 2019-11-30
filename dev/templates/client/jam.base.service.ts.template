@@ -22,7 +22,7 @@ export class JamBaseService {
 				switch (typeof val) {
 					case 'number':
 					case 'string':
-						result.push(`${key}=${val}`);
+						result.push(`${key}=${encodeURIComponent(val)}`);
 						break;
 					case 'boolean':
 						result.push(`${key}=${val ? 'true' : 'false'}`);
@@ -30,7 +30,7 @@ export class JamBaseService {
 					case 'object':
 						if (Array.isArray(val)) {
 							val.forEach((v: string) => {
-								result.push(`${key}=${v}`);
+								result.push(`${key}=${encodeURIComponent(v)}`);
 							});
 						}
 						break;
