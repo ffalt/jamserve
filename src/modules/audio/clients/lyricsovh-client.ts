@@ -1,6 +1,7 @@
 import request from 'request';
 import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
+
 const log = logger('LyricsOVHClient');
 
 export interface LyricsResult {
@@ -37,6 +38,10 @@ export class LyricsOVHClient extends WebserviceClient {
 	}
 
 	private cleanString(s: string): string {
-		return encodeURIComponent(s.replace(/[’´`]/g, '\''));
+		return encodeURIComponent(s
+			.replace(/[’´`]/g, '\'')
+			.replace(/[‐]/g, '-')
+			.normalize()
+		);
 	}
 }
