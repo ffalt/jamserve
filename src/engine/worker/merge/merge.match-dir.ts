@@ -3,10 +3,13 @@ import {RootScanStrategy} from '../../../model/jam-types';
 import {AudioModule} from '../../../modules/audio/audio.module';
 import {ImageModule} from '../../../modules/image/image.module';
 import {deepCompare} from '../../../utils/deep-compare';
+import {logger} from '../../../utils/logger';
 import {Store} from '../../store/store';
 import {Changes} from '../changes/changes';
 import {MatchDir} from '../match-dir/match-dir.types';
 import {MatchDirMergeBuilder, MatchDirMergeTagBuilder, MergeMatchDir} from './merge.match-dir.builder';
+
+const log = logger('IO.MatchDirMerge');
 
 export class MatchDirMerge {
 	folderBuilder: MatchDirMergeBuilder;
@@ -28,7 +31,9 @@ export class MatchDirMerge {
 	}
 
 	private static async mergeRecursive(dir: MergeMatchDir, changes: Changes): Promise<void> {
+		log.debug('Check For Changes:', dir.name);
 		if (MatchDirMerge.folderHasChanged(dir)) {
+			log.info('Folder Changed:', dir.name);
 			const folder = MatchDirMergeBuilder.buildFolder(dir);
 			folder.id = dir.folder.id;
 			dir.folder = folder;

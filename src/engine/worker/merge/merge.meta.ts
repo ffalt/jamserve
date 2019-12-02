@@ -1,4 +1,5 @@
 import {AlbumType, cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../model/jam-types';
+import {logger} from '../../../utils/logger';
 import {slugify} from '../../../utils/slug';
 import {Album} from '../../album/album.model';
 import {Artist} from '../../artist/artist.model';
@@ -7,6 +8,8 @@ import {Track} from '../../track/track.model';
 import {Changes} from '../changes/changes';
 import {MetaStatBuilder} from '../match-dir/match-dir.meta-stats.builder';
 import {getAlbumName, MetaMergerCache, MetaMergeTrackInfo, UpdateMetaMergeTrackInfo} from './merge.meta.cache';
+
+const log = logger('IO.MetaMerger');
 
 export class MetaMerger {
 	cache: MetaMergerCache;
@@ -87,6 +90,7 @@ export class MetaMerger {
 	}
 
 	private async refreshArtist(artist: Artist, changes: Changes, removedTrackIDs: Array<string>, updateTracks: Array<UpdateMetaMergeTrackInfo>, newTracks: Array<MetaMergeTrackInfo>): Promise<void> {
+		log.debug('Refreshing Artist:', artist.name);
 		const tracks = await this.refreshArtistTracks(artist, removedTrackIDs, updateTracks, newTracks);
 		if (tracks.length === 0) {
 			if (changes.newArtists.includes(artist)) {
@@ -169,6 +173,7 @@ export class MetaMerger {
 	}
 
 	private async refreshAlbum(album: Album, changes: Changes, removedTrackIDs: Array<string>, updateTracks: Array<UpdateMetaMergeTrackInfo>, newTracks: Array<MetaMergeTrackInfo>): Promise<void> {
+		log.debug('Refreshing Album:', album.name);
 		const trackInfos = await this.refreshAlbumTracks(album, changes, removedTrackIDs, updateTracks, newTracks);
 		if (trackInfos.length === 0) {
 			if (!changes.removedAlbums.includes(album)) {

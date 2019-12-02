@@ -44,26 +44,30 @@ export class ChangesWorker {
 	}
 
 	async cleanChanges(changes: Changes): Promise<void> {
-		let ids: Array<string> = [];
+		let imageCleanIds = new Set<string>();
+		let trackCleanIds = new Set<string>();
 		if (changes.removedAlbums.length > 0) {
 			const albumIDs = changes.removedAlbums.map(a => a.id);
 			await this.store.albumStore.remove(albumIDs);
 			await this.store.stateStore.removeByQuery({destIDs: albumIDs, type: DBObjectType.album});
+			imageCleanIds = new Set<string>([...imageCleanIds, ...albumIDs]);
 		}
 		if (changes.removedArtists.length > 0) {
 			const artistIDs = changes.removedArtists.map(a => a.id);
 			await this.store.artistStore.remove(artistIDs);
 			await this.store.stateStore.removeByQuery({destIDs: artistIDs, type: DBObjectType.artist});
+			imageCleanIds = new Set<string>([...imageCleanIds, ...artistIDs]);
 		}
 		if (changes.removedFolders.length > 0) {
 			const folderIDs = changes.removedFolders.map(folder => folder.id);
 			await this.store.folderStore.remove(folderIDs);
 			await this.store.stateStore.removeByQuery({destIDs: folderIDs, type: DBObjectType.folder});
-			ids = folderIDs;
+			imageCleanIds = new Set<string>([...imageCleanIds, ...folderIDs]);
 		}
 		if (changes.removedTracks.length > 0) {
 			const trackIDs = changes.removedTracks.map(track => track.id);
-			ids = ids.concat(trackIDs);
+			imageCleanIds = new Set<string>([...imageCleanIds, ...trackIDs]);
+			trackCleanIds = new Set<string>([...trackCleanIds, ...trackIDs]);
 			await this.store.trackStore.remove(trackIDs);
 			await this.store.stateStore.removeByQuery({destIDs: trackIDs, type: DBObjectType.track});
 			await this.store.bookmarkStore.removeByQuery({destIDs: trackIDs});
@@ -81,8 +85,30 @@ export class ChangesWorker {
 
 			}
 		}
+		if (changes.updateAlbums.length > 0) {
+			const albumIDs = changes.updateAlbums.map(a => a.id);
+			imageCleanIds = new Set<string>([...imageCleanIds, ...albumIDs]);
+		}
+		if (changes.updateArtists.length > 0) {
+			const artistIDs = changes.updateArtists.map(a => a.id);
+			imageCleanIds = new Set<string>([...imageCleanIds, ...artistIDs]);
+		}
+		if (changes.updateFolders.length > 0) {
+			const folderIDs = changes.updateFolders.map(f => f.id);
+			imageCleanIds = new Set<string>([...imageCleanIds, ...folderIDs]);
+		}
+		if (changes.updateTracks.length > 0) {
+			for (const t of changes.updateTracks) {
+				imageCleanIds.add(t.track.albumID);
+				imageCleanIds.add(t.oldTrack.albumID);
+			}
+		}
+		let ids = [...imageCleanIds];
 		if (ids.length > 0) {
 			await this.imageModule.clearImageCacheByIDs(ids);
+		}
+		ids = [...trackCleanIds];
+		if (ids.length > 0) {
 			await this.audioModule.clearCacheByIDs(ids);
 		}
 	}
@@ -120,6 +146,7 @@ export class ChangesWorker {
 		await this.cleanChanges(changes);
 
 		changes.end = Date.now();
+
 		return changes;
 	}
 
