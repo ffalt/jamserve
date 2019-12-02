@@ -25,7 +25,7 @@ export class AcoustidClient extends WebserviceClient {
 
 	constructor(options: AcoustidClient.AcoustidClientOptions) {
 		// "not more than 3 per second" https://acoustid.org/webservice
-		super(3, 1000, options.userAgent);
+		super(1, 1000, 'JamServe/0.1.0');
 		this.options = options;
 	}
 
