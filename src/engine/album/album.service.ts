@@ -75,7 +75,7 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 
 	async getAlbumImage(album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		let result: ApiBinaryResult | undefined;
-		if (album.albumType === AlbumType.series) {
+		if (album.albumType === AlbumType.series && album.trackIDs.length === 1) {
 			result = await this.getAlbumTrackImage(album, size, format);
 		}
 		if (!result) {
