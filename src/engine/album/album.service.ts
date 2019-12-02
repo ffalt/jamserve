@@ -54,16 +54,36 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 		}
 	}
 
-	async getAlbumImage(album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
-		if (album.albumType === AlbumType.series && album.trackIDs.length === 1) {
+	async getAlbumTrackImage(album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+		if (album.trackIDs.length > 0) {
 			const track = await this.trackService.trackStore.byId(album.trackIDs[0]);
 			if (track) {
 				return this.trackService.getTrackImage(track, size, format);
 			}
 		}
+	}
+
+	async getAlbumFolderImage(album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		const folder = await this.getAlbumFolder(album);
 		if (folder) {
-			return this.folderService.getFolderImage(folder, size, format);
+			const result = this.folderService.getFolderImage(folder, size, format);
+			if (result) {
+				return result;
+			}
 		}
+	}
+
+	async getAlbumImage(album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+		let result: ApiBinaryResult | undefined;
+		if (album.albumType === AlbumType.series) {
+			result = await this.getAlbumTrackImage(album, size, format);
+		}
+		if (!result) {
+			result = await this.getAlbumFolderImage(album, size, format);
+		}
+		if (!result) {
+			result = await this.getAlbumTrackImage(album, size, format);
+		}
+		return result;
 	}
 }
