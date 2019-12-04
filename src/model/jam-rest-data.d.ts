@@ -392,7 +392,6 @@ export declare namespace Jam {
 
 	export interface AlbumTag {
 		duration: number;
-		created: number;
 		genre?: string;
 		year?: number;
 		grouping?: string;

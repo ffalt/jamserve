@@ -169,6 +169,12 @@ export declare namespace JamParameters {
 		 */
 		albumState?: boolean;
 		/**
+		 * include tag (duration, musicbrainz ids, etc) on album(s)
+		 *
+		 * @default false
+		 */
+		albumTag?: boolean;
+		/**
 		 * include extended meta data on album(s)
 		 *
 		 * @default false

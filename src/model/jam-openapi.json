@@ -2,7 +2,7 @@
 	"openapi": "3.0.0",
 	"info": {
 		"description": "Api for JamServe",
-		"version": "0.1.7",
+		"version": "0.1.8",
 		"title": "JamApi",
 		"license": {
 			"name": "MIT"
@@ -6835,6 +6835,16 @@
 					},
 					{
 						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -7028,6 +7038,16 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -7387,6 +7407,16 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -7820,6 +7850,16 @@
 					},
 					{
 						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -8145,6 +8185,16 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -8593,6 +8643,16 @@
 					},
 					{
 						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -8782,6 +8842,16 @@
 					},
 					{
 						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -8905,6 +8975,16 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -9047,6 +9127,16 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -9610,6 +9700,16 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumTag",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -22952,9 +23052,6 @@
 					"duration": {
 						"type": "number"
 					},
-					"created": {
-						"type": "number"
-					},
 					"genre": {
 						"type": "string"
 					},
@@ -22977,7 +23074,6 @@
 					}
 				},
 				"required": [
-					"created",
 					"duration"
 				]
 			},

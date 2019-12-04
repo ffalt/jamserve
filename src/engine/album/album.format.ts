@@ -18,14 +18,13 @@ export function formatAlbum(album: Album, includes: JamParameters.IncludesAlbum)
 		artist: album.artist,
 		artistID: album.artistID,
 		trackCount: album.trackIDs.length,
-		tag: {
+		tag: includes.albumTag ? {
 			genre: album.genre,
 			grouping: album.grouping,
 			year: album.year,
 			duration: album.duration,
-			created: album.created,
 			musicbrainz: mbz
-		},
+		} : undefined,
 		trackIDs: includes.albumTrackIDs ? album.trackIDs : undefined
 	};
 }
