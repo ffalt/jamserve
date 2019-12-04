@@ -13,6 +13,9 @@ import {Track, TrackTag} from '../../track/track.model';
 import {Changes} from '../changes/changes';
 import {MatchDirMetaStats, MetaStat} from '../match-dir/match-dir.meta-stats';
 import {MatchDir, MatchFile} from '../match-dir/match-dir.types';
+import {logger} from '../../../utils/logger';
+
+const log = logger('IO.MatchDirMergeBuilder');
 
 export interface MergeMatchDir extends MatchDir {
 	folder: Folder;
@@ -57,6 +60,7 @@ export class MatchDirMergeBuilder {
 	}
 
 	private async buildTrack(file: MatchFile, parent: Folder): Promise<Track> {
+		log.debug('Building Track:', file.name);
 		const data = await this.audioModule.read(file.name);
 		const tag: TrackTag = data.tag || {format: TrackTagFormatType.none};
 		tag.title = tag.title || basenameStripExt(file.name);
@@ -95,6 +99,7 @@ export class MatchDirMergeBuilder {
 
 	async buildMerge(dir: MatchDir, changes: Changes, forceTrackMetaRefresh: boolean): Promise<MergeMatchDir> {
 		if (!dir.folder) {
+			log.debug('Building Folder:', dir.name);
 			dir.folder = MatchDirMergeBuilder.buildFolder(dir);
 			dir.folder.id = await this.store.trackStore.getNewId();
 			changes.newFolders.push(dir.folder);

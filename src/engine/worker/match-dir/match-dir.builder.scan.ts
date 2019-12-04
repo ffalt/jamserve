@@ -1,9 +1,12 @@
 import path from 'path';
+import {logger} from '../../../utils/logger';
 import {Folder} from '../../folder/folder.model';
 import {Store} from '../../store/store';
 import {Track} from '../../track/track.model';
 import {ScanDir} from '../scan-dir/scan-dir';
 import {MatchDir} from './match-dir.types';
+
+const log = logger('IO.MatchDirBuilderScan');
 
 export class MatchDirBuilderScan {
 
@@ -27,9 +30,10 @@ export class MatchDirBuilderScan {
 		return result;
 	}
 
-	private async matchDirR(dir: MatchDir, removedFolders: Array<Folder>, removedTracks: Array<Track>): Promise<void> {
-		const tracks = await this.store.trackStore.search({path: dir.name});
-		tracks.items.forEach(track => {
+	private async matchDirR(dir: MatchDir, searchTracks: Array<Track>, searchFolders: Array<Folder>, removedFolders: Array<Folder>, removedTracks: Array<Track>): Promise<void> {
+		log.debug('Matching:', dir.name);
+		const tracks = searchTracks.filter(t => t.path === dir.name); // await this.store.trackStore.search({path: dir.name});
+		tracks.forEach(track => {
 			const filename = path.join(track.path, track.name);
 			const file = dir.files.find(f => f.name === filename);
 			if (file) {
@@ -39,26 +43,29 @@ export class MatchDirBuilderScan {
 			}
 		});
 		if (dir.folder) {
-			const folders = await this.store.folderStore.search({parentID: dir.folder.id});
-			folders.items = folders.items.sort((a, b) => a.path.localeCompare(b.path));
-			for (const subFolder of folders.items) {
+			const folderId = dir.folder.id;
+			const folders = searchFolders.filter(f => f.parentID === folderId) // await this.store.folderStore.search({parentID: dir.folder.id});
+				.sort((a, b) => a.path.localeCompare(b.path));
+			for (const subFolder of folders) {
 				const subDir = dir.directories.find(sd => sd.name === subFolder.path);
 				if (!subDir) {
 					removedFolders.push(subFolder);
 				} else {
 					subDir.folder = subFolder;
-					await this.matchDirR(subDir, removedFolders, removedTracks);
+					await this.matchDirR(subDir, searchTracks, searchFolders, removedFolders, removedTracks);
 				}
 			}
 		}
 	}
 
 	async match(dir: ScanDir): Promise<{ rootMatch: MatchDir, removedFolders: Array<Folder>, removedTracks: Array<Track> }> {
+		const tracks = await this.store.trackStore.search({inPath: dir.name});
+		const folders = await this.store.folderStore.search({inPath: dir.name});
 		const rootMatch: MatchDir = this.cloneScanDir(dir, undefined, 0);
 		rootMatch.folder = await this.store.folderStore.searchOne({path: dir.name});
 		const removedFolders: Array<Folder> = [];
 		const removedTracks: Array<Track> = [];
-		await this.matchDirR(rootMatch, removedFolders, removedTracks);
+		await this.matchDirR(rootMatch, tracks.items, folders.items, removedFolders, removedTracks);
 		for (const sub of removedFolders) {
 			const folderList = await this.store.folderStore.search({inPath: sub.path});
 			for (const folder of folderList.items) {
