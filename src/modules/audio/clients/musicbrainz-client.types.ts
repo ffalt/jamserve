@@ -23,7 +23,7 @@ export const LookupIncludes: { [type: string]: Array<string> } = {
 	label: ['releases'],
 	place: [],
 	recording: ['artists', 'releases', 'artist-credits', 'aliases', 'tags', 'ratings', 'annotation'],
-	release: ['artists', 'collections', 'labels', 'recordings', 'release-groups', 'discids', 'media', 'isrcs', 'artist-credits', 'aliases', 'tags', 'url-rels', 'annotation'],
+	release: ['artists', 'labels', 'recordings', 'release-groups', 'discids', 'media', 'isrcs', 'artist-credits', 'aliases', 'tags', 'url-rels', 'annotation'],
 	'release-group': ['artists', 'releases', 'media', 'artist-credits', 'aliases', 'tags', 'ratings', 'url-rels', 'annotation'],
 	series: [],
 	work: [],
