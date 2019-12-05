@@ -40,8 +40,10 @@ export class LyricsOVHClient extends WebserviceClient {
 	private cleanString(s: string): string {
 		return encodeURIComponent(s
 			.replace(/[’´`]/g, '\'')
+			.replace(/[():]/g, ' ')
 			.replace(/[‐]/g, '-')
 			.normalize()
+			.trim()
 		);
 	}
 }
