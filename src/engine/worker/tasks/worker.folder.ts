@@ -62,16 +62,13 @@ export class FolderWorker {
 		oldPath = ensureTrailingPathSeparator(oldPath);
 		const folders = (await this.store.folderStore.search({inPath: oldPath})).items;
 		for (const f of folders) {
-			const rest = f.path.slice(oldPath.length - 1);
-			if (!(rest.length > 0 && rest[0] !== path.sep)) {
-				f.path = newPath + ensureTrailingPathSeparator(rest);
-				f.rootID = rootID;
-			}
+			f.path = f.path.replace(ensureTrailingPathSeparator(oldPath), ensureTrailingPathSeparator(newPath));
+			f.rootID = rootID;
 		}
 		await this.store.folderStore.replaceMany(folders);
 		const tracks = (await this.store.trackStore.search({inPath: oldPath})).items;
 		for (const t of tracks) {
-			t.path = t.path.replace(oldPath, ensureTrailingPathSeparator(newPath));
+			t.path = t.path.replace(ensureTrailingPathSeparator(oldPath), ensureTrailingPathSeparator(newPath));
 			t.rootID = rootID;
 		}
 		await this.store.trackStore.replaceMany(tracks);

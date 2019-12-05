@@ -56,16 +56,24 @@ describe('FolderWorker', () => {
 						throw Error('Invalid Test Setup');
 					}
 
-					async function testRename(folder: Folder, newName: string): Promise<void> {
+					async function testRename(folder: Folder, newName: string): Promise<Folder | undefined> {
+						const trackCount = await store.trackStore.searchCount({inPath: folder.path});
 						await workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName});
-						const all = await store.folderStore.search({inPath: folder.path});
+						const updatedFolder = await store.folderStore.byId(folder.id);
+						expect(updatedFolder).toBeDefined();
+						if (!updatedFolder) {
+							return;
+						}
+						const all = await store.folderStore.search({inPath: updatedFolder.path});
 						for (const f of all.items) {
 							expect(await fse.pathExists(f.path)).toBe(true);
 						}
-						const tracks = await store.trackStore.search({inPath: folder.path});
+						const tracks = await store.trackStore.search({inPath: updatedFolder.path});
+						expect(trackCount, `Track count does not match: ${updatedFolder.path}`).toBe(tracks.items.length);
 						for (const t of tracks.items) {
 							expect(await fse.pathExists(t.path + t.name)).toBe(true);
 						}
+						return updatedFolder;
 					}
 
 					for (const id of folderIds) {
@@ -75,8 +83,10 @@ describe('FolderWorker', () => {
 							return;
 						}
 						const name = path.basename(folder.path);
-						await testRename(folder, name + '_renamed');
-						await testRename(folder, name);
+						const updatedFolder = await testRename(folder, name + '_renamed');
+						if (updatedFolder) {
+							await testRename(updatedFolder, name);
+						}
 					}
 				});
 
@@ -290,8 +300,6 @@ describe('FolderWorker', () => {
 					await imageModuleTest.imageModule.clearImageCacheByID(folder.id);
 				});
 */
-		},
-		async () => {
 		}
 	);
 
