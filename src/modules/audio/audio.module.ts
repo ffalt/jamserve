@@ -340,19 +340,14 @@ export class AudioModule {
 
 	async getLyrics(artist: string, song: string): Promise<LyricsResult | undefined> {
 		let result = await this.lyricsOVH.search(artist, song);
-		if (!result || !result.lyrics) {
-			if (song.includes('(')) {
-				const title = song.slice(0, song.indexOf('(')).trim();
-				if (title.length > 0) {
-					result = await this.lyricsOVH.search(artist, title);
-				}
-			}
-		}
-		if (!result || !result.lyrics) {
-			if (song.includes('(')) {
-				const title = song.replace(/[()]/g, '').trim();
-				if (title.length > 0) {
-					result = await this.lyricsOVH.search(artist, title);
+		const cutVariants = ['(', '/', '[', ':'];
+		for (const cut of cutVariants) {
+			if (!result || !result.lyrics) {
+				if (song.includes(cut)) {
+					const title = song.slice(0, song.indexOf(cut)).trim();
+					if (title.length > 0) {
+						result = await this.lyricsOVH.search(artist, title);
+					}
 				}
 			}
 		}
