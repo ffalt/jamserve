@@ -643,6 +643,7 @@ export declare namespace Jam {
 
 	export interface WikidataLookupResponse {
 		entity?: WikiData.Entity;
+		data?: WikiData.Entity;
 	}
 
 	export interface LyricsOVHResponse {

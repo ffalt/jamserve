@@ -177,13 +177,17 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		return this.searchInStore<Jam.WikipediaSummaryResponse>(`wikidata-summary-${id}`,
 			MetaDataType.wikidata, async () => {
 				const lookup = await this.wikidataLookup(id);
-				if (!lookup.entity) {
+				if (!lookup) {
+					return {};
+				}
+				const obj = lookup.entity || lookup.data;
+				if (!obj) {
 					return {};
 				}
 				lang = lang || 'en';
 				const site = `${lang}wiki`;
-				if (lookup.entity.sitelinks) {
-					const langSite = lookup.entity.sitelinks[site];
+				if (obj.sitelinks) {
+					const langSite = obj.sitelinks[site];
 					if (!langSite) {
 						return {};
 					}
