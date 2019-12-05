@@ -19387,6 +19387,9 @@
 				"properties": {
 					"entity": {
 						"$ref": "#/components/schemas/WikiData.Entity"
+					},
+					"data": {
+						"$ref": "#/components/schemas/WikiData.Entity"
 					}
 				}
 			},
