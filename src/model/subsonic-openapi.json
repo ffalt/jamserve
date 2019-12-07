@@ -223,8 +223,8 @@
 						"in": "query",
 						"name": "position",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "The position (in milliseconds) within the media file.",
 						"required": true
@@ -488,8 +488,8 @@
 						"in": "query",
 						"name": "expires",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "The time at which the share expires. Given as milliseconds since 1970.",
 						"required": false
@@ -1568,9 +1568,9 @@
 						"in": "query",
 						"name": "size",
 						"schema": {
+							"type": "integer",
 							"maximum": 500,
-							"default": 10,
-							"type": "number"
+							"default": 10
 						},
 						"description": "The number of albums to return. Max 500.",
 						"required": false
@@ -1579,8 +1579,8 @@
 						"in": "query",
 						"name": "offset",
 						"schema": {
-							"default": 0,
-							"type": "number"
+							"type": "integer",
+							"default": 0
 						},
 						"description": "The list offset. Useful if you for example want to page through the list of newest albums.",
 						"required": false
@@ -1607,8 +1607,8 @@
 						"in": "query",
 						"name": "toYear",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "The last year in the range.",
 						"required": false
@@ -1692,9 +1692,9 @@
 						"in": "query",
 						"name": "size",
 						"schema": {
+							"type": "integer",
 							"maximum": 500,
-							"default": 10,
-							"type": "number"
+							"default": 10
 						},
 						"description": "The number of albums to return. Max 500.",
 						"required": false
@@ -1703,8 +1703,8 @@
 						"in": "query",
 						"name": "offset",
 						"schema": {
-							"default": 0,
-							"type": "number"
+							"type": "integer",
+							"default": 0
 						},
 						"description": "The list offset. Useful if you for example want to page through the list of newest albums.",
 						"required": false
@@ -1731,8 +1731,8 @@
 						"in": "query",
 						"name": "toYear",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "The last year in the range.",
 						"required": false
@@ -1900,9 +1900,9 @@
 						"in": "query",
 						"name": "count",
 						"schema": {
+							"type": "integer",
 							"default": 20,
-							"minimum": 1,
-							"type": "number"
+							"minimum": 1
 						},
 						"description": "Max number of similar artists to return.",
 						"required": false
@@ -1996,9 +1996,9 @@
 						"in": "query",
 						"name": "count",
 						"schema": {
+							"type": "integer",
 							"default": 20,
-							"minimum": 1,
-							"type": "number"
+							"minimum": 1
 						},
 						"description": "Max number of similar artists to return.",
 						"required": false
@@ -2370,8 +2370,8 @@
 						"in": "query",
 						"name": "ifModifiedSince",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).",
 						"required": false
@@ -2976,9 +2976,9 @@
 						"in": "query",
 						"name": "count",
 						"schema": {
+							"type": "integer",
 							"default": 20,
-							"minimum": 0,
-							"type": "number"
+							"minimum": 0
 						},
 						"description": "The maximum number of episodes to return.",
 						"required": false
@@ -3416,10 +3416,10 @@
 						"in": "query",
 						"name": "size",
 						"schema": {
+							"type": "integer",
 							"default": 10,
 							"minimum": 1,
-							"maximum": 500,
-							"type": "number"
+							"maximum": 500
 						},
 						"description": "The maximum number of songs to return. Max 500.",
 						"required": false
@@ -3446,7 +3446,7 @@
 						"in": "query",
 						"name": "fromYear",
 						"schema": {
-							"type": "number"
+							"type": "integer"
 						},
 						"description": "Only return songs published after or in this year.",
 						"required": false
@@ -3455,7 +3455,7 @@
 						"in": "query",
 						"name": "toYear",
 						"schema": {
-							"type": "number"
+							"type": "integer"
 						},
 						"description": "Only return songs published before or in this year.",
 						"required": false
@@ -3723,9 +3723,9 @@
 						"in": "query",
 						"name": "count",
 						"schema": {
+							"type": "integer",
 							"default": 50,
-							"minimum": 1,
-							"type": "number"
+							"minimum": 1
 						},
 						"description": "Max number of songs to return.",
 						"required": false
@@ -3809,9 +3809,9 @@
 						"in": "query",
 						"name": "count",
 						"schema": {
+							"type": "integer",
 							"default": 50,
-							"minimum": 1,
-							"type": "number"
+							"minimum": 1
 						},
 						"description": "Max number of songs to return.",
 						"required": false
@@ -3970,10 +3970,10 @@
 						"in": "query",
 						"name": "count",
 						"schema": {
+							"type": "integer",
 							"default": 10,
 							"maximum": 500,
-							"minimum": 1,
-							"type": "number"
+							"minimum": 1
 						},
 						"description": "The maximum number of songs to return. Max 500.",
 						"required": false
@@ -3982,9 +3982,9 @@
 						"in": "query",
 						"name": "offset",
 						"schema": {
+							"type": "integer",
 							"default": 0,
-							"minimum": 0,
-							"type": "number"
+							"minimum": 0
 						},
 						"description": "The offset. Useful if you want to page through the songs in a genre.",
 						"required": false
@@ -4227,9 +4227,9 @@
 						"in": "query",
 						"name": "count",
 						"schema": {
+							"type": "integer",
 							"default": 50,
-							"minimum": 1,
-							"type": "number"
+							"minimum": 1
 						},
 						"description": "Max number of songs to return.",
 						"required": false
@@ -4591,8 +4591,8 @@
 						"in": "query",
 						"name": "index",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "Used by skip and remove. Zero-based index of the song to skip to or remove.",
 						"required": false
@@ -4601,9 +4601,9 @@
 						"in": "query",
 						"name": "offset",
 						"schema": {
+							"type": "integer",
 							"default": 0,
-							"minimum": 0,
-							"type": "number"
+							"minimum": 0
 						},
 						"description": "Used by skip. Start playing this many seconds into the track.",
 						"required": false
@@ -4621,9 +4621,9 @@
 						"in": "query",
 						"name": "gain",
 						"schema": {
+							"type": "number",
 							"minimum": 0,
-							"maximum": 1,
-							"type": "number"
+							"maximum": 1
 						},
 						"description": "Used by setGain to control the playback volume. A float value between 0.0 and 1.0.",
 						"required": false
@@ -4830,8 +4830,8 @@
 						"in": "query",
 						"name": "position",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "The position in milliseconds within the currently playing song.",
 						"required": false
@@ -4907,8 +4907,8 @@
 						"in": "query",
 						"name": "time",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "The time (in milliseconds since 1 Jan 1970) at which the song was listened to.",
 						"required": false
@@ -5028,9 +5028,9 @@
 						"in": "query",
 						"name": "count",
 						"schema": {
+							"type": "integer",
 							"default": 20,
-							"minimum": 1,
-							"type": "number"
+							"minimum": 1
 						},
 						"description": "Maximum number of results to return.",
 						"required": false
@@ -5039,9 +5039,9 @@
 						"in": "query",
 						"name": "offset",
 						"schema": {
+							"type": "integer",
 							"minimum": 0,
-							"default": 0,
-							"type": "number"
+							"default": 0
 						},
 						"description": "Search result offset. Used for paging.",
 						"required": false
@@ -5134,9 +5134,9 @@
 						"in": "query",
 						"name": "artistCount",
 						"schema": {
+							"type": "integer",
 							"minimum": 1,
-							"default": 20,
-							"type": "number"
+							"default": 20
 						},
 						"description": "Maximum number of artists to return.",
 						"required": false
@@ -5145,9 +5145,9 @@
 						"in": "query",
 						"name": "artistOffset",
 						"schema": {
+							"type": "integer",
 							"minimum": 0,
-							"default": 0,
-							"type": "number"
+							"default": 0
 						},
 						"description": "Search result offset for artists. Used for paging.",
 						"required": false
@@ -5156,9 +5156,9 @@
 						"in": "query",
 						"name": "albumCount",
 						"schema": {
+							"type": "integer",
 							"minimum": 1,
-							"default": 20,
-							"type": "number"
+							"default": 20
 						},
 						"description": "Maximum number of albums to return.",
 						"required": false
@@ -5167,9 +5167,9 @@
 						"in": "query",
 						"name": "albumOffset",
 						"schema": {
+							"type": "integer",
 							"minimum": 0,
-							"default": 0,
-							"type": "number"
+							"default": 0
 						},
 						"description": "Search result offset for albums. Used for paging.",
 						"required": false
@@ -5178,9 +5178,9 @@
 						"in": "query",
 						"name": "songCount",
 						"schema": {
+							"type": "integer",
 							"minimum": 1,
-							"default": 20,
-							"type": "number"
+							"default": 20
 						},
 						"description": "Maximum number of songs to return.",
 						"required": false
@@ -5189,9 +5189,9 @@
 						"in": "query",
 						"name": "songOffset",
 						"schema": {
+							"type": "integer",
 							"minimum": 0,
-							"default": 0,
-							"type": "number"
+							"default": 0
 						},
 						"description": "Search result offset for songs. Used for paging.",
 						"required": false
@@ -5284,9 +5284,9 @@
 						"in": "query",
 						"name": "artistCount",
 						"schema": {
+							"type": "integer",
 							"minimum": 1,
-							"default": 20,
-							"type": "number"
+							"default": 20
 						},
 						"description": "Maximum number of artists to return.",
 						"required": false
@@ -5295,9 +5295,9 @@
 						"in": "query",
 						"name": "artistOffset",
 						"schema": {
+							"type": "integer",
 							"minimum": 0,
-							"default": 0,
-							"type": "number"
+							"default": 0
 						},
 						"description": "Search result offset for artists. Used for paging.",
 						"required": false
@@ -5306,9 +5306,9 @@
 						"in": "query",
 						"name": "albumCount",
 						"schema": {
+							"type": "integer",
 							"minimum": 1,
-							"default": 20,
-							"type": "number"
+							"default": 20
 						},
 						"description": "Maximum number of albums to return.",
 						"required": false
@@ -5317,9 +5317,9 @@
 						"in": "query",
 						"name": "albumOffset",
 						"schema": {
+							"type": "integer",
 							"minimum": 0,
-							"default": 0,
-							"type": "number"
+							"default": 0
 						},
 						"description": "Search result offset for albums. Used for paging.",
 						"required": false
@@ -5328,9 +5328,9 @@
 						"in": "query",
 						"name": "songCount",
 						"schema": {
+							"type": "integer",
 							"minimum": 1,
-							"default": 20,
-							"type": "number"
+							"default": 20
 						},
 						"description": "Maximum number of songs to return.",
 						"required": false
@@ -5339,9 +5339,9 @@
 						"in": "query",
 						"name": "songOffset",
 						"schema": {
+							"type": "integer",
 							"minimum": 0,
-							"default": 0,
-							"type": "number"
+							"default": 0
 						},
 						"description": "Search result offset for songs. Used for paging.",
 						"required": false
@@ -5426,9 +5426,9 @@
 						"in": "query",
 						"name": "rating",
 						"schema": {
+							"type": "integer",
 							"minimum": 0,
-							"maximum": 5,
-							"type": "number"
+							"maximum": 5
 						},
 						"description": "The rating between 1 and 5 (inclusive), or 0 to remove the rating.",
 						"required": true
@@ -5875,8 +5875,8 @@
 						"in": "query",
 						"name": "expires",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "The time at which the share expires. Given as milliseconds since 1970.",
 						"required": false
@@ -6106,24 +6106,7 @@
 						"in": "query",
 						"name": "maxBitRate",
 						"schema": {
-							"enum": [
-								0,
-								112,
-								128,
-								160,
-								192,
-								224,
-								256,
-								32,
-								320,
-								40,
-								48,
-								56,
-								64,
-								80,
-								96
-							],
-							"type": "number"
+							"type": "integer"
 						},
 						"description": "The maximum bit rate (in Kbps) for the user. Audio streams of higher bit rates are automatically downsampled to this bit rate. Legal values: 0 (no limit), 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320.",
 						"required": false
@@ -6373,8 +6356,8 @@
 						"in": "query",
 						"name": "maxBitRate",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "If specified, the server will attempt to limit the bitrate to this value, in kilobits per second. If set to zero, no limit is imposed.",
 						"required": false
@@ -6383,8 +6366,8 @@
 						"in": "query",
 						"name": "timeOffset",
 						"schema": {
-							"minimum": 0,
-							"type": "number"
+							"type": "integer",
+							"minimum": 0
 						},
 						"description": "Only applicable to video streaming. If specified, start streaming at the given offset (in seconds) into the video. Typically used to implement video skipping.",
 						"required": false
