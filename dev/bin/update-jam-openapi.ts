@@ -6,15 +6,16 @@ import {Definitions} from '../lib/json-schema';
 import {buildBinaryResponse, buildOpenApiParameters, collectSchema, listToObject} from '../lib/open-api';
 import {run} from '../lib/run';
 import {transformTS2NamespaceJSONScheme} from '../lib/tsd2scheme';
+import {JAMAPI_URL_VERSION} from '../../src/api/jam/version';
 
 function buildOpenApi(version: string): OpenAPIObject {
 	return {
 		openapi: '3.0.0',
 		info: {description: 'Api for JamServe', version, title: 'JamApi', license: {name: 'MIT'}},
 		servers: [{
-			url: 'http://localhost:4040/api/{version}/',
+			url: 'http://localhost:4040/jam/{version}/',
 			description: 'A local JamServe API',
-			variables: {version: {enum: ['v1'], default: 'v1'}}
+			variables: {version: {enum: [JAMAPI_URL_VERSION], default: JAMAPI_URL_VERSION}}
 		}],
 		paths: {},
 		components: {

@@ -8,6 +8,7 @@ import {Engine} from '../engine/engine';
 import {logger} from '../utils/logger';
 import {initJamRouter} from './jam/router';
 import {initSubsonicRouter} from './subsonic/router';
+import {JAMAPI_URL_VERSION} from './jam/version';
 
 const log = logger('Server');
 
@@ -50,7 +51,7 @@ export class Server {
 		 */
 
 		app.use(EngineMiddleWare);
-		app.use('/api/v1', initJamRouter(engine));
+		app.use(`/jam/${JAMAPI_URL_VERSION}`, initJamRouter(engine));
 		app.use('/rest', initSubsonicRouter(engine));
 
 		// frontend (jamberry config file)
