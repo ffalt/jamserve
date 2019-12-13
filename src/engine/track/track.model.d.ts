@@ -11,6 +11,7 @@ export interface Track extends DBObject {
 		modified: number;
 		size: number;
 	};
+	seriesID?: string;
 	albumID: string;
 	artistID: string;
 	albumArtistID: string;
@@ -51,6 +52,7 @@ export interface TrackTag {
 	mbRecordingID?: string;
 	mbAlbumStatus?: string;
 	mbReleaseCountry?: string;
+	group?: string;
 	grouping?: string;
 	lyrics?: string;
 	chapters?: Array<TrackTagChapter>;

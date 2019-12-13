@@ -1,5 +1,22 @@
 import {Jam} from '../../model/jam-rest-data';
-import {AlbumIndex, ArtistIndex, FolderIndex} from './index.model';
+import {AlbumIndex, ArtistIndex, FolderIndex, SeriesIndex} from './index.model';
+
+export function formatSeriesIndex(index: SeriesIndex): Jam.SeriesIndex {
+	return {
+		lastModified: index.lastModified,
+		groups: index.groups.map(i => ({
+			name: i.name,
+			entries: i.entries.map(e => {
+				return {
+					name: e.series.name,
+					trackCount: e.series.trackIDs.length,
+					albumCount: e.series.albumIDs.length,
+					seriesID: e.series.id
+				};
+			})
+		}))
+	};
+}
 
 export function formatArtistIndex(index: ArtistIndex): Jam.ArtistIndex {
 	return {

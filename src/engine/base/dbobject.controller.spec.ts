@@ -51,14 +51,14 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 				it('should ignore invalid ids', async () => {
 					const req = {query: {ids: ['invalid']}, user};
 					const list = await controller.ids(req as JamRequest<OBJLISTREQUEST>);
-					expect(list).toBeTruthy();
+					expect(list).toBeDefined();
 					expect(list.length).toBe(0); // 'no items should be returned'
 				});
 				it('should return objects', async () => {
 					for (const obj of objs) {
 						const req = {query: {id: obj.id}, user};
 						const result = await controller.id(req as JamRequest<OBJREQUEST>);
-						expect(result).toBeTruthy();
+						expect(result).toBeDefined();
 						await validateJamResponse(opts.typeName, result);
 					}
 				});
@@ -68,14 +68,14 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 					for (const obj of objs) {
 						const req: JamRequest<JamParameters.ID> = {query: {id: obj.id}, user};
 						const result = await controller.state(req);
-						expect(result).toBeTruthy();
+						expect(result).toBeDefined();
 						await validateJamResponse('Jam.State', result);
 					}
 				});
 				it('should return object states', async () => {
 					const req: JamRequest<JamParameters.IDs> = {query: {ids: objs.map(o => o.id)}, user};
 					const result = await controller.states(req);
-					expect(result).toBeTruthy();
+					expect(result).toBeDefined();
 					expect(Object.keys(result).length).toBe(objs.length);
 					await validateJamResponse('Jam.States', result);
 				});
@@ -85,7 +85,7 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 					for (const obj of objs) {
 						const req: JamRequest<JamParameters.Fav> = {query: {id: obj.id}, user};
 						const result = await controller.favUpdate(req);
-						expect(result).toBeTruthy();
+						expect(result).toBeDefined();
 						expect(result.faved !== undefined && result.faved > 0).toBe(true); // 'Must have a fav timestamp');
 						await validateJamResponse('Jam.State', result);
 					}
@@ -94,7 +94,7 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 					for (const obj of objs) {
 						const req: JamRequest<JamParameters.Fav> = {query: {id: obj.id, remove: true}, user};
 						const result = await controller.favUpdate(req);
-						expect(result).toBeTruthy();
+						expect(result).toBeDefined();
 						expect(result.faved).toBeUndefined(); // 'Must not have a fav timestamp'
 						await validateJamResponse('Jam.State', result);
 					}
@@ -110,7 +110,7 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 					for (const obj of objs) {
 						const req: JamRequest<JamParameters.Rate> = {query: {id: obj.id, rating: 1}, user};
 						const result = await controller.rateUpdate(req);
-						expect(result).toBeTruthy();
+						expect(result).toBeDefined();
 						expect(result.rated).toBe(1); // 'Must have a rate value');
 						await validateJamResponse('Jam.State', result);
 					}
@@ -119,7 +119,7 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 					for (const obj of objs) {
 						const req: JamRequest<JamParameters.Rate> = {query: {id: obj.id, rating: 0}, user};
 						const result = await controller.rateUpdate(req);
-						expect(result).toBeTruthy();
+						expect(result).toBeDefined();
 						expect(result.rated).toBeUndefined(); // 'Must not have a rating');
 						await validateJamResponse('Jam.State', result);
 					}
@@ -130,8 +130,8 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 					for (const obj of objs) {
 						const req = {query: {id: obj.id}, user};
 						const result = await controller.search(req as JamRequest<SEARCHQUERY>);
-						expect(result).toBeTruthy();
-						expect(result.items).toBeTruthy();
+						expect(result).toBeDefined();
+						expect(result.items).toBeDefined();
 						expect(result.items.length).toBe(1); // 'Must find one object')
 						await validateJamResponse(opts.typeName, result.items, true);
 					}
@@ -142,8 +142,8 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 					for (const obj of objs) {
 						const req: JamRequest<JamParameters.Image> = {query: {id: obj.id}, user};
 						const result = await controller.image(req);
-						expect(result).toBeTruthy();
-						expect(result.buffer || result.file).toBeTruthy();
+						expect(result).toBeDefined();
+						expect(result.buffer || result.file).toBeDefined();
 					}
 				});
 			});

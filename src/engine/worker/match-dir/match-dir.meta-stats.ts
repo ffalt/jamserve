@@ -26,19 +26,18 @@ export interface MetaStat {
 
 const typeByGenreNames: { [name: string]: AlbumType; } = {
 	audiobook: AlbumType.audiobook,
-	'audio theater': AlbumType.series,
-	'audio drama': AlbumType.series,
-	'audio series': AlbumType.series,
+	'audio theater': AlbumType.audiobook,
+	'audio drama': AlbumType.audiobook,
+	'audio series': AlbumType.audiobook,
 	soundtrack: AlbumType.soundtrack
 };
 
 const typeByMusicbrainzString: Array<{ type: AlbumType; names: Array<string>; }> = [
-	{type: AlbumType.audiobook, names: ['audiobook', 'spokenword']},
+	{type: AlbumType.audiobook, names: ['audiobook', 'spokenword', 'audiodrama', 'audio drama', 'audio theater', 'audio series']},
 	{type: AlbumType.bootleg, names: ['bootleg']},
 	{type: AlbumType.compilation, names: ['compilation']},
 	{type: AlbumType.live, names: ['live']},
 	{type: AlbumType.soundtrack, names: ['soundtrack']},
-	{type: AlbumType.series, names: ['audiodrama', 'audio drama', 'audio theater', 'audio series']},
 	{type: AlbumType.ep, names: ['ep']},
 	{type: AlbumType.single, names: ['single']},
 	{type: AlbumType.album, names: ['album']}

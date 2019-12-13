@@ -10,6 +10,7 @@ import {ImageService} from '../image/image.service';
 import {formatAlbumIndex} from '../index/index.format';
 import {IndexService} from '../index/index.service';
 import {MetaDataService} from '../metadata/metadata.service';
+import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
 import {TrackController} from '../track/track.controller';
 import {Track} from '../track/track.model';
@@ -18,7 +19,6 @@ import {formatAlbum} from './album.format';
 import {Album} from './album.model';
 import {AlbumService} from './album.service';
 import {SearchQueryAlbum} from './album.store';
-import {formatState} from '../state/state.format';
 
 export class AlbumController extends BaseListController<JamParameters.Album,
 	JamParameters.Albums,
@@ -64,11 +64,7 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 			result.state = formatState(state);
 		}
 		if (includes.albumInfo) {
-			try {
-				result.info = await this.metaDataService.extInfo.byAlbum(album);
-			} catch (e) {
-				result.info = undefined;
-			}
+			result.info = await this.metaDataService.extInfo.byAlbum(album);
 		}
 		if (includes.albumTracks) {
 			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user, (a, b) => this.sortAlbumTracks(a, b));

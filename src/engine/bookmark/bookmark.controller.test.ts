@@ -27,7 +27,7 @@ describe('BookmarkController', () => {
 					throw Error('Invalid Test Setup');
 				}
 				const bookmark = await controller.create({query: {trackID: track.id, comment: 'hello', position: 12345}, user});
-				expect(bookmark).toBeTruthy();
+				expect(bookmark).toBeDefined();
 			});
 		});
 		describe('.delete', () => {
@@ -40,7 +40,7 @@ describe('BookmarkController', () => {
 					throw Error('Invalid Test Setup');
 				}
 				const bookmark = await controller.create({query: {trackID: track.id, comment: 'delete', position: 54321}, user});
-				expect(bookmark).toBeTruthy();
+				expect(bookmark).toBeDefined();
 				await controller.delete({query: {id: bookmark.id}, user});
 				const none = await controller.bookmarkService.bookmarkStore.byId(bookmark.id);
 				expect(none).toBeUndefined();
@@ -57,13 +57,13 @@ describe('BookmarkController', () => {
 				}
 				let bookmark = await controller.create({query: {trackID: track.id, comment: 'byTrackDelete', position: 54321}, user});
 				const mustStay = await controller.create({query: {trackID: track.id, comment: 'byTrackDelete', position: 54321}, user: dummyUser});
-				expect(bookmark).toBeTruthy();
+				expect(bookmark).toBeDefined();
 				bookmark = await controller.create({query: {trackID: track.id, comment: 'byTrackDelete', position: 34567}, user});
-				expect(bookmark).toBeTruthy();
+				expect(bookmark).toBeDefined();
 				await controller.byTrackDelete({query: {trackID: track.id}, user});
 				const list = await controller.bookmarkService.byTrack(track.id, user.id);
 				expect(list.items.length).toBe(0);
-				expect(await controller.bookmarkService.bookmarkStore.byId(mustStay.id)).toBeTruthy();
+				expect(await controller.bookmarkService.bookmarkStore.byId(mustStay.id)).toBeDefined();
 			});
 		});
 		describe('.list', () => {
@@ -78,7 +78,7 @@ describe('BookmarkController', () => {
 				const result = await controller.list({query: {bookmarkTrack: true}, user});
 				expect(result.items.length).toBe(list.items.length + 1);
 				for (const bookmark of result.items) {
-					expect(bookmark.track).toBeTruthy();
+					expect(bookmark.track).toBeDefined();
 				}
 			});
 		});
@@ -108,7 +108,7 @@ describe('BookmarkController', () => {
 			it('should ignore invalid ids', async () => {
 				const req: JamRequest<JamParameters.Bookmarks> = {query: {ids: ['invalid']}, user};
 				const list = await controller.ids(req);
-				expect(list).toBeTruthy();
+				expect(list).toBeDefined();
 				expect(list.items.length).toBe(0); // 'no items should be returned'
 			});
 			it('should return an bookmark', async () => {
@@ -119,8 +119,8 @@ describe('BookmarkController', () => {
 				const bookmark = await controller.create({query: {trackID: track.id, comment: 'byTrackList', position: 33333}, user});
 				const req: JamRequest<JamParameters.Bookmark> = {query: {id: bookmark.id, bookmarkTrack: true}, user};
 				const result = await controller.id(req);
-				expect(result).toBeTruthy();
-				expect(result.track).toBeTruthy();
+				expect(result).toBeDefined();
+				expect(result.track).toBeDefined();
 				await validateJamResponse('Jam.Bookmark', result);
 			});
 		});

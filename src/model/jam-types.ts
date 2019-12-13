@@ -7,6 +7,7 @@ export enum JamObjectType {
 	playlist = 'playlist',
 	podcast = 'podcast',
 	episode = 'episode',
+	series = 'series',
 	bookmark = 'bookmark',
 	album = 'album',
 	artist = 'artist',
@@ -121,8 +122,7 @@ export enum AlbumType {
 	soundtrack = 'soundtrack',
 	audiobook = 'audiobook',
 	ep = 'ep',
-	single = 'single',
-	series = 'series'
+	single = 'single'
 }
 
 export const AlbumTypesArtistMusic = [AlbumType.album, AlbumType.live, AlbumType.bootleg, AlbumType.ep, AlbumType.single];

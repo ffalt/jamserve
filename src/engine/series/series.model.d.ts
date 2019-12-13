@@ -1,16 +1,14 @@
 import {AlbumType} from '../../model/jam-types';
 import {DBObject} from '../base/base.model';
 
-export interface Artist extends DBObject {
-	slug: string;
+export interface Series extends DBObject {
 	name: string;
-	nameSort?: string;
+	artist: string;
+	artistID: string;
 	rootIDs: Array<string>;
-	trackIDs: Array<string>;
-	folderIDs: Array<string>;
 	albumIDs: Array<string>;
-	seriesIDs: Array<string>;
+	folderIDs: Array<string>;
+	trackIDs: Array<string>;
 	albumTypes: Array<AlbumType>;
-	mbArtistID?: string;
 	created: number;
 }

@@ -56,7 +56,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		return result;
 	}
 
-	async getFolderImage(folder: Folder, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getImage(folder: Folder, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		const artwork = await getFolderDisplayImage(folder);
 		if (artwork) {
 			return this.getArtworkImage(folder, artwork, size, format);

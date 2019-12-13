@@ -49,7 +49,7 @@ export function testBaseListController<OBJREQUEST extends JamParameters.ID | INC
 					for (const listId of lists) {
 						const req = {query: {list: listId}, user};
 						const result = await controller.list(req as JamRequest<LISTQUERY>);
-						expect(result).toBeTruthy();
+						expect(result).toBeDefined();
 						await validateJamResponse(opts.typeName, result.items, true);
 					}
 				});
@@ -64,8 +64,8 @@ export function testBaseListController<OBJREQUEST extends JamParameters.ID | INC
 						for (const obj of objs) {
 							const req = {query: {id: obj.id, format}, user};
 							const result = await controller.download(req as JamRequest<JamParameters.Download>);
-							expect(result).toBeTruthy();
-							expect(result.pipe).toBeTruthy();
+							expect(result).toBeDefined();
+							expect(result.pipe).toBeDefined();
 						}
 					}
 				});

@@ -1,7 +1,10 @@
 import {DBObjectType} from '../../db/db.types';
-import {AlbumType, FolderType} from '../../model/jam-types';
+import {AlbumType, ArtworkImageType, FolderType} from '../../model/jam-types';
 import {mockPath} from '../../utils/testutils.spec';
 import {Folder} from './folder.model';
+import {mockImage} from '../../modules/image/image.module.spec';
+import path from 'path';
+import fse from 'fs-extra';
 
 export function mockFolder(): Folder {
 	return {
@@ -59,4 +62,23 @@ export function mockFolder2(): Folder {
 			mbArtistID: 'mbArtistID2'
 		}
 	};
+}
+
+export async function mockFolderArtwork(folder: Folder, type: ArtworkImageType): Promise<string> {
+	const name = 'dummy.png';
+	const image = await mockImage('png');
+	const filename = path.resolve(folder.path, name);
+	await fse.writeFile(filename, image.buffer);
+	folder.tag.artworks = [{
+		id: 'dummyID',
+		image: {format: 'png', height: 123, width: 123},
+		name,
+		types: [type],
+		stat: {
+			created: 123,
+			modified: 123,
+			size: 123
+		}
+	}];
+	return filename;
 }

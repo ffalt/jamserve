@@ -15,18 +15,18 @@ describe('PlaylistService', () => {
 		() => {
 			it('create an empty playlist', async () => {
 				const playlist = await playlistService.create('playlist 1', 'a comment', false, 'userID1', []);
-				expect(playlist).toBeTruthy();
+				expect(playlist).toBeDefined();
 			});
 			it('modify a playlist', async () => {
 				const trackIDs = await trackStore.allIds();
 				let playlist = await playlistService.playlistStore.searchOne({userID: 'userID1'});
-				expect(playlist).toBeTruthy();
+				expect(playlist).toBeDefined();
 				if (playlist) {
 					playlist.trackIDs = trackIDs;
 					await playlistService.update(playlist);
 				}
 				playlist = await playlistService.playlistStore.searchOne({userID: 'userID1'});
-				expect(playlist).toBeTruthy();
+				expect(playlist).toBeDefined();
 				if (playlist) {
 					expect(playlist.trackIDs.length).toBe(trackIDs.length);
 					expect(playlist.duration).toBe(trackIDs.length);
@@ -34,7 +34,7 @@ describe('PlaylistService', () => {
 			});
 			it('remove a playlist', async () => {
 				let playlist = await playlistService.playlistStore.searchOne({userID: 'userID1'});
-				expect(playlist).toBeTruthy();
+				expect(playlist).toBeDefined();
 				if (playlist) {
 					await playlistService.remove(playlist);
 				}

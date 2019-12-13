@@ -61,14 +61,14 @@ describe('UserService', () => {
 			});
 
 			it('should create the user', async () => {
-				expect(userID).toBeTruthy();
+				expect(userID).toBeDefined();
 				const user = await userService.getByID(userID);
-				expect(user).toBeTruthy();
+				expect(user).toBeDefined();
 				expect(user).toEqual(mock);
 			});
 			it('should find and compare the created user by name', async () => {
 				const user = await userService.getByName(mock.name);
-				expect(user).toBeTruthy();
+				expect(user).toBeDefined();
 				expect(user).toEqual(mock);
 			});
 			it('should not allow add an same name user', async () => {
@@ -76,7 +76,7 @@ describe('UserService', () => {
 			});
 			it('should auth the user by password', async () => {
 				const user = await userService.auth(mock.name, mockUserPass);
-				expect(user).toBeTruthy();
+				expect(user).toBeDefined();
 				expect(user).toEqual(mock);
 			});
 			it('should not auth the user with the wrong password', async () => {
@@ -90,7 +90,7 @@ describe('UserService', () => {
 				const s = salt(6);
 				const token = hashMD5(session.subsonic + s);
 				const user = await userService.authSubsonicToken(mock.name, token, s);
-				expect(user).toBeTruthy();
+				expect(user).toBeDefined();
 				expect(user).toEqual(mock);
 			});
 			it('should not auth the user with the wrong token', async () => {
@@ -116,7 +116,7 @@ describe('UserService', () => {
 				mock.name = `${oldname}_renamed`;
 				await userService.update(mock);
 				const user = await userService.getByID(userID);
-				expect(user).toBeTruthy();
+				expect(user).toBeDefined();
 				expect(user).toEqual(mock);
 				mock.name = oldname;
 				await userService.update(mock);
@@ -124,15 +124,15 @@ describe('UserService', () => {
 				expect(user2).toEqual(mock);
 			});
 			it('should return a generated avatar image', async () => {
-				const result = await userService.getUserImage(mock);
-				expect(result).toBeTruthy();
+				const result = await userService.getImage(mock);
+				expect(result).toBeDefined();
 			});
 			it('should return an avatar image', async () => {
 				const image = await mockImage('png');
 				const filename = path.resolve(userService.userAvatarPath, `${mock.id}.png`);
 				await fse.writeFile(filename, image.buffer);
-				const result = await userService.getUserImage(mock);
-				expect(result).toBeTruthy();
+				const result = await userService.getImage(mock);
+				expect(result).toBeDefined();
 				await fse.remove(filename);
 			});
 			it('should set the avatar image', async () => {
@@ -141,8 +141,8 @@ describe('UserService', () => {
 				await fse.writeFile(filename, image.buffer);
 				await userService.setUserImage(mock, filename);
 				expect(await fse.pathExists(filename)).toBe(false);
-				const result = await userService.getUserImage(mock);
-				expect(result).toBeTruthy();
+				const result = await userService.getImage(mock);
+				expect(result).toBeDefined();
 			});
 			it('should remove the user', async () => {
 				await userService.remove(mock);

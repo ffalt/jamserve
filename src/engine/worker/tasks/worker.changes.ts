@@ -6,7 +6,7 @@ import {ImageModule} from '../../../modules/image/image.module';
 import {updatePlayListTracks} from '../../playlist/playlist.service';
 import {Root} from '../../root/root.model';
 import {Store} from '../../store/store';
-import {Changes} from '../changes/changes';
+import {Changes, emptyChanges} from '../changes/changes';
 import {MatchDir} from '../match-dir/match-dir.types';
 import {MatchDirMerge} from '../merge/merge.match-dir';
 import {MetaMerger} from '../merge/merge.meta';
@@ -18,29 +18,6 @@ export class ChangesWorker {
 		public settings: Jam.AdminSettingsLibrary
 	) {
 
-	}
-
-	private emptyChanges(): Changes {
-		const changes: Changes = {
-			newArtists: [],
-			updateArtists: [],
-			removedArtists: [],
-
-			newAlbums: [],
-			updateAlbums: [],
-			removedAlbums: [],
-
-			newTracks: [],
-			updateTracks: [],
-			removedTracks: [],
-
-			newFolders: [],
-			updateFolders: [],
-			removedFolders: [],
-			start: Date.now(),
-			end: 0
-		};
-		return changes;
 	}
 
 	async cleanChanges(changes: Changes): Promise<void> {
@@ -63,6 +40,12 @@ export class ChangesWorker {
 			await this.store.folderStore.remove(folderIDs);
 			await this.store.stateStore.removeByQuery({destIDs: folderIDs, type: DBObjectType.folder});
 			imageCleanIds = new Set<string>([...imageCleanIds, ...folderIDs]);
+		}
+		if (changes.removedSeries.length > 0) {
+			const seriesIDs = changes.removedSeries.map(series => series.id);
+			await this.store.seriesStore.remove(seriesIDs);
+			await this.store.stateStore.removeByQuery({destIDs: seriesIDs, type: DBObjectType.series});
+			imageCleanIds = new Set<string>([...imageCleanIds, ...seriesIDs]);
 		}
 		if (changes.removedTracks.length > 0) {
 			const trackIDs = changes.removedTracks.map(track => track.id);
@@ -97,6 +80,10 @@ export class ChangesWorker {
 			const folderIDs = changes.updateFolders.map(f => f.id);
 			imageCleanIds = new Set<string>([...imageCleanIds, ...folderIDs]);
 		}
+		if (changes.updateSeries.length > 0) {
+			const seriesIDs = changes.updateSeries.map(s => s.id);
+			imageCleanIds = new Set<string>([...imageCleanIds, ...seriesIDs]);
+		}
 		if (changes.updateTracks.length > 0) {
 			for (const t of changes.updateTracks) {
 				imageCleanIds.add(t.track.albumID);
@@ -118,11 +105,12 @@ export class ChangesWorker {
 		await this.store.trackStore.upsert(changes.updateTracks.map(t => t.track));
 		await this.store.folderStore.bulk(changes.newFolders);
 		await this.store.folderStore.upsert(changes.updateFolders);
-
 		await this.store.albumStore.bulk(changes.newAlbums);
 		await this.store.albumStore.upsert(changes.updateAlbums);
 		await this.store.artistStore.bulk(changes.newArtists);
 		await this.store.artistStore.upsert(changes.updateArtists);
+		await this.store.seriesStore.bulk(changes.newSeries);
+		await this.store.seriesStore.upsert(changes.updateSeries);
 	}
 
 	async mergeMatch(root: Root, rootMatch: MatchDir, rebuildDirTag: (dir: MatchDir) => boolean, forceTrackMetaRefresh: boolean, changes: Changes): Promise<void> {
@@ -135,7 +123,7 @@ export class ChangesWorker {
 		if (!root) {
 			return Promise.reject(Error(`Root ${rootID} not found`));
 		}
-		return {root, changes: this.emptyChanges()};
+		return {root, changes: emptyChanges()};
 	}
 
 	async finish(changes: Changes, rootID: string, forceMetaRefresh: boolean): Promise<Changes> {

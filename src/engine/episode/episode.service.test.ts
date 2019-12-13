@@ -49,7 +49,7 @@ describe('EpisodeService', () => {
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				await episodeService.downloadEpisode(mock);
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				expect(episode).toBeTruthy();
+				expect(episode).toBeDefined();
 				if (episode) {
 					expect(episode.status).toBe(PodcastStatus.error);
 				}
@@ -64,7 +64,7 @@ describe('EpisodeService', () => {
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				await episodeService.downloadEpisode(mock);
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				expect(episode).toBeTruthy();
+				expect(episode).toBeDefined();
 				if (episode) {
 					expect(episode.status).toBe(PodcastStatus.error);
 					await episodeService.deleteEpisode(episode); // should do nothing;
@@ -83,7 +83,7 @@ describe('EpisodeService', () => {
 				await episodeService.downloadEpisode(mock);
 				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				expect(episode).toBeTruthy();
+				expect(episode).toBeDefined();
 				if (episode) {
 					expect(episode.status).toBe(PodcastStatus.error);
 					await episodeService.deleteEpisode(episode); // should do nothing;
@@ -106,7 +106,7 @@ describe('EpisodeService', () => {
 				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				file.removeCallback();
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				expect(episode).toBeTruthy();
+				expect(episode).toBeDefined();
 				if (episode) {
 					expect(episode.status).toBe(PodcastStatus.completed);
 					await episodeService.deleteEpisode(episode);
@@ -127,7 +127,7 @@ describe('EpisodeService', () => {
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				const episode = await episodeService.episodeStore.searchOne({podcastID});
-				expect(episode).toBeTruthy();
+				expect(episode).toBeDefined();
 				if (!episode) {
 					return;
 				}

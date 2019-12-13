@@ -25,6 +25,8 @@ export interface SearchQueryTrack extends SearchQuery {
 	album?: string;
 	albumID?: string;
 	albumIDs?: Array<string>;
+	seriesID?: string;
+	seriesIDs?: Array<string>;
 	genre?: string;
 	newerThan?: number;
 	fromYear?: number;
@@ -66,6 +68,8 @@ export class TrackStore extends BaseStore<Track, SearchQueryTrack> {
 		q.term('tag.album', query.album);
 		q.term('artistID', query.artistID);
 		q.terms('artistID', query.artistIDs);
+		q.term('seriesID', query.seriesID);
+		q.terms('seriesID', query.seriesIDs);
 		q.term('albumArtistID', query.albumArtistID);
 		q.terms('albumArtistID', query.albumArtistIDs);
 		q.term('albumID', query.albumID);

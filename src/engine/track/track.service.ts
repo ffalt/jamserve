@@ -44,7 +44,7 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 		return this.folderService.folderStore.byId(track.parentID);
 	}
 
-	async getTrackImage(track: Track, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getImage(track: Track, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (track.tag && track.tag.nrTagImages) {
 			const result = await this.imageModule.getExisting(track.id, size, format);
 			if (result) {
@@ -57,7 +57,7 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 		}
 		const folder = await this.getTrackFolder(track);
 		if (folder) {
-			return this.folderService.getFolderImage(folder, size, format);
+			return this.folderService.getImage(folder, size, format);
 		}
 	}
 

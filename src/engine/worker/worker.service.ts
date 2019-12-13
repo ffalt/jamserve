@@ -4,7 +4,6 @@ import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
 import {Root} from '../root/root.model';
 import {Store} from '../store/store';
-import {WaveformService} from '../waveform/waveform.service';
 import {Changes} from './changes/changes';
 import {MatchDirBuilderDB} from './match-dir/match-dir.builder.db';
 import {ArtworkWorker} from './tasks/worker.artwork';
@@ -12,7 +11,6 @@ import {ChangesWorker} from './tasks/worker.changes';
 import {FolderWorker} from './tasks/worker.folder';
 import {RootWorker} from './tasks/worker.root';
 import {TrackWorker} from './tasks/worker.track';
-import {StreamService} from '../stream/stream.service';
 
 export interface WorkerRequestParameters {
 	rootID: string;

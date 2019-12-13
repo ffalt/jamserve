@@ -9,6 +9,7 @@ export function formatStats(stats: Stats): Jam.Stats {
 		artistTypes: stats.artistTypes,
 		artist: stats.artist,
 		folder: stats.folder,
+		series: stats.series,
 		track: stats.track
 	};
 }

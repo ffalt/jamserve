@@ -26,4 +26,7 @@ export function logChanges(changes: Changes): void {
 	logChange('Added Albums', changes.newAlbums);
 	logChange('Updated Albums', changes.updateAlbums);
 	logChange('Removed Albums', changes.removedAlbums);
+	logChange('Added Series', changes.newSeries);
+	logChange('Updated Series', changes.updateSeries);
+	logChange('Removed Series', changes.removedSeries);
 }

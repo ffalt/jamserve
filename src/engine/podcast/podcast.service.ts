@@ -112,9 +112,20 @@ export class PodcastService extends BaseListService<Podcast, SearchQueryPodcast>
 		log.info('Refreshed');
 	}
 
-	async getPodcastImage(podcast: Podcast, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getImage(podcast: Podcast, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (podcast.image) {
 			return this.imageModule.get(podcast.id, path.join(this.podcastsPath, podcast.id, podcast.image), size, format);
 		}
+	}
+
+	async getEpisodeImage(episode: Episode, size: number | undefined, format: string | undefined): Promise<ApiBinaryResult | undefined> {
+		const result = await this.episodeService.getImage(episode, size, format);
+		if (!result) {
+			const podcast = await this.podcastStore.byId(episode.podcastID);
+			if (podcast) {
+				return this.getImage(podcast, size, format);
+			}
+		}
+		return result;
 	}
 }

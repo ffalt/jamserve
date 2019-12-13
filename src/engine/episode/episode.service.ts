@@ -152,7 +152,7 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		return newEpisodes;
 	}
 
-	async getEpisodeImage(episode: Episode, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getImage(episode: Episode, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (episode.tag && episode.tag.nrTagImages && episode.path) {
 			const result = await this.imageModule.getExisting(episode.id, size, format);
 			if (result) {

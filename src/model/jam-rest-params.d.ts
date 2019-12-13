@@ -21,6 +21,7 @@ export declare namespace JamParameters {
 	export type PlaylistSortField = 'name' | 'created' ;
 	export type PodcastSortField = 'title' | 'created' ;
 	export type AlbumSortField = 'name' | 'artist' | 'genre' | 'year' | 'created';
+	export type SeriesSortField = 'name' | 'created';
 	export type ArtistSortField = 'name' | 'created';
 	export type UserSortField = 'name' | 'created';
 	export type RootSortField = 'name' | 'created';
@@ -257,7 +258,7 @@ export declare namespace JamParameters {
 		playlistState?: boolean;
 	}
 
-	export interface IncludesArtist extends IncludesAlbum {
+	export interface IncludesArtist extends IncludesAlbum, IncludesTrack {
 		/**
 		 * include albums on artist(s)
 		 *
@@ -289,6 +290,18 @@ export declare namespace JamParameters {
 		 */
 		artistTrackIDs?: boolean;
 		/**
+		 * include series on artist(s)
+		 *
+		 * @default false
+		 */
+		artistSeries?: boolean;
+		/**
+		 * include series ids on artist(s)
+		 *
+		 * @default false
+		 */
+		artistSeriesIDs?: boolean;
+		/**
 		 * include extended meta data on artist(s)
 		 *
 		 * @default false
@@ -300,6 +313,45 @@ export declare namespace JamParameters {
 		 * @default false
 		 */
 		artistSimilar?: boolean;
+	}
+
+	export interface IncludesSeries extends IncludesAlbum, IncludesTrack {
+		/**
+		 * include albums on series
+		 *
+		 * @default false
+		 */
+		seriesAlbums?: boolean;
+		/**
+		 * include album ids on artist(s)
+		 *
+		 * @default false
+		 */
+		seriesAlbumIDs?: boolean;
+		/**
+		 * include user states (fav,rate) on artist(s)
+		 *
+		 * @default false
+		 */
+		seriesState?: boolean;
+		/**
+		 * include tracks on artist(s)
+		 *
+		 * @default false
+		 */
+		seriesTracks?: boolean;
+		/**
+		 * include track ids on artist(s)
+		 *
+		 * @default false
+		 */
+		seriesTrackIDs?: boolean;
+		/**
+		 * include extended meta data on artist(s)
+		 *
+		 * @default false
+		 */
+		seriesInfo?: boolean;
 	}
 
 	export interface IncludesFolderChildren extends IncludesTrack, IncludesFolder {
@@ -445,7 +497,16 @@ export declare namespace JamParameters {
 	export interface ArtistTracks extends IDs, IncludesTrack, Paginate {
 	}
 
+	export interface ArtistSeries extends IDs, IncludesSeries, Paginate {
+	}
+
 	export interface ArtistAlbums extends IDs, IncludesAlbum, Paginate {
+	}
+
+	export interface SeriesTracks extends IDs, IncludesTrack, Paginate {
+	}
+
+	export interface SeriesAlbums extends IDs, IncludesSeries, Paginate {
 	}
 
 	export interface AlbumTracks extends IDs, IncludesTrack, Paginate {
@@ -1111,10 +1172,6 @@ export declare namespace JamParameters {
 	}
 
 	export interface Artist extends ID, IncludesArtist {
-		/**
-		 * filter by root id
-		 */
-		rootID?: string;
 	}
 
 	export interface Artists extends IDs, IncludesArtist {
@@ -1171,6 +1228,63 @@ export declare namespace JamParameters {
 	export interface ArtistIndex extends ArtistSearchQuery {
 	}
 
+	export interface Series extends ID, IncludesSeries {
+		/**
+		 * filter by root id
+		 */
+		rootID?: string;
+	}
+
+	export interface Serieses extends IDs, IncludesSeries {
+	}
+
+	export interface SeriesList extends SeriesSearchQuery, IncludesSeries, List {
+	}
+
+	export interface SeriesIndex extends SeriesSearchQuery {
+	}
+
+	export interface SeriesSearch extends Paginate, SeriesSearchQuery, IncludesSeries {
+	}
+
+	export interface SeriesSearchQuery extends SearchQuery {
+		/**
+		 * filter by name
+		 */
+		name?: string;
+		/**
+		 * filter by root id
+		 */
+		rootID?: string;
+		/**
+		 * filter by root ids
+		 */
+		rootIDs?: Array<string>;
+		/**
+		 * filter by album id
+		 */
+		albumID?: string;
+		/**
+		 * filter by album type
+		 */
+		albumType?: Jam.AlbumType;
+		/**
+		 * filter by album types
+		 */
+		albumTypes?: Array<Jam.AlbumType>;
+		/**
+		 * filter by creation date (unix time)
+		 *
+		 * @minimum 0
+		 * @TJS-type integer
+		 */
+		newerThan?: number;
+		/**
+		 * sort the result by
+		 */
+		sortField?: SeriesSortField;
+	}
+
 	export interface RootNew {
 		/**
 		 * name of the root
@@ -1199,6 +1313,16 @@ export declare namespace JamParameters {
 		 * the scan strategy for the root
 		 */
 		strategy: Jam.RootScanStrategy;
+	}
+
+	export interface RootRefreshAll {
+		/**
+		 * the scan strategy for the root
+		 */
+		refreshMeta?: boolean;
+	}
+
+	export interface RootRefresh extends ID, RootRefreshAll {
 	}
 
 	export interface UserNew {
@@ -1352,17 +1476,6 @@ export declare namespace JamParameters {
 		 * filter by root id
 		 */
 		rootID?: string;
-	}
-
-	export interface ChartlyricsSearch {
-		/**
-		 * search by artist name
-		 */
-		artist: string;
-		/**
-		 * search by song name
-		 */
-		song: string;
 	}
 
 	export interface MusicBrainzSearch {

@@ -11,13 +11,13 @@ describe('BookmarkService', () => {
 			describe('.create', () => {
 				it('should create a bookmark', async () => {
 					const bookmark = await bookmarkService.create('trackID1', 'userID1', 5, 'a comment');
-					expect(bookmark).toBeTruthy();
+					expect(bookmark).toBeDefined();
 				});
 				it('should overwrite a bookmark', async () => {
 					const bookmark = await bookmarkService.create('trackID1', 'userID1', 15, 'a comment');
-					expect(bookmark).toBeTruthy();
+					expect(bookmark).toBeDefined();
 					const update = await bookmarkService.create('trackID1', 'userID1', 15, 'a update comment');
-					expect(update).toBeTruthy();
+					expect(update).toBeDefined();
 					expect(update.id).toBe(bookmark.id);
 				});
 			});
@@ -33,7 +33,7 @@ describe('BookmarkService', () => {
 			describe('.remove', () => {
 				it('should remove a bookmark', async () => {
 					const bookmark = await bookmarkService.create('trackID1', 'userID1', 15, 'a comment');
-					expect(bookmark).toBeTruthy();
+					expect(bookmark).toBeDefined();
 					await bookmarkService.remove(bookmark.id, 'userID1');
 					const result = await bookmarkService.bookmarkStore.byId(bookmark.id);
 					expect(result).toBeUndefined();
@@ -42,7 +42,7 @@ describe('BookmarkService', () => {
 			describe('.removeByTrack', () => {
 				it('should remove a bookmark', async () => {
 					const bookmark = await bookmarkService.create('trackID1', 'userID1', 15, 'a comment');
-					expect(bookmark).toBeTruthy();
+					expect(bookmark).toBeDefined();
 					await bookmarkService.removeByTrack('trackID1', 'userID1');
 					const result = await bookmarkService.byTrack('trackID1', 'userID1');
 					expect(result.items.length).toBe(0);

@@ -5,6 +5,7 @@ import {slugify} from '../../../utils/slug';
 import {Album} from '../../album/album.model';
 import {Artist} from '../../artist/artist.model';
 import {Folder} from '../../folder/folder.model';
+import {Series} from '../../series/series.model';
 import {Store} from '../../store/store';
 import {Track} from '../../track/track.model';
 import {Changes} from '../changes/changes';
@@ -31,11 +32,71 @@ export function getAlbumSlug(trackInfo: MetaMergeTrackInfo): string {
 
 export class MetaMergerCache {
 	private artistCache: Array<{ artist: Artist, slugs: Array<string> }> = [];
+	private seriesCache: Array<Series> = [];
 	private albumCache: Array<Album> = [];
 	private folderCache: Array<Folder> = [];
 
 	constructor(private store: Store) {
 
+	}
+
+	// series
+
+	private async buildSeries(trackInfo: MetaMergeTrackInfo, artistID: string, artist: string): Promise<Series> {
+		return {
+			id: await this.store.seriesStore.getNewId(),
+			type: DBObjectType.series,
+			name: trackInfo.track.tag.group || '',
+			albumTypes: trackInfo.parent && trackInfo.parent.tag && trackInfo.parent.tag.albumType !== undefined ? [trackInfo.parent.tag.albumType] : [AlbumType.unknown],
+			artistID, artist,
+			folderIDs: [],
+			albumIDs: [],
+			trackIDs: [],
+			rootIDs: [],
+			created: Date.now()
+		};
+	}
+
+	private async findSeriesInDB(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Series | undefined> {
+		return this.store.seriesStore.searchOne({name: trackInfo.track.tag.group, artistID});
+	}
+
+	private async findSeriesInCache(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Series | undefined> {
+		if (!trackInfo.track.tag.group) {
+			return;
+		}
+		return this.seriesCache.find(a => (a.name === trackInfo.track.tag.group) && (a.artistID === artistID));
+	}
+
+	async getSeriesByID(id: string, changes?: Changes): Promise<Series | undefined> {
+		let series = this.seriesCache.find(a => a.id === id);
+		if (series) {
+			return series;
+		}
+		series = await this.store.seriesStore.byId(id);
+		if (series) {
+			this.seriesCache.push(series);
+			if (changes) {
+				changes.updateSeries.push(series);
+			}
+		}
+		return series;
+	}
+
+	async findOrCreateSeries(trackInfo: MetaMergeTrackInfo, artistID: string, artist: string, albumID: string, changes: Changes): Promise<Series> {
+		let series = await this.findSeriesInCache(trackInfo, artistID);
+		if (series) {
+			return series;
+		}
+		series = await this.findSeriesInDB(trackInfo, artistID);
+		if (!series) {
+			series = await this.buildSeries(trackInfo, artistID, artist);
+			changes.newSeries.push(series);
+		} else {
+			changes.updateSeries.push(series);
+		}
+		this.seriesCache.push(series);
+		return series;
 	}
 
 	// album
@@ -51,6 +112,7 @@ export class MetaMergerCache {
 			artistID,
 			mbArtistID: trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID,
 			mbAlbumID: trackInfo.track.tag.mbAlbumID,
+			series: trackInfo.track.tag.group,
 			grouping: trackInfo.track.tag.grouping,
 			genre: trackInfo.track.tag.genre,
 			folderIDs: [],
@@ -114,6 +176,8 @@ export class MetaMergerCache {
 		return album;
 	}
 
+	// artist
+
 	private async buildArtist(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist> {
 		let aa = {mbArtistID: trackInfo.track.tag.mbArtistID, name: trackInfo.track.tag.artist, nameSort: trackInfo.track.tag.artistSort};
 		if (albumArtist && (trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.albumArtist)) {
@@ -129,6 +193,7 @@ export class MetaMergerCache {
 			nameSort: aa.nameSort,
 			mbArtistID: aa.mbArtistID,
 			albumTypes: [],
+			seriesIDs: [],
 			albumIDs: [],
 			folderIDs: [],
 			trackIDs: [],
@@ -176,8 +241,6 @@ export class MetaMergerCache {
 		}
 	}
 
-	// artist
-
 	async getArtistByID(id: string, changes: Changes): Promise<Artist | undefined> {
 		const artistCache = this.artistCache.find(a => a.artist.id === id);
 		if (artistCache) {
@@ -215,6 +278,7 @@ export class MetaMergerCache {
 				name: MUSICBRAINZ_VARIOUS_ARTISTS_NAME,
 				mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID,
 				albumTypes: [AlbumType.compilation],
+				seriesIDs: [],
 				folderIDs: [],
 				albumIDs: [],
 				trackIDs: [],

@@ -48,11 +48,11 @@ export class ArtistService extends BaseListService<Artist, SearchQueryArtist> {
 		}
 	}
 
-	async getArtistImage(artist: Artist, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getImage(artist: Artist, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (this.canHaveArtistImage(artist)) {
 			const folder = await this.getArtistFolder(artist);
 			if (folder) {
-				return this.folderService.getFolderImage(folder, size, format);
+				return this.folderService.getImage(folder, size, format);
 			}
 		}
 		return this.folderService.imageModule.paint(artist.name, size, format);

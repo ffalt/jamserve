@@ -1,6 +1,7 @@
 import {Album} from '../album/album.model';
 import {Artist} from '../artist/artist.model';
 import {Folder} from '../folder/folder.model';
+import {Series} from '../series/series.model';
 
 export interface FolderIndexEntry {
 	name: string;
@@ -45,4 +46,18 @@ export interface AlbumIndexGroup {
 export interface AlbumIndex {
 	lastModified: number;
 	groups: Array<AlbumIndexGroup>;
+}
+
+export interface SeriesIndexEntry {
+	series: Series;
+}
+
+export interface SeriesIndexGroup {
+	name: string;
+	entries: Array<SeriesIndexEntry>;
+}
+
+export interface SeriesIndex {
+	lastModified: number;
+	groups: Array<SeriesIndexGroup>;
 }

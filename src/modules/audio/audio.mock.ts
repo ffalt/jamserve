@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
 import {ID3v2, IID3V2, ITagID} from 'jamp3';
 
-export async function writeMP3Track(filename: string, album: string, artist: string, trackNr: number, genre: string, albumArtist?: string, group?: string): Promise<void> {
+export async function writeMP3Track(filename: string, album: string, artist: string, trackNr: number, genre: string, albumArtist?: string, series?: string, group?: string): Promise<void> {
 	const mp3stub = Buffer.from(
 		[255, 227, 24, 196, 0, 12, 200, 7, 18, 88, 8, 68, 2, 187, 109, 182, 167, 108, 0, 24, 62, 15, 131, 224, 248,
 			32, 8, 2, 0, 128, 38, 15, 131, 224, 248, 62, 8, 2, 0, 128, 32, 3, 7, 193, 240, 124, 252, 160, 32, 239,
@@ -58,6 +58,14 @@ export async function writeMP3Track(filename: string, album: string, artist: str
 			id: 'GRP1',
 			value: {
 				text: group
+			}
+		});
+	}
+	if (series) {
+		t.frames.push({
+			id: 'TIT1',
+			value: {
+				text: series
 			}
 		});
 	}

@@ -5,7 +5,6 @@ export interface AlbumTypeStats {
 	unknown: number;
 	live: number;
 	audiobook: number;
-	series: number;
 	soundtrack: number;
 	bootleg: number;
 	ep: number;
@@ -16,6 +15,7 @@ export interface Stats {
 	rootID?: string;
 	track: number;
 	folder: number;
+	series: number;
 	album: number;
 	albumTypes: AlbumTypeStats;
 	artist: number;

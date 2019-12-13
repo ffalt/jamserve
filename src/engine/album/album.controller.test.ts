@@ -37,7 +37,7 @@ describe('AlbumController', () => {
 				};
 				const list = await controller.similarTracks({query: {id: album.id}, user});
 				api.metadataController.metadataService.similarTracks.byAlbum = org;
-				expect(list).toBeTruthy();
+				expect(list).toBeDefined();
 				expect(list.items.length).toBe(0);
 			});
 			it('should handle empty metadata data', async () => {
@@ -51,7 +51,7 @@ describe('AlbumController', () => {
 				};
 				const list = await controller.similarTracks({query: {id: album.id}, user});
 				api.metadataController.metadataService.similarTracks.byAlbum = org;
-				expect(list).toBeTruthy();
+				expect(list).toBeDefined();
 				expect(list.items.length).toBe(0);
 			});
 			it('should return similar tracks', async () => {
@@ -65,7 +65,7 @@ describe('AlbumController', () => {
 				};
 				const list = await controller.similarTracks({query: {id: album.id}, user});
 				api.metadataController.metadataService.similarTracks.byAlbum = org;
-				expect(list).toBeTruthy();
+				expect(list).toBeDefined();
 				expect(list.items.length).toBe(1);
 			});
 		});
@@ -80,14 +80,14 @@ describe('AlbumController', () => {
 					throw new Error('Invalid Test Setup');
 				}
 				const list = await controller.tracks({query: {ids: [album.id]}, user});
-				expect(list).toBeTruthy();
+				expect(list).toBeDefined();
 				expect(list.items.length).toBe(album.trackIDs.length);
 			});
 		});
 		describe('.index', () => {
 			it('should return an index with all albums', async () => {
 				const index = await controller.index({query: {}, user});
-				expect(index).toBeTruthy();
+				expect(index).toBeDefined();
 				let count = 0;
 				for (const group of index.groups) {
 					count += group.entries.length;
@@ -96,7 +96,7 @@ describe('AlbumController', () => {
 			});
 			it('should return an empty index', async () => {
 				const index = await controller.index({query: {id: 'invalid'}, user});
-				expect(index).toBeTruthy();
+				expect(index).toBeDefined();
 				expect(index.groups.length).toBe(0);
 			});
 		});
@@ -108,7 +108,7 @@ describe('AlbumController', () => {
 				}
 				for (const album of albums) {
 					const result = await controller.id({query: {id: album.id, albumState: true, albumTrackIDs: true, albumTracks: true}, user});
-					expect(result).toBeTruthy();
+					expect(result).toBeDefined();
 					expect(result.trackIDs).toEqual(album.trackIDs);
 					expect((result as any).tracks.length).toBe(album.trackIDs.length);
 				}
@@ -131,21 +131,21 @@ describe('AlbumController', () => {
 				};
 				const result = await controller.id({query: {id: album.id, albumInfo: true}, user});
 				api.metadataController.metadataService.extInfo.byAlbum = org;
-				expect(result).toBeTruthy();
+				expect(result).toBeDefined();
 				expect(result.info).toEqual(extended);
 			});
-			it('should handle metadata not available for  album info in sub-object', async () => {
+			it('should handle metadata not available for album info in sub-object', async () => {
 				const album = await controller.albumService.albumStore.random();
 				if (!album) {
 					throw new Error('Invalid Test Setup');
 				}
 				const org = api.metadataController.metadataService.extInfo.byAlbum;
 				api.metadataController.metadataService.extInfo.byAlbum = async (a: Album): Promise<Jam.ExtendedInfo | undefined> => {
-					return Promise.reject(Error('Dummy'));
+					return undefined;
 				};
 				const result = await controller.id({query: {id: album.id, albumInfo: true}, user});
 				api.metadataController.metadataService.extInfo.byAlbum = org;
-				expect(result).toBeTruthy();
+				expect(result).toBeDefined();
 				expect(result.info).toBeUndefined();
 			});
 		});
@@ -168,7 +168,7 @@ describe('AlbumController', () => {
 				};
 				const result = await controller.info({query: {id: album.id}, user});
 				api.metadataController.metadataService.extInfo.byAlbum = org;
-				expect(result).toBeTruthy();
+				expect(result).toBeDefined();
 				expect(result.info).toEqual(extended);
 			});
 		});

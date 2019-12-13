@@ -15,6 +15,7 @@ import {Podcast} from '../podcast/podcast.model';
 import {Track} from '../track/track.model';
 import {TrackStore} from '../track/track.store';
 import {User} from '../user/user.model';
+import {Series} from '../series/series.model';
 
 export class DownloadService {
 
@@ -40,6 +41,12 @@ export class DownloadService {
 		const tracks = await this.trackStore.byIds(artist.trackIDs);
 		const fileList = tracks.map(t => path.join(t.path, t.name));
 		return {pipe: new CompressListStream(fileList, artist.name, format)};
+	}
+
+	private async downloadSeries(series: Series, format?: string): Promise<ApiBinaryResult> {
+		const tracks = await this.trackStore.byIds(series.trackIDs);
+		const fileList = tracks.map(t => path.join(t.path, t.name));
+		return {pipe: new CompressListStream(fileList, series.name, format)};
 	}
 
 	private async downloadAlbum(album: Album, format?: string): Promise<ApiBinaryResult> {
@@ -72,6 +79,8 @@ export class DownloadService {
 				return this.downloadFolder(o as Folder, format);
 			case DBObjectType.artist:
 				return this.downloadArtist(o as Artist, format);
+			case DBObjectType.series:
+				return this.downloadSeries(o as Series, format);
 			case DBObjectType.album:
 				return this.downloadAlbum(o as Album, format);
 			case DBObjectType.episode:

@@ -24,6 +24,7 @@ import {TrackController} from '../../engine/track/track.controller';
 import {UserController} from '../../engine/user/user.controller';
 import {User} from '../../engine/user/user.model';
 import {WaveformController} from '../../engine/waveform/waveform.controller';
+import {SeriesController} from '../../engine/series/series.controller';
 
 export interface JamRequest<T> {
 	query: T;
@@ -50,14 +51,15 @@ export class JamApi {
 	playqueueController: PlayQueueController;
 	podcastController: PodcastController;
 	radioController: RadioController;
-	settingsController: SettingsController;
 	rootController: RootController;
+	seriesController: SeriesController;
+	sessionController: SessionController;
+	settingsController: SettingsController;
+	statsController: StatsController;
 	streamController: StreamController;
 	trackController: TrackController;
 	userController: UserController;
 	waveformController: WaveformController;
-	statsController: StatsController;
-	sessionController: SessionController;
 
 	constructor(public engine: Engine) {
 		this.settingsController = new SettingsController(this.engine.settingsService);
@@ -82,7 +84,11 @@ export class JamApi {
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.albumController = new AlbumController(this.engine.albumService, this.trackController, this.engine.metaDataService, this.engine.indexService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
-		this.artistController = new ArtistController(this.engine.artistService, this.trackController, this.albumController, this.engine.metaDataService, this.engine.indexService,
+		this.seriesController = new SeriesController(this.engine.seriesService, this.trackController, this.albumController,
+			this.engine.metaDataService, this.engine.indexService,
+			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
+		this.artistController = new ArtistController(this.engine.artistService, this.trackController, this.seriesController, this.albumController,
+			this.engine.metaDataService, this.engine.indexService,
 			this.engine.stateService, this.engine.imageService, this.engine.downloadService);
 		this.folderController = new FolderController(this.engine.folderService, this.trackController, this.engine.metaDataService, this.engine.indexService,
 			this.engine.rootService, this.engine.stateService, this.engine.imageService, this.engine.downloadService, this.engine.ioService);

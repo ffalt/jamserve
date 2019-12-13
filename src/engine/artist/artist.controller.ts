@@ -12,6 +12,7 @@ import {ImageService} from '../image/image.service';
 import {formatArtistIndex} from '../index/index.format';
 import {IndexService} from '../index/index.service';
 import {MetaDataService} from '../metadata/metadata.service';
+import {SeriesController} from '../series/series.controller';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
 import {TrackController} from '../track/track.controller';
@@ -34,6 +35,7 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 	constructor(
 		public artistService: ArtistService,
 		private trackController: TrackController,
+		private seriesController: SeriesController,
 		private albumController: AlbumController,
 		private metaDataService: MetaDataService,
 		private indexService: IndexService,
@@ -202,5 +204,20 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {
 		const artist = await this.byID(req.query.id);
 		return {info: await this.metaDataService.extInfo.byArtist(artist)};
+	}
+
+	async series(req: JamRequest<JamParameters.ArtistSeries>): Promise<ListResult<Jam.Series>> {
+		const artists = await this.byIDs(req.query.ids);
+		let seriesIDs: Array<string> = [];
+		artists.forEach(artist => {
+			seriesIDs = seriesIDs.concat(artist.seriesIDs);
+		});
+		const list = paginate(seriesIDs, req.query.amount, req.query.offset);
+		return {
+			total: list.total,
+			amount: list.amount,
+			offset: list.offset,
+			items: await this.seriesController.prepareListByIDs(list.items, req.query, req.user)
+		};
 	}
 }

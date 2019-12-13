@@ -18,7 +18,7 @@ describe('SessionService', () => {
 					mock.expires = Date.now() + 60000;
 					await sessionService.set(mock);
 					const result = await sessionService.get(mock.sessionID);
-					expect(result).toBeTruthy();
+					expect(result).toBeDefined();
 				});
 				it('should overwrite a session', async () => {
 					const mock = mockSession();
@@ -28,7 +28,7 @@ describe('SessionService', () => {
 					await sessionService.set(mock);
 					expect(await sessionService.count()).toBe(1);
 					const result = await sessionService.get(mock.sessionID);
-					expect(result).toBeTruthy();
+					expect(result).toBeDefined();
 					if (result) {
 						expect(result.expires).toBe(mock.expires);
 					}

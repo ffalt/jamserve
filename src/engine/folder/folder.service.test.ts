@@ -23,7 +23,7 @@ describe('FolderService', () => {
 						throw new Error('Invalid Test Setup');
 					}
 					folder.tag.artworks = undefined;
-					const res = await folderService.getFolderImage(folder);
+					const res = await folderService.getImage(folder);
 					expect(res).toBeUndefined();
 				});
 			});

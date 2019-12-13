@@ -670,6 +670,14 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
+		 * artist: get series of an artist by artist id
+		 */
+		'artist/series'?: {
+			params: JamParameters.ArtistSeries;
+			result: Jam.SeriesList;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
 		 * artist: get external artist description by id
 		 */
 		'artist/info'?: {
@@ -754,6 +762,87 @@ export interface JamApi {
 		 * album: get external album description by id
 		 */
 		'album/info'?: {
+			params: JamParameters.ID;
+			result: Jam.Info;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+
+		/**
+		 * series: get a series by id
+		 */
+		'series/id'?: {
+			params: JamParameters.Series;
+			result: Jam.Series;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * series: get series by ids
+		 */
+		'series/ids'?: {
+			params: JamParameters.Serieses;
+			result: Array<Jam.Series>;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
+		 * series: search series
+		 */
+		'series/search'?: {
+			params: JamParameters.SeriesSearch;
+			result: Jam.SeriesList;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
+		 * series: get the user state (fav/rating) by series id
+		 */
+		'series/state'?: {
+			params: JamParameters.ID;
+			result: Jam.State;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * series: get the user states (fav/rating) by series ids
+		 */
+		'series/states'?: {
+			params: JamParameters.IDs;
+			result: Jam.States;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * series: get a series list by series list type
+		 */
+		'series/list'?: {
+			params: JamParameters.SeriesList;
+			result: Jam.SeriesList;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
+		 * series: get the navigation index for series
+		 */
+		'series/index'?: {
+			params: JamParameters.SeriesIndex;
+			result: Jam.SeriesIndex
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+		};
+		/**
+		 * series: get tracks of a series by series id
+		 */
+		'series/tracks'?: {
+			params: JamParameters.SeriesTracks;
+			result: Jam.TrackList;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * series: get albums of a series by series id
+		 */
+		'series/albums'?: {
+			params: JamParameters.SeriesAlbums;
+			result: Jam.AlbumList;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * series: get external series description by id
+		 */
+		'series/info'?: {
 			params: JamParameters.ID;
 			result: Jam.Info;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
@@ -1705,18 +1794,19 @@ export interface JamApi {
 			roles: ['admin'];
 		};
 		/**
-		 * root: start a root scan by root id
+		 * root: start a root refresh by root id
 		 */
-		'root/scan'?: {
-			params: JamParameters.ID;
+		'root/refresh'?: {
+			params: JamParameters.RootRefresh;
 			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
 		/**
-		 * root: start scan of all roots
+		 * root: start refresh of all roots
 		 */
-		'root/scanAll'?: {
+		'root/refreshAll'?: {
+			params: JamParameters.RootRefreshAll;
 			result: Array<Jam.AdminChangeQueueInfo>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 			roles: ['admin'];

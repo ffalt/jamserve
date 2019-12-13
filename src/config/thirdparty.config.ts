@@ -38,7 +38,7 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		https://acoustid.org/
 		audio identification via fingerprinting
 	 */
-	acoustid: {apiKey: 'xuwbosoqd4', userAgent},
+	acoustid: {apiKey: 'bLwTKyNczi', userAgent},
 	/*
 		LastFM
 		https://www.last.fm/api

@@ -6,7 +6,8 @@ import {ArtistStore, SearchQueryArtist} from '../artist/artist.store';
 import {Folder} from '../folder/folder.model';
 import {FolderStore, SearchQueryFolder} from '../folder/folder.store';
 import {TrackStore} from '../track/track.store';
-import {AlbumIndex, AlbumIndexEntry, ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry} from './index.model';
+import {AlbumIndex, AlbumIndexEntry, ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry, SeriesIndex, SeriesIndexEntry} from './index.model';
+import {SearchQuerySeries, SeriesStore} from '../series/series.store';
 
 export class IndexTreeBuilder {
 	private ignore: string;
@@ -95,6 +96,37 @@ export class IndexArtistTreeBuilder extends IndexTreeBuilder {
 		result.groups.forEach(group => {
 			group.entries = group.entries.sort((a, b) => {
 				return (a.artist.nameSort || this.removeArticles(a.artist.name)).localeCompare(b.artist.nameSort || this.removeArticles(b.artist.name));
+			});
+		});
+		result.groups = result.groups.sort((a, b) => {
+			return a.name.localeCompare(b.name);
+		});
+		return result;
+	}
+
+}
+
+export class IndexSeriesTreeBuilder extends IndexTreeBuilder {
+	constructor(indexConfig: Jam.AdminSettingsIndex, private seriesStore: SeriesStore) {
+		super(indexConfig);
+	}
+
+	async buildSeriesIndex(query: SearchQuerySeries): Promise<SeriesIndex> {
+		const result: SeriesIndex = {groups: [], lastModified: Date.now()};
+		const series = await this.seriesStore.search(query);
+		series.items.forEach(item => {
+			const entry: SeriesIndexEntry = {series: item};
+			const indexChar = this.getIndexChar(this.removeArticles(item.name) || '');
+			let group = result.groups.find(g => g.name === indexChar);
+			if (!group) {
+				group = {name: indexChar, entries: []};
+				result.groups.push(group);
+			}
+			group.entries.push(entry);
+		});
+		result.groups.forEach(group => {
+			group.entries = group.entries.sort((a, b) => {
+				return (this.removeArticles(a.series.name)).localeCompare(this.removeArticles(b.series.name));
 			});
 		});
 		result.groups = result.groups.sort((a, b) => {

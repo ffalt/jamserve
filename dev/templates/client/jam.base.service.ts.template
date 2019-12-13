@@ -21,6 +21,8 @@ export class JamBaseService {
 			if (val !== undefined) {
 				switch (typeof val) {
 					case 'number':
+						result.push(`${key}=${val}`);
+						break;
 					case 'string':
 						result.push(`${key}=${encodeURIComponent(val)}`);
 						break;

@@ -41,5 +41,8 @@ export class NowPlayingService {
 		await this.stateService.reportPlaying(track.albumID, DBObjectType.album, user.id);
 		await this.stateService.reportPlaying(track.artistID, DBObjectType.artist, user.id);
 		await this.stateService.reportPlaying(track.parentID, DBObjectType.folder, user.id);
+		if (track.seriesID) {
+			await this.stateService.reportPlaying(track.seriesID, DBObjectType.series, user.id);
+		}
 	}
 }

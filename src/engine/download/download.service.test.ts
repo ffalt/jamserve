@@ -24,8 +24,8 @@ describe('DownloadService', () => {
 					return Promise.reject('Invalid Test Setup');
 				}
 				const res = await downloadService.getObjDownload(track, undefined, user);
-				expect(res).toBeTruthy();
-				expect(res.pipe).toBeTruthy();
+				expect(res).toBeDefined();
+				expect(res.pipe).toBeDefined();
 			});
 			it('should download a folder', async () => {
 				const folder = await store.folderStore.random();
@@ -33,16 +33,16 @@ describe('DownloadService', () => {
 					return Promise.reject('Invalid Test Setup');
 				}
 				const res = await downloadService.getObjDownload(folder, undefined, user);
-				expect(res).toBeTruthy();
-				expect(res.pipe).toBeTruthy();
+				expect(res).toBeDefined();
+				expect(res.pipe).toBeDefined();
 			});
 			it('should download an episode', async () => {
 				const episode = mockEpisode();
 				episode.id = 'downloadEpisodeID1';
 				episode.path = '/invalid.invalid.invalid';
 				const res = await downloadService.getObjDownload(episode, undefined, user);
-				expect(res).toBeTruthy();
-				expect(res.pipe).toBeTruthy();
+				expect(res).toBeDefined();
+				expect(res.pipe).toBeDefined();
 			});
 			it('should not download an unavailable episode', async () => {
 				const episode = mockEpisode();
@@ -56,8 +56,8 @@ describe('DownloadService', () => {
 					return Promise.reject('Invalid Test Setup');
 				}
 				const res = await downloadService.getObjDownload(artist, undefined, user);
-				expect(res).toBeTruthy();
-				expect(res.pipe).toBeTruthy();
+				expect(res).toBeDefined();
+				expect(res.pipe).toBeDefined();
 			});
 			it('should download an album', async () => {
 				const album = await store.albumStore.random();
@@ -65,8 +65,8 @@ describe('DownloadService', () => {
 					return Promise.reject('Invalid Test Setup');
 				}
 				const res = await downloadService.getObjDownload(album, undefined, user);
-				expect(res).toBeTruthy();
-				expect(res.pipe).toBeTruthy();
+				expect(res).toBeDefined();
+				expect(res.pipe).toBeDefined();
 			});
 			it('should download a playlist', async () => {
 				const playlist = mockPlaylist();
@@ -79,12 +79,12 @@ describe('DownloadService', () => {
 				}
 				playlist.trackIDs = [track.id];
 				let res = await downloadService.getObjDownload(playlist, undefined, user);
-				expect(res).toBeTruthy();
-				expect(res.pipe).toBeTruthy();
+				expect(res).toBeDefined();
+				expect(res.pipe).toBeDefined();
 				playlist.userID = 'someOtherUserID1';
 				res = await downloadService.getObjDownload(playlist, undefined, user);
-				expect(res).toBeTruthy();
-				expect(res.pipe).toBeTruthy();
+				expect(res).toBeDefined();
+				expect(res.pipe).toBeDefined();
 			});
 			it('should not download a non public playlist', async () => {
 				const playlist = mockPlaylist();
@@ -103,8 +103,8 @@ describe('DownloadService', () => {
 				const folder = mockFolder();
 				folder.id = 'downloadFolderID1';
 				const res = await downloadService.getObjDownload(folder, undefined, user);
-				expect(res).toBeTruthy();
-				expect(res.pipe).toBeTruthy();
+				expect(res).toBeDefined();
+				expect(res.pipe).toBeDefined();
 			});
 			it('should not download a car', async () => {
 				await expect(downloadService.getObjDownload(user, undefined, user)).rejects.toThrow('Invalid Download Type');

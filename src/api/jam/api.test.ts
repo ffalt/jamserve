@@ -7,7 +7,7 @@ describe('JamApi', () => {
 		jam = new JamApi(testEngine.engine);
 	}, () => {
 		it('should exist', async () => {
-			expect(jam).toBeTruthy();
+			expect(jam).toBeDefined();
 		});
 	}, async () => {
 		// nope

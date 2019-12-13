@@ -20,7 +20,7 @@ describe('ChatService', () => {
 		() => {
 			it('should add and remove a msg', async () => {
 				const msg = await chatService.add('msg', user1);
-				expect(msg).toBeTruthy();
+				expect(msg).toBeDefined();
 				expect(await chatService.find(msg.time)).toBe(msg);
 				await chatService.remove(msg);
 				const list = await chatService.get();
@@ -28,7 +28,7 @@ describe('ChatService', () => {
 			});
 			it('should find since a given datetime', async () => {
 				const msg = await chatService.add('msg', user1);
-				expect(msg).toBeTruthy();
+				expect(msg).toBeDefined();
 				let list = await chatService.get(msg.time - 1);
 				expect(list.length).toBe(1);
 				list = await chatService.get(msg.time);

@@ -18,6 +18,7 @@ export class StatsService {
 			stat = {
 				rootID,
 				album: await this.store.albumStore.searchCount({rootID}),
+				series: await this.store.seriesStore.searchCount({rootID}),
 				albumTypes: {
 					album: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.album}),
 					compilation: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation, mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}),
@@ -25,7 +26,6 @@ export class StatsService {
 						await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation}) -
 						await this.store.albumStore.searchCount({rootID, albumType: AlbumType.compilation, mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}),
 					audiobook: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.audiobook}),
-					series: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.series}),
 					soundtrack: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.soundtrack}),
 					bootleg: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.bootleg}),
 					live: await this.store.albumStore.searchCount({rootID, albumType: AlbumType.live}),
@@ -41,7 +41,6 @@ export class StatsService {
 						await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation}) -
 						await this.store.artistStore.searchCount({rootID, albumType: AlbumType.compilation, mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}),
 					audiobook: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.audiobook}),
-					series: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.series}),
 					soundtrack: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.soundtrack}),
 					bootleg: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.bootleg}),
 					live: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.live}),

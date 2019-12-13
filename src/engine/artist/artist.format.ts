@@ -12,10 +12,12 @@ export function formatArtist(artist: Artist, includes: JamParameters.IncludesArt
 	return {
 		id: artist.id,
 		name: artist.name,
-		albumCount: artist.albumIDs.length,
 		albumTypes: artist.albumTypes,
-		albumIDs: includes.artistAlbumIDs ? artist.albumIDs : undefined,
 		trackIDs: includes.artistTrackIDs ? artist.trackIDs : undefined,
+		albumIDs: includes.artistAlbumIDs ? artist.albumIDs : undefined,
+		seriesIDs: includes.artistSeries ? artist.seriesIDs : undefined,
+		albumCount: artist.albumIDs.length,
+		seriesCount: artist.seriesIDs ? artist.seriesIDs.length : 0,
 		trackCount: artist.trackIDs.length,
 		created: artist.created,
 		musicbrainz: mbz

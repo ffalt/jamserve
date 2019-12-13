@@ -21,22 +21,22 @@ describe('StreamService', () => {
 		() => {
 			it('should stream a track', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Invalid Test Setup');
+				expect(track).toBeDefined(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
 				let result = await streamService.streamTrack(track, undefined, undefined, user);
-				expect(result).toBeTruthy();
-				expect(result.file).toBeTruthy();
+				expect(result).toBeDefined();
+				expect(result.file).toBeDefined();
 				for (const format of SupportedTranscodeAudioFormat) {
 					result = await streamService.streamTrack(track, format, undefined, user);
-					expect(result).toBeTruthy();
+					expect(result).toBeDefined();
 					expect(!!result.file || !!result.pipe).toBe(true); // 'Invalid result');
 				}
 				track.media.format = undefined;
 				result = await streamService.streamTrack(track, undefined, undefined, user);
-				expect(result).toBeTruthy();
-				expect(result.file).toBeTruthy();
+				expect(result).toBeDefined();
+				expect(result.file).toBeDefined();
 			});
 			it('should fail streaming a track if file does not exists', async () => {
 				const mock = mockTrack();
@@ -46,7 +46,7 @@ describe('StreamService', () => {
 			});
 			it('should not stream invalid settings', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Invalid Test Setup');
+				expect(track).toBeDefined(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
@@ -55,7 +55,7 @@ describe('StreamService', () => {
 			});
 			it('should stream a episode', async () => {
 				const track = await trackStore.random();
-				expect(track).toBeTruthy(); // 'Invalid Test Setup');
+				expect(track).toBeDefined(); // 'Invalid Test Setup');
 				if (!track) {
 					return;
 				}
@@ -63,8 +63,8 @@ describe('StreamService', () => {
 				mock.path = path.join(track.path, track.name);
 				mock.media = track.media;
 				const result = await streamService.streamEpisode(mock, undefined, undefined, user);
-				expect(result).toBeTruthy();
-				expect(result.file).toBeTruthy();
+				expect(result).toBeDefined();
+				expect(result.file).toBeDefined();
 			});
 			it('should fail streaming a episode if file does not exists', async () => {
 				const mock = mockEpisode();

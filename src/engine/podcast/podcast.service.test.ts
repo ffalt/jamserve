@@ -23,7 +23,7 @@ describe('PodcastService', () => {
 			it('should create a podcast', async () => {
 				const podcast = await podcastService.create('http://invaliddomain.invaliddomain.invaliddomain/feed1');
 				expect(podcast.status).toBe(PodcastStatus.new);
-				expect(podcast).toBeTruthy();
+				expect(podcast).toBeDefined();
 				await podcastService.remove(podcast);
 			});
 			it('should fail refreshing a podcast', async () => {
@@ -33,7 +33,7 @@ describe('PodcastService', () => {
 				await podcastService.refresh(podcast);
 				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				const p = await podcastService.podcastStore.byId(podcast.id);
-				expect(p).toBeTruthy();
+				expect(p).toBeDefined();
 				if (p) {
 					expect(p.status).toBe(PodcastStatus.error);
 				}
@@ -46,7 +46,7 @@ describe('PodcastService', () => {
 				await podcastService.refresh(podcast);
 				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				const p = await podcastService.podcastStore.byId(podcast.id);
-				expect(p).toBeTruthy();
+				expect(p).toBeDefined();
 				if (p) {
 					expect(p.status).toBe(PodcastStatus.error);
 				}
@@ -60,7 +60,7 @@ describe('PodcastService', () => {
 				await podcastService.refresh(podcast);
 				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				const p = await podcastService.podcastStore.byId(podcast.id);
-				expect(p).toBeTruthy();
+				expect(p).toBeDefined();
 				if (p) {
 					expect(p.status).toBe(PodcastStatus.completed); // , p.errorMessage);
 					const count = await episodeService.episodeStore.searchCount({podcastID: podcast.id});
@@ -76,7 +76,7 @@ describe('PodcastService', () => {
 				await podcastService.refreshPodcasts();
 				expect(scope.isDone()).toBe(true); // 'no request has been made');
 				const p = await podcastService.podcastStore.byId(podcast.id);
-				expect(p).toBeTruthy();
+				expect(p).toBeDefined();
 				if (p) {
 					expect(p.status).toBe(PodcastStatus.completed); // p.errorMessage);
 					const count = await episodeService.episodeStore.searchCount({podcastID: podcast.id});

@@ -10,17 +10,17 @@ describe('RadioService', () => {
 		() => {
 			it('should create a radio', async () => {
 				const radio = await radioService.create('test radio', 'a stream url', 'a homepage url');
-				expect(radio).toBeTruthy();
+				expect(radio).toBeDefined();
 			});
 			it('should update a radio', async () => {
 				const radio = await radioService.radioStore.random();
-				expect(radio).toBeTruthy(); // 'Invalid Test Setup');
+				expect(radio).toBeDefined(); // 'Invalid Test Setup');
 				if (!radio) {
 					return;
 				}
 				await radioService.update(radio, 'a new name');
 				const r = await radioService.radioStore.byId(radio.id);
-				expect(r).toBeTruthy();
+				expect(r).toBeDefined();
 				if (r) {
 					expect(r.name).toBe('a new name');
 				}
@@ -30,7 +30,7 @@ describe('RadioService', () => {
 			});
 			it('should remove a radio', async () => {
 				const radio = await radioService.radioStore.random();
-				expect(radio).toBeTruthy(); // 'Invalid Test Setup');
+				expect(radio).toBeDefined(); // 'Invalid Test Setup');
 				if (!radio) {
 					return;
 				}

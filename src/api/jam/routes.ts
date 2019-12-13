@@ -405,6 +405,11 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.AlbumList = await api.artistController.albums(options);
 		ApiResponder.data(req, res, result);
 	});
+	register.get('/artist/series', async (req, res) => {
+		const options: JamRequest<JamParameters.ArtistSeries> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.SeriesList = await api.artistController.series(options);
+		ApiResponder.data(req, res, result);
+	});
 	register.get('/artist/info', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Info = await api.artistController.info(options);
@@ -458,6 +463,56 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	register.get('/album/info', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
 		const result: Jam.Info = await api.albumController.info(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/id', async (req, res) => {
+		const options: JamRequest<JamParameters.Series> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.Series = await api.seriesController.id(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/ids', async (req, res) => {
+		const options: JamRequest<JamParameters.Serieses> = {query: req.query, user: req.user, client: req.client};
+		const result: Array<Jam.Series> = await api.seriesController.ids(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/search', async (req, res) => {
+		const options: JamRequest<JamParameters.SeriesSearch> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.SeriesList = await api.seriesController.search(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/state', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.State = await api.seriesController.state(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/states', async (req, res) => {
+		const options: JamRequest<JamParameters.IDs> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.States = await api.seriesController.states(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/list', async (req, res) => {
+		const options: JamRequest<JamParameters.SeriesList> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.SeriesList = await api.seriesController.list(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/index', async (req, res) => {
+		const options: JamRequest<JamParameters.SeriesIndex> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.SeriesIndex = await api.seriesController.index(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/tracks', async (req, res) => {
+		const options: JamRequest<JamParameters.SeriesTracks> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.TrackList = await api.seriesController.tracks(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/albums', async (req, res) => {
+		const options: JamRequest<JamParameters.SeriesAlbums> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.AlbumList = await api.seriesController.albums(options);
+		ApiResponder.data(req, res, result);
+	});
+	register.get('/series/info', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.Info = await api.seriesController.info(options);
 		ApiResponder.data(req, res, result);
 	});
 	register.get('/playlist/id', async (req, res) => {
@@ -970,14 +1025,14 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.AdminChangeQueueInfo = await api.rootController.delete(options);
 		ApiResponder.data(req, res, result);
 	}, ['admin']);
-	register.post('/root/scan', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.AdminChangeQueueInfo = await api.rootController.scan(options);
+	register.post('/root/refresh', async (req, res) => {
+		const options: JamRequest<JamParameters.RootRefresh> = {query: req.body, user: req.user, client: req.client};
+		const result: Jam.AdminChangeQueueInfo = await api.rootController.refresh(options);
 		ApiResponder.data(req, res, result);
 	}, ['admin']);
-	register.post('/root/scanAll', async (req, res) => {
-		const options: JamRequest<{}> = {query: req.body, user: req.user, client: req.client};
-		const result: Array<Jam.AdminChangeQueueInfo> = await api.rootController.scanAll(options);
+	register.post('/root/refreshAll', async (req, res) => {
+		const options: JamRequest<JamParameters.RootRefreshAll> = {query: req.body, user: req.user, client: req.client};
+		const result: Array<Jam.AdminChangeQueueInfo> = await api.rootController.refreshAll(options);
 		ApiResponder.data(req, res, result);
 	}, ['admin']);
 	register.post('/admin/settings/update', async (req, res) => {

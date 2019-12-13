@@ -129,7 +129,6 @@ export class MatchDirMergeTagBuilder {
 	}
 
 	private static getMixedFolderType(dir: MergeMatchDir, metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
-		// if (metaStat.albumType === AlbumType.series && dir.)
 		return MatchDirMergeTagBuilder.getMultiAlbumFolderType(dir);
 	}
 
@@ -141,7 +140,7 @@ export class MatchDirMergeTagBuilder {
 			return FolderType.extras;
 		}
 		if (metaStat.trackCount > 0) {
-			if (metaStat.hasMultipleAlbums && dir.tag && dir.tag.albumType === AlbumType.series) {
+			if (metaStat.hasMultipleAlbums && dir.tag && dir.tag.albumType === AlbumType.audiobook) {
 				return FolderType.artist;
 			}
 			const dirCount = dir.directories.filter(d => !!d.tag && d.tag.type !== FolderType.extras).length;

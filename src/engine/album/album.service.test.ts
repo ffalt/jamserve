@@ -8,6 +8,7 @@ import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
 import {TrackService} from '../track/track.service';
 import {AlbumService} from './album.service';
+import {mockFolderArtwork} from '../folder/folder.mock';
 
 describe('AlbumService', () => {
 	let albumService: AlbumService;
@@ -45,42 +46,28 @@ describe('AlbumService', () => {
 					}
 					for (const album of albums) {
 						const folder = await albumService.getAlbumFolder(album);
-						expect(folder).toBeTruthy();
-						if (folder) {
+						expect(folder).toBeDefined();
+						if (folder && !album.seriesID) {
 							expect(FolderTypesAlbum).toContain(folder.tag.type);
 						}
 					}
 				});
 			});
-			describe('getAlbumImage', () => {
+			describe('getImage', () => {
 				it('should return an album image', async () => {
 					const album = await albumService.albumStore.random();
 					if (!album) {
 						throw new Error('Invalid Test Setup');
 					}
 					const folder = await albumService.getAlbumFolder(album);
-					expect(folder).toBeTruthy();
+					expect(folder).toBeDefined();
 					if (folder) {
-						const name = 'dummy.png';
-						const image = await mockImage('png');
-						const filename = path.resolve(folder.path, name);
-						await fse.writeFile(filename, image.buffer);
-						folder.tag.artworks = [{
-							id: 'dummyID',
-							image: {format: 'png', height: 123, width: 123},
-							name,
-							types: [ArtworkImageType.front],
-							stat: {
-								created: 123,
-								modified: 123,
-								size: 123
-							}
-						}];
+						const filename = await mockFolderArtwork(folder, ArtworkImageType.front);
 						await folderService.folderStore.replace(folder);
-						const img = await albumService.getAlbumImage(album);
-						expect(img).toBeTruthy();
+						const img = await albumService.getImage(album);
+						expect(img).toBeDefined();
 						if (img) {
-							expect(img.file).toBeTruthy();
+							expect(img.file).toBeDefined();
 							if (img.file) {
 								expect(img.file.filename).toBe(filename);
 							}

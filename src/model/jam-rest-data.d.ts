@@ -424,12 +424,51 @@ export declare namespace Jam {
 	}
 
 	/*
+	 * Series Data
+	 */
+
+	export interface Series extends Base {
+		artist: string;
+		artistID: string;
+		albumCount: number;
+		trackCount: number;
+		albumTypes: Array<AlbumType>;
+		tracks?: Array<Track>;
+		trackIDs?: Array<string>;
+		albumIDs?: Array<string>;
+		albums?: Array<Album>;
+		info?: ExtendedInfo;
+	}
+
+	export interface SeriesList extends ListResult {
+		items: Array<Series>;
+	}
+
+	export interface SeriesIndexEntry {
+		name: string;
+		seriesID: string;
+		albumCount: number;
+		trackCount: number;
+	}
+
+	export interface SeriesIndexGroup {
+		name: string;
+		entries: Array<SeriesIndexEntry>;
+	}
+
+	export interface SeriesIndex {
+		lastModified: number;
+		groups: Array<SeriesIndexGroup>;
+	}
+
+	/*
 	 * Artist Data
 	 */
 
 	export interface Artist extends Base {
 		albumCount: number;
 		trackCount: number;
+		seriesCount: number;
 		musicbrainz?: {
 			artistID?: string;
 		};
@@ -437,6 +476,8 @@ export declare namespace Jam {
 		tracks?: Array<Track>;
 		trackIDs?: Array<string>;
 		albumIDs?: Array<string>;
+		seriesIDs?: Array<string>;
+		series?: Array<Series>;
 		albums?: Array<Album>;
 		similar?: Array<Artist>;
 		info?: ExtendedInfo;
@@ -449,6 +490,7 @@ export declare namespace Jam {
 	export interface ArtistIndexEntry {
 		name: string;
 		artistID: string;
+		albumCount: number;
 		trackCount: number;
 	}
 
@@ -460,6 +502,23 @@ export declare namespace Jam {
 	export interface ArtistIndex {
 		lastModified: number;
 		groups: Array<ArtistIndexGroup>;
+	}
+
+	export interface SeriesIndexEntry {
+		name: string;
+		seriesID: string;
+		trackCount: number;
+		albumCount: number;
+	}
+
+	export interface SeriesIndexGroup {
+		name: string;
+		entries: Array<SeriesIndexEntry>;
+	}
+
+	export interface SeriesIndex {
+		lastModified: number;
+		groups: Array<SeriesIndexGroup>;
 	}
 
 	/*
@@ -492,7 +551,6 @@ export declare namespace Jam {
 		unknown: number;
 		live: number;
 		audiobook: number;
-		series: number;
 		soundtrack: number;
 		bootleg: number;
 		ep: number;
@@ -503,6 +561,7 @@ export declare namespace Jam {
 		rootID?: string;
 		track: number;
 		folder: number;
+		series: number;
 		artist: number;
 		artistTypes: StatsAlbumTypes;
 		album: number;

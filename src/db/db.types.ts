@@ -14,5 +14,6 @@ export enum DBObjectType {
 	radio,
 	metadata,
 	settings,
-	session
+	session,
+	series
 }

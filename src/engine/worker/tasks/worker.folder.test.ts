@@ -78,7 +78,7 @@ describe('FolderWorker', () => {
 
 					for (const id of folderIds) {
 						const folder = await store.folderStore.byId(id);
-						expect(folder).toBeTruthy();
+						expect(folder).toBeDefined();
 						if (!folder) {
 							return;
 						}

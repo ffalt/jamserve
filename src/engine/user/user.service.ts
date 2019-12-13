@@ -35,7 +35,7 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		return path.join(this.userAvatarPath, `avatar-${user.id}.png`);
 	}
 
-	async getUserImage(user: User, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getImage(user: User, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		const filename = this.avatarImageFilename(user);
 		let exists = await fse.pathExists(filename);
 		if (!exists) {

@@ -4,9 +4,10 @@ import {DebouncePromises} from '../../utils/debounce-promises';
 import {AlbumStore, SearchQueryAlbum} from '../album/album.store';
 import {ArtistStore, SearchQueryArtist} from '../artist/artist.store';
 import {FolderStore, SearchQueryFolder} from '../folder/folder.store';
+import {SearchQuerySeries, SeriesStore} from '../series/series.store';
 import {TrackStore} from '../track/track.store';
-import {IndexAlbumTreeBuilder, IndexArtistTreeBuilder, IndexFolderTreeBuilder} from './index.builder';
-import {AlbumIndex, ArtistIndex, FolderIndex} from './index.model';
+import {IndexAlbumTreeBuilder, IndexArtistTreeBuilder, IndexFolderTreeBuilder, IndexSeriesTreeBuilder} from './index.builder';
+import {AlbumIndex, ArtistIndex, FolderIndex, SeriesIndex} from './index.model';
 
 export class IndexService {
 	private cached: {
@@ -16,26 +17,36 @@ export class IndexService {
 		artist: {
 			[id: string]: ArtistIndex;
 		};
+		series: {
+			[id: string]: SeriesIndex;
+		};
 		album: {
 			[id: string]: AlbumIndex;
 		};
 	} = {
 		folder: {},
 		artist: {},
+		series: {},
 		album: {}
 	};
 	private indexCacheFolderDebounce = new DebouncePromises<FolderIndex>();
 	private indexCacheArtistDebounce = new DebouncePromises<ArtistIndex>();
+	private indexCacheSeriesDebounce = new DebouncePromises<SeriesIndex>();
 	private indexCacheAlbumDebounce = new DebouncePromises<AlbumIndex>();
 	public indexConfig: Jam.AdminSettingsIndex = {ignoreArticles: []};
 
-	constructor(private artistStore: ArtistStore, private albumStore: AlbumStore, private folderStore: FolderStore, private trackStore: TrackStore) {
+	constructor(
+		private artistStore: ArtistStore, private albumStore: AlbumStore,
+		private folderStore: FolderStore, private trackStore: TrackStore,
+		private seriesStore: SeriesStore
+	) {
 	}
 
 	public clearCache(): void {
 		this.cached = {
 			folder: {},
 			artist: {},
+			series: {},
 			album: {}
 		};
 	}
@@ -83,6 +94,27 @@ export class IndexService {
 			return result;
 		} catch (e) {
 			this.indexCacheArtistDebounce.reject(id, e);
+			return Promise.reject(e);
+		}
+	}
+
+	async getSeriesIndex(query: SearchQuerySeries): Promise<SeriesIndex> {
+		const id = JSON.stringify(query);
+		if (this.cached.series[id]) {
+			return this.cached.series[id];
+		}
+		if (this.indexCacheSeriesDebounce.isPending(id)) {
+			return this.indexCacheSeriesDebounce.append(id);
+		}
+		this.indexCacheSeriesDebounce.setPending(id);
+		try {
+			const builder = new IndexSeriesTreeBuilder(this.indexConfig, this.seriesStore);
+			const result = await builder.buildSeriesIndex(query);
+			this.indexCacheSeriesDebounce.resolve(id, result);
+			this.cached.series[id] = result;
+			return result;
+		} catch (e) {
+			this.indexCacheSeriesDebounce.reject(id, e);
 			return Promise.reject(e);
 		}
 	}

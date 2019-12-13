@@ -45,11 +45,15 @@ function logChanges(changes: Changes): void {
 	}
 	logChange('Updated Albums', changes.updateAlbums.length);
 	logChange('Removed Albums', changes.removedAlbums.length);
+	logChange('Added Series', changes.newSeries.length);
+	logChange('Updated Series', changes.updateSeries.length);
+	logChange('Removed Series', changes.removedSeries.length);
+
 }
 
 export async function validateMock(mockFolder: MockFolder, store: Store): Promise<void> {
 	const folder = await store.folderStore.searchOne({path: ensureTrailingPathSeparator(mockFolder.path)});
-	expect(folder).toBeTruthy();
+	expect(folder).toBeDefined();
 	if (!folder) {
 		return;
 	}
@@ -71,6 +75,7 @@ async function prepareMockRoot(mockRoot: MockRoot, workerService: WorkerService,
 	expect(changes.newFolders.length, 'New Folder count doesnt match').toBe(mockRoot.expected.folders);
 	expect(changes.newArtists.length, 'New Artist count doesnt match').toBe(mockRoot.expected.artists);
 	expect(changes.newAlbums.length, 'New Album count doesnt match').toBe(mockRoot.expected.albums);
+	expect(changes.newSeries.length, 'New Series count doesnt match').toBe(mockRoot.expected.series);
 	expect(changes.updateTracks.length, 'Update Track count doesnt match').toBe(0);
 	expect(changes.removedTracks.length, 'Removed Tracks count doesnt match').toBe(0);
 	expect(changes.updateFolders.length, 'Update Folder count doesnt match').toBe(0);
@@ -83,7 +88,7 @@ async function prepareMockRoot(mockRoot: MockRoot, workerService: WorkerService,
 		expect(changes.newAlbums.length, 'Album count doesnt match').toBe(mockRoot.albums.length);
 		for (const album of mockRoot.albums) {
 			const b = changes.newAlbums.find(a => a.name === album.name && a.artist === album.artist);
-			expect(b, `Album not found ${album.name} - ${album.artist}`).toBeTruthy();
+			expect(b, `Album not found ${album.name} - ${album.artist}`).toBeDefined();
 			if (b) {
 				expect(b.albumType, `Album Type doesnt match ${album.name} - ${album.artist}`).toBe(album.albumType);
 			}
@@ -102,6 +107,44 @@ async function tearDownMockRoot(mockRoot: MockRoot, workerService: WorkerService
 	await store.check();
 }
 
+async function checkChanges(changes: Changes, expected: {
+	newTracks?: number;
+	updateTracks?: number;
+	removedTracks?: number;
+	newFolders?: number;
+	updateFolders?: number;
+	removedFolders?: number;
+	newArtists?: number;
+	updateArtists?: number;
+	removedArtists?: number;
+	newAlbums?: number;
+	updateAlbums?: number;
+	removedAlbums?: number;
+	newSeries?: number;
+	updateSeries?: number;
+	removedSeries?: number;
+}): Promise<void> {
+	expect(changes.newTracks.length, 'New Track count doesnt match').toBe(expected.newTracks || 0);
+	expect(changes.updateTracks.length, 'Update Track count doesnt match').toBe(expected.updateTracks || 0);
+	expect(changes.removedTracks.length, 'Removed Tracks count doesnt match').toBe(expected.removedTracks || 0);
+
+	expect(changes.newArtists.length, 'New Artist count doesnt match').toBe(expected.newArtists || 0);
+	expect(changes.updateArtists.length, 'Update Artist count doesnt match').toBe(expected.updateArtists || 0);
+	expect(changes.removedArtists.length, 'Removed Artists count doesnt match').toBe(expected.removedArtists || 0);
+
+	expect(changes.newAlbums.length, 'New Album count doesnt match').toBe(expected.newAlbums || 0);
+	expect(changes.updateAlbums.length, 'Update Album count doesnt match').toBe(expected.updateAlbums || 0);
+	expect(changes.removedAlbums.length, 'Removed Album count doesnt match').toBe(expected.removedAlbums || 0);
+
+	expect(changes.newFolders.length, 'New Folder count doesnt match').toBe(expected.newFolders || 0);
+	expect(changes.updateFolders.length, 'Update Folder count doesnt match').toBe(expected.updateFolders || 0);
+	expect(changes.removedFolders.length, 'Removed Folders count doesnt match').toBe(expected.removedFolders || 0);
+
+	expect(changes.newSeries.length, 'New Series count doesnt match').toBe(expected.newSeries || 0);
+	expect(changes.updateSeries.length, 'Update Series count doesnt match').toBe(expected.updateSeries || 0);
+	expect(changes.removedSeries.length, 'Removed Series count doesnt match').toBe(expected.removedSeries || 0);
+}
+
 describe('WorkerService', () => {
 	let store: Store;
 	let dir: tmp.DirResult;
@@ -115,7 +158,7 @@ describe('WorkerService', () => {
 		},
 		() => {
 
-			describe('artist/album with RootScanStrategy.auto', () => {
+			describe('RootScanStrategy.auto', () => {
 				beforeEach(async () => {
 					dir = tmp.dirSync();
 					mockRoot = buildMockRoot(dir.name, 1, 'rootID1');
@@ -128,40 +171,26 @@ describe('WorkerService', () => {
 				});
 				it('should rescan', async () => {
 					const changes = await workerService.refreshRoot({rootID: mockRoot.id, forceMetaRefresh: false});
-					expect(changes.newTracks.length).toBe(0); // New Track count doesnt match');
-					expect(changes.updateTracks.length).toBe(0); // Update Track count doesnt match');
-					expect(changes.removedTracks.length).toBe(0); // Removed Tracks count doesnt match');
-					expect(changes.newFolders.length).toBe(0); // New Folder count doesnt match');
-					expect(changes.updateFolders.length).toBe(0); // Update Folder count doesnt match');
-					expect(changes.removedFolders.length).toBe(0); // Removed Folders count doesnt match');
-					expect(changes.newArtists.length).toBe(0); // New Artist count doesnt match');
-					expect(changes.updateArtists.length).toBe(0); // Update Artist count doesnt match');
-					expect(changes.removedArtists.length).toBe(0); // Removed Artists count doesnt match');
-					expect(changes.newAlbums.length).toBe(0); // New Album count doesnt match');
-					expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
-					expect(changes.removedAlbums.length).toBe(0); // Removed Album count doesnt match');
+					await checkChanges(changes, {});
 					await validateMock(mockRoot, store);
 				});
 				it('should remove missing in the root', async () => {
 					await removeMockRoot(mockRoot);
 					await fse.ensureDir(mockRoot.path);
 					const changes = await workerService.refreshRoot({rootID: mockRoot.id, forceMetaRefresh: false});
-					expect(changes.newTracks.length).toBe(0); // New Track count doesnt match');
-					expect(changes.updateTracks.length).toBe(0); // Update Track count doesnt match');
-					expect(changes.removedTracks.length).toBe(mockRoot.expected.tracks); // Removed Tracks count doesnt match');
-					expect(changes.newFolders.length).toBe(0); // New Folder count doesnt match');
-					expect(changes.updateFolders.length).toBe(1); // Update Folder count doesnt match');
-					expect(changes.removedFolders.length).toBe(mockRoot.expected.folders - 1); // Removed Folders count doesnt match');
-					expect(changes.newArtists.length).toBe(0); // New Artist count doesnt match');
-					expect(changes.updateArtists.length).toBe(0); // Update Artist count doesnt match');
-					expect(changes.removedArtists.length).toBe(mockRoot.expected.artists); // Removed Artists count doesnt match');
-					expect(changes.newAlbums.length).toBe(0); // New Album count doesnt match');
-					expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
-					expect(changes.removedAlbums.length).toBe(mockRoot.expected.albums); // Removed Album count doesnt match');
+					await checkChanges(changes, {
+						removedTracks: mockRoot.expected.tracks,
+						updateFolders: 1,
+						removedFolders: mockRoot.expected.folders - 1,
+						removedArtists: mockRoot.expected.artists,
+						removedAlbums: mockRoot.expected.albums,
+						removedSeries: mockRoot.expected.series
+					});
 					expect(await store.folderStore.count()).toBe(1);
 					expect(await store.trackStore.count()).toBe(0);
 					expect(await store.albumStore.count()).toBe(0);
 					expect(await store.artistStore.count()).toBe(0);
+					expect(await store.seriesStore.count()).toBe(0);
 					mockRoot.folders = [];
 				});
 				it('should scan added in the root', async () => {
@@ -170,18 +199,14 @@ describe('WorkerService', () => {
 					await workerService.refreshRoot({rootID: mockRoot.id, forceMetaRefresh: false});
 					await writeMockRoot(mockRoot);
 					const changes = await workerService.refreshRoot({rootID: mockRoot.id, forceMetaRefresh: false});
-					expect(changes.newTracks.length).toBe(mockRoot.expected.tracks); // New Track count doesnt match');
-					expect(changes.updateFolders.length).toBe(1); // Update Folder count doesnt match');
-					expect(changes.newFolders.length).toBe(mockRoot.expected.folders - 1); // New Folder count doesnt match');
-					expect(changes.newArtists.length).toBe(mockRoot.expected.artists); // New Artist count doesnt match');
-					expect(changes.newAlbums.length).toBe(mockRoot.expected.albums); // New Album count doesnt match');
-					expect(changes.updateTracks.length).toBe(0); // Update Track count doesnt match');
-					expect(changes.removedTracks.length).toBe(0); // Removed Tracks count doesnt match');
-					expect(changes.removedFolders.length).toBe(0); // Removed Folders count doesnt match');
-					expect(changes.updateArtists.length).toBe(0); // Update Artist count doesnt match');
-					expect(changes.removedArtists.length).toBe(0); // Removed Artists count doesnt match');
-					expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
-					expect(changes.removedAlbums.length).toBe(0); // Removed Album count doesnt match');
+					await checkChanges(changes, {
+						newTracks: mockRoot.expected.tracks,
+						updateFolders: 1,
+						newFolders: mockRoot.expected.folders - 1,
+						newArtists: mockRoot.expected.artists,
+						newAlbums: mockRoot.expected.albums,
+						newSeries: mockRoot.expected.series
+					});
 					await validateMock(mockRoot, store);
 				});
 				it('should combine/remove artists and albums from different roots', async () => {
@@ -190,36 +215,27 @@ describe('WorkerService', () => {
 					mockRoot2.id = await store.rootStore.add({id: '', path: mockRoot2.path, type: DBObjectType.root, name: mockRoot2.name, strategy: RootScanStrategy.auto, created: Date.now()});
 					await writeMockRoot(mockRoot2);
 					let changes = await workerService.refreshRoot({rootID: mockRoot2.id, forceMetaRefresh: false});
-					expect(changes.newTracks.length).toBe(mockRoot.expected.tracks); // New Track count doesnt match');
-					expect(changes.newFolders.length).toBe(mockRoot.expected.folders); // New Folder count doesnt match');
-					expect(changes.newArtists.length).toBe(0); // New Artist count doesnt match');
-					expect(changes.newAlbums.length).toBe(0); // New Album count doesnt match');
-					expect(changes.updateTracks.length).toBe(0); // Update Track count doesnt match');
-					expect(changes.removedTracks.length).toBe(0); // Removed Tracks count doesnt match');
-					expect(changes.updateFolders.length).toBe(0); // Update Folder count doesnt match');
-					expect(changes.removedFolders.length).toBe(0); // Removed Folders count doesnt match');
-					expect(changes.removedArtists.length).toBe(0); // Removed Artists count doesnt match');
-					expect(changes.removedAlbums.length).toBe(0); // Removed Album count doesnt match');
-					expect(changes.updateAlbums.length).toBe(mockRoot.expected.albums); // Update Album count doesnt match');
-					expect(changes.updateArtists.length).toBe(mockRoot.expected.artists); // Update Artist count doesnt match');
+					await checkChanges(changes, {
+						newTracks: mockRoot2.expected.tracks,
+						newFolders: mockRoot2.expected.folders,
+						updateSeries: mockRoot2.expected.series,
+						updateAlbums: mockRoot2.expected.albums,
+						updateArtists: mockRoot2.expected.artists
+					});
 					await validateMock(mockRoot2, store);
 					await removeMockRoot(mockRoot2);
 
 					await fse.ensureDir(mockRoot2.path);
 					changes = await workerService.refreshRoot({rootID: mockRoot2.id, forceMetaRefresh: false});
 					await fse.rmdir(mockRoot2.path);
-					expect(changes.newTracks.length).toBe(0); // New Track count doesnt match');
-					expect(changes.newFolders.length).toBe(0); // New Folder count doesnt match');
-					expect(changes.newArtists.length).toBe(0); // New Artist count doesnt match');
-					expect(changes.newAlbums.length).toBe(0); // New Album count doesnt match');
-					expect(changes.updateTracks.length).toBe(0); // Update Track count doesnt match');
-					expect(changes.removedTracks.length).toBe(mockRoot2.expected.tracks); // Removed Tracks count doesnt match');
-					expect(changes.updateFolders.length).toBe(1); // Update Folder count doesnt match');
-					expect(changes.removedFolders.length).toBe(mockRoot2.expected.folders - 1); // Removed Folders count doesnt match');
-					expect(changes.removedArtists.length).toBe(0); // Removed Artists count doesnt match');
-					expect(changes.removedAlbums.length).toBe(0); // Removed Album count doesnt match');
-					expect(changes.updateAlbums.length).toBe(mockRoot2.expected.albums); // Update Album count doesnt match');
-					expect(changes.updateArtists.length).toBe(mockRoot2.expected.artists); // Update Artist count doesnt match');
+					await checkChanges(changes, {
+						removedTracks: mockRoot2.expected.tracks,
+						updateFolders: 1,
+						removedFolders: mockRoot2.expected.folders - 1,
+						updateSeries: mockRoot2.expected.series,
+						updateAlbums: mockRoot2.expected.albums,
+						updateArtists: mockRoot2.expected.artists
+					});
 				});
 				it('should combine close enough artist names', async () => {
 					const dir2 = tmp.dirSync();
@@ -275,6 +291,7 @@ describe('WorkerService', () => {
 						expected: {
 							folders: 3,
 							tracks: 3,
+							series: 0,
 							artists: 1,
 							albums: 1,
 							folderType: FolderType.collection
@@ -284,18 +301,12 @@ describe('WorkerService', () => {
 					mockRoot2.id = await store.rootStore.add({id: '', path: mockRoot2.path, type: DBObjectType.root, name: mockRoot2.name, strategy: RootScanStrategy.auto, created: Date.now()});
 					await writeMockRoot(mockRoot2);
 					const changes = await workerService.refreshRoot({rootID: mockRoot2.id, forceMetaRefresh: false});
-					expect(changes.newTracks.length).toBe(mockRoot2.expected.tracks); // New Track count doesnt match');
-					expect(changes.newFolders.length).toBe(mockRoot2.expected.folders); // New Folder count doesnt match');
-					expect(changes.newArtists.length).toBe(mockRoot2.expected.artists); // New Artist count doesnt match');
-					expect(changes.newAlbums.length).toBe(mockRoot2.expected.albums); // New Album count doesnt match');
-					expect(changes.updateTracks.length).toBe(0); // Update Track count doesnt match');
-					expect(changes.removedTracks.length).toBe(0); // Removed Tracks count doesnt match');
-					expect(changes.updateFolders.length).toBe(0); // Update Folder count doesnt match');
-					expect(changes.removedFolders.length).toBe(0); // Removed Folders count doesnt match');
-					expect(changes.updateArtists.length).toBe(0); // Update Artist count doesnt match');
-					expect(changes.removedArtists.length).toBe(0); // Removed Artists count doesnt match');
-					expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
-					expect(changes.removedAlbums.length).toBe(0); // Removed Album count doesnt match');
+					await checkChanges(changes, {
+						newTracks: mockRoot2.expected.tracks,
+						newFolders: mockRoot2.expected.folders,
+						newArtists: mockRoot2.expected.artists,
+						newAlbums: mockRoot2.expected.albums
+					});
 					await validateMock(mockRoot2, store);
 					await removeMockRoot(mockRoot2);
 					dir2.removeCallback();
@@ -373,6 +384,7 @@ describe('WorkerService', () => {
 							folders: 4,
 							tracks: 4,
 							artists: 2,
+							series: 0,
 							albums: 2,
 							folderType: FolderType.collection
 						}
@@ -381,18 +393,12 @@ describe('WorkerService', () => {
 					mockRoot2.id = await store.rootStore.add({id: '', path: mockRoot2.path, type: DBObjectType.root, name: mockRoot2.name, strategy: RootScanStrategy.auto, created: Date.now()});
 					await writeMockRoot(mockRoot2);
 					let changes = await workerService.refreshRoot({rootID: mockRoot2.id, forceMetaRefresh: false});
-					expect(changes.newTracks.length).toBe(mockRoot2.expected.tracks); // New Track count doesnt match');
-					expect(changes.newFolders.length).toBe(mockRoot2.expected.folders); // New Folder count doesnt match');
-					expect(changes.newArtists.length).toBe(mockRoot2.expected.artists); // New Artist count doesnt match');
-					expect(changes.newAlbums.length).toBe(mockRoot2.expected.albums); // New Album count doesnt match');
-					expect(changes.updateTracks.length).toBe(0); // Update Track count doesnt match');
-					expect(changes.removedTracks.length).toBe(0); // Removed Tracks count doesnt match');
-					expect(changes.updateFolders.length).toBe(0); // Update Folder count doesnt match');
-					expect(changes.removedFolders.length).toBe(0); // Removed Folders count doesnt match');
-					expect(changes.updateArtists.length).toBe(0); // Update Artist count doesnt match');
-					expect(changes.removedArtists.length).toBe(0); // Removed Artists count doesnt match');
-					expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
-					expect(changes.removedAlbums.length).toBe(0); // Removed Album count doesnt match');
+					await checkChanges(changes, {
+						newTracks: mockRoot2.expected.tracks,
+						newFolders: mockRoot2.expected.folders,
+						newArtists: mockRoot2.expected.artists,
+						newAlbums: mockRoot2.expected.albums
+					});
 					await validateMock(mockRoot2, store);
 
 					await removeMockFolder(mockRoot2.folders[0].folders[1]);
@@ -427,30 +433,18 @@ describe('WorkerService', () => {
 					};
 					mockRoot2.folders[0].expected.folderType = FolderType.artist;
 					await writeMockFolder(mockRoot2.folders[0].folders[1]);
-
 					// rescan and expect:
 					// (Artist B) and (Album 2 by Artist B) must be removed
 					changes = await workerService.refreshRoot({rootID: mockRoot2.id, forceMetaRefresh: false});
-					expect(changes.newTracks.length, 'New Track count doesnt match').toBe(0); // );
-					expect(changes.newFolders.length).toBe(0); // New Folder count doesnt match');
-					expect(changes.newArtists.length).toBe(0); // New Artist count doesnt match');
-					expect(changes.removedTracks.length).toBe(0); // Removed Tracks count doesnt match');
-					expect(changes.removedFolders.length).toBe(0); // Removed Folders count doesnt match');
-					expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
-					// 2 Tracks must be updated
-					expect(changes.updateTracks.length).toBe(2); // Update Track count doesnt match');
-					// Album Folder & Artist Folder must be updated
-					expect(changes.updateFolders.length).toBe(2); // Update Folder count doesnt match');
-					// (Album 2 by Artist B) must be removed
-					expect(changes.removedAlbums.length).toBe(1); // Removed Album count doesnt match');
-					// (Album 2 by Artist A) must be added
-					expect(changes.newAlbums.length).toBe(1); // New Album count doesnt match');
-					// Artist B must be removed
-					expect(changes.removedArtists.length).toBe(1); // Removed Artists count doesnt match');
-					// Artist A must be updated
-					expect(changes.updateArtists.length).toBe(1); // Update Artist count doesnt match');
+					await checkChanges(changes, {
+						updateTracks: 2, // 2 Tracks must be updated
+						updateFolders: 2, // Album Folder & Artist Folder must be updated
+						removedAlbums: 1, 	// (Album 2 by Artist B) must be removed
+						newAlbums: 1, // (Album 2 by Artist A) must be added
+						removedArtists: 1, 	// Artist B must be removed
+						updateArtists: 1 // Artist A must be updated
+					});
 					await validateMock(mockRoot2, store);
-
 					await removeMockRoot(mockRoot2);
 					dir2.removeCallback();
 				});
@@ -458,19 +452,19 @@ describe('WorkerService', () => {
 					const tracks = await store.trackStore.search({rootID: mockRoot.id});
 					for (const track of tracks.items) {
 						const changes = await workerService.removeTracks({rootID: mockRoot.id, trackIDs: [track.id]});
-						expect(changes.removedTracks.length).toBe(1); // Removed Tracks count doesnt match');
+						expect(changes.removedTracks.length, 'Removed Tracks count doesnt match').toBe(1);
 					}
 					const album = await store.albumStore.search({rootID: mockRoot.id});
-					expect(album.items.length).toBe(0); // All albums should have been removed');
+					expect(album.items.length, 'All albums should have been removed').toBe(0);
 					const artists = await store.artistStore.search({rootID: mockRoot.id});
-					expect(artists.items.length).toBe(0); // All artists should have been removed');
+					expect(artists.items.length, 'All artists should have been removed').toBe(0);
 					await writeMockRoot(mockRoot);
 					const restorechanges = await workerService.refreshRoot({rootID: mockRoot.id, forceMetaRefresh: false});
-					expect(restorechanges.newTracks.length).toBe(tracks.items.length); // Restored Tracks count doesnt match');
+					expect(restorechanges.newTracks.length, 'Restored Tracks count doesnt match').toBe(tracks.items.length);
 				});
 			});
 
-			describe('audio series with RootScanStrategy.audiobook', () => {
+			describe('RootScanStrategy.audiobook', () => {
 				beforeEach(async () => {
 					dir = tmp.dirSync();
 					mockRoot = buildSeriesMockRoot(dir.name, 2, 'rootID2');
@@ -483,24 +477,9 @@ describe('WorkerService', () => {
 				});
 				it('should rescan', async () => {
 					const changes = await workerService.refreshRoot({rootID: mockRoot.id, forceMetaRefresh: false});
-					expect(changes.newTracks.length).toBe(0); // New Track count doesnt match');
-					expect(changes.updateTracks.length).toBe(0); // Update Track count doesnt match');
-					expect(changes.removedTracks.length).toBe(0); // Removed Tracks count doesnt match');
-					expect(changes.newFolders.length).toBe(0); // New Folder count doesnt match');
-					expect(changes.updateFolders.length).toBe(0); // Update Folder count doesnt match');
-					expect(changes.removedFolders.length).toBe(0); // Removed Folders count doesnt match');
-					expect(changes.newArtists.length).toBe(0); // New Artist count doesnt match');
-					expect(changes.updateArtists.length).toBe(0); // Update Artist count doesnt match');
-					expect(changes.removedArtists.length).toBe(0); // Removed Artists count doesnt match');
-					expect(changes.newAlbums.length).toBe(0); // New Album count doesnt match');
-					expect(changes.updateAlbums.length).toBe(0); // Update Album count doesnt match');
-					expect(changes.removedAlbums.length).toBe(0); // Removed Album count doesnt match');
+					await checkChanges(changes, {});
 					await validateMock(mockRoot, store);
 				});
 			});
-		},
-		async () => {
-		}
-	);
-
+		});
 });

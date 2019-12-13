@@ -19,7 +19,7 @@ describe('RootWorker', () => {
 				root.path = '/invalid/test/path/';
 				root.id = await workerService.rootWorker.addRoot(root);
 				const result = await store.rootStore.searchOne({path: '/invalid/test/path/'});
-				expect(result).toBeTruthy();
+				expect(result).toBeDefined();
 			});
 			it('should not allow already scanned path or parts of path in a new root', async () => {
 				const root = mockRoot();
@@ -38,12 +38,12 @@ describe('RootWorker', () => {
 			});
 			it('should update a root', async () => {
 				let result = await store.rootStore.searchOne({path: '/invalid/test/path/'});
-				expect(result).toBeTruthy();
+				expect(result).toBeDefined();
 				if (result) {
 					await workerService.rootWorker.update(result, result.name, '/invalid/something/different/', result.strategy);
 					result = await store.rootStore.searchOne({path: '/invalid/something/different/'});
 				}
-				expect(result).toBeTruthy();
+				expect(result).toBeDefined();
 			});
 			it('should remove a root', async () => {
 				const root = mockRoot();

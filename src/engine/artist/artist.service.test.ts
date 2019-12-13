@@ -1,12 +1,11 @@
 import fse from 'fs-extra';
-import path from 'path';
 import {DBObjectType} from '../../db/db.types';
 import {AlbumType, ArtworkImageType, FolderType} from '../../model/jam-types';
-import {mockImage} from '../../modules/image/image.module.spec';
 import {testService} from '../base/base.service.spec';
 import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
 import {ArtistService} from './artist.service';
+import {mockFolderArtwork} from '../folder/folder.mock';
 
 describe('ArtistService', () => {
 	let artistService: ArtistService;
@@ -23,14 +22,14 @@ describe('ArtistService', () => {
 					let folder = await artistService.getArtistFolder({
 						id: 'invalid', type: DBObjectType.artist,
 						name: 'invalid', albumTypes: [AlbumType.album],
-						created: 0, slug: 'invalid', albumIDs: [],
+						created: 0, slug: 'invalid', albumIDs: [], seriesIDs: [],
 						folderIDs: [], rootIDs: [], trackIDs: []
 					});
 					expect(folder).toBeUndefined();
 					folder = await artistService.getArtistFolder({
 						id: 'invalid', type: DBObjectType.artist,
 						name: 'invalid', albumTypes: [AlbumType.album],
-						created: 0, slug: 'invalid', albumIDs: [],
+						created: 0, slug: 'invalid', albumIDs: [], seriesIDs: [],
 						folderIDs: ['invalid', 'invalid'], rootIDs: [], trackIDs: []
 					});
 					expect(folder).toBeUndefined();
@@ -42,9 +41,9 @@ describe('ArtistService', () => {
 						if (artistService.canHaveArtistImage(artist)) {
 							const folder = await artistService.getArtistFolder(artist);
 							if (!folder) {
-								console.log(artist);
+								console.error(artist);
 							}
-							expect(folder).toBeTruthy();
+							expect(folder).toBeDefined();
 							if (folder) {
 								expect(folder.tag.type).toBe(FolderType.artist); // folder.path + ' is not an artist folder');
 							}
@@ -59,28 +58,14 @@ describe('ArtistService', () => {
 					for (const artist of artists) {
 						if (artistService.canHaveArtistImage(artist)) {
 							const folder = await artistService.getArtistFolder(artist);
-							expect(folder).toBeTruthy();
+							expect(folder).toBeDefined();
 							if (folder) {
-								const name = 'dummy.png';
-								const image = await mockImage('png');
-								const filename = path.resolve(folder.path, name);
-								await fse.writeFile(filename, image.buffer);
-								folder.tag.artworks = [{
-									id: 'dummyID',
-									image: {format: 'png', height: 123, width: 123},
-									name,
-									types: [ArtworkImageType.artist],
-									stat: {
-										created: 123,
-										modified: 123,
-										size: 123
-									}
-								}];
+								const filename = await mockFolderArtwork(folder, ArtworkImageType.artist);
 								await folderService.folderStore.replace(folder);
-								const img = await artistService.getArtistImage(artist);
-								expect(img).toBeTruthy();
+								const img = await artistService.getImage(artist);
+								expect(img).toBeDefined();
 								if (img) {
-									expect(img.file || img.buffer).toBeTruthy(); // 'Image response not valid');
+									expect(img.file || img.buffer).toBeDefined(); // 'Image response not valid');
 									if (img.file) {
 										expect(img.file.filename).toBe(filename);
 									}

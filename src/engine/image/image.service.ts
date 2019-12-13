@@ -16,6 +16,8 @@ import {Playlist} from '../playlist/playlist.model';
 import {Podcast} from '../podcast/podcast.model';
 import {PodcastService} from '../podcast/podcast.service';
 import {Root} from '../root/root.model';
+import {Series} from '../series/series.model';
+import {SeriesService} from '../series/series.service';
 import {Track} from '../track/track.model';
 import {TrackService} from '../track/track.service';
 import {User} from '../user/user.model';
@@ -27,7 +29,8 @@ export class ImageService {
 		private imageModule: ImageModule, private trackService: TrackService,
 		private folderService: FolderService, private artistService: ArtistService,
 		private albumService: AlbumService, private userService: UserService,
-		private podcastService: PodcastService, private episodeService: EpisodeService) {
+		private podcastService: PodcastService, private episodeService: EpisodeService,
+		private seriesService: SeriesService) {
 	}
 
 	private static getCoverArtTextFolder(folder: Folder): string {
@@ -77,6 +80,8 @@ export class ImageService {
 				return ImageService.getCoverArtTextEpisode(o as Episode);
 			case DBObjectType.playlist:
 				return (o as Playlist).name;
+			case DBObjectType.series:
+				return (o as Series).name;
 			case DBObjectType.podcast:
 				return ImageService.getCoverArtTextPodcast(o as Podcast);
 			case DBObjectType.album:
@@ -96,30 +101,33 @@ export class ImageService {
 		let result: ApiBinaryResult | undefined;
 		switch (o.type) {
 			case DBObjectType.track:
-				result = await this.trackService.getTrackImage(o as Track, size, format);
+				result = await this.trackService.getImage(o as Track, size, format);
 				break;
 			case DBObjectType.folder:
-				result = await this.folderService.getFolderImage(o as Folder, size, format);
+				result = await this.folderService.getImage(o as Folder, size, format);
 				break;
 			case DBObjectType.artist:
-				result = await this.artistService.getArtistImage(o as Artist, size, format);
+				result = await this.artistService.getImage(o as Artist, size, format);
 				break;
 			case DBObjectType.album:
-				result = await this.albumService.getAlbumImage(o as Album, size, format);
+				result = await this.albumService.getImage(o as Album, size, format);
 				break;
 			case DBObjectType.user:
-				result = await this.userService.getUserImage(o as User, size, format);
+				result = await this.userService.getImage(o as User, size, format);
 				break;
 			case DBObjectType.podcast:
-				result = await this.podcastService.getPodcastImage(o as Podcast, size, format);
+				result = await this.podcastService.getImage(o as Podcast, size, format);
 				break;
 			case DBObjectType.episode:
-				result = await this.getEpisodeImage(o as Episode, size, format);
+				result = await this.podcastService.getEpisodeImage(o as Episode, size, format);
+				break;
+			case DBObjectType.series:
+				result = await this.seriesService.getImage(o as Series, size, format);
 				break;
 			case DBObjectType.root:
-				const rfolder = await this.folderService.folderStore.searchOne({rootID: (o as Root).id, level: 0});
-				if (rfolder) {
-					result = await this.folderService.getFolderImage(rfolder, size, format);
+				const rootFolder = await this.folderService.folderStore.searchOne({rootID: (o as Root).id, level: 0});
+				if (rootFolder) {
+					result = await this.folderService.getImage(rootFolder, size, format);
 				}
 				break;
 			default:
@@ -136,15 +144,4 @@ export class ImageService {
 		return this.imageModule.paint(s, size || 128, format);
 	}
 
-	private async getEpisodeImage(episode: Episode, size: number | undefined, format: string | undefined): Promise<ApiBinaryResult | undefined> {
-		const result = await this.episodeService.getEpisodeImage(episode, size, format);
-		if (!result) {
-			const podcast = await this.podcastService.podcastStore.byId(episode.podcastID);
-			if (podcast) {
-				return this.podcastService.getPodcastImage(podcast, size, format);
-			}
-		}
-		return result;
-
-	}
 }

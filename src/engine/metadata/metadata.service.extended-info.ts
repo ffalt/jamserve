@@ -6,6 +6,7 @@ import {Artist} from '../artist/artist.model';
 import {Folder} from '../folder/folder.model';
 import {MetaDataFormat} from './metadata.format';
 import {MetaDataService} from './metadata.service';
+import {Series} from '../series/series.model';
 
 const log = logger('Metadata');
 
@@ -105,89 +106,90 @@ export class MetadataServiceExtendedInfo {
 
 	private async getAlbumInfoByName(albumName: string, artistName: string): Promise<Jam.ExtendedInfo | undefined> {
 		const res = await this.service.musicbrainzSearch(MusicBrainzSearchType.release, {release: albumName, artist: artistName});
-		let result: Jam.ExtendedInfo | undefined;
+		let info: Jam.ExtendedInfo | undefined;
 		if (res && res.releases && res.releases.length > 1) {
-			result = await this.getAlbumInfoByMusicBrainzID(res.releases[0].id);
+			info = await this.getAlbumInfoByMusicBrainzID(res.releases[0].id);
 		}
-		if (!result) {
+		if (!info) {
 			const lastfm = await this.service.lastFMAlbumSearch(albumName, artistName);
 			if (lastfm && lastfm.album && lastfm.album.mbid) {
-				result = await this.getAlbumInfoByMusicBrainzID(lastfm.album.mbid);
+				info = await this.getAlbumInfoByMusicBrainzID(lastfm.album.mbid);
 			}
 		}
-		return result;
+		return info;
 	}
 
 	async byArtist(artist: Artist): Promise<Jam.ExtendedInfo | undefined> {
+		let info: Jam.ExtendedInfo | undefined;
 		try {
-			let result: Jam.ExtendedInfo | undefined;
 			if (artist.mbArtistID) {
-				result = await this.getArtistInfoByMusicBrainzID(artist.mbArtistID);
+				info = await this.getArtistInfoByMusicBrainzID(artist.mbArtistID);
 			}
-			if (!result && artist.name) {
-				result = await this.getArtistInfoByName(artist.name);
+			if (!info && artist.name) {
+				info = await this.getArtistInfoByName(artist.name);
 			}
-			return result;
+		} catch (e) {
+			log.error(e);
+		}
+		return info;
+	}
+
+	async bySeries(series: Series): Promise<Jam.ExtendedInfo | undefined> {
+		try {
+			if (series.name) {
+				const info = await this.getArtistInfoByName(series.name);
+				if (info) {
+					return info;
+				}
+			}
 		} catch (e) {
 			log.error(e);
 		}
 	}
 
 	async byAlbum(album: Album): Promise<Jam.ExtendedInfo | undefined> {
+		let info: Jam.ExtendedInfo | undefined;
 		try {
 			if (album.mbAlbumID) {
-				const info = await this.getAlbumInfoByMusicBrainzID(album.mbAlbumID);
-				if (info) {
-					return info;
-				}
+				info = await this.getAlbumInfoByMusicBrainzID(album.mbAlbumID);
 			}
-			if (album.name && album.artist) {
-				const info = await this.getAlbumInfoByName(album.name, album.artist);
-				if (info) {
-					return info;
-				}
+			if (!info && album.name && album.artist) {
+				info = await this.getAlbumInfoByName(album.name, album.artist);
 			}
 		} catch (e) {
 			log.error(e);
 		}
+		return info;
 	}
 
 	async byFolderArtist(folder: Folder): Promise<Jam.ExtendedInfo | undefined> {
+		let info: Jam.ExtendedInfo | undefined;
 		try {
 			if (folder.tag.mbArtistID) {
-				const info = await this.getArtistInfoByMusicBrainzID(folder.tag.mbArtistID);
-				if (info) {
-					return info;
-				}
+				info = await this.getArtistInfoByMusicBrainzID(folder.tag.mbArtistID);
 			}
-			if (folder.tag.artist) {
-				const info = await this.getArtistInfoByName(folder.tag.artist);
-				if (info) {
-					return info;
-				}
+			if (!info && folder.tag.artist) {
+				info = await this.getArtistInfoByName(folder.tag.artist);
 			}
 		} catch (e) {
 			log.error(e);
 		}
+		return info;
 	}
 
 	async byFolderAlbum(folder: Folder): Promise<Jam.ExtendedInfo | undefined> {
+		let info: Jam.ExtendedInfo | undefined;
 		try {
 			if (folder.tag.mbAlbumID) {
-				const info = await this.getAlbumInfoByMusicBrainzID(folder.tag.mbAlbumID);
-				if (info) {
-					return info;
-				}
+				info = await this.getAlbumInfoByMusicBrainzID(folder.tag.mbAlbumID);
 			}
-			if (folder.tag.album && folder.tag.artist) {
-				const info = await this.getAlbumInfoByName(folder.tag.album, folder.tag.artist);
-				if (info) {
-					return info;
-				}
+			if (!info && folder.tag.album && folder.tag.artist) {
+				info = await this.getAlbumInfoByName(folder.tag.album, folder.tag.artist);
 			}
 		} catch (e) {
 			log.error(e);
 		}
+		return info;
 	}
 
 }

@@ -17,19 +17,19 @@ describe('SessionController', () => {
 	}, () => {
 		it('should return ping', async () => {
 			let result = await controller.ping({query: {}, user: undefined} as any);
-			expect(result).toBeTruthy();
+			expect(result).toBeDefined();
 			await validateJamResponse('Jam.Ping', result);
 			result = await controller.ping({query: {}, user});
-			expect(result).toBeTruthy();
+			expect(result).toBeDefined();
 			await validateJamResponse('Jam.Ping', result);
 		});
 		it('should return session info', async () => {
 			let result = await controller.session({query: {}, user: undefined} as any);
-			expect(result).toBeTruthy();
+			expect(result).toBeDefined();
 			await validateJamResponse('Jam.Session', result);
 			result = await controller.session({query: {}, user});
-			expect(result).toBeTruthy();
-			expect(result.user).toBeTruthy();
+			expect(result).toBeDefined();
+			expect(result.user).toBeDefined();
 			await validateJamResponse('Jam.Session', result);
 		});
 	});

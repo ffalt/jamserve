@@ -8,6 +8,7 @@ import {TrackHealthID} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {trackTagToRawTag} from '../../modules/audio/metadata';
 import {ApiBinaryResult} from '../../typings';
+import {logger} from '../../utils/logger';
 import {paginate} from '../../utils/paginate';
 import {BaseListController} from '../base/dbobject-list.controller';
 import {ListResult} from '../base/list-result';
@@ -29,6 +30,8 @@ import {formatTrack} from './track.format';
 import {Track} from './track.model';
 import {TrackService} from './track.service';
 import {SearchQueryTrack} from './track.store';
+
+const log = logger('TrackController');
 
 export class TrackController extends BaseListController<JamParameters.Track,
 	JamParameters.Tracks,
@@ -228,7 +231,11 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		if (!artist || !song) {
 			return {};
 		}
-		return this.metaService.lyrics(artist, song);
-
+		try {
+			return this.metaService.lyrics(artist, song);
+		} catch (e) {
+			log.error(e);
+			return {};
+		}
 	}
 }

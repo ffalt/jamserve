@@ -16,7 +16,7 @@ describe('FolderController', () => {
 		describe('.subfolders', () => {
 			it('should not return subfolders for invalid parameter', async () => {
 				const result = await controller.subfolders({query: {id: 'invalid'}, user});
-				expect(result).toBeTruthy();
+				expect(result).toBeDefined();
 				expect(result.items.length).toBe(0);
 			});
 			it('should return subfolders', async () => {
@@ -26,7 +26,7 @@ describe('FolderController', () => {
 				}
 				for (const folder of folders) {
 					const result = await controller.subfolders({query: {id: folder.id}, user});
-					expect(result).toBeTruthy();
+					expect(result).toBeDefined();
 					expect(result.items.length).toBe(folder.tag.folderCount);
 				}
 			});
@@ -34,7 +34,7 @@ describe('FolderController', () => {
 		describe('.tracks', () => {
 			it('should not return tracks for invalid parameter', async () => {
 				const result = await controller.tracks({query: {ids: ['invalid']}, user});
-				expect(result).toBeTruthy();
+				expect(result).toBeDefined();
 				expect(result.items.length).toBe(0);
 			});
 			it('should return tracks', async () => {
@@ -44,7 +44,7 @@ describe('FolderController', () => {
 				}
 				for (const folder of folders) {
 					const result = await controller.tracks({query: {ids: [folder.id]}, user});
-					expect(result).toBeTruthy();
+					expect(result).toBeDefined();
 					expect(result.items.length).toBe(folder.tag.trackCount);
 				}
 			});
@@ -52,7 +52,7 @@ describe('FolderController', () => {
 		describe('.children', () => {
 			it('should not return children for invalid parameter', async () => {
 				const result = await controller.children({query: {id: 'invalid'}, user});
-				expect(result).toBeTruthy();
+				expect(result).toBeDefined();
 				expect(result.folders.length).toBe(0);
 				expect(result.tracks.length).toBe(0);
 			});
@@ -63,7 +63,7 @@ describe('FolderController', () => {
 				}
 				for (const folder of folders) {
 					const result = await controller.children({query: {id: folder.id}, user});
-					expect(result).toBeTruthy();
+					expect(result).toBeDefined();
 					expect(result.tracks.length).toBe(folder.tag.trackCount);
 					expect(result.folders.length).toBe(folder.tag.folderCount);
 				}
@@ -72,7 +72,7 @@ describe('FolderController', () => {
 		describe('.index', () => {
 			it('should return an index with all folders', async () => {
 				const index = await controller.index({query: {}, user});
-				expect(index).toBeTruthy();
+				expect(index).toBeDefined();
 				let count = 0;
 				for (const group of index.groups) {
 					count += group.entries.length;
@@ -81,7 +81,7 @@ describe('FolderController', () => {
 			});
 			it('should return an empty index', async () => {
 				const index = await controller.index({query: {id: 'invalid'}, user});
-				expect(index).toBeTruthy();
+				expect(index).toBeDefined();
 				expect(index.groups.length).toBe(0);
 			});
 		});
