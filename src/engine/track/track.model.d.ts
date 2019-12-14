@@ -52,8 +52,8 @@ export interface TrackTag {
 	mbRecordingID?: string;
 	mbAlbumStatus?: string;
 	mbReleaseCountry?: string;
-	group?: string;
-	grouping?: string;
+	series?: string;
+	seriesNr?: string;
 	lyrics?: string;
 	chapters?: Array<TrackTagChapter>;
 }

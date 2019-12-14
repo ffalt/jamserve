@@ -2,7 +2,7 @@
 	"openapi": "3.0.0",
 	"info": {
 		"description": "Api for JamServe",
-		"version": "0.1.9",
+		"version": "0.1.10",
 		"title": "JamApi",
 		"license": {
 			"name": "MIT"
@@ -25180,6 +25180,15 @@
 					"artistID": {
 						"type": "string"
 					},
+					"series": {
+						"type": "string"
+					},
+					"seriesID": {
+						"type": "string"
+					},
+					"seriesNr": {
+						"type": "string"
+					},
 					"trackIDs": {
 						"type": "array",
 						"items": {
@@ -25228,9 +25237,6 @@
 					},
 					"year": {
 						"type": "number"
-					},
-					"grouping": {
-						"type": "string"
 					},
 					"musicbrainz": {
 						"type": "object",

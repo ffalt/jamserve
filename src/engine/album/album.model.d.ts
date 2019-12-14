@@ -10,7 +10,7 @@ export interface Album extends DBObject {
 	albumType: AlbumType;
 	series?: string;
 	seriesID?: string;
-	grouping?: string;
+	seriesNr?: string;
 	artistID: string;
 	artist?: string;
 	genre?: string;

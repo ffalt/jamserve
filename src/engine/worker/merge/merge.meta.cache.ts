@@ -46,7 +46,7 @@ export class MetaMergerCache {
 		return {
 			id: await this.store.seriesStore.getNewId(),
 			type: DBObjectType.series,
-			name: trackInfo.track.tag.group || '',
+			name: trackInfo.track.tag.series || '',
 			albumTypes: trackInfo.parent && trackInfo.parent.tag && trackInfo.parent.tag.albumType !== undefined ? [trackInfo.parent.tag.albumType] : [AlbumType.unknown],
 			artistID, artist,
 			folderIDs: [],
@@ -58,14 +58,14 @@ export class MetaMergerCache {
 	}
 
 	private async findSeriesInDB(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Series | undefined> {
-		return this.store.seriesStore.searchOne({name: trackInfo.track.tag.group, artistID});
+		return this.store.seriesStore.searchOne({name: trackInfo.track.tag.series, artistID});
 	}
 
 	private async findSeriesInCache(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Series | undefined> {
-		if (!trackInfo.track.tag.group) {
+		if (!trackInfo.track.tag.series) {
 			return;
 		}
-		return this.seriesCache.find(a => (a.name === trackInfo.track.tag.group) && (a.artistID === artistID));
+		return this.seriesCache.find(a => (a.name === trackInfo.track.tag.series) && (a.artistID === artistID));
 	}
 
 	async getSeriesByID(id: string, changes?: Changes): Promise<Series | undefined> {
@@ -112,8 +112,8 @@ export class MetaMergerCache {
 			artistID,
 			mbArtistID: trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID,
 			mbAlbumID: trackInfo.track.tag.mbAlbumID,
-			series: trackInfo.track.tag.group,
-			grouping: trackInfo.track.tag.grouping,
+			series: trackInfo.track.tag.series,
+			seriesNr: trackInfo.track.tag.seriesNr,
 			genre: trackInfo.track.tag.genre,
 			folderIDs: [],
 			trackIDs: [],

@@ -11,6 +11,7 @@ export function mockArtist(): Artist {
 		rootIDs: ['rootID1', 'rootID2'],
 		trackIDs: ['trackID1', 'trackID2'],
 		folderIDs: ['folderID1', 'folderID2'],
+		seriesIDs: [],
 		albumTypes: [AlbumType.album, AlbumType.audiobook],
 		albumIDs: ['albumID1', 'albumID2'],
 		mbArtistID: 'mbArtistID1',
@@ -28,6 +29,7 @@ export function mockArtist2(): Artist {
 		rootIDs: ['rootID2'],
 		trackIDs: ['trackID3', 'trackID4'],
 		folderIDs: ['folderID3', 'folderID4'],
+		seriesIDs: [],
 		albumIDs: ['albumID3', 'albumID4'],
 		mbArtistID: 'mbArtistID2',
 		created: 1443495268

@@ -385,6 +385,9 @@ export declare namespace Jam {
 		albumType: AlbumType;
 		trackCount: number;
 		artistID: string;
+		series?: string;
+		seriesID?: string;
+		seriesNr?: string;
 		trackIDs?: Array<string>;
 		tracks?: Array<Track>;
 		info?: ExtendedInfo;
@@ -394,7 +397,6 @@ export declare namespace Jam {
 		duration: number;
 		genre?: string;
 		year?: number;
-		grouping?: string;
 		musicbrainz?: {
 			artistID?: string;
 			albumID?: string;

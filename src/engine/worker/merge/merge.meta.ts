@@ -32,7 +32,7 @@ export class MetaMerger {
 		trackInfo.track.albumArtistID = albumArtist.id;
 		const album = await this.cache.findOrCreateAlbum(trackInfo, albumArtist.id, changes);
 		trackInfo.track.albumID = album.id;
-		if (trackInfo.track.tag.group) {
+		if (trackInfo.track.tag.series) {
 			const series = await this.cache.findOrCreateSeries(trackInfo, albumArtist.id, albumArtist.name, album.id, changes);
 			if (series) {
 				trackInfo.track.seriesID = series.id;
@@ -348,8 +348,8 @@ export class MetaMerger {
 			metaStatBuilder.statID('mbArtistID', track.tag.mbAlbumArtistID || track.tag.mbArtistID);
 			metaStatBuilder.statID('mbAlbumID', track.tag.mbAlbumID);
 			metaStatBuilder.statSlugValue('genre', track.tag.genre);
-			metaStatBuilder.statSlugValue('grouping', track.tag.grouping);
-			metaStatBuilder.statSlugValue('group', track.tag.group);
+			metaStatBuilder.statSlugValue('seriesNr', track.tag.seriesNr);
+			metaStatBuilder.statSlugValue('series', track.tag.series);
 			metaStatBuilder.statNumber('year', track.tag.year);
 			duration += (track.media.duration || 0);
 			metaStatBuilder.statSlugValue('name', getAlbumName(trackInfo));
@@ -360,11 +360,11 @@ export class MetaMerger {
 		album.folderIDs = [...folderIDs];
 		album.artist = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
 		album.name = metaStatBuilder.mostUsed('name') || cUnknownAlbum;
-		album.grouping = metaStatBuilder.mostUsed('grouping');
+		album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
 		album.mbArtistID = metaStatBuilder.mostUsed('mbArtistID');
 		album.mbAlbumID = metaStatBuilder.mostUsed('mbAlbumID');
 		album.genre = metaStatBuilder.mostUsed('genre');
-		album.series = metaStatBuilder.mostUsed('group');
+		album.series = metaStatBuilder.mostUsed('series');
 		album.year = metaStatBuilder.mostUsedNumber('year');
 		album.albumType = metaStatBuilder.mostUsed('albumType') as AlbumType || AlbumType.unknown;
 		album.duration = duration;

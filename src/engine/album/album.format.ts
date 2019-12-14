@@ -17,10 +17,12 @@ export function formatAlbum(album: Album, includes: JamParameters.IncludesAlbum)
 		created: album.created,
 		artist: album.artist,
 		artistID: album.artistID,
+		series: album.series,
+		seriesID: album.seriesID,
+		seriesNr: album.seriesNr,
 		trackCount: album.trackIDs.length,
 		tag: includes.albumTag ? {
 			genre: album.genre,
-			grouping: album.grouping,
 			year: album.year,
 			duration: album.duration,
 			musicbrainz: mbz

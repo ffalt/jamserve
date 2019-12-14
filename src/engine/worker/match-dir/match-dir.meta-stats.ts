@@ -84,6 +84,7 @@ export class MatchDirMetaStats {
 		builder.statSlugValue('artist', tracktag.albumArtist || tracktag.artist);
 		builder.statSlugValue('artistSort', tracktag.albumArtistSort || tracktag.artistSort);
 		builder.statSlugValue('genre', tracktag.genre);
+		builder.statSlugValue('series', tracktag.series);
 		builder.statSlugValue('album', tracktag.album ? extractAlbumName(tracktag.album) : undefined);
 		builder.statNumber('year', tracktag.year);
 		builder.statTrackCount('albumTrackCount', tracktag.trackTotal, tracktag.disc);
@@ -143,6 +144,12 @@ export class MatchDirMetaStats {
 		}
 		if (albumType === AlbumType.unknown) {
 			albumType = MatchDirMetaStats.getStrategyAlbumType(strategy, hasMultipleArtists);
+		}
+		if (albumType === AlbumType.audiobook) {
+			const series = builder.mostUsed('series');
+			if (series) {
+				albumType = AlbumType.series;
+			}
 		}
 		return {albumType, artist, hasMultipleArtists, mbAlbumType, genre};
 	}

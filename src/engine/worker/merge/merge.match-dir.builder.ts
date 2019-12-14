@@ -140,7 +140,7 @@ export class MatchDirMergeTagBuilder {
 			return FolderType.extras;
 		}
 		if (metaStat.trackCount > 0) {
-			if (metaStat.hasMultipleAlbums && dir.tag && dir.tag.albumType === AlbumType.audiobook) {
+			if (metaStat.hasMultipleAlbums && dir.tag && dir.tag.albumType === AlbumType.series) {
 				return FolderType.artist;
 			}
 			const dirCount = dir.directories.filter(d => !!d.tag && d.tag.type !== FolderType.extras).length;

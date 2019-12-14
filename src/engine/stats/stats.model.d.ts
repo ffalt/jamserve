@@ -9,6 +9,7 @@ export interface AlbumTypeStats {
 	bootleg: number;
 	ep: number;
 	single: number;
+	series: number;
 }
 
 export interface Stats {

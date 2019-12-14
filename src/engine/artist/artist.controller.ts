@@ -58,10 +58,10 @@ export class ArtistController extends BaseListController<JamParameters.Artist,
 	static sortArtistAlbums(a: Album, b: Album): number {
 		let res = a.albumType.localeCompare(b.albumType);
 		if (res === 0) {
-			if (a.grouping && b.grouping) {
-				res = ArtistController.sortGrouping(a.grouping, b.grouping);
-			} else if (a.grouping || b.grouping) {
-				res = a.grouping ? 1 : -1;
+			if (a.seriesNr && b.seriesNr) {
+				res = ArtistController.sortGrouping(a.seriesNr, b.seriesNr);
+			} else if (a.seriesNr || b.seriesNr) {
+				res = a.seriesNr ? 1 : -1;
 			}
 		}
 		if (res === 0) {
