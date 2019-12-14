@@ -1,6 +1,6 @@
 {
   "name": "jamserve",
-  "version": "0.2.15-alpha",
+  "version": "0.2.16-alpha",
   "author": "ffalt",
   "license": "MIT",
   "description": "jamserve streaming audio server",
@@ -136,7 +136,7 @@
     "mustache": "3.1.0",
     "nock": "11.7.0",
     "nodemon": "2.0.2",
-    "redoc-cli": "0.9.3",
+    "redoc-cli": "0.9.4",
     "rimraf": "3.0.0",
     "source-map-support": "0.5.16",
     "supertest": "4.0.2",
