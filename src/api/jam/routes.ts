@@ -895,6 +895,16 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		await api.artistController.rateUpdate(options);
 		ApiResponder.ok(req, res);
 	});
+	register.post('/series/fav/update', async (req, res) => {
+		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
+		await api.seriesController.favUpdate(options);
+		ApiResponder.ok(req, res);
+	});
+	register.post('/series/rate/update', async (req, res) => {
+		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
+		await api.seriesController.rateUpdate(options);
+		ApiResponder.ok(req, res);
+	});
 	register.post('/episode/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
 		await api.episodeController.favUpdate(options);

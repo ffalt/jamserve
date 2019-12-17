@@ -1588,6 +1588,21 @@ export interface JamApi {
 		};
 
 		/**
+		 * series: fav/unfav a series
+		 */
+		'series/fav/update'?: {
+			params: JamParameters.Fav;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+		/**
+		 * series: rate a series
+		 */
+		'series/rate/update'?: {
+			params: JamParameters.Rate;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+
+		/**
 		 * episode: fav/unfav an episode
 		 */
 		'episode/fav/update'?: {

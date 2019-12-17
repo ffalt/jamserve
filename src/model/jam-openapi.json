@@ -17664,6 +17664,80 @@
 				}
 			}
 		},
+		"/series/fav/update": {
+			"post": {
+				"operationId": "seriesController.favUpdate",
+				"description": "fav/unfav a series",
+				"tags": [
+					"series"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"requestBody": {
+					"description": "Change the fav user state",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.Fav"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/series/rate/update": {
+			"post": {
+				"operationId": "seriesController.rateUpdate",
+				"description": "rate a series",
+				"tags": [
+					"series"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"requestBody": {
+					"description": "Change the rating user state",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.Rate"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/episode/fav/update": {
 			"post": {
 				"operationId": "episodeController.favUpdate",
