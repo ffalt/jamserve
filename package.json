@@ -146,7 +146,7 @@
     "tslint": "5.20.1",
     "typescript": "3.7.3",
     "typescript-json-schema": "0.41.0",
-    "webpack": "4.41.2",
+    "webpack": "4.41.3",
     "webpack-cli": "3.3.10",
     "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-node-externals": "1.7.2"
