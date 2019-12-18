@@ -11,9 +11,9 @@ export interface MetaStat {
 	artist?: string;
 	artistSort?: string;
 	album?: string;
-	genre?: string;
+	genres?: Array<string>;
 	mbArtistID?: string;
-	mbAlbumID?: string;
+	mbReleaseID?: string;
 	mbReleaseGroupID?: string;
 	mbAlbumType?: string;
 	year?: number;
@@ -90,7 +90,7 @@ export class MatchDirMetaStats {
 		builder.statTrackCount('albumTrackCount', tracktag.trackTotal, tracktag.disc);
 		builder.statSlugValue('mbAlbumType', `${tracktag.mbAlbumType || ''}/${tracktag.mbAlbumStatus || ''}`);
 		builder.statID('mbArtistID', tracktag.mbArtistID);
-		builder.statID('mbAlbumID', tracktag.mbAlbumID);
+		builder.statID('mbReleaseID', tracktag.mbReleaseID);
 		builder.statID('mbReleaseGroupID', tracktag.mbReleaseGroupID);
 	}
 
@@ -109,11 +109,15 @@ export class MatchDirMetaStats {
 		builder.statSlugValue('artist', subtag.artist);
 		builder.statSlugValue('artistSort', subtag.artistSort);
 		builder.statSlugValue('album', subtag.album ? extractAlbumName(subtag.album) : undefined);
-		builder.statSlugValue('genre', subtag.genre);
+		if (subtag.genres) {
+			for (const genre of subtag.genres) {
+				builder.statSlugValue('genre', genre);
+			}
+		}
 		builder.statNumber('year', subtag.year);
 		builder.statSlugValue('mbAlbumType', subtag.mbAlbumType);
 		builder.statID('mbArtistID', subtag.mbArtistID);
-		builder.statID('mbAlbumID', subtag.mbAlbumID);
+		builder.statID('mbReleaseID', subtag.mbReleaseID);
 		builder.statID('mbReleaseGroupID', subtag.mbReleaseGroupID);
 		return subtag.albumTrackCount || 0;
 	}
@@ -128,7 +132,7 @@ export class MatchDirMetaStats {
 		return result > 0 ? result : undefined;
 	}
 
-	private static getAlbumInfo(builder: MetaStatBuilder, strategy: RootScanStrategy): { albumType: AlbumType, artist?: string, genre?: string, mbAlbumType?: string, hasMultipleArtists: boolean } {
+	private static getAlbumInfo(builder: MetaStatBuilder, strategy: RootScanStrategy): { albumType: AlbumType, artist?: string, genres?: Array<string>, mbAlbumType?: string, hasMultipleArtists: boolean } {
 		// heuristically most used values
 		const artist = builder.mostUsed('artist', MUSICBRAINZ_VARIOUS_ARTISTS_NAME);
 		const genre = builder.mostUsed('genre');
@@ -151,20 +155,20 @@ export class MatchDirMetaStats {
 				albumType = AlbumType.series;
 			}
 		}
-		return {albumType, artist, hasMultipleArtists, mbAlbumType, genre};
+		return {albumType, artist, hasMultipleArtists, mbAlbumType, genres: builder.asStringList('genre')};
 	}
 
 	static buildMetaStat(dir: MatchDir, settings: Jam.AdminSettingsLibrary, strategy: RootScanStrategy): MetaStat {
 		const builder = new MetaStatBuilder();
 		const trackCount = MatchDirMetaStats.buildTracksSlugs(dir, builder);
 		const subFolderTrackCount = MatchDirMetaStats.buildSubFoldersSlugs(dir, builder);
-		const {albumType, artist, hasMultipleArtists, mbAlbumType, genre} = MatchDirMetaStats.getAlbumInfo(builder, strategy);
+		const {albumType, artist, hasMultipleArtists, mbAlbumType, genres} = MatchDirMetaStats.getAlbumInfo(builder, strategy);
 		return {
-			trackCount, subFolderTrackCount, albumType, genre, artist, hasMultipleArtists, mbAlbumType,
+			trackCount, subFolderTrackCount, albumType, genres, artist, hasMultipleArtists, mbAlbumType,
 			hasMultipleAlbums: builder.asList('album').length > 1,
 			album: builder.mostUsed('album', extractAlbumName(path.basename(dir.name))),
 			artistSort: hasMultipleArtists ? undefined : builder.mostUsed('artistSort'),
-			mbAlbumID: builder.mostUsed('mbAlbumID', ''),
+			mbReleaseID: builder.mostUsed('mbReleaseID', ''),
 			mbReleaseGroupID: builder.mostUsed('mbReleaseGroupID', ''),
 			mbArtistID: builder.mostUsed('mbArtistID', ''),
 			year: builder.mostUsedNumber('year')

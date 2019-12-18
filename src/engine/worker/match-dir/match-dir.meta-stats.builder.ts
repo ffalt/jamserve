@@ -101,6 +101,12 @@ export class MetaStatBuilder {
 		return MetaStatBuilder.convert2list(this.stats[name] || {});
 	}
 
+	asStringList(name: string): Array<string> {
+		return MetaStatBuilder.convert2list(this.stats[name] || {})
+			.sort((a, b) => a.count - b.count)
+			.map(entry => entry.val);
+	}
+
 	asNumberList(name: string): Array<MetaStatNumber> {
 		return MetaStatBuilder.convert2Numlist(this.stats[name] || {});
 	}

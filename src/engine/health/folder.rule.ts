@@ -29,7 +29,7 @@ const folderRules: Array<FolderRuleInfo> = [
 				if (!folder.tag.artist) {
 					missing.push('artist');
 				}
-				if (!folder.tag.genre) {
+				if (!folder.tag.genres || folder.tag.genres.length === 0) {
 					missing.push('genre');
 				}
 				if (!folder.tag.albumTrackCount) {
@@ -56,7 +56,7 @@ const folderRules: Array<FolderRuleInfo> = [
 		run: async (folder, parents, root) => {
 			if (FolderTypesAlbum.includes(folder.tag.type)) {
 				const missing = [];
-				if (!folder.tag.mbAlbumID) {
+				if (!folder.tag.mbReleaseID) {
 					missing.push('musicbrainz album id');
 				} else {
 					if (!folder.tag.mbAlbumType) {

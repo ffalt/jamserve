@@ -46,7 +46,7 @@ export interface TrackTag {
 	mbAlbumType?: string;
 	mbAlbumArtistID?: string;
 	mbArtistID?: string;
-	mbAlbumID?: string;
+	mbReleaseID?: string;
 	mbReleaseTrackID?: string;
 	mbReleaseGroupID?: string;
 	mbRecordingID?: string;

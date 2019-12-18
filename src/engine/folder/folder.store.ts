@@ -24,7 +24,7 @@ export interface SearchQueryFolder extends SearchQuery {
 	newerThan?: number;
 	fromYear?: number;
 	toYear?: number;
-	mbAlbumID?: string;
+	mbReleaseID?: string;
 	mbArtistID?: string;
 	type?: FolderType;
 	types?: Array<FolderType>;
@@ -52,7 +52,7 @@ export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 		q.term('path', query.path);
 		q.startsWiths('path', query.inPaths ? query.inPaths.map(ensureTrailingPathSeparator) : undefined);
 		q.startsWith('path', query.inPath ? ensureTrailingPathSeparator(query.inPath) : undefined);
-		q.term('tag.mbAlbumID', query.mbAlbumID);
+		q.term('tag.mbReleaseID', query.mbReleaseID);
 		q.term('tag.mbArtistID', query.mbArtistID);
 		q.term('tag.genre', query.genre);
 		q.term('tag.title', query.title);

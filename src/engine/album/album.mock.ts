@@ -14,12 +14,12 @@ export function mockAlbum(): Album {
 		folderIDs: ['folderID1', 'folderID2'],
 		artistID: 'artistID1',
 		artist: 'artist name',
-		genre: 'genre name',
+		genres: ['genre name'],
 		year: 1984,
 		duration: 12345,
 		created: 1543495268,
 		mbArtistID: 'mbArtistID',
-		mbAlbumID: 'mbAlbumID'
+		mbReleaseID: 'mbReleaseID'
 	};
 }
 
@@ -35,12 +35,12 @@ export function mockAlbum2(): Album {
 		folderIDs: ['folderID3', 'folderID4'],
 		artistID: 'artistID2',
 		artist: 'second artist name',
-		genre: 'second genre name',
+		genres: ['second genre name'],
 		year: 2000,
 		duration: 54321,
 		created: 1443495268,
 		mbArtistID: 'mbArtistID2',
-		mbAlbumID: 'mbAlbumID2'
+		mbReleaseID: 'mbReleaseID'
 	};
 }
 

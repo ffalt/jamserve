@@ -29,7 +29,7 @@ describe('FolderStore', () => {
 				{album: mock.tag.album},
 				{genre: mock.tag.genre},
 				{level: mock.tag.level},
-				{mbAlbumID: mock.tag.mbAlbumID},
+				{mbReleaseID: mock.tag.mbReleaseID},
 				{mbArtistID: mock.tag.mbArtistID},
 				{newerThan: mock.stat.created - 1},
 				{fromYear: mock.tag.year, toYear: mock.tag.year},

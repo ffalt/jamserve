@@ -35,7 +35,7 @@ export interface FolderTag {
 	trackCount: number;
 	folderCount: number;
 	type: FolderType;
-	genre?: string;
+	genres?: Array<string>;
 	album?: string;
 	artist?: string;
 	artistSort?: string;
@@ -43,7 +43,7 @@ export interface FolderTag {
 	albumTrackCount?: number;
 	title?: string;
 	year?: number;
-	mbAlbumID?: string;
+	mbReleaseID?: string;
 	mbReleaseGroupID?: string;
 	mbAlbumType?: string;
 	mbArtistID?: string;

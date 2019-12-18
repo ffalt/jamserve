@@ -12,5 +12,6 @@ export interface Artist extends DBObject {
 	seriesIDs: Array<string>;
 	albumTypes: Array<AlbumType>;
 	mbArtistID?: string;
+	genres?: Array<string>;
 	created: number;
 }

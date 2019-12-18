@@ -232,7 +232,7 @@ export class FORMAT {
 			songCount: album.trackIDs.length,
 			duration: Math.trunc(album.duration),
 			year: album.year,
-			genre: album.genre,
+			genre: album.genres && album.genres.length > 0 ? album.genres.join(' / ') : undefined,
 			created: FORMAT.formatSubSonicDate(album.created),
 			starred: state && state.faved ? FORMAT.formatSubSonicDate(state.faved) : undefined
 		};
@@ -418,7 +418,7 @@ export class FORMAT {
 			created: FORMAT.formatSubSonicDate(folder.stat.created),
 			title: folder.tag.title || '',
 			album: folder.tag.album,
-			genre: folder.tag.genre,
+			genre: folder.tag.genres && folder.tag.genres.length > 0 ? folder.tag.genres.join(' / ') : undefined,
 			artist: folder.tag.artist,
 			year: folder.tag.year,
 			coverArt: folder.id,

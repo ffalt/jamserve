@@ -212,9 +212,8 @@ export class MatchDirMergeTagBuilder {
 		switch (type) {
 			case FolderType.collection:
 				tag.albumType = undefined;
-				tag.genre = undefined;
 				tag.mbArtistID = undefined;
-				tag.mbAlbumID = undefined;
+				tag.mbReleaseID = undefined;
 				tag.mbAlbumType = undefined;
 				tag.mbReleaseGroupID = undefined;
 				tag.artist = undefined;
@@ -223,8 +222,7 @@ export class MatchDirMergeTagBuilder {
 				tag.year = undefined;
 				break;
 			case FolderType.artist:
-				tag.genre = undefined;
-				tag.mbAlbumID = undefined;
+				tag.mbReleaseID = undefined;
 				tag.mbAlbumType = undefined;
 				tag.mbReleaseGroupID = undefined;
 				tag.album = undefined;
@@ -271,8 +269,8 @@ export class MatchDirMergeTagBuilder {
 			artistSort: metaStat.artistSort,
 			title: nameSplit.title,
 			artworks: await this.buildFolderArtworks(dir),
-			genre: metaStat.genre,
-			mbAlbumID: metaStat.mbAlbumID,
+			genres: metaStat.genres,
+			mbReleaseID: metaStat.mbReleaseID,
 			mbReleaseGroupID: metaStat.mbReleaseGroupID,
 			mbAlbumType: metaStat.mbAlbumType,
 			mbArtistID: metaStat.mbArtistID,

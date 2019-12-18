@@ -4,6 +4,7 @@ import {DBObject} from '../base/base.model';
 export interface Album extends DBObject {
 	slug: string;
 	name: string;
+	genres: Array<string>;
 	rootIDs: Array<string>;
 	trackIDs: Array<string>;
 	folderIDs: Array<string>;
@@ -13,10 +14,9 @@ export interface Album extends DBObject {
 	seriesNr?: string;
 	artistID: string;
 	artist?: string;
-	genre?: string;
 	year?: number;
 	duration: number;
 	created: number;
 	mbArtistID?: string;
-	mbAlbumID?: string;
+	mbReleaseID?: string;
 }

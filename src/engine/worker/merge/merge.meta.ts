@@ -170,6 +170,7 @@ export class MetaMerger {
 				metaStatBuilder.statSlugValue('artist', track.tag.albumArtist);
 				metaStatBuilder.statSlugValue('artistSort', track.tag.albumArtistSort);
 			}
+			metaStatBuilder.statSlugValue('genre', track.tag.genre);
 			rootIDs.add(track.rootID);
 			folderIDs.add(track.parentID);
 			trackIDs.add(track.id);
@@ -181,6 +182,7 @@ export class MetaMerger {
 		artist.trackIDs = [...trackIDs];
 		artist.folderIDs = [...folderIDs];
 		artist.seriesIDs = [...seriesIDs];
+		artist.genres = metaStatBuilder.asStringList('genre');
 		if (artist.name !== MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
 			const artistName = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
 			artist.name = artistName;
@@ -346,7 +348,7 @@ export class MetaMerger {
 			trackIDs.add(track.id);
 			metaStatBuilder.statSlugValue('artist', track.tag.albumArtist || track.tag.artist);
 			metaStatBuilder.statID('mbArtistID', track.tag.mbAlbumArtistID || track.tag.mbArtistID);
-			metaStatBuilder.statID('mbAlbumID', track.tag.mbAlbumID);
+			metaStatBuilder.statID('mbReleaseID', track.tag.mbReleaseID);
 			metaStatBuilder.statSlugValue('genre', track.tag.genre);
 			metaStatBuilder.statSlugValue('seriesNr', track.tag.seriesNr);
 			metaStatBuilder.statSlugValue('series', track.tag.series);
@@ -362,8 +364,8 @@ export class MetaMerger {
 		album.name = metaStatBuilder.mostUsed('name') || cUnknownAlbum;
 		album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
 		album.mbArtistID = metaStatBuilder.mostUsed('mbArtistID');
-		album.mbAlbumID = metaStatBuilder.mostUsed('mbAlbumID');
-		album.genre = metaStatBuilder.mostUsed('genre');
+		album.mbReleaseID = metaStatBuilder.mostUsed('mbReleaseID');
+		album.genres = metaStatBuilder.asStringList('genre');
 		album.series = metaStatBuilder.mostUsed('series');
 		album.year = metaStatBuilder.mostUsedNumber('year');
 		album.albumType = metaStatBuilder.mostUsed('albumType') as AlbumType || AlbumType.unknown;

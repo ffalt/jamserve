@@ -3,17 +3,6 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {Track, TrackTag} from './track.model';
 
 export function formatTrackTag(tag: TrackTag): Jam.TrackTag {
-	let mbz: Jam.TrackMBTag | undefined = {
-		recordingID: tag.mbRecordingID,
-		releaseTrackID: tag.mbReleaseTrackID,
-		releaseGroupID: tag.mbReleaseGroupID,
-		trackID: tag.mbTrackID,
-		artistID: tag.mbArtistID,
-		releaseID: tag.mbAlbumID
-	};
-	if (!Object.keys(mbz).find(key => !!(mbz as any)[key])) {
-		mbz = undefined;
-	}
 	return {
 		trackNr: tag.track,
 		disc: tag.discTotal !== undefined && tag.discTotal > 1 ? tag.disc : undefined,
@@ -22,7 +11,12 @@ export function formatTrackTag(tag: TrackTag): Jam.TrackTag {
 		artist: tag.artist,
 		album: tag.album,
 		genre: tag.genre,
-		musicbrainz: mbz
+		mbRecordingID: tag.mbRecordingID,
+		mbReleaseTrackID: tag.mbReleaseTrackID,
+		mbReleaseGroupID: tag.mbReleaseGroupID,
+		mbTrackID: tag.mbTrackID,
+		mbArtistID: tag.mbArtistID,
+		mbReleaseID: tag.mbReleaseID
 	};
 }
 

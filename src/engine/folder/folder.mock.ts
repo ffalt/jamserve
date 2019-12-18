@@ -29,7 +29,7 @@ export function mockFolder(): Folder {
 			albumType: AlbumType.unknown,
 			title: 'a title',
 			year: 1984,
-			mbAlbumID: 'mbAlbumID1',
+			mbReleaseID: 'mbReleaseID1',
 			mbArtistID: 'mbArtistID1'
 		}
 	};
@@ -58,7 +58,7 @@ export function mockFolder2(): Folder {
 			albumType: AlbumType.album,
 			title: 'second title',
 			year: 2000,
-			mbAlbumID: 'mbAlbumID2',
+			mbReleaseID: 'mbReleaseID2',
 			mbArtistID: 'mbArtistID2'
 		}
 	};

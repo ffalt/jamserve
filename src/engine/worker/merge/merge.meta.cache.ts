@@ -111,10 +111,10 @@ export class MetaMergerCache {
 			artist: trackInfo.track.tag.albumArtist || trackInfo.track.tag.artist || cUnknownArtist,
 			artistID,
 			mbArtistID: trackInfo.track.tag.mbAlbumArtistID || trackInfo.track.tag.mbArtistID,
-			mbAlbumID: trackInfo.track.tag.mbAlbumID,
+			mbReleaseID: trackInfo.track.tag.mbReleaseID,
 			series: trackInfo.track.tag.series,
 			seriesNr: trackInfo.track.tag.seriesNr,
-			genre: trackInfo.track.tag.genre,
+			genres: [],
 			folderIDs: [],
 			trackIDs: [],
 			rootIDs: [],
@@ -125,8 +125,8 @@ export class MetaMergerCache {
 	}
 
 	private async findAlbumInDB(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Album | undefined> {
-		if (trackInfo.track.tag.mbAlbumID) {
-			const album = await this.store.albumStore.searchOne({mbAlbumID: trackInfo.track.tag.mbAlbumID});
+		if (trackInfo.track.tag.mbReleaseID) {
+			const album = await this.store.albumStore.searchOne({mbReleaseID: trackInfo.track.tag.mbReleaseID});
 			if (album) {
 				return album;
 			}
@@ -135,8 +135,8 @@ export class MetaMergerCache {
 	}
 
 	private async findAlbumInCache(trackInfo: MetaMergeTrackInfo, artistID: string): Promise<Album | undefined> {
-		if (trackInfo.track.tag.mbAlbumID) {
-			const album = this.albumCache.find(a => a.mbAlbumID === trackInfo.track.tag.mbAlbumID);
+		if (trackInfo.track.tag.mbReleaseID) {
+			const album = this.albumCache.find(a => a.mbReleaseID === trackInfo.track.tag.mbReleaseID);
 			if (album) {
 				return album;
 			}

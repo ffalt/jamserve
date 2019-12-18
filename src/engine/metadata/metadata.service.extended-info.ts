@@ -150,8 +150,8 @@ export class MetadataServiceExtendedInfo {
 	async byAlbum(album: Album): Promise<Jam.ExtendedInfo | undefined> {
 		let info: Jam.ExtendedInfo | undefined;
 		try {
-			if (album.mbAlbumID) {
-				info = await this.getAlbumInfoByMusicBrainzID(album.mbAlbumID);
+			if (album.mbReleaseID) {
+				info = await this.getAlbumInfoByMusicBrainzID(album.mbReleaseID);
 			}
 			if (!info && album.name && album.artist) {
 				info = await this.getAlbumInfoByName(album.name, album.artist);
@@ -180,8 +180,8 @@ export class MetadataServiceExtendedInfo {
 	async byFolderAlbum(folder: Folder): Promise<Jam.ExtendedInfo | undefined> {
 		let info: Jam.ExtendedInfo | undefined;
 		try {
-			if (folder.tag.mbAlbumID) {
-				info = await this.getAlbumInfoByMusicBrainzID(folder.tag.mbAlbumID);
+			if (folder.tag.mbReleaseID) {
+				info = await this.getAlbumInfoByMusicBrainzID(folder.tag.mbReleaseID);
 			}
 			if (!info && folder.tag.album && folder.tag.artist) {
 				info = await this.getAlbumInfoByName(folder.tag.album, folder.tag.artist);

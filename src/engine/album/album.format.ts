@@ -3,13 +3,6 @@ import {JamParameters} from '../../model/jam-rest-params';
 import {Album} from './album.model';
 
 export function formatAlbum(album: Album, includes: JamParameters.IncludesAlbum): Jam.Album {
-	let mbz: any = {
-		artistID: album.mbArtistID,
-		albumID: album.mbAlbumID
-	};
-	if (!Object.keys(mbz).find(key => !!mbz[key])) {
-		mbz = undefined;
-	}
 	return {
 		id: album.id,
 		name: album.name,
@@ -21,12 +14,11 @@ export function formatAlbum(album: Album, includes: JamParameters.IncludesAlbum)
 		seriesID: album.seriesID,
 		seriesNr: album.seriesNr,
 		trackCount: album.trackIDs.length,
-		tag: includes.albumTag ? {
-			genre: album.genre,
-			year: album.year,
-			duration: album.duration,
-			musicbrainz: mbz
-		} : undefined,
+		genres: album.genres,
+		year: album.year,
+		duration: album.duration,
+		mbArtistID: album.mbArtistID,
+		mbReleaseID: album.mbReleaseID,
 		trackIDs: includes.albumTrackIDs ? album.trackIDs : undefined
 	};
 }

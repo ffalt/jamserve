@@ -26,22 +26,16 @@ export function formatFolderArtworks(folder: Folder): Array<Jam.ArtworkImage> {
 function formatFolderTag(folder: Folder): Jam.FolderTag {
 	const isAlbum = FolderTypesAlbum.includes(folder.tag.type);
 	const isArtist = folder.tag.type === FolderType.artist;
-	let mbz: Jam.FolderMBTag | undefined = {
-		artistID: isArtist || isAlbum ? folder.tag.mbArtistID : undefined,
-		releaseID: isAlbum ? folder.tag.mbAlbumID : undefined,
-		releaseGroupID: isAlbum ? folder.tag.mbReleaseGroupID : undefined
-	};
-	if (!Object.keys(mbz).find(key => !!(mbz as any)[key])) {
-		mbz = undefined;
-	}
 	return {
 		artist: isAlbum || isArtist ? (folder.tag.artist || cUnknownArtist) : undefined,
 		artistSort: isAlbum || isArtist ? folder.tag.artistSort : undefined,
 		album: isAlbum ? (folder.tag.album || cUnknownAlbum) : undefined,
 		albumType: isAlbum ? folder.tag.albumType : undefined,
-		genre: folder.tag.genre,
-		year: isAlbum ? folder.tag.year : undefined,
-		musicbrainz: mbz
+		genres: folder.tag.genres,
+		mbArtistID: isArtist || isAlbum ? folder.tag.mbArtistID : undefined,
+		mbReleaseID: isAlbum ? folder.tag.mbReleaseID : undefined,
+		mbReleaseGroupID: isAlbum ? folder.tag.mbReleaseGroupID : undefined,
+		year: isAlbum ? folder.tag.year : undefined
 	};
 }
 

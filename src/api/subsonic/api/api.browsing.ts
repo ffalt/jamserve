@@ -183,8 +183,8 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		 */
 		const folder = await this.engine.store.folderStore.byId(req.query.id);
 		if (folder) {
-			if (folder.tag.mbAlbumID) {
-				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.album, folder.tag.mbAlbumID);
+			if (folder.tag.mbReleaseID) {
+				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.album, folder.tag.mbReleaseID);
 				if (lastfm && lastfm.album) {
 					return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
 				}
@@ -214,8 +214,8 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		 */
 		const album = await this.engine.store.albumStore.byId(req.query.id);
 		if (album) {
-			if (album.mbAlbumID) {
-				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.album, album.mbAlbumID);
+			if (album.mbReleaseID) {
+				const lastfm = await this.engine.metaDataService.lastFMLookup(LastFMLookupType.album, album.mbReleaseID);
 				if (lastfm && lastfm.album) {
 					return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
 				}
