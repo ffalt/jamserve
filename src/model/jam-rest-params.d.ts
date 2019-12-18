@@ -170,12 +170,6 @@ export declare namespace JamParameters {
 		 */
 		albumState?: boolean;
 		/**
-		 * include tag (duration, musicbrainz ids, etc) on album(s)
-		 *
-		 * @default false
-		 */
-		albumTag?: boolean;
-		/**
 		 * include extended meta data on album(s)
 		 *
 		 * @default false
@@ -1049,11 +1043,11 @@ export declare namespace JamParameters {
 		 */
 		trackID?: string;
 		/**
-		 * filter by album id
+		 * filter by musicbrainz album id
 		 */
-		mbAlbumID?: string;
+		mbReleaseID?: string;
 		/**
-		 * filter by artist id
+		 * filter by musicbrainz artist id
 		 */
 		mbArtistID?: string;
 		/**
@@ -1202,6 +1196,10 @@ export declare namespace JamParameters {
 		 * filter by album types
 		 */
 		albumTypes?: Array<Jam.AlbumType>;
+		/**
+		 * filter by genre
+		 */
+		genre?: string;
 		/**
 		 * filter by musicbrainz album id
 		 */

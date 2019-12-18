@@ -166,15 +166,6 @@ export declare namespace Jam {
 	 * Track Data
 	 */
 
-	export interface TrackMBTag {
-		trackID?: string;
-		recordingID?: string;
-		releaseTrackID?: string;
-		releaseGroupID?: string;
-		releaseID?: string;
-		artistID?: string;
-	}
-
 	export interface TrackTag {
 		title?: string;
 		album?: string;
@@ -183,7 +174,12 @@ export declare namespace Jam {
 		year?: number;
 		trackNr?: number;
 		disc?: number;
-		musicbrainz?: TrackMBTag;
+		mbTrackID?: string;
+		mbRecordingID?: string;
+		mbReleaseTrackID?: string;
+		mbReleaseGroupID?: string;
+		mbReleaseID?: string;
+		mbArtistID?: string;
 	}
 
 	export interface TrackMedia {
@@ -338,20 +334,16 @@ export declare namespace Jam {
 		size: number;
 	}
 
-	export interface FolderMBTag {
-		artistID?: string;
-		releaseID?: string;
-		releaseGroupID?: string;
-	}
-
 	export interface FolderTag {
 		album?: string;
 		albumType?: AlbumType;
 		artist?: string;
 		artistSort?: string;
-		genre?: string;
+		genres?: Array<string>;
 		year?: number;
-		musicbrainz?: FolderMBTag;
+		mbArtistID?: string;
+		mbReleaseID?: string;
+		mbReleaseGroupID?: string;
 	}
 
 	export interface FolderChildren {
@@ -380,27 +372,21 @@ export declare namespace Jam {
 	 */
 
 	export interface Album extends Base {
-		artist?: string;
-		tag?: AlbumTag;
 		albumType: AlbumType;
 		trackCount: number;
+		duration: number;
 		artistID: string;
+		artist?: string;
+		genres?: Array<string>;
+		year?: number;
+		mbArtistID?: string;
+		mbReleaseID?: string;
 		series?: string;
 		seriesID?: string;
 		seriesNr?: string;
 		trackIDs?: Array<string>;
 		tracks?: Array<Track>;
 		info?: ExtendedInfo;
-	}
-
-	export interface AlbumTag {
-		duration: number;
-		genre?: string;
-		year?: number;
-		musicbrainz?: {
-			artistID?: string;
-			albumID?: string;
-		};
 	}
 
 	export interface AlbumList extends ListResult {
@@ -471,9 +457,8 @@ export declare namespace Jam {
 		albumCount: number;
 		trackCount: number;
 		seriesCount: number;
-		musicbrainz?: {
-			artistID?: string;
-		};
+		mbArtistID?: string;
+		genres?: Array<string>;
 		albumTypes: Array<AlbumType>;
 		tracks?: Array<Track>;
 		trackIDs?: Array<string>;

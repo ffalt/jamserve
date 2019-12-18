@@ -2,7 +2,7 @@
 	"openapi": "3.0.0",
 	"info": {
 		"description": "Api for JamServe",
-		"version": "0.1.10",
+		"version": "0.1.11",
 		"title": "JamApi",
 		"license": {
 			"name": "MIT"
@@ -6846,16 +6846,6 @@
 					},
 					{
 						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -7073,16 +7063,6 @@
 					},
 					{
 						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -7266,6 +7246,15 @@
 							}
 						},
 						"description": "filter by album types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by genre",
 						"required": false
 					},
 					{
@@ -7458,16 +7447,6 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -7729,6 +7708,15 @@
 					},
 					{
 						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by genre",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "mbArtistID",
 						"schema": {
 							"type": "string"
@@ -7917,16 +7905,6 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -8280,16 +8258,6 @@
 					},
 					{
 						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -8473,6 +8441,15 @@
 							}
 						},
 						"description": "filter by album types",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "filter by genre",
 						"required": false
 					},
 					{
@@ -8734,16 +8711,6 @@
 					},
 					{
 						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -8952,16 +8919,6 @@
 					},
 					{
 						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -9151,16 +9108,6 @@
 					},
 					{
 						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -9284,16 +9231,6 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -9440,16 +9377,6 @@
 					},
 					{
 						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -9557,11 +9484,11 @@
 					},
 					{
 						"in": "query",
-						"name": "mbAlbumID",
+						"name": "mbReleaseID",
 						"schema": {
 							"type": "string"
 						},
-						"description": "filter by album id",
+						"description": "filter by musicbrainz album id",
 						"required": false
 					},
 					{
@@ -9570,7 +9497,7 @@
 						"schema": {
 							"type": "string"
 						},
-						"description": "filter by artist id",
+						"description": "filter by musicbrainz artist id",
 						"required": false
 					},
 					{
@@ -9825,11 +9752,11 @@
 					},
 					{
 						"in": "query",
-						"name": "mbAlbumID",
+						"name": "mbReleaseID",
 						"schema": {
 							"type": "string"
 						},
-						"description": "filter by album id",
+						"description": "filter by musicbrainz album id",
 						"required": false
 					},
 					{
@@ -9838,7 +9765,7 @@
 						"schema": {
 							"type": "string"
 						},
-						"description": "filter by artist id",
+						"description": "filter by musicbrainz artist id",
 						"required": false
 					},
 					{
@@ -10013,16 +9940,6 @@
 					},
 					{
 						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -10162,11 +10079,11 @@
 					},
 					{
 						"in": "query",
-						"name": "mbAlbumID",
+						"name": "mbReleaseID",
 						"schema": {
 							"type": "string"
 						},
-						"description": "filter by album id",
+						"description": "filter by musicbrainz album id",
 						"required": false
 					},
 					{
@@ -10175,7 +10092,7 @@
 						"schema": {
 							"type": "string"
 						},
-						"description": "filter by artist id",
+						"description": "filter by musicbrainz artist id",
 						"required": false
 					},
 					{
@@ -10811,16 +10728,6 @@
 					},
 					{
 						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
 						"name": "albumInfo",
 						"schema": {
 							"default": false,
@@ -11004,16 +10911,6 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -11354,16 +11251,6 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -11774,16 +11661,6 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -12288,16 +12165,6 @@
 							"type": "boolean"
 						},
 						"description": "include user states (fav,rate) on album(s)",
-						"required": false
-					},
-					{
-						"in": "query",
-						"name": "albumTag",
-						"schema": {
-							"default": false,
-							"type": "boolean"
-						},
-						"description": "include tag (duration, musicbrainz ids, etc) on album(s)",
 						"required": false
 					},
 					{
@@ -22138,30 +22005,22 @@
 					"disc": {
 						"type": "number"
 					},
-					"musicbrainz": {
-						"$ref": "#/components/schemas/Jam.TrackMBTag"
-					}
-				}
-			},
-			"Jam.TrackMBTag": {
-				"type": "object",
-				"properties": {
-					"trackID": {
+					"mbTrackID": {
 						"type": "string"
 					},
-					"recordingID": {
+					"mbRecordingID": {
 						"type": "string"
 					},
-					"releaseTrackID": {
+					"mbReleaseTrackID": {
 						"type": "string"
 					},
-					"releaseGroupID": {
+					"mbReleaseGroupID": {
 						"type": "string"
 					},
-					"releaseID": {
+					"mbReleaseID": {
 						"type": "string"
 					},
-					"artistID": {
+					"mbArtistID": {
 						"type": "string"
 					}
 				}
@@ -24476,27 +24335,22 @@
 					"artistSort": {
 						"type": "string"
 					},
-					"genre": {
-						"type": "string"
+					"genres": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
 					},
 					"year": {
 						"type": "number"
 					},
-					"musicbrainz": {
-						"$ref": "#/components/schemas/Jam.FolderMBTag"
-					}
-				}
-			},
-			"Jam.FolderMBTag": {
-				"type": "object",
-				"properties": {
-					"artistID": {
+					"mbArtistID": {
 						"type": "string"
 					},
-					"releaseID": {
+					"mbReleaseID": {
 						"type": "string"
 					},
-					"releaseGroupID": {
+					"mbReleaseGroupID": {
 						"type": "string"
 					}
 				}
@@ -25058,12 +24912,13 @@
 					"seriesCount": {
 						"type": "number"
 					},
-					"musicbrainz": {
-						"type": "object",
-						"properties": {
-							"artistID": {
-								"type": "string"
-							}
+					"mbArtistID": {
+						"type": "string"
+					},
+					"genres": {
+						"type": "array",
+						"items": {
+							"type": "string"
 						}
 					},
 					"albumTypes": {
@@ -25239,19 +25094,34 @@
 			"Jam.Album": {
 				"type": "object",
 				"properties": {
-					"artist": {
-						"type": "string"
-					},
-					"tag": {
-						"$ref": "#/components/schemas/Jam.AlbumTag"
-					},
 					"albumType": {
 						"$ref": "#/components/schemas/Jam.AlbumType"
 					},
 					"trackCount": {
 						"type": "number"
 					},
+					"duration": {
+						"type": "number"
+					},
 					"artistID": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"genres": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"year": {
+						"type": "number"
+					},
+					"mbArtistID": {
+						"type": "string"
+					},
+					"mbReleaseID": {
 						"type": "string"
 					},
 					"series": {
@@ -25295,37 +25165,10 @@
 					"albumType",
 					"artistID",
 					"created",
+					"duration",
 					"id",
 					"name",
 					"trackCount"
-				]
-			},
-			"Jam.AlbumTag": {
-				"type": "object",
-				"properties": {
-					"duration": {
-						"type": "number"
-					},
-					"genre": {
-						"type": "string"
-					},
-					"year": {
-						"type": "number"
-					},
-					"musicbrainz": {
-						"type": "object",
-						"properties": {
-							"artistID": {
-								"type": "string"
-							},
-							"albumID": {
-								"type": "string"
-							}
-						}
-					}
-				},
-				"required": [
-					"duration"
 				]
 			},
 			"Jam.AlbumType": {
