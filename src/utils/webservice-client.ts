@@ -2,6 +2,7 @@ import rateLimiter from 'limiter';
 import request from 'request';
 
 export class WebserviceClient {
+	enabled = false;
 	private readonly limiter: rateLimiter.RateLimiter;
 	private readonly userAgent: string;
 
@@ -22,6 +23,9 @@ export class WebserviceClient {
 	}
 
 	protected async getJson<T>(url: string, parameters?: object | undefined): Promise<T> {
+		if (!this.enabled) {
+			return Promise.reject(Error('External service is disabled'));
+		}
 		const options: request.Options = {
 			url,
 			headers: {'User-Agent': this.userAgent},

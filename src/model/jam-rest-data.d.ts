@@ -656,10 +656,15 @@ export declare namespace Jam {
 		scanAtStart: boolean;
 	}
 
+	export interface AdminSettingsExternal {
+		enabled: boolean;
+	}
+
 	export interface AdminSettings {
 		chat: AdminSettingsChat;
 		index: AdminSettingsIndex;
 		library: AdminSettingsLibrary;
+		externalServices: AdminSettingsExternal;
 	}
 
 	/*

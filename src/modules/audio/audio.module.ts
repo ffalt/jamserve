@@ -70,6 +70,17 @@ export class AudioModule {
 			(params: { maxBitRate?: number, format: string }) => `${params.maxBitRate ? `-${params.maxBitRate}` : ''}.${params.format}`);
 	}
 
+	setSettings(externalServices: Jam.AdminSettingsExternal): void {
+		const enabled = externalServices && externalServices.enabled;
+		this.musicbrainz.enabled = enabled;
+		this.acoustid.enabled = enabled;
+		this.lastFM.enabled = enabled;
+		this.lyricsOVH.enabled = enabled;
+		this.acousticbrainz.enabled = enabled;
+		this.coverArtArchive.enabled = enabled;
+		this.wikipedia.enabled = enabled;
+	}
+
 	private async generateWaveform(filename: string, format: JamParameters.WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
 		const wf = new WaveformGenerator();
 		switch (format) {

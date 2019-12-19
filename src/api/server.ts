@@ -7,8 +7,8 @@ import path from 'path';
 import {Engine} from '../engine/engine';
 import {logger} from '../utils/logger';
 import {initJamRouter} from './jam/router';
-import {initSubsonicRouter} from './subsonic/router';
 import {JAMAPI_URL_VERSION} from './jam/version';
+import {initSubsonicRouter} from './subsonic/router';
 
 const log = logger('Server');
 

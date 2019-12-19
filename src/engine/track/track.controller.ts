@@ -226,13 +226,19 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		if (track.tag.lyrics) {
 			return {lyrics: track.tag.lyrics};
 		}
-		const artist = track.tag.artist;
 		const song = track.tag.title;
-		if (!artist || !song) {
+		if (!song) {
 			return {};
 		}
 		try {
-			return this.metaService.lyrics(artist, song);
+			let result: Jam.TrackLyrics | undefined;
+			if (track.tag.artist) {
+				result = await this.metaService.lyrics(track.tag.artist, song);
+			}
+			if ((!result || !result.lyrics) && track.tag.albumArtist && (track.tag.artist !== track.tag.albumArtist)) {
+				result = await this.metaService.lyrics(track.tag.albumArtist, song);
+			}
+			return result || {};
 		} catch (e) {
 			log.error(e);
 			return {};

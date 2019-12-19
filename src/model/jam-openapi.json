@@ -25792,10 +25792,14 @@
 					},
 					"library": {
 						"$ref": "#/components/schemas/Jam.AdminSettingsLibrary"
+					},
+					"externalServices": {
+						"$ref": "#/components/schemas/Jam.AdminSettingsExternal"
 					}
 				},
 				"required": [
 					"chat",
+					"externalServices",
 					"index",
 					"library"
 				]
@@ -25850,6 +25854,17 @@
 				},
 				"required": [
 					"scanAtStart"
+				]
+			},
+			"Jam.AdminSettingsExternal": {
+				"type": "object",
+				"properties": {
+					"enabled": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"enabled"
 				]
 			},
 			"Jam.AdminChangeQueueInfo": {

@@ -92,7 +92,7 @@ export class Engine {
 		this.albumService = new AlbumService(this.store.albumStore, this.trackService, this.folderService, this.stateService);
 		this.indexService = new IndexService(this.store.artistStore, this.store.albumStore, this.store.folderStore, this.store.trackStore, this.store.seriesStore);
 		this.workerService = new WorkerService(this.store, this.audioModule, this.imageModule);
-		this.settingsService = new SettingsService(store.settingsStore, this.chatService, this.indexService, this.workerService, version);
+		this.settingsService = new SettingsService(store.settingsStore, this.chatService, this.indexService, this.workerService, this.audioModule, version);
 		this.artistService = new ArtistService(this.store.artistStore, this.store.trackStore, this.folderService, this.stateService);
 		this.userService = new UserService(this.config.getDataPath(['images']), this.store.userStore, this.store.stateStore, this.store.playlistStore,
 			this.store.bookmarkStore, this.store.playQueueStore, this.store.sessionStore, this.imageModule);
