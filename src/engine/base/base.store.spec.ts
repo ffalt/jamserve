@@ -56,13 +56,11 @@ export function testStore(setup: (db: TestDB) => BaseStore<DBObject, SearchQuery
 				const matches = generateMatchingQueries(obj);
 				for (const match of matches) {
 					let o = await store.searchOne(match);
-					expect(o).toBeDefined();
-					// should().exist(o, 'Match did not match anything ' + JSON.stringify(match));
+					expect(o, `${JSON.stringify(match)} not found`).toBeDefined();
 					const list = await store.search(match);
-					expect(list.items.length > 0).toBe(true); // 'Match did not match anything ' + JSON.stringify(match));
+					expect(list.items.length > 0, `Match did not match anything ${JSON.stringify(match)}`).toBe(true);
 					o = list.items.find(ob => ob.id === id);
-					expect(o).toBeDefined();
-					// should().exist(o, 'Match did not match the right item ' + JSON.stringify(match));
+					expect(o, `Match did not match the right item ${JSON.stringify(match)}`).toBeDefined();
 					const tid = await store.searchIDs(match);
 					expect(tid.length > 0).toBe(true);
 					expect(tid.includes(id)).toBe(true);

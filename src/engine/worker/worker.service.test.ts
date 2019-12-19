@@ -438,8 +438,8 @@ describe('WorkerService', () => {
 					changes = await workerService.refreshRoot({rootID: mockRoot2.id, forceMetaRefresh: false});
 					await checkChanges(changes, {
 						updateTracks: 2, // 2 Tracks must be updated
-						updateFolders: 2, // Album Folder & Artist Folder must be updated
-						removedAlbums: 1, 	// (Album 2 by Artist B) must be removed
+						updateFolders: 3, // Root & Album Folder & Artist Folder must be updated
+						removedAlbums: 1, // (Album 2 by Artist B) must be removed
 						newAlbums: 1, // (Album 2 by Artist A) must be added
 						removedArtists: 1, 	// Artist B must be removed
 						updateArtists: 1 // Artist A must be updated

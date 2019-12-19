@@ -30,7 +30,7 @@ export interface SearchQueryAlbum extends SearchQuery {
 const fieldMap: { [name in JamParameters.AlbumSortField]: string } = {
 	name: 'name',
 	artist: 'artist',
-	genre: 'genre',
+	genre: 'genres',
 	year: 'year',
 	created: 'created'
 };
@@ -52,7 +52,7 @@ export class AlbumStore extends BaseStore<Album, SearchQueryAlbum> {
 		q.term('albumType', query.albumType);
 		q.terms('albumType', query.albumTypes);
 		q.term('artistID', query.artistID);
-		q.term('genre', query.genre);
+		q.term('genres', query.genre);
 		q.term('mbReleaseID', query.mbReleaseID);
 		q.term('mbArtistID', query.mbArtistID);
 		q.term('artist', query.artist);

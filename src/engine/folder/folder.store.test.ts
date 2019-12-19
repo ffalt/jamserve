@@ -27,7 +27,7 @@ describe('FolderStore', () => {
 				{artists: [mock.tag.artist || '']},
 				{title: mock.tag.title},
 				{album: mock.tag.album},
-				{genre: mock.tag.genre},
+				...(mock.tag.genres || []).map(g => ({genre: g})),
 				{level: mock.tag.level},
 				{mbReleaseID: mock.tag.mbReleaseID},
 				{mbArtistID: mock.tag.mbArtistID},
@@ -35,7 +35,6 @@ describe('FolderStore', () => {
 				{fromYear: mock.tag.year, toYear: mock.tag.year},
 				{types: [mock.tag.type]},
 				{query: (mock.tag.title || '')[0]}
-
 			];
 			return matches;
 		},

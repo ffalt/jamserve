@@ -34,7 +34,7 @@ export interface SearchQueryFolder extends SearchQuery {
 const sortFieldMap: { [name in JamParameters.FolderSortField]: string } = {
 	artist: 'tag.artist',
 	album: 'tag.album',
-	genre: 'tag.genre',
+	genre: 'tag.genres',
 	created: 'stat.created',
 	parent: 'parentID',
 	title: 'tag.title',
@@ -54,7 +54,7 @@ export class FolderStore extends BaseStore<Folder, SearchQueryFolder> {
 		q.startsWith('path', query.inPath ? ensureTrailingPathSeparator(query.inPath) : undefined);
 		q.term('tag.mbReleaseID', query.mbReleaseID);
 		q.term('tag.mbArtistID', query.mbArtistID);
-		q.term('tag.genre', query.genre);
+		q.term('tag.genres', query.genre);
 		q.term('tag.title', query.title);
 		q.term('tag.album', query.album);
 		q.term('rootID', query.rootID);
