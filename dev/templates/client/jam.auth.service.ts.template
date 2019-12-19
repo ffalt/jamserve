@@ -47,7 +47,7 @@ export class JamAuthService {
 			if (data.user) {
 				this.user = data.user;
 				this.auth.version = data.version;
-                await this.configuration.toStorage({auth: this.auth, user: this.user});
+				await this.configuration.toStorage({auth: this.auth, user: this.user});
 			} else {
 				this.user = undefined;
 			}
