@@ -1,6 +1,6 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
-import {HttpEvent, HttpSentEvent} from '@angular/common/http';
+import {HttpEvent, HttpParams, HttpSentEvent} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 
@@ -14,53 +14,34 @@ export class JamBaseService {
 	constructor(private http: JamHttpService, private authService: JamAuthService) {
 	}
 
-	static flattenParams(params: any): string {
-		const result: Array<string> = [];
-		Object.keys(params).forEach(key => {
-			const val = params[key];
-			if (val !== undefined) {
-				switch (typeof val) {
-					case 'number':
-						result.push(`${key}=${val}`);
-						break;
-					case 'string':
-						result.push(`${key}=${encodeURIComponent(val)}`);
-						break;
-					case 'boolean':
-						result.push(`${key}=${val ? 'true' : 'false'}`);
-						break;
-					case 'object':
-						if (Array.isArray(val)) {
-							val.forEach((v: string) => {
-								result.push(`${key}=${encodeURIComponent(v)}`);
-							});
-						}
-						break;
-					default:
-						break;
-				}
-			}
-		});
-		if (result.length) {
-			return `?${result.join('&')}`;
-		}
-		return '';
-	}
-
-	buildUrl(view: string, params: any, forDOM: boolean): string {
+	buildRequest(view: string, params: any, forDOM: boolean): { url: string, parameters: HttpParams } {
 		const buildParams = params || {};
 		if (forDOM && this.authService.auth.token) {
 			buildParams.bearer = this.authService.auth.token;
 		}
-		return this.authService.auth.server + this.authService.apiPrefix + view + JamBaseService.flattenParams(buildParams);
+		let result = new HttpParams();
+		for (const key of Object.keys(buildParams)) {
+			if (buildParams[key] !== undefined) {
+				result = result.append(key, buildParams[key]);
+			}
+		}
+		return {url: this.authService.auth.server + this.authService.apiPrefix + view, parameters: result};
+	}
+
+	buildUrl(view: string, params: any, forDOM: boolean): string {
+		const {url, parameters} = this.buildRequest(view, params, forDOM);
+		const flat = parameters.toString();
+		return url + (flat ? `?${flat}` : '');
 	}
 
 	async raw(view: string, params: any): Promise<ArrayBuffer> {
-		return this.http.raw(this.buildUrl(view, params, false), this.authService.getHTTPOptions());
+		const {url, parameters} = this.buildRequest(view, params, false);
+		return this.http.raw(url, {...this.authService.getHTTPOptions(), params: parameters});
 	}
 
 	async get<T>(view: string, params: any): Promise<T> {
-		return this.http.get<T>(this.buildUrl(view, params, false), this.authService.getHTTPOptions());
+		const {url, parameters} = this.buildRequest(view, params, false);
+		return this.http.get(url, {...this.authService.getHTTPOptions(), params: parameters});
 	}
 
 	async post<T>(view: string, params: any, body: any): Promise<T> {
