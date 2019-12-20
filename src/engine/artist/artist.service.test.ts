@@ -2,10 +2,10 @@ import fse from 'fs-extra';
 import {DBObjectType} from '../../db/db.types';
 import {AlbumType, ArtworkImageType, FolderType} from '../../model/jam-types';
 import {testService} from '../base/base.service.spec';
+import {mockFolderArtwork} from '../folder/folder.mock';
 import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
 import {ArtistService} from './artist.service';
-import {mockFolderArtwork} from '../folder/folder.mock';
 
 describe('ArtistService', () => {
 	let artistService: ArtistService;

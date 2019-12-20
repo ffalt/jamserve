@@ -85,7 +85,7 @@ export class GenreService {
 			});
 			return genre;
 		}).filter(genre => genre.trackCount > 0).sort((a, b) => {
-			return a.name.localeCompare(b.name)
+			return a.name.localeCompare(b.name);
 		});
 	}
 

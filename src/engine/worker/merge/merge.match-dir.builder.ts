@@ -6,6 +6,7 @@ import {AudioModule} from '../../../modules/audio/audio.module';
 import {ImageModule} from '../../../modules/image/image.module';
 import {generateArtworkId} from '../../../utils/artwork-id';
 import {basenameStripExt, ensureTrailingPathSeparator} from '../../../utils/fs-utils';
+import {logger} from '../../../utils/logger';
 import {artWorkImageNameToType} from '../../folder/folder.format';
 import {Artwork, Folder, FolderTag} from '../../folder/folder.model';
 import {Store} from '../../store/store';
@@ -13,7 +14,6 @@ import {Track, TrackTag} from '../../track/track.model';
 import {Changes} from '../changes/changes';
 import {MatchDirMetaStats, MetaStat} from '../match-dir/match-dir.meta-stats';
 import {MatchDir, MatchFile} from '../match-dir/match-dir.types';
-import {logger} from '../../../utils/logger';
 
 const log = logger('IO.MatchDirMergeBuilder');
 

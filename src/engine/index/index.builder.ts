@@ -5,9 +5,9 @@ import {AlbumStore, SearchQueryAlbum} from '../album/album.store';
 import {ArtistStore, SearchQueryArtist} from '../artist/artist.store';
 import {Folder} from '../folder/folder.model';
 import {FolderStore, SearchQueryFolder} from '../folder/folder.store';
+import {SearchQuerySeries, SeriesStore} from '../series/series.store';
 import {TrackStore} from '../track/track.store';
 import {AlbumIndex, AlbumIndexEntry, ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry, SeriesIndex, SeriesIndexEntry} from './index.model';
-import {SearchQuerySeries, SeriesStore} from '../series/series.store';
 
 export class IndexTreeBuilder {
 	private ignore: string;

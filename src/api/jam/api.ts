@@ -16,6 +16,7 @@ import {PlayQueueController} from '../../engine/playqueue/playqueue.controller';
 import {PodcastController} from '../../engine/podcast/podcast.controller';
 import {RadioController} from '../../engine/radio/radio.controller';
 import {RootController} from '../../engine/root/root.controller';
+import {SeriesController} from '../../engine/series/series.controller';
 import {SessionController} from '../../engine/session/session.controller';
 import {SettingsController} from '../../engine/settings/settings.controller';
 import {StatsController} from '../../engine/stats/stats.controller';
@@ -24,7 +25,6 @@ import {TrackController} from '../../engine/track/track.controller';
 import {UserController} from '../../engine/user/user.controller';
 import {User} from '../../engine/user/user.model';
 import {WaveformController} from '../../engine/waveform/waveform.controller';
-import {SeriesController} from '../../engine/series/series.controller';
 
 export interface JamRequest<T> {
 	query: T;

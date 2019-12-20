@@ -1,10 +1,10 @@
 import fse from 'fs-extra';
 import {ArtworkImageType, FolderTypesAlbum} from '../../model/jam-types';
 import {testService} from '../base/base.service.spec';
+import {mockFolderArtwork} from '../folder/folder.mock';
 import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
 import {TrackService} from './track.service';
-import {mockFolderArtwork} from '../folder/folder.mock';
 
 describe('TrackService', () => {
 	let trackService: TrackService;

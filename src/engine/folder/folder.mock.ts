@@ -1,10 +1,10 @@
+import fse from 'fs-extra';
+import path from 'path';
 import {DBObjectType} from '../../db/db.types';
 import {AlbumType, ArtworkImageType, FolderType} from '../../model/jam-types';
+import {mockImage} from '../../modules/image/image.module.spec';
 import {mockPath} from '../../utils/testutils.spec';
 import {Folder} from './folder.model';
-import {mockImage} from '../../modules/image/image.module.spec';
-import path from 'path';
-import fse from 'fs-extra';
 
 export function mockFolder(): Folder {
 	return {

@@ -12,10 +12,10 @@ import {EpisodeStore} from '../episode/episode.store';
 import {Folder} from '../folder/folder.model';
 import {Playlist} from '../playlist/playlist.model';
 import {Podcast} from '../podcast/podcast.model';
+import {Series} from '../series/series.model';
 import {Track} from '../track/track.model';
 import {TrackStore} from '../track/track.store';
 import {User} from '../user/user.model';
-import {Series} from '../series/series.model';
 
 export class DownloadService {
 

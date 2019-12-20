@@ -4,9 +4,9 @@ import {logger} from '../../utils/logger';
 import {Album} from '../album/album.model';
 import {Artist} from '../artist/artist.model';
 import {Folder} from '../folder/folder.model';
+import {Series} from '../series/series.model';
 import {MetaDataFormat} from './metadata.format';
 import {MetaDataService} from './metadata.service';
-import {Series} from '../series/series.model';
 
 const log = logger('Metadata');
 

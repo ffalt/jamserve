@@ -1,6 +1,7 @@
 import {JamApi} from '../../api/jam/api';
 import {Errors} from '../../api/jam/error';
 import {Jam} from '../../model/jam-rest-data';
+import {AlbumType} from '../../model/jam-types';
 import {testBaseListController} from '../base/dbobject-list.controller.spec';
 import {mockTrack} from '../track/track.mock';
 import {Track} from '../track/track.model';
@@ -8,7 +9,6 @@ import {User} from '../user/user.model';
 import {ArtistController} from './artist.controller';
 import {mockArtist} from './artist.mock';
 import {Artist} from './artist.model';
-import {AlbumType} from '../../model/jam-types';
 
 describe('ArtistController', () => {
 	let controller: ArtistController;

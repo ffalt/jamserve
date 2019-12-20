@@ -1,14 +1,12 @@
 import fse from 'fs-extra';
-import path from 'path';
 import {DBObjectType} from '../../db/db.types';
 import {AlbumType, ArtworkImageType, FolderTypesAlbum} from '../../model/jam-types';
-import {mockImage} from '../../modules/image/image.module.spec';
 import {testService} from '../base/base.service.spec';
+import {mockFolderArtwork} from '../folder/folder.mock';
 import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
 import {TrackService} from '../track/track.service';
 import {AlbumService} from './album.service';
-import {mockFolderArtwork} from '../folder/folder.mock';
 
 describe('AlbumService', () => {
 	let albumService: AlbumService;
@@ -27,14 +25,14 @@ describe('AlbumService', () => {
 					let folder = await albumService.getAlbumFolder({
 						id: 'invalid', type: DBObjectType.album,
 						name: 'invalid', albumType: AlbumType.album, artistID: 'invalid',
-						created: 0, duration: 0, slug: 'invalid',
+						created: 0, duration: 0, slug: 'invalid', genres: [],
 						folderIDs: [], rootIDs: [], trackIDs: []
 					});
 					expect(folder).toBeUndefined();
 					folder = await albumService.getAlbumFolder({
 						id: 'invalid', type: DBObjectType.album,
 						name: 'invalid', albumType: AlbumType.album, artistID: 'invalid',
-						created: 0, duration: 0, slug: 'invalid',
+						created: 0, duration: 0, slug: 'invalid', genres: [],
 						folderIDs: ['invalid', 'invalid'], rootIDs: [], trackIDs: []
 					});
 					expect(folder).toBeUndefined();
