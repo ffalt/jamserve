@@ -84,6 +84,7 @@ export class IoService {
 	private current: WorkerRequest<WorkerRequestParameters> | undefined;
 	private queue: Array<WorkerRequest<WorkerRequestParameters>> = [];
 	private delayedTrackTagWrite = new Map<string, { request: WorkerRequest<WorkerRequestWriteTrackTags>, timeout?: NodeJS.Timeout }>();
+	private delayedTrackFix = new Map<string, { request: WorkerRequest<WorkerRequestFixTrack>, timeout?: NodeJS.Timeout }>();
 	private nextID: number = Date.now();
 	private afterScanTimeout: NodeJS.Timeout | undefined;
 	private history: Array<{ id: string; error?: string; date: number; }> = [];
@@ -202,6 +203,11 @@ export class IoService {
 			return {id, error: done.error, done: done.date};
 		}
 		for (const d of this.delayedTrackTagWrite) {
+			if (d[1].request.id === id) {
+				return {id};
+			}
+		}
+		for (const d of this.delayedTrackFix) {
 			if (d[1].request.id === id) {
 				return {id};
 			}
@@ -382,9 +388,33 @@ export class IoService {
 	}
 
 	async fixTrack(trackID: string, fixID: TrackHealthID, rootID: string): Promise<Jam.AdminChangeQueueInfo> {
-		return this.newRequest<WorkerRequestFixTrack>(
-			WorkerRequestMode.fixTrack, p => this.workerService.fixTrack(p), {rootID, trackID, fixID}
-		);
+		const oldRequest = this.findRequest(rootID, WorkerRequestMode.fixTrack);
+		if (oldRequest) {
+			(oldRequest.parameters as WorkerRequestFixTrack).fixes.push({trackID, fixID});
+			return this.getRequestInfo(oldRequest);
+		}
+		let delayedCmd = this.delayedTrackFix.get(rootID);
+		if (delayedCmd) {
+			if (delayedCmd.timeout) {
+				clearTimeout(delayedCmd.timeout);
+			}
+			(delayedCmd.request.parameters).fixes.push({trackID, fixID});
+		} else {
+			delayedCmd = {
+				request:
+					new WorkerRequest<WorkerRequestFixTrack>(this.generateRequestID(),
+						WorkerRequestMode.fixTrack, p => this.workerService.fixTracks(p), {rootID, fixes: [{trackID, fixID}]}),
+				timeout: undefined
+			};
+			this.delayedTrackFix.set(rootID, delayedCmd);
+		}
+		delayedCmd.timeout = setTimeout(() => {
+			this.delayedTrackFix.delete(rootID);
+			if (delayedCmd) {
+				this.addRequest(delayedCmd.request);
+			}
+		}, 10000);
+		return this.getRequestInfo(delayedCmd.request);
 	}
 
 	async renameFolder(folderID: string, newName: string, rootID: string): Promise<Jam.AdminChangeQueueInfo> {

@@ -8,6 +8,7 @@ import {Store} from '../../store/store';
 import {Changes} from '../changes/changes';
 import {MatchDir} from '../match-dir/match-dir.types';
 import {MatchDirMergeBuilder, MatchDirMergeTagBuilder, MergeMatchDir} from './merge.match-dir.builder';
+import {processQueue} from '../../../utils/queue';
 
 const log = logger('IO.MatchDirMerge');
 
@@ -45,9 +46,14 @@ export class MatchDirMerge {
 				changes.newFolders.push(folder);
 			}
 		}
-		for (const d of dir.directories) {
-			await MatchDirMerge.mergeRecursive(d, changes);
+		if (dir.directories.length > 0) {
+			await processQueue<MergeMatchDir>(3, dir.directories, async d => {
+				await MatchDirMerge.mergeRecursive(d, changes);
+			});
 		}
+		// for (const d of dir.directories) {
+		// 	await MatchDirMerge.mergeRecursive(d, changes);
+		// }
 	}
 
 	async merge(dir: MatchDir, rootID: string, rebuildDirTag: (dir: MatchDir) => boolean, forceTrackMetaRefresh: boolean, changes: Changes): Promise<void> {

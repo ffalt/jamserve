@@ -14,6 +14,7 @@ import {Track, TrackTag} from '../../track/track.model';
 import {Changes} from '../changes/changes';
 import {MatchDirMetaStats, MetaStat} from '../match-dir/match-dir.meta-stats';
 import {MatchDir, MatchFile} from '../match-dir/match-dir.types';
+import {processQueue} from '../../../utils/queue';
 
 const log = logger('IO.MatchDirMergeBuilder');
 
@@ -107,8 +108,13 @@ export class MatchDirMergeBuilder {
 		for (const sub of dir.directories) {
 			await this.buildMerge(sub, changes, forceTrackMetaRefresh);
 		}
-		for (const file of dir.files) {
-			if (file.type === FileTyp.AUDIO && dir.folder) {
+		if (dir.folder) {
+			const files = dir.files.filter(file => (file.type === FileTyp.AUDIO));
+			// const folder = dir.folder;
+			// await processQueue<MatchFile>(3, files, async file => {
+			// 	await this.buildMergeTrack(file, folder, changes, forceTrackMetaRefresh);
+			// });
+			for (const file of files) {
 				await this.buildMergeTrack(file, dir.folder, changes, forceTrackMetaRefresh);
 			}
 		}
