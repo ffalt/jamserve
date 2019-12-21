@@ -4,6 +4,7 @@ import {FileTyp} from '../../../model/jam-types';
 import {getFileType} from '../../../utils/filetype';
 import {ensureTrailingPathSeparator} from '../../../utils/fs-utils';
 import {logger} from '../../../utils/logger';
+import {processQueue} from '../../../utils/queue';
 
 const log = logger('IO.DirScanner');
 
@@ -64,9 +65,11 @@ export class DirScanner {
 				}
 			}
 		}
-		for (const folder of folders) {
-			const sub = await this.scanDirR(folder.dir, folder.stat, rootID);
-			result.directories.push(sub);
+		if (folders.length > 0) {
+			await processQueue<{ dir: string, stat: fse.Stats }>(3, folders, async folder => {
+				const sub = await this.scanDirR(folder.dir, folder.stat, rootID);
+				result.directories.push(sub);
+			});
 		}
 		return result;
 	}

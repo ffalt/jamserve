@@ -10,6 +10,9 @@ import {Changes, emptyChanges} from '../changes/changes';
 import {MatchDir} from '../match-dir/match-dir.types';
 import {MatchDirMerge} from '../merge/merge.match-dir';
 import {MetaMerger} from '../merge/merge.meta';
+import {logger} from '../../../utils/logger';
+
+const log = logger('IO.ChangesWorker');
 
 export class ChangesWorker {
 
@@ -24,30 +27,35 @@ export class ChangesWorker {
 		let imageCleanIds = new Set<string>();
 		let trackCleanIds = new Set<string>();
 		if (changes.removedAlbums.length > 0) {
+			log.debug('Removing Albums:', changes.removedAlbums.length);
 			const albumIDs = changes.removedAlbums.map(a => a.id);
 			await this.store.albumStore.remove(albumIDs);
 			await this.store.stateStore.removeByQuery({destIDs: albumIDs, type: DBObjectType.album});
 			imageCleanIds = new Set<string>([...imageCleanIds, ...albumIDs]);
 		}
 		if (changes.removedArtists.length > 0) {
+			log.debug('Removing Artists:', changes.removedArtists.length);
 			const artistIDs = changes.removedArtists.map(a => a.id);
 			await this.store.artistStore.remove(artistIDs);
 			await this.store.stateStore.removeByQuery({destIDs: artistIDs, type: DBObjectType.artist});
 			imageCleanIds = new Set<string>([...imageCleanIds, ...artistIDs]);
 		}
 		if (changes.removedFolders.length > 0) {
+			log.debug('Removing Folders:', changes.removedFolders.length);
 			const folderIDs = changes.removedFolders.map(folder => folder.id);
 			await this.store.folderStore.remove(folderIDs);
 			await this.store.stateStore.removeByQuery({destIDs: folderIDs, type: DBObjectType.folder});
 			imageCleanIds = new Set<string>([...imageCleanIds, ...folderIDs]);
 		}
 		if (changes.removedSeries.length > 0) {
+			log.debug('Removing Series:', changes.removedSeries.length);
 			const seriesIDs = changes.removedSeries.map(series => series.id);
 			await this.store.seriesStore.remove(seriesIDs);
 			await this.store.stateStore.removeByQuery({destIDs: seriesIDs, type: DBObjectType.series});
 			imageCleanIds = new Set<string>([...imageCleanIds, ...seriesIDs]);
 		}
 		if (changes.removedTracks.length > 0) {
+			log.debug('Removing Tracks:', changes.removedTracks.length);
 			const trackIDs = changes.removedTracks.map(track => track.id);
 			imageCleanIds = new Set<string>([...imageCleanIds, ...trackIDs]);
 			trackCleanIds = new Set<string>([...trackCleanIds, ...trackIDs]);
@@ -57,10 +65,10 @@ export class ChangesWorker {
 			const playlists = await this.store.playlistStore.search({trackIDs});
 			if (playlists.items.length > 0) {
 				for (const playlist of playlists.items) {
+					const count = playlist.trackIDs.length;
 					playlist.trackIDs = playlist.trackIDs.filter(id => !trackIDs.includes(id));
-					if (playlist.trackIDs.length === 0) {
-						await this.store.playlistStore.remove(playlist.id);
-					} else {
+					if (count !== playlist.trackIDs.length) {
+						log.debug('Updating Playlist:', playlist.name);
 						await updatePlayListTracks(this.store.trackStore, playlist);
 						await this.store.playlistStore.replace(playlist);
 					}
@@ -92,24 +100,36 @@ export class ChangesWorker {
 		}
 		let ids = [...imageCleanIds];
 		if (ids.length > 0) {
+			log.debug('Cleaning Image Cache IDs:', ids.length);
 			await this.imageModule.clearImageCacheByIDs(ids);
 		}
 		ids = [...trackCleanIds];
 		if (ids.length > 0) {
+			log.debug('Cleaning Audio Cache IDs:', ids.length);
 			await this.audioModule.clearCacheByIDs(ids);
 		}
 	}
 
 	async storeChanges(changes: Changes): Promise<void> {
+		log.debug('Storing New Tracks:', changes.newTracks.length);
 		await this.store.trackStore.bulk(changes.newTracks);
+		log.debug('Updating Tracks:', changes.updateTracks.length);
 		await this.store.trackStore.upsert(changes.updateTracks.map(t => t.track));
+		log.debug('Storing New Folders:', changes.newTracks.length);
 		await this.store.folderStore.bulk(changes.newFolders);
+		log.debug('Updating Folders:', changes.updateFolders.length);
 		await this.store.folderStore.upsert(changes.updateFolders);
+		log.debug('Storing New Albums:', changes.newTracks.length);
 		await this.store.albumStore.bulk(changes.newAlbums);
+		log.debug('Updating Albums:', changes.updateAlbums.length);
 		await this.store.albumStore.upsert(changes.updateAlbums);
+		log.debug('Storing New Artists:', changes.newTracks.length);
 		await this.store.artistStore.bulk(changes.newArtists);
+		log.debug('Updating Artists:', changes.updateArtists.length);
 		await this.store.artistStore.upsert(changes.updateArtists);
+		log.debug('Storing New Series:', changes.newTracks.length);
 		await this.store.seriesStore.bulk(changes.newSeries);
+		log.debug('Updating Series:', changes.updateSeries.length);
 		await this.store.seriesStore.upsert(changes.updateSeries);
 	}
 

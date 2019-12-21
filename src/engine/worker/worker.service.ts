@@ -27,8 +27,7 @@ export interface WorkerRequestRenameTrack extends WorkerRequestParameters {
 }
 
 export interface WorkerRequestFixTrack extends WorkerRequestParameters {
-	trackID: string;
-	fixID: TrackHealthID;
+	fixes: Array<{ trackID: string; fixID: TrackHealthID }>;
 }
 
 export interface WorkerRequestRenameFolder extends WorkerRequestParameters {
@@ -254,9 +253,9 @@ export class WorkerService {
 		return this.changes.finish(changes, root.id, false);
 	}
 
-	async fixTrack(parameters: WorkerRequestFixTrack): Promise<Changes> {
+	async fixTracks(parameters: WorkerRequestFixTrack): Promise<Changes> {
 		const {root, changes} = await this.changes.start(parameters.rootID);
-		const {changedFolderIDs, changedTrackIDs} = await this.trackWorker.fix(parameters.trackID, parameters.fixID);
+		const {changedFolderIDs, changedTrackIDs} = await this.trackWorker.fix(parameters.fixes);
 		await this.mergeDBMatch(root, changedFolderIDs, changedTrackIDs, changes);
 		return this.changes.finish(changes, root.id, false);
 	}

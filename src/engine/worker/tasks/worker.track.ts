@@ -33,22 +33,27 @@ export class TrackWorker {
 		return {changedTrackIDs, changedFolderIDs};
 	}
 
-	public async fix(trackID: string, fixID: TrackHealthID): Promise<{ changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {
-		const track = await this.store.trackStore.byId(trackID);
-		if (!track) {
-			return Promise.reject(Error('Track not found'));
+	public async fix(fixes: Array<{ trackID: string, fixID: TrackHealthID }>): Promise<{ changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {
+		const changedFolderIDs = new Set<string>();
+		const changedTrackIDs = new Set<string>();
+		const tracks = await this.store.trackStore.byIds(fixes.map(t => t.trackID));
+		for (const fix of fixes) {
+			const track = tracks.find(t => t.id === fix.trackID);
+			if (track) {
+				changedTrackIDs.add(track.id);
+				changedFolderIDs.add(track.parentID);
+				if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].includes(fix.fixID)) {
+					await this.audioModule.rewriteMP3(path.join(track.path, track.name));
+				} else if ([TrackHealthID.mp3Garbage, TrackHealthID.mp3MediaValid].includes(fix.fixID)) {
+					await this.audioModule.fixMP3Audio(path.join(track.path, track.name));
+				} else if ([TrackHealthID.id3v2NoId3v1].includes(fix.fixID)) {
+					await this.audioModule.removeMP3ID3v1Tag(path.join(track.path, track.name));
+				} else {
+					return Promise.reject(Error('Invalid TrackHealthID'));
+				}
+			}
 		}
-		if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].includes(fixID)) {
-			await this.audioModule.rewriteMP3(path.join(track.path, track.name));
-		} else if ([TrackHealthID.mp3Garbage, TrackHealthID.mp3MediaValid].includes(fixID)) {
-			await this.audioModule.fixMP3Audio(path.join(track.path, track.name));
-		} else if ([TrackHealthID.id3v2NoId3v1].includes(fixID)) {
-			await this.audioModule.removeMP3ID3v1Tag(path.join(track.path, track.name));
-		} else {
-			return Promise.reject(Error('Invalid TrackHealthID'));
-		}
-		return {changedTrackIDs: [track.id], changedFolderIDs: [track.parentID]};
-
+		return {changedFolderIDs: [...changedFolderIDs], changedTrackIDs: [...changedTrackIDs]};
 	}
 
 	public async rename(trackID: string, newName: string): Promise<void> {
