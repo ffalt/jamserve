@@ -188,6 +188,20 @@ const folderRules: Array<FolderRuleInfo> = [
 		}
 	},
 	{
+		id: FolderHealthID.albumImageQuality,
+		name: 'Album folder image is of low quality',
+		run: async (folder, parents, root) => {
+			if ((folder.tag.type === FolderType.album) || (folder.tag.type === FolderType.multialbum && folder.tag.folderCount > 0)) {
+				const artwork = await getFolderDisplayImage(folder);
+				if (artwork && artwork.image) {
+					if (artwork.image.height && artwork.image.width && (artwork.image.height < 300 || artwork.image.width < 300)) {
+						return {details: [{reason: 'Image is too small', actual: `${artwork.image.width} x ${artwork.image.height}`, expected: '>=300 x >=300'}]};
+					}
+				}
+			}
+		}
+	},
+	{
 		id: FolderHealthID.artistImageExists,
 		name: 'Artist folder image is missing',
 		run: async (folder, parents, root) => {
