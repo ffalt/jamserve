@@ -236,6 +236,7 @@ export enum FolderHealthID {
 	albumNameConform = 'folder.album.name.conform',
 	albumImageExists = 'folder.album.image.exists',
 	albumImageValid = 'folder.album.image.valid',
+	albumImageQuality = 'folder.album.image.quality',
 	artistNameConform = 'folder.artist.name.conform',
 	artistImageExists = 'folder.artist.image.exists',
 	artistImageValid = 'folder.artist.image.valid'

@@ -24,13 +24,13 @@ export class StreamController {
 
 	async streamTrack(track: Track, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
 		const result = await this.streamService.streamTrack(track, format, maxBitRate, user);
-		this.nowPlayingService.reportTrack(track, user).catch(e => log.error(e)); // do not wait
+		// this.nowPlayingService.reportTrack(track, user).catch(e => log.error(e)); // do not wait
 		return result;
 	}
 
 	async streamEpisode(episode: Episode, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
 		const result = await this.streamService.streamEpisode(episode, format, maxBitRate, user);
-		this.nowPlayingService.reportEpisode(episode, user).catch(e => log.error(e)); // do not wait
+		// this.nowPlayingService.reportEpisode(episode, user).catch(e => log.error(e)); // do not wait
 		return result;
 	}
 
@@ -43,6 +43,20 @@ export class StreamController {
 			default:
 		}
 		return Promise.reject(Error('Invalid Object Type for Streaming'));
+	}
+
+	async scrobble(req: JamRequest<JamParameters.ID>): Promise<void> {
+		const o = await this.byID(req.query.id);
+		switch (o.type) {
+			case DBObjectType.track:
+				this.nowPlayingService.reportTrack(o as Track, req.user).catch(e => log.error(e)); // do not wait
+				break;
+			case DBObjectType.episode:
+				this.nowPlayingService.reportEpisode(o as Episode, req.user).catch(e => log.error(e)); // do not wait
+				break;
+			default:
+				return Promise.reject(Error('Invalid Object Type for Scrobbling'));
+		}
 	}
 
 	async stream(req: JamRequest<JamParameters.PathStream>): Promise<ApiBinaryResult> {

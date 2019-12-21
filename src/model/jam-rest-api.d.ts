@@ -1335,6 +1335,14 @@ export interface JamApi {
 		};
 
 		/**
+		 * media: scrobble a media file
+		 */
+		'stream/scrobble'?: {
+			params: JamParameters.ID;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+		};
+
+		/**
 		 * bookmark: create a bookmark
 		 */
 		'bookmark/create'?: {

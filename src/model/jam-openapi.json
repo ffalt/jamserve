@@ -16276,6 +16276,42 @@
 				}
 			}
 		},
+		"/stream/scrobble": {
+			"post": {
+				"operationId": "streamController.scrobble",
+				"description": "scrobble a media file",
+				"tags": [
+					"media"
+				],
+				"responses": {
+					"200": {
+						"description": "ok"
+					},
+					"400": {
+						"description": "Invalid/Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"500": {
+						"description": "Guru Meditation"
+					}
+				},
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JamParameters.ID"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/bookmark/create": {
 			"post": {
 				"operationId": "bookmarkController.create",
@@ -25913,6 +25949,18 @@
 					"username"
 				]
 			},
+			"JamParameters.ID": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "the item id",
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
 			"JamParameters.BookmarkCreate": {
 				"type": "object",
 				"properties": {
@@ -26019,18 +26067,6 @@
 						"description": "radio homepage url",
 						"type": "string"
 					},
-					"id": {
-						"description": "the item id",
-						"type": "string"
-					}
-				},
-				"required": [
-					"id"
-				]
-			},
-			"JamParameters.ID": {
-				"type": "object",
-				"properties": {
 					"id": {
 						"description": "the item id",
 						"type": "string"

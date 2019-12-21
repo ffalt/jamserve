@@ -745,6 +745,11 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: ApiBinaryResult = await api.downloadController.downloadByPathParameter(options);
 		ApiResponder.binary(req, res, result);
 	}, ['stream'], 'download/{pathParameter}');
+	register.post('/stream/scrobble', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
+		await api.streamController.scrobble(options);
+		ApiResponder.ok(req, res);
+	});
 	register.post('/bookmark/create', async (req, res) => {
 		const options: JamRequest<JamParameters.BookmarkCreate> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.Bookmark = await api.bookmarkController.create(options);
