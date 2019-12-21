@@ -22,7 +22,13 @@ export class JamBaseService {
 		let result = new HttpParams();
 		for (const key of Object.keys(buildParams)) {
 			if (buildParams[key] !== undefined) {
-				result = result.append(key, buildParams[key]);
+				if (Array.isArray(buildParams[key])) {
+					for (const sub of buildParams[key]) {
+						result = result.append(key, sub);
+					}
+				} else {
+					result = result.append(key, buildParams[key]);
+				}
 			}
 		}
 		return {url: this.authService.auth.server + this.authService.apiPrefix + view, parameters: result};
