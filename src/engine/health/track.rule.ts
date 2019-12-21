@@ -160,7 +160,7 @@ const trackRules: Array<TrackRuleInfo> = [
 	},
 	{
 		id: TrackHealthID.mp3Garbage,
-		name: 'MP3 has garbage data',
+		name: 'MP3 has unaccounted data',
 		mp3: true,
 		run: async (track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.mp3Warnings && tagCache.mp3Warnings.mpeg) {
