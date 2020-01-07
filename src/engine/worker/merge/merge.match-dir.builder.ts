@@ -7,6 +7,7 @@ import {ImageModule} from '../../../modules/image/image.module';
 import {generateArtworkId} from '../../../utils/artwork-id';
 import {basenameStripExt, ensureTrailingPathSeparator} from '../../../utils/fs-utils';
 import {logger} from '../../../utils/logger';
+import {processQueue} from '../../../utils/queue';
 import {artWorkImageNameToType} from '../../folder/folder.format';
 import {Artwork, Folder, FolderTag} from '../../folder/folder.model';
 import {Store} from '../../store/store';
@@ -14,7 +15,6 @@ import {Track, TrackTag} from '../../track/track.model';
 import {Changes} from '../changes/changes';
 import {MatchDirMetaStats, MetaStat} from '../match-dir/match-dir.meta-stats';
 import {MatchDir, MatchFile} from '../match-dir/match-dir.types';
-import {processQueue} from '../../../utils/queue';
 
 const log = logger('IO.MatchDirMergeBuilder');
 
@@ -110,13 +110,10 @@ export class MatchDirMergeBuilder {
 		}
 		if (dir.folder) {
 			const files = dir.files.filter(file => (file.type === FileTyp.AUDIO));
-			// const folder = dir.folder;
-			// await processQueue<MatchFile>(3, files, async file => {
-			// 	await this.buildMergeTrack(file, folder, changes, forceTrackMetaRefresh);
-			// });
-			for (const file of files) {
-				await this.buildMergeTrack(file, dir.folder, changes, forceTrackMetaRefresh);
-			}
+			const folder = dir.folder;
+			await processQueue<MatchFile>(3, files, async file => {
+				await this.buildMergeTrack(file, folder, changes, forceTrackMetaRefresh);
+			});
 		}
 		return dir as MergeMatchDir;
 	}

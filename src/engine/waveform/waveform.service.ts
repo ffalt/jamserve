@@ -12,12 +12,12 @@ export class WaveformService {
 	}
 
 	async getTrackWaveform(track: Track, format: WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
-		return this.audioModule.getWaveForm(track.id, path.join(track.path, track.name), format, width);
+		return this.audioModule.waveform.get(track.id, path.join(track.path, track.name), format, width);
 	}
 
 	async getEpisodeWaveform(episode: Episode, format: WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
 		if (episode.path && episode.media) {
-			return this.audioModule.getWaveForm(episode.id, episode.path, format, width);
+			return this.audioModule.waveform.get(episode.id, episode.path, format, width);
 		}
 		return Promise.reject(Error('Podcast episode not ready'));
 	}

@@ -8,6 +8,7 @@ import {ensureTrailingPathSeparator, fileExt, replaceFileSystemChars} from '../.
 import {Root} from '../../root/root.model';
 import {Store} from '../../store/store';
 import {Track} from '../../track/track.model';
+import {processQueue} from '../../../utils/queue';
 
 export class TrackWorker {
 
@@ -37,22 +38,23 @@ export class TrackWorker {
 		const changedFolderIDs = new Set<string>();
 		const changedTrackIDs = new Set<string>();
 		const tracks = await this.store.trackStore.byIds(fixes.map(t => t.trackID));
-		for (const fix of fixes) {
-			const track = tracks.find(t => t.id === fix.trackID);
-			if (track) {
-				changedTrackIDs.add(track.id);
-				changedFolderIDs.add(track.parentID);
-				if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].includes(fix.fixID)) {
-					await this.audioModule.rewriteMP3(path.join(track.path, track.name));
-				} else if ([TrackHealthID.mp3Garbage, TrackHealthID.mp3MediaValid].includes(fix.fixID)) {
-					await this.audioModule.fixMP3Audio(path.join(track.path, track.name));
-				} else if ([TrackHealthID.id3v2NoId3v1].includes(fix.fixID)) {
-					await this.audioModule.removeMP3ID3v1Tag(path.join(track.path, track.name));
-				} else {
-					return Promise.reject(Error('Invalid TrackHealthID'));
+		const fixTasks: Array<{ filename: string, fixIDs: Array<TrackHealthID> }> = [];
+		for (const track of tracks) {
+			changedTrackIDs.add(track.id);
+			changedFolderIDs.add(track.parentID);
+			fixTasks.push({filename: path.join(track.path, track.name), fixIDs: fixes.filter(f => f.trackID === track.id).map(f => f.fixID)});
+		}
+		await processQueue<{ filename: string, fixIDs: Array<TrackHealthID> }>(3, fixTasks, async item => {
+			for (const fixID of item.fixIDs) {
+				if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].includes(fixID)) {
+					await this.audioModule.mp3.rewrite(item.filename);
+				} else if ([TrackHealthID.mp3Garbage, TrackHealthID.mp3MediaValid].includes(fixID)) {
+					await this.audioModule.mp3.fixAudio(item.filename);
+				} else if ([TrackHealthID.id3v2NoId3v1].includes(fixID)) {
+					await this.audioModule.mp3.removeID3v1(item.filename);
 				}
 			}
-		}
+		});
 		return {changedFolderIDs: [...changedFolderIDs], changedTrackIDs: [...changedTrackIDs]};
 	}
 

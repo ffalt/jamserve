@@ -1,8 +1,8 @@
 import {ID3v2, IID3V1, IID3V2, IMP3Analyzer, MP3Analyzer} from 'jamp3';
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
-import {AlbumType, AlbumTypesArtistMusic, AudioFormatType, TrackHealthID} from '../../model/jam-types';
-import {ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
+import {AlbumTypesArtistMusic, AudioFormatType, TrackHealthID} from '../../model/jam-types';
+import {AudioModule, ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
 import {flac_test} from '../../modules/audio/tools/flac';
 import {logger} from '../../utils/logger';
 import {Folder} from '../folder/folder.model';
@@ -250,15 +250,18 @@ function isFlac(track: Track): boolean {
 
 export class TrackRulesChecker {
 
+	constructor(private audiomodule: AudioModule) {
+	}
+
 	async run(track: Track, parent: Folder, root: Root, checkMedia: boolean): Promise<Array<Jam.HealthHint>> {
 		const result: Array<Jam.HealthHint> = [];
 		const mediaCache: MediaCache = {};
 		const filename = path.join(track.path, track.name);
+		log.debug('Analyzing track', filename);
 		if (checkMedia) {
 			if (isMP3(track)) {
 				log.debug('Check MPEG', filename);
-				const mp3ana = new MP3Analyzer();
-				const ana = await mp3ana.read(filename, {id3v1: true, id3v2: true, mpeg: true, xing: true, ignoreXingOffOne: true});
+				const ana = await this.audiomodule.mp3.analyze(filename);
 				mediaCache.id3v1 = ana.tags.id3v1;
 				mediaCache.id3v2 = ana.tags.id3v2;
 				mediaCache.mp3Warnings = {
@@ -285,7 +288,6 @@ export class TrackRulesChecker {
 				}
 			}
 		}
-		log.debug('Analyzing track', filename);
 		const mp3 = isMP3(track);
 		const flac = isFlac(track);
 		for (const rule of trackRules) {

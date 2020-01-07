@@ -27,7 +27,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		if (!req.query.artist || !req.query.title) {
 			return {lyrics: {content: ''}};
 		}
-		const lyrics = await this.engine.audioModule.getLyrics(req.query.artist, req.query.title);
+		const lyrics = await this.engine.metaDataService.lyrics(req.query.artist, req.query.title);
 		if (!lyrics || !lyrics.lyrics) {
 			return {lyrics: {content: ''}};
 		}

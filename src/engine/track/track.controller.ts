@@ -30,6 +30,7 @@ import {formatTrack} from './track.format';
 import {Track} from './track.model';
 import {TrackService} from './track.service';
 import {SearchQueryTrack} from './track.store';
+import {processQueue} from '../../utils/queue';
 
 const log = logger('TrackController');
 
@@ -41,7 +42,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 	Track,
 	Jam.Track,
 	JamParameters.TrackList> {
-	checker = new TrackRulesChecker();
+	checker: TrackRulesChecker;
 
 	constructor(
 		public trackService: TrackService,
@@ -57,6 +58,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		protected downloadService: DownloadService
 	) {
 		super(trackService, stateService, imageService, downloadService);
+		this.checker = new TrackRulesChecker(audioModule);
 	}
 
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
@@ -190,6 +192,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		const result: Array<Jam.TrackHealth> = [];
 		const roots: Array<Root> = [];
 		const folders: Array<Folder> = [];
+		const checks: Array<{ track: Track, folder: Folder, root: Root }> = [];
 		for (const track of list.items) {
 			let root = roots.find(r => r.id === track.rootID);
 			if (!root) {
@@ -208,16 +211,26 @@ export class TrackController extends BaseListController<JamParameters.Track,
 
 				}
 				if (folder) {
-					const health = await this.checker.run(track, folder, root, !!req.query.media);
-					if (health && health.length > 0) {
-						result.push({
-							track: await this.prepare(track, req.query, req.user),
-							health
-						});
-					}
+					checks.push({track, folder, root});
+					// const health = await this.checker.run(track, folder, root, !!req.query.media);
+					// if (health && health.length > 0) {
+					// result.push({
+					// 	track: await this.prepare(track, req.query, req.user),
+					// 	health
+					// });
+					// }
 				}
 			}
 		}
+		await processQueue<{ track: Track, folder: Folder, root: Root }>(3, checks, async item => {
+			const health = await this.checker.run(item.track, item.folder, item.root, !!req.query.media);
+			if (health && health.length > 0) {
+				result.push({
+					track: await this.prepare(item.track, req.query, req.user),
+					health
+				});
+			}
+		});
 		return result;
 	}
 

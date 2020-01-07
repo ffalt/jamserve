@@ -31,7 +31,7 @@ export class StreamService {
 		}
 		const bitRate = maxBitRate || 0;
 		if (destFormat !== 'raw' && TranscoderStream.needsTranscoding(sourceFormat || fileSuffix(filename), destFormat, bitRate)) {
-			return this.audioModule.getTranscode(filename, id, destFormat, bitRate);
+			return this.audioModule.transcoder.get(filename, id, destFormat, bitRate);
 		}
 		return {file: {filename, name: `${id}.${destFormat}`}};
 	}

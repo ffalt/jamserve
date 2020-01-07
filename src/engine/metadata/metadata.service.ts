@@ -5,6 +5,7 @@ import {AcousticBrainz} from '../../model/acousticbrainz-rest-data';
 import {Acoustid} from '../../model/acoustid-rest-data';
 import {CoverArtArchive} from '../../model/coverartarchive-rest-data';
 import {Jam} from '../../model/jam-rest-data';
+import {CoverArtArchiveLookupType} from '../../model/jam-types';
 import {LastFM} from '../../model/lastfm-rest-data';
 import {MusicBrainz} from '../../model/musicbrainz-rest-data';
 import {AudioModule} from '../../modules/audio/audio.module';
@@ -79,18 +80,18 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	async musicbrainzSearch(type: string, query: MusicbrainzClientApi.SearchQuery): Promise<MusicBrainz.Response> {
 		return this.searchInStore<MusicBrainz.Response>(`search-${type}${JSON.stringify(query)}`,
 			MetaDataType.musicbrainz, async () => {
-				return this.audioModule.musicbrainzSearch(type, query);
+				return this.audioModule.musicbrainz.search({type, query});
 			});
 	}
 
 	async acoustidLookupTrack(track: Track, includes: string | undefined): Promise<Array<Acoustid.Result>> {
-		return this.audioModule.acoustidLookup(path.join(track.path, track.name), includes);
+		return this.audioModule.acoustid.acoustid(path.join(track.path, track.name), includes);
 	}
 
 	async lastFMLookup(type: string, mbid: string): Promise<LastFM.Result> {
 		return this.searchInStore<LastFM.Result>(`lookup-${type}${mbid}`,
 			MetaDataType.lastfm, async () => {
-				return this.audioModule.lastFMLookup(type, mbid);
+				return this.audioModule.lastFM.lookup(type, mbid);
 			});
 	}
 
@@ -132,28 +133,46 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 	async acousticbrainzLookup(mbid: string, nr: number | undefined): Promise<AcousticBrainz.Response> {
 		return this.searchInStore<AcousticBrainz.Response>(`lookup-${mbid}${nr !== undefined ? `-${nr}` : ''}`,
 			MetaDataType.acousticbrainz, async () => {
-				return this.audioModule.acousticbrainzLookup(mbid, nr);
+				return this.audioModule.acousticbrainz.highLevel(mbid, nr);
 			});
 	}
 
 	async coverartarchiveLookup(type: string, mbid: string): Promise<CoverArtArchive.Response> {
 		return this.searchInStore<CoverArtArchive.Response>(`lookup-${type}${mbid}`,
 			MetaDataType.coverartarchive, async () => {
-				return this.audioModule.coverartarchiveLookup(type, mbid);
+				if (type === CoverArtArchiveLookupType.release) {
+					return this.audioModule.coverArtArchive.releaseImages(mbid);
+				}
+				if (type === CoverArtArchiveLookupType.releaseGroup) {
+					return this.audioModule.coverArtArchive.releaseGroupImages(mbid);
+				}
+				return Promise.reject(Error('Invalid CoverArtArchive Lookup Type'));
 			});
 	}
 
 	async musicbrainzLookup(type: string, mbid: string, inc?: string): Promise<MusicBrainz.Response> {
 		return this.searchInStore<MusicBrainz.Response>(`lookup-${type}${mbid}${inc ? inc : ''}`,
 			MetaDataType.musicbrainz, async () => {
-				return this.audioModule.musicbrainzLookup(type, mbid, inc);
+				return this.audioModule.musicbrainz.lookup({type, id: mbid, inc});
 			});
 	}
 
 	async lyrics(artist: string, song: string): Promise<Jam.TrackLyrics> {
 		return this.searchInStore<Jam.TrackLyrics>(`lyrics-${artist}/${song}`,
 			MetaDataType.lyrics, async () => {
-				return (await this.audioModule.getLyrics(artist, song)) || {};
+				let result = await this.audioModule.lyricsOVH.search(artist, song);
+				const cutVariants = ['(', '/', '[', ':'];
+				for (const cut of cutVariants) {
+					if (!result || !result.lyrics) {
+						if (song.includes(cut)) {
+							const title = song.slice(0, song.indexOf(cut)).trim();
+							if (title.length > 0) {
+								result = await this.audioModule.lyricsOVH.search(artist, title);
+							}
+						}
+					}
+				}
+				return result;
 			});
 	}
 
@@ -161,14 +180,14 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 		lang = lang || 'en';
 		return this.searchInStore<Jam.WikipediaSummaryResponse>(`summary-${title}/${lang}`,
 			MetaDataType.wikipedia, async () => {
-				return {summary: await this.audioModule.wikipediaSummary(title, lang)};
+				return {summary: await this.audioModule.wikipedia.summary(title, lang)};
 			});
 	}
 
 	async wikidataLookup(id: string): Promise<Jam.WikidataLookupResponse> {
 		return this.searchInStore<Jam.WikidataLookupResponse>(`wikidata-entity-${id}`,
 			MetaDataType.wikidata, async () => {
-				const entity = await this.audioModule.wikidataID(id);
+				const entity = await this.audioModule.wikipedia.wikidata(id);
 				return {id, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now()};
 			});
 	}
