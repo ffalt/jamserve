@@ -1,0 +1,81 @@
+// THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
+
+import axios from 'axios/dist/axios';
+
+export interface HttpHeaders {
+	Authorization?: string;
+}
+
+export interface HTTPOptions {
+	headers?: HttpHeaders;
+	params?: any;
+	reportProgress?: boolean;
+	withCredentials?: boolean;
+}
+
+async function handleError(e): Promise<any> {
+	console.error(e);
+	if (e.status === 0) {
+		return Promise.reject(Error('Could not reach server'));
+	}
+	return Promise.reject(e);
+}
+
+export class JamHttpService {
+
+	// this.axiosAuthorized = axios.create({
+	// 	paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat'}),
+	// 	headers: {"X-Firebase-Auth": vi.firebaseToken}
+	// });
+
+	async raw(url: string, options: HTTPOptions): Promise<ArrayBuffer> {
+		try {
+			const opts = {
+				headers: options.headers,
+				params: options.params,
+				reportProgress: options.reportProgress,
+				responseType: 'arraybuffer' as 'arraybuffer',
+				withCredentials: options.withCredentials
+			};
+			const result = await axios.get(url, opts);
+			return result.data;
+		} catch (e) {
+			return handleError(e);
+		}
+	}
+
+	async get<T>(url: string, options: HTTPOptions): Promise<T> {
+		console.log('get', url);
+		try {
+			const result = await axios.get(url, {params: options.params, headers: options.headers, withCredentials: options.withCredentials});
+			return result.data;
+		} catch (e) {
+			return handleError(e);
+		}
+	}
+
+	async post<T>(url: string, body: any, options: HTTPOptions): Promise<T> {
+		console.log('post', url);
+		try {
+			const result = await axios.post(url, body,
+				{params: options.params, headers: options.headers, withCredentials: options.withCredentials}
+			);
+			return result.data;
+		} catch (e) {
+			return handleError(e);
+		}
+	}
+
+	async postObserve<T>(url: string, body: any, options: HTTPOptions, onUploadProgress: (progressEvent: any) => void): Promise<T> {
+		console.log('postObserve', url);
+		try {
+			const result = await axios.post(url, body,
+				{params: options.params, headers: options.headers, onUploadProgress, withCredentials: options.withCredentials}
+			);
+			return result.data;
+		} catch (e) {
+			return handleError(e);
+		}
+	}
+
+}
