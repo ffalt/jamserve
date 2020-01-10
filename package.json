@@ -111,7 +111,7 @@
     "@types/mustache": "0.8.32",
     "@types/nedb": "1.8.9",
     "@types/nock": "11.1.0",
-    "@types/node": "12.12.19",
+    "@types/node": "13.1.6",
     "@types/on-finished": "2.3.1",
     "@types/passport": "1.0.2",
     "@types/passport-jwt": "3.0.3",
