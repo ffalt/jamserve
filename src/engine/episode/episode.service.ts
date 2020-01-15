@@ -158,9 +158,13 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 			if (result) {
 				return result;
 			}
-			const buffer = await this.audioModule.extractTagImage(episode.path);
-			if (buffer) {
-				return this.imageModule.getBuffer(episode.id, buffer, size, format);
+			try {
+				const buffer = await this.audioModule.extractTagImage(episode.path);
+				if (buffer) {
+					return await this.imageModule.getBuffer(episode.id, buffer, size, format);
+				}
+			} catch (e) {
+				log.error('getImage', 'Extracting image from audio failed: ' + episode.path);
 			}
 		}
 	}

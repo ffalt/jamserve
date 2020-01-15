@@ -1,4 +1,3 @@
-import fse from 'fs-extra';
 import path from 'path';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {ImageModule} from '../../modules/image/image.module';
@@ -9,6 +8,9 @@ import {FolderService} from '../folder/folder.service';
 import {StateService} from '../state/state.service';
 import {Track} from './track.model';
 import {SearchQueryTrack, TrackStore} from './track.store';
+import {logger} from '../../utils/logger';
+
+const log = logger('TrackService');
 
 export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 
@@ -50,9 +52,13 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 			if (result) {
 				return result;
 			}
-			const buffer = await this.audioModule.extractTagImage(path.join(track.path, track.name));
-			if (buffer) {
-				return this.imageModule.getBuffer(track.id, buffer, size, format);
+			try {
+				const buffer = await this.audioModule.extractTagImage(path.join(track.path, track.name));
+				if (buffer) {
+					return await this.imageModule.getBuffer(track.id, buffer, size, format);
+				}
+			} catch (e) {
+				log.error('TrackService', 'Extracting image from audio failed: ' + path.join(track.path, track.name));
 			}
 		}
 		const folder = await this.getTrackFolder(track);

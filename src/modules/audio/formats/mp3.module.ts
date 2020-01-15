@@ -88,6 +88,7 @@ export class AudioModuleMP3 {
 	}
 
 	async extractTagImage(filename: string): Promise<Buffer | undefined> {
+		log.debug('extractTagImage', filename);
 		const id3v2 = new ID3v2();
 		const tag = await id3v2.read(filename);
 		if (tag) {

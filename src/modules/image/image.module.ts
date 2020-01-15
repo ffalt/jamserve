@@ -99,7 +99,7 @@ export class ImageModule {
 		if (size || (fileFormat !== format)) {
 			const mime = mimeTypes.lookup(format);
 			if (!mime) {
-				return Promise.reject('Unknown Image Format Request');
+				return Promise.reject(`Unknown Image Format Request: ${format} ${filename}`);
 			}
 			const sharpy = sharp(filename, {failOnError: false});
 			if (size) {
@@ -117,7 +117,7 @@ export class ImageModule {
 		format = format || info.format;
 		const mime = mimeTypes.lookup(format);
 		if (!mime) {
-			return Promise.reject('Unknown Image Format Request');
+			return Promise.reject(`Unknown Image Format Request: ${format}`);
 		}
 		if (size) {
 			return {
