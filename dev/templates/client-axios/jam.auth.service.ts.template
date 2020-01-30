@@ -3,21 +3,13 @@
 import {JamConfiguration} from './jam.configuration';
 import {HttpHeaders, HTTPOptions, JamHttpService} from './jam.http.service';
 import {Jam} from './model/jam-rest-data';
-
-export interface Auth {
-	server: string;
-	username: string;
-	session: boolean;
-	token?: string;
-	version?: string;
-	password?: string;
-}
+import {Auth} from './model/jam-auth';
 
 export class JamAuthService {
 	user?: Jam.SessionUser = undefined;
 	auth?: Auth = undefined;
-	readonly version = '{{{version}}}';
-	readonly apiPrefix = '{{{apiPrefix}}}';
+	readonly version = '0.1.12';
+	readonly apiPrefix = '/jam/v1/';
 	checked: boolean = false;
 	loaded: boolean = false;
 
@@ -49,7 +41,7 @@ export class JamAuthService {
 				this.user = undefined;
 			}
 		} catch (e) {
-			return Promise.reject(e || Error('Server error'));
+			throw (e || Error('Server error'));
 		}
 	}
 
@@ -68,9 +60,12 @@ export class JamAuthService {
 				jwt: !canUseSession
 			}, {withCredentials: canUseSession});
 			this.user = data.user;
+			if (!this.user) {
+				return Promise.reject(Error('Invalid Server Response'));
+			}
 			this.auth = {
 				server,
-				username: data.user.name,
+				username: this.user.name,
 				session: canUseSession,
 				token: !canUseSession ? data.jwt : undefined,
 				version: data.version,
@@ -79,15 +74,15 @@ export class JamAuthService {
 			await this.configuration.toStorage({auth: this.auth, user: this.user});
 			await this.configuration.userChangeNotify(this.user);
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 			await this.clear();
 			if (e.error && e.error.error) {
-				return Promise.reject(Error(e.error.error));
+				throw Error(e.error.error);
 			}
 			if (e.statusText) {
-				return Promise.reject(Error(e.statusText));
+				throw Error(e.statusText);
 			}
-			return Promise.reject(Error('Server Error'));
+			throw Error('Server Error');
 		}
 	}
 
@@ -124,18 +119,18 @@ export class JamAuthService {
 	}
 
 	userRolePodcast(): boolean {
-		return this.user && this.user.roles && this.user.roles.podcast;
+		return !!this.user?.roles?.podcast;
 	}
 
 	userRoleAdmin(): boolean {
-		return this.user && this.user.roles && this.user.roles.admin;
+		return !!this.user?.roles?.admin;
 	}
 
 	userRoleUpload(): boolean {
-		return this.user && this.user.roles && this.user.roles.upload;
+		return !!this.user?.roles?.upload;
 	}
 
 	userRoleStream(): boolean {
-		return this.user && this.user.roles && this.user.roles.stream;
+		return !!this.user?.roles?.stream;
 	}
 }

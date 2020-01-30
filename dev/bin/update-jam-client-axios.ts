@@ -33,7 +33,7 @@ function generateUploadClientCalls(call: ApiCall, name: string): Array<MustacheD
 	return [{
 		name,
 		paramsType: '',
-		paramName: `params: ${call.paramType}, file: File, onUploadProgress: (progressEvent: any) => void`,
+		paramName: `params: ${call.paramType}, file: any, onUploadProgress: (progressEvent: any) => void`,
 		resultType: call.resultType ? call.resultType : 'void',
 		baseFuncResultType: call.resultType || '',
 		baseFunc: 'upload',
@@ -164,7 +164,7 @@ async function writeService(destPath: string, serviceParts: Array<Part>): Promis
 	list.forEach((p, i) => {
 		p.isLast = i === list.length - 1;
 	});
-	const template = Mustache.render((await fse.readFile('../templates/client-vue/jam.service.ts.template')).toString(), {list});
+	const template = Mustache.render((await fse.readFile('../templates/client-axios/jam.service.ts.template')).toString(), {list});
 	const destfile = path.resolve(destPath, 'jam.service.ts');
 	await fse.writeFile(destfile, template);
 }
@@ -176,37 +176,42 @@ async function writePartService(destPath: string, key: string, part: string, cal
 	});
 	const withHttpEvent = calls.find(c => c.resultType.includes('HttpEvent'));
 	const withJam = calls.find(c => c.resultType.includes('Jam.'));
-	const t = Mustache.render((await fse.readFile('../templates/client-vue/jam.part.service.ts.template')).toString(), {list: l, part, withHttpEvent, withJam});
+	const t = Mustache.render((await fse.readFile('../templates/client-axios/jam.part.service.ts.template')).toString(), {list: l, part, withHttpEvent, withJam});
 	await fse.writeFile(partfile, t);
 }
 
 async function writeAuthService(destPath: string, calls: ApiCalls): Promise<void> {
-	const t = Mustache.render((await fse.readFile('../templates/client-vue/jam.auth.service.ts.template')).toString(), {apiPrefix: calls.apiPrefix, version: calls.version});
+	const t = Mustache.render((await fse.readFile('../templates/client-axios/jam.auth.service.ts.template')).toString(), {apiPrefix: calls.apiPrefix, version: calls.version});
 	await fse.writeFile(path.resolve(destPath, `jam.auth.service.ts`), t);
 }
 
 async function writeBaseService(destPath: string): Promise<void> {
-	const t = Mustache.render((await fse.readFile('../templates/client-vue/jam.base.service.ts.template')).toString(), {});
+	const t = Mustache.render((await fse.readFile('../templates/client-axios/jam.base.service.ts.template')).toString(), {});
 	await fse.writeFile(path.resolve(destPath, `jam.base.service.ts`), t);
 }
 
 async function writeHttpService(destPath: string): Promise<void> {
-	const t = Mustache.render((await fse.readFile('../templates/client-vue/jam.http.service.ts.template')).toString(), {});
+	const t = Mustache.render((await fse.readFile('../templates/client-axios/jam.http.service.ts.template')).toString(), {});
 	await fse.writeFile(path.resolve(destPath, `jam.http.service.ts`), t);
 }
 
 async function writeJamConfiguration(destPath: string): Promise<void> {
-	const t = Mustache.render((await fse.readFile('../templates/client-vue/jam.configuration.ts.template')).toString(), {});
+	const t = Mustache.render((await fse.readFile('../templates/client-axios/jam.configuration.ts.template')).toString(), {});
 	await fse.writeFile(path.resolve(destPath, `jam.configuration.ts`), t);
 }
 
 async function writeIndex(destPath: string): Promise<void> {
-	const t = Mustache.render((await fse.readFile('../templates/client-vue/index.ts.template')).toString(), {});
+	const t = Mustache.render((await fse.readFile('../templates/client-axios/index.ts.template')).toString(), {});
 	await fse.writeFile(path.resolve(destPath, `index.ts`), t);
 }
 
+async function writeAuthModel(destPath: string): Promise<void> {
+	const t = Mustache.render((await fse.readFile('../templates/client-axios/jam-auth.d.ts.template')).toString(), {});
+	await fse.writeFile(path.resolve(destPath, `jam-auth.d.ts`), t);
+}
+
 async function build(): Promise<string> {
-	const destPath = path.resolve('../../dist/jamvue/');
+	const destPath = path.resolve('../../dist/jam-axios/');
 	if (await fse.pathExists(destPath)) {
 		await fse.remove(destPath);
 	}
@@ -248,6 +253,8 @@ async function build(): Promise<string> {
 	];
 	const modelDestPath = path.resolve(destPath, 'model');
 	await fse.mkdirp(modelDestPath);
+
+	await writeAuthModel(modelDestPath);
 
 	for (const model of models) {
 		await fse.copy(path.resolve(basePath, model), path.resolve(modelDestPath, model));

@@ -11,22 +11,10 @@ export class JamBaseService {
 
 	buildRequest(view: string, params: any, forDOM: boolean): { url: string, parameters: any } {
 		const buildParams = params || {};
-		if (forDOM && this.authService.auth.token) {
-			buildParams.bearer = this.authService.auth.token;
+		if (forDOM && this.authService.auth?.token) {
+			buildParams.bearer = this.authService.auth?.token;
 		}
-		// let result = new HttpParameters();
-		// for (const key of Object.keys(buildParams)) {
-		// 	if (buildParams[key] !== undefined) {
-		// 		if (Array.isArray(buildParams[key])) {
-		// 			for (const sub of buildParams[key]) {
-		// 				result.append(key, sub);
-		// 			}
-		// 		} else {
-		// 			result.append(key, buildParams[key]);
-		// 		}
-		// 	}
-		// }
-		return {url: this.authService.auth.server + this.authService.apiPrefix + view, parameters: buildParams};
+		return {url: this.authService.auth?.server + this.authService.apiPrefix + view, parameters: buildParams};
 	}
 
 	static flattenParams(params: any): string {
@@ -115,7 +103,7 @@ export class JamBaseService {
 		return this.raw(path, params);
 	}
 
-	async upload<T>(path: string, params: any, name: string, file: File, onUploadProgress: (progressEvent: any) => void): Promise<T> {
+	async upload<T>(path: string, params: any, name: string, file: any, onUploadProgress: (progressEvent: any) => void): Promise<T> {
 		const formData = new FormData();
 		Object.keys(params)
 			.forEach(key => {
@@ -141,7 +129,7 @@ export class JamBaseService {
 			return '';
 		}
 		const s = (size !== undefined ? `-${size.toString()}` : '');
-		return this.buildRequestUrl(`image/${id}${s}` + (format ? '.' + format : ''));
+		return this.buildRequestUrl(`image/${id}${s}${(format ? `.${format}` : '')}`);
 	}
 
 }

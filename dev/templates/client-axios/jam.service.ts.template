@@ -10,8 +10,8 @@ import {Jam{{part}}Service} from './jam.{{{name}}}.service';
 {{/list}}
 
 export class JamService {
-    http = new JamHttpService();
-    auth: JamAuthService;
+	http = new JamHttpService();
+	auth: JamAuthService;
 	base: JamBaseService;
 	{{#list}}
 	{{{name}}}: Jam{{part}}Service;

@@ -1,4 +1,3 @@
-// tslint:disable:max-file-line-count
 import {Jam} from './jam-rest-data';
 
 export declare namespace JamParameters {
@@ -14,19 +13,18 @@ export declare namespace JamParameters {
 	export type CoverArtArchiveLookupType = 'release' | 'release-group';
 
 	export type TrackSortField = 'artist' | 'album' | 'albumartist' | 'genre' | 'parent' | 'title' | 'year' | 'created';
-	export type FolderSortField = 'artist' | 'album' | 'genre' | 'parent' | 'title' | 'year' | 'created' ;
+	export type FolderSortField = 'artist' | 'album' | 'genre' | 'parent' | 'title' | 'year' | 'created';
 	export type EpisodeSortField = 'podcast' | 'name' | 'date' | 'created';
 	export type BookmarkSortField = 'created' | 'position';
 	export type RadioSortField = 'name' | 'created';
-	export type PlaylistSortField = 'name' | 'created' ;
-	export type PodcastSortField = 'title' | 'created' ;
+	export type PlaylistSortField = 'name' | 'created';
+	export type PodcastSortField = 'title' | 'created';
 	export type AlbumSortField = 'name' | 'artist' | 'genre' | 'year' | 'created';
 	export type SeriesSortField = 'name' | 'created';
 	export type ArtistSortField = 'name' | 'created';
 	export type UserSortField = 'name' | 'created';
 	export type RootSortField = 'name' | 'created';
 
-	// tslint:disable-next-line:interface-name
 	export interface ID {
 		/**
 		 * the item id
@@ -34,7 +32,6 @@ export declare namespace JamParameters {
 		id: string;
 	}
 
-	// tslint:disable-next-line:interface-name
 	export interface IDs {
 		/**
 		 * array of item ids
@@ -1573,7 +1570,7 @@ export declare namespace JamParameters {
 		/**
 		 * comma-separated musicbrainz includes
 		 */
-		inc?: string;  // TODO: typescript-type the musicbrainz lookup includes
+		inc?: string; // TODO: typescript-type the musicbrainz lookup includes
 	}
 
 	export interface LastFMLookup extends ID {
@@ -1587,7 +1584,7 @@ export declare namespace JamParameters {
 		/**
 		 * comma-separated acoustid includes
 		 */
-		inc?: string;  // TODO: typescript-type the acoustid lookup includes
+		inc?: string; // TODO: typescript-type the acoustid lookup includes
 	}
 
 	/**

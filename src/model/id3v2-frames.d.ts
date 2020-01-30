@@ -1,4 +1,4 @@
-export namespace ID3v2Frames {
+export declare namespace ID3v2Frames {
 
 	export interface Frame {
 		id: string;

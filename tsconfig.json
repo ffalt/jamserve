@@ -3,6 +3,14 @@
   "exclude": [
     "**/*.test.ts",
     "**/*.mock.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "bin",
+    "data",
+    "dev",
+    "dist",
+    "local",
+    "node_modules",
+    ".git",
+    ".idea"
   ]
 }

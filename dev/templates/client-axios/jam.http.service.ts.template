@@ -1,6 +1,6 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
-import axios from 'axios/dist/axios';
+import axios from 'axios';
 
 export interface HttpHeaders {
 	Authorization?: string;
@@ -13,7 +13,7 @@ export interface HTTPOptions {
 	withCredentials?: boolean;
 }
 
-async function handleError(e): Promise<any> {
+async function handleError(e: any): Promise<any> {
 	console.error(e);
 	if (e.status === 0) {
 		return Promise.reject(Error('Could not reach server'));
@@ -22,11 +22,6 @@ async function handleError(e): Promise<any> {
 }
 
 export class JamHttpService {
-
-	// this.axiosAuthorized = axios.create({
-	// 	paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat'}),
-	// 	headers: {"X-Firebase-Auth": vi.firebaseToken}
-	// });
 
 	async raw(url: string, options: HTTPOptions): Promise<ArrayBuffer> {
 		try {
@@ -45,7 +40,6 @@ export class JamHttpService {
 	}
 
 	async get<T>(url: string, options: HTTPOptions): Promise<T> {
-		console.log('get', url);
 		try {
 			const result = await axios.get(url, {params: options.params, headers: options.headers, withCredentials: options.withCredentials});
 			return result.data;
@@ -55,9 +49,10 @@ export class JamHttpService {
 	}
 
 	async post<T>(url: string, body: any, options: HTTPOptions): Promise<T> {
-		console.log('post', url);
 		try {
-			const result = await axios.post(url, body,
+			const result = await axios.post(
+				url,
+				body,
 				{params: options.params, headers: options.headers, withCredentials: options.withCredentials}
 			);
 			return result.data;
@@ -67,10 +62,16 @@ export class JamHttpService {
 	}
 
 	async postObserve<T>(url: string, body: any, options: HTTPOptions, onUploadProgress: (progressEvent: any) => void): Promise<T> {
-		console.log('postObserve', url);
 		try {
-			const result = await axios.post(url, body,
-				{params: options.params, headers: options.headers, onUploadProgress, withCredentials: options.withCredentials}
+			const result = await axios.post(
+				url,
+				body,
+				{
+					params: options.params,
+					headers: options.headers,
+					onUploadProgress,
+					withCredentials: options.withCredentials
+				}
 			);
 			return result.data;
 		} catch (e) {

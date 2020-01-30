@@ -146,7 +146,7 @@ export enum LastFMLookupType {
 	artistToptracks = 'artist-toptracks'
 }
 
-export const enum MusicBrainzLookupType {
+export enum MusicBrainzLookupType {
 	area = 'area',
 	artist = 'artist',
 	collection = 'collection',
@@ -162,7 +162,7 @@ export const enum MusicBrainzLookupType {
 	url = 'url'
 }
 
-export const enum MusicBrainzSearchType {
+export enum MusicBrainzSearchType {
 	artist = 'artist',
 	label = 'label',
 	recording = 'recording',
@@ -172,12 +172,12 @@ export const enum MusicBrainzSearchType {
 	area = 'area'
 }
 
-export const enum CoverArtArchiveLookupType {
+export enum CoverArtArchiveLookupType {
 	release = 'release',
 	releaseGroup = 'release-group'
 }
 
-export const enum TrackTagFormatType {
+export enum TrackTagFormatType {
 	none = 'none',
 	ffmpeg = 'ffmpeg',
 	id3v20 = 'id3v20',
@@ -189,7 +189,7 @@ export const enum TrackTagFormatType {
 	vorbis = 'vorbis'
 }
 
-export const enum MusicBrainzAlbumPrimaryType {
+export enum MusicBrainzAlbumPrimaryType {
 	album = 'Album',
 	single = 'Single',
 	ep = 'EP',
@@ -197,7 +197,7 @@ export const enum MusicBrainzAlbumPrimaryType {
 	other = 'Other'
 }
 
-export const enum MusicBrainzAlbumSecondaryType {
+export enum MusicBrainzAlbumSecondaryType {
 	compilation = 'Compilation',
 	soundtrack = 'Soundtrack',
 	spokenword = 'Spokenword',

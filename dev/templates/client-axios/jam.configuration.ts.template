@@ -1,10 +1,10 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
-import {Auth} from './jam.auth.service';
+import {Auth} from './model/jam-auth';
 import {Jam} from './model/jam-rest-data';
 
 export abstract class JamConfiguration {
-	clientName: string;
+	clientName?: string;
 
 	abstract domain(): string;
 

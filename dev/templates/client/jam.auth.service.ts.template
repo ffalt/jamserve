@@ -57,6 +57,9 @@ export class JamAuthService {
 	}
 
 	async canUseSession(server: string): Promise<boolean> {
+	    if (this.configuration.forceSessionUsage) {
+	        return true;
+	    }
 		const data = await this.http.get<Jam.Session>(`${server}${this.apiPrefix}session`, {withCredentials: false});
 		return (data.allowedCookieDomains || []).includes(this.configuration.domain());
 	}

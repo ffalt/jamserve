@@ -28,11 +28,7 @@ export declare namespace LastFM {
 		rank: string;
 		streamable: Streamable;
 		artist: ArtistInfo;
-	}
-
-	export interface Track {
-		artist: ArtistInfo;
-		image: Array<Image>;
+		image?: Array<Image>;
 	}
 
 	export interface Wiki {

@@ -5,6 +5,7 @@ import {Jam} from './model/jam-rest-data';
 
 export abstract class JamConfiguration {
 	clientName: string;
+	forceSessionUsage: boolean;
 
 	abstract domain(): string;
 
