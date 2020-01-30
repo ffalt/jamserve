@@ -607,14 +607,19 @@ export declare namespace Jam {
 	 * AutoComplete Data
 	 */
 
+	export interface AutoCompleteEntry {
+		id: string;
+		name: string;
+	}
+
 	export interface AutoComplete {
-		tracks?: Array<{ id: string; name: string; }>;
-		artists?: Array<{ id: string; name: string; }>;
-		albums?: Array<{ id: string; name: string; }>;
-		folders?: Array<{ id: string; name: string; }>;
-		playlists?: Array<{ id: string; name: string; }>;
-		podcasts?: Array<{ id: string; name: string; }>;
-		episodes?: Array<{ id: string; name: string; }>;
+		tracks?: Array<AutoCompleteEntry>;
+		artists?: Array<AutoCompleteEntry>;
+		albums?: Array<AutoCompleteEntry>;
+		folders?: Array<AutoCompleteEntry>;
+		playlists?: Array<AutoCompleteEntry>;
+		podcasts?: Array<AutoCompleteEntry>;
+		episodes?: Array<AutoCompleteEntry>;
 	}
 
 	/*
