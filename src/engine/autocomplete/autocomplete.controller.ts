@@ -57,6 +57,12 @@ export class AutocompleteController {
 				return {id: o.id, name: o.name};
 			});
 		}
+		if (query.series !== undefined && query.series > 0) {
+			const list = await this.store.seriesStore.search({query: query.query, amount: query.series});
+			result.series = list.items.map(o => {
+				return {id: o.id, name: o.name};
+			});
+		}
 		return result;
 	}
 }

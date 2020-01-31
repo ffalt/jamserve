@@ -349,6 +349,11 @@ export declare namespace Jam {
 		mbReleaseGroupID?: string;
 	}
 
+	export interface FolderChildren {
+		folders: Array<Folder>;
+		tracks: Array<Track>;
+	}
+
 	export interface FolderIndexEntry {
 		name: string;
 		folderID: string;
@@ -620,6 +625,7 @@ export declare namespace Jam {
 		playlists?: Array<AutoCompleteEntry>;
 		podcasts?: Array<AutoCompleteEntry>;
 		episodes?: Array<AutoCompleteEntry>;
+		series?: Array<AutoCompleteEntry>;
 	}
 
 	/*
@@ -663,6 +669,27 @@ export declare namespace Jam {
 		error?: string;
 		done?: number;
 	}
+	/*
+	 * WaveForm Data
+	 */
+
+	export interface WaveFormData {
+		/** The version number of the waveform data format. */
+		version: number;
+		/** The number of waveform channels present (version 2 only). */
+		channels?: number;
+		/** Sample rate of original audio file (Hz). */
+		sample_rate: number;
+		/** Number of audio samples per waveform minimum/maximum pair. */
+		samples_per_pixel: number;
+		/** Resolution of waveform data. May be either 8 or 16. */
+		bits: number;
+		/** Length of waveform data (number of minimum and maximum value pairs per channel). */
+		length: number;
+		/** Array of minimum and maximum waveform data points, interleaved. Depending on bits, each value may be in the range -128 to +127 or -32768 to +32727. */
+		data: Array<number>;
+	}
+
 
 	/*
 	 * Metadata Data

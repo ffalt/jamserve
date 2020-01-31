@@ -25,6 +25,7 @@ export type JamApiImageTypes = ['image/jpeg', 'image/png'];
 export type JamApiDownloadTypes = ['application/zip', 'application/tar'];
 export type JamApiStreamTypes = ['audio/mpeg', 'audio/flac', 'audio/mp4', 'audio/ogg', 'audio/x-flv'];
 export type JamApiDefaultStreamTypes = ['audio/mpeg'];
+export type JamApiSVG = ['image/svg+xml'];
 export type JamApiWaveformTypes = ['image/svg+xml', 'application/json', 'application/binary'];
 export type JamApiDefaultDownloadTypes = ['application/zip'];
 
@@ -1285,7 +1286,17 @@ export interface JamApi {
 			operationId: 'waveform.svg';
 			pathParams: JamParameters.WaveformSVG;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			binary: JamApiWaveformTypes;
+			binary: JamApiSVG;
+			roles: ['stream'];
+		};
+		/**
+		 * media: get peaks waveform data as json
+		 */
+		'waveform_json'?: {
+			operationId: 'waveform.json';
+			params: JamParameters.ID;
+			result: Jam.WaveFormData,
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['stream'];
 		};
 

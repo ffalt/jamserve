@@ -10,6 +10,8 @@ import {Episode} from '../episode/episode.model';
 import {Store} from '../store/store';
 import {Track} from '../track/track.model';
 import {WaveformService} from './waveform.service';
+import {Jam} from '../../model/jam-rest-data';
+import fse from 'fs-extra';
 
 export class WaveformController {
 
@@ -42,6 +44,21 @@ export class WaveformController {
 
 	async waveform(req: JamRequest<JamParameters.Waveform>): Promise<ApiBinaryResult> {
 		return this.getWaveform(req.query.id, req.query.format);
+	}
+
+	async json(req: JamRequest<JamParameters.ID>): Promise<Jam.WaveFormData> {
+		const result = await this.getWaveform(req.query.id, WaveformFormatType.json);
+		console.log(result);
+		if (result.json) {
+			return result.json;
+		}
+		if (result.buffer) {
+			return JSON.parse(result.buffer.buffer.toString());
+		}
+		if (result.file) {
+			return JSON.parse((await fse.readFile(result.file.filename)).toString());
+		}
+		return Promise.reject(Error('Error on Waveform generation'));
 	}
 
 	private async byID(id: string | undefined): Promise<DBObject> {

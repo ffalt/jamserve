@@ -740,6 +740,11 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: ApiBinaryResult = await api.waveformController.svgByPathParameter(options);
 		ApiResponder.binary(req, res, result);
 	}, ['stream'], 'waveform_svg/{pathParameter}');
+	register.get('/waveform_json', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.query, user: req.user, client: req.client};
+		const result: Jam.WaveFormData = await api.waveformController.json(options);
+		ApiResponder.data(req, res, result);
+	}, ['stream']);
 	register.get('/download/:pathParameter', async (req, res) => {
 		const options: JamRequest<{pathParameter: string}> = {query: req.params, user: req.user, client: req.client};
 		const result: ApiBinaryResult = await api.downloadController.downloadByPathParameter(options);

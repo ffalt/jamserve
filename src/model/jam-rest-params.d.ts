@@ -1732,6 +1732,14 @@ export declare namespace JamParameters {
 		 * @TJS-type integer
 		 */
 		episode?: number;
+		/**
+		 * amount of series names to complete
+		 *
+		 * @default 0
+		 * @minimum 0
+		 * @TJS-type integer
+		 */
+		series?: number;
 	}
 
 	export interface SubsonicToken extends ID {
