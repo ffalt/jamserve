@@ -30,10 +30,11 @@ class LastFMClientBeautify {
 			case 'streamable':
 				result[key] = {sample: sub['#text'], fulltrack: sub.fulltrack};
 				break;
-			case 'image':
+			case 'image': {
 				const images = Array.isArray(sub) ? sub : [sub];
 				result[key] = images.filter(img => img.url && img.url.length > 0);
 				break;
+			}
 			case 'tracks':
 				result[key] = LastFMClientBeautify.ensureList('track', sub);
 				break;

@@ -7,7 +7,7 @@ import {DatabaseIndex, DatabaseQuery} from '../db.model';
 import {DBObjectType} from '../db.types';
 
 function regExpEscape(literal: string): string {
-	return literal.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
+	return literal.replace(/[-[\]{}()*+!<=:?./\\^$|#\s,]/g, '\\$&');
 }
 
 export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
@@ -87,7 +87,6 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				Object.keys(o).map((key: string): any => {
 					return {
 						$where(): boolean {
-							// tslint:disable-next-line:no-invalid-this
 							return this[key].startsWith(o[key]);
 						}
 					};
@@ -100,7 +99,6 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 				Object.keys(o).map((key: string): any => {
 					return {
 						$where(): boolean {
-							// tslint:disable-next-line:no-invalid-this
 							return !!o[key].find(entry => this[key].startsWith(entry));
 						}
 					};
@@ -111,12 +109,12 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 			const o = query.range;
 			Object.keys(o).forEach(key => {
 				const vals = o[key];
-				if (vals.hasOwnProperty('gte') && vals.gte !== undefined) {
+				if (vals.gte !== undefined) {
 					const term: any = {};
 					term[key] = {$gte: vals.gte};
 					must.push(term);
 				}
-				if (vals.hasOwnProperty('lte') && vals.lte !== undefined) {
+				if (vals.lte !== undefined) {
 					const term: any = {};
 					term[key] = {$lte: vals.lte};
 					must.push(term);
@@ -315,7 +313,7 @@ export class DBIndexNedb<T extends DBObject> implements DatabaseIndex<T> {
 	private getDotFieldValues(field: string, o: T): Array<string> {
 		const result: Array<any> = [];
 
-		const getFieldValueR = (fields: Array<string>, obj: any) => {
+		const getFieldValueR = (fields: Array<string>, obj: any): void => {
 			const sub = obj[fields[0]];
 			if (sub === undefined) {
 				return;

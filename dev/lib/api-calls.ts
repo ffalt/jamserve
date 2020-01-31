@@ -107,16 +107,6 @@ function getPathParamsCalls(name: string, pathParams: any, api: Definition): Api
 	return getPathParamsParameterCalls(paramType, paramDef, paramParts);
 }
 
-export async function getSubsonicApiCalls(basePath: string): Promise<ApiCalls> {
-	const api = await transformTS2JSONScheme(basePath, 'subsonic-rest-api', 'SubsonicApi');
-	return getApiCalls(api, SUBSONIC_VERSION, '/rest/');
-}
-
-export async function getJamApiCalls(basePath: string): Promise<ApiCalls> {
-	const api = await transformTS2JSONScheme(basePath, 'jam-rest-api', 'JamApi');
-	return getApiCalls(api, JAMAPI_VERSION, `/jam/${JAMAPI_URL_VERSION}/`);
-}
-
 function getResultErrors(api: any, apidef: any): Array<{ code: number, text: string }> {
 	const resultErrors: Array<{ code: number, text: string }> = [];
 	if (apidef.properties.errors) {
@@ -249,4 +239,14 @@ export function getApiCalls(api: Definition, version: string, apiPrefix: string)
 		}
 	}
 	return result;
+}
+
+export async function getSubsonicApiCalls(basePath: string): Promise<ApiCalls> {
+	const api = await transformTS2JSONScheme(basePath, 'subsonic-rest-api', 'SubsonicApi');
+	return getApiCalls(api, SUBSONIC_VERSION, '/rest/');
+}
+
+export async function getJamApiCalls(basePath: string): Promise<ApiCalls> {
+	const api = await transformTS2JSONScheme(basePath, 'jam-rest-api', 'JamApi');
+	return getApiCalls(api, JAMAPI_VERSION, `/jam/${JAMAPI_URL_VERSION}/`);
 }

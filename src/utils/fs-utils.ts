@@ -30,10 +30,11 @@ export function basenameStripExt(filename: string): string {
 export function replaceFileSystemChars(s: string, replace: string): string {
 	return s.toString()
 		.replace(/:/g, ' - ')
-		.replace(/[?\/!\\"]/g, replace);
+		.replace(/[?/!\\"]/g, replace);
 }
 
-const FolderSystemCharsRegEx = /[<>:"\/\\|?*\x00-\x1F]|^(?:aux|con|clock\$|nul|prn|com[1-9]|lpt[1-9])$/i;
+// eslint-disable-next-line no-control-regex
+const FolderSystemCharsRegEx = /[<>:"/\\|?*\x00-\x1F]|^(?:aux|con|clock\$|nul|prn|com[1-9]|lpt[1-9])$/i;
 
 export function containsFolderSystemChars(s: string): boolean {
 	return FolderSystemCharsRegEx.test(s);
@@ -53,7 +54,7 @@ export function replaceFolderSystemChars(s: string, replace: string): string {
 	 */
 	return s.toString()
 		.replace(/:/g, ' -')
-		.replace(/[|*?\/!\\<>"]/g, replace);
+		.replace(/[|*?/!\\<>"]/g, replace);
 }
 
 export function ensureTrailingPathSeparator(s: string): string {

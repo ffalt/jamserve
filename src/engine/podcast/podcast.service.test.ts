@@ -130,7 +130,7 @@ describe('PodcastService', () => {
 				const scope = nock('http://invaliddomain.invaliddomain.invaliddomain')
 					.get('/feed8').reply(200, mock.feed);
 				const org = podcastService.podcastStore.replace;
-				podcastService.podcastStore.replace = async p => {
+				podcastService.podcastStore.replace = async (): Promise<void> => {
 					return Promise.reject(Error('test error'));
 				};
 				await expect(podcastService.refresh(podcast)).rejects.toThrow('error');

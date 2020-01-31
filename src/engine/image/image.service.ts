@@ -124,12 +124,13 @@ export class ImageService {
 			case DBObjectType.series:
 				result = await this.seriesService.getImage(o as Series, size, format);
 				break;
-			case DBObjectType.root:
+			case DBObjectType.root: {
 				const rootFolder = await this.folderService.folderStore.searchOne({rootID: (o as Root).id, level: 0});
 				if (rootFolder) {
 					result = await this.folderService.getImage(rootFolder, size, format);
 				}
 				break;
+			}
 			default:
 				break;
 		}

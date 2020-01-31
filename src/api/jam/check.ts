@@ -48,7 +48,6 @@ export function apiCheck(name: string): express.RequestHandler {
 	return CheckApiParametersHandler;
 }
 
-// tslint:disable-next-line:interface-name
 export interface IDFormat {
 	id: string;
 	format?: string;

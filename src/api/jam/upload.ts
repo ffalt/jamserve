@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer';
+
 import finishedRequest from 'on-finished';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import {logger} from '../../utils/logger';
@@ -17,7 +18,7 @@ function registerAutoClean(req: express.Request, res: express.Response): void {
 }
 
 class JamUpload {
-	upload: multer.Instance;
+	upload: any; // import Multer from 'multer'; TODO: type not importable?
 
 	constructor(tmpPath: string) {
 		const dest = `${tmpPath}/`;
@@ -26,7 +27,7 @@ class JamUpload {
 
 	handler(field: string, autoClean: boolean = true): express.RequestHandler {
 		const mu = this.upload.single(field);
-		return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+		return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
 			if (autoClean) {
 				registerAutoClean(req, res);
 			}

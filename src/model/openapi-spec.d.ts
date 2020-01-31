@@ -1,4 +1,3 @@
-/* tslint:disable:interface-name */
 // Source:
 // https://github.com/metadevpro/openapi3-ts
 

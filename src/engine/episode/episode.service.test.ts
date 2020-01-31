@@ -191,7 +191,7 @@ describe('EpisodeService', () => {
 				mock.enclosures = [{url: 'http://invaliddomain.invaliddomain.invaliddomain/episode1.mp3', type: 'dummy', length: 0}];
 				await episodeService.mergeEpisodes(mock.podcastID, mock.podcast, [mock]);
 				const org = episodeService.episodeStore.replace;
-				episodeService.episodeStore.replace = async p => {
+				episodeService.episodeStore.replace = async (): Promise<void> => {
 					return Promise.reject(Error('test error'));
 				};
 				await expect(episodeService.downloadEpisode(mock)).rejects.toThrow('error');

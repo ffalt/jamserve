@@ -21,8 +21,7 @@ export class WaveformModule {
 		const wf = new WaveformGenerator();
 		switch (format) {
 			case WaveformFormatType.svg:
-				const svg = await wf.svg(filename, width);
-				return {buffer: {buffer: Buffer.from(svg, 'ascii'), contentType: 'image/svg+xml'}};
+				return {buffer: {buffer: Buffer.from(await wf.svg(filename, width), 'ascii'), contentType: 'image/svg+xml'}};
 			case WaveformFormatType.json:
 				return {json: await wf.json(filename)};
 			case WaveformFormatType.dat:

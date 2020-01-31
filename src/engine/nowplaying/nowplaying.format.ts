@@ -16,10 +16,11 @@ export function packNowPlaying(entry: NowPlaying): Jam.NowPlaying {
 		case DBObjectType.track:
 			playing.track = formatTrack(entry.obj as Track, {});
 			break;
-		case DBObjectType.episode:
+		case DBObjectType.episode: {
 			const episode = entry.obj as Episode;
 			playing.track = formatEpisode(episode, {}, episode.status);
 			break;
+		}
 		default:
 	}
 	return playing;

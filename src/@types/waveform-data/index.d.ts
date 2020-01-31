@@ -1,5 +1,3 @@
-// tslint:disable:variable-name
-
 /**
  * types for https://github.com/bbc/waveform-data.js v3.0.0
  */

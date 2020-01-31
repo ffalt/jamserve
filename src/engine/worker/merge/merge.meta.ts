@@ -25,8 +25,7 @@ export class MetaMerger {
 		}
 		const artist = await this.cache.findOrCreateArtist(trackInfo, false, changes);
 		trackInfo.track.artistID = artist.id;
-		let albumArtist: Artist;
-		albumArtist = (trackInfo.parent.tag.artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME) ?
+		const albumArtist: Artist = (trackInfo.parent.tag.artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME) ?
 			await this.cache.findOrCreateCompilationArtist(changes) :
 			await this.cache.findOrCreateArtist(trackInfo, true, changes);
 		trackInfo.track.albumArtistID = albumArtist.id;

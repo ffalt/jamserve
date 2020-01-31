@@ -4,10 +4,6 @@ import {Engine} from '../../engine/engine';
 import {getMaxAge} from '../../utils/max-age';
 import {ExpressSessionStore} from './session-store';
 
-export function registerSession(router: express.Router, engine: Engine): void {
-	router.use(jamSession(engine));
-}
-
 function jamSession(engine: Engine): express.RequestHandler {
 	const maxAge = getMaxAge(engine.config.server.session.cookie.maxAge);
 	return session({
@@ -23,4 +19,8 @@ function jamSession(engine: Engine): express.RequestHandler {
 			maxAge: maxAge > 0 ? maxAge : undefined
 		}
 	});
+}
+
+export function registerSession(router: express.Router, engine: Engine): void {
+	router.use(jamSession(engine));
 }

@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "*.js",
+    "dev/**/*",
+    "src/**/*",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/**.mock.ts",
+    "src/**/**.spec.ts",
+    "src/**/**.test.ts",
+    "config/*.js"
+  ],
+  "exclude": [
+    "bin",
+    "data",
+    "dist",
+    "local",
+    "node_modules",
+    ".git",
+    ".idea"
+  ]
+}

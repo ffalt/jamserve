@@ -79,12 +79,10 @@ export class AvatarGenerator {
 						}
 						return ps;
 					},
-					// tslint:disable-next-line:no-object-literal-type-assertion
 					{} as PartsMap
 				);
 				return variants;
 			},
-			// tslint:disable-next-line:no-object-literal-type-assertion
 			{} as VariantsMap
 		);
 	}

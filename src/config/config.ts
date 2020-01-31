@@ -26,6 +26,7 @@ export function extendConfig(jamServe: JamServeConfig, firstStart: FirstStartCon
 	return {...jamServe, firstStart, getDataPath: (parts: Array<string>): string => path.resolve(jamServe.paths.data, ...parts)};
 }
 
+// eslint-disable-next-line no-var
 declare var __non_webpack_require__: any;
 
 export function loadConfig(configPath?: string): Config {

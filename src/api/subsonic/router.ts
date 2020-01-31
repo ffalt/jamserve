@@ -47,6 +47,7 @@ async function runSubsonic(req: UserRequest, res: express.Response, execute: (re
 
 export function initSubsonicRouter(engine: Engine): express.Router {
 	const api = new SubsonicApi(engine);
+	const router = express.Router();
 
 	const register: Register = {
 		all(name: string, execute: (req: UserRequest, res: express.Response) => Promise<void>, roles?: Array<SubSonicRole>): void {
@@ -60,7 +61,6 @@ export function initSubsonicRouter(engine: Engine): express.Router {
 		}
 	};
 
-	const router = express.Router();
 	// router.options('*', cors());
 	router.use((req, res, next) => {
 		log.info(req.method, req.originalUrl);

@@ -87,8 +87,6 @@ describe('TrackWorker', () => {
 				await validateMock(mockRoot, store);
 			});
 
-		},
-		async () => {
 		}
 	);
 

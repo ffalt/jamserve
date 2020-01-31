@@ -19,7 +19,7 @@ export function testBaseController<OBJREQUEST extends JamParameters.ID | INCLUDE
 		skipBaseTests?: boolean
 	},
 	setup: (jam: JamApi, user: User) => Promise<BaseController<OBJREQUEST, OBJLISTREQUEST, INCLUDE, JAMQUERY, SEARCHQUERY, DBOBJECT, RESULTOBJ>>,
-	tests: () => void, cleanup ?: () => Promise<void>
+	tests: () => void, cleanup?: () => Promise<void>
 ): void {
 	let jam: JamApi;
 	let user: User;

@@ -80,7 +80,7 @@ export class WaveformStream extends Transform {
 
 	readResults(value: number, pos: number, data: Buffer): void {
 		const dataLen = data.length;
-		while (true) {
+		while (pos <= dataLen) {
 			this._min = this._min === null ? value : Math.min(this._min, value);
 			this._max = this._max === null ? value : Math.max(this._max, value);
 			this._samples += 1;

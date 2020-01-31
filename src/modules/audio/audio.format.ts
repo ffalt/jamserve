@@ -184,7 +184,7 @@ export class FORMAT {
 	}
 
 	private static cleanText(s: string | undefined): string | undefined {
-		return s !== undefined ? s.replace(/  /g, ' ').trim() : undefined;
+		return s !== undefined ? s.replace(/ {2}/g, ' ').trim() : undefined;
 	}
 
 	static packFlacVorbisCommentJamServeTag(comment?: FlacComment, pictures?: Array<FlacPicture>): TrackTag | undefined {

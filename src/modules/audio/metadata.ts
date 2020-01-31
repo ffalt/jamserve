@@ -9,6 +9,25 @@ import {MetaDataBlockPicture} from './formats/flac/lib/block.picture';
 import {BlockVorbiscomment} from './formats/flac/lib/block.vorbiscomment';
 import {MetaWriteableDataBlock} from './formats/flac/lib/block.writeable';
 
+function prepareFrame(frame: ID3v2Frames.Frame): void {
+	if (frame && frame.value && (frame as ID3v2Frames.Bin).value.bin) {
+		const binValue = frame.value as any;
+		binValue.bin = binValue.bin.toString('base64');
+	}
+	if (frame && frame.subframes) {
+		frame.subframes.forEach(prepareFrame);
+	}
+}
+
+export function prepareResponseTag(tag: Jam.RawTag): void {
+	Object.keys(tag.frames).forEach(key => {
+		const frames = tag.frames[key];
+		if (frames) {
+			frames.forEach(prepareFrame);
+		}
+	});
+}
+
 export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | undefined> {
 	if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {
 		return;
@@ -186,27 +205,8 @@ export function trackTagToRawTag(tag: TrackTag): Jam.RawTag {
 	return {version: 4, frames: builder.rawBuilder.build()};
 }
 
-function prepareFrame(frame: ID3v2Frames.Frame): void {
-	if (frame && frame.value && frame.value.hasOwnProperty('bin')) {
-		const binValue = frame.value as any;
-		binValue.bin = binValue.bin.toString('base64');
-	}
-	if (frame && frame.subframes) {
-		frame.subframes.forEach(prepareFrame);
-	}
-}
-
-export function prepareResponseTag(tag: Jam.RawTag): void {
-	Object.keys(tag.frames).forEach(key => {
-		const frames = tag.frames[key];
-		if (frames) {
-			frames.forEach(prepareFrame);
-		}
-	});
-}
-
 function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {
-	if (frame && frame.value && frame.value.hasOwnProperty('bin')) {
+	if (frame && frame.value && (frame as ID3v2Frames.Bin).value.bin) {
 		const bin = (frame.value as any).bin;
 		if (typeof bin === 'string') {
 			(frame.value as any).bin = Buffer.from(bin, 'base64');

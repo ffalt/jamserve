@@ -128,14 +128,16 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		}
 		const maxBitRate = req.query.maxBitRate !== undefined && req.query.maxBitRate > 0 ? req.query.maxBitRate : undefined;
 		switch (o.type) {
-			case DBObjectType.track:
+			case DBObjectType.track: {
 				const res = await this.engine.streamService.streamTrack(o as Track, req.query.format, maxBitRate, req.user);
 				this.engine.nowPlayingService.reportTrack(o as Track, req.user).catch(e => log.error(e)); // do not wait
 				return res;
-			case DBObjectType.episode:
+			}
+			case DBObjectType.episode: {
 				const result = await this.engine.streamService.streamEpisode(o as Episode, req.query.format, maxBitRate, req.user);
 				this.engine.nowPlayingService.reportEpisode(o as Episode, req.user).catch(e => log.error(e)); // do not wait
 				return result;
+			}
 			default:
 		}
 		return Promise.reject(Error('Invalid Object Type for Streaming'));

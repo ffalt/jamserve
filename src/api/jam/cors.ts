@@ -13,7 +13,7 @@ export function registerPublicCORS(router: express.Router, engine: Engine): void
 }
 
 export function registerAuthenticatedCors(router: express.Router, engine: Engine): void {
-	const corsOptionsDelegate = (req: express.Request, callback: (err: Error | null, options: cors.CorsOptions) => void) => {
+	const corsOptionsDelegate = (req: express.Request, callback: (err: Error | null, options: cors.CorsOptions) => void): void => {
 		const origins = engine.config.server.session.allowedCookieDomains || [];
 		const corsOptions: cors.CorsOptions = {
 			preflightContinue: false,

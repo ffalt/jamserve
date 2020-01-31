@@ -3,57 +3,60 @@ import path from 'path';
 import {run} from '../lib/run';
 import {transformTS2JSONScheme} from '../lib/ts2scheme';
 
-function transformProperty(name: string, parent: string, prop: any, definitions: any, paths: Array<string>, done: Array<string>, result: Array<string>): string {
-	let key = '';
-	if (prop.$ref) {
-		key = prop.$ref.split('/')[2];
-		prop = definitions[key];
-	}
-	if (prop.type === 'string') {
-		if (['name', 'title'].includes(name)) {
-			return 'typeString';
-		}
-		return 'typeKey';
-	}
-	if (prop.type === 'number') {
-		return 'typeInt';
-	}
-	if (prop.type === 'boolean') {
-		return 'typeBool';
-	}
-	if (prop.type === 'array') {
-		return transformProperty(name, parent, prop.items, definitions, paths, done, result);
-	}
-	if (prop.type === 'object') {
-		return transformProperties(key, prop.properties, definitions, paths, done, result);
-	}
-	if (Object.keys(prop).length > 0) {
-		console.log('TODO', prop);
-	}
-	return '';
-}
+class Mapper {
 
-function transformProperties(symbol: string, props: any, definitions: any, paths: Array<string>, done: Array<string>, result: Array<string>): any {
-	if (symbol.length > 0 && done.includes(symbol)) {
-		const name = `type${symbol.replace(/\./g, '_')}`;
-		return name;
-	}
-	const properties: any = {};
-	Object.keys(props).forEach(key => {
-		const prop = props[key];
-		const val = transformProperty(key, symbol, prop, definitions, paths.concat([key]), done, result);
-		if (val && val.length > 0) {
-			properties[key] = val;
+	static transformProperty(name: string, parent: string, prop: any, definitions: any, paths: Array<string>, done: Array<string>, result: Array<string>): string {
+		let key = '';
+		if (prop.$ref) {
+			key = prop.$ref.split('/')[2];
+			prop = definitions[key];
 		}
-	});
-	if (symbol.length > 0 && !done.includes(symbol)) {
-		done.push(symbol);
-		const name = `type${symbol.replace(/\./g, '_')}`;
-		result.push(`const ${name} = ${JSON.stringify({properties}, null, '\t').replace(/"/g, '')};
-`);
-		return name;
+		if (prop.type === 'string') {
+			if (['name', 'title'].includes(name)) {
+				return 'typeString';
+			}
+			return 'typeKey';
+		}
+		if (prop.type === 'number') {
+			return 'typeInt';
+		}
+		if (prop.type === 'boolean') {
+			return 'typeBool';
+		}
+		if (prop.type === 'array') {
+			return Mapper.transformProperty(name, parent, prop.items, definitions, paths, done, result);
+		}
+		if (prop.type === 'object') {
+			return Mapper.transformProperties(key, prop.properties, definitions, paths, done, result);
+		}
+		if (Object.keys(prop).length > 0) {
+			console.log('TODO', prop);
+		}
+		return '';
 	}
-	return {properties};
+
+	static transformProperties(symbol: string, props: any, definitions: any, paths: Array<string>, done: Array<string>, result: Array<string>): any {
+		if (symbol.length > 0 && done.includes(symbol)) {
+			return `type${symbol.replace(/\./g, '_')}`;
+		}
+		const properties: any = {};
+		Object.keys(props).forEach(key => {
+			const prop = props[key];
+			const val = Mapper.transformProperty(key, symbol, prop, definitions, paths.concat([key]), done, result);
+			if (val && val.length > 0) {
+				properties[key] = val;
+			}
+		});
+		if (symbol.length > 0 && !done.includes(symbol)) {
+			done.push(symbol);
+			const name = `type${symbol.replace(/\./g, '_')}`;
+			result.push(`const ${name} = ${JSON.stringify({properties}, null, '\t').replace(/"/g, '')};
+`);
+			return name;
+		}
+		return {properties};
+	}
+
 }
 
 async function build(): Promise<string> {
@@ -76,7 +79,7 @@ const typeKey = {type: 'keyword'};
 	for (const symbol of symbols) {
 		const baseP = path.resolve(basePath, `engine/${symbol.toLowerCase()}`);
 		const scheme = await transformTS2JSONScheme(baseP, `${symbol.toLowerCase()}.model`, symbol);
-		transformProperties(symbol, scheme.properties || {}, scheme.definitions || {}, [], done, result);
+		Mapper.transformProperties(symbol, scheme.properties || {}, scheme.definitions || {}, [], done, result);
 		object[symbol.toLowerCase()] = `type${symbol.replace(/\./g, '_')}`;
 	}
 	result.push(`export const mapping: any = ${JSON.stringify(object, null, '\t').replace(/"/g, '')};

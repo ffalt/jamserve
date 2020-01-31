@@ -34,7 +34,7 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 			sessionID,
 			jwth: session.jwth,
 			agent: session.userAgent,
-			mode: !!session.jwth ? SessionMode.jwt : SessionMode.browser,
+			mode: session.jwth ? SessionMode.jwt : SessionMode.browser,
 			subsonic: '',
 			client: session.client,
 			cookie: JSON.stringify(session.cookie),

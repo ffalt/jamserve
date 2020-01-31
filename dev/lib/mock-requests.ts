@@ -106,14 +106,12 @@ export class MockRequests {
 	static async generateRequestMocks(spec: OpenAPIObject): Promise<RequestMocks> {
 		const derefSpec = (await refParser.dereference(spec)) as OpenAPIObject;
 		const requestMocks: RequestMocks = {};
-		for (const apiPath in derefSpec.paths) {
-			if (derefSpec.paths.hasOwnProperty(apiPath)) {
-				const api = apiPath.slice(1);
-				requestMocks[api] = {};
-				for (const operation in derefSpec.paths[apiPath]) {
-					if (derefSpec.paths[apiPath].hasOwnProperty(operation)) {
-						requestMocks[api][operation] = await MockRequests.generateRequestMock(derefSpec.paths[apiPath][operation] as OperationObject);
-					}
+		for (const apiPath in Object.keys(derefSpec.paths)) {
+			const api = apiPath.slice(1);
+			requestMocks[api] = {};
+			if (derefSpec.paths[apiPath]) {
+				for (const operation in Object.keys(derefSpec.paths[apiPath])) {
+					requestMocks[api][operation] = await MockRequests.generateRequestMock(derefSpec.paths[apiPath][operation] as OperationObject);
 				}
 			}
 		}

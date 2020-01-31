@@ -1,4 +1,3 @@
-/* tslint:disable:max-classes-per-file */
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
 import {AlbumStore, SearchQueryAlbum} from '../album/album.store';
@@ -23,7 +22,7 @@ export class IndexTreeBuilder {
 	}
 
 	getIndexChar(name: string): string {
-		const s = name.replace(/[¿…¡?[\]{}<>‘`“'&_~=:.\/;@#«!%$*()+\-\\|]/g, '').trim();
+		const s = name.replace(/[¿…¡?[\]{}<>‘`“'&_~=:./;@#«!%$*()+\-\\|]/g, '').trim();
 		if (s.length === 0) {
 			return '#';
 		}

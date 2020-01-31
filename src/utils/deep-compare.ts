@@ -1,6 +1,6 @@
 export function deepCompare(a: any, b: any, ignore?: Array<string>): boolean {
 	const ignoreList: Array<string> = ignore || [];
-	const compare = (oa: any, ob: any) => {
+	const compare = (oa: any, ob: any): boolean => {
 		if (a === undefined) {
 			return false;
 		}
@@ -23,15 +23,15 @@ export function deepCompare(a: any, b: any, ignore?: Array<string>): boolean {
 		return false;
 	}
 	let key;
-	for (key in a) {
-		if (a.hasOwnProperty(key) && !ignoreList.includes(key)) {
+	for (key in Object.keys(a)) {
+		if (!ignoreList.includes(key)) {
 			if (!compare(a[key], b[key])) {
 				return false;
 			}
 		}
 	}
-	for (key in b) {
-		if (b.hasOwnProperty(key) && !ignoreList.includes(key)) {
+	for (key in Object.keys(b)) {
+		if (!ignoreList.includes(key)) {
 			if (!compare(a[key], b[key])) {
 				return false;
 			}

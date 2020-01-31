@@ -50,13 +50,12 @@ export class IDFolderCache<T> {
 		}
 		this.cacheDebounce.setPending(cacheID);
 		try {
-			let result: ApiBinaryResult;
 			const cachefile = path.join(this.dataPath, cacheID);
 			const exists = await fse.pathExists(cachefile);
 			if (!exists) {
 				await build(cachefile);
 			}
-			result = {file: {filename: cachefile, name: cacheID}};
+			const result: ApiBinaryResult = {file: {filename: cachefile, name: cacheID}};
 			this.cacheDebounce.resolve(cacheID, result);
 			return result;
 		} catch (e) {

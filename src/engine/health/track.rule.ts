@@ -60,6 +60,18 @@ interface TrackRuleInfo {
 	run(track: Track, parent: Folder, root: Root, tagCache: MediaCache): Promise<RuleResult | undefined>;
 }
 
+function hasID3v2Tag(track: Track): boolean {
+	return ID3TrackTagRawFormatTypes.includes(track.tag.format);
+}
+
+function isMP3(track: Track): boolean {
+	return track.media && track.media.format === AudioFormatType.mp3;
+}
+
+function isFlac(track: Track): boolean {
+	return track.media && track.media.format === AudioFormatType.flac;
+}
+
 const trackRules: Array<TrackRuleInfo> = [
 	{
 		id: TrackHealthID.tagValuesExists,
@@ -235,18 +247,6 @@ const trackRules: Array<TrackRuleInfo> = [
 		}
 	}
 ];
-
-function hasID3v2Tag(track: Track): boolean {
-	return ID3TrackTagRawFormatTypes.includes(track.tag.format);
-}
-
-function isMP3(track: Track): boolean {
-	return track.media && track.media.format === AudioFormatType.mp3;
-}
-
-function isFlac(track: Track): boolean {
-	return track.media && track.media.format === AudioFormatType.flac;
-}
 
 export class TrackRulesChecker {
 

@@ -53,8 +53,6 @@ describe('RootWorker', () => {
 				const result = await store.rootStore.searchOne({path: root.path});
 				expect(result).toBeUndefined();
 			});
-		},
-		async () => {
 		}
 	);
 

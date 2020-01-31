@@ -1,6 +1,5 @@
 export declare namespace SubsonicParameters {
 
-	// tslint:disable-next-line:interface-name
 	export interface ID {
 		/**
 		 * The item ID

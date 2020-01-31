@@ -92,8 +92,6 @@ describe('WaveformService', () => {
 				expect(result2.file).toBeDefined();
 				await audioModule.clearCacheByIDs([track.id]);
 			});
-		},
-		async () => {
 		}
 	);
 });

@@ -1,4 +1,3 @@
-/* tslint:disable:max-classes-per-file */
 import path from 'path';
 
 import {Jam} from '../../model/jam-rest-data';
@@ -20,7 +19,7 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumTagsExists,
 		name: 'Album folder values are missing',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 			if (FolderTypesAlbum.includes(folder.tag.type)) {
 				const missing = [];
 				if (!folder.tag.album) {
@@ -53,7 +52,7 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumMBIDExists,
 		name: 'Album folder musicbrainz id are missing',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 			if (FolderTypesAlbum.includes(folder.tag.type)) {
 				const missing = [];
 				if (!folder.tag.mbReleaseID) {
@@ -76,7 +75,7 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumTracksComplete,
 		name: 'Album folder seems to be incomplete',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 			if (
 				(folder.tag.type === FolderType.album) &&
 				(folder.tag.albumTrackCount) && (folder.tag.albumTrackCount !== folder.tag.trackCount)
@@ -92,16 +91,16 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumNameConform,
 		name: 'Album folder name is not conform',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 
 			function getNiceOtherFolderName(tag: FolderTag): string {
 				let name = (tag.album || '')
 					.replace(/[!?]/g, '')
 					.replace(/< >/g, ' - ')
 					.replace(/<>/g, ' - ')
-					.replace(/[\/]/g, '-')
+					.replace(/[/]/g, '-')
 					.replace(/\.\.\./g, '…')
-					.replace(/  /g, ' ')
+					.replace(/ {2}/g, ' ')
 					.trim();
 				name = replaceFolderSystemChars(name, '_');
 				return name.trim();
@@ -113,9 +112,9 @@ const folderRules: Array<FolderRuleInfo> = [
 					.replace(/[!?]/g, '')
 					.replace(/< >/g, ' - ')
 					.replace(/<>/g, ' - ')
-					.replace(/[\/]/g, '-')
+					.replace(/[/]/g, '-')
 					.replace(/\.\.\./g, '…')
-					.replace(/  /g, ' ')
+					.replace(/ {2}/g, ' ')
 					.trim();
 				name = replaceFolderSystemChars(name, '_');
 				const s = (year.length > 0 ? `[${replaceFolderSystemChars(year, '_')}] ` : '') + name;
@@ -123,11 +122,11 @@ const folderRules: Array<FolderRuleInfo> = [
 			}
 
 			function slug(folderPath: string): string {
-				return path.basename(folderPath).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
+				return path.basename(folderPath).trim().replace(/[_:!?/ ]/g, '').toLowerCase();
 			}
 
 			function niceSlug(nicename: string): string {
-				return nicename.replace(/[_:!?\/ ]/g, '').toLowerCase();
+				return nicename.replace(/[_:!?/ ]/g, '').toLowerCase();
 			}
 
 			function checkNiceName(nicename: string): RuleResult | undefined {
@@ -156,7 +155,7 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumImageExists,
 		name: 'Album folder image is missing',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 			if ((folder.tag.type === FolderType.album) || (folder.tag.type === FolderType.multialbum && folder.tag.folderCount > 0)) {
 				const artwork = await getFolderDisplayImage(folder);
 				if (!artwork) {
@@ -168,7 +167,7 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumImageValid,
 		name: 'Album folder image is invalid',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 			if ((folder.tag.type === FolderType.album) || (folder.tag.type === FolderType.multialbum && folder.tag.folderCount > 0)) {
 				const artwork = await getFolderDisplayImage(folder);
 				if (artwork && (!artwork.image || artwork.image.format === 'invalid')) {
@@ -190,7 +189,7 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumImageQuality,
 		name: 'Album folder image is of low quality',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 			if ((folder.tag.type === FolderType.album) || (folder.tag.type === FolderType.multialbum && folder.tag.folderCount > 0)) {
 				const artwork = await getFolderDisplayImage(folder);
 				if (artwork && artwork.image) {
@@ -204,7 +203,7 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.artistImageExists,
 		name: 'Artist folder image is missing',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 			if (folder.tag.type === FolderType.artist) {
 				const artwork = await getFolderDisplayImage(folder);
 				if (!artwork) {
@@ -216,7 +215,7 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.artistImageValid,
 		name: 'Artist folder image is invalid',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 			if (folder.tag.type === FolderType.artist) {
 				const artwork = await getFolderDisplayImage(folder);
 				if (artwork && (!artwork.image || artwork.image.format === 'invalid')) {
@@ -238,11 +237,11 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.artistNameConform,
 		name: 'Artist folder name is not conform',
-		run: async (folder, parents, root) => {
+		run: async (folder, parents, root): Promise<RuleResult | undefined> => {
 			if (folder.tag.type === FolderType.artist && folder.tag.artist) {
-				const nameSlug = path.basename(folder.path).trim().replace(/[_:!?\/ ]/g, '').toLowerCase();
+				const nameSlug = path.basename(folder.path).trim().replace(/[_:!?/ ]/g, '').toLowerCase();
 				const artistName = replaceFolderSystemChars(folder.tag.artist, '_');
-				const artistNameSlug = artistName.replace(/[_:!?\/ ]/g, '').toLowerCase();
+				const artistNameSlug = artistName.replace(/[_:!?/ ]/g, '').toLowerCase();
 				if (nameSlug.localeCompare(artistNameSlug) !== 0) {
 					return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: artistName}]};
 				}

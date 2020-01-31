@@ -87,7 +87,7 @@ export class Feed {
 		});
 
 		return new Promise<{ feed: FeedParser.Node, posts: Array<FeedParser.Item> }>((resolve, reject) => {
-			const done = (err?: Error) => {
+			const done = (err?: Error): void => {
 				if (doneReported) {
 					return;
 				}

@@ -46,7 +46,7 @@ describe('FolderWorker', () => {
 					}
 					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: ''})).rejects.toThrow('Invalid Directory Name');
 					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: '.'})).rejects.toThrow('Invalid Directory Name');
-					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: '//..*\.'})).rejects.toThrow('Invalid Directory Name');
+					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: '//..*.'})).rejects.toThrow('Invalid Directory Name');
 					await expect(workerService.renameFolder({rootID: folder.rootID, folderID: folder.id, newName: path.basename(folder.path)})).rejects.toThrow('Folder name already used in Destination');
 				});
 

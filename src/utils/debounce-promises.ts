@@ -7,7 +7,7 @@ export class DebouncePromises<T> {
 
 	async append(id: string): Promise<T> {
 		return new Promise<T>((resolve, reject) => {
-			const run = (err: Error | null, result?: T) => {
+			const run = (err: Error | null, result?: T): void => {
 				if (err) {
 					reject(err);
 				} else {

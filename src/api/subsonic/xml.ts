@@ -7,8 +7,8 @@ function xmlString(s: any): string {
 }
 
 function xmlContent(o: any): string {
-	for (const key in o) {
-		if (key === 'content' && o.hasOwnProperty(key)) {
+	for (const key in Object.keys(o)) {
+		if (key === 'content') {
 			return o[key];
 		}
 	}

@@ -58,42 +58,6 @@ export class TestEngineDataMock {
 	}
 }
 
-export class TestEngine {
-	engine!: Engine;
-	engineMock!: TestEngineDataMock;
-	imageModuleTest!: ImageModuleTest;
-	audioModuleTest!: AudioModuleTest;
-	dir: tmp.DirResult;
-
-	constructor(public name: string, public useDB: DBType, public testDB: TestDB) {
-		this.dir = tmp.dirSync();
-	}
-
-	protected async init(config: Config, db: Database): Promise<void> {
-		this.imageModuleTest = new ImageModuleTest();
-		await this.imageModuleTest.setup();
-		this.audioModuleTest = new AudioModuleTest(this.imageModuleTest.imageModule);
-		await this.audioModuleTest.setup();
-		this.engine = new Engine(config, new Store(db), JAMSERVE_VERSION, {audio: this.audioModuleTest.audioModule, image: this.imageModuleTest.imageModule});
-		this.engineMock = new TestEngineDataMock(this.engine);
-	}
-
-	async setup(): Promise<void> {
-		await this.testDB.setup();
-		const config = mockupConfig(this.dir.name, this.useDB);
-		await this.init(config, this.testDB.database);
-		await this.engineMock.setup();
-	}
-
-	async cleanup(): Promise<void> {
-		await this.testDB.cleanup();
-		await this.imageModuleTest.cleanup();
-		await this.audioModuleTest.cleanup();
-		await this.engineMock.cleanup();
-		this.dir.removeCallback();
-	}
-}
-
 function mockupConfig(testPath: string, useDB: DBType): Config {
 	const mockBaseConfig: JamServeConfig = {
 		log: {level: 'warn'},
@@ -129,4 +93,40 @@ function mockupConfig(testPath: string, useDB: DBType): Config {
 		}
 	};
 	return extendConfig(mockBaseConfig, {});
+}
+
+export class TestEngine {
+	engine!: Engine;
+	engineMock!: TestEngineDataMock;
+	imageModuleTest!: ImageModuleTest;
+	audioModuleTest!: AudioModuleTest;
+	dir: tmp.DirResult;
+
+	constructor(public name: string, public useDB: DBType, public testDB: TestDB) {
+		this.dir = tmp.dirSync();
+	}
+
+	protected async init(config: Config, db: Database): Promise<void> {
+		this.imageModuleTest = new ImageModuleTest();
+		await this.imageModuleTest.setup();
+		this.audioModuleTest = new AudioModuleTest(this.imageModuleTest.imageModule);
+		await this.audioModuleTest.setup();
+		this.engine = new Engine(config, new Store(db), JAMSERVE_VERSION, {audio: this.audioModuleTest.audioModule, image: this.imageModuleTest.imageModule});
+		this.engineMock = new TestEngineDataMock(this.engine);
+	}
+
+	async setup(): Promise<void> {
+		await this.testDB.setup();
+		const config = mockupConfig(this.dir.name, this.useDB);
+		await this.init(config, this.testDB.database);
+		await this.engineMock.setup();
+	}
+
+	async cleanup(): Promise<void> {
+		await this.testDB.cleanup();
+		await this.imageModuleTest.cleanup();
+		await this.audioModuleTest.cleanup();
+		await this.engineMock.cleanup();
+		this.dir.removeCallback();
+	}
 }
