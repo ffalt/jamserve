@@ -16657,7 +16657,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -16694,7 +16701,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17266,7 +17280,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17303,7 +17324,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17471,7 +17499,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17508,7 +17543,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17545,7 +17587,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17582,7 +17631,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17619,7 +17675,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17656,7 +17719,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17693,7 +17763,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17730,7 +17807,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17807,7 +17891,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17844,7 +17935,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -17993,7 +18091,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"
@@ -18030,7 +18135,14 @@
 				],
 				"responses": {
 					"200": {
-						"description": "ok"
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Jam.State"
+								}
+							}
+						}
 					},
 					"400": {
 						"description": "Invalid/Missing parameter"

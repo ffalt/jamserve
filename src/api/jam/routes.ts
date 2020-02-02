@@ -797,13 +797,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	}, ['admin']);
 	register.post('/track/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.favUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.trackController.favUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/track/rate/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
-		await api.trackController.rateUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.trackController.rateUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/track/rawTag/update', async (req, res) => {
 		const options: JamRequest<JamParameters.RawTagUpdate> = {query: req.body, user: req.user, client: req.client};
@@ -862,13 +862,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	}, ['admin']);
 	register.post('/folder/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
-		await api.folderController.favUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.folderController.favUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/folder/rate/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
-		await api.folderController.rateUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.folderController.rateUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/folder/parent/update', async (req, res) => {
 		const options: JamRequest<JamParameters.FolderMoveParent> = {query: req.body, user: req.user, client: req.client};
@@ -887,43 +887,43 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	}, ['admin']);
 	register.post('/album/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
-		await api.albumController.favUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.albumController.favUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/album/rate/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
-		await api.albumController.rateUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.albumController.rateUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/artist/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
-		await api.artistController.favUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.artistController.favUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/artist/rate/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
-		await api.artistController.rateUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.artistController.rateUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/series/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
-		await api.seriesController.favUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.seriesController.favUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/series/rate/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
-		await api.seriesController.rateUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.seriesController.rateUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/episode/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
-		await api.episodeController.favUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.episodeController.favUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/episode/rate/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
-		await api.episodeController.rateUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.episodeController.rateUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/podcast/create', async (req, res) => {
 		const options: JamRequest<JamParameters.PodcastNew> = {query: req.body, user: req.user, client: req.client};
@@ -932,13 +932,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	}, ['podcast']);
 	register.post('/podcast/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
-		await api.podcastController.favUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.podcastController.favUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/podcast/rate/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
-		await api.podcastController.rateUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.podcastController.rateUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/podcast/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
@@ -957,13 +957,13 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 	});
 	register.post('/playlist/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body, user: req.user, client: req.client};
-		await api.playlistController.favUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.playlistController.favUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/playlist/rate/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Rate> = {query: req.body, user: req.user, client: req.client};
-		await api.playlistController.rateUpdate(options);
-		ApiResponder.ok(req, res);
+		const result: Jam.State = await api.playlistController.rateUpdate(options);
+		ApiResponder.data(req, res, result);
 	});
 	register.post('/playlist/delete', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.body, user: req.user, client: req.client};
