@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 import {JamAuthService} from './jam.auth.service';
 import {JamHttpService} from './jam.http.service';
 import {JamParameters} from './model/jam-rest-params';
+import {Jam} from './model/jam-rest-data';
 
 @Injectable()
 export class JamBaseService {
@@ -76,8 +77,8 @@ export class JamBaseService {
 		await this.requestData<{}>(path, params);
 	}
 
-	buildRequestUrl(view: string, params?: any): string {
-		return this.buildUrl(view, params, true);
+	buildRequestUrl(view: string, params?: any, forDom: boolean = true): string {
+		return this.buildUrl(view, params, forDom);
 	}
 
 	async binary(path: string, params?: any): Promise<ArrayBuffer> {

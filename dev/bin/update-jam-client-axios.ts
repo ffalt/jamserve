@@ -90,12 +90,12 @@ function generatePathParamBinaryClientCalls(call: ApiCall): Array<MustacheDataCl
 	return [
 		{
 			name: `${basename}_url`,
-			paramName: params,
-			paramsType: '',
+			paramName: `${params}, forDom`,
+			paramsType: 'boolean = true',
 			resultType: 'string',
 			baseFuncResultType: '',
 			baseFunc: 'buildRequestUrl',
-			baseFuncParameters: '',
+			baseFuncParameters: 'undefined, forDom',
 			apiPath: `${basename}/${parampath}`,
 			apiPathTemplate: true,
 			description: callDescription(call),
