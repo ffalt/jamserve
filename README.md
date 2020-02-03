@@ -19,7 +19,7 @@ Features:
 
 ## Requirements
 
-*   install [NodeJS](https://nodejs.org/) >= 8.x and [NPM](https://www.npmjs.com/)
+*   install [NodeJS](https://nodejs.org/) >= 11.x and [NPM](https://www.npmjs.com/)
 *   install [FFMPEG](https://ffmpeg.org/) and set [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe) FFPROBE_PATH and FFMPEG_PATH
 
 optional for meta data matching & mp3 repair support
