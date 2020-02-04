@@ -47,7 +47,7 @@
   "dependencies": {
     "@elastic/elasticsearch": "7.5.0",
     "@types/multer": "^1.4.0",
-    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/eslint-plugin": "^2.19.0",
     "@typescript-eslint/parser": "^2.18.0",
     "ajv": "6.11.0",
     "archiver": "3.1.1",
