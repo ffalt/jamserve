@@ -202,6 +202,7 @@ export declare namespace Jam {
 		artistID?: string;
 		albumArtistID?: string;
 		albumID?: string;
+		seriesID?: string;
 	}
 
 	export interface TrackList extends ListResult {

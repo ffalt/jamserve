@@ -22087,6 +22087,9 @@
 					"albumID": {
 						"type": "string"
 					},
+					"seriesID": {
+						"type": "string"
+					},
 					"id": {
 						"type": "string"
 					},
@@ -24794,6 +24797,9 @@
 						"type": "string"
 					},
 					"albumID": {
+						"type": "string"
+					},
+					"seriesID": {
 						"type": "string"
 					},
 					"id": {
