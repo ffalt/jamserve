@@ -48,7 +48,6 @@ export class WaveformController {
 
 	async json(req: JamRequest<JamParameters.ID>): Promise<Jam.WaveFormData> {
 		const result = await this.getWaveform(req.query.id, WaveformFormatType.json);
-		console.log(result);
 		if (result.json) {
 			return result.json;
 		}
