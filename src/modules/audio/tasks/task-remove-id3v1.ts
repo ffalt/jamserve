@@ -1,8 +1,5 @@
 import {IMP3, MP3} from 'jamp3';
 import {parentPort} from 'worker_threads';
-import path from 'path';
-
-export const workerPath = path.join(__dirname, 'task-remove-id3v1.js');
 
 async function removeID3v1(filename: string): Promise<IMP3.RemoveResult | undefined> {
 	const mp3 = new MP3();

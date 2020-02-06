@@ -6,10 +6,13 @@ import {logger} from '../../../utils/logger';
 import {FORMAT} from '../audio.format';
 import {AudioScanResult} from '../audio.module';
 import {id3v2ToRawTag, rawTagToID3v2} from '../metadata';
-import * as taskAnalyzeMp3 from '../tasks/task-analyze-mp3';
-import * as taskFixMp3 from '../tasks/task-fix-mp3';
-import * as taskRemoveID3v1 from '../tasks/task-remove-id3v1';
-import * as taskRewriteMp3 from '../tasks/task-rewrite-mp3';
+import path from "path";
+
+const taskPath = path.join(__dirname, 'tasks');
+export const taskRewriteMp3 = path.join(taskPath, 'task-rewrite-mp3.js');
+export const taskFixMp3 = path.join(taskPath, 'task-fix-mp3.js');
+export const taskRemoveID3v1 = path.join(taskPath, 'task-remove-id3v1.js');
+export const taskAnalyzeMp3 = path.join(taskPath, 'task-analyze-mp3.js');
 
 const log = logger('Audio:MP3');
 
@@ -57,7 +60,7 @@ export class AudioModuleMP3 {
 
 	async removeID3v1(filename: string): Promise<void> {
 		if (!this.removeID3v1Pool) {
-			this.removeID3v1Pool = new StaticPool({size: 3, task: taskRemoveID3v1.workerPath});
+			this.removeID3v1Pool = new StaticPool({size: 3, task: taskRemoveID3v1});
 		}
 		log.debug('remove ID3v1 Tag', filename);
 		await this.removeID3v1Pool.exec(filename);
@@ -65,7 +68,7 @@ export class AudioModuleMP3 {
 
 	async fixAudio(filename: string): Promise<void> {
 		if (!this.fixMP3Pool) {
-			this.fixMP3Pool = new StaticPool({size: 3, task: taskFixMp3.workerPath});
+			this.fixMP3Pool = new StaticPool({size: 3, task: taskFixMp3});
 		}
 		log.debug('fix Audio', filename);
 		await this.fixMP3Pool.exec(filename);
@@ -73,7 +76,7 @@ export class AudioModuleMP3 {
 
 	async rewrite(filename: string): Promise<void> {
 		if (!this.rewriteAudioPool) {
-			this.rewriteAudioPool = new StaticPool({size: 3, task: taskRewriteMp3.workerPath});
+			this.rewriteAudioPool = new StaticPool({size: 3, task: taskRewriteMp3});
 		}
 		log.debug('rewrite', filename);
 		await this.rewriteAudioPool.exec(filename);
@@ -81,7 +84,7 @@ export class AudioModuleMP3 {
 
 	async analyze(filename: string): Promise<IMP3Analyzer.Report> {
 		if (!this.analyzeMp3Pool) {
-			this.analyzeMp3Pool = new StaticPool({size: 3, task: taskAnalyzeMp3.workerPath});
+			this.analyzeMp3Pool = new StaticPool({size: 3, task: taskAnalyzeMp3});
 		}
 		log.debug('analyze', filename);
 		return this.analyzeMp3Pool.exec(filename);

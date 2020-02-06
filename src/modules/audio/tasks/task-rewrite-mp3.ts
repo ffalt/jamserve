@@ -1,12 +1,9 @@
 import fse from 'fs-extra';
 import {ID3v2, IID3V2} from 'jamp3';
-import path from 'path';
 import {parentPort} from 'worker_threads';
 import {AudioFormatType} from '../../../model/jam-types';
 import {fileDeleteIfExists, fileSuffix} from '../../../utils/fs-utils';
 import {rewriteWriteFFmpeg} from '../tools/ffmpeg-rewrite';
-
-export const workerPath = path.join(__dirname, 'task-rewrite-mp3.js');
 
 async function rewriteAudio(param: string): Promise<void> {
 	const tempFile = `${param}.tmp`;

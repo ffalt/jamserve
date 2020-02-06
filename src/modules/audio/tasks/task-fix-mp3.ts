@@ -1,9 +1,6 @@
 import fse from 'fs-extra';
-import path from 'path';
 import {parentPort} from 'worker_threads';
 import {mp3val} from '../tools/mp3val';
-
-export const workerPath = path.join(__dirname, 'task-fix-mp3.js');
 
 async function fixMP3(filename: string): Promise<void> {
 	const backupFile = `${filename}.bak`;

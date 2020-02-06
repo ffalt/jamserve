@@ -1,8 +1,5 @@
 import {IMP3Analyzer, MP3Analyzer} from 'jamp3';
-import path from 'path';
 import {parentPort} from 'worker_threads';
-
-export const workerPath = path.join(__dirname, 'task-analyze-mp3.js');
 
 async function analyzeMP3(filename: string): Promise<IMP3Analyzer.Report> {
 	const mp3ana = new MP3Analyzer();
