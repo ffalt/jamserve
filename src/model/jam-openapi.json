@@ -18966,20 +18966,17 @@
 			"Jam.SessionUser": {
 				"type": "object",
 				"properties": {
-					"roles": {
-						"$ref": "#/components/schemas/Jam.Roles"
-					},
 					"id": {
 						"type": "string"
-					},
-					"state": {
-						"$ref": "#/components/schemas/Jam.State"
 					},
 					"name": {
 						"type": "string"
 					},
 					"created": {
 						"type": "number"
+					},
+					"roles": {
+						"$ref": "#/components/schemas/Jam.Roles"
 					}
 				},
 				"required": [
@@ -19003,23 +19000,6 @@
 					},
 					"admin": {
 						"type": "boolean"
-					}
-				}
-			},
-			"Jam.State": {
-				"type": "object",
-				"properties": {
-					"played": {
-						"type": "number"
-					},
-					"lastplayed": {
-						"type": "number"
-					},
-					"faved": {
-						"type": "number"
-					},
-					"rated": {
-						"type": "number"
 					}
 				}
 			},
@@ -24274,6 +24254,23 @@
 					"size"
 				]
 			},
+			"Jam.State": {
+				"type": "object",
+				"properties": {
+					"played": {
+						"type": "number"
+					},
+					"lastplayed": {
+						"type": "number"
+					},
+					"faved": {
+						"type": "number"
+					},
+					"rated": {
+						"type": "number"
+					}
+				}
+			},
 			"Jam.ChatMessage": {
 				"type": "object",
 				"properties": {
@@ -25652,23 +25649,20 @@
 			"Jam.User": {
 				"type": "object",
 				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"roles": {
-						"$ref": "#/components/schemas/Jam.Roles"
-					},
 					"id": {
 						"type": "string"
-					},
-					"state": {
-						"$ref": "#/components/schemas/Jam.State"
 					},
 					"name": {
 						"type": "string"
 					},
 					"created": {
 						"type": "number"
+					},
+					"email": {
+						"type": "string"
+					},
+					"roles": {
+						"$ref": "#/components/schemas/Jam.Roles"
 					}
 				},
 				"required": [

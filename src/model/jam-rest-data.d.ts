@@ -553,7 +553,10 @@ export declare namespace Jam {
 		admin?: boolean;
 	}
 
-	export interface SessionUser extends Base {
+	export interface SessionUser {
+		id: string;
+		name: string;
+		created: number;
 		roles: Roles;
 	}
 
@@ -561,7 +564,10 @@ export declare namespace Jam {
 	 * User Data
 	 */
 
-	export interface User extends Base {
+	export interface User {
+		id: string;
+		name: string;
+		created: number;
 		email: string;
 		roles: Roles;
 	}
