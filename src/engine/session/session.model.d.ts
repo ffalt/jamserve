@@ -10,5 +10,4 @@ export interface Session extends DBObject {
 	sessionID: string; // session id
 	cookie: string; // session cookie
 	jwth: string; // hashed jwt
-	subsonic: string; // subsonic token
 }

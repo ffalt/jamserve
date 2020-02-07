@@ -133,46 +133,6 @@ export class UserService extends BaseStoreService<User, SearchQueryUser> {
 		return user;
 	}
 
-	async authSubsonicPassword(name: string, pass: string): Promise<User> {
-		if ((!pass) || (!pass.length)) {
-			return Promise.reject(Error('Invalid Password'));
-		}
-		const user = await this.getByName(name);
-		if (!user) {
-			return Promise.reject(Error('Invalid Username'));
-		}
-		const session = await this.sessionStore.searchOne({userID: user.id, mode: SessionMode.subsonic});
-		if (!session) {
-			return Promise.reject(Error('No Jam Token for Subsonic available'));
-		}
-		if (pass !== session.subsonic) {
-			return Promise.reject(Error('Invalid Password'));
-		}
-		return user;
-	}
-
-	async authSubsonicToken(name: string, token: string, salt: string): Promise<User> {
-		if (!name || name.trim().length === 0) {
-			return Promise.reject(Error('Invalid Username'));
-		}
-		if ((!token) || (!token.length)) {
-			return Promise.reject(Error('Invalid Token'));
-		}
-		const user = await this.getByName(name);
-		if (!user) {
-			return Promise.reject(Error('Invalid Username'));
-		}
-		const session = await this.sessionStore.searchOne({userID: user.id, mode: SessionMode.subsonic});
-		if (!session) {
-			return Promise.reject(Error('No Jam Token for Subsonic available'));
-		}
-		const t = hashMD5(session.subsonic + salt);
-		if (token !== t) {
-			return Promise.reject(Error('Invalid Token'));
-		}
-		return user;
-	}
-
 	public clearCache(): void {
 		this.cachedUsers.clear();
 	}

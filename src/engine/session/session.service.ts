@@ -1,9 +1,6 @@
-import {DBObjectType} from '../../db/db.types';
-import {randomString} from '../../utils/random';
 import {BaseStoreService} from '../base/base.service';
 import {Session} from './session.model';
 import {SearchQuerySession, SessionStore} from './session.store';
-import {SessionMode} from './session.types';
 
 export interface SessionNotifyEventObject {
 	clearCache(): Promise<void>;
@@ -49,6 +46,15 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 			return session;
 		} catch (e) {
 			return;
+		}
+	}
+
+	async clearExpired(): Promise<void> {
+		const sessions = await this.sessionStore.all();
+		for (const session of sessions) {
+			if (this.expired(session)) {
+				await this.remove(session.id);
+			}
 		}
 	}
 
@@ -109,25 +115,4 @@ export class SessionService extends BaseStoreService<Session, SearchQuerySession
 		return !session;
 	}
 
-	async subsonicByUser(userID: string): Promise<Session | undefined> {
-		return this.sessionStore.searchOne({userID, mode: SessionMode.subsonic});
-	}
-
-	async createSubsonic(userID: string): Promise<Session> {
-		let session = await this.subsonicByUser(userID);
-		if (!session) {
-			session = {
-				id: '',
-				type: DBObjectType.session,
-				agent: '',
-				userID, client: 'Subsonic Client', expires: 0,
-				mode: SessionMode.subsonic,
-				sessionID: `${userID}_subsonic`,
-				cookie: '{}', jwth: '', subsonic: ''
-			};
-		}
-		session.subsonic = randomString(16);
-		await this.sessionStore.upsert([session]);
-		return session;
-	}
 }

@@ -6,9 +6,8 @@ import stream from 'stream';
 import zlib from 'zlib';
 import {DBObjectType} from '../db/db.types';
 import {Episode, PodcastEpisodeChapter} from '../engine/episode/episode.model';
-import {PodcastTag} from '../engine/podcast/podcast.model';
+import {Podcast, PodcastTag} from '../engine/podcast/podcast.model';
 import {PodcastStatus} from '../model/jam-types';
-import {Subsonic} from '../model/subsonic-rest-data';
 
 export class Feed {
 
@@ -117,7 +116,7 @@ export class Feed {
 		});
 	}
 
-	public async get(podcast: Subsonic.PodcastChannel): Promise<{ tag: PodcastTag, episodes: Array<Episode> }> {
+	public async get(podcast: Podcast): Promise<{ tag: PodcastTag, episodes: Array<Episode> }> {
 		const data = await this.fetch(podcast.url);
 		const tag: PodcastTag = {
 			title: data.feed.title,
@@ -152,7 +151,7 @@ export class Feed {
 			return {
 				id: '',
 				podcastID: podcast.id,
-				podcast: podcast.title || '',
+				podcast: tag.title || '',
 				status: PodcastStatus.new,
 				type: DBObjectType.episode,
 				author: post.author,

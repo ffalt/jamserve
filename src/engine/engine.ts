@@ -125,6 +125,7 @@ export class Engine {
 		await this.genreService.refresh();
 		await this.statsService.refresh();
 		await this.metaDataService.cleanUp();
+		await this.sessionService.clearExpired();
 	}
 
 	private async buildAdminUser(admin: { name: string, pass: string, mail: string }): Promise<void> {

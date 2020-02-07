@@ -1020,16 +1020,6 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		await api.sessionController.delete(options);
 		ApiResponder.ok(req, res);
 	});
-	register.post('/user/sessions/subsonic/view', async (req, res) => {
-		const options: JamRequest<JamParameters.SubsonicToken> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.SubsonicToken = await api.userController.subsonicView(options);
-		ApiResponder.data(req, res, result);
-	});
-	register.post('/user/sessions/subsonic/generate', async (req, res) => {
-		const options: JamRequest<JamParameters.SubsonicToken> = {query: req.body, user: req.user, client: req.client};
-		const result: Jam.SubsonicToken = await api.userController.subsonicGenerate(options);
-		ApiResponder.data(req, res, result);
-	});
 	register.post('/root/create', async (req, res) => {
 		const options: JamRequest<JamParameters.RootNew> = {query: req.body, user: req.user, client: req.client};
 		const result: Jam.AdminChangeQueueInfo = await api.rootController.create(options);

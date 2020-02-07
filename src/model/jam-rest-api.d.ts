@@ -1796,24 +1796,6 @@ export interface JamApi {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
-		/**
-		 * user: get infos about the user subsonic token
-		 */
-		'user/sessions/subsonic/view'?: {
-			operationId: 'user.subsonic.view'
-			params: JamParameters.SubsonicToken;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-			result: Jam.SubsonicToken;
-		};
-		/**
-		 * user: generate a user subsonic token
-		 */
-		'user/sessions/subsonic/generate'?: {
-			operationId: 'user.subsonic.generate'
-			params: JamParameters.SubsonicToken;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-			result: Jam.SubsonicToken;
-		};
 
 		/**
 		 * root: create a root folder

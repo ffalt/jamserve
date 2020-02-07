@@ -1,5 +1,4 @@
 import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../src/api/jam/version';
-import {SUBSONIC_VERSION} from '../../src/api/subsonic/version';
 import {AudioFormatType, WaveformFormatType} from '../../src/model/jam-types';
 import {Definition, Definitions} from './json-schema';
 import {transformTS2JSONScheme} from './ts2scheme';
@@ -239,11 +238,6 @@ export function getApiCalls(api: Definition, version: string, apiPrefix: string)
 		}
 	}
 	return result;
-}
-
-export async function getSubsonicApiCalls(basePath: string): Promise<ApiCalls> {
-	const api = await transformTS2JSONScheme(basePath, 'subsonic-rest-api', 'SubsonicApi');
-	return getApiCalls(api, SUBSONIC_VERSION, '/rest/');
 }
 
 export async function getJamApiCalls(basePath: string): Promise<ApiCalls> {

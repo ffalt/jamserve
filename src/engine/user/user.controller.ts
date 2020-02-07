@@ -151,19 +151,4 @@ export class UserController extends BaseController<JamParameters.ID, JamParamete
 		return this.userService.setUserEmail(user, req.query.email);
 	}
 
-	async subsonicView(req: JamRequest<JamParameters.SubsonicToken>): Promise<Jam.SubsonicToken> {
-		const user = await this.checkUserAccess(req.query.id, req.query.password, req.user);
-		const session = await this.sessionService.subsonicByUser(user.id);
-		return {token: session ? session.subsonic : undefined};
-	}
-
-	async subsonicGenerate(req: JamRequest<JamParameters.SubsonicToken>): Promise<Jam.SubsonicToken> {
-		const user = await this.checkUserAccess(req.query.id, req.query.password, req.user);
-		const session = await this.sessionService.createSubsonic(user.id);
-		if (!session) {
-			return Promise.reject(NotFoundError());
-		}
-		return {token: session.subsonic};
-	}
-
 }

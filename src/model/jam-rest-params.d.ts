@@ -1742,15 +1742,4 @@ export declare namespace JamParameters {
 		series?: number;
 	}
 
-	export interface SubsonicToken extends ID {
-		/**
-		 * view subsonic token of user with id
-		 */
-		id: string;
-		/**
-		 * current password of calling user (or admin) is view the subsonic token
-		 */
-		password: string;
-	}
-
 }

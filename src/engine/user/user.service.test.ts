@@ -85,22 +85,6 @@ describe('UserService', () => {
 				await expect(userService.auth(mock.name, '')).rejects.toThrow('Invalid Password');
 				await expect(userService.auth('non-existing', 'something')).rejects.toThrow('Invalid Username');
 			});
-			it('should auth the user by token', async () => {
-				const session = await sessionService.createSubsonic(userID);
-				const s = salt(6);
-				const token = hashMD5(session.subsonic + s);
-				const user = await userService.authSubsonicToken(mock.name, token, s);
-				expect(user).toBeDefined();
-				expect(user).toEqual(mock);
-			});
-			it('should not auth the user with the wrong token', async () => {
-				await expect(userService.authSubsonicToken(mock.name, 'wrong', 'wrong')).rejects.toThrow('Invalid Token');
-				await expect(userService.authSubsonicToken(' ', 'wrong', 'wrong')).rejects.toThrow('Invalid Username');
-				await expect(userService.authSubsonicToken(mock.name, '', 'wrong')).rejects.toThrow('Invalid Token');
-				await expect(userService.authSubsonicToken(mock.name, 'wrong', '')).rejects.toThrow('Invalid Token');
-				await expect(userService.authSubsonicToken('non-existing', 'wrong', 'wrong')).rejects.toThrow('Invalid Username');
-			});
-
 			it('should use the cache', async () => {
 				userService.clearCache();
 				let user = await userService.getByName(mock.name);

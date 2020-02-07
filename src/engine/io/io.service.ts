@@ -1,6 +1,5 @@
 import {Jam} from '../../model/jam-rest-data';
 import {ArtworkImageType, RootScanStrategy, TrackHealthID} from '../../model/jam-types';
-import {Subsonic} from '../../model/subsonic-rest-data';
 import {logger} from '../../utils/logger';
 import {RootStatus} from '../root/root.model';
 import {RootStore} from '../root/root.store';
@@ -183,10 +182,6 @@ export class IoService {
 
 	private newRequest<T extends WorkerRequestParameters>(mode: WorkerRequestMode, execute: (parameters: T) => Promise<Changes>, parameters: T): Jam.AdminChangeQueueInfo {
 		return this.addRequest(new WorkerRequest<T>(this.generateRequestID(), mode, execute, parameters));
-	}
-
-	getScanStatus(): Subsonic.ScanStatus {
-		return {scanning: this.scanning, count: this.scanningCount};
 	}
 
 	getAdminChangeQueueInfoStatus(id: string): Jam.AdminChangeQueueInfo {

@@ -373,7 +373,6 @@ const typeSession = {
 		sessionID: typeKey,
 		cookie: typeKey,
 		jwth: typeKey,
-		subsonic: typeKey,
 		id: typeKey,
 		type: typeInt
 	}
