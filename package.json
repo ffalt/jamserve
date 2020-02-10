@@ -138,7 +138,7 @@
     "mustache": "4.0.0",
     "nock": "11.7.2",
     "nodemon": "2.0.2",
-    "redoc-cli": "0.9.5",
+    "redoc-cli": "0.9.6",
     "rimraf": "3.0.1",
     "source-map-support": "0.5.16",
     "supertest": "4.0.2",
