@@ -139,7 +139,7 @@
     "nock": "11.7.2",
     "nodemon": "2.0.2",
     "redoc-cli": "0.9.5",
-    "rimraf": "3.0.1",
+    "rimraf": "3.0.2",
     "source-map-support": "0.5.16",
     "supertest": "4.0.2",
     "ts-jest": "25.2.0",
