@@ -41,7 +41,7 @@
     "build:jam:api:docs": "redoc-cli bundle src/model/jam-openapi.json --output ./dist/docs/api/jam/index.html"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "7.5.1",
+    "@elastic/elasticsearch": "7.6.0",
     "ajv": "6.11.0",
     "archiver": "3.1.1",
     "body-parser": "1.19.0",
