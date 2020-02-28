@@ -26706,11 +26706,6 @@
 		}
 	},
 	"security": [
-		{
-			"cookieAuth": []
-		},
-		{
-			"bearerAuth": []
-		}
+
 	]
 }

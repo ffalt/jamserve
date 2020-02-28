@@ -3,7 +3,6 @@ import D3Node from 'd3-node';
 import {scaleLinear} from 'd3-scale';
 import {area} from 'd3-shape';
 import fs from 'fs';
-import SVGO from 'svgo';
 import WaveformData from 'waveform-data';
 import {WaveDataResponse, Waveform} from './waveform.class';
 
