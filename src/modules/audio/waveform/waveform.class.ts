@@ -92,7 +92,7 @@ export class Waveform {
 		// https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md
 		return {
 			version: 2,
-			channels: 2,
+			channels: 1,
 			sample_rate: this.opts.sampleRate,
 			samples_per_pixel: this.opts.samplesPerPixel,
 			bits: 16,
