@@ -24,6 +24,7 @@ type JimpFont = any;
 
 const log = logger('Images');
 sharp.cache(false);
+sharp.simd(false);
 
 /**
  * Handles image access/reading/writing/transforming

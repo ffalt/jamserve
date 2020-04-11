@@ -63,12 +63,12 @@ export function registerPassPort(router: express.Router, engine: Engine): void {
 			return next();
 		}
 		let name = '';
-		let token = req.header('Authorization');
+		let token: string | undefined = req.header('Authorization');
 		if (token) {
 			token = token.slice(7); // Bearer xyz
 			name = 'jwt-header';
 		} else {
-			token = req.query.bearer;
+			token = `${req.query.bearer}`;
 			if (token) {
 				name = 'jwt-parameter';
 			}

@@ -1,4 +1,4 @@
-import refParser from 'json-schema-ref-parser';
+import refParser from '@apidevtools/json-schema-ref-parser';
 import {OpenAPIObject, OperationObject, ParameterObject} from '../../src/model/openapi-spec';
 import {InvalidData, ValidData} from './mock-data';
 

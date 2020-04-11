@@ -25,7 +25,7 @@ function buildOpenApi(version: string): OpenAPIObject {
 			},
 			schemas: {}
 		},
-		security: [{cookieAuth: []}, {bearerAuth: []}]
+		security: []
 	};
 }
 
