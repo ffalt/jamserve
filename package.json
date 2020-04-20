@@ -133,7 +133,7 @@
     "conventional-changelog-cli": "2.0.31",
     "copy-webpack-plugin": "5.1.1",
     "deplokay": "0.0.12",
-    "jest": "25.3.0",
+    "jest": "25.4.0",
     "jest-expect-message": "1.0.2",
     "mustache": "4.0.1",
     "nock": "12.0.3",
