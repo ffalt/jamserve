@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "7.6.1",
-    "ajv": "6.12.0",
+    "ajv": "6.12.2",
     "archiver": "3.1.1",
     "body-parser": "1.19.0",
     "colors": "1.4.0",
