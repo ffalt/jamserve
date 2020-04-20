@@ -107,7 +107,7 @@
     "@types/jest": "25.2.1",
     "@types/jest-expect-message": "1.0.1",
     "@types/mime-types": "2.1.0",
-    "@types/multer": "1.4.2",
+    "@types/multer": "1.4.3",
     "@types/mustache": "4.0.1",
     "@types/nedb": "1.8.9",
     "@types/nock": "11.1.0",
