@@ -58,7 +58,7 @@
     "eslint": "6.8.0",
     "express": "4.17.1",
     "express-rate-limit": "5.1.1",
-    "express-session": "1.17.0",
+    "express-session": "1.17.1",
     "express-useragent": "1.0.13",
     "feedparser": "2.2.9",
     "fluent-ffmpeg": "2.1.2",
