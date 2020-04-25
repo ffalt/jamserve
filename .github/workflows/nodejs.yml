@@ -29,12 +29,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm run build:prod --if-present
-    - name: Test & publish code coverage
-      uses: paambaati/codeclimate-action@v2.6.0
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      with:
-        coverageCommand: npm run coverage
-        coverageLocations: ${{github.workspace}}/coverage/lcov.info:lcov
-        debug: true
+    - run: npm run build:pro
+    - run: npm test
+#    - name: Test & publish code coverage
+#      uses: paambaati/codeclimate-action@v2.6.0
+#      env:
+#        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+#      with:
+#        coverageCommand: npm run coverage
+#        coverageLocations: ${{github.workspace}}/coverage/lcov.info:lcov
+#        debug: true
