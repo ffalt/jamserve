@@ -20,7 +20,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install xmllint
+    - name: Update apt
+      run: sudo apt-get update
+    - name: Install ffmpeg
       run: sudo apt-get install ffmpeg
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
