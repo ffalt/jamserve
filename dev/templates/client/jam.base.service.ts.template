@@ -6,8 +6,8 @@ import {Observable} from 'rxjs';
 
 import {JamAuthService} from './jam.auth.service';
 import {JamHttpService} from './jam.http.service';
-import {JamParameters} from './model/jam-rest-params';
 import {Jam} from './model/jam-rest-data';
+import {JamParameters} from './model/jam-rest-params';
 
 @Injectable()
 export class JamBaseService {

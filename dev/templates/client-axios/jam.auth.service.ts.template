@@ -102,9 +102,13 @@ export class JamAuthService {
 
 	async logout(): Promise<void> {
 		if (this.auth) {
-			await this.http.post<{}>(`${this.auth.server}${this.apiPrefix}logout`, {}, this.getHTTPOptions());
+			const url = `${this.auth.server}${this.apiPrefix}logout`;
+			const options = this.getHTTPOptions();
+			await this.clear();
+			await this.http.post<{}>(url, {}, options);
+		} else {
+			await this.clear();
 		}
-		await this.clear();
 	}
 
 	async clear(): Promise<void> {

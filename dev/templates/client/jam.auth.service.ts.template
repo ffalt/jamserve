@@ -57,9 +57,9 @@ export class JamAuthService {
 	}
 
 	async canUseSession(server: string): Promise<boolean> {
-	    if (this.configuration.forceSessionUsage) {
-	        return true;
-	    }
+		if (this.configuration.forceSessionUsage) {
+			return true;
+		}
 		const data = await this.http.get<Jam.Session>(`${server}${this.apiPrefix}session`, {withCredentials: false});
 		return (data.allowedCookieDomains || []).includes(this.configuration.domain());
 	}
@@ -112,9 +112,13 @@ export class JamAuthService {
 
 	async logout(): Promise<void> {
 		if (this.auth) {
-			await this.http.post<{}>(`${this.auth.server}${this.apiPrefix}logout`, {}, this.getHTTPOptions());
+			const url = `${this.auth.server}${this.apiPrefix}logout`;
+			const options = this.getHTTPOptions();
+			await this.clear();
+			await this.http.post<{}>(url, {}, options);
+		} else {
+			await this.clear();
 		}
-		await this.clear();
 	}
 
 	async clear(): Promise<void> {
