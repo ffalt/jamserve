@@ -30,6 +30,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build:prod --if-present
-    - run: npm test
+    - name: Test & publish code coverage
+      uses: paambaati/codeclimate-action@v2.6.0
       env:
-        CI: true
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        coverageCommand: npm run coverage
+        debug: true
