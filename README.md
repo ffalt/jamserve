@@ -2,17 +2,21 @@
 
 An audio library server written in Typescript for NodeJS
 
+![Test](https://github.com/ffalt/jamserve/workflows/test/badge.svg)
+[![Maintainability](https://api.codeclimate.com/v1/badges/78793d8ce54f2e8e6236/maintainability)](https://codeclimate.com/github/ffalt/jamserve/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/78793d8ce54f2e8e6236/test_coverage)](https://codeclimate.com/github/ffalt/jamserve/test_coverage)
+
 ## Preamble
 
 This is my current pet project to manage/stream/edit my own music collection. It's not ready yet a.k.a. work in progress. Everything is subject to change. Please do not use it for other than testing purposes until further notice.
 
 It's heavily inspired by the now closed source Java Server [Subsonic](http://www.subsonic.org/pages/index.jsp).
 
-This is the backend development repository. 
+This is the backend development repository.
 
-see [Jamberry](https://github.com/ffalt/jamberry) for web-client development, 
+see [Jamberry](https://github.com/ffalt/jamberry) for web-client development,
 
-see [Jampacked](https://github.com/ffalt/jampacked) for mobile app development, 
+see [Jampacked](https://github.com/ffalt/jampacked) for mobile app development,
 
 Installation & Usage Scripts (e.g. with Docker) will be published soon® in different repositories.
 
