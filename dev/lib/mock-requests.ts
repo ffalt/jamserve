@@ -2,7 +2,7 @@ import refParser from '@apidevtools/json-schema-ref-parser';
 import {OpenAPIObject, OperationObject, ParameterObject} from '../../src/model/openapi-spec';
 import {InvalidData, ValidData} from './mock-data';
 
-function combineData(list: Array<{ name: string, data: any }>): any {
+function combineData(list: Array<{ name: string; data: any }>): any {
 	const result: any = {};
 	for (const entry of list) {
 		result[entry.name] = entry.data;

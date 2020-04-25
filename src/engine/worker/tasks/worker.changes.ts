@@ -138,7 +138,7 @@ export class ChangesWorker {
 		await merger.merge(rootMatch, root.id, rebuildDirTag, forceTrackMetaRefresh, changes);
 	}
 
-	async start(rootID: string): Promise<{ changes: Changes, root: Root }> {
+	async start(rootID: string): Promise<{ changes: Changes; root: Root }> {
 		const root = await this.store.rootStore.byId(rootID);
 		if (!root) {
 			return Promise.reject(Error(`Root ${rootID} not found`));

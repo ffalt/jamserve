@@ -12,7 +12,7 @@ export function hashSaltSHA512(s: string, salt: string): string {
 	return hash.digest('hex');
 }
 
-export function hashAndSaltSHA512(s: string): { salt: string, hash: string } {
+export function hashAndSaltSHA512(s: string): { salt: string; hash: string } {
 	const salt = generateSalt16();
 	return {salt, hash: hashSaltSHA512(s, salt)};
 }

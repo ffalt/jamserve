@@ -1,4 +1,4 @@
-import {ID3v2, IID3V1, IID3V2, IMP3Analyzer, MP3Analyzer} from 'jamp3';
+import {ID3v2, IID3V1, IID3V2, IMP3Analyzer} from 'jamp3';
 import path from 'path';
 import {Jam} from '../../model/jam-rest-data';
 import {AlbumTypesArtistMusic, AudioFormatType, TrackHealthID} from '../../model/jam-types';

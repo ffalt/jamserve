@@ -31,7 +31,7 @@ export function getAlbumSlug(trackInfo: MetaMergeTrackInfo): string {
 }
 
 export class MetaMergerCache {
-	private artistCache: Array<{ artist: Artist, slugs: Array<string> }> = [];
+	private artistCache: Array<{ artist: Artist; slugs: Array<string> }> = [];
 	private seriesCache: Array<Series> = [];
 	private albumCache: Array<Album> = [];
 	private folderCache: Array<Folder> = [];

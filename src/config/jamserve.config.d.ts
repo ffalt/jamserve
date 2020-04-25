@@ -36,13 +36,13 @@ export interface ServerConfig {
 	};
 	limit: {
 		login: {
-			max: number,
-			window: number
-		},
+			max: number;
+			window: number;
+		};
 		api: {
-			max: number,
-			window: number
-		}
+			max: number;
+			window: number;
+		};
 	};
 }
 
@@ -51,7 +51,7 @@ export interface JamServeConfig {
 	server: ServerConfig;
 	database: DBConfig;
 	paths: {
-		data: string,
-		frontend: string
+		data: string;
+		frontend: string;
 	};
 }

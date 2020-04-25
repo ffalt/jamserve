@@ -1,5 +1,4 @@
 import {Jam} from '../../model/jam-rest-data';
-import {LastFM} from '../../model/lastfm-rest-data';
 
 export class MetaDataFormat {
 

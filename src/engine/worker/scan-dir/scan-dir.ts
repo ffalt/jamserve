@@ -12,8 +12,8 @@ export interface ScanDir {
 	name: string;
 	rootID: string;
 	stat: {
-		ctime: number,
-		mtime: number
+		ctime: number;
+		mtime: number;
 	};
 	directories: Array<ScanDir>;
 	files: Array<ScanFile>;
@@ -23,9 +23,9 @@ export interface ScanFile {
 	name: string;
 	type: FileTyp;
 	stat: {
-		ctime: number,
-		mtime: number,
-		size: number
+		ctime: number;
+		mtime: number;
+		size: number;
 	};
 }
 
@@ -43,7 +43,7 @@ export class DirScanner {
 			directories: [],
 			files: []
 		};
-		const folders: Array<{ dir: string, stat: fse.Stats }> = [];
+		const folders: Array<{ dir: string; stat: fse.Stats }> = [];
 		const list = await fse.readdir(dir);
 		for (const filename of list) {
 			if (filename[0] !== '.') {
@@ -66,7 +66,7 @@ export class DirScanner {
 			}
 		}
 		if (folders.length > 0) {
-			await processQueue<{ dir: string, stat: fse.Stats }>(3, folders, async folder => {
+			await processQueue<{ dir: string; stat: fse.Stats }>(3, folders, async folder => {
 				const sub = await this.scanDirR(folder.dir, folder.stat, rootID);
 				result.directories.push(sub);
 			});

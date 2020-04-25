@@ -5,7 +5,7 @@ const chance = new Chance();
 
 export class ValidData {
 
-	static generateValidDataByParameter(param: ParameterObject): { name: string, data: any } {
+	static generateValidDataByParameter(param: ParameterObject): { name: string; data: any } {
 		return {name: param.name, data: ValidData.generateValidDataSchema(param.schema as SchemaObject)};
 	}
 
@@ -60,12 +60,12 @@ export class ValidData {
 
 export class InvalidData {
 
-	static generateInvalidDataByParameter(param: ParameterObject): Array<{ name: string, data: any, invalid?: string }> {
+	static generateInvalidDataByParameter(param: ParameterObject): Array<{ name: string; data: any; invalid?: string }> {
 		return InvalidData.generateInvalidDataBySchema(param.schema as SchemaObject).map(o => ({...o, name: param.name}));
 	}
 
-	static generateInvalidIntegerData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
-		const result: Array<{ data: any, invalid: string }> = [];
+	static generateInvalidIntegerData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+		const result: Array<{ data: any; invalid: string }> = [];
 		result.push({data: chance.string(), invalid: 'string'});
 		result.push({data: '', invalid: 'empty string'});
 		result.push({data: true, invalid: 'boolean'});
@@ -83,8 +83,8 @@ export class InvalidData {
 		return result;
 	}
 
-	static generateInvalidNumberData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
-		const result: Array<{ data: any, invalid: string }> = [];
+	static generateInvalidNumberData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+		const result: Array<{ data: any; invalid: string }> = [];
 		result.push({data: chance.string(), invalid: 'string'});
 		result.push({data: '', invalid: 'empty string'});
 		result.push({data: true, invalid: 'boolean'});
@@ -97,8 +97,8 @@ export class InvalidData {
 		return result;
 	}
 
-	static generateInvalidStringData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
-		const result: Array<{ data: any, invalid: string }> = [];
+	static generateInvalidStringData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+		const result: Array<{ data: any; invalid: string }> = [];
 		if (schema.default === undefined) { // if the default value available, these parameter are always valid to omit
 			result.push({data: '', invalid: 'empty string'});
 		}
@@ -108,8 +108,8 @@ export class InvalidData {
 		return result;
 	}
 
-	static generateInvalidBooleanData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
-		const result: Array<{ data: any, invalid: string }> = [];
+	static generateInvalidBooleanData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+		const result: Array<{ data: any; invalid: string }> = [];
 		result.push({data: '', invalid: 'empty string'});
 		result.push({data: chance.string(), invalid: 'string'});
 		result.push({data: chance.integer() + 2, invalid: 'integer > 1'});
@@ -117,8 +117,8 @@ export class InvalidData {
 		return result;
 	}
 
-	static generateInvalidArrayData(schema: SchemaObject): Array<{ data: any, invalid: string }> {
-		const result: Array<{ data: any, invalid: string }> = [];
+	static generateInvalidArrayData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+		const result: Array<{ data: any; invalid: string }> = [];
 		result.push({data: null, invalid: 'null'});
 		const array = [ValidData.generateValidDataSchema(schema.items as SchemaObject).data];
 		const invalids = InvalidData.generateInvalidDataBySchema(schema.items as SchemaObject);
@@ -128,7 +128,7 @@ export class InvalidData {
 		return result;
 	}
 
-	static generateInvalidDataBySchema(schema: SchemaObject): Array<{ data: any, invalid: string }> {
+	static generateInvalidDataBySchema(schema: SchemaObject): Array<{ data: any; invalid: string }> {
 		switch (schema.type) {
 			case 'integer':
 				return InvalidData.generateInvalidIntegerData(schema);

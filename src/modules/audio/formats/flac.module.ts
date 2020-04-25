@@ -1,15 +1,12 @@
 import fse from 'fs-extra';
 import {Jam} from '../../../model/jam-rest-data';
 import {TrackTagFormatType} from '../../../model/jam-types';
-import {logger} from '../../../utils/logger';
 import {ImageModule} from '../../image/image.module';
 import {FORMAT} from '../audio.format';
 import {AudioScanResult} from '../audio.module';
 import {flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2} from '../metadata';
 import {Flac} from './flac';
 import {MetaWriteableDataBlock} from './flac/lib/block.writeable';
-
-const log = logger('Audio:FLAC');
 
 export class AudioModuleFLAC {
 

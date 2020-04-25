@@ -16,7 +16,7 @@ export class TrackWorker {
 
 	}
 
-	public async writeTags(tags: Array<{ trackID: string; tag: Jam.RawTag }>): Promise<{ changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {
+	public async writeTags(tags: Array<{ trackID: string; tag: Jam.RawTag }>): Promise<{ changedFolderIDs: Array<string>; changedTrackIDs: Array<string> }> {
 		const changedTrackIDs = [];
 		const tracks = await this.store.trackStore.byIds(tags.map(t => t.trackID));
 		const changedFolderIDs: Array<string> = [];
@@ -34,17 +34,17 @@ export class TrackWorker {
 		return {changedTrackIDs, changedFolderIDs};
 	}
 
-	public async fix(fixes: Array<{ trackID: string, fixID: TrackHealthID }>): Promise<{ changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {
+	public async fix(fixes: Array<{ trackID: string; fixID: TrackHealthID }>): Promise<{ changedFolderIDs: Array<string>; changedTrackIDs: Array<string> }> {
 		const changedFolderIDs = new Set<string>();
 		const changedTrackIDs = new Set<string>();
 		const tracks = await this.store.trackStore.byIds(fixes.map(t => t.trackID));
-		const fixTasks: Array<{ filename: string, fixIDs: Array<TrackHealthID> }> = [];
+		const fixTasks: Array<{ filename: string; fixIDs: Array<TrackHealthID> }> = [];
 		for (const track of tracks) {
 			changedTrackIDs.add(track.id);
 			changedFolderIDs.add(track.parentID);
 			fixTasks.push({filename: path.join(track.path, track.name), fixIDs: fixes.filter(f => f.trackID === track.id).map(f => f.fixID)});
 		}
-		await processQueue<{ filename: string, fixIDs: Array<TrackHealthID> }>(3, fixTasks, async item => {
+		await processQueue<{ filename: string; fixIDs: Array<TrackHealthID> }>(3, fixTasks, async item => {
 			for (const fixID of item.fixIDs) {
 				if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].includes(fixID)) {
 					await this.audioModule.mp3.rewrite(item.filename);
@@ -82,7 +82,7 @@ export class TrackWorker {
 		await this.store.trackStore.replace(track);
 	}
 
-	public async delete(root: Root, trackIDs: Array<string>): Promise<{ changedFolderIDs: Array<string>, changedTrackIDs: Array<string>, removedTracks: Array<Track> }> {
+	public async delete(root: Root, trackIDs: Array<string>): Promise<{ changedFolderIDs: Array<string>; changedTrackIDs: Array<string>; removedTracks: Array<Track> }> {
 		const removedTracks = await this.store.trackStore.byIds(trackIDs);
 		const trashPath = path.join(root.path, '.trash');
 		for (const track of removedTracks) {
@@ -97,7 +97,7 @@ export class TrackWorker {
 		return {changedFolderIDs, changedTrackIDs: [], removedTracks};
 	}
 
-	public async move(trackIDs: Array<string>, newParentID: string): Promise<{ changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {
+	public async move(trackIDs: Array<string>, newParentID: string): Promise<{ changedFolderIDs: Array<string>; changedTrackIDs: Array<string> }> {
 		const tracks = await this.store.trackStore.byIds(trackIDs);
 		const newParent = await this.store.folderStore.byId(newParentID);
 		if (!newParent) {
@@ -127,7 +127,7 @@ export class TrackWorker {
 		return {changedTrackIDs, changedFolderIDs};
 	}
 
-	public async refresh(trackIDs: Array<string>): Promise<{ changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {
+	public async refresh(trackIDs: Array<string>): Promise<{ changedFolderIDs: Array<string>; changedTrackIDs: Array<string> }> {
 		const tracks = await this.store.trackStore.byIds(trackIDs);
 		const changedFolderIDs: Array<string> = [];
 		const changedTrackIDs: Array<string> = [];

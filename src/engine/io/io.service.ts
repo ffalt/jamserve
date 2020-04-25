@@ -82,11 +82,11 @@ export class IoService {
 	private rootstatus = new Map<string, RootStatus>();
 	private current: WorkerRequest<WorkerRequestParameters> | undefined;
 	private queue: Array<WorkerRequest<WorkerRequestParameters>> = [];
-	private delayedTrackTagWrite = new Map<string, { request: WorkerRequest<WorkerRequestWriteTrackTags>, timeout?: NodeJS.Timeout }>();
-	private delayedTrackFix = new Map<string, { request: WorkerRequest<WorkerRequestFixTrack>, timeout?: NodeJS.Timeout }>();
+	private delayedTrackTagWrite = new Map<string, { request: WorkerRequest<WorkerRequestWriteTrackTags>; timeout?: NodeJS.Timeout }>();
+	private delayedTrackFix = new Map<string, { request: WorkerRequest<WorkerRequestFixTrack>; timeout?: NodeJS.Timeout }>();
 	private nextID: number = Date.now();
 	private afterScanTimeout: NodeJS.Timeout | undefined;
-	private history: Array<{ id: string; error?: string; date: number; }> = [];
+	private history: Array<{ id: string; error?: string; date: number }> = [];
 
 	constructor(private rootStore: RootStore, private workerService: WorkerService, private onRefresh: () => Promise<void>) {
 	}

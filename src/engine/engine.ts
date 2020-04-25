@@ -76,7 +76,7 @@ export class Engine {
 	public sessionService: SessionService;
 	public seriesService: SeriesService;
 
-	constructor(public config: Config, public store: Store, public version: string, modules?: { image: ImageModule, audio: AudioModule }) {
+	constructor(public config: Config, public store: Store, public version: string, modules?: { image: ImageModule; audio: AudioModule }) {
 		this.imageModule = modules && modules.image ? modules.image : new ImageModule(config.getDataPath(['cache', 'images']));
 		this.audioModule = modules && modules.audio ? modules.audio : new AudioModule(
 			config.getDataPath(['cache', 'waveforms']),
@@ -128,7 +128,7 @@ export class Engine {
 		await this.sessionService.clearExpired();
 	}
 
-	private async buildAdminUser(admin: { name: string, pass: string, mail: string }): Promise<void> {
+	private async buildAdminUser(admin: { name: string; pass: string; mail: string }): Promise<void> {
 		const pw = hashAndSaltSHA512(admin.pass || '');
 		const user: User = {
 			id: '',

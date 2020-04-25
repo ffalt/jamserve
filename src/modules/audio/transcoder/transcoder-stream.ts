@@ -16,8 +16,8 @@ export abstract class TranscoderStream implements StreamData {
 		return SupportedTranscodeAudioFormat.includes(format);
 	}
 
-	static async getAvailableFormats(): Promise<Array<{ format: string, name: string }>> {
-		return new Promise<Array<{ format: string, name: string }>>((resolve, reject) => {
+	static async getAvailableFormats(): Promise<Array<{ format: string; name: string }>> {
+		return new Promise<Array<{ format: string; name: string }>>((resolve, reject) => {
 			ffmpeg().getAvailableFormats((err, formats) => {
 				if (err || !formats) {
 					return reject(err);

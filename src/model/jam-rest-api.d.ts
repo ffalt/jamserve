@@ -36,7 +36,7 @@ export interface JamApi {
 		 * access: is the api online?
 		 */
 		'ping'?: {
-			operationId: 'session.ping'
+			operationId: 'session.ping';
 			result: Jam.Ping;
 			public: true;
 		};
@@ -44,7 +44,7 @@ export interface JamApi {
 		 * access: check the login state
 		 */
 		'session'?: {
-			operationId: 'session.session'
+			operationId: 'session.session';
 			result: Jam.Session;
 			public: true;
 		};
@@ -53,7 +53,7 @@ export interface JamApi {
 		 * metadata: lookup lastfm data
 		 */
 		'lastfm/lookup'?: {
-			operationId: 'metadata.lastfmLookup'
+			operationId: 'metadata.lastfmLookup';
 			params: JamParameters.LastFMLookup;
 			result: Jam.LastFMResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -62,7 +62,7 @@ export interface JamApi {
 		 * metadata: search lyrics.ovh data
 		 */
 		'lyricsovh/search'?: {
-			operationId: 'metadata.lyricsovhSearch'
+			operationId: 'metadata.lyricsovhSearch';
 			params: JamParameters.LyricsOVHSearch;
 			result: Jam.LyricsOVHResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -71,7 +71,7 @@ export interface JamApi {
 		 * metadata: lookup acoustid data
 		 */
 		'acoustid/lookup'?: {
-			operationId: 'metadata.acoustidLookup'
+			operationId: 'metadata.acoustidLookup';
 			params: JamParameters.AcoustidLookup;
 			result: Array<Jam.AcoustidResponse>;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -80,7 +80,7 @@ export interface JamApi {
 		 * metadata: lookup musicbrainz data
 		 */
 		'musicbrainz/lookup'?: {
-			operationId: 'metadata.musicbrainzLookup'
+			operationId: 'metadata.musicbrainzLookup';
 			params: JamParameters.MusicBrainzLookup;
 			result: Jam.MusicBrainzResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -89,7 +89,7 @@ export interface JamApi {
 		 * metadata: search musicbrainz data
 		 */
 		'musicbrainz/search'?: {
-			operationId: 'metadata.musicbrainzSearch'
+			operationId: 'metadata.musicbrainzSearch';
 			params: JamParameters.MusicBrainzSearch;
 			result: Jam.MusicBrainzResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -98,7 +98,7 @@ export interface JamApi {
 		 * metadata: lookup acousticbrainz data
 		 */
 		'acousticbrainz/lookup'?: {
-			operationId: 'metadata.acousticbrainzLookup'
+			operationId: 'metadata.acousticbrainzLookup';
 			params: JamParameters.AcousticBrainzLookup;
 			result: Jam.AcousticBrainzResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -107,7 +107,7 @@ export interface JamApi {
 		 * metadata: lookup coverartarchive data
 		 */
 		'coverartarchive/lookup'?: {
-			operationId: 'metadata.coverartarchiveLookup'
+			operationId: 'metadata.coverartarchiveLookup';
 			params: JamParameters.CoverArtArchiveLookup;
 			result: Jam.CoverArtArchiveResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -116,7 +116,7 @@ export interface JamApi {
 		 * metadata: wikipedia summary
 		 */
 		'wikipedia/summary'?: {
-			operationId: 'metadata.wikipediaSummary'
+			operationId: 'metadata.wikipediaSummary';
 			params: JamParameters.WikipediaSummary;
 			result: Jam.WikipediaSummaryResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -125,7 +125,7 @@ export interface JamApi {
 		 * metadata: wikidata summary
 		 */
 		'wikidata/summary'?: {
-			operationId: 'metadata.wikidataSummary'
+			operationId: 'metadata.wikidataSummary';
 			params: JamParameters.WikidataSummary;
 			result: Jam.WikipediaSummaryResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -134,7 +134,7 @@ export interface JamApi {
 		 * metadata: wikidata lookup
 		 */
 		'wikidata/lookup'?: {
-			operationId: 'metadata.wikidataLookup'
+			operationId: 'metadata.wikidataLookup';
 			params: JamParameters.WikidataLookup;
 			result: Jam.WikidataLookupResponse;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -144,7 +144,7 @@ export interface JamApi {
 		 * various: autocomplete
 		 */
 		'autocomplete'?: {
-			operationId: 'autocomplete.autocomplete'
+			operationId: 'autocomplete.autocomplete';
 			params: JamParameters.AutoComplete;
 			result: Jam.AutoComplete;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
@@ -161,7 +161,7 @@ export interface JamApi {
 		 * various: get count stats for folders/tracks/albums/...
 		 */
 		'stats'?: {
-			operationId: 'stats.get'
+			operationId: 'stats.get';
 			params: JamParameters.Stats;
 			result: Jam.Stats;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
@@ -433,7 +433,7 @@ export interface JamApi {
 		 */
 		'episode/state'?: {
 			params: JamParameters.ID;
-			result: Jam.State
+			result: Jam.State;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -497,7 +497,7 @@ export interface JamApi {
 		 * podcast: get podcast episodes by podcast id
 		 */
 		'podcast/episodes'?: {
-			params: JamParameters.PodcastEpisodes
+			params: JamParameters.PodcastEpisodes;
 			result: Jam.PodcastEpisodeList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
@@ -569,7 +569,7 @@ export interface JamApi {
 		 */
 		'radio/state'?: {
 			params: JamParameters.ID;
-			result: Jam.State
+			result: Jam.State;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
 		/**
@@ -650,7 +650,7 @@ export interface JamApi {
 		 */
 		'artist/index'?: {
 			params: JamParameters.ArtistIndex;
-			result: Jam.ArtistIndex
+			result: Jam.ArtistIndex;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -820,7 +820,7 @@ export interface JamApi {
 		 */
 		'series/index'?: {
 			params: JamParameters.SeriesIndex;
-			result: Jam.SeriesIndex
+			result: Jam.SeriesIndex;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
@@ -936,7 +936,7 @@ export interface JamApi {
 		 * user: get infos about the user sessions
 		 */
 		'user/sessions/list'?: {
-			operationId: 'session.sessions'
+			operationId: 'session.sessions';
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 			result: Array<Jam.UserSession>;
 		};
@@ -1023,7 +1023,7 @@ export interface JamApi {
 			result: Jam.AdminSettings;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 			roles: ['admin'];
-			operationId: 'settings.admin'
+			operationId: 'settings.admin';
 		};
 		/**
 		 * admin: get admin change request status
@@ -1033,7 +1033,7 @@ export interface JamApi {
 			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric;
 			roles: ['admin'];
-			operationId: 'root.queue.id'
+			operationId: 'root.queue.id';
 		};
 
 		// binary
@@ -1295,7 +1295,7 @@ export interface JamApi {
 		'waveform_json'?: {
 			operationId: 'waveform.json';
 			params: JamParameters.ID;
-			result: Jam.WaveFormData,
+			result: Jam.WaveFormData;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['stream'];
 		};
@@ -1437,7 +1437,7 @@ export interface JamApi {
 		 */
 		'track/rawTag/update'?: {
 			params: JamParameters.RawTagUpdate;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1446,7 +1446,7 @@ export interface JamApi {
 		 */
 		'track/name/update'?: {
 			params: JamParameters.TrackEditName;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1455,7 +1455,7 @@ export interface JamApi {
 		 */
 		'track/parent/update'?: {
 			params: JamParameters.TrackMoveParent;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1464,7 +1464,7 @@ export interface JamApi {
 		 */
 		'track/delete'?: {
 			params: JamParameters.ID;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1473,7 +1473,7 @@ export interface JamApi {
 		 */
 		'track/fix'?: {
 			params: JamParameters.TrackFix;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1483,7 +1483,7 @@ export interface JamApi {
 		 */
 		'folder/artwork/create'?: {
 			params: JamParameters.FolderArtworkNew;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1492,7 +1492,7 @@ export interface JamApi {
 		 */
 		'folder/artwork/delete'?: {
 			params: JamParameters.ID;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1501,7 +1501,7 @@ export interface JamApi {
 		 */
 		'folder/artwork/name/update'?: {
 			params: JamParameters.FolderArtworkEditName;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1510,20 +1510,20 @@ export interface JamApi {
 		 */
 		'folder/artworkUpload/create'?: {
 			params: JamParameters.FolderArtworkUpload;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
-			upload: 'image'
+			upload: 'image';
 		};
 		/**
 		 * folder: update an artwork by upload
 		 */
 		'folder/artworkUpload/update'?: {
 			params: JamParameters.ID;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
-			upload: 'image'
+			upload: 'image';
 		};
 
 		/**
@@ -1532,7 +1532,7 @@ export interface JamApi {
 		'folder/name/update'?: {
 			params: JamParameters.FolderEditName;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			roles: ['admin'];
 		};
 		/**
@@ -1556,7 +1556,7 @@ export interface JamApi {
 		 */
 		'folder/parent/update'?: {
 			params: JamParameters.FolderMoveParent;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
 		};
@@ -1566,7 +1566,7 @@ export interface JamApi {
 		'folder/delete'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			result: Jam.AdminChangeQueueInfo,
+			result: Jam.AdminChangeQueueInfo;
 			roles: ['admin'];
 		};
 		/**
@@ -1778,7 +1778,7 @@ export interface JamApi {
 		'user/imageUpload/update'?: {
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			upload: 'image'
+			upload: 'image';
 		};
 		/**
 		 * user: delete an user
@@ -1792,7 +1792,7 @@ export interface JamApi {
 		 * user: remove an user session
 		 */
 		'user/sessions/delete'?: {
-			operationId: 'session.delete'
+			operationId: 'session.delete';
 			params: JamParameters.ID;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
@@ -1850,7 +1850,7 @@ export interface JamApi {
 			params: Jam.AdminSettings;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['admin'];
-			operationId: 'settings.admin.update'
+			operationId: 'settings.admin.update';
 		};
 
 	};

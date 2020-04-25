@@ -12,7 +12,7 @@ interface NebDBClient {
 }
 
 export class DBNedb implements Database {
-	clients: { [type: string]: NebDBClient; } = {};
+	clients: { [type: string]: NebDBClient } = {};
 	sequenceId = 99999;
 
 	constructor(dbPath: string) {

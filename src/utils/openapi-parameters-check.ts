@@ -7,7 +7,7 @@ const log = logger('CheckApiParameters');
 
 class Validator {
 
-	static validateBooleanParameter(query: any, param: { name: string, required?: boolean }, value: any): string | undefined {
+	static validateBooleanParameter(query: any, param: { name: string; required?: boolean }, value: any): string | undefined {
 		if (['true', 'yes', '1'].includes(value.toString())) {
 			query[param.name] = true;
 			value = true;
@@ -20,7 +20,7 @@ class Validator {
 		query[param.name] = value;
 	}
 
-	static validateNumberParameter(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
+	static validateNumberParameter(query: any, param: { name: string; required?: boolean }, value: any, schema: SchemaObject): string | undefined {
 		const s = value.toString().trim();
 		if (s.length === 0) {
 			return `Empty number parameter ${param.name}`;
@@ -41,7 +41,7 @@ class Validator {
 		}
 	}
 
-	static validateStringParameter(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
+	static validateStringParameter(query: any, param: { name: string; required?: boolean }, value: any, schema: SchemaObject): string | undefined {
 		if (typeof value !== 'string') {
 			return `Invalid string parameter ${param.name}`;
 		}
@@ -57,7 +57,7 @@ class Validator {
 		}
 	}
 
-	static validateArrayParameter(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
+	static validateArrayParameter(query: any, param: { name: string; required?: boolean }, value: any, schema: SchemaObject): string | undefined {
 		const items = (schema.items || {type: 'unknown'}) as SchemaObject;
 		const listValues = ((Array.isArray(value) ? value : [value]) || []);
 		if (param.required && listValues.length === 0) {
@@ -72,7 +72,7 @@ class Validator {
 		}
 	}
 
-	static validateAnyOfParameter(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
+	static validateAnyOfParameter(query: any, param: { name: string; required?: boolean }, value: any, schema: SchemaObject): string | undefined {
 		const results: Array<string> = [];
 		for (const entry of (schema.anyOf || [])) {
 			const res = Validator.validOAParameterValueBySchema(query, param, value, entry);
@@ -84,7 +84,7 @@ class Validator {
 		return results.join('/');
 	}
 
-	static validOAParameterValueBySchema(query: any, param: { name: string, required?: boolean }, value: any, schema: SchemaObject): string | undefined {
+	static validOAParameterValueBySchema(query: any, param: { name: string; required?: boolean }, value: any, schema: SchemaObject): string | undefined {
 		if (value === undefined || value === null) {
 			if (schema && schema.default !== undefined) {
 				query[param.name] = schema.default;

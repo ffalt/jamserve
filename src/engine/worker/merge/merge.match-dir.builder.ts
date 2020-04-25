@@ -235,8 +235,8 @@ export class MatchDirMergeTagBuilder {
 		}
 	}
 
-	private static splitDirectoryName(name: string): { title: string; year?: number; } {
-		const result: { title: string; year?: number; } = {title: path.basename(name).trim()};
+	private static splitDirectoryName(name: string): { title: string; year?: number } {
+		const result: { title: string; year?: number } = {title: path.basename(name).trim()};
 		// year title | year - title | (year) title | [year] title
 		const parts = result.title.split(' ');
 		const s = parts[0].replace(/[^\w\s]/gi, '');

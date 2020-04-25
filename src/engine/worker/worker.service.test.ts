@@ -21,6 +21,7 @@ function logChange(name: string, amount: number): void {
 
 function logChanges(changes: Changes): void {
 	const v = moment.utc(changes.end - changes.start).format('HH:mm:ss');
+	logChange('Duration', v);
 	logChange('Added Tracks', changes.newTracks.length);
 	logChange('Updated Tracks', changes.updateTracks.length);
 	logChange('Removed Tracks', changes.removedTracks.length);

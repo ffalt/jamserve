@@ -104,7 +104,7 @@ async function buildOpenApiPath(call: ApiCall, openapi: OpenAPIObject, definitio
 		security: call.isPublic ? [] : undefined,
 		requestBody: await buildOpenApiRequestBody(call, openapi)
 	};
-	cmd.responses = await listToObject<{ code: number, text: string }, ResponseObject, ResponsesObject>(call.resultErrors,
+	cmd.responses = await listToObject<{ code: number; text: string }, ResponseObject, ResponsesObject>(call.resultErrors,
 		async item => ({key: item.code.toString(), value: {description: item.text}}),
 		cmd.responses);
 	const result: PathItemObject = {};

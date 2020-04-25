@@ -43,13 +43,13 @@ export declare namespace Wikipedia {
 				revisions: string;
 				edit: string;
 				talk: string;
-			},
+			};
 			mobile: {
 				page: string;
 				revisions: string;
 				edit: string;
 				talk: string;
-			}
+			};
 		};
 		api_urls: {
 			summary: string;
@@ -83,7 +83,7 @@ export declare namespace WikiPHPApi {
 		warnings?: {
 			extracts?: {
 				[id: string]: string;
-			}
+			};
 		};
 		query: {
 			pages: {
@@ -101,7 +101,7 @@ export class WikipediaClient extends WebserviceClient {
 		super(200, 1000, userAgent);
 	}
 
-	async summary(title: string, lang: string | undefined): Promise<{ title: string, url: string, summary: string } | undefined> {
+	async summary(title: string, lang: string | undefined): Promise<{ title: string; url: string; summary: string } | undefined> {
 		log.info('requesting summary', title);
 		const url = `https://${(lang || 'en')}.wikipedia.org/w/api.php`;
 		const data: WikiPHPApi.Summary = await this.getJson<WikiPHPApi.Summary>(url, {

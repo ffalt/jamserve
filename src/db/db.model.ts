@@ -72,7 +72,7 @@ export interface DatabaseQuery {
 		[name: string]: Array<string>;
 	};
 	range?: {
-		[name: string]: { lte?: number; gte?: number; };
+		[name: string]: { lte?: number; gte?: number };
 	};
 	notNull?: Array<string>;
 	sort?: DatabaseQuerySort;

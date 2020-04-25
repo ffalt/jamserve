@@ -42,7 +42,21 @@ module.exports = {
 			"files": ["*.ts"],
 			"rules": {
 				"@typescript-eslint/explicit-function-return-type": ["error"],
-				"@typescript-eslint/no-var-requires": 2
+				"@typescript-eslint/no-unused-vars": ["error", {"args": "none"}],
+				"@typescript-eslint/no-var-requires": 2,
+				"@typescript-eslint/member-delimiter-style": [
+					"error",
+					{
+						"multiline": {
+							"delimiter": "semi",
+							"requireLast": true
+						},
+						"singleline": {
+							"delimiter": "semi",
+							"requireLast": false
+						}
+					}
+				]
 			}
 		}
 	]

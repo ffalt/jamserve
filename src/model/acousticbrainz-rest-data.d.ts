@@ -60,7 +60,7 @@ export declare namespace AcousticBrainz {
 			length: number;
 			lossless: number;
 			md5_encoded: string;
-			replay_gain: number
+			replay_gain: number;
 		};
 		tags: {
 			acoustid_id: Array<string>;
@@ -106,11 +106,11 @@ export declare namespace AcousticBrainz {
 			totaltracks: Array<string>;
 			tracknumber: Array<string>;
 			tracktotal: Array<string>;
-			work: Array<string>
+			work: Array<string>;
 		};
 		version: {
 			highlevel: Version;
-			lowlevel: Version
+			lowlevel: Version;
 		};
 	}
 }

@@ -97,16 +97,17 @@ import {testService} from '../base/base.service.spec';
 import {MetaDataService} from './metadata.service';
 
 describe('MetaDataService', () => {
-	let metaDataService: MetaDataService;
+	// let metaDataService: MetaDataService;
 	testService({mockData: false},
 		async (store, imageModuleTest, audioModuleTest) => {
-			metaDataService = new MetaDataService(store.metaStore, store.folderStore, store.trackStore, store.albumStore, store.artistStore, audioModuleTest.audioModule);
+			// metaDataService =
+			new MetaDataService(store.metaStore, store.folderStore, store.trackStore, store.albumStore, store.artistStore, audioModuleTest.audioModule);
 		},
 		() => {
 			describe('.', () => {
 				it('should', async () => {
-			// nope
-		});
+					// nope
+				});
 			});
 			/*
 			describe('.getArtistInfo', () => {

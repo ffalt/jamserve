@@ -58,7 +58,7 @@ export class MatchDirBuilderScan {
 		}
 	}
 
-	async match(dir: ScanDir): Promise<{ rootMatch: MatchDir, removedFolders: Array<Folder>, removedTracks: Array<Track> }> {
+	async match(dir: ScanDir): Promise<{ rootMatch: MatchDir; removedFolders: Array<Folder>; removedTracks: Array<Track> }> {
 		const tracks = await this.store.trackStore.search({inPath: dir.name});
 		const folders = await this.store.folderStore.search({inPath: dir.name});
 		const rootMatch: MatchDir = this.cloneScanDir(dir, undefined, 0);

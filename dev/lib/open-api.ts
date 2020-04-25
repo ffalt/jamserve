@@ -61,7 +61,7 @@ export function collectParams(p: Definition, definitions: Definitions, inPart: s
 	return result;
 }
 
-export async function listToObject<T, U, Y extends { [name: string]: U }>(list: Array<T>, transform: (item: T) => Promise<{ key: string, value: U }>, obj: Y): Promise<Y> {
+export async function listToObject<T, U, Y extends { [name: string]: U }>(list: Array<T>, transform: (item: T) => Promise<{ key: string; value: U }>, obj: Y): Promise<Y> {
 	const result: { [name: string]: U } = obj;
 	for (const item of list) {
 		const {key, value} = await transform(item);

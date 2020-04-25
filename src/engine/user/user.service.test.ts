@@ -1,43 +1,22 @@
 import fse from 'fs-extra';
 import path from 'path';
 import tmp from 'tmp';
-import {ImageModule} from '../../modules/image/image.module';
 import {mockImage} from '../../modules/image/image.module.spec';
-import {hashMD5} from '../../utils/hash';
 import {testService} from '../base/base.service.spec';
-import {SessionService} from '../session/session.service';
 import {mockUser, mockUser2, mockUserPass} from './user.mock';
 import {UserService} from './user.service';
 
-function salt(length: number): string {
-	let s = '';
-	const randomchar = (): string => {
-		const n = Math.floor(Math.random() * 62);
-		if (n < 10) {
-			return n.toString(); // 1-10
-		}
-		if (n < 36) {
-			return String.fromCharCode(n + 55); // A-Z
-		}
-		return String.fromCharCode(n + 61); // a-z
-	};
-	while (s.length < length) {
-		s += randomchar();
-	}
-	return s;
-}
-
 describe('UserService', () => {
 	let userService: UserService;
-	let sessionService: SessionService;
-	let imageModule: ImageModule;
+	// let sessionService: SessionService;
+	// let imageModule: ImageModule;
 	let dir: tmp.DirResult;
 	testService({mockData: false},
 		async (store, imageModuleTest) => {
 			dir = tmp.dirSync();
-			imageModule = imageModuleTest.imageModule;
+			// imageModule = imageModuleTest.imageModule;
 			userService = new UserService(dir.name, store.userStore, store.stateStore, store.playlistStore, store.bookmarkStore, store.playQueueStore, store.sessionStore, imageModuleTest.imageModule);
-			sessionService = new SessionService(store.sessionStore);
+			// sessionService = new SessionService(store.sessionStore);
 		},
 		() => {
 			let userID: string;

@@ -1,5 +1,5 @@
 import {JamRequest} from '../../api/jam/api';
-import {GenericError, InvalidParamError, NotFoundError, UnauthError} from '../../api/jam/error';
+import {GenericError, InvalidParamError, UnauthError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';

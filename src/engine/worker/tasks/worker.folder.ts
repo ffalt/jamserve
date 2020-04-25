@@ -57,7 +57,7 @@ export class FolderWorker {
 		};
 	}
 
-	private async updatePaths(oldPath: string, newPath: string, rootID: string): Promise<{ changedFolderIDs: Set<string>, changedTrackIDs: Set<string> }> {
+	private async updatePaths(oldPath: string, newPath: string, rootID: string): Promise<{ changedFolderIDs: Set<string>; changedTrackIDs: Set<string> }> {
 		newPath = ensureTrailingPathSeparator(newPath);
 		oldPath = ensureTrailingPathSeparator(oldPath);
 		const folders = (await this.store.folderStore.search({inPath: oldPath})).items;
@@ -75,7 +75,7 @@ export class FolderWorker {
 		return {changedFolderIDs: new Set<string>(folders.map(f => f.id)), changedTrackIDs: new Set<string>(tracks.map(t => t.id))};
 	}
 
-	private async moveFolder(folder: Folder, newParent: Folder): Promise<{ changedFolderIDs: Set<string>, changedTrackIDs: Set<string> }> {
+	private async moveFolder(folder: Folder, newParent: Folder): Promise<{ changedFolderIDs: Set<string>; changedTrackIDs: Set<string> }> {
 		if (folder.parentID === newParent.id) {
 			return Promise.reject(Error('Folder name already used in Destination'));
 		}
@@ -96,7 +96,7 @@ export class FolderWorker {
 		return this.updatePaths(oldpath, newPath, newParent.rootID);
 	}
 
-	public async move(newParentID: string, moveFolderIDs: Array<string>): Promise<{ changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {
+	public async move(newParentID: string, moveFolderIDs: Array<string>): Promise<{ changedFolderIDs: Array<string>; changedTrackIDs: Array<string> }> {
 		const newParent = await this.store.folderStore.byId(newParentID);
 		if (!newParent) {
 			return Promise.reject(Error('Destination Folder not found'));
@@ -123,7 +123,7 @@ export class FolderWorker {
 		return {changedFolderIDs: [...changedFolderIDs], changedTrackIDs: [...changedTrackIDs]};
 	}
 
-	public async rename(folderID: string, newName: string): Promise<{ changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {
+	public async rename(folderID: string, newName: string): Promise<{ changedFolderIDs: Array<string>; changedTrackIDs: Array<string> }> {
 		const folder = await this.store.folderStore.byId(folderID);
 		if (!folder) {
 			return Promise.reject(Error('Folder not found'));
@@ -142,7 +142,7 @@ export class FolderWorker {
 		return {changedFolderIDs: [], changedTrackIDs: []};
 	}
 
-	public async create(parentID: string, name: string): Promise<{ folder: Folder, parent: Folder }> {
+	public async create(parentID: string, name: string): Promise<{ folder: Folder; parent: Folder }> {
 		const parent = await this.store.folderStore.byId(parentID);
 		if (!parent) {
 			return Promise.reject(Error('Destination Folder not found'));
@@ -156,7 +156,7 @@ export class FolderWorker {
 		return {folder, parent};
 	}
 
-	public async delete(root: Root, folderIDs: Array<string>): Promise<{ removedFolders: Array<Folder>, removedTracks: Array<Track>, changedFolderIDs: Array<string>, changedTrackIDs: Array<string> }> {
+	public async delete(root: Root, folderIDs: Array<string>): Promise<{ removedFolders: Array<Folder>; removedTracks: Array<Track>; changedFolderIDs: Array<string>; changedTrackIDs: Array<string> }> {
 		const folders = await this.store.folderStore.byIds(folderIDs);
 		for (const folder of folders) {
 			if (folder.tag.level === 0) {

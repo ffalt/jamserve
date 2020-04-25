@@ -33,12 +33,12 @@ sharp.simd(false);
 export class ImageModule {
 	private format = 'png';
 	private font: JimpFont | undefined;
-	private cache: IDFolderCache<{ size?: number, format?: string }>;
+	private cache: IDFolderCache<{ size?: number; format?: string }>;
 	private readonly avatarPartsLocation: string;
 
 	constructor(private imageCachePath: string, avatarPartsLocation?: string) {
 		this.avatarPartsLocation = avatarPartsLocation || path.join(__dirname, 'static', 'avatar');
-		this.cache = new IDFolderCache<{ size?: number, format?: string }>(imageCachePath, 'thumb', (params: { size?: number, format?: string }) => {
+		this.cache = new IDFolderCache<{ size?: number; format?: string }>(imageCachePath, 'thumb', (params: { size?: number; format?: string }) => {
 			return `${params.size !== undefined ? `-${params.size}` : ''}.${params.format || this.format}`;
 		});
 	}

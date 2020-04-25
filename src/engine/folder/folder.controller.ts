@@ -195,7 +195,7 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 		return formatFolderArtworks(folder);
 	}
 
-	private async artworkByID(id: string): Promise<{ artwork: Artwork, folder: Folder }> {
+	private async artworkByID(id: string): Promise<{ artwork: Artwork; folder: Folder }> {
 		const folderID = id.split('-')[0];
 		const folder = await this.byID(folderID);
 		const artwork = (folder.tag.artworks || []).find(art => art.id === id);

@@ -1,17 +1,16 @@
 import {ImageModuleTest} from '../../modules/image/image.module.spec';
 import {testService} from '../base/base.service.spec';
 import {StateService} from '../state/state.service';
-import {TrackStore} from '../track/track.store';
 import {FolderService} from './folder.service';
 
 describe('FolderService', () => {
-	let trackStore: TrackStore;
+	// let trackStore: TrackStore;
 	let folderService: FolderService;
 	let imageModuleTest: ImageModuleTest;
 	testService({mockData: true},
 		async (store, imageModuleTestPara) => {
 			imageModuleTest = imageModuleTestPara;
-			trackStore = store.trackStore;
+			// trackStore = store.trackStore;
 			const stateService = new StateService(store.stateStore);
 			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
 		},

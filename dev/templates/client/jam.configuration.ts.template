@@ -11,8 +11,8 @@ export abstract class JamConfiguration {
 
 	abstract userChangeNotify(user: Jam.SessionUser | undefined): Promise<void>;
 
-	abstract fromStorage(): Promise<{ user: Jam.SessionUser, auth: Auth } | undefined>;
+	abstract fromStorage(): Promise<{ user: Jam.SessionUser; auth: Auth } | undefined>;
 
-	abstract toStorage(data: { user: Jam.SessionUser, auth: Auth } | undefined): Promise<void>;
+	abstract toStorage(data: { user: Jam.SessionUser; auth: Auth } | undefined): Promise<void>;
 
 }

@@ -44,7 +44,7 @@ export function mockPodcast2(): Podcast {
 	};
 }
 
-export function mockPodcastXML(): { feed: string, nrOfItems: number } {
+export function mockPodcastXML(): { feed: string; nrOfItems: number } {
 	// https://raw.githubusercontent.com/danmactough/node-feedparser/master/test/feeds/rss2sample.xml
 	return {
 		nrOfItems: 4,

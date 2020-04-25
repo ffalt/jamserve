@@ -1,5 +1,4 @@
 import {JamRequest} from '../../api/jam/api';
-import {DBObjectType} from '../../db/db.types';
 import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {RootScanStrategy} from '../../model/jam-types';

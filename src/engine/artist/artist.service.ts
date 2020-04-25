@@ -1,4 +1,4 @@
-import {AlbumType, FolderType, MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
+import {FolderType, MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {slugify} from '../../utils/slug';
 import {BaseListService} from '../base/dbobject-list.service';

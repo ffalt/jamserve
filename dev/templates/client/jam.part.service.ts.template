@@ -1,5 +1,7 @@
 // THIS FILE IS GENERATED, DO NOT EDIT MANUALLY
 
+/* eslint-disable @typescript-eslint/camelcase */
+
 {{#withHttpEvent}}
 import {HttpEvent} from '@angular/common/http';
 import {Injectable} from '@angular/core';

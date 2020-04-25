@@ -192,7 +192,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		const result: Array<Jam.TrackHealth> = [];
 		const roots: Array<Root> = [];
 		const folders: Array<Folder> = [];
-		const checks: Array<{ track: Track, folder: Folder, root: Root }> = [];
+		const checks: Array<{ track: Track; folder: Folder; root: Root }> = [];
 		for (const track of list.items) {
 			let root = roots.find(r => r.id === track.rootID);
 			if (!root) {
@@ -222,7 +222,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 				}
 			}
 		}
-		await processQueue<{ track: Track, folder: Folder, root: Root }>(3, checks, async item => {
+		await processQueue<{ track: Track; folder: Folder; root: Root }>(3, checks, async item => {
 			const health = await this.checker.run(item.track, item.folder, item.root, !!req.query.media);
 			if (health && health.length > 0) {
 				result.push({

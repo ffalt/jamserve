@@ -35,7 +35,7 @@ export interface ApiCall {
 	bodySchema?: Definition;
 	resultType?: string;
 	roles: Array<string>;
-	resultErrors: Array<{ code: number, text: string }>;
+	resultErrors: Array<{ code: number; text: string }>;
 	upload?: string;
 	binaryResult: Array<string> | undefined;
 	resultSchema: Definition;
@@ -106,8 +106,8 @@ function getPathParamsCalls(name: string, pathParams: any, api: Definition): Api
 	return getPathParamsParameterCalls(paramType, paramDef, paramParts);
 }
 
-function getResultErrors(api: any, apidef: any): Array<{ code: number, text: string }> {
-	const resultErrors: Array<{ code: number, text: string }> = [];
+function getResultErrors(api: any, apidef: any): Array<{ code: number; text: string }> {
+	const resultErrors: Array<{ code: number; text: string }> = [];
 	if (apidef.properties.errors) {
 		if (apidef.properties.errors.$ref) {
 			const errspec = api.definitions[apidef.properties.errors.$ref.split('/')[2]].properties;
@@ -164,7 +164,7 @@ function getResultType(resultdef: any): string | undefined {
 	return resultType;
 }
 
-function getDescriptionAndTag(name: string, description: string | undefined): { description?: string, tag: string } {
+function getDescriptionAndTag(name: string, description: string | undefined): { description?: string; tag: string } {
 	let tag = name.split('/')[0];
 	if (description) {
 		const sl = description.split(':');

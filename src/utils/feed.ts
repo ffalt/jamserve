@@ -63,7 +63,7 @@ export class Feed {
 		return res;
 	}
 
-	private async fetch(url: string): Promise<{ feed: FeedParser.Node, posts: Array<FeedParser.Item> }> {
+	private async fetch(url: string): Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
 		let feed: any;
 		let doneReported = false;
@@ -85,7 +85,7 @@ export class Feed {
 			}
 		});
 
-		return new Promise<{ feed: FeedParser.Node, posts: Array<FeedParser.Item> }>((resolve, reject) => {
+		return new Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }>((resolve, reject) => {
 			const done = (err?: Error): void => {
 				if (doneReported) {
 					return;
@@ -116,7 +116,7 @@ export class Feed {
 		});
 	}
 
-	public async get(podcast: Podcast): Promise<{ tag: PodcastTag, episodes: Array<Episode> }> {
+	public async get(podcast: Podcast): Promise<{ tag: PodcastTag; episodes: Array<Episode> }> {
 		const data = await this.fetch(podcast.url);
 		const tag: PodcastTag = {
 			title: data.feed.title,

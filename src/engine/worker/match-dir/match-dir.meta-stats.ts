@@ -24,7 +24,7 @@ export interface MetaStat {
 	albumType: AlbumType;
 }
 
-const typeByGenreNames: { [name: string]: AlbumType; } = {
+const typeByGenreNames: { [name: string]: AlbumType } = {
 	audiobook: AlbumType.audiobook,
 	'audio theater': AlbumType.audiobook,
 	'audio drama': AlbumType.audiobook,
@@ -32,7 +32,7 @@ const typeByGenreNames: { [name: string]: AlbumType; } = {
 	soundtrack: AlbumType.soundtrack
 };
 
-const typeByMusicbrainzString: Array<{ type: AlbumType; names: Array<string>; }> = [
+const typeByMusicbrainzString: Array<{ type: AlbumType; names: Array<string> }> = [
 	{type: AlbumType.audiobook, names: ['audiobook', 'spokenword', 'audiodrama', 'audio drama', 'audio theater', 'audio series']},
 	{type: AlbumType.bootleg, names: ['bootleg']},
 	{type: AlbumType.compilation, names: ['compilation']},
@@ -132,7 +132,7 @@ export class MatchDirMetaStats {
 		return result > 0 ? result : undefined;
 	}
 
-	private static getAlbumInfo(builder: MetaStatBuilder, strategy: RootScanStrategy): { albumType: AlbumType, artist?: string, genres?: Array<string>, mbAlbumType?: string, hasMultipleArtists: boolean } {
+	private static getAlbumInfo(builder: MetaStatBuilder, strategy: RootScanStrategy): { albumType: AlbumType; artist?: string; genres?: Array<string>; mbAlbumType?: string; hasMultipleArtists: boolean } {
 		// heuristically most used values
 		const artist = builder.mostUsed('artist', MUSICBRAINZ_VARIOUS_ARTISTS_NAME);
 		const genre = builder.mostUsed('genre');

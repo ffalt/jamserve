@@ -21,12 +21,12 @@ import {getBinPath} from './which';
 // 	});
 // }
 
-export async function spawnTool(binName: string, envName: string, args: Array<string>): Promise<{ result: string, errMsg: string }> {
+export async function spawnTool(binName: string, envName: string, args: Array<string>): Promise<{ result: string; errMsg: string }> {
 	const bin = await getBinPath(binName, envName);
 	if (!bin || bin.length === 0) {
 		return Promise.reject(Error(`Tool binary not found ${binName}`));
 	}
-	return new Promise<{ result: string, errMsg: string }>((resolve, reject) => {
+	return new Promise<{ result: string; errMsg: string }>((resolve, reject) => {
 		const child = spawn(bin, args);
 		if (!child.stdout || !child.stderr) {
 			return reject(Error('Unsupported std out'));

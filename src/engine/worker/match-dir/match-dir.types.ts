@@ -7,8 +7,8 @@ export interface MatchDir {
 	name: string;
 	rootID: string;
 	stat: {
-		ctime: number,
-		mtime: number
+		ctime: number;
+		mtime: number;
 	};
 	directories: Array<MatchDir>;
 	files: Array<MatchFile>;
@@ -23,9 +23,9 @@ export interface MatchFile {
 	name: string;
 	type: FileTyp;
 	stat: {
-		ctime: number,
-		mtime: number,
-		size: number
+		ctime: number;
+		mtime: number;
+		size: number;
 	};
 	rootID: string;
 	track?: Track;

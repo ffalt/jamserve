@@ -1,15 +1,14 @@
 import {testBaseListController} from '../base/dbobject-list.controller.spec';
-import {User} from '../user/user.model';
 import {PodcastController} from './podcast.controller';
 
 describe('PodcastController', () => {
 	let controller: PodcastController;
-	let user: User;
+	// let user: User;
 	testBaseListController({
 		typeName: 'Jam.Podcast'
 	}, async (jamApi, jamUser) => {
 		controller = jamApi.podcastController;
-		user = jamUser;
+		// user = jamUser;
 		return controller;
 	}, () => {
 		it('should work', async () => {

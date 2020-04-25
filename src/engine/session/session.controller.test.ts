@@ -1,4 +1,3 @@
-import {JamApi} from '../../api/jam/api';
 import {testController, validateJamResponse} from '../base/controller.spec';
 import {mockUser} from '../user/user.mock';
 import {User} from '../user/user.model';
@@ -6,14 +5,14 @@ import {SessionController} from './session.controller';
 
 describe('SessionController', () => {
 	let controller: SessionController;
-	let api: JamApi;
+	// let api: JamApi;
 	let user: User;
 	const dummyUser = mockUser();
 	testController({}, async (jamApi, jamUser) => {
 		dummyUser.id = 'dummyInvalid';
 		controller = jamApi.sessionController;
 		user = jamUser;
-		api = jamApi;
+		// api = jamApi;
 	}, () => {
 		it('should return ping', async () => {
 			let result = await controller.ping({query: {}, user: undefined} as any);

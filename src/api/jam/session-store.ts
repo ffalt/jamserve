@@ -89,7 +89,7 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 			.catch(callback);
 	};
 
-	all: (callback: (err: any, obj?: { [sid: string]: Express.SessionData; } | null) => void) => void = callback => {
+	all: (callback: (err: any, obj?: { [sid: string]: Express.SessionData } | null) => void) => void = callback => {
 		this.sessionService.all()
 			.then(data => {
 				const result: { [id: string]: ExpressSession } = {};

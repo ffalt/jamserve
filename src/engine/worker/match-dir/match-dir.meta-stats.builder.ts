@@ -13,10 +13,10 @@ export interface MetaStatNumber extends MetaStatValue<number> {
 
 export class MetaStatBuilder {
 	stats: {
-		[name: string]: { [key: string]: { count: number, val: string }; };
+		[name: string]: { [key: string]: { count: number; val: string } };
 	} = {};
 
-	private static convert2Numlist(o: { [key: string]: { count: number, val: string }; }): Array<MetaStatNumber> {
+	private static convert2Numlist(o: { [key: string]: { count: number; val: string } }): Array<MetaStatNumber> {
 		return Object.keys(o).map(key => {
 			return {count: o[key].count, val: Number(o[key].val)};
 		}).sort((a, b) => {
@@ -24,7 +24,7 @@ export class MetaStatBuilder {
 		});
 	}
 
-	private static convert2list(o: { [key: string]: { count: number, val: string }; }): Array<MetaStatString> {
+	private static convert2list(o: { [key: string]: { count: number; val: string } }): Array<MetaStatString> {
 		return Object.keys(o).map(key => {
 			return o[key];
 		}).sort((a, b) => {

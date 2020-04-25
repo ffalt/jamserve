@@ -86,10 +86,10 @@ export class LastFMClient extends WebserviceClient {
 		this.options = options;
 	}
 
-	private async get(api: string, params: { [name: string]: string; }): Promise<LastFM.Result> {
+	private async get(api: string, params: { [name: string]: string }): Promise<LastFM.Result> {
 		log.info('requesting', api, JSON.stringify(params));
 		params.method = api;
-		const sortedParams: { [name: string]: string; } = {method: api};
+		const sortedParams: { [name: string]: string } = {method: api};
 		Object.keys(params).forEach(key => {
 			sortedParams[key] = params[key];
 		});

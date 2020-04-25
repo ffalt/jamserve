@@ -9,7 +9,7 @@ describe('IOService', () => {
 	let store: Store;
 	let dir: tmp.DirResult;
 	let mockRoot: MockRoot;
-	let ioService: IoService;
+	// let ioService: IoService;
 
 	testService({mockData: false},
 		async (storeTest, imageModuleTest, audioModuleTest) => {
@@ -17,7 +17,8 @@ describe('IOService', () => {
 			dir = tmp.dirSync();
 			mockRoot = buildMockRoot(dir.name, 1, 'rootID');
 			const workerService = new WorkerService(store, audioModuleTest.audioModule, imageModuleTest.imageModule);
-			ioService = new IoService(store.rootStore, workerService, async () => {
+			// ioService =
+			new IoService(store.rootStore, workerService, async () => {
 				// nope
 			});
 			await writeMockRoot(mockRoot);

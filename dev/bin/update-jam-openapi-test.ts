@@ -13,7 +13,7 @@ interface MustacheDataSection {
 
 interface MustacheDataSubSection {
 	title: string;
-	tests: Array<{ title: string, content: string }>;
+	tests: Array<{ title: string; content: string }>;
 }
 
 interface MustacheDataTest {

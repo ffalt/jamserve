@@ -26,9 +26,9 @@ export class GenreService {
 						count: number;
 						artists: { [name: string]: number };
 						albums: { [name: string]: number };
-					}
-				}
-			}
+					};
+				};
+			};
 		} = {};
 
 		await this.trackStore.iterate(async tracks => {

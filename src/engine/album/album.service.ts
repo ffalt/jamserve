@@ -1,4 +1,4 @@
-import {AlbumType, FolderTypesAlbum} from '../../model/jam-types';
+import {FolderTypesAlbum} from '../../model/jam-types';
 import {ApiBinaryResult} from '../../typings';
 import {BaseListService} from '../base/dbobject-list.service';
 import {Folder} from '../folder/folder.model';

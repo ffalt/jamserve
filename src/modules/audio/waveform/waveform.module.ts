@@ -9,10 +9,10 @@ import {logger} from '../../../utils/logger';
 const log = logger('Audio:Waveform');
 
 export class WaveformModule {
-	private waveformCache: IDFolderCache<{ width?: number, format: string }>;
+	private waveformCache: IDFolderCache<{ width?: number; format: string }>;
 
 	constructor(waveformCachePath: string) {
-		this.waveformCache = new IDFolderCache<{ width?: number, format: string }>(waveformCachePath, 'waveform', (params: { width?: number, format: string }) => {
+		this.waveformCache = new IDFolderCache<{ width?: number; format: string }>(waveformCachePath, 'waveform', (params: { width?: number; format: string }) => {
 			return `${params.width !== undefined ? `-${params.width}` : ''}.${params.format}`;
 		});
 	}
