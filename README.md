@@ -219,15 +219,15 @@ module.exports = {
 
 ### Development Build
 
-`npm run build:dev` to build the server into dist/bundle.js
+`npm run build:dev` to build the server into dist/jamserve.js
 
 ### Production Build
 
-`npm run build:prod` to build the server into dist/bundle.js
+`npm run build:prod` to build the server into dist/jamserve.js
 
 ### Generate Documentation
 
-`npm run build:docs` to build the server into dist/docs
+`npm run build:docs` to build the server into dist/static/docs
 
 ### Update Model & Definition Files
 

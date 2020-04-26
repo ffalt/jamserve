@@ -1,7 +1,7 @@
 {
   "verbose": true,
-  "watch": ["dist/bundle.js"],
-  "exec": "node ./dist/bundle.js",
+  "watch": ["dist/jamserve.js"],
+  "exec": "node ./dist/jamserve.js",
   "events": {},
   "env": {
     "NODE_ENV": "development"

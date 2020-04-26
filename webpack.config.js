@@ -21,7 +21,7 @@ const app = {
 	},
 	devtool: "source-map",
 	output: {
-		filename: 'bundle.js',
+		filename: 'jamserve.js',
 		path: path.resolve(__dirname, 'dist')
 	},
 	plugins: [

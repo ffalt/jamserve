@@ -67,7 +67,7 @@ function registerApiPublic(router: express.Router, api: JamApi): void {
 function registerApiAuthenticated(router: express.Router, api: JamApi): void {
 
 	router.post('/logout', CallSessionLogoutHandler as express.RequestHandler);
-	router.use('/docs', express.static(path.resolve('./dist/docs/api/')));
+	router.use('/docs', express.static(path.resolve('./static/docs/api/')));
 
 	const upload = jamUpload(api.engine.config.getDataPath(['cache', 'uploads']));
 	const register: Register = {
