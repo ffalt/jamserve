@@ -35,7 +35,9 @@
     "build:jam:client:angular": "cd dev/bin && ts-node update-jam-client.ts",
     "build:jam:client:axios": "cd dev/bin && ts-node update-jam-client-axios.ts",
     "build:jam:router": "cd dev/bin && ts-node update-jam-router.ts",
-    "build:jam:api:docs": "redoc-cli bundle src/model/jam-openapi.json --output ./dist/static/docs/api/jam/index.html"
+    "build:jam:api:docs": "redoc-cli bundle src/model/jam-openapi.json --output ./dist/static/docs/api/jam/index.html",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@elastic/elasticsearch": "7.6.1",
@@ -86,7 +88,8 @@
     "which": "2.0.2",
     "winston": "3.2.1",
     "xml2js": "0.4.23",
-    "yauzl": "2.10.0"
+    "yauzl": "2.10.0",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "@types/archiver": "3.1.0",
@@ -150,5 +153,6 @@
   },
   "engines": {
     "node": ">= 11.0.0"
-  }
+  },
+  "snyk": true
 }
