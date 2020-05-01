@@ -7,7 +7,7 @@ module.exports = {
 		/*
 			Root frontend directory
 		*/
-		frontend: './dist/jamberry/'
+		frontend: './static/jamberry/'
 	},
 	server: {
 		/*
@@ -41,7 +41,7 @@ module.exports = {
 				/*
 					If true, session cookies are only available for https, NOT http
 				 */
-				secure: false,
+				secure: true,
 				/*
 					If true, server trusts first reverse proxy like nginx
 				 */
