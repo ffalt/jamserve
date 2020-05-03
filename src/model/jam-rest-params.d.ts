@@ -226,6 +226,12 @@ export declare namespace JamParameters {
 		 * @default false
 		 */
 		podcastEpisodes?: boolean;
+		/**
+		 * include episode count on podcast(s)
+		 *
+		 * @default false
+		 */
+		podcastEpisodeCount?: boolean;
 	}
 
 	export interface IncludesPlaylist extends IncludesTrack {

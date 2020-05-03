@@ -51,7 +51,8 @@ export class StatsService {
 					single: await this.store.artistStore.searchCount({rootID, albumType: AlbumType.single})
 				},
 				folder: await this.store.folderStore.searchCount({rootID}),
-				track: await this.store.trackStore.searchCount({rootID})
+				track: await this.store.trackStore.searchCount({rootID}),
+				podcasts: await this.store.podcastStore.searchCount({})
 			};
 			this.stats.push(stat);
 		}

@@ -10,6 +10,7 @@ export function formatStats(stats: Stats): Jam.Stats {
 		artist: stats.artist,
 		folder: stats.folder,
 		series: stats.series,
-		track: stats.track
+		track: stats.track,
+		podcasts: stats.podcasts
 	};
 }

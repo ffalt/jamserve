@@ -5521,6 +5521,16 @@
 					},
 					{
 						"in": "query",
+						"name": "podcastEpisodeCount",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include episode count on podcast(s)",
+						"required": false
+					},
+					{
+						"in": "query",
 						"name": "trackMedia",
 						"schema": {
 							"default": false,
@@ -5624,6 +5634,16 @@
 							"type": "boolean"
 						},
 						"description": "include episodes on podcast(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "podcastEpisodeCount",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include episode count on podcast(s)",
 						"required": false
 					},
 					{
@@ -5858,6 +5878,16 @@
 							"type": "boolean"
 						},
 						"description": "include episodes on podcast(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "podcastEpisodeCount",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include episode count on podcast(s)",
 						"required": false
 					},
 					{
@@ -6274,6 +6304,16 @@
 							"type": "boolean"
 						},
 						"description": "include episodes on podcast(s)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "podcastEpisodeCount",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "include episode count on podcast(s)",
 						"required": false
 					},
 					{
@@ -21860,6 +21900,9 @@
 					},
 					"albumTypes": {
 						"$ref": "#/components/schemas/Jam.StatsAlbumTypes"
+					},
+					"podcasts": {
+						"type": "number"
 					}
 				},
 				"required": [
@@ -21868,6 +21911,7 @@
 					"artist",
 					"artistTypes",
 					"folder",
+					"podcasts",
 					"series",
 					"track"
 				]
@@ -24820,6 +24864,9 @@
 					},
 					"description": {
 						"type": "string"
+					},
+					"episodeCount": {
+						"type": "number"
 					},
 					"episodes": {
 						"type": "array",

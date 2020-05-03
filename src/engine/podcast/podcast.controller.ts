@@ -47,6 +47,9 @@ export class PodcastController extends BaseListController<JamParameters.Podcast,
 		if (includes.podcastEpisodes) {
 			result.episodes = (await this.episodeController.prepareByQuery({podcastID: podcast.id}, includes, user)).items;
 		}
+		if (includes.podcastEpisodeCount) {
+			result.episodeCount = result.episodes ? result.episodes.length : (await this.episodeController.episodeService.countEpisodes(podcast.id));
+		}
 		return result;
 	}
 

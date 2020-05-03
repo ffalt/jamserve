@@ -21,4 +21,5 @@ export interface Stats {
 	albumTypes: AlbumTypeStats;
 	artist: number;
 	artistTypes: AlbumTypeStats;
+	podcasts: number;
 }

@@ -29,7 +29,7 @@ export class EpisodeController extends BaseListController<JamParameters.Episode,
 	JamParameters.PodcastEpisodeList> {
 
 	constructor(
-		private episodeService: EpisodeService,
+		public episodeService: EpisodeService,
 		private streamController: StreamController,
 		protected stateService: StateService,
 		protected imageService: ImageService,

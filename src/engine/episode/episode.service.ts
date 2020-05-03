@@ -169,4 +169,7 @@ export class EpisodeService extends BaseListService<Episode, SearchQueryEpisode>
 		}
 	}
 
+	async countEpisodes(podcastID: string): Promise<number> {
+		return this.store.searchCount({podcastID});
+	}
 }

@@ -20,6 +20,9 @@ export class Feed {
 		if (!s.includes(':') && !isNaN(num)) {
 			return num;
 		}
+		if (s.length === 5) {
+			s = `00:${s}`;
+		}
 		return moment.duration(s).as('seconds');
 	}
 

@@ -269,6 +269,7 @@ export declare namespace Jam {
 		lastCheck?: number;
 		errorMessage?: string;
 		description?: string;
+		episodeCount?: number;
 		episodes?: Array<PodcastEpisode>;
 	}
 
@@ -536,6 +537,7 @@ export declare namespace Jam {
 		artistTypes: StatsAlbumTypes;
 		album: number;
 		albumTypes: StatsAlbumTypes;
+		podcasts: number;
 	}
 
 	/*
