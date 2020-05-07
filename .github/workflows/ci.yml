@@ -17,8 +17,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Update apt
         run: sudo apt-get update
-      - name: Install ffmpeg
-        run: sudo apt-get install ffmpeg
+      - name: Install ffmpeg & fpcalc & mp3val
+        run: sudo apt-get install ffmpeg libchromaprint-tools mp3val
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -80,7 +80,7 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         uses: fleskesvor/create-release@feature/support-target-commitish
         with:
-          commitish: "releases"
+          commitish: "release"
           tag_name: "v${{ steps.check.outputs.version }}"
           release_name: "Release v${{ steps.check.outputs.version }}"
           draft: false
