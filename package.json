@@ -1,6 +1,6 @@
 {
   "name": "jamserve",
-  "version": "0.2.27-alpha",
+  "version": "0.2.28-alpha",
   "author": "ffalt",
   "license": "MIT",
   "description": "jamserve streaming audio server",
@@ -20,7 +20,7 @@
     "test": "jest --maxWorkers=1",
     "test:watch": "jest --maxWorkers=1 --watch",
     "coverage": "jest --runInBand --coverage",
-    "build:changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "build:changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "build:prod": "webpack --mode production",
     "build:deploy": "npm run clean && npm run build:prod && npm run build:files && npm run build:docs",
     "build:dev": "webpack --mode development",
