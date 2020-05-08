@@ -105,7 +105,7 @@ async function download() {
 	if (!(await fse.pathExists(esBin))) {
 		const downloadFilename = path.resolve(__ELASTIC__.LOCAL_TEST_ELASTIC_PATH, `elasticsearch-${__ELASTIC__.LOCAL_TEST_ELASTIC_VERSION}.zip`);
 		if (!(await fse.pathExists(downloadFilename))) {
-			const downloadUrl = `https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${__ELASTIC__.LOCAL_TEST_ELASTIC_VERSION}-windows-x86_64.zip`;
+			const downloadUrl = `https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${__ELASTIC__.LOCAL_TEST_ELASTIC_VERSION}.zip`;
 			await downloadFile(downloadUrl, downloadFilename);
 		}
 		if (!(await fse.pathExists(esBin))) {
