@@ -18,7 +18,12 @@ export class DBElastic implements Database {
 	indexRefresh?: ElasticIndexRefresh;
 
 	constructor(config: ElasticsearchConfig) {
-		this.client = new Client({node: config.host});
+		this.client = new Client({
+			node: config.host,
+			maxRetries: 5,
+			requestTimeout: 30000,
+			pingTimeout: 30000
+		});
 		this.sequence = new DbElasticSequence(this.client);
 		this.indexPrefix = config.indexPrefix;
 		this.indexRefresh = config.indexRefresh as ElasticIndexRefresh;
@@ -36,7 +41,7 @@ export class DBElastic implements Database {
 
 	async ping(): Promise<void> {
 		try {
-			await this.client.ping({});
+			await this.client.ping();
 		} catch (e) {
 			log.error('elasticsearch could not be contacted', e);
 			return Promise.reject(e);

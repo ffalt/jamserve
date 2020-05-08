@@ -17,8 +17,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Update apt
         run: sudo apt-get update
-      - name: Install ffmpeg & fpcalc & mp3val
-        run: sudo apt-get install ffmpeg libchromaprint-tools mp3val
+      - name: Install ffmpeg & fpcalc & mp3val & default-jre
+        run: sudo apt-get install ffmpeg libchromaprint-tools mp3val default-jre
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:

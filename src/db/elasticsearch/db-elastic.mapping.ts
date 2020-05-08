@@ -378,6 +378,22 @@ const typeSession = {
 	}
 };
 
+const typeSeries = {
+	properties: {
+		name: typeString,
+		artist: typeKey,
+		artistID: typeKey,
+		rootIDs: typeKey,
+		albumIDs: typeKey,
+		folderIDs: typeKey,
+		trackIDs: typeKey,
+		albumTypes: typeKey,
+		created: typeInt,
+		id: typeKey,
+		type: typeInt
+	}
+};
+
 export const mapping: any = {
 	root: typeRoot,
 	user: typeUser,
@@ -394,5 +410,6 @@ export const mapping: any = {
 	bookmark: typeBookmark,
 	metadata: typeMetaData,
 	settings: typeSettings,
-	session: typeSession
+	session: typeSession,
+	series: typeSeries
 };
