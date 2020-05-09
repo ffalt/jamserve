@@ -7,6 +7,10 @@ module.exports = {
 	*/
 	adminUser: {
 		name: 'admin',
+		/*
+		   Since the default admin password is stored in clear in this file,
+		   you MUST change it on first login
+		*/
 		pass: 'admin'
 	},
 	/*
