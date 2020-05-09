@@ -70,7 +70,6 @@ export async function validatePathParameterIDFormat(pathParameter: string, valid
 	return {id, format};
 }
 
-// tslint:disable-next-line:interface-name
 export interface IDSizeFormat {
 	id: string;
 	size?: number;
