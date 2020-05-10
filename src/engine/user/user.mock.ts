@@ -18,7 +18,6 @@ export function mockUser(): User {
 		created: 1543495268,
 		scrobblingEnabled: false,
 		maxBitRate: 10,
-		allowedFolder: [],
 		roles: {
 			admin: true,
 			podcast: true,
@@ -44,7 +43,6 @@ export function mockUser2(): User {
 		created: 1443495268,
 		scrobblingEnabled: true,
 		maxBitRate: 20,
-		allowedFolder: [],
 		roles: {
 			admin: false,
 			podcast: false,
