@@ -12,24 +12,26 @@ This is my current pet project to manage/stream/edit my own music collection. It
 
 It's heavily inspired by the now closed source Java Server [Subsonic](http://www.subsonic.org/pages/index.jsp).
 
-This is the backend development repository.
+This is the backend development repository. See
 
-see [Jamberry](https://github.com/ffalt/jamberry) for web-client development,
+[Jamberry](https://github.com/ffalt/jamberry) for web-client development
 
-see [Jampacked](https://github.com/ffalt/jampacked) for mobile app development,
+[Jampacked](https://github.com/ffalt/jampacked) for mobile app development
 
-Installation & Usage Scripts (e.g. with Docker) will be published soon® in different repositories.
+[Jam-Dockerimage](hhttps://github.com/ffalt/jam-dockerimage)  Bare Docker-Image with JamServe, Jamberry
+
+[Jam-Docker](https://github.com/ffalt/jam-docker) run JamServe, Jamberry & ElasticSearch with Docker,
 
 Features:
 
-*   API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
+*   REST & GraphQL API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
 *   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/master/src/model/jam-openapi.json)
 *   Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
 *   Database Support for NeDB or ElasticSearch
 
 ## Requirements
 
-*   install [NodeJS](https://nodejs.org/) >= 11.x and [NPM](https://www.npmjs.com/)
+*   install [NodeJS](https://nodejs.org/) >= 13.x and [NPM](https://www.npmjs.com/)
 *   install [FFMPEG](https://ffmpeg.org/) and set [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe) FFPROBE_PATH and FFMPEG_PATH
 
 optional for meta data matching & mp3 repair support
