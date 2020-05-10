@@ -9,8 +9,8 @@ import {Artwork, Folder} from './folder.model';
 import {FolderStore, SearchQueryFolder} from './folder.store';
 import {Jam} from '../../model/jam-rest-data';
 import {Root} from '../root/root.model';
-import {RootService} from '../root/root.service';
 import {FolderRulesChecker} from '../health/folder.rule';
+import {RootStore} from '../root/root.store';
 
 export async function getFolderDisplayImage(folder: Folder): Promise<Artwork | undefined> {
 	if (!folder.tag || !folder.tag.artworks) {
@@ -25,7 +25,7 @@ export async function getFolderDisplayImage(folder: Folder): Promise<Artwork | u
 export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 	checker = new FolderRulesChecker();
 
-	constructor(public folderStore: FolderStore, private trackStore: TrackStore, private rootService: RootService, stateService: StateService, public imageModule: ImageModule) {
+	constructor(public folderStore: FolderStore, private trackStore: TrackStore, private rootStore: RootStore, stateService: StateService, public imageModule: ImageModule) {
 		super(folderStore, stateService);
 	}
 
@@ -87,7 +87,7 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 		for (const folder of list.items) {
 			let root = roots.find(r => r.id === folder.rootID);
 			if (!root) {
-				root = await this.rootService.rootStore.byId(folder.rootID);
+				root = await this.rootStore.byId(folder.rootID);
 				if (root) {
 					roots.push(root);
 				}

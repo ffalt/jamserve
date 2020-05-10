@@ -14,7 +14,7 @@ import {trackTagToRawTag} from '../../modules/audio/metadata';
 import {Root} from '../root/root.model';
 import {processQueue} from '../../utils/queue';
 import {TrackRulesChecker} from '../health/track.rule';
-import {RootService} from '../root/root.service';
+import {RootStore} from '../root/root.store';
 
 const log = logger('TrackService');
 
@@ -22,7 +22,7 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 	checker: TrackRulesChecker;
 
 	constructor(
-		public trackStore: TrackStore, private folderService: FolderService, private rootService: RootService,
+		public trackStore: TrackStore, private folderService: FolderService, private rootStore: RootStore,
 		private audioModule: AudioModule,
 		private imageModule: ImageModule, stateService: StateService
 	) {
@@ -107,7 +107,7 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 		for (const track of list.items) {
 			let root = roots.find(r => r.id === track.rootID);
 			if (!root) {
-				root = await this.rootService.rootStore.byId(track.rootID);
+				root = await this.rootStore.byId(track.rootID);
 				if (root) {
 					roots.push(root);
 				}

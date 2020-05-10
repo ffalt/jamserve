@@ -88,8 +88,8 @@ export class Engine {
 		this.streamService = new StreamService(this.audioModule);
 		this.stateService = new StateService(this.store.stateStore);
 		this.rootService = new RootService(this.store.rootStore);
-		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.rootService, this.stateService, this.imageModule);
-		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.rootService, this.audioModule, this.imageModule, this.stateService);
+		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.store.rootStore, this.stateService, this.imageModule);
+		this.trackService = new TrackService(this.store.trackStore, this.folderService,this.store.rootStore, this.audioModule, this.imageModule, this.stateService);
 		this.albumService = new AlbumService(this.store.albumStore, this.trackService, this.folderService, this.stateService);
 		this.indexService = new IndexService(this.store.artistStore, this.store.albumStore, this.store.folderStore, this.store.trackStore, this.store.seriesStore);
 		this.workerService = new WorkerService(this.store, this.audioModule, this.imageModule);

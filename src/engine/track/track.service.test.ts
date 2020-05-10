@@ -12,8 +12,8 @@ describe('TrackService', () => {
 	testService({mockData: true},
 		async (store, imageModuleTest, audioModuleTest) => {
 			const stateService = new StateService(store.stateStore);
-			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
-			trackService = new TrackService(store.trackStore, folderService, audioModuleTest.audioModule, imageModuleTest.imageModule, stateService);
+			folderService = new FolderService(store.folderStore, store.trackStore, store.rootStore, stateService, imageModuleTest.imageModule);
+			trackService = new TrackService(store.trackStore, folderService, store.rootStore, audioModuleTest.audioModule, imageModuleTest.imageModule, stateService);
 		},
 		() => {
 			it('should return the track folder', async () => {
