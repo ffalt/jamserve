@@ -1103,8 +1103,20 @@ const typeDefs = gql`
 		os: String
 	}
 
+	type AutoComplete {
+		tracks(amount:Int!): [Track]
+		artists(amount:Int!): [Artist]
+		albums(amount:Int!): [Album]
+		folders(amount:Int!): [Folder]
+		playlists(amount:Int!): [Playlist]
+		podcasts(amount:Int!): [Podcast]
+		episodes(amount:Int!): [Episode]
+		series(amount:Int!): [Series]
+	}
+
 	type Query {
 		hello: String
+		autocomplete(query:String!): AutoComplete
 		stats(rootID: String): Stats!
 		sessions: [Session]!
 		chat(since: Float): [ChatMessage]!
@@ -1144,6 +1156,9 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 	const resolvers = {
 		Query: {
 			hello: (): any => 'Hello world!',
+			autocomplete: (query: string): { query: string } => {
+				return {query};
+			},
 			roots: async (obj: any, args: QueryPageArgs<SearchQueryRoot, JamParameters.RootSortField>): Promise<PageResult<Root>> => {
 				return packPage(await engine.rootService.rootStore.search(buildSearchQuery(args)));
 			},
@@ -1289,6 +1304,32 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 				const genres = await engine.genreService.getGenres(rootID);
 				const list = paginate(genres, page?.amount || 100, page?.offset || 0);
 				return packPage(list);
+			},
+		},
+		AutoComplete: {
+			tracks: async (obj: { query: string }, {amount}: { amount: number }): Promise<Array<Track>> => {
+				return (await engine.trackService.trackStore.search({query: obj.query, amount: amount || 5})).items;
+			},
+			artists: async (obj: { query: string }, {amount}: { amount: number }): Promise<Array<Artist>> => {
+				return (await engine.artistService.artistStore.search({query: obj.query, amount: amount || 5})).items;
+			},
+			albums: async (obj: { query: string }, {amount}: { amount: number }): Promise<Array<Album>> => {
+				return (await engine.albumService.albumStore.search({query: obj.query, amount: amount || 5})).items;
+			},
+			folders: async (obj: { query: string }, {amount}: { amount: number }): Promise<Array<Folder>> => {
+				return (await engine.folderService.folderStore.search({query: obj.query, amount: amount || 5})).items;
+			},
+			playlists: async (obj: { query: string }, {amount}: { amount: number }): Promise<Array<Playlist>> => {
+				return (await engine.playlistService.playlistStore.search({query: obj.query, amount: amount || 5})).items;
+			},
+			podcasts: async (obj: { query: string }, {amount}: { amount: number }): Promise<Array<Podcast>> => {
+				return (await engine.podcastService.podcastStore.search({query: obj.query, amount: amount || 5})).items;
+			},
+			episodes: async (obj: { query: string }, {amount}: { amount: number }): Promise<Array<Episode>> => {
+				return (await engine.episodeService.episodeStore.search({query: obj.query, amount: amount || 5})).items;
+			},
+			series: async (obj: { query: string }, {amount}: { amount: number }): Promise<Array<Series>> => {
+				return (await engine.seriesService.seriesStore.search({query: obj.query, amount: amount || 5})).items;
 			},
 		},
 		PlayQueue: {
