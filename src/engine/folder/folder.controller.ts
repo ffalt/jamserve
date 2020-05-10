@@ -10,13 +10,11 @@ import {paginate} from '../../utils/paginate';
 import {BaseListController} from '../base/dbobject-list.controller';
 import {ListResult} from '../base/list-result';
 import {DownloadService} from '../download/download.service';
-import {FolderRulesChecker} from '../health/folder.rule';
 import {ImageService} from '../image/image.service';
 import {formatFolderIndex} from '../index/index.format';
 import {IndexService} from '../index/index.service';
 import {IoService} from '../io/io.service';
 import {MetaDataService} from '../metadata/metadata.service';
-import {Root} from '../root/root.model';
 import {RootService} from '../root/root.service';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
@@ -32,7 +30,6 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	JamParameters.IncludesFolderChildren, SearchQueryFolder,
 	JamParameters.FolderSearch, Folder, Jam.Folder,
 	JamParameters.FolderList> {
-	checker = new FolderRulesChecker();
 
 	constructor(
 		public folderService: FolderService,
@@ -242,32 +239,13 @@ export class FolderController extends BaseListController<JamParameters.Folder, J
 	}
 
 	async health(req: JamRequest<JamParameters.FolderHealth>): Promise<Array<Jam.FolderHealth>> {
-		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		list.items = list.items.sort((a, b) => {
-			return a.path.localeCompare(b.path);
-		});
+		const list = await this.folderService.health(await this.translateQuery(req.query, req.user));
 		const result: Array<Jam.FolderHealth> = [];
-		const roots: Array<Root> = [];
-		const cachedFolders = list.items.slice(0);
-		for (const folder of list.items) {
-			let root = roots.find(r => r.id === folder.rootID);
-			if (!root) {
-				root = await this.rootService.rootStore.byId(folder.rootID);
-				if (root) {
-					roots.push(root);
-				}
-			}
-			if (root) {
-				const parents = await this.folderService.collectFolderPath(folder.parentID, cachedFolders);
-				const health = await this.checker.run(folder, parents, root);
-				if (health && health.length > 0) {
-					result.push({
-						folder: await this.prepare(folder, req.query, req.user),
-						health
-					});
-				}
-			}
-
+		for (const entry of list) {
+			result.push({
+				folder: await this.prepare(entry.folder, req.query, req.user),
+				health: entry.health
+			});
 		}
 		return result;
 	}

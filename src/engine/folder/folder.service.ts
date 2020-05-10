@@ -7,6 +7,10 @@ import {StateService} from '../state/state.service';
 import {TrackStore} from '../track/track.store';
 import {Artwork, Folder} from './folder.model';
 import {FolderStore, SearchQueryFolder} from './folder.store';
+import {Jam} from '../../model/jam-rest-data';
+import {Root} from '../root/root.model';
+import {RootService} from '../root/root.service';
+import {FolderRulesChecker} from '../health/folder.rule';
 
 export async function getFolderDisplayImage(folder: Folder): Promise<Artwork | undefined> {
 	if (!folder.tag || !folder.tag.artworks) {
@@ -19,8 +23,9 @@ export async function getFolderDisplayImage(folder: Folder): Promise<Artwork | u
 }
 
 export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
+	checker = new FolderRulesChecker();
 
-	constructor(public folderStore: FolderStore, private trackStore: TrackStore, stateService: StateService, public imageModule: ImageModule) {
+	constructor(public folderStore: FolderStore, private trackStore: TrackStore, private rootService: RootService, stateService: StateService, public imageModule: ImageModule) {
 		super(folderStore, stateService);
 	}
 
@@ -66,5 +71,38 @@ export class FolderService extends BaseListService<Folder, SearchQueryFolder> {
 	async getArtworkImage(folder: Folder, artwork: Artwork, size?: number, format?: string): Promise<ApiBinaryResult> {
 		return this.imageModule.get(artwork.id, path.join(folder.path, artwork.name), size, format);
 	}
+
+	async health(query: SearchQueryFolder): Promise<Array<{
+		folder: Folder;
+		health: Array<Jam.HealthHint>;
+	}>> {
+		const list = await this.store.search(query);
+		list.items = list.items.sort((a, b) => a.path.localeCompare(b.path));
+		const result: Array<{
+			folder: Folder;
+			health: Array<Jam.HealthHint>;
+		}> = [];
+		const roots: Array<Root> = [];
+		const cachedFolders = list.items.slice(0);
+		for (const folder of list.items) {
+			let root = roots.find(r => r.id === folder.rootID);
+			if (!root) {
+				root = await this.rootService.rootStore.byId(folder.rootID);
+				if (root) {
+					roots.push(root);
+				}
+			}
+			if (root) {
+				const parents = await this.collectFolderPath(folder.parentID, cachedFolders);
+				const health = await this.checker.run(folder, parents, root);
+				if (health && health.length > 0) {
+					result.push({folder, health});
+				}
+			}
+
+		}
+		return result;
+	}
+
 
 }

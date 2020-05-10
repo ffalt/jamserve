@@ -1,5 +1,5 @@
 import {Engine} from '../../engine/engine';
-import {ApolloServer, AuthenticationError, gql} from 'apollo-server-express';
+import {ApolloServer, AuthenticationError, gql, SchemaDirectiveVisitor} from 'apollo-server-express';
 import {Album} from '../../engine/album/album.model';
 import {Track} from '../../engine/track/track.model';
 import {ListResult} from '../../engine/base/list-result';
@@ -41,6 +41,8 @@ import {Stats} from '../../engine/stats/stats.model';
 import {PlayQueue} from '../../engine/playqueue/playqueue.model';
 import {GraphQLJSON, GraphQLJSONObject} from 'graphql-type-json';
 import {formatSession} from '../../engine/session/session.format';
+import {SearchQueryUser} from '../../engine/user/user.store';
+import {JAMAPI_VERSION} from './version';
 
 interface Page {
 	offset?: number;
@@ -68,6 +70,7 @@ interface PageResult<T> {
 interface QueryContext {
 	user: User;
 	engine: Engine;
+	sessionID: string;
 	req: Request;
 	res: Response;
 }
@@ -143,6 +146,8 @@ function buildListSearchQuery<T extends SearchQuery, Y>(args: QueryListPageArgs<
 const typeDefs = gql`
 	scalar JSON
 	scalar JSONObject
+
+	directive @hasRole(role: String) on OBJECT | FIELD_DEFINITION
 
 	enum SessionMode {
 		browser
@@ -232,11 +237,11 @@ const typeDefs = gql`
 		year: Int
 		duration: Float
 		created: Datetime!
-		mbArtistID: String
-		mbReleaseID: String
+		mbArtistID: ID
+		mbReleaseID: ID
 
-		seriesID: String
-		artistID: String
+		seriesID: ID
+		artistID: ID
 		trackIDs: [String]
 		folderIDs: [String]
 		rootIDs: [String]
@@ -266,23 +271,23 @@ const typeDefs = gql`
 	}
 
 	input AlbumFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
 		name: String
 		slug: String
-		rootID: String
-		rootIDs: [String!]
+		rootID: ID
+		rootIDs: [ID!]
 		artist: String
-		artistID: String
-		trackID: String
-		trackIDs: [String!]
-		seriesID: String
-		seriesIDs: [String!]
-		albumType: String
-		albumTypes: [String!]
-		mbReleaseID: String
-		mbArtistID: String
+		artistID: ID
+		trackID: ID
+		trackIDs: [ID!]
+		seriesID: ID
+		seriesIDs: [ID!]
+		albumType: AlbumType
+		albumTypes: [AlbumType!]
+		mbReleaseID: ID
+		mbArtistID: ID
 		genre: String
 		newerThan: Float
 		fromYear: Int
@@ -346,8 +351,8 @@ const typeDefs = gql`
 	}
 
 	input PodcastFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
 		url: String
 		title: String
@@ -397,8 +402,8 @@ const typeDefs = gql`
 	}
 
 	input RootFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
 		name: String
 		path: String
@@ -420,6 +425,18 @@ const typeDefs = gql`
 	input RootOrderBy {
 		field: RootOrderByField
 		direction: SortDirection
+	}
+
+	type HealthHintDetail {
+		reason: String!
+		expected: String
+		actual: String
+	}
+
+	type HealthHint {
+		id: ID!
+		name: String!
+		details: [HealthHintDetail!]
 	}
 
 
@@ -445,10 +462,10 @@ const typeDefs = gql`
 		albumTrackCount: Int
 		title: String
 		year: Int
-		mbReleaseID: String
-		mbReleaseGroupID: String
+		mbReleaseID: ID
+		mbReleaseGroupID: ID
 		mbAlbumType: String
-		mbArtistID: String
+		mbArtistID: ID
 		artworks: [FolderArtwork!]
 	}
 
@@ -458,8 +475,8 @@ const typeDefs = gql`
 		stat: FolderStat!
 		tag: FolderTag!
 
-		rootID: String!
-		parentID: String
+		rootID: ID!
+		parentID: ID
 
 		root: Root!
 		parent: Folder
@@ -469,6 +486,7 @@ const typeDefs = gql`
 		info: ExtendedInfo
 		similarArtistFolders(page: Page, filter: FolderFilter, orderBy: [FolderOrderBy!]): FolderListPage!
 		similarArtistTracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
+		health: [HealthHint!]! @hasRole(role: "admin")
 	}
 
 	type FolderStat {
@@ -500,13 +518,13 @@ const typeDefs = gql`
 	}
 
 	input FolderFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
-		rootID: String
-		rootIDs: [String!]
-		parentID: String
-		parentIDs: [String!]
+		rootID: ID
+		rootIDs: [ID!]
+		parentID: ID
+		parentIDs: [ID!]
 		path: String
 		inPath: String
 		inPaths: [String!]
@@ -519,8 +537,8 @@ const typeDefs = gql`
 		newerThan: Float
 		fromYear: Int
 		toYear: Int
-		mbReleaseID: String
-		mbArtistID: String
+		mbReleaseID: ID
+		mbArtistID: ID
 		type: FolderType
 		types: [FolderType!]
 	}
@@ -532,7 +550,7 @@ const typeDefs = gql`
 	}
 
 	type FolderArtwork {
-		id: String!
+		id: ID!
 		name: String!
 		types: [String!]!
 		image: FolderArtworkImage
@@ -560,7 +578,7 @@ const typeDefs = gql`
 	type Radio  {
 		id: ID!
 		name: String!
-		url:String!
+		url: String!
 		homepage: String
 		disabled: Boolean
 		created: Datetime!
@@ -587,8 +605,8 @@ const typeDefs = gql`
 	}
 
 	input RadioFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
 		name: String
 		url: String
@@ -609,7 +627,7 @@ const typeDefs = gql`
 
 	type Episode  {
 		id: ID!
-		podcastID: String!
+		podcastID: ID!
 		podcastName: String!
 		status: PodcastStatus!
 		error: String
@@ -619,7 +637,7 @@ const typeDefs = gql`
 		date: Datetime
 		duration: Float
 		name: String
-		guid: String
+		guid: ID
 		author: String
 		chapters: [EpisodeChapter!]
 		enclosures: [EpisodeEnclosure!]
@@ -639,11 +657,11 @@ const typeDefs = gql`
 	}
 
 	input EpisodeFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
-		podcastID: String
-		podcastIDs: [String!]
+		podcastID: ID
+		podcastIDs: [ID!]
 		name: String
 		status: String
 		newerThan: Float
@@ -696,14 +714,14 @@ const typeDefs = gql`
 		trackTotal: Int
 		year: Int
 		nrTagImages: Int
-		mbTrackID: String
+		mbTrackID: ID
 		mbAlbumType: String
-		mbAlbumArtistID: String
-		mbArtistID: String
-		mbReleaseID: String
-		mbReleaseTrackID: String
-		mbReleaseGroupID: String
-		mbRecordingID: String
+		mbAlbumArtistID: ID
+		mbArtistID: ID
+		mbReleaseID: ID
+		mbReleaseTrackID: ID
+		mbReleaseGroupID: ID
+		mbRecordingID: ID
 		mbAlbumStatus: String
 		mbReleaseCountry: String
 		series: String
@@ -727,15 +745,15 @@ const typeDefs = gql`
 		name: String!
 		path: String!
 		stat: FileStats
-		albumArtistID: String
+		albumArtistID: ID
 		tag: TrackTag
 		media: TrackMedia
 
-		artistID: String
-		albumID: String!
-		parentID: String!
-		seriesID: String
-		rootID: String!
+		artistID: ID
+		albumID: ID!
+		parentID: ID!
+		seriesID: ID
+		rootID: ID!
 
 		artist: Artist
 		albumArtist: Artist
@@ -749,6 +767,7 @@ const typeDefs = gql`
 		similar(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
 		lyrics: TrackLyrics!
 		rawTag: TrackRawTag
+		health(media: Boolean): [HealthHint!]! @hasRole(role: "admin")
 	}
 
 	type TrackListPage {
@@ -760,29 +779,29 @@ const typeDefs = gql`
 	}
 
 	input TrackFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
 		path: String
 		inPath: String
 		inPaths: [String!]
 		artist: String
-		artistID: String
-		artistIDs: [String!]
-		albumArtistID: String
-		albumArtistIDs: [String!]
-		parentID: String
-		parentIDs: [String!]
-		mbTrackID: String
-		mbTrackIDs: [String!]
-		rootID: String
-		rootIDs: [String!]
+		artistID: ID
+		artistIDs: [ID!]
+		albumArtistID: ID
+		albumArtistIDs: [ID!]
+		parentID: ID
+		parentIDs: [ID!]
+		mbTrackID: ID
+		mbTrackIDs: [ID!]
+		rootID: ID
+		rootIDs: [ID!]
 		title: String
 		album: String
-		albumID: String
-		albumIDs: [String!]
-		seriesID: String
-		seriesIDs: [String!]
+		albumID: ID
+		albumIDs: [ID!]
+		seriesID: ID
+		seriesIDs: [ID!]
 		genre: String
 		newerThan: Float
 		fromYear: Int
@@ -814,7 +833,7 @@ const typeDefs = gql`
 		name: String!
 		nameSort: String
 		albumTypes: [AlbumType!]
-		mbArtistID: String
+		mbArtistID: ID
 		genres: [String!]
 		created: Datetime!
 
@@ -858,24 +877,24 @@ const typeDefs = gql`
 	}
 
 	input ArtistFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
 		name: String
 
 		slug: String
 		names: [String!]
-		trackID: String
-		trackIDs: [String!]
-		rootID: String
-		rootIDs: [String!]
-		seriesID: String
-		seriesIDs: [String!]
-		mbArtistID: String
+		trackID: ID
+		trackIDs: [ID!]
+		rootID: ID
+		rootIDs: [ID!]
+		seriesID: ID
+		seriesIDs: [ID!]
+		mbArtistID: ID
 		genre: String
-		albumID: String
-		albumType: String
-		albumTypes: [String!]
+		albumID: ID
+		albumType: AlbumType
+		albumTypes: [AlbumType!]
 		newerThan: Float
 	}
 
@@ -897,11 +916,11 @@ const typeDefs = gql`
 		albumTypes: [AlbumType!]!
 		created: Datetime
 
-		artistID: String!
-		folderIDs: [String!]
-		trackIDs: [String!]
-		albumIDs: [String!]
-		rootIDs: [String!]
+		artistID: ID!
+		folderIDs: [ID!]
+		trackIDs: [ID!]
+		albumIDs: [ID!]
+		rootIDs: [ID!]
 
 		artist: Artist!
 		folders(page: Page, filter: FolderFilter, orderBy: [FolderOrderBy!]): FolderListPage!
@@ -913,20 +932,20 @@ const typeDefs = gql`
 	}
 
 	input SeriesFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		name: String
-		rootID: String
-		rootIDs: [String!]
-		artistID: String
-		trackID: String
-		trackIDs: [String!]
-		folderID: String
-		folderIDs: [String!]
-		albumID: String
-		albumIDs: [String!]
-		albumType: String
-		albumTypes: [String!]
+		rootID: ID
+		rootIDs: [ID!]
+		artistID: ID
+		trackID: ID
+		trackIDs: [ID!]
+		folderID: ID
+		folderIDs: [ID!]
+		albumID: ID
+		albumIDs: [ID!]
+		albumType: AlbumType
+		albumTypes: [AlbumType!]
 		newerThan: Float
 	}
 
@@ -961,7 +980,7 @@ const typeDefs = gql`
 
 	type Bookmark {
 		id: ID!
-		destID: String!
+		destID: ID!
 		comment: String
 		created: Datetime!
 		changed: Datetime!
@@ -978,12 +997,12 @@ const typeDefs = gql`
 	}
 
 	input BookmarkFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
 		position: Float
-		destID: String
-		destIDs: [String!]
+		destID: ID
+		destIDs: [ID!]
 	}
 
 	enum BookmarkOrderByField {
@@ -1000,13 +1019,13 @@ const typeDefs = gql`
 	type Playlist {
 		id: ID!
 		name: String!
-		userID: String!
+		userID: ID!
 		comment: String
 		changed: Datetime!
 		created: Datetime!
 		isPublic: Boolean!
 		duration: Float
-		trackIDs: [String!]!
+		trackIDs: [ID!]!
 		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
 	}
 
@@ -1029,14 +1048,14 @@ const typeDefs = gql`
 	}
 
 	input PlaylistFilter {
-		id: String
-		ids: [String!]
+		id: ID
+		ids: [ID!]
 		query: String
 		name: String
-		userID: String
+		userID: ID
 		isPublic: Boolean
-		trackID: String
-		trackIDs: [String!]
+		trackID: ID
+		trackIDs: [ID!]
 		newerThan: Float
 	}
 
@@ -1071,7 +1090,7 @@ const typeDefs = gql`
 	}
 
 	type Stats {
-		rootID: String
+		rootID: ID
 		track: Int!
 		folder: Int!
 		series: Int!
@@ -1083,8 +1102,8 @@ const typeDefs = gql`
 	}
 
 	type PlayQueue {
-		trackIDs: [String!]!
-		currentID: String
+		trackIDs: [ID!]!
+		currentID: ID
 		position: Float
 		changed: Datetime
 		changedBy: String
@@ -1094,8 +1113,8 @@ const typeDefs = gql`
 	}
 
 	type Session {
-		id: String!
-		client:  String!
+		id: ID!
+		client: String!
 		expires: Datetime
 		mode: SessionMode
 		platform: String
@@ -1114,48 +1133,207 @@ const typeDefs = gql`
 		series(amount:Int!): [Series]
 	}
 
+	type User {
+		id: ID!
+		name: String
+		email: String
+		created: Datetime
+		scrobblingEnabled: Boolean
+		maxBitRate: Float
+		roles: UserRoles
+	}
+
+	type UserListPage {
+		total: Int!
+		offset: Int!
+		amount: Int!
+		more: Boolean!
+		items: [User!]!
+	}
+
+	enum UserOrderByField {
+		name
+		created
+	}
+
+	input UserOrderBy {
+		field: UserOrderByField
+		direction: SortDirection
+	}
+
+	type UserRoles {
+		stream: Boolean!
+		upload: Boolean!
+		admin: Boolean!
+		podcast: Boolean!
+	}
+
+	input UserFilter {
+		id: ID
+		ids: [ID!]
+		query: String
+		name: String
+		isAdmin: Boolean
+	}
+
+
+	type MaxAge {
+		value: Int!
+		unit: String!
+	}
+
+	type AdminSettingsChat {
+		maxMessages: Int!
+		maxAge: MaxAge!
+	}
+
+	type AdminSettingsIndex {
+		ignoreArticles: [String!]!
+	}
+
+	type AdminSettingsLibrary {
+		scanAtStart: Boolean!
+	}
+
+	type AdminSettingsExternal {
+		enabled: Boolean!
+	}
+
+	type AdminSettings {
+		chat: AdminSettingsChat!
+		index: AdminSettingsIndex!
+		library: AdminSettingsLibrary!
+		externalServices: AdminSettingsExternal!
+	}
+
+	type AdminChangeQueueInfo {
+		id: ID!
+		pos: Int
+		error: String
+		done: Datetime
+	}
+
 	type Query {
-		hello: String
-		autocomplete(query:String!): AutoComplete
-		stats(rootID: String): Stats!
-		sessions: [Session]!
-		chat(since: Float): [ChatMessage]!
-		genres(page: Page, rootID: String): GenreListPage!
+		version: String!
+		autocomplete(query: String!): AutoComplete!
+		stats(rootID: ID): Stats!
+		session: Session
+		sessions: [Session!]!
+		chat(since: Float): [ChatMessage!]!
+		genres(page: Page, rootID: ID): GenreListPage!
 		playlists(page: Page, filter: PlaylistFilter, orderBy: [PlaylistOrderBy!], list: ListType): PlaylistListPage!
-		playlist(id: String): Playlist
+		playlist(id: ID!): Playlist
 		folders(page: Page, filter: FolderFilter, orderBy: [FolderOrderBy!], list: ListType): FolderListPage!
 		folderIndex(filter: FolderFilter): FolderIndex!
-		folder(id: String): Folder
+		folder(id: ID!): Folder
 		roots(page: Page, filter: RootFilter, orderBy: [RootOrderBy!]): RootListPage!
-		root(id: String): Root
+		root(id: ID!): Root
 		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!], list: ListType): TrackListPage!
-		track(id: String): Track
+		track(id: ID!): Track
 		artists(page: Page, filter: ArtistFilter, orderBy: [ArtistOrderBy!], list: ListType): ArtistListPage!
 		artistIndex(filter: ArtistFilter): ArtistIndex!
-		artist(id: String): Artist!
+		artist(id: ID!): Artist!
 		series(page: Page, filter: SeriesFilter, orderBy: [SeriesOrderBy!], list: ListType): SeriesListPage!
 		seriesIndex(filter: SeriesFilter): SeriesIndex!
-		serie(id: String): Series
+		serie(id: ID!): Series
 		albums(page: Page, filter: AlbumFilter, orderBy: [AlbumOrderBy!], list: ListType): AlbumListPage!
 		albumIndex(filter: AlbumFilter): AlbumIndex!
-		album(id: String): Album
+		album(id: ID!): Album
 		episodes(page: Page, filter: EpisodeFilter, orderBy: [EpisodeOrderBy!], list: ListType): EpisodeListPage!
-		episode(id: String): Album
+		episode(id: ID!): Album
 		podcasts(page: Page, filter: PodcastFilter, orderBy: [PodcastOrderBy!], list: ListType): PodcastListPage!
-		podcast(id: String): Podcast
+		podcast(id: ID!): Podcast
 		radios(page: Page, filter: RadioFilter, orderBy: [RadioOrderBy!], list: ListType): RadioListPage!
-		radio(id: String): Radio
+		radio(id: ID!): Radio
 		bookmarks(page: Page, filter: BookmarkFilter, orderBy: [BookmarkOrderBy!]): BookmarkListPage!
 		nowPlaying: [NowPlaying]!
 		playQueue: PlayQueue!
+		users(page: Page, filter: UserFilter, orderBy: [UserOrderBy!]): UserListPage! @hasRole(role: "admin")
+		user(id: ID!): User @hasRole(role: "admin")
+		adminSettings: AdminSettings! @hasRole(role: "admin")
+		adminQueue(id: ID!): AdminChangeQueueInfo @hasRole(role: "admin")
 	}
 
+
 `;
+
+export class HasRoleDirective extends SchemaDirectiveVisitor {
+	visitFieldDefinition(field: any): any {
+		const expectedRole = this.args.role;
+		const next = field.resolve;
+
+		field.resolve = (result: any, args: any, context: any, info: any): any => {
+			const {user} = context;
+			if (!user) {
+				throw new AuthenticationError(
+					'You must be signed in to view this resource.'
+				);
+			}
+			const hasRole = (user.roles as any)[expectedRole];
+
+			if (!hasRole) {
+				throw new AuthenticationError(
+					'Authorization error: Incorrect permissions'
+				);
+			}
+
+			return next(result, args, context, info);
+		};
+	}
+
+	visitObject(obj: any): any {
+		const fields = obj.getFields();
+		const expectedRole = this.args.role;
+
+		Object.keys(fields).forEach(fieldName => {
+			const field = fields[fieldName];
+			const next = field.resolve;
+			field.resolve = function(
+				result: any,
+				args: any,
+				context: any,
+				info: any
+			): any {
+				const {user} = context;
+				if (!user) {
+					throw new AuthenticationError(
+						'You must be signed in to view this resource.'
+					);
+				}
+
+				const hasRole = (user.roles as any)[expectedRole];
+
+				if (!hasRole) {
+					throw new AuthenticationError(
+						'Authorization error: Incorrect permissions'
+					);
+				}
+
+				return next(result, args, context, info);
+			};
+		});
+	}
+}
 
 export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 	const resolvers = {
 		Query: {
-			hello: (): any => 'Hello world!',
+			version: (): string => JAMAPI_VERSION,
+
+			adminSettings: async (): Promise<Jam.AdminSettings> => {
+				return await engine.settingsService.get();
+			},
+			adminQueue: async (obj: any, {id}: { id: string }): Promise<Jam.AdminChangeQueueInfo> => {
+				return engine.ioService.getAdminChangeQueueInfoStatus(id);
+			},
+
+			users: async (obj: any, args: QueryPageArgs<SearchQueryUser, JamParameters.UserSortField>, {user}: QueryContext): Promise<PageResult<User>> => {
+				return packPage(await engine.userService.userStore.search(buildSearchQuery(args)));
+			},
+			user: async (obj: any, args: { id?: string }): Promise<User | undefined> => {
+				return args.id ? await engine.userService.userStore.byId(args.id) : undefined;
+			},
+
 			autocomplete: (query: string): { query: string } => {
 				return {query};
 			},
@@ -1299,6 +1477,10 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			},
 			sessions: async (obj: any, args: any, {user}: QueryContext): Promise<Array<Jam.UserSession>> => {
 				return (await engine.sessionService.byUserID(user.id)).map(session => formatSession(session));
+			},
+			session: async (obj: any, args: any, {sessionID}: QueryContext): Promise<Jam.UserSession | undefined> => {
+				const session = await engine.sessionService.byID(sessionID);
+				return session ? formatSession(session) : undefined;
 			},
 			genres: async (obj: any, {page, rootID}: { page?: Page; rootID?: string }): Promise<PageResult<Genre>> => {
 				const genres = await engine.genreService.getGenres(rootID);
@@ -1449,6 +1631,13 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			},
 			rawTag: async (obj: Track): Promise<Jam.RawTag | undefined> => {
 				return await engine.trackService.getRawTag(obj);
+			},
+			health: async (obj: Track, {media}: { media?: boolean }): Promise<Array<Jam.HealthHint>> => {
+				const tracksHealth = await engine.trackService.health({id: obj.id, amount: 1}, media);
+				if (tracksHealth.length > 0) {
+					return tracksHealth[0].health;
+				}
+				return [];
 			}
 		},
 		Folder: {
@@ -1496,6 +1685,13 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 				const result = await engine.metaDataService.similarTracks.byFolder(obj);
 				const query = {...buildSearchQuery(args, true), ids: result.map(o => o.id)};
 				return packPage(await engine.trackService.trackStore.search(query));
+			},
+			health: async (obj: Folder): Promise<Array<Jam.HealthHint>> => {
+				const folderHealth = await engine.folderService.health({id: obj.id, amount: 1});
+				if (folderHealth.length > 0) {
+					return folderHealth[0].health;
+				}
+				return [];
 			}
 		},
 		ChatMessage: {
@@ -1550,6 +1746,9 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			albumCount: async (obj: Artist): Promise<number> => obj.albumIDs.length,
 			seriesCount: async (obj: Artist): Promise<number> => obj.seriesIDs.length,
 			rootCount: async (obj: Artist): Promise<number> => obj.rootIDs.length
+		},
+		User: {
+			created: async (obj: User): Promise<Dtime | undefined> => packDtime(obj.created),
 		},
 		Album: {
 			created: async (obj: Album): Promise<Dtime | undefined> => packDtime(obj.created),
@@ -1646,6 +1845,9 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 	return new ApolloServer({
 		typeDefs,
 		resolvers,
+		schemaDirectives: {
+			hasRole: HasRoleDirective
+		},
 		playground: {
 			settings: {
 				// 'request.credentials': 'same-origin'
@@ -1657,6 +1859,7 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			return {
 				req, res,
 				engine,
+				sessionID: req.session?.id,
 				user: req.user as User
 			} as any;
 		},

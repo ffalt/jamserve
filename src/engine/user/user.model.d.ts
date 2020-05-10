@@ -8,7 +8,6 @@ export interface User extends DBObject {
 	created: number;
 	scrobblingEnabled: boolean;
 	maxBitRate?: number;
-	allowedFolder?: Array<string>;
 	roles: UserRoles;
 }
 

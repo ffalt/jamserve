@@ -15,7 +15,6 @@ import {JamApiRole, Register, registerAccessControlApi, RegisterCallback, regist
 import {registerSession} from './session';
 import {jamUpload} from './upload';
 import {initJamGraphQLRouter} from './graphql';
-import {JAMAPI_URL_VERSION} from './version';
 
 const log = logger('Jam.Api');
 
@@ -127,9 +126,7 @@ export function initJamRouter(app: express.Application, engine: Engine): express
 	registerApiAuthenticated(router, api);
 
 	const graphqlServer = initJamGraphQLRouter(engine);
-	const graphql = graphqlServer.getMiddleware({
-		path: `/graphql`
-	});
+	const graphql = graphqlServer.getMiddleware({path: `/graphql`});
 	router.use(graphql);
 
 	register404Error(router, engine);

@@ -8,7 +8,7 @@ import {JamApi, JamRequest} from './api';
 import {UserRequest} from './login';
 import {ApiResponder} from './response';
 
-export type JamApiRole = 'admin' | 'podcast' | 'stream';
+export type JamApiRole = 'admin' | 'stream' | 'podcast';
 export type RegisterCallback = (req: UserRequest, res: express.Response) => Promise<void>;
 export interface Register {
 	get(name: string, execute: RegisterCallback, roles?: Array<JamApiRole>, apiCheckName?: string): void;
@@ -250,11 +250,6 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.PodcastEpisodeList = await api.episodeController.search(options);
 		ApiResponder.data(req, res, result);
 	});
-	register.get('/episode/retrieve', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.query as any, user: req.user, client: req.client};
-		await api.episodeController.retrieve(options);
-		ApiResponder.ok(req, res);
-	}, ['podcast']);
 	register.get('/episode/state', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query as any, user: req.user, client: req.client};
 		const result: Jam.State = await api.episodeController.state(options);
@@ -300,16 +295,6 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.PodcastEpisodeList = await api.podcastController.episodes(options);
 		ApiResponder.data(req, res, result);
 	});
-	register.get('/podcast/refreshAll', async (req, res) => {
-		const options: JamRequest<{}> = {query: req.query as any, user: req.user, client: req.client};
-		await api.podcastController.refreshAll(options);
-		ApiResponder.ok(req, res);
-	}, ['podcast']);
-	register.get('/podcast/refresh', async (req, res) => {
-		const options: JamRequest<JamParameters.ID> = {query: req.query as any, user: req.user, client: req.client};
-		await api.podcastController.refresh(options);
-		ApiResponder.ok(req, res);
-	}, ['podcast']);
 	register.get('/podcast/state', async (req, res) => {
 		const options: JamRequest<JamParameters.ID> = {query: req.query as any, user: req.user, client: req.client};
 		const result: Jam.State = await api.podcastController.state(options);
@@ -925,10 +910,25 @@ export function registerAccessControlApi(register: Register, api: JamApi): void 
 		const result: Jam.State = await api.episodeController.rateUpdate(options);
 		ApiResponder.data(req, res, result);
 	});
+	register.post('/episode/retrieve', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body as any, user: req.user, client: req.client};
+		await api.episodeController.retrieve(options);
+		ApiResponder.ok(req, res);
+	}, ['podcast']);
 	register.post('/podcast/create', async (req, res) => {
 		const options: JamRequest<JamParameters.PodcastNew> = {query: req.body as any, user: req.user, client: req.client};
 		const result: Jam.Podcast = await api.podcastController.create(options);
 		ApiResponder.data(req, res, result);
+	}, ['podcast']);
+	register.post('/podcast/refreshAll', async (req, res) => {
+		const options: JamRequest<{}> = {query: req.body as any, user: req.user, client: req.client};
+		await api.podcastController.refreshAll(options);
+		ApiResponder.ok(req, res);
+	}, ['podcast']);
+	register.post('/podcast/refresh', async (req, res) => {
+		const options: JamRequest<JamParameters.ID> = {query: req.body as any, user: req.user, client: req.client};
+		await api.podcastController.refresh(options);
+		ApiResponder.ok(req, res);
 	}, ['podcast']);
 	register.post('/podcast/fav/update', async (req, res) => {
 		const options: JamRequest<JamParameters.Fav> = {query: req.body as any, user: req.user, client: req.client};

@@ -37,7 +37,6 @@ const typeUser = {
 		created: typeInt,
 		scrobblingEnabled: typeBool,
 		maxBitRate: typeInt,
-		allowedFolder: typeKey,
 		roles: typeUserRoles,
 		id: typeKey,
 		type: typeInt

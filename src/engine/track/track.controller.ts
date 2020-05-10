@@ -11,13 +11,10 @@ import {BaseListController} from '../base/dbobject-list.controller';
 import {ListResult} from '../base/list-result';
 import {BookmarkService} from '../bookmark/bookmark.service';
 import {DownloadService} from '../download/download.service';
-import {Folder} from '../folder/folder.model';
 import {FolderService} from '../folder/folder.service';
-import {TrackRulesChecker} from '../health/track.rule';
 import {ImageService} from '../image/image.service';
 import {IoService} from '../io/io.service';
 import {MetaDataService} from '../metadata/metadata.service';
-import {Root} from '../root/root.model';
 import {RootService} from '../root/root.service';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
@@ -27,7 +24,6 @@ import {formatTrack} from './track.format';
 import {Track} from './track.model';
 import {TrackService} from './track.service';
 import {SearchQueryTrack} from './track.store';
-import {processQueue} from '../../utils/queue';
 
 export class TrackController extends BaseListController<JamParameters.Track,
 	JamParameters.Tracks,
@@ -37,7 +33,6 @@ export class TrackController extends BaseListController<JamParameters.Track,
 	Track,
 	Jam.Track,
 	JamParameters.TrackList> {
-	checker: TrackRulesChecker;
 
 	constructor(
 		public trackService: TrackService,
@@ -53,7 +48,6 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		protected downloadService: DownloadService
 	) {
 		super(trackService, stateService, imageService, downloadService);
-		this.checker = new TrackRulesChecker(audioModule);
 	}
 
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
@@ -170,50 +164,14 @@ export class TrackController extends BaseListController<JamParameters.Track,
 	}
 
 	async health(req: JamRequest<JamParameters.TrackHealth>): Promise<Array<Jam.TrackHealth>> {
-		const list = await this.service.store.search(await this.translateQuery(req.query, req.user));
-		list.items = this.service.defaultSort(list.items);
+		const list = await this.trackService.health(await this.translateQuery(req.query, req.user));
 		const result: Array<Jam.TrackHealth> = [];
-		const roots: Array<Root> = [];
-		const folders: Array<Folder> = [];
-		const checks: Array<{ track: Track; folder: Folder; root: Root }> = [];
-		for (const track of list.items) {
-			let root = roots.find(r => r.id === track.rootID);
-			if (!root) {
-				root = await this.rootService.rootStore.byId(track.rootID);
-				if (root) {
-					roots.push(root);
-				}
-			}
-			if (root) {
-				let folder = folders.find(f => f.id === track.parentID);
-				if (!folder) {
-					folder = await this.folderService.folderStore.byId(track.parentID);
-					if (folder) {
-						folders.push(folder);
-					}
-
-				}
-				if (folder) {
-					checks.push({track, folder, root});
-					// const health = await this.checker.run(track, folder, root, !!req.query.media);
-					// if (health && health.length > 0) {
-					// result.push({
-					// 	track: await this.prepare(track, req.query, req.user),
-					// 	health
-					// });
-					// }
-				}
-			}
+		for (const item of list) {
+			result.push({
+				track: await this.prepare(item.track, req.query, req.user),
+				health: item.health
+			});
 		}
-		await processQueue<{ track: Track; folder: Folder; root: Root }>(3, checks, async item => {
-			const health = await this.checker.run(item.track, item.folder, item.root, !!req.query.media);
-			if (health && health.length > 0) {
-				result.push({
-					track: await this.prepare(item.track, req.query, req.user),
-					health
-				});
-			}
-		});
 		return result;
 	}
 

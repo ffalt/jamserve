@@ -11,16 +11,23 @@ import {SearchQueryTrack, TrackStore} from './track.store';
 import {logger} from '../../utils/logger';
 import {Jam} from '../../model/jam-rest-data';
 import {trackTagToRawTag} from '../../modules/audio/metadata';
+import {Root} from '../root/root.model';
+import {processQueue} from '../../utils/queue';
+import {TrackRulesChecker} from '../health/track.rule';
+import {RootService} from '../root/root.service';
 
 const log = logger('TrackService');
 
 export class TrackService extends BaseListService<Track, SearchQueryTrack> {
+	checker: TrackRulesChecker;
 
 	constructor(
-		public trackStore: TrackStore, private folderService: FolderService, private audioModule: AudioModule,
+		public trackStore: TrackStore, private folderService: FolderService, private rootService: RootService,
+		private audioModule: AudioModule,
 		private imageModule: ImageModule, stateService: StateService
 	) {
 		super(trackStore, stateService);
+		this.checker = new TrackRulesChecker(audioModule);
 	}
 
 	async getRawTag(track: Track): Promise<Jam.RawTag | undefined> {
@@ -84,4 +91,57 @@ export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 		}
 	}
 
+	async health(query: SearchQueryTrack, media?: boolean): Promise<Array<{
+		track: Track;
+		health: Array<Jam.HealthHint>;
+	}>> {
+		const list = await this.store.search(query);
+		list.items = this.defaultSort(list.items);
+		const result: Array<{
+			track: Track;
+			health: Array<Jam.HealthHint>;
+		}> = [];
+		const roots: Array<Root> = [];
+		const folders: Array<Folder> = [];
+		const checks: Array<{ track: Track; folder: Folder; root: Root }> = [];
+		for (const track of list.items) {
+			let root = roots.find(r => r.id === track.rootID);
+			if (!root) {
+				root = await this.rootService.rootStore.byId(track.rootID);
+				if (root) {
+					roots.push(root);
+				}
+			}
+			if (root) {
+				let folder = folders.find(f => f.id === track.parentID);
+				if (!folder) {
+					folder = await this.folderService.folderStore.byId(track.parentID);
+					if (folder) {
+						folders.push(folder);
+					}
+
+				}
+				if (folder) {
+					checks.push({track, folder, root});
+					// const health = await this.checker.run(track, folder, root, !!req.query.media);
+					// if (health && health.length > 0) {
+					// result.push({
+					// 	track: await this.prepare(track, req.query, req.user),
+					// 	health
+					// });
+					// }
+				}
+			}
+		}
+		await processQueue<{ track: Track; folder: Folder; root: Root }>(3, checks, async item => {
+			const health = await this.checker.run(item.track, item.folder, item.root, !!media);
+			if (health && health.length > 0) {
+				result.push({
+					track: item.track,
+					health
+				});
+			}
+		});
+		return result;
+	}
 }

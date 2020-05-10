@@ -87,8 +87,9 @@ export class Engine {
 		this.waveformService = new WaveformService(this.audioModule);
 		this.streamService = new StreamService(this.audioModule);
 		this.stateService = new StateService(this.store.stateStore);
-		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.stateService, this.imageModule);
-		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.audioModule, this.imageModule, this.stateService);
+		this.rootService = new RootService(this.store.rootStore);
+		this.folderService = new FolderService(this.store.folderStore, this.store.trackStore, this.rootService, this.stateService, this.imageModule);
+		this.trackService = new TrackService(this.store.trackStore, this.folderService, this.rootService, this.audioModule, this.imageModule, this.stateService);
 		this.albumService = new AlbumService(this.store.albumStore, this.trackService, this.folderService, this.stateService);
 		this.indexService = new IndexService(this.store.artistStore, this.store.albumStore, this.store.folderStore, this.store.trackStore, this.store.seriesStore);
 		this.workerService = new WorkerService(this.store, this.audioModule, this.imageModule);
@@ -114,7 +115,6 @@ export class Engine {
 		this.imageService = new ImageService(this.imageModule, this.trackService, this.folderService, this.artistService,
 			this.albumService, this.userService, this.podcastService, this.episodeService, this.seriesService);
 		this.metaDataService = new MetaDataService(this.store.metaStore, this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
-		this.rootService = new RootService(this.store.rootStore);
 		this.radioService = new RadioService(this.store.radioStore, this.stateService);
 		this.sessionService = new SessionService(this.store.sessionStore);
 	}
