@@ -40,6 +40,7 @@
   "dependencies": {
     "@elastic/elasticsearch": "7.6.1",
     "ajv": "6.12.2",
+    "apollo-server-express": "^2.13.0",
     "archiver": "4.0.1",
     "body-parser": "1.19.0",
     "colors": "1.4.0",
@@ -60,6 +61,7 @@
     "feedparser": "2.2.10",
     "fluent-ffmpeg": "2.1.2",
     "fs-extra": "9.0.0",
+    "graphql": "^15.0.0",
     "helmet": "3.22.0",
     "iconv-lite": "0.5.1",
     "jamp3": "0.4.1",
@@ -100,6 +102,7 @@
     "@types/feedparser": "2.2.3",
     "@types/fluent-ffmpeg": "2.1.14",
     "@types/fs-extra": "8.1.0",
+    "@types/graphql": "^14.2.3",
     "@types/helmet": "0.0.46",
     "@types/jest": "25.2.1",
     "@types/jest-expect-message": "1.0.2",

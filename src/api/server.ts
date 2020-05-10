@@ -50,7 +50,7 @@ export class Server {
 		 */
 
 		app.use(EngineMiddleWare);
-		app.use(`/jam/${JAMAPI_URL_VERSION}`, initJamRouter(engine));
+		app.use(`/jam/${JAMAPI_URL_VERSION}`, initJamRouter(app, engine));
 
 		// frontend (jamberry config file)
 		const configFile = path.resolve('./config/jamberry.config.js');
