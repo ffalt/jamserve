@@ -35,9 +35,11 @@ export interface SearchQueryTrack extends SearchQuery {
 }
 
 const fieldMap: { [name in JamParameters.TrackSortField]: string } = {
+	trackNr: 'tag.track',
+	discNr: 'tag.disc',
 	artist: 'tag.artist',
 	album: 'tag.album',
-	albumartist: 'tag.albumArtist',
+	albumArtist: 'tag.albumArtist',
 	genre: 'tag.genre',
 	parent: 'path',
 	title: 'tag.title',

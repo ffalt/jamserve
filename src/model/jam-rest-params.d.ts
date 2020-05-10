@@ -12,7 +12,7 @@ export declare namespace JamParameters {
 	export type MusicBrainzSearchType = 'area' | 'artist' | 'label' | 'recording' | 'release' | 'release-group' | 'work';
 	export type CoverArtArchiveLookupType = 'release' | 'release-group';
 
-	export type TrackSortField = 'artist' | 'album' | 'albumartist' | 'genre' | 'parent' | 'title' | 'year' | 'created';
+	export type TrackSortField = 'artist' | 'album' | 'albumArtist' | 'genre' | 'parent' | 'title' | 'year' | 'created' | 'trackNr' | 'discNr';
 	export type FolderSortField = 'artist' | 'album' | 'genre' | 'parent' | 'title' | 'year' | 'created';
 	export type EpisodeSortField = 'podcast' | 'name' | 'date' | 'created';
 	export type BookmarkSortField = 'created' | 'position';
