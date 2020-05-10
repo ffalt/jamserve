@@ -35,6 +35,13 @@ import {AlbumIndex, ArtistIndex, FolderIndex, SeriesIndex} from '../../engine/in
 import {ChatMessage} from '../../engine/chat/chat.model';
 import {NowPlaying} from '../../engine/nowplaying/nowplaying.model';
 import moment from 'moment';
+import {paginate} from '../../utils/paginate';
+import {Genre} from '../../engine/genre/genre.model';
+import {Stats} from '../../engine/stats/stats.model';
+import {PlayQueue} from '../../engine/playqueue/playqueue.model';
+import {GraphQLJSON, GraphQLJSONObject} from 'graphql-type-json';
+import {Session} from '../../engine/session/session.model';
+import {formatSession} from '../../engine/session/session.format';
 
 interface Page {
 	offset?: number;
@@ -104,12 +111,14 @@ function unpackOrderBys<T>(list?: Array<OrderBy<T>>): Array<SearchQuerySort<T>> 
 }
 
 function packPage<T>(list?: ListResult<T>): PageResult<T> {
+	console.log(list);
 	const items = list?.items || [];
+	const amount = (list?.amount === undefined ? list?.amount : list?.total) || items.length;
 	return {
 		total: list?.total || 0,
-		more: ((list?.offset || 0) + (list?.amount || 0)) < (list?.total || 0),
+		more: ((list?.offset || 0) + (amount || items.length)) < (list?.total || 0),
 		offset: list?.offset || 0,
-		amount: (list?.amount === undefined ? list?.amount : list?.total) || items.length,
+		amount,
 		items
 	}
 }
@@ -133,6 +142,13 @@ function buildListSearchQuery<T extends SearchQuery, Y>(args: QueryListPageArgs<
 }
 
 const typeDefs = gql`
+	scalar JSON
+	scalar JSONObject
+
+	enum SessionMode {
+		browser
+		jwt
+	}
 
 	enum ListType {
 		random
@@ -697,6 +713,16 @@ const typeDefs = gql`
 		chapters: [TrackTagChapter!]
 	}
 
+	type TrackLyrics {
+		lyrics: String
+		source: String
+	}
+
+	type TrackRawTag {
+		version: Int!
+		frames: JSONObject
+	}
+
 	type Track {
 		id: ID!
 		name: String!
@@ -722,6 +748,8 @@ const typeDefs = gql`
 		bookmarks(page: Page, filter: BookmarkFilter, orderBy: [BookmarkOrderBy!]): BookmarkListPage!
 		playlists(page: Page, filter: PlaylistFilter, orderBy: [PlaylistOrderBy!]): PlaylistListPage!
 		similar(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
+		lyrics: TrackLyrics!
+		rawTag: TrackRawTag
 	}
 
 	type TrackListPage {
@@ -975,12 +1003,11 @@ const typeDefs = gql`
 		name: String!
 		userID: String!
 		comment: String
-		coverArt: String
 		changed: Datetime!
 		created: Datetime!
 		isPublic: Boolean!
 		duration: Float
-		trackIDs: [String!]
+		trackIDs: [String!]!
 		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
 	}
 
@@ -1014,9 +1041,74 @@ const typeDefs = gql`
 		newerThan: Float
 	}
 
+
+	type Genre {
+		name: String!
+		trackCount: Int!
+		artistCount: Int!
+		albumCount: Int!
+	}
+
+	type GenreListPage {
+		total: Int!
+		offset: Int!
+		amount: Int!
+		more: Boolean!
+		items: [Genre!]!
+	}
+
+	type StatsAlbumType {
+		album: Int!
+		compilation: Int!
+		artist_compilation: Int!
+		unknown: Int!
+		live: Int!
+		audiobook: Int!
+		soundtrack: Int!
+		bootleg: Int!
+		ep: Int!
+		single: Int!
+		series: Int!
+	}
+
+	type Stats {
+		rootID: String
+		track: Int!
+		folder: Int!
+		series: Int!
+		album: Int!
+		albumTypes: StatsAlbumType
+		artist: Int!
+		artistTypes: StatsAlbumType
+		podcasts: Int!
+	}
+
+	type PlayQueue {
+		trackIDs: [String!]!
+		currentID: String
+		position: Float
+		changed: Datetime
+		changedBy: String
+		trackCOunt: Int!
+		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
+	}
+
+	type Session {
+		id: String!
+		client:  String!
+		expires: Datetime
+		mode: SessionMode;
+		platform: String
+		agent: String
+		os: String
+	}
+
 	type Query {
 		hello: String
+		stats(rootID: String): Stats!
+		sessions: [Session]!
 		chat(since: Float): [ChatMessage]!
+		genres(page: Page, rootID: String): GenreListPage!
 		playlists(page: Page, filter: PlaylistFilter, orderBy: [PlaylistOrderBy!], list: ListType): PlaylistListPage!
 		playlist(id: String): Playlist
 		folders(page: Page, filter: FolderFilter, orderBy: [FolderOrderBy!], list: ListType): FolderListPage!
@@ -1043,6 +1135,7 @@ const typeDefs = gql`
 		radio(id: String): Radio
 		bookmarks(page: Page, filter: BookmarkFilter, orderBy: [BookmarkOrderBy!]): BookmarkListPage!
 		nowPlaying: [NowPlaying]!
+		playQueue: PlayQueue!
 	}
 
 `;
@@ -1177,12 +1270,36 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 				const query = {...buildSearchQuery(args), userID: user.id};
 				return packPage(await engine.bookmarkService.bookmarkStore.search(query));
 			},
-
 			chat: async (obj: any, {since}: { since?: number }, {user}: QueryContext): Promise<Array<ChatMessage>> => {
 				return await engine.chatService.get(since);
 			},
 			nowPlaying: async (obj: any): Promise<Array<NowPlaying>> => {
 				return await engine.nowPlayingService.getNowPlaying();
+			},
+			stats: async (obj: any, {rootID}: { rootID?: string }): Promise<Stats> => {
+				return await engine.statsService.getStats(rootID);
+			},
+			playQueue: async (obj: any, args: any, {user}: QueryContext): Promise<PlayQueue | undefined> => {
+				return await engine.playQueueService.get(user.id);
+			},
+			sessions: async (obj: any, args: any, {user}: QueryContext): Promise<Array<Jam.UserSession>> => {
+				return (await engine.sessionService.byUserID(user.id)).map(session => formatSession(session));
+			},
+			genres: async (obj: any, {page, rootID}: { page?: Page; rootID?: string }): Promise<PageResult<Genre>> => {
+				const genres = await engine.genreService.getGenres(rootID);
+				const list = paginate(genres, page?.amount || 100, page?.offset || 0);
+				return packPage(list);
+			},
+		},
+		PlayQueue: {
+			changed: async (obj: PlayQueue): Promise<Dtime | undefined> => packDtime(obj.changed),
+			trackCount: async (obj: PlayQueue): Promise<number> => obj.trackIDs.length,
+			currentTrack: async (obj: PlayQueue): Promise<Track | undefined> => {
+				return obj.currentID ? await engine.trackService.trackStore.byId(obj.currentID) : undefined;
+			},
+			tracks: async (obj: PlayQueue, args: QueryPageArgs<SearchQueryTrack, JamParameters.TrackSortField>): Promise<PageResult<Track>> => {
+				const query = {...buildSearchQuery(args, true), trackIDs: obj.trackIDs};
+				return packPage(await engine.trackService.trackStore.search(query));
 			}
 		},
 		NowPlaying: {
@@ -1285,6 +1402,12 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 				const result = await engine.metaDataService.similarTracks.byTrack(obj);
 				const query = {...buildSearchQuery(args, true), ids: result.map(o => o.id)};
 				return packPage(await engine.trackService.trackStore.search(query));
+			},
+			lyrics: async (obj: Track): Promise<Jam.TrackLyrics> => {
+				return await engine.metaDataService.lyricsByTrack(obj);
+			},
+			rawTag: async (obj: Track): Promise<Jam.RawTag | undefined> => {
+				return await engine.trackService.getRawTag(obj);
 			}
 		},
 		Folder: {
@@ -1474,7 +1597,9 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			state: async (obj: Series, args: any, {user}: QueryContext): Promise<State> => {
 				return await engine.stateService.findOrCreate(obj.id, user.id, DBObjectType.series);
 			}
-		}
+		},
+		JSON: GraphQLJSON,
+		JSONObject: GraphQLJSONObject
 	};
 
 	return new ApolloServer({

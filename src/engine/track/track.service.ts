@@ -9,13 +9,30 @@ import {StateService} from '../state/state.service';
 import {Track} from './track.model';
 import {SearchQueryTrack, TrackStore} from './track.store';
 import {logger} from '../../utils/logger';
+import {Jam} from '../../model/jam-rest-data';
+import {trackTagToRawTag} from '../../modules/audio/metadata';
 
 const log = logger('TrackService');
 
 export class TrackService extends BaseListService<Track, SearchQueryTrack> {
 
-	constructor(public trackStore: TrackStore, private folderService: FolderService, private audioModule: AudioModule, private imageModule: ImageModule, stateService: StateService) {
+	constructor(
+		public trackStore: TrackStore, private folderService: FolderService, private audioModule: AudioModule,
+		private imageModule: ImageModule, stateService: StateService
+	) {
 		super(trackStore, stateService);
+	}
+
+	async getRawTag(track: Track): Promise<Jam.RawTag | undefined> {
+		try {
+			const result = await this.audioModule.readRawTag(path.join(track.path, track.name));
+			if (!result) {
+				return trackTagToRawTag(track.tag);
+			}
+			return result;
+		} catch (e) {
+			return trackTagToRawTag(track.tag);
+		}
 	}
 
 	defaultCompare(a: Track, b: Track): number {

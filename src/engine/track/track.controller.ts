@@ -1,4 +1,3 @@
-import path from 'path';
 import {JamRequest} from '../../api/jam/api';
 import {NotFoundError} from '../../api/jam/error';
 import {DBObjectType} from '../../db/db.types';
@@ -6,9 +5,7 @@ import {Jam} from '../../model/jam-rest-data';
 import {JamParameters} from '../../model/jam-rest-params';
 import {TrackHealthID} from '../../model/jam-types';
 import {AudioModule} from '../../modules/audio/audio.module';
-import {trackTagToRawTag} from '../../modules/audio/metadata';
 import {ApiBinaryResult} from '../../typings';
-import {logger} from '../../utils/logger';
 import {paginate} from '../../utils/paginate';
 import {BaseListController} from '../base/dbobject-list.controller';
 import {ListResult} from '../base/list-result';
@@ -31,8 +28,6 @@ import {Track} from './track.model';
 import {TrackService} from './track.service';
 import {SearchQueryTrack} from './track.store';
 import {processQueue} from '../../utils/queue';
-
-const log = logger('TrackController');
 
 export class TrackController extends BaseListController<JamParameters.Track,
 	JamParameters.Tracks,
@@ -64,7 +59,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 	async prepare(track: Track, includes: JamParameters.IncludesTrack, user: User): Promise<Jam.Track> {
 		const result = formatTrack(track, includes);
 		if (includes.trackRawTag) {
-			result.tagRaw = await this.getRawTag(track);
+			result.tagRaw = await this.trackService.getRawTag(track);
 		}
 		if (includes.trackState) {
 			const state = await this.stateService.findOrCreate(track.id, user.id, DBObjectType.track);
@@ -107,21 +102,9 @@ export class TrackController extends BaseListController<JamParameters.Track,
 
 	// more track api
 
-	private async getRawTag(track: Track): Promise<Jam.RawTag | undefined> {
-		try {
-			const result = await this.audioModule.readRawTag(path.join(track.path, track.name));
-			if (!result) {
-				return trackTagToRawTag(track.tag);
-			}
-			return result;
-		} catch (e) {
-			return trackTagToRawTag(track.tag);
-		}
-	}
-
 	async rawTag(req: JamRequest<JamParameters.ID>): Promise<Jam.RawTag> {
 		const track = await this.byID(req.query.id);
-		const result = await this.getRawTag(track);
+		const result = await this.trackService.getRawTag(track);
 		if (!result) {
 			return Promise.reject(Error('Unsupported audio file'));
 		}
@@ -133,7 +116,7 @@ export class TrackController extends BaseListController<JamParameters.Track,
 		tracks = this.service.defaultSort(tracks);
 		const result: Jam.RawTags = {};
 		for (const track of tracks) {
-			const tag = await this.getRawTag(track);
+			const tag = await this.trackService.getRawTag(track);
 			if (tag) {
 				result[track.id] = tag;
 			}
@@ -236,25 +219,6 @@ export class TrackController extends BaseListController<JamParameters.Track,
 
 	async lyrics(req: JamRequest<JamParameters.ID>): Promise<Jam.TrackLyrics> {
 		const track = await this.byID(req.query.id);
-		if (track.tag.lyrics) {
-			return {lyrics: track.tag.lyrics};
-		}
-		const song = track.tag.title;
-		if (!song) {
-			return {};
-		}
-		try {
-			let result: Jam.TrackLyrics | undefined;
-			if (track.tag.artist) {
-				result = await this.metaService.lyrics(track.tag.artist, song);
-			}
-			if ((!result || !result.lyrics) && track.tag.albumArtist && (track.tag.artist !== track.tag.albumArtist)) {
-				result = await this.metaService.lyrics(track.tag.albumArtist, song);
-			}
-			return result || {};
-		} catch (e) {
-			log.error(e);
-			return {};
-		}
+		return this.metaService.lyricsByTrack(track);
 	}
 }

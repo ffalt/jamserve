@@ -216,4 +216,26 @@ export class MetaDataService extends BaseStoreService<MetaData, SearchQueryMetaD
 			});
 	}
 
+	async lyricsByTrack(track: Track): Promise<Jam.TrackLyrics> {
+		if (track.tag.lyrics) {
+			return {lyrics: track.tag.lyrics};
+		}
+		const song = track.tag.title;
+		if (!song) {
+			return {};
+		}
+		try {
+			let result: Jam.TrackLyrics | undefined;
+			if (track.tag.artist) {
+				result = await this.lyrics(track.tag.artist, song);
+			}
+			if ((!result || !result.lyrics) && track.tag.albumArtist && (track.tag.artist !== track.tag.albumArtist)) {
+				result = await this.lyrics(track.tag.albumArtist, song);
+			}
+			return result || {};
+		} catch (e) {
+			log.error(e);
+			return {};
+		}
+	}
 }
