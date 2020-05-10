@@ -15,7 +15,6 @@ import {MetaDataService} from '../metadata/metadata.service';
 import {formatState} from '../state/state.format';
 import {StateService} from '../state/state.service';
 import {TrackController} from '../track/track.controller';
-import {Track} from '../track/track.model';
 import {User} from '../user/user.model';
 import {formatSeries} from './series.format';
 import {Series} from './series.model';
@@ -44,44 +43,6 @@ export class SeriesController extends BaseListController<JamParameters.Series,
 		super(seriesService, stateService, imageService, downloadService);
 	}
 
-	static sortGrouping(a: string, b: string): number {
-		const aNr = Number(a);
-		const bNr = Number(b);
-		if (isNaN(aNr) || isNaN(bNr)) {
-			return (a || '').localeCompare(b || '');
-		}
-		return aNr - bNr;
-	}
-
-	static sortSeriesAlbums(a: Album, b: Album): number {
-		let res = a.albumType.localeCompare(b.albumType);
-		if (res === 0) {
-			if (a.seriesNr && b.seriesNr) {
-				res = SeriesController.sortGrouping(a.seriesNr, b.seriesNr);
-			} else if (a.seriesNr || b.seriesNr) {
-				res = a.seriesNr ? 1 : -1;
-			}
-		}
-		if (res === 0) {
-			res = (b.year || 0) - (a.year || 0);
-		}
-		if (res === 0) {
-			res = a.name.localeCompare(b.name);
-		}
-		return res;
-	}
-
-	static sortSeriesTracks(a: Track, b: Track): number {
-		let res = a.parentID.localeCompare(b.parentID);
-		if (res === 0) {
-			res = (b.tag.disc || 0) - (a.tag.disc || 0);
-		}
-		if (res === 0) {
-			res = (b.tag.track || 0) - (a.tag.track || 0);
-		}
-		return res;
-	}
-
 	async prepare(series: Series, includes: JamParameters.IncludesSeries, user: User): Promise<Jam.Series> {
 		const result = formatSeries(series, includes);
 		if (includes.seriesState) {
@@ -92,10 +53,10 @@ export class SeriesController extends BaseListController<JamParameters.Series,
 			result.info = await this.metaDataService.extInfo.bySeries(series);
 		}
 		if (includes.seriesTracks) {
-			result.tracks = await this.trackController.prepareListByIDs(series.trackIDs, includes, user, SeriesController.sortSeriesTracks);
+			result.tracks = await this.trackController.prepareListByIDs(series.trackIDs, includes, user, SeriesService.sortSeriesTracks);
 		}
 		if (includes.seriesAlbums) {
-			result.albums = await this.albumController.prepareListByIDs(series.albumIDs, includes, user, SeriesController.sortSeriesAlbums);
+			result.albums = await this.albumController.prepareListByIDs(series.albumIDs, includes, user, SeriesService.sortSeriesAlbums);
 		}
 		return result;
 	}
@@ -133,7 +94,7 @@ export class SeriesController extends BaseListController<JamParameters.Series,
 			total: list.total,
 			amount: list.amount,
 			offset: list.offset,
-			items: await this.albumController.prepareListByIDs(list.items, req.query, req.user, SeriesController.sortSeriesAlbums)
+			items: await this.albumController.prepareListByIDs(list.items, req.query, req.user, SeriesService.sortSeriesAlbums)
 		};
 	}
 
@@ -148,7 +109,7 @@ export class SeriesController extends BaseListController<JamParameters.Series,
 			total: list.total,
 			amount: list.amount,
 			offset: list.offset,
-			items: await this.trackController.prepareListByIDs(list.items, req.query, req.user, SeriesController.sortSeriesTracks)
+			items: await this.trackController.prepareListByIDs(list.items, req.query, req.user, SeriesService.sortSeriesTracks)
 		};
 	}
 

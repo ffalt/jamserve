@@ -1,12 +1,13 @@
 import {DBObjectType} from '../../db/db.types';
-import {BaseStoreService} from '../base/base.service';
 import {Radio} from './radio.model';
 import {RadioStore, SearchQueryRadio} from './radio.store';
+import {BaseListService} from '../base/dbobject-list.service';
+import {StateService} from '../state/state.service';
 
-export class RadioService extends BaseStoreService<Radio, SearchQueryRadio> {
+export class RadioService extends BaseListService<Radio, SearchQueryRadio> {
 
-	constructor(public radioStore: RadioStore) {
-		super(radioStore);
+	constructor(public radioStore: RadioStore, stateService: StateService) {
+		super(radioStore, stateService);
 	}
 
 	defaultSort(items: Array<Radio>): Array<Radio> {

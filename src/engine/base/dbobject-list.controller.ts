@@ -1,9 +1,6 @@
 import {JamRequest} from '../../api/jam/api';
-import {InvalidParamError} from '../../api/jam/error';
 import {JamParameters} from '../../model/jam-rest-params';
 import {ApiBinaryResult} from '../../typings';
-import {paginate} from '../../utils/paginate';
-import {randomItems} from '../../utils/random';
 import {DownloadService} from '../download/download.service';
 import {ImageService} from '../image/image.service';
 import {StateService} from '../state/state.service';
@@ -35,51 +32,9 @@ export abstract class BaseListController<OBJREQUEST extends JamParameters.ID | I
 
 	private async getList(listQuery: JamParameters.List, jamquery: SEARCHQUERY, includes: INCLUDE, user: User): Promise<ListResult<RESULTOBJ>> {
 		const query = await this.translateQuery(jamquery, user);
-		let ids: Array<string> = [];
-		let total: number | undefined;
-		switch (listQuery.list) {
-			case 'random':
-				// TODO: cache ids to avoid duplicates in random items pagination
-				ids = await this.listService.store.searchIDs({...query, amount: -1, offset: 0});
-				listQuery.amount = listQuery.amount || 20;
-				total = ids.length;
-				ids = randomItems<string>(ids, listQuery.amount || 20);
-				break;
-			case 'highest':
-				ids = await this.listService.getHighestRatedIDs(query, user);
-				total = ids.length;
-				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
-				break;
-			case 'avghighest':
-				ids = await this.listService.getAvgHighestIDs(query);
-				total = ids.length;
-				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
-				break;
-			case 'frequent':
-				ids = await this.listService.getFrequentlyPlayedIDs(query, user);
-				total = ids.length;
-				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
-				break;
-			case 'faved':
-				ids = await this.listService.getFavedIDs(query, user);
-				total = ids.length;
-				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
-				break;
-			case 'recent':
-				ids = await this.listService.getRecentlyPlayedIDs(query, user);
-				total = ids.length;
-				ids = paginate(ids, listQuery.amount, listQuery.offset).items;
-				break;
-			default:
-				return Promise.reject(InvalidParamError('Unknown List Type'));
-		}
-		const result = await this.prepareListByIDs(ids, includes, user);
-		return {
-			total,
-			offset: listQuery.offset,
-			amount: listQuery.amount,
-			items: result
-		};
+		const list = await this.listService.getListIDs(listQuery, query, user);
+		const result = await this.prepareListByIDs(list.items, includes, user);
+		return {...list, items: result};
 	}
 
 	async list(req: JamRequest<LISTQUERY>): Promise<ListResult<RESULTOBJ>> {

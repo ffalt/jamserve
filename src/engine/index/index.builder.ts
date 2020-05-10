@@ -6,7 +6,7 @@ import {Folder} from '../folder/folder.model';
 import {FolderStore, SearchQueryFolder} from '../folder/folder.store';
 import {SearchQuerySeries, SeriesStore} from '../series/series.store';
 import {TrackStore} from '../track/track.store';
-import {AlbumIndex, AlbumIndexEntry, ArtistIndex, ArtistIndexEntry, FolderIndex, FolderIndexEntry, SeriesIndex, SeriesIndexEntry} from './index.model';
+import {AlbumIndex, ArtistIndex, FolderIndex, FolderIndexEntry, SeriesIndex} from './index.model';
 
 export class IndexTreeBuilder {
 	private ignore: string;
@@ -83,18 +83,17 @@ export class IndexArtistTreeBuilder extends IndexTreeBuilder {
 		const result: ArtistIndex = {groups: [], lastModified: Date.now()};
 		const artists = await this.artistStore.search(query);
 		artists.items.forEach(artist => {
-			const entry: ArtistIndexEntry = {artist};
 			const indexChar = this.getIndexChar(artist.nameSort || this.removeArticles(artist.name) || '');
 			let group = result.groups.find(g => g.name === indexChar);
 			if (!group) {
 				group = {name: indexChar, entries: []};
 				result.groups.push(group);
 			}
-			group.entries.push(entry);
+			group.entries.push(artist);
 		});
 		result.groups.forEach(group => {
 			group.entries = group.entries.sort((a, b) => {
-				return (a.artist.nameSort || this.removeArticles(a.artist.name)).localeCompare(b.artist.nameSort || this.removeArticles(b.artist.name));
+				return (a.nameSort || this.removeArticles(a.name)).localeCompare(b.nameSort || this.removeArticles(b.name));
 			});
 		});
 		result.groups = result.groups.sort((a, b) => {
@@ -114,18 +113,17 @@ export class IndexSeriesTreeBuilder extends IndexTreeBuilder {
 		const result: SeriesIndex = {groups: [], lastModified: Date.now()};
 		const series = await this.seriesStore.search(query);
 		series.items.forEach(item => {
-			const entry: SeriesIndexEntry = {series: item};
 			const indexChar = this.getIndexChar(this.removeArticles(item.name) || '');
 			let group = result.groups.find(g => g.name === indexChar);
 			if (!group) {
 				group = {name: indexChar, entries: []};
 				result.groups.push(group);
 			}
-			group.entries.push(entry);
+			group.entries.push(item);
 		});
 		result.groups.forEach(group => {
 			group.entries = group.entries.sort((a, b) => {
-				return (this.removeArticles(a.series.name)).localeCompare(this.removeArticles(b.series.name));
+				return (this.removeArticles(a.name)).localeCompare(this.removeArticles(b.name));
 			});
 		});
 		result.groups = result.groups.sort((a, b) => {
@@ -145,18 +143,17 @@ export class IndexAlbumTreeBuilder extends IndexTreeBuilder {
 		const result: AlbumIndex = {groups: [], lastModified: Date.now()};
 		const albums = await this.albumStore.search(query);
 		albums.items.forEach(album => {
-			const entry: AlbumIndexEntry = {album};
 			const indexChar = this.getIndexChar(album.name);
 			let group = result.groups.find(g => g.name === indexChar);
 			if (!group) {
 				group = {name: indexChar, entries: []};
 				result.groups.push(group);
 			}
-			group.entries.push(entry);
+			group.entries.push(album);
 		});
 		result.groups.forEach(group => {
 			group.entries.sort((a, b) => {
-				return a.album.name.localeCompare(b.album.name);
+				return a.name.localeCompare(b.name);
 			});
 		});
 		result.groups.sort((a, b) => {

@@ -115,7 +115,7 @@ export class Engine {
 			this.albumService, this.userService, this.podcastService, this.episodeService, this.seriesService);
 		this.metaDataService = new MetaDataService(this.store.metaStore, this.store.folderStore, this.store.trackStore, this.store.albumStore, this.store.artistStore, this.audioModule);
 		this.rootService = new RootService(this.store.rootStore);
-		this.radioService = new RadioService(this.store.radioStore);
+		this.radioService = new RadioService(this.store.radioStore, this.stateService);
 		this.sessionService = new SessionService(this.store.sessionStore);
 	}
 

@@ -8,10 +8,10 @@ export function formatSeriesIndex(index: SeriesIndex): Jam.SeriesIndex {
 			name: i.name,
 			entries: i.entries.map(e => {
 				return {
-					name: e.series.name,
-					trackCount: e.series.trackIDs.length,
-					albumCount: e.series.albumIDs.length,
-					seriesID: e.series.id
+					name: e.name,
+					trackCount: e.trackIDs.length,
+					albumCount: e.albumIDs.length,
+					seriesID: e.id
 				};
 			})
 		}))
@@ -25,10 +25,10 @@ export function formatArtistIndex(index: ArtistIndex): Jam.ArtistIndex {
 			name: i.name,
 			entries: i.entries.map(e => {
 				return {
-					name: e.artist.name,
-					trackCount: e.artist.trackIDs.length,
-					albumCount: e.artist.albumIDs.length,
-					artistID: e.artist.id
+					name: e.name,
+					trackCount: e.trackIDs.length,
+					albumCount: e.albumIDs.length,
+					artistID: e.id
 				};
 			})
 		}))
@@ -58,11 +58,11 @@ export function formatAlbumIndex(index: AlbumIndex): Jam.AlbumIndex {
 			name: i.name,
 			entries: i.entries.map(e => {
 				return {
-					id: e.album.id,
-					name: e.album.name,
-					artist: e.album.artist || '',
-					artistID: e.album.artistID,
-					trackCount: e.album.trackIDs.length
+					id: e.id,
+					name: e.name,
+					artist: e.artist || '',
+					artistID: e.artistID,
+					trackCount: e.trackIDs.length
 				};
 			})
 		}))

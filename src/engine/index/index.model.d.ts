@@ -20,13 +20,9 @@ export interface FolderIndex {
 	groups: Array<FolderIndexGroup>;
 }
 
-export interface ArtistIndexEntry {
-	artist: Artist;
-}
-
 export interface ArtistIndexGroup {
 	name: string;
-	entries: Array<ArtistIndexEntry>;
+	entries: Array<Artist>;
 }
 
 export interface ArtistIndex {
@@ -34,13 +30,9 @@ export interface ArtistIndex {
 	groups: Array<ArtistIndexGroup>;
 }
 
-export interface AlbumIndexEntry {
-	album: Album;
-}
-
 export interface AlbumIndexGroup {
 	name: string;
-	entries: Array<AlbumIndexEntry>;
+	entries: Array<Album>;
 }
 
 export interface AlbumIndex {
@@ -48,13 +40,9 @@ export interface AlbumIndex {
 	groups: Array<AlbumIndexGroup>;
 }
 
-export interface SeriesIndexEntry {
-	series: Series;
-}
-
 export interface SeriesIndexGroup {
 	name: string;
-	entries: Array<SeriesIndexEntry>;
+	entries: Array<Series>;
 }
 
 export interface SeriesIndex {
