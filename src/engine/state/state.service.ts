@@ -20,7 +20,7 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 			destID,
 			destType,
 			played: 0,
-			lastplayed: 0,
+			lastplayed: undefined,
 			faved: undefined,
 			rated: 0,
 			userID
@@ -117,7 +117,7 @@ export class StateService extends BaseStoreService<State, SearchQueryState> {
 
 	async getRecentlyPlayedDestIDs(type: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateStore.search({userID, type, isPlayed: true});
-		return states.items.sort((a, b) => b.lastplayed - a.lastplayed).map(a => a.destID);
+		return states.items.sort((a, b) => Number(b.lastplayed) - Number(a.lastplayed)).map(a => a.destID);
 	}
 
 	async reportPlaying(id: string, type: DBObjectType, userID: string): Promise<State> {

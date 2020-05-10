@@ -6,7 +6,7 @@ export interface State extends DBObject {
 	destID: string;
 	destType: DBObjectType;
 	played: number;
-	lastplayed: number;
+	lastplayed?: number;
 	faved?: number;
 	rated?: number;
 }

@@ -4,7 +4,7 @@ import {State, States} from './state.model';
 export function formatState(state?: State): Jam.State {
 	return {
 		played: state && state.played > 0 ? state.played : undefined,
-		lastplayed: state && state.lastplayed > 0 ? state.lastplayed : undefined,
+		lastplayed: state && state.lastplayed && state.lastplayed > 0 ? state.lastplayed : undefined,
 		faved: state ? state.faved : undefined,
 		rated: state && state.rated !== undefined && state.rated > 0 ? state.rated : undefined
 	};
