@@ -41,22 +41,6 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 		super(albumService, stateService, imageService, downloadService);
 	}
 
-	sortAlbumTracks(a: Track, b: Track): number {
-		if (a.tag.discTotal !== undefined && a.tag.disc !== undefined && b.tag.discTotal !== undefined && b.tag.disc !== undefined) {
-			const res = a.tag.disc - b.tag.disc;
-			if (res !== 0) {
-				return res;
-			}
-		}
-		if (a.tag.track !== undefined && b.tag.track !== undefined) {
-			const res = a.tag.track - b.tag.track;
-			if (res !== 0) {
-				return res;
-			}
-		}
-		return a.name.localeCompare(b.name);
-	}
-
 	async prepare(album: Album, includes: JamParameters.IncludesAlbum, user: User): Promise<Jam.Album> {
 		const result = formatAlbum(album, includes);
 		if (includes.albumState) {
@@ -67,7 +51,7 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 			result.info = await this.metaDataService.extInfo.byAlbum(album);
 		}
 		if (includes.albumTracks) {
-			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user, (a, b) => this.sortAlbumTracks(a, b));
+			result.tracks = await this.trackController.prepareListByIDs(album.trackIDs, includes, user, (a, b) => this.albumService.sortAlbumTracks(a, b));
 		}
 		return result;
 	}
@@ -119,7 +103,7 @@ export class AlbumController extends BaseListController<JamParameters.Album,
 		albums.forEach(album => {
 			trackIDs = trackIDs.concat(album.trackIDs);
 		});
-		return {items: await this.trackController.prepareListByIDs(trackIDs, req.query, req.user, (a, b) => this.sortAlbumTracks(a, b))};
+		return {items: await this.trackController.prepareListByIDs(trackIDs, req.query, req.user, (a, b) => this.albumService.sortAlbumTracks(a, b))};
 	}
 
 	async info(req: JamRequest<JamParameters.ID>): Promise<Jam.Info> {

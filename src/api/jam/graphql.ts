@@ -23,6 +23,9 @@ import {SearchQueryAlbum} from '../../engine/album/album.store';
 import {SearchQueryPodcast} from '../../engine/podcast/podcast.store';
 import {SearchQueryEpisode} from '../../engine/episode/episode.store';
 import {SearchQueryBookmark} from '../../engine/bookmark/bookmark.store';
+import {JamParameters} from '../../model/jam-rest-params';
+import {SearchQuery, SearchQuerySort} from '../../engine/base/base.store';
+import {SearchQueryFolder} from '../../engine/folder/folder.store';
 
 interface Page {
 	offset?: number;
@@ -42,6 +45,25 @@ function packDtime(dtime?: number): Dtime | undefined {
 		timestamp: dtime,
 		iso: (new Date(dtime)).toISOString()
 	}
+}
+
+function unpackOrderBy<T>(orderby: OrderBy<T>): SearchQuerySort<T> {
+	return {
+		field: orderby.field,
+		descending: orderby.direction === 'desc'
+	}
+}
+
+function unpackOrderBys<T>(list?: Array<OrderBy<T>>): Array<SearchQuerySort<T>> | undefined {
+	if (!list) {
+		return;
+	}
+	return list.map(orderBy => unpackOrderBy<T>(orderBy));
+}
+
+interface OrderBy<T> {
+	direction: 'asc' | 'desc';
+	field: T;
 }
 
 interface PageResult<T> {
@@ -169,8 +191,8 @@ const typeDefs = gql`
 
 		root: Root!
 		parent: Folder
-		folders(page: Page): FolderListPage!
-		tracks(page: Page): TrackListPage!
+		folders(page: Page, filter: FolderFilter, orderBy: [FolderOrderBy!]): FolderListPage!
+		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
 		state: State
 	}
 
@@ -272,9 +294,9 @@ const typeDefs = gql`
 		series: Series
 		artistName: String
 		artist: Artist!
-		tracks(page: Page): TrackListPage!
-		folders(page: Page): FolderListPage!
-		roots(page: Page): RootListPage!
+		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
+		folders(page: Page, filter: FolderFilter, orderBy: [FolderOrderBy!]): FolderListPage!
+		roots(page: Page, filter: RootFilter, orderBy: [RootOrderBy!]): RootListPage!
 		state: State
 	}
 
@@ -294,11 +316,11 @@ const typeDefs = gql`
 		seriesIDs: [String]
 		rootIDs: [String]
 
-		tracks(page: Page): TrackListPage!
-		folders(page: Page): FolderListPage!
-		albums(page: Page): AlbumListPage!
-		series(page: Page): SeriesListPage!
-		roots(page: Page): RootListPage!
+		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
+		folders(page: Page, filter: FolderFilter, orderBy: [FolderOrderBy!]): FolderListPage!
+		albums(page: Page, filter: AlbumFilter, orderBy: [AlbumOrderBy!]): AlbumListPage!
+		series(page: Page, filter: SeriesFilter, orderBy: [SeriesOrderBy!]): SeriesListPage!
+		roots(page: Page, filter: RootFilter, orderBy: [RootOrderBy!]): RootListPage!
 		state: State
 	}
 
@@ -316,10 +338,10 @@ const typeDefs = gql`
 		rootIDs: [String!]
 
 		artist: Artist!
-		folders(page: Page): FolderListPage!
-		tracks(page: Page): TrackListPage!
-		albums(page: Page): AlbumListPage!
-		roots(page: Page): RootListPage!
+		folders(page: Page, filter: FolderFilter, orderBy: [FolderOrderBy!]): FolderListPage!
+		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
+		albums(page: Page, filter: AlbumFilter, orderBy: [AlbumOrderBy!]): AlbumListPage!
+		roots(page: Page, filter: RootFilter, orderBy: [RootOrderBy!]): RootListPage!
 		state: State
 	}
 
@@ -393,7 +415,7 @@ const typeDefs = gql`
 		image: String
 		errorMessage: String
 		tag: PodcastTag
-		episodes(page: Page): EpisodeListPage!
+		episodes(page: Page, filter: EpisodeFilter, orderBy: [EpisodeOrderBy!]): EpisodeListPage!
 		state: State
 	}
 
@@ -598,6 +620,32 @@ const typeDefs = gql`
 		toYear: Int
 	}
 
+	input FolderFilter {
+		id: String
+		ids: [String!]
+		query: String
+		rootID: String
+		rootIDs: [String!]
+		parentID: String
+		parentIDs: [String!]
+		path: String
+		inPath: String
+		inPaths: [String!]
+		artist: String
+		artists: [String!]
+		title: String
+		album: String
+		genre: String
+		level: Int
+		newerThan: Float
+		fromYear: Int
+		toYear: Int
+		mbReleaseID: String
+		mbArtistID: String
+		type: FolderType
+		types: [FolderType!]
+	}
+
 	input TrackFilter {
 		id: String
 		ids: [String!]
@@ -704,6 +752,20 @@ const typeDefs = gql`
 		direction: SortDirection
 	}
 
+	enum FolderOrderByField {
+		artist
+		album
+		genre
+		created
+		parent
+		title
+		year
+	}
+	input FolderOrderBy {
+		field: PodcastOrderByField
+		direction: SortDirection
+	}
+
 	enum RadioOrderByField {
 		name
 		created
@@ -724,6 +786,8 @@ const typeDefs = gql`
 
 	type Query {
 		hello: String
+		folders(page: Page, filter: FolderFilter, orderBy: [FolderOrderBy!]): FolderListPage!
+		folder(id: String): Folder
 		roots(page: Page, filter: RootFilter, orderBy: [RootOrderBy!]): RootListPage!
 		root(id: String): Root
 		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
@@ -766,101 +830,99 @@ function emptyPackage(): PageResult<any> {
 	};
 }
 
+interface QueryContext {
+	user: User;
+}
+
+interface QueryListArgs<T, Y> {
+	page?: Page;
+	filter?: T;
+	orderBy?: Array<OrderBy<Y>>;
+}
+
+function buildListQuery<T extends SearchQuery, Y>(args: QueryListArgs<T, Y>, allIfNoAmount: boolean = false): T {
+	const {page, filter, orderBy} = args;
+	return {amount: page?.amount || (allIfNoAmount ? undefined : 20), offset: page?.offset || 0, ...filter, sorts: unpackOrderBys<Y>(orderBy)} as any;
+}
+
 export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 
 // Provide resolver functions for your schema fields
 	const resolvers = {
 		Query: {
 			hello: (): any => 'Hello world!',
-			roots: async (obj: any, args: { page?: Page; filter?: SearchQueryRoot }): Promise<PageResult<Root>> => {
-				const {page, filter} = args;
-				return packPage(await engine.rootService.rootStore.search(
-					{amount: page?.amount || 20, offset: page?.offset || 0, ...filter}
-				));
+			roots: async (obj: any, args: QueryListArgs<SearchQueryRoot, JamParameters.RootSortField>): Promise<PageResult<Root>> => {
+				return packPage(await engine.rootService.rootStore.search(buildListQuery(args)));
 			},
 			root: async (obj: any, args: { id?: string }): Promise<Root | undefined> => {
 				return args.id ? await engine.rootService.rootStore.byId(args.id) : undefined;
 			},
 
-			tracks: async (obj: any, args: { page?: Page; filter?: SearchQueryTrack }): Promise<PageResult<Track>> => {
-				const {page, filter} = args;
-				return packPage(await engine.trackService.trackStore.search(
-					{amount: page?.amount || 20, offset: page?.offset || 0, ...filter}
-				));
+			tracks: async (obj: any, args: QueryListArgs<SearchQueryTrack, JamParameters.TrackSortField>): Promise<PageResult<Track>> => {
+				return packPage(await engine.trackService.trackStore.search(buildListQuery(args)));
 			},
 			track: async (obj: any, args: { id?: string }): Promise<Track | undefined> => {
 				return args.id ? await engine.trackService.trackStore.byId(args.id) : undefined;
 			},
 
-			radios: async (obj: any, args: { page?: Page; filter?: SearchQueryRadio }): Promise<PageResult<Radio>> => {
-				const {page, filter} = args;
-				return packPage(await engine.radioService.radioStore.search(
-					{amount: page?.amount || 20, offset: page?.offset || 0, ...filter}
-				));
+			radios: async (obj: any, args: QueryListArgs<SearchQueryRadio, JamParameters.RadioSortField>): Promise<PageResult<Radio>> => {
+				return packPage(await engine.radioService.radioStore.search(buildListQuery(args)));
 			},
 			radio: async (obj: any, args: { id?: string }): Promise<Radio | undefined> => {
 				return args.id ? await engine.radioService.radioStore.byId(args.id) : undefined;
 			},
 
-			artists: async (obj: any, args: { page?: Page; filter?: SearchQueryArtist }): Promise<PageResult<Artist>> => {
-				const {page, filter} = args;
-				return packPage(await engine.artistService.artistStore.search(
-					{amount: page?.amount || 20, offset: page?.offset || 0, ...filter}
-				));
+			artists: async (obj: any, args: QueryListArgs<SearchQueryArtist, JamParameters.ArtistSortField>): Promise<PageResult<Artist>> => {
+				return packPage(await engine.artistService.artistStore.search(buildListQuery(args)));
 			},
 			artist: async (obj: any, args: { id?: string }): Promise<Artist | undefined> => {
 				return args.id ? await engine.artistService.artistStore.byId(args.id) : undefined;
 			},
 
-			series: async (obj: any, args: { page?: Page; filter?: SearchQuerySeries }): Promise<PageResult<Series>> => {
-				const {page, filter} = args;
-				return packPage(await engine.seriesService.seriesStore.search(
-					{amount: page?.amount || 20, offset: page?.offset || 0, ...filter}
-				));
+			series: async (obj: any, args: QueryListArgs<SearchQuerySeries, JamParameters.SeriesSortField>): Promise<PageResult<Series>> => {
+				return packPage(await engine.seriesService.seriesStore.search(buildListQuery(args)));
 			},
 			serie: async (obj: any, args: { id?: string }): Promise<Series | undefined> => {
 				return args.id ? await engine.seriesService.seriesStore.byId(args.id) : undefined;
 			},
 
-			albums: async (obj: any, args: { page?: Page; filter?: SearchQueryAlbum }): Promise<PageResult<Album>> => {
-				const {page, filter} = args;
-				return packPage(await engine.albumService.albumStore.search(
-					{amount: page?.amount || 20, offset: page?.offset || 0, ...filter}
-				));
+			albums: async (obj: any, args: QueryListArgs<SearchQueryAlbum, JamParameters.AlbumSortField>): Promise<PageResult<Album>> => {
+				return packPage(await engine.albumService.albumStore.search(buildListQuery(args)));
 			},
 			album: async (obj: any, args: { id?: string }): Promise<Album | undefined> => {
 				return args.id ? await engine.albumService.albumStore.byId(args.id) : undefined;
 			},
 
-			podcasts: async (obj: any, args: { page?: Page; filter?: SearchQueryPodcast }): Promise<PageResult<Podcast>> => {
-				const {page, filter} = args;
-				return packPage(await engine.podcastService.podcastStore.search(
-					{amount: page?.amount || 20, offset: page?.offset || 0, ...filter}
-				));
+			folders: async (obj: any, args: QueryListArgs<SearchQueryFolder, JamParameters.FolderSortField>): Promise<PageResult<Folder>> => {
+				return packPage(await engine.folderService.folderStore.search(buildListQuery(args)));
+			},
+			folder: async (obj: any, args: { id?: string }): Promise<Folder | undefined> => {
+				return args.id ? await engine.folderService.folderStore.byId(args.id) : undefined;
+			},
+
+			podcasts: async (obj: any, args: QueryListArgs<SearchQueryPodcast, JamParameters.PodcastSortField>): Promise<PageResult<Podcast>> => {
+				return packPage(await engine.podcastService.podcastStore.search(buildListQuery(args)));
 			},
 			podcast: async (obj: any, args: { id?: string }): Promise<Podcast | undefined> => {
 				return args.id ? await engine.podcastService.podcastStore.byId(args.id) : undefined;
 			},
 
-			episodes: async (obj: any, args: { page?: Page; filter?: SearchQueryEpisode }): Promise<PageResult<Episode>> => {
-				const {page, filter} = args;
-				return packPage(await engine.episodeService.episodeStore.search(
-					{amount: page?.amount || 20, offset: page?.offset || 0, ...filter}
-				));
+			episodes: async (obj: any, args: QueryListArgs<SearchQueryEpisode, JamParameters.EpisodeSortField>): Promise<PageResult<Episode>> => {
+				const query: SearchQueryEpisode = buildListQuery(args);
+				query.sorts = query.sorts ? query.sorts : [{field: 'date', descending: true}];
+				return packPage(await engine.episodeService.episodeStore.search(query));
 			},
 			episode: async (obj: any, args: { id?: string }): Promise<Episode | undefined> => {
 				return args.id ? await engine.episodeService.episodeStore.byId(args.id) : undefined;
 			},
 
-			bookmarks: async (obj: any, args: { page?: Page; filter?: SearchQueryBookmark }, context: { user: User }): Promise<PageResult<Bookmark>> => {
-				const {page, filter} = args;
+			bookmarks: async (obj: any, args: QueryListArgs<SearchQueryBookmark, JamParameters.BookmarkSortField>, context: QueryContext): Promise<PageResult<Bookmark>> => {
 				const {user} = context;
 				if (!user) {
 					return emptyPackage();
 				}
-				return packPage(await engine.bookmarkService.bookmarkStore.search(
-					{userID: user.id, amount: page?.amount || 20, offset: page?.offset || 0, ...filter}
-				));
+				const query = {...buildListQuery(args), userID: user.id};
+				return packPage(await engine.bookmarkService.bookmarkStore.search(query));
 			}
 		},
 		Podcast: {
@@ -869,13 +931,12 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			name: async (obj: Podcast): Promise<string> => {
 				return obj.tag ? obj.tag.title : obj.url;
 			},
-			episodes: async (obj: Podcast, args: { page?: Page }): Promise<PageResult<Episode>> => {
-				const {page} = args;
-				return packPage(await engine.episodeService.episodeStore.search(
-					{podcastID: obj.id, amount: page?.amount || 20, offset: page?.offset || 0}
-				));
+			episodes: async (obj: Podcast, args: QueryListArgs<SearchQueryEpisode, JamParameters.EpisodeSortField>): Promise<PageResult<Episode>> => {
+				const query: SearchQueryEpisode = {...buildListQuery(args), podcastID: obj.id};
+				query.sorts = query.sorts ? query.sorts : [{field: 'date', descending: true}];
+				return packPage(await engine.episodeService.episodeStore.search(query));
 			},
-			state: async (obj: Podcast, args: any, context: { user: User }): Promise<State> => {
+			state: async (obj: Podcast, args: any, context: QueryContext): Promise<State> => {
 				const {user} = context;
 				return await engine.stateService.findOrCreate(obj.id, user.id, DBObjectType.podcast);
 			}
@@ -894,7 +955,7 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			podcast: async (obj: Episode): Promise<Podcast | undefined> => {
 				return await engine.podcastService.podcastStore.byId(obj.podcastID);
 			},
-			state: async (obj: Episode, args: any, context: { user: User }): Promise<State> => {
+			state: async (obj: Episode, args: any, context: QueryContext): Promise<State> => {
 				const {user} = context;
 				return await engine.stateService.findOrCreate(obj.id, user.id, DBObjectType.episode);
 			}
@@ -934,16 +995,15 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			series: async (obj: Track): Promise<Series | undefined> => {
 				return obj.seriesID ? await engine.seriesService.seriesStore.byId(obj.seriesID) : undefined;
 			},
-			bookmarks: async (obj: Track, args: any, context: { user: User }): Promise<PageResult<Bookmark>> => {
+			bookmarks: async (obj: Track, args: QueryListArgs<SearchQueryBookmark, JamParameters.BookmarkSortField>, context: QueryContext): Promise<PageResult<Bookmark>> => {
 				const {user} = context;
 				if (!user) {
 					return emptyPackage();
 				}
-				return packPage(await engine.bookmarkService.bookmarkStore.search(
-					{userID: user.id, destID: obj.id}
-				));
+				const query = {...buildListQuery(args, true), userID: user.id, destID: obj.id};
+				return packPage(await engine.bookmarkService.bookmarkStore.search(query));
 			},
-			state: async (obj: Track, args: any, context: { user: User }): Promise<State> => {
+			state: async (obj: Track, args: any, context: QueryContext): Promise<State> => {
 				const {user} = context;
 				return await engine.stateService.findOrCreate(obj.id, user.id, DBObjectType.track);
 			}
@@ -963,56 +1023,42 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			parent: async (obj: Folder): Promise<Folder | undefined> => {
 				return obj.parentID ? await engine.folderService.folderStore.byId(obj.parentID) : undefined;
 			},
-			folders: async (obj: Folder, args: { page?: Page }): Promise<PageResult<Folder>> => {
-				const {page} = args;
-				return packPage(await engine.folderService.folderStore.search(
-					{parentID: obj.id, amount: page?.amount, offset: page?.offset || 0}
-				));
+			folders: async (obj: Folder, args: QueryListArgs<SearchQueryFolder, JamParameters.FolderSortField>): Promise<PageResult<Folder>> => {
+				const query = {...buildListQuery(args, true), parentID: obj.id};
+				return packPage(await engine.folderService.folderStore.search(query));
 			},
-			tracks: async (obj: Folder, args: { page?: Page }): Promise<PageResult<Track>> => {
-				const {page} = args;
-				return packPage(await engine.trackService.trackStore.search(
-					{parentID: obj.id, amount: page?.amount, offset: page?.offset || 0}
-				));
+			tracks: async (obj: Folder, args: QueryListArgs<SearchQueryTrack, JamParameters.TrackSortField>): Promise<PageResult<Track>> => {
+				const query = {...buildListQuery(args, true), parentID: obj.id};
+				return packPage(await engine.trackService.trackStore.search(query));
 			},
-			state: async (obj: Folder, args: any, context: { user: User }): Promise<State> => {
+			state: async (obj: Folder, args: any, context: QueryContext): Promise<State> => {
 				const {user} = context;
 				return await engine.stateService.findOrCreate(obj.id, user.id, DBObjectType.folder);
 			}
 		},
 		Artist: {
 			created: async (obj: Artist): Promise<Dtime | undefined> => packDtime(obj.created),
-			roots: async (obj: Artist, args: { page?: Page }): Promise<PageResult<Root>> => {
-				const {page} = args;
-				return packPage(await engine.rootService.rootStore.search(
-					{ids: obj.rootIDs, amount: page?.amount, offset: page?.offset || 0}
-				));
+			roots: async (obj: Artist, args: QueryListArgs<SearchQueryRoot, JamParameters.RootSortField>): Promise<PageResult<Root>> => {
+				const query = {...buildListQuery(args, true), ids: obj.rootIDs};
+				return packPage(await engine.rootService.rootStore.search(query));
 			},
-			tracks: async (obj: Artist, args: { page?: Page }): Promise<PageResult<Track>> => {
-				const {page} = args;
-				return packPage(await engine.trackService.trackStore.search(
-					{artistID: obj.id, amount: page?.amount, offset: page?.offset || 0}
-				));
+			tracks: async (obj: Artist, args: QueryListArgs<SearchQueryTrack, JamParameters.TrackSortField>): Promise<PageResult<Track>> => {
+				const query = {...buildListQuery(args, true), artistID: obj.id};
+				return packPage(await engine.trackService.trackStore.search(query));
 			},
-			folders: async (obj: Artist, args: { page?: Page }): Promise<PageResult<Folder>> => {
-				const {page} = args;
-				return packPage(await engine.folderService.folderStore.search(
-					{ids: obj.folderIDs, amount: page?.amount, offset: page?.offset || 0}
-				));
+			folders: async (obj: Artist, args: QueryListArgs<SearchQueryFolder, JamParameters.FolderSortField>): Promise<PageResult<Folder>> => {
+				const query = {...buildListQuery(args, true), ids: obj.folderIDs};
+				return packPage(await engine.folderService.folderStore.search(query));
 			},
-			albums: async (obj: Artist, args: { page?: Page }): Promise<PageResult<Album>> => {
-				const {page} = args;
-				return packPage(await engine.albumService.albumStore.search(
-					{artistID: obj.id, amount: page?.amount, offset: page?.offset || 0}
-				));
+			albums: async (obj: Artist, args: QueryListArgs<SearchQueryAlbum, JamParameters.AlbumSortField>): Promise<PageResult<Album>> => {
+				const query = {...buildListQuery(args, true), artistID: obj.id};
+				return packPage(await engine.albumService.albumStore.search(query));
 			},
-			series: async (obj: Artist, args: { page?: Page }): Promise<PageResult<Series>> => {
-				const {page} = args;
-				return packPage(await engine.seriesService.seriesStore.search(
-					{artistID: obj.id, amount: page?.amount, offset: page?.offset || 0}
-				));
+			series: async (obj: Artist, args: QueryListArgs<SearchQuerySeries, JamParameters.SeriesSortField>): Promise<PageResult<Series>> => {
+				const query = {...buildListQuery(args, true), artistID: obj.id};
+				return packPage(await engine.seriesService.seriesStore.search(query));
 			},
-			state: async (obj: Artist, args: any, context: { user: User }): Promise<State> => {
+			state: async (obj: Artist, args: any, context: QueryContext): Promise<State> => {
 				const {user} = context;
 				return await engine.stateService.findOrCreate(obj.id, user.id, DBObjectType.artist);
 			}
@@ -1028,28 +1074,26 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			artist: async (obj: Album): Promise<Artist | undefined> => {
 				return await engine.artistService.artistStore.byId(obj.artistID);
 			},
-			roots: async (obj: Album, args: { page?: Page }): Promise<PageResult<Root>> => {
-				const {page} = args;
-				return packPage(await engine.rootService.rootStore.search(
-					{ids: obj.rootIDs, amount: page?.amount, offset: page?.offset || 0}
-				));
+			roots: async (obj: Album, args: QueryListArgs<SearchQueryRoot, JamParameters.RootSortField>): Promise<PageResult<Root>> => {
+				const query = {...buildListQuery(args, true), ids: obj.rootIDs};
+				return packPage(await engine.rootService.rootStore.search(query));
 			},
 			series: async (obj: Album): Promise<Series | undefined> => {
 				return obj.seriesID ? await engine.seriesService.seriesStore.byId(obj.seriesID) : undefined;
 			},
-			folders: async (obj: Album, args: { page?: Page }): Promise<PageResult<Folder>> => {
-				const {page} = args;
-				return packPage(await engine.folderService.folderStore.search(
-					{ids: obj.folderIDs, amount: page?.amount, offset: page?.offset || 0}
-				));
+			folders: async (obj: Album, args: QueryListArgs<SearchQueryFolder, JamParameters.FolderSortField>): Promise<PageResult<Folder>> => {
+				const query = {...buildListQuery(args, true), ids: obj.folderIDs};
+				return packPage(await engine.folderService.folderStore.search(query));
 			},
-			tracks: async (obj: Album, args: { page?: Page }): Promise<any> => {
-				const {page} = args;
-				return packPage(await engine.trackService.trackStore.search(
-					{albumID: obj.id, amount: page?.amount, offset: page?.offset || 0}
-				));
+			tracks: async (obj: Album, args: QueryListArgs<SearchQueryTrack, JamParameters.TrackSortField>): Promise<any> => {
+				const query = {...buildListQuery(args, true), albumID: obj.id};
+				const list = await engine.trackService.trackStore.search(query);
+				if (!query.sorts) {
+					list.items = list.items ? list.items.sort((a, b) => engine.albumService.sortAlbumTracks(a, b)) : [];
+				}
+				return packPage(list);
 			},
-			state: async (obj: Album, args: any, context: { user: User }): Promise<State> => {
+			state: async (obj: Album, args: any, context: QueryContext): Promise<State> => {
 				const {user} = context;
 				return await engine.stateService.findOrCreate(obj.id, user.id, DBObjectType.album);
 			}
@@ -1066,31 +1110,23 @@ export function initJamGraphQLRouter(engine: Engine): ApolloServer {
 			artist: async (obj: Series): Promise<Artist | undefined> => {
 				return await engine.artistService.artistStore.byId(obj.artistID);
 			},
-			roots: async (obj: Series, args: { page?: Page }): Promise<PageResult<Root>> => {
-				const {page} = args;
-				return packPage(await engine.rootService.rootStore.search(
-					{ids: obj.rootIDs, amount: page?.amount, offset: page?.offset || 0}
-				));
+			roots: async (obj: Series, args: QueryListArgs<SearchQueryRoot, JamParameters.RootSortField>): Promise<PageResult<Root>> => {
+				const query = {...buildListQuery(args, true), ids: obj.rootIDs};
+				return packPage(await engine.rootService.rootStore.search(query));
 			},
-			albums: async (obj: Series, args: { page?: Page }): Promise<PageResult<Album>> => {
-				const {page} = args;
-				return packPage(await engine.albumService.albumStore.search(
-					{artistID: obj.id, amount: page?.amount, offset: page?.offset || 0}
-				));
+			albums: async (obj: Series, args: QueryListArgs<SearchQueryAlbum, JamParameters.AlbumSortField>): Promise<PageResult<Album>> => {
+				const query = {...buildListQuery(args, true), artistID: obj.id};
+				return packPage(await engine.albumService.albumStore.search(query));
 			},
-			folders: async (obj: Series, args: { page?: Page }): Promise<PageResult<Folder>> => {
-				const {page} = args;
-				return packPage(await engine.folderService.folderStore.search(
-					{ids: obj.folderIDs, amount: page?.amount, offset: page?.offset || 0}
-				));
+			folders: async (obj: Series, args: QueryListArgs<SearchQueryFolder, JamParameters.FolderSortField>): Promise<PageResult<Folder>> => {
+				const query = {...buildListQuery(args, true), ids: obj.folderIDs};
+				return packPage(await engine.folderService.folderStore.search(query));
 			},
-			tracks: async (obj: Series, args: { page?: Page }): Promise<any> => {
-				const {page} = args;
-				return packPage(await engine.trackService.trackStore.search(
-					{albumID: obj.id, amount: page?.amount, offset: page?.offset || 0}
-				));
+			tracks: async (obj: Series, args: QueryListArgs<SearchQueryTrack, JamParameters.TrackSortField>): Promise<any> => {
+				const query = {...buildListQuery(args, true), albumID: obj.id};
+				return packPage(await engine.trackService.trackStore.search(query));
 			},
-			state: async (obj: Series, args: any, context: { user: User }): Promise<State> => {
+			state: async (obj: Series, args: any, context: QueryContext): Promise<State> => {
 				const {user} = context;
 				return await engine.stateService.findOrCreate(obj.id, user.id, DBObjectType.series);
 			}

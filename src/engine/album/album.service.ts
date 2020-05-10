@@ -7,6 +7,7 @@ import {StateService} from '../state/state.service';
 import {TrackService} from '../track/track.service';
 import {Album} from './album.model';
 import {AlbumStore, SearchQueryAlbum} from './album.store';
+import {Track} from '../track/track.model';
 
 export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 
@@ -16,6 +17,22 @@ export class AlbumService extends BaseListService<Album, SearchQueryAlbum> {
 
 	defaultSort(items: Array<Album>): Array<Album> {
 		return items.sort((a, b) => a.name.localeCompare(b.name));
+	}
+
+	sortAlbumTracks(a: Track, b: Track): number {
+		if (a.tag.discTotal !== undefined && a.tag.disc !== undefined && b.tag.discTotal !== undefined && b.tag.disc !== undefined) {
+			const res = a.tag.disc - b.tag.disc;
+			if (res !== 0) {
+				return res;
+			}
+		}
+		if (a.tag.track !== undefined && b.tag.track !== undefined) {
+			const res = a.tag.track - b.tag.track;
+			if (res !== 0) {
+				return res;
+			}
+		}
+		return a.name.localeCompare(b.name);
 	}
 
 	async getAlbumFolder(album: Album): Promise<Folder | undefined> {
