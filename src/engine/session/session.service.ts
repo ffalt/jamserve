@@ -1,10 +1,6 @@
 import {BaseStoreService} from '../base/base.service';
 import {Session} from './session.model';
 import {SearchQuerySession, SessionStore} from './session.store';
-import {JamRequest} from '../../api/jam/api';
-import {Jam} from '../../model/jam-rest-data';
-import {JAMAPI_VERSION} from '../../api/jam/version';
-import {formatSessionUser} from '../user/user.format';
 
 export interface SessionNotifyEventObject {
 	clearCache(): Promise<void>;

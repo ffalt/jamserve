@@ -33,9 +33,9 @@ describe('Server', () => {
 			get = (apiPath, query, expect): supertest.Test =>
 				request.get(apiPrefix + apiPath).set('Authorization', `Bearer ${user1token}`)
 				.query(query).expect(expect);
-			post = (apiPath, query, body, expect): supertest.Test =>
-				request.post(apiPrefix + apiPath).set('Authorization', `Bearer ${user1token}`)
-				.query(query).send(body).expect(expect);
+//			post = (apiPath, query, body, expect): supertest.Test =>
+//				request.post(apiPrefix + apiPath).set('Authorization', `Bearer ${user1token}`)
+//				.query(query).send(body).expect(expect);
 			getNoRights = (apiPath, query, expect): supertest.Test =>
 				request.get(apiPrefix + apiPath).set('Authorization', `Bearer ${user2token}`)
 				.query(query).expect(expect);

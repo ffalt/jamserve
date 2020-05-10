@@ -18,7 +18,7 @@ export abstract class BaseListService<T extends DBObject, Q extends SearchQuery>
 		super(store);
 	}
 
-	async getList(query: { listQuery: JamParameters.List, query: Q, user: User }): Promise<ListResult<T>> {
+	async getList(query: { listQuery: JamParameters.List; query: Q; user: User }): Promise<ListResult<T>> {
 		const list = await this.getListIDs(query.listQuery, query.query, query.user);
 		return {...list, items: await this.store.byIds(list.items)};
 	}
