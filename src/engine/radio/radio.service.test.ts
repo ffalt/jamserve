@@ -1,11 +1,13 @@
 import {testService} from '../base/base.service.spec';
 import {RadioService} from './radio.service';
+import {StateService} from '../state/state.service';
 
 describe('RadioService', () => {
 	let radioService: RadioService;
 	testService({mockData: false},
 		async store => {
-			radioService = new RadioService(store.radioStore);
+			const stateService = new StateService(store.stateStore);
+			radioService = new RadioService(store.radioStore, stateService);
 		},
 		() => {
 			it('should create a radio', async () => {

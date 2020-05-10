@@ -12,7 +12,7 @@ describe('SeriesService', () => {
 	testService({mockData: true},
 		async (store, imageModuleTest, audioModuleTest) => {
 			const stateService = new StateService(store.stateStore);
-			folderService = new FolderService(store.folderStore, store.trackStore, stateService, imageModuleTest.imageModule);
+			folderService = new FolderService(store.folderStore, store.trackStore, store.rootStore, stateService, imageModuleTest.imageModule);
 			seriesService = new SeriesService(store.seriesStore, store.trackStore, folderService, stateService);
 		},
 		() => {
