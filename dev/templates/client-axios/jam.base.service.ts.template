@@ -15,7 +15,7 @@ export class JamBaseService {
 		if (forDOM && this.authService.auth?.token) {
 			buildParams.bearer = this.authService.auth?.token;
 		}
-		return {url: this.authService.auth?.server + this.authService.apiPrefix + view, parameters: buildParams};
+		return {url: this.authService.auth?.server + JamAuthService.apiPrefix + view, parameters: buildParams};
 	}
 
 	static flattenParams(params: any): string {

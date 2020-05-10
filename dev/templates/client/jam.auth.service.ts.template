@@ -17,10 +17,10 @@ export interface Auth {
 
 @Injectable()
 export class JamAuthService {
+	static readonly version = '{{{version}}}';
+	static readonly apiPrefix = '{{{apiPrefix}}}';
 	user?: Jam.SessionUser = undefined;
 	auth?: Auth = undefined;
-	readonly version = '{{{version}}}';
-	readonly apiPrefix = '{{{apiPrefix}}}';
 	checked: boolean = false;
 	loaded: boolean = false;
 
@@ -43,7 +43,7 @@ export class JamAuthService {
 			return;
 		}
 		try {
-			const data = await this.http.get<Jam.Session>(`${this.auth.server}${this.apiPrefix}session`, this.getHTTPOptions());
+			const data = await this.http.get<Jam.Session>(`${this.auth.server}${JamAuthService.apiPrefix}session`, this.getHTTPOptions());
 			if (data.user) {
 				this.user = data.user;
 				this.auth.version = data.version;
@@ -60,14 +60,14 @@ export class JamAuthService {
 		if (this.configuration.forceSessionUsage) {
 			return true;
 		}
-		const data = await this.http.get<Jam.Session>(`${server}${this.apiPrefix}session`, {withCredentials: false});
+		const data = await this.http.get<Jam.Session>(`${server}${JamAuthService.apiPrefix}session`, {withCredentials: false});
 		return (data.allowedCookieDomains || []).includes(this.configuration.domain());
 	}
 
 	async login(server: string, username: string, password: string, storePassword?: boolean): Promise<void> {
 		const canUseSession = await this.canUseSession(server);
 		try {
-			const data = await this.http.post<Jam.Session>(`${server}${this.apiPrefix}login`, {
+			const data = await this.http.post<Jam.Session>(`${server}${JamAuthService.apiPrefix}login`, {
 				client: this.configuration.clientName,
 				username,
 				password,
@@ -112,7 +112,7 @@ export class JamAuthService {
 
 	async logout(): Promise<void> {
 		if (this.auth) {
-			const url = `${this.auth.server}${this.apiPrefix}logout`;
+			const url = `${this.auth.server}${JamAuthService.apiPrefix}logout`;
 			const options = this.getHTTPOptions();
 			await this.clear();
 			await this.http.post<{}>(url, {}, options);

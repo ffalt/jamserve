@@ -421,14 +421,6 @@ export interface JamApi {
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
 		};
 		/**
-		 * episode: retrieve a podcast episode media file
-		 */
-		'episode/retrieve'?: {
-			params: JamParameters.ID;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['podcast'];
-		};
-		/**
 		 * episode: get the user state (fav/rating) by podcast episode id
 		 */
 		'episode/state'?: {
@@ -500,20 +492,6 @@ export interface JamApi {
 			params: JamParameters.PodcastEpisodes;
 			result: Jam.PodcastEpisodeList;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
-		};
-		/**
-		 * podcast: check all podcast feeds for new episodes
-		 */
-		'podcast/refreshAll'?: {
-			roles: ['podcast'];
-		};
-		/**
-		 * podcast: check podcast feeds for new episodes by podcast id
-		 */
-		'podcast/refresh'?: {
-			params: JamParameters.ID;
-			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
-			roles: ['podcast'];
 		};
 		/**
 		 * podcast: get the user state (fav/rating) by podcast id
@@ -1646,6 +1624,14 @@ export interface JamApi {
 			result: Jam.State;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 		};
+		/**
+		 * episode: retrieve a podcast episode media file
+		 */
+		'episode/retrieve'?: {
+			params: JamParameters.ID;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
+			roles: ['podcast'];
+		};
 
 		/**
 		 * podcast: create a podcast
@@ -1654,6 +1640,20 @@ export interface JamApi {
 			params: JamParameters.PodcastNew;
 			result: Jam.Podcast;
 			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters;
+			roles: ['podcast'];
+		};
+		/**
+		 * podcast: check all podcast feeds for new episodes
+		 */
+		'podcast/refreshAll'?: {
+			roles: ['podcast'];
+		};
+		/**
+		 * podcast: check podcast feeds for new episodes by podcast id
+		 */
+		'podcast/refresh'?: {
+			params: JamParameters.ID;
+			errors: JamApiErrorUnauthorized | JamApiErrorGeneric | JamApiErrorParameters | JamApiErrorNotFound;
 			roles: ['podcast'];
 		};
 		/**
