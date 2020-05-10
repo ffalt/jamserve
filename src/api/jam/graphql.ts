@@ -40,7 +40,6 @@ import {Genre} from '../../engine/genre/genre.model';
 import {Stats} from '../../engine/stats/stats.model';
 import {PlayQueue} from '../../engine/playqueue/playqueue.model';
 import {GraphQLJSON, GraphQLJSONObject} from 'graphql-type-json';
-import {Session} from '../../engine/session/session.model';
 import {formatSession} from '../../engine/session/session.format';
 
 interface Page {
@@ -1089,7 +1088,8 @@ const typeDefs = gql`
 		position: Float
 		changed: Datetime
 		changedBy: String
-		trackCOunt: Int!
+		trackCount: Int!
+		currentTrack: Track
 		tracks(page: Page, filter: TrackFilter, orderBy: [TrackOrderBy!]): TrackListPage!
 	}
 
@@ -1097,7 +1097,7 @@ const typeDefs = gql`
 		id: String!
 		client:  String!
 		expires: Datetime
-		mode: SessionMode;
+		mode: SessionMode
 		platform: String
 		agent: String
 		os: String
