@@ -18,7 +18,7 @@ This is the backend development repository. See
 
 [Jampacked](https://github.com/ffalt/jampacked) for mobile app development
 
-[Jam-Dockerimage](hhttps://github.com/ffalt/jam-dockerimage)  Bare Docker-Image with JamServe, Jamberry
+[Jam-Dockerimage](https://github.com/ffalt/jam-dockerimage)  Bare Docker-Image with JamServe, Jamberry
 
 [Jam-Docker](https://github.com/ffalt/jam-docker) run JamServe, Jamberry & ElasticSearch with Docker,
 
