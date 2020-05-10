@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2018",
     "module": "commonjs",
     "outDir": "./dist",
     "sourceMap": true,
@@ -9,9 +9,12 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "baseUrl": "./",
+    "lib": ["es2018", "esnext.asynciterable"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "typeRoots": [
       "node_modules/@types",
       "src/@types"
