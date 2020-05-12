@@ -104,7 +104,7 @@
     "@types/fluent-ffmpeg": "2.1.14",
     "@types/fs-extra": "8.1.0",
     "@types/graphql-type-json": "^0.3.2",
-    "@types/helmet": "0.0.46",
+    "@types/helmet": "0.0.47",
     "@types/jest": "25.2.1",
     "@types/jest-expect-message": "1.0.2",
     "@types/mime-types": "2.1.0",
