@@ -25,7 +25,7 @@ This is the backend development repository. See
 Features:
 
 *   REST & GraphQL API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
-*   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/master/src/model/jam-openapi.json)
+*   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/src/model/jam-openapi.json)
 *   Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
 *   Database Support for NeDB or ElasticSearch
 
