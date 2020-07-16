@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "7.6.1",
-    "ajv": "6.12.2",
+    "ajv": "6.12.3",
     "apollo-server-express": "^2.13.0",
     "archiver": "4.0.1",
     "body-parser": "1.19.0",
