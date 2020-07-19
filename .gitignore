@@ -8,4 +8,5 @@ temp/
 data/
 dist/
 local/
+deploy/
 .env

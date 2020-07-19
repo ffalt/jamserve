@@ -92,7 +92,7 @@ export class Server {
 		log.table([
 			{Content: 'Frontend', URL: `${this.getURL()}`},
 			{Content: 'GraphQl', URL: `${this.getURL()}/graphql`},
-			{Content: 'REST Api', URL: `${this.getURL()}/jam/${JAMAPI_URL_VERSION}`},
+			{Content: 'REST Api', URL: `${this.getURL()}/jam/${JAMAPI_URL_VERSION}/ping`},
 			{Content: 'REST Documentation', URL: `${this.getURL()}/docs`},
 			{Content: 'OpenApi Spec', URL: `${this.getURL()}/docs/openapi.json`},
 			{Content: 'GraphQL Spec', URL: `${this.getURL()}/docs/schema.graphql`},
