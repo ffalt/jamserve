@@ -537,6 +537,7 @@ type PodcastQL {
   image: String
   errorMessage: String
   title: String
+  language: String
   link: String
   author: String
   description: String
@@ -840,6 +841,7 @@ enum EpisodeOrderFields {
   default
   created
   updated
+  name
   status
   date
 }
@@ -890,6 +892,7 @@ enum FolderOrderFields {
   created
   updated
   name
+  title
   year
 }
 
