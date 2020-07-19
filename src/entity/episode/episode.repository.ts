@@ -23,6 +23,9 @@ export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs
 			case EpisodeOrderFields.status:
 				result.status = direction;
 				break;
+			case EpisodeOrderFields.name:
+				result.name = direction;
+				break;
 			case EpisodeOrderFields.default:
 			case EpisodeOrderFields.date:
 				result.date = direction;

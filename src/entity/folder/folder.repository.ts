@@ -24,6 +24,10 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 			case FolderOrderFields.year:
 				result.year = direction;
 				break;
+			case FolderOrderFields.title:
+				result.title = direction;
+				result.path = direction;
+				break;
 			case FolderOrderFields.default:
 			case FolderOrderFields.name:
 				result.path = direction;
