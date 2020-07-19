@@ -13,7 +13,8 @@ export class RadioRepository extends BaseRepository<Radio, RadioFilterArgs, Radi
 	objType = DBObjectType.radio;
 	indexProperty = 'name';
 
-	public applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: 	RadioOrderArgs): void {
+	public applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: RadioOrderArgs): void {
+		this.applyDefaultOrderByEntry(result, direction, order?.orderBy);
 	}
 
 	async buildFilter(filter?: RadioFilterArgs, user?: User): Promise<QBFilterQuery<Radio>> {

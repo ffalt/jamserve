@@ -11,9 +11,11 @@ export class SettingsRepository extends BaseRepository<Settings, any, any> {
 	objType = DBObjectType.settings;
 
 	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: any): void {
+		//currently none
 	}
 
 	async buildFilter(filter?: any, user?: User): Promise<QBFilterQuery<Settings>> {
+		//currently none
 		return {};
 	}
 }

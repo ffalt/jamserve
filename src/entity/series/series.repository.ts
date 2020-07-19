@@ -1,6 +1,6 @@
 import {QueryOrder, Repository} from 'mikro-orm';
 import {BaseRepository} from '../base/base.repository';
-import {DBObjectType, PodcastOrderFields} from '../../types/enums';
+import {DBObjectType} from '../../types/enums';
 import {Series} from './series';
 import {QBFilterQuery} from 'mikro-orm/dist/typings';
 import {QHelper} from '../base/base';

@@ -11,9 +11,11 @@ export class StateRepository extends BaseRepository<State, any, any> {
 	objType = DBObjectType.state;
 
 	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: any): void {
+		//currently none
 	}
 
 	async buildFilter(filter?: any, user?: User): Promise<QBFilterQuery<State>> {
+		//currently none
 		return {};
 	}
 

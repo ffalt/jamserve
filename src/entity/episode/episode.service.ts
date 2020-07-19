@@ -9,7 +9,7 @@ import {logger} from '../../utils/logger';
 import {Inject, Singleton} from 'typescript-ioc';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {OrmService} from '../../modules/engine/services/orm.service';
-import {Episode, EpisodeChapter, EpisodeEnclosure} from './episode';
+import {Episode, EpisodeEnclosure} from './episode';
 import {AudioFormatType, PodcastStatus} from '../../types/enums';
 import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
 import {ConfigService} from '../../modules/engine/services/config.service';

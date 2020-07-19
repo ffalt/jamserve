@@ -4,7 +4,6 @@ import fse from 'fs-extra';
 import 'jest-expect-message';
 import {bindMockConfig} from './mock/mock.config';
 import {waitEngineStart} from './mock/mock.engine';
-import {MockRoot} from './mock/mock.root';
 import {initTest} from './init';
 import {MockFeed1} from './mock/mock.rss-feed';
 import {Podcast} from '../entity/podcast/podcast';

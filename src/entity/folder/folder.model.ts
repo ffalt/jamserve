@@ -29,6 +29,14 @@ export class FolderTag {
 	mbReleaseGroupID?: string;
 }
 
+@ResultType({description: 'Folder Parent Information'})
+export class FolderParent {
+	@ObjField({description: 'ID', isID: true})
+	id!: string;
+	@ObjField({description: 'Name', example: 'Awesome'})
+	name!: string;
+}
+
 @ResultType({description: 'Folder'})
 export class FolderBase extends Base {
 	@ObjField(() => FolderType, {description: 'Album Type', example: FolderType.multialbum})
@@ -55,14 +63,6 @@ export class FolderBase extends Base {
 	info?: ExtendedInfo;
 	@ObjField(() => [FolderParent], {nullable: true, description: 'List of Parent Folders up to Root'})
 	parents?: Array<FolderParent>;
-}
-
-@ResultType({description: 'Folder Parent Information'})
-export class FolderParent {
-	@ObjField({description: 'ID', isID: true})
-	id!: string;
-	@ObjField({description: 'Name', example: 'Awesome'})
-	name!: string;
 }
 
 @ResultType({description: 'Folder with tracks'})

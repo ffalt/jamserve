@@ -4,7 +4,7 @@ import {Album, AlbumQL} from '../album/album';
 import {Artist, ArtistQL} from '../artist/artist';
 import {Series, SeriesQL} from '../series/series';
 import {RootScanStrategy} from '../../types/enums';
-import {Field, Int, ObjectType} from 'type-graphql';
+import {Field, ObjectType} from 'type-graphql';
 import {Base, PaginatedResponse} from '../base/base';
 import {Collection, Entity, Enum, ManyToMany, OneToMany, Property, QueryOrder} from 'mikro-orm';
 import {RootStatus} from '../../modules/engine/services/io.types';

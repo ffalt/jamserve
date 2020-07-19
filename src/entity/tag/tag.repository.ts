@@ -11,9 +11,11 @@ export class TagRepository extends BaseRepository<Tag, any, any> {
 	objType = DBObjectType.tag;
 
 	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: any): void {
+		//currently none
 	}
 
 	async buildFilter(filter?: any, user?: User): Promise<QBFilterQuery<Tag>> {
+		//currently none
 		return {};
 	}
 

@@ -1,6 +1,6 @@
 import {QueryOrder, Repository} from 'mikro-orm';
 import {BaseRepository} from '../base/base.repository';
-import {AlbumOrderFields, DBObjectType, TrackOrderFields} from '../../types/enums';
+import {AlbumOrderFields, DBObjectType} from '../../types/enums';
 import {Album} from './album';
 import {QBFilterQuery} from 'mikro-orm/dist/typings';
 import {QHelper} from '../base/base';

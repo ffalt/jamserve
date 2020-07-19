@@ -11,9 +11,11 @@ export class MetaDataRepository extends BaseRepository<MetaData, any, any> {
 	objType = DBObjectType.metadata;
 
 	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: any): void {
+		//currently none
 	}
 
 	async buildFilter(filter?: any, user?: User): Promise<QBFilterQuery<MetaData>> {
+		//currently none
 		return {};
 	}
 

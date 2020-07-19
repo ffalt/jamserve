@@ -11,9 +11,11 @@ export class PlayQueueEntryRepository extends BaseRepository<PlayQueueEntry, any
 	objType = DBObjectType.playqueueentry;
 
 	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: any): void {
+		//currently none
 	}
 
 	async buildFilter(filter?: any, user?: User): Promise<QBFilterQuery<PlayQueueEntry>> {
+		//currently none
 		return {};
 	}
 }

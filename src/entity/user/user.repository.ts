@@ -2,7 +2,6 @@ import {QueryOrder, Repository} from 'mikro-orm';
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType, UserRole} from '../../types/enums';
 import {User} from './user';
-import {DefaultOrderArgs} from '../base/base.args';
 import {QueryOrderMap} from 'mikro-orm/dist/query';
 import {QBFilterQuery} from 'mikro-orm/dist/typings';
 import {UserFilterArgs, UserOrderArgs} from './user.args';
