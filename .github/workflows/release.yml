@@ -1,0 +1,87 @@
+name: release
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [13.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update apt
+        run: sudo apt-get update
+      - name: Install ffmpeg & fpcalc & mp3val
+        run: sudo apt-get install ffmpeg libchromaprint-tools mp3val
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.6.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: npm run coverage
+          coverageLocations: ${{github.workspace}}/coverage/lcov.info:lcov
+          debug: true
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check if version has been updated
+        id: check
+        uses: EndBug/version-check@v1
+        with:
+          diff-search: true
+          file-name: package.json
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log when changed
+        if: steps.check.outputs.changed == 'true'
+        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
+
+      - name: Log when unchanged
+        if: steps.check.outputs.changed != 'true'
+        run: 'echo "No version change :/"'
+
+      - name: Install Node.js 13.x
+        if: steps.check.outputs.changed == 'true'
+        uses: actions/setup-node@v1
+        with:
+          node-version: 13.x
+
+      - name: Install and Build
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          npm install
+          npm run build:deploy
+
+      - name: Deploy to Release Branch 🚀
+        if: steps.check.outputs.changed == 'true'
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: release # The branch the action should deploy to.
+          FOLDER: deploy # The folder the action should deploy.
+          CLEAN: true
+      - name: Create Release Tag
+        if: steps.check.outputs.changed == 'true'
+        uses: fleskesvor/create-release@feature/support-target-commitish
+        with:
+          commitish: "release"
+          tag_name: "v${{ steps.check.outputs.version }}"
+          release_name: "Release v${{ steps.check.outputs.version }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
