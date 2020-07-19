@@ -1,0 +1,128 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Server = void 0;
+const typescript_ioc_1 = require("typescript-ioc");
+const path_1 = __importDefault(require("path"));
+const express_1 = __importDefault(require("express"));
+const engine_service_1 = require("../engine/services/engine.service");
+const body_parser_1 = __importDefault(require("body-parser"));
+const helmet_1 = __importDefault(require("helmet"));
+const engine_middleware_1 = require("./middlewares/engine.middleware");
+const config_service_1 = require("../engine/services/config.service");
+const logger_1 = require("../../utils/logger");
+const apollo_middleware_1 = require("./middlewares/apollo.middleware");
+const session_middleware_1 = require("./middlewares/session.middleware");
+const log_middleware_1 = require("./middlewares/log.middleware");
+const rest_middleware_1 = require("./middlewares/rest.middleware");
+const passport_middleware_1 = require("./middlewares/passport.middleware");
+const version_1 = require("../engine/rest/version");
+const docs_middleware_1 = require("./middlewares/docs.middleware");
+const cors_middleware_1 = require("./middlewares/cors.middleware");
+const log = logger_1.logger('Server');
+let Server = class Server {
+    async init() {
+        const app = express_1.default();
+        app.use(body_parser_1.default.urlencoded({ extended: true, limit: '10mb' }));
+        app.use(body_parser_1.default.json({ limit: '10mb' }));
+        app.use(body_parser_1.default.json({ type: 'application/vnd.api+json', limit: '10mb' }));
+        app.use(helmet_1.default());
+        if (this.configService.env.session.proxy) {
+            app.enable('trust proxy');
+        }
+        app.use(log_middleware_1.useLogMiddleware());
+        app.use(engine_middleware_1.useEngineMiddleware(this.engine));
+        app.use(session_middleware_1.useSessionMiddleware(this.configService));
+        app.use(passport_middleware_1.usePassPortMiddleWare(app, this.engine));
+        app.use(cors_middleware_1.useAuthenticatedCors(this.configService));
+        app.use(`/jam/${version_1.JAMAPI_URL_VERSION}`, this.rest.middleware());
+        app.use('/graphql', await this.apollo.middleware());
+        app.use('/docs', await this.docs.middleware());
+        const configFile = path_1.default.resolve(this.configService.getDataPath(['config']), 'jamberry.config.js');
+        app.get('/assets/config/config.js', (req, res) => {
+            res.sendFile(configFile);
+        });
+        app.get('/*', express_1.default.static(path_1.default.resolve(this.configService.env.paths.frontend)));
+        const indexFile = path_1.default.resolve(this.configService.env.paths.frontend, 'index.html');
+        app.get('/*', (req, res) => {
+            res.sendFile(indexFile);
+        });
+        this.app = app;
+    }
+    getURL() {
+        return `http://${this.configService.env.host === '127.0.0.1' ? 'localhost' :
+            this.configService.env.host}:${this.configService.env.port}`;
+    }
+    async start() {
+        this.server = this.app.listen(this.configService.env.port, this.configService.env.host);
+        this.server.setTimeout(4 * 60000);
+        log.table([
+            { Content: 'Frontend', URL: `${this.getURL()}` },
+            { Content: 'GraphQl', URL: `${this.getURL()}/graphql` },
+            { Content: 'REST Api', URL: `${this.getURL()}/jam/${version_1.JAMAPI_URL_VERSION}/ping` },
+            { Content: 'REST Documentation', URL: `${this.getURL()}/docs` },
+            { Content: 'OpenApi Spec', URL: `${this.getURL()}/docs/openapi.json` },
+            { Content: 'GraphQL Spec', URL: `${this.getURL()}/docs/schema.graphql` },
+            { Content: 'GraphQL Voyager', URL: `${this.getURL()}/docs/voyager` },
+            { Content: 'Angular Client', URL: `${this.getURL()}/docs/angular-client.zip` },
+            { Content: 'Axios Client', URL: `${this.getURL()}/docs/axios-client.zip` }
+        ], [
+            { name: 'Content', alignment: 'right' },
+            { name: 'URL', alignment: 'left' }
+        ]);
+    }
+    async stop() {
+        return new Promise((resolve, reject) => {
+            if (this.server) {
+                this.server.close(err => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve();
+                    }
+                });
+                this.server.unref();
+            }
+            else {
+                resolve();
+            }
+        });
+    }
+};
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", engine_service_1.EngineService)
+], Server.prototype, "engine", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", apollo_middleware_1.ApolloMiddleware)
+], Server.prototype, "apollo", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", rest_middleware_1.RestMiddleware)
+], Server.prototype, "rest", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", config_service_1.ConfigService)
+], Server.prototype, "configService", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", docs_middleware_1.DocsMiddleware)
+], Server.prototype, "docs", void 0);
+Server = __decorate([
+    typescript_ioc_1.Singleton
+], Server);
+exports.Server = Server;
+//# sourceMappingURL=server.js.map

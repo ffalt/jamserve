@@ -1,0 +1,1 @@
+{"version":3,"file":"ffprobe.js","sourceRoot":"","sources":["../../../../src/modules/audio/tools/ffprobe.ts"],"names":[],"mappings":";;;AAAA,8CAAkD;AAgF3C,KAAK,UAAU,KAAK,CAAC,QAAgB,EAAE,IAAmB;IAChE,OAAO,oBAAa,CAAc,SAAS,EAAE,cAAc,EAAE,CAAC,eAAe,EAAE,MAAM,EAAE,aAAa,EAAE,eAAe,EAAE,cAAc,EAAE,GAAG,IAAI,EAAE,QAAQ,CAAC,CAAC,CAAC;AAC5J,CAAC;AAFD,sBAEC"}

@@ -1,0 +1,44 @@
+// @generated
+// This file was automatically generated and should not be edited.
+
+import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
+import {ModuleWithProviders, NgModule, Provider} from '@angular/core';
+
+import {JamAuthService} from './jam.auth.service';
+import {JamBaseService} from './jam.base.service';
+import {JamHttpService} from './jam.http.service';
+import {JamService} from './jam.service';
+
+{{#list}}
+import {Jam{{part}}Service} from './services/jam.{{{name}}}.service';
+{{/list}}
+
+export const jamProviders: Array<Provider> =
+	[
+		JamAuthService,
+		JamBaseService,
+		JamHttpService,
+		{{#list}}
+		Jam{{part}}Service,
+		{{/list}}
+		JamService
+	];
+
+@NgModule({
+	imports: [
+		HttpClientModule,
+		HttpClientJsonpModule
+	],
+	declarations: [],
+	exports: [],
+	providers: jamProviders
+})
+export class JamModule {
+
+	static forRoot(provider: Provider): ModuleWithProviders<JamModule> {
+		return {
+			ngModule: JamModule,
+			providers: [provider, ...jamProviders]
+		};
+	}
+}

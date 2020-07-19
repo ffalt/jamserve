@@ -1,0 +1,44 @@
+{
+   "compilerOptions": {
+      "lib": ["es2018", "esnext.asynciterable", "dom"],
+      "target": "es2018",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "baseUrl": "./",
+      "outDir": "./dist",
+      "rootDir": "src",
+      "strict": true,
+      "removeComments": true,
+      "strictNullChecks": true,
+      "noImplicitAny": true,
+      "resolveJsonModule": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "sourceMap": true,
+      "typeRoots": [
+         "node_modules/@types",
+         "src/@types"
+      ]
+   },
+   "include": [
+      "./src/**/*.ts",
+      "./src/modules/audio/formats/tasks/task-analyze-mp3.ts",
+      "./src/modules/audio/formats/tasks/task-fix-mp3.ts",
+      "./src/modules/audio/formats/tasks/task-rewrite-mp3.ts",
+      "./src/modules/audio/formats/tasks/task-remove-id3v1.ts"
+   ],
+   "exclude": [
+      "src/test",
+      "bin",
+      "data",
+      "dist",
+      "temp",
+      "local",
+      "static",
+      "node_modules",
+      ".git",
+      ".idea"
+   ]
+}
