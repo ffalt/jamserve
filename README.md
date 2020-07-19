@@ -152,7 +152,8 @@ module.exports = {
 
 ### Develop Quick
 
-run via tsnode which is faster, but nodejs worker_threads can't be used (extended audio module functions)
+run via tsnode which is faster, but nodejs worker_threads will not be used
+
 `npm run develop:tsnode` to run the server & rebuild/reload on source file changes
 
 ### Clean Dist
