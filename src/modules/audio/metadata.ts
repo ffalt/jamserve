@@ -1,13 +1,12 @@
 import {ID3v2, ID3V24TagBuilder, IID3V2, ITagID} from 'jamp3';
 import moment from 'moment';
-import {TrackTag} from '../../engine/track/track.model';
-import {ID3v2Frames} from '../../model/id3v2-frames';
-import {Jam} from '../../model/jam-rest-data';
 import {ImageModule} from '../image/image.module';
 import {FlacInfo} from './formats/flac';
 import {MetaDataBlockPicture} from './formats/flac/lib/block.picture';
 import {BlockVorbiscomment} from './formats/flac/lib/block.vorbiscomment';
 import {MetaWriteableDataBlock} from './formats/flac/lib/block.writeable';
+import {ID3v2Frames, RawTag} from './rawTag';
+import {TrackTag} from './audio.format';
 
 function prepareFrame(frame: ID3v2Frames.Frame): void {
 	if (frame && frame.value && (frame as ID3v2Frames.Bin).value.bin) {
@@ -19,7 +18,7 @@ function prepareFrame(frame: ID3v2Frames.Frame): void {
 	}
 }
 
-export function prepareResponseTag(tag: Jam.RawTag): void {
+export function prepareResponseTag(tag: RawTag): void {
 	Object.keys(tag.frames).forEach(key => {
 		const frames = tag.frames[key];
 		if (frames) {
@@ -28,7 +27,7 @@ export function prepareResponseTag(tag: Jam.RawTag): void {
 	});
 }
 
-export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | undefined> {
+export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefined> {
 	if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {
 		return;
 	}
@@ -156,8 +155,8 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<Jam.RawTag | und
 	return tag;
 }
 
-export async function id3v2ToRawTag(id3v2tag: IID3V2.Tag): Promise<Jam.RawTag | undefined> {
-	const tag: Jam.RawTag = {
+export async function id3v2ToRawTag(id3v2tag: IID3V2.Tag): Promise<RawTag | undefined> {
+	const tag: RawTag = {
 		version: id3v2tag.head ? id3v2tag.head.ver : 4,
 		frames: {}
 	};
@@ -193,13 +192,13 @@ export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageMod
 	return result;
 }
 
-export function trackTagToRawTag(tag: TrackTag): Jam.RawTag {
+export function trackTagToRawTag(tag: TrackTag): RawTag {
 	const builder = new ID3V24TagBuilder('utf8');
 	builder.artist(tag.artist)
 		.album(tag.album)
 		.title(tag.title)
-		.genre(tag.genre)
-		.track(tag.track, tag.trackTotal)
+		.genre(tag.genres ? tag.genres.join(' / ') : undefined)
+		.track(tag.trackNr, tag.trackTotal)
 		.disc(tag.disc, tag.discTotal)
 		.date(tag.year ? tag.year.toString() : undefined);
 	return {version: 4, frames: builder.rawBuilder.build()};
@@ -217,7 +216,7 @@ function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {
 	}
 }
 
-export function rawTagToID3v2(tag: Jam.RawTag): IID3V2.Tag {
+export function rawTagToID3v2(tag: RawTag): IID3V2.Tag {
 	const frames: Array<IID3V2.Frame> = [];
 	Object.keys(tag.frames).map(id => {
 		const f = tag.frames[id] || [];

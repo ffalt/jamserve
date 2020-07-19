@@ -1,5 +1,5 @@
-import {AcousticBrainz} from '../../../model/acousticbrainz-rest-data';
 import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client';
+import {AcousticBrainz} from './acousticbrainz-rest-data';
 
 declare namespace AcousticbrainzClientApi {
 	export type Request = JSONRequest;

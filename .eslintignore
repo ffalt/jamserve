@@ -3,3 +3,5 @@ data/
 coverage/
 dist/
 local/
+static/
+temp/

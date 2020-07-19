@@ -32,11 +32,11 @@ export interface WaveDataResponse {
 }
 
 export class Waveform {
-	opts: WaveformOptions;
+	opts: WaveformOptions = {samplesPerPixel: 256, sampleRate: 44100};
 	samples: Array<number> = [];
 
 	constructor(private stream: Stream, opts: WaveformOptions) {
-		this.opts = {samplesPerPixel: 256, sampleRate: 44100, ...(opts || {})};
+		this.opts = {...this.opts, ...(opts || {})};
 	}
 
 	run(cb: (err?: Error) => void): void {

@@ -1,7 +1,7 @@
-import {LastFM} from '../../../model/lastfm-rest-data';
 import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 import {LastFMClientApi} from './lastfm-client.interface';
+import {LastFM} from './lastfm-rest-data';
 
 const log = logger('LastFM');
 
@@ -109,14 +109,19 @@ export class LastFMClient extends WebserviceClient {
 		return (await this.get('artist.getInfo', {artist})).artist;
 	}
 
-	async trackID(mbid: string): Promise<LastFM.Track | undefined> {
-		// https://www.last.fm/api/show/artist.getInfo
-		return (await this.get('artist.getInfo', {mbid})).track;
-	}
-
 	async artistID(mbid: string): Promise<LastFM.Artist | undefined> {
 		// https://www.last.fm/api/show/artist.getInfo
 		return (await this.get('artist.getInfo', {mbid})).artist;
+	}
+
+	async trackID(mbid: string): Promise<LastFM.Track | undefined> {
+		// https://www.last.fm/api/show/track.getInfo
+		return (await this.get('track.getInfo', {mbid})).track;
+	}
+
+	async track(name: string, artist: string): Promise<LastFM.Track | undefined> {
+		// https://www.last.fm/api/show/track.getInfo
+		return (await this.get('track.getInfo', {artist, name})).track;
 	}
 
 	async album(album: string, artist: string): Promise<LastFM.Album | undefined> {

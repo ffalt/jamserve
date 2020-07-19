@@ -3,7 +3,6 @@ import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
 import path from 'path';
 import sharp from 'sharp';
-import {ApiBinaryResult} from '../../typings';
 import {downloadFile} from '../../utils/download';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
@@ -11,6 +10,9 @@ import {IDFolderCache} from '../../utils/id-file-cache';
 import {logger} from '../../utils/logger';
 import {randomString} from '../../utils/random';
 import {AvatarGen} from './image.avatar';
+import {ImageResult} from './image.format';
+import {ConfigService} from '../engine/services/config.service';
+import {Inject, Singleton} from 'typescript-ioc';
 
 export interface ImageInfo {
 	width: number;
@@ -30,15 +32,18 @@ sharp.simd(false);
  * Handles image access/reading/writing/transforming
  */
 
+@Singleton
 export class ImageModule {
 	private format = 'png';
 	private font: JimpFont | undefined;
 	private cache: IDFolderCache<{ size?: number; format?: string }>;
-	private readonly avatarPartsLocation: string;
+	private readonly imageCachePath: string;
+	@Inject
+	private configService!: ConfigService;
 
-	constructor(private imageCachePath: string, avatarPartsLocation?: string) {
-		this.avatarPartsLocation = avatarPartsLocation || path.join(__dirname, 'static', 'avatar');
-		this.cache = new IDFolderCache<{ size?: number; format?: string }>(imageCachePath, 'thumb', (params: { size?: number; format?: string }) => {
+	constructor() {
+		this.imageCachePath = this.configService.getDataPath(['cache', 'images']);
+		this.cache = new IDFolderCache<{ size?: number; format?: string }>(this.imageCachePath, 'thumb', (params: { size?: number; format?: string }) => {
 			return `${params.size !== undefined ? `-${params.size}` : ''}.${params.format || this.format}`;
 		});
 	}
@@ -47,7 +52,7 @@ export class ImageModule {
 		log.debug('Requesting image', imageUrl);
 		const imageext = path.extname(imageUrl).split('?')[0].trim().toLowerCase();
 		if (imageext.length === 0) {
-			return Promise.reject(Error('Invalid Image Url'));
+			return Promise.reject(Error('Invalid Image URL'));
 		}
 		let filename = name + imageext;
 		let nr = 2;
@@ -56,11 +61,11 @@ export class ImageModule {
 			nr++;
 		}
 		await downloadFile(imageUrl, path.join(filepath, filename));
-		log.info('image downloaded', filename);
+		log.info('Image downloaded', filename);
 		return filename;
 	}
 
-	async paint(text: string, size: number | undefined, format: string | undefined): Promise<ApiBinaryResult> {
+	async paint(text: string, size: number | undefined, format: string | undefined): Promise<ImageResult> {
 		size = size || 320;
 		const image = new Jimp(360, 360, '#282828');
 		if (!this.font) {
@@ -80,7 +85,7 @@ export class ImageModule {
 		return {buffer: {buffer, contentType: mime}};
 	}
 
-	private async getImage(filename: string, size: number | undefined, name: string): Promise<ApiBinaryResult> {
+	private async getImage(filename: string, size: number | undefined, name: string): Promise<ImageResult> {
 		if (!size) {
 			return {file: {filename, name}};
 		}
@@ -91,7 +96,7 @@ export class ImageModule {
 		return this.getImageAs(filename, fileFormat, size, name);
 	}
 
-	private async getImageAs(filename: string, format: string, size: number | undefined, name: string): Promise<ApiBinaryResult> {
+	private async getImageAs(filename: string, format: string, size: number | undefined, name: string): Promise<ImageResult> {
 		const fileFormat = fileSuffix(filename);
 		const exists = await fse.pathExists(filename);
 		if (!exists) {
@@ -113,7 +118,7 @@ export class ImageModule {
 		return {file: {filename, name}};
 	}
 
-	private async getImageBufferAs(buffer: Buffer, format: string | undefined, size: number | undefined): Promise<ApiBinaryResult> {
+	private async getImageBufferAs(buffer: Buffer, format: string | undefined, size: number | undefined): Promise<ImageResult> {
 		const info = await this.getImageInfoBuffer(buffer);
 		format = format || info.format;
 		const mime = mimeTypes.lookup(format);
@@ -151,11 +156,11 @@ export class ImageModule {
 		};
 	}
 
-	async getExisting(id: string, size: number | undefined, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getExisting(id: string, size: number | undefined, format?: string): Promise<ImageResult | undefined> {
 		return this.cache.getExisting(id, {size, format});
 	}
 
-	async getBuffer(id: string, buffer: Buffer, size: number | undefined, format?: string): Promise<ApiBinaryResult> {
+	async getBuffer(id: string, buffer: Buffer, size: number | undefined, format?: string): Promise<ImageResult> {
 		if (format && !SupportedWriteImageFormat.includes(format)) {
 			return Promise.reject(Error('Invalid Format'));
 		}
@@ -170,7 +175,7 @@ export class ImageModule {
 		});
 	}
 
-	async get(id: string, filename: string, size: number | undefined, format?: string): Promise<ApiBinaryResult> {
+	async get(id: string, filename: string, size: number | undefined, format?: string): Promise<ImageResult> {
 		if (!filename) {
 			return Promise.reject(Error('Invalid Path'));
 		}
@@ -227,7 +232,7 @@ export class ImageModule {
 	}
 
 	async generateAvatar(seed: string, destination: string): Promise<void> {
-		const avatarGenerator = new AvatarGen(this.avatarPartsLocation);
+		const avatarGenerator = new AvatarGen();
 		const avatar = await avatarGenerator.generate(seed);
 		await fse.writeFile(destination, avatar);
 	}

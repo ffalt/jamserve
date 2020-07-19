@@ -1,10 +1,60 @@
 import {ID3v1_GENRES, ID3v2, IID3V1, IID3V2, IMP3} from 'jamp3';
-import {TrackMedia, TrackTag} from '../../engine/track/track.model';
-import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
 import {cleanGenre} from '../../utils/genres';
 import {ID3TrackTagRawFormatTypes} from './audio.module';
 import {FlacComment, FlacMedia, FlacPicture} from './formats/flac';
 import {ProbeResult} from './tools/ffprobe';
+import {AudioFormatType, TagFormatType} from '../../types/enums';
+
+
+export interface TagChapter {
+	start: number;
+	end: number;
+	title?: string;
+}
+
+export interface TrackTag {
+	format: TagFormatType;
+	album?: string;
+	albumSort?: string;
+	albumArtist?: string;
+	albumArtistSort?: string;
+	artist?: string;
+	artistSort?: string;
+	genres?: Array<string>;
+	disc?: number;
+	discTotal?: number;
+	title?: string;
+	titleSort?: string;
+	trackNr?: number;
+	trackTotal?: number;
+	year?: number;
+	nrTagImages?: number;
+	mbTrackID?: string;
+	mbAlbumType?: string;
+	mbAlbumArtistID?: string;
+	mbArtistID?: string;
+	mbReleaseID?: string;
+	mbReleaseTrackID?: string;
+	mbReleaseGroupID?: string;
+	mbRecordingID?: string;
+	mbAlbumStatus?: string;
+	mbReleaseCountry?: string;
+	series?: string;
+	seriesNr?: string;
+	lyrics?: string;
+	chapters?: Array<TagChapter>;
+}
+
+export interface TrackMedia {
+	mediaDuration?: number;
+	mediaBitRate?: number;
+	mediaFormat?: AudioFormatType;
+	mediaSampleRate?: number;
+	mediaChannels?: number;
+	mediaEncoded?: string; // VBR || CBR || ''
+	mediaMode?: string; // 'joint', 'dual', 'single'
+	mediaVersion?: string;
+}
 
 export class FORMAT {
 	static packJamServeMedia(data?: IMP3.MPEG): TrackMedia {
@@ -12,14 +62,14 @@ export class FORMAT {
 			return {};
 		}
 		return {
-			format: AudioFormatType.mp3,
-			duration: data.durationEstimate,
-			bitRate: data.bitRate,
-			sampleRate: data.sampleRate,
-			channels: data.channels,
-			encoded: data.encoded,
-			mode: data.mode,
-			version: `${data.version} ${data.layer}`
+			mediaFormat: AudioFormatType.mp3,
+			mediaDuration: Math.floor(data.durationEstimate * 1000),
+			mediaBitRate: data.bitRate,
+			mediaSampleRate: data.sampleRate,
+			mediaChannels: data.channels,
+			mediaEncoded: data.encoded,
+			mediaMode: data.mode,
+			mediaVersion: `${data.version} ${data.layer}`
 		};
 	}
 
@@ -32,13 +82,13 @@ export class FORMAT {
 			return {};
 		}
 		return {
-			format,
-			duration: Number(data.format.duration),
-			bitRate: Number(data.format.bit_rate),
-			sampleRate: Number(stream.sample_rate),
-			channels: stream.channels,
-			mode: stream.channel_layout,
-			version: stream.codec_long_name
+			mediaFormat: format,
+			mediaDuration: Math.floor(Number(data.format.duration) * 1000),
+			mediaBitRate: Number(data.format.bit_rate),
+			mediaSampleRate: Number(stream.sample_rate),
+			mediaChannels: stream.channels,
+			mediaMode: stream.channel_layout,
+			mediaVersion: stream.codec_long_name
 		};
 	}
 
@@ -47,11 +97,11 @@ export class FORMAT {
 			return {};
 		}
 		return {
-			format: AudioFormatType.flac,
-			duration: media.duration,
-			sampleRate: media.sampleRate,
-			encoded: 'VBR',
-			channels: media.channels
+			mediaFormat: AudioFormatType.flac,
+			mediaDuration: Math.floor(media.duration * 1000),
+			mediaSampleRate: media.sampleRate,
+			mediaEncoded: 'VBR',
+			mediaChannels: media.channels
 		};
 	}
 
@@ -80,24 +130,24 @@ export class FORMAT {
 
 	static packProbeJamServeTag(data: ProbeResult): TrackTag {
 		if (!data || !data.format || !data.format.tags) {
-			return {format: TrackTagFormatType.none};
+			return {format: TagFormatType.none};
 		}
 		const simple: { [name: string]: string | undefined } = {};
 		Object.keys(data.format.tags).forEach(key => {
 			simple[key.toUpperCase().replace(/ /g, '_')] = FORMAT.cleanText(data.format.tags[key]);
 		});
 		return {
-			format: TrackTagFormatType.ffmpeg,
+			format: TagFormatType.ffmpeg,
 			artist: simple.ARTIST,
 			title: simple.TITLE,
 			album: simple.ALBUM,
 			year: FORMAT.parseNum(simple.DATE),
-			track: FORMAT.parseNum(simple.TRACK),
+			trackNr: FORMAT.parseNum(simple.TRACK),
 			disc: FORMAT.parseNum(simple.DISC),
 			lyrics: simple.LYRICS,
 			seriesNr: simple.WORK,
 			series: simple.GROUPING,
-			genre: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
+			genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
 			albumArtist: simple.ALBUM_ARTIST,
 			albumSort: simple.ALBUM_SORT || simple.ALBUM_SORT_ORDER,
 			albumArtistSort: simple.ALBUM_ARTIST_SORT || simple.ALBUM_ARTIST_SORT_ORDER,
@@ -121,14 +171,15 @@ export class FORMAT {
 			return undefined;
 		}
 		const simple = data.value;
+		const genre = (simple.genreIndex !== undefined && !!ID3v1_GENRES[simple.genreIndex]) ? ID3v1_GENRES[simple.genreIndex] : undefined;
 		return {
-			format: TrackTagFormatType.id3v1,
+			format: TagFormatType.id3v1,
 			artist: FORMAT.cleanText(simple.artist),
 			title: FORMAT.cleanText(simple.title),
 			album: FORMAT.cleanText(simple.album),
 			year: FORMAT.parseNum(simple.year),
-			track: simple.track,
-			genre: (simple.genreIndex !== undefined && !!ID3v1_GENRES[simple.genreIndex]) ? ID3v1_GENRES[simple.genreIndex] : undefined
+			trackNr: simple.track,
+			genres: genre ? [genre] : undefined
 		};
 	}
 
@@ -148,7 +199,7 @@ export class FORMAT {
 		// });
 		const simple = ID3v2.simplify(data, ['CHAP', 'APIC']);
 		const pics = data.frames.filter(f => f.id === 'APIC');
-		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TrackTagFormatType.none;
+		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TagFormatType.none;
 		return {
 			format,
 			album: FORMAT.cleanText(simple.ALBUM),
@@ -159,10 +210,10 @@ export class FORMAT {
 			artistSort: FORMAT.cleanText(simple.ARTISTSORT),
 			title: FORMAT.cleanText(simple.TITLE),
 			titleSort: FORMAT.cleanText(simple.TITLESORT),
-			genre: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
+			genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
 			disc: FORMAT.parseNum(simple.DISCNUMBER),
 			discTotal: FORMAT.parseNum(simple.DISCTOTAL),
-			track: FORMAT.parseNum(simple.TRACKNUMBER),
+			trackNr: FORMAT.parseNum(simple.TRACKNUMBER),
 			trackTotal: FORMAT.parseNum(simple.TRACKTOTAL),
 			lyrics: simple.LYRICS,
 			seriesNr: simple.WORK,
@@ -193,19 +244,19 @@ export class FORMAT {
 		}
 		const simple: { [key: string]: string | undefined } = comment.tag;
 		return {
-			format: TrackTagFormatType.vorbis,
+			format: TagFormatType.vorbis,
 			album: simple.ALBUM,
 			albumSort: simple.ALBUMSORT,
 			albumArtist: simple.ALBUMARTIST,
 			albumArtistSort: simple.ALBUMARTISTSORT,
 			artist: simple.ARTIST,
 			artistSort: simple.ARTISTSORT,
-			genre: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
+			genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
 			disc: FORMAT.parseNum(simple.DISCNUMBER),
 			discTotal: FORMAT.parseNum(simple.DISCTOTAL) || FORMAT.parseNum(simple.TOTALDISCS),
 			title: simple.TITLE,
 			titleSort: simple.TITLESORT,
-			track: FORMAT.parseNum(simple.TRACKNUMBER) || FORMAT.parseNum(simple.TRACK),
+			trackNr: FORMAT.parseNum(simple.TRACKNUMBER) || FORMAT.parseNum(simple.TRACK),
 			trackTotal: FORMAT.parseNum(simple.TRACKTOTAL) || FORMAT.parseNum(simple.TOTALTRACKS),
 			year: FORMAT.parseYear(simple.ORIGINALYEAR) || FORMAT.parseYear(simple.ORIGINALDATE) || FORMAT.parseYear(simple.DATE),
 			lyrics: simple.LYRICS,

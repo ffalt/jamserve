@@ -1,12 +1,21 @@
 import {IDFolderCache} from '../../../utils/id-file-cache';
-import {JamParameters} from '../../../model/jam-rest-params';
-import {ApiBinaryResult} from '../../../typings';
 import {WaveformGenerator} from './waveform.generator';
-import {WaveformFormatType} from '../../../model/jam-types';
 import fse from 'fs-extra';
 import {logger} from '../../../utils/logger';
+import {WaveformFormatType} from '../../../types/enums';
 
 const log = logger('Audio:Waveform');
+
+
+export interface WaveformResult {
+	file?: { filename: string; name: string };
+	json?: any;
+	buffer?: {
+		buffer: Buffer;
+		contentType: string;
+	};
+	name?: string;
+}
 
 export class WaveformModule {
 	private waveformCache: IDFolderCache<{ width?: number; format: string }>;
@@ -17,7 +26,7 @@ export class WaveformModule {
 		});
 	}
 
-	private async generateWaveform(filename: string, format: JamParameters.WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
+	private async generateWaveform(filename: string, format: WaveformFormatType, width?: number): Promise<WaveformResult> {
 		const wf = new WaveformGenerator();
 		switch (format) {
 			case WaveformFormatType.svg:
@@ -31,7 +40,7 @@ export class WaveformModule {
 		return Promise.reject(Error('Invalid Format for Waveform generation'));
 	}
 
-	async get(id: string, filename: string, format: WaveformFormatType, width?: number): Promise<ApiBinaryResult> {
+	async get(id: string, filename: string, format: WaveformFormatType, width?: number): Promise<WaveformResult> {
 		if (!filename || !(await fse.pathExists(filename))) {
 			return Promise.reject(Error('Invalid filename for waveform generation'));
 		}

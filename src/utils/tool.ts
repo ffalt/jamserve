@@ -39,7 +39,7 @@ export async function spawnTool(binName: string, envName: string, args: Array<st
 		child.stderr.on('data', (data: Buffer) => {
 			errMsg += data.toString();
 		});
-		child.on('close', (code: number) => {
+		child.on('close', () => {
 			resolve({result, errMsg});
 		});
 	});

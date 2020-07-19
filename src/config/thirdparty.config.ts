@@ -22,10 +22,10 @@ export interface ThirdpartyToolsConfig {
 	coverartarchive: {
 		userAgent: string;
 	};
-	chartlyrics: {
+	wikipedia: {
 		userAgent: string;
 	};
-	wikipedia: {
+	lyricsovh: {
 		userAgent: string;
 	};
 }
@@ -69,9 +69,8 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
  	*/
 	wikipedia: {userAgent: `${userAgent} ( jamserve@protonmail.com )`},
 	/*
-		Chart Lyrics
-		http://www.chartlyrics.com/
-		lyrics database
-	 */
-	chartlyrics: {userAgent}
+		lyricsovh
+		https://lyrics.ovh/
+ 	*/
+	lyricsovh: {userAgent: `${userAgent} ( jamserve@protonmail.com )`},
 };

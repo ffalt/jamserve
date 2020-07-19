@@ -1,13 +1,10 @@
-import {AvatarGenerator, defaultAvatarSettings} from './avatar-generator/avatar-generator';
+import {AvatarGenerator} from './avatar-generator';
 
 export class AvatarGen {
 	avatar: AvatarGenerator;
 
-	constructor(avatarPartsLocation?: string) {
-		if (avatarPartsLocation) {
-			defaultAvatarSettings.partsLocation = avatarPartsLocation;
-		}
-		this.avatar = new AvatarGenerator(defaultAvatarSettings);
+	constructor() {
+		this.avatar = new AvatarGenerator();
 	}
 
 	public async generate(id: string): Promise<Buffer> {

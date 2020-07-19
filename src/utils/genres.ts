@@ -1,4 +1,4 @@
-import genreData from '../model/genres.json';
+import genreData from '../static/genres.json';
 
 let GenresSlugs: { [slug: string]: string }; // will be build on first use
 
@@ -23,7 +23,7 @@ export function getKnownGenre(genre: string): string | undefined {
 	return GenresSlugs[slug];
 }
 
-export function cleanGenre(genre: string): string {
+export function cleanGenre(genre: string): Array<string> {
 	const results: Array<string> = [];
 	const parts = genre.split('/');
 	parts.forEach(part => {
@@ -51,9 +51,11 @@ export function cleanGenre(genre: string): string {
 			if (!result && part.includes(' & ')) {
 				const subParts = part.split('&');
 				subParts.forEach(sub => {
-					sub = cleanGenre(sub);
-					if (!results.includes(sub)) {
-						results.push(sub);
+					const subs = cleanGenre(sub);
+					for (const s of subs) {
+						if (!results.includes(s)) {
+							results.push(s);
+						}
 					}
 				});
 			} else if (result) {
@@ -67,5 +69,5 @@ export function cleanGenre(genre: string): string {
 			}
 		}
 	});
-	return results.join(' / ');
+	return results;
 }

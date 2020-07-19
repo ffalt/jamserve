@@ -1,0 +1,25 @@
+// @generated
+// This file was automatically generated and should not be edited.
+
+import {Injectable} from '@angular/core';
+
+import {JamAuthService} from './jam.auth.service';
+import {JamBaseService} from './jam.base.service';
+
+{{#list}}
+import {Jam{{part}}Service} from './services/jam.{{{name}}}.service';
+{{/list}}
+
+@Injectable()
+export class JamService {
+
+	constructor(
+		public auth: JamAuthService,
+		public base: JamBaseService,
+	{{#list}}
+		public {{{name}}}: Jam{{part}}Service{{^isLast}},{{/isLast}}
+	{{/list}}
+	) {
+	}
+
+}

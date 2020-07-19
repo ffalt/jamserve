@@ -1,6 +1,6 @@
 import request from 'request';
-import {CoverArtArchive} from '../../../model/coverartarchive-rest-data';
 import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client';
+import {CoverArtArchive} from './coverartarchive-rest-data';
 
 declare namespace CoverArtArchiveClientApi {
 	export type Request = JSONRequest;
@@ -41,21 +41,19 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<CoverArtArchiveC
 	}
 
 	async releaseImages(mbid: string): Promise<CoverArtArchive.Response> {
-		const data = await this.get({
+		return await this.get({
 			path: `${this.options.basePath}release/${mbid}/`,
 			query: {},
 			retry: 0
 		});
-		return data;
 	}
 
 	async releaseGroupImages(mbid: string): Promise<CoverArtArchive.Response> {
-		const data = await this.get({
+		return await this.get({
 			path: `${this.options.basePath}release-group/${mbid}/`,
 			query: {},
 			retry: 0
 		});
-		return data;
 	}
 
 }

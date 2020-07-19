@@ -1,10 +1,6 @@
-import {ThirdpartyToolsConfig} from '../../config/thirdparty.config';
-import {TrackMedia, TrackTag} from '../../engine/track/track.model';
-import {Jam} from '../../model/jam-rest-data';
-import {AudioFormatType, TrackTagFormatType} from '../../model/jam-types';
 import {fileSuffix} from '../../utils/fs-utils';
 import {ImageModule} from '../image/image.module';
-import {FORMAT} from './audio.format';
+import {FORMAT, TrackMedia, TrackTag} from './audio.format';
 import {AcousticbrainzClient} from './clients/acousticbrainz-client';
 import {AcoustidClient} from './clients/acoustid-client';
 import {CoverArtArchiveClient} from './clients/coverartarchive-client';
@@ -17,14 +13,18 @@ import {AudioModuleMP3} from './formats/mp3.module';
 import {probe} from './tools/ffprobe';
 import {TranscoderModule} from './transcoder/transcoder.module';
 import {WaveformModule} from './waveform/waveform.module';
+import {AudioFormatType, TagFormatType} from '../../types/enums';
+import {AdminSettingsExternal, SettingsService} from '../../entity/settings/settings.service';
+import {RawTag} from './rawTag';
+import {ConfigService} from '../engine/services/config.service';
+import {Inject, Singleton} from 'typescript-ioc';
 
-export interface AudioScanResult {
-	media?: TrackMedia;
-	tag?: TrackTag;
+export interface AudioScanResult extends TrackTag, TrackMedia {
 }
 
-export const ID3TrackTagRawFormatTypes = [TrackTagFormatType.id3v20, TrackTagFormatType.id3v21, TrackTagFormatType.id3v22, TrackTagFormatType.id3v23, TrackTagFormatType.id3v24];
+export const ID3TrackTagRawFormatTypes = [TagFormatType.id3v20, TagFormatType.id3v21, TagFormatType.id3v22, TagFormatType.id3v23, TagFormatType.id3v24];
 
+@Singleton
 export class AudioModule {
 	musicbrainz: MusicbrainzClient;
 	acoustid: AcoustidClient;
@@ -37,22 +37,36 @@ export class AudioModule {
 	flac: AudioModuleFLAC;
 	transcoder: TranscoderModule;
 	waveform: WaveformModule;
+	waveformCachePath: string;
+	transcodeCachePath: string;
+	@Inject
+	private configService!: ConfigService;
+	@Inject
+	private settingsService!: SettingsService;
+	@Inject
+	private imageModule!: ImageModule;
 
-	constructor(waveformCachePath: string, transcodeCachePath: string, tools: ThirdpartyToolsConfig, public imageModule: ImageModule) {
-		this.musicbrainz = new MusicbrainzClient({userAgent: tools.musicbrainz.userAgent, retryOn: true});
-		this.acousticbrainz = new AcousticbrainzClient({userAgent: tools.acousticbrainz.userAgent, retryOn: true});
-		this.lastFM = new LastFMClient({key: tools.lastfm.apiKey, userAgent: tools.lastfm.userAgent});
-		this.acoustid = new AcoustidClient({key: tools.acoustid.apiKey, userAgent: tools.acoustid.userAgent});
-		this.lyricsOVH = new LyricsOVHClient(tools.chartlyrics.userAgent);
-		this.wikipedia = new WikipediaClient(tools.wikipedia.userAgent);
-		this.coverArtArchive = new CoverArtArchiveClient({userAgent: tools.coverartarchive.userAgent, retryOn: true});
-		this.transcoder = new TranscoderModule(transcodeCachePath);
+	constructor() {
+		this.waveformCachePath = this.configService.getDataPath(['cache', 'waveforms']);
+		this.transcodeCachePath = this.configService.getDataPath(['cache', 'transcode']);
+		this.musicbrainz = new MusicbrainzClient({userAgent: this.configService.tools.musicbrainz.userAgent, retryOn: true});
+		this.acousticbrainz = new AcousticbrainzClient({userAgent: this.configService.tools.acousticbrainz.userAgent, retryOn: true});
+		this.lastFM = new LastFMClient({key: this.configService.tools.lastfm.apiKey, userAgent: this.configService.tools.lastfm.userAgent});
+		this.acoustid = new AcoustidClient({key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent});
+		this.lyricsOVH = new LyricsOVHClient(this.configService.tools.lyricsovh.userAgent);
+		this.wikipedia = new WikipediaClient(this.configService.tools.wikipedia.userAgent);
+		this.coverArtArchive = new CoverArtArchiveClient({userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true});
+		this.transcoder = new TranscoderModule(this.transcodeCachePath);
 		this.mp3 = new AudioModuleMP3();
-		this.flac = new AudioModuleFLAC(imageModule);
-		this.waveform = new WaveformModule(waveformCachePath);
+		this.flac = new AudioModuleFLAC(this.imageModule);
+		this.waveform = new WaveformModule(this.waveformCachePath);
+		this.settingsService.registerChangeListener(async () => {
+			this.setSettings(this.settingsService.settings.externalServices);
+		})
+		this.setSettings(this.settingsService.settings.externalServices);
 	}
 
-	setSettings(externalServices: Jam.AdminSettingsExternal): void {
+	setSettings(externalServices: AdminSettingsExternal): void {
 		const enabled = externalServices && externalServices.enabled;
 		this.musicbrainz.enabled = enabled;
 		this.acoustid.enabled = enabled;
@@ -73,12 +87,12 @@ export class AudioModule {
 		}
 		const p = await probe(filename, []);
 		if (!p) {
-			return {tag: {format: TrackTagFormatType.none}, media: {}};
+			return {format: TagFormatType.none};
 		}
-		return {tag: FORMAT.packProbeJamServeTag(p), media: FORMAT.packProbeJamServeMedia(p, suffix as AudioFormatType)};
+		return {...FORMAT.packProbeJamServeTag(p), ...FORMAT.packProbeJamServeMedia(p, suffix as AudioFormatType)};
 	}
 
-	async readRawTag(filename: string): Promise<Jam.RawTag | undefined> {
+	async readRawTag(filename: string): Promise<RawTag | undefined> {
 		const suffix = fileSuffix(filename);
 		if (suffix === AudioFormatType.mp3) {
 			return this.mp3.readRaw(filename);
@@ -88,7 +102,7 @@ export class AudioModule {
 		}
 	}
 
-	async writeRawTag(filename: string, tag: Jam.RawTag): Promise<void> {
+	async writeRawTag(filename: string, tag: RawTag): Promise<void> {
 		const suffix = fileSuffix(filename);
 		try {
 			if (suffix === AudioFormatType.mp3) {

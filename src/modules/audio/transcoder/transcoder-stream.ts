@@ -1,9 +1,9 @@
 import express from 'express';
 import ffmpeg from 'fluent-ffmpeg';
-import {AudioFormatType} from '../../../model/jam-types';
-import {StreamData} from '../../../typings';
 import {SupportedTranscodeAudioFormat} from '../../../utils/filetype';
 import {logger} from '../../../utils/logger';
+import {AudioFormatType} from '../../../types/enums';
+import {StreamData} from '../../rest/builder/express-responder';
 
 const log = logger('transcoder.stream');
 
@@ -45,9 +45,14 @@ export abstract class TranscoderStream implements StreamData {
 					.toFormat(format)
 					.withAudioBitrate(`${maxBitRate || 128}k`)
 					.withAudioCodec('libmp3lame');
-			case  AudioFormatType.m4a:
+			case AudioFormatType.mp4:
+			case AudioFormatType.m4a:
 				return proc
 					.toFormat('mp4')
+					.withAudioBitrate(`${maxBitRate || 128}k`);
+			case AudioFormatType.webma:
+				return proc
+					.toFormat('webm')
 					.withAudioBitrate(`${maxBitRate || 128}k`);
 			default:
 				return proc

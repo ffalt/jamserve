@@ -45,7 +45,7 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 		let header = size;
 		header |= (this.type << 24);
 		header |= (this.isLast ? 0x80000000 : 0);
-		buffer.writeUInt32BE(header >>> 0, pos);
+		buffer.writeUInt32BE(header, pos);
 		pos += 4;
 
 		const vendorLen = Buffer.byteLength(this.vendor);

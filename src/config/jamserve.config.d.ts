@@ -1,14 +1,9 @@
-import {ElasticsearchConfig} from '../db/elasticsearch/db-elastic.types';
-
 type LogLevel = 'error' | 'warn' | 'info' | 'debug';
-type DBType = 'elasticsearch' | 'nedb';
+type DBType = 'sqlite';
 
 export interface DBConfig {
 	use: DBType;
-	options: {
-		elasticsearch?: ElasticsearchConfig;
-		nedb?: {};
-	};
+	options: any;
 }
 
 export interface ServerConfig {

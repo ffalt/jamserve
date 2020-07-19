@@ -30,7 +30,7 @@ export function basenameStripExt(filename: string): string {
 export function replaceFileSystemChars(s: string, replace: string): string {
 	return s.toString()
 		.replace(/:/g, ' - ')
-		.replace(/[?/!\\"]/g, replace);
+		.replace(/[?/!\\"|*]/g, replace);
 }
 
 // eslint-disable-next-line no-control-regex

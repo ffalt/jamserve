@@ -1,21 +1,19 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "include": [
-    "*.js",
-    "dev/**/*",
-    "src/**/*",
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/**.mock.ts",
-    "src/**/**.spec.ts",
-    "src/**/**.test.ts",
-    "config/*.js"
+    "./src/**/*.ts",
+    "./src/modules/audio/formats/tasks/task-analyze-mp3.ts",
+    "./src/modules/audio/formats/tasks/task-fix-mp3.ts",
+    "./src/modules/audio/formats/tasks/task-rewrite-mp3.ts",
+    "./src/modules/audio/formats/tasks/task-remove-id3v1.ts"
   ],
   "exclude": [
     "bin",
     "data",
     "dist",
+    "temp",
     "local",
+    "static",
     "node_modules",
     ".git",
     ".idea"

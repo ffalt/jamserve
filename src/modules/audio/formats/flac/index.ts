@@ -153,8 +153,7 @@ export class Flac {
 				i++;
 				suffix = `|${i}`;
 			}
-			const val = line.slice(pos + 1);
-			tag[key + suffix] = val;
+			tag[key + suffix] = line.slice(pos + 1);
 		});
 		return {vendor: mdb.vendor, tag};
 	}

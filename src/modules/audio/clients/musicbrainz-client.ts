@@ -1,7 +1,7 @@
-import {MusicBrainz} from '../../../model/musicbrainz-rest-data';
 import {WebserviceJSONClient} from '../../../utils/webservice-json-client';
 import {MusicbrainzClientApi} from './musicbrainz-client.interface';
 import {LookupBrowseTypes, LookupIncludes} from './musicbrainz-client.types';
+import {MusicBrainz} from './musicbrainz-rest-data';
 
 export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi.Request, MusicBrainz.Response> {
 

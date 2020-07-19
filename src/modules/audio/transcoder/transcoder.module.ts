@@ -1,10 +1,16 @@
-import {ApiBinaryResult} from '../../../typings';
 import {TranscoderStream} from './transcoder-stream';
-import {AudioFormatType} from '../../../model/jam-types';
 import {IDFolderCache} from '../../../utils/id-file-cache';
 import {logger} from '../../../utils/logger';
+import {AudioFormatType} from '../../../types/enums';
 
 const log = logger('Audio:Transcoder');
+
+export interface TranscoderResult {
+	file: {
+		filename: string;
+		name: string;
+	};
+}
 
 export class TranscoderModule {
 	private transcodeCache: IDFolderCache<{ maxBitRate?: number; format: string }>;
@@ -14,7 +20,7 @@ export class TranscoderModule {
 			(params: { maxBitRate?: number; format: string }) => `${params.maxBitRate ? `-${params.maxBitRate}` : ''}.${params.format}`);
 	}
 
-	async get(filename: string, id: string, format: string, maxBitRate: number): Promise<ApiBinaryResult> {
+	async get(filename: string, id: string, format: string, maxBitRate: number): Promise<TranscoderResult> {
 		if (!TranscoderStream.validTranscoding(format as AudioFormatType)) {
 			return Promise.reject(Error('Unsupported transcoding format'));
 		}
@@ -26,7 +32,6 @@ export class TranscoderModule {
 			await TranscoderStream.transcodeToFile(filename, cacheFilename, format, maxBitRate);
 		});
 	}
-
 
 	async clearCacheByIDs(ids: Array<string>): Promise<void> {
 		await this.transcodeCache.removeByIDs(ids);

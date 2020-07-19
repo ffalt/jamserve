@@ -1,7 +1,7 @@
-import {Acoustid} from '../../../model/acoustid-rest-data';
 import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 import {fpcalc, FPCalcOptions, FPCalcResult} from '../tools/fpcalc';
+import {Acoustid} from './acoustid-rest-data';
 
 const log = logger('Acoustid');
 
@@ -46,12 +46,8 @@ export class AcoustidClient extends WebserviceClient {
 	}
 
 	async acoustid(file: string, includes: string | undefined): Promise<Array<Acoustid.Result>> {
-		try {
-			const result = await fpcalc(file, this.options.fpcalc || {});
-			return this.get(result, includes);
-		} catch (e) {
-			log.error(e);
-			return [];
-		}
+		this.checkDisabled();
+		const result = await fpcalc(file, this.options.fpcalc || {});
+		return this.get(result, includes);
 	}
 }

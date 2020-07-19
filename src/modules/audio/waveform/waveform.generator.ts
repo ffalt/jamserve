@@ -20,11 +20,12 @@ export class WaveformGenerator {
 
 	async svg(filename: string, width?: number): Promise<string> {
 		const data = await this.json(filename);
-		const svg = this.buildSvg(data, width);
+		return this.buildSvg(data, width);
+		// const svg = this.buildSvg(data, width);
 		// const svgo = new SVGO();
 		// const optimized = await svgo.optimize(svg);
 		// return optimized.data;
-		return svg;
+		// return svg;
 	}
 
 	private async generateWaveform(filename: string): Promise<Waveform> {
@@ -63,7 +64,7 @@ export class WaveformGenerator {
 		const waveArea = area()
 			.x((a, i) => x(i))
 			.y0((b, i) => y(minArray[i]))
-			.y1((c, i) => y(c as any));
+			.y1((c) => y(c as any));
 		const d3n = new D3Node();
 		const svg = d3n.createSVG(null, null, {preserveAspectRatio: 'none', width: '100%', height: '100%', viewBox: `0 0 ${width} ${height}`});
 		svg
@@ -72,8 +73,7 @@ export class WaveformGenerator {
 			.attr('stroke', 'green')
 			.attr('fill', 'darkgreen')
 			.attr('d', waveArea);
-		const result = d3n.svgString();
-		return result;
+		return d3n.svgString();
 	}
 
 }

@@ -13,7 +13,7 @@ export class MetaDataBlock {
 		this.removed = true;
 	}
 
-	parse(buffer: Buffer): void {
+	parse(_: Buffer): void {
 		// nope
 	}
 }

@@ -1,10 +1,16 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {ApiBinaryResult} from '../typings';
 import {DebouncePromises} from './debounce-promises';
 
+export interface IDCacheResult {
+	file: {
+		filename: string;
+		name: string;
+	};
+}
+
 export class IDFolderCache<T> {
-	private cacheDebounce = new DebouncePromises<ApiBinaryResult>();
+	private cacheDebounce = new DebouncePromises<IDCacheResult>();
 
 	constructor(public dataPath: string, public filePrefix: string, private resolveParams: (params: T) => string) {
 
@@ -31,7 +37,7 @@ export class IDFolderCache<T> {
 		}
 	}
 
-	async getExisting(id: string, params: T): Promise<ApiBinaryResult | undefined> {
+	async getExisting(id: string, params: T): Promise<IDCacheResult | undefined> {
 		const cacheID = this.cacheFilename(id, params);
 		if (this.cacheDebounce.isPending(cacheID)) {
 			return this.cacheDebounce.append(cacheID);
@@ -43,7 +49,7 @@ export class IDFolderCache<T> {
 		}
 	}
 
-	async get(id: string, params: T, build: (cacheFilename: string) => Promise<void>): Promise<ApiBinaryResult> {
+	async get(id: string, params: T, build: (cacheFilename: string) => Promise<void>): Promise<IDCacheResult> {
 		const cacheID = this.cacheFilename(id, params);
 		if (this.cacheDebounce.isPending(cacheID)) {
 			return this.cacheDebounce.append(cacheID);
@@ -55,7 +61,7 @@ export class IDFolderCache<T> {
 			if (!exists) {
 				await build(cachefile);
 			}
-			const result: ApiBinaryResult = {file: {filename: cachefile, name: cacheID}};
+			const result: IDCacheResult = {file: {filename: cachefile, name: cacheID}};
 			this.cacheDebounce.resolve(cacheID, result);
 			return result;
 		} catch (e) {

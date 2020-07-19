@@ -56,13 +56,13 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 			return new Promise<any>((resolve, reject) => {
 				setTimeout(() => {
 					this.get(req).then(resolve).catch(reject);
-				}, this.options.retryDelay);
+				}, this.options.retryDelay || 3000);
 			});
 		}
 		return Promise.reject(error);
 	}
 
-	protected async processError(e: any, req: T): Promise<R> {
+	protected async processError(e: Error | any, req: T): Promise<R> {
 		const statusCode = e.statusCode;
 		if (statusCode === 502 || statusCode === 503) {
 			return this.retry(e, req);
@@ -71,8 +71,8 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 		return Promise.reject(e);
 	}
 
-	protected isRateLimitError(body: any): boolean {
-		return (body && body.error && body.error.includes('allowable rate limit'));
+	protected isRateLimitError(body?: { error?: string }): boolean {
+		return !!body?.error?.includes('allowable rate limit');
 	}
 
 	protected async get(req: T): Promise<R> {

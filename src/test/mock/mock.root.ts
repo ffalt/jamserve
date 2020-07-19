@@ -1,0 +1,796 @@
+import path from 'path';
+import fse from 'fs-extra';
+import {AlbumType, FolderType, PodcastStatus, RootScanStrategy} from '../../types/enums';
+import {WorkerService} from '../../modules/engine/services/worker.service';
+import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {extendSpecMockFolder, MockFolder, MockSpecFolder, writeMockFolder} from './mock.folder';
+import {extendSpecMockTrack, MockTrack} from './mock.track';
+import {Changes} from '../../modules/engine/worker/changes';
+
+export interface MockSpecRoot extends MockSpecFolder {
+	id: string;
+	albums?: Array<MockSpecAlbum>;
+	expected: {
+		folders: number;
+		tracks: number;
+		artists: Array<string>;
+		series: number;
+		artworks: number;
+		albums: number;
+		folderType?: FolderType;
+	};
+}
+
+export interface MockSpecAlbum {
+	artist: string;
+	name: string;
+	albumType: AlbumType;
+}
+
+export interface MockRoot extends MockSpecRoot {
+	path: string;
+	folders: Array<MockFolder>;
+	tracks: Array<MockTrack>;
+	strategy: RootScanStrategy;
+}
+
+export function extendSpecMockRoot(dir: string, root: MockSpecRoot, strategy: RootScanStrategy): MockRoot {
+	return {
+		...root,
+		strategy,
+		path: dir,
+		folders: root.folders.map(f => extendSpecMockFolder(dir, f)),
+		tracks: root.tracks.map(t => extendSpecMockTrack(dir, t))
+	};
+}
+
+export function buildMockRoot(dir: string, nr: number, strategy: RootScanStrategy): MockRoot {
+	const rootDir = path.join(dir, `root${nr}`);
+	const spec: MockSpecRoot = {
+		id: '',
+		name: `root${nr}`,
+		folders: [
+			{
+				name: 'artist 1',
+				genre: '',
+				folders: [
+					{
+						name: 'album 1',
+						genre: 'Genre 1',
+						folders: [],
+						images: ['folder.png'],
+						tracks: [
+							{
+								name: '1 - title 1 - artist 1.mp3',
+								artist: 'artist 1',
+								album: 'album 1',
+								number: 1,
+								total: 3,
+								genre: 'Genre 1'
+							},
+							{
+								name: '2 - title 2 - artist 1.mp3',
+								artist: 'artist 1',
+								album: 'album 1',
+								number: 2,
+								total: 3,
+								genre: 'Genre 1'
+							},
+							{
+								name: '3 - title 3 - artist 1.mp3',
+								artist: 'artist 1',
+								album: 'album 1',
+								number: 3,
+								total: 3,
+								genre: 'Genre 1'
+							}
+						],
+						expected: {
+							folderType: FolderType.album,
+							albumType: AlbumType.album
+						}
+					},
+					{
+						name: 'album 2',
+						genre: 'Genre 1',
+						folders: [],
+						images: ['album.png'],
+						tracks: [
+							{
+								name: '1 - title 1 - artist 1.mp3',
+								artist: 'artist 1',
+								album: 'album 2',
+								number: 1,
+								total: 3,
+								genre: 'Genre 1'
+							},
+							{
+								name: '2 - title 2 - artist 1.mp3',
+								artist: 'artist 1',
+								album: 'album 2',
+								number: 2,
+								total: 3,
+								genre: 'Genre 1'
+							},
+							{
+								name: '3 - title 3 - artist 1 with another artist.mp3',
+								artist: 'artist 1 with another artist',
+								albumArtist: 'artist 1',
+								album: 'album 2',
+								number: 3,
+								total: 3,
+								genre: 'Genre 2'
+							}],
+						expected: {
+							folderType: FolderType.album,
+							albumType: AlbumType.album
+						}
+					},
+					{
+						name: 'album 3',
+						genre: 'Genre 3',
+						images: ['cover.png'],
+						folders: [
+							{
+								name: 'cd 1',
+								genre: 'Genre 3',
+								folders: [],
+								images: ['cover1.png'],
+								tracks: [
+									{
+										name: '1 - cd 1 - title 1 - artist 1.mp3',
+										artist: 'artist 1',
+										album: 'album 3',
+										number: 1,
+										total: 2,
+										genre: 'Genre 3'
+									},
+									{
+										name: '2 - cd 1 - title 2 - artist 1.mp3',
+										artist: 'artist 1',
+										album: 'album 3',
+										number: 2,
+										total: 2,
+										genre: 'Genre 3'
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.album
+								}
+							},
+							{
+								name: 'cd 2',
+								genre: 'Genre 3',
+								folders: [],
+								images: ['cover2.png'],
+								tracks: [
+									{
+										name: '1 - cd 2 - title 1 - artist 1.mp3',
+										artist: 'artist 1',
+										album: 'album 3',
+										number: 1,
+										total: 2,
+										genre: 'Genre 3'
+									},
+									{
+										name: '2 - cd 2 - title 2 - artist 1.mp3',
+										artist: 'artist 1',
+										album: 'album 3',
+										number: 2,
+										total: 2,
+										genre: 'Genre 3'
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.album
+								}
+							}
+						],
+						tracks: [],
+						expected: {
+							folderType: FolderType.multialbum,
+							albumType: AlbumType.album
+						}
+					}
+				],
+				tracks: [],
+				images: [],
+				expected: {
+					folderType: FolderType.artist
+				}
+			},
+			{
+				name: 'artist 2',
+				genre: '',
+				folders: [
+					{
+						name: 'album 1',
+						genre: 'Genre 1',
+						folders: [],
+						images: ['cover.png'],
+						tracks: [
+							{
+								name: '1 - title 1 - artist 2.mp3',
+								artist: 'artist 2',
+								album: 'album 1',
+								number: 1,
+								total: 4,
+								genre: 'Genre 1'
+							},
+							{
+								name: '2 - title 2 - artist 2.mp3',
+								artist: 'artist 2',
+								album: 'album 1',
+								number: 2,
+								total: 4,
+								genre: 'Genre 1'
+							},
+							{
+								name: '3 - title 3 - artist 2.mp3',
+								artist: 'artist 2',
+								album: 'album 1',
+								number: 3,
+								total: 4,
+								genre: 'Genre 2'
+							}
+						],
+						expected: {
+							folderType: FolderType.album,
+							albumType: AlbumType.album
+						}
+					}
+				],
+				images: ['folder.png'],
+				tracks: [],
+				expected: {
+					folderType: FolderType.artist
+				}
+			},
+			{
+				name: 'compilation 1',
+				genre: '',
+				folders: [],
+				images: ['front.png'],
+				tracks: [
+					{
+						name: '1 - title 1 - artist c1.mp3',
+						artist: 'artist c1',
+						album: 'compilation 1',
+						number: 1,
+						total: 3,
+						genre: 'Genre 1'
+					},
+					{
+						name: '2 - title 2 - artist c2.mp3',
+						artist: 'artist c2',
+						album: 'compilation 1',
+						number: 2,
+						total: 3,
+						genre: 'Genre 2'
+					},
+					{
+						name: '3 - title 3 - artist c3.mp3',
+						artist: 'artist c3',
+						album: 'compilation 1',
+						number: 3,
+						total: 3,
+						genre: 'Genre 3'
+					}
+				],
+				expected: {
+					folderType: FolderType.album,
+					albumType: AlbumType.compilation
+				}
+			},
+			{
+				name: 'artist 5',
+				genre: '',
+				images: ['artist.png'],
+				folders: [
+					{
+						name: 'series 1',
+						genre: 'Audiobook',
+						images: ['front.png', 'back.jpeg'],
+						folders: [],
+						tracks: [
+							{
+								name: '1 - title 1 - series 1 album 1 - artist 5.mp3',
+								artist: 'artist 5',
+								group: 'series 1',
+								groupNr: '1',
+								album: 'series 1 album 1',
+								number: 1,
+								total: 3,
+								genre: 'Audiobook'
+							},
+							{
+								name: '1 - title 1 - series 1 album 2 - artist 5.mp3',
+								artist: 'artist 5',
+								group: 'series 1',
+								groupNr: '2',
+								album: 'series 1 album 2',
+								number: 1,
+								total: 3,
+								genre: 'Audiobook'
+							},
+							{
+								name: '3 - title 3 - series 1 album 3 - artist 5.mp3',
+								artist: 'artist 5',
+								group: 'series 1',
+								groupNr: '3',
+								album: 'series 1 album 3',
+								number: 1,
+								total: 3,
+								genre: 'Audiobook'
+							}
+						],
+						expected: {
+							folderType: FolderType.collection
+						}
+					}
+				],
+				tracks: [],
+				expected: {
+					folderType: FolderType.artist
+				}
+			}
+		],
+		images: [],
+		tracks: [],
+		expected: {
+			folders: 12,
+			tracks: 19,
+			artists: ['artist 1', 'artist 1 with another artist', 'artist 2', 'artist c1', 'Various Artists', 'artist c2', 'artist c3', 'artist 5'],
+			albums: 8,
+			series: 1,
+			artworks: 11,
+			folderType: FolderType.collection
+		}
+	};
+	return extendSpecMockRoot(rootDir, spec, strategy);
+}
+
+export function buildSeriesMockRoot(dir: string, nr: number, strategy: RootScanStrategy): MockRoot {
+	const rootDir = path.join(dir, `root${nr}`);
+	const spec: MockSpecRoot = {
+		id: '',
+		name: `root${nr}`,
+		folders: [
+			{
+				name: 'audiobook series 1',
+				genre: '',
+				folders: [
+					{
+						name: 'album 1',
+						genre: 'audio series',
+						folders: [],
+						images: ['front.png'],
+						tracks: [
+							{
+								name: '1 - title 1 - audiobook series 1.mp3',
+								group: 'audiobook series 1',
+								artist: 'audiobook series 1',
+								album: 'album 1',
+								groupNr: 'episode 1',
+								number: 1,
+								total: 3,
+								genre: 'audio series'
+							},
+							{
+								name: '2 - title 2 - audiobook series 1.mp3',
+								group: 'audiobook series 1',
+								artist: 'audiobook series 1',
+								album: 'album 1',
+								groupNr: 'episode 1',
+								number: 2,
+								total: 3,
+								genre: 'audio series'
+							},
+							{
+								name: '3 - title 3 - audiobook series 1.mp3',
+								group: 'audiobook series 1',
+								artist: 'audiobook series 1',
+								album: 'album 1',
+								groupNr: 'episode 1',
+								number: 3,
+								total: 3,
+								genre: 'audio series'
+							}
+						],
+						expected: {
+							folderType: FolderType.album,
+							albumType: AlbumType.series
+						}
+					},
+					{
+						name: 'album 2',
+						genre: 'audio series',
+						folders: [],
+						images: ['front.png'],
+						tracks: [
+							{
+								name: '1 - title 1 - audiobook series 1.mp3',
+								group: 'audiobook series 1',
+								artist: 'audiobook series 1',
+								album: 'album 2',
+								number: 1,
+								total: 3,
+								groupNr: 'episode 2',
+								genre: 'audio series'
+							},
+							{
+								name: '2 - title 2 - audiobook series 1.mp3',
+								group: 'audiobook series 1',
+								artist: 'audiobook series 1',
+								album: 'album 2',
+								number: 2,
+								total: 3,
+								groupNr: 'episode 2',
+								genre: 'audio series'
+							},
+							{
+								name: '3 - title 3 - audiobook series 1.mp3',
+								group: 'audiobook series 1',
+								artist: 'audiobook series 1',
+								albumArtist: 'audiobook series 1',
+								album: 'album 2',
+								groupNr: 'episode 2',
+								number: 3,
+								total: 3,
+								genre: 'audio series'
+							}],
+						expected: {
+							folderType: FolderType.album,
+							albumType: AlbumType.series
+						}
+					},
+					{
+						name: 'album 3',
+						genre: 'audio series',
+						folders: [
+							{
+								name: 'cd 1',
+								genre: 'audio series',
+								folders: [],
+								images: [],
+								tracks: [
+									{
+										name: '1 - cd 1 - title 1 - audiobook series 1.mp3',
+										group: 'audiobook series 1',
+										artist: 'audiobook series 1',
+										album: 'album 3',
+										number: 1,
+										total: 2,
+										groupNr: 'episode 3',
+										genre: 'audio series'
+									},
+									{
+										name: '2 - cd 1 - title 2 - audiobook series 1.mp3',
+										group: 'audiobook series 1',
+										artist: 'audiobook series 1',
+										album: 'album 3',
+										groupNr: 'episode 3',
+										number: 2,
+										total: 2,
+										genre: 'audio series'
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.series
+								}
+							},
+							{
+								name: 'cd 2',
+								genre: 'audio series',
+								folders: [],
+								images: [],
+								tracks: [
+									{
+										name: '1 - cd 2 - title 1 - audiobook series 1.mp3',
+										group: 'audiobook series 1',
+										artist: 'audiobook series 1',
+										album: 'album 3',
+										groupNr: 'episode 3',
+										number: 1,
+										total: 2,
+										genre: 'audio series'
+									},
+									{
+										name: '2 - cd 2 - title 2 - audiobook series 1.mp3',
+										group: 'audiobook series 1',
+										artist: 'audiobook series 1',
+										album: 'album 3',
+										groupNr: 'episode 3',
+										number: 2,
+										total: 2,
+										genre: 'audio series'
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.series
+								}
+							}
+						],
+						images: ['front.png'],
+						tracks: [],
+						expected: {
+							folderType: FolderType.multialbum,
+							albumType: AlbumType.series
+						}
+					}
+				],
+				images: ['front.png'],
+				tracks: [],
+				expected: {
+					folderType: FolderType.artist
+				}
+			},
+			{
+				name: 'audiobook series 2',
+				genre: 'audio series',
+				folders: [],
+				images: ['front.png'],
+				tracks: [
+					{
+						name: '1 - title 1 - audiobook series 2.mp3',
+						group: 'audiobook series 2',
+						artist: 'audiobook series 2',
+						album: 'album 1',
+						groupNr: 'episode 1',
+						number: 1,
+						total: 3,
+						genre: 'audio series'
+					},
+					{
+						name: '2 - title 2 - audiobook series 2.mp3',
+						group: 'audiobook series 2',
+						artist: 'audiobook series 2',
+						album: 'album 2',
+						groupNr: 'episode 2',
+						number: 2,
+						total: 3,
+						genre: 'audio series'
+					},
+					{
+						name: '3 - title 3 - audiobook series 2.mp3',
+						group: 'audiobook series 2',
+						artist: 'audiobook series 2',
+						album: 'album 3',
+						groupNr: 'episode 3',
+						number: 3,
+						total: 3,
+						genre: 'audio series'
+					}],
+				expected: {
+					folderType: FolderType.artist
+				}
+			},
+			{
+				name: 'audiobook series 3',
+				genre: 'audio series',
+				images: [],
+				folders: [
+					{
+						name: 'album 4',
+						genre: 'audio series',
+						folders: [
+							{
+								name: 'cd 1',
+								genre: 'audio series',
+								images: [],
+								folders: [],
+								tracks: [
+									{
+										name: '1 - cd 1 - title 1 - audiobook series 3.mp3',
+										group: 'audiobook series 3',
+										artist: 'audiobook series 3',
+										album: 'album 4',
+										number: 1,
+										total: 2,
+										groupNr: 'episode 4',
+										genre: 'audio series'
+									},
+									{
+										name: '2 - cd 1 - title 2 - audiobook series 3.mp3',
+										group: 'audiobook series 3',
+										artist: 'audiobook series 3',
+										album: 'album 4',
+										groupNr: 'episode 4',
+										number: 2,
+										total: 2,
+										genre: 'audio series'
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.series
+								}
+							},
+							{
+								name: 'cd 2',
+								genre: 'audio series',
+								images: [],
+								folders: [],
+								tracks: [
+									{
+										name: '1 - cd 2 - title 1 - audiobook series 3.mp3',
+										group: 'audiobook series 3',
+										artist: 'audiobook series 3',
+										album: 'album 4',
+										groupNr: 'episode 4',
+										number: 1,
+										total: 2,
+										genre: 'audio series'
+									},
+									{
+										name: '2 - cd 2 - title 2 - audiobook series 3.mp3',
+										group: 'audiobook series 3',
+										artist: 'audiobook series 3',
+										album: 'album 4',
+										groupNr: 'episode 4',
+										number: 2,
+										total: 2,
+										genre: 'audio series'
+									}
+								],
+								expected: {
+									folderType: FolderType.multialbum,
+									albumType: AlbumType.series
+								}
+							}
+						],
+						images: ['front.png'],
+						tracks: [],
+						expected: {
+							folderType: FolderType.multialbum,
+							albumType: AlbumType.series
+						}
+					}
+				],
+				tracks: [
+					{
+						name: '1 - title 1 - audiobook series 3.mp3',
+						artist: 'audiobook series 3',
+						group: 'audiobook series 3',
+						album: 'album 1',
+						groupNr: 'episode 1',
+						number: 1,
+						total: 3,
+						genre: 'audio series'
+					},
+					{
+						name: '2 - title 2 - audiobook series 3.mp3',
+						artist: 'audiobook series 3',
+						group: 'audiobook series 3',
+						album: 'album 2',
+						groupNr: 'episode 2',
+						number: 2,
+						total: 3,
+						genre: 'audio series'
+					},
+					{
+						name: '3 - title 3 - audiobook series 3.mp3',
+						artist: 'audiobook series 3',
+						group: 'audiobook series 3',
+						album: 'album 3',
+						groupNr: 'episode 3',
+						number: 3,
+						total: 3,
+						genre: 'audio series'
+					}],
+				expected: {
+					folderType: FolderType.artist
+				}
+			}
+		],
+		images: ['folder.png'],
+		tracks: [],
+		albums: [
+			{artist: 'audiobook series 1', name: 'album 1', albumType: AlbumType.series},
+			{artist: 'audiobook series 1', name: 'album 2', albumType: AlbumType.series},
+			{artist: 'audiobook series 1', name: 'album 3', albumType: AlbumType.series},
+			{artist: 'audiobook series 2', name: 'album 1', albumType: AlbumType.series},
+			{artist: 'audiobook series 2', name: 'album 2', albumType: AlbumType.series},
+			{artist: 'audiobook series 2', name: 'album 3', albumType: AlbumType.series},
+			{artist: 'audiobook series 3', name: 'album 1', albumType: AlbumType.series},
+			{artist: 'audiobook series 3', name: 'album 2', albumType: AlbumType.series},
+			{artist: 'audiobook series 3', name: 'album 3', albumType: AlbumType.series},
+			{artist: 'audiobook series 3', name: 'album 4', albumType: AlbumType.series}
+		],
+		expected: {
+			folders: 12,
+			tracks: 20,
+			series: 3,
+			artists: ['audiobook series 1', 'audiobook series 2', 'audiobook series 3'],
+			albums: 10,
+			artworks: 6,
+			folderType: FolderType.collection
+		}
+	};
+	return extendSpecMockRoot(rootDir, spec, strategy);
+}
+
+export async function writeMockRoot(root: MockRoot): Promise<void> {
+	await fse.ensureDir(root.path);
+	for (const folder of root.folders) {
+		await writeMockFolder(folder);
+	}
+}
+
+export async function validateMock(mockFolder: MockFolder, workerService: WorkerService): Promise<void> {
+	const folder = await workerService.orm.Folder.findOne({path: ensureTrailingPathSeparator(mockFolder.path)});
+	expect(folder).toBeDefined();
+	if (!folder) {
+		return;
+	}
+	if (mockFolder.expected.folderType !== undefined) {
+		expect(folder.folderType, 'Folder type unexpected: ' + mockFolder.path).toBe(mockFolder.expected.folderType);
+	}
+	if (mockFolder.expected.albumType !== undefined) {
+		expect(folder.albumType, 'Album type unexpected: ' + mockFolder.path).toBe(mockFolder.expected.albumType);
+	}
+	for (const sub of mockFolder.folders) {
+		await validateMock(sub, workerService);
+	}
+}
+
+export async function writeAndStoreMock(mockRoot: MockRoot, workerService: WorkerService): Promise<Changes> {
+	await writeMockRoot(mockRoot);
+	const root = workerService.orm.Root.create({
+		path: mockRoot.path,
+		name: mockRoot.name,
+		strategy: mockRoot.strategy
+	});
+	await workerService.orm.Root.persistAndFlush(root);
+	mockRoot.id = root.id;
+	const changes = await workerService.refreshRoot({rootID: mockRoot.id});
+	const admin = await workerService.orm.User.oneOrFail({name: 'admin'});
+	if (changes.tracks.added.size > 0) {
+		const bookmark = workerService.orm.Bookmark.create({
+			track: changes.tracks.added.list[0],
+			user: admin,
+			position: 1,
+			comment: 'awesome!'
+		})
+		await workerService.orm.Bookmark.persistAndFlush(bookmark);
+		//
+		const playlist = workerService.orm.Playlist.create({
+			name: 'playlist',
+			comment: 'awesome!',
+			isPublic: true,
+			user: admin,
+			changed: Date.now(),
+			duration: 0
+		});
+		await workerService.orm.Playlist.persistAndFlush(playlist);
+		const entry = workerService.orm.PlaylistEntry.create({position: 1, playlist, track: changes.tracks.added.list[0]});
+		await workerService.orm.PlaylistEntry.persistAndFlush(entry);
+	}
+	const radio = workerService.orm.Radio.create({
+		name: 'radio',
+		url: 'http://awesome!stream',
+		homepage: 'http://awesome!',
+		disabled: false
+	});
+	await workerService.orm.Radio.persistAndFlush(radio);
+	const podcast = workerService.orm.Podcast.create({
+		name: 'podcast',
+		lastCheck: 0,
+		url: 'http://podcast!stream',
+		status: PodcastStatus.new,
+		categories: []
+	});
+	await workerService.orm.Podcast.persistAndFlush(podcast);
+	const episode = workerService.orm.Episode.create({
+		name: 'episode',
+		podcast,
+		date: Date.now(),
+		status: PodcastStatus.new
+	});
+	await workerService.orm.Episode.persistAndFlush(episode);
+	return changes;
+}

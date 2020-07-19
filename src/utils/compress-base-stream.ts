@@ -1,8 +1,8 @@
 import archiver from 'archiver';
 import express from 'express';
-import {StreamData} from '../typings';
 import {replaceFileSystemChars} from './fs-utils';
 import {logger} from './logger';
+import {StreamData} from '../modules/rest/builder/express-responder';
 
 const log = logger('BaseCompressStream');
 

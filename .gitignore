@@ -1,7 +1,11 @@
-node_modules
-config/*config.js
-data
-dist
-coverage
-local
 .idea/
+.vscode/
+node_modules/
+coverage/
+build/
+tmp/
+temp/
+data/
+dist/
+local/
+.env

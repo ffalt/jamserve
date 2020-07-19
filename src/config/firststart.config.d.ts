@@ -1,4 +1,4 @@
-import {Jam} from '../model/jam-rest-data';
+import {RootScanStrategy} from '../types/enums';
 
 export interface FirstStartConfig {
 	adminUser?: {
@@ -6,5 +6,5 @@ export interface FirstStartConfig {
 		pass: string;
 		mail: string;
 	};
-	roots?: Array<{ name: string; path: string; strategy?: Jam.RootScanStrategy }>;
+	roots?: Array<{ name: string; path: string; strategy?: RootScanStrategy }>;
 }

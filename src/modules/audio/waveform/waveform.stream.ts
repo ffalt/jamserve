@@ -98,7 +98,7 @@ export class WaveformStream extends Transform {
 		}
 	}
 
-	_transform(chunk: Buffer, encoding: string, cb: TransformCallback): void {
+	_transform(chunk: Buffer, encoding: BufferEncoding, cb: TransformCallback): void {
 		this._total += chunk.length;
 		if (this._started) {
 			this._buf.write(chunk, encoding, cb as any);

@@ -41,9 +41,12 @@ module.exports = {
 			// enable the rule specifically for TypeScript files
 			"files": ["*.ts"],
 			"rules": {
-				"@typescript-eslint/explicit-function-return-type": ["error"],
 				"@typescript-eslint/no-unused-vars": ["error", {"args": "none"}],
 				"@typescript-eslint/no-var-requires": 2,
+				"@typescript-eslint/ban-types": 0,
+				"@typescript-eslint/no-non-null-assertion": 0,
+				"@typescript-eslint/explicit-module-boundary-types": 0,
+				"@typescript-eslint/explicit-function-return-type": 0,
 				"@typescript-eslint/member-delimiter-style": [
 					"error",
 					{

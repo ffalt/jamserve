@@ -1,4 +1,5 @@
 import winston from 'winston';
+import {Table} from 'console-table-printer';
 
 export function configureLogger(level: string): void {
 	winston.configure({
@@ -42,6 +43,14 @@ export class Logger {
 
 	error(format: string | Error, ...params: Array<any>): void {
 		this.applyLog('error', format.toString(), params);
+	}
+
+	table(items: Array<any>, columns?: Array<{ name: string; alignment: 'left' | 'right' }>): void {
+		if (winston.level === 'info') {
+			const p = new Table({columns});
+			p.addRows(items);
+			p.printTable();
+		}
 	}
 
 }

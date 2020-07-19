@@ -1,5 +1,5 @@
-import {AudioFormatType, FileTyp} from '../model/jam-types';
 import {fileSuffix} from './fs-utils';
+import {AudioFormatType, FileTyp} from '../types/enums';
 
 // TODO: 'bmp' is not supported by sharp, preconvert with jimp?
 export const SupportedReadImageFormat = ['png', 'jpeg', 'jpg', 'gif', 'tiff'];
@@ -21,22 +21,25 @@ export const SupportedTranscodeAudioFormat: Array<AudioFormatType> = [
 	AudioFormatType.ogg,
 	AudioFormatType.oga,
 	AudioFormatType.flac,
+	AudioFormatType.wav,
+	AudioFormatType.webma,
+	AudioFormatType.mp4,
 	AudioFormatType.m4a
 ];
 
 export function getFileType(filename: string): FileTyp {
 	const suffix = fileSuffix(filename);
 	if (SupportedReadImageFormat.includes(suffix)) {
-		return FileTyp.IMAGE;
+		return FileTyp.image;
 	}
 	if (SupportedAudioFormat.includes(suffix as AudioFormatType)) {
-		return FileTyp.AUDIO;
+		return FileTyp.audio;
 	}
 	if (['tag'].includes(suffix)) {
-		return FileTyp.TAG;
+		return FileTyp.tag;
 	}
 	if (['bak'].includes(suffix)) {
-		return FileTyp.BACKUP;
+		return FileTyp.backup;
 	}
-	return FileTyp.OTHER;
+	return FileTyp.other;
 }

@@ -1,11 +1,11 @@
 import fse from 'fs-extra';
 import {ID3v2, IID3V2} from 'jamp3';
 import {parentPort} from 'worker_threads';
-import {AudioFormatType} from '../../../model/jam-types';
 import {fileDeleteIfExists, fileSuffix} from '../../../utils/fs-utils';
 import {rewriteWriteFFmpeg} from '../tools/ffmpeg-rewrite';
+import {AudioFormatType} from '../../../types/enums';
 
-async function rewriteAudio(param: string): Promise<void> {
+export async function rewriteAudio(param: string): Promise<void> {
 	const tempFile = `${param}.tmp`;
 	const backupFile = `${param}.bak`;
 	try {
@@ -32,7 +32,7 @@ async function rewriteAudio(param: string): Promise<void> {
 	}
 }
 
-if (parentPort) {
+if (parentPort && process.env.JAM_USE_TASKS) {
 	parentPort.on('message', async (param: any) => {
 		if (typeof param !== 'string') {
 			throw new Error('param must be a string.');

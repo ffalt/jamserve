@@ -1,12 +1,12 @@
 import fse from 'fs-extra';
-import {Jam} from '../../../model/jam-rest-data';
-import {TrackTagFormatType} from '../../../model/jam-types';
 import {ImageModule} from '../../image/image.module';
 import {FORMAT} from '../audio.format';
 import {AudioScanResult} from '../audio.module';
 import {flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2} from '../metadata';
 import {Flac} from './flac';
 import {MetaWriteableDataBlock} from './flac/lib/block.writeable';
+import {TagFormatType} from '../../../types/enums';
+import {RawTag} from '../rawTag';
 
 export class AudioModuleFLAC {
 
@@ -17,14 +17,18 @@ export class AudioModuleFLAC {
 		const flac = new Flac();
 		try {
 			const result = await flac.read(filename);
-			return {tag: FORMAT.packFlacVorbisCommentJamServeTag(result.comment, result.pictures), media: FORMAT.packFlacMediaInfoJamServeMedia(result.media)};
+			return {
+				format: TagFormatType.none,
+				...FORMAT.packFlacMediaInfoJamServeMedia(result.media),
+				...FORMAT.packFlacVorbisCommentJamServeTag(result.comment, result.pictures)
+			};
 		} catch (e) {
 			console.error(e);
-			return {tag: {format: TrackTagFormatType.none}, media: {}};
+			return {format: TagFormatType.none};
 		}
 	}
 
-	async readRaw(filename: string): Promise<Jam.RawTag | undefined> {
+	async readRaw(filename: string): Promise<RawTag | undefined> {
 		const flac = new Flac();
 		const result = await flac.read(filename);
 		if (!result || !result.comment) {
@@ -33,7 +37,7 @@ export class AudioModuleFLAC {
 		return flacToRawTag(result);
 	}
 
-	async write(filename: string, tag: Jam.RawTag): Promise<void> {
+	async write(filename: string, tag: RawTag): Promise<void> {
 		const id3 = rawTagToID3v2(tag);
 		const flacBlocks: Array<MetaWriteableDataBlock> = await id3v2ToFlacMetaData(id3, this.imageModule);
 		const flac = new Flac();
