@@ -80,7 +80,7 @@ JAM_JWT_MAXAGE=1 day
 # Due to CORS security you MUST name all domains where login with session cookie is allowed
 # https://de.wikipedia.org/wiki/Cross-Origin_Resource_Sharing
 # (background: random sites cannot access/create cookies for your domain)
-JAM_ALLOWED_COOKIE_DOMAINS=http://127.0.0.1:4040,http://127.0.0.1:4200
+JAM_ALLOWED_COOKIE_DOMAINS=http://localhost:4040,http://localhost:4200
 
 # An unique string for your instance to sign the session cookie (change it!)
 # http://www.senchalabs.org/connect/session.html
