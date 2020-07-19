@@ -37,6 +37,13 @@ export function wrapLong(s: string): string {
 	return s;
 }
 
+export async function writeTemplate(name: string, template: string, data: any): Promise<{ name: string; content: string }> {
+	return {
+		name,
+		content: Mustache.render((await fse.readFile(template)).toString(), data)
+	};
+}
+
 export async function writeParts(name: string, template: string, serviceParts: Array<Part>): Promise<{ name: string; content: string }> {
 	const list: Array<Part> = serviceParts
 		.sort((a, b) => a.name.localeCompare(b.name));
@@ -44,13 +51,6 @@ export async function writeParts(name: string, template: string, serviceParts: A
 		p.isLast = i === list.length - 1;
 	});
 	return writeTemplate(name, template, {list})
-}
-
-export async function writeTemplate(name: string, template: string, data: any): Promise<{ name: string; content: string }> {
-	return {
-		name,
-		content: Mustache.render((await fse.readFile(template)).toString(), data)
-	};
 }
 
 export function getResultType(call: MethodMetadata): string | undefined {

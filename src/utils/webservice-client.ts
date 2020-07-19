@@ -22,7 +22,7 @@ export class WebserviceClient {
 		}
 	}
 
-	protected checkDisabled():void {
+	protected checkDisabled(): void {
 		if (!this.enabled) {
 			throw new Error('External service is disabled');
 		}

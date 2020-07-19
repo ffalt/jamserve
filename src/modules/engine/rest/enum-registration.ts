@@ -1,11 +1,17 @@
 import {registerEnumType} from '../../rest/decorators/enums';
 import {
+	AlbumOrderFields,
 	AlbumType,
+	ArtistOrderFields,
 	ArtworkImageType,
 	AudioFormatType,
+	BookmarkOrderFields,
 	CoverArtArchiveLookupType,
+	DefaultOrderFields,
 	DownloadFormatType,
+	EpisodeOrderFields,
 	FolderHealthID,
+	FolderOrderFields,
 	FolderType,
 	ImageFormatType,
 	JamObjectType,
@@ -13,24 +19,19 @@ import {
 	ListType,
 	MusicBrainzLookupType,
 	MusicBrainzSearchType,
+	PlaylistEntryOrderFields,
+	PodcastOrderFields,
 	PodcastStatus,
 	RootScanStrategy,
 	SessionMode,
 	TagFormatType,
 	TrackHealthID,
+	TrackOrderFields,
 	UserRole,
-	WaveformFormatType,
-	AlbumOrderFields,
-	ArtistOrderFields,
-	DefaultOrderFields,
-	BookmarkOrderFields,
-	EpisodeOrderFields,
-	FolderOrderFields,
-	PlaylistEntryOrderFields,
-	TrackOrderFields, PodcastOrderFields
+	WaveformFormatType
 } from '../../../types/enums';
 
-export function registerRestEnums():void {
+export function registerRestEnums(): void {
 
 	registerEnumType(DefaultOrderFields, {name: 'DefaultOrderFields'});
 	registerEnumType(PodcastOrderFields, {name: 'PodcastOrderFields'});

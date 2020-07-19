@@ -19,7 +19,7 @@ export async function writeImage(filename: string): Promise<void> {
 	await image.writeAsync(filename);
 }
 
-export async function writeMockImage(filename: string, format:string): Promise<void> {
+export async function writeMockImage(filename: string, format: string): Promise<void> {
 	const image = await mockImage(format);
 	await fse.writeFile(filename, image.buffer);
 }

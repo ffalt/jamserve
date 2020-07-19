@@ -4,7 +4,7 @@ import {ArtworkImageType} from '../../types/enums';
 import {Folder} from '../folder/folder';
 import {IoService} from '../../modules/engine/services/io.service';
 import {Artwork} from './artwork';
-import path from "path";
+import path from 'path';
 import {ImageModule} from '../../modules/image/image.module';
 
 @Singleton
@@ -26,7 +26,7 @@ export class ArtworkService {
 		return this.ioService.replaceArtwork(artwork.id, filename, artwork.folder.root.id);
 	}
 
-	async rename(artwork: Artwork, newName:string): Promise<AdminChangeQueueInfo> {
+	async rename(artwork: Artwork, newName: string): Promise<AdminChangeQueueInfo> {
 		return this.ioService.renameArtwork(artwork.id, newName, artwork.folder.root.id);
 	}
 
