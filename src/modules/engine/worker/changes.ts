@@ -13,28 +13,32 @@ import {BaseWorker} from './tasks/base';
 const log = logger('Worker.Changes');
 
 class IdSet<T extends { id: string }> {
-	public list: Array<T> = [];
+	private map: Map<string, T> = new Map();
 
 	get size(): number {
-		return this.list.length;
+		return this.map.size;
+	}
+
+	get list(): Array<T> {
+		return [...this.map.values()];
 	}
 
 	add(item?: T): void {
-		if (item && !this.has(item)) {
-			this.list.push(item);
+		if (item) {
+			this.map.set(item.id, item);
 		}
 	}
 
 	has(item: T): boolean {
-		return !!this.list.find(i => i.id === item.id);
+		return this.map.has(item.id);
 	}
 
 	delete(item: T): void {
-		this.list = this.list.filter(i => i.id !== item.id);
+		this.map.delete(item.id);
 	}
 
 	ids(): Array<string> {
-		return this.list.map(i => i.id);
+		return [...this.map.keys()];
 	}
 
 	append(items: Array<T>): void {
