@@ -1,6 +1,5 @@
 import {Playlist, PlaylistIndex, PlaylistPage} from './playlist.model';
-import {User} from '../user/user';
-import {BodyParam, BodyParams, Controller, CurrentUser, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {BaseController} from '../base/base.controller';
 import {PlaylistEntryPage} from '../playlistentry/playlist-entry.model';
@@ -8,10 +7,12 @@ import {IncludesTrackArgs} from '../track/track.args';
 import {IncludesPlaylistArgs, PlaylistFilterArgs, PlaylistMutateArgs, PlaylistOrderArgs} from './playlist.args';
 import {IncludesEpisodeArgs} from '../episode/episode.args';
 import {ListArgs, PageArgs} from '../base/base.args';
-import {Inject} from 'typescript-ioc';
+import {InRequestScope, Inject} from 'typescript-ioc';
 import {PlaylistService} from './playlist.service';
 import {PlaylistEntryOrderArgs} from '../playlistentry/playlist-entry.args';
+import {Context} from '../../modules/engine/rest/context';
 
+@InRequestScope
 @Controller('/playlist', {tags: ['Playlist'], roles: [UserRole.stream]})
 export class PlaylistController extends BaseController {
 	@Inject
@@ -26,10 +27,10 @@ export class PlaylistController extends BaseController {
 		@QueryParams() playlistArgs: IncludesPlaylistArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Playlist> {
 		return this.transform.playlist(
-			await this.orm.Playlist.oneOrFailFilter({ids: [id]}, user),
+			orm, await orm.Playlist.oneOrFailFilter({ids: [id]}, user),
 			playlistArgs, trackArgs, episodeArgs, user
 		);
 	}
@@ -39,9 +40,12 @@ export class PlaylistController extends BaseController {
 		() => PlaylistIndex,
 		{description: 'Get the Navigation Index for Playlists', summary: 'Get Index'}
 	)
-	async index(@QueryParams() filter: PlaylistFilterArgs, @CurrentUser() user: User): Promise<PlaylistIndex> {
-		const result = await this.orm.Playlist.indexFilter(filter, user);
-		return this.transform.playlistIndex(result);
+	async index(
+		@QueryParams() filter: PlaylistFilterArgs,
+		@Ctx() {orm, user}: Context
+	): Promise<PlaylistIndex> {
+		const result = await orm.Playlist.indexFilter(filter, user);
+		return this.transform.playlistIndex(orm, result);
 	}
 
 	@Get(
@@ -57,16 +61,16 @@ export class PlaylistController extends BaseController {
 		@QueryParams() filter: PlaylistFilterArgs,
 		@QueryParams() order: PlaylistOrderArgs,
 		@QueryParams() list: ListArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<PlaylistPage> {
 		if (list.list) {
-			return await this.orm.Playlist.findListTransformFilter(list.list, filter, [order], page, user,
-				o => this.transform.playlist(o, playlistArgs, trackArgs, episodeArgs, user)
+			return await orm.Playlist.findListTransformFilter(list.list, filter, [order], page, user,
+				o => this.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user)
 			)
 		}
-		return await this.orm.Playlist.searchTransformFilter(
+		return await orm.Playlist.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.playlist(o, playlistArgs, trackArgs, episodeArgs, user)
+			o => this.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user)
 		);
 	}
 
@@ -81,12 +85,12 @@ export class PlaylistController extends BaseController {
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
 		@QueryParams() filter: PlaylistFilterArgs,
 		@QueryParams() order: PlaylistEntryOrderArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<PlaylistEntryPage> {
-		const playlistIDs = await this.orm.Playlist.findIDsFilter(filter, user);
-		return await this.orm.PlaylistEntry.searchTransformFilter(
+		const playlistIDs = await orm.Playlist.findIDsFilter(filter, user);
+		return await orm.PlaylistEntry.searchTransformFilter(
 			{playlistIDs}, [order], page, user,
-			o => this.transform.playlistEntry(o, trackArgs, episodeArgs, user)
+			o => this.transform.playlistEntry(orm, o, trackArgs, episodeArgs, user)
 		);
 	}
 
@@ -97,10 +101,10 @@ export class PlaylistController extends BaseController {
 	)
 	async create(
 		@BodyParams() args: PlaylistMutateArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Playlist> {
-		const playlist = await this.playlistService.create(args, user);
-		return this.transform.playlist(playlist, {}, {}, {}, user);
+		const playlist = await this.playlistService.create(orm, args, user);
+		return this.transform.playlist(orm, playlist, {}, {}, {}, user);
 	}
 
 	@Post(
@@ -111,11 +115,11 @@ export class PlaylistController extends BaseController {
 	async update(
 		@BodyParam('id', {description: 'Playlist Id', isID: true}) id: string,
 		@BodyParams() args: PlaylistMutateArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Playlist> {
-		const playlist = await this.orm.Playlist.oneOrFail({id, user: user.id});
-		await this.playlistService.update(args, playlist);
-		return this.transform.playlist(playlist, {}, {}, {}, user);
+		const playlist = await orm.Playlist.oneOrFail({where: {id, user: user.id}});
+		await this.playlistService.update(orm, args, playlist);
+		return this.transform.playlist(orm, playlist, {}, {}, {}, user);
 	}
 
 	@Post(
@@ -124,10 +128,10 @@ export class PlaylistController extends BaseController {
 	)
 	async remove(
 		@BodyParam('id', {description: 'Playlist Id', isID: true}) id: string,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
-		const playlist = await this.orm.Playlist.oneOrFail({id, user: user.id});
-		await this.playlistService.remove(playlist);
+		const playlist = await orm.Playlist.oneOrFail({where: {id, user: user.id}});
+		await this.playlistService.remove(orm, playlist);
 	}
 
 }

@@ -5,13 +5,13 @@ import {AlbumTypesArtistMusic, FolderHealthID, FolderType, FolderTypesAlbum} fro
 import {Folder} from '../folder/folder';
 import {FolderHealthHint} from './health.model';
 import {getFolderDisplayArtwork} from '../folder/folder.service';
-import {OrmService} from '../../modules/engine/services/orm.service';
+import {Orm} from '../../modules/engine/services/orm.service';
 
 interface FolderRuleInfo {
 	id: FolderHealthID;
 	name: string;
 
-	run(orm: OrmService, folder: Folder, parents: Array<Folder>): Promise<RuleResult | undefined>;
+	run(orm: Orm, folder: Folder, parents: Array<Folder>): Promise<RuleResult | undefined>;
 }
 
 const folderRules: Array<FolderRuleInfo> = [
@@ -153,8 +153,8 @@ const folderRules: Array<FolderRuleInfo> = [
 		id: FolderHealthID.albumImageExists,
 		name: 'Album folder image is missing',
 		run: async (orm, folder): Promise<RuleResult | undefined> => {
-			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum && folder.children.length > 0)) {
-				const artwork = await getFolderDisplayArtwork(folder, orm);
+			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum && (await folder.children.count()) > 0)) {
+				const artwork = await getFolderDisplayArtwork(orm, folder);
 				if (!artwork) {
 					return {};
 				}
@@ -165,8 +165,8 @@ const folderRules: Array<FolderRuleInfo> = [
 		id: FolderHealthID.albumImageValid,
 		name: 'Album folder image is invalid',
 		run: async (orm, folder): Promise<RuleResult | undefined> => {
-			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum && folder.children.length > 0)) {
-				const artwork = await getFolderDisplayArtwork(folder, orm);
+			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum && (await folder.children.count()) > 0)) {
+				const artwork = await getFolderDisplayArtwork(orm, folder);
 				if (artwork && (artwork.format === 'invalid')) {
 					return {details: [{reason: 'Broken or unsupported File Format'}]};
 				}
@@ -187,8 +187,8 @@ const folderRules: Array<FolderRuleInfo> = [
 		id: FolderHealthID.albumImageQuality,
 		name: 'Album folder image is of low quality',
 		run: async (orm, folder): Promise<RuleResult | undefined> => {
-			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum && folder.children.length > 0)) {
-				const artwork = await getFolderDisplayArtwork(folder, orm);
+			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum && (await folder.children.count()) > 0)) {
+				const artwork = await getFolderDisplayArtwork(orm, folder);
 				if (artwork && artwork.height && artwork.width && (artwork.height < 300 || artwork.width < 300)) {
 					return {details: [{reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300'}]};
 				}
@@ -200,7 +200,7 @@ const folderRules: Array<FolderRuleInfo> = [
 		name: 'Artist folder image is missing',
 		run: async (orm, folder): Promise<RuleResult | undefined> => {
 			if (folder.folderType === FolderType.artist) {
-				const artwork = await getFolderDisplayArtwork(folder, orm);
+				const artwork = await getFolderDisplayArtwork(orm, folder);
 				if (!artwork) {
 					return {};
 				}
@@ -212,7 +212,7 @@ const folderRules: Array<FolderRuleInfo> = [
 		name: 'Artist folder image is invalid',
 		run: async (orm, folder): Promise<RuleResult | undefined> => {
 			if (folder.folderType === FolderType.artist) {
-				const artwork = await getFolderDisplayArtwork(folder, orm);
+				const artwork = await getFolderDisplayArtwork(orm, folder);
 				if (artwork && (artwork.format === 'invalid')) {
 					return {details: [{reason: 'Broken or unsupported File Format'}]};
 				}
@@ -247,7 +247,7 @@ const folderRules: Array<FolderRuleInfo> = [
 
 export class FolderRulesChecker {
 
-	async run(orm: OrmService, folder: Folder, parents: Array<Folder>): Promise<Array<FolderHealthHint>> {
+	async run(orm: Orm, folder: Folder, parents: Array<Folder>): Promise<Array<FolderHealthHint>> {
 		const result: Array<FolderHealthHint> = [];
 		for (const rule of folderRules) {
 			const match = await rule.run(orm, folder, parents);

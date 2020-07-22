@@ -1,14 +1,15 @@
 import {Root, RootPage, RootUpdateStatus} from './root.model';
-import {User} from '../user/user';
-import {BodyParam, BodyParams, Controller, CurrentUser, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {BaseController} from '../base/base.controller';
 import {IncludesRootArgs, RootFilterArgs, RootMutateArgs, RootOrderArgs, RootRefreshArgs} from './root.args';
 import {AdminChangeQueueInfo} from '../admin/admin';
-import {Inject} from 'typescript-ioc';
+import {InRequestScope, Inject} from 'typescript-ioc';
 import {IoService} from '../../modules/engine/services/io.service';
 import {PageArgs} from '../base/base.args';
+import {Context} from '../../modules/engine/rest/context';
 
+@InRequestScope
 @Controller('/root', {tags: ['Root'], roles: [UserRole.stream]})
 export class RootController extends BaseController {
 	@Inject
@@ -21,10 +22,10 @@ export class RootController extends BaseController {
 	async id(
 		@QueryParam('id', {description: 'Root Id', isID: true}) id: string,
 		@QueryParams() rootArgs: IncludesRootArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Root> {
 		return this.transform.root(
-			await this.orm.Root.oneOrFail(id),
+			orm, await orm.Root.oneOrFailByID(id),
 			rootArgs, user
 		);
 	}
@@ -39,11 +40,11 @@ export class RootController extends BaseController {
 		@QueryParams() rootArgs: IncludesRootArgs,
 		@QueryParams() filter: RootFilterArgs,
 		@QueryParams() order: RootOrderArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<RootPage> {
-		return await this.orm.Root.searchTransformFilter(
+		return await orm.Root.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.root(o, rootArgs, user)
+			o => this.transform.root(orm, o, rootArgs, user)
 		);
 	}
 
@@ -52,8 +53,11 @@ export class RootController extends BaseController {
 		() => RootUpdateStatus,
 		{description: 'Get root status by id'}
 	)
-	async status(@QueryParam('id', {description: 'Root Id', isID: true}) id: string): Promise<RootUpdateStatus> {
-		return this.transform.rootStatus(await this.orm.Root.oneOrFail(id));
+	async status(
+		@QueryParam('id', {description: 'Root Id', isID: true}) id: string,
+		@Ctx() {orm, user}: Context
+	): Promise<RootUpdateStatus> {
+		return this.transform.rootStatus(await orm.Root.oneOrFailByID(id));
 	}
 
 	@Post(
@@ -61,7 +65,10 @@ export class RootController extends BaseController {
 		() => AdminChangeQueueInfo,
 		{description: 'Create a root', roles: [UserRole.admin]}
 	)
-	async create(@BodyParams() args: RootMutateArgs): Promise<AdminChangeQueueInfo> {
+	async create(
+		@BodyParams() args: RootMutateArgs,
+		@Ctx() {orm, user}: Context
+	): Promise<AdminChangeQueueInfo> {
 		return await this.ioService.createRoot(args.name, args.path, args.strategy);
 	}
 
@@ -72,7 +79,8 @@ export class RootController extends BaseController {
 	)
 	async update(
 		@BodyParam('id', {description: 'Root Id', isID: true}) id: string,
-		@BodyParams() args: RootMutateArgs
+		@BodyParams() args: RootMutateArgs,
+		@Ctx() {orm, user}: Context
 	): Promise<AdminChangeQueueInfo> {
 		return await this.ioService.updateRoot(id, args.name, args.path, args.strategy);
 	}
@@ -82,7 +90,10 @@ export class RootController extends BaseController {
 		() => AdminChangeQueueInfo,
 		{description: 'Remove a root', roles: [UserRole.admin]}
 	)
-	async remove(@BodyParam('id', {description: 'Root Id', isID: true}) id: string): Promise<AdminChangeQueueInfo> {
+	async remove(
+		@BodyParam('id', {description: 'Root Id', isID: true}) id: string,
+		@Ctx() {orm, user}: Context
+	): Promise<AdminChangeQueueInfo> {
 		return await this.ioService.removeRoot(id);
 	}
 
@@ -91,11 +102,14 @@ export class RootController extends BaseController {
 		() => AdminChangeQueueInfo,
 		{description: 'Check podcast feeds for new episodes', roles: [UserRole.admin]}
 	)
-	async refresh(@BodyParams() args: RootRefreshArgs): Promise<AdminChangeQueueInfo> {
+	async refresh(
+		@BodyParams() args: RootRefreshArgs,
+		@Ctx() {orm}: Context
+	): Promise<AdminChangeQueueInfo> {
 		if (args.id) {
 			return await this.ioService.refreshRoot(args.id);
 		} else {
-			const result = await this.ioService.refresh();
+			const result = await this.ioService.refresh(orm);
 			return result[result.length - 1];
 		}
 	}

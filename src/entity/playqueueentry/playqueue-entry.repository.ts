@@ -1,20 +1,20 @@
-import {QueryOrder, Repository} from 'mikro-orm';
+import {QueryOrder, QueryOrderMap} from '../../modules/orm';
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType} from '../../types/enums';
 import {PlayQueueEntry} from './playqueue-entry';
-import {QueryOrderMap} from 'mikro-orm/dist/query';
 import {User} from '../user/user';
-import {QBFilterQuery} from 'mikro-orm/dist/typings';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 
-@Repository(PlayQueueEntry)
+// @Repository(PlayQueueEntry)
 export class PlayQueueEntryRepository extends BaseRepository<PlayQueueEntry, any, any> {
 	objType = DBObjectType.playqueueentry;
 
-	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: any): void {
+	buildOrder(order?: any): Array<OrderItem> {
 		//currently none
+		return [];
 	}
 
-	async buildFilter(filter?: any, user?: User): Promise<QBFilterQuery<PlayQueueEntry>> {
+	async buildFilter(filter?: any, user?: User): Promise<FindOptions<PlayQueueEntry>> {
 		//currently none
 		return {};
 	}

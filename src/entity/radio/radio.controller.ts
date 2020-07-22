@@ -1,11 +1,13 @@
 import {Radio, RadioIndex, RadioPage} from './radio.model';
-import {User} from '../user/user';
-import {BodyParam, BodyParams, Controller, CurrentUser, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {BaseController} from '../base/base.controller';
 import {IncludesRadioArgs, RadioFilterArgs, RadioMutateArgs, RadioOrderArgs} from './radio.args';
 import {PageArgs} from '../base/base.args';
+import {Context} from '../../modules/engine/rest/context';
+import {InRequestScope} from 'typescript-ioc';
 
+@InRequestScope
 @Controller('/radio', {tags: ['Radio'], roles: [UserRole.stream]})
 export class RadioController extends BaseController {
 	@Get('/id',
@@ -15,10 +17,10 @@ export class RadioController extends BaseController {
 	async id(
 		@QueryParam('id', {description: 'Radio Id', isID: true}) id: string,
 		@QueryParams() radioArgs: IncludesRadioArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Radio> {
 		return this.transform.radio(
-			await this.orm.Radio.oneOrFail(id),
+			orm, await orm.Radio.oneOrFailByID(id),
 			radioArgs, user
 		);
 	}
@@ -28,9 +30,12 @@ export class RadioController extends BaseController {
 		() => RadioIndex,
 		{description: 'Get the Navigation Index for Radios', summary: 'Get Index'}
 	)
-	async index(@QueryParams() filter: RadioFilterArgs): Promise<RadioIndex> {
-		const result = await this.orm.Radio.indexFilter(filter);
-		return this.transform.radioIndex(result);
+	async index(
+		@QueryParams() filter: RadioFilterArgs,
+		@Ctx() {orm}: Context
+	): Promise<RadioIndex> {
+		const result = await orm.Radio.indexFilter(filter);
+		return this.transform.radioIndex(orm, result);
 	}
 
 	@Get(
@@ -43,11 +48,11 @@ export class RadioController extends BaseController {
 		@QueryParams() radioArgs: IncludesRadioArgs,
 		@QueryParams() filter: RadioFilterArgs,
 		@QueryParams() order: RadioOrderArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<RadioPage> {
-		return await this.orm.Radio.searchTransformFilter(
+		return await orm.Radio.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.radio(o, radioArgs, user)
+			o => this.transform.radio(orm, o, radioArgs, user)
 		);
 	}
 
@@ -57,11 +62,11 @@ export class RadioController extends BaseController {
 	)
 	async create(
 		@BodyParams() args: RadioMutateArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Radio> {
-		const radio = this.orm.Radio.create(args);
-		await this.orm.orm.em.persistAndFlush(radio);
-		return await this.transform.radio(radio, {}, user);
+		const radio = orm.Radio.create(args);
+		await orm.Radio.persistAndFlush(radio);
+		return await this.transform.radio(orm, radio, {}, user);
 	}
 
 	@Post(
@@ -71,24 +76,27 @@ export class RadioController extends BaseController {
 	async update(
 		@BodyParam('id', {description: 'Root Id', isID: true}) id: string,
 		@BodyParams() args: RadioMutateArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Radio> {
-		const radio = await this.orm.Radio.oneOrFail(id);
+		const radio = await orm.Radio.oneOrFailByID(id);
 		radio.disabled = !!args.disabled;
 		radio.homepage = args.homepage;
 		radio.name = args.name;
 		radio.url = args.url;
-		await this.orm.orm.em.persistAndFlush(radio);
-		return await this.transform.radio(radio, {}, user);
+		await orm.Radio.persistAndFlush(radio);
+		return await this.transform.radio(orm, radio, {}, user);
 	}
 
 	@Post(
 		'/remove',
 		{description: 'Remove a Radio', roles: [UserRole.admin], summary: 'Remove Radio'}
 	)
-	async remove(@BodyParam('id', {description: 'Root Id', isID: true}) id: string): Promise<void> {
-		const radio = await this.orm.Radio.oneOrFail(id);
-		await this.orm.Radio.removeAndFlush(radio);
+	async remove(
+		@BodyParam('id', {description: 'Root Id', isID: true}) id: string,
+		@Ctx() {orm}: Context
+	): Promise<void> {
+		const radio = await orm.Radio.oneOrFailByID(id);
+		await orm.Radio.removeAndFlush(radio);
 	}
 
 }

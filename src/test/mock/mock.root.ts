@@ -6,6 +6,7 @@ import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import {extendSpecMockFolder, MockFolder, MockSpecFolder, writeMockFolder} from './mock.folder';
 import {extendSpecMockTrack, MockTrack} from './mock.track';
 import {Changes} from '../../modules/engine/worker/changes';
+import {Orm} from '../../modules/engine/services/orm.service';
 
 export interface MockSpecRoot extends MockSpecFolder {
 	id: string;
@@ -721,8 +722,8 @@ export async function writeMockRoot(root: MockRoot): Promise<void> {
 	}
 }
 
-export async function validateMock(mockFolder: MockFolder, workerService: WorkerService): Promise<void> {
-	const folder = await workerService.orm.Folder.findOne({path: ensureTrailingPathSeparator(mockFolder.path)});
+export async function validateMock(mockFolder: MockFolder, workerService: WorkerService, orm: Orm): Promise<void> {
+	const folder = await orm.Folder.findOne({where: {path: ensureTrailingPathSeparator(mockFolder.path)}});
 	expect(folder).toBeDefined();
 	if (!folder) {
 		return;
@@ -734,63 +735,66 @@ export async function validateMock(mockFolder: MockFolder, workerService: Worker
 		expect(folder.albumType, 'Album type unexpected: ' + mockFolder.path).toBe(mockFolder.expected.albumType);
 	}
 	for (const sub of mockFolder.folders) {
-		await validateMock(sub, workerService);
+		await validateMock(sub, workerService, orm);
 	}
 }
 
-export async function writeAndStoreMock(mockRoot: MockRoot, workerService: WorkerService): Promise<Changes> {
+export async function writeAndStoreMock(mockRoot: MockRoot, workerService: WorkerService, orm: Orm): Promise<Changes> {
 	await writeMockRoot(mockRoot);
-	const root = workerService.orm.Root.create({
+	const root = orm.Root.create({
 		path: mockRoot.path,
 		name: mockRoot.name,
 		strategy: mockRoot.strategy
 	});
-	await workerService.orm.Root.persistAndFlush(root);
+	await orm.Root.persistAndFlush(root);
 	mockRoot.id = root.id;
 	const changes = await workerService.refreshRoot({rootID: mockRoot.id});
-	const admin = await workerService.orm.User.oneOrFail({name: 'admin'});
+	const admin = await orm.User.oneOrFail({where: {name: 'admin'}});
 	if (changes.tracks.added.size > 0) {
-		const bookmark = workerService.orm.Bookmark.create({
-			track: changes.tracks.added.list[0],
-			user: admin,
+		const track = await orm.Track.oneOrFailByID(changes.tracks.added.ids()[0]);
+		const bookmark = orm.Bookmark.create({
 			position: 1,
 			comment: 'awesome!'
 		})
-		await workerService.orm.Bookmark.persistAndFlush(bookmark);
+		await bookmark.user.set(admin);
+		await bookmark.track.set(track);
+		await orm.Bookmark.persistAndFlush(bookmark);
 		//
-		const playlist = workerService.orm.Playlist.create({
+		const playlist = orm.Playlist.create({
 			name: 'playlist',
 			comment: 'awesome!',
 			isPublic: true,
-			user: admin,
 			changed: Date.now(),
 			duration: 0
 		});
-		await workerService.orm.Playlist.persistAndFlush(playlist);
-		const entry = workerService.orm.PlaylistEntry.create({position: 1, playlist, track: changes.tracks.added.list[0]});
-		await workerService.orm.PlaylistEntry.persistAndFlush(entry);
+		await playlist.user.set(admin);
+		await orm.Playlist.persistAndFlush(playlist);
+		const entry = orm.PlaylistEntry.create({position: 1});
+		await entry.playlist.set(playlist);
+		await entry.track.set(track);
+		await orm.PlaylistEntry.persistAndFlush(entry);
 	}
-	const radio = workerService.orm.Radio.create({
+	const radio = orm.Radio.create({
 		name: 'radio',
 		url: 'http://awesome!stream',
 		homepage: 'http://awesome!',
 		disabled: false
 	});
-	await workerService.orm.Radio.persistAndFlush(radio);
-	const podcast = workerService.orm.Podcast.create({
+	await orm.Radio.persistAndFlush(radio);
+	const podcast = orm.Podcast.create({
 		name: 'podcast',
 		lastCheck: 0,
 		url: 'http://podcast!stream',
 		status: PodcastStatus.new,
 		categories: []
 	});
-	await workerService.orm.Podcast.persistAndFlush(podcast);
-	const episode = workerService.orm.Episode.create({
+	await orm.Podcast.persistAndFlush(podcast);
+	const episode = orm.Episode.create({
 		name: 'episode',
-		podcast,
 		date: Date.now(),
 		status: PodcastStatus.new
 	});
-	await workerService.orm.Episode.persistAndFlush(episode);
+	await episode.podcast.set(podcast);
+	await orm.Episode.persistAndFlush(episode);
 	return changes;
 }

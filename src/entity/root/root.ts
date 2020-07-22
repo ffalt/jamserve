@@ -6,42 +6,42 @@ import {Series, SeriesQL} from '../series/series';
 import {RootScanStrategy} from '../../types/enums';
 import {Field, ObjectType} from 'type-graphql';
 import {Base, PaginatedResponse} from '../base/base';
-import {Collection, Entity, Enum, ManyToMany, OneToMany, Property, QueryOrder} from 'mikro-orm';
+import {Collection, Entity, ManyToMany, OneToMany, Property, QueryOrder} from '../../modules/orm';
 import {RootStatus} from '../../modules/engine/services/io.types';
 
 @ObjectType()
 @Entity()
 export class Root extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	path!: string;
 
 	@Field(() => RootScanStrategy)
-	@Enum(() => RootScanStrategy)
+	@Property(() => RootScanStrategy)
 	strategy!: RootScanStrategy;
 
 	@Field(() => [FolderQL])
-	@OneToMany(() => Folder, folder => folder.root, {orderBy: {path: QueryOrder.ASC}})
+	@OneToMany<Folder>(() => Folder, folder => folder.root, {orderBy: {path: QueryOrder.ASC}})
 	folders: Collection<Folder> = new Collection<Folder>(this);
 
 	@Field(() => [TrackQL])
-	@OneToMany(() => Track, track => track.root, {orderBy: {path: QueryOrder.ASC, tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC} as any}})
+	@OneToMany<Track>(() => Track, track => track.root, {orderBy: {path: QueryOrder.ASC, tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC}}})
 	tracks: Collection<Track> = new Collection<Track>(this);
 
 	@Field(() => [AlbumQL])
-	@ManyToMany(() => Album, album => album.roots, {orderBy: {artist: {nameSort: QueryOrder.ASC} as any, albumType: QueryOrder.ASC, name: QueryOrder.ASC}})
+	@ManyToMany<Album>(() => Album, album => album.roots, {orderBy: {artist: {nameSort: QueryOrder.ASC}, albumType: QueryOrder.ASC, name: QueryOrder.ASC}})
 	albums: Collection<Album> = new Collection<Album>(this);
 
 	@Field(() => [ArtistQL])
-	@ManyToMany(() => Artist, artist => artist.roots, {orderBy: {nameSort: QueryOrder.ASC}})
+	@ManyToMany<Artist>(() => Artist, artist => artist.roots, {orderBy: {nameSort: QueryOrder.ASC}})
 	artists: Collection<Artist> = new Collection<Artist>(this);
 
 	@Field(() => [SeriesQL])
-	@ManyToMany(() => Series, series => series.roots, {orderBy: {name: QueryOrder.ASC}})
+	@ManyToMany<Series>(() => Series, series => series.roots, {orderBy: {name: QueryOrder.ASC}})
 	series: Collection<Series> = new Collection<Series>(this);
 }
 

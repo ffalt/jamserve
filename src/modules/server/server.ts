@@ -1,4 +1,4 @@
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import http from 'http';
 import path from 'path';
 import express from 'express';
@@ -16,10 +16,11 @@ import {usePassPortMiddleWare} from './middlewares/passport.middleware';
 import {JAMAPI_URL_VERSION} from '../engine/rest/version';
 import {DocsMiddleware} from './middlewares/docs.middleware';
 import {useAuthenticatedCors} from './middlewares/cors.middleware';
+import {SessionService} from '../../entity/settings/session.service';
 
 const log = logger('Server');
 
-@Singleton
+@InRequestScope
 export class Server {
 	@Inject
 	engine!: EngineService;
@@ -29,6 +30,8 @@ export class Server {
 	rest!: RestMiddleware;
 	@Inject
 	configService!: ConfigService;
+	@Inject
+	sessionService!: SessionService;
 	@Inject
 	docs!: DocsMiddleware;
 	app!: express.Application;
@@ -58,7 +61,7 @@ export class Server {
 
 		app.use(useLogMiddleware());
 		app.use(useEngineMiddleware(this.engine));
-		app.use(useSessionMiddleware(this.configService));
+		app.use(useSessionMiddleware(this.configService, this.sessionService));
 		app.use(usePassPortMiddleWare(app, this.engine));
 		app.use(useAuthenticatedCors(this.configService));
 

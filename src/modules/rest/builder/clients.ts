@@ -1,4 +1,4 @@
-import {CustomPathParameters} from '../decorators/types';
+import {CustomPathParameters} from '../definitions/types';
 import {MethodMetadata} from '../definitions/method-metadata';
 import {getMetadataStorage} from '../metadata';
 import Mustache from 'mustache';

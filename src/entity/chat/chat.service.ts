@@ -2,9 +2,9 @@ import moment from 'moment';
 import {Chat} from './chat';
 import {SettingsService} from '../settings/settings.service';
 import {User} from '../user/user';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 
-@Singleton
+@InRequestScope
 export class ChatService {
 	@Inject
 	private settingsService!: SettingsService;

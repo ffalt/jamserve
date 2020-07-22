@@ -1,38 +1,38 @@
-import {QueryOrder, Repository} from 'mikro-orm';
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType, PodcastOrderFields} from '../../types/enums';
 import {Podcast} from './podcast';
-import {QBFilterQuery} from 'mikro-orm/dist/typings';
-import {QHelper} from '../base/base';
-import {QueryOrderMap} from 'mikro-orm/dist/query';
+import {OrderHelper} from '../base/base';
 import {User} from '../user/user';
 import {PodcastFilterArgs, PodcastOrderArgs} from './podcast.args';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {Artist} from '../artist/artist';
 
-@Repository(Podcast)
+// @Repository(Podcast)
 export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterArgs, PodcastOrderArgs> {
 	objType = DBObjectType.podcast;
 	indexProperty = 'name';
 
-	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: PodcastOrderArgs): void {
+	buildOrder(order?: PodcastOrderArgs): Array<OrderItem> {
+		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case PodcastOrderFields.created:
-				result.createdAt = direction;
-				break;
+				return [['createdAt', direction]];
 			case PodcastOrderFields.updated:
-				result.updatedAt = direction;
-				break;
+				return [['updatedAt', direction]];
 			case PodcastOrderFields.lastCheck:
-				result.lastCheck = direction;
-				break;
+				return [['lastCheck', direction]];
 			case PodcastOrderFields.default:
 			case PodcastOrderFields.name:
-				result.name = direction;
-				break;
+				return [['name', direction]];
 		}
+		return [];
 	}
 
-	async buildFilter(filter?: PodcastFilterArgs, user?: User): Promise<QBFilterQuery<Podcast>> {
-		return filter ? QHelper.buildQuery<Podcast>(
+	async buildFilter(filter?: PodcastFilterArgs, user?: User): Promise<FindOptions<Podcast>> {
+		if (!filter) {
+			return {};
+		}
+		const result = QHelper.buildQuery<Podcast>(
 			[
 				{id: filter.ids},
 				{name: QHelper.like(filter.query)},
@@ -44,12 +44,15 @@ export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterArgs
 				{generator: QHelper.eq(filter.generator)},
 				{status: QHelper.inOrEqual(filter.statuses)},
 				{createdAt: QHelper.gte(filter.since)},
-				{episodes: QHelper.foreignKeys(filter.episodeIDs)},
 				{lastCheck: QHelper.lte(filter.lastCheckTo)},
 				{lastCheck: QHelper.gte(filter.lastCheckFrom)},
 				...QHelper.inStringArray('categories', filter.categories)
 			]
-		) : {};
+		);
+		result.include = QHelper.includeQueries<Podcast>([
+			{episodes: [{id: QHelper.inOrEqual(filter.episodeIDs)}]}
+		]);
+		return result;
 	}
 
 }

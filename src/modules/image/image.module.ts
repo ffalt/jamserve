@@ -12,7 +12,7 @@ import {randomString} from '../../utils/random';
 import {AvatarGen} from './image.avatar';
 import {ImageResult} from './image.format';
 import {ConfigService} from '../engine/services/config.service';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 
 export interface ImageInfo {
 	width: number;
@@ -32,7 +32,7 @@ sharp.simd(false);
  * Handles image access/reading/writing/transforming
  */
 
-@Singleton
+@InRequestScope
 export class ImageModule {
 	private format = 'png';
 	private font: JimpFont | undefined;

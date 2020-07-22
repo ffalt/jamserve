@@ -21,8 +21,8 @@ export class NowPlayingResolver {
 	}
 
 	@Mutation(() => NowPlayingQL)
-	async scrobble(@Arg('id', () => ID!) id: string, @Ctx() {engine, user}: Context): Promise<NowPlaying> {
-		return await engine.nowPlayingService.scrobble(id, user);
+	async scrobble(@Arg('id', () => ID!) id: string, @Ctx() {engine, orm, user}: Context): Promise<NowPlaying> {
+		return await engine.nowPlayingService.scrobble(orm, id, user);
 	}
 }
 

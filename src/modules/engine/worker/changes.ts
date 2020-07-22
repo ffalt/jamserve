@@ -9,41 +9,60 @@ import moment from 'moment';
 import {Artwork} from '../../../entity/artwork/artwork';
 import {MetaMerger} from './merge-meta';
 import {BaseWorker} from './tasks/base';
+import {Orm, OrmService} from '../services/orm.service';
+import {Inject, InRequestScope} from 'typescript-ioc';
 
 const log = logger('Worker.Changes');
 
 class IdSet<T extends { id: string }> {
-	private map: Map<string, T> = new Map();
+	private set = new Set<string>();// map: Map<string, T> = new Map();
 
 	get size(): number {
-		return this.map.size;
+		return this.set.size;
 	}
 
-	get list(): Array<T> {
-		return [...this.map.values()];
-	}
+	//
+	// get list(): Array<T> {
+	// 	return [...this.map.values()];
+	// }
 
 	add(item?: T): void {
 		if (item) {
-			this.map.set(item.id, item);
+			this.set.add(item.id);
+		}
+	}
+
+	addID(item?: string): void {
+		if (item) {
+			this.set.add(item);
 		}
 	}
 
 	has(item: T): boolean {
-		return this.map.has(item.id);
+		return this.set.has(item.id);
+	}
+
+	hasID(item: string): boolean {
+		return this.set.has(item);
 	}
 
 	delete(item: T): void {
-		this.map.delete(item.id);
+		this.set.delete(item.id);
 	}
 
 	ids(): Array<string> {
-		return [...this.map.keys()];
+		return [...this.set];
 	}
 
 	append(items: Array<T>): void {
 		for (const item of items) {
 			this.add(item);
+		}
+	}
+
+	appendIDs(items: Array<string>): void {
+		for (const item of items) {
+			this.set.add(item);
 		}
 	}
 }
@@ -92,7 +111,10 @@ export function logChanges(changes: Changes): void {
 	logChangeSet('Roots', changes.roots);
 }
 
+@InRequestScope
 export class ChangesWorker extends BaseWorker {
+	@Inject
+	ormService!: OrmService;
 
 	/*
 		async cleanChanges(changes: Changes): Promise<void> {
@@ -211,34 +233,31 @@ export class ChangesWorker extends BaseWorker {
 		}
 	*/
 
-	async start(rootID: string): Promise<{ changes: Changes; root: Root }> {
-		if (!rootID) {
-			return Promise.reject(Error(`Root not found`));
-		}
-		const root = await this.orm.Root.findOne(rootID);
-		if (!root) {
-			return Promise.reject(Error(`Root not found`));
-		}
-		return {root, changes: new Changes()};
+	async start(rootID: string): Promise<{ changes: Changes; orm: Orm; root: Root }> {
+		const orm = this.ormService.fork();
+		const root = await orm.Root.findOneOrFailByID(rootID);
+		return {root, orm, changes: new Changes()};
 	}
 
-	async finish(changes: Changes, root: Root): Promise<Changes> {
-		const metaMerger = new MetaMerger(this.orm, changes, root);
-		await metaMerger.mergeMeta();
-		changes.tracks.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-		changes.artworks.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-		changes.folders.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-		changes.roots.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-		changes.albums.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-		changes.artists.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-		changes.series.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
+	async finish(orm: Orm, changes: Changes, root: Root): Promise<Changes> {
 		// TODO: clean image caches
-		log.debug('Flushing changes');
-		await this.orm.orm.em.flush();
+		const metaMerger = new MetaMerger(orm, changes, root.id);
+		await metaMerger.mergeMeta();
+		await this.mergeRemovals(orm, changes);
 		changes.end = Date.now();
 		logChanges(changes);
-
 		return changes;
 	}
 
+	private async mergeRemovals(orm: Orm, changes: Changes) {
+		await orm.Track.removeLaterByIDs(changes.tracks.removed.ids());
+		await orm.Artwork.removeLaterByIDs(changes.artworks.removed.ids());
+		await orm.Folder.removeLaterByIDs(changes.folders.removed.ids());
+		await orm.Root.removeLaterByIDs(changes.roots.removed.ids());
+		await orm.Album.removeLaterByIDs(changes.albums.removed.ids());
+		await orm.Artist.removeLaterByIDs(changes.artists.removed.ids());
+		await orm.Series.removeLaterByIDs(changes.series.removed.ids());
+		log.debug('Syncing Removal Updates to DB');
+		await orm.em.flush();
+	}
 }

@@ -1,7 +1,7 @@
 import {ApolloServer, AuthenticationError} from 'apollo-server-express';
 import {OrmService} from '../../engine/services/orm.service';
 import {EngineService} from '../../engine/services/engine.service';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {Context} from './apollo.context';
 import express from 'express';
 import {AuthChecker, buildSchema, registerEnumType} from 'type-graphql';
@@ -125,7 +125,7 @@ const apolloLogger: any = {
 	}
 }
 
-@Singleton
+@InRequestScope
 export class ApolloMiddleware {
 	@Inject
 	private orm!: OrmService;
@@ -146,13 +146,10 @@ export class ApolloMiddleware {
 				}
 			},
 			context: async ({req, res}): Promise<Context> => {
-				// console.log(req);
-				// console.log(req.body.query);
-				// console.log(req.body.variables);
 				if (!req.user) throw new AuthenticationError('you must be logged in');
 				return {
 					req, res,
-					orm: this.orm,
+					orm: this.orm.fork(),
 					engine: this.engine,
 					sessionID: req.session?.id,
 					user: req.user

@@ -1,43 +1,30 @@
-import {QueryOrder, Repository} from 'mikro-orm';
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType} from '../../types/enums';
 import {State} from './state';
-import {QueryOrderMap} from 'mikro-orm/dist/query';
 import {User} from '../user/user';
-import {QBFilterQuery} from 'mikro-orm/dist/typings';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 
-@Repository(State)
+// @Repository(State)
 export class StateRepository extends BaseRepository<State, any, any> {
 	objType = DBObjectType.state;
 
-	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: any): void {
+	buildOrder(order?: any): Array<OrderItem> {
 		//currently none
+		return [];
 	}
 
-	async buildFilter(filter?: any, user?: User): Promise<QBFilterQuery<State>> {
+	async buildFilter(filter?: any, user?: User): Promise<FindOptions<State>> {
 		//currently none
 		return {};
 	}
 
-	async findOrCreate(destID: string, type: DBObjectType, userID: string): Promise<State> {
-		const state = await this.findOne({
-			$and: [
-				{user: {id: userID}},
-				{destID: {$eq: destID}},
-				{destType: {$eq: type}}
-			]
-		});
+	async findOrCreate(destID: string, destType: DBObjectType, userID: string): Promise<State> {
+		const state = await this.findOne({where: {user: userID, destID, destType}});
 		return state || new State();
 	}
 
-	async findMany(destIDs: Array<string>, type: DBObjectType, userID: string): Promise<Array<State>> {
-		return await this.find({
-			$and: [
-				{user: {id: userID}},
-				{destID: {$in: destIDs}},
-				{destType: {$eq: type}}
-			]
-		});
+	async findMany(destIDs: Array<string>, destType: DBObjectType, userID: string): Promise<Array<State>> {
+		return await this.find({where: {user: userID, destID: destIDs, destType}});
 	}
 
 }

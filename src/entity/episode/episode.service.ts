@@ -6,9 +6,9 @@ import {downloadFile} from '../../utils/download';
 import {SupportedAudioFormat} from '../../utils/filetype';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
 import {logger} from '../../utils/logger';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {DebouncePromises} from '../../utils/debounce-promises';
-import {OrmService} from '../../modules/engine/services/orm.service';
+import {Orm} from '../../modules/engine/services/orm.service';
 import {Episode, EpisodeEnclosure} from './episode';
 import {AudioFormatType, PodcastStatus} from '../../types/enums';
 import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
@@ -16,7 +16,7 @@ import {ConfigService} from '../../modules/engine/services/config.service';
 
 const log = logger('EpisodeService');
 
-@Singleton
+@InRequestScope
 export class EpisodeService {
 	private episodeDownloadDebounce = new DebouncePromises<void>();
 	private readonly podcastsPath: string;
@@ -24,8 +24,6 @@ export class EpisodeService {
 	private audioModule!: AudioModule;
 	@Inject
 	private imageModule!: ImageModule;
-	@Inject
-	private orm!: OrmService;
 	@Inject
 	private configService!: ConfigService;
 
@@ -52,7 +50,8 @@ export class EpisodeService {
 		if (!SupportedAudioFormat.includes(suffix as AudioFormatType)) {
 			throw new Error(`Unsupported Podcast audio format .${suffix}`);
 		}
-		const p = path.resolve(this.podcastsPath, episode.podcast.id);
+		const podcastID = episode.podcast.idOrFail();
+		const p = path.resolve(this.podcastsPath, podcastID);
 		await fse.ensureDir(p);
 		const filename = path.join(p, `${episode.id}.${suffix}`);
 		log.info('retrieving file', url);
@@ -60,7 +59,7 @@ export class EpisodeService {
 		return filename;
 	}
 
-	async downloadEpisode(episode: Episode): Promise<void> {
+	async downloadEpisode(orm: Orm, episode: Episode): Promise<void> {
 		if (this.episodeDownloadDebounce.isPending(episode.id)) {
 			return this.episodeDownloadDebounce.append(episode.id);
 		}
@@ -70,8 +69,13 @@ export class EpisodeService {
 				const filename = await this.downloadEpisodeFile(episode);
 				const stat = await fse.stat(filename);
 				const result = await this.audioModule.read(filename);
+				const oldTag = await episode.tag.get();
+				if (oldTag) {
+					orm.Tag.removeLater(oldTag);
+				}
+				const tag = orm.Tag.create({...result, chapters: result.chapters ? JSON.stringify(result.chapters) : undefined});
+				await episode.tag.set(tag);
 				episode.status = PodcastStatus.completed;
-				episode.tag = this.orm.Tag.create(result);
 				episode.statCreated = stat.ctime.valueOf();
 				episode.statModified = stat.mtime.valueOf();
 				episode.fileSize = stat.size;
@@ -81,7 +85,7 @@ export class EpisodeService {
 				episode.status = PodcastStatus.error;
 				episode.error = (e || '').toString();
 			}
-			await this.orm.orm.em.persistAndFlush(episode);
+			await orm.Episode.persistAndFlush(episode);
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
 		} catch (e) {
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
@@ -89,33 +93,41 @@ export class EpisodeService {
 		}
 	}
 
-	async removeEpisodes(podcastID: string): Promise<void> {
-		const removeEpisodes = await this.orm.Episode.find({podcast: podcastID});
+	async removeEpisodes(orm: Orm, podcastID: string): Promise<void> {
+		const removeEpisodes = await orm.Episode.find({where: {podcast: podcastID}});
 		await this.imageModule.clearImageCacheByIDs(removeEpisodes.map(it => it.id));
 		for (const episode of removeEpisodes) {
-			this.orm.Episode.removeLater(episode);
+			orm.Episode.removeLater(episode);
 			if (episode.path) {
 				await fileDeleteIfExists(episode.path);
 			}
 		}
 	}
 
-	async deleteEpisode(episode: Episode): Promise<void> {
+	async deleteEpisode(orm: Orm, episode: Episode): Promise<void> {
 		if (!episode.path) {
 			return;
 		}
 		await fileDeleteIfExists(episode.path);
+		const tag = await episode.tag.get();
+		if (tag) {
+			orm.Tag.removeLater(tag);
+		}
+		await episode.tag.set(undefined);
 		episode.path = undefined;
 		episode.statCreated = undefined;
 		episode.statModified = undefined;
 		episode.fileSize = undefined;
-		episode.tag = undefined;
 		episode.status = PodcastStatus.deleted;
-		await this.orm.Episode.persistAndFlush(episode);
+		await orm.Episode.persistAndFlush(episode);
 	}
 
 	async getImage(episode: Episode, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
-		if (episode.tag && episode.tag.nrTagImages && episode.path) {
+		if (!episode.path) {
+			return;
+		}
+		const tag = await episode.tag.get();
+		if (tag && tag.nrTagImages) {
 			const result = await this.imageModule.getExisting(episode.id, size, format);
 			if (result) {
 				return result;
@@ -132,7 +144,7 @@ export class EpisodeService {
 
 	}
 
-	async countEpisodes(podcastID: string): Promise<number> {
-		return await this.orm.Episode.count({podcast: podcastID});
+	async countEpisodes(orm: Orm, podcastID: string): Promise<number> {
+		return await orm.Episode.count({where: {podcast: podcastID}});
 	}
 }

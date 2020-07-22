@@ -9,7 +9,7 @@ import {SeriesArgsQL, SeriesIndexArgsQL} from './series.args';
 export class SeriesResolver {
 	@Query(() => SeriesQL, {description: 'Get a Series by Id'})
 	async series(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Series> {
-		return await orm.Series.oneOrFail(id)
+		return await orm.Series.oneOrFailByID(id)
 	}
 
 	@Query(() => SeriesPageQL, {description: 'Search Series'})
@@ -27,26 +27,22 @@ export class SeriesResolver {
 
 	@FieldResolver(() => Int)
 	async rootsCount(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Series.populate(series, 'roots');
-		return series.roots.length;
+		return series.roots.count();
 	}
 
 	@FieldResolver(() => Int)
 	async foldersCount(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Series.populate(series, 'folders');
-		return series.folders.length;
+		return series.folders.count();
 	}
 
 	@FieldResolver(() => Int)
 	async tracksCount(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Series.populate(series, 'tracks');
-		return series.tracks.length;
+		return series.tracks.count();
 	}
 
 	@FieldResolver(() => Int)
 	async albumsCount(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Series.populate(series, 'albums');
-		return series.albums.length;
+		return series.albums.count();
 	}
 
 	@FieldResolver(() => StateQL)

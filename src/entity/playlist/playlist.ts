@@ -1,7 +1,7 @@
 import {User} from '../user/user';
 import {PlaylistEntry, PlaylistEntryQL} from '../playlistentry/playlist-entry';
 import {Field, ID, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToOne, OneToMany, Property, QueryOrder} from 'mikro-orm';
+import {Collection, Entity, ManyToOne, OneToMany, ORM_INT, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 
@@ -9,29 +9,29 @@ import {State, StateQL} from '../state/state';
 @Entity()
 export class Playlist extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
-	@ManyToOne(() => User)
-	user!: User;
+	@ManyToOne<User>(() => User, user => user.playlists)
+	user: Reference<User> = new Reference<User>(this);
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	comment?: string;
 
-	@Property()
+	@Property(() => String, {nullable: true})
 	coverArt?: string;
 
 	@Field(() => Boolean)
-	@Property()
+	@Property(() => Boolean)
 	isPublic: boolean = false;
 
 	@Field(() => Int)
-	@Property()
+	@Property(() => ORM_INT)
 	duration: number = 0;
 
 	@Field(() => [PlaylistEntryQL])
-	@OneToMany(() => PlaylistEntry, entry => entry.playlist, {orderBy: {position: QueryOrder.ASC}})
+	@OneToMany<PlaylistEntry>(() => PlaylistEntry, entry => entry.playlist, {orderBy: {position: QueryOrder.ASC}})
 	entries: Collection<PlaylistEntry> = new Collection<PlaylistEntry>(this);
 }
 

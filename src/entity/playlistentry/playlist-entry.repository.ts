@@ -1,32 +1,30 @@
-import {QueryOrder, Repository} from 'mikro-orm';
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType, PlaylistEntryOrderFields} from '../../types/enums';
 import {PlaylistEntry} from './playlist-entry';
-import {QueryOrderMap} from 'mikro-orm/dist/query';
 import {PlaylistEntryOrderArgs} from './playlist-entry.args';
 import {User} from '../user/user';
-import {QBFilterQuery} from 'mikro-orm/dist/typings';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {OrderHelper} from '../base/base';
 
-@Repository(PlaylistEntry)
+// @Repository(PlaylistEntry)
 export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, any, PlaylistEntryOrderArgs> {
 	objType = DBObjectType.playlistentry;
 
-	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: PlaylistEntryOrderArgs): void {
+	buildOrder(order?: PlaylistEntryOrderArgs): Array<OrderItem> {
+		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case PlaylistEntryOrderFields.created:
-				result.createdAt = direction;
-				break;
+				return [['createdAt', direction]];
 			case PlaylistEntryOrderFields.updated:
-				result.updatedAt = direction;
-				break;
+				return [['updatedAt', direction]];
 			case PlaylistEntryOrderFields.default:
 			case PlaylistEntryOrderFields.position:
-				result.position = direction;
-				break;
+				return [['position', direction]];
 		}
+		return [];
 	}
 
-	async buildFilter(filter?: any, user?: User): Promise<QBFilterQuery<PlaylistEntry>> {
+	async buildFilter(filter?: any, user?: User): Promise<FindOptions<PlaylistEntry>> {
 		return {};
 	}
 

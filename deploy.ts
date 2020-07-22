@@ -16,21 +16,6 @@ export async function spawnNPM(): Promise<void> {
 	});
 }
 
-export async function spawnMikroOrm(): Promise<void> {
-	return new Promise<void>((resolve, reject) => {
-		exec('npx mikro-orm cache:generate', {
-			cwd: './deploy',
-		}, function(error, stdout, stderr) {
-			console.log(stdout);
-			if (error) {
-				reject(error);
-			} else {
-				resolve();
-			}
-		});
-	});
-}
-
 async function start(): Promise<void> {
 	console.log('Cleaning output path "deploy"');
 	await fse.remove('deploy');
@@ -48,12 +33,6 @@ async function start(): Promise<void> {
 		scripts: {
 			start: 'node dist/index.js'
 		},
-		"mikro-orm": {
-			"useTsNode": false,
-			"configPaths": [
-				"./dist/config/orm.config.js"
-			]
-		},
 		engines: pack.engines,
 		dependencies: pack.dependencies,
 	};
@@ -62,20 +41,13 @@ async function start(): Promise<void> {
 	await spawnNPM();
 	console.log('Copy software files');
 	await fse.copy('dist', 'deploy/dist');
-	console.log('Copy orm files');
-	await fse.copy('src', 'deploy/src');
-	await fse.copy('tsconfig.json', 'deploy/tsconfig.json');
 	console.log('Copy static files');
 	await fse.copy('static', 'deploy/static');
 	console.log('Copy doc files');
 	await fse.copy('LICENSE', 'deploy/LICENSE');
 	await fse.copy('README.md', 'deploy/README.md');
-	console.log('Create orm cache');
-	await spawnMikroOrm();
 	console.log('Cleanup "deploy/node_modules"');
 	await fse.remove('deploy/node_modules');
-	console.log('Cleanup "deploy/src"');
-	await fse.remove('deploy/src');
 	console.log('done.');
 }
 

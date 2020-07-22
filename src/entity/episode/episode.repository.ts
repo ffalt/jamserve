@@ -1,39 +1,33 @@
-import {QueryOrder, Repository} from 'mikro-orm';
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType, EpisodeOrderFields} from '../../types/enums';
-import {QHelper} from '../base/base';
-import {QBFilterQuery} from 'mikro-orm/dist/typings';
+import {OrderHelper} from '../base/base';
 import {Episode} from './episode';
-import {QueryOrderMap} from 'mikro-orm/dist/query';
 import {EpisodeFilterArgs, EpisodeOrderArgs} from './episode.args';
 import {User} from '../user/user';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 
-@Repository(Episode)
 export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs, EpisodeOrderArgs> {
 	objType = DBObjectType.episode;
 
-	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: EpisodeOrderArgs): void {
+	buildOrder(order?: EpisodeOrderArgs): Array<OrderItem> {
+		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case EpisodeOrderFields.created:
-				result.createdAt = direction;
-				break;
+				return [['createdAt', direction]];
 			case EpisodeOrderFields.updated:
-				result.updatedAt = direction;
-				break;
+				return [['updatedAt', direction]];
 			case EpisodeOrderFields.status:
-				result.status = direction;
-				break;
+				return [['status', direction]];
 			case EpisodeOrderFields.name:
-				result.name = direction;
-				break;
+				return [['name', direction]];
 			case EpisodeOrderFields.default:
 			case EpisodeOrderFields.date:
-				result.date = direction;
-				break;
+				return [['date', direction]];
 		}
+		return [];
 	}
 
-	async buildFilter(filter?: EpisodeFilterArgs, user?: User): Promise<QBFilterQuery<Episode>> {
+	async buildFilter(filter?: EpisodeFilterArgs, user?: User): Promise<FindOptions<Episode>> {
 		return filter ? QHelper.buildQuery<Episode>(
 			[
 				{id: filter.ids},
@@ -43,7 +37,7 @@ export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs
 				{guid: QHelper.inOrEqual(filter.guids)},
 				{author: QHelper.inOrEqual(filter.authors)},
 				{createdAt: QHelper.gte(filter.since)},
-				{podcast: QHelper.foreignKey(filter.podcastIDs)}
+				{podcast: QHelper.inOrEqual(filter.podcastIDs)}
 			]
 		) : {};
 	}

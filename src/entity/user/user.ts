@@ -3,62 +3,67 @@ import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {PlayQueue, PlayQueueQL} from '../playqueue/playqueue';
 import {Field, Int, ObjectType} from 'type-graphql';
 import {State} from '../state/state';
-import {Cascade, Collection, Entity, OneToMany, OneToOne, Property, QueryOrder} from 'mikro-orm';
+import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {UserRole} from '../../types/enums';
+import {Playlist, PlaylistQL} from '../playlist/playlist';
 
 @ObjectType()
 @Entity()
 export class User extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
-	@Property()
+	@Property(() => String)
 	salt!: string;
 
-	@Property()
+	@Property(() => String)
 	hash!: string;
 
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	email!: string;
 
 	@Field(() => Int, {nullable: true})
-	@Property()
+	@Property(() => ORM_INT, {nullable: true})
 	maxBitRate?: number;
 
-	@Property()
+	@Property(() => Boolean)
 	roleAdmin!: boolean;
 
-	@Property()
+	@Property(() => Boolean)
 	roleStream!: boolean;
 
-	@Property()
+	@Property(() => Boolean)
 	roleUpload!: boolean;
 
-	@Property()
+	@Property(() => Boolean)
 	rolePodcast!: boolean;
 
 	@Field(() => [SessionQL])
-	@OneToMany(() => Session, session => session.user, {orderBy: {expires: QueryOrder.ASC}})
+	@OneToMany<Session>(() => Session, session => session.user, {orderBy: {expires: QueryOrder.ASC}})
 	sessions: Collection<Session> = new Collection<Session>(this);
 
 	@Field(() => [BookmarkQL])
-	@OneToMany(() => Bookmark, bookmark => bookmark.user, {
+	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.user, {
 		orderBy: {
-			track: {path: QueryOrder.ASC, tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC}} as any,
-			episode: {path: QueryOrder.ASC, tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC}} as any,
+			track: {path: QueryOrder.ASC, tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC}},
+			episode: {path: QueryOrder.ASC, tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC}},
 			position: QueryOrder.ASC
 		}
 	})
 	bookmarks: Collection<Bookmark> = new Collection<Bookmark>(this);
 
 	@Field(() => PlayQueueQL, {nullable: true})
-	@OneToOne(() => PlayQueue)
-	playQueue?: PlayQueue;
+	@OneToOne<PlayQueue>(() => PlayQueue, playQueue => playQueue.user, {nullable: true})
+	playQueue: Reference<PlayQueue> = new Reference<PlayQueue>(this);
 
-	@OneToMany(() => State, state => state.user, {cascade: [Cascade.REMOVE], orderBy: {destType: QueryOrder.ASC}})
+	@Field(() => [PlaylistQL])
+	@OneToMany<Playlist>(() => Playlist, playlist => playlist.user)
+	playlists: Collection<Playlist> = new Collection<Playlist>(this);
+
+	@OneToMany<State>(() => State, state => state.user, {orderBy: {destType: QueryOrder.ASC}})
 	states: Collection<State> = new Collection<State>(this);
 }
 

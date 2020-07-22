@@ -7,13 +7,13 @@ import {GenreIndex} from './genre.model';
 export class GenreResolver {
 
 	@Query(() => [GenreQL], {description: 'Get a list of genres found in the library'})
-	async genres(@Ctx() {engine}: Context): Promise<Array<Genre>> {
-		return engine.genreService.getGenres();
+	async genres(@Ctx() {engine, orm}: Context): Promise<Array<Genre>> {
+		return engine.genreService.getGenres(orm);
 	}
 
 	@Query(() => GenreIndexQL, {description: 'Get the Navigation Index for Genres'})
-	async genresIndex(@Ctx() {engine}: Context): Promise<GenreIndex> {
-		return await engine.genreService.index();
+	async genresIndex(@Ctx() {engine, orm}: Context): Promise<GenreIndex> {
+		return await engine.genreService.index(orm);
 	}
 
 }

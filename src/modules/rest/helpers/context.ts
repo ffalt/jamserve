@@ -1,8 +1,9 @@
 import express from 'express';
 
-export interface RestContext<T> {
+export interface RestContext<USER, ORM> {
 	req: express.Request;
 	res: express.Response;
 	next: express.NextFunction;
-	user: T;
+	user: USER;
+	orm: ORM;
 }

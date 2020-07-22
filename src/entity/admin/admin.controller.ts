@@ -1,11 +1,13 @@
-import {BodyParams, Controller, Get, Post, QueryParam} from '../../modules/rest';
+import {BodyParams, Controller, Ctx, Get, Post, QueryParam} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {AdminChangeQueueInfo, AdminSettings} from './admin';
-import {Inject} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {SettingsService} from '../settings/settings.service';
 import {IoService} from '../../modules/engine/services/io.service';
 import {AdminSettingsArgs} from './admin.args';
+import {Context} from '../../modules/engine/rest/context';
 
+@InRequestScope
 @Controller('/admin', {tags: ['Administration'], roles: [UserRole.admin]})
 export class AdminController {
 	@Inject
@@ -27,7 +29,9 @@ export class AdminController {
 		() => AdminChangeQueueInfo,
 		{description: 'Get Queue Information for Admin Change Tasks', summary: 'Get Queue Info'}
 	)
-	async queueId(@QueryParam('id', {description: 'Queue Task Id', isID: true}) id: string): Promise<AdminChangeQueueInfo> {
+	async queueId(
+		@QueryParam('id', {description: 'Queue Task Id', isID: true}) id: string
+	): Promise<AdminChangeQueueInfo> {
 		return this.ioService.getAdminChangeQueueInfoStatus(id);
 	}
 
@@ -35,8 +39,11 @@ export class AdminController {
 		'/settings/update',
 		{description: 'Update the Server Admin Settings', summary: 'Set Settings'}
 	)
-	async settingsUpdate(@BodyParams() args: AdminSettingsArgs): Promise<void> {
-		await this.settingsService.updateSettings(args);
+	async settingsUpdate(
+		@BodyParams() args: AdminSettingsArgs,
+		@Ctx() {orm}: Context
+	): Promise<void> {
+		await this.settingsService.updateSettings(orm, args);
 	}
 
 }

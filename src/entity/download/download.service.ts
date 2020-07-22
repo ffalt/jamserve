@@ -1,6 +1,5 @@
 import path from 'path';
-import {Inject, Singleton} from 'typescript-ioc';
-import {OrmService} from '../../modules/engine/services/orm.service';
+import {InRequestScope} from 'typescript-ioc';
 import {Episode} from '../episode/episode';
 import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
 import {Track} from '../track/track';
@@ -18,11 +17,8 @@ import {DBObjectType} from '../../types/enums';
 import {Base} from '../base/base';
 import {Artwork} from '../artwork/artwork';
 
-@Singleton
+@InRequestScope
 export class DownloadService {
-	@Inject
-	private orm!: OrmService;
-
 	private async downloadEpisode(episode: Episode, format?: string): Promise<ApiBinaryResult> {
 		if (!episode.path) {
 			return Promise.reject(Error('Podcast episode not ready'));
@@ -43,36 +39,47 @@ export class DownloadService {
 	}
 
 	private async downloadArtist(artist: Artist, format?: string): Promise<ApiBinaryResult> {
-		const fileList = artist.tracks.getItems().map(t => path.join(t.path, t.fileName));
+		const tracks = await artist.tracks.getItems();
+		const fileList = tracks.map(t => path.join(t.path, t.fileName));
 		return {pipe: new CompressListStream(fileList, artist.name, format)};
 	}
 
 	private async downloadSeries(series: Series, format?: string): Promise<ApiBinaryResult> {
-		const fileList = series.tracks.getItems().map(t => path.join(t.path, t.fileName));
+		const tracks = await series.tracks.getItems();
+		const fileList = tracks.map(t => path.join(t.path, t.fileName));
 		return {pipe: new CompressListStream(fileList, series.name, format)};
 	}
 
 	private async downloadAlbum(album: Album, format?: string): Promise<ApiBinaryResult> {
-		const fileList = album.tracks.getItems().map(t => path.join(t.path, t.fileName));
+		const tracks = await album.tracks.getItems();
+		const fileList = tracks.map(t => path.join(t.path, t.fileName));
 		return {pipe: new CompressListStream(fileList, album.name, format)};
 	}
 
 	private async downloadPodcast(podcast: Podcast, format: string | undefined): Promise<ApiBinaryResult> {
-		const fileList: Array<string> = podcast.episodes.getItems().filter(e => !!e.path).map(e => e.path as string);
+		const episodes = await podcast.episodes.getItems();
+		const fileList: Array<string> = episodes.filter(e => !!e.path).map(e => e.path as string);
 		return {pipe: new CompressListStream(fileList, podcast.id, format)};
 	}
 
 	private async downloadPlaylist(playlist: Playlist, format: string | undefined, user: User): Promise<ApiBinaryResult> {
-		if (playlist.user.id !== user.id && !playlist.isPublic) {
+		const userID = await playlist.user.id();
+		if (userID !== user.id && !playlist.isPublic) {
 			return Promise.reject(UnauthError());
 		}
-		const fileList = playlist.entries.getItems().map(t => {
-			if (t.episode) {
-				return t.episode.path
-			} else if (t.track) {
-				return path.join(t.track.path, t.track.fileName)
+		const entries = await playlist.entries.getItems();
+		const fileList: Array<string> = [];
+		for (const entry of entries) {
+			const track = await entry.track.get();
+			if (track) {
+				fileList.push(path.join(track.path, track.fileName))
+			} else {
+				const episode = await entry.episode.get();
+				if (episode && episode.path) {
+					fileList.push(episode.path);
+				}
 			}
-		}).filter(s => !!s) as Array<string>;
+		}
 		// TODO: add playlist index file m3u/pls
 		return {pipe: new CompressListStream(fileList, playlist.name, format)};
 	}

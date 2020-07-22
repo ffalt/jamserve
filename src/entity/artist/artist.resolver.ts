@@ -14,7 +14,7 @@ import {ArtistIndexArgsQL, ArtistsArgsQL} from './artist.args';
 export class ArtistResolver {
 	@Query(() => ArtistQL, {description: 'Get an Artist by Id'})
 	async artist(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Artist> {
-		return await orm.Artist.oneOrFail(id)
+		return await orm.Artist.oneOrFailByID(id)
 	}
 
 	@Query(() => ArtistPageQL, {description: 'Search Artists'})
@@ -37,73 +37,61 @@ export class ArtistResolver {
 
 	@FieldResolver(() => [TrackQL])
 	async tracks(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Track>> {
-		await orm.Artist.populate(artist, 'tracks');
 		return artist.tracks.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async tracksCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Artist.populate(artist, 'tracks');
-		return artist.tracks.length;
+		return artist.tracks.count();
 	}
 
 	@FieldResolver(() => [TrackQL])
 	async albumTracks(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Track>> {
-		await orm.Artist.populate(artist, 'albumTracks');
 		return artist.albumTracks.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async albumsTracksCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Artist.populate(artist, 'albumTracks');
-		return artist.albumTracks.length;
+		return artist.albumTracks.count();
 	}
 
 	@FieldResolver(() => [AlbumQL])
 	async albums(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Album>> {
-		await orm.Artist.populate(artist, 'albums');
 		return artist.albums.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async albumsCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Artist.populate(artist, 'albums');
-		return artist.albums.length;
+		return artist.albums.count();
 	}
 
 	@FieldResolver(() => [RootQL])
 	async roots(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Root>> {
-		await orm.Artist.populate(artist, 'roots');
 		return artist.roots.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async rootsCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Artist.populate(artist, 'roots');
-		return artist.roots.length;
+		return artist.roots.count();
 	}
 
 	@FieldResolver(() => [FolderQL])
 	async folders(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Folder>> {
-		await orm.Artist.populate(artist, 'folders');
 		return artist.folders.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async foldersCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Artist.populate(artist, 'folders');
-		return artist.folders.length;
+		return artist.folders.count();
 	}
 
 	@FieldResolver(() => [SeriesQL])
 	async series(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Series>> {
-		await orm.Artist.populate(artist, 'series');
 		return artist.series.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async seriesCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Artist.populate(artist, 'series');
-		return artist.series.length;
+		return artist.series.count();
 	}
 }

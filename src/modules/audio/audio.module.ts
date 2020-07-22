@@ -17,14 +17,14 @@ import {AudioFormatType, TagFormatType} from '../../types/enums';
 import {AdminSettingsExternal, SettingsService} from '../../entity/settings/settings.service';
 import {RawTag} from './rawTag';
 import {ConfigService} from '../engine/services/config.service';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
 }
 
 export const ID3TrackTagRawFormatTypes = [TagFormatType.id3v20, TagFormatType.id3v21, TagFormatType.id3v22, TagFormatType.id3v23, TagFormatType.id3v24];
 
-@Singleton
+@InRequestScope
 export class AudioModule {
 	musicbrainz: MusicbrainzClient;
 	acoustid: AcoustidClient;

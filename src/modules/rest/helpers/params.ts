@@ -1,5 +1,5 @@
 import { findType } from "./findType";
-import { ReturnTypeFunc, TypeOptions, ValidateOptions } from "../decorators/types";
+import { ReturnTypeFunc, TypeOptions, ValidateOptions } from "../definitions/types";
 import {CommonArgMetadata} from '../definitions/param-metadata';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 

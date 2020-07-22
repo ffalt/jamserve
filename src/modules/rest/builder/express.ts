@@ -3,7 +3,7 @@ import {getMetadataStorage} from '../metadata';
 import {ParamMetadata, RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata';
 import {FieldMetadata} from '../definitions/field-metadata';
 import {getDefaultValue} from '../helpers/default-value';
-import {CustomPathParameterGroup, CustomPathParameters, FieldOptions, TypeOptions} from '../decorators/types';
+import {CustomPathParameterGroup, CustomPathParameters, FieldOptions, TypeOptions} from '../definitions/types';
 import {RestContext} from '../helpers/context';
 import {ClassMetadata} from '../definitions/class-metadata';
 import {ApiBaseResponder} from './express-responder';
@@ -14,6 +14,7 @@ import {ensureTrailingPathSeparator, fileDeleteIfExists} from '../../../utils/fs
 import finishedRequest from 'on-finished';
 import {logger} from '../../../utils/logger';
 import {getEnumReverseValuesMap} from '../helpers/enums';
+import {Container} from 'typescript-ioc';
 
 const log = logger('RestAPI');
 
@@ -122,7 +123,7 @@ function prepareParameter(param: RestParamMetadata | FieldMetadata, data: any, i
 	return value;
 }
 
-function prepareParameterSingle(param: RestParamMetadata, context: RestContext<any>): any {
+function prepareParameterSingle(param: RestParamMetadata, context: RestContext<any, any>): any {
 	let data: any = {};
 	switch (param.mode) {
 		case 'body':
@@ -144,7 +145,7 @@ function mapArgFields(argumentType: ClassMetadata, data: any, args: any = {}): v
 	});
 }
 
-function prepareParameterObj(param: RestParamsMetadata, context: RestContext<any>): any {
+function prepareParameterObj(param: RestParamsMetadata, context: RestContext<any, any>): any {
 	const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === param.getType());
 	if (!argumentType) {
 		throw GenericError(
@@ -177,7 +178,7 @@ function prepareParameterObj(param: RestParamsMetadata, context: RestContext<any
 	return args;
 }
 
-function prepareArg(param: ParamMetadata, context: RestContext<any>): any {
+function prepareArg(param: ParamMetadata, context: RestContext<any, any>): any {
 	switch (param.kind) {
 		case 'context':
 			return param.propertyName ? (context as any)[param.propertyName] : context;
@@ -199,13 +200,14 @@ function registerAutoClean(req: express.Request, res: express.Response): void {
 	});
 }
 
-async function callMethod(method: MethodMetadata, context: RestContext<any>, name: string): Promise<void> {
+async function callMethod(method: MethodMetadata, context: RestContext<any, any>, name: string): Promise<void> {
 	try {
 		const Controller = method.controllerClassMetadata?.target as any;
 		if (!Controller) {
 			throw GenericError(`Internal: Invalid controller in method ${method.methodName}`);
 		}
-		const instance = new Controller();
+		const instance = Container.get(Controller) as any;
+		const func = instance[method.methodName];
 		const args = [];
 		const params = method.params.sort((a, b) => a.index - b.index)
 		for (const param of params) {
@@ -214,20 +216,20 @@ async function callMethod(method: MethodMetadata, context: RestContext<any>, nam
 		}
 		if (method.binary !== undefined) {
 			// eslint-disable-next-line prefer-spread
-			const result = await instance[method.methodName].apply(instance, args);
+			const result = await func.apply(instance, args);
 			ApiBaseResponder.sendBinary(context.req, context.res, result);
 			return;
 		}
 		if (method.getReturnType === undefined) {
 			// eslint-disable-next-line prefer-spread
-			await instance[method.methodName].apply(instance, args);
+			await func.apply(instance, args);
 			ApiBaseResponder.sendOK(context.req, context.res);
 			return;
 		}
 		const target = method.getReturnType();
 		if (target === String) {
 			// eslint-disable-next-line prefer-spread
-			const result = await instance[method.methodName].apply(instance, args);
+			const result = await func.apply(instance, args);
 			ApiBaseResponder.sendString(context.req, context.res, result);
 			return;
 		}
@@ -270,6 +272,7 @@ function getMethodResultFormat(method: MethodMetadata): string {
 
 export interface RestOptions {
 	validateRoles: (user: Express.User | undefined, roles: Array<string>) => boolean;
+	controllers: any[];
 	tmpPath: string;
 }
 
@@ -392,7 +395,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 							), pathParameters: undefined
 						} as any;
 					}
-					await callMethod(get, {req, res, next, user: req.user}, 'Get');
+					await callMethod(get, {req, res, orm: (req as any).orm, next, user: req.user}, 'Get');
 				} catch (e) {
 					ApiBaseResponder.sendError(req, res, e);
 				}
@@ -427,7 +430,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 							), pathParameters: undefined
 						} as any;
 					}
-					await callMethod(post, {req, res, next, user: req.user}, 'Post');
+					await callMethod(post, {req, res, next, orm: (req as any).orm, user: req.user}, 'Post');
 				} catch (e) {
 					ApiBaseResponder.sendError(req, res, e);
 				}

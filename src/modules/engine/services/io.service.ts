@@ -2,13 +2,12 @@ import {ArtworkImageType, RootScanStrategy, TrackHealthID} from '../../../types/
 import {Changes} from '../worker/changes';
 import {WorkerService} from './worker.service';
 import {RawTag} from '../../audio/rawTag';
-import {OrmService} from './orm.service';
+import {Orm, OrmService} from './orm.service';
 import {AdminChangeQueueInfo, IoRequest, RootStatus, WorkerRequestMode} from './io.types';
 import {
 	WorkerRequestCreateArtwork,
 	WorkerRequestCreateFolder,
 	WorkerRequestCreateRoot,
-	WorkerRequestRemoveArtwork,
 	WorkerRequestDeleteFolders,
 	WorkerRequestDownloadArtwork,
 	WorkerRequestFixTrack,
@@ -16,6 +15,7 @@ import {
 	WorkerRequestMoveTracks,
 	WorkerRequestParameters,
 	WorkerRequestRefreshRoot,
+	WorkerRequestRemoveArtwork,
 	WorkerRequestRemoveRoot,
 	WorkerRequestRemoveTracks,
 	WorkerRequestRenameArtwork,
@@ -25,12 +25,12 @@ import {
 	WorkerRequestUpdateRoot,
 	WorkerRequestWriteTrackTags
 } from './worker.types';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../../utils/logger';
 
 const log = logger('IO');
 
-@Singleton
+@InRequestScope
 export class IoService {
 	@Inject
 	public orm!: OrmService;
@@ -179,8 +179,8 @@ export class IoService {
 		return status;
 	}
 
-	async refresh(): Promise<Array<AdminChangeQueueInfo>> {
-		const roots = await this.orm.Root.findAll();
+	async refresh(orm: Orm): Promise<Array<AdminChangeQueueInfo>> {
+		const roots = await orm.Root.all();
 		const result: Array<AdminChangeQueueInfo> = [];
 		for (const root of roots) {
 			result.push(await this.refreshRoot(root.id));

@@ -1,6 +1,7 @@
 import {Changes, ChangeSet} from '../../modules/engine/worker/changes';
 import {MockRoot, validateMock} from './mock.root';
 import {WorkerService} from '../../modules/engine/services/worker.service';
+import {Orm} from '../../modules/engine/services/orm.service';
 
 function validateChangeSet(name: string, changeSet: ChangeSet<any>, added: number, updated: number, removed: number) {
 	expect(changeSet.added.size, `New ${name} count doesnt match`).toBe(added);
@@ -36,7 +37,7 @@ export function expectChanges(changes: Changes, expected: {
 	validateChangeSet('Series', changes.series, expected.seriesNew || 0, expected.seriesUpdate || 0, expected.seriesRemoved || 0);
 }
 
-export async function validateMockRoot(mockRoot: MockRoot, changes: Changes, workerService: WorkerService): Promise<void> {
+export async function validateMockRoot(mockRoot: MockRoot, changes: Changes, workerService: WorkerService, orm: Orm): Promise<void> {
 	validateChangeSet('Track', changes.tracks, mockRoot.expected.tracks, 0, 0);
 	validateChangeSet('Artist', changes.artists, mockRoot.expected.artists.length, 0, 0);
 	validateChangeSet('Folder', changes.folders, mockRoot.expected.folders, 0, 0);
@@ -44,17 +45,17 @@ export async function validateMockRoot(mockRoot: MockRoot, changes: Changes, wor
 	validateChangeSet('Album', changes.albums, mockRoot.expected.albums, 0, 0);
 	validateChangeSet('Series', changes.series, mockRoot.expected.series, 0, 0);
 	for (const a of mockRoot.expected.artists) {
-		expect(changes.artists.added.list.find(artist => artist.name === a), `Missing Artist ${a}`).toBeDefined();
+		expect(await orm.Artist.findOne({where: {name: a}}), `Missing Artist ${a}`).toBeDefined();
 	}
 	if (mockRoot.albums) {
 		expect(changes.albums.added.size, 'Album count doesnt match').toBe(mockRoot.albums.length);
 		for (const album of mockRoot.albums) {
-			const b = changes.albums.added.list.find(a => a.name === album.name && a.artist.name === album.artist);
+			const b = await orm.Album.findOneFilter({name: album.name, artist: album.artist});
 			expect(b, `Album not found ${album.name} - ${album.artist}`).toBeDefined();
 			if (b) {
 				expect(b.albumType, `Album Type doesnt match ${album.name} - ${album.artist}`).toBe(album.albumType);
 			}
 		}
 	}
-	await validateMock(mockRoot, workerService);
+	await validateMock(mockRoot, workerService, orm);
 }

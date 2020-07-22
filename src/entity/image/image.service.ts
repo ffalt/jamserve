@@ -1,5 +1,5 @@
 import path from 'path';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {ImageModule} from '../../modules/image/image.module';
 import {Folder} from '../folder/folder';
 import {DBObjectType, FolderType} from '../../types/enums';
@@ -25,8 +25,9 @@ import {SeriesService} from '../series/series.service';
 import {RootService} from '../root/root.service';
 import {Artwork} from '../artwork/artwork';
 import {ArtworkService} from '../artwork/artwork.service';
+import {Orm} from '../../modules/engine/services/orm.service';
 
-@Singleton
+@InRequestScope
 export class ImageService {
 	@Inject
 	private imageModule!: ImageModule;
@@ -64,8 +65,9 @@ export class ImageService {
 		return result;
 	}
 
-	private static getCoverArtTextEpisode(episode: Episode): string {
-		let text: string | undefined = episode.tag?.title;
+	private static async getCoverArtTextEpisode(episode: Episode): Promise<string> {
+		const tag = await episode.tag.get();
+		let text: string | undefined = tag?.title;
 		if (!text && episode.path) {
 			text = path.basename(episode.path);
 		}
@@ -78,22 +80,23 @@ export class ImageService {
 		return text;
 	}
 
-	private static getCoverArtTextTrack(track: Track): string {
-		return track.tag && track.tag.title ? track.tag.title : path.basename(track.path);
+	private static async getCoverArtTextTrack(track: Track): Promise<string> {
+		const tag = await track.tag.get();
+		return tag && tag.title ? tag.title : path.basename(track.path);
 	}
 
 	private static getCoverArtTextPodcast(podcast: Podcast): string {
 		return podcast.title || podcast.url;
 	}
 
-	private getCoverArtText(o: Base, type: DBObjectType): string {
+	private async getCoverArtText(o: Base, type: DBObjectType): Promise<string> {
 		switch (type) {
 			case DBObjectType.track:
-				return ImageService.getCoverArtTextTrack(o as Track);
+				return await ImageService.getCoverArtTextTrack(o as Track);
 			case DBObjectType.folder:
 				return ImageService.getCoverArtTextFolder(o as Folder);
 			case DBObjectType.episode:
-				return ImageService.getCoverArtTextEpisode(o as Episode);
+				return await ImageService.getCoverArtTextEpisode(o as Episode);
 			case DBObjectType.playlist:
 				return (o as Playlist).name;
 			case DBObjectType.series:
@@ -113,38 +116,38 @@ export class ImageService {
 		}
 	}
 
-	async getObjImage(o: Base, type: DBObjectType, size?: number, format?: string): Promise<ApiBinaryResult> {
+	async getObjImage(orm: Orm, o: Base, type: DBObjectType, size?: number, format?: string): Promise<ApiBinaryResult> {
 		let result: ApiBinaryResult | undefined;
 		switch (type) {
 			case DBObjectType.track:
-				result = await this.trackService.getImage(o as Track, size, format);
+				result = await this.trackService.getImage(orm, o as Track, size, format);
 				break;
 			case DBObjectType.folder:
-				result = await this.folderService.getImage(o as Folder, size, format);
+				result = await this.folderService.getImage(orm, o as Folder, size, format);
 				break;
 			case DBObjectType.artist:
-				result = await this.artistService.getImage(o as Artist, size, format);
+				result = await this.artistService.getImage(orm, o as Artist, size, format);
 				break;
 			case DBObjectType.album:
-				result = await this.albumService.getImage(o as Album, size, format);
+				result = await this.albumService.getImage(orm, o as Album, size, format);
 				break;
 			case DBObjectType.user:
-				result = await this.userService.getImage(o as User, size, format);
+				result = await this.userService.getImage(orm, o as User, size, format);
 				break;
 			case DBObjectType.podcast:
-				result = await this.podcastService.getImage(o as Podcast, size, format);
+				result = await this.podcastService.getImage(orm, o as Podcast, size, format);
 				break;
 			case DBObjectType.episode:
-				result = await this.podcastService.getEpisodeImage(o as Episode, size, format);
+				result = await this.podcastService.getEpisodeImage(orm, o as Episode, size, format);
 				break;
 			case DBObjectType.series:
-				result = await this.seriesService.getImage(o as Series, size, format);
+				result = await this.seriesService.getImage(orm, o as Series, size, format);
 				break;
 			case DBObjectType.artwork:
-				result = await this.artworkService.getImage(o as Artwork, size, format);
+				result = await this.artworkService.getImage(orm, o as Artwork, size, format);
 				break;
 			case DBObjectType.root: {
-				result = await this.rootService.getImage(o as Root, size, format);
+				result = await this.rootService.getImage(orm, o as Root, size, format);
 				break;
 			}
 			default:
@@ -157,7 +160,7 @@ export class ImageService {
 	}
 
 	async paintImage(obj: Base, type: DBObjectType, size?: number, format?: string): Promise<ApiBinaryResult> {
-		const s = this.getCoverArtText(obj, type);
+		const s = await this.getCoverArtText(obj, type);
 		return this.imageModule.paint(s, size || 128, format);
 	}
 

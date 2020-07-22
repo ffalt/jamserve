@@ -3,6 +3,7 @@ import {JAMSERVE_VERSION} from './version';
 import dotenv from 'dotenv';
 import {configureLogger, logger} from './utils/logger';
 import {Server} from './modules/server/server';
+import {Container} from 'typescript-ioc';
 
 dotenv.config();
 
@@ -10,7 +11,7 @@ configureLogger(process.env.JAM_LOG_LEVEL || 'info');
 
 const log = logger('Server');
 
-const server = new Server();
+const server = Container.get(Server);
 
 async function run(): Promise<void> {
 	log.info(`Jamserve ${JAMSERVE_VERSION} starting`);

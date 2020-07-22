@@ -1,5 +1,5 @@
 import {Field, ObjectType} from 'type-graphql';
-import {Entity, Property} from 'mikro-orm';
+import {Entity, Property} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 
@@ -7,19 +7,19 @@ import {State, StateQL} from '../state/state';
 @Entity()
 export class Radio extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	url!: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	homepage?: string;
 
 	@Field(() => Boolean)
-	@Property()
+	@Property(() => Boolean)
 	disabled: boolean = false;
 }
 

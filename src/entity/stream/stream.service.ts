@@ -6,13 +6,13 @@ import {fileSuffix} from '../../utils/fs-utils';
 import {Episode} from '../episode/episode';
 import {Track} from '../track/track';
 import {User} from '../user/user';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
 import {AudioFormatType, DBObjectType} from '../../types/enums';
 import {GenericError} from '../../modules/rest/builder/express-error';
 import {Base} from '../base/base';
 
-@Singleton
+@InRequestScope
 export class StreamService {
 	@Inject
 	private audioModule!: AudioModule;
@@ -39,14 +39,16 @@ export class StreamService {
 	}
 
 	async streamTrack(track: Track, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
+		const tag = await track.tag.get();
 		// this.nowPlayingService.reportTrack(track, user).catch(e => log.error(e)); // do not wait
-		return await this.streamFile(path.join(track.path, track.fileName), track.id, track.tag?.mediaFormat, format, maxBitRate);
+		return await this.streamFile(path.join(track.path, track.fileName), track.id, tag?.mediaFormat, format, maxBitRate);
 	}
 
 	async streamEpisode(episode: Episode, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
 		// this.nowPlayingService.reportEpisode(episode, user).catch(e => log.error(e)); // do not wait
-		if (episode.path && episode.tag?.mediaFormat) {
-			return this.streamFile(episode.path, episode.id, episode.tag?.mediaFormat, format, maxBitRate);
+		const tag = await episode.tag.get();
+		if (episode.path && tag?.mediaFormat) {
+			return this.streamFile(episode.path, episode.id, tag?.mediaFormat, format, maxBitRate);
 		}
 		return Promise.reject(GenericError('Podcast episode not ready'));
 	}

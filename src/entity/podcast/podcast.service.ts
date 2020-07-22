@@ -4,8 +4,8 @@ import {ImageModule} from '../../modules/image/image.module';
 import {DebouncePromises} from '../../utils/debounce-promises';
 import {pathDeleteIfExists} from '../../utils/fs-utils';
 import {logger} from '../../utils/logger';
-import {Inject, Singleton} from 'typescript-ioc';
-import {OrmService} from '../../modules/engine/services/orm.service';
+import {Inject, InRequestScope} from 'typescript-ioc';
+import {Orm, OrmService} from '../../modules/engine/services/orm.service';
 import {Podcast} from './podcast';
 import {PodcastStatus} from '../../types/enums';
 import {ConfigService} from '../../modules/engine/services/config.service';
@@ -17,7 +17,7 @@ import {EpisodeService} from '../episode/episode.service';
 
 const log = logger('PodcastService');
 
-@Singleton
+@InRequestScope
 export class PodcastService {
 	private podcastRefreshDebounce = new DebouncePromises<void>();
 	private readonly podcastsPath: string;
@@ -29,8 +29,6 @@ export class PodcastService {
 	private configService!: ConfigService;
 	@Inject
 	private episodeService!: EpisodeService;
-	@Inject
-	private orm!: OrmService;
 
 	constructor() {
 		this.podcastsPath = this.configService.getDataPath(['podcasts']);
@@ -40,46 +38,44 @@ export class PodcastService {
 		return this.podcastRefreshDebounce.isPending(podcastId);
 	}
 
-	async create(url: string): Promise<Podcast> {
-		const podcast: Podcast = this.orm.Podcast.create({
+	async create(orm: Orm, url: string): Promise<Podcast> {
+		const podcast: Podcast = orm.Podcast.create({
 			lastCheck: 0,
 			url,
 			name: url,
 			categories: [],
 			status: PodcastStatus.new
 		});
-		await this.orm.orm.em.persistAndFlush(podcast);
+		await orm.Podcast.persistAndFlush(podcast);
 		return podcast;
 	}
 
-	async remove(podcast: Podcast): Promise<void> {
+	async remove(orm: Orm, podcast: Podcast): Promise<void> {
 		const p = path.resolve(this.podcastsPath, podcast.id);
-		await this.episodeService.removeEpisodes(podcast.id);
-		await this.orm.Podcast.removeLater(podcast);
-		await this.orm.orm.em.flush();
+		await this.episodeService.removeEpisodes(orm, podcast.id);
+		await orm.Podcast.removeAndFlush(podcast);
 		await pathDeleteIfExists(p);
 		await this.imageModule.clearImageCacheByIDs([podcast.id]);
 	}
 
-	private async mergeEpisodes(podcast: Podcast, episodes: Array<EpisodeData>): Promise<Array<Episode>> {
+	private async mergeEpisodes(orm: Orm, podcast: Podcast, episodes: Array<EpisodeData>): Promise<Array<Episode>> {
 		if ((!episodes) || (!episodes.length)) {
 			return [];
 		}
 		const newEpisodes: Array<Episode> = [];
-		const oldEpisodes = podcast.episodes.getItems();
+		const oldEpisodes = await podcast.episodes.getItems();
 		for (const epi of episodes) {
 			let episode = oldEpisodes.find(e => e.guid === epi.guid);
 			if (!episode) {
-				episode = this.orm.Episode.create({
+				episode = orm.Episode.create({
 					...epi,
 					chapters: undefined,
 					enclosures: undefined,
-					status: PodcastStatus.new,
-					podcast
+					status: PodcastStatus.new
 				})
 				newEpisodes.push(episode);
 			}
-			episode.podcast = podcast;
+			await episode.podcast.set(podcast);
 			episode.duration = epi.duration !== undefined ? epi.duration * 1000 : undefined;
 			episode.chaptersJSON = epi.chapters && epi.chapters.length > 0 ? JSON.stringify(epi.chapters) : undefined;
 			episode.enclosuresJSON = epi.enclosures && epi.enclosures.length > 0 ? JSON.stringify(epi.enclosures) : undefined;
@@ -88,13 +84,13 @@ export class PodcastService {
 			episode.name = epi.name || episode.name;
 			episode.guid = epi.guid || epi.link;
 			episode.author = epi.author;
-			this.orm.orm.em.persistLater(episode);
+			orm.Episode.persistLater(episode);
 		}
-		await this.orm.orm.em.flush();
+		await orm.em.flush();
 		return newEpisodes;
 	}
 
-	private async updatePodcast(podcast: Podcast, tag: PodcastTag, episodes: Array<EpisodeData>): Promise<void> {
+	private async updatePodcast(orm: Orm, podcast: Podcast, tag: PodcastTag, episodes: Array<EpisodeData>): Promise<void> {
 		podcast.name = tag.title || podcast.name;
 		podcast.author = tag.author;
 		podcast.description = tag.description;
@@ -120,11 +116,11 @@ export class PodcastService {
 				log.info('Downloading Podcast image failed', e);
 			}
 		}
-		const newEpisodes = await this.mergeEpisodes(podcast, episodes);
+		const newEpisodes = await this.mergeEpisodes(orm, podcast, episodes);
 		log.info(`${podcast.url}: New Episodes: ${newEpisodes.length}`);
 	}
 
-	async refresh(podcast: Podcast): Promise<void> {
+	async refresh(orm: Orm, podcast: Podcast): Promise<void> {
 		if (this.podcastRefreshDebounce.isPending(podcast.id)) {
 			return this.podcastRefreshDebounce.append(podcast.id);
 		}
@@ -135,7 +131,7 @@ export class PodcastService {
 			try {
 				const result = await feed.get(podcast);
 				if (result) {
-					await this.updatePodcast(podcast, result.tag, result.episodes);
+					await this.updatePodcast(orm, podcast, result.tag, result.episodes);
 					podcast.status = PodcastStatus.completed;
 				} else {
 					podcast.status = PodcastStatus.error;
@@ -147,7 +143,7 @@ export class PodcastService {
 				podcast.errorMessage = (e || '').toString();
 			}
 			podcast.lastCheck = Date.now();
-			await this.orm.orm.em.persistAndFlush(podcast);
+			await orm.Podcast.persistAndFlush(podcast);
 			this.podcastRefreshDebounce.resolve(podcast.id, undefined);
 		} catch (e) {
 			this.podcastRefreshDebounce.resolve(podcast.id, undefined);
@@ -155,25 +151,25 @@ export class PodcastService {
 		}
 	}
 
-	async refreshPodcasts(): Promise<void> {
+	async refreshPodcasts(orm: Orm): Promise<void> {
 		log.info('Refreshing');
-		const podcasts = await this.orm.Podcast.all();
+		const podcasts = await orm.Podcast.all();
 		for (const podcast of podcasts) {
-			await this.refresh(podcast);
+			await this.refresh(orm, podcast);
 		}
 		log.info('Refreshed');
 	}
 
-	async getImage(podcast: Podcast, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getImage(orm: Orm, podcast: Podcast, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (podcast.image) {
 			return this.imageModule.get(podcast.id, path.join(this.podcastsPath, podcast.id, podcast.image), size, format);
 		}
 	}
 
-	async getEpisodeImage(episode: Episode, size: number | undefined, format: string | undefined): Promise<ApiBinaryResult | undefined> {
+	async getEpisodeImage(orm: Orm, episode: Episode, size: number | undefined, format: string | undefined): Promise<ApiBinaryResult | undefined> {
 		const result = await this.episodeService.getImage(episode, size, format);
 		if (!result) {
-			return this.getImage(episode.podcast, size, format);
+			return this.getImage(orm, await episode.podcast.getOrFail(), size, format);
 		}
 		return result;
 	}

@@ -7,8 +7,8 @@ import {StatsArgs} from './stats.args';
 export class StatsResolver {
 
 	@Query(() => StatsQL)
-	async stats(@Args() args: StatsArgs, @Ctx() {engine}: Context): Promise<StatsQL> {
-		return await engine.statsService.getStats(args?.rootID);
+	async stats(@Args() args: StatsArgs, @Ctx() {engine, orm}: Context): Promise<StatsQL> {
+		return await engine.statsService.getStats(orm, args?.rootID);
 	}
 }
 

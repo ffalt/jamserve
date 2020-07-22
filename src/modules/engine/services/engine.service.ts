@@ -6,9 +6,9 @@ import {SettingsService} from '../../../entity/settings/settings.service';
 import {IoService} from './io.service';
 import {ConfigService} from './config.service';
 import {JAMSERVE_VERSION} from '../../../version';
-import {OrmService} from './orm.service';
+import {Orm, OrmService} from './orm.service';
 import {WaveformService} from '../../../entity/waveform/waveform.service';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../../utils/logger';
 import {UserService} from '../../../entity/user/user.service';
 import {SessionService} from '../../../entity/settings/session.service';
@@ -24,7 +24,7 @@ import {PlayQueueService} from '../../../entity/playqueue/playqueue.service';
 
 const log = logger('Engine');
 
-@Singleton
+@InRequestScope
 export class EngineService {
 	@Inject
 	public configService!: ConfigService;
@@ -78,15 +78,15 @@ export class EngineService {
 		];
 	}
 
-	private async checkRescan(): Promise<void> {
-		const version = await this.settingsService.settingsVersion();
+	private async checkRescan(orm: Orm): Promise<void> {
+		const version = await this.settingsService.settingsVersion(orm);
 		const forceRescan = !!version && version !== JAMSERVE_VERSION;
 		if (forceRescan) {
 			log.info(`Updating from version ${version || '-'}`);
 		}
 		if (forceRescan || this.settingsService.settings.library.scanAtStart) {
-			this.ioService.refresh().then(() => {
-				return forceRescan ? this.settingsService.saveSettings() : undefined;
+			this.ioService.refresh(orm).then(() => {
+				return forceRescan ? this.settingsService.saveSettings(orm) : undefined;
 			}).catch(e => {
 				log.error('Error on startup scanning', e);
 			});
@@ -106,19 +106,20 @@ export class EngineService {
 		await this.checkDataPaths();
 		// init orm
 		await this.orm.start(this.configService.env.paths.data);
+		const orm = this.orm.fork();
 		// first start?
-		await this.checkFirstStart();
+		await this.checkFirstStart(orm);
 		// check rescan?
-		await this.checkRescan();
+		await this.checkRescan(orm);
 	}
 
 	public async stop() {
 		await this.orm.stop();
 	}
 
-	private async buildAdminUser(admin: { name: string; pass: string; mail: string }): Promise<void> {
+	private async buildAdminUser(orm: Orm, admin: { name: string; pass: string; mail: string }): Promise<void> {
 		const pw = hashAndSaltSHA512(admin.pass || '');
-		const user = this.orm.User.create({
+		const user = orm.User.create({
 			name: admin.name,
 			salt: pw.salt,
 			hash: pw.hash,
@@ -128,34 +129,34 @@ export class EngineService {
 			roleStream: true,
 			roleUpload: true
 		})
-		await this.orm.orm.em.persistAndFlush(user);
+		await orm.User.persistAndFlush(user);
 	}
 
-	private async buildRoots(roots: Array<{ name: string; path: string; strategy?: RootScanStrategy }>): Promise<void> {
+	private async buildRoots(orm: Orm, roots: Array<{ name: string; path: string; strategy?: RootScanStrategy }>): Promise<void> {
 		for (const first of roots) {
-			const root = this.orm.Root.create({
+			const root = orm.Root.create({
 				name: first.name,
 				path: first.path,
 				strategy: first.strategy as RootScanStrategy || RootScanStrategy.auto
 			})
-			await this.orm.orm.em.persistAndFlush(root);
+			await orm.Root.persistAndFlush(root);
 		}
 	}
 
-	private async checkFirstStart(): Promise<void> {
+	private async checkFirstStart(orm: Orm): Promise<void> {
 		if (!this.configService.firstStart) {
 			return;
 		}
 		if (this.configService.firstStart.adminUser) {
-			const count = await this.orm.User.count();
+			const count = await orm.User.count();
 			if (count === 0) {
-				await this.buildAdminUser(this.configService.firstStart.adminUser);
+				await this.buildAdminUser(orm, this.configService.firstStart.adminUser);
 			}
 		}
 		if (this.configService.firstStart.roots) {
-			const count = await this.orm.Root.count();
+			const count = await orm.Root.count();
 			if (count === 0) {
-				await this.buildRoots(this.configService.firstStart.roots);
+				await this.buildRoots(orm, this.configService.firstStart.roots);
 			}
 		}
 	}

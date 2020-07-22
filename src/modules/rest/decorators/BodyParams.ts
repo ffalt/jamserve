@@ -1,5 +1,5 @@
 import {getMetadataStorage} from '../metadata';
-import {ReturnTypeFunc, ValidateOptions} from './types';
+import {ReturnTypeFunc, ValidateOptions} from '../definitions/types';
 import {getTypeDecoratorParams} from '../helpers/decorators';
 import {getParamInfo} from '../helpers/params';
 

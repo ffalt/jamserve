@@ -29,17 +29,17 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		done(null, user?.id || '_invalid_');
 	});
 	passport.deserializeUser((id: string, done) => {
-		engine.userService.findByID(id).then(user => done(null, user ? user : false)).catch(done);
+		engine.userService.findByID(engine.orm.fork(), id).then(user => done(null, user ? user : false)).catch(done);
 	});
 
 	passport.use('local', new passportLocal.Strategy(
 		{usernameField: 'username', passwordField: 'password'},
 		(username, password, done) => {
-			engine.userService.auth(username, password).then(user => done(null, user ? user : false)).catch(done);
+			engine.userService.auth(engine.orm.fork(), username, password).then(user => done(null, user ? user : false)).catch(done);
 		}
 	));
 	const resolvePayload = (jwtPayload: any, done: passportJWT.VerifiedCallback): void => {
-		engine.userService.findByID(jwtPayload.id)
+		engine.userService.findByID(engine.orm.fork(),jwtPayload.id)
 			.then(user => done(null, user ? user : false, jwtPayload))
 			.catch(done);
 	};

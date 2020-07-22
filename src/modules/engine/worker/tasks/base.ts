@@ -1,15 +1,28 @@
 import {containsFolderSystemChars, fileExt, replaceFolderSystemChars} from '../../../../utils/fs-utils';
 import path from 'path';
 import fse from 'fs-extra';
-import {OrmService} from '../../services/orm.service';
+import {Orm, OrmService} from '../../services/orm.service';
 import {ImageModule} from '../../../image/image.module';
 import {AudioModule} from '../../../audio/audio.module';
 import {Root} from '../../../../entity/root/root';
+import {Inject} from 'typescript-ioc';
 
 export class BaseWorker {
-
-	constructor(protected orm: OrmService, protected imageModule: ImageModule, protected audioModule: AudioModule) {
-	}
+	@Inject
+	protected audioModule!: AudioModule;
+	@Inject
+	protected imageModule!: ImageModule;
+	// @Inject
+	// protected ormService!: OrmService;
+	//
+	// ormInstance?: Orm;
+	//
+	// get orm(): Orm {
+	// 	if (!this.ormInstance) {
+	// 		this.ormInstance = this.ormService.fork();
+	// 	}
+	// 	return this.ormInstance;
+	// }
 
 	async renameFile(dir: string, oldName: string, newName: string): Promise<string> {
 		if (containsFolderSystemChars(newName)) {

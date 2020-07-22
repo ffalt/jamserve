@@ -42,7 +42,7 @@ export interface TrackTag {
 	series?: string;
 	seriesNr?: string;
 	lyrics?: string;
-	chapters?: Array<TagChapter>;
+	chapters?: string; //Array<TagChapter>;
 }
 
 export interface TrackMedia {

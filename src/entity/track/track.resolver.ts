@@ -21,7 +21,7 @@ export class TrackResolver {
 
 	@Query(() => TrackQL)
 	async track(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Track> {
-		return await orm.Track.oneOrFail(id)
+		return await orm.Track.oneOrFailByID(id)
 	}
 
 	@Query(() => TrackPageQL)
@@ -34,14 +34,12 @@ export class TrackResolver {
 
 	@FieldResolver(() => [BookmarkQL])
 	async bookmarks(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Array<Bookmark>> {
-		await orm.Track.populate(track, 'bookmarks');
 		return track.bookmarks.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async bookmarksCount(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Track.populate(track, 'bookmarks');
-		return track.bookmarks.length;
+		return track.bookmarks.count();
 	}
 
 	@FieldResolver(() => Date)
@@ -56,44 +54,37 @@ export class TrackResolver {
 
 	@FieldResolver(() => FolderQL)
 	async folder(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Folder> {
-		await orm.Track.populate(track, 'folder');
-		return track.folder;
+		return track.folder.getOrFail();
 	}
 
 	@FieldResolver(() => TagQL, {nullable: true})
 	async tag(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Tag | undefined> {
-		await orm.Track.populate(track, 'tag');
-		return track.tag;
+		return track.tag.get();
 	}
 
 	@FieldResolver(() => AlbumQL, {nullable: true})
 	async album(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Album | undefined> {
-		await orm.Track.populate(track, 'album');
-		return track.album;
+		return track.album.get();
 	}
 
 	@FieldResolver(() => SeriesQL, {nullable: true})
 	async series(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Series | undefined> {
-		await orm.Track.populate(track, 'series');
-		return track.series;
+		return track.series.get();
 	}
 
 	@FieldResolver(() => ArtistQL, {nullable: true})
 	async albumArtist(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Artist | undefined> {
-		await orm.Track.populate(track, 'albumArtist');
-		return track.albumArtist;
+		return track.albumArtist.get();
 	}
 
 	@FieldResolver(() => ArtistQL, {nullable: true})
 	async artist(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Artist | undefined> {
-		await orm.Track.populate(track, 'artist');
-		return track.artist;
+		return track.artist.get();
 	}
 
 	@FieldResolver(() => RootQL)
 	async root(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Root> {
-		await orm.Track.populate(track, 'root');
-		return track.root;
+		return track.root.getOrFail();
 	}
 
 	@FieldResolver(() => WaveformQL)
@@ -102,8 +93,8 @@ export class TrackResolver {
 	}
 
 	@FieldResolver(() => TrackLyricsQL)
-	async lyrics(@GQLRoot() track: Track, @Ctx() {engine}: Context): Promise<TrackLyrics> {
-		return engine.metadataService.lyricsByTrack(track);
+	async lyrics(@GQLRoot() track: Track, @Ctx() {engine, orm}: Context): Promise<TrackLyrics> {
+		return engine.metadataService.lyricsByTrack(orm, track);
 	}
 
 	@FieldResolver(() => MediaTagRawQL)

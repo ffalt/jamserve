@@ -1,22 +1,19 @@
-import {QueryOrder, Repository} from 'mikro-orm';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType} from '../../types/enums';
 import {Session} from './session';
-import {QueryOrderMap} from 'mikro-orm/dist/query';
 import {User} from '../user/user';
-import {QBFilterQuery} from 'mikro-orm/dist/typings';
-import {QHelper} from '../base/base';
 import {SessionFilterArgs, SessionOrderArgs} from './session.args';
 
-@Repository(Session)
+// @Repository(Session)
 export class SessionRepository extends BaseRepository<Session, SessionFilterArgs, SessionOrderArgs> {
 	objType = DBObjectType.session;
 
-	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: SessionOrderArgs): void {
-		this.applyDefaultOrderByEntry(result, direction, order?.orderBy);
+	buildOrder(order?: SessionOrderArgs): Array<OrderItem> {
+		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: SessionFilterArgs, user?: User): Promise<QBFilterQuery<Session>> {
+	async buildFilter(filter?: SessionFilterArgs, user?: User): Promise<FindOptions<Session>> {
 		return filter ? QHelper.buildQuery<Session>(
 			[
 				{id: filter.ids},
@@ -30,4 +27,9 @@ export class SessionRepository extends BaseRepository<Session, SessionFilterArgs
 			]
 		) : {};
 	}
+
+	async byUserID(userID: string): Promise<Array<Session>> {
+		return await this.find({where: {user: userID}});
+	}
+
 }

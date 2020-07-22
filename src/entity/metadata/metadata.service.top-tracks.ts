@@ -3,14 +3,15 @@ import {MetaDataService} from './metadata.service';
 import {Song} from './metadata.service.similar-tracks';
 import {PageResult} from '../base/base';
 import {PageArgs} from '../base/base.args';
+import {Orm} from '../../modules/engine/services/orm.service';
 
 export class MetadataServiceTopTracks {
 	constructor(private service: MetaDataService) {
 
 	}
 
-	async byArtistName(artist: string, page?: PageArgs): Promise<PageResult<Track>> {
-		const result = await this.service.lastFMTopTracksArtist(artist);
+	async byArtistName(orm: Orm, artist: string, page?: PageArgs): Promise<PageResult<Track>> {
+		const result = await this.service.lastFMTopTracksArtist(orm, artist);
 		if (result && result.toptracks && result.toptracks.track) {
 			const songs: Array<Song> = result.toptracks.track.map(t => {
 				return {
@@ -20,10 +21,10 @@ export class MetadataServiceTopTracks {
 					url: t.url
 				};
 			});
-			const ids = await this.service.similarTracks.findSongTrackIDs(songs);
-			return this.service.orm.Track.search(ids, undefined, page);
+			const ids = await this.service.similarTracks.findSongTrackIDs(orm, songs);
+			return orm.Track.search({where: {id: ids}, limit: page?.take, offset: page?.skip});
 		}
-		return {items: [], ...(page||{}), total: 0};
+		return {items: [], ...(page || {}), total: 0};
 	}
 
 }

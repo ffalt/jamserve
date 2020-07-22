@@ -3,7 +3,8 @@ module.exports = {
 	testEnvironment: 'node',
 	coverageDirectory: 'coverage',
 	setupFilesAfterEnv: ["jest-expect-message"],
-	testTimeout: 100000000,
+	testTimeout: 10000000,
+	maxWorkers: 1,
 	"roots": [
 		"<rootDir>/src"
 	],

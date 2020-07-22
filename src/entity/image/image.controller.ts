@@ -1,43 +1,17 @@
-import {Inject} from 'typescript-ioc';
-import {ApiBinaryResult, Controller, Get, NotFoundError} from '../../modules/rest';
-import {DBObjectType, ImageFormatType, UserRole} from '../../types/enums';
+import {ApiBinaryResult, Controller, Ctx, Get, NotFoundError} from '../../modules/rest';
+import {ImageFormatType, UserRole} from '../../types/enums';
 import {ApiImageTypes} from '../../types/consts';
 import {ImageArgs} from './image.args';
-import {OrmService} from '../../modules/engine/services/orm.service';
 import {ImageService} from './image.service';
 import {PathParams} from '../../modules/rest/decorators';
-import {Base} from '../base/base';
-import {BaseRepository} from '../base/base.repository';
+import {Context} from '../../modules/engine/rest/context';
+import {InRequestScope, Inject} from 'typescript-ioc';
 
+@InRequestScope
 @Controller('/image', {tags: ['Image'], roles: [UserRole.stream]})
 export class ImageController {
 	@Inject
 	private imageService!: ImageService;
-	@Inject
-	private orm!: OrmService;
-
-	public async findInImageTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		const repos: Array<BaseRepository<any, any, any>> = [
-			this.orm.Album,
-			this.orm.Artist,
-			this.orm.Artwork,
-			this.orm.Episode,
-			this.orm.Folder,
-			this.orm.Root,
-			this.orm.Playlist,
-			this.orm.Podcast,
-			this.orm.Radio,
-			this.orm.Series,
-			this.orm.Track,
-			this.orm.User
-		]
-		for (const repo of repos) {
-			const obj = await repo.findOne({id});
-			if (obj) {
-				return {obj: obj as any, objType: repo.objType};
-			}
-		}
-	}
 
 	@Get(
 		'/{id}_{size}.{format}',
@@ -60,12 +34,15 @@ export class ImageController {
 			]
 		}
 	)
-	async image(@PathParams() imageArgs: ImageArgs): Promise<ApiBinaryResult | undefined> {
-		const result = await this.findInImageTypes(imageArgs.id);
+	async image(
+		@PathParams() imageArgs: ImageArgs,
+		@Ctx() {orm, user}: Context
+	): Promise<ApiBinaryResult | undefined> {
+		const result = await orm.findInImageTypes(imageArgs.id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		return await this.imageService.getObjImage(result.obj, result.objType, imageArgs.size, imageArgs.format);
+		return await this.imageService.getObjImage(orm, result.obj, result.objType, imageArgs.size, imageArgs.format);
 	}
 
 }

@@ -1,62 +1,82 @@
-import {EntityRepository, FilterQuery, FindOptions, QueryOrder} from 'mikro-orm';
-import {QBFilterQuery, Query} from 'mikro-orm/dist/typings';
 import {DBObjectType, DefaultOrderFields, ListType} from '../../types/enums';
 import {randomItems} from '../../utils/random';
 import {InvalidParamError, NotFoundError} from '../../modules/rest/builder';
-import {IndexResult, IndexResultGroup, PageResult} from './base';
+import {IndexResult, IndexResultGroup, OrderHelper, PageResult} from './base';
 import {StateHelper} from '../state/state.helper';
-import {QueryOrderMap} from 'mikro-orm/dist/query';
+import {EntityRepository, FindOptions, Op, Order, OrderItem, WhereOptions} from '../../modules/orm';
 import {User} from '../user/user';
-import {PageArgs} from './base.args';
+import {DefaultOrderArgs, PageArgs} from './base.args';
 import {paginate} from './base.utils';
+import {Includeable} from 'sequelize';
 
-export abstract class BaseRepository<Entity, Filter, Order extends { orderDesc?: boolean }> extends EntityRepository<Entity> {
+export abstract class BaseRepository<Entity extends { id: string }, Filter, OrderBy extends { orderDesc?: boolean }> extends EntityRepository<Entity> {
 	objType!: DBObjectType;
 	indexProperty!: string;
 
-	abstract applyOrderByEntry(orderBy: QueryOrderMap, direction: QueryOrder, order?: Order): void;
+	abstract buildOrder(order?: OrderBy): Array<OrderItem>;
 
-	abstract async buildFilter(filter?: Filter, user?: User): Promise<QBFilterQuery<Entity>>
+	abstract async buildFilter(filter?: Filter, user?: User): Promise<FindOptions<Entity>>;
 
-	applyDefaultOrderByEntry(result: QueryOrderMap, direction: QueryOrder, orderBy?: DefaultOrderFields): void {
-		switch (orderBy) {
+	buildDefaultOrder(order?: DefaultOrderArgs): Array<OrderItem> {
+		const direction = OrderHelper.direction(order);
+		switch (order?.orderBy) {
 			case DefaultOrderFields.created:
-				result.createdAt = direction;
-				break;
+				return [['createdAt', direction]];
 			case DefaultOrderFields.updated:
-				result.updatedAt = direction;
-				break;
+				return [['updatedAt', direction]];
 			case DefaultOrderFields.name:
-				result.name = direction;
-				break;
 			case DefaultOrderFields.default:
-				result.name = direction;
-				break;
+				return [['name', direction]];
 		}
+		return [];
 	}
 
-	buildOrderBy(order?: Array<Order>): QueryOrderMap | undefined {
+	buildOrderBy(order?: Array<OrderBy>): Order | undefined {
 		if (!order) {
 			return;
 		}
-		// order of setting properties matches sort query. important!
-		const result: QueryOrderMap = {};
-		for (const o of order) {
-			this.applyOrderByEntry(result, o?.orderDesc ? QueryOrder.DESC : QueryOrder.ASC, o);
+		let result: Array<OrderItem> = [];
+		order.forEach(o => result = result.concat(this.buildOrder(o)));
+		return result.length > 0 ? result : undefined;
+	}
+
+	async buildFindOptions(filter?: Filter, order?: Array<OrderBy>, user?: User, page?: PageArgs): Promise<FindOptions<Entity>> {
+		const options = filter ? await this.buildFilter(filter, user) : {};
+		options.limit = page?.take;
+		options.offset = page?.skip;
+		options.order = this.buildOrderBy(order);
+		if (options.order) {
+			(options.order as OrderItem[]).map(o => {
+				if ((o as Array<any>).length === 3) {
+					const key = (o as Array<string>)[0];
+					const list: Includeable[] = (options.include as Includeable[]) || [];
+					if (!list.find((i: any) => i.association === key)) {
+						list.push({association: key})
+						options.include = list;
+					}
+				}
+			});
 		}
-		if (Object.keys(result).length > 0) {
-			return result;
-		}
+		return options;
 	}
 
 	async all(): Promise<Array<Entity>> {
 		return this.find({});
 	}
 
-	async oneOrFail(where: FilterQuery<Entity>, populate?: string[] | boolean, orderBy?: QueryOrderMap): Promise<Entity> {
+	async oneOrFailByID(id: string): Promise<Entity> {
 		try {
-			return await super.findOneOrFail(where, populate, orderBy);
+			return await super.findOneOrFailByID(id);
 		} catch (e) {
+			throw NotFoundError();
+		}
+	}
+
+	async oneOrFail(options: FindOptions<Entity>): Promise<Entity> {
+		try {
+			return await super.findOneOrFail(options);
+		} catch (e) {
+			console.log(e);
 			throw NotFoundError();
 		}
 	}
@@ -76,92 +96,53 @@ export abstract class BaseRepository<Entity, Filter, Order extends { orderDesc?:
 		}
 	}
 
-	async search(filter: QBFilterQuery<Entity>, orderBy: QueryOrderMap | undefined, page?: PageArgs): Promise<PageResult<Entity>> {
-		const [items, total] = await this.findAndCount(filter, [], orderBy, page?.take, page?.skip);
-		return {...(page || {}), total, items};
+	async search(options: FindOptions<Entity>): Promise<PageResult<Entity>> {
+		const {entities, count} = await this.findAndCount(options);
+		return {skip: options.offset, take: options.limit, total: count, items: entities};
 	}
 
 	async searchTransform<T>(
-		filter: QBFilterQuery<Entity>,
-		order: QueryOrderMap | undefined,
-		page: PageArgs | undefined,
+		options: FindOptions<Entity>,
 		transform: (item: Entity) => Promise<T>
 	): Promise<PageResult<T>> {
-		const [result, total] = await this.findAndCount(filter, [], order, page?.take, page?.skip);
-		const items = await Promise.all(result.map(o => transform(o)));
-		return {...(page || {}), total, items};
+		const {count, entities} = await this.findAndCount(options);
+		const items = await Promise.all(entities.map(o => transform(o)));
+		return {skip: options.offset, take: options.limit, total: count, items};
 	}
 
-	async findIDsAndCount(where: QBFilterQuery<Entity>, page?: PageArgs): Promise<[string[], number]> {
-		// TODO: how to count all in limited createQueryBuilder
-		const builder = this.createQueryBuilder('o')
-			.addSelect('id')
-			.where(where);
-		let result = await builder.execute('all', false);
-		const count = result.length;
-		if (page?.skip) {
-			result = result.slice(page.skip);
-		}
-		if (page?.take) {
-			result = result.slice(0, page.take);
-		}
-		return [result.map((o: { id: string }) => o.id), count];
-	}
-
-	async index(property: string, filter: QBFilterQuery<Entity>): Promise<IndexResult<IndexResultGroup<Entity>>> {
-		const builder = this.createQueryBuilder('o');
-		const groupSQL = `upper(substr(o.${property},1,1))`;
-		builder
-			.select('id')
-			.addSelect(`${groupSQL} as g`)
-			.where(filter)
-			.groupBy(groupSQL)
-		const map = new Map<string, Array<string>>();
-		const result = await builder.execute('all');
-		for (const entry of result) {
-			const list = map.get(entry.g) || [];
-			list.push(entry.id);
-			map.set(entry.g, list);
+	async index(property: keyof Entity, options: FindOptions<Entity>): Promise<IndexResult<IndexResultGroup<Entity>>> {
+		const items = await this.find(options);
+		const map = new Map<string, Array<Entity>>();
+		for (const item of items) {
+			const value = (item[property] || '') as string;
+			const c = value[0];
+			const list = map.get(c) || [];
+			list.push(item);
+			map.set(c, list);
 		}
 		const groups: Array<IndexResultGroup<Entity>> = [];
 		for (const [group, value] of map) {
 			groups.push({
 				name: group,
-				items: await this.find({id: {$in: value}} as Query<Entity>)
-			})
+				items: value
+			});
 		}
 		return {groups};
 	}
 
-	async findOneIDorFail(where: QBFilterQuery<Entity>): Promise<string> {
-		const result = await this.findOneID(where);
+	async findOneIDorFail(options: FindOptions<Entity>): Promise<string> {
+		const result = await this.findOneID(options);
 		if (!result) {
 			throw NotFoundError();
 		}
 		return result;
 	}
 
-	async findOneID(where: QBFilterQuery<Entity>): Promise<string | undefined> {
-		const builder = this.createQueryBuilder('o')
-			.addSelect('id')
-			.where(where);
-		const result = await builder.execute('get');
-		return result?.id;
-	}
-
-	async findIDs(where: QBFilterQuery<Entity>): Promise<string[]> {
-		const builder = this.createQueryBuilder('o')
-			.addSelect('id')
-			.where(where);
-		const result = await builder.execute('all');
-		return result.map((o: { id: string }) => o.id);
-	}
-
-	async findList(list: ListType, where: QBFilterQuery<Entity>, orderBy: QueryOrderMap | undefined, page: PageArgs | undefined, userID: string): Promise<PageResult<Entity>> {
-		const result = await this.getListIDs(list, where, orderBy, page, userID);
+	async findList(list: ListType, options: FindOptions<Entity>, userID: string): Promise<PageResult<Entity>> {
+		const result = await this.getListIDs(list, options, userID);
 		return {
 			...result,
-			items: await this.find({id: {$in: result.items}} as FilterQuery<Entity>)
+			items: await this.findByIDs(result.items)
 		};
 	}
 
@@ -169,44 +150,43 @@ export abstract class BaseRepository<Entity, Filter, Order extends { orderDesc?:
 		return await this.count(await this.buildFilter(filter, user));
 	}
 
-	async findFilter(filter: Filter | undefined, options?: FindOptions, user?: User): Promise<Array<Entity>> {
-		return await this.find(await this.buildFilter(filter, user), options);
+	async findFilter(filter?: Filter | undefined, order?: Array<OrderBy> | undefined, page?: PageArgs | undefined, user?: User | undefined): Promise<Array<Entity>> {
+		return await this.find(await this.buildFindOptions(filter, order, user, page));
 	}
 
 	async findIDsFilter(filter: Filter | undefined, user?: User): Promise<Array<string>> {
 		return await this.findIDs(await this.buildFilter(filter, user));
 	}
 
-	async findListFilter(list: ListType, filter: Filter | undefined, order: Array<Order> | undefined, page: PageArgs | undefined, user: User): Promise<PageResult<Entity>> {
-		return await this.findList(list, await this.buildFilter(filter, user), this.buildOrderBy(order), page, user.id);
+	async findListFilter(list: ListType, filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageArgs | undefined, user: User): Promise<PageResult<Entity>> {
+		return await this.findList(list, await this.buildFindOptions(filter, order, user, page), user.id);
 	}
 
-	async findListTransformFilter<T>(list: ListType, filter: Filter, order: Array<Order> | undefined, page: PageArgs, user: User, transform: (item: Entity) => Promise<T>): Promise<PageResult<T>> {
-		return await this.findListTransform<T>(list, await this.buildFilter(filter, user), this.buildOrderBy(order), page, user.id, transform);
+	async findListTransformFilter<T>(list: ListType, filter: Filter, order: Array<OrderBy> | undefined, page: PageArgs, user: User, transform: (item: Entity) => Promise<T>): Promise<PageResult<T>> {
+		return await this.findListTransform<T>(list, await this.buildFindOptions(filter, order, user, page), user.id, transform);
 	}
 
-	async searchFilter(filter: Filter | undefined, order: Array<Order> | undefined, page: PageArgs | undefined, user: User): Promise<PageResult<Entity>> {
-		return await this.search(await this.buildFilter(filter, user), this.buildOrderBy(order), page);
+	async searchFilter(filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageArgs | undefined, user: User): Promise<PageResult<Entity>> {
+		return await this.search(await this.buildFindOptions(filter, order, user, page));
 	}
 
-	async searchTransformFilter<T>(filter: Filter | undefined, order: Array<Order>, page: PageArgs, user: User, transform: (item: Entity) => Promise<T>): Promise<PageResult<T>> {
-		return await this.searchTransform<T>(
-			await this.buildFilter(filter, user),
-			this.buildOrderBy(order),
-			page,
-			transform
-		);
+	async searchTransformFilter<T>(
+		filter: Filter | undefined,
+		order: Array<OrderBy>,
+		page: PageArgs,
+		user: User,
+		transform: (item: Entity) => Promise<T>
+	): Promise<PageResult<T>> {
+		return await this.searchTransform<T>(await this.buildFindOptions(filter, order, user, page), transform);
 	}
 
 	async findListTransform<T>(
 		list: ListType,
-		where: QBFilterQuery<Entity>,
-		orderBy: QueryOrderMap | undefined,
-		page: PageArgs | undefined,
+		options: FindOptions<Entity>,
 		userID: string,
 		transform: (item: Entity) => Promise<T>
 	): Promise<PageResult<T>> {
-		const result = await this.findList(list, where, orderBy, page, userID);
+		const result = await this.findList(list, options, userID);
 		return {
 			...result,
 			items: await Promise.all(result.items.map(o => transform(o)))
@@ -214,45 +194,44 @@ export abstract class BaseRepository<Entity, Filter, Order extends { orderDesc?:
 	}
 
 	async indexFilter(filter?: Filter, user?: User): Promise<IndexResult<IndexResultGroup<Entity>>> {
-		return await this.index(this.indexProperty, await this.buildFilter(filter, user));
+		return await this.index(this.indexProperty as keyof Entity, await this.buildFilter(filter, user));
 	}
 
-	private async getListIDs(list: ListType, where: QBFilterQuery<Entity>, orderBy: QueryOrderMap | undefined, page: PageArgs | undefined, userID: string): Promise<PageResult<string>> {
+	private async getListIDs(list: ListType, options: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {
 		let ids: Array<string> = [];
 		let total: number | undefined;
-		if (!page) {
-			page = {};
-		}
+		const opts = {options, limit: undefined, offset: undefined};
+		const page = {skip: options.offset, take: options.limit};
 		switch (list) {
 			case ListType.random:
 				// TODO: cache ids to avoid duplicates in random items pagination?
-				ids = await this.findIDs(where);
+				ids = await this.findIDs(opts);
 				page.take = page.take || 20;
 				total = ids.length;
 				ids = randomItems<string>(ids, page.take);
 				break;
 			case ListType.highest:
-				ids = await this.getHighestRatedIDs(where, userID);
+				ids = await this.getHighestRatedIDs(opts, userID);
 				total = ids.length;
 				ids = paginate(ids, page).items;
 				break;
 			case ListType.avghighest:
-				ids = await this.getAvgHighestIDs(where);
+				ids = await this.getAvgHighestIDs(opts);
 				total = ids.length;
 				ids = paginate(ids, page).items;
 				break;
 			case ListType.frequent:
-				ids = await this.getFrequentlyPlayedIDs(where, userID);
+				ids = await this.getFrequentlyPlayedIDs(opts, userID);
 				total = ids.length;
 				ids = paginate(ids, page).items;
 				break;
 			case ListType.faved:
-				ids = await this.getFavedIDs(where, userID);
+				ids = await this.getFavedIDs(opts, userID);
 				total = ids.length;
 				ids = paginate(ids, page).items;
 				break;
 			case ListType.recent:
-				ids = await this.getRecentlyPlayedIDs(where, userID);
+				ids = await this.getRecentlyPlayedIDs(opts, userID);
 				total = ids.length;
 				ids = paginate(ids, page).items;
 				break;
@@ -262,41 +241,54 @@ export abstract class BaseRepository<Entity, Filter, Order extends { orderDesc?:
 		return {total, ...page, items: ids};
 	}
 
-	private async getFilteredIDs(ids: Array<string>, where: QBFilterQuery<Entity>): Promise<Array<string>> {
-		const list = await this.findIDs({$and: [{id: {$in: ids}}, where]});
+	private async getFilteredIDs(ids: Array<string>, options: FindOptions<Entity>): Promise<Array<string>> {
+		let where: WhereOptions<Entity> = {id: {[Op.in]: ids}};
+		if (options.where && Object.keys(options.where).length > 0) {
+			where = {[Op.and]: [where, options.where]}
+		}
+		const list = await this.findIDs({...options, where});
 		return list.sort((a, b) => {
 			return ids.indexOf(a) - ids.indexOf(b);
 		});
 	}
 
-	private async getHighestRatedIDs(where: QBFilterQuery<Entity>, userID: string): Promise<Array<string>> {
+	private async getHighestRatedIDs(options: FindOptions<Entity>, userID: string): Promise<Array<string>> {
 		const helper = new StateHelper(this.em);
 		const ids = await helper.getHighestRatedDestIDs(this.objType, userID);
-		return this.getFilteredIDs(ids, where);
+		return this.getFilteredIDs(ids, options);
 	}
 
-	private async getAvgHighestIDs(where: QBFilterQuery<Entity>): Promise<Array<string>> {
+	private async getAvgHighestIDs(options: FindOptions<Entity>): Promise<Array<string>> {
 		const helper = new StateHelper(this.em);
 		const ids = await helper.getAvgHighestDestIDs(this.objType);
-		return this.getFilteredIDs(ids, where);
+		return this.getFilteredIDs(ids, options);
 	}
 
-	private async getFrequentlyPlayedIDs(where: QBFilterQuery<Entity>, userID: string): Promise<Array<string>> {
+	private async getFrequentlyPlayedIDs(options: FindOptions<Entity>, userID: string): Promise<Array<string>> {
 		const helper = new StateHelper(this.em);
 		const ids = await helper.getFrequentlyPlayedDestIDs(this.objType, userID);
-		return this.getFilteredIDs(ids, where);
+		return this.getFilteredIDs(ids, options);
 	}
 
-	private async getFavedIDs(where: QBFilterQuery<Entity>, userID: string): Promise<Array<string>> {
+	private async getFavedIDs(options: FindOptions<Entity>, userID: string): Promise<Array<string>> {
 		const helper = new StateHelper(this.em);
 		const ids = await helper.getFavedDestIDs(this.objType, userID);
-		return this.getFilteredIDs(ids, where);
+		return this.getFilteredIDs(ids, options);
 	}
 
-	private async getRecentlyPlayedIDs(where: QBFilterQuery<Entity>, userID: string): Promise<Array<string>> {
+	private async getRecentlyPlayedIDs(options: FindOptions<Entity>, userID: string): Promise<Array<string>> {
 		const helper = new StateHelper(this.em);
 		const ids = await helper.getRecentlyPlayedDestIDs(this.objType, userID);
-		return this.getFilteredIDs(ids, where);
+		return this.getFilteredIDs(ids, options);
+	}
+
+	async removeLaterByIDs(ids: Array<string>): Promise<void> {
+		if (ids && ids.length > 0) {
+			const items = await this.findByIDs(ids);
+			for (const item of items) {
+				this.removeLater(item);
+			}
+		}
 	}
 
 }

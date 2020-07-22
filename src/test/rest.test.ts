@@ -13,6 +13,7 @@ import {ensureTrailingPathSeparator} from '../utils/fs-utils';
 import path from 'path';
 import {buildMockRoot, MockRoot, writeAndStoreMock} from './mock/mock.root';
 import {initTest} from './init';
+import {Container, Snapshot} from 'typescript-ioc';
 
 initTest();
 
@@ -34,18 +35,21 @@ describe('REST', function() {
 	};
 	let mocks: Array<RequestMock>;
 	let validMocks: Array<RequestMock>;
+	let snapshot: Snapshot;
 	beforeAll(async () => {
+		snapshot = Container.snapshot();
 		dir = tmp.dirSync();
+		server = Container.get(Server);
 		bindMockConfig(dir.name, false);
-		server = new Server();
 		await server.init();
 		await server.engine.start();
 		await server.start();
 		await waitEngineStart(server.engine);
+		const orm = server.engine.orm.fork();
 
 		request = supertest(`http://${server.configService.env.host}:${server.configService.env.port}`);
 
-		await server.engine.userService.createUser('all', 'all@localhost', 'all', true, true, true, true);
+		await server.engine.userService.createUser(orm,'all', 'all@localhost', 'all', true, true, true, true);
 		const res = await request.post(apiPrefix + 'auth/login')
 			.send({username: 'all', password: 'all', client: 'supertest-tests', jwt: true});
 		if (res.status !== 200) {
@@ -54,7 +58,7 @@ describe('REST', function() {
 		tokens.all = res.body.jwt;
 
 		for (const role of roles) {
-			await server.engine.userService.createUser(role, role + '@localhost', role,
+			await server.engine.userService.createUser(orm, role, role + '@localhost', role,
 				role === UserRole.admin,
 				role === UserRole.stream,
 				role === UserRole.upload,
@@ -138,6 +142,7 @@ describe('REST', function() {
 		await server.stop();
 		await fse.remove(dir.name);
 		// dir.removeCallback();
+		snapshot.restore();
 	});
 	describe('must fail', function() {
 		it('should reject all invalid calls', async () => {
@@ -169,27 +174,28 @@ describe('REST', function() {
 			const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
 			await fse.mkdir(mediaPath);
 			mockRoot = buildMockRoot(mediaPath, 1, RootScanStrategy.auto);
-			await writeAndStoreMock(mockRoot, server.engine.ioService.workerService);
+			await writeAndStoreMock(mockRoot, server.engine.ioService.workerService, server.engine.orm.fork());
 		});
 
 		afterEach(async () => {
 			await fse.remove(dir.name);
 		});
 		it('should do something', async () => {
-			const album = await server.engine.orm.Album.oneOrFailFilter({since: 1});
-			const artist = await server.engine.orm.Artist.oneOrFailFilter({since: 1});
-			const series = await server.engine.orm.Series.oneOrFailFilter({since: 1});
-			const artwork = await server.engine.orm.Artwork.oneOrFailFilter({since: 1});
-			const folder = await server.engine.orm.Folder.oneOrFailFilter({since: 1});
-			const artistFolder = await server.engine.orm.Folder.oneOrFailFilter({folderTypes: [FolderType.artist]});
-			const albumFolder = await server.engine.orm.Folder.oneOrFailFilter({folderTypes: [FolderType.album]});
-			const bookmark = await server.engine.orm.Bookmark.oneOrFailFilter({since: 1});
-			const playlist = await server.engine.orm.Playlist.oneOrFailFilter({since: 1});
-			const track = await server.engine.orm.Track.oneOrFailFilter({since: 1});
-			const radio = await server.engine.orm.Radio.oneOrFailFilter({since: 1});
-			const podcast = await server.engine.orm.Podcast.oneOrFailFilter({since: 1});
-			const episode = await server.engine.orm.Episode.oneOrFailFilter({since: 1});
-			const user = await server.engine.orm.User.oneOrFailFilter({name: 'admin'});
+			const orm = server.engine.orm.fork();
+			const album = await orm.Album.oneOrFailFilter({since: 1});
+			const artist = await orm.Artist.oneOrFailFilter({since: 1});
+			const series = await orm.Series.oneOrFailFilter({since: 1});
+			const artwork = await orm.Artwork.oneOrFailFilter({since: 1});
+			const folder = await orm.Folder.oneOrFailFilter({since: 1});
+			const artistFolder = await orm.Folder.oneOrFailFilter({folderTypes: [FolderType.artist]});
+			const albumFolder = await orm.Folder.oneOrFailFilter({folderTypes: [FolderType.album]});
+			const bookmark = await orm.Bookmark.oneOrFailFilter({since: 1});
+			const playlist = await orm.Playlist.oneOrFailFilter({since: 1});
+			const track = await orm.Track.oneOrFailFilter({since: 1});
+			const radio = await orm.Radio.oneOrFailFilter({since: 1});
+			const podcast = await orm.Podcast.oneOrFailFilter({since: 1});
+			const episode = await orm.Episode.oneOrFailFilter({since: 1});
+			const user = await orm.User.oneOrFailFilter({name: 'admin'});
 			for (const call of mocks) {
 				if (call.valid && call.method === 'get') {
 					let expected = 200;
@@ -351,7 +357,7 @@ describe('REST', function() {
 							break;
 						}
 						// default: {
-						// 	console.log(call.apiName, call.data);
+						// 	console.debug(call.apiName, call.data);
 						// }
 					}
 					await mockCall(call, expected, tokens.all);

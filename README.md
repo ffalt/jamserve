@@ -25,7 +25,7 @@ Features:
 *   REST & GraphQL API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
 *   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/specs/jam.openapi.json)
 *   Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
-*   Database Support for SQLite (planned: some more supported by [Mikro-Orm](https://mikro-orm.io/docs/installation))
+*   Database Support for SQLite (planned: some more supported by [sequelize](https://sequelize.org))
 
 ## Requirements
 

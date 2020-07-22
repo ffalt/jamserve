@@ -1,17 +1,18 @@
 import {Episode, EpisodePage, EpisodeUpdateStatus} from './episode.model';
-import {User} from '../user/user';
-import {BodyParam, Controller, CurrentUser, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
+import {BodyParam, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {BaseController} from '../base/base.controller';
 import {IncludesPodcastArgs} from '../podcast/podcast.args';
 import {EpisodeFilterArgs, EpisodeOrderArgs, IncludesEpisodeArgs, IncludesEpisodeParentArgs} from './episode.args';
 import {ListArgs, PageArgs} from '../base/base.args';
-import {Inject} from 'typescript-ioc';
+import {InRequestScope, Inject} from 'typescript-ioc';
 import {EpisodeService} from './episode.service';
 import {logger} from '../../utils/logger';
+import {Context} from '../../modules/engine/rest/context';
 
 const log = logger('EpisodeController');
 
+@InRequestScope
 @Controller('/episode', {tags: ['Episode'], roles: [UserRole.stream]})
 export class EpisodeController extends BaseController {
 	@Inject
@@ -27,10 +28,10 @@ export class EpisodeController extends BaseController {
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
 		@QueryParams() episodeParentArgs: IncludesEpisodeParentArgs,
 		@QueryParams() podcastArgs: IncludesPodcastArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Episode> {
 		return this.transform.episode(
-			await this.orm.Episode.oneOrFail(id),
+			orm, await orm.Episode.oneOrFailByID(id),
 			episodeArgs, episodeParentArgs, podcastArgs, user
 		);
 	}
@@ -48,16 +49,16 @@ export class EpisodeController extends BaseController {
 		@QueryParams() filter: EpisodeFilterArgs,
 		@QueryParams() order: EpisodeOrderArgs,
 		@QueryParams() list: ListArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<EpisodePage> {
 		if (list.list) {
-			return await this.orm.Episode.findListTransformFilter(list.list, filter, [order], page, user,
-				o => this.transform.episode(o, episodeArgs, episodeParentArgs, podcastArgs, user)
+			return await orm.Episode.findListTransformFilter(list.list, filter, [order], page, user,
+				o => this.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user)
 			);
 		}
-		return await this.orm.Episode.searchTransformFilter(
+		return await orm.Episode.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.episode(o, episodeArgs, episodeParentArgs, podcastArgs, user)
+			o => this.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user)
 		);
 	}
 
@@ -66,8 +67,11 @@ export class EpisodeController extends BaseController {
 		() => EpisodeUpdateStatus,
 		{description: 'Get a Episode Status by Id', summary: 'Get Status'}
 	)
-	async status(@QueryParam('id', {description: 'Episode Id', isID: true}) id: string): Promise<EpisodeUpdateStatus> {
-		return this.transform.episodeStatus(await this.orm.Episode.oneOrFail(id));
+	async status(
+		@QueryParam('id', {description: 'Episode Id', isID: true}) id: string,
+		@Ctx() {orm, user}: Context
+	): Promise<EpisodeUpdateStatus> {
+		return this.transform.episodeStatus(await orm.Episode.oneOrFailByID(id));
 	}
 
 
@@ -77,11 +81,11 @@ export class EpisodeController extends BaseController {
 	)
 	async retrieve(
 		@BodyParam('id', {description: 'Episode Id', isID: true}) id: string,
-		@CurrentUser() user: User
+		@Ctx() {orm}: Context
 	): Promise<void> {
-		const episode = await this.orm.Episode.oneOrFail(id);
+		const episode = await orm.Episode.oneOrFailByID(id);
 		if (!episode.path) {
-			this.episodeService.downloadEpisode(episode).catch(e => log.error(e)); // do not wait
+			this.episodeService.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
 		}
 	}
 

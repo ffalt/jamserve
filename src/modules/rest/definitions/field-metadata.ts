@@ -1,6 +1,5 @@
 import {ParamMetadata} from './param-metadata';
-import {DirectiveMetadata} from './directive-metadata';
-import {FieldOptions, TypeOptions, TypeValueThunk} from '../decorators/types';
+import {FieldOptions, TypeOptions, TypeValueThunk} from './types';
 
 export interface FieldMetadata {
 	target: Function;
@@ -12,6 +11,5 @@ export interface FieldMetadata {
 	deprecationReason: string | undefined;
 	params?: ParamMetadata[];
 	roles?: string[];
-	directives?: DirectiveMetadata[];
 	simple?: boolean;
 }

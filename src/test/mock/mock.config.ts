@@ -1,7 +1,8 @@
 import {ConfigService} from '../../modules/engine/services/config.service';
 import path from 'path';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
-import {Container} from 'typescript-ioc';
+import {Container, Scope} from 'typescript-ioc';
+import {OrmService} from '../../modules/engine/services/orm.service';
 
 export const mockEnv = {
 	port: 4141,
@@ -31,5 +32,6 @@ export function bindMockConfig(dataPath: string, withAdmin: boolean = true): voi
 		public tools = ThirdPartyConfig;
 	}
 
-	Container.bind(ConfigService).to(MockConfigService)
+	Container.bind(ConfigService).to(MockConfigService);
+	Container.bind(OrmService).scope(Scope.Request);
 }

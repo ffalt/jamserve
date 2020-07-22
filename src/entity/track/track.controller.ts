@@ -1,16 +1,17 @@
 import {Track, TrackHealth, TrackLyrics, TrackPage} from './track.model';
-import {User} from '../user/user';
-import {BodyParam, BodyParams, Controller, CurrentUser, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {BaseController} from '../base/base.controller';
 import {IncludesTrackArgs, MediaHealthArgs, RawTagUpdateArgs, TrackFilterArgs, TrackFixArgs, TrackMoveArgs, TrackOrderArgs, TrackRenameArgs} from './track.args';
-import {Inject} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {TrackService} from './track.service';
 import {MediaIDTagRaw} from '../tag/tag.model';
 import {ListArgs, PageArgs} from '../base/base.args';
 import {AdminChangeQueueInfo} from '../admin/admin';
 import {IoService} from '../../modules/engine/services/io.service';
+import {Context} from '../../modules/engine/rest/context';
 
+@InRequestScope
 @Controller('/track', {tags: ['Track'], roles: [UserRole.stream]})
 export class TrackController extends BaseController {
 	@Inject
@@ -26,10 +27,10 @@ export class TrackController extends BaseController {
 	async id(
 		@QueryParam('id', {description: 'Track Id', isID: true}) id: string,
 		@QueryParams() trackArgs: IncludesTrackArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Track> {
 		return this.transform.track(
-			await this.orm.Track.oneOrFail(id),
+			orm, await orm.Track.oneOrFailByID(id),
 			trackArgs, user
 		);
 	}
@@ -45,16 +46,16 @@ export class TrackController extends BaseController {
 		@QueryParams() filter: TrackFilterArgs,
 		@QueryParams() order: TrackOrderArgs,
 		@QueryParams() list: ListArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<TrackPage> {
 		if (list.list) {
-			return await this.orm.Track.findListTransformFilter(list.list, filter, [order], page, user,
-				o => this.transform.track(o, trackArgs, user)
+			return await orm.Track.findListTransformFilter(list.list, filter, [order], page, user,
+				o => this.transform.track(orm, o, trackArgs, user)
 			);
 		}
-		return await this.orm.Track.searchTransformFilter(
+		return await orm.Track.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.track(o, trackArgs, user)
+			o => this.transform.track(orm, o, trackArgs, user)
 		);
 	}
 
@@ -67,11 +68,11 @@ export class TrackController extends BaseController {
 		@QueryParam('id', {description: 'Track Id', isID: true}) id: string,
 		@QueryParams() page: PageArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<TrackPage> {
-		const track = await this.orm.Track.oneOrFail(id);
-		const result = await this.metadata.similarTracks.byTrack(track, page);
-		return {...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(o, trackArgs, user)))};
+		const track = await orm.Track.oneOrFailByID(id);
+		const result = await this.metadata.similarTracks.byTrack(orm, track, page);
+		return {...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user)))};
 	}
 
 	@Get(
@@ -79,9 +80,12 @@ export class TrackController extends BaseController {
 		() => TrackLyrics,
 		{description: 'Get Lyrics for a Track by Id (External Service or Media File)', summary: 'Get Lyrics'}
 	)
-	async lyrics(@QueryParam('id', {description: 'Track Id', isID: true}) id: string): Promise<TrackLyrics> {
-		const track = await this.orm.Track.oneOrFail(id);
-		return this.metadata.lyricsByTrack(track);
+	async lyrics(
+		@QueryParam('id', {description: 'Track Id', isID: true}) id: string,
+		@Ctx() {orm}: Context
+	): Promise<TrackLyrics> {
+		const track = await orm.Track.oneOrFailByID(id);
+		return this.metadata.lyricsByTrack(orm, track);
 	}
 
 	@Get(
@@ -91,9 +95,9 @@ export class TrackController extends BaseController {
 	)
 	async rawTagGet(
 		@QueryParams() filter: TrackFilterArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Array<MediaIDTagRaw>> {
-		const tracks = await this.orm.Track.findFilter(filter, undefined, user);
+		const tracks = await orm.Track.findFilter(filter, [], {}, user);
 		const result: Array<MediaIDTagRaw> = [];
 		for (const track of tracks) {
 			const raw = await this.trackService.getRawTag(track) || {};
@@ -111,14 +115,14 @@ export class TrackController extends BaseController {
 		@QueryParams() mediaHealthArgs: MediaHealthArgs,
 		@QueryParams() filter: TrackFilterArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Array<TrackHealth>> {
-		const tracks = await this.orm.Track.findFilter(filter, undefined, user)
+		const tracks = await orm.Track.findFilter(filter, [], {}, user)
 		const list = await this.trackService.health(tracks, mediaHealthArgs.healthMedia);
 		const result: Array<TrackHealth> = [];
 		for (const item of list) {
 			result.push({
-				track: await this.transform.trackBase(item.track, trackArgs, user),
+				track: await this.transform.trackBase(orm, item.track, trackArgs, user),
 				health: item.health
 			});
 		}
@@ -130,9 +134,12 @@ export class TrackController extends BaseController {
 		() => AdminChangeQueueInfo,
 		{description: 'Rename a track', roles: [UserRole.admin], summary: 'Rename Track'}
 	)
-	async rename(@BodyParams() args: TrackRenameArgs): Promise<AdminChangeQueueInfo> {
-		const track = await this.orm.Track.oneOrFail(args.id);
-		return await this.ioService.renameTrack(args.id, args.name, track.root.id);
+	async rename(
+		@BodyParams() args: TrackRenameArgs,
+		@Ctx() {orm}: Context
+	): Promise<AdminChangeQueueInfo> {
+		const track = await orm.Track.oneOrFailByID(args.id);
+		return await this.ioService.renameTrack(args.id, args.name, track.root.idOrFail());
 	}
 
 	@Post(
@@ -140,9 +147,12 @@ export class TrackController extends BaseController {
 		() => AdminChangeQueueInfo,
 		{description: 'Move Tracks', roles: [UserRole.admin]}
 	)
-	async move(@BodyParams() args: TrackMoveArgs): Promise<AdminChangeQueueInfo> {
-		const folder = await this.orm.Folder.oneOrFail(args.folderID);
-		return await this.ioService.moveTracks(args.ids, args.folderID, folder.root.id);
+	async move(
+		@BodyParams() args: TrackMoveArgs,
+		@Ctx() {orm}: Context
+	): Promise<AdminChangeQueueInfo> {
+		const folder = await orm.Folder.oneOrFailByID(args.folderID);
+		return await this.ioService.moveTracks(args.ids, args.folderID, folder.root.idOrFail());
 	}
 
 	@Post(
@@ -150,9 +160,12 @@ export class TrackController extends BaseController {
 		() => AdminChangeQueueInfo,
 		{description: 'Remove a Track', roles: [UserRole.admin], summary: 'Remove Track'}
 	)
-	async remove(@BodyParam('id') id: string): Promise<AdminChangeQueueInfo> {
-		const track = await this.orm.Track.oneOrFail(id);
-		return await this.ioService.removeTrack(id, track.root.id);
+	async remove(
+		@BodyParam('id') id: string,
+		@Ctx() {orm}: Context
+	): Promise<AdminChangeQueueInfo> {
+		const track = await orm.Track.oneOrFailByID(id);
+		return await this.ioService.removeTrack(id, track.root.idOrFail());
 	}
 
 	@Post(
@@ -160,9 +173,12 @@ export class TrackController extends BaseController {
 		() => AdminChangeQueueInfo,
 		{description: 'Fix Track by Health Hint Id', roles: [UserRole.admin], summary: 'Fix Track'}
 	)
-	async fix(@BodyParams() args: TrackFixArgs): Promise<AdminChangeQueueInfo> {
-		const track = await this.orm.Track.oneOrFail(args.id);
-		return await this.ioService.fixTrack(args.id, args.fixID, track.root.id);
+	async fix(
+		@BodyParams() args: TrackFixArgs,
+		@Ctx() {orm}: Context
+	): Promise<AdminChangeQueueInfo> {
+		const track = await orm.Track.oneOrFailByID(args.id);
+		return await this.ioService.fixTrack(args.id, args.fixID, track.root.idOrFail());
 	}
 
 	@Post(
@@ -170,8 +186,11 @@ export class TrackController extends BaseController {
 		() => AdminChangeQueueInfo,
 		{description: 'Write a Raw Rag to a Track by Track Id', roles: [UserRole.admin], summary: 'Set Raw Tag'}
 	)
-	async rawTagSet(@BodyParams() args: RawTagUpdateArgs): Promise<AdminChangeQueueInfo> {
-		const track = await this.orm.Track.oneOrFail(args.id);
-		return await this.ioService.writeRawTag(args.id, args.tag, track.root.id);
+	async rawTagSet(
+		@BodyParams() args: RawTagUpdateArgs,
+		@Ctx() {orm}: Context
+	): Promise<AdminChangeQueueInfo> {
+		const track = await orm.Track.oneOrFailByID(args.id);
+		return await this.ioService.writeRawTag(args.id, args.tag, track.root.idOrFail());
 	}
 }

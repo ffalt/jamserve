@@ -2,16 +2,17 @@ import {OrmService} from '../../modules/engine/services/orm.service';
 import {Session} from '../session/session';
 import {SessionMode} from '../../types/enums';
 import {Express} from 'express';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
+import {Op} from '../../modules/orm';
 
 export interface SessionNotifyEventObject {
 	clearCache(): Promise<void>;
 }
 
-@Singleton
+@InRequestScope
 export class SessionService {
 	@Inject
-	private orm!: OrmService
+	private ormService!: OrmService;
 	private events: Array<SessionNotifyEventObject> = [];
 	private jwthCache: Array<string> = [];
 
@@ -24,37 +25,40 @@ export class SessionService {
 	}
 
 	async set(sid: string, data: Express.SessionData): Promise<void> {
+		const orm = this.ormService.fork();
 		let session = await this.getSession(sid);
 		if (!data.passport.user) {
 			if (session) {
-				await this.orm.Session.removeAndFlush(session);
+				await orm.Session.removeAndFlush(session);
 			}
 			return;
 		}
 		if (!session) {
-			session = this.orm.Session.create({sessionID: sid});
+			session = orm.Session.create({sessionID: sid});
 		}
 		session.jwth = data.jwth;
 		session.agent = data.userAgent;
 		session.client = data.client;
 		session.cookie = JSON.stringify(data.cookie);
 		session.mode = data.jwth ? SessionMode.jwt : SessionMode.browser;
-		if (!session.user || session.user.id !== data.passport.user) {
-			session.user = await this.orm.User.oneOrFail(data.passport.user)
+		if (session.user.id() !== data.passport.user) {
+			await session.user.set(await orm.User.oneOrFailByID(data.passport.user));
 		}
 		session.expires = typeof data.cookie.expires === 'boolean' ?
 			(data.cookie.expires ? Date.now() : 0) :
 			(data.cookie.expires?.valueOf() || 0);
-		await this.orm.Session.persistAndFlush(session);
+		await orm.Session.persistAndFlush(session);
 	}
 
 	async all(): Promise<Array<Express.SessionData>> {
-		const sessions = await this.orm.Session.all();
+		const orm = this.ormService.fork();
+		const sessions = await orm.Session.all();
 		return sessions.map(session => this.toExpress(session));
 	}
 
 	async getSession(sessionID: string): Promise<Session | undefined> {
-		const session = await this.orm.Session.findOne({sessionID: {$eq: sessionID}});
+		const orm = this.ormService.fork();
+		const session = await orm.Session.findOne({where: {sessionID}});
 		if (session && this.expired(session)) {
 			await this.remove(sessionID);
 			return;
@@ -62,45 +66,53 @@ export class SessionService {
 		return session || undefined;
 	}
 
-
 	async clearExpired(): Promise<void> {
-		await this.orm.Session.remove({expires: {$lt: Date.now()}});
+		const orm = this.ormService.fork();
+		await orm.Session.removeByQueryAndFlush({where: {expires: {[Op.lt]: Date.now()}}});
 	}
 
 	async byJwth(jwth: string): Promise<Session | undefined> {
-		return (await this.orm.Session.findOne({jwth: {$eq: jwth}})) || undefined;
+		const orm = this.ormService.fork();
+		return (await orm.Session.findOne({where: {jwth}}));
 	}
 
 	async byUserID(userID: string): Promise<Array<Session>> {
-		return await this.orm.Session.find({user: {id: userID}});
+		const orm = this.ormService.fork();
+		return await orm.Session.find({where: {user: userID}});
 	}
 
 	async byID(id: string): Promise<Session | undefined> {
-		return await this.orm.Session.findOne(id) || undefined;
+		const orm = this.ormService.fork();
+		return await orm.Session.findOneByID(id);
 	}
 
 	async remove(sessionID: string): Promise<void> {
 		this.jwthCache = [];
-		await this.orm.Session.remove({sessionID: {$eq: sessionID}});
+		const orm = this.ormService.fork();
+		await orm.Session.removeByQueryAndFlush({where: {sessionID}});
 	}
 
 	async removeUserSession(id: string, userID: string): Promise<void> {
 		this.jwthCache = [];
-		await this.orm.Session.remove({id: id, user: {id: userID}});
+		const orm = this.ormService.fork();
+		await orm.Session.removeByQueryAndFlush({where: {id, user: userID}});
 	}
 
 	async removeByJwth(jwth: string): Promise<void> {
 		this.jwthCache = [];
-		await this.orm.Session.remove({jwth: {$eq: jwth}});
+		const orm = this.ormService.fork();
+		await orm.Session.removeByQueryAndFlush({where: {jwth}});
 	}
 
 	async clear(): Promise<void> {
 		this.jwthCache = [];
-		await this.orm.Session.remove({});
+		const orm = this.ormService.fork();
+		await orm.Session.removeByQueryAndFlush({});
 	}
 
 	async count(): Promise<number> {
-		return this.orm.Session.count();
+		const orm = this.ormService.fork();
+		return orm.Session.count();
 	}
 
 	async clearCache(): Promise<void> {
@@ -138,7 +150,7 @@ export class SessionService {
 			client: session.client,
 			jwth: session.jwth,
 			userAgent: session.agent,
-			passport: {user: session.user.id}
+			passport: {user: session.user.idOrFail()}
 		};
 	}
 

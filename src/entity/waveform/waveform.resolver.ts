@@ -7,8 +7,11 @@ import {NotFoundError} from '../../modules/rest/builder';
 export class WaveformResolver {
 
 	@Query(() => WaveformQL)
-	async waveform(@Arg('id', () => ID!) id: string, @Ctx() {orm, engine, user}: Context): Promise<Waveform> {
-		const result = await engine.waveformService.findInWaveformTypes(id);
+	async waveform(
+		@Arg('id', () => ID!) id: string,
+		@Ctx() {orm}: Context
+	): Promise<Waveform> {
+		const result = await orm.findInWaveformTypes(id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}

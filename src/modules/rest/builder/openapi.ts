@@ -2,7 +2,7 @@ import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version';
 import {getMetadataStorage} from '../metadata';
 import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata';
 import {ClassMetadata} from '../definitions/class-metadata';
-import {CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue, TypeValueThunk} from '../decorators/types';
+import {CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue, TypeValueThunk} from '../definitions/types';
 import {getDefaultValue} from '../helpers/default-value';
 import {ControllerClassMetadata} from '../definitions/controller-metadata';
 import {EnumMetadata} from '../definitions/enum-metadata';

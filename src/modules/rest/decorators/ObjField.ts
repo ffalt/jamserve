@@ -1,7 +1,7 @@
 import {findType} from '../helpers/findType';
 import {getMetadataStorage} from '../metadata';
 import {getTypeDecoratorParams} from '../helpers/decorators';
-import {FieldOptions, MethodAndPropDecorator, ReturnTypeFunc} from './types';
+import {FieldOptions, MethodAndPropDecorator, ReturnTypeFunc} from '../definitions/types';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export function ObjField(): MethodAndPropDecorator;
@@ -23,11 +23,9 @@ export function ObjField(
 			maybeOptions
 		);
 		const opt = options as FieldOptions;
-		const isResolver = Boolean(descriptor);
-		const isResolverMethod = Boolean(descriptor && descriptor.value);
 
 		const {getType, typeOptions} = findType({
-			metadataKey: isResolverMethod ? 'design:returntype' : 'design:type',
+			metadataKey: 'design:type',
 			prototype,
 			propertyKey,
 			returnTypeFunc,
@@ -43,14 +41,5 @@ export function ObjField(
 			description: opt.description,
 			deprecationReason: opt.deprecationReason
 		});
-
-		if (isResolver) {
-			getMetadataStorage().collectFieldResolverMetadata({
-				kind: 'internal',
-				methodName: propertyKey,
-				schemaName: opt.name || propertyKey,
-				target: prototype.constructor
-			});
-		}
 	};
 }

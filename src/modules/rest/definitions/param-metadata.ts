@@ -1,5 +1,5 @@
 import type {ValidatorOptions} from 'class-validator';
-import {TypeOptions, TypeValueThunk} from '../decorators/types';
+import {TypeOptions, TypeValueThunk} from './types';
 
 export interface BasicParamMetadata {
 	target: Function;

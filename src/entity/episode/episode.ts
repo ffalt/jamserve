@@ -3,10 +3,12 @@ import {Tag, TagQL} from '../tag/tag';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {PodcastStatus} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Cascade, Collection, Entity, Enum, ManyToOne, OneToMany, OneToOne, Property, QueryOrder} from 'mikro-orm';
+import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_INT, ORM_TIMESTAMP, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {Waveform, WaveformQL} from '../waveform/waveform';
+import {PlayQueueEntry} from '../playqueueentry/playqueue-entry';
+import {PlaylistEntry} from '../playlistentry/playlist-entry';
 
 @ObjectType()
 export class EpisodeChapter {
@@ -38,71 +40,77 @@ export class EpisodeEnclosureQL extends EpisodeEnclosure {
 @Entity()
 export class Episode extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
-	@Enum(() => PodcastStatus)
-	@Property()
+	@Field(() => PodcastStatus)
+	@Property(() => PodcastStatus)
 	status!: PodcastStatus;
 
 	@Field(() => Int, {nullable: true})
-	@Property()
+	@Property(() => ORM_INT, {nullable: true})
 	fileSize?: number;
 
-	@Property()
+	@Property(() => ORM_TIMESTAMP, {nullable: true})
 	statCreated?: number;
 
-	@Property()
+	@Property(() => ORM_TIMESTAMP, {nullable: true})
 	statModified?: number;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	error?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	path?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	link?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	summary?: string;
 
-	@Property()
+	@Property(() => ORM_TIMESTAMP)
 	date!: number;
 
 	@Field(() => Int, {nullable: true})
-	@Property({nullable: true})
+	@Property(() => ORM_INT, {nullable: true})
 	duration?: number;
 
 	@Field(() => String, {nullable: true})
-	@Property({nullable: true})
+	@Property(() => String, {nullable: true})
 	guid?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property({nullable: true})
+	@Property(() => String, {nullable: true})
 	author?: string;
 
-	@Property({nullable: true})
+	@Property(() => String, {nullable: true})
 	chaptersJSON?: string;
 
-	@Property({nullable: true})
+	@Property(() => String, {nullable: true})
 	enclosuresJSON?: string;
 
 	@Field(() => TagQL, {nullable: true})
-	@OneToOne({entity: () => Tag, nullable: true})
-	tag?: Tag;
+	@OneToOne<Tag>(() => Tag, tag => tag.episode, {owner: true, nullable: true})
+	tag: Reference<Tag> = new Reference<Tag>(this);
 
 	@Field(() => PodcastQL)
-	@ManyToOne(() => Podcast)
-	podcast!: Podcast;
+	@ManyToOne<Podcast>(() => Podcast, podcast => podcast.episodes)
+	podcast: Reference<Podcast> = new Reference<Podcast>(this);
 
 	@Field(() => [BookmarkQL])
-	@OneToMany({entity: () => Bookmark, mappedBy: bookmark => bookmark.episode, cascade: [Cascade.REMOVE], orderBy: {position: QueryOrder.ASC}})
+	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.episode, {orderBy: {position: QueryOrder.ASC}})
 	bookmarks: Collection<Bookmark> = new Collection<Bookmark>(this);
+
+	@OneToMany<PlayQueueEntry>(() => PlayQueueEntry, playqueueEntry => playqueueEntry.episode)
+	playqueueEntries: Collection<PlayQueueEntry> = new Collection<PlayQueueEntry>(this);
+
+	@OneToMany<PlaylistEntry>(() => PlaylistEntry, playlistEntry => playlistEntry.episode)
+	playlistEntries: Collection<PlaylistEntry> = new Collection<PlaylistEntry>(this);
 }
 
 

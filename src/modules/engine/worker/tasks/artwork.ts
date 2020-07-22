@@ -8,6 +8,8 @@ import {ArtworkImageType} from '../../../../types/enums';
 import {BaseWorker} from './base';
 import {Root} from '../../../../entity/root/root';
 import {Folder} from '../../../../entity/folder/folder';
+import {InRequestScope} from 'typescript-ioc';
+import {Orm} from '../../services/orm.service';
 
 export const FolderTypeImageName: { [foldertype: string]: string } = {
 	unknown: 'folder',
@@ -18,6 +20,7 @@ export const FolderTypeImageName: { [foldertype: string]: string } = {
 	extras: 'folder'
 };
 
+@InRequestScope
 export class ArtworkWorker extends BaseWorker {
 
 	private async updateArtworkImageFile(artwork: Artwork): Promise<void> {
@@ -33,16 +36,16 @@ export class ArtworkWorker extends BaseWorker {
 		artwork.width = info?.width;
 	}
 
-	async rename(artworkID: string, newName: string, changes: Changes): Promise<void> {
-		const artwork = await this.orm.Artwork.findOne(artworkID);
+	async rename(orm: Orm, artworkID: string, newName: string, changes: Changes): Promise<void> {
+		const artwork = await orm.Artwork.findOneByID(artworkID);
 		if (!artwork) {
 			return Promise.reject(Error(`Artwork not found`));
 		}
 		artwork.name = await this.renameFile(artwork.path, artwork.name, newName);
 		await this.updateArtworkImageFile(artwork);
-		this.orm.orm.em.persistLater(artwork);
+		orm.Artwork.persistLater(artwork);
 		changes.artworks.updated.add(artwork);
-		changes.folders.updated.add(artwork.folder);
+		changes.folders.updated.add(await artwork.folder.get());
 	}
 
 	private getArtworkName(folder: Folder, types: Array<ArtworkImageType>): string {
@@ -72,11 +75,11 @@ export class ArtworkWorker extends BaseWorker {
 		return dest;
 	}
 
-	async create(folderID: string, artworkFilename: string, types: Array<ArtworkImageType>, changes: Changes): Promise<void> {
+	async create(orm: Orm, folderID: string, artworkFilename: string, types: Array<ArtworkImageType>, changes: Changes): Promise<void> {
 		if (!artworkFilename || !(await fse.pathExists(artworkFilename))) {
 			return Promise.reject(Error('Invalid Artwork File Name'));
 		}
-		const folder = await this.orm.Folder.findOne(folderID);
+		const folder = await orm.Folder.findOneByID(folderID);
 		if (!folder) {
 			return Promise.reject(Error(`Folder not found`));
 		}
@@ -87,23 +90,23 @@ export class ArtworkWorker extends BaseWorker {
 		} catch (e) {
 			return Promise.reject(Error(`Importing artwork failed`));
 		}
-		const artwork = this.orm.Artwork.create({
+		const artwork = orm.Artwork.create({
 			name: dest,
 			path: folder.path,
-			types,
-			folder
+			types
 		});
+		await artwork.folder.set(folder);
 		changes.folders.updated.add(folder);
 		changes.artworks.added.add(artwork);
 		await this.updateArtworkImageFile(artwork);
-		this.orm.orm.em.persistLater(artwork);
+		orm.Artwork.persistLater(artwork);
 	}
 
-	async replace(artworkID: string, artworkFilename: string, changes: Changes): Promise<void> {
+	async replace(orm: Orm, artworkID: string, artworkFilename: string, changes: Changes): Promise<void> {
 		if (!artworkFilename || !(await fse.pathExists(artworkFilename))) {
 			return Promise.reject(Error('Invalid Artwork File Name'));
 		}
-		const artwork = await this.orm.Artwork.findOne(artworkID);
+		const artwork = await orm.Artwork.findOneByID(artworkID);
 		if (!artwork) {
 			return Promise.reject(Error(`Artwork not found`));
 		}
@@ -123,39 +126,37 @@ export class ArtworkWorker extends BaseWorker {
 		}
 		await this.updateArtworkImageFile(artwork);
 		changes.artworks.updated.add(artwork);
-		this.orm.orm.em.persistLater(artwork);
+		orm.Artwork.persistLater(artwork);
 	}
 
-	async download(folderID: string, artworkURL: string, types: Array<ArtworkImageType>, changes: Changes): Promise<void> {
-		const folder = await this.orm.Folder.findOne(folderID);
-		if (!folder) {
-			return Promise.reject(Error(`Folder not found`));
-		}
+	async download(orm: Orm, folderID: string, artworkURL: string, types: Array<ArtworkImageType>, changes: Changes): Promise<void> {
+		const folder = await orm.Folder.findOneOrFailByID(folderID);
 		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
 		const filename = await this.imageModule.storeImage(folder.path, name, artworkURL);
-		const artwork = this.orm.Artwork.create({name: filename, path: folder.path, folder});
+		const artwork = orm.Artwork.create({name: filename, path: folder.path});
+		await artwork.folder.set(folder);
 		changes.folders.updated.add(folder);
 		changes.artworks.added.add(artwork);
 		await this.updateArtworkImageFile(artwork);
-		this.orm.orm.em.persistLater(artwork);
+		orm.Artwork.persistLater(artwork);
 	}
 
-	async remove(root: Root, artworkID: string, changes: Changes): Promise<void> {
-		const artwork = await this.orm.Artwork.findOne(artworkID);
+	async remove(orm: Orm, root: Root, artworkID: string, changes: Changes): Promise<void> {
+		const artwork = await orm.Artwork.findOneByID(artworkID);
 		if (!artwork) {
 			return Promise.reject(Error(`Artwork not found`));
 		}
 		await this.moveToTrash(root, artwork.path, artwork.name);
 		changes.artworks.removed.add(artwork);
-		changes.folders.updated.add(artwork.folder);
+		changes.folders.updated.add(await artwork.folder.get());
 	}
 
-	async move(artworkIDs: Array<string>, newParentID: string, changes: Changes) {
-		const artworks = await this.orm.Artwork.find(artworkIDs);
+	async move(orm: Orm, artworkIDs: Array<string>, newParentID: string, changes: Changes) {
+		const artworks = await orm.Artwork.findByIDs(artworkIDs);
 		if (artworks.length !== artworkIDs.length) {
 			return Promise.reject(Error('Artwork not found'));
 		}
-		const newParent = await this.orm.Folder.findOne(newParentID);
+		const newParent = await orm.Folder.findOneByID(newParentID);
 		if (!newParent) {
 			return Promise.reject(Error('Destination Folder not found'));
 		}
@@ -167,13 +168,13 @@ export class ArtworkWorker extends BaseWorker {
 		changes.folders.updated.add(newParent);
 		for (const artwork of artworks) {
 			changes.artworks.updated.add(artwork);
-			const oldParent = artwork.folder;
-			if (oldParent.id !== newParentID) {
+			const oldParent = await artwork.folder.get();
+			if (oldParent?.id !== newParentID) {
 				changes.folders.updated.add(oldParent);
 				await fse.move(path.join(artwork.path, artwork.name), path.join(newParent.path, artwork.name));
 				artwork.path = ensureTrailingPathSeparator(newParent.path);
-				artwork.folder = newParent;
-				this.orm.orm.em.persistLater(artwork);
+				await artwork.folder.set(newParent);
+				orm.Artwork.persistLater(artwork);
 			}
 		}
 	}

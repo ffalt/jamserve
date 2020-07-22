@@ -1,15 +1,16 @@
 import {Artwork, ArtworkPage} from './artwork.model';
-import {User} from '../user/user';
-import {BodyParam, BodyParams, Controller, CurrentUser, Get, Post, QueryParam, QueryParams, Upload, UploadFile} from '../../modules/rest';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams, Upload, UploadFile} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {BaseController} from '../base/base.controller';
 import {ArtworkFilterArgs, ArtworkNewArgs, ArtworkNewUploadArgs, ArtworkOrderArgs, ArtworkRenameArgs, IncludesArtworkArgs, IncludesArtworkChildrenArgs} from './artwork.args';
 import {ListArgs, PageArgs} from '../base/base.args';
-import {Inject} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {ArtworkService} from './artwork.service';
 import {AdminChangeQueueInfo} from '../admin/admin';
 import {IncludesFolderArgs} from '../folder/folder.args';
+import {Context} from '../../modules/engine/rest/context';
 
+@InRequestScope
 @Controller('/artwork', {tags: ['Artwork'], roles: [UserRole.stream]})
 export class ArtworkController extends BaseController {
 	@Inject
@@ -24,10 +25,10 @@ export class ArtworkController extends BaseController {
 		@QueryParams() artworkArgs: IncludesArtworkArgs,
 		@QueryParams() artworkChildrenArgs: IncludesArtworkChildrenArgs,
 		@QueryParams() folderArgs: IncludesFolderArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Artwork> {
 		return this.transform.artwork(
-			await this.orm.Artwork.oneOrFail(id),
+			orm, await orm.Artwork.oneOrFailByID(id),
 			artworkArgs, artworkChildrenArgs, folderArgs, user
 		);
 	}
@@ -45,16 +46,16 @@ export class ArtworkController extends BaseController {
 		@QueryParams() filter: ArtworkFilterArgs,
 		@QueryParams() order: ArtworkOrderArgs,
 		@QueryParams() list: ListArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<ArtworkPage> {
 		if (list.list) {
-			return await this.orm.Artwork.findListTransformFilter(list.list, filter, [order], page, user,
-				o => this.transform.artwork(o, artworkArgs, artworkChildrenArgs, folderArgs, user)
+			return await orm.Artwork.findListTransformFilter(list.list, filter, [order], page, user,
+				o => this.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user)
 			);
 		}
-		return await this.orm.Artwork.searchTransformFilter(
+		return await orm.Artwork.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.artwork(o, artworkArgs, artworkChildrenArgs, folderArgs, user)
+			o => this.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user)
 		);
 	}
 
@@ -65,9 +66,9 @@ export class ArtworkController extends BaseController {
 	)
 	async createByUrl(
 		@BodyParams() args: ArtworkNewArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<AdminChangeQueueInfo> {
-		const folder = await this.orm.Folder.oneOrFail(args.folderID);
+		const folder = await orm.Folder.oneOrFailByID(args.folderID);
 		return await this.artworkService.createByUrl(folder, args.url, args.types);
 	}
 
@@ -79,9 +80,9 @@ export class ArtworkController extends BaseController {
 	async createByUpload(
 		@BodyParams() args: ArtworkNewUploadArgs,
 		@Upload('image') file: UploadFile,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<AdminChangeQueueInfo> {
-		const folder = await this.orm.Folder.oneOrFail(args.folderID);
+		const folder = await orm.Folder.oneOrFailByID(args.folderID);
 		return await this.artworkService.createByFile(folder, file.name, args.types);
 	}
 
@@ -93,9 +94,9 @@ export class ArtworkController extends BaseController {
 	async update(
 		@BodyParam('id', {description: 'Artwork Id', isID: true}) id: string,
 		@Upload('image') file: UploadFile,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<AdminChangeQueueInfo> {
-		const artwork = await this.orm.Artwork.oneOrFail(id);
+		const artwork = await orm.Artwork.oneOrFailByID(id);
 		return await this.artworkService.upload(artwork, file.name);
 	}
 
@@ -106,9 +107,9 @@ export class ArtworkController extends BaseController {
 	)
 	async rename(
 		@BodyParams() args: ArtworkRenameArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<AdminChangeQueueInfo> {
-		const artwork = await this.orm.Artwork.oneOrFail(args.id);
+		const artwork = await orm.Artwork.oneOrFailByID(args.id);
 		return await this.artworkService.rename(artwork, args.newName);
 	}
 
@@ -119,9 +120,9 @@ export class ArtworkController extends BaseController {
 	)
 	async remove(
 		@BodyParam('id', {description: 'Artwork Id', isID: true}) id: string,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<AdminChangeQueueInfo> {
-		const artwork = await this.orm.Artwork.oneOrFail(id);
+		const artwork = await orm.Artwork.oneOrFailByID(id);
 		return await this.artworkService.remove(artwork);
 	}
 

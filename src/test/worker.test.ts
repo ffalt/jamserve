@@ -13,6 +13,8 @@ import {waitEngineStart} from './mock/mock.engine';
 import {Folder} from '../entity/folder/folder';
 import {mockNock, mockNockURL} from './mock/mock.nock';
 import {Artwork} from '../entity/artwork/artwork';
+import {Container} from 'typescript-ioc';
+
 import {
 	WorkerRequestCreateArtwork,
 	WorkerRequestDownloadArtwork,
@@ -33,6 +35,7 @@ import {buildMockRoot, buildSeriesMockRoot, extendSpecMockRoot, MockRoot, MockSp
 import {writeMockFolder} from './mock/mock.folder';
 import {initTest} from './init';
 import {expectChanges, validateMockRoot} from './mock/mock.changes';
+import {Orm} from '../modules/engine/services/orm.service';
 
 initTest();
 
@@ -41,15 +44,16 @@ describe('WorkerService', () => {
 	let workerService: WorkerService;
 	let dir: tmp.DirResult;
 	let mockRoot: MockRoot;
+	let orm: Orm;
 
 	beforeEach(async () => {
 		dir = tmp.dirSync();
 		bindMockConfig(dir.name);
-
-		engine = new EngineService();
+		engine = Container.get(EngineService);
 		workerService = engine.ioService.workerService;
 		await engine.start();
 		await waitEngineStart(engine);
+		orm = engine.orm.fork();
 	});
 
 	afterEach(async () => {
@@ -66,8 +70,8 @@ describe('WorkerService', () => {
 				const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
 				await fse.mkdir(mediaPath);
 				mockRoot = buildMockRoot(mediaPath, 1, RootScanStrategy.auto);
-				const changes = await writeAndStoreMock(mockRoot, workerService);
-				await validateMockRoot(mockRoot, changes, workerService);
+				const changes = await writeAndStoreMock(mockRoot, workerService, orm);
+				await validateMockRoot(mockRoot, changes, workerService, orm);
 			});
 
 			afterEach(async () => {
@@ -83,7 +87,7 @@ describe('WorkerService', () => {
 
 				//Assert
 				expectChanges(changes, {});
-				await validateMock(mockRoot, workerService);
+				await validateMock(mockRoot, workerService, orm);
 			});
 			it('should remove missing in the root', async () => {
 				//Arrange
@@ -103,14 +107,14 @@ describe('WorkerService', () => {
 					seriesRemoved: mockRoot.expected.series,
 					artworksRemoved: mockRoot.expected.artworks
 				});
-				expect(await engine.orm.Folder.count()).toBe(1);
-				expect(await engine.orm.Track.count()).toBe(0);
-				expect(await engine.orm.Album.count()).toBe(0);
-				expect(await engine.orm.Artist.count()).toBe(0);
-				expect(await engine.orm.Series.count()).toBe(0);
-				expect(await engine.orm.Artwork.count()).toBe(0);
-				expect(await engine.orm.Bookmark.count()).toBe(0);
-				expect(await engine.orm.State.count()).toBe(0);
+				expect(await orm.Folder.count()).toBe(1);
+				expect(await orm.Track.count()).toBe(0);
+				expect(await orm.Album.count()).toBe(0);
+				expect(await orm.Artist.count()).toBe(0);
+				expect(await orm.Series.count()).toBe(0);
+				expect(await orm.Artwork.count()).toBe(0);
+				expect(await orm.Bookmark.count()).toBe(0);
+				expect(await orm.State.count()).toBe(0);
 			});
 			it('should scan added in the root', async () => {
 				//Arrange
@@ -132,12 +136,12 @@ describe('WorkerService', () => {
 					albumsNew: mockRoot.expected.albums,
 					seriesNew: mockRoot.expected.series
 				});
-				await validateMock(mockRoot, workerService);
+				await validateMock(mockRoot, workerService, orm);
 			});
 			it('should combine/remove artists and albums from different roots', async () => {
 				const dir2 = tmp.dirSync();
 				const mockRoot2 = buildMockRoot(dir2.name, 2, RootScanStrategy.auto);
-				let changes = await writeAndStoreMock(mockRoot2, workerService);
+				let changes = await writeAndStoreMock(mockRoot2, workerService, orm);
 				expectChanges(changes, {
 					tracksNew: mockRoot2.expected.tracks,
 					foldersNew: mockRoot2.expected.folders,
@@ -146,7 +150,7 @@ describe('WorkerService', () => {
 					albumsUpdate: mockRoot2.expected.albums,
 					artistsUpdate: mockRoot2.expected.artists.length
 				});
-				await validateMock(mockRoot2, workerService);
+				await validateMock(mockRoot2, workerService, orm);
 				await fse.remove(mockRoot2.path);
 				// dir2.removeCallback();
 
@@ -231,14 +235,14 @@ describe('WorkerService', () => {
 					}
 				};
 				const mockRoot2 = extendSpecMockRoot(rootDir, mockRootSpec2, RootScanStrategy.auto);
-				const changes = await writeAndStoreMock(mockRoot2, workerService);
+				const changes = await writeAndStoreMock(mockRoot2, workerService, orm);
 				expectChanges(changes, {
 					tracksNew: mockRoot2.expected.tracks,
 					foldersNew: mockRoot2.expected.folders,
 					artistsNew: mockRoot2.expected.artists.length,
 					albumsNew: mockRoot2.expected.albums
 				});
-				await validateMock(mockRoot2, workerService);
+				await validateMock(mockRoot2, workerService, orm);
 				await fse.remove(mockRoot2.path);
 				dir2.removeCallback();
 			});
@@ -326,14 +330,14 @@ describe('WorkerService', () => {
 					}
 				};
 				const mockRoot2 = extendSpecMockRoot(rootDir, mockRootSpec2, RootScanStrategy.auto);
-				let changes = await writeAndStoreMock(mockRoot2, workerService);
+				let changes = await writeAndStoreMock(mockRoot2, workerService, orm);
 				expectChanges(changes, {
 					tracksNew: mockRoot2.expected.tracks,
 					foldersNew: mockRoot2.expected.folders,
 					artistsNew: mockRoot2.expected.artists.length,
 					albumsNew: mockRoot2.expected.albums
 				});
-				await validateMock(mockRoot2, workerService);
+				await validateMock(mockRoot2, workerService, orm);
 
 				await fse.remove(mockRoot2.folders[0].folders[1].path);
 
@@ -381,19 +385,19 @@ describe('WorkerService', () => {
 					artistsRemoved: 1, 	// Artist B must be removed
 					artistsUpdate: 1 // Artist A must be updated
 				});
-				await validateMock(mockRoot2, workerService);
+				await validateMock(mockRoot2, workerService, orm);
 				await fse.remove(mockRoot2.path);
 				dir2.removeCallback();
 			});
 			it('should remove tracks on scan', async () => {
-				const tracks = await engine.orm.Track.findFilter({rootIDs: [mockRoot.id]});
+				const tracks = await orm.Track.findFilter({rootIDs: [mockRoot.id]});
 				for (const track of tracks) {
 					const changes = await workerService.removeTracks({rootID: mockRoot.id, trackIDs: [track.id]});
 					expect(changes.tracks.removed.size, 'Removed Tracks count doesnt match').toBe(1);
 				}
-				const album = await engine.orm.Album.findFilter({rootIDs: [mockRoot.id]});
+				const album = await orm.Album.findFilter({rootIDs: [mockRoot.id]});
 				expect(album.length, 'All albums should have been removed').toBe(0);
-				const artists = await engine.orm.Artist.findFilter({rootIDs: [mockRoot.id]});
+				const artists = await orm.Artist.findFilter({rootIDs: [mockRoot.id]});
 				expect(artists.length, 'All artists should have been removed').toBe(0);
 				await writeMockRoot(mockRoot);
 				const restoreChanges = await workerService.refreshRoot({rootID: mockRoot.id});
@@ -406,8 +410,8 @@ describe('WorkerService', () => {
 				const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
 				await fse.mkdir(mediaPath);
 				mockRoot = buildSeriesMockRoot(dir.name, 2, RootScanStrategy.audiobook);
-				const changes = await writeAndStoreMock(mockRoot, workerService);
-				await validateMockRoot(mockRoot, changes, workerService);
+				const changes = await writeAndStoreMock(mockRoot, workerService, orm);
+				await validateMockRoot(mockRoot, changes, workerService, orm);
 			});
 
 			afterEach(async () => {
@@ -418,7 +422,7 @@ describe('WorkerService', () => {
 			it('should rescan', async () => {
 				const changes = await workerService.refreshRoot({rootID: mockRoot.id});
 				expectChanges(changes, {});
-				await validateMock(mockRoot, workerService);
+				await validateMock(mockRoot, workerService, orm);
 			});
 		});
 
@@ -430,8 +434,8 @@ describe('WorkerService', () => {
 			const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
 			await fse.mkdir(mediaPath);
 			mockRoot = buildMockRoot(mediaPath, 1, RootScanStrategy.auto);
-			const changes = await writeAndStoreMock(mockRoot, workerService);
-			await validateMockRoot(mockRoot, changes, workerService);
+			const changes = await writeAndStoreMock(mockRoot, workerService, orm);
+			await validateMockRoot(mockRoot, changes, workerService, orm);
 		});
 
 		afterEach(async () => {
@@ -443,7 +447,7 @@ describe('WorkerService', () => {
 
 			describe('create folders', () => {
 				it('should handle invalid parameters', async () => {
-					const folders = await workerService.orm.Folder.find({root: {id: mockRoot.id}});
+					const folders = await orm.Folder.find({where: {root: mockRoot.id}});
 					const folder = folders[0];
 					if (!folder) {
 						throw Error('Invalid Test Setup');
@@ -452,28 +456,39 @@ describe('WorkerService', () => {
 					await expect(workerService.createFolder({rootID: mockRoot.id, parentID: folder.id, name: '.'})).rejects.toThrow('Invalid Directory Name');
 					await expect(workerService.createFolder({rootID: mockRoot.id, parentID: folder.id, name: '//..*.'})).rejects.toThrow('Invalid Directory Name');
 					await expect(workerService.createFolder({rootID: mockRoot.id, parentID: 'invalid', name: 'valid'})).rejects.toThrow('Destination Folder not found');
-					const child = folders.find(f => !!f.parent);
-					if (!child || !child.parent) {
+
+					const findWithParent = async () => {
+						for (const f of folders) {
+							if (await f.parent.get()) {
+								return f;
+							}
+						}
+					};
+
+					const child = await findWithParent();
+					if (!child) {
 						throw Error('Invalid Test Setup');
 					}
-					await expect(workerService.createFolder({rootID: mockRoot.id, parentID: child.parent.id, name: path.basename(child.path)})).rejects.toThrow('Folder name already used in Destination');
+					const parentID =  child.parent.idOrFail();
+					await expect(workerService.createFolder({rootID: mockRoot.id, parentID, name: path.basename(child.path)})).rejects.toThrow('Folder name already used in Destination');
 				});
 
 				it('should create a folder', async () => {
-					const parent = await workerService.orm.Folder.findOneOrFail({root: {id: mockRoot.id}});
+					const parent = await orm.Folder.findOneOrFail({where: {root: mockRoot.id}});
 					const changes = await workerService.createFolder({rootID: mockRoot.id, parentID: parent.id, name: randomString(10)});
 					expectChanges(changes, {
 						foldersUpdate: 1,
 						foldersNew: 1
 					});
 				});
+
 			});
 
 			describe('rename folders', () => {
 				let folder!: Folder;
 
 				beforeEach(async () => {
-					folder = await workerService.orm.Folder.findOneOrFail({root: {id: mockRoot.id}});
+					folder = await orm.Folder.findOneOrFail({where: {root: mockRoot.id}});
 				});
 
 				it('should handle invalid parameters', async () => {
@@ -493,22 +508,22 @@ describe('WorkerService', () => {
 				});
 
 				it('should rename and update all folder & track paths', async () => {
-					const folderIds = await workerService.orm.Folder.findIDs({root: {id: mockRoot.id}});
+					const folderIds = await orm.Folder.findIDs({where: {root: mockRoot.id}});
 					if (folderIds.length === 0) {
 						throw Error('Invalid Test Setup');
 					}
 
 					async function testRename(folder: Folder, newName: string): Promise<Folder | undefined> {
-						const trackCount = await workerService.orm.Track.countFilter({childOfID: folder.id});
-						const folderCount = await workerService.orm.Folder.countFilter({childOfID: folder.id});
+						const trackCount = await orm.Track.countFilter({childOfID: folder.id});
+						const folderCount = await orm.Folder.countFilter({childOfID: folder.id});
 						await workerService.renameFolder({rootID: mockRoot.id, folderID: folder.id, newName});
-						const updatedFolder = await workerService.orm.Folder.oneOrFail(folder.id);
-						const all = await workerService.orm.Folder.findFilter({childOfID: updatedFolder.id});
+						const updatedFolder = await orm.Folder.oneOrFailByID(folder.id);
+						const all = await orm.Folder.findFilter({childOfID: updatedFolder.id});
 						expect(folderCount, `Folder count does not match: ${updatedFolder.path}`).toBe(all.length);
 						for (const f of all) {
 							expect(await fse.pathExists(f.path), `Folder does not exists: ${f.path}`).toBe(true);
 						}
-						const tracks = await workerService.orm.Track.findFilter({childOfID: updatedFolder.id});
+						const tracks = await orm.Track.findFilter({childOfID: updatedFolder.id});
 						expect(trackCount, `Track count does not match: ${updatedFolder.path}`).toBe(tracks.length);
 						for (const track of tracks) {
 							expect(await fse.pathExists(path.join(track.path, track.fileName)),
@@ -518,7 +533,7 @@ describe('WorkerService', () => {
 					}
 
 					for (const id of folderIds) {
-						const folder = await workerService.orm.Folder.oneOrFail(id);
+						const folder = await orm.Folder.oneOrFailByID(id);
 						const name = path.basename(folder.path);
 						const updatedFolder = await testRename(folder, name + '_renamed');
 						if (updatedFolder) {
@@ -533,8 +548,8 @@ describe('WorkerService', () => {
 				let artistFolder!: Folder;
 
 				beforeEach(async () => {
-					rootFolder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], level: 0});
-					artistFolder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], artist: 'artist 1', folderTypes: [FolderType.artist]});
+					rootFolder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], level: 0});
+					artistFolder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], artist: 'artist 1', folderTypes: [FolderType.artist]});
 				});
 
 				it('should not remove root folders', async () => {
@@ -550,10 +565,10 @@ describe('WorkerService', () => {
 				});
 
 				it('should remove folders', async () => {
-					const folderCount = (await workerService.orm.Folder.countFilter({childOfID: artistFolder.id})) + 1;
-					const artworkCount = await workerService.orm.Artwork.countFilter({childOfID: artistFolder.id});
-					const trackCount = await workerService.orm.Track.countFilter({childOfID: artistFolder.id});
-					const albumCount = await workerService.orm.Album.countFilter({artist: 'artist 1'});
+					const folderCount = (await orm.Folder.countFilter({childOfID: artistFolder.id})) + 1;
+					const artworkCount = await orm.Artwork.countFilter({childOfID: artistFolder.id});
+					const trackCount = await orm.Track.countFilter({childOfID: artistFolder.id});
+					const albumCount = await orm.Album.countFilter({artist: 'artist 1'});
 					const changes = await workerService.deleteFolders({rootID: mockRoot.id, folderIDs: [artistFolder.id]});
 					expectChanges(changes, {
 						tracksRemoved: trackCount,
@@ -585,10 +600,10 @@ describe('WorkerService', () => {
 				let album2Folder!: Folder;
 
 				beforeEach(async () => {
-					rootFolder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], level: 0});
-					albumFolder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], album: 'album 3', level: 2, artist: 'artist 1'});
-					album2Folder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 2', album: 'album 1'});
-					artistFolder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.artist], artist: 'artist 2'});
+					rootFolder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], level: 0});
+					albumFolder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], album: 'album 3', level: 2, artist: 'artist 1'});
+					album2Folder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 2', album: 'album 1'});
+					artistFolder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.artist], artist: 'artist 2'});
 				});
 
 				it('should not move folders with invalid parameters', async () => {
@@ -598,7 +613,7 @@ describe('WorkerService', () => {
 					await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder cannot be moved to itself');
 					await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [album2Folder.id]})).rejects.toThrow('Folder name already used in Destination');
 					await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: 'invalid', folderIDs: [albumFolder.id]})).rejects.toThrow('Destination Folder not found');
-					await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: ['invalid']})).rejects.toThrow('Source Folder not found');
+					await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: ['invalid']})).rejects.toThrow('Folder not found');
 				});
 
 				it('should handle fs errors', async () => {
@@ -610,9 +625,9 @@ describe('WorkerService', () => {
 				});
 
 				it('should move folders', async () => {
-					const trackCount = await workerService.orm.Track.countFilter({childOfID: albumFolder.id});
-					const artworkCount = await workerService.orm.Artwork.countFilter({childOfID: albumFolder.id});
-					const oldParentID = albumFolder.parent?.id;
+					const trackCount = await orm.Track.countFilter({childOfID: albumFolder.id});
+					const artworkCount = await orm.Artwork.countFilter({childOfID: albumFolder.id});
+					const oldParentID = albumFolder.parent.id();
 					if (!oldParentID) {
 						throw Error('Invalid Test Setup');
 					}
@@ -641,7 +656,7 @@ describe('WorkerService', () => {
 				let opts: WorkerRequestRefreshFolders;
 
 				beforeEach(async () => {
-					rootFolder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], level: 0});
+					rootFolder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], level: 0});
 					opts = {rootID: mockRoot.id, folderIDs: [rootFolder.id]};
 				});
 
@@ -699,7 +714,7 @@ describe('WorkerService', () => {
 
 			describe('remove roots', () => {
 				it('should handle invalid parameters', async () => {
-					await expect(workerService.removeRoot({rootID: ''})).rejects.toThrow('Root not found');
+					await expect(workerService.removeRoot({rootID: ''})).rejects.toThrow('Invalid ID');
 					await expect(workerService.removeRoot({rootID: 'invalid'})).rejects.toThrow('Root not found');
 				});
 
@@ -760,20 +775,20 @@ describe('WorkerService', () => {
 				let opts: WorkerRequestMoveArtworks;
 
 				beforeEach(async () => {
-					artwork = await workerService.orm.Artwork.oneOrFailFilter({name: 'front.png'});
-					folder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 1'});
+					artwork = await orm.Artwork.oneOrFailFilter({name: 'front.png'});
+					folder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 1'});
 					opts = {rootID: mockRoot.id, artworkIDs: [artwork.id], newParentID: folder.id};
 				});
 
 				it('should handle invalid parameters', async () => {
-					await expect(workerService.moveArtworks({...opts, newParentID: artwork.folder.id})).rejects.toThrow('File name is already used in folder');
+					await expect(workerService.moveArtworks({...opts, newParentID: artwork.folder.idOrFail()})).rejects.toThrow('File name is already used in folder');
 					await expect(workerService.moveArtworks({...opts, rootID: 'invalid'})).rejects.toThrow('Root not found');
 					await expect(workerService.moveArtworks({...opts, artworkIDs: ['invalid']})).rejects.toThrow('Artwork not found');
 					await expect(workerService.moveArtworks({...opts, newParentID: 'invalid'})).rejects.toThrow('Destination Folder not found');
 				});
 
 				it('should move artworks', async () => {
-					const oldFolderID = artwork.folder.id;
+					const oldFolderID = artwork.folder.idOrFail();
 					let changes = await workerService.moveArtworks({rootID: mockRoot.id, artworkIDs: [artwork.id], newParentID: folder.id});
 					expectChanges(changes, {
 						foldersUpdate: 2,
@@ -793,12 +808,12 @@ describe('WorkerService', () => {
 				let opts: WorkerRequestRenameArtwork;
 
 				beforeEach(async () => {
-					artwork = await workerService.orm.Artwork.oneOrFailFilter({name: 'front.png'});
+					artwork = await orm.Artwork.oneOrFailFilter({name: 'front.png'});
 					opts = {rootID: mockRoot.id, artworkID: artwork.id, newName: ''};
 				});
 
 				it('should handle invalid parameters', async () => {
-					const artwork = await workerService.orm.Artwork.oneOrFailFilter({name: 'front.png'});
+					const artwork = await orm.Artwork.oneOrFailFilter({name: 'front.png'});
 					const ext = path.extname(artwork.name);
 					await expect(workerService.renameArtwork({...opts, newName: ''})).rejects.toThrow('Invalid Name');
 					await expect(workerService.renameArtwork({...opts, newName: '.'})).rejects.toThrow(/Changing File extension not supported/);
@@ -832,7 +847,7 @@ describe('WorkerService', () => {
 				let opts: WorkerRequestRemoveArtwork;
 
 				beforeEach(async () => {
-					artwork = await workerService.orm.Artwork.oneOrFailFilter({name: 'front.png'});
+					artwork = await orm.Artwork.oneOrFailFilter({name: 'front.png'});
 					opts = {rootID: mockRoot.id, artworkID: artwork.id};
 				});
 
@@ -863,7 +878,7 @@ describe('WorkerService', () => {
 				let opts: WorkerRequestDownloadArtwork;
 
 				beforeEach(async () => {
-					folder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 1'});
+					folder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 1'});
 					opts = {rootID: mockRoot.id, folderID: folder.id, types: [ArtworkImageType.front], artworkURL: ''};
 				});
 
@@ -896,7 +911,7 @@ describe('WorkerService', () => {
 				let importFile: string;
 
 				beforeEach(async () => {
-					folder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 1'});
+					folder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 1'});
 					importFile = path.resolve(mockRoot.path, 'import');
 					await writeMockImage(importFile, 'png');
 					opts = {rootID: mockRoot.id, folderID: folder.id, types: [ArtworkImageType.front], artworkFilename: importFile};
@@ -925,22 +940,22 @@ describe('WorkerService', () => {
 				it('should create an artwork', async () => {
 					const changes = await workerService.createArtwork(opts);
 					expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
-					expect(changes.artworks.added.list[0].name).toBe('front.png');
+					expect((await orm.Artwork.oneOrFailByID(changes.artworks.added.ids()[0])).name).toBe('front.png');
 				});
 
 				it('should create & auto name an artwork', async () => {
 					const changes = await workerService.createArtwork({...opts, types: []});
 					expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
-					expect(changes.artworks.added.list[0].name).toBe('cover.png');
+					expect((await orm.Artwork.oneOrFailByID(changes.artworks.added.ids()[0])).name).toBe('cover.png');
 				});
 
 				it('should create & auto unique name an artwork', async () => {
 					let changes = await workerService.createArtwork({...opts, types: []});
 					expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
-					expect(changes.artworks.added.list[0].name).toBe('cover.png');
+					expect((await orm.Artwork.oneOrFailByID(changes.artworks.added.ids()[0])).name).toBe('cover.png');
 					changes = await workerService.createArtwork({...opts, types: []});
 					expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
-					expect(changes.artworks.added.list[0].name).toBe('cover-2.png');
+					expect((await orm.Artwork.oneOrFailByID(changes.artworks.added.ids()[0])).name).toBe('cover-2.png');
 				});
 			});
 
@@ -950,7 +965,7 @@ describe('WorkerService', () => {
 				let importFile: string;
 
 				beforeEach(async () => {
-					artwork = await workerService.orm.Artwork.oneOrFailFilter({name: 'front.png'});
+					artwork = await orm.Artwork.oneOrFailFilter({name: 'front.png'});
 					importFile = path.resolve(mockRoot.path, 'import');
 					await writeMockImage(importFile, 'jpeg');
 					opts = {rootID: mockRoot.id, artworkID: artwork.id, artworkFilename: importFile};
@@ -979,7 +994,7 @@ describe('WorkerService', () => {
 				it('should replace an artwork', async () => {
 					const changes = await workerService.replaceArtwork(opts);
 					expectChanges(changes, {artworksUpdate: 1});
-					expect(changes.artworks.updated.list[0].name).toBe('front.jpeg');
+					expect((await orm.Artwork.oneOrFailByID(changes.artworks.updated.ids()[0])).name).toBe('front.jpeg');
 				});
 			});
 
@@ -995,10 +1010,10 @@ describe('WorkerService', () => {
 				let opts: WorkerRequestMoveTracks;
 
 				beforeEach(async () => {
-					albumFolder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 1'});
-					album2Folder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 2'});
-					album3Folder = await workerService.orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 2', album: 'album 1'});
-					trackIDs = await workerService.orm.Track.findIDsFilter({childOfID: albumFolder.id});
+					albumFolder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 1'});
+					album2Folder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 1', album: 'album 2'});
+					album3Folder = await orm.Folder.oneOrFailFilter({rootIDs: [mockRoot.id], folderTypes: [FolderType.album], artist: 'artist 2', album: 'album 1'});
+					trackIDs = await orm.Track.findIDsFilter({childOfID: albumFolder.id});
 					opts = {rootID: mockRoot.id, trackIDs, newParentID: album3Folder.id};
 				});
 
@@ -1034,7 +1049,7 @@ describe('WorkerService', () => {
 				let opts: WorkerRequestRenameTrack;
 
 				beforeEach(async () => {
-					track = await workerService.orm.Track.findOneOrFail({fileName: {$eq: '2 - title 2 - artist 1.mp3'}});
+					track = await orm.Track.findOneOrFail({where: {fileName: '2 - title 2 - artist 1.mp3'}});
 					const ext = path.extname(track.fileName);
 					opts = {rootID: mockRoot.id, trackID: track.id, newName: 'valid' + ext};
 				});
@@ -1076,7 +1091,7 @@ describe('WorkerService', () => {
 				let opts: WorkerRequestRemoveTracks;
 
 				beforeEach(async () => {
-					track = await workerService.orm.Track.findOneOrFail({fileName: {$eq: '2 - title 2 - artist 1.mp3'}});
+					track = await orm.Track.findOneOrFail({where: {fileName: '2 - title 2 - artist 1.mp3'}});
 					opts = {rootID: mockRoot.id, trackIDs: [track.id]};
 				});
 
@@ -1109,7 +1124,7 @@ describe('WorkerService', () => {
 				let opts: WorkerRequestRefreshTracks;
 
 				beforeEach(async () => {
-					track = await workerService.orm.Track.findOneOrFail({fileName: {$eq: '2 - title 2 - artist 1.mp3'}});
+					track = await orm.Track.findOneOrFail({where: {fileName: '2 - title 2 - artist 1.mp3'}});
 					opts = {rootID: mockRoot.id, trackIDs: [track.id]};
 				});
 

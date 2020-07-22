@@ -14,7 +14,7 @@ import {FolderIndexArgs, FoldersArgs} from './folder.args';
 export class FolderResolver {
 	@Query(() => FolderQL, {description: 'Get a Folder by Id'})
 	async folder(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Folder> {
-		return await orm.Folder.oneOrFail(id)
+		return await orm.Folder.oneOrFailByID(id)
 	}
 
 	@Query(() => FolderPageQL, {description: 'Search Folders'})
@@ -32,74 +32,62 @@ export class FolderResolver {
 
 	@FieldResolver(() => [FolderQL])
 	async children(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<Array<Folder>> {
-		await orm.Folder.populate(folder, 'children');
 		return folder.children.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async childrenCount(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Folder.populate(folder, 'children');
-		return folder.children.length;
+		return folder.children.count();
 	}
 
 	@FieldResolver(() => [SeriesQL], {nullable: true})
 	async series(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<Array<Series>> {
-		await orm.Folder.populate(folder, 'series');
 		return folder.series.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async seriesCount(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Folder.populate(folder, 'series');
-		return folder.series.length;
+		return folder.series.count();
 	}
 
 	@FieldResolver(() => [ArtistQL], {nullable: true})
 	async artists(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<Array<Artist>> {
-		await orm.Folder.populate(folder, 'artists');
 		return folder.artists.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async artistsCount(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Folder.populate(folder, 'artists');
-		return folder.artists.length;
+		return folder.artists.count();
 	}
 
 	@FieldResolver(() => [AlbumQL], {nullable: true})
 	async albums(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<Array<Album>> {
-		await orm.Folder.populate(folder, 'albums');
 		return folder.albums.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async albumsCount(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Folder.populate(folder, 'albums');
-		return folder.albums.length;
+		return folder.albums.count();
 	}
 
 	@FieldResolver(() => [TrackQL], {nullable: true})
 	async tracks(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<Array<Track>> {
-		await orm.Folder.populate(folder, 'tracks');
 		return folder.tracks.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async tracksCount(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Folder.populate(folder, 'tracks');
-		return folder.tracks.length;
+		return folder.tracks.count();
 	}
 
 	@FieldResolver(() => [ArtworkQL], {nullable: true})
 	async artworks(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<Array<Artwork>> {
-		await orm.Folder.populate(folder, 'artworks');
 		return folder.artworks.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async artworksCount(@GQLRoot() folder: Folder, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Folder.populate(folder, 'artworks');
-		return folder.artworks.length;
+		return folder.artworks.count();
 	}
 
 	@FieldResolver(() => StateQL)

@@ -10,7 +10,7 @@ import {Episode, EpisodeQL} from '../episode/episode';
 export class PodcastResolver {
 	@Query(() => PodcastQL, {description: 'Get a Podcast by Id'})
 	async podcast(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Podcast> {
-		return await orm.Podcast.oneOrFail(id);
+		return await orm.Podcast.oneOrFailByID(id);
 	}
 
 	@Query(() => PodcastPageQL, {description: 'Search Podcasts'})
@@ -43,14 +43,12 @@ export class PodcastResolver {
 
 	@FieldResolver(() => [EpisodeQL])
 	async episodes(@GQLRoot() podcast: Podcast, @Ctx() {orm}: Context): Promise<Array<Episode>> {
-		await orm.Podcast.populate(podcast, 'episodes');
 		return podcast.episodes.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async episodesCount(@GQLRoot() podcast: Podcast, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Podcast.populate(podcast, 'episodes');
-		return podcast.episodes.length;
+		return podcast.episodes.count();
 	}
 
 }

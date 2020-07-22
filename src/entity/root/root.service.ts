@@ -1,16 +1,18 @@
 import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
-import {Inject} from 'typescript-ioc';
+import {InRequestScope, Inject} from 'typescript-ioc';
 import {FolderService} from '../folder/folder.service';
 import {Root} from './root';
+import {Orm} from '../../modules/engine/services/orm.service';
 
 export class RootService {
 	@Inject
 	folderService!: FolderService;
 
-	async getImage(root: Root, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
-		const folders = root.folders.getItems().sort((a, b) => b.level - a.level);
-		if (folders.length > 0) {
-			return this.folderService.getImage(folders[0], size, format);
+	async getImage(orm: Orm, root: Root, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+		const folders = await root.folders.getItems();
+		const folder = folders.sort((a, b) => b.level - a.level)[0];
+		if (folder) {
+			return this.folderService.getImage(orm, folder, size, format);
 		}
 	}
 }

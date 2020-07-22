@@ -1,23 +1,20 @@
-import {QueryOrder, Repository} from 'mikro-orm';
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType} from '../../types/enums';
-import {QBFilterQuery} from 'mikro-orm/dist/typings';
-import {QHelper} from '../base/base';
 import {Playlist} from './playlist';
-import {QueryOrderMap} from 'mikro-orm/dist/query';
 import {User} from '../user/user';
 import {PlaylistFilterArgs, PlaylistOrderArgs} from './playlist.args';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 
-@Repository(Playlist)
+// @Repository(Playlist)
 export class PlaylistRepository extends BaseRepository<Playlist, PlaylistFilterArgs, PlaylistOrderArgs> {
 	objType = DBObjectType.playlist;
 	indexProperty = 'name';
 
-	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: PlaylistOrderArgs): void {
-		this.applyDefaultOrderByEntry(result, direction, order?.orderBy);
+	buildOrder(order?: PlaylistOrderArgs): Array<OrderItem> {
+		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: PlaylistFilterArgs, user?: User): Promise<QBFilterQuery<Playlist>> {
+	async buildFilter(filter?: PlaylistFilterArgs, user?: User): Promise<FindOptions<Playlist>> {
 		return filter ? QHelper.buildQuery<Playlist>(
 			[
 				{id: filter.ids},
@@ -25,13 +22,11 @@ export class PlaylistRepository extends BaseRepository<Playlist, PlaylistFilterA
 				{name: QHelper.eq(filter.name)},
 				{comment: QHelper.eq(filter.comment)},
 				{createdAt: QHelper.gte(filter.since)},
-				{user: QHelper.foreignKey(filter.userIDs)},
-				{
-					$or: QHelper.buildBool([
-						{isPublic: QHelper.eq(true)},
-						{user: user?.id}
-					])
-				}
+				{user: QHelper.inOrEqual(filter.userIDs)},
+				QHelper.or([
+					{isPublic: true},
+					{user: user?.id}
+				])
 			]
 		) : {};
 	}

@@ -6,9 +6,8 @@ import {Artist, ArtistQL} from '../artist/artist';
 import {Series, SeriesQL} from '../series/series';
 import {AlbumType, FolderType} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Cascade, Collection, Entity, Enum, ManyToMany, ManyToOne, OneToMany, Property, QueryOrder} from 'mikro-orm';
+import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_INT, ORM_TIMESTAMP, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
-import {OrmStringListType} from '../../modules/engine/services/orm.types';
 import {State, StateQL} from '../state/state';
 import {FolderHealthHint} from '../health/health.model';
 
@@ -16,107 +15,107 @@ import {FolderHealthHint} from '../health/health.model';
 @Entity()
 export class Folder extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	title!: string;
 
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	path!: string;
 
 	@Field(() => Int)
-	@Property()
+	@Property(() => ORM_TIMESTAMP)
 	statCreated!: number;
 
 	@Field(() => Int)
-	@Property()
+	@Property(() => ORM_TIMESTAMP)
 	statModified!: number;
 
 	@Field(() => Int)
-	@Property()
+	@Property(() => ORM_INT)
 	level!: number;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	album?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	artist?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	artistSort?: string;
 
 	@Field(() => Int, {nullable: true})
-	@Property()
+	@Property(() => ORM_INT, {nullable: true})
 	albumTrackCount?: number;
 
 	@Field(() => Int, {nullable: true})
-	@Property()
+	@Property(() => ORM_INT, {nullable: true})
 	year?: number;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	mbReleaseID?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	mbReleaseGroupID?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	mbAlbumType?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	mbArtistID?: string;
 
 	@Field(() => AlbumType, {nullable: true})
-	@Enum(() => AlbumType)
+	@Property(() => AlbumType, {nullable: true})
 	albumType?: AlbumType;
 
 	@Field(() => FolderType)
-	@Enum(() => FolderType)
+	@Property(() => FolderType)
 	folderType!: FolderType;
 
 	@Field(() => [String])
-	@Property({type: OrmStringListType})
+	@Property(() => [String])
 	genres: Array<string> = [];
 
 	@Field(() => FolderQL, {nullable: true})
-	@ManyToOne(() => Folder)
-	parent?: Folder;
+	@ManyToOne<Folder>(() => Folder, folder => folder.children, {nullable: true})
+	parent: Reference<Folder> = new Reference<Folder>(this);
 
 	@Field(() => [FolderQL])
-	@OneToMany({entity: () => Folder, mappedBy: folder => folder.parent, cascade: [Cascade.REMOVE], orderBy: {path: QueryOrder.ASC}})
+	@OneToMany<Folder>(() => Folder, folder => folder.parent, {orderBy: {path: QueryOrder.ASC}})
 	children: Collection<Folder> = new Collection<Folder>(this);
 
 	@Field(() => RootQL)
-	@ManyToOne(() => Root)
-	root!: Root;
+	@ManyToOne<Root>(() => Root, root => root.folders)
+	root: Reference<Root> = new Reference<Root>(this);
 
 	@Field(() => [ArtworkQL])
-	@OneToMany({entity: () => Artwork, mappedBy: artwork => artwork.folder, cascade: [Cascade.REMOVE], orderBy: {name: QueryOrder.ASC}})
+	@OneToMany<Artwork>(() => Artwork, artwork => artwork.folder, {orderBy: {name: QueryOrder.ASC}})
 	artworks: Collection<Artwork> = new Collection<Artwork>(this);
 
 	@Field(() => [TrackQL])
-	@OneToMany({entity: () => Track, mappedBy: track => track.folder, cascade: [Cascade.REMOVE], orderBy: { tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC} as any}})
+	@OneToMany<Track>(() => Track, track => track.folder, {orderBy: {tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC}}})
 	tracks: Collection<Track> = new Collection<Track>(this);
 
 	@Field(() => [AlbumQL])
-	@ManyToMany(() => Album, album => album.folders, {orderBy: {albumType: QueryOrder.ASC, name: QueryOrder.ASC}})
+	@ManyToMany<Album>(() => Album, album => album.folders, {orderBy: {albumType: QueryOrder.ASC, name: QueryOrder.ASC}})
 	albums: Collection<Album> = new Collection<Album>(this);
 
 	@Field(() => [ArtistQL])
-	@ManyToMany(() => Artist, artist => artist.folders, {orderBy: {nameSort: QueryOrder.ASC}})
+	@ManyToMany<Artist>(() => Artist, artist => artist.folders, {orderBy: {nameSort: QueryOrder.ASC}})
 	artists: Collection<Artist> = new Collection<Artist>(this);
 
 	@Field(() => [SeriesQL])
-	@ManyToMany(() => Series, series => series.folders, {orderBy: {name: QueryOrder.ASC}})
+	@ManyToMany<Series>(() => Series, series => series.folders, {orderBy: {name: QueryOrder.ASC}})
 	series: Collection<Series> = new Collection<Series>(this);
 }
 

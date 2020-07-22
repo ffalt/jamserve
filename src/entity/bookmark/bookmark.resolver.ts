@@ -10,7 +10,7 @@ import {BookmarksArgs} from './bookmark.args';
 export class BookmarkResolver {
 	@Query(() => BookmarkQL, {description: 'Get a Bookmark by Id'})
 	async bookmark(@Arg('id', () => ID!) id: string, @Ctx() {orm, user}: Context): Promise<Bookmark> {
-		return await orm.Bookmark.oneOrFail({id: id, user: user.id})
+		return await orm.Bookmark.oneOrFail(user.roleAdmin ? {where: {id: id}} : {where: {id: id, user: user.id}})
 	}
 
 	@Query(() => BookmarkPageQL, {description: 'Search Bookmarks'})
@@ -20,14 +20,12 @@ export class BookmarkResolver {
 
 	@FieldResolver(() => TrackQL, {nullable: true})
 	async track(@GQLRoot() bookmark: Bookmark, @Ctx() {orm}: Context): Promise<Track | undefined> {
-		await orm.Bookmark.populate(bookmark, 'track');
-		return bookmark.track;
+		return bookmark.track.get();
 	}
 
 	@FieldResolver(() => EpisodeQL, {nullable: true})
 	async episode(@GQLRoot() bookmark: Bookmark, @Ctx() {orm}: Context): Promise<Episode | undefined> {
-		await orm.Bookmark.populate(bookmark, 'episode');
-		return bookmark.episode;
+		return bookmark.episode.get();
 	}
 
 }

@@ -1,67 +1,66 @@
 import {Episode, EpisodeQL} from '../episode/episode';
 import {PodcastStatus} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, Enum, OneToMany, Property, QueryOrder} from 'mikro-orm';
+import {Collection, Entity, OneToMany, ORM_TIMESTAMP, Property, QueryOrder} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
-import {OrmStringListType} from '../../modules/engine/services/orm.types';
 import {State, StateQL} from '../state/state';
 
 @ObjectType()
 @Entity()
 export class Podcast extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	url!: string;
 
-	@Property()
+	@Property(() => ORM_TIMESTAMP)
 	lastCheck!: number;
 
 	@Field(() => PodcastStatus)
-	@Enum(() => PodcastStatus)
+	@Property(() => PodcastStatus)
 	status!: PodcastStatus;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	image?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	errorMessage?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	title?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	language?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	link?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	author?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	description?: string;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	generator?: string;
 
 	@Field(() => [String])
-	@Property({type: OrmStringListType})
+	@Property(() => [String])
 	categories!: Array<string>;
 
 	@Field(() => [EpisodeQL])
-	@OneToMany({entity: () => Episode, mappedBy: episode => episode.podcast, orderBy: {date: QueryOrder.DESC}})
+	@OneToMany<Episode>(() => Episode, episode => episode.podcast, {orderBy: {date: QueryOrder.DESC}})
 	episodes: Collection<Episode> = new Collection<Episode>(this);
 }
 

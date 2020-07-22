@@ -1,4 +1,3 @@
-import {registerEnumType} from '../../rest/decorators/enums';
 import {
 	AlbumOrderFields,
 	AlbumType,
@@ -30,6 +29,7 @@ import {
 	UserRole,
 	WaveformFormatType
 } from '../../../types/enums';
+import {registerEnumType} from '../../rest/helpers/enums';
 
 export function registerRestEnums(): void {
 

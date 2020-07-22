@@ -13,7 +13,7 @@ import {EpisodesArgs} from './episode.args';
 export class EpisodeResolver {
 	@Query(() => EpisodeQL, {description: 'Get a Episode by Id'})
 	async episode(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Episode> {
-		return await orm.Episode.oneOrFail(id)
+		return await orm.Episode.oneOrFailByID(id)
 	}
 
 	@Query(() => EpisodePageQL, {description: 'Search Episodes'})
@@ -26,26 +26,22 @@ export class EpisodeResolver {
 
 	@FieldResolver(() => TagQL, {nullable: true})
 	async tag(@GQLRoot() episode: Episode, @Ctx() {orm}: Context): Promise<Tag | undefined> {
-		await orm.Episode.populate(episode, 'tag');
-		return episode.tag;
+		return episode.tag.get();
 	}
 
 	@FieldResolver(() => PodcastQL)
 	async podcast(@GQLRoot() episode: Episode, @Ctx() {orm}: Context): Promise<Podcast> {
-		await orm.Episode.populate(episode, 'podcast');
-		return episode.podcast;
+		return episode.podcast.getOrFail();
 	}
 
 	@FieldResolver(() => [BookmarkQL])
 	async bookmarks(@GQLRoot() episode: Episode, @Ctx() {orm}: Context): Promise<Array<Bookmark>> {
-		await orm.Episode.populate(episode, 'bookmarks');
 		return episode.bookmarks.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async bookmarksCount(@GQLRoot() episode: Episode, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Episode.populate(episode, 'bookmarks');
-		return episode.bookmarks.length;
+		return episode.bookmarks.count();
 	}
 
 	@FieldResolver(() => WaveformQL)

@@ -7,20 +7,18 @@ import {PlayQueueEntry, PlayQueueEntryQL} from '../playqueueentry/playqueue-entr
 @Resolver(PlayQueueQL)
 export class PlayQueueResolver {
 	@Query(() => PlayQueueQL, {description: 'Get a PlayQueue for the calling user'})
-	async playQueue(@Ctx() {engine, user}: Context): Promise<PlayQueue> {
-		return engine.playQueueService.get(user);
+	async playQueue(@Ctx() {engine, orm, user}: Context): Promise<PlayQueue> {
+		return engine.playQueueService.get(orm, user);
 	}
 
 	@FieldResolver(() => [PlayQueueEntryQL])
 	async entries(@GQLRoot() playQueue: PlayQueue, @Ctx() {orm}: Context): Promise<Array<PlayQueueEntry>> {
-		await orm.PlayQueue.populate(playQueue, 'entries');
 		return playQueue.entries.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async entriesCount(@GQLRoot() playQueue: PlayQueue, @Ctx() {orm}: Context): Promise<number> {
-		await orm.PlayQueue.populate(playQueue, 'entries');
-		return playQueue.entries.length;
+		return playQueue.entries.count();
 	}
 
 }

@@ -1,5 +1,5 @@
 import {getMetadataStorage} from '../metadata';
-import {MethodOptions, ReturnTypeFunc} from './types';
+import {MethodOptions, ReturnTypeFunc} from '../definitions/types';
 import {getMethodMetadata} from '../helpers/method-metadata';
 import {getTypeDecoratorParams} from '../helpers/decorators';
 

@@ -5,40 +5,39 @@ import {Root, RootQL} from '../root/root';
 import {Folder, FolderQL} from '../folder/folder';
 import {AlbumType} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, Property, QueryOrder} from 'mikro-orm';
+import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
-import {OrmStringListType} from '../../modules/engine/services/orm.types';
 import {State, StateQL} from '../state/state';
 
 @ObjectType()
 @Entity()
 export class Series extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
 	@Field(() => [AlbumType])
-	@Property({type: OrmStringListType})
+	@Property(() => [AlbumType])
 	albumTypes!: Array<AlbumType>;
 
 	@Field(() => ArtistQL)
-	@ManyToOne(() => Artist)
-	artist!: Artist;
+	@ManyToOne<Artist>(() => Artist, artist => artist.series)
+	artist: Reference<Artist> = new Reference<Artist>(this);
 
 	@Field(() => [TrackQL])
-	@OneToMany(() => Track, track => track.series, {orderBy: {tag: {seriesNr: QueryOrder.ASC, disc: QueryOrder.ASC, trackNr: QueryOrder.ASC, title: QueryOrder.ASC} as any}})
+	@OneToMany<Track>(() => Track, track => track.series, {orderBy: {tag: {seriesNr: QueryOrder.ASC, disc: QueryOrder.ASC, trackNr: QueryOrder.ASC, title: QueryOrder.ASC} as any}})
 	tracks: Collection<Track> = new Collection<Track>(this);
 
 	@Field(() => [AlbumQL])
-	@ManyToMany({entity: () => Album, orderBy: {seriesNr: QueryOrder.ASC, name: QueryOrder.ASC}})
+	@OneToMany<Album>(() => Album, album => album.series, {orderBy: {seriesNr: QueryOrder.ASC, name: QueryOrder.ASC}})
 	albums: Collection<Album> = new Collection<Album>(this);
 
 	@Field(() => [RootQL])
-	@ManyToMany(() => Root, root => root.series, {owner: true, orderBy: {name: QueryOrder.ASC}})
+	@ManyToMany<Root>(() => Root, root => root.series, {owner: true, orderBy: {name: QueryOrder.ASC}})
 	roots: Collection<Root> = new Collection<Root>(this);
 
 	@Field(() => [FolderQL])
-	@ManyToMany(() => Folder, folder => folder.series, {owner: true, orderBy: {path: QueryOrder.ASC}})
+	@ManyToMany<Folder>(() => Folder, folder => folder.series, {owner: true, orderBy: {path: QueryOrder.ASC}})
 	folders: Collection<Folder> = new Collection<Folder>(this);
 }
 

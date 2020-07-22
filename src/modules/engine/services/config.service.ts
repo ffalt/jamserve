@@ -1,10 +1,10 @@
 import {ThirdPartyConfig, ThirdpartyToolsConfig} from '../../../config/thirdparty.config';
-import {Singleton} from 'typescript-ioc';
+import {InRequestScope} from 'typescript-ioc';
 import path from 'path';
 import {FirstStartConfig} from '../../../config/firststart.config';
 import {getMaxAge} from '../../../utils/max-age';
 
-@Singleton
+@InRequestScope
 export class ConfigService {
 	env = {
 		host: process.env.JAM_HOST || '127.0.0.1',

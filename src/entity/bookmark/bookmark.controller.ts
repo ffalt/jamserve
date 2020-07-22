@@ -1,20 +1,18 @@
 import {Bookmark, BookmarkPage} from './bookmark.model';
-import {OrmService} from '../../modules/engine/services/orm.service';
-import {Inject} from 'typescript-ioc';
-import {User} from '../user/user';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {TransformService} from '../../modules/engine/services/transform.service';
-import {BodyParam, BodyParams, Controller, CurrentUser, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {IncludesTrackArgs} from '../track/track.args';
 import {BookmarkCreateArgs, BookmarkFilterArgs, BookmarkOrderArgs, IncludesBookmarkChildrenArgs} from './bookmark.args';
 import {IncludesEpisodeArgs} from '../episode/episode.args';
 import {BookmarkService} from './bookmark.service';
 import {PageArgs} from '../base/base.args';
+import {Context} from '../../modules/engine/rest/context';
 
+@InRequestScope
 @Controller('/bookmark', {tags: ['Bookmark'], roles: [UserRole.stream]})
 export class BookmarkController {
-	@Inject
-	private orm!: OrmService;
 	@Inject
 	private transform!: TransformService;
 	@Inject
@@ -29,10 +27,10 @@ export class BookmarkController {
 		@QueryParams() bookmarkChildrenArgs: IncludesBookmarkChildrenArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Bookmark> {
 		return this.transform.bookmark(
-			await this.orm.Bookmark.oneOrFail({id, user: user.id}),
+			orm, await orm.Bookmark.oneOrFail(user.roleAdmin ? {where: {id}} : {where: {id, user: user.id}}),
 			bookmarkChildrenArgs, trackArgs, episodeArgs, user
 		);
 	}
@@ -49,11 +47,11 @@ export class BookmarkController {
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
 		@QueryParams() filter: BookmarkFilterArgs,
 		@QueryParams() order: BookmarkOrderArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<BookmarkPage> {
-		return await this.orm.Bookmark.searchTransformFilter(
+		return await orm.Bookmark.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.bookmark(o, bookmarkChildrenArgs, trackArgs, episodeArgs, user)
+			o => this.transform.bookmark(orm, o, bookmarkChildrenArgs, trackArgs, episodeArgs, user)
 		);
 	}
 
@@ -64,10 +62,10 @@ export class BookmarkController {
 	)
 	async create(
 		@BodyParams() createArgs: BookmarkCreateArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Bookmark> {
 		return await this.transform.bookmark(
-			await this.bookmarkService.create(createArgs.mediaID, user, createArgs.position, createArgs.comment),
+			orm, await this.bookmarkService.create(orm, createArgs.mediaID, user, createArgs.position, createArgs.comment),
 			{}, {}, {}, user
 		);
 	}
@@ -78,9 +76,9 @@ export class BookmarkController {
 	)
 	async remove(
 		@BodyParam('id', {description: 'Bookmark Id', isID: true}) id: string,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
-		await this.bookmarkService.remove(id, user.id);
+		await this.bookmarkService.remove(orm, id, user.id);
 	}
 
 	@Post(
@@ -88,10 +86,9 @@ export class BookmarkController {
 		{description: 'Remove Bookmarks by Media Id [Track/Episode]', summary: 'Remove Bookmarks'}
 	)
 	async removeByMedia(
-		@BodyParam('id', {description: 'Track or Episode Id', isID: true})
-			id: string,
-		@CurrentUser() user: User
+		@BodyParam('id', {description: 'Track or Episode Id', isID: true}) id: string,
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
-		await this.bookmarkService.removeByDest(id, user.id);
+		await this.bookmarkService.removeByDest(orm, id, user.id);
 	}
 }

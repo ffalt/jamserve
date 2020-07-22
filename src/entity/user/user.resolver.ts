@@ -12,7 +12,7 @@ export class UserResolver {
 	@Authorized(UserRole.admin)
 	@Query(() => UserQL)
 	async user(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<User> {
-		return await orm.User.oneOrFail(id)
+		return await orm.User.oneOrFailByID(id)
 	}
 
 	@Authorized(UserRole.admin)
@@ -34,13 +34,11 @@ export class UserResolver {
 
 	@FieldResolver(() => [SessionQL])
 	async sessions(@GQLRoot() user: User, @Ctx() {orm}: Context): Promise<Array<Session>> {
-		await orm.User.populate(user, 'sessions');
 		return user.sessions.getItems();
 	}
 
 	@FieldResolver(() => [BookmarkQL])
 	async bookmarks(@GQLRoot() user: User, @Ctx() {orm}: Context): Promise<Array<Bookmark>> {
-		await orm.User.populate(user, 'bookmarks');
 		return user.bookmarks.getItems();
 	}
 

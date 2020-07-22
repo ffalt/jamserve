@@ -1,21 +1,17 @@
 import {PlayQueue} from './playqueue.model';
-import {OrmService} from '../../modules/engine/services/orm.service';
-import {Inject} from 'typescript-ioc';
-import {User} from '../user/user';
+import {InRequestScope, Inject} from 'typescript-ioc';
 import {TransformService} from '../../modules/engine/services/transform.service';
-import {Controller, Ctx, CurrentUser, Get, Post, QueryParams} from '../../modules/rest';
+import {BodyParams, Controller, Ctx, Get, Post, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {IncludesTrackArgs} from '../track/track.args';
 import {IncludesPlayQueueArgs, PlayQueueSetArgs} from './playqueue.args';
 import {IncludesEpisodeArgs} from '../episode/episode.args';
 import {PlayQueueService} from './playqueue.service';
-import {Context} from '../../modules/server/middlewares/rest.context';
-import {BodyParams} from '../../modules/rest/decorators/BodyParams';
+import {Context} from '../../modules/engine/rest/context';
 
+@InRequestScope
 @Controller('/playqueue', {tags: ['PlayQueue'], roles: [UserRole.stream]})
 export class PlayQueueController {
-	@Inject
-	private orm!: OrmService;
 	@Inject
 	private transform!: TransformService;
 	@Inject
@@ -29,11 +25,11 @@ export class PlayQueueController {
 		@QueryParams() playqueueArgs: IncludesPlayQueueArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<PlayQueue> {
 
 		return this.transform.playQueue(
-			await this.playQueueService.get(user),
+			orm, await this.playQueueService.get(orm, user),
 			playqueueArgs, trackArgs, episodeArgs, user
 		);
 	}
@@ -43,17 +39,17 @@ export class PlayQueueController {
 	)
 	async set(
 		@BodyParams() args: PlayQueueSetArgs,
-		@Ctx() {req, user}: Context
+		@Ctx() {req, orm, user}: Context
 	): Promise<void> {
-		await this.playQueueService.set(args, user, req.session?.client || 'unknown');
+		await this.playQueueService.set(orm, args, user, req.session?.client || 'unknown');
 	}
 
 	@Post('/clear',
 		{description: 'Clear the PlayQueue for the calling user', summary: 'Clear PlayQueue'}
 	)
 	async clear(
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
-		await this.playQueueService.clear(user);
+		await this.playQueueService.clear(orm, user);
 	}
 }

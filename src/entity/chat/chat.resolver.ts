@@ -1,7 +1,7 @@
 import {Args, Query, Resolver} from 'type-graphql';
 import {ChatService} from './chat.service';
 import {Chat, ChatQL} from './chat';
-import {Inject} from 'typescript-ioc';
+import {InRequestScope, Inject} from 'typescript-ioc';
 import {ChatFilterArgs} from './chat.args';
 
 @Resolver(ChatQL)

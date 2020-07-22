@@ -1,14 +1,13 @@
 import {Express} from 'express';
 import {Store} from 'express-session';
 import {SessionNotifyEventObject, SessionService} from '../../../entity/settings/session.service';
-import {Inject} from 'typescript-ioc';
 
 export class ExpressSessionStore extends Store implements SessionNotifyEventObject {
 	private cache = new Map<string, Express.SessionData>();
-	@Inject
-	private sessionService!: SessionService;
+	// @Inject
+	// private sessionService!: SessionService;
 
-	constructor() {
+	constructor(private sessionService: SessionService) {
 		super();
 		this.sessionService.registerNotify(this); // TODO: better notify system in node? use RX?
 	}

@@ -3,21 +3,18 @@ import {MethodMetadata} from '../definitions/method-metadata';
 import {ResultClassMetadata} from '../definitions/object-class-metdata';
 import {ClassMetadata} from '../definitions/class-metadata';
 import {EnumMetadata} from '../definitions/enum-metadata';
-import {DirectiveClassMetadata, DirectiveFieldMetadata} from '../definitions/directive-metadata';
-import {ControllerClassMetadata, FieldResolverMetadata} from '../definitions/controller-metadata';
+import {ControllerClassMetadata} from '../definitions/controller-metadata';
 import {FieldMetadata} from '../definitions/field-metadata';
 import {ParamMetadata} from '../definitions/param-metadata';
 
 export class MetadataStorage {
+	initialized = false;
 	gets: MethodMetadata[] = [];
 	posts: MethodMetadata[] = [];
-	fieldResolvers: FieldResolverMetadata[] = [];
 	resultTypes: ResultClassMetadata[] = [];
 	inputTypes: ClassMetadata[] = [];
 	argumentTypes: ClassMetadata[] = [];
 	enums: EnumMetadata[] = [];
-	classDirectives: DirectiveClassMetadata[] = [];
-	fieldDirectives: DirectiveFieldMetadata[] = [];
 	controllerClasses: ControllerClassMetadata[] = [];
 	fields: FieldMetadata[] = [];
 	params: ParamMetadata[] = [];
@@ -32,10 +29,6 @@ export class MetadataStorage {
 
 	collectPostHandlerMetadata(definition: MethodMetadata): void {
 		this.posts.push(definition);
-	}
-
-	collectFieldResolverMetadata(definition: FieldResolverMetadata): void {
-		this.fieldResolvers.push(definition);
 	}
 
 	collectResultMetadata(definition: ResultClassMetadata): void {
@@ -63,24 +56,23 @@ export class MetadataStorage {
 	}
 
 	build(): void {
-		this.buildClassMetadata(this.resultTypes);
-		this.buildClassMetadata(this.inputTypes);
-		this.buildClassMetadata(this.argumentTypes);
-
-		this.buildControllersMetadata(this.gets);
-		this.buildControllersMetadata(this.posts);
+		if (!this.initialized) {
+			this.buildClassMetadata(this.resultTypes);
+			this.buildClassMetadata(this.inputTypes);
+			this.buildClassMetadata(this.argumentTypes);
+			this.buildControllersMetadata(this.gets);
+			this.buildControllersMetadata(this.posts);
+			this.initialized = true;
+		}
 	}
 
 	clear(): void {
 		this.gets = [];
 		this.posts = [];
-		this.fieldResolvers = [];
 		this.resultTypes = [];
 		this.inputTypes = [];
 		this.argumentTypes = [];
 		this.enums = [];
-		this.classDirectives = [];
-		this.fieldDirectives = [];
 		this.controllerClasses = [];
 		this.fields = [];
 		this.params = [];
@@ -94,16 +86,8 @@ export class MetadataStorage {
 					field.params = this.params.filter(
 						param => param.target === field.target && field.name === param.methodName,
 					);
-					field.directives = this.fieldDirectives
-						.filter(it => it.target === field.target && it.fieldName === field.name)
-						.map(it => it.directive);
 				});
 				def.fields = fields;
-			}
-			if (!def.directives) {
-				def.directives = this.classDirectives
-					.filter(it => it.target === def.target)
-					.map(it => it.directive);
 			}
 		});
 	}
@@ -112,9 +96,6 @@ export class MetadataStorage {
 		definitions.forEach(def => {
 			def.controllerClassMetadata = this.controllerClasses.find(resolver => resolver.target === def.target);
 			def.params = this.params.filter(param => param.target === def.target && def.methodName === param.methodName);
-			def.directives = this.fieldDirectives
-				.filter(it => it.target === def.target && it.fieldName === def.methodName)
-				.map(it => it.directive);
 		});
 	}
 }

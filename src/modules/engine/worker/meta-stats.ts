@@ -1,9 +1,8 @@
 import path from 'path';
 import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums';
-import {Track} from '../../../entity/track/track';
 import {MetaStatBuilder} from '../../../utils/stats-builder';
 import {extractAlbumName} from '../../../utils/album-name';
-import {MatchNode} from './scan';
+import {MatchNode, MatchTrack} from './scan';
 import {MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
 import {Folder} from '../../../entity/folder/folder';
 
@@ -78,24 +77,20 @@ export class MatchNodeMetaStats {
 		}
 	}
 
-	private static async buildTrackSlugs(track: Track | undefined, builder: MetaStatBuilder): Promise<void> {
-		const tag = track?.tag;
-		if (!tag) {
-			return;
-		}
-		builder.statSlugValue('artist', tag.albumArtist || tag.artist);
-		builder.statSlugValue('artistSort', tag.albumArtistSort || tag.artistSort);
-		for (const genre of (tag.genres || [])) {
+	private static async buildTrackSlugs(match: MatchTrack, builder: MetaStatBuilder): Promise<void> {
+		builder.statSlugValue('artist', match.artist);
+		builder.statSlugValue('artistSort', match.artistSort);
+		for (const genre of (match.genres || [])) {
 			builder.statSlugValue('genre', genre);
 		}
-		builder.statSlugValue('series', tag.series);
-		builder.statSlugValue('album', tag.album ? extractAlbumName(tag.album) : undefined);
-		builder.statNumber('year', tag.year);
-		builder.statTrackCount('totalTrackCount', tag.trackTotal, tag.disc);
-		builder.statSlugValue('mbAlbumType', `${tag.mbAlbumType || ''}/${tag.mbAlbumStatus || ''}`);
-		builder.statID('mbArtistID', tag.mbArtistID);
-		builder.statID('mbReleaseID', tag.mbReleaseID);
-		builder.statID('mbReleaseGroupID', tag.mbReleaseGroupID);
+		builder.statSlugValue('series', match.series);
+		builder.statSlugValue('album', match.album ? extractAlbumName(match.album) : undefined);
+		builder.statNumber('year', match.year);
+		builder.statTrackCount('totalTrackCount', match.trackTotal, match.disc);
+		builder.statSlugValue('mbAlbumType', match.mbAlbumType);
+		builder.statID('mbArtistID', match.mbArtistID);
+		builder.statID('mbReleaseID', match.mbReleaseID);
+		builder.statID('mbReleaseGroupID', match.mbReleaseGroupID);
 	}
 
 	private static async buildTracksSlugs(node: MatchNode, builder: MetaStatBuilder): Promise<void> {

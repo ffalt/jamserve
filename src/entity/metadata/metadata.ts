@@ -1,15 +1,15 @@
 import {MetaDataType} from '../../types/enums';
-import {Entity, Enum, Property} from 'mikro-orm';
+import {Entity, Property} from '../../modules/orm';
 import {Base} from '../base/base';
 
 @Entity()
 export class MetaData extends Base {
-	@Property()
+	@Property(() => String)
 	name!: string;
 
-	@Enum(() => MetaDataType)
+	@Property(() => MetaDataType)
 	dataType!: MetaDataType;
 
-	@Property({type: 'json'})
-	data!: any;
+	@Property(() => String)
+	data!: string;
 }

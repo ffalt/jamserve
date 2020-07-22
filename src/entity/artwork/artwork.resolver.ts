@@ -10,7 +10,7 @@ export class ArtworkResolver {
 
 	@Query(() => ArtworkQL, {description: 'Get an Artwork by Id'})
 	async artwork(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Artwork> {
-		return await orm.Artwork.oneOrFail(id)
+		return await orm.Artwork.oneOrFailByID(id)
 	}
 
 	@Query(() => ArtworkPageQL, {description: 'Search Artworks'})
@@ -23,8 +23,7 @@ export class ArtworkResolver {
 
 	@FieldResolver(() => FolderQL, {description: 'Get the Navigation Index for Albums'})
 	async folder(@GQLRoot() artwork: Artwork, @Ctx() {orm}: Context): Promise<Folder> {
-		await orm.Artwork.populate(artwork, 'folder');
-		return artwork.folder;
+		return artwork.folder.getOrFail();
 	}
 
 }

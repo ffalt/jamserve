@@ -1,9 +1,9 @@
 import {User} from './user';
-import {OrmService} from '../../modules/engine/services/orm.service';
+import {Orm} from '../../modules/engine/services/orm.service';
 import {hashAndSaltSHA512, hashSaltSHA512} from '../../utils/hash';
 import {UserRole} from '../../types/enums';
 import {JWTPayload} from '../../utils/jwt';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import path from 'path';
 import fse from 'fs-extra';
 import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
@@ -14,10 +14,8 @@ import commonPassword from 'common-password-checker';
 import {UserMutateArgs} from './user.args';
 import {randomString} from '../../utils/random';
 
-@Singleton
+@InRequestScope
 export class UserService {
-	@Inject
-	private orm!: OrmService;
 	@Inject
 	private configService!: ConfigService;
 	@Inject
@@ -28,27 +26,23 @@ export class UserService {
 		this.userAvatarPath = this.configService.getDataPath(['images']);
 	}
 
-	async findByName(name: string): Promise<User | undefined> {
+	async findByName(orm: Orm, name: string): Promise<User | undefined> {
 		if (!name || name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const user = await this.orm.User.findOne({name: {$eq: name}});
+		return await orm.User.findOne({where: {name}});
+	}
+
+	async findByID(orm: Orm, id: string): Promise<User | undefined> {
+		const user = await orm.User.findOneByID(id);
 		return user || undefined;
 	}
 
-	async findByID(id: string): Promise<User | undefined> {
-		if (!id || id.trim().length === 0) {
-			return Promise.reject(Error('Invalid ID'));
-		}
-		const user = await this.orm.User.findOne(id);
-		return user || undefined;
-	}
-
-	async auth(name: string, pass: string): Promise<User> {
+	async auth(orm: Orm, name: string, pass: string): Promise<User> {
 		if ((!pass) || (!pass.length)) {
 			return Promise.reject(Error('Invalid Password'));
 		}
-		const user = await this.findByName(name);
+		const user = await this.findByName(orm, name);
 		if (!user) {
 			return Promise.reject(Error('Invalid Username'));
 		}
@@ -59,11 +53,11 @@ export class UserService {
 		return user;
 	}
 
-	public async authJWT(jwtPayload: JWTPayload): Promise<User | undefined> {
+	public async authJWT(orm: Orm, jwtPayload: JWTPayload): Promise<User | undefined> {
 		if (!jwtPayload || !jwtPayload.id) {
 			return Promise.reject(Error('Invalid token'));
 		}
-		return await this.orm.User.findOne(jwtPayload.id) || undefined;
+		return await orm.User.findOneByID(jwtPayload.id);
 	}
 
 	static listfyRoles(user: User): Array<UserRole> {
@@ -83,12 +77,11 @@ export class UserService {
 		return result;
 	}
 
-
 	private avatarImageFilename(user: User): string {
 		return path.join(this.userAvatarPath, `avatar-${user.id}.png`);
 	}
 
-	async getImage(user: User, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getImage(orm: Orm, user: User, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		const filename = this.avatarImageFilename(user);
 		let exists = await fse.pathExists(filename);
 		if (!exists) {
@@ -126,23 +119,23 @@ export class UserService {
 		}
 	}
 
-	async setUserPassword(user: User, pass: string): Promise<void> {
+	async setUserPassword(orm: Orm, user: User, pass: string): Promise<void> {
 		await this.testPassword(pass);
 		const pw = hashAndSaltSHA512(pass);
 		user.salt = pw.salt;
 		user.hash = pw.hash;
-		await this.orm.User.persistAndFlush(user);
+		await orm.User.persistAndFlush(user);
 	}
 
-	async setUserEmail(user: User, email: string): Promise<void> {
+	async setUserEmail(orm: Orm, user: User, email: string): Promise<void> {
 		if ((!email) || (!email.trim().length)) {
 			return Promise.reject(Error('Invalid Email'));
 		}
 		user.email = email;
-		await this.orm.User.persistAndFlush(user);
+		await orm.User.persistAndFlush(user);
 	}
 
-	async remove(user: User): Promise<void> {
+	async remove(orm: Orm, user: User): Promise<void> {
 		/*
 			await this.stateStore.removeByQuery({userID: user.id});
 		await this.playlistStore.removeByQuery({userID: user.id});
@@ -151,12 +144,13 @@ export class UserService {
 		await this.sessionStore.removeByQuery({userID: user.id});
 		await this.userStore.remove(user.id);
 		 */
-		await this.orm.User.removeAndFlush(user);
+		await orm.User.removeAndFlush(user);
 		await this.imageModule.clearImageCacheByIDs([user.id]);
 		await fileDeleteIfExists(this.avatarImageFilename(user));
 	}
 
-	public async createUser(name: string,
+	public async createUser(orm: Orm,
+							name: string,
 							email: string,
 							pass: string,
 							roleAdmin: boolean,
@@ -165,28 +159,29 @@ export class UserService {
 							rolePodcast: boolean
 	): Promise<User> {
 		const pw = hashAndSaltSHA512(pass);
-		const user: User = this.orm.User.create({name: name || '', salt: pw.salt, hash: pw.hash, email, roleAdmin, roleStream, roleUpload, rolePodcast});
-		await this.orm.User.persistAndFlush(user);
+		const user: User = orm.User.create({name: name || '', salt: pw.salt, hash: pw.hash, email, roleAdmin, roleStream, roleUpload, rolePodcast});
+		await orm.User.persistAndFlush(user);
 		return user;
 	}
 
-	public async create(args: UserMutateArgs): Promise<User> {
+	public async create(orm: Orm, args: UserMutateArgs): Promise<User> {
 		if (!args.name || args.name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const existingUser = await this.orm.User.findOne({name: {$eq: args.name}});
+		const existingUser = await orm.User.findOne({where: {name: args.name}});
 		if (existingUser) {
 			return Promise.reject(Error('Username already exists'));
 		}
 		const pass = randomString(16);
-		return await this.createUser(args.name, args.email || '', pass, !!args.roleAdmin, !!args.roleStream, !!args.roleUpload, !!args.rolePodcast);
+		return await this.createUser(orm, args.name,
+			args.email || '', pass, !!args.roleAdmin, !!args.roleStream, !!args.roleUpload, !!args.rolePodcast);
 	}
 
-	public async update(user: User, args: UserMutateArgs): Promise<User> {
+	public async update(orm: Orm, user: User, args: UserMutateArgs): Promise<User> {
 		if (!args.name || args.name.trim().length === 0) {
 			return Promise.reject(Error('Invalid Username'));
 		}
-		const existingUser = await this.orm.User.oneOrFail({name: {$eq: args.name}});
+		const existingUser = await orm.User.findOne({where: {name: args.name}});
 		if (existingUser && existingUser.id !== user.id) {
 			return Promise.reject(Error('Username already exists'));
 		}
@@ -196,7 +191,7 @@ export class UserService {
 		user.rolePodcast = !!args.rolePodcast;
 		user.roleStream = !!args.roleStream;
 		user.roleUpload = !!args.roleUpload;
-		await this.orm.User.persistAndFlush(user);
+		await orm.User.persistAndFlush(user);
 		return user;
 	}
 }

@@ -1,24 +1,28 @@
 import {Session} from '../session/session.model';
 import {ConfigService} from '../../modules/engine/services/config.service';
-import {Inject} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {BodyParams, Controller, Ctx, Post} from '../../modules/rest';
 import passport from 'passport';
 import {generateJWT, jwtHash} from '../../utils/jwt';
 import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
-import {Context} from '../../modules/server/middlewares/rest.context';
 import {CredentialsArgs} from './auth.args';
 import {UserRole} from '../../types/enums';
 import {logger} from '../../utils/logger';
+import {Context} from '../../modules/engine/rest/context';
 
 const log = logger('AuthController');
 
+@InRequestScope
 @Controller('/auth', {tags: ['Access']})
 export class AuthController {
 	@Inject
 	private configService!: ConfigService;
 
 	@Post('/login', () => Session, {description: 'Start session or jwt access', summary: 'Login'})
-	async login(@BodyParams() credentials: CredentialsArgs, @Ctx() context: Context): Promise<Session> {
+	async login(
+		@BodyParams() credentials: CredentialsArgs,
+		@Ctx() context: Context
+	): Promise<Session> {
 		return new Promise<Session>((resolve, reject) => {
 			passport.authenticate('local', (err, user) => {
 				if (err || !user) {
@@ -28,7 +32,8 @@ export class AuthController {
 				context.req.login(user, (err2: Error) => {
 					if (err2) {
 						log.error(err2);
-						reject(new Error('Invalid Auth'));
+						console.error(err2);
+						return reject(new Error('Invalid Auth'));
 					}
 					const client = context.req.body.client || 'Unknown Client';
 					// context.req.client = client;

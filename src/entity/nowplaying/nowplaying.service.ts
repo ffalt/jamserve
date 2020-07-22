@@ -2,8 +2,8 @@ import {Episode} from '../episode/episode';
 import {Track} from '../track/track';
 import {User} from '../user/user';
 import {NowPlaying} from './nowplaying';
-import {Inject, Singleton} from 'typescript-ioc';
-import {OrmService} from '../../modules/engine/services/orm.service';
+import {Inject, InRequestScope} from 'typescript-ioc';
+import {Orm} from '../../modules/engine/services/orm.service';
 import {NotFoundError} from '../../modules/rest/builder';
 import {DBObjectType} from '../../types/enums';
 import {logger} from '../../utils/logger';
@@ -11,11 +11,9 @@ import {StateService} from '../state/state.service';
 
 const log = logger('NowPlayingService');
 
-@Singleton
+@InRequestScope
 export class NowPlayingService {
 	private playing: Array<NowPlaying> = [];
-	@Inject
-	private orm!: OrmService;
 	@Inject
 	private stateService!: StateService;
 
@@ -38,7 +36,7 @@ export class NowPlayingService {
 		this.playing.push(result);
 		this.report([
 			{id: episode.id, type: DBObjectType.episode, userID: user.id},
-			{id: episode.podcast.id, type: DBObjectType.podcast, userID: user.id},
+			{id: episode.podcast.idOrFail(), type: DBObjectType.podcast, userID: user.id},
 		]).catch(e => log.error(e)); // do not wait
 		return result;
 	}
@@ -49,17 +47,17 @@ export class NowPlayingService {
 		this.playing.push(result);
 		this.report([
 			{id: track.id, type: DBObjectType.track, userID: user.id},
-			{id: track.album?.id, type: DBObjectType.album, userID: user.id},
-			{id: track.artist?.id, type: DBObjectType.artist, userID: user.id},
-			{id: track.folder?.id, type: DBObjectType.folder, userID: user.id},
-			{id: track.series?.id, type: DBObjectType.series, userID: user.id},
-			{id: track.root?.id, type: DBObjectType.root, userID: user.id},
+			{id: track.album.id(), type: DBObjectType.album, userID: user.id},
+			{id: track.artist.id(), type: DBObjectType.artist, userID: user.id},
+			{id: track.folder.id(), type: DBObjectType.folder, userID: user.id},
+			{id: track.series.id(), type: DBObjectType.series, userID: user.id},
+			{id: track.root.id(), type: DBObjectType.root, userID: user.id},
 		]).catch(e => log.error(e)); // do not wait
 		return result;
 	}
 
-	async scrobble(id: string, user: User): Promise<NowPlaying> {
-		const result = await this.orm.findInStreamTypes(id);
+	async scrobble(orm: Orm, id: string, user: User): Promise<NowPlaying> {
+		const result = await orm.findInStreamTypes(id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}

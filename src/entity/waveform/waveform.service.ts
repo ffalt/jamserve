@@ -6,7 +6,7 @@ import {DBObjectType, WaveformFormatType} from '../../types/enums';
 import {Track} from '../track/track';
 import {Episode} from '../episode/episode';
 import {Base} from '../base/base';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../utils/logger';
 import {BaseRepository} from '../base/base.repository';
 import {OrmService} from '../../modules/engine/services/orm.service';
@@ -32,22 +32,11 @@ export interface WaveFormData {
 	data: Array<number>;
 }
 
-@Singleton
+@InRequestScope
 export class WaveformService {
 	@Inject
 	private audioModule!: AudioModule
-	@Inject
-	private orm!: OrmService;
 
-	async findInWaveformTypes(id: string): Promise<{ obj: Track | Episode; objType: DBObjectType } | undefined> {
-		const repos: Array<BaseRepository<any, any, any>> = [this.orm.Track, this.orm.Episode]
-		for (const repo of repos) {
-			const obj = await repo.findOne({id});
-			if (obj) {
-				return {obj: obj as any, objType: repo.objType};
-			}
-		}
-	}
 	async getWaveform(obj: Base, objType: DBObjectType, format?: WaveformFormatType, width?: number): Promise<WaveformResult> {
 		format = (format || WaveformDefaultFormat);
 		switch (objType) {

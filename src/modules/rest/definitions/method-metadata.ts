@@ -1,7 +1,6 @@
 import {ControllerClassMetadata} from './controller-metadata';
 import {ParamMetadata} from './param-metadata';
-import {DirectiveMetadata} from './directive-metadata';
-import {AuthOptions, BinaryOptions, CustomPathParameterOptions, TypeOptions, TypeValueThunk} from '../decorators/types';
+import {AuthOptions, BinaryOptions, CustomPathParameterOptions, TypeOptions, TypeValueThunk} from './types';
 
 export interface MethodMetadata extends CustomPathParameterOptions, BinaryOptions, AuthOptions {
 	methodName: string;
@@ -9,7 +8,6 @@ export interface MethodMetadata extends CustomPathParameterOptions, BinaryOption
 	target: Function;
 	controllerClassMetadata?: ControllerClassMetadata;
 	params: ParamMetadata[];
-	directives?: DirectiveMetadata[];
 	getReturnType?: TypeValueThunk;
 	returnTypeOptions?: TypeOptions;
 	responseStringMimeTypes?: string[];

@@ -14,7 +14,7 @@ export class RootResolver {
 
 	@Query(() => RootQL, {description: 'Get a Root by Id'})
 	async root(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Root> {
-		return await orm.Root.oneOrFail(id)
+		return await orm.Root.oneOrFailByID(id)
 	}
 
 	@Query(() => RootPageQL, {description: 'Search Roots'})
@@ -32,31 +32,26 @@ export class RootResolver {
 
 	@FieldResolver(() => [TrackQL])
 	async tracks(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Track>> {
-		await orm.Root.populate(root, 'tracks');
 		return root.tracks.getItems();
 	}
 
 	@FieldResolver(() => [FolderQL])
 	async folders(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Folder>> {
-		await orm.Root.populate(root, 'folders');
 		return root.folders.getItems();
 	}
 
 	@FieldResolver(() => [AlbumQL])
 	async albums(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Album>> {
-		await orm.Root.populate(root, 'albums');
 		return root.albums.getItems();
 	}
 
 	@FieldResolver(() => [SeriesQL])
 	async series(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Series>> {
-		await orm.Root.populate(root, 'series');
 		return root.series.getItems();
 	}
 
 	@FieldResolver(() => [ArtistQL])
 	async artists(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Artist>> {
-		await orm.Root.populate(root, 'artists');
 		return root.artists.getItems();
 	}
 }

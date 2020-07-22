@@ -1,5 +1,5 @@
 import {findType} from './findType';
-import {MethodOptions, ReturnTypeFunc} from '../decorators/types';
+import {MethodOptions, ReturnTypeFunc} from '../definitions/types';
 import {MethodMetadata} from '../definitions/method-metadata';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 

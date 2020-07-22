@@ -1,4 +1,4 @@
-import {Inject, Singleton} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import express from 'express';
 import {ApolloMiddleware} from './apollo.middleware';
 import {RestMiddleware} from './rest.middleware';
@@ -8,7 +8,7 @@ import {buildAngularClientZip} from '../../rest/builder/angular';
 import {ApiBaseResponder} from '../../rest/builder/express-responder';
 import {buildAxiosClientZip} from '../../rest/builder/axios';
 
-@Singleton
+@InRequestScope
 export class DocsMiddleware {
 	@Inject
 	private apollo!: ApolloMiddleware;

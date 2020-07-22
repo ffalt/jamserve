@@ -1,19 +1,17 @@
-import {Inject} from 'typescript-ioc';
-import {BodyParams, Controller, CurrentUser, Get, NotFoundError, Post, QueryParam, QueryParams} from '../../modules/rest';
+import {InRequestScope, Inject} from 'typescript-ioc';
+import {BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
-import {OrmService} from '../../modules/engine/services/orm.service';
-import {User} from '../user/user';
 import {TransformService} from '../../modules/engine/services/transform.service';
 import {State, States} from './state.model';
 import {FavArgs, RateArgs, StatesArgs} from './state.args';
 import {StateService} from './state.service';
+import {Context} from '../../modules/engine/rest/context';
 
 const description = '[Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track]';
 
+@InRequestScope
 @Controller('/state', {tags: ['State'], roles: [UserRole.stream]})
 export class StateController {
-	@Inject
-	private orm!: OrmService;
 	@Inject
 	private stateService!: StateService;
 	@Inject
@@ -26,13 +24,13 @@ export class StateController {
 	)
 	async state(
 		@QueryParam('id', {description: 'Object Id', isID: true}) id: string,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<State | undefined> {
-		const result = await this.stateService.findInStateTypes(id);
+		const result = await orm.findInStateTypes(id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		return this.transform.state(id, result.objType, user.id);
+		return this.transform.state(orm, id, result.objType, user.id);
 	}
 
 	@Get(
@@ -42,13 +40,13 @@ export class StateController {
 	)
 	async states(
 		@QueryParams() args: StatesArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<States> {
 		const states: States = {states: []}
 		for (const id of args.ids) {
-			const result = await this.stateService.findInStateTypes(id);
+			const result = await orm.findInStateTypes(id);
 			if (result) {
-				states.states.push({id, state: await this.transform.state(id, result.objType, user.id)})
+				states.states.push({id, state: await this.transform.state(orm, id, result.objType, user.id)})
 			}
 		}
 		return states;
@@ -61,9 +59,9 @@ export class StateController {
 	)
 	async fav(
 		@BodyParams() args: FavArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<State> {
-		return this.stateService.fav(args.id, args.remove, user);
+		return this.stateService.fav(orm, args.id, args.remove, user);
 	}
 
 	@Post(
@@ -73,9 +71,9 @@ export class StateController {
 	)
 	async rate(
 		@BodyParams() args: RateArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<State> {
-		return this.stateService.rate(args.id, args.rating, user);
+		return this.stateService.rate(orm, args.id, args.rating, user);
 	}
 
 }

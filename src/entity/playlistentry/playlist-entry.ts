@@ -3,26 +3,26 @@ import {Episode, EpisodeQL} from '../episode/episode';
 import {Playlist, PlaylistQL} from '../playlist/playlist';
 import {Field, Int, ObjectType} from 'type-graphql';
 import {Base} from '../base/base';
-import {Entity, ManyToOne, OneToOne, Property} from 'mikro-orm';
+import {Entity, ManyToOne, ORM_INT, Property, Reference} from '../../modules/orm';
 
 @ObjectType()
 @Entity()
 export class PlaylistEntry extends Base {
 	@Field(() => Int)
-	@Property()
+	@Property(() => ORM_INT)
 	position!: number;
 
 	@Field(() => PlaylistQL)
-	@ManyToOne(() => Playlist)
-	playlist!: Playlist;
+	@ManyToOne<Playlist>(() => Playlist, playlist => playlist.entries)
+	playlist: Reference<Playlist> = new Reference<Playlist>(this);
 
 	@Field(() => TrackQL)
-	@OneToOne(() => Track)
-	track?: Track;
+	@ManyToOne<Track>(() => Track, track => track.playlistEntries)
+	track: Reference<Track> = new Reference<Track>(this);
 
 	@Field(() => EpisodeQL)
-	@OneToOne(() => Episode)
-	episode?: Episode;
+	@ManyToOne<Episode>(() => Episode, episode => episode.playlistEntries)
+	episode: Reference<Episode> = new Reference<Episode>(this);
 }
 
 @ObjectType()

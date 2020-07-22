@@ -1,6 +1,6 @@
 import {Artist, ArtistIndex, ArtistPage} from './artist.model';
 import {User} from '../user/user';
-import {Controller, CurrentUser, Get, QueryParam, QueryParams} from '../../modules/rest';
+import {Controller, Ctx, CurrentUser, Get, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {BaseController} from '../base/base.controller';
 import {ExtendedInfoResult} from '../metadata/metadata.model';
@@ -12,7 +12,10 @@ import {IncludesSeriesArgs, SeriesFilterArgs, SeriesOrderArgs} from '../series/s
 import {IncludesTrackArgs, TrackOrderArgs} from '../track/track.args';
 import {ArtistFilterArgs, ArtistOrderArgs, IncludesArtistArgs, IncludesArtistChildrenArgs} from './artist.args';
 import {ListArgs, PageArgs} from '../base/base.args';
+import {Context} from '../../modules/engine/rest/context';
+import {InRequestScope} from 'typescript-ioc';
 
+@InRequestScope
 @Controller('/artist', {tags: ['Artist'], roles: [UserRole.stream]})
 export class ArtistController extends BaseController {
 
@@ -27,10 +30,10 @@ export class ArtistController extends BaseController {
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() albumArgs: IncludesAlbumArgs,
 		@QueryParams() seriesArgs: IncludesSeriesArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<Artist> {
 		return this.transform.artist(
-			await this.orm.Artist.oneOrFail(id),
+			orm, await orm.Artist.oneOrFailByID(id),
 			artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user
 		);
 	}
@@ -40,9 +43,12 @@ export class ArtistController extends BaseController {
 		() => ArtistIndex,
 		{description: 'Get the Navigation Index for Albums', summary: 'Get Index'}
 	)
-	async index(@QueryParams() filter: ArtistFilterArgs): Promise<ArtistIndex> {
-		const result = await this.orm.Artist.indexFilter(filter);
-		return await this.transform.artistIndex(result);
+	async index(
+		@QueryParams() filter: ArtistFilterArgs,
+		@Ctx() {orm}: Context
+	): Promise<ArtistIndex> {
+		const result = await orm.Artist.indexFilter(filter);
+		return await this.transform.artistIndex(orm, result);
 	}
 
 	@Get(
@@ -60,16 +66,16 @@ export class ArtistController extends BaseController {
 		@QueryParams() filter: ArtistFilterArgs,
 		@QueryParams() order: ArtistOrderArgs,
 		@QueryParams() list: ListArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<ArtistPage> {
 		if (list.list) {
-			return await this.orm.Artist.findListTransformFilter(list.list, filter, [order], page, user,
-				o => this.transform.artist(o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user)
+			return await orm.Artist.findListTransformFilter(list.list, filter, [order], page, user,
+				o => this.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user)
 			);
 		}
-		return await this.orm.Artist.searchTransformFilter(
+		return await orm.Artist.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.artist(o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user)
+			o => this.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user)
 		);
 	}
 
@@ -78,9 +84,12 @@ export class ArtistController extends BaseController {
 		() => ExtendedInfoResult,
 		{description: 'Get Meta Data Info of an Artist by Id (External Service)', summary: 'Get Info'}
 	)
-	async info(@QueryParam('id', {description: 'Artist Id', isID: true}) id: string): Promise<ExtendedInfoResult> {
-		const artist = await this.orm.Artist.oneOrFail(id);
-		return {info: await this.metadata.extInfo.byArtist(artist)};
+	async info(
+		@QueryParam('id', {description: 'Artist Id', isID: true}) id: string,
+		@Ctx() {orm, user}: Context
+	): Promise<ExtendedInfoResult> {
+		const artist = await orm.Artist.oneOrFailByID(id);
+		return {info: await this.metadata.extInfo.byArtist(orm, artist)};
 	}
 
 	@Get(
@@ -92,11 +101,11 @@ export class ArtistController extends BaseController {
 		@QueryParam('id', {description: 'Artist Id', isID: true}) id: string,
 		@QueryParams() page: PageArgs,
 		@QueryParams() artistArgs: IncludesArtistArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<ArtistPage> {
-		const artist = await this.orm.Artist.oneOrFail(id);
-		const result = await this.metadata.similarArtists.byArtist(artist, page);
-		return {...result, items: await Promise.all(result.items.map(o => this.transform.artistBase(o, artistArgs, user)))};
+		const artist = await orm.Artist.oneOrFailByID(id);
+		const result = await this.metadata.similarArtists.byArtist(orm, artist, page);
+		return {...result, items: await Promise.all(result.items.map(o => this.transform.artistBase(orm, o, artistArgs, user)))};
 	}
 
 	@Get(
@@ -108,11 +117,11 @@ export class ArtistController extends BaseController {
 		@QueryParam('id', {description: 'Artist Id', isID: true}) id: string,
 		@QueryParams() page: PageArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<TrackPage> {
-		const artist = await this.orm.Artist.oneOrFail(id);
-		const result = await this.metadata.similarTracks.byArtist(artist, page);
-		return {...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(o, trackArgs, user)))};
+		const artist = await orm.Artist.oneOrFailByID(id);
+		const result = await this.metadata.similarTracks.byArtist(orm, artist, page);
+		return {...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user)))};
 	}
 
 	@Get(
@@ -125,12 +134,12 @@ export class ArtistController extends BaseController {
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() filter: ArtistFilterArgs,
 		@QueryParams() order: TrackOrderArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<TrackPage> {
-		const artistIDs = await this.orm.Artist.findIDsFilter(filter, user);
-		return await this.orm.Track.searchTransformFilter(
+		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
+		return await orm.Track.searchTransformFilter(
 			{artistIDs}, [order], page, user,
-			o => this.transform.trackBase(o, trackArgs, user)
+			o => this.transform.trackBase(orm, o, trackArgs, user)
 		);
 	}
 
@@ -144,12 +153,12 @@ export class ArtistController extends BaseController {
 		@QueryParams() albumArgs: IncludesAlbumArgs,
 		@QueryParams() filter: ArtistFilterArgs,
 		@QueryParams() order: AlbumOrderArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<AlbumPage> {
-		const artistIDs = await this.orm.Artist.findIDsFilter(filter, user);
-		return await this.orm.Album.searchTransformFilter(
+		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
+		return await orm.Album.searchTransformFilter(
 			{artistIDs}, [order], page, user,
-			o => this.transform.albumBase(o, albumArgs, user)
+			o => this.transform.albumBase(orm, o, albumArgs, user)
 		);
 	}
 
@@ -163,12 +172,12 @@ export class ArtistController extends BaseController {
 		@QueryParams() seriesArgs: IncludesSeriesArgs,
 		@QueryParams() filter: SeriesFilterArgs,
 		@QueryParams() order: SeriesOrderArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<SeriesPage> {
-		const artistIDs = await this.orm.Artist.findIDsFilter(filter, user);
-		return await this.orm.Series.searchTransformFilter(
+		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
+		return await orm.Series.searchTransformFilter(
 			{artistIDs}, [order], page, user,
-			o => this.transform.seriesBase(o, seriesArgs, user)
+			o => this.transform.seriesBase(orm, o, seriesArgs, user)
 		);
 	}
 

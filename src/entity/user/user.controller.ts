@@ -1,19 +1,19 @@
 import {User, UserPage} from './user.model';
 import {User as ORMUser} from './user';
-import {OrmService} from '../../modules/engine/services/orm.service';
-import {Inject} from 'typescript-ioc';
+import {Orm} from '../../modules/engine/services/orm.service';
+import {InRequestScope, Inject} from 'typescript-ioc';
 import {TransformService} from '../../modules/engine/services/transform.service';
-import {BodyParam, BodyParams, Controller, CurrentUser, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile} from '../../modules/rest';
+import {BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs} from './user.args';
 import {UserService} from './user.service';
 import {randomString} from '../../utils/random';
 import {PageArgs} from '../base/base.args';
+import {Context} from '../../modules/engine/rest/context';
 
+@InRequestScope
 @Controller('/user', {tags: ['User']})
 export class UserController {
-	@Inject
-	private orm!: OrmService;
 	@Inject
 	private transform!: TransformService;
 	@Inject
@@ -26,10 +26,10 @@ export class UserController {
 	async id(
 		@QueryParam('id', {description: 'User Id', isID: true}) id: string,
 		@QueryParams() userArgs: IncludesUserArgs,
-		@CurrentUser() user: ORMUser
+		@Ctx() {orm, user}: Context
 	): Promise<User> {
 		return this.transform.user(
-			await this.orm.User.oneOrFail(id),
+			orm, await orm.User.oneOrFailByID(id),
 			userArgs, user
 		);
 	}
@@ -44,11 +44,11 @@ export class UserController {
 		@QueryParams() userArgs: IncludesUserArgs,
 		@QueryParams() filter: UserFilterArgs,
 		@QueryParams() order: UserOrderArgs,
-		@CurrentUser() user: ORMUser
+		@Ctx() {orm, user}: Context
 	): Promise<UserPage> {
-		return await this.orm.User.searchTransformFilter(
+		return await orm.User.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.user(o, userArgs, user)
+			o => this.transform.user(orm, o, userArgs, user)
 		);
 	}
 
@@ -59,10 +59,10 @@ export class UserController {
 	)
 	async create(
 		@BodyParams() args: UserMutateArgs,
-		@CurrentUser() user: ORMUser
+		@Ctx() {orm, user}: Context
 	): Promise<User> {
-		await this.validatePassword(args.password, user);
-		return this.transform.user(await this.userService.create(args), {}, user);
+		await this.validatePassword(orm, args.password, user);
+		return this.transform.user(orm, await this.userService.create(orm, args), {}, user);
 	}
 
 	@Post(
@@ -73,10 +73,10 @@ export class UserController {
 	async update(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@BodyParams() args: UserMutateArgs,
-		@CurrentUser() user: ORMUser
+		@Ctx() {orm, user}: Context
 	): Promise<User> {
-		await this.validatePassword(args.password, user);
-		const u = id === user.id ? user : await this.orm.User.oneOrFail(id);
+		await this.validatePassword(orm, args.password, user);
+		const u = id === user.id ? user : await orm.User.oneOrFailByID(id);
 		if (user.id === id) {
 			if (!args.roleAdmin) {
 				throw InvalidParamError('roleAdmin', `You can't de-admin yourself`);
@@ -85,7 +85,7 @@ export class UserController {
 				throw InvalidParamError('roleStream', `You can't remove api access for yourself`);
 			}
 		}
-		return this.transform.user(await this.userService.update(u, args), {}, user);
+		return this.transform.user(orm, await this.userService.update(orm, u, args), {}, user);
 	}
 
 	@Post(
@@ -94,13 +94,13 @@ export class UserController {
 	)
 	async remove(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
-		@CurrentUser() user: ORMUser
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
 		if (user.id === id) {
 			throw InvalidParamError('id', `You can't remove yourself`);
 		}
-		const u = await this.orm.User.oneOrFail(id);
-		await this.userService.remove(u);
+		const u = await orm.User.oneOrFailByID(id);
+		await this.userService.remove(orm, u);
 	}
 
 	@Post(
@@ -110,10 +110,10 @@ export class UserController {
 	async changePassword(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@BodyParams() args: UserPasswordUpdateArgs,
-		@CurrentUser() user: ORMUser
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
-		const u = await this.checkUserAccess(id, args.password, user);
-		return this.userService.setUserPassword(u, args.newPassword);
+		const u = await this.checkUserAccess(orm, id, args.password, user);
+		return this.userService.setUserPassword(orm, u, args.newPassword);
 	}
 
 	@Post(
@@ -123,10 +123,10 @@ export class UserController {
 	async changeEmail(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@BodyParams() args: UserEmailUpdateArgs,
-		@CurrentUser() user: ORMUser
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
-		const u = await this.checkUserAccess(id, args.password, user);
-		return this.userService.setUserEmail(u, args.email);
+		const u = await this.checkUserAccess(orm, id, args.password, user);
+		return this.userService.setUserEmail(orm, u, args.email);
 	}
 
 	@Post(
@@ -136,9 +136,9 @@ export class UserController {
 	async generateUserImage(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@BodyParams() args: UserGenerateImageArgs,
-		@CurrentUser() user: ORMUser
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
-		const u = await this.validateUserOrAdmin(id, user);
+		const u = await this.validateUserOrAdmin(orm, id, user);
 		await this.userService.generateAvatar(u, args.seed || randomString(42));
 	}
 
@@ -149,34 +149,34 @@ export class UserController {
 	async uploadUserImage(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@Upload('image') file: UploadFile,
-		@CurrentUser() user: ORMUser
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
-		const u = await this.validateUserOrAdmin(id, user);
+		const u = await this.validateUserOrAdmin(orm, id, user);
 		return this.userService.setUserImage(u, file.name, file.type);
 	}
 
-	private async validatePassword(password: string, user: ORMUser): Promise<void> {
-		const result = await this.userService.auth(user.name, password);
+	private async validatePassword(orm: Orm, password: string, user: ORMUser): Promise<void> {
+		const result = await this.userService.auth(orm, user.name, password);
 		if (!result) {
 			return Promise.reject(UnauthError());
 		}
 	}
 
-	private async checkUserAccess(userID: string, password: string, user: ORMUser): Promise<ORMUser> {
-		await this.validatePassword(password, user);
+	private async checkUserAccess(orm: Orm, userID: string, password: string, user: ORMUser): Promise<ORMUser> {
+		await this.validatePassword(orm, password, user);
 		if (userID === user.id || user.roleAdmin) {
-			return userID === user.id ? user : await this.orm.User.oneOrFail(userID);
+			return userID === user.id ? user : await orm.User.oneOrFailByID(userID);
 		}
 		return Promise.reject(UnauthError());
 	}
 
-	private async validateUserOrAdmin(id: string, user: ORMUser): Promise<ORMUser> {
+	private async validateUserOrAdmin(orm: Orm, id: string, user: ORMUser): Promise<ORMUser> {
 		if (id === user.id) {
 			return user;
 		}
 		if (!user.roleAdmin) {
 			throw UnauthError();
 		}
-		return await this.orm.User.oneOrFail(id);
+		return await orm.User.oneOrFailByID(id);
 	}
 }

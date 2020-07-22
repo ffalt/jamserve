@@ -1,52 +1,51 @@
 import {Folder, FolderQL} from '../folder/folder';
 import {ArtworkImageType} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Entity, ManyToOne, Property} from 'mikro-orm';
+import {Entity, ManyToOne, ORM_INT, ORM_TIMESTAMP, Property, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
-import {OrmStringListType} from '../../modules/engine/services/orm.types';
 
 @ObjectType()
 @Entity()
 export class Artwork extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	path!: string;
 
 	@Field(() => [ArtworkImageType])
-	@Property({type: OrmStringListType})
+	@Property(() => [ArtworkImageType])
 	types: Array<ArtworkImageType> = [];
 
 	@Field(() => Int)
-	@Property()
+	@Property(() => ORM_TIMESTAMP)
 	statCreated!: number;
 
 	@Field(() => Int)
-	@Property()
+	@Property(() => ORM_TIMESTAMP)
 	statModified!: number;
 
 	@Field(() => Int)
-	@Property()
+	@Property(() => ORM_INT)
 	fileSize!: number;
 
 	@Field(() => Int, {nullable: true})
-	@Property()
+	@Property(() => ORM_INT, {nullable: true})
 	width?: number;
 
 	@Field(() => Int, {nullable: true})
-	@Property()
+	@Property(() => ORM_INT, {nullable: true})
 	height?: number;
 
 	@Field(() => String, {nullable: true})
-	@Property()
+	@Property(() => String, {nullable: true})
 	format?: string;
 
 	@Field(() => FolderQL)
-	@ManyToOne(() => Folder)
-	folder!: Folder;
+	@ManyToOne<Folder>(() => Folder, folder => folder.artworks)
+	folder: Reference<Folder> = new Reference<Folder>(this);
 }
 
 @ObjectType()

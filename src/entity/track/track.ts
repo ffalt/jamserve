@@ -6,70 +6,78 @@ import {Artist, ArtistQL} from '../artist/artist';
 import {MediaTagRawQL, Tag, TagQL} from '../tag/tag';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Cascade, Collection, Entity, ManyToOne, OneToMany, OneToOne, Property, QueryOrder} from 'mikro-orm';
+import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_INT, ORM_TIMESTAMP, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {Waveform, WaveformQL} from '../waveform/waveform';
 import {TrackHealthHint} from '../health/health.model';
 import {MediaTagRaw} from '../tag/tag.model';
 import {TrackLyrics} from './track.model';
+import {PlayQueueEntry} from '../playqueueentry/playqueue-entry';
+import {PlaylistEntry} from '../playlistentry/playlist-entry';
 
 @ObjectType()
 @Entity()
 export class Track extends Base {
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	name!: string;
 
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	fileName!: string;
 
 	@Field(() => String)
-	@Property()
+	@Property(() => String)
 	path!: string;
 
-	@Property()
+	@Property(() => ORM_TIMESTAMP)
 	statCreated!: number;
 
-	@Property()
+	@Property(() => ORM_TIMESTAMP)
 	statModified!: number;
 
 	@Field(() => Int)
-	@Property()
+	@Property(() => ORM_INT)
 	fileSize!: number;
 
 	@Field(() => SeriesQL, {nullable: true})
-	@ManyToOne(() => Series)
-	series?: Series;
+	@ManyToOne<Series>(() => Series, series => series.tracks)
+	series = new Reference<Series>(this);
 
 	@Field(() => AlbumQL, {nullable: true})
-	@ManyToOne(() => Album, {nullable: true})
-	album?: Album;
+	@ManyToOne<Album>(() => Album, album => album.tracks, {nullable: true})
+	album = new Reference<Album>(this);
 
 	@Field(() => FolderQL)
-	@ManyToOne(() => Folder)
-	folder!: Folder;
+	@ManyToOne<Folder>(() => Folder, folder => folder.tracks)
+	folder = new Reference<Folder>(this);
 
 	@Field(() => ArtistQL, {nullable: true})
-	@ManyToOne(() => Artist)
-	artist?: Artist;
+	@ManyToOne<Artist>(() => Artist, artist => artist.tracks, {nullable: true})
+	artist = new Reference<Artist>(this);
 
 	@Field(() => ArtistQL, {nullable: true})
-	@ManyToOne(() => Artist)
-	albumArtist?: Artist;
+	@ManyToOne<Artist>(() => Artist, artist => artist.albumTracks, {nullable: true})
+	albumArtist = new Reference<Artist>(this);
 
 	@Field(() => RootQL)
-	@ManyToOne(() => Root)
-	root!: Root;
+	@ManyToOne<Root>(() => Root, root => root.tracks)
+	root = new Reference<Root>(this);
 
 	@Field(() => [BookmarkQL])
-	@OneToMany({entity: () => Bookmark, mappedBy: bookmark => bookmark.track, cascade: [Cascade.REMOVE], orderBy: {position: QueryOrder.ASC}})
+	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.track, {orderBy: {position: QueryOrder.ASC}, onDelete: 'cascade'})
 	bookmarks: Collection<Bookmark> = new Collection<Bookmark>(this);
 
+	@OneToMany<PlayQueueEntry>(() => PlayQueueEntry, playqueueEntry => playqueueEntry.track)
+	playqueueEntries: Collection<PlayQueueEntry> = new Collection<PlayQueueEntry>(this);
+
+	@OneToMany<PlaylistEntry>(() => PlaylistEntry, playlistEntry => playlistEntry.track)
+	playlistEntries: Collection<PlaylistEntry> = new Collection<PlaylistEntry>(this);
+
 	@Field(() => TagQL, {nullable: true})
-	@OneToOne({entity: () => Tag, nullable: true, cascade: [Cascade.REMOVE]})
-	tag?: Tag;
+	@OneToOne<Tag>(() => Tag, tag => tag.track, {owner: true, nullable: true})
+	tag: Reference<Tag> = new Reference<Tag>(this);
 }
 
 @ObjectType()

@@ -81,7 +81,6 @@ export class Feed {
 		if (charset && !/utf-*8/i.test(charset)) {
 			try {
 				const iv = iconv.decodeStream(charset);
-				// console.log('Converting from charset %s to utf-8', charset);
 				iv.on('error', done);
 				// If we're using iconv, stream will be the output of iconv
 				// otherwise it will remain the output of request

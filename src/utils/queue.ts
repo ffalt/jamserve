@@ -5,13 +5,11 @@ export async function processQueue<T>(concurrent: number, list: Array<T>, proces
 		return;
 	}
 	const q = new PQueue({concurrency: 10});
-	// console.log('start');
 	for (const item of list) {
-		// console.log(folder.dir, 'add');
 		q.add(async () => {
 			await process(item);
 		}).then(() => {
-			// console.log(folder.dir, 'added');
+			// 
 		});
 	}
 	await q.onIdle();

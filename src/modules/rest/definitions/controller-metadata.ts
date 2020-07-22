@@ -1,6 +1,5 @@
 import {ParamMetadata} from './param-metadata';
-import {DirectiveMetadata} from './directive-metadata';
-import {ClassTypeResolver, TypeOptions, TypeValueThunk} from '../decorators/types';
+import {ClassTypeResolver, TypeOptions, TypeValueThunk} from './types';
 
 export interface BaseControllerMetadata {
 	methodName: string;
@@ -9,7 +8,6 @@ export interface BaseControllerMetadata {
 	controllerClassMetadata?: ControllerClassMetadata;
 	params?: ParamMetadata[];
 	roles?: string[];
-	directives?: DirectiveMetadata[];
 }
 
 export interface FieldResolverMetadata extends BaseControllerMetadata {

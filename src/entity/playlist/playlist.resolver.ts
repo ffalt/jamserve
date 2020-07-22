@@ -11,7 +11,7 @@ export class PlaylistResolver {
 
 	@Query(() => PlaylistQL, {description: 'Get a Playlist by Id'})
 	async playlist(@Arg('id', () => ID!) id: string, @Ctx() {orm, user}: Context): Promise<Playlist> {
-		return await orm.Playlist.oneOrFail({id: id, user: user.id, isPublic: {$eq: true}});
+		return await orm.Playlist.oneOrFail({where: {id, user: user.id, isPublic: true}});
 	}
 
 	@Query(() => PlaylistPageQL, {description: 'Search Playlists'})
@@ -29,26 +29,22 @@ export class PlaylistResolver {
 
 	@FieldResolver(() => [PlaylistEntryQL])
 	async entries(@GQLRoot() playlist: Playlist, @Ctx() {orm}: Context): Promise<Array<PlaylistEntry>> {
-		await orm.Playlist.populate(playlist, 'entries');
 		return playlist.entries.getItems();
 	}
 
 	@FieldResolver(() => Int)
 	async entriesCount(@GQLRoot() playlist: Playlist, @Ctx() {orm}: Context): Promise<number> {
-		await orm.Playlist.populate(playlist, 'entries');
-		return playlist.entries.length;
+		return playlist.entries.count();
 	}
 
 	@FieldResolver(() => ID)
-	async userID(@GQLRoot() playlist: Playlist, @Ctx() {orm}: Context): Promise<string> {
-		await orm.Playlist.populate(playlist, 'user');
-		return playlist.user.id;
+	userID(@GQLRoot() playlist: Playlist, @Ctx() {orm}: Context): string {
+		return playlist.user.idOrFail();
 	}
 
 	@FieldResolver(() => String)
 	async userName(@GQLRoot() playlist: Playlist, @Ctx() {orm}: Context): Promise<string> {
-		await orm.Playlist.populate(playlist, 'user');
-		return playlist.user.name;
+		return (await playlist.user.getOrFail()).name;
 	}
 
 	@FieldResolver(() => StateQL)

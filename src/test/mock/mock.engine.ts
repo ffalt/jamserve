@@ -7,7 +7,6 @@ export async function waitEngineStart(engine: EngineService): Promise<void> {
 				wait(cb);
 			}, 100);
 		} else {
-			// if (engine.ioService.)
 			cb();
 		}
 	}

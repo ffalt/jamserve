@@ -1,5 +1,5 @@
 import {getMetadataStorage} from '../metadata';
-import {ControllerOptions} from './types';
+import {ControllerOptions} from '../definitions/types';
 
 function extractClassName(target: Function): string {
 	const s = target.toString().split(' ');

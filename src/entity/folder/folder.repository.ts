@@ -1,53 +1,52 @@
-import {Repository} from 'mikro-orm';
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType, FolderOrderFields} from '../../types/enums';
 import {Folder} from './folder';
-import {QBFilterQuery} from 'mikro-orm/dist/typings';
-import {QHelper} from '../base/base';
-import {QueryOrder, QueryOrderMap} from 'mikro-orm/dist/query';
+import {OrderHelper} from '../base/base';
 import {FolderFilterArgs, FolderOrderArgs} from './folder.args';
 import {User} from '../user/user';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 
-@Repository(Folder)
 export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, FolderOrderArgs> {
 	objType = DBObjectType.folder;
 	indexProperty = 'title';
 
-	applyOrderByEntry(result: QueryOrderMap, direction: QueryOrder, order?: FolderOrderArgs): void {
+	buildOrder(order?: FolderOrderArgs): Array<OrderItem> {
+		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case FolderOrderFields.created:
-				result.createdAt = direction;
-				break;
+				return [['createdAt', direction]];
 			case FolderOrderFields.updated:
-				result.updatedAt = direction;
-				break;
+				return [['updatedAt', direction]];
 			case FolderOrderFields.year:
-				result.year = direction;
-				break;
+				return [['year', direction]];
 			case FolderOrderFields.title:
-				result.title = direction;
-				result.path = direction;
-				break;
+				return [
+					['title', direction],
+					['path', direction]
+				];
 			case FolderOrderFields.default:
 			case FolderOrderFields.name:
-				result.path = direction;
-				break;
+				return [['path', direction]];
 		}
+		return [];
 	}
 
-	async buildFilter(filter?: FolderFilterArgs, user?: User): Promise<QBFilterQuery<Folder>> {
+	async buildFilter(filter?: FolderFilterArgs, user?: User): Promise<FindOptions<Folder>> {
+		if (!filter) {
+			return {};
+		}
 		let parentIDs: Array<string> = [];
-		if (filter?.childOfID) {
-			const folder = await this.oneOrFail({id: filter.childOfID});
+		if (filter.childOfID) {
+			const folder = await this.oneOrFailByID(filter.childOfID);
 			parentIDs = parentIDs.concat(await this.findAllDescendantsIds(folder));
 			if (parentIDs.length === 0) {
 				parentIDs.push('__non_existing_');
 			}
 		}
-		if (filter?.parentIDs) {
+		if (filter.parentIDs) {
 			parentIDs = parentIDs.concat(filter?.parentIDs);
 		}
-		return filter ? QHelper.buildQuery<Folder>(
+		const result = QHelper.buildQuery<Folder>(
 			[
 				{id: filter.ids},
 				{title: QHelper.like(filter.query)},
@@ -57,9 +56,8 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 				{artistSort: QHelper.eq(filter.artistSort)},
 				{title: QHelper.eq(filter.title)},
 				{createdAt: QHelper.gte(filter.since)},
-				{parent: QHelper.foreignKey(parentIDs.length > 0 ? parentIDs : undefined)},
+				{parent: QHelper.inOrEqual(parentIDs.length > 0 ? parentIDs : undefined)},
 				{level: QHelper.eq(filter.level)},
-				// {totalTrackCount: QHelper.eq(filter.totalTrackCount)},
 				{albumType: QHelper.inOrEqual(filter.albumTypes)},
 				{folderType: QHelper.inOrEqual(filter.folderTypes)},
 				{mbReleaseID: QHelper.inOrEqual(filter.mbReleaseIDs)},
@@ -68,24 +66,29 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 				{mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs)},
 				{year: QHelper.lte(filter.toYear)},
 				{year: QHelper.gte(filter.fromYear)},
-				{root: QHelper.foreignKey(filter.rootIDs)},
-				{artworks: QHelper.foreignKeys(filter.artworksIDs)},
-				{tracks: QHelper.foreignKeys(filter.trackIDs)},
-				{series: QHelper.foreignKeys(filter.seriesIDs)},
-				{albums: QHelper.foreignKeys(filter.albumIDs)},
-				{artists: QHelper.foreignKeys(filter.artistIDs)},
+				{root: QHelper.inOrEqual(filter.rootIDs)},
 				{createdAt: QHelper.gte(filter.since)},
 				...QHelper.inStringArray('genres', filter.genres)
 			]
-		) : {};
+		);
+		result.include = QHelper.includeQueries<Folder>([
+			{tracks: [{id: QHelper.inOrEqual(filter.trackIDs)}]},
+			{artworks: [{id: QHelper.inOrEqual(filter.artworksIDs)}]},
+			{series: [{id: QHelper.inOrEqual(filter.seriesIDs)}]},
+			{albums: [{id: QHelper.inOrEqual(filter.albumIDs)}]},
+			{artists: [{id: QHelper.inOrEqual(filter.artistIDs)}]}
+		]);
+		return result;
 	}
 
 	async findAllDescendants(folder: Folder): Promise<Array<Folder>> {
-		return this.find({path: {$like: `%${folder.path}%`}});
+		const options = QHelper.buildQuery<Folder>([{path: QHelper.like(folder.path)}]);
+		return this.find(options);
 	}
 
 	async findAllDescendantsIds(folder: Folder): Promise<Array<string>> {
-		return this.findIDs({path: {$like: `%${folder.path}%`}});
+		const options = QHelper.buildQuery<Folder>([{path: QHelper.like(folder.path)}]);
+		return this.findIDs(options);
 	}
 
 }

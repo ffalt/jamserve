@@ -14,7 +14,7 @@ export class SessionResolver {
 
 	@Query(() => SessionQL, {description: 'Check the Login State'})
 	async session(@Ctx() {orm, user}: Context): Promise<Session> {
-		return await orm.Session.oneOrFail({user: user.id});
+		return await orm.Session.oneOrFail({where: {user: user.id}});
 	}
 
 	@Query(() => SessionPageQL, {description: 'Get a list of all sessions of the current user'})

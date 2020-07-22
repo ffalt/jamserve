@@ -1,15 +1,14 @@
 import {Base} from '../base/base';
-import {Entity, Property} from 'mikro-orm';
-import {OrmJsonType} from '../../modules/engine/services/orm.types';
+import {Entity, Property} from '../../modules/orm';
 
 @Entity()
 export class Settings extends Base {
-	@Property()
+	@Property(() => String)
 	section!: string;
 
-	@Property()
+	@Property(() => String)
 	version!: string;
 
-	@Property({type: OrmJsonType})
-	data!: any;
+	@Property(() => String)
+	data!: string;
 }

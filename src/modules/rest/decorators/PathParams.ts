@@ -1,4 +1,4 @@
-import {ReturnTypeFunc, ValidateOptions} from './types';
+import {ReturnTypeFunc, ValidateOptions} from '../definitions/types';
 import {getMetadataStorage} from '../metadata';
 import {getTypeDecoratorParams} from '../helpers/decorators';
 import {getParamInfo} from '../helpers/params';

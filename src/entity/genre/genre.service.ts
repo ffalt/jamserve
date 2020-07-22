@@ -1,6 +1,6 @@
 import {Genre, GenreIndex} from './genre.model';
-import {Inject, Singleton} from 'typescript-ioc';
-import {OrmService} from '../../modules/engine/services/orm.service';
+import {InRequestScope} from 'typescript-ioc';
+import {Orm} from '../../modules/engine/services/orm.service';
 import {IndexResultGroup} from '../base/base';
 
 export interface GenreInfo {
@@ -15,13 +15,11 @@ export interface GenreInfo {
 	}>;
 }
 
-@Singleton
+@InRequestScope
 export class GenreService {
-	@Inject
-	private orm!: OrmService;
 	private genres: Array<GenreInfo> = [];
 
-	async refresh(): Promise<void> {
+	async refresh(orm: Orm): Promise<void> {
 		const genreHash: {
 			[name: string]: {
 				roots: {
@@ -37,31 +35,36 @@ export class GenreService {
 		} = {};
 
 		// TODO better: distinct genres & request filtered counts
-		const trackIDs = await this.orm.Track.findIDs({});
+		const trackIDs = await orm.Track.findIDs({});
 		for (const id of trackIDs) {
-			const track = await this.orm.Track.oneOrFail(id);
-			await this.orm.Track.populate(track, 'tag');
-			let genres = track.tag?.genres;
+			const track = await orm.Track.oneOrFailByID(id);
+			const tag = await track.tag.get();
+			let genres = tag?.genres;
 			if (!genres || genres.length === 0) {
 				genres = ['[No genre]']
 			}
 			for (const genre of genres) {
 				const data = genreHash[genre] || {roots: {}};
-				const section = data.roots[track.root.id] || {count: 0, artists: {}, albums: {}, series: {}, folders: {}};
+				const rootID = track.root.idOrFail();
+				const section = data.roots[rootID] || {count: 0, artists: {}, albums: {}, series: {}, folders: {}};
 				section.count++;
-				if (track.artist?.id) {
-					section.artists[track.artist.id] = (section.artists[track.artist.id] || 0) + 1;
+				const artistID = track.artist.id();
+				if (artistID) {
+					section.artists[artistID] = (section.artists[artistID] || 0) + 1;
 				}
-				if (track.album?.id) {
-					section.albums[track.album.id] = (section.albums[track.album.id] || 0) + 1;
+				const albumID = await track.album.id();
+				if (albumID) {
+					section.albums[albumID] = (section.albums[albumID] || 0) + 1;
 				}
-				if (track.series?.id) {
-					section.series[track.series.id] = (section.series[track.series.id] || 0) + 1;
+				const seriesID = await track.series.id();
+				if (seriesID) {
+					section.series[seriesID] = (section.series[seriesID] || 0) + 1;
 				}
-				if (track.folder?.id) {
-					section.folders[track.folder.id] = (section.folders[track.folder.id] || 0) + 1;
+				const folderID = await track.folder.id();
+				if (folderID) {
+					section.folders[folderID] = (section.folders[folderID] || 0) + 1;
 				}
-				data.roots[track.root.id] = section;
+				data.roots[rootID] = section;
 				genreHash[genre] = data;
 			}
 		}
@@ -85,9 +88,9 @@ export class GenreService {
 		});
 	}
 
-	async getGenres(rootID?: string): Promise<Array<Genre>> {
+	async getGenres(orm: Orm, rootID?: string): Promise<Array<Genre>> {
 		if (this.genres.length === 0) {
-			await this.refresh();
+			await this.refresh(orm);
 		}
 		return this.genres.map(g => {
 			const genre = {
@@ -113,8 +116,8 @@ export class GenreService {
 		});
 	}
 
-	async index(): Promise<GenreIndex> {
-		const genres = await this.getGenres();
+	async index(orm: Orm): Promise<GenreIndex> {
+		const genres = await this.getGenres(orm);
 		const map = new Map<string, Array<Genre>>();
 		for (const entry of genres) {
 			const char = entry.name[0] || '?';

@@ -1,7 +1,7 @@
 import {Settings} from './settings';
 import {JAMSERVE_VERSION} from '../../version';
-import {OrmService} from '../../modules/engine/services/orm.service';
-import {Inject, Singleton} from 'typescript-ioc';
+import {Orm} from '../../modules/engine/services/orm.service';
+import {InRequestScope} from 'typescript-ioc';
 
 export interface AdminSettingsChat {
 	maxMessages: number;
@@ -48,11 +48,8 @@ export const defaultEngineSettings: AdminSettings = {
 
 export type SettingChangesListener = () => Promise<void>;
 
-@Singleton
+@InRequestScope
 export class SettingsService {
-	@Inject
-	private orm!: OrmService;
-
 	public settings: AdminSettings = {...defaultEngineSettings};
 	private settingsChangeListeners: Array<SettingChangesListener> = [];
 
@@ -60,39 +57,38 @@ export class SettingsService {
 		return this.settings;
 	}
 
-	async settingsVersion(): Promise<string | undefined> {
-		const settings = await this.getSettings();
+	async settingsVersion(orm: Orm): Promise<string | undefined> {
+		const settings = await this.getSettings(orm);
 		return settings.version;
 	}
 
-	async saveSettings(): Promise<void> {
-		const settings = await this.getSettings();
+	async saveSettings(orm: Orm): Promise<void> {
+		const settings = await this.getSettings(orm);
 		settings.version = JAMSERVE_VERSION;
-		settings.data = this.settings;
-		await this.orm.orm.em.flush();
+		settings.data = JSON.stringify(this.settings);
+		await orm.Settings.persistAndFlush(settings);
 	}
 
-	private async getSettings(): Promise<Settings> {
-		let settings = await this.orm.Settings.findOne({section: {$eq: 'jamserve'}});
+	private async getSettings(orm: Orm): Promise<Settings> {
+		let settings = await orm.Settings.findOne({where: {section: 'jamserve'}});
 		if (!settings) {
-			settings = this.orm.Settings.create({
+			settings = orm.Settings.create({
 				section: 'jamserve',
-				data: defaultEngineSettings,
+				data: JSON.stringify(defaultEngineSettings),
 				version: JAMSERVE_VERSION
 			})
-			this.orm.orm.em.persistLater(settings);
 		}
 		return settings;
 	}
 
-	async loadSettings(): Promise<void> {
-		const settings = await this.getSettings();
-		await this.setSettings(settings.data as AdminSettings);
+	async loadSettings(orm: Orm): Promise<void> {
+		const settings = await this.getSettings(orm);
+		await this.setSettings(JSON.parse(settings.data));
 	}
 
-	async updateSettings(settings: AdminSettings): Promise<void> {
+	async updateSettings(orm: Orm, settings: AdminSettings): Promise<void> {
 		await this.setSettings(settings);
-		await this.saveSettings();
+		await this.saveSettings(orm);
 	}
 
 	private async setSettings(settings: AdminSettings): Promise<void> {

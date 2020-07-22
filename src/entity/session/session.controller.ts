@@ -1,23 +1,25 @@
 import {Session} from './session.model';
 import {ConfigService} from '../../modules/engine/services/config.service';
-import {Inject} from 'typescript-ioc';
-import {BodyParam, Controller, CurrentUser, Get, Post} from '../../modules/rest/decorators';
+import {Inject, InRequestScope} from 'typescript-ioc';
+import {BodyParam, Controller, Ctx, CurrentUser, Get, Post} from '../../modules/rest/decorators';
 import {User} from '../user/user';
 import {SessionUser} from './session-user.model';
 import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
 import {UserSession} from '../settings/user-session.model';
 import {UserRole} from '../../types/enums';
-import {SessionService} from '../settings/session.service';
 import {TransformService} from '../../modules/engine/services/transform.service';
+import {Context} from '../../modules/engine/rest/context';
+import { EngineRequest } from '../../modules/server/middlewares/engine.middleware';
 
+@InRequestScope
 @Controller('/session', {tags: ['Access']})
 export class SessionController {
 	@Inject
 	private configService!: ConfigService;
 	@Inject
-	private sessionService!: SessionService;
-	@Inject
 	private transform!: TransformService;
+	// @Inject
+	// private sessionService!: SessionService;
 
 	@Get(() => Session, {description: 'Check the Login State', summary: 'Check Session'})
 	session(@CurrentUser() user?: User): Session {
@@ -43,9 +45,11 @@ export class SessionController {
 
 	@Get('/list', () => [UserSession],
 		{roles: [UserRole.stream], description: 'Get a list of all sessions of the current user', summary: 'Get Sessions'})
-	async list(@CurrentUser() user: User): Promise<Array<UserSession>> {
-		const sessions = await this.sessionService.byUserID(user.id);
-		return sessions.map(session => this.transform.userSession(session));
+	async list(
+		@Ctx() {orm, req, user}: Context
+	): Promise<Array<UserSession>> {
+		const sessions = await (req as EngineRequest).engine.sessionService.byUserID(user.id);
+		return sessions.map(session => this.transform.userSession(orm, session));
 	}
 
 	@Post(
@@ -54,8 +58,8 @@ export class SessionController {
 	)
 	async remove(
 		@BodyParam('id', {description: 'User Session Id', isID: true}) id: string,
-		@CurrentUser() user: User
+		@Ctx() {orm, req, user}: Context
 	): Promise<void> {
-		await this.sessionService.removeUserSession(id, user.id);
+		await (req as EngineRequest).engine.sessionService.removeUserSession(id, user.id);
 	}
 }

@@ -1,5 +1,3 @@
-import {MikroORM} from 'mikro-orm';
-import options from '../../../config/orm.config';
 import {Album} from '../../../entity/album/album';
 import {State} from '../../../entity/state/state';
 import {Artist} from '../../../entity/artist/artist';
@@ -18,7 +16,7 @@ import {Settings} from '../../../entity/settings/settings';
 import {Track} from '../../../entity/track/track';
 import {User} from '../../../entity/user/user';
 import {Tag} from '../../../entity/tag/tag';
-import {Singleton} from 'typescript-ioc';
+import {InRequestScope} from 'typescript-ioc';
 import {MetaData} from '../../../entity/metadata/metadata';
 import {PlaylistEntry} from '../../../entity/playlistentry/playlist-entry';
 import {PlayQueueEntry} from '../../../entity/playqueueentry/playqueue-entry';
@@ -47,11 +45,14 @@ import {PlayQueueEntryRepository} from '../../../entity/playqueueentry/playqueue
 import {PodcastRepository} from '../../../entity/podcast/podcast.repository';
 import {SettingsRepository} from '../../../entity/settings/settings.repository';
 import path from 'path';
+import {EntityManager, ORM} from '../../orm';
+import {ORMEntities} from '../orm/entities';
+import {ORMRepositories} from '../orm/repositories';
+import {registerORMEnums} from '../orm/enum-registration';
 
-@Singleton
-export class OrmService {
-	public orm!: MikroORM;
+registerORMEnums()
 
+export class Orm {
 	public Album!: AlbumRepository;
 	public Artist!: ArtistRepository;
 	public Artwork!: ArtworkRepository;
@@ -74,41 +75,28 @@ export class OrmService {
 	public Settings!: SettingsRepository;
 	public MetaData!: MetaDataRepository;
 
-	async start(dataPath: string): Promise<void> {
-		this.orm = await MikroORM.init({
-			...options,
-			dbName: path.resolve(dataPath, 'jam.sqlite'),
-		});
-		this.State = new StateRepository(this.orm.em, State);
-		this.Album = new AlbumRepository(this.orm.em, Album);
-		this.Artist = new ArtistRepository(this.orm.em, Artist);
-		this.Artwork = new ArtworkRepository(this.orm.em, Artwork);
-		this.Bookmark = new BookmarkRepository(this.orm.em, Bookmark);
-		this.Episode = new EpisodeRepository(this.orm.em, Episode);
-		this.Folder = new FolderRepository(this.orm.em, Folder);
-		this.Root = new RootRepository(this.orm.em, Root);
-		this.MetaData = new MetaDataRepository(this.orm.em, MetaData);
-		this.PlayQueue = new PlayQueueRepository(this.orm.em, PlayQueue);
-		this.PlayQueueEntry = new PlayQueueEntryRepository(this.orm.em, PlayQueueEntry);
-		this.Playlist = new PlaylistRepository(this.orm.em, Playlist);
-		this.PlaylistEntry = new PlaylistEntryRepository(this.orm.em, PlaylistEntry);
-		this.Podcast = new PodcastRepository(this.orm.em, Podcast);
-		this.Radio = new RadioRepository(this.orm.em, Radio);
-		this.Series = new SeriesRepository(this.orm.em, Series);
-		this.Session = new SessionRepository(this.orm.em, Session);
-		this.Settings = new SettingsRepository(this.orm.em, Settings);
-		this.Tag = new TagRepository(this.orm.em, Tag);
-		this.Track = new TrackRepository(this.orm.em, Track);
-		this.User = new UserRepository(this.orm.em, User);
-
-		const generator = this.orm.getSchemaGenerator();
-		// await generator.dropSchema();
-		await generator.ensureDatabase();
-		await generator.updateSchema();
-	}
-
-	public async stop() {
-		await this.orm.close();
+	constructor(public em: EntityManager) {
+		this.State = em.getRepository<State, StateRepository>(State);
+		this.Album = em.getRepository<Album, AlbumRepository>(Album);
+		this.Artist = em.getRepository<Artist, ArtistRepository>(Artist);
+		this.Artwork = em.getRepository<Artwork, ArtworkRepository>(Artwork);
+		this.Bookmark = em.getRepository<Bookmark, BookmarkRepository>(Bookmark);
+		this.Episode = em.getRepository<Episode, EpisodeRepository>(Episode);
+		this.Folder = em.getRepository<Folder, FolderRepository>(Folder);
+		this.Root = em.getRepository<Root, RootRepository>(Root);
+		this.MetaData = em.getRepository<MetaData, MetaDataRepository>(MetaData);
+		this.PlayQueue = em.getRepository<PlayQueue, PlayQueueRepository>(PlayQueue);
+		this.PlayQueueEntry = em.getRepository<PlayQueueEntry, PlayQueueEntryRepository>(PlayQueueEntry);
+		this.Playlist = em.getRepository<Playlist, PlaylistRepository>(Playlist);
+		this.PlaylistEntry = em.getRepository<PlaylistEntry, PlaylistEntryRepository>(PlaylistEntry);
+		this.Podcast = em.getRepository<Podcast, PodcastRepository>(Podcast);
+		this.Radio = em.getRepository<Radio, RadioRepository>(Radio);
+		this.Series = em.getRepository<Series, SeriesRepository>(Series);
+		this.Session = em.getRepository<Session, SessionRepository>(Session);
+		this.Settings = em.getRepository<Settings, SettingsRepository>(Settings);
+		this.Tag = em.getRepository<Tag, TagRepository>(Tag);
+		this.Track = em.getRepository<Track, TrackRepository>(Track);
+		this.User = em.getRepository<User, UserRepository>(User);
 	}
 
 	public async findInStreamTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
@@ -117,11 +105,110 @@ export class OrmService {
 			this.Episode
 		];
 		for (const repo of repos) {
-			const obj = await repo.findOne({id});
+			const obj = await repo.findOneByID(id);
 			if (obj) {
 				return {obj: obj as any, objType: repo.objType};
 			}
 		}
+	}
+
+	public async findInImageTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
+		const repos: Array<BaseRepository<any, any, any>> = [
+			this.Album,
+			this.Artist,
+			this.Artwork,
+			this.Episode,
+			this.Folder,
+			this.Root,
+			this.Playlist,
+			this.Podcast,
+			this.Radio,
+			this.Series,
+			this.Track,
+			this.User
+		];
+		for (const repo of repos) {
+			const obj = await repo.findOneByID(id);
+			if (obj) {
+				return {obj: obj as any, objType: repo.objType};
+			}
+		}
+	}
+
+	public async findInDownloadTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
+		const repos: Array<BaseRepository<any, any, any>> = [
+			this.Album,
+			this.Artist,
+			this.Artwork,
+			this.Episode,
+			this.Folder,
+			this.Playlist,
+			this.Podcast,
+			this.Series,
+			this.Track
+		];
+		for (const repo of repos) {
+			const obj = await repo.findOneByID(id);
+			if (obj) {
+				return {obj: obj as any, objType: repo.objType};
+			}
+		}
+	}
+
+	async findInStateTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
+		const repos: Array<BaseRepository<any, any, any>> = [
+			this.Album,
+			this.Artist,
+			this.Artwork,
+			this.Episode,
+			this.Folder,
+			this.Root,
+			this.Playlist,
+			this.Podcast,
+			this.Series,
+			this.Radio,
+			this.Track
+		];
+		for (const repo of repos) {
+			const obj = await repo.findOneByID(id);
+			if (obj) {
+				return {obj: obj as any, objType: repo.objType};
+			}
+		}
+	}
+
+	async findInWaveformTypes(id: string): Promise<{ obj: Track | Episode; objType: DBObjectType } | undefined> {
+		const repos: Array<BaseRepository<any, any, any>> = [this.Track, this.Episode];
+		for (const repo of repos) {
+			const obj = await repo.findOneByID(id);
+			if (obj) {
+				return {obj: obj as any, objType: repo.objType};
+			}
+		}
+	}
+}
+
+@InRequestScope
+export class OrmService {
+	private orm!: ORM;
+
+	async start(dataPath: string): Promise<void> {
+		this.orm = await ORM.init({
+			entities: ORMEntities,
+			repositories: ORMRepositories,
+			storage: path.resolve(dataPath, 'jam.sqlite'),
+		});
+		const generator = this.orm.getSchemaGenerator();
+		await generator.dropSchema();
+		await generator.ensureDatabase();
+	}
+
+	public fork(): Orm {
+		return new Orm(this.orm.manager());
+	}
+
+	public async stop() {
+		await this.orm.close();
 	}
 
 }

@@ -1,12 +1,13 @@
-import {Inject} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {TransformService} from '../../modules/engine/services/transform.service';
-import {BodyParams, Controller, CurrentUser, Get, Post, QueryParams} from '../../modules/rest';
+import {BodyParams, Controller, Ctx, Get, Post, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {Chat} from './chat.model';
 import {ChatService} from './chat.service';
-import {User} from '../user/user';
 import {ChatCreateArgs, ChatFilterArgs, ChatRemoveArgs} from './chat.args';
+import {Context} from '../../modules/engine/rest/context';
 
+@InRequestScope
 @Controller('/chat', {tags: ['Chat'], roles: [UserRole.stream]})
 export class ChatController {
 	@Inject
@@ -25,7 +26,7 @@ export class ChatController {
 	)
 	async create(
 		@BodyParams() args: ChatCreateArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
 		await this.chatService.add(args.message, user);
 	}
@@ -36,7 +37,7 @@ export class ChatController {
 	)
 	async remove(
 		@BodyParams() args: ChatRemoveArgs,
-		@CurrentUser() user: User
+		@Ctx() {orm, user}: Context
 	): Promise<void> {
 		const chat = await this.chatService.find(args.time);
 		if (chat && chat.userID === user.id) {

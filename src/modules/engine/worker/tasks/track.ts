@@ -8,28 +8,31 @@ import {Root} from '../../../../entity/root/root';
 import {Changes} from '../changes';
 import {BaseWorker} from './base';
 import {Track} from '../../../../entity/track/track';
+import {InRequestScope} from 'typescript-ioc';
+import {Orm} from '../../services/orm.service';
 
+@InRequestScope
 export class TrackWorker extends BaseWorker {
 
-	public async writeTags(tags: Array<{ trackID: string; tag: RawTag }>, changes: Changes): Promise<void> {
+	public async writeTags(orm: Orm, tags: Array<{ trackID: string; tag: RawTag }>, changes: Changes): Promise<void> {
 		for (const tag of tags) {
-			const track = await this.orm.Track.findOne(tag.trackID);
+			const track = await orm.Track.findOneByID(tag.trackID);
 			if (track) {
 				const filename = path.join(track.path, track.fileName);
 				await this.audioModule.writeRawTag(filename, tag.tag);
 				await this.updateTrackStats(track);
 				changes.tracks.updated.add(track);
-				changes.folders.updated.add(track.folder);
+				changes.folders.updated.add(await track.folder.get());
 			}
 		}
 	}
 
-	public async fix(fixes: Array<{ trackID: string; fixID: TrackHealthID }>, changes: Changes): Promise<void> {
-		const tracks = await this.orm.Track.find(fixes.map(t => t.trackID));
+	public async fix(orm: Orm, fixes: Array<{ trackID: string; fixID: TrackHealthID }>, changes: Changes): Promise<void> {
+		const tracks = await orm.Track.findByIDs(fixes.map(t => t.trackID));
 		const fixTasks: Array<{ filename: string; fixIDs: Array<TrackHealthID> }> = [];
 		for (const track of tracks) {
 			changes.tracks.updated.add(track);
-			changes.folders.updated.add(track.folder);
+			changes.folders.updated.add(await track.folder.get());
 			fixTasks.push({
 				filename: path.join(track.path, track.fileName),
 				fixIDs: fixes.filter(f => f.trackID === track.id).map(f => f.fixID)
@@ -55,36 +58,36 @@ export class TrackWorker extends BaseWorker {
 		track.fileSize = stat.size;
 	}
 
-	public async rename(trackID: string, newName: string, changes: Changes): Promise<void> {
-		const track = await this.orm.Track.findOne(trackID);
+	public async rename(orm: Orm, trackID: string, newName: string, changes: Changes): Promise<void> {
+		const track = await orm.Track.findOneByID(trackID);
 		if (!track) {
 			return Promise.reject(Error('Track not found'));
 		}
 		track.fileName = await this.renameFile(track.path, track.fileName, newName);
 		await this.updateTrackStats(track);
-		this.orm.orm.em.persistLater(track);
+		orm.Track.persistLater(track);
 		changes.tracks.updated.add(track);
-		changes.folders.updated.add(track.folder);
+		changes.folders.updated.add(await track.folder.get());
 	}
 
-	public async remove(root: Root, trackIDs: Array<string>, changes: Changes): Promise<void> {
-		const removedTracks = await this.orm.Track.find(trackIDs);
+	public async remove(orm: Orm, root: Root, trackIDs: Array<string>, changes: Changes): Promise<void> {
+		const removedTracks = await orm.Track.findByIDs(trackIDs);
 		if (removedTracks.length !== trackIDs.length) {
 			return Promise.reject(Error('Track not found'));
 		}
 		for (const track of removedTracks) {
 			await this.moveToTrash(root, track.path, track.fileName);
-			changes.folders.updated.add(track.folder);
+			changes.folders.updated.add(await track.folder.get());
 			changes.tracks.removed.add(track);
 		}
 	}
 
-	public async move(trackIDs: Array<string>, newParentID: string, changes: Changes): Promise<void> {
-		const tracks = await this.orm.Track.find(trackIDs);
+	public async move(orm: Orm, trackIDs: Array<string>, newParentID: string, changes: Changes): Promise<void> {
+		const tracks = await orm.Track.findByIDs(trackIDs);
 		if (tracks.length !== trackIDs.length) {
 			return Promise.reject(Error('Track not found'));
 		}
-		const newParent = await this.orm.Folder.findOne(newParentID);
+		const newParent = await orm.Folder.findOneByID(newParentID);
 		if (!newParent) {
 			return Promise.reject(Error('Destination Folder not found'));
 		}
@@ -96,27 +99,27 @@ export class TrackWorker extends BaseWorker {
 		changes.folders.updated.add(newParent);
 		for (const track of tracks) {
 			changes.tracks.updated.add(track);
-			const oldParent = track.folder;
-			if (oldParent.id !== newParentID) {
+			const oldParent = await track.folder.get();
+			if (oldParent?.id !== newParentID) {
 				changes.folders.updated.add(oldParent);
 				await fse.move(path.join(track.path, track.fileName), path.join(newParent.path, track.fileName));
 				track.path = ensureTrailingPathSeparator(newParent.path);
-				track.root = newParent.root;
-				track.folder = newParent;
+				await track.root.set(await newParent.root.getOrFail());
+				await track.folder.set(newParent);
 				await this.updateTrackStats(track);
-				this.orm.orm.em.persistLater(track);
+				orm.Track.persistLater(track);
 			}
 		}
 	}
 
-	public async refresh(trackIDs: Array<string>, changes: Changes): Promise<void> {
-		const tracks = await this.orm.Track.find(trackIDs);
+	public async refresh(orm: Orm, trackIDs: Array<string>, changes: Changes): Promise<void> {
+		const tracks = await orm.Track.findByIDs(trackIDs);
 		if (tracks.length !== trackIDs.length) {
 			return Promise.reject(Error('Track not found'));
 		}
 		for (const track of tracks) {
 			changes.tracks.updated.add(track);
-			changes.folders.updated.add(track.folder);
+			changes.folders.updated.add(await track.folder.get());
 		}
 	}
 }
