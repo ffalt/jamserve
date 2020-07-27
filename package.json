@@ -90,7 +90,7 @@
     "winston": "3.3.3"
   },
   "devDependencies": {
-    "@apidevtools/json-schema-ref-parser": "9.0.3",
+    "@apidevtools/json-schema-ref-parser": "9.0.6",
     "@types/archiver": "3.1.0",
     "@types/chance": "1.1.0",
     "@types/compression": "1.7.0",
