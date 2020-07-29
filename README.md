@@ -30,12 +30,32 @@ Features:
 ## Requirements
 
 *   install [NodeJS](https://nodejs.org/) >= 13.x and [NPM](https://www.npmjs.com/)
-*   install [FFMPEG](https://ffmpeg.org/) and set [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe) FFPROBE_PATH and FFMPEG_PATH
+*   install [FFMPEG](https://ffmpeg.org/)
+ 
+    `apt-get install ffmpeg`
+
+      manual installation: available in PATH or [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe): *FFPROBE_PATH* and *FFMPEG_PATH*
 
 optional for meta data matching & mp3 repair support
 
-*   install [fpcalc](https://github.com/acoustid/chromaprint/releases/) and set environment variable: FPCALC_PATH
-*   install [mp3val](http://mp3val.sourceforge.net/) and set environment variable: MP3VAL_PATH
+*   install [fpcalc](https://github.com/acoustid/chromaprint/releases/)
+
+    `apt-get install libchromaprint-tools`
+     
+     manual installation: available in PATH or environment variable *FPCALC_PATH*
+     
+*   install [mp3val](http://mp3val.sourceforge.net/) 
+
+    `apt-get install mp3val`
+     
+     manual installation: available in PATH or environment variable *MP3VAL_PATH*
+     
+*   install [flac](https://xiph.org/flac/)
+
+    `apt-get install flac`
+     
+     manual installation: available in PATH or environment variable *FLAC_PATH*
+
 
 ## Installation
 

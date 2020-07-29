@@ -144,6 +144,7 @@ type UserQL {
   sessions: [SessionQL!]!
   bookmarks: [BookmarkQL!]!
   playQueue: PlayQueueQL
+  playlists: [PlaylistQL!]!
   roles: [UserRole!]!
 }
 
@@ -505,6 +506,7 @@ type EpisodeQL {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
+  status: PodcastStatus!
   fileSize: Int
   error: String
   path: String
@@ -524,7 +526,14 @@ type EpisodeQL {
   chapters: [EpisodeChapterQL!]
   enclosures: [EpisodeEnclosureQL!]
   waveform: WaveformQL!
-  status: PodcastStatus!
+}
+
+enum PodcastStatus {
+  new
+  downloading
+  completed
+  error
+  deleted
 }
 
 type PodcastQL {
@@ -547,14 +556,6 @@ type PodcastQL {
   episodesCount: Int!
   lastCheck: DateTime!
   state: StateQL!
-}
-
-enum PodcastStatus {
-  new
-  downloading
-  completed
-  error
-  deleted
 }
 
 type EpisodeChapterQL {
@@ -588,6 +589,31 @@ type PlayQueueEntryQL {
   playQueue: PlayQueueQL!
   track: TrackQL
   episode: EpisodeQL
+}
+
+type PlaylistQL {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  comment: String
+  isPublic: Boolean!
+  duration: Int!
+  entries: [PlaylistEntryQL!]!
+  userID: ID!
+  userName: String!
+  entriesCount: Int!
+  state: StateQL!
+}
+
+type PlaylistEntryQL {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  position: Int!
+  playlist: PlaylistQL!
+  track: TrackQL!
+  episode: EpisodeQL!
 }
 
 """User Roles"""
@@ -921,31 +947,6 @@ type GenreIndexQL {
 type GenreIndexGroupQL {
   items: [GenreQL!]!
   name: String!
-}
-
-type PlaylistQL {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  name: String!
-  comment: String
-  isPublic: Boolean!
-  duration: Int!
-  entries: [PlaylistEntryQL!]!
-  userID: ID!
-  userName: String!
-  entriesCount: Int!
-  state: StateQL!
-}
-
-type PlaylistEntryQL {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  position: Int!
-  playlist: PlaylistQL!
-  track: TrackQL!
-  episode: EpisodeQL!
 }
 
 type PlaylistPageQL {
