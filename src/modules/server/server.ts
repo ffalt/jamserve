@@ -39,6 +39,7 @@ export class Server {
 
 	async init(): Promise<void> {
 		const app: express.Application = express();
+		log.debug(`registering express standard middleware`);
 		app.use(bodyParser.urlencoded({extended: true, limit: '10mb'}));
 		app.use(bodyParser.json({limit: '10mb'}));
 		app.use(bodyParser.json({type: 'application/vnd.api+json', limit: '10mb'}));
@@ -65,10 +66,14 @@ export class Server {
 		app.use(usePassPortMiddleWare(app, this.engine));
 		app.use(useAuthenticatedCors(this.configService));
 
+		log.debug(`registering jam api middleware`);
 		app.use(`/jam/${JAMAPI_URL_VERSION}`, this.rest.middleware());
+		log.debug(`registering graphql middleware`);
 		app.use('/graphql', await this.apollo.middleware());
+		log.debug(`registering docs middleware`);
 		app.use('/docs', await this.docs.middleware());
 
+		log.debug(`registering static middleware`);
 		// frontend (jamberry config file)
 		const configFile = path.resolve(this.configService.getDataPath(['config']), 'jamberry.config.js');
 		app.get('/assets/config/config.js', (req, res) => {
@@ -90,6 +95,7 @@ export class Server {
 	}
 
 	async start(): Promise<void> {
+		log.debug(`starting express on ${this.getURL()}`);
 		this.server = this.app.listen(this.configService.env.port, this.configService.env.host);
 		this.server.setTimeout(4 * 60000); // 4 minutes
 		log.table([

@@ -1,6 +1,5 @@
 import {Artist, ArtistIndex, ArtistPage} from './artist.model';
-import {User} from '../user/user';
-import {Controller, Ctx, CurrentUser, Get, QueryParam, QueryParams} from '../../modules/rest';
+import {Controller, Ctx, Get, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {BaseController} from '../base/base.controller';
 import {ExtendedInfoResult} from '../metadata/metadata.model';

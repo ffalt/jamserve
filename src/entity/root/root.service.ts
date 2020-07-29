@@ -1,5 +1,5 @@
-import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
-import {InRequestScope, Inject} from 'typescript-ioc';
+import {ApiBinaryResult} from '../../modules/rest/';
+import {Inject} from 'typescript-ioc';
 import {FolderService} from '../folder/folder.service';
 import {Root} from './root';
 import {Orm} from '../../modules/engine/services/orm.service';

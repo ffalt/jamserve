@@ -6,6 +6,7 @@ import {Model} from 'sequelize/types/lib/model';
 import {EntityManager} from './manager';
 import {Reference} from './reference';
 import {Collection} from './collection';
+import {Transaction} from 'sequelize/types/lib/transaction';
 
 function transformValueForDB(value: any, field: PropertyMetadata): any {
 	if (field.typeOptions.array) {
@@ -33,6 +34,12 @@ export function mapManagedToSource(instance: ManagedEntity): void {
 			source.set(field.name, transformValueForDB(instance[field.name], field));
 		}
 	});
+	if (!instance._source.createdAt) {
+		instance._source.createdAt = instance.createdAt;
+	}
+	if (!instance._source.updatedAt) {
+		instance._source.updatedAt = instance.updatedAt;
+	}
 }
 
 export async function saveManagedEntity(instance: ManagedEntity): Promise<void> {
@@ -55,16 +62,17 @@ export function cleanManagedEntityRelations(instance: ManagedEntity): void {
 	}
 }
 
-export async function saveManagedEntityRelations(instance: ManagedEntity): Promise<void> {
+export async function saveManagedEntityRelations(instance: ManagedEntity, transaction?: Transaction): Promise<void> {
 	for (const field of instance._meta.fields) {
 		if (field.isRelation) {
 			const refOrCollection = instance[field.name];
-			if (refOrCollection instanceof Reference) {
-				// const ref = refOrCollection as Reference<any>;
-				// await ref.flush();
-			} else if (refOrCollection instanceof Collection) {
+			// if (refOrCollection instanceof Reference) {
+			// const ref = refOrCollection as Reference<any>;
+			// await ref.flush();
+			// } else
+			if (refOrCollection instanceof Collection) {
 				const collection = refOrCollection as Collection<any>;
-				await collection.flush();
+				await collection.flush(transaction);
 			}
 		}
 	}

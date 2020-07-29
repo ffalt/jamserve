@@ -257,7 +257,9 @@ export class ChangesWorker extends BaseWorker {
 		await orm.Album.removeLaterByIDs(changes.albums.removed.ids());
 		await orm.Artist.removeLaterByIDs(changes.artists.removed.ids());
 		await orm.Series.removeLaterByIDs(changes.series.removed.ids());
-		log.debug('Syncing Removal Updates to DB');
-		await orm.em.flush();
+		if (orm.em.hasChanges()) {
+			log.debug('Syncing Removal Updates to DB');
+			await orm.em.flush();
+		}
 	}
 }

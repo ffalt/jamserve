@@ -21,6 +21,7 @@ import {AudioModule} from '../../audio/audio.module';
 import {StateService} from '../../../entity/state/state.service';
 import {NowPlayingService} from '../../../entity/nowplaying/nowplaying.service';
 import {PlayQueueService} from '../../../entity/playqueue/playqueue.service';
+import {ChatService} from '../../../entity/chat/chat.service';
 
 const log = logger('Engine');
 
@@ -58,6 +59,8 @@ export class EngineService {
 	public statsService!: StatsService;
 	@Inject
 	public playQueueService!: PlayQueueService;
+	@Inject
+	public chatService!: ChatService;
 
 	constructor() {
 		this.ioService.registerAfterRefresh((): Promise<void> => this.afterRefresh())
@@ -85,6 +88,7 @@ export class EngineService {
 			log.info(`Updating from version ${version || '-'}`);
 		}
 		if (forceRescan || this.settingsService.settings.library.scanAtStart) {
+			log.info(`Starting rescan`);
 			this.ioService.refresh(orm).then(() => {
 				return forceRescan ? this.settingsService.saveSettings(orm) : undefined;
 			}).catch(e => {
@@ -103,13 +107,17 @@ export class EngineService {
 
 	async start(): Promise<void> {
 		// check paths
+		log.debug(`check data paths`);
 		await this.checkDataPaths();
 		// init orm
+		log.debug(`start orm`);
 		await this.orm.start(this.configService.env.paths.data);
 		const orm = this.orm.fork();
 		// first start?
+		log.debug(`check first start`);
 		await this.checkFirstStart(orm);
 		// check rescan?
+		log.debug(`check for rescan`);
 		await this.checkRescan(orm);
 	}
 

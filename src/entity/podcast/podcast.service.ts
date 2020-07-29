@@ -5,7 +5,7 @@ import {DebouncePromises} from '../../utils/debounce-promises';
 import {pathDeleteIfExists} from '../../utils/fs-utils';
 import {logger} from '../../utils/logger';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {Orm, OrmService} from '../../modules/engine/services/orm.service';
+import {Orm} from '../../modules/engine/services/orm.service';
 import {Podcast} from './podcast';
 import {PodcastStatus} from '../../types/enums';
 import {ConfigService} from '../../modules/engine/services/config.service';

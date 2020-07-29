@@ -8,8 +8,6 @@ import {Episode} from '../episode/episode';
 import {Base} from '../base/base';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../utils/logger';
-import {BaseRepository} from '../base/base.repository';
-import {OrmService} from '../../modules/engine/services/orm.service';
 
 const log = logger('Waveform');
 

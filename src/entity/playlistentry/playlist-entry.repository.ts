@@ -3,10 +3,9 @@ import {DBObjectType, PlaylistEntryOrderFields} from '../../types/enums';
 import {PlaylistEntry} from './playlist-entry';
 import {PlaylistEntryOrderArgs} from './playlist-entry.args';
 import {User} from '../user/user';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {FindOptions, OrderItem} from '../../modules/orm';
 import {OrderHelper} from '../base/base';
 
-// @Repository(PlaylistEntry)
 export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, any, PlaylistEntryOrderArgs> {
 	objType = DBObjectType.playlistentry;
 

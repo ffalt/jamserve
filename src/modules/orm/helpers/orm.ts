@@ -4,24 +4,13 @@ import {getMetadataStorage} from '../metadata';
 import {ORMConfig} from '../definitions/config';
 import {ModelBuilder} from '../builder/schema';
 
-export class SchemaGenerator {
-
-	constructor(private sequelize: Sequelize) {
-	}
-
-	async dropSchema(): Promise<void> {
-		await this.sequelize.drop();
-	}
-
-	async ensureDatabase(): Promise<void> {
-		await this.sequelize.sync();
-	}
-}
-
 export class ORM {
 	static async init(config: ORMConfig): Promise<ORM> {
 		const sequelize = new Sequelize({
 			dialect: 'sqlite',
+			// logging: (sql: string, timing?: number) => {
+			// 	log.debug(sql);
+			// },
 			logging: false,
 			logQueryParameters: false,
 			retry: {max: 0},
@@ -42,6 +31,14 @@ export class ORM {
 		await this.buildSchema();
 	}
 
+	async dropSchema(): Promise<void> {
+		await this.sequelize.drop();
+	}
+
+	async ensureDatabase(): Promise<void> {
+		await this.sequelize.sync();
+	}
+
 	async testConnection(): Promise<void> {
 		await this.sequelize.authenticate();
 	}
@@ -59,7 +56,4 @@ export class ORM {
 		await this.sequelize.close();
 	}
 
-	getSchemaGenerator(): SchemaGenerator {
-		return new SchemaGenerator(this.sequelize);
-	}
 }

@@ -198,9 +198,8 @@ export class OrmService {
 			repositories: ORMRepositories,
 			storage: path.resolve(dataPath, 'jam.sqlite'),
 		});
-		const generator = this.orm.getSchemaGenerator();
-		await generator.dropSchema();
-		await generator.ensureDatabase();
+		// await this.orm.dropSchema();
+		await this.orm.ensureDatabase();
 	}
 
 	public fork(): Orm {

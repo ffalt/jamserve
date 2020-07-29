@@ -91,17 +91,28 @@ export class MetaMerger {
 		if (changedTracks.length === 0) {
 			return;
 		}
+		const folderCache = new Map<string, Folder>();
 		for (const id of changedTracks) {
 			const track = await this.orm.Track.oneOrFailByID(id);
 			const tag = await track.tag.get();
-			const folder = await track.folder.get();
+			let folder = folderCache.get(track.folder.idOrFail());
+			if (!folder) {
+				folder = await track.folder.getOrFail();
+				folderCache.set(folder.id, folder);
+			}
 			if (tag && folder) {
 				const trackInfo: MetaMergeTrackInfo = {track, tag, folder};
 				await this.addMeta(trackInfo);
 			}
+			if (this.orm.em.changesCount() > 500) {
+				log.debug('Syncing new Track Meta to DB');
+				await this.orm.em.flush();
+			}
 		}
-		log.debug('Syncing new Meta to DB');
-		await this.orm.em.flush();
+		if (this.orm.em.hasChanges()) {
+			log.debug('Syncing new Track Meta to DB');
+			await this.orm.em.flush();
+		}
 	}
 
 	private async loadChangedMeta(): Promise<void> {
@@ -116,6 +127,10 @@ export class MetaMerger {
 			this.changes.albums.updated.appendIDs(albums);
 			const series = await this.orm.Series.findIDsFilter({trackIDs})
 			this.changes.series.updated.appendIDs(series);
+		}
+		if (this.orm.em.hasChanges()) {
+			log.debug('Syncing Track/Folder Changes to DB');
+			await this.orm.em.flush();
 		}
 	}
 
@@ -146,6 +161,14 @@ export class MetaMerger {
 				artist.genres = await this.collectArtistGenres(artist);
 				artist.albumTypes = await this.collectArtistAlbumTypes(artist);
 			}
+			if (this.orm.em.changesCount() > 500) {
+				log.debug('Syncing new Artist Meta to DB');
+				await this.orm.em.flush();
+			}
+		}
+		if (this.orm.em.hasChanges()) {
+			log.debug('Syncing new Artist Meta to DB');
+			await this.orm.em.flush();
 		}
 	}
 
@@ -165,11 +188,20 @@ export class MetaMerger {
 			series.albumTypes = [...albumTypes];
 			const currentTracks = await this.orm.Track.findFilter({seriesIDs: [id]});
 			const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
-			series.tracks.set(tracks);
+			await series.tracks.set(tracks);
 			if (tracks.length === 0) {
 				this.changes.series.removed.add(series);
 				this.changes.series.updated.delete(series);
 			}
+			this.orm.Series.persistLater(series);
+			if (this.orm.em.changesCount() > 500) {
+				log.debug('Syncing new Series Meta to DB');
+				await this.orm.em.flush();
+			}
+		}
+		if (this.orm.em.hasChanges()) {
+			log.debug('Syncing new Series Meta to DB');
+			await this.orm.em.flush();
 		}
 	}
 
@@ -195,25 +227,27 @@ export class MetaMerger {
 				}
 				await album.folders.set(folders);
 				album.genres = await this.collectAlbumGenres(album);
+				this.orm.Album.persistLater(album);
 			}
+			if (this.orm.em.changesCount() > 500) {
+				log.debug('Syncing new Album Meta to DB');
+				await this.orm.em.flush();
+			}
+		}
+		if (this.orm.em.hasChanges()) {
+			log.debug('Syncing new Album Meta to DB');
+			await this.orm.em.flush();
 		}
 	}
 
 	async mergeMeta(): Promise<void> {
+		log.info('Updating Metadata');
 		this.root = await this.orm.Root.oneOrFailByID(this.rootID);
 		this.cache = new MetaMergerCache(this.orm, this.changes, this.root);
 		await this.loadChangedMeta(); // register all album/series/artist to check for changes
-
-		log.debug('Syncing Track/Folder Changes to DB');
-		await this.orm.em.flush();
-
 		await this.applyChangedTrackMeta(); // add/update track meta
-
 		await this.applyChangedAlbumMeta(); // update albums
 		await this.applyChangedArtistMeta(); // update artists
 		await this.applyChangedSeriesMeta(); // update series
-
-		log.debug('Syncing Meta Updates to DB');
-		await this.orm.em.flush();
 	}
 }

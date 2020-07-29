@@ -1,4 +1,4 @@
-import {ClassType, TypeResolver} from 'type-graphql';
+import {ClassType} from 'type-graphql';
 import {OrderByObj} from './query';
 
 export const bannedTypes: Function[] = [Promise, Array, Object, Function];

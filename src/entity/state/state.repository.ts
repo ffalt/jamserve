@@ -2,9 +2,8 @@ import {BaseRepository} from '../base/base.repository';
 import {DBObjectType} from '../../types/enums';
 import {State} from './state';
 import {User} from '../user/user';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {FindOptions, OrderItem} from '../../modules/orm';
 
-// @Repository(State)
 export class StateRepository extends BaseRepository<State, any, any> {
 	objType = DBObjectType.state;
 

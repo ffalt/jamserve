@@ -177,8 +177,10 @@ export class WorkerScan {
 				await this.buildArtwork(file, folder);
 			}
 		}
-		log.debug('Syncing Track/Artwork Changes to DB');
-		await this.orm.em.flush();
+		if (this.orm.em.changesCount() > 1000) {
+			log.debug('Syncing Track/Artwork Changes to DB');
+			await this.orm.em.flush();
+		}
 		return result;
 	}
 
@@ -311,8 +313,10 @@ export class WorkerScan {
 		} else {
 			rootMatch = await this.scanNode(dir, parent)
 		}
-		log.debug('Syncing Track/Folder Changes to DB');
-		await this.orm.em.flush();
+		if (this.orm.em.hasChanges()) {
+			log.debug('Syncing Track/Artwork Changes to DB');
+			await this.orm.em.flush();
+		}
 		const scanMerger = new WorkerMergeScan(this.orm, this.root.strategy, this.changes);
 		await scanMerger.merge(rootMatch);
 	}

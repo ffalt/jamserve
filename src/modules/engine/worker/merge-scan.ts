@@ -17,8 +17,10 @@ export class WorkerMergeScan {
 	async merge(matchRoot: MatchNode): Promise<void> {
 		this.markChangedParents(matchRoot);
 		await this.mergeNode(matchRoot);
-		log.debug('Syncing Folder Changes to DB');
-		await this.orm.em.flush();
+		if (this.orm.em.hasChanges()) {
+			log.debug('Syncing Folder Changes to DB');
+			await this.orm.em.flush();
+		}
 	}
 
 	private static isExtraFolder(node: MatchNode): boolean {

@@ -5,9 +5,7 @@ import {OrderHelper} from '../base/base';
 import {User} from '../user/user';
 import {PodcastFilterArgs, PodcastOrderArgs} from './podcast.args';
 import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
-import {Artist} from '../artist/artist';
 
-// @Repository(Podcast)
 export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterArgs, PodcastOrderArgs> {
 	objType = DBObjectType.podcast;
 	indexProperty = 'name';

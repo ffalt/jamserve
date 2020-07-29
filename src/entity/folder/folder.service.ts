@@ -5,7 +5,7 @@ import path from 'path';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {FolderRulesChecker} from '../health/folder.rule';
 import {ImageModule} from '../../modules/image/image.module';
-import {Orm, OrmService} from '../../modules/engine/services/orm.service';
+import {Orm} from '../../modules/engine/services/orm.service';
 import {ApiBinaryResult} from '../../modules/rest/builder';
 
 export async function getFolderDisplayArtwork(orm: Orm, folder: Folder): Promise<Artwork | undefined> {

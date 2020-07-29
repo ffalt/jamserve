@@ -5,11 +5,11 @@ import {ORMConfig} from '../definitions/config';
 import {FindOptions, Sequelize} from 'sequelize';
 import {Model, ModelCtor} from 'sequelize/types/lib/model';
 import {ManagedEntity} from '../definitions/managed-entity';
-import {cleanManagedEntityRelations, createManagedEntity, saveManagedEntity, saveManagedEntityRelations} from './entity';
+import {cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations} from './entity';
 
 export class EntityManager {
 	private readonly repositoryMap: Dictionary<EntityRepository<IDEntity>> = {};
-	private changeSet: Array<{ entityName: EntityName<any>; persist?: AnyEntity | AnyEntity[]; remove?: { entity?: AnyEntity | AnyEntity[]; query?: FindOptions; resultCount?: number } }> = [];
+	private changeSet: Array<{ entityName: string; persist?: ManagedEntity; remove?: { entity?: ManagedEntity; query?: FindOptions; resultCount?: number } }> = [];
 
 	constructor(public readonly sequelize: Sequelize, private readonly metadata: MetadataStorage, private readonly config: ORMConfig) {
 	}
@@ -34,34 +34,9 @@ export class EntityManager {
 	}
 
 	persistLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | AnyEntity[]): void {
-		this.changeSet.push({entityName, persist: entity})
-	}
-
-	private async flushEntityChange<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | AnyEntity[]) {
-		const items = Array.isArray(entity) ? entity : [entity];
-		for (const item of items) {
-			await saveManagedEntity(item as ManagedEntity)
-		}
-	}
-
-	private async flushEntityRelationChange<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | AnyEntity[]) {
-		const items = Array.isArray(entity) ? entity : [entity];
-		for (const item of items) {
-			await saveManagedEntityRelations(item as ManagedEntity)
-		}
-	}
-
-	private async flushRemove<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | AnyEntity[]): Promise<void> {
-		const items = Array.isArray(entity) ? entity : [entity];
-		for (const item of items) {
-			const instance = item as ManagedEntity;
-			await instance._source.destroy();
-		}
-	}
-
-	private async flushRemoveQuery<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<number> {
-		const model = this.model(entityName);
-		return await model.destroy({where: options.where});
+		let entities: AnyEntity[] = Array.isArray(entity) ? entity : [entity];
+		entities = entities.filter(e => !this.changeSet.find(c => c.persist === e));
+		this.changeSet.push(...(entities.map(e => ({entityName: entityName as string, persist: e as ManagedEntity}))));
 	}
 
 	async flush(): Promise<void> {
@@ -72,16 +47,18 @@ export class EntityManager {
 		try {
 			for (const change of this.changeSet) {
 				if (change.persist) {
-					await this.flushEntityChange(change.entityName, change.persist);
+					mapManagedToSource(change.persist);
+					await change.persist._source.save({transaction: t});
 				} else if (change.remove && change.remove.entity) {
-					await this.flushRemove(change.entityName, change.remove.entity);
+					await change.remove.entity._source.destroy({transaction: t});
 				} else if (change.remove && change.remove.query) {
-					change.remove.resultCount = await this.flushRemoveQuery(change.entityName, change.remove.query);
+					const model = this.model(change.entityName);
+					change.remove.resultCount = await model.destroy({where: change.remove.query.where, transaction: t});
 				}
 			}
 			for (const change of this.changeSet) {
 				if (change.persist) {
-					await this.flushEntityRelationChange(change.entityName, change.persist);
+					await saveManagedEntityRelations(change.persist, t);
 				}
 			}
 			for (const change of this.changeSet) {
@@ -119,9 +96,7 @@ export class EntityManager {
 			return Promise.reject(Error('Invalid ID'));
 		}
 		const model = this.model(entityName);
-		await this.sequelize.authenticate();
 		const source = await model.findOne({where: {id}});
-		// const source = await model.findByPk(id);
 		if (!source) {
 			return;
 		}
@@ -216,14 +191,23 @@ export class EntityManager {
 		await this.flush();
 	}
 
-	removeLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity): void {
-		this.changeSet.push({entityName, remove: {entity}});
+	removeLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | Array<AnyEntity>): void {
+		const entities: AnyEntity[] = Array.isArray(entity) ? entity : [entity];
+		this.changeSet.push(...(entities.map(e => ({entityName: entityName as string, remove: {entity: e as ManagedEntity}}))));
 	}
 
 	async removeByQueryAndFlush<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<number> {
-		const change = {entityName, remove: {query: options, resultCount: 0}};
+		const change = {entityName: entityName as string, remove: {query: options, resultCount: 0}};
 		this.changeSet.push(change);
 		await this.flush();
 		return change.remove.resultCount;
+	}
+
+	hasChanges(): boolean {
+		return this.changeSet.length > 0;
+	}
+
+	changesCount(): number {
+		return this.changeSet.length;
 	}
 }
