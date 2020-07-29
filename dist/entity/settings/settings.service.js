@@ -5,13 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SettingsService = exports.defaultEngineSettings = void 0;
 const version_1 = require("../../version");
-const orm_service_1 = require("../../modules/engine/services/orm.service");
 const typescript_ioc_1 = require("typescript-ioc");
 exports.defaultEngineSettings = {
     chat: {
@@ -36,35 +32,34 @@ let SettingsService = class SettingsService {
     async get() {
         return this.settings;
     }
-    async settingsVersion() {
-        const settings = await this.getSettings();
+    async settingsVersion(orm) {
+        const settings = await this.getSettings(orm);
         return settings.version;
     }
-    async saveSettings() {
-        const settings = await this.getSettings();
+    async saveSettings(orm) {
+        const settings = await this.getSettings(orm);
         settings.version = version_1.JAMSERVE_VERSION;
-        settings.data = this.settings;
-        await this.orm.orm.em.flush();
+        settings.data = JSON.stringify(this.settings);
+        await orm.Settings.persistAndFlush(settings);
     }
-    async getSettings() {
-        let settings = await this.orm.Settings.findOne({ section: { $eq: 'jamserve' } });
+    async getSettings(orm) {
+        let settings = await orm.Settings.findOne({ where: { section: 'jamserve' } });
         if (!settings) {
-            settings = this.orm.Settings.create({
+            settings = orm.Settings.create({
                 section: 'jamserve',
-                data: exports.defaultEngineSettings,
+                data: JSON.stringify(exports.defaultEngineSettings),
                 version: version_1.JAMSERVE_VERSION
             });
-            this.orm.orm.em.persistLater(settings);
         }
         return settings;
     }
-    async loadSettings() {
-        const settings = await this.getSettings();
-        await this.setSettings(settings.data);
+    async loadSettings(orm) {
+        const settings = await this.getSettings(orm);
+        await this.setSettings(JSON.parse(settings.data));
     }
-    async updateSettings(settings) {
+    async updateSettings(orm, settings) {
         await this.setSettings(settings);
-        await this.saveSettings();
+        await this.saveSettings(orm);
     }
     async setSettings(settings) {
         this.settings = settings;
@@ -79,12 +74,8 @@ let SettingsService = class SettingsService {
         this.settingsChangeListeners = this.settingsChangeListeners.filter(l => l !== listener);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], SettingsService.prototype, "orm", void 0);
 SettingsService = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], SettingsService);
 exports.SettingsService = SettingsService;
 //# sourceMappingURL=settings.service.js.map

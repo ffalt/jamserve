@@ -24,7 +24,7 @@ const bookmark_1 = require("../bookmark/bookmark");
 const episode_args_1 = require("./episode.args");
 let EpisodeResolver = class EpisodeResolver {
     async episode(id, { orm }) {
-        return await orm.Episode.oneOrFail(id);
+        return await orm.Episode.oneOrFailByID(id);
     }
     async episodes({ page, filter, order, list }, { orm, user }) {
         if (list) {
@@ -33,20 +33,16 @@ let EpisodeResolver = class EpisodeResolver {
         return await orm.Episode.searchFilter(filter, order, page, user);
     }
     async tag(episode, { orm }) {
-        await orm.Episode.populate(episode, 'tag');
-        return episode.tag;
+        return episode.tag.get();
     }
     async podcast(episode, { orm }) {
-        await orm.Episode.populate(episode, 'podcast');
-        return episode.podcast;
+        return episode.podcast.getOrFail();
     }
     async bookmarks(episode, { orm }) {
-        await orm.Episode.populate(episode, 'bookmarks');
         return episode.bookmarks.getItems();
     }
     async bookmarksCount(episode, { orm }) {
-        await orm.Episode.populate(episode, 'bookmarks');
-        return episode.bookmarks.length;
+        return episode.bookmarks.count();
     }
     async waveform(episode) {
         return { obj: episode, objType: enums_1.DBObjectType.episode };

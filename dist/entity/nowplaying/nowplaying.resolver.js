@@ -25,8 +25,8 @@ let NowPlayingResolver = class NowPlayingResolver {
     async userName(nowPlaying) {
         return nowPlaying.user.name;
     }
-    async scrobble(id, { engine, user }) {
-        return await engine.nowPlayingService.scrobble(id, user);
+    async scrobble(id, { engine, orm, user }) {
+        return await engine.nowPlayingService.scrobble(orm, id, user);
     }
 };
 __decorate([

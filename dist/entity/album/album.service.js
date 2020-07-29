@@ -13,39 +13,35 @@ exports.AlbumService = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
 const track_service_1 = require("../track/track.service");
 const folder_service_1 = require("../folder/folder.service");
-const orm_service_1 = require("../../modules/engine/services/orm.service");
 let AlbumService = class AlbumService {
-    async getAlbumFolder(album) {
-        await this.orm.Album.populate(album, ['folders']);
-        if (album.folders.length === 0) {
-            return;
-        }
-        const folders = album.folders.getItems().sort((a, b) => b.level - a.level);
-        return folders[0];
-    }
-    async getAlbumTrackImage(album, size, format) {
-        await this.orm.Album.populate(album, ['tracks']);
-        if (album.tracks.length > 0) {
-            const tracks = album.tracks.getItems();
-            return this.trackService.getImage(tracks[0], size, format);
+    async getAlbumFolder(orm, album) {
+        const folders = await album.folders.getItems();
+        if (folders.length > 0) {
+            return folders.sort((a, b) => b.level - a.level)[0];
         }
     }
-    async getAlbumFolderImage(album, size, format) {
-        const folder = await this.getAlbumFolder(album);
+    async getAlbumTrackImage(orm, album, size, format) {
+        const tracks = await album.tracks.getItems();
+        if (tracks.length > 0) {
+            return this.trackService.getImage(orm, tracks[0], size, format);
+        }
+    }
+    async getAlbumFolderImage(orm, album, size, format) {
+        const folder = await this.getAlbumFolder(orm, album);
         if (folder) {
-            return this.folderService.getImage(folder, size, format);
+            return this.folderService.getImage(orm, folder, size, format);
         }
     }
-    async getImage(album, size, format) {
+    async getImage(orm, album, size, format) {
         let result;
         if (album.series) {
-            result = await this.getAlbumTrackImage(album, size, format);
+            result = await this.getAlbumTrackImage(orm, album, size, format);
         }
         if (!result) {
-            result = await this.getAlbumFolderImage(album, size, format);
+            result = await this.getAlbumFolderImage(orm, album, size, format);
         }
         if (!result) {
-            result = await this.getAlbumTrackImage(album, size, format);
+            result = await this.getAlbumTrackImage(orm, album, size, format);
         }
         return result;
     }
@@ -58,12 +54,8 @@ __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", folder_service_1.FolderService)
 ], AlbumService.prototype, "folderService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], AlbumService.prototype, "orm", void 0);
 AlbumService = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], AlbumService);
 exports.AlbumService = AlbumService;
 //# sourceMappingURL=album.service.js.map

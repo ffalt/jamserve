@@ -22,7 +22,7 @@ let SessionResolver = class SessionResolver {
         return version_1.JAMAPI_VERSION;
     }
     async session({ orm, user }) {
-        return await orm.Session.oneOrFail({ user: user.id });
+        return await orm.Session.oneOrFail({ where: { user: user.id } });
     }
     async sessions({ page, filter, order }, { orm, user }) {
         return await orm.Session.searchFilter(filter, order, page, user);

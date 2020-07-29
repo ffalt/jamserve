@@ -20,7 +20,7 @@ const series_1 = require("./series");
 const series_args_1 = require("./series.args");
 let SeriesResolver = class SeriesResolver {
     async series(id, { orm }) {
-        return await orm.Series.oneOrFail(id);
+        return await orm.Series.oneOrFailByID(id);
     }
     async serieses({ page, filter, order, list }, { orm, user }) {
         if (list) {
@@ -32,20 +32,16 @@ let SeriesResolver = class SeriesResolver {
         return await orm.Series.indexFilter(filter, user);
     }
     async rootsCount(series, { orm }) {
-        await orm.Series.populate(series, 'roots');
-        return series.roots.length;
+        return series.roots.count();
     }
     async foldersCount(series, { orm }) {
-        await orm.Series.populate(series, 'folders');
-        return series.folders.length;
+        return series.folders.count();
     }
     async tracksCount(series, { orm }) {
-        await orm.Series.populate(series, 'tracks');
-        return series.tracks.length;
+        return series.tracks.count();
     }
     async albumsCount(series, { orm }) {
-        await orm.Series.populate(series, 'albums');
-        return series.albums.length;
+        return series.albums.count();
     }
     async state(series, { orm, user }) {
         return await orm.State.findOrCreate(series.id, enums_1.DBObjectType.series, user.id);

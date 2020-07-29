@@ -22,7 +22,7 @@ const session_1 = require("../session/session");
 const bookmark_1 = require("../bookmark/bookmark");
 let UserResolver = class UserResolver {
     async user(id, { orm }) {
-        return await orm.User.oneOrFail(id);
+        return await orm.User.oneOrFailByID(id);
     }
     async users({ page, filter, order }, { orm, user }) {
         return await orm.User.searchFilter(filter, order, page, user);
@@ -34,11 +34,9 @@ let UserResolver = class UserResolver {
         return user_service_1.UserService.listfyRoles(user);
     }
     async sessions(user, { orm }) {
-        await orm.User.populate(user, 'sessions');
         return user.sessions.getItems();
     }
     async bookmarks(user, { orm }) {
-        await orm.User.populate(user, 'bookmarks');
         return user.bookmarks.getItems();
     }
 };

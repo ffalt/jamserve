@@ -13,49 +13,53 @@ exports.SessionPageQL = exports.SessionQL = exports.Session = void 0;
 const user_1 = require("../user/user");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 let Session = class Session extends base_1.Base {
+    constructor() {
+        super(...arguments);
+        this.user = new orm_1.Reference(this);
+    }
 };
 __decorate([
-    mikro_orm_1.ManyToOne(() => user_1.User),
-    __metadata("design:type", user_1.User)
+    orm_1.ManyToOne(() => user_1.User, user => user.sessions),
+    __metadata("design:type", orm_1.Reference)
 ], Session.prototype, "user", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Session.prototype, "client", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Session.prototype, "agent", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
     __metadata("design:type", Number)
 ], Session.prototype, "expires", void 0);
 __decorate([
     type_graphql_1.Field(() => enums_1.SessionMode),
-    mikro_orm_1.Enum(() => enums_1.SessionMode),
+    orm_1.Property(() => enums_1.SessionMode),
     __metadata("design:type", String)
 ], Session.prototype, "mode", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Session.prototype, "sessionID", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Session.prototype, "cookie", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Session.prototype, "jwth", void 0);
 Session = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Session);
 exports.Session = Session;
 let SessionQL = class SessionQL extends Session {

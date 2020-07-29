@@ -20,7 +20,7 @@ const Root_1 = require("type-graphql/dist/decorators/Root");
 const artwork_args_1 = require("./artwork.args");
 let ArtworkResolver = class ArtworkResolver {
     async artwork(id, { orm }) {
-        return await orm.Artwork.oneOrFail(id);
+        return await orm.Artwork.oneOrFailByID(id);
     }
     async artworks({ page, filter, order, list }, { orm, user }) {
         if (list) {
@@ -29,8 +29,7 @@ let ArtworkResolver = class ArtworkResolver {
         return await orm.Artwork.searchFilter(filter, order, page, user);
     }
     async folder(artwork, { orm }) {
-        await orm.Artwork.populate(artwork, 'folder');
-        return artwork.folder;
+        return artwork.folder.getOrFail();
     }
 };
 __decorate([

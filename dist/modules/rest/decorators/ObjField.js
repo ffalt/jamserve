@@ -12,10 +12,8 @@ function ObjField(returnTypeFuncOrOptions, maybeOptions) {
         }
         const { options, returnTypeFunc } = decorators_1.getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
         const opt = options;
-        const isResolver = Boolean(descriptor);
-        const isResolverMethod = Boolean(descriptor && descriptor.value);
         const { getType, typeOptions } = findType_1.findType({
-            metadataKey: isResolverMethod ? 'design:returntype' : 'design:type',
+            metadataKey: 'design:type',
             prototype,
             propertyKey,
             returnTypeFunc,
@@ -30,14 +28,6 @@ function ObjField(returnTypeFuncOrOptions, maybeOptions) {
             description: opt.description,
             deprecationReason: opt.deprecationReason
         });
-        if (isResolver) {
-            metadata_1.getMetadataStorage().collectFieldResolverMetadata({
-                kind: 'internal',
-                methodName: propertyKey,
-                schemaName: opt.name || propertyKey,
-                target: prototype.constructor
-            });
-        }
     };
 }
 exports.ObjField = ObjField;

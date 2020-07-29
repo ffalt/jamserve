@@ -14,6 +14,7 @@ const fs_utils_1 = require("../../../utils/fs-utils");
 const on_finished_1 = __importDefault(require("on-finished"));
 const logger_1 = require("../../../utils/logger");
 const enums_1 = require("../helpers/enums");
+const typescript_ioc_1 = require("typescript-ioc");
 const log = logger_1.logger('RestAPI');
 function prepareParameter(param, data, isField) {
     if (isField) {
@@ -199,7 +200,8 @@ async function callMethod(method, context, name) {
         if (!Controller) {
             throw express_error_1.GenericError(`Internal: Invalid controller in method ${method.methodName}`);
         }
-        const instance = new Controller();
+        const instance = typescript_ioc_1.Container.get(Controller);
+        const func = instance[method.methodName];
         const args = [];
         const params = method.params.sort((a, b) => a.index - b.index);
         for (const param of params) {
@@ -207,18 +209,18 @@ async function callMethod(method, context, name) {
             args.push(arg);
         }
         if (method.binary !== undefined) {
-            const result = await instance[method.methodName].apply(instance, args);
+            const result = await func.apply(instance, args);
             express_responder_1.ApiBaseResponder.sendBinary(context.req, context.res, result);
             return;
         }
         if (method.getReturnType === undefined) {
-            await instance[method.methodName].apply(instance, args);
+            await func.apply(instance, args);
             express_responder_1.ApiBaseResponder.sendOK(context.req, context.res);
             return;
         }
         const target = method.getReturnType();
         if (target === String) {
-            const result = await instance[method.methodName].apply(instance, args);
+            const result = await func.apply(instance, args);
             express_responder_1.ApiBaseResponder.sendString(context.req, context.res, result);
             return;
         }
@@ -358,7 +360,7 @@ function buildRestRouter(api, options) {
                             ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get, req), pathParameters: undefined
                         };
                     }
-                    await callMethod(get, { req, res, next, user: req.user }, 'Get');
+                    await callMethod(get, { req, res, orm: req.orm, next, user: req.user }, 'Get');
                 }
                 catch (e) {
                     express_responder_1.ApiBaseResponder.sendError(req, res, e);
@@ -388,7 +390,7 @@ function buildRestRouter(api, options) {
                             ...processCustomPathParameters(post.customPathParameters, req.params.pathParameters, post, req), pathParameters: undefined
                         };
                     }
-                    await callMethod(post, { req, res, next, user: req.user }, 'Post');
+                    await callMethod(post, { req, res, next, orm: req.orm, user: req.user }, 'Post');
                 }
                 catch (e) {
                     express_responder_1.ApiBaseResponder.sendError(req, res, e);

@@ -19,19 +19,9 @@ const audio_module_1 = require("../../modules/audio/audio.module");
 const enums_1 = require("../../types/enums");
 const typescript_ioc_1 = require("typescript-ioc");
 const logger_1 = require("../../utils/logger");
-const orm_service_1 = require("../../modules/engine/services/orm.service");
 const log = logger_1.logger('Waveform');
 exports.WaveformDefaultFormat = enums_1.WaveformFormatType.svg;
 let WaveformService = class WaveformService {
-    async findInWaveformTypes(id) {
-        const repos = [this.orm.Track, this.orm.Episode];
-        for (const repo of repos) {
-            const obj = await repo.findOne({ id });
-            if (obj) {
-                return { obj: obj, objType: repo.objType };
-            }
-        }
-    }
     async getWaveform(obj, objType, format, width) {
         format = (format || exports.WaveformDefaultFormat);
         switch (objType) {
@@ -96,12 +86,8 @@ __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", audio_module_1.AudioModule)
 ], WaveformService.prototype, "audioModule", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], WaveformService.prototype, "orm", void 0);
 WaveformService = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], WaveformService);
 exports.WaveformService = WaveformService;
 //# sourceMappingURL=waveform.service.js.map

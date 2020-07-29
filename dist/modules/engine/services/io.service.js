@@ -147,8 +147,8 @@ let IoService = class IoService {
         }
         return status;
     }
-    async refresh() {
-        const roots = await this.orm.Root.findAll();
+    async refresh(orm) {
+        const roots = await orm.Root.all();
         const result = [];
         for (const root of roots) {
             result.push(await this.refreshRoot(root.id));
@@ -317,7 +317,7 @@ __decorate([
     __metadata("design:type", worker_service_1.WorkerService)
 ], IoService.prototype, "workerService", void 0);
 IoService = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], IoService);
 exports.IoService = IoService;
 //# sourceMappingURL=io.service.js.map

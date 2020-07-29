@@ -21,7 +21,6 @@ const user_1 = require("../user/user");
 const version_1 = require("../../modules/engine/rest/version");
 const user_session_model_1 = require("../settings/user-session.model");
 const enums_1 = require("../../types/enums");
-const session_service_1 = require("../settings/session.service");
 const transform_service_1 = require("../../modules/engine/services/transform.service");
 let SessionController = class SessionController {
     session(user) {
@@ -44,22 +43,18 @@ let SessionController = class SessionController {
             user: sessionUser
         };
     }
-    async list(user) {
-        const sessions = await this.sessionService.byUserID(user.id);
-        return sessions.map(session => this.transform.userSession(session));
+    async list({ orm, req, user }) {
+        const sessions = await req.engine.sessionService.byUserID(user.id);
+        return sessions.map(session => this.transform.userSession(orm, session));
     }
-    async remove(id, user) {
-        await this.sessionService.removeUserSession(id, user.id);
+    async remove(id, { orm, req, user }) {
+        await req.engine.sessionService.removeUserSession(id, user.id);
     }
 };
 __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", config_service_1.ConfigService)
 ], SessionController.prototype, "configService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", session_service_1.SessionService)
-], SessionController.prototype, "sessionService", void 0);
 __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", transform_service_1.TransformService)
@@ -73,20 +68,21 @@ __decorate([
 ], SessionController.prototype, "session", null);
 __decorate([
     decorators_1.Get('/list', () => [user_session_model_1.UserSession], { roles: [enums_1.UserRole.stream], description: 'Get a list of all sessions of the current user', summary: 'Get Sessions' }),
-    __param(0, decorators_1.CurrentUser()),
+    __param(0, decorators_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SessionController.prototype, "list", null);
 __decorate([
     decorators_1.Post('/remove', { roles: [enums_1.UserRole.stream], description: 'Remove a user session', summary: 'Remove Session' }),
     __param(0, decorators_1.BodyParam('id', { description: 'User Session Id', isID: true })),
-    __param(1, decorators_1.CurrentUser()),
+    __param(1, decorators_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, user_1.User]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], SessionController.prototype, "remove", null);
 SessionController = __decorate([
+    typescript_ioc_1.InRequestScope,
     decorators_1.Controller('/session', { tags: ['Access'] })
 ], SessionController);
 exports.SessionController = SessionController;

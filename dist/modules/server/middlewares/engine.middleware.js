@@ -4,6 +4,7 @@ exports.useEngineMiddleware = void 0;
 function useEngineMiddleware(engine) {
     return (req, res, next) => {
         req.engine = engine;
+        req.orm = engine.orm.fork();
         next();
     };
 }

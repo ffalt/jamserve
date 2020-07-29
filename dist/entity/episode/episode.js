@@ -15,10 +15,12 @@ const tag_1 = require("../tag/tag");
 const bookmark_1 = require("../bookmark/bookmark");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 const state_1 = require("../state/state");
 const waveform_1 = require("../waveform/waveform");
+const playqueue_entry_1 = require("../playqueueentry/playqueue-entry");
+const playlist_entry_1 = require("../playlistentry/playlist-entry");
 let EpisodeChapter = class EpisodeChapter {
 };
 __decorate([
@@ -66,97 +68,109 @@ exports.EpisodeEnclosureQL = EpisodeEnclosureQL;
 let Episode = class Episode extends base_1.Base {
     constructor() {
         super(...arguments);
-        this.bookmarks = new mikro_orm_1.Collection(this);
+        this.tag = new orm_1.Reference(this);
+        this.podcast = new orm_1.Reference(this);
+        this.bookmarks = new orm_1.Collection(this);
+        this.playqueueEntries = new orm_1.Collection(this);
+        this.playlistEntries = new orm_1.Collection(this);
     }
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Episode.prototype, "name", void 0);
 __decorate([
-    mikro_orm_1.Enum(() => enums_1.PodcastStatus),
-    mikro_orm_1.Property(),
+    type_graphql_1.Field(() => enums_1.PodcastStatus),
+    orm_1.Property(() => enums_1.PodcastStatus),
     __metadata("design:type", String)
 ], Episode.prototype, "status", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Episode.prototype, "fileSize", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_TIMESTAMP, { nullable: true }),
     __metadata("design:type", Number)
 ], Episode.prototype, "statCreated", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_TIMESTAMP, { nullable: true }),
     __metadata("design:type", Number)
 ], Episode.prototype, "statModified", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "error", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "path", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "link", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "summary", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
     __metadata("design:type", Number)
 ], Episode.prototype, "date", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    mikro_orm_1.Property({ nullable: true }),
+    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Episode.prototype, "duration", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property({ nullable: true }),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "guid", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property({ nullable: true }),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "author", void 0);
 __decorate([
-    mikro_orm_1.Property({ nullable: true }),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "chaptersJSON", void 0);
 __decorate([
-    mikro_orm_1.Property({ nullable: true }),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "enclosuresJSON", void 0);
 __decorate([
     type_graphql_1.Field(() => tag_1.TagQL, { nullable: true }),
-    mikro_orm_1.OneToOne({ entity: () => tag_1.Tag, nullable: true }),
-    __metadata("design:type", tag_1.Tag)
+    orm_1.OneToOne(() => tag_1.Tag, tag => tag.episode, { owner: true, nullable: true }),
+    __metadata("design:type", orm_1.Reference)
 ], Episode.prototype, "tag", void 0);
 __decorate([
     type_graphql_1.Field(() => podcast_1.PodcastQL),
-    mikro_orm_1.ManyToOne(() => podcast_1.Podcast),
-    __metadata("design:type", podcast_1.Podcast)
+    orm_1.ManyToOne(() => podcast_1.Podcast, podcast => podcast.episodes),
+    __metadata("design:type", orm_1.Reference)
 ], Episode.prototype, "podcast", void 0);
 __decorate([
     type_graphql_1.Field(() => [bookmark_1.BookmarkQL]),
-    mikro_orm_1.OneToMany({ entity: () => bookmark_1.Bookmark, mappedBy: bookmark => bookmark.episode, cascade: [mikro_orm_1.Cascade.REMOVE], orderBy: { position: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.episode, { orderBy: { position: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Episode.prototype, "bookmarks", void 0);
+__decorate([
+    orm_1.OneToMany(() => playqueue_entry_1.PlayQueueEntry, playqueueEntry => playqueueEntry.episode),
+    __metadata("design:type", orm_1.Collection)
+], Episode.prototype, "playqueueEntries", void 0);
+__decorate([
+    orm_1.OneToMany(() => playlist_entry_1.PlaylistEntry, playlistEntry => playlistEntry.episode),
+    __metadata("design:type", orm_1.Collection)
+], Episode.prototype, "playlistEntries", void 0);
 Episode = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Episode);
 exports.Episode = Episode;
 let EpisodeQL = class EpisodeQL extends Episode {

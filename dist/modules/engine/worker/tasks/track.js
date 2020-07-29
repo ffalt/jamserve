@@ -1,4 +1,10 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -10,25 +16,26 @@ const fs_utils_1 = require("../../../../utils/fs-utils");
 const enums_1 = require("../../../../types/enums");
 const queue_1 = require("../../../../utils/queue");
 const base_1 = require("./base");
-class TrackWorker extends base_1.BaseWorker {
-    async writeTags(tags, changes) {
+const typescript_ioc_1 = require("typescript-ioc");
+let TrackWorker = class TrackWorker extends base_1.BaseWorker {
+    async writeTags(orm, tags, changes) {
         for (const tag of tags) {
-            const track = await this.orm.Track.findOne(tag.trackID);
+            const track = await orm.Track.findOneByID(tag.trackID);
             if (track) {
                 const filename = path_1.default.join(track.path, track.fileName);
                 await this.audioModule.writeRawTag(filename, tag.tag);
                 await this.updateTrackStats(track);
                 changes.tracks.updated.add(track);
-                changes.folders.updated.add(track.folder);
+                changes.folders.updated.add(await track.folder.get());
             }
         }
     }
-    async fix(fixes, changes) {
-        const tracks = await this.orm.Track.find(fixes.map(t => t.trackID));
+    async fix(orm, fixes, changes) {
+        const tracks = await orm.Track.findByIDs(fixes.map(t => t.trackID));
         const fixTasks = [];
         for (const track of tracks) {
             changes.tracks.updated.add(track);
-            changes.folders.updated.add(track.folder);
+            changes.folders.updated.add(await track.folder.get());
             fixTasks.push({
                 filename: path_1.default.join(track.path, track.fileName),
                 fixIDs: fixes.filter(f => f.trackID === track.id).map(f => f.fixID)
@@ -54,34 +61,34 @@ class TrackWorker extends base_1.BaseWorker {
         track.statModified = stat.mtime.valueOf();
         track.fileSize = stat.size;
     }
-    async rename(trackID, newName, changes) {
-        const track = await this.orm.Track.findOne(trackID);
+    async rename(orm, trackID, newName, changes) {
+        const track = await orm.Track.findOneByID(trackID);
         if (!track) {
             return Promise.reject(Error('Track not found'));
         }
         track.fileName = await this.renameFile(track.path, track.fileName, newName);
         await this.updateTrackStats(track);
-        this.orm.orm.em.persistLater(track);
+        orm.Track.persistLater(track);
         changes.tracks.updated.add(track);
-        changes.folders.updated.add(track.folder);
+        changes.folders.updated.add(await track.folder.get());
     }
-    async remove(root, trackIDs, changes) {
-        const removedTracks = await this.orm.Track.find(trackIDs);
+    async remove(orm, root, trackIDs, changes) {
+        const removedTracks = await orm.Track.findByIDs(trackIDs);
         if (removedTracks.length !== trackIDs.length) {
             return Promise.reject(Error('Track not found'));
         }
         for (const track of removedTracks) {
             await this.moveToTrash(root, track.path, track.fileName);
-            changes.folders.updated.add(track.folder);
+            changes.folders.updated.add(await track.folder.get());
             changes.tracks.removed.add(track);
         }
     }
-    async move(trackIDs, newParentID, changes) {
-        const tracks = await this.orm.Track.find(trackIDs);
+    async move(orm, trackIDs, newParentID, changes) {
+        const tracks = await orm.Track.findByIDs(trackIDs);
         if (tracks.length !== trackIDs.length) {
             return Promise.reject(Error('Track not found'));
         }
-        const newParent = await this.orm.Folder.findOne(newParentID);
+        const newParent = await orm.Folder.findOneByID(newParentID);
         if (!newParent) {
             return Promise.reject(Error('Destination Folder not found'));
         }
@@ -93,28 +100,31 @@ class TrackWorker extends base_1.BaseWorker {
         changes.folders.updated.add(newParent);
         for (const track of tracks) {
             changes.tracks.updated.add(track);
-            const oldParent = track.folder;
-            if (oldParent.id !== newParentID) {
+            const oldParent = await track.folder.get();
+            if ((oldParent === null || oldParent === void 0 ? void 0 : oldParent.id) !== newParentID) {
                 changes.folders.updated.add(oldParent);
                 await fs_extra_1.default.move(path_1.default.join(track.path, track.fileName), path_1.default.join(newParent.path, track.fileName));
                 track.path = fs_utils_1.ensureTrailingPathSeparator(newParent.path);
-                track.root = newParent.root;
-                track.folder = newParent;
+                await track.root.set(await newParent.root.getOrFail());
+                await track.folder.set(newParent);
                 await this.updateTrackStats(track);
-                this.orm.orm.em.persistLater(track);
+                orm.Track.persistLater(track);
             }
         }
     }
-    async refresh(trackIDs, changes) {
-        const tracks = await this.orm.Track.find(trackIDs);
+    async refresh(orm, trackIDs, changes) {
+        const tracks = await orm.Track.findByIDs(trackIDs);
         if (tracks.length !== trackIDs.length) {
             return Promise.reject(Error('Track not found'));
         }
         for (const track of tracks) {
             changes.tracks.updated.add(track);
-            changes.folders.updated.add(track.folder);
+            changes.folders.updated.add(await track.folder.get());
         }
     }
-}
+};
+TrackWorker = __decorate([
+    typescript_ioc_1.InRequestScope
+], TrackWorker);
 exports.TrackWorker = TrackWorker;
 //# sourceMappingURL=track.js.map

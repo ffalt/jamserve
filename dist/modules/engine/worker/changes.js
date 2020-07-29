@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8,31 +17,46 @@ const logger_1 = require("../../../utils/logger");
 const moment_1 = __importDefault(require("moment"));
 const merge_meta_1 = require("./merge-meta");
 const base_1 = require("./tasks/base");
+const orm_service_1 = require("../services/orm.service");
+const typescript_ioc_1 = require("typescript-ioc");
 const log = logger_1.logger('Worker.Changes');
 class IdSet {
     constructor() {
-        this.list = [];
+        this.set = new Set();
     }
     get size() {
-        return this.list.length;
+        return this.set.size;
     }
     add(item) {
-        if (item && !this.has(item)) {
-            this.list.push(item);
+        if (item) {
+            this.set.add(item.id);
+        }
+    }
+    addID(item) {
+        if (item) {
+            this.set.add(item);
         }
     }
     has(item) {
-        return !!this.list.find(i => i.id === item.id);
+        return this.set.has(item.id);
+    }
+    hasID(item) {
+        return this.set.has(item);
     }
     delete(item) {
-        this.list = this.list.filter(i => i.id !== item.id);
+        this.set.delete(item.id);
     }
     ids() {
-        return this.list.map(i => i.id);
+        return [...this.set];
     }
     append(items) {
         for (const item of items) {
             this.add(item);
+        }
+    }
+    appendIDs(items) {
+        for (const item of items) {
+            this.set.add(item);
         }
     }
 }
@@ -80,33 +104,40 @@ function logChanges(changes) {
     logChangeSet('Roots', changes.roots);
 }
 exports.logChanges = logChanges;
-class ChangesWorker extends base_1.BaseWorker {
+let ChangesWorker = class ChangesWorker extends base_1.BaseWorker {
     async start(rootID) {
-        if (!rootID) {
-            return Promise.reject(Error(`Root not found`));
-        }
-        const root = await this.orm.Root.findOne(rootID);
-        if (!root) {
-            return Promise.reject(Error(`Root not found`));
-        }
-        return { root, changes: new Changes() };
+        const orm = this.ormService.fork();
+        const root = await orm.Root.findOneOrFailByID(rootID);
+        return { root, orm, changes: new Changes() };
     }
-    async finish(changes, root) {
-        const metaMerger = new merge_meta_1.MetaMerger(this.orm, changes, root);
+    async finish(orm, changes, root) {
+        const metaMerger = new merge_meta_1.MetaMerger(orm, changes, root.id);
         await metaMerger.mergeMeta();
-        changes.tracks.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-        changes.artworks.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-        changes.folders.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-        changes.roots.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-        changes.albums.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-        changes.artists.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-        changes.series.removed.list.forEach(f => this.orm.orm.em.removeLater(f));
-        log.debug('Flushing changes');
-        await this.orm.orm.em.flush();
+        await this.mergeRemovals(orm, changes);
         changes.end = Date.now();
         logChanges(changes);
         return changes;
     }
-}
+    async mergeRemovals(orm, changes) {
+        await orm.Track.removeLaterByIDs(changes.tracks.removed.ids());
+        await orm.Artwork.removeLaterByIDs(changes.artworks.removed.ids());
+        await orm.Folder.removeLaterByIDs(changes.folders.removed.ids());
+        await orm.Root.removeLaterByIDs(changes.roots.removed.ids());
+        await orm.Album.removeLaterByIDs(changes.albums.removed.ids());
+        await orm.Artist.removeLaterByIDs(changes.artists.removed.ids());
+        await orm.Series.removeLaterByIDs(changes.series.removed.ids());
+        if (orm.em.hasChanges()) {
+            log.debug('Syncing Removal Updates to DB');
+            await orm.em.flush();
+        }
+    }
+};
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", orm_service_1.OrmService)
+], ChangesWorker.prototype, "ormService", void 0);
+ChangesWorker = __decorate([
+    typescript_ioc_1.InRequestScope
+], ChangesWorker);
 exports.ChangesWorker = ChangesWorker;
 //# sourceMappingURL=changes.js.map

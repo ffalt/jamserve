@@ -23,7 +23,7 @@ const series_1 = require("../series/series");
 const artist_1 = require("../artist/artist");
 let RootResolver = class RootResolver {
     async root(id, { orm }) {
-        return await orm.Root.oneOrFail(id);
+        return await orm.Root.oneOrFailByID(id);
     }
     async roots({ page, filter, order, list }, { orm, user }) {
         if (list) {
@@ -35,23 +35,18 @@ let RootResolver = class RootResolver {
         return engine.ioService.getRootStatus(root.id);
     }
     async tracks(root, { orm }) {
-        await orm.Root.populate(root, 'tracks');
         return root.tracks.getItems();
     }
     async folders(root, { orm }) {
-        await orm.Root.populate(root, 'folders');
         return root.folders.getItems();
     }
     async albums(root, { orm }) {
-        await orm.Root.populate(root, 'albums');
         return root.albums.getItems();
     }
     async series(root, { orm }) {
-        await orm.Root.populate(root, 'series');
         return root.series.getItems();
     }
     async artists(root, { orm }) {
-        await orm.Root.populate(root, 'artists');
         return root.artists.getItems();
     }
 };

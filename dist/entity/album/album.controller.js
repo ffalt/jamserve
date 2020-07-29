@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AlbumController = void 0;
 const album_model_1 = require("./album.model");
-const user_1 = require("../user/user");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const base_controller_1 = require("../base/base.controller");
@@ -24,31 +23,32 @@ const album_args_1 = require("./album.args");
 const track_args_1 = require("../track/track.args");
 const artist_args_1 = require("../artist/artist.args");
 const base_args_1 = require("../base/base.args");
+const typescript_ioc_1 = require("typescript-ioc");
 let AlbumController = class AlbumController extends base_controller_1.BaseController {
-    async id(id, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user) {
-        return this.transform.album(await this.orm.Album.oneOrFail(id), albumArgs, albumChildrenArgs, trackArgs, artistArgs, user);
+    async id(id, albumArgs, albumChildrenArgs, trackArgs, artistArgs, { orm, user }) {
+        return this.transform.album(orm, await orm.Album.oneOrFailByID(id), albumArgs, albumChildrenArgs, trackArgs, artistArgs, user);
     }
-    async index(filter) {
-        return await this.transform.albumIndex(await this.orm.Album.indexFilter(filter));
+    async index(filter, { orm }) {
+        return await this.transform.albumIndex(orm, await orm.Album.indexFilter(filter));
     }
-    async search(page, albumArgs, albumChildrenArgs, trackArgs, artistArgs, filter, order, list, user) {
+    async search(page, albumArgs, albumChildrenArgs, trackArgs, artistArgs, filter, order, list, { orm, user }) {
         if (list.list) {
-            return await this.orm.Album.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.album(o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user));
+            return await orm.Album.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user));
         }
-        return await this.orm.Album.searchTransformFilter(filter, [order], page, user, o => this.transform.album(o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user));
+        return await orm.Album.searchTransformFilter(filter, [order], page, user, o => this.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user));
     }
-    async info(id) {
-        const album = await this.orm.Album.oneOrFail(id);
-        return { info: await this.metadata.extInfo.byAlbum(album) };
+    async info(id, { orm }) {
+        const album = await orm.Album.oneOrFailByID(id);
+        return { info: await this.metadata.extInfo.byAlbum(orm, album) };
     }
-    async tracks(page, trackArgs, filter, order, user) {
-        const albumIDs = await this.orm.Album.findIDsFilter(filter, user);
-        return await this.orm.Track.searchTransformFilter({ albumIDs }, [order], page, user, o => this.transform.trackBase(o, trackArgs, user));
+    async tracks(page, trackArgs, filter, order, { orm, user }) {
+        const albumIDs = await orm.Album.findIDsFilter(filter, user);
+        return await orm.Track.searchTransformFilter({ albumIDs }, [order], page, user, o => this.transform.trackBase(orm, o, trackArgs, user));
     }
-    async similarTracks(id, page, trackArgs, user) {
-        const album = await this.orm.Album.oneOrFail(id);
-        const result = await this.metadata.similarTracks.byAlbum(album, page);
-        return { ...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(o, trackArgs, user))) };
+    async similarTracks(id, page, trackArgs, { orm, user }) {
+        const album = await orm.Album.oneOrFailByID(id);
+        const result = await this.metadata.similarTracks.byAlbum(orm, album, page);
+        return { ...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user))) };
     }
 };
 __decorate([
@@ -58,20 +58,20 @@ __decorate([
     __param(2, rest_1.QueryParams()),
     __param(3, rest_1.QueryParams()),
     __param(4, rest_1.QueryParams()),
-    __param(5, rest_1.CurrentUser()),
+    __param(5, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, album_args_1.IncludesAlbumArgs,
         album_args_1.IncludesAlbumChildrenArgs,
         track_args_1.IncludesTrackArgs,
-        artist_args_1.IncludesArtistArgs,
-        user_1.User]),
+        artist_args_1.IncludesArtistArgs, Object]),
     __metadata("design:returntype", Promise)
 ], AlbumController.prototype, "id", null);
 __decorate([
     rest_1.Get('/index', () => album_model_1.AlbumIndex, { description: 'Get the Navigation Index for Albums', summary: 'Get Index' }),
     __param(0, rest_1.QueryParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [album_args_1.AlbumFilterArgs]),
+    __metadata("design:paramtypes", [album_args_1.AlbumFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], AlbumController.prototype, "index", null);
 __decorate([
@@ -84,7 +84,7 @@ __decorate([
     __param(5, rest_1.QueryParams()),
     __param(6, rest_1.QueryParams()),
     __param(7, rest_1.QueryParams()),
-    __param(8, rest_1.CurrentUser()),
+    __param(8, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [base_args_1.PageArgs,
         album_args_1.IncludesAlbumArgs,
@@ -93,15 +93,15 @@ __decorate([
         artist_args_1.IncludesArtistArgs,
         album_args_1.AlbumFilterArgs,
         album_args_1.AlbumOrderArgs,
-        base_args_1.ListArgs,
-        user_1.User]),
+        base_args_1.ListArgs, Object]),
     __metadata("design:returntype", Promise)
 ], AlbumController.prototype, "search", null);
 __decorate([
     rest_1.Get('/info', () => metadata_model_1.ExtendedInfoResult, { description: 'Get Meta Data Info of an Album by Id (External Service)', summary: 'Get Info' }),
     __param(0, rest_1.QueryParam('id', { description: 'Album Id', isID: true })),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], AlbumController.prototype, "info", null);
 __decorate([
@@ -110,13 +110,12 @@ __decorate([
     __param(1, rest_1.QueryParams()),
     __param(2, rest_1.QueryParams()),
     __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.CurrentUser()),
+    __param(4, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [base_args_1.PageArgs,
         track_args_1.IncludesTrackArgs,
         album_args_1.AlbumFilterArgs,
-        track_args_1.TrackOrderArgs,
-        user_1.User]),
+        track_args_1.TrackOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], AlbumController.prototype, "tracks", null);
 __decorate([
@@ -124,14 +123,14 @@ __decorate([
     __param(0, rest_1.QueryParam('id', { description: 'Album Id', isID: true })),
     __param(1, rest_1.QueryParams()),
     __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.CurrentUser()),
+    __param(3, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, base_args_1.PageArgs,
-        track_args_1.IncludesTrackArgs,
-        user_1.User]),
+        track_args_1.IncludesTrackArgs, Object]),
     __metadata("design:returntype", Promise)
 ], AlbumController.prototype, "similarTracks", null);
 AlbumController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/album', { tags: ['Album'], roles: [enums_1.UserRole.stream] })
 ], AlbumController);
 exports.AlbumController = AlbumController;

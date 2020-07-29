@@ -6,55 +6,55 @@ class MetadataServiceSimilarArtists {
     constructor(service) {
         this.service = service;
     }
-    async getLastFMSimilarArtists(mbArtistID) {
-        const lastfm = await this.service.lastFMLookup(enums_1.LastFMLookupType.artist, mbArtistID);
+    async getLastFMSimilarArtists(orm, mbArtistID) {
+        const lastfm = await this.service.lastFMLookup(orm, enums_1.LastFMLookupType.artist, mbArtistID);
         if (lastfm && lastfm.artist && lastfm.artist.similar && lastfm.artist.similar.artist) {
             return lastfm.artist.similar.artist;
         }
         return [];
     }
-    async findSimilarArtistFolders(similarArtists, page) {
+    async findSimilarArtistFolders(orm, similarArtists, page) {
         const names = [];
         similarArtists.forEach(a => {
             if (a.name) {
                 names.push(a.name);
             }
         });
-        return await this.service.orm.Folder.search({ folderType: { $in: [enums_1.FolderType.artist] }, artist: { $in: names } }, undefined, page);
+        return await orm.Folder.search({ where: { folderType: enums_1.FolderType.artist, artist: names }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
     }
-    async findSimilarArtists(similarArtists, page) {
+    async findSimilarArtists(orm, similarArtists, page) {
         const names = [];
         similarArtists.forEach(a => {
             if (a.name) {
                 names.push(a.name);
             }
         });
-        return await this.service.orm.Artist.search({ name: { $in: names } }, undefined, page);
+        return await orm.Artist.search({ where: { name: names }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
     }
-    async byArtistIdName(mbArtistID, artist) {
+    async byArtistIdName(orm, mbArtistID, artist) {
         let similar = [];
         if (mbArtistID) {
-            similar = await this.getLastFMSimilarArtists(mbArtistID);
+            similar = await this.getLastFMSimilarArtists(orm, mbArtistID);
         }
         else if (artist) {
-            const a = await this.service.lastFMArtistSearch(artist);
+            const a = await this.service.lastFMArtistSearch(orm, artist);
             if (a && a.artist) {
-                similar = await this.getLastFMSimilarArtists(a.artist.mbid);
+                similar = await this.getLastFMSimilarArtists(orm, a.artist.mbid);
             }
         }
         return similar;
     }
-    async byArtist(artist, page) {
-        const similar = await this.byArtistIdName(artist.mbArtistID, artist.name);
+    async byArtist(orm, artist, page) {
+        const similar = await this.byArtistIdName(orm, artist.mbArtistID, artist.name);
         if (similar && similar.length > 0) {
-            return this.findSimilarArtists(similar, page);
+            return this.findSimilarArtists(orm, similar, page);
         }
         return { items: [], ...(page || {}), total: 0 };
     }
-    async byFolder(folder, page) {
-        const similar = await this.byArtistIdName(folder.mbArtistID, folder.artist);
+    async byFolder(orm, folder, page) {
+        const similar = await this.byArtistIdName(orm, folder.mbArtistID, folder.artist);
         if (similar && similar.length > 0) {
-            return this.findSimilarArtistFolders(similar, page);
+            return this.findSimilarArtistFolders(orm, similar, page);
         }
         return { items: [], ...(page || {}), total: 0 };
     }

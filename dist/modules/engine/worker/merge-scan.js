@@ -11,13 +11,18 @@ const logger_1 = require("../../../utils/logger");
 const meta_stats_1 = require("./meta-stats");
 const log = logger_1.logger('Worker.MergeScan');
 class WorkerMergeScan {
-    constructor(strategy, changes) {
+    constructor(orm, strategy, changes) {
+        this.orm = orm;
         this.strategy = strategy;
         this.changes = changes;
     }
     async merge(matchRoot) {
         this.markChangedParents(matchRoot);
         await this.mergeNode(matchRoot);
+        if (this.orm.em.hasChanges()) {
+            log.debug('Syncing Folder Changes to DB');
+            await this.orm.em.flush();
+        }
     }
     static isExtraFolder(node) {
         const name = path_1.default.basename(node.scan.path).toLowerCase();
@@ -40,7 +45,7 @@ class WorkerMergeScan {
             return enums_1.FolderType.extras;
         }
         if (metaStat.trackCount > 0) {
-            if (metaStat.hasMultipleAlbums && node.folder.albumType === enums_1.AlbumType.series) {
+            if (metaStat.hasMultipleAlbums && metaStat.albumType === enums_1.AlbumType.series) {
                 return enums_1.FolderType.artist;
             }
             const dirCount = node.children.filter(d => d.folder.folderType !== enums_1.FolderType.extras).length;
@@ -50,7 +55,7 @@ class WorkerMergeScan {
             return enums_1.FolderType.album;
         }
         if (node.children.length === 0) {
-            return (node.tracks.length === 0) ? enums_1.FolderType.extras : enums_1.FolderType.album;
+            return (metaStat.trackCount === 0) ? enums_1.FolderType.extras : enums_1.FolderType.album;
         }
         if (metaStat.hasMultipleAlbums) {
             return (metaStat.hasMultipleArtists || strategy === enums_1.RootScanStrategy.compilation) ? enums_1.FolderType.collection : enums_1.FolderType.artist;
@@ -64,7 +69,10 @@ class WorkerMergeScan {
         return WorkerMergeScan.getMultiAlbumFolderType(node);
     }
     static setFolderType(node, type) {
-        node.folder.folderType = type;
+        if (node.folder.folderType !== type) {
+            node.folder.folderType = type;
+            node.changed = true;
+        }
         switch (type) {
             case enums_1.FolderType.collection:
                 node.folder.albumType = undefined;
@@ -92,8 +100,11 @@ class WorkerMergeScan {
             WorkerMergeScan.setFolderType(node, enums_1.FolderType.multialbum);
         }
         for (const child of node.children) {
-            if (node.folder.folderType !== enums_1.FolderType.extras) {
-                node.folder.albumType = child.folder.albumType;
+            if (child.folder.folderType !== enums_1.FolderType.extras) {
+                if (node.folder.albumType !== child.folder.albumType) {
+                    node.folder.albumType = child.folder.albumType;
+                    node.changed = true;
+                }
             }
             WorkerMergeScan.markMultiAlbumChildDirs(child);
         }
@@ -134,6 +145,7 @@ class WorkerMergeScan {
                 WorkerMergeScan.markArtistChildDirs(child);
             }
         }
+        this.orm.Folder.persistLater(folder);
     }
     async mergeNode(node) {
         for (const child of node.children) {
@@ -152,8 +164,8 @@ class WorkerMergeScan {
             }
         }
         if (changed) {
-            if (!this.changes.folders.added.has(node.folder) && !this.changes.folders.removed.has(node.folder)) {
-                this.changes.folders.updated.add(node.folder);
+            if (!this.changes.folders.added.hasID(node.folder.id) && !this.changes.folders.removed.hasID(node.folder.id)) {
+                this.changes.folders.updated.addID(node.folder.id);
             }
         }
         node.changed = changed;

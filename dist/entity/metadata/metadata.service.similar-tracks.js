@@ -6,7 +6,7 @@ class MetadataServiceSimilarTracks {
     constructor(service) {
         this.service = service;
     }
-    async findSongTrackIDs(songs) {
+    async findSongTrackIDs(orm, songs) {
         const ids = [];
         const vals = [];
         songs.forEach(sim => {
@@ -19,33 +19,33 @@ class MetadataServiceSimilarTracks {
         });
         const result = new Set();
         const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
-        const list = await this.service.orm.Track.find({ tag: { mbTrackID: { $in: mbTrackIDs } } });
-        ids.forEach(sim => {
-            const t = list.find(tr => { var _a; return ((_a = tr.tag) === null || _a === void 0 ? void 0 : _a.mbTrackID) === sim.mbid; });
+        const list = await orm.Track.find({ where: { tag: { mbTrackID: mbTrackIDs } } });
+        for (const sim of ids) {
+            const t = await list.find(async (tr) => { var _a; return ((_a = (await tr.tag.get())) === null || _a === void 0 ? void 0 : _a.mbTrackID) === sim.mbid; });
             if (!t) {
                 vals.push(sim);
             }
             else {
                 result.add(t.id);
             }
-        });
+        }
         for (const sim of vals) {
-            const id = await this.service.orm.Track.findOneID({ name: { $eq: sim.name }, artist: { name: { $eq: sim.artist } } });
+            const id = await orm.Track.findOneID({ where: { name: sim.name, artist: { name: sim.artist } } });
             if (id) {
                 result.add(id);
             }
         }
         return [...result];
     }
-    async getSimilarSongs(similar) {
+    async getSimilarSongs(orm, similar) {
         let tracks = [];
         for (const artist of similar) {
             let data;
             if (artist.mbid) {
-                data = await this.service.lastFMTopTracksArtistID(artist.mbid);
+                data = await this.service.lastFMTopTracksArtistID(orm, artist.mbid);
             }
             else if (artist.name) {
-                data = await this.service.lastFMTopTracksArtist(artist.name);
+                data = await this.service.lastFMTopTracksArtist(orm, artist.name);
             }
             if (data && data.toptracks && data.toptracks.track) {
                 tracks = tracks.concat(data.toptracks.track.map(song => {
@@ -60,34 +60,35 @@ class MetadataServiceSimilarTracks {
         }
         return random_1.shuffle(tracks);
     }
-    async getSimilarArtistTracks(similars, page) {
+    async getSimilarArtistTracks(orm, similars, page) {
         if (!similars || similars.length === 0) {
             return { items: [], ...(page || {}), total: 0 };
         }
-        const songs = await this.getSimilarSongs(similars);
-        const ids = await this.findSongTrackIDs(songs);
-        return this.service.orm.Track.search({ id: ids }, undefined, page);
+        const songs = await this.getSimilarSongs(orm, similars);
+        const ids = await this.findSongTrackIDs(orm, songs);
+        return orm.Track.search({ where: { id: ids }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
     }
-    async byArtist(artist, page) {
-        const similar = await this.service.similarArtists.byArtistIdName(artist.mbArtistID, artist.name);
-        return this.getSimilarArtistTracks(similar, page);
+    async byArtist(orm, artist, page) {
+        const similar = await this.service.similarArtists.byArtistIdName(orm, artist.mbArtistID, artist.name);
+        return this.getSimilarArtistTracks(orm, similar, page);
     }
-    async byFolder(folder, page) {
-        const similar = await this.service.similarArtists.byArtistIdName(folder.mbArtistID, folder.artist);
-        return this.getSimilarArtistTracks(similar, page);
+    async byFolder(orm, folder, page) {
+        const similar = await this.service.similarArtists.byArtistIdName(orm, folder.mbArtistID, folder.artist);
+        return this.getSimilarArtistTracks(orm, similar, page);
     }
-    async byAlbum(album, page) {
-        const similar = await this.service.similarArtists.byArtistIdName(album.mbArtistID, album.artist.name);
-        return this.getSimilarArtistTracks(similar, page);
+    async byAlbum(orm, album, page) {
+        const artist = await album.artist.get();
+        const similar = await this.service.similarArtists.byArtistIdName(orm, album.mbArtistID, artist === null || artist === void 0 ? void 0 : artist.name);
+        return this.getSimilarArtistTracks(orm, similar, page);
     }
-    async byTrack(track, page) {
-        var _a, _b, _c;
+    async byTrack(orm, track, page) {
         let data;
-        if ((_a = track.tag) === null || _a === void 0 ? void 0 : _a.mbTrackID) {
-            data = await this.service.lastFMSimilarTracks(track.tag.mbTrackID);
+        const tag = await track.tag.get();
+        if (tag === null || tag === void 0 ? void 0 : tag.mbTrackID) {
+            data = await this.service.lastFMSimilarTracks(orm, tag.mbTrackID);
         }
-        else if (((_b = track.tag) === null || _b === void 0 ? void 0 : _b.title) && ((_c = track.tag) === null || _c === void 0 ? void 0 : _c.artist)) {
-            data = await this.service.lastFMSimilarTracksSearch(track.tag.title, track.tag.artist);
+        else if ((tag === null || tag === void 0 ? void 0 : tag.title) && (tag === null || tag === void 0 ? void 0 : tag.artist)) {
+            data = await this.service.lastFMSimilarTracksSearch(orm, tag.title, tag.artist);
         }
         let ids = [];
         if (data && data.similartracks && data.similartracks.track) {
@@ -99,9 +100,9 @@ class MetadataServiceSimilarTracks {
                     url: t.url
                 };
             });
-            ids = await this.findSongTrackIDs(songs);
+            ids = await this.findSongTrackIDs(orm, songs);
         }
-        return this.service.orm.Track.search({ id: ids }, undefined, page);
+        return orm.Track.search({ where: { id: ids }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
     }
 }
 exports.MetadataServiceSimilarTracks = MetadataServiceSimilarTracks;

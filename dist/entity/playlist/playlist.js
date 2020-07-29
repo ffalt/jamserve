@@ -13,53 +13,54 @@ exports.PlaylistIndexQL = exports.PlaylistIndexGroupQL = exports.PlaylistPageQL 
 const user_1 = require("../user/user");
 const playlist_entry_1 = require("../playlistentry/playlist-entry");
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 const state_1 = require("../state/state");
 let Playlist = class Playlist extends base_1.Base {
     constructor() {
         super(...arguments);
+        this.user = new orm_1.Reference(this);
         this.isPublic = false;
         this.duration = 0;
-        this.entries = new mikro_orm_1.Collection(this);
+        this.entries = new orm_1.Collection(this);
     }
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Playlist.prototype, "name", void 0);
 __decorate([
-    mikro_orm_1.ManyToOne(() => user_1.User),
-    __metadata("design:type", user_1.User)
+    orm_1.ManyToOne(() => user_1.User, user => user.playlists),
+    __metadata("design:type", orm_1.Reference)
 ], Playlist.prototype, "user", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Playlist.prototype, "comment", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Playlist.prototype, "coverArt", void 0);
 __decorate([
     type_graphql_1.Field(() => Boolean),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => Boolean),
     __metadata("design:type", Boolean)
 ], Playlist.prototype, "isPublic", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT),
     __metadata("design:type", Number)
 ], Playlist.prototype, "duration", void 0);
 __decorate([
     type_graphql_1.Field(() => [playlist_entry_1.PlaylistEntryQL]),
-    mikro_orm_1.OneToMany(() => playlist_entry_1.PlaylistEntry, entry => entry.playlist, { orderBy: { position: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => playlist_entry_1.PlaylistEntry, entry => entry.playlist, { orderBy: { position: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Playlist.prototype, "entries", void 0);
 Playlist = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Playlist);
 exports.Playlist = Playlist;
 let PlaylistQL = class PlaylistQL extends Playlist {

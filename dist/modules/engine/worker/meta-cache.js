@@ -26,12 +26,13 @@ class MetaMergerCache {
         this.albumCache = [];
     }
     async buildSeries(trackInfo, artist) {
-        return this.orm.Series.create({
+        const result = this.orm.Series.create({
             name: trackInfo.tag.series || '',
-            albumTypes: trackInfo.folder.albumType ? [trackInfo.folder.albumType] : [enums_1.AlbumType.unknown],
-            artist: artist.id,
-            roots: [this.root]
+            albumTypes: trackInfo.folder.albumType ? [trackInfo.folder.albumType] : [enums_1.AlbumType.unknown]
         });
+        await result.artist.set(artist);
+        await result.roots.add(this.root);
+        return result;
     }
     async findSeriesInCache(trackInfo, artistID) {
         if (!trackInfo.tag.series) {
@@ -45,9 +46,9 @@ class MetaMergerCache {
         if (cache === null || cache === void 0 ? void 0 : cache.series) {
             return cache.series;
         }
-        const series = await this.orm.Series.findOne(id);
+        const series = await this.orm.Series.findOneByID(id);
         if (series) {
-            this.seriesCache.push({ series, artist: await series.artist });
+            this.seriesCache.push({ series, artist: await series.artist.getOrFail() });
             if (changes && !changes.series.added.has(series)) {
                 changes.series.updated.add(series);
             }
@@ -59,7 +60,7 @@ class MetaMergerCache {
         if (series) {
             return series;
         }
-        series = await this.orm.Series.findOne({ $and: [{ name: { $eq: trackInfo.tag.series } }, { artist: artist.id }] });
+        series = await this.orm.Series.findOne({ where: { name: trackInfo.tag.series, artist: artist.id } });
         if (!series) {
             series = await this.buildSeries(trackInfo, artist);
             this.changes.series.added.add(series);
@@ -67,7 +68,7 @@ class MetaMergerCache {
         else {
             this.changes.series.updated.add(series);
         }
-        series.albums.add(album);
+        await series.albums.add(album);
         this.seriesCache.push({ series, artist });
         return series;
     }
@@ -76,31 +77,26 @@ class MetaMergerCache {
             slug: getAlbumSlug(trackInfo),
             name: getAlbumName(trackInfo),
             albumType: trackInfo.folder.albumType || enums_1.AlbumType.unknown,
-            artist: artist,
             mbArtistID: trackInfo.tag.mbAlbumArtistID || trackInfo.tag.mbArtistID,
             mbReleaseID: trackInfo.tag.mbReleaseID,
             seriesNr: trackInfo.tag.seriesNr,
             year: trackInfo.tag.year,
             duration: trackInfo.tag.mediaDuration || 0
         });
-        album.folders.add(trackInfo.folder);
-        album.roots.add(this.root);
-        this.orm.orm.em.persistLater(album);
+        await album.artist.set(artist);
+        await album.folders.add(trackInfo.folder);
+        await album.roots.add(this.root);
+        this.orm.Album.persistLater(album);
         return album;
     }
     async findAlbumInDB(trackInfo, artist) {
         if (trackInfo.tag.mbReleaseID) {
-            const album = await this.orm.Album.findOne({ mbReleaseID: { $eq: trackInfo.tag.mbReleaseID } });
+            const album = await this.orm.Album.findOne({ where: { mbReleaseID: trackInfo.tag.mbReleaseID } });
             if (album) {
                 return album;
             }
         }
-        return await this.orm.Album.findOne({
-            $and: [
-                { slug: { $eq: getAlbumSlug(trackInfo) } },
-                { artist: artist.id }
-            ]
-        }) || undefined;
+        return await this.orm.Album.findOne({ where: { slug: getAlbumSlug(trackInfo), artist: artist.id } }) || undefined;
     }
     async findAlbumInCache(trackInfo, artist) {
         if (trackInfo.tag.mbReleaseID) {
@@ -118,9 +114,9 @@ class MetaMergerCache {
         if (cache === null || cache === void 0 ? void 0 : cache.album) {
             return cache.album;
         }
-        const album = await this.orm.Album.findOne(id);
+        const album = await this.orm.Album.findOneByID(id);
         if (album) {
-            this.albumCache.push({ album, artist: await album.artist });
+            this.albumCache.push({ album, artist: await album.artist.getOrFail() });
             this.changes.albums.updated.add(album);
         }
         return album || undefined;
@@ -144,13 +140,13 @@ class MetaMergerCache {
     async findArtistInDB(trackInfo, albumArtist) {
         const mbArtistID = albumArtist ? (trackInfo.tag.mbAlbumArtistID || trackInfo.tag.mbArtistID) : trackInfo.tag.mbArtistID;
         if (mbArtistID) {
-            const artist = await this.orm.Artist.findOne({ mbArtistID: { $eq: mbArtistID } });
+            const artist = await this.orm.Artist.findOne({ where: { mbArtistID } });
             if (artist) {
                 return artist;
             }
         }
         const slug = slug_1.slugify((albumArtist ? (trackInfo.tag.albumArtist || trackInfo.tag.artist) : trackInfo.tag.artist) || consts_1.cUnknownArtist);
-        return await this.orm.Artist.findOne({ slug: { $eq: slug } }) || undefined;
+        return (await this.orm.Artist.findOne({ where: { slug } })) || undefined;
     }
     async findArtistInCache(trackInfo, albumArtist) {
         let aa = { mbArtistID: trackInfo.tag.mbArtistID, name: trackInfo.tag.artist };
@@ -177,7 +173,7 @@ class MetaMergerCache {
         if (artistCache) {
             return artistCache.artist;
         }
-        const artist = await this.orm.Artist.findOne(id);
+        const artist = await this.orm.Artist.findOneByID(id);
         if (artist) {
             this.artistCache.push({ artist, slugs: [artist.slug] });
             this.changes.artists.updated.add(artist);
@@ -189,7 +185,7 @@ class MetaMergerCache {
         if (artistCache) {
             return artistCache.artist;
         }
-        const artist = await this.orm.Artist.findOne({ mbArtistID: { $eq: consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID } });
+        const artist = await this.orm.Artist.findOne({ where: { mbArtistID: consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID } });
         if (artist) {
             this.changes.artists.updated.add(artist);
             this.artistCache.push({ artist, slugs: [artist.slug] });
@@ -209,10 +205,10 @@ class MetaMergerCache {
             mbArtistID: aa.mbArtistID,
             albumTypes: trackInfo.folder.albumType ? [trackInfo.folder.albumType] : [],
         });
-        artist.roots.add(this.root);
-        artist.folders.add(trackInfo.folder);
-        artist.tracks.add(trackInfo.track);
-        this.orm.orm.em.persistLater(artist);
+        await artist.roots.add(this.root);
+        await artist.folders.add(trackInfo.folder);
+        await artist.tracks.add(trackInfo.track);
+        this.orm.Artist.persistLater(artist);
         return artist;
     }
     async findOrCreateCompilationArtist() {
@@ -227,7 +223,7 @@ class MetaMergerCache {
             });
             this.changes.artists.added.add(artist);
             this.artistCache.push({ artist, slugs: [artist.slug] });
-            this.orm.orm.em.persistLater(artist);
+            this.orm.Artist.persistLater(artist);
             return artist;
         }
         else if (!this.changes.artists.added.has(artist)) {

@@ -1,4 +1,10 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -9,6 +15,7 @@ const path_1 = __importDefault(require("path"));
 const fs_utils_1 = require("../../../../utils/fs-utils");
 const artwork_type_1 = require("../../../../utils/artwork-type");
 const base_1 = require("./base");
+const typescript_ioc_1 = require("typescript-ioc");
 exports.FolderTypeImageName = {
     unknown: 'folder',
     artist: 'artist',
@@ -17,7 +24,7 @@ exports.FolderTypeImageName = {
     multialbum: 'cover',
     extras: 'folder'
 };
-class ArtworkWorker extends base_1.BaseWorker {
+let ArtworkWorker = class ArtworkWorker extends base_1.BaseWorker {
     async updateArtworkImageFile(artwork) {
         const destFile = path_1.default.join(artwork.path, artwork.name);
         const stat = await fs_extra_1.default.stat(destFile);
@@ -30,16 +37,16 @@ class ArtworkWorker extends base_1.BaseWorker {
         artwork.height = info === null || info === void 0 ? void 0 : info.height;
         artwork.width = info === null || info === void 0 ? void 0 : info.width;
     }
-    async rename(artworkID, newName, changes) {
-        const artwork = await this.orm.Artwork.findOne(artworkID);
+    async rename(orm, artworkID, newName, changes) {
+        const artwork = await orm.Artwork.findOneByID(artworkID);
         if (!artwork) {
             return Promise.reject(Error(`Artwork not found`));
         }
         artwork.name = await this.renameFile(artwork.path, artwork.name, newName);
         await this.updateArtworkImageFile(artwork);
-        this.orm.orm.em.persistLater(artwork);
+        orm.Artwork.persistLater(artwork);
         changes.artworks.updated.add(artwork);
-        changes.folders.updated.add(artwork.folder);
+        changes.folders.updated.add(await artwork.folder.get());
     }
     getArtworkName(folder, types) {
         let name = types.sort((a, b) => a.localeCompare(b)).join('-');
@@ -66,11 +73,11 @@ class ArtworkWorker extends base_1.BaseWorker {
         }
         return dest;
     }
-    async create(folderID, artworkFilename, types, changes) {
+    async create(orm, folderID, artworkFilename, types, changes) {
         if (!artworkFilename || !(await fs_extra_1.default.pathExists(artworkFilename))) {
             return Promise.reject(Error('Invalid Artwork File Name'));
         }
-        const folder = await this.orm.Folder.findOne(folderID);
+        const folder = await orm.Folder.findOneByID(folderID);
         if (!folder) {
             return Promise.reject(Error(`Folder not found`));
         }
@@ -82,22 +89,22 @@ class ArtworkWorker extends base_1.BaseWorker {
         catch (e) {
             return Promise.reject(Error(`Importing artwork failed`));
         }
-        const artwork = this.orm.Artwork.create({
+        const artwork = orm.Artwork.create({
             name: dest,
             path: folder.path,
-            types,
-            folder
+            types
         });
+        await artwork.folder.set(folder);
         changes.folders.updated.add(folder);
         changes.artworks.added.add(artwork);
         await this.updateArtworkImageFile(artwork);
-        this.orm.orm.em.persistLater(artwork);
+        orm.Artwork.persistLater(artwork);
     }
-    async replace(artworkID, artworkFilename, changes) {
+    async replace(orm, artworkID, artworkFilename, changes) {
         if (!artworkFilename || !(await fs_extra_1.default.pathExists(artworkFilename))) {
             return Promise.reject(Error('Invalid Artwork File Name'));
         }
-        const artwork = await this.orm.Artwork.findOne(artworkID);
+        const artwork = await orm.Artwork.findOneByID(artworkID);
         if (!artwork) {
             return Promise.reject(Error(`Artwork not found`));
         }
@@ -117,36 +124,34 @@ class ArtworkWorker extends base_1.BaseWorker {
         }
         await this.updateArtworkImageFile(artwork);
         changes.artworks.updated.add(artwork);
-        this.orm.orm.em.persistLater(artwork);
+        orm.Artwork.persistLater(artwork);
     }
-    async download(folderID, artworkURL, types, changes) {
-        const folder = await this.orm.Folder.findOne(folderID);
-        if (!folder) {
-            return Promise.reject(Error(`Folder not found`));
-        }
+    async download(orm, folderID, artworkURL, types, changes) {
+        const folder = await orm.Folder.findOneOrFailByID(folderID);
         const name = types.sort((a, b) => a.localeCompare(b)).join('-');
         const filename = await this.imageModule.storeImage(folder.path, name, artworkURL);
-        const artwork = this.orm.Artwork.create({ name: filename, path: folder.path, folder });
+        const artwork = orm.Artwork.create({ name: filename, path: folder.path });
+        await artwork.folder.set(folder);
         changes.folders.updated.add(folder);
         changes.artworks.added.add(artwork);
         await this.updateArtworkImageFile(artwork);
-        this.orm.orm.em.persistLater(artwork);
+        orm.Artwork.persistLater(artwork);
     }
-    async remove(root, artworkID, changes) {
-        const artwork = await this.orm.Artwork.findOne(artworkID);
+    async remove(orm, root, artworkID, changes) {
+        const artwork = await orm.Artwork.findOneByID(artworkID);
         if (!artwork) {
             return Promise.reject(Error(`Artwork not found`));
         }
         await this.moveToTrash(root, artwork.path, artwork.name);
         changes.artworks.removed.add(artwork);
-        changes.folders.updated.add(artwork.folder);
+        changes.folders.updated.add(await artwork.folder.get());
     }
-    async move(artworkIDs, newParentID, changes) {
-        const artworks = await this.orm.Artwork.find(artworkIDs);
+    async move(orm, artworkIDs, newParentID, changes) {
+        const artworks = await orm.Artwork.findByIDs(artworkIDs);
         if (artworks.length !== artworkIDs.length) {
             return Promise.reject(Error('Artwork not found'));
         }
-        const newParent = await this.orm.Folder.findOne(newParentID);
+        const newParent = await orm.Folder.findOneByID(newParentID);
         if (!newParent) {
             return Promise.reject(Error('Destination Folder not found'));
         }
@@ -158,16 +163,19 @@ class ArtworkWorker extends base_1.BaseWorker {
         changes.folders.updated.add(newParent);
         for (const artwork of artworks) {
             changes.artworks.updated.add(artwork);
-            const oldParent = artwork.folder;
-            if (oldParent.id !== newParentID) {
+            const oldParent = await artwork.folder.get();
+            if ((oldParent === null || oldParent === void 0 ? void 0 : oldParent.id) !== newParentID) {
                 changes.folders.updated.add(oldParent);
                 await fs_extra_1.default.move(path_1.default.join(artwork.path, artwork.name), path_1.default.join(newParent.path, artwork.name));
                 artwork.path = fs_utils_1.ensureTrailingPathSeparator(newParent.path);
-                artwork.folder = newParent;
-                this.orm.orm.em.persistLater(artwork);
+                await artwork.folder.set(newParent);
+                orm.Artwork.persistLater(artwork);
             }
         }
     }
-}
+};
+ArtworkWorker = __decorate([
+    typescript_ioc_1.InRequestScope
+], ArtworkWorker);
 exports.ArtworkWorker = ArtworkWorker;
 //# sourceMappingURL=artwork.js.map

@@ -5,8 +5,8 @@ class MetadataServiceTopTracks {
     constructor(service) {
         this.service = service;
     }
-    async byArtistName(artist, page) {
-        const result = await this.service.lastFMTopTracksArtist(artist);
+    async byArtistName(orm, artist, page) {
+        const result = await this.service.lastFMTopTracksArtist(orm, artist);
         if (result && result.toptracks && result.toptracks.track) {
             const songs = result.toptracks.track.map(t => {
                 return {
@@ -16,8 +16,8 @@ class MetadataServiceTopTracks {
                     url: t.url
                 };
             });
-            const ids = await this.service.similarTracks.findSongTrackIDs(songs);
-            return this.service.orm.Track.search(ids, undefined, page);
+            const ids = await this.service.similarTracks.findSongTrackIDs(orm, songs);
+            return orm.Track.search({ where: { id: ids }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
         }
         return { items: [], ...(page || {}), total: 0 };
     }

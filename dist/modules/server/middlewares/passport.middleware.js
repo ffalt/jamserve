@@ -20,13 +20,13 @@ function usePassPortMiddleWare(router, engine) {
         done(null, (user === null || user === void 0 ? void 0 : user.id) || '_invalid_');
     });
     passport_1.default.deserializeUser((id, done) => {
-        engine.userService.findByID(id).then(user => done(null, user ? user : false)).catch(done);
+        engine.userService.findByID(engine.orm.fork(), id).then(user => done(null, user ? user : false)).catch(done);
     });
     passport_1.default.use('local', new passport_local_1.default.Strategy({ usernameField: 'username', passwordField: 'password' }, (username, password, done) => {
-        engine.userService.auth(username, password).then(user => done(null, user ? user : false)).catch(done);
+        engine.userService.auth(engine.orm.fork(), username, password).then(user => done(null, user ? user : false)).catch(done);
     }));
     const resolvePayload = (jwtPayload, done) => {
-        engine.userService.findByID(jwtPayload.id)
+        engine.userService.findByID(engine.orm.fork(), jwtPayload.id)
             .then(user => done(null, user ? user : false, jwtPayload))
             .catch(done);
     };

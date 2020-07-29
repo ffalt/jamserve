@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrackController = void 0;
 const track_model_1 = require("./track.model");
-const user_1 = require("../user/user");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const base_controller_1 = require("../base/base.controller");
@@ -26,26 +25,26 @@ const base_args_1 = require("../base/base.args");
 const admin_1 = require("../admin/admin");
 const io_service_1 = require("../../modules/engine/services/io.service");
 let TrackController = class TrackController extends base_controller_1.BaseController {
-    async id(id, trackArgs, user) {
-        return this.transform.track(await this.orm.Track.oneOrFail(id), trackArgs, user);
+    async id(id, trackArgs, { orm, user }) {
+        return this.transform.track(orm, await orm.Track.oneOrFailByID(id), trackArgs, user);
     }
-    async search(page, trackArgs, filter, order, list, user) {
+    async search(page, trackArgs, filter, order, list, { orm, user }) {
         if (list.list) {
-            return await this.orm.Track.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.track(o, trackArgs, user));
+            return await orm.Track.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.track(orm, o, trackArgs, user));
         }
-        return await this.orm.Track.searchTransformFilter(filter, [order], page, user, o => this.transform.track(o, trackArgs, user));
+        return await orm.Track.searchTransformFilter(filter, [order], page, user, o => this.transform.track(orm, o, trackArgs, user));
     }
-    async similar(id, page, trackArgs, user) {
-        const track = await this.orm.Track.oneOrFail(id);
-        const result = await this.metadata.similarTracks.byTrack(track, page);
-        return { ...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(o, trackArgs, user))) };
+    async similar(id, page, trackArgs, { orm, user }) {
+        const track = await orm.Track.oneOrFailByID(id);
+        const result = await this.metadata.similarTracks.byTrack(orm, track, page);
+        return { ...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user))) };
     }
-    async lyrics(id) {
-        const track = await this.orm.Track.oneOrFail(id);
-        return this.metadata.lyricsByTrack(track);
+    async lyrics(id, { orm }) {
+        const track = await orm.Track.oneOrFailByID(id);
+        return this.metadata.lyricsByTrack(orm, track);
     }
-    async rawTagGet(filter, user) {
-        const tracks = await this.orm.Track.findFilter(filter, undefined, user);
+    async rawTagGet(filter, { orm, user }) {
+        const tracks = await orm.Track.findFilter(filter, [], {}, user);
         const result = [];
         for (const track of tracks) {
             const raw = await this.trackService.getRawTag(track) || {};
@@ -53,37 +52,37 @@ let TrackController = class TrackController extends base_controller_1.BaseContro
         }
         return result;
     }
-    async health(mediaHealthArgs, filter, trackArgs, user) {
-        const tracks = await this.orm.Track.findFilter(filter, undefined, user);
+    async health(mediaHealthArgs, filter, trackArgs, { orm, user }) {
+        const tracks = await orm.Track.findFilter(filter, [], {}, user);
         const list = await this.trackService.health(tracks, mediaHealthArgs.healthMedia);
         const result = [];
         for (const item of list) {
             result.push({
-                track: await this.transform.trackBase(item.track, trackArgs, user),
+                track: await this.transform.trackBase(orm, item.track, trackArgs, user),
                 health: item.health
             });
         }
         return result;
     }
-    async rename(args) {
-        const track = await this.orm.Track.oneOrFail(args.id);
-        return await this.ioService.renameTrack(args.id, args.name, track.root.id);
+    async rename(args, { orm }) {
+        const track = await orm.Track.oneOrFailByID(args.id);
+        return await this.ioService.renameTrack(args.id, args.name, track.root.idOrFail());
     }
-    async move(args) {
-        const folder = await this.orm.Folder.oneOrFail(args.folderID);
-        return await this.ioService.moveTracks(args.ids, args.folderID, folder.root.id);
+    async move(args, { orm }) {
+        const folder = await orm.Folder.oneOrFailByID(args.folderID);
+        return await this.ioService.moveTracks(args.ids, args.folderID, folder.root.idOrFail());
     }
-    async remove(id) {
-        const track = await this.orm.Track.oneOrFail(id);
-        return await this.ioService.removeTrack(id, track.root.id);
+    async remove(id, { orm }) {
+        const track = await orm.Track.oneOrFailByID(id);
+        return await this.ioService.removeTrack(id, track.root.idOrFail());
     }
-    async fix(args) {
-        const track = await this.orm.Track.oneOrFail(args.id);
-        return await this.ioService.fixTrack(args.id, args.fixID, track.root.id);
+    async fix(args, { orm }) {
+        const track = await orm.Track.oneOrFailByID(args.id);
+        return await this.ioService.fixTrack(args.id, args.fixID, track.root.idOrFail());
     }
-    async rawTagSet(args) {
-        const track = await this.orm.Track.oneOrFail(args.id);
-        return await this.ioService.writeRawTag(args.id, args.tag, track.root.id);
+    async rawTagSet(args, { orm }) {
+        const track = await orm.Track.oneOrFailByID(args.id);
+        return await this.ioService.writeRawTag(args.id, args.tag, track.root.idOrFail());
     }
 };
 __decorate([
@@ -98,10 +97,9 @@ __decorate([
     rest_1.Get('/id', () => track_model_1.Track, { description: 'Get a Track by Id', summary: 'Get Track' }),
     __param(0, rest_1.QueryParam('id', { description: 'Track Id', isID: true })),
     __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.CurrentUser()),
+    __param(2, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, track_args_1.IncludesTrackArgs,
-        user_1.User]),
+    __metadata("design:paramtypes", [String, track_args_1.IncludesTrackArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "id", null);
 __decorate([
@@ -111,14 +109,13 @@ __decorate([
     __param(2, rest_1.QueryParams()),
     __param(3, rest_1.QueryParams()),
     __param(4, rest_1.QueryParams()),
-    __param(5, rest_1.CurrentUser()),
+    __param(5, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [base_args_1.PageArgs,
         track_args_1.IncludesTrackArgs,
         track_args_1.TrackFilterArgs,
         track_args_1.TrackOrderArgs,
-        base_args_1.ListArgs,
-        user_1.User]),
+        base_args_1.ListArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "search", null);
 __decorate([
@@ -126,27 +123,26 @@ __decorate([
     __param(0, rest_1.QueryParam('id', { description: 'Track Id', isID: true })),
     __param(1, rest_1.QueryParams()),
     __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.CurrentUser()),
+    __param(3, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, base_args_1.PageArgs,
-        track_args_1.IncludesTrackArgs,
-        user_1.User]),
+        track_args_1.IncludesTrackArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "similar", null);
 __decorate([
     rest_1.Get('/lyrics', () => track_model_1.TrackLyrics, { description: 'Get Lyrics for a Track by Id (External Service or Media File)', summary: 'Get Lyrics' }),
     __param(0, rest_1.QueryParam('id', { description: 'Track Id', isID: true })),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "lyrics", null);
 __decorate([
     rest_1.Get('/rawTag/get', () => [tag_model_1.MediaIDTagRaw], { description: 'Get Raw Tag (eg. id3/vorbis)', summary: 'Get Raw Tag' }),
     __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.CurrentUser()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.TrackFilterArgs,
-        user_1.User]),
+    __metadata("design:paramtypes", [track_args_1.TrackFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "rawTagGet", null);
 __decorate([
@@ -154,50 +150,55 @@ __decorate([
     __param(0, rest_1.QueryParams()),
     __param(1, rest_1.QueryParams()),
     __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.CurrentUser()),
+    __param(3, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [track_args_1.MediaHealthArgs,
         track_args_1.TrackFilterArgs,
-        track_args_1.IncludesTrackArgs,
-        user_1.User]),
+        track_args_1.IncludesTrackArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "health", null);
 __decorate([
     rest_1.Post('/rename', () => admin_1.AdminChangeQueueInfo, { description: 'Rename a track', roles: [enums_1.UserRole.admin], summary: 'Rename Track' }),
     __param(0, rest_1.BodyParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.TrackRenameArgs]),
+    __metadata("design:paramtypes", [track_args_1.TrackRenameArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "rename", null);
 __decorate([
     rest_1.Post('/move', () => admin_1.AdminChangeQueueInfo, { description: 'Move Tracks', roles: [enums_1.UserRole.admin] }),
     __param(0, rest_1.BodyParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.TrackMoveArgs]),
+    __metadata("design:paramtypes", [track_args_1.TrackMoveArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "move", null);
 __decorate([
     rest_1.Post('/remove', () => admin_1.AdminChangeQueueInfo, { description: 'Remove a Track', roles: [enums_1.UserRole.admin], summary: 'Remove Track' }),
     __param(0, rest_1.BodyParam('id')),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "remove", null);
 __decorate([
     rest_1.Post('/fix', () => admin_1.AdminChangeQueueInfo, { description: 'Fix Track by Health Hint Id', roles: [enums_1.UserRole.admin], summary: 'Fix Track' }),
     __param(0, rest_1.BodyParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.TrackFixArgs]),
+    __metadata("design:paramtypes", [track_args_1.TrackFixArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "fix", null);
 __decorate([
     rest_1.Post('/rawTag/set', () => admin_1.AdminChangeQueueInfo, { description: 'Write a Raw Rag to a Track by Track Id', roles: [enums_1.UserRole.admin], summary: 'Set Raw Tag' }),
     __param(0, rest_1.BodyParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.RawTagUpdateArgs]),
+    __metadata("design:paramtypes", [track_args_1.RawTagUpdateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "rawTagSet", null);
 TrackController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/track', { tags: ['Track'], roles: [enums_1.UserRole.stream] })
 ], TrackController);
 exports.TrackController = TrackController;

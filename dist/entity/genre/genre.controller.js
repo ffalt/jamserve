@@ -22,12 +22,12 @@ const base_args_1 = require("../base/base.args");
 const base_utils_1 = require("../base/base.utils");
 const genre_args_1 = require("./genre.args");
 let GenreController = class GenreController {
-    async list(page, filter) {
-        const genres = await this.genreService.getGenres(filter.rootID);
+    async list(page, filter, { orm }) {
+        const genres = await this.genreService.getGenres(orm, filter.rootID);
         return base_utils_1.paginate(genres, page);
     }
-    async index() {
-        return await this.genreService.index();
+    async index({ orm }) {
+        return await this.genreService.index(orm);
     }
 };
 __decorate([
@@ -38,18 +38,21 @@ __decorate([
     decorators_1.Get('/list', () => genre_model_1.GenrePage, { description: 'Get a list of genres found in the library', summary: 'Get Genres' }),
     __param(0, decorators_1.QueryParams()),
     __param(1, decorators_1.QueryParams()),
+    __param(2, decorators_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [base_args_1.PageArgs,
-        genre_args_1.GenreFilterArgs]),
+        genre_args_1.GenreFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "list", null);
 __decorate([
     decorators_1.Get('/index', () => genre_model_1.GenreIndex, { description: 'Get the Navigation Index for Genres', summary: 'Get Genre Index' }),
+    __param(0, decorators_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "index", null);
 GenreController = __decorate([
+    typescript_ioc_1.InRequestScope,
     decorators_1.Controller('/genre', { tags: ['Genres'], roles: [enums_1.UserRole.stream] })
 ], GenreController);
 exports.GenreController = GenreController;

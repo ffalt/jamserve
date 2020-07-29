@@ -13,10 +13,11 @@ exports.RootService = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
 const folder_service_1 = require("../folder/folder.service");
 class RootService {
-    async getImage(root, size, format) {
-        const folders = root.folders.getItems().sort((a, b) => b.level - a.level);
-        if (folders.length > 0) {
-            return this.folderService.getImage(folders[0], size, format);
+    async getImage(orm, root, size, format) {
+        const folders = await root.folders.getItems();
+        const folder = folders.sort((a, b) => b.level - a.level)[0];
+        if (folder) {
+            return this.folderService.getImage(orm, folder, size, format);
         }
     }
 }

@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EpisodeController = void 0;
 const episode_model_1 = require("./episode.model");
-const user_1 = require("../user/user");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const base_controller_1 = require("../base/base.controller");
@@ -26,22 +25,22 @@ const episode_service_1 = require("./episode.service");
 const logger_1 = require("../../utils/logger");
 const log = logger_1.logger('EpisodeController');
 let EpisodeController = class EpisodeController extends base_controller_1.BaseController {
-    async id(id, episodeArgs, episodeParentArgs, podcastArgs, user) {
-        return this.transform.episode(await this.orm.Episode.oneOrFail(id), episodeArgs, episodeParentArgs, podcastArgs, user);
+    async id(id, episodeArgs, episodeParentArgs, podcastArgs, { orm, user }) {
+        return this.transform.episode(orm, await orm.Episode.oneOrFailByID(id), episodeArgs, episodeParentArgs, podcastArgs, user);
     }
-    async search(page, episodeArgs, episodeParentArgs, podcastArgs, filter, order, list, user) {
+    async search(page, episodeArgs, episodeParentArgs, podcastArgs, filter, order, list, { orm, user }) {
         if (list.list) {
-            return await this.orm.Episode.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.episode(o, episodeArgs, episodeParentArgs, podcastArgs, user));
+            return await orm.Episode.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
         }
-        return await this.orm.Episode.searchTransformFilter(filter, [order], page, user, o => this.transform.episode(o, episodeArgs, episodeParentArgs, podcastArgs, user));
+        return await orm.Episode.searchTransformFilter(filter, [order], page, user, o => this.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
     }
-    async status(id) {
-        return this.transform.episodeStatus(await this.orm.Episode.oneOrFail(id));
+    async status(id, { orm, user }) {
+        return this.transform.episodeStatus(await orm.Episode.oneOrFailByID(id));
     }
-    async retrieve(id, user) {
-        const episode = await this.orm.Episode.oneOrFail(id);
+    async retrieve(id, { orm }) {
+        const episode = await orm.Episode.oneOrFailByID(id);
         if (!episode.path) {
-            this.episodeService.downloadEpisode(episode).catch(e => log.error(e));
+            this.episodeService.downloadEpisode(orm, episode).catch(e => log.error(e));
         }
     }
 };
@@ -55,12 +54,11 @@ __decorate([
     __param(1, rest_1.QueryParams()),
     __param(2, rest_1.QueryParams()),
     __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.CurrentUser()),
+    __param(4, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, episode_args_1.IncludesEpisodeArgs,
         episode_args_1.IncludesEpisodeParentArgs,
-        podcast_args_1.IncludesPodcastArgs,
-        user_1.User]),
+        podcast_args_1.IncludesPodcastArgs, Object]),
     __metadata("design:returntype", Promise)
 ], EpisodeController.prototype, "id", null);
 __decorate([
@@ -72,7 +70,7 @@ __decorate([
     __param(4, rest_1.QueryParams()),
     __param(5, rest_1.QueryParams()),
     __param(6, rest_1.QueryParams()),
-    __param(7, rest_1.CurrentUser()),
+    __param(7, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [base_args_1.PageArgs,
         episode_args_1.IncludesEpisodeArgs,
@@ -80,26 +78,27 @@ __decorate([
         podcast_args_1.IncludesPodcastArgs,
         episode_args_1.EpisodeFilterArgs,
         episode_args_1.EpisodeOrderArgs,
-        base_args_1.ListArgs,
-        user_1.User]),
+        base_args_1.ListArgs, Object]),
     __metadata("design:returntype", Promise)
 ], EpisodeController.prototype, "search", null);
 __decorate([
     rest_1.Get('/status', () => episode_model_1.EpisodeUpdateStatus, { description: 'Get a Episode Status by Id', summary: 'Get Status' }),
     __param(0, rest_1.QueryParam('id', { description: 'Episode Id', isID: true })),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], EpisodeController.prototype, "status", null);
 __decorate([
     rest_1.Post('/retrieve', { description: 'Retrieve a Podcast Episode Media File', roles: [enums_1.UserRole.podcast], summary: 'Retrieve Episode' }),
     __param(0, rest_1.BodyParam('id', { description: 'Episode Id', isID: true })),
-    __param(1, rest_1.CurrentUser()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, user_1.User]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], EpisodeController.prototype, "retrieve", null);
 EpisodeController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/episode', { tags: ['Episode'], roles: [enums_1.UserRole.stream] })
 ], EpisodeController);
 exports.EpisodeController = EpisodeController;

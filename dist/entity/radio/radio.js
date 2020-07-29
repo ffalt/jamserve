@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RadioIndexQL = exports.RadioIndexGroupQL = exports.RadioPageQL = exports.RadioQL = exports.Radio = void 0;
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 const state_1 = require("../state/state");
 let Radio = class Radio extends base_1.Base {
@@ -22,27 +22,27 @@ let Radio = class Radio extends base_1.Base {
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Radio.prototype, "name", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Radio.prototype, "url", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Radio.prototype, "homepage", void 0);
 __decorate([
     type_graphql_1.Field(() => Boolean),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => Boolean),
     __metadata("design:type", Boolean)
 ], Radio.prototype, "disabled", void 0);
 Radio = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Radio);
 exports.Radio = Radio;
 let RadioQL = class RadioQL extends Radio {

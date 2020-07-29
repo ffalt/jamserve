@@ -10,11 +10,12 @@ const dir_name_1 = require("../../../utils/dir-name");
 const path_1 = __importDefault(require("path"));
 const fs_utils_1 = require("../../../utils/fs-utils");
 const artwork_type_1 = require("../../../utils/artwork-type");
+const merge_scan_1 = require("./merge-scan");
 const log = logger_1.logger('Worker.Scan');
 class WorkerScan {
-    constructor(orm, root, audioModule, imageModule, changes) {
+    constructor(orm, rootID, audioModule, imageModule, changes) {
         this.orm = orm;
-        this.root = root;
+        this.rootID = rootID;
         this.audioModule = audioModule;
         this.imageModule = imageModule;
         this.changes = changes;
@@ -34,7 +35,8 @@ class WorkerScan {
     async buildArtwork(file, folder) {
         log.info('New Artwork', file.path);
         const name = path_1.default.basename(file.path);
-        const artwork = this.orm.Artwork.create({ name, path: folder.path, folder });
+        const artwork = this.orm.Artwork.create({ name, path: folder.path });
+        await artwork.folder.set(folder);
         await this.setArtworkValues(file, artwork);
         this.changes.artworks.added.add(artwork);
         return artwork;
@@ -44,38 +46,56 @@ class WorkerScan {
         await this.setArtworkValues(file, artwork);
         this.changes.artworks.updated.add(artwork);
     }
+    async buildTrackMatch(track) {
+        const tag = await track.tag.get();
+        return {
+            artist: (tag === null || tag === void 0 ? void 0 : tag.albumArtist) || (tag === null || tag === void 0 ? void 0 : tag.artist),
+            artistSort: (tag === null || tag === void 0 ? void 0 : tag.albumArtistSort) || (tag === null || tag === void 0 ? void 0 : tag.artistSort),
+            genres: tag === null || tag === void 0 ? void 0 : tag.genres,
+            album: tag === null || tag === void 0 ? void 0 : tag.album,
+            series: tag === null || tag === void 0 ? void 0 : tag.series,
+            year: tag === null || tag === void 0 ? void 0 : tag.year,
+            trackTotal: tag === null || tag === void 0 ? void 0 : tag.trackTotal,
+            discTotal: tag === null || tag === void 0 ? void 0 : tag.discTotal,
+            disc: tag === null || tag === void 0 ? void 0 : tag.disc,
+            track: tag === null || tag === void 0 ? void 0 : tag.trackNr,
+            mbArtistID: tag === null || tag === void 0 ? void 0 : tag.mbArtistID,
+            mbReleaseID: tag === null || tag === void 0 ? void 0 : tag.mbReleaseID,
+            mbAlbumType: `${(tag === null || tag === void 0 ? void 0 : tag.mbAlbumType) || ''}/${(tag === null || tag === void 0 ? void 0 : tag.mbAlbumStatus) || ''}`,
+        };
+    }
     async setTrackValues(file, track) {
         const data = await this.audioModule.read(file.path);
         const tag = this.orm.Tag.create(data);
-        this.orm.orm.em.persistLater(tag);
-        const oldTag = await track.tag;
+        this.orm.Tag.persistLater(tag);
+        const oldTag = await track.tag.get();
         if (oldTag) {
-            this.orm.orm.em.removeLater(oldTag);
+            this.orm.Tag.removeLater(oldTag);
         }
-        track.tag = tag;
+        await track.tag.set(tag);
         track.fileSize = file.size;
         track.statCreated = file.ctime;
         track.statModified = file.mtime;
-        this.orm.orm.em.persistLater(track);
+        this.orm.Track.persistLater(track);
+        return this.buildTrackMatch(track);
     }
     async buildTrack(file, parent) {
         log.info('New Track', file.path);
         const track = this.orm.Track.create({
             name: fs_utils_1.basenameStripExt(file.path),
             fileName: path_1.default.basename(file.path),
-            path: fs_utils_1.ensureTrailingPathSeparator(path_1.default.dirname(file.path)),
-            folder: parent,
-            root: this.root
+            path: fs_utils_1.ensureTrailingPathSeparator(path_1.default.dirname(file.path))
         });
-        await this.setTrackValues(file, track);
+        await track.folder.set(parent);
+        await track.root.set(this.root);
         this.changes.tracks.added.add(track);
-        return track;
+        return await this.setTrackValues(file, track);
     }
     async updateTrack(file, track) {
         if (!this.changes.tracks.removed.has(track)) {
             log.info('Track has changed', file.path);
-            await this.setTrackValues(file, track);
             this.changes.tracks.updated.add(track);
+            return await this.setTrackValues(file, track);
         }
     }
     async buildFolder(dir, parent) {
@@ -88,12 +108,14 @@ class WorkerScan {
             title,
             year,
             folderType: enums_1.FolderType.unknown,
-            root: this.root,
-            parent,
             statCreated: dir.ctime,
             statModified: dir.mtime
         });
-        this.orm.orm.em.persistLater(folder);
+        await folder.root.set(this.root);
+        if (parent) {
+            await folder.parent.set(parent);
+        }
+        this.orm.Folder.persistLater(folder);
         return folder;
     }
     async buildNode(dir, parent) {
@@ -104,7 +126,7 @@ class WorkerScan {
             folder,
             children: [],
             tracks: [],
-            artworks: [],
+            artworksCount: 0,
             changed: true
         };
         for (const subDir of dir.directories) {
@@ -115,8 +137,13 @@ class WorkerScan {
                 result.tracks.push(await this.buildTrack(file, folder));
             }
             else if (file.type === enums_1.FileTyp.image) {
-                result.artworks.push(await this.buildArtwork(file, folder));
+                result.artworksCount += 1;
+                await this.buildArtwork(file, folder);
             }
+        }
+        if (this.orm.em.changesCount() > 1000) {
+            log.debug('Syncing Track/Artwork Changes to DB');
+            await this.orm.em.flush();
         }
         return result;
     }
@@ -136,7 +163,7 @@ class WorkerScan {
             folder,
             children: [],
             tracks: [],
-            artworks: [],
+            artworksCount: 0,
             changed: false
         };
         await this.scanSubfolders(folder, dir, result);
@@ -145,8 +172,7 @@ class WorkerScan {
         return result;
     }
     async scanSubfolders(folder, dir, result) {
-        await this.orm.Folder.populate(folder, 'children');
-        const folders = folder.children.getItems();
+        const folders = await folder.children.getItems();
         for (const subDir of dir.directories) {
             if (subDir.path !== folder.path) {
                 const subFolder = folders.find(f => f.path === subDir.path);
@@ -169,14 +195,13 @@ class WorkerScan {
     async scanArtworks(dir, folder, result) {
         const scanArtworks = dir.files.filter(f => f.type === enums_1.FileTyp.image);
         const foundScanArtworks = [];
-        await this.orm.Folder.populate(folder, 'artworks');
-        const artworks = folder.artworks.getItems();
+        const artworks = await folder.artworks.getItems();
         for (const artwork of artworks) {
             const filename = path_1.default.join(artwork.path, artwork.name);
             const scanArtwork = scanArtworks.find(t => t.path == filename);
             if (scanArtwork) {
                 foundScanArtworks.push(scanArtwork);
-                result.artworks.push(artwork);
+                result.artworksCount += 1;
                 if (scanArtwork.size !== artwork.fileSize ||
                     scanArtwork.ctime !== artwork.statCreated ||
                     scanArtwork.mtime !== artwork.statModified) {
@@ -193,25 +218,30 @@ class WorkerScan {
         const newArtworks = scanArtworks.filter(t => !foundScanArtworks.includes(t));
         for (const newArtwork of newArtworks) {
             result.changed = true;
-            result.artworks.push(await this.buildArtwork(newArtwork, folder));
+            result.artworksCount += 1;
+            await this.buildArtwork(newArtwork, folder);
         }
     }
     async scanTracks(dir, folder, result) {
         const scanTracks = dir.files.filter(f => f.type === enums_1.FileTyp.audio);
         const foundScanTracks = [];
-        await this.orm.Folder.populate(folder, ['tracks', 'artworks']);
-        const tracks = folder.tracks.getItems();
+        const tracks = await folder.tracks.getItems();
         for (const track of tracks) {
             const filename = path_1.default.join(track.path, track.fileName);
             const scanTrack = scanTracks.find(t => t.path == filename);
             if (scanTrack) {
                 foundScanTracks.push(scanTrack);
-                result.tracks.push(track);
                 if (scanTrack.size !== track.fileSize ||
                     scanTrack.ctime !== track.statCreated ||
                     scanTrack.mtime !== track.statModified) {
-                    await this.updateTrack(scanTrack, track);
+                    const t = await this.updateTrack(scanTrack, track);
+                    if (t) {
+                        result.tracks.push(t);
+                    }
                     result.changed = true;
+                }
+                else {
+                    result.tracks.push(await this.buildTrackMatch(track));
                 }
             }
             else {
@@ -227,7 +257,8 @@ class WorkerScan {
         }
     }
     async match(dir) {
-        const parent = await this.orm.Folder.findOne({ path: { $eq: dir.path } });
+        this.root = await this.orm.Root.oneOrFailByID(this.rootID);
+        const parent = await this.orm.Folder.findOne({ where: { path: dir.path } });
         if (!parent) {
             const oldParent = await this.orm.Folder.findOneFilter({ rootIDs: [this.root.id], level: 0 });
             if (oldParent) {
@@ -241,7 +272,12 @@ class WorkerScan {
         else {
             rootMatch = await this.scanNode(dir, parent);
         }
-        return rootMatch;
+        if (this.orm.em.hasChanges()) {
+            log.debug('Syncing Track/Artwork Changes to DB');
+            await this.orm.em.flush();
+        }
+        const scanMerger = new merge_scan_1.WorkerMergeScan(this.orm, this.root.strategy, this.changes);
+        await scanMerger.merge(rootMatch);
     }
 }
 exports.WorkerScan = WorkerScan;

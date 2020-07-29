@@ -15,32 +15,38 @@ const episode_1 = require("../episode/episode");
 const playlist_1 = require("../playlist/playlist");
 const type_graphql_1 = require("type-graphql");
 const base_1 = require("../base/base");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 let PlaylistEntry = class PlaylistEntry extends base_1.Base {
+    constructor() {
+        super(...arguments);
+        this.playlist = new orm_1.Reference(this);
+        this.track = new orm_1.Reference(this);
+        this.episode = new orm_1.Reference(this);
+    }
 };
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT),
     __metadata("design:type", Number)
 ], PlaylistEntry.prototype, "position", void 0);
 __decorate([
     type_graphql_1.Field(() => playlist_1.PlaylistQL),
-    mikro_orm_1.ManyToOne(() => playlist_1.Playlist),
-    __metadata("design:type", playlist_1.Playlist)
+    orm_1.ManyToOne(() => playlist_1.Playlist, playlist => playlist.entries),
+    __metadata("design:type", orm_1.Reference)
 ], PlaylistEntry.prototype, "playlist", void 0);
 __decorate([
     type_graphql_1.Field(() => track_1.TrackQL),
-    mikro_orm_1.OneToOne(() => track_1.Track),
-    __metadata("design:type", track_1.Track)
+    orm_1.ManyToOne(() => track_1.Track, track => track.playlistEntries),
+    __metadata("design:type", orm_1.Reference)
 ], PlaylistEntry.prototype, "track", void 0);
 __decorate([
     type_graphql_1.Field(() => episode_1.EpisodeQL),
-    mikro_orm_1.OneToOne(() => episode_1.Episode),
-    __metadata("design:type", episode_1.Episode)
+    orm_1.ManyToOne(() => episode_1.Episode, episode => episode.playlistEntries),
+    __metadata("design:type", orm_1.Reference)
 ], PlaylistEntry.prototype, "episode", void 0);
 PlaylistEntry = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], PlaylistEntry);
 exports.PlaylistEntry = PlaylistEntry;
 let PlaylistEntryQL = class PlaylistEntryQL extends PlaylistEntry {

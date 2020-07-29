@@ -20,7 +20,6 @@ const typescript_ioc_1 = require("typescript-ioc");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const builder_1 = require("../../modules/rest/builder");
-const orm_service_1 = require("../../modules/engine/services/orm.service");
 const decorators_1 = require("../../modules/rest/decorators");
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const waveform_args_1 = require("./waveform.args");
@@ -28,8 +27,8 @@ const waveform_service_1 = require("./waveform.service");
 const waveform_model_1 = require("./waveform.model");
 const consts_1 = require("../../types/consts");
 let WaveformController = class WaveformController {
-    async json(id) {
-        const result = await this.waveformService.findInWaveformTypes(id);
+    async json(id, { orm }) {
+        const result = await orm.findInWaveformTypes(id);
         if (!result) {
             return Promise.reject(builder_1.NotFoundError());
         }
@@ -45,8 +44,8 @@ let WaveformController = class WaveformController {
         }
         return Promise.reject(Error('Error on Waveform generation'));
     }
-    async svg(args) {
-        const result = await this.waveformService.findInWaveformTypes(args.id);
+    async svg(args, { orm }) {
+        const result = await orm.findInWaveformTypes(args.id);
         if (!result) {
             return Promise.reject(builder_1.NotFoundError());
         }
@@ -59,8 +58,8 @@ let WaveformController = class WaveformController {
         }
         return Promise.reject(Error('Error on Waveform generation'));
     }
-    async waveform(id, waveformArgs) {
-        const result = await this.waveformService.findInWaveformTypes(id);
+    async waveform(id, waveformArgs, { orm }) {
+        const result = await orm.findInWaveformTypes(id);
         if (!result) {
             return Promise.reject(builder_1.NotFoundError());
         }
@@ -69,17 +68,14 @@ let WaveformController = class WaveformController {
 };
 __decorate([
     typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], WaveformController.prototype, "orm", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
     __metadata("design:type", waveform_service_1.WaveformService)
 ], WaveformController.prototype, "waveformService", void 0);
 __decorate([
     rest_1.Get('/json', () => waveform_model_1.WaveFormData, { description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON' }),
     __param(0, rest_1.QueryParam('id', { description: 'Object Id', isID: true })),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformController.prototype, "json", null);
 __decorate([
@@ -88,8 +84,9 @@ __decorate([
         responseStringMimeTypes: ['image/svg+xml']
     }),
     __param(0, decorators_1.QueryParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [waveform_args_1.WaveformSVGArgs]),
+    __metadata("design:paramtypes", [waveform_args_1.WaveformSVGArgs, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformController.prototype, "svg", null);
 __decorate([
@@ -111,11 +108,13 @@ __decorate([
     }),
     __param(0, decorators_1.PathParam('id', { description: 'Media Id', isID: true })),
     __param(1, decorators_1.PathParams()),
+    __param(2, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, waveform_args_1.WaveformArgs]),
+    __metadata("design:paramtypes", [String, waveform_args_1.WaveformArgs, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformController.prototype, "waveform", null);
 WaveformController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/waveform', { tags: ['Waveform'], roles: [enums_1.UserRole.stream] })
 ], WaveformController);
 exports.WaveformController = WaveformController;

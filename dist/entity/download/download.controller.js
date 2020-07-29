@@ -17,43 +17,18 @@ const typescript_ioc_1 = require("typescript-ioc");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const consts_1 = require("../../types/consts");
-const orm_service_1 = require("../../modules/engine/services/orm.service");
 const download_args_1 = require("./download.args");
 const download_service_1 = require("./download.service");
-const user_1 = require("../user/user");
 const description = 'Download Archive Binary [Album, Artist, Artwork, Episode, Folder, Playlist, Podcast, Series, Track]';
 let DownloadController = class DownloadController {
-    async findInDownloadTypes(id) {
-        const repos = [
-            this.orm.Album,
-            this.orm.Artist,
-            this.orm.Artwork,
-            this.orm.Episode,
-            this.orm.Folder,
-            this.orm.Playlist,
-            this.orm.Podcast,
-            this.orm.Series,
-            this.orm.Track
-        ];
-        for (const repo of repos) {
-            const obj = await repo.findOne({ id });
-            if (obj) {
-                return { obj: obj, objType: repo.objType };
-            }
-        }
-    }
-    async download(id, downloadArgs, user) {
-        const result = await this.findInDownloadTypes(id);
+    async download(id, downloadArgs, { orm, user }) {
+        const result = await orm.findInDownloadTypes(id);
         if (!result) {
             return Promise.reject(rest_1.NotFoundError());
         }
         return await this.downloadService.getObjDownload(result.obj, result.objType, downloadArgs.format, user);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], DownloadController.prototype, "orm", void 0);
 __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", download_service_1.DownloadService)
@@ -76,13 +51,13 @@ __decorate([
     }),
     __param(0, rest_1.PathParam('id', { description: 'Object Id', isID: true })),
     __param(1, rest_1.PathParams()),
-    __param(2, rest_1.CurrentUser()),
+    __param(2, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, download_args_1.DownloadArgs,
-        user_1.User]),
+    __metadata("design:paramtypes", [String, download_args_1.DownloadArgs, Object]),
     __metadata("design:returntype", Promise)
 ], DownloadController.prototype, "download", null);
 DownloadController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/download', { tags: ['Download'], roles: [enums_1.UserRole.stream] })
 ], DownloadController);
 exports.DownloadController = DownloadController;

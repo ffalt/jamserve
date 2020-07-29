@@ -18,16 +18,14 @@ const playqueue_1 = require("./playqueue");
 const Root_1 = require("type-graphql/dist/decorators/Root");
 const playqueue_entry_1 = require("../playqueueentry/playqueue-entry");
 let PlayQueueResolver = class PlayQueueResolver {
-    async playQueue({ engine, user }) {
-        return engine.playQueueService.get(user);
+    async playQueue({ engine, orm, user }) {
+        return engine.playQueueService.get(orm, user);
     }
     async entries(playQueue, { orm }) {
-        await orm.PlayQueue.populate(playQueue, 'entries');
         return playQueue.entries.getItems();
     }
     async entriesCount(playQueue, { orm }) {
-        await orm.PlayQueue.populate(playQueue, 'entries');
-        return playQueue.entries.length;
+        return playQueue.entries.count();
     }
 };
 __decorate([

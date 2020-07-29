@@ -42,9 +42,9 @@ let ImageService = ImageService_1 = class ImageService {
         }
         return result;
     }
-    static getCoverArtTextEpisode(episode) {
-        var _a;
-        let text = (_a = episode.tag) === null || _a === void 0 ? void 0 : _a.title;
+    static async getCoverArtTextEpisode(episode) {
+        const tag = await episode.tag.get();
+        let text = tag === null || tag === void 0 ? void 0 : tag.title;
         if (!text && episode.path) {
             text = path_1.default.basename(episode.path);
         }
@@ -56,20 +56,21 @@ let ImageService = ImageService_1 = class ImageService {
         }
         return text;
     }
-    static getCoverArtTextTrack(track) {
-        return track.tag && track.tag.title ? track.tag.title : path_1.default.basename(track.path);
+    static async getCoverArtTextTrack(track) {
+        const tag = await track.tag.get();
+        return tag && tag.title ? tag.title : path_1.default.basename(track.path);
     }
     static getCoverArtTextPodcast(podcast) {
         return podcast.title || podcast.url;
     }
-    getCoverArtText(o, type) {
+    async getCoverArtText(o, type) {
         switch (type) {
             case enums_1.DBObjectType.track:
-                return ImageService_1.getCoverArtTextTrack(o);
+                return await ImageService_1.getCoverArtTextTrack(o);
             case enums_1.DBObjectType.folder:
                 return ImageService_1.getCoverArtTextFolder(o);
             case enums_1.DBObjectType.episode:
-                return ImageService_1.getCoverArtTextEpisode(o);
+                return await ImageService_1.getCoverArtTextEpisode(o);
             case enums_1.DBObjectType.playlist:
                 return o.name;
             case enums_1.DBObjectType.series:
@@ -88,38 +89,38 @@ let ImageService = ImageService_1 = class ImageService {
                 return type;
         }
     }
-    async getObjImage(o, type, size, format) {
+    async getObjImage(orm, o, type, size, format) {
         let result;
         switch (type) {
             case enums_1.DBObjectType.track:
-                result = await this.trackService.getImage(o, size, format);
+                result = await this.trackService.getImage(orm, o, size, format);
                 break;
             case enums_1.DBObjectType.folder:
-                result = await this.folderService.getImage(o, size, format);
+                result = await this.folderService.getImage(orm, o, size, format);
                 break;
             case enums_1.DBObjectType.artist:
-                result = await this.artistService.getImage(o, size, format);
+                result = await this.artistService.getImage(orm, o, size, format);
                 break;
             case enums_1.DBObjectType.album:
-                result = await this.albumService.getImage(o, size, format);
+                result = await this.albumService.getImage(orm, o, size, format);
                 break;
             case enums_1.DBObjectType.user:
-                result = await this.userService.getImage(o, size, format);
+                result = await this.userService.getImage(orm, o, size, format);
                 break;
             case enums_1.DBObjectType.podcast:
-                result = await this.podcastService.getImage(o, size, format);
+                result = await this.podcastService.getImage(orm, o, size, format);
                 break;
             case enums_1.DBObjectType.episode:
-                result = await this.podcastService.getEpisodeImage(o, size, format);
+                result = await this.podcastService.getEpisodeImage(orm, o, size, format);
                 break;
             case enums_1.DBObjectType.series:
-                result = await this.seriesService.getImage(o, size, format);
+                result = await this.seriesService.getImage(orm, o, size, format);
                 break;
             case enums_1.DBObjectType.artwork:
-                result = await this.artworkService.getImage(o, size, format);
+                result = await this.artworkService.getImage(orm, o, size, format);
                 break;
             case enums_1.DBObjectType.root: {
-                result = await this.rootService.getImage(o, size, format);
+                result = await this.rootService.getImage(orm, o, size, format);
                 break;
             }
             default:
@@ -131,7 +132,7 @@ let ImageService = ImageService_1 = class ImageService {
         return result;
     }
     async paintImage(obj, type, size, format) {
-        const s = this.getCoverArtText(obj, type);
+        const s = await this.getCoverArtText(obj, type);
         return this.imageModule.paint(s, size || 128, format);
     }
 };
@@ -180,7 +181,7 @@ __decorate([
     __metadata("design:type", artwork_service_1.ArtworkService)
 ], ImageService.prototype, "artworkService", void 0);
 ImageService = ImageService_1 = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], ImageService);
 exports.ImageService = ImageService;
 //# sourceMappingURL=image.service.js.map

@@ -18,123 +18,135 @@ const track_1 = require("../worker/tasks/track");
 const settings_service_1 = require("../../../entity/settings/settings.service");
 const audio_module_1 = require("../../audio/audio.module");
 const image_module_1 = require("../../image/image.module");
-const orm_service_1 = require("./orm.service");
 const typescript_ioc_1 = require("typescript-ioc");
 let WorkerService = class WorkerService {
-    constructor() {
-        this.artworkWorker = new artwork_1.ArtworkWorker(this.orm, this.imageModule, this.audioModule);
-        this.trackWorker = new track_1.TrackWorker(this.orm, this.imageModule, this.audioModule);
-        this.folderWorker = new folder_1.FolderWorker(this.orm, this.imageModule, this.audioModule);
-        this.rootWorker = new root_1.RootWorker(this.orm, this.imageModule, this.audioModule);
-        this.changes = new changes_1.ChangesWorker(this.orm, this.imageModule, this.audioModule);
-    }
     async refreshRoot(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.rootWorker.scan(root, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.rootWorker.scan(orm, root, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async updateRoot(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.rootWorker.update(root, parameters.name, parameters.path, parameters.strategy);
-        await this.rootWorker.scan(root, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.rootWorker.update(orm, root, parameters.name, parameters.path, parameters.strategy);
+        await this.rootWorker.scan(orm, root, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async createRoot(parameters) {
-        const root = await this.rootWorker.create(parameters.name, parameters.path, parameters.strategy);
-        const { changes } = await this.changes.start(root.id);
-        return this.changes.finish(changes, root);
+        const root = await this.rootWorker.create(this.changes.ormService.fork(), parameters.name, parameters.path, parameters.strategy);
+        const { orm, changes } = await this.changes.start(root.id);
+        return this.changes.finish(orm, changes, root);
     }
     async removeRoot(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.rootWorker.remove(root, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.rootWorker.remove(orm, root, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async deleteFolders(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.folderWorker.delete(root, parameters.folderIDs, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.folderWorker.delete(orm, root, parameters.folderIDs, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async refreshFolders(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.folderWorker.refresh(parameters.folderIDs, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.folderWorker.refresh(orm, parameters.folderIDs, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async createFolder(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.folderWorker.create(parameters.parentID, parameters.name, root, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.folderWorker.create(orm, parameters.parentID, parameters.name, root, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async moveFolders(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.folderWorker.move(parameters.newParentID, parameters.folderIDs, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.folderWorker.move(orm, parameters.newParentID, parameters.folderIDs, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async renameFolder(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.folderWorker.rename(parameters.folderID, parameters.newName, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.folderWorker.rename(orm, parameters.folderID, parameters.newName, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async refreshTracks(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.trackWorker.refresh(parameters.trackIDs, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.trackWorker.refresh(orm, parameters.trackIDs, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async removeTracks(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.trackWorker.remove(root, parameters.trackIDs, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.trackWorker.remove(orm, root, parameters.trackIDs, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async moveTracks(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.trackWorker.move(parameters.trackIDs, parameters.newParentID, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.trackWorker.move(orm, parameters.trackIDs, parameters.newParentID, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async renameTrack(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.trackWorker.rename(parameters.trackID, parameters.newName, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.trackWorker.rename(orm, parameters.trackID, parameters.newName, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async fixTracks(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.trackWorker.fix(parameters.fixes, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.trackWorker.fix(orm, parameters.fixes, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async writeTrackTags(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.trackWorker.writeTags(parameters.tags, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.trackWorker.writeTags(orm, parameters.tags, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async renameArtwork(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.artworkWorker.rename(parameters.artworkID, parameters.newName, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.artworkWorker.rename(orm, parameters.artworkID, parameters.newName, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async createArtwork(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.artworkWorker.create(parameters.folderID, parameters.artworkFilename, parameters.types, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.artworkWorker.create(orm, parameters.folderID, parameters.artworkFilename, parameters.types, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async moveArtworks(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.artworkWorker.move(parameters.artworkIDs, parameters.newParentID, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.artworkWorker.move(orm, parameters.artworkIDs, parameters.newParentID, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async replaceArtwork(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.artworkWorker.replace(parameters.artworkID, parameters.artworkFilename, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.artworkWorker.replace(orm, parameters.artworkID, parameters.artworkFilename, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async downloadArtwork(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.artworkWorker.download(parameters.folderID, parameters.artworkURL, parameters.types, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.artworkWorker.download(orm, parameters.folderID, parameters.artworkURL, parameters.types, changes);
+        return this.changes.finish(orm, changes, root);
     }
     async removeArtwork(parameters) {
-        const { root, changes } = await this.changes.start(parameters.rootID);
-        await this.artworkWorker.remove(root, parameters.artworkID, changes);
-        return this.changes.finish(changes, root);
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.artworkWorker.remove(orm, root, parameters.artworkID, changes);
+        return this.changes.finish(orm, changes, root);
     }
 };
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", artwork_1.ArtworkWorker)
+], WorkerService.prototype, "artworkWorker", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", track_1.TrackWorker)
+], WorkerService.prototype, "trackWorker", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", folder_1.FolderWorker)
+], WorkerService.prototype, "folderWorker", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", root_1.RootWorker)
+], WorkerService.prototype, "rootWorker", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", changes_1.ChangesWorker)
+], WorkerService.prototype, "changes", void 0);
 __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", audio_module_1.AudioModule)
@@ -145,15 +157,10 @@ __decorate([
 ], WorkerService.prototype, "imageModule", void 0);
 __decorate([
     typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], WorkerService.prototype, "orm", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
     __metadata("design:type", settings_service_1.SettingsService)
 ], WorkerService.prototype, "settingsService", void 0);
 WorkerService = __decorate([
-    typescript_ioc_1.Singleton,
-    __metadata("design:paramtypes", [])
+    typescript_ioc_1.InRequestScope
 ], WorkerService);
 exports.WorkerService = WorkerService;
 //# sourceMappingURL=worker.service.js.map

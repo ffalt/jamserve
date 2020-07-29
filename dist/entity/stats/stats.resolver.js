@@ -17,8 +17,8 @@ const type_graphql_1 = require("type-graphql");
 const stats_1 = require("./stats");
 const stats_args_1 = require("./stats.args");
 let StatsResolver = class StatsResolver {
-    async stats(args, { engine }) {
-        return await engine.statsService.getStats(args === null || args === void 0 ? void 0 : args.rootID);
+    async stats(args, { engine, orm }) {
+        return await engine.statsService.getStats(orm, args === null || args === void 0 ? void 0 : args.rootID);
     }
 };
 __decorate([

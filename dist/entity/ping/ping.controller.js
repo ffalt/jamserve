@@ -13,6 +13,7 @@ exports.PingController = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const ping_model_1 = require("./ping.model");
 const version_1 = require("../../modules/engine/rest/version");
+const typescript_ioc_1 = require("typescript-ioc");
 let PingController = class PingController {
     ping() {
         return { version: version_1.JAMAPI_VERSION };
@@ -25,6 +26,7 @@ __decorate([
     __metadata("design:returntype", ping_model_1.Ping)
 ], PingController.prototype, "ping", null);
 PingController = __decorate([
+    typescript_ioc_1.InRequestScope,
     decorators_1.Controller('/ping', { tags: ['Access'] })
 ], PingController);
 exports.PingController = PingController;

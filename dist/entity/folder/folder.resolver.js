@@ -25,7 +25,7 @@ const artwork_1 = require("../artwork/artwork");
 const folder_args_1 = require("./folder.args");
 let FolderResolver = class FolderResolver {
     async folder(id, { orm }) {
-        return await orm.Folder.oneOrFail(id);
+        return await orm.Folder.oneOrFailByID(id);
     }
     async folders({ page, filter, order, list }, { orm, user }) {
         if (list) {
@@ -37,52 +37,40 @@ let FolderResolver = class FolderResolver {
         return await orm.Folder.indexFilter(filter, user);
     }
     async children(folder, { orm }) {
-        await orm.Folder.populate(folder, 'children');
         return folder.children.getItems();
     }
     async childrenCount(folder, { orm }) {
-        await orm.Folder.populate(folder, 'children');
-        return folder.children.length;
+        return folder.children.count();
     }
     async series(folder, { orm }) {
-        await orm.Folder.populate(folder, 'series');
         return folder.series.getItems();
     }
     async seriesCount(folder, { orm }) {
-        await orm.Folder.populate(folder, 'series');
-        return folder.series.length;
+        return folder.series.count();
     }
     async artists(folder, { orm }) {
-        await orm.Folder.populate(folder, 'artists');
         return folder.artists.getItems();
     }
     async artistsCount(folder, { orm }) {
-        await orm.Folder.populate(folder, 'artists');
-        return folder.artists.length;
+        return folder.artists.count();
     }
     async albums(folder, { orm }) {
-        await orm.Folder.populate(folder, 'albums');
         return folder.albums.getItems();
     }
     async albumsCount(folder, { orm }) {
-        await orm.Folder.populate(folder, 'albums');
-        return folder.albums.length;
+        return folder.albums.count();
     }
     async tracks(folder, { orm }) {
-        await orm.Folder.populate(folder, 'tracks');
         return folder.tracks.getItems();
     }
     async tracksCount(folder, { orm }) {
-        await orm.Folder.populate(folder, 'tracks');
-        return folder.tracks.length;
+        return folder.tracks.count();
     }
     async artworks(folder, { orm }) {
-        await orm.Folder.populate(folder, 'artworks');
         return folder.artworks.getItems();
     }
     async artworksCount(folder, { orm }) {
-        await orm.Folder.populate(folder, 'artworks');
-        return folder.artworks.length;
+        return folder.artworks.count();
     }
     async state(folder, { orm, user }) {
         return await orm.State.findOrCreate(folder.id, enums_1.DBObjectType.folder, user.id);

@@ -21,7 +21,7 @@ const playlist_entry_1 = require("../playlistentry/playlist-entry");
 const playlist_args_1 = require("./playlist.args");
 let PlaylistResolver = class PlaylistResolver {
     async playlist(id, { orm, user }) {
-        return await orm.Playlist.oneOrFail({ id: id, user: user.id, isPublic: { $eq: true } });
+        return await orm.Playlist.oneOrFail({ where: { id, user: user.id, isPublic: true } });
     }
     async playlists({ page, filter, order, list }, { orm, user }) {
         if (list) {
@@ -33,20 +33,16 @@ let PlaylistResolver = class PlaylistResolver {
         return await orm.Playlist.indexFilter(filter, user);
     }
     async entries(playlist, { orm }) {
-        await orm.Playlist.populate(playlist, 'entries');
         return playlist.entries.getItems();
     }
     async entriesCount(playlist, { orm }) {
-        await orm.Playlist.populate(playlist, 'entries');
-        return playlist.entries.length;
+        return playlist.entries.count();
     }
-    async userID(playlist, { orm }) {
-        await orm.Playlist.populate(playlist, 'user');
-        return playlist.user.id;
+    userID(playlist, { orm }) {
+        return playlist.user.idOrFail();
     }
     async userName(playlist, { orm }) {
-        await orm.Playlist.populate(playlist, 'user');
-        return playlist.user.name;
+        return (await playlist.user.getOrFail()).name;
     }
     async state(playlist, { orm, user }) {
         return await orm.State.findOrCreate(playlist.id, enums_1.DBObjectType.playlist, user.id);
@@ -92,7 +88,7 @@ __decorate([
     __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [playlist_1.Playlist, Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", String)
 ], PlaylistResolver.prototype, "userID", null);
 __decorate([
     type_graphql_1.FieldResolver(() => String),

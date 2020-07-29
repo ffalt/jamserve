@@ -55,24 +55,20 @@ class MatchNodeMetaStats {
                 return enums_1.AlbumType.unknown;
         }
     }
-    static async buildTrackSlugs(track, builder) {
-        const tag = track === null || track === void 0 ? void 0 : track.tag;
-        if (!tag) {
-            return;
-        }
-        builder.statSlugValue('artist', tag.albumArtist || tag.artist);
-        builder.statSlugValue('artistSort', tag.albumArtistSort || tag.artistSort);
-        for (const genre of (tag.genres || [])) {
+    static async buildTrackSlugs(match, builder) {
+        builder.statSlugValue('artist', match.artist);
+        builder.statSlugValue('artistSort', match.artistSort);
+        for (const genre of (match.genres || [])) {
             builder.statSlugValue('genre', genre);
         }
-        builder.statSlugValue('series', tag.series);
-        builder.statSlugValue('album', tag.album ? album_name_1.extractAlbumName(tag.album) : undefined);
-        builder.statNumber('year', tag.year);
-        builder.statTrackCount('totalTrackCount', tag.trackTotal, tag.disc);
-        builder.statSlugValue('mbAlbumType', `${tag.mbAlbumType || ''}/${tag.mbAlbumStatus || ''}`);
-        builder.statID('mbArtistID', tag.mbArtistID);
-        builder.statID('mbReleaseID', tag.mbReleaseID);
-        builder.statID('mbReleaseGroupID', tag.mbReleaseGroupID);
+        builder.statSlugValue('series', match.series);
+        builder.statSlugValue('album', match.album ? album_name_1.extractAlbumName(match.album) : undefined);
+        builder.statNumber('year', match.year);
+        builder.statTrackCount('totalTrackCount', match.trackTotal, match.disc);
+        builder.statSlugValue('mbAlbumType', match.mbAlbumType);
+        builder.statID('mbArtistID', match.mbArtistID);
+        builder.statID('mbReleaseID', match.mbReleaseID);
+        builder.statID('mbReleaseGroupID', match.mbReleaseGroupID);
     }
     static async buildTracksSlugs(node, builder) {
         for (const track of node.tracks) {

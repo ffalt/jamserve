@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NowPlayingService = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
-const orm_service_1 = require("../../modules/engine/services/orm.service");
 const builder_1 = require("../../modules/rest/builder");
 const enums_1 = require("../../types/enums");
 const logger_1 = require("../../utils/logger");
@@ -35,27 +34,26 @@ let NowPlayingService = class NowPlayingService {
         this.playing.push(result);
         this.report([
             { id: episode.id, type: enums_1.DBObjectType.episode, userID: user.id },
-            { id: episode.podcast.id, type: enums_1.DBObjectType.podcast, userID: user.id },
+            { id: episode.podcast.idOrFail(), type: enums_1.DBObjectType.podcast, userID: user.id },
         ]).catch(e => log.error(e));
         return result;
     }
     async reportTrack(track, user) {
-        var _a, _b, _c, _d, _e;
         this.playing = this.playing.filter(np => (np.user.id !== user.id));
         const result = { time: Date.now(), track, user };
         this.playing.push(result);
         this.report([
             { id: track.id, type: enums_1.DBObjectType.track, userID: user.id },
-            { id: (_a = track.album) === null || _a === void 0 ? void 0 : _a.id, type: enums_1.DBObjectType.album, userID: user.id },
-            { id: (_b = track.artist) === null || _b === void 0 ? void 0 : _b.id, type: enums_1.DBObjectType.artist, userID: user.id },
-            { id: (_c = track.folder) === null || _c === void 0 ? void 0 : _c.id, type: enums_1.DBObjectType.folder, userID: user.id },
-            { id: (_d = track.series) === null || _d === void 0 ? void 0 : _d.id, type: enums_1.DBObjectType.series, userID: user.id },
-            { id: (_e = track.root) === null || _e === void 0 ? void 0 : _e.id, type: enums_1.DBObjectType.root, userID: user.id },
+            { id: track.album.id(), type: enums_1.DBObjectType.album, userID: user.id },
+            { id: track.artist.id(), type: enums_1.DBObjectType.artist, userID: user.id },
+            { id: track.folder.id(), type: enums_1.DBObjectType.folder, userID: user.id },
+            { id: track.series.id(), type: enums_1.DBObjectType.series, userID: user.id },
+            { id: track.root.id(), type: enums_1.DBObjectType.root, userID: user.id },
         ]).catch(e => log.error(e));
         return result;
     }
-    async scrobble(id, user) {
-        const result = await this.orm.findInStreamTypes(id);
+    async scrobble(orm, id, user) {
+        const result = await orm.findInStreamTypes(id);
         if (!result) {
             return Promise.reject(builder_1.NotFoundError());
         }
@@ -71,14 +69,10 @@ let NowPlayingService = class NowPlayingService {
 };
 __decorate([
     typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], NowPlayingService.prototype, "orm", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
     __metadata("design:type", state_service_1.StateService)
 ], NowPlayingService.prototype, "stateService", void 0);
 NowPlayingService = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], NowPlayingService);
 exports.NowPlayingService = NowPlayingService;
 //# sourceMappingURL=nowplaying.service.js.map

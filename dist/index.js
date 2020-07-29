@@ -8,10 +8,11 @@ const version_1 = require("./version");
 const dotenv_1 = __importDefault(require("dotenv"));
 const logger_1 = require("./utils/logger");
 const server_1 = require("./modules/server/server");
+const typescript_ioc_1 = require("typescript-ioc");
 dotenv_1.default.config();
 logger_1.configureLogger(process.env.JAM_LOG_LEVEL || 'info');
 const log = logger_1.logger('Server');
-const server = new server_1.Server();
+const server = typescript_ioc_1.Container.get(server_1.Server);
 async function run() {
     log.info(`Jamserve ${version_1.JAMSERVE_VERSION} starting`);
     await server.init();

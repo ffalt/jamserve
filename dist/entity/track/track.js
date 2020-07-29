@@ -18,90 +18,109 @@ const artist_1 = require("../artist/artist");
 const tag_1 = require("../tag/tag");
 const bookmark_1 = require("../bookmark/bookmark");
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 const state_1 = require("../state/state");
 const waveform_1 = require("../waveform/waveform");
 const health_model_1 = require("../health/health.model");
 const tag_model_1 = require("../tag/tag.model");
 const track_model_1 = require("./track.model");
+const playqueue_entry_1 = require("../playqueueentry/playqueue-entry");
+const playlist_entry_1 = require("../playlistentry/playlist-entry");
 let Track = class Track extends base_1.Base {
     constructor() {
         super(...arguments);
-        this.bookmarks = new mikro_orm_1.Collection(this);
+        this.series = new orm_1.Reference(this);
+        this.album = new orm_1.Reference(this);
+        this.folder = new orm_1.Reference(this);
+        this.artist = new orm_1.Reference(this);
+        this.albumArtist = new orm_1.Reference(this);
+        this.root = new orm_1.Reference(this);
+        this.bookmarks = new orm_1.Collection(this);
+        this.playqueueEntries = new orm_1.Collection(this);
+        this.playlistEntries = new orm_1.Collection(this);
+        this.tag = new orm_1.Reference(this);
     }
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Track.prototype, "name", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Track.prototype, "fileName", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Track.prototype, "path", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
     __metadata("design:type", Number)
 ], Track.prototype, "statCreated", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
     __metadata("design:type", Number)
 ], Track.prototype, "statModified", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT),
     __metadata("design:type", Number)
 ], Track.prototype, "fileSize", void 0);
 __decorate([
     type_graphql_1.Field(() => series_1.SeriesQL, { nullable: true }),
-    mikro_orm_1.ManyToOne(() => series_1.Series),
-    __metadata("design:type", series_1.Series)
+    orm_1.ManyToOne(() => series_1.Series, series => series.tracks),
+    __metadata("design:type", Object)
 ], Track.prototype, "series", void 0);
 __decorate([
     type_graphql_1.Field(() => album_1.AlbumQL, { nullable: true }),
-    mikro_orm_1.ManyToOne(() => album_1.Album, { nullable: true }),
-    __metadata("design:type", album_1.Album)
+    orm_1.ManyToOne(() => album_1.Album, album => album.tracks, { nullable: true }),
+    __metadata("design:type", Object)
 ], Track.prototype, "album", void 0);
 __decorate([
     type_graphql_1.Field(() => folder_1.FolderQL),
-    mikro_orm_1.ManyToOne(() => folder_1.Folder),
-    __metadata("design:type", folder_1.Folder)
+    orm_1.ManyToOne(() => folder_1.Folder, folder => folder.tracks),
+    __metadata("design:type", Object)
 ], Track.prototype, "folder", void 0);
 __decorate([
     type_graphql_1.Field(() => artist_1.ArtistQL, { nullable: true }),
-    mikro_orm_1.ManyToOne(() => artist_1.Artist),
-    __metadata("design:type", artist_1.Artist)
+    orm_1.ManyToOne(() => artist_1.Artist, artist => artist.tracks, { nullable: true }),
+    __metadata("design:type", Object)
 ], Track.prototype, "artist", void 0);
 __decorate([
     type_graphql_1.Field(() => artist_1.ArtistQL, { nullable: true }),
-    mikro_orm_1.ManyToOne(() => artist_1.Artist),
-    __metadata("design:type", artist_1.Artist)
+    orm_1.ManyToOne(() => artist_1.Artist, artist => artist.albumTracks, { nullable: true }),
+    __metadata("design:type", Object)
 ], Track.prototype, "albumArtist", void 0);
 __decorate([
     type_graphql_1.Field(() => root_1.RootQL),
-    mikro_orm_1.ManyToOne(() => root_1.Root),
-    __metadata("design:type", root_1.Root)
+    orm_1.ManyToOne(() => root_1.Root, root => root.tracks),
+    __metadata("design:type", Object)
 ], Track.prototype, "root", void 0);
 __decorate([
     type_graphql_1.Field(() => [bookmark_1.BookmarkQL]),
-    mikro_orm_1.OneToMany({ entity: () => bookmark_1.Bookmark, mappedBy: bookmark => bookmark.track, cascade: [mikro_orm_1.Cascade.REMOVE], orderBy: { position: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.track, { orderBy: { position: orm_1.QueryOrder.ASC }, onDelete: 'cascade' }),
+    __metadata("design:type", orm_1.Collection)
 ], Track.prototype, "bookmarks", void 0);
 __decorate([
+    orm_1.OneToMany(() => playqueue_entry_1.PlayQueueEntry, playqueueEntry => playqueueEntry.track),
+    __metadata("design:type", orm_1.Collection)
+], Track.prototype, "playqueueEntries", void 0);
+__decorate([
+    orm_1.OneToMany(() => playlist_entry_1.PlaylistEntry, playlistEntry => playlistEntry.track),
+    __metadata("design:type", orm_1.Collection)
+], Track.prototype, "playlistEntries", void 0);
+__decorate([
     type_graphql_1.Field(() => tag_1.TagQL, { nullable: true }),
-    mikro_orm_1.OneToOne({ entity: () => tag_1.Tag, nullable: true, cascade: [mikro_orm_1.Cascade.REMOVE] }),
-    __metadata("design:type", tag_1.Tag)
+    orm_1.OneToOne(() => tag_1.Tag, tag => tag.track, { owner: true, nullable: true }),
+    __metadata("design:type", orm_1.Reference)
 ], Track.prototype, "tag", void 0);
 Track = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Track);
 exports.Track = Track;
 let TrackLyricsQL = class TrackLyricsQL {

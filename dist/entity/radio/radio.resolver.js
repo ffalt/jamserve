@@ -20,7 +20,7 @@ const radio_1 = require("./radio");
 const radio_args_1 = require("./radio.args");
 let RadioResolver = class RadioResolver {
     async radio(id, { orm }) {
-        return await orm.Radio.oneOrFail(id);
+        return await orm.Radio.oneOrFailByID(id);
     }
     async radios({ page, filter, order, list }, { orm, user }) {
         if (list) {

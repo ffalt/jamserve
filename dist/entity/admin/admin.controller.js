@@ -27,8 +27,8 @@ let AdminController = class AdminController {
     async queueId(id) {
         return this.ioService.getAdminChangeQueueInfoStatus(id);
     }
-    async settingsUpdate(args) {
-        await this.settingsService.updateSettings(args);
+    async settingsUpdate(args, { orm }) {
+        await this.settingsService.updateSettings(orm, args);
     }
 };
 __decorate([
@@ -55,11 +55,13 @@ __decorate([
 __decorate([
     rest_1.Post('/settings/update', { description: 'Update the Server Admin Settings', summary: 'Set Settings' }),
     __param(0, rest_1.BodyParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [admin_args_1.AdminSettingsArgs]),
+    __metadata("design:paramtypes", [admin_args_1.AdminSettingsArgs, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "settingsUpdate", null);
 AdminController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/admin', { tags: ['Administration'], roles: [enums_1.UserRole.admin] })
 ], AdminController);
 exports.AdminController = AdminController;

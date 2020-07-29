@@ -21,7 +21,7 @@ const podcast_args_1 = require("./podcast.args");
 const episode_1 = require("../episode/episode");
 let PodcastResolver = class PodcastResolver {
     async podcast(id, { orm }) {
-        return await orm.Podcast.oneOrFail(id);
+        return await orm.Podcast.oneOrFailByID(id);
     }
     async podcasts({ page, filter, order, list }, { orm, user }) {
         if (list) {
@@ -42,12 +42,10 @@ let PodcastResolver = class PodcastResolver {
         return new Date(podcast.lastCheck);
     }
     async episodes(podcast, { orm }) {
-        await orm.Podcast.populate(podcast, 'episodes');
         return podcast.episodes.getItems();
     }
     async episodesCount(podcast, { orm }) {
-        await orm.Podcast.populate(podcast, 'episodes');
-        return podcast.episodes.length;
+        return podcast.episodes.count();
     }
 };
 __decorate([

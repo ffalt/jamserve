@@ -5,45 +5,45 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenreService = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
-const orm_service_1 = require("../../modules/engine/services/orm.service");
 let GenreService = class GenreService {
     constructor() {
         this.genres = [];
     }
-    async refresh() {
-        var _a, _b, _c, _d, _e;
+    async refresh(orm) {
         const genreHash = {};
-        const trackIDs = await this.orm.Track.findIDs({});
+        const trackIDs = await orm.Track.findIDs({});
         for (const id of trackIDs) {
-            const track = await this.orm.Track.oneOrFail(id);
-            await this.orm.Track.populate(track, 'tag');
-            let genres = (_a = track.tag) === null || _a === void 0 ? void 0 : _a.genres;
+            const track = await orm.Track.oneOrFailByID(id);
+            const tag = await track.tag.get();
+            let genres = tag === null || tag === void 0 ? void 0 : tag.genres;
             if (!genres || genres.length === 0) {
                 genres = ['[No genre]'];
             }
             for (const genre of genres) {
                 const data = genreHash[genre] || { roots: {} };
-                const section = data.roots[track.root.id] || { count: 0, artists: {}, albums: {}, series: {}, folders: {} };
+                const rootID = track.root.idOrFail();
+                const section = data.roots[rootID] || { count: 0, artists: {}, albums: {}, series: {}, folders: {} };
                 section.count++;
-                if ((_b = track.artist) === null || _b === void 0 ? void 0 : _b.id) {
-                    section.artists[track.artist.id] = (section.artists[track.artist.id] || 0) + 1;
+                const artistID = track.artist.id();
+                if (artistID) {
+                    section.artists[artistID] = (section.artists[artistID] || 0) + 1;
                 }
-                if ((_c = track.album) === null || _c === void 0 ? void 0 : _c.id) {
-                    section.albums[track.album.id] = (section.albums[track.album.id] || 0) + 1;
+                const albumID = await track.album.id();
+                if (albumID) {
+                    section.albums[albumID] = (section.albums[albumID] || 0) + 1;
                 }
-                if ((_d = track.series) === null || _d === void 0 ? void 0 : _d.id) {
-                    section.series[track.series.id] = (section.series[track.series.id] || 0) + 1;
+                const seriesID = await track.series.id();
+                if (seriesID) {
+                    section.series[seriesID] = (section.series[seriesID] || 0) + 1;
                 }
-                if ((_e = track.folder) === null || _e === void 0 ? void 0 : _e.id) {
-                    section.folders[track.folder.id] = (section.folders[track.folder.id] || 0) + 1;
+                const folderID = await track.folder.id();
+                if (folderID) {
+                    section.folders[folderID] = (section.folders[folderID] || 0) + 1;
                 }
-                data.roots[track.root.id] = section;
+                data.roots[rootID] = section;
                 genreHash[genre] = data;
             }
         }
@@ -65,9 +65,9 @@ let GenreService = class GenreService {
             };
         });
     }
-    async getGenres(rootID) {
+    async getGenres(orm, rootID) {
         if (this.genres.length === 0) {
-            await this.refresh();
+            await this.refresh(orm);
         }
         return this.genres.map(g => {
             const genre = {
@@ -92,8 +92,8 @@ let GenreService = class GenreService {
             return a.name.localeCompare(b.name);
         });
     }
-    async index() {
-        const genres = await this.getGenres();
+    async index(orm) {
+        const genres = await this.getGenres(orm);
         const map = new Map();
         for (const entry of genres) {
             const char = entry.name[0] || '?';
@@ -111,12 +111,8 @@ let GenreService = class GenreService {
         return { lastModified: Date.now(), groups };
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], GenreService.prototype, "orm", void 0);
 GenreService = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], GenreService);
 exports.GenreService = GenreService;
 //# sourceMappingURL=genre.service.js.map

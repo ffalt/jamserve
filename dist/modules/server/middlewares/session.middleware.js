@@ -6,11 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSessionMiddleware = void 0;
 const express_session_1 = __importDefault(require("express-session"));
 const session_store_1 = require("./session-store");
-function useSessionMiddleware(configService) {
+function useSessionMiddleware(configService, sessionService) {
     return express_session_1.default({
         name: 'jam.sid',
         secret: configService.env.session.secret,
-        store: new session_store_1.ExpressSessionStore(),
+        store: new session_store_1.ExpressSessionStore(sessionService),
         resave: false,
         proxy: configService.env.session.proxy,
         saveUninitialized: false,

@@ -13,10 +13,10 @@ exports.SeriesService = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
 const folder_service_1 = require("../folder/folder.service");
 let SeriesService = class SeriesService {
-    async getImage(series, size, format) {
-        const folders = series.folders.getItems().sort((a, b) => b.level - a.level);
+    async getImage(orm, series, size, format) {
+        const folders = (await series.folders.getItems()).sort((a, b) => b.level - a.level);
         for (const folder of folders) {
-            const result = this.folderService.getImage(folder, size, format);
+            const result = this.folderService.getImage(orm, folder, size, format);
             if (result) {
                 return result;
             }
@@ -28,7 +28,7 @@ __decorate([
     __metadata("design:type", folder_service_1.FolderService)
 ], SeriesService.prototype, "folderService", void 0);
 SeriesService = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], SeriesService);
 exports.SeriesService = SeriesService;
 //# sourceMappingURL=series.service.js.map

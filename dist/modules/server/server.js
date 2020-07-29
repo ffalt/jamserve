@@ -30,10 +30,12 @@ const passport_middleware_1 = require("./middlewares/passport.middleware");
 const version_1 = require("../engine/rest/version");
 const docs_middleware_1 = require("./middlewares/docs.middleware");
 const cors_middleware_1 = require("./middlewares/cors.middleware");
+const session_service_1 = require("../../entity/settings/session.service");
 const log = logger_1.logger('Server');
 let Server = class Server {
     async init() {
         const app = express_1.default();
+        log.debug(`registering express standard middleware`);
         app.use(body_parser_1.default.urlencoded({ extended: true, limit: '10mb' }));
         app.use(body_parser_1.default.json({ limit: '10mb' }));
         app.use(body_parser_1.default.json({ type: 'application/vnd.api+json', limit: '10mb' }));
@@ -43,12 +45,16 @@ let Server = class Server {
         }
         app.use(log_middleware_1.useLogMiddleware());
         app.use(engine_middleware_1.useEngineMiddleware(this.engine));
-        app.use(session_middleware_1.useSessionMiddleware(this.configService));
+        app.use(session_middleware_1.useSessionMiddleware(this.configService, this.sessionService));
         app.use(passport_middleware_1.usePassPortMiddleWare(app, this.engine));
         app.use(cors_middleware_1.useAuthenticatedCors(this.configService));
+        log.debug(`registering jam api middleware`);
         app.use(`/jam/${version_1.JAMAPI_URL_VERSION}`, this.rest.middleware());
+        log.debug(`registering graphql middleware`);
         app.use('/graphql', await this.apollo.middleware());
+        log.debug(`registering docs middleware`);
         app.use('/docs', await this.docs.middleware());
+        log.debug(`registering static middleware`);
         const configFile = path_1.default.resolve(this.configService.getDataPath(['config']), 'jamberry.config.js');
         app.get('/assets/config/config.js', (req, res) => {
             res.sendFile(configFile);
@@ -65,6 +71,7 @@ let Server = class Server {
             this.configService.env.host}:${this.configService.env.port}`;
     }
     async start() {
+        log.debug(`starting express on ${this.getURL()}`);
         this.server = this.app.listen(this.configService.env.port, this.configService.env.host);
         this.server.setTimeout(4 * 60000);
         log.table([
@@ -119,10 +126,14 @@ __decorate([
 ], Server.prototype, "configService", void 0);
 __decorate([
     typescript_ioc_1.Inject,
+    __metadata("design:type", session_service_1.SessionService)
+], Server.prototype, "sessionService", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
     __metadata("design:type", docs_middleware_1.DocsMiddleware)
 ], Server.prototype, "docs", void 0);
 Server = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], Server);
 exports.Server = Server;
 //# sourceMappingURL=server.js.map

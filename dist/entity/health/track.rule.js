@@ -34,43 +34,41 @@ const GARBAGE_FRAMES_IDS = [
     'COMM',
     'POPM'
 ];
-function hasID3v2Tag(track) {
-    var _a;
-    return !!((_a = track.tag) === null || _a === void 0 ? void 0 : _a.format) && audio_module_1.ID3TrackTagRawFormatTypes.includes(track.tag.format);
+function hasID3v2Tag(track, tag) {
+    return !!(tag === null || tag === void 0 ? void 0 : tag.format) && audio_module_1.ID3TrackTagRawFormatTypes.includes(tag.format);
 }
-function isMP3(track) {
-    return !!track.tag && track.tag.mediaFormat === enums_1.AudioFormatType.mp3;
+function isMP3(track, tag) {
+    return !!tag && tag.mediaFormat === enums_1.AudioFormatType.mp3;
 }
-function isFlac(track) {
-    return !!track.tag && track.tag.mediaFormat === enums_1.AudioFormatType.flac;
+function isFlac(track, tag) {
+    return !!tag && tag.mediaFormat === enums_1.AudioFormatType.flac;
 }
 const trackRules = [
     {
         id: enums_1.TrackHealthID.tagValuesExists,
         name: 'Tag Values missing',
         all: true,
-        run: async (track) => {
-            var _a, _b, _c, _d, _e, _f, _g;
+        run: async (folder, track, tag, tagCache) => {
             const missing = [];
-            if (!((_a = track.tag) === null || _a === void 0 ? void 0 : _a.album)) {
+            if (!(tag === null || tag === void 0 ? void 0 : tag.album)) {
                 missing.push('album');
             }
-            if (!((_b = track.tag) === null || _b === void 0 ? void 0 : _b.artist)) {
+            if (!(tag === null || tag === void 0 ? void 0 : tag.artist)) {
                 missing.push('artist');
             }
-            if (!((_c = track.tag) === null || _c === void 0 ? void 0 : _c.albumArtist)) {
+            if (!(tag === null || tag === void 0 ? void 0 : tag.albumArtist)) {
                 missing.push('album artist');
             }
-            if (!((_d = track.tag) === null || _d === void 0 ? void 0 : _d.genres) || track.tag.genres.length === 0) {
+            if (!(tag === null || tag === void 0 ? void 0 : tag.genres) || tag.genres.length === 0) {
                 missing.push('genre');
             }
-            if (!((_e = track.tag) === null || _e === void 0 ? void 0 : _e.trackNr)) {
+            if (!(tag === null || tag === void 0 ? void 0 : tag.trackNr)) {
                 missing.push('track nr');
             }
-            if (track.folder.albumType !== undefined && !track.series && !((_f = track.tag) === null || _f === void 0 ? void 0 : _f.trackTotal)) {
+            if (folder.albumType !== undefined && !track.series && !(tag === null || tag === void 0 ? void 0 : tag.trackTotal)) {
                 missing.push('total track count');
             }
-            if (track.folder.albumType !== undefined && enums_1.AlbumTypesArtistMusic.includes(track.folder.albumType) && !((_g = track.tag) === null || _g === void 0 ? void 0 : _g.year)) {
+            if (folder.albumType !== undefined && enums_1.AlbumTypesArtistMusic.includes(folder.albumType) && !(tag === null || tag === void 0 ? void 0 : tag.year)) {
                 missing.push('year');
             }
             if (missing.length > 0) {
@@ -82,8 +80,8 @@ const trackRules = [
         id: enums_1.TrackHealthID.id3v2NoId3v1,
         name: 'ID3v2 is available, ID3v1 is redundant',
         mp3: true,
-        run: async (track, tagCache) => {
-            if (hasID3v2Tag(track) && tagCache.id3v1) {
+        run: async (folder, track, tag, tagCache) => {
+            if (hasID3v2Tag(track, tag) && tagCache.id3v1) {
                 return {};
             }
         }
@@ -92,8 +90,8 @@ const trackRules = [
         id: enums_1.TrackHealthID.id3v2Exists,
         name: 'ID3v2 Tag is missing',
         mp3: true,
-        run: async (track) => {
-            if (!hasID3v2Tag(track)) {
+        run: async (folder, track, tag, tagCache) => {
+            if (!hasID3v2Tag(track, tag)) {
                 return {};
             }
         }
@@ -102,7 +100,7 @@ const trackRules = [
         id: enums_1.TrackHealthID.id3v2Valid,
         name: 'ID3v2 is invalid',
         mp3: true,
-        run: async (track, tagCache) => {
+        run: async (folder, track, tag, tagCache) => {
             if (tagCache.mp3Warnings && tagCache.mp3Warnings.id3v2 && tagCache.mp3Warnings.id3v2.length > 0) {
                 return {
                     details: tagCache.mp3Warnings.id3v2.map(m => {
@@ -116,7 +114,7 @@ const trackRules = [
         id: enums_1.TrackHealthID.id3v2Garbage,
         name: 'ID3v2 has garbage frames',
         mp3: true,
-        run: async (track, tagCache) => {
+        run: async (folder, track, tag, tagCache) => {
             if (tagCache.id3v2) {
                 const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.includes(frame.id));
                 if (frames.length > 0) {
@@ -139,7 +137,7 @@ const trackRules = [
         id: enums_1.TrackHealthID.mp3Garbage,
         name: 'MP3 has unaccounted data',
         mp3: true,
-        run: async (track, tagCache) => {
+        run: async (folder, track, tag, tagCache) => {
             if (tagCache.mp3Warnings && tagCache.mp3Warnings.mpeg) {
                 const warnings = tagCache.mp3Warnings.mpeg.filter(m => analyzeErrors.mpeg.includes(m.msg));
                 if (warnings.length > 0) {
@@ -156,7 +154,7 @@ const trackRules = [
         id: enums_1.TrackHealthID.mp3HeaderExists,
         name: 'VBR Header is missing',
         mp3: true,
-        run: async (track, tagCache) => {
+        run: async (folder, track, tag, tagCache) => {
             if (tagCache.mp3Warnings && tagCache.mp3Warnings.xing) {
                 const warning = tagCache.mp3Warnings.xing.find(m => {
                     return analyzeErrors.xingMissing.includes(m.msg);
@@ -171,7 +169,7 @@ const trackRules = [
         id: enums_1.TrackHealthID.mp3HeaderValid,
         name: 'VBR Header is invalid',
         mp3: true,
-        run: async (track, tagCache) => {
+        run: async (folder, track, tag, tagCache) => {
             if (tagCache.mp3Warnings && tagCache.mp3Warnings.xing) {
                 const warnings = tagCache.mp3Warnings.xing.filter(m => analyzeErrors.xing.includes(m.msg));
                 if (warnings.length > 0) {
@@ -188,7 +186,7 @@ const trackRules = [
         id: enums_1.TrackHealthID.mp3MediaValid,
         name: 'MP3 Media is invalid',
         mp3: true,
-        run: async (track, tagCache) => {
+        run: async (folder, track, tag, tagCache) => {
             if (tagCache.mp3Warnings && tagCache.mp3Warnings.mpeg) {
                 const mp3Warnings = tagCache.mp3Warnings.mpeg.filter(m => !fixable.includes(m.msg));
                 if (mp3Warnings.length > 0) {
@@ -205,7 +203,7 @@ const trackRules = [
         id: enums_1.TrackHealthID.flacMediaValid,
         name: 'Flac Media is invalid',
         mp3: true,
-        run: async (track, tagCache) => {
+        run: async (folder, track, tag, tagCache) => {
             if (tagCache.flacWarnings) {
                 return { details: [{ reason: tagCache.flacWarnings }] };
             }
@@ -253,11 +251,13 @@ class TrackRulesChecker {
                 }
             }
         }
+        const folder = await track.folder.getOrFail();
+        const tag = await track.tag.get();
         const mp3 = isMP3(track);
         const flac = isFlac(track);
         for (const rule of trackRules) {
             if (rule.all || (rule.mp3 && mp3) || (rule.flac && flac)) {
-                const match = await rule.run(track, mediaCache);
+                const match = await rule.run(folder, track, tag, mediaCache);
                 if (match) {
                     result.push({
                         id: rule.id,

@@ -127,7 +127,7 @@ __decorate([
     __metadata("design:type", image_module_1.ImageModule)
 ], AudioModule.prototype, "imageModule", void 0);
 AudioModule = __decorate([
-    typescript_ioc_1.Singleton,
+    typescript_ioc_1.InRequestScope,
     __metadata("design:paramtypes", [])
 ], AudioModule);
 exports.AudioModule = AudioModule;

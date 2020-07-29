@@ -18,60 +18,60 @@ const series_1 = require("../series/series");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
 const base_1 = require("../base/base");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 let Root = class Root extends base_1.Base {
     constructor() {
         super(...arguments);
-        this.folders = new mikro_orm_1.Collection(this);
-        this.tracks = new mikro_orm_1.Collection(this);
-        this.albums = new mikro_orm_1.Collection(this);
-        this.artists = new mikro_orm_1.Collection(this);
-        this.series = new mikro_orm_1.Collection(this);
+        this.folders = new orm_1.Collection(this);
+        this.tracks = new orm_1.Collection(this);
+        this.albums = new orm_1.Collection(this);
+        this.artists = new orm_1.Collection(this);
+        this.series = new orm_1.Collection(this);
     }
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Root.prototype, "name", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Root.prototype, "path", void 0);
 __decorate([
     type_graphql_1.Field(() => enums_1.RootScanStrategy),
-    mikro_orm_1.Enum(() => enums_1.RootScanStrategy),
+    orm_1.Property(() => enums_1.RootScanStrategy),
     __metadata("design:type", String)
 ], Root.prototype, "strategy", void 0);
 __decorate([
     type_graphql_1.Field(() => [folder_1.FolderQL]),
-    mikro_orm_1.OneToMany(() => folder_1.Folder, folder => folder.root, { orderBy: { path: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => folder_1.Folder, folder => folder.root, { orderBy: { path: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "folders", void 0);
 __decorate([
     type_graphql_1.Field(() => [track_1.TrackQL]),
-    mikro_orm_1.OneToMany(() => track_1.Track, track => track.root, { orderBy: { path: mikro_orm_1.QueryOrder.ASC, tag: { disc: mikro_orm_1.QueryOrder.ASC, trackNr: mikro_orm_1.QueryOrder.ASC } } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => track_1.Track, track => track.root, { orderBy: { path: orm_1.QueryOrder.ASC, tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC } } }),
+    __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "tracks", void 0);
 __decorate([
     type_graphql_1.Field(() => [album_1.AlbumQL]),
-    mikro_orm_1.ManyToMany(() => album_1.Album, album => album.roots, { orderBy: { artist: { nameSort: mikro_orm_1.QueryOrder.ASC }, albumType: mikro_orm_1.QueryOrder.ASC, name: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.ManyToMany(() => album_1.Album, album => album.roots, { orderBy: { artist: { nameSort: orm_1.QueryOrder.ASC }, albumType: orm_1.QueryOrder.ASC, name: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "albums", void 0);
 __decorate([
     type_graphql_1.Field(() => [artist_1.ArtistQL]),
-    mikro_orm_1.ManyToMany(() => artist_1.Artist, artist => artist.roots, { orderBy: { nameSort: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.ManyToMany(() => artist_1.Artist, artist => artist.roots, { orderBy: { nameSort: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "artists", void 0);
 __decorate([
     type_graphql_1.Field(() => [series_1.SeriesQL]),
-    mikro_orm_1.ManyToMany(() => series_1.Series, series => series.roots, { orderBy: { name: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.ManyToMany(() => series_1.Series, series => series.roots, { orderBy: { name: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "series", void 0);
 Root = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Root);
 exports.Root = Root;
 let RootStatusQL = class RootStatusQL {

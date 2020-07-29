@@ -16,27 +16,21 @@ exports.StreamController = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const orm_service_1 = require("../../modules/engine/services/orm.service");
 const express_error_1 = require("../../modules/rest/builder/express-error");
 const PathParam_1 = require("../../modules/rest/decorators/PathParam");
 const PathParams_1 = require("../../modules/rest/decorators/PathParams");
 const stream_args_1 = require("./stream.args");
 const stream_service_1 = require("./stream.service");
-const user_1 = require("../user/user");
 const consts_1 = require("../../types/consts");
 let StreamController = class StreamController {
-    async stream(id, streamArgs, user) {
-        const result = await this.orm.findInStreamTypes(id);
+    async stream(id, streamArgs, { orm, user }) {
+        const result = await orm.findInStreamTypes(id);
         if (!result) {
             return Promise.reject(express_error_1.NotFoundError());
         }
         return this.streamService.streamDBObject(result.obj, result.objType, streamArgs.format, streamArgs.maxBitRate, user);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], StreamController.prototype, "orm", void 0);
 __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", stream_service_1.StreamService)
@@ -62,13 +56,13 @@ __decorate([
     }),
     __param(0, PathParam_1.PathParam('id', { description: 'Media Id', isID: true })),
     __param(1, PathParams_1.PathParams()),
-    __param(2, rest_1.CurrentUser()),
+    __param(2, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, stream_args_1.StreamArgs,
-        user_1.User]),
+    __metadata("design:paramtypes", [String, stream_args_1.StreamArgs, Object]),
     __metadata("design:returntype", Promise)
 ], StreamController.prototype, "stream", null);
 StreamController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/stream', { tags: ['Stream'], roles: [enums_1.UserRole.stream] })
 ], StreamController);
 exports.StreamController = StreamController;

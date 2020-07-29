@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StateHelper = void 0;
 const state_1 = require("./state");
+const orm_1 = require("../../modules/orm");
 class StateHelper {
     constructor(em) {
         this.em = em;
@@ -44,16 +45,16 @@ class StateHelper {
         return state;
     }
     async findOrCreate(destID, destType, user) {
-        const state = await this.stateRepo.findOne({ user: user.id, destID: { $eq: destID }, destType: { $eq: destType } });
+        const state = await this.stateRepo.findOne({ where: { user: user.id, destID, destType } });
         return state || this.emptyState(destID, destType, user);
     }
     async getHighestRatedDestIDs(destType, userID) {
-        const states = await this.stateRepo.find({ user: { id: userID }, destType: { $eq: destType }, rated: { $gte: 1 } });
+        const states = await this.stateRepo.find({ where: { user: userID, destType, rated: { [orm_1.Op.gte]: 1 } } });
         const ratings = states.sort((a, b) => Number(b.rated) - Number(a.rated));
         return ratings.map(a => a.destID);
     }
     async getAvgHighestDestIDs(destType) {
-        const states = await this.stateRepo.find({ destType: { $eq: destType } });
+        const states = await this.stateRepo.find({ where: { destType } });
         const ratings = {};
         states.forEach(state => {
             if (state.rated !== undefined) {
@@ -70,15 +71,15 @@ class StateHelper {
         return list.map(a => a.id);
     }
     async getFrequentlyPlayedDestIDs(destType, userID) {
-        const states = await this.stateRepo.find({ user: { id: userID }, destType: { $eq: destType }, played: { $gte: 1 } });
+        const states = await this.stateRepo.find({ where: { user: userID, destType, played: { [orm_1.Op.gte]: 1 } } });
         return states.sort((a, b) => Number(b.played) - Number(a.played)).map(a => a.destID);
     }
     async getFavedDestIDs(destType, userID) {
-        const states = await this.stateRepo.find({ user: { id: userID }, destType: { $eq: destType }, faved: { $gte: 1 } });
+        const states = await this.stateRepo.find({ where: { user: userID, destType, faved: { [orm_1.Op.gte]: 1 } } });
         return states.sort((a, b) => Number(b.faved) - Number(a.faved)).map(a => a.destID);
     }
     async getRecentlyPlayedDestIDs(destType, userID) {
-        const states = await this.stateRepo.find({ user: { id: userID }, destType: { $eq: destType }, played: { $gte: 1 } });
+        const states = await this.stateRepo.find({ where: { user: userID, destType, played: { [orm_1.Op.gte]: 1 } } });
         return states.sort((a, b) => Number(b.lastPlayed) - Number(a.lastPlayed)).map(a => a.destID);
     }
     async reportPlaying(destID, destType, user) {

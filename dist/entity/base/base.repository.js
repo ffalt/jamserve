@@ -1,49 +1,71 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseRepository = void 0;
-const mikro_orm_1 = require("mikro-orm");
 const enums_1 = require("../../types/enums");
 const random_1 = require("../../utils/random");
 const builder_1 = require("../../modules/rest/builder");
+const base_1 = require("./base");
 const state_helper_1 = require("../state/state.helper");
+const orm_1 = require("../../modules/orm");
 const base_utils_1 = require("./base.utils");
-class BaseRepository extends mikro_orm_1.EntityRepository {
-    applyDefaultOrderByEntry(result, direction, orderBy) {
-        switch (orderBy) {
+class BaseRepository extends orm_1.EntityRepository {
+    buildDefaultOrder(order) {
+        const direction = base_1.OrderHelper.direction(order);
+        switch (order === null || order === void 0 ? void 0 : order.orderBy) {
             case enums_1.DefaultOrderFields.created:
-                result.createdAt = direction;
-                break;
+                return [['createdAt', direction]];
             case enums_1.DefaultOrderFields.updated:
-                result.updatedAt = direction;
-                break;
+                return [['updatedAt', direction]];
             case enums_1.DefaultOrderFields.name:
-                result.name = direction;
-                break;
             case enums_1.DefaultOrderFields.default:
-                result.name = direction;
-                break;
+                return [['name', direction]];
         }
+        return [];
     }
     buildOrderBy(order) {
         if (!order) {
             return;
         }
-        const result = {};
-        for (const o of order) {
-            this.applyOrderByEntry(result, (o === null || o === void 0 ? void 0 : o.orderDesc) ? mikro_orm_1.QueryOrder.DESC : mikro_orm_1.QueryOrder.ASC, o);
+        let result = [];
+        order.forEach(o => result = result.concat(this.buildOrder(o)));
+        return result.length > 0 ? result : undefined;
+    }
+    async buildFindOptions(filter, order, user, page) {
+        const options = filter ? await this.buildFilter(filter, user) : {};
+        options.limit = page === null || page === void 0 ? void 0 : page.take;
+        options.offset = page === null || page === void 0 ? void 0 : page.skip;
+        options.order = this.buildOrderBy(order);
+        if (options.order) {
+            options.order.map(o => {
+                if (o.length === 3) {
+                    const key = o[0];
+                    const list = options.include || [];
+                    if (!list.find((i) => i.association === key)) {
+                        list.push({ association: key });
+                        options.include = list;
+                    }
+                }
+            });
         }
-        if (Object.keys(result).length > 0) {
-            return result;
-        }
+        return options;
     }
     async all() {
         return this.find({});
     }
-    async oneOrFail(where, populate, orderBy) {
+    async oneOrFailByID(id) {
         try {
-            return await super.findOneOrFail(where, populate, orderBy);
+            return await super.findOneOrFailByID(id);
         }
         catch (e) {
+            throw builder_1.NotFoundError();
+        }
+    }
+    async oneOrFail(options) {
+        try {
+            return await super.findOneOrFail(options);
+        }
+        catch (e) {
+            console.log(e);
             throw builder_1.NotFoundError();
         }
     }
@@ -61,104 +83,71 @@ class BaseRepository extends mikro_orm_1.EntityRepository {
             return result;
         }
     }
-    async search(filter, orderBy, page) {
-        const [items, total] = await this.findAndCount(filter, [], orderBy, page === null || page === void 0 ? void 0 : page.take, page === null || page === void 0 ? void 0 : page.skip);
-        return { ...(page || {}), total, items };
+    async search(options) {
+        const { entities, count } = await this.findAndCount(options);
+        return { skip: options.offset, take: options.limit, total: count, items: entities };
     }
-    async searchTransform(filter, order, page, transform) {
-        const [result, total] = await this.findAndCount(filter, [], order, page === null || page === void 0 ? void 0 : page.take, page === null || page === void 0 ? void 0 : page.skip);
-        const items = await Promise.all(result.map(o => transform(o)));
-        return { ...(page || {}), total, items };
+    async searchTransform(options, transform) {
+        const { count, entities } = await this.findAndCount(options);
+        const items = await Promise.all(entities.map(o => transform(o)));
+        return { skip: options.offset, take: options.limit, total: count, items };
     }
-    async findIDsAndCount(where, page) {
-        const builder = this.createQueryBuilder('o')
-            .addSelect('id')
-            .where(where);
-        let result = await builder.execute('all', false);
-        const count = result.length;
-        if (page === null || page === void 0 ? void 0 : page.skip) {
-            result = result.slice(page.skip);
-        }
-        if (page === null || page === void 0 ? void 0 : page.take) {
-            result = result.slice(0, page.take);
-        }
-        return [result.map((o) => o.id), count];
-    }
-    async index(property, filter) {
-        const builder = this.createQueryBuilder('o');
-        const groupSQL = `upper(substr(o.${property},1,1))`;
-        builder
-            .select('id')
-            .addSelect(`${groupSQL} as g`)
-            .where(filter)
-            .groupBy(groupSQL);
+    async index(property, options) {
+        const items = await this.find(options);
         const map = new Map();
-        const result = await builder.execute('all');
-        for (const entry of result) {
-            const list = map.get(entry.g) || [];
-            list.push(entry.id);
-            map.set(entry.g, list);
+        for (const item of items) {
+            const value = (item[property] || '');
+            const c = value[0];
+            const list = map.get(c) || [];
+            list.push(item);
+            map.set(c, list);
         }
         const groups = [];
         for (const [group, value] of map) {
             groups.push({
                 name: group,
-                items: await this.find({ id: { $in: value } })
+                items: value
             });
         }
         return { groups };
     }
-    async findOneIDorFail(where) {
-        const result = await this.findOneID(where);
+    async findOneIDorFail(options) {
+        const result = await this.findOneID(options);
         if (!result) {
             throw builder_1.NotFoundError();
         }
         return result;
     }
-    async findOneID(where) {
-        const builder = this.createQueryBuilder('o')
-            .addSelect('id')
-            .where(where);
-        const result = await builder.execute('get');
-        return result === null || result === void 0 ? void 0 : result.id;
-    }
-    async findIDs(where) {
-        const builder = this.createQueryBuilder('o')
-            .addSelect('id')
-            .where(where);
-        const result = await builder.execute('all');
-        return result.map((o) => o.id);
-    }
-    async findList(list, where, orderBy, page, userID) {
-        const result = await this.getListIDs(list, where, orderBy, page, userID);
+    async findList(list, options, userID) {
+        const result = await this.getListIDs(list, options, userID);
         return {
             ...result,
-            items: await this.find({ id: { $in: result.items } })
+            items: await this.findByIDs(result.items)
         };
     }
     async countFilter(filter, user) {
         return await this.count(await this.buildFilter(filter, user));
     }
-    async findFilter(filter, options, user) {
-        return await this.find(await this.buildFilter(filter, user), options);
+    async findFilter(filter, order, page, user) {
+        return await this.find(await this.buildFindOptions(filter, order, user, page));
     }
     async findIDsFilter(filter, user) {
         return await this.findIDs(await this.buildFilter(filter, user));
     }
     async findListFilter(list, filter, order, page, user) {
-        return await this.findList(list, await this.buildFilter(filter, user), this.buildOrderBy(order), page, user.id);
+        return await this.findList(list, await this.buildFindOptions(filter, order, user, page), user.id);
     }
     async findListTransformFilter(list, filter, order, page, user, transform) {
-        return await this.findListTransform(list, await this.buildFilter(filter, user), this.buildOrderBy(order), page, user.id, transform);
+        return await this.findListTransform(list, await this.buildFindOptions(filter, order, user, page), user.id, transform);
     }
     async searchFilter(filter, order, page, user) {
-        return await this.search(await this.buildFilter(filter, user), this.buildOrderBy(order), page);
+        return await this.search(await this.buildFindOptions(filter, order, user, page));
     }
     async searchTransformFilter(filter, order, page, user, transform) {
-        return await this.searchTransform(await this.buildFilter(filter, user), this.buildOrderBy(order), page, transform);
+        return await this.searchTransform(await this.buildFindOptions(filter, order, user, page), transform);
     }
-    async findListTransform(list, where, orderBy, page, userID, transform) {
-        const result = await this.findList(list, where, orderBy, page, userID);
+    async findListTransform(list, options, userID, transform) {
+        const result = await this.findList(list, options, userID);
         return {
             ...result,
             items: await Promise.all(result.items.map(o => transform(o)))
@@ -167,41 +156,40 @@ class BaseRepository extends mikro_orm_1.EntityRepository {
     async indexFilter(filter, user) {
         return await this.index(this.indexProperty, await this.buildFilter(filter, user));
     }
-    async getListIDs(list, where, orderBy, page, userID) {
+    async getListIDs(list, options, userID) {
         let ids = [];
         let total;
-        if (!page) {
-            page = {};
-        }
+        const opts = { options, limit: undefined, offset: undefined };
+        const page = { skip: options.offset, take: options.limit };
         switch (list) {
             case enums_1.ListType.random:
-                ids = await this.findIDs(where);
+                ids = await this.findIDs(opts);
                 page.take = page.take || 20;
                 total = ids.length;
                 ids = random_1.randomItems(ids, page.take);
                 break;
             case enums_1.ListType.highest:
-                ids = await this.getHighestRatedIDs(where, userID);
+                ids = await this.getHighestRatedIDs(opts, userID);
                 total = ids.length;
                 ids = base_utils_1.paginate(ids, page).items;
                 break;
             case enums_1.ListType.avghighest:
-                ids = await this.getAvgHighestIDs(where);
+                ids = await this.getAvgHighestIDs(opts);
                 total = ids.length;
                 ids = base_utils_1.paginate(ids, page).items;
                 break;
             case enums_1.ListType.frequent:
-                ids = await this.getFrequentlyPlayedIDs(where, userID);
+                ids = await this.getFrequentlyPlayedIDs(opts, userID);
                 total = ids.length;
                 ids = base_utils_1.paginate(ids, page).items;
                 break;
             case enums_1.ListType.faved:
-                ids = await this.getFavedIDs(where, userID);
+                ids = await this.getFavedIDs(opts, userID);
                 total = ids.length;
                 ids = base_utils_1.paginate(ids, page).items;
                 break;
             case enums_1.ListType.recent:
-                ids = await this.getRecentlyPlayedIDs(where, userID);
+                ids = await this.getRecentlyPlayedIDs(opts, userID);
                 total = ids.length;
                 ids = base_utils_1.paginate(ids, page).items;
                 break;
@@ -210,36 +198,48 @@ class BaseRepository extends mikro_orm_1.EntityRepository {
         }
         return { total, ...page, items: ids };
     }
-    async getFilteredIDs(ids, where) {
-        const list = await this.findIDs({ $and: [{ id: { $in: ids } }, where] });
+    async getFilteredIDs(ids, options) {
+        let where = { id: { [orm_1.Op.in]: ids } };
+        if (options.where && Object.keys(options.where).length > 0) {
+            where = { [orm_1.Op.and]: [where, options.where] };
+        }
+        const list = await this.findIDs({ ...options, where });
         return list.sort((a, b) => {
             return ids.indexOf(a) - ids.indexOf(b);
         });
     }
-    async getHighestRatedIDs(where, userID) {
+    async getHighestRatedIDs(options, userID) {
         const helper = new state_helper_1.StateHelper(this.em);
         const ids = await helper.getHighestRatedDestIDs(this.objType, userID);
-        return this.getFilteredIDs(ids, where);
+        return this.getFilteredIDs(ids, options);
     }
-    async getAvgHighestIDs(where) {
+    async getAvgHighestIDs(options) {
         const helper = new state_helper_1.StateHelper(this.em);
         const ids = await helper.getAvgHighestDestIDs(this.objType);
-        return this.getFilteredIDs(ids, where);
+        return this.getFilteredIDs(ids, options);
     }
-    async getFrequentlyPlayedIDs(where, userID) {
+    async getFrequentlyPlayedIDs(options, userID) {
         const helper = new state_helper_1.StateHelper(this.em);
         const ids = await helper.getFrequentlyPlayedDestIDs(this.objType, userID);
-        return this.getFilteredIDs(ids, where);
+        return this.getFilteredIDs(ids, options);
     }
-    async getFavedIDs(where, userID) {
+    async getFavedIDs(options, userID) {
         const helper = new state_helper_1.StateHelper(this.em);
         const ids = await helper.getFavedDestIDs(this.objType, userID);
-        return this.getFilteredIDs(ids, where);
+        return this.getFilteredIDs(ids, options);
     }
-    async getRecentlyPlayedIDs(where, userID) {
+    async getRecentlyPlayedIDs(options, userID) {
         const helper = new state_helper_1.StateHelper(this.em);
         const ids = await helper.getRecentlyPlayedDestIDs(this.objType, userID);
-        return this.getFilteredIDs(ids, where);
+        return this.getFilteredIDs(ids, options);
+    }
+    async removeLaterByIDs(ids) {
+        if (ids && ids.length > 0) {
+            const items = await this.findByIDs(ids);
+            for (const item of items) {
+                this.removeLater(item);
+            }
+        }
     }
 }
 exports.BaseRepository = BaseRepository;

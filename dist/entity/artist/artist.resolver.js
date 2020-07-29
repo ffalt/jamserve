@@ -25,7 +25,7 @@ const series_1 = require("../series/series");
 const artist_args_1 = require("./artist.args");
 let ArtistResolver = class ArtistResolver {
     async artist(id, { orm }) {
-        return await orm.Artist.oneOrFail(id);
+        return await orm.Artist.oneOrFailByID(id);
     }
     async artists({ page, filter, order, list }, { orm, user }) {
         if (list) {
@@ -40,52 +40,40 @@ let ArtistResolver = class ArtistResolver {
         return await orm.State.findOrCreate(artist.id, enums_1.DBObjectType.artist, user.id);
     }
     async tracks(artist, { orm }) {
-        await orm.Artist.populate(artist, 'tracks');
         return artist.tracks.getItems();
     }
     async tracksCount(artist, { orm }) {
-        await orm.Artist.populate(artist, 'tracks');
-        return artist.tracks.length;
+        return artist.tracks.count();
     }
     async albumTracks(artist, { orm }) {
-        await orm.Artist.populate(artist, 'albumTracks');
         return artist.albumTracks.getItems();
     }
     async albumsTracksCount(artist, { orm }) {
-        await orm.Artist.populate(artist, 'albumTracks');
-        return artist.albumTracks.length;
+        return artist.albumTracks.count();
     }
     async albums(artist, { orm }) {
-        await orm.Artist.populate(artist, 'albums');
         return artist.albums.getItems();
     }
     async albumsCount(artist, { orm }) {
-        await orm.Artist.populate(artist, 'albums');
-        return artist.albums.length;
+        return artist.albums.count();
     }
     async roots(artist, { orm }) {
-        await orm.Artist.populate(artist, 'roots');
         return artist.roots.getItems();
     }
     async rootsCount(artist, { orm }) {
-        await orm.Artist.populate(artist, 'roots');
-        return artist.roots.length;
+        return artist.roots.count();
     }
     async folders(artist, { orm }) {
-        await orm.Artist.populate(artist, 'folders');
         return artist.folders.getItems();
     }
     async foldersCount(artist, { orm }) {
-        await orm.Artist.populate(artist, 'folders');
-        return artist.folders.length;
+        return artist.folders.count();
     }
     async series(artist, { orm }) {
-        await orm.Artist.populate(artist, 'series');
         return artist.series.getItems();
     }
     async seriesCount(artist, { orm }) {
-        await orm.Artist.populate(artist, 'series');
-        return artist.series.length;
+        return artist.series.count();
     }
 };
 __decorate([

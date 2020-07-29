@@ -128,7 +128,7 @@ let ApolloMiddleware = class ApolloMiddleware {
                     throw new apollo_server_express_1.AuthenticationError('you must be logged in');
                 return {
                     req, res,
-                    orm: this.orm,
+                    orm: this.orm.fork(),
                     engine: this.engine,
                     sessionID: (_a = req.session) === null || _a === void 0 ? void 0 : _a.id,
                     user: req.user
@@ -150,7 +150,7 @@ __decorate([
     __metadata("design:type", engine_service_1.EngineService)
 ], ApolloMiddleware.prototype, "engine", void 0);
 ApolloMiddleware = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], ApolloMiddleware);
 exports.ApolloMiddleware = ApolloMiddleware;
 //# sourceMappingURL=apollo.middleware.js.map

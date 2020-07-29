@@ -11,24 +11,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MetaData = void 0;
 const enums_1 = require("../../types/enums");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 let MetaData = class MetaData extends base_1.Base {
 };
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], MetaData.prototype, "name", void 0);
 __decorate([
-    mikro_orm_1.Enum(() => enums_1.MetaDataType),
+    orm_1.Property(() => enums_1.MetaDataType),
     __metadata("design:type", String)
 ], MetaData.prototype, "dataType", void 0);
 __decorate([
-    mikro_orm_1.Property({ type: 'json' }),
-    __metadata("design:type", Object)
+    orm_1.Property(() => String),
+    __metadata("design:type", String)
 ], MetaData.prototype, "data", void 0);
 MetaData = __decorate([
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], MetaData);
 exports.MetaData = MetaData;
 //# sourceMappingURL=metadata.js.map

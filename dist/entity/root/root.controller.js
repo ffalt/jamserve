@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RootController = void 0;
 const root_model_1 = require("./root.model");
-const user_1 = require("../user/user");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const base_controller_1 = require("../base/base.controller");
@@ -24,30 +23,30 @@ const typescript_ioc_1 = require("typescript-ioc");
 const io_service_1 = require("../../modules/engine/services/io.service");
 const base_args_1 = require("../base/base.args");
 let RootController = class RootController extends base_controller_1.BaseController {
-    async id(id, rootArgs, user) {
-        return this.transform.root(await this.orm.Root.oneOrFail(id), rootArgs, user);
+    async id(id, rootArgs, { orm, user }) {
+        return this.transform.root(orm, await orm.Root.oneOrFailByID(id), rootArgs, user);
     }
-    async search(page, rootArgs, filter, order, user) {
-        return await this.orm.Root.searchTransformFilter(filter, [order], page, user, o => this.transform.root(o, rootArgs, user));
+    async search(page, rootArgs, filter, order, { orm, user }) {
+        return await orm.Root.searchTransformFilter(filter, [order], page, user, o => this.transform.root(orm, o, rootArgs, user));
     }
-    async status(id) {
-        return this.transform.rootStatus(await this.orm.Root.oneOrFail(id));
+    async status(id, { orm, user }) {
+        return this.transform.rootStatus(await orm.Root.oneOrFailByID(id));
     }
-    async create(args) {
+    async create(args, { orm, user }) {
         return await this.ioService.createRoot(args.name, args.path, args.strategy);
     }
-    async update(id, args) {
+    async update(id, args, { orm, user }) {
         return await this.ioService.updateRoot(id, args.name, args.path, args.strategy);
     }
-    async remove(id) {
+    async remove(id, { orm, user }) {
         return await this.ioService.removeRoot(id);
     }
-    async refresh(args) {
+    async refresh(args, { orm }) {
         if (args.id) {
             return await this.ioService.refreshRoot(args.id);
         }
         else {
-            const result = await this.ioService.refresh();
+            const result = await this.ioService.refresh(orm);
             return result[result.length - 1];
         }
     }
@@ -60,10 +59,9 @@ __decorate([
     rest_1.Get('/id', () => root_model_1.Root, { description: 'Get a Root by Id', summary: 'Get Root' }),
     __param(0, rest_1.QueryParam('id', { description: 'Root Id', isID: true })),
     __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.CurrentUser()),
+    __param(2, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, root_args_1.IncludesRootArgs,
-        user_1.User]),
+    __metadata("design:paramtypes", [String, root_args_1.IncludesRootArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "id", null);
 __decorate([
@@ -72,52 +70,57 @@ __decorate([
     __param(1, rest_1.QueryParams()),
     __param(2, rest_1.QueryParams()),
     __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.CurrentUser()),
+    __param(4, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [base_args_1.PageArgs,
         root_args_1.IncludesRootArgs,
         root_args_1.RootFilterArgs,
-        root_args_1.RootOrderArgs,
-        user_1.User]),
+        root_args_1.RootOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "search", null);
 __decorate([
     rest_1.Get('/status', () => root_model_1.RootUpdateStatus, { description: 'Get root status by id' }),
     __param(0, rest_1.QueryParam('id', { description: 'Root Id', isID: true })),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "status", null);
 __decorate([
     rest_1.Post('/create', () => admin_1.AdminChangeQueueInfo, { description: 'Create a root', roles: [enums_1.UserRole.admin] }),
     __param(0, rest_1.BodyParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [root_args_1.RootMutateArgs]),
+    __metadata("design:paramtypes", [root_args_1.RootMutateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "create", null);
 __decorate([
     rest_1.Post('/update', () => admin_1.AdminChangeQueueInfo, { description: 'Update a root', roles: [enums_1.UserRole.admin] }),
     __param(0, rest_1.BodyParam('id', { description: 'Root Id', isID: true })),
     __param(1, rest_1.BodyParams()),
+    __param(2, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, root_args_1.RootMutateArgs]),
+    __metadata("design:paramtypes", [String, root_args_1.RootMutateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "update", null);
 __decorate([
     rest_1.Post('/remove', () => admin_1.AdminChangeQueueInfo, { description: 'Remove a root', roles: [enums_1.UserRole.admin] }),
     __param(0, rest_1.BodyParam('id', { description: 'Root Id', isID: true })),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "remove", null);
 __decorate([
     rest_1.Post('/refresh', () => admin_1.AdminChangeQueueInfo, { description: 'Check podcast feeds for new episodes', roles: [enums_1.UserRole.admin] }),
     __param(0, rest_1.BodyParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [root_args_1.RootRefreshArgs]),
+    __metadata("design:paramtypes", [root_args_1.RootRefreshArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "refresh", null);
 RootController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/root', { tags: ['Root'], roles: [enums_1.UserRole.stream] })
 ], RootController);
 exports.RootController = RootController;

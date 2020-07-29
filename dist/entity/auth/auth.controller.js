@@ -38,7 +38,8 @@ let AuthController = class AuthController {
                 context.req.login(user, (err2) => {
                     if (err2) {
                         log.error(err2);
-                        reject(new Error('Invalid Auth'));
+                        console.error(err2);
+                        return reject(new Error('Invalid Auth'));
                     }
                     const client = context.req.body.client || 'Unknown Client';
                     const token = credentials.jwt ? jwt_1.generateJWT(user.id, client, this.configService.env.jwt.secret, this.configService.env.jwt.maxAge) : undefined;
@@ -78,7 +79,8 @@ __decorate([
 ], AuthController.prototype, "configService", void 0);
 __decorate([
     rest_1.Post('/login', () => session_model_1.Session, { description: 'Start session or jwt access', summary: 'Login' }),
-    __param(0, rest_1.BodyParams()), __param(1, rest_1.Ctx()),
+    __param(0, rest_1.BodyParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [auth_args_1.CredentialsArgs, Object]),
     __metadata("design:returntype", Promise)
@@ -91,6 +93,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "logout", null);
 AuthController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/auth', { tags: ['Access'] })
 ], AuthController);
 exports.AuthController = AuthController;

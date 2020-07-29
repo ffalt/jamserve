@@ -32,7 +32,7 @@ const bookmark_1 = require("../bookmark/bookmark");
 const track_args_1 = require("./track.args");
 let TrackResolver = class TrackResolver {
     async track(id, { orm }) {
-        return await orm.Track.oneOrFail(id);
+        return await orm.Track.oneOrFailByID(id);
     }
     async tracks({ page, filter, order, list }, { orm, user }) {
         if (list) {
@@ -41,12 +41,10 @@ let TrackResolver = class TrackResolver {
         return await orm.Track.searchFilter(filter, order, page, user);
     }
     async bookmarks(track, { orm }) {
-        await orm.Track.populate(track, 'bookmarks');
         return track.bookmarks.getItems();
     }
     async bookmarksCount(track, { orm }) {
-        await orm.Track.populate(track, 'bookmarks');
-        return track.bookmarks.length;
+        return track.bookmarks.count();
     }
     fileCreated(track) {
         return new Date(track.statCreated);
@@ -55,38 +53,31 @@ let TrackResolver = class TrackResolver {
         return new Date(track.statModified);
     }
     async folder(track, { orm }) {
-        await orm.Track.populate(track, 'folder');
-        return track.folder;
+        return track.folder.getOrFail();
     }
     async tag(track, { orm }) {
-        await orm.Track.populate(track, 'tag');
-        return track.tag;
+        return track.tag.get();
     }
     async album(track, { orm }) {
-        await orm.Track.populate(track, 'album');
-        return track.album;
+        return track.album.get();
     }
     async series(track, { orm }) {
-        await orm.Track.populate(track, 'series');
-        return track.series;
+        return track.series.get();
     }
     async albumArtist(track, { orm }) {
-        await orm.Track.populate(track, 'albumArtist');
-        return track.albumArtist;
+        return track.albumArtist.get();
     }
     async artist(track, { orm }) {
-        await orm.Track.populate(track, 'artist');
-        return track.artist;
+        return track.artist.get();
     }
     async root(track, { orm }) {
-        await orm.Track.populate(track, 'root');
-        return track.root;
+        return track.root.getOrFail();
     }
     async waveform(track) {
         return { obj: track, objType: enums_1.DBObjectType.track };
     }
-    async lyrics(track, { engine }) {
-        return engine.metadataService.lyricsByTrack(track);
+    async lyrics(track, { engine, orm }) {
+        return engine.metadataService.lyricsByTrack(orm, track);
     }
     async rawTag(track, { engine }) {
         return (await engine.audioModule.readRawTag(path_1.default.join(track.path, track.fileName))) || {};

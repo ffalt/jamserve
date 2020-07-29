@@ -18,11 +18,9 @@ const path_1 = __importDefault(require("path"));
 const typescript_ioc_1 = require("typescript-ioc");
 const folder_rule_1 = require("../health/folder.rule");
 const image_module_1 = require("../../modules/image/image.module");
-const orm_service_1 = require("../../modules/engine/services/orm.service");
-async function getFolderDisplayArtwork(folder, orm) {
-    await orm.Folder.populate(folder, ['artworks']);
+async function getFolderDisplayArtwork(orm, folder) {
     const search = folder.folderType === enums_1.FolderType.artist ? enums_1.ArtworkImageType.artist : enums_1.ArtworkImageType.front;
-    return folder.artworks.getItems().find(a => a.types.includes(search));
+    return (await folder.artworks.getItems()).find(a => a.types.includes(search));
 }
 exports.getFolderDisplayArtwork = getFolderDisplayArtwork;
 let FolderService = class FolderService {
@@ -36,23 +34,23 @@ let FolderService = class FolderService {
                 return;
             }
             result.unshift(f);
-            await collect(f.parent);
+            await collect(await f.parent.get());
         };
         await collect(folder);
         return result;
     }
-    async getImage(folder, size, format) {
-        const artwork = await getFolderDisplayArtwork(folder, this.orm);
+    async getImage(orm, folder, size, format) {
+        const artwork = await getFolderDisplayArtwork(orm, folder);
         if (artwork) {
             return this.imageModule.get(artwork.id, path_1.default.join(artwork.path, artwork.name), size, format);
         }
     }
-    async health(list) {
+    async health(orm, list) {
         const folders = list.sort((a, b) => a.path.localeCompare(b.path));
         const result = [];
         for (const folder of folders) {
-            const parents = await this.collectFolderPath(folder.parent);
-            const health = await this.checker.run(this.orm, folder, parents);
+            const parents = await this.collectFolderPath(await folder.parent.get());
+            const health = await this.checker.run(orm, folder, parents);
             if (health && health.length > 0) {
                 result.push({ folder, health });
             }
@@ -64,12 +62,8 @@ __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", image_module_1.ImageModule)
 ], FolderService.prototype, "imageModule", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
-], FolderService.prototype, "orm", void 0);
 FolderService = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], FolderService);
 exports.FolderService = FolderService;
 //# sourceMappingURL=folder.service.js.map

@@ -36,6 +36,7 @@ const audio_module_1 = require("../../audio/audio.module");
 const state_service_1 = require("../../../entity/state/state.service");
 const nowplaying_service_1 = require("../../../entity/nowplaying/nowplaying.service");
 const playqueue_service_1 = require("../../../entity/playqueue/playqueue.service");
+const chat_service_1 = require("../../../entity/chat/chat.service");
 const log = logger_1.logger('Engine');
 let EngineService = class EngineService {
     constructor() {
@@ -53,15 +54,16 @@ let EngineService = class EngineService {
             this.configService.getDataPath(['podcasts'])
         ];
     }
-    async checkRescan() {
-        const version = await this.settingsService.settingsVersion();
+    async checkRescan(orm) {
+        const version = await this.settingsService.settingsVersion(orm);
         const forceRescan = !!version && version !== version_1.JAMSERVE_VERSION;
         if (forceRescan) {
             log.info(`Updating from version ${version || '-'}`);
         }
         if (forceRescan || this.settingsService.settings.library.scanAtStart) {
-            this.ioService.refresh().then(() => {
-                return forceRescan ? this.settingsService.saveSettings() : undefined;
+            log.info(`Starting rescan`);
+            this.ioService.refresh(orm).then(() => {
+                return forceRescan ? this.settingsService.saveSettings(orm) : undefined;
             }).catch(e => {
                 log.error('Error on startup scanning', e);
             });
@@ -75,17 +77,22 @@ let EngineService = class EngineService {
         }
     }
     async start() {
+        log.debug(`check data paths`);
         await this.checkDataPaths();
+        log.debug(`start orm`);
         await this.orm.start(this.configService.env.paths.data);
-        await this.checkFirstStart();
-        await this.checkRescan();
+        const orm = this.orm.fork();
+        log.debug(`check first start`);
+        await this.checkFirstStart(orm);
+        log.debug(`check for rescan`);
+        await this.checkRescan(orm);
     }
     async stop() {
         await this.orm.stop();
     }
-    async buildAdminUser(admin) {
+    async buildAdminUser(orm, admin) {
         const pw = hash_1.hashAndSaltSHA512(admin.pass || '');
-        const user = this.orm.User.create({
+        const user = orm.User.create({
             name: admin.name,
             salt: pw.salt,
             hash: pw.hash,
@@ -95,32 +102,32 @@ let EngineService = class EngineService {
             roleStream: true,
             roleUpload: true
         });
-        await this.orm.orm.em.persistAndFlush(user);
+        await orm.User.persistAndFlush(user);
     }
-    async buildRoots(roots) {
+    async buildRoots(orm, roots) {
         for (const first of roots) {
-            const root = this.orm.Root.create({
+            const root = orm.Root.create({
                 name: first.name,
                 path: first.path,
                 strategy: first.strategy || enums_1.RootScanStrategy.auto
             });
-            await this.orm.orm.em.persistAndFlush(root);
+            await orm.Root.persistAndFlush(root);
         }
     }
-    async checkFirstStart() {
+    async checkFirstStart(orm) {
         if (!this.configService.firstStart) {
             return;
         }
         if (this.configService.firstStart.adminUser) {
-            const count = await this.orm.User.count();
+            const count = await orm.User.count();
             if (count === 0) {
-                await this.buildAdminUser(this.configService.firstStart.adminUser);
+                await this.buildAdminUser(orm, this.configService.firstStart.adminUser);
             }
         }
         if (this.configService.firstStart.roots) {
-            const count = await this.orm.Root.count();
+            const count = await orm.Root.count();
             if (count === 0) {
-                await this.buildRoots(this.configService.firstStart.roots);
+                await this.buildRoots(orm, this.configService.firstStart.roots);
             }
         }
     }
@@ -189,8 +196,12 @@ __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", playqueue_service_1.PlayQueueService)
 ], EngineService.prototype, "playQueueService", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", chat_service_1.ChatService)
+], EngineService.prototype, "chatService", void 0);
 EngineService = __decorate([
-    typescript_ioc_1.Singleton,
+    typescript_ioc_1.InRequestScope,
     __metadata("design:paramtypes", [])
 ], EngineService);
 exports.EngineService = EngineService;

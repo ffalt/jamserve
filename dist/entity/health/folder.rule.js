@@ -142,8 +142,8 @@ const folderRules = [
         id: enums_1.FolderHealthID.albumImageExists,
         name: 'Album folder image is missing',
         run: async (orm, folder) => {
-            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum && folder.children.length > 0)) {
-                const artwork = await folder_service_1.getFolderDisplayArtwork(folder, orm);
+            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum && (await folder.children.count()) > 0)) {
+                const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
                 if (!artwork) {
                     return {};
                 }
@@ -154,8 +154,8 @@ const folderRules = [
         id: enums_1.FolderHealthID.albumImageValid,
         name: 'Album folder image is invalid',
         run: async (orm, folder) => {
-            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum && folder.children.length > 0)) {
-                const artwork = await folder_service_1.getFolderDisplayArtwork(folder, orm);
+            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum && (await folder.children.count()) > 0)) {
+                const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
                 if (artwork && (artwork.format === 'invalid')) {
                     return { details: [{ reason: 'Broken or unsupported File Format' }] };
                 }
@@ -176,8 +176,8 @@ const folderRules = [
         id: enums_1.FolderHealthID.albumImageQuality,
         name: 'Album folder image is of low quality',
         run: async (orm, folder) => {
-            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum && folder.children.length > 0)) {
-                const artwork = await folder_service_1.getFolderDisplayArtwork(folder, orm);
+            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum && (await folder.children.count()) > 0)) {
+                const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
                 if (artwork && artwork.height && artwork.width && (artwork.height < 300 || artwork.width < 300)) {
                     return { details: [{ reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300' }] };
                 }
@@ -189,7 +189,7 @@ const folderRules = [
         name: 'Artist folder image is missing',
         run: async (orm, folder) => {
             if (folder.folderType === enums_1.FolderType.artist) {
-                const artwork = await folder_service_1.getFolderDisplayArtwork(folder, orm);
+                const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
                 if (!artwork) {
                     return {};
                 }
@@ -201,7 +201,7 @@ const folderRules = [
         name: 'Artist folder image is invalid',
         run: async (orm, folder) => {
             if (folder.folderType === enums_1.FolderType.artist) {
-                const artwork = await folder_service_1.getFolderDisplayArtwork(folder, orm);
+                const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
                 if (artwork && (artwork.format === 'invalid')) {
                     return { details: [{ reason: 'Broken or unsupported File Format' }] };
                 }

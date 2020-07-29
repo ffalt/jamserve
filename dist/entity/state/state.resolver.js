@@ -17,18 +17,18 @@ const type_graphql_1 = require("type-graphql");
 const state_1 = require("./state");
 const builder_1 = require("../../modules/rest/builder");
 let StateResolver = class StateResolver {
-    async state(id, { engine, user }) {
-        const result = await engine.stateService.findInStateTypes(id);
+    async state(id, { orm, user }) {
+        const result = await orm.findInStateTypes(id);
         if (!result) {
             return Promise.reject(builder_1.NotFoundError());
         }
-        return await engine.orm.State.findOrCreate(result.obj.id, result.objType, user.id);
+        return await orm.State.findOrCreate(result.obj.id, result.objType, user.id);
     }
-    async fav(id, remove, { engine, user }) {
-        return await engine.stateService.fav(id, remove, user);
+    async fav(id, remove, { engine, orm, user }) {
+        return await engine.stateService.fav(orm, id, remove, user);
     }
-    async rate(id, rating, { engine, user }) {
-        return await engine.stateService.rate(id, rating, user);
+    async rate(id, rating, { engine, orm, user }) {
+        return await engine.stateService.rate(orm, id, rating, user);
     }
 };
 __decorate([

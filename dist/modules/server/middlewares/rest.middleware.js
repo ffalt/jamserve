@@ -20,16 +20,17 @@ const express_2 = require("../../rest/builder/express");
 const typescript_ioc_1 = require("typescript-ioc");
 const logger_1 = require("../../../utils/logger");
 const controllers_1 = require("../../engine/rest/controllers");
-const enum_registration_1 = require("../../engine/rest/enum-registration");
 const config_service_1 = require("../../engine/services/config.service");
+const enum_registration_1 = require("../../engine/rest/enum-registration");
 const log = logger_1.logger('REST');
+enum_registration_1.registerRestEnums();
 let RestMiddleware = class RestMiddleware {
     middleware() {
         const api = express_1.default.Router();
-        enum_registration_1.registerRestEnums();
-        builder_1.buildRestMeta(controllers_1.RestControllers());
+        builder_1.buildRestMeta();
         const options = {
             tmpPath: this.configService.getDataPath(['cache', 'uploads']),
+            controllers: controllers_1.RestControllers(),
             validateRoles: (user, roles) => {
                 const u = user;
                 if (roles.length > 0) {
@@ -70,7 +71,7 @@ __decorate([
     __metadata("design:type", config_service_1.ConfigService)
 ], RestMiddleware.prototype, "configService", void 0);
 RestMiddleware = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], RestMiddleware);
 exports.RestMiddleware = RestMiddleware;
 //# sourceMappingURL=rest.middleware.js.map

@@ -88,7 +88,7 @@ __decorate([
     __metadata("design:type", rest_middleware_1.RestMiddleware)
 ], DocsMiddleware.prototype, "rest", void 0);
 DocsMiddleware = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], DocsMiddleware);
 exports.DocsMiddleware = DocsMiddleware;
 //# sourceMappingURL=docs.middleware.js.map

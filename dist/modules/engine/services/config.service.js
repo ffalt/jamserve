@@ -53,7 +53,7 @@ let ConfigService = class ConfigService {
     }
 };
 ConfigService = __decorate([
-    typescript_ioc_1.Singleton,
+    typescript_ioc_1.InRequestScope,
     __metadata("design:paramtypes", [])
 ], ConfigService);
 exports.ConfigService = ConfigService;

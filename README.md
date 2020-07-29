@@ -25,17 +25,37 @@ Features:
 *   REST & GraphQL API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
 *   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/specs/jam.openapi.json)
 *   Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
-*   Database Support for SQLite (planned: some more supported by [Mikro-Orm](https://mikro-orm.io/docs/installation))
+*   Database Support for SQLite (planned: some more supported by [sequelize](https://sequelize.org))
 
 ## Requirements
 
 *   install [NodeJS](https://nodejs.org/) >= 13.x and [NPM](https://www.npmjs.com/)
-*   install [FFMPEG](https://ffmpeg.org/) and set [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe) FFPROBE_PATH and FFMPEG_PATH
+*   install [FFMPEG](https://ffmpeg.org/)
+ 
+    `apt-get install ffmpeg`
+
+      manual installation: available in PATH or [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe): *FFPROBE_PATH* and *FFMPEG_PATH*
 
 optional for meta data matching & mp3 repair support
 
-*   install [fpcalc](https://github.com/acoustid/chromaprint/releases/) and set environment variable: FPCALC_PATH
-*   install [mp3val](http://mp3val.sourceforge.net/) and set environment variable: MP3VAL_PATH
+*   install [fpcalc](https://github.com/acoustid/chromaprint/releases/)
+
+    `apt-get install libchromaprint-tools`
+     
+     manual installation: available in PATH or environment variable *FPCALC_PATH*
+     
+*   install [mp3val](http://mp3val.sourceforge.net/) 
+
+    `apt-get install mp3val`
+     
+     manual installation: available in PATH or environment variable *MP3VAL_PATH*
+     
+*   install [flac](https://xiph.org/flac/)
+
+    `apt-get install flac`
+     
+     manual installation: available in PATH or environment variable *FLAC_PATH*
+
 
 ## Installation
 
@@ -80,7 +100,7 @@ JAM_JWT_MAXAGE=1 day
 # Due to CORS security you MUST name all domains where login with session cookie is allowed
 # https://de.wikipedia.org/wiki/Cross-Origin_Resource_Sharing
 # (background: random sites cannot access/create cookies for your domain)
-JAM_ALLOWED_COOKIE_DOMAINS=http://127.0.0.1:4040,http://127.0.0.1:4200
+JAM_ALLOWED_COOKIE_DOMAINS=http://localhost:4040,http://localhost:4200
 
 # An unique string for your instance to sign the session cookie (change it!)
 # http://www.senchalabs.org/connect/session.html

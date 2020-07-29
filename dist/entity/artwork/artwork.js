@@ -13,68 +13,68 @@ exports.ArtworkPageQL = exports.ArtworkQL = exports.Artwork = void 0;
 const folder_1 = require("../folder/folder");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
-const orm_types_1 = require("../../modules/engine/services/orm.types");
 let Artwork = class Artwork extends base_1.Base {
     constructor() {
         super(...arguments);
         this.types = [];
+        this.folder = new orm_1.Reference(this);
     }
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Artwork.prototype, "name", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Artwork.prototype, "path", void 0);
 __decorate([
     type_graphql_1.Field(() => [enums_1.ArtworkImageType]),
-    mikro_orm_1.Property({ type: orm_types_1.OrmStringListType }),
+    orm_1.Property(() => [enums_1.ArtworkImageType]),
     __metadata("design:type", Array)
 ], Artwork.prototype, "types", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
     __metadata("design:type", Number)
 ], Artwork.prototype, "statCreated", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
     __metadata("design:type", Number)
 ], Artwork.prototype, "statModified", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT),
     __metadata("design:type", Number)
 ], Artwork.prototype, "fileSize", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Artwork.prototype, "width", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Artwork.prototype, "height", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Artwork.prototype, "format", void 0);
 __decorate([
     type_graphql_1.Field(() => folder_1.FolderQL),
-    mikro_orm_1.ManyToOne(() => folder_1.Folder),
-    __metadata("design:type", folder_1.Folder)
+    orm_1.ManyToOne(() => folder_1.Folder, folder => folder.artworks),
+    __metadata("design:type", orm_1.Reference)
 ], Artwork.prototype, "folder", void 0);
 Artwork = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Artwork);
 exports.Artwork = Artwork;
 let ArtworkQL = class ArtworkQL extends Artwork {

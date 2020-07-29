@@ -25,7 +25,7 @@ const series_1 = require("../series/series");
 const album_args_1 = require("./album.args");
 let AlbumResolver = class AlbumResolver {
     async album(id, { orm }) {
-        return await orm.Album.oneOrFail(id);
+        return await orm.Album.oneOrFailByID(id);
     }
     async albums({ filter, page, order, list }, { orm, user }) {
         if (list) {
@@ -37,39 +37,31 @@ let AlbumResolver = class AlbumResolver {
         return await orm.Album.indexFilter(filter);
     }
     async artist(album, { orm }) {
-        await orm.Album.populate(album, 'artist');
-        return album.artist;
+        return album.artist.getOrFail();
     }
     async tracks(album, { orm }) {
-        await orm.Album.populate(album, 'tracks');
         return album.tracks.getItems();
     }
     async roots(album, { orm }) {
-        await orm.Album.populate(album, 'roots');
         return album.roots.getItems();
     }
     async folders(album, { orm }) {
-        await orm.Album.populate(album, 'folders');
         return album.folders.getItems();
     }
     async series(album, { orm }) {
-        await orm.Album.populate(album, 'series');
-        return album.series;
+        return album.series.get();
     }
     async state(album, { orm, user }) {
         return await orm.State.findOrCreate(album.id, enums_1.DBObjectType.album, user.id);
     }
     async foldersCount(album, { orm }) {
-        await orm.Album.populate(album, 'folders');
-        return album.folders.length;
+        return album.folders.count();
     }
     async tracksCount(album, { orm }) {
-        await orm.Album.populate(album, 'tracks');
-        return album.tracks.length;
+        return album.tracks.count();
     }
     async rootsCount(album, { orm }) {
-        await orm.Album.populate(album, 'roots');
-        return album.roots.length;
+        return album.roots.count();
     }
 };
 __decorate([

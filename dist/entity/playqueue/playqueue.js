@@ -13,46 +13,46 @@ exports.PlayQueueQL = exports.PlayQueue = void 0;
 const user_1 = require("../user/user");
 const playqueue_entry_1 = require("../playqueueentry/playqueue-entry");
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 let PlayQueue = class PlayQueue extends base_1.Base {
     constructor() {
         super(...arguments);
-        this.entries = new mikro_orm_1.Collection(this);
+        this.entries = new orm_1.Collection(this);
     }
 };
 __decorate([
-    mikro_orm_1.OneToOne(() => user_1.User),
-    __metadata("design:type", user_1.User)
-], PlayQueue.prototype, "user", void 0);
-__decorate([
     type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], PlayQueue.prototype, "current", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], PlayQueue.prototype, "position", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], PlayQueue.prototype, "duration", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], PlayQueue.prototype, "changedBy", void 0);
 __decorate([
+    orm_1.OneToOne(() => user_1.User, user => user.playQueue, { owner: true }),
+    __metadata("design:type", user_1.User)
+], PlayQueue.prototype, "user", void 0);
+__decorate([
     type_graphql_1.Field(() => [playqueue_entry_1.PlayQueueEntryQL]),
-    mikro_orm_1.OneToMany(() => playqueue_entry_1.PlayQueueEntry, entry => entry.playQueue, { orderBy: { position: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => playqueue_entry_1.PlayQueueEntry, entry => entry.playQueue, { orderBy: { position: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], PlayQueue.prototype, "entries", void 0);
 PlayQueue = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], PlayQueue);
 exports.PlayQueue = PlayQueue;
 let PlayQueueQL = class PlayQueueQL extends PlayQueue {

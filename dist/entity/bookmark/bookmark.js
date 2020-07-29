@@ -14,37 +14,43 @@ const user_1 = require("../user/user");
 const track_1 = require("../track/track");
 const episode_1 = require("../episode/episode");
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 let Bookmark = class Bookmark extends base_1.Base {
+    constructor() {
+        super(...arguments);
+        this.track = new orm_1.Reference(this);
+        this.episode = new orm_1.Reference(this);
+        this.user = new orm_1.Reference(this);
+    }
 };
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_INT),
     __metadata("design:type", Number)
 ], Bookmark.prototype, "position", void 0);
 __decorate([
     type_graphql_1.Field(() => track_1.TrackQL, { nullable: true }),
-    mikro_orm_1.ManyToOne(() => track_1.Track),
-    __metadata("design:type", track_1.Track)
+    orm_1.ManyToOne(() => track_1.Track, track => track.bookmarks, { nullable: true }),
+    __metadata("design:type", orm_1.Reference)
 ], Bookmark.prototype, "track", void 0);
 __decorate([
     type_graphql_1.Field(() => episode_1.EpisodeQL, { nullable: true }),
-    mikro_orm_1.ManyToOne(() => episode_1.Episode),
-    __metadata("design:type", episode_1.Episode)
+    orm_1.ManyToOne(() => episode_1.Episode, episode => episode.bookmarks, { nullable: true }),
+    __metadata("design:type", orm_1.Reference)
 ], Bookmark.prototype, "episode", void 0);
 __decorate([
-    mikro_orm_1.ManyToOne(() => user_1.User),
-    __metadata("design:type", user_1.User)
+    orm_1.ManyToOne(() => user_1.User, user => user.bookmarks),
+    __metadata("design:type", orm_1.Reference)
 ], Bookmark.prototype, "user", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Bookmark.prototype, "comment", void 0);
 Bookmark = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Bookmark);
 exports.Bookmark = Bookmark;
 let BookmarkQL = class BookmarkQL extends Bookmark {

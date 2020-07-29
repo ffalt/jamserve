@@ -21,18 +21,16 @@ const episode_1 = require("../episode/episode");
 const bookmark_args_1 = require("./bookmark.args");
 let BookmarkResolver = class BookmarkResolver {
     async bookmark(id, { orm, user }) {
-        return await orm.Bookmark.oneOrFail({ id: id, user: user.id });
+        return await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id: id } } : { where: { id: id, user: user.id } });
     }
     async bookmarks({ filter, page, order }, { orm, user }) {
         return await orm.Bookmark.searchFilter(filter, order, page, user);
     }
     async track(bookmark, { orm }) {
-        await orm.Bookmark.populate(bookmark, 'track');
-        return bookmark.track;
+        return bookmark.track.get();
     }
     async episode(bookmark, { orm }) {
-        await orm.Bookmark.populate(bookmark, 'episode');
-        return bookmark.episode;
+        return bookmark.episode.get();
     }
 };
 __decorate([

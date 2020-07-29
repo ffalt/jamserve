@@ -13,88 +13,87 @@ exports.PodcastIndexQL = exports.PodcastIndexGroupQL = exports.PodcastPageQL = e
 const episode_1 = require("../episode/episode");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
-const orm_types_1 = require("../../modules/engine/services/orm.types");
 const state_1 = require("../state/state");
 let Podcast = class Podcast extends base_1.Base {
     constructor() {
         super(...arguments);
-        this.episodes = new mikro_orm_1.Collection(this);
+        this.episodes = new orm_1.Collection(this);
     }
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Podcast.prototype, "name", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Podcast.prototype, "url", void 0);
 __decorate([
-    mikro_orm_1.Property(),
+    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
     __metadata("design:type", Number)
 ], Podcast.prototype, "lastCheck", void 0);
 __decorate([
     type_graphql_1.Field(() => enums_1.PodcastStatus),
-    mikro_orm_1.Enum(() => enums_1.PodcastStatus),
+    orm_1.Property(() => enums_1.PodcastStatus),
     __metadata("design:type", String)
 ], Podcast.prototype, "status", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Podcast.prototype, "image", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Podcast.prototype, "errorMessage", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Podcast.prototype, "title", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Podcast.prototype, "language", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Podcast.prototype, "link", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Podcast.prototype, "author", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Podcast.prototype, "description", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Podcast.prototype, "generator", void 0);
 __decorate([
     type_graphql_1.Field(() => [String]),
-    mikro_orm_1.Property({ type: orm_types_1.OrmStringListType }),
+    orm_1.Property(() => [String]),
     __metadata("design:type", Array)
 ], Podcast.prototype, "categories", void 0);
 __decorate([
     type_graphql_1.Field(() => [episode_1.EpisodeQL]),
-    mikro_orm_1.OneToMany({ entity: () => episode_1.Episode, mappedBy: episode => episode.podcast, orderBy: { date: mikro_orm_1.QueryOrder.DESC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => episode_1.Episode, episode => episode.podcast, { orderBy: { date: orm_1.QueryOrder.DESC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Podcast.prototype, "episodes", void 0);
 Podcast = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Podcast);
 exports.Podcast = Podcast;
 let PodcastQL = class PodcastQL extends Podcast {

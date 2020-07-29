@@ -17,86 +17,85 @@ const folder_1 = require("../folder/folder");
 const series_1 = require("../series/series");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
-const mikro_orm_1 = require("mikro-orm");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
-const orm_types_1 = require("../../modules/engine/services/orm.types");
 const state_1 = require("../state/state");
 let Artist = class Artist extends base_1.Base {
     constructor() {
         super(...arguments);
         this.albumTypes = [];
         this.genres = [];
-        this.tracks = new mikro_orm_1.Collection(this);
-        this.albumTracks = new mikro_orm_1.Collection(this);
-        this.albums = new mikro_orm_1.Collection(this);
-        this.roots = new mikro_orm_1.Collection(this);
-        this.folders = new mikro_orm_1.Collection(this);
-        this.series = new mikro_orm_1.Collection(this);
+        this.tracks = new orm_1.Collection(this);
+        this.albumTracks = new orm_1.Collection(this);
+        this.albums = new orm_1.Collection(this);
+        this.roots = new orm_1.Collection(this);
+        this.folders = new orm_1.Collection(this);
+        this.series = new orm_1.Collection(this);
     }
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Artist.prototype, "name", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Artist.prototype, "slug", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String),
     __metadata("design:type", String)
 ], Artist.prototype, "nameSort", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
-    mikro_orm_1.Property(),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Artist.prototype, "mbArtistID", void 0);
 __decorate([
     type_graphql_1.Field(() => [enums_1.AlbumType]),
-    mikro_orm_1.Property({ type: orm_types_1.OrmStringListType }),
+    orm_1.Property(() => [enums_1.AlbumType]),
     __metadata("design:type", Array)
 ], Artist.prototype, "albumTypes", void 0);
 __decorate([
     type_graphql_1.Field(() => [String]),
-    mikro_orm_1.Property({ type: orm_types_1.OrmStringListType }),
+    orm_1.Property(() => [String]),
     __metadata("design:type", Array)
 ], Artist.prototype, "genres", void 0);
 __decorate([
     type_graphql_1.Field(() => [track_1.TrackQL]),
-    mikro_orm_1.OneToMany(() => track_1.Track, track => track.artist, { orderBy: { album: { name: mikro_orm_1.QueryOrder.ASC }, tag: { disc: mikro_orm_1.QueryOrder.ASC, trackNr: mikro_orm_1.QueryOrder.ASC } } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => track_1.Track, track => track.artist, { orderBy: { album: { name: orm_1.QueryOrder.ASC }, tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC } } }),
+    __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "tracks", void 0);
 __decorate([
     type_graphql_1.Field(() => [track_1.TrackQL]),
-    mikro_orm_1.OneToMany(() => track_1.Track, track => track.albumArtist, { orderBy: { album: { name: mikro_orm_1.QueryOrder.ASC }, tag: { disc: mikro_orm_1.QueryOrder.ASC, trackNr: mikro_orm_1.QueryOrder.ASC } } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => track_1.Track, track => track.albumArtist, { orderBy: { album: { name: orm_1.QueryOrder.ASC }, tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC } } }),
+    __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "albumTracks", void 0);
 __decorate([
     type_graphql_1.Field(() => [album_1.AlbumQL]),
-    mikro_orm_1.OneToMany(() => album_1.Album, album => album.artist, { orderBy: { albumType: mikro_orm_1.QueryOrder.ASC, year: mikro_orm_1.QueryOrder.DESC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => album_1.Album, album => album.artist, { orderBy: { albumType: orm_1.QueryOrder.ASC, year: orm_1.QueryOrder.DESC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "albums", void 0);
 __decorate([
     type_graphql_1.Field(() => [root_1.RootQL]),
-    mikro_orm_1.ManyToMany(() => root_1.Root, root => root.artists, { owner: true, orderBy: { name: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.ManyToMany(() => root_1.Root, root => root.artists, { owner: true, orderBy: { name: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "roots", void 0);
 __decorate([
     type_graphql_1.Field(() => [folder_1.FolderQL]),
-    mikro_orm_1.ManyToMany(() => folder_1.Folder, folder => folder.artists, { owner: true, orderBy: { path: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.ManyToMany(() => folder_1.Folder, folder => folder.artists, { owner: true, orderBy: { path: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "folders", void 0);
 __decorate([
     type_graphql_1.Field(() => [series_1.SeriesQL]),
-    mikro_orm_1.OneToMany(() => series_1.Series, series => series.artist, { orderBy: { name: mikro_orm_1.QueryOrder.ASC } }),
-    __metadata("design:type", mikro_orm_1.Collection)
+    orm_1.OneToMany(() => series_1.Series, series => series.artist, { orderBy: { name: orm_1.QueryOrder.ASC } }),
+    __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "series", void 0);
 Artist = __decorate([
     type_graphql_1.ObjectType(),
-    mikro_orm_1.Entity()
+    orm_1.Entity()
 ], Artist);
 exports.Artist = Artist;
 let ArtistQL = class ArtistQL extends Artist {

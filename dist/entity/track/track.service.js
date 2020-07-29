@@ -30,40 +30,22 @@ let TrackService = class TrackService {
     async getRawTag(track) {
         try {
             const result = await this.audioModule.readRawTag(path_1.default.join(track.path, track.fileName));
-            if (!result && track.tag) {
-                return metadata_1.trackTagToRawTag(track.tag);
+            if (!result) {
+                const tag = await track.tag.get();
+                if (tag) {
+                    return metadata_1.trackTagToRawTag(tag);
+                }
             }
             return result;
         }
         catch (e) {
-            return track.tag ? metadata_1.trackTagToRawTag(track.tag) : undefined;
+            const tag = await track.tag.get();
+            return tag ? metadata_1.trackTagToRawTag(tag) : undefined;
         }
     }
-    defaultCompare(a, b) {
-        var _a, _b, _c, _d;
-        let res = a.path.localeCompare(b.path);
-        if (res !== 0) {
-            return res;
-        }
-        if (((_a = a.tag) === null || _a === void 0 ? void 0 : _a.disc) !== undefined && ((_b = b.tag) === null || _b === void 0 ? void 0 : _b.disc) !== undefined) {
-            res = a.tag.disc - b.tag.disc;
-            if (res !== 0) {
-                return res;
-            }
-        }
-        if (((_c = a.tag) === null || _c === void 0 ? void 0 : _c.trackNr) !== undefined && ((_d = b.tag) === null || _d === void 0 ? void 0 : _d.trackNr) !== undefined) {
-            res = a.tag.trackNr - b.tag.trackNr;
-            if (res !== 0) {
-                return res;
-            }
-        }
-        return a.name.localeCompare(b.name);
-    }
-    defaultSort(tracks) {
-        return tracks.sort((a, b) => this.defaultCompare(a, b));
-    }
-    async getImage(track, size, format) {
-        if (track.tag && track.tag.nrTagImages) {
+    async getImage(orm, track, size, format) {
+        const tag = await track.tag.get();
+        if (tag === null || tag === void 0 ? void 0 : tag.nrTagImages) {
             const result = await this.imageModule.getExisting(track.id, size, format);
             if (result) {
                 return result;
@@ -78,12 +60,12 @@ let TrackService = class TrackService {
                 log.error('TrackService', 'Extracting image from audio failed: ' + path_1.default.join(track.path, track.fileName));
             }
         }
-        if (track.folder) {
-            return this.folderService.getImage(track.folder, size, format);
+        const folder = await track.folder.get();
+        if (folder) {
+            return this.folderService.getImage(orm, folder, size, format);
         }
     }
-    async health(list, media) {
-        const tracks = this.defaultSort(list);
+    async health(tracks, media) {
         const result = [];
         await queue_1.processQueue(3, tracks, async (track) => {
             const health = await this.checker.run(track, !!media);
@@ -107,7 +89,7 @@ __decorate([
     __metadata("design:type", folder_service_1.FolderService)
 ], TrackService.prototype, "folderService", void 0);
 TrackService = __decorate([
-    typescript_ioc_1.Singleton,
+    typescript_ioc_1.InRequestScope,
     __metadata("design:paramtypes", [])
 ], TrackService);
 exports.TrackService = TrackService;

@@ -17,8 +17,8 @@ const type_graphql_1 = require("type-graphql");
 const waveform_1 = require("./waveform");
 const builder_1 = require("../../modules/rest/builder");
 let WaveformResolver = class WaveformResolver {
-    async waveform(id, { orm, engine, user }) {
-        const result = await engine.waveformService.findInWaveformTypes(id);
+    async waveform(id, { orm }) {
+        const result = await orm.findInWaveformTypes(id);
         if (!result) {
             return Promise.reject(builder_1.NotFoundError());
         }
@@ -33,7 +33,8 @@ let WaveformResolver = class WaveformResolver {
 };
 __decorate([
     type_graphql_1.Query(() => waveform_1.WaveformQL),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID)), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID)),
+    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)

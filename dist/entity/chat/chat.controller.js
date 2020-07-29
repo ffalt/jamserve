@@ -19,16 +19,15 @@ const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const chat_model_1 = require("./chat.model");
 const chat_service_1 = require("./chat.service");
-const user_1 = require("../user/user");
 const chat_args_1 = require("./chat.args");
 let ChatController = class ChatController {
     async list({ since }) {
         return this.transform.chats(await this.chatService.get(since));
     }
-    async create(args, user) {
+    async create(args, { orm, user }) {
         await this.chatService.add(args.message, user);
     }
-    async remove(args, user) {
+    async remove(args, { orm, user }) {
         const chat = await this.chatService.find(args.time);
         if (chat && chat.userID === user.id) {
             await this.chatService.remove(chat);
@@ -53,22 +52,21 @@ __decorate([
 __decorate([
     rest_1.Post('/create', { description: 'Post a Chat Message', summary: 'Post Chat' }),
     __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.CurrentUser()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [chat_args_1.ChatCreateArgs,
-        user_1.User]),
+    __metadata("design:paramtypes", [chat_args_1.ChatCreateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "create", null);
 __decorate([
     rest_1.Post('/remove', { description: 'Remove a Chat Message', summary: 'Remove Chat' }),
     __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.CurrentUser()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [chat_args_1.ChatRemoveArgs,
-        user_1.User]),
+    __metadata("design:paramtypes", [chat_args_1.ChatRemoveArgs, Object]),
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "remove", null);
 ChatController = __decorate([
+    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/chat', { tags: ['Chat'], roles: [enums_1.UserRole.stream] })
 ], ChatController);
 exports.ChatController = ChatController;

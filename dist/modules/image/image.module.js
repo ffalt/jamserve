@@ -236,7 +236,7 @@ __decorate([
     __metadata("design:type", config_service_1.ConfigService)
 ], ImageModule.prototype, "configService", void 0);
 ImageModule = __decorate([
-    typescript_ioc_1.Singleton,
+    typescript_ioc_1.InRequestScope,
     __metadata("design:paramtypes", [])
 ], ImageModule);
 exports.ImageModule = ImageModule;

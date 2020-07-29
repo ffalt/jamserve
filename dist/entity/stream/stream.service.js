@@ -44,13 +44,13 @@ let StreamService = class StreamService {
         return { file: { filename, name: `${id}.${destFormat}` } };
     }
     async streamTrack(track, format, maxBitRate, user) {
-        var _a;
-        return await this.streamFile(path_1.default.join(track.path, track.fileName), track.id, (_a = track.tag) === null || _a === void 0 ? void 0 : _a.mediaFormat, format, maxBitRate);
+        const tag = await track.tag.get();
+        return await this.streamFile(path_1.default.join(track.path, track.fileName), track.id, tag === null || tag === void 0 ? void 0 : tag.mediaFormat, format, maxBitRate);
     }
     async streamEpisode(episode, format, maxBitRate, user) {
-        var _a, _b;
-        if (episode.path && ((_a = episode.tag) === null || _a === void 0 ? void 0 : _a.mediaFormat)) {
-            return this.streamFile(episode.path, episode.id, (_b = episode.tag) === null || _b === void 0 ? void 0 : _b.mediaFormat, format, maxBitRate);
+        const tag = await episode.tag.get();
+        if (episode.path && (tag === null || tag === void 0 ? void 0 : tag.mediaFormat)) {
+            return this.streamFile(episode.path, episode.id, tag === null || tag === void 0 ? void 0 : tag.mediaFormat, format, maxBitRate);
         }
         return Promise.reject(express_error_1.GenericError('Podcast episode not ready'));
     }
@@ -70,7 +70,7 @@ __decorate([
     __metadata("design:type", audio_module_1.AudioModule)
 ], StreamService.prototype, "audioModule", void 0);
 StreamService = __decorate([
-    typescript_ioc_1.Singleton
+    typescript_ioc_1.InRequestScope
 ], StreamService);
 exports.StreamService = StreamService;
 //# sourceMappingURL=stream.service.js.map
