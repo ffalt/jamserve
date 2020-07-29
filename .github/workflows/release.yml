@@ -16,7 +16,7 @@ jobs:
       - name: Update apt
         run: sudo apt-get update
       - name: Install ffmpeg & fpcalc & mp3val
-        run: sudo apt-get install ffmpeg libchromaprint-tools mp3val
+        run: sudo apt-get install ffmpeg flac libchromaprint-tools mp3val
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
