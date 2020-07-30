@@ -1,8 +1,7 @@
 import {State} from './state';
 import {DBObjectType} from '../../types/enums';
 import {User} from '../user/user';
-import {EntityManager, EntityRepository} from '../../modules/orm';
-import {Op} from '../../modules/orm';
+import {EntityManager, EntityRepository, Op} from '../../modules/orm';
 
 // This is not a service, to avoid circular usage orm => orm.baseRepository => stateServide => orm
 export class StateHelper {
@@ -12,8 +11,8 @@ export class StateHelper {
 		this.stateRepo = this.em.getRepository(State);
 	}
 
-	private emptyState(destID: string, destType: DBObjectType, user: User): State {
-		return this.stateRepo.create({
+	private async emptyState(destID: string, destType: DBObjectType, user: User): Promise<State> {
+		const state = this.stateRepo.create({
 			destID,
 			destType,
 			played: 0,
@@ -21,9 +20,10 @@ export class StateHelper {
 			updatedAt: new Date(),
 			lastPlayed: undefined,
 			faved: undefined,
-			rated: 0,
-			user
+			rated: 0
 		});
+		await state.user.set(user);
+		return state;
 	}
 
 	async fav(destID: string, destType: DBObjectType, user: User, remove: boolean): Promise<State> {
@@ -52,7 +52,7 @@ export class StateHelper {
 
 	async findOrCreate(destID: string, destType: DBObjectType, user: User): Promise<State> {
 		const state = await this.stateRepo.findOne({where: {user: user.id, destID, destType}});
-		return state || this.emptyState(destID, destType, user);
+		return state || await this.emptyState(destID, destType, user);
 	}
 
 	async getHighestRatedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {

@@ -1,4 +1,4 @@
-import {InRequestScope, Inject} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
 import {BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {TransformService} from '../../modules/engine/services/transform.service';
@@ -61,7 +61,7 @@ export class StateController {
 		@BodyParams() args: FavArgs,
 		@Ctx() {orm, user}: Context
 	): Promise<State> {
-		return this.stateService.fav(orm, args.id, args.remove, user);
+		return await this.transform.stateBase(orm, await this.stateService.fav(orm, args.id, args.remove, user));
 	}
 
 	@Post(
@@ -73,7 +73,7 @@ export class StateController {
 		@BodyParams() args: RateArgs,
 		@Ctx() {orm, user}: Context
 	): Promise<State> {
-		return this.stateService.rate(orm, args.id, args.rating, user);
+		return await this.transform.stateBase(orm, await this.stateService.rate(orm, args.id, args.rating, user));
 	}
 
 }
