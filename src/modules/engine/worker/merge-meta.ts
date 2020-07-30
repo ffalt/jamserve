@@ -160,6 +160,7 @@ export class MetaMerger {
 				await artist.folders.set(folders);
 				artist.genres = await this.collectArtistGenres(artist);
 				artist.albumTypes = await this.collectArtistAlbumTypes(artist);
+				this.orm.Artist.persistLater(artist);
 			}
 			if (this.orm.em.changesCount() > 500) {
 				log.debug('Syncing new Artist Meta to DB');
@@ -182,18 +183,19 @@ export class MetaMerger {
 			const albums = (await series.albums.getItems()).filter(t => {
 				return !this.changes.albums.removed.has(t);
 			});
-			for (const album of albums) {
-				albumTypes.add(album.albumType);
-			}
-			series.albumTypes = [...albumTypes];
 			const currentTracks = await this.orm.Track.findFilter({seriesIDs: [id]});
 			const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
 			await series.tracks.set(tracks);
 			if (tracks.length === 0) {
 				this.changes.series.removed.add(series);
 				this.changes.series.updated.delete(series);
+			} else {
+				for (const album of albums) {
+					albumTypes.add(album.albumType);
+				}
+				series.albumTypes = [...albumTypes];
+				this.orm.Series.persistLater(series);
 			}
-			this.orm.Series.persistLater(series);
 			if (this.orm.em.changesCount() > 500) {
 				log.debug('Syncing new Series Meta to DB');
 				await this.orm.em.flush();
