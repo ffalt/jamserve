@@ -1,6 +1,6 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {AlbumType, FolderOrderFields, FolderType, ListType} from '../../types/enums';
-import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
+import {ArgsType, Field, Float, ID, InputType, Int} from 'type-graphql';
 import {FilterArgs, OrderByArgs, PaginatedArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 
@@ -81,7 +81,7 @@ export class FolderFilterArgs {
 	@ObjField(() => [String], {nullable: true, description: 'filter by Folder Ids', isID: true})
 	ids?: Array<string>;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;
 
@@ -120,10 +120,6 @@ export class FolderFilterArgs {
 	@Field(() => String, {nullable: true})
 	@ObjField(() => [String], {nullable: true, description: 'filter by Artist Sort Name', example: ['Awesome Artist, The']})
 	artistSort?: string;
-	//
-	// @Field(() => Int, {nullable: true})
-	// @ObjField(() => [String], {nullable: true, description: 'filter by Total Track Count', min: 0, example: 55})
-	// totalTrackCount?: number;
 
 	@Field(() => String, {nullable: true})
 	@ObjField(() => [String], {nullable: true, description: 'filter by Title', example: 'Awesome Folder'})

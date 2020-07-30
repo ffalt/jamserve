@@ -4,7 +4,7 @@ import {Folder, FolderQL} from '../folder/folder';
 import {Series, SeriesQL} from '../series/series';
 import {Artist, ArtistQL} from '../artist/artist';
 import {AlbumType} from '../../types/enums';
-import {Field, Int, ObjectType} from 'type-graphql';
+import {Field, Float, Int, ObjectType} from 'type-graphql';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_INT, Property, QueryOrder, Reference} from '../../modules/orm';
@@ -32,7 +32,7 @@ export class Album extends Base {
 	@Property(() => ORM_INT, {nullable: true})
 	year?: number;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@Property(() => ORM_INT, {nullable: true})
 	duration!: number;
 

@@ -13,7 +13,7 @@ export class State extends Base {
 	@Property(() => DBObjectType)
 	destType!: DBObjectType;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Date, {nullable: true})
 	@Property(() => ORM_TIMESTAMP, {nullable: true})
 	faved?: number;
 
@@ -25,7 +25,7 @@ export class State extends Base {
 	@Property(() => ORM_INT, {nullable: true})
 	rated?: number;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Date, {nullable: true})
 	@Property(() => ORM_TIMESTAMP, {nullable: true})
 	lastPlayed?: number;
 

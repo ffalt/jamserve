@@ -36,11 +36,6 @@ export class PodcastResolver {
 		return engine.podcastService.isDownloading(podcast.id) ? PodcastStatus.downloading : podcast.status;
 	}
 
-	@FieldResolver(() => Date)
-	lastCheck(@GQLRoot() podcast: Podcast): Date {
-		return new Date(podcast.lastCheck);
-	}
-
 	@FieldResolver(() => [EpisodeQL])
 	async episodes(@GQLRoot() podcast: Podcast, @Ctx() {orm}: Context): Promise<Array<Episode>> {
 		return podcast.episodes.getItems();
@@ -51,4 +46,8 @@ export class PodcastResolver {
 		return podcast.episodes.count();
 	}
 
+	@FieldResolver(() => Date)
+	async lastCheck(@GQLRoot() timestamp: number): Promise<Date> {
+		return new Date(timestamp);
+	}
 }

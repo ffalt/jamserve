@@ -5,7 +5,7 @@ import {Album, AlbumQL} from '../album/album';
 import {Artist, ArtistQL} from '../artist/artist';
 import {MediaTagRawQL, Tag, TagQL} from '../tag/tag';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
-import {Field, Int, ObjectType} from 'type-graphql';
+import {Field, Float, Int, ObjectType} from 'type-graphql';
 import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_INT, ORM_TIMESTAMP, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
@@ -37,7 +37,7 @@ export class Track extends Base {
 	@Property(() => ORM_TIMESTAMP)
 	statModified!: number;
 
-	@Field(() => Int)
+	@Field(() => Float)
 	@Property(() => ORM_INT)
 	fileSize!: number;
 

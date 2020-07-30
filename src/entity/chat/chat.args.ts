@@ -1,6 +1,6 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {examples} from '../../modules/engine/rest/example.consts';
-import {ArgsType, Field, Int} from 'type-graphql';
+import {ArgsType, Field, Float} from 'type-graphql';
 
 @ObjParamsType()
 export class ChatCreateArgs {
@@ -17,7 +17,7 @@ export class ChatRemoveArgs {
 @ArgsType()
 @ObjParamsType()
 export class ChatFilterArgs {
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField(() => Number, {nullable: true, description: 'filter by message timestamp', min: 0, example: examples.timestamp})
 	since?: number;
 }

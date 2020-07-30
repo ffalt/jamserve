@@ -94,4 +94,15 @@ export class FolderResolver {
 	async state(@GQLRoot() folder: Folder, @Ctx() {orm, user}: Context): Promise<State> {
 		return await orm.State.findOrCreate(folder.id, DBObjectType.folder, user.id);
 	}
+
+	@FieldResolver(() => Date)
+	statCreated(@GQLRoot() timestamp: number): Date {
+		return new Date(timestamp);
+	}
+
+	@FieldResolver(() => Date)
+	statModified(@GQLRoot() timestamp: number): Date {
+		return new Date(timestamp);
+	}
+
 }

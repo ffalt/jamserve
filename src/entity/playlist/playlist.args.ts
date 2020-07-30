@@ -1,5 +1,5 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
+import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
 import {ListType} from '../../types/enums';
 import {DefaultOrderArgs, FilterArgs, PaginatedArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
@@ -45,7 +45,7 @@ export class PlaylistFilterArgs {
 	@ObjField(() => [String], {nullable: true, description: 'filter by Playlist Ids', isID: true})
 	ids?: Array<string>;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;
 
@@ -57,11 +57,11 @@ export class PlaylistFilterArgs {
 	@ObjField({nullable: true, description: 'filter by isPublic Flag', example: true})
 	isPublic?: boolean;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by since Playlist duration', min: 0, example: examples.timestamp})
 	durationFrom?: number;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by until Playlist duration', min: 0, example: examples.timestamp})
 	durationTo?: number;
 }

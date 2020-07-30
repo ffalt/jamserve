@@ -1,6 +1,6 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {ListType, TrackHealthID, TrackOrderFields} from '../../types/enums';
-import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
+import {ArgsType, Field, Float, ID, InputType, Int} from 'type-graphql';
 import {OrderByArgs, PaginatedArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 
@@ -93,7 +93,7 @@ export class TrackFilterArgs {
 	@ObjField(() => [String], {nullable: true, description: 'filter by genres', example: ['Folk Pop']})
 	genres?: Array<string>;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;
 

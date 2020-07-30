@@ -1,14 +1,14 @@
 import {User} from '../user/user';
 import {Track, TrackQL} from '../track/track';
 import {Episode, EpisodeQL} from '../episode/episode';
-import {Field, Int, ObjectType} from 'type-graphql';
+import {Field, Float, ObjectType} from 'type-graphql';
 import {Entity, ManyToOne, ORM_INT, Property, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 
 @ObjectType()
 @Entity()
 export class Bookmark extends Base {
-	@Field(() => Int)
+	@Field(() => Float)
 	@Property(() => ORM_INT)
 	position!: number;
 

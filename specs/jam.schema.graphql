@@ -34,7 +34,7 @@ type Query {
   bookmarks(page: PageArgsQL, filter: BookmarkFilterArgsQL, order: [BookmarkOrderArgsQL!]): BookmarkPageQL!
 
   """Get Chat Messages"""
-  chats(since: Int): [ChatQL!]!
+  chats(since: Float): [ChatQL!]!
 
   """Get a Episode by Id"""
   episode(id: ID!): EpisodeQL!
@@ -159,7 +159,7 @@ type SessionQL {
   updatedAt: DateTime!
   client: String!
   agent: String!
-  expires: Int!
+  expires: DateTime!
   mode: SessionMode!
 }
 
@@ -172,7 +172,7 @@ type BookmarkQL {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  position: Int!
+  position: Float!
   track: TrackQL
   episode: EpisodeQL
   comment: String
@@ -185,7 +185,7 @@ type TrackQL {
   name: String!
   fileName: String!
   path: String!
-  fileSize: Int!
+  fileSize: Float!
   series: SeriesQL
   album: AlbumQL
   folder: FolderQL!
@@ -268,7 +268,7 @@ type AlbumQL {
   albumType: AlbumType!
   seriesNr: String
   year: Int
-  duration: Int
+  duration: Float
   mbArtistID: String
   mbReleaseID: String
   genres: [String!]!
@@ -312,8 +312,8 @@ type FolderQL {
   name: String!
   title: String!
   path: String!
-  statCreated: Int!
-  statModified: Int!
+  statCreated: DateTime!
+  statModified: DateTime!
   level: Int!
   album: String
   artist: String
@@ -395,15 +395,15 @@ type StateQL {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  faved: Int
+  faved: DateTime
   played: Int
   rated: Int
-  lastPlayed: Int
+  lastPlayed: DateTime
 }
 
 type RootStatusQL {
   lastScan: DateTime
-  scanning: Boolean!
+  scanning: Boolean
   error: String
 }
 
@@ -441,10 +441,10 @@ type TagQL {
   seriesNr: String
   lyrics: String
   chapters: [TagChapterQL!]
-  mediaDuration: Int
-  mediaBitRate: Int
+  mediaDuration: Float
+  mediaBitRate: Float
   mediaFormat: AudioFormatType
-  mediaSampleRate: Int
+  mediaSampleRate: Float
   mediaChannels: Int
   mediaEncoded: String
   mediaMode: String
@@ -464,8 +464,8 @@ enum TagFormatType {
 }
 
 type TagChapterQL {
-  start: Int!
-  end: Int!
+  start: Float!
+  end: Float!
   title: String!
 }
 
@@ -512,7 +512,7 @@ type EpisodeQL {
   path: String
   link: String
   summary: String
-  duration: Int
+  duration: Float
   guid: String
   author: String
   tag: TagQL
@@ -559,14 +559,14 @@ type PodcastQL {
 }
 
 type EpisodeChapterQL {
-  start: Int!
+  start: Float!
   title: String!
 }
 
 type EpisodeEnclosureQL {
   url: String!
   type: String
-  length: Int
+  length: Float
 }
 
 type PlayQueueQL {
@@ -574,8 +574,8 @@ type PlayQueueQL {
   createdAt: DateTime!
   updatedAt: DateTime!
   current: Int
-  position: Int
-  duration: Int
+  position: Float
+  duration: Float
   changedBy: String!
   entries: [PlayQueueEntryQL!]!
   entriesCount: Int!
@@ -598,7 +598,7 @@ type PlaylistQL {
   name: String!
   comment: String
   isPublic: Boolean!
-  duration: Int!
+  duration: Float!
   entries: [PlaylistEntryQL!]!
   userID: ID!
   userName: String!
@@ -610,7 +610,7 @@ type PlaylistEntryQL {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  position: Int!
+  position: Float!
   playlist: PlaylistQL!
   track: TrackQL!
   episode: EpisodeQL!
@@ -643,7 +643,7 @@ input UserFilterArgsQL {
   query: String
   name: String
   ids: [ID!]
-  since: Int
+  since: Float
   email: String
   roles: [UserRole!]
 }
@@ -691,7 +691,7 @@ input AlbumFilterArgsQL {
   mbReleaseIDs: [String!]
   mbArtistIDs: [String!]
   genres: [String!]
-  since: Int
+  since: Float
   fromYear: Int
   toYear: Int
 }
@@ -751,7 +751,7 @@ input ArtistFilterArgsQL {
   genres: [String!]
   albumTypes: [AlbumType!]
   mbArtistIDs: [String!]
-  since: Int
+  since: Float
 }
 
 input ArtistOrderArgsQL {
@@ -791,7 +791,7 @@ input ArtworkFilterArgsQL {
   folderIDs: [ID!]
   childOfID: ID
   types: [ArtworkImageType!]
-  since: Int
+  since: Float
   sizeFrom: Int
   sizeTo: Int
   widthFrom: Int
@@ -818,7 +818,7 @@ input BookmarkFilterArgsQL {
   ids: [ID!]
   trackIDs: [ID!]
   episodeIDs: [ID!]
-  since: Int
+  since: Float
 }
 
 input BookmarkOrderArgsQL {
@@ -835,7 +835,7 @@ enum BookmarkOrderFields {
 
 type ChatQL {
   message: String!
-  created: Int!
+  created: DateTime!
   userName: String!
   userID: ID!
 }
@@ -852,7 +852,7 @@ input EpisodeFilterArgsQL {
   name: String
   ids: [ID!]
   podcastIDs: [ID!]
-  since: Int
+  since: Float
   authors: [String!]
   guids: [String!]
   statuses: [PodcastStatus!]
@@ -883,7 +883,7 @@ input FolderFilterArgsQL {
   query: String
   name: String
   ids: [ID!]
-  since: Int
+  since: Float
   parentIDs: [ID!]
   childOfID: ID
   level: Int
@@ -961,11 +961,11 @@ input PlaylistFilterArgsQL {
   name: String
   comment: String
   ids: [ID!]
-  since: Int
+  since: Float
   userIDs: [ID!]
   isPublic: Boolean
-  durationFrom: Int
-  durationTo: Int
+  durationFrom: Float
+  durationTo: Float
 }
 
 input PlaylistOrderArgsQL {
@@ -994,11 +994,11 @@ input PodcastFilterArgsQL {
   name: String
   ids: [ID!]
   episodeIDs: [ID!]
-  since: Int
+  since: Float
   url: String
   statuses: [PodcastStatus!]
-  lastCheckFrom: Int
-  lastCheckTo: Int
+  lastCheckFrom: Float
+  lastCheckTo: Float
   title: String
   author: String
   description: String
@@ -1081,7 +1081,7 @@ input RootFilterArgsQL {
   query: String
   name: String
   ids: [ID!]
-  since: Int
+  since: Float
   strategies: [RootScanStrategy!]!
   trackIDs: [ID!]
   folderIDs: [ID!]
@@ -1107,7 +1107,7 @@ input SeriesFilterArgsQL {
   name: String
   ids: [ID!]
   albumTypes: [AlbumType!]
-  since: Int
+  since: Float
   trackIDs: [ID!]
   albumIDs: [ID!]
   artistIDs: [ID!]
@@ -1138,11 +1138,11 @@ type SessionPageQL {
 
 input SessionFilterArgsQL {
   ids: [ID!]
-  since: Int
+  since: Float
   client: String
   agent: String
-  expiresFrom: Int
-  expiresTo: Int
+  expiresFrom: Float
+  expiresTo: Float
   mode: SessionMode
 }
 
@@ -1166,7 +1166,7 @@ input TrackFilterArgsQL {
   artist: String
   album: String
   genres: [String!]
-  since: Int
+  since: Float
   seriesIDs: [ID!]
   albumIDs: [ID!]
   artistIDs: [ID!]
@@ -1219,7 +1219,7 @@ type StatsAlbumTypesQL {
 }
 
 type NowPlayingQL {
-  time: Int!
+  time: Float!
   track: TrackQL
   episode: EpisodeQL
   userName: String!

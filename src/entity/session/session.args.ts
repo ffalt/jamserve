@@ -1,4 +1,4 @@
-import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
+import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
 import {DefaultOrderArgs, PaginatedArgs} from '../base/base.args';
 import {SessionMode} from '../../types/enums';
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
@@ -11,7 +11,7 @@ export class SessionFilterArgs {
 	ids?: Array<string>;
 
 	@ObjField(() => Number, {nullable: true, description: 'filter by session timestamp', min: 0, example: examples.timestamp})
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	since?: number;
 
 	@ObjField(() => String, {nullable: true, description: 'filter by client name', example: 'Jamberry'})
@@ -23,11 +23,11 @@ export class SessionFilterArgs {
 	agent?: string;
 
 	@ObjField(() => Number, {nullable: true, description: 'filter by since expiry date', min: 0, example: examples.timestamp})
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	expiresFrom?: number;
 
 	@ObjField(() => Number, {nullable: true, description: 'filter by to expiry date', min: 0, example: examples.timestamp})
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	expiresTo?: number;
 
 	@ObjField(() => SessionMode, {nullable: true, description: 'filter by session mode', example: SessionMode.browser})

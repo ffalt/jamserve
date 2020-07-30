@@ -1,5 +1,5 @@
 import {AudioFormatType, TagFormatType} from '../../types/enums';
-import {Field, Int, ObjectType} from 'type-graphql';
+import {Field, Float, Int, ObjectType} from 'type-graphql';
 import {Entity, OneToOne, ORM_INT, Property, Reference} from '../../modules/orm';
 import {Base} from '../base/base';
 import {GraphQLJSON} from 'graphql-type-json';
@@ -129,11 +129,11 @@ export class Tag extends Base {
 	@Property(() => String, {nullable: true})
 	chapters?: string;//Array<TagChapter>;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@Property(() => ORM_INT, {nullable: true})
 	mediaDuration?: number;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@Property(() => ORM_INT, {nullable: true})
 	mediaBitRate?: number;
 
@@ -141,7 +141,7 @@ export class Tag extends Base {
 	@Property(() => AudioFormatType, {nullable: true})
 	mediaFormat?: AudioFormatType;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@Property(() => ORM_INT, {nullable: true})
 	mediaSampleRate?: number;
 
@@ -171,9 +171,9 @@ export class Tag extends Base {
 
 @ObjectType()
 export class TagChapterQL {
-	@Field(() => Int)
+	@Field(() => Float)
 	start!: number;
-	@Field(() => Int)
+	@Field(() => Float)
 	end!: number;
 	@Field(() => String)
 	title!: string;

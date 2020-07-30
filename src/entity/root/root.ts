@@ -49,7 +49,7 @@ export class Root extends Base {
 export class RootStatusQL {
 	@Field(() => Date, {nullable: true})
 	lastScan!: Date;
-	@Field(() => Boolean)
+	@Field(() => Boolean, {nullable: true})
 	scanning!: boolean;
 	@Field(() => String, {nullable: true})
 	error?: string;

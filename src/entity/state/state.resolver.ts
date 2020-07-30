@@ -1,7 +1,9 @@
-import {Arg, Ctx, ID, Int, Mutation, Query, Resolver} from 'type-graphql';
+import {Arg, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver} from 'type-graphql';
 import {Context} from '../../modules/server/middlewares/apollo.context';
 import {State, StateQL} from './state';
 import {NotFoundError} from '../../modules/rest/builder';
+import {dateOrUndefined} from '../base/base';
+import {Root as GQLRoot} from 'type-graphql/dist/decorators/Root';
 
 @Resolver(StateQL)
 export class StateResolver {
@@ -33,6 +35,16 @@ export class StateResolver {
 		@Arg('rating', () => Int) rating: number,
 		@Ctx() {engine, orm, user}: Context): Promise<State> {
 		return await engine.stateService.rate(orm, id, rating, user);
+	}
+
+	@FieldResolver(() => Date, {nullable: true})
+	async faved(@GQLRoot() timestamp?: number): Promise<Date | undefined> {
+		return dateOrUndefined(timestamp);
+	}
+
+	@FieldResolver(() => Date, {nullable: true})
+	async lastPlayed(@GQLRoot() timestamp?: number): Promise<Date | undefined> {
+		return dateOrUndefined(timestamp);
 	}
 }
 

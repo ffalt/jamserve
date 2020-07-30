@@ -1,5 +1,5 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
+import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
 import {DefaultOrderArgs, FilterArgs, PaginatedArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 import {UserRole} from '../../types/enums';
@@ -44,7 +44,7 @@ export class UserEmailUpdateArgs {
 
 @ObjParamsType()
 export class UserGenerateImageArgs {
-	@ObjField({nullable:true, description: 'Random Seed String'})
+	@ObjField({nullable: true, description: 'Random Seed String'})
 	seed?: string;
 }
 
@@ -63,7 +63,7 @@ export class UserFilterArgs {
 	@ObjField(() => [String], {nullable: true, description: 'filter by User Ids', isID: true})
 	ids?: Array<string>;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;
 

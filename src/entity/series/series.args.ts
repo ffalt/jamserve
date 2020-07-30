@@ -1,5 +1,5 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
+import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
 import {AlbumType, ListType} from '../../types/enums';
 import {DefaultOrderArgs, FilterArgs, PaginatedArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
@@ -47,7 +47,7 @@ export class SeriesFilterArgs {
 	@ObjField(() => [AlbumType], {nullable: true, description: 'filter by Album Types', example: [AlbumType.audiobook]})
 	albumTypes?: Array<AlbumType>;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;
 

@@ -10,13 +10,13 @@ export abstract class Base {
 	@PrimaryKey()
 	id: string = v4();
 
+	// @Property() added by default Sequelize
 	@Field(() => Date)
-		// @Property() added by default Sequelize
 	createdAt: Date = new Date();
 
+	// @Property() added by default Sequelize
+	// @Property({onUpdate: () => new Date()})
 	@Field(() => Date)
-		// @Property() added by default Sequelize
-		// @Property({onUpdate: () => new Date()})
 	updatedAt: Date = new Date();
 }
 
@@ -88,3 +88,11 @@ export class OrderHelper {
 		return args?.orderDesc ? 'DESC' : 'ASC';
 	}
 }
+
+export function dateOrUndefined(timestamp?: number): Date | undefined {
+	if (timestamp === undefined || timestamp === null) {
+		return undefined;
+	}
+	return new Date(timestamp);
+}
+

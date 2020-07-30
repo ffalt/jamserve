@@ -1,11 +1,11 @@
 import {Track, TrackQL} from '../track/track';
 import {Episode, EpisodeQL} from '../episode/episode';
 import {User} from '../user/user';
-import {Field, ID, Int, ObjectType} from 'type-graphql';
+import {Field, Float, ID, ObjectType} from 'type-graphql';
 
 @ObjectType()
 export class NowPlaying {
-	@Field(() => Int)
+	@Field(() => Float)
 	time!: number;
 	@Field(() => TrackQL, {nullable: true})
 	track?: Track;

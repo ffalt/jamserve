@@ -1,6 +1,6 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {ArtworkImageType, ListType} from '../../types/enums';
-import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
+import {ArgsType, Field, Float, ID, InputType, Int} from 'type-graphql';
 import {DefaultOrderArgs, PaginatedArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 
@@ -78,7 +78,7 @@ export class ArtworkFilterArgs {
 	@ObjField(() => [ArtworkImageType], {nullable: true, description: 'filter by Artwork Image Types', example: ArtworkImageType.front})
 	types?: Array<ArtworkImageType>;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;
 

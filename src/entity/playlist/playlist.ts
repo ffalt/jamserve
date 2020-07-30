@@ -1,6 +1,6 @@
 import {User} from '../user/user';
 import {PlaylistEntry, PlaylistEntryQL} from '../playlistentry/playlist-entry';
-import {Field, ID, Int, ObjectType} from 'type-graphql';
+import {Field, Float, ID, Int, ObjectType} from 'type-graphql';
 import {Collection, Entity, ManyToOne, OneToMany, ORM_INT, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
@@ -26,7 +26,7 @@ export class Playlist extends Base {
 	@Property(() => Boolean)
 	isPublic: boolean = false;
 
-	@Field(() => Int)
+	@Field(() => Float)
 	@Property(() => ORM_INT)
 	duration: number = 0;
 

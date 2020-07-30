@@ -1,7 +1,7 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {ListType, RootScanStrategy} from '../../types/enums';
 import {examples} from '../../modules/engine/rest/example.consts';
-import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
+import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
 import {DefaultOrderArgs, PaginatedArgs} from '../base/base.args';
 
 @ObjParamsType()
@@ -39,7 +39,7 @@ export class RootFilterArgs {
 	@ObjField(() => [String], {nullable: true, description: 'filter by Root Ids', isID: true})
 	ids?: Array<string>;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;
 

@@ -1,8 +1,9 @@
-import {Args, Ctx, Query, Resolver} from 'type-graphql';
+import {Args, Ctx, FieldResolver, Query, Resolver} from 'type-graphql';
 import {Session, SessionPageQL, SessionQL} from './session';
 import {Context} from '../../modules/server/middlewares/apollo.context';
 import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
 import {SessionsArgs} from './session.args';
+import {Root as GQLRoot} from 'type-graphql/dist/decorators/Root';
 
 @Resolver(SessionQL)
 export class SessionResolver {
@@ -20,5 +21,10 @@ export class SessionResolver {
 	@Query(() => SessionPageQL, {description: 'Get a list of all sessions of the current user'})
 	async sessions(@Args() {page, filter, order}: SessionsArgs, @Ctx() {orm, user}: Context): Promise<SessionPageQL> {
 		return await orm.Session.searchFilter(filter, order, page, user);
+	}
+
+	@FieldResolver(() => Date)
+	async expires(@GQLRoot() timestamp: number): Promise<Date> {
+		return new Date(timestamp);
 	}
 }

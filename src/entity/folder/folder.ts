@@ -26,11 +26,11 @@ export class Folder extends Base {
 	@Property(() => String)
 	path!: string;
 
-	@Field(() => Int)
+	@Field(() => Date)
 	@Property(() => ORM_TIMESTAMP)
 	statCreated!: number;
 
-	@Field(() => Int)
+	@Field(() => Date)
 	@Property(() => ORM_TIMESTAMP)
 	statModified!: number;
 

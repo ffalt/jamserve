@@ -1,6 +1,6 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {AlbumOrderFields, AlbumType, ListType} from '../../types/enums';
-import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
+import {ArgsType, Field, Float, ID, InputType, Int} from 'type-graphql';
 import {FilterArgs, OrderByArgs, PaginatedArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 
@@ -83,7 +83,7 @@ export class AlbumFilterArgs {
 	@ObjField(() => [String], {nullable: true, description: 'filter by Genres', example: examples.genres})
 	genres?: Array<string>;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;
 

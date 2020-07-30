@@ -2,7 +2,7 @@ import {Podcast, PodcastQL} from '../podcast/podcast';
 import {Tag, TagQL} from '../tag/tag';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {PodcastStatus} from '../../types/enums';
-import {Field, Int, ObjectType} from 'type-graphql';
+import {Field, Float, Int, ObjectType} from 'type-graphql';
 import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_INT, ORM_TIMESTAMP, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
@@ -12,7 +12,7 @@ import {PlaylistEntry} from '../playlistentry/playlist-entry';
 
 @ObjectType()
 export class EpisodeChapter {
-	@Field(() => Int)
+	@Field(() => Float)
 	start!: number;
 	@Field(() => String)
 	title!: string;
@@ -24,7 +24,7 @@ export class EpisodeEnclosure {
 	url!: string;
 	@Field(() => String, {nullable: true})
 	type?: string;
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	length?: number;
 }
 
@@ -76,7 +76,7 @@ export class Episode extends Base {
 	@Property(() => ORM_TIMESTAMP)
 	date!: number;
 
-	@Field(() => Int, {nullable: true})
+	@Field(() => Float, {nullable: true})
 	@Property(() => ORM_INT, {nullable: true})
 	duration?: number;
 
