@@ -52,4 +52,5 @@ export class ArtistRepository extends BaseRepository<Artist, ArtistFilterArgs, A
 		]);
 		return result;
 	}
+
 }

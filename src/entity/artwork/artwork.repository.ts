@@ -7,7 +7,6 @@ import {User} from '../user/user';
 import {ArtworkFilterArgs, ArtworkOrderArgs} from './artwork.args';
 import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 
-// @Repository(Artwork)
 export class ArtworkRepository extends BaseRepository<Artwork, ArtworkFilterArgs, ArtworkOrderArgs> {
 	objType = DBObjectType.artwork;
 

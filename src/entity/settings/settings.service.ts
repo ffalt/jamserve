@@ -105,4 +105,6 @@ export class SettingsService {
 	public unRegisterChangeListener(listener: SettingChangesListener) {
 		this.settingsChangeListeners = this.settingsChangeListeners.filter(l => l !== listener);
 	}
+
+
 }

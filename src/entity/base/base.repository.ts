@@ -110,12 +110,31 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 		return {skip: options.offset, take: options.limit, total: count, items};
 	}
 
-	async index(property: keyof Entity, options: FindOptions<Entity>): Promise<IndexResult<IndexResultGroup<Entity>>> {
+	private getIndexChar(name: string): string {
+		const s = name.replace(/[¿…¡?[\]{}<>‘`“'&_~=:./;@#«!%$*()+\-\\|]/g, '').trim();
+		if (s.length === 0) {
+			return '#';
+		}
+		const c = s.charAt(0).toUpperCase();
+		if (!isNaN(Number(c))) {
+			return '#';
+		}
+		return c;
+	}
+
+	private removeArticles(ignore: string, name: string): string {
+		// /^(?:(?:the|los|les)\s+)?(.*)/gi
+		const matches = new RegExp(`^(?:(?:${ignore})\\s+)?(.*)`, 'gi').exec(name);
+		return matches ? matches[1] : name;
+	}
+
+	async index(property: keyof Entity, options: FindOptions<Entity>, ignoreArticles?: Array<string>): Promise<IndexResult<IndexResultGroup<Entity>>> {
+		const ignore = ignoreArticles ? ignoreArticles.join('|') : undefined;
 		const items = await this.find(options);
 		const map = new Map<string, Array<Entity>>();
 		for (const item of items) {
 			const value = (item[property] || '') as string;
-			const c = value[0];
+			const c = this.getIndexChar(ignore ? this.removeArticles(ignore, value) : value);
 			const list = map.get(c) || [];
 			list.push(item);
 			map.set(c, list);
@@ -127,6 +146,14 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 				items: value
 			});
 		}
+		groups.sort((a, b) => a.name.localeCompare(b.name));
+		groups.forEach(g => {
+			g.items.sort((a, b) => {
+				const av = (a[property] || '') as string;
+				const bv = (b[property] || '') as string;
+				return av.localeCompare(bv);
+			})
+		})
 		return {groups};
 	}
 
@@ -193,8 +220,8 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 		};
 	}
 
-	async indexFilter(filter?: Filter, user?: User): Promise<IndexResult<IndexResultGroup<Entity>>> {
-		return await this.index(this.indexProperty as keyof Entity, await this.buildFilter(filter, user));
+	async indexFilter(filter?: Filter, user?: User, ignoreArticles?: Array<string>): Promise<IndexResult<IndexResultGroup<Entity>>> {
+		return await this.index(this.indexProperty as keyof Entity, await this.buildFilter(filter, user), ignoreArticles);
 	}
 
 	private async getListIDs(list: ListType, options: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {

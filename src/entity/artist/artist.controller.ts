@@ -12,11 +12,14 @@ import {IncludesTrackArgs, TrackOrderArgs} from '../track/track.args';
 import {ArtistFilterArgs, ArtistOrderArgs, IncludesArtistArgs, IncludesArtistChildrenArgs} from './artist.args';
 import {ListArgs, PageArgs} from '../base/base.args';
 import {Context} from '../../modules/engine/rest/context';
-import {InRequestScope} from 'typescript-ioc';
+import {Inject, InRequestScope} from 'typescript-ioc';
+import {SettingsService} from '../settings/settings.service';
 
 @InRequestScope
 @Controller('/artist', {tags: ['Artist'], roles: [UserRole.stream]})
 export class ArtistController extends BaseController {
+	@Inject
+	protected settingsService!: SettingsService;
 
 	@Get('/id',
 		() => Artist,
@@ -44,9 +47,9 @@ export class ArtistController extends BaseController {
 	)
 	async index(
 		@QueryParams() filter: ArtistFilterArgs,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, user}: Context
 	): Promise<ArtistIndex> {
-		const result = await orm.Artist.indexFilter(filter);
+		const result = await orm.Artist.indexFilter(filter, user, this.settingsService.settings.index.ignoreArticles);
 		return await this.transform.artistIndex(orm, result);
 	}
 
