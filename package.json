@@ -91,7 +91,7 @@
     "@types/fs-extra": "9.0.1",
     "@types/graphql-type-json": "0.3.2",
     "@types/helmet": "0.0.47",
-    "@types/jest": "26.0.7",
+    "@types/jest": "26.0.8",
     "@types/jest-expect-message": "1.0.2",
     "@types/method-override": "0.0.31",
     "@types/mime-types": "2.1.0",
