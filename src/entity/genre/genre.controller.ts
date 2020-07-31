@@ -8,11 +8,8 @@ import {paginate} from '../base/base.utils';
 import {GenreFilterArgs} from './genre.args';
 import {Context} from '../../modules/engine/rest/context';
 
-@InRequestScope
 @Controller('/genre', {tags: ['Genres'], roles: [UserRole.stream]})
 export class GenreController {
-	@Inject
-	private genreService!: GenreService;
 
 	@Get('/list',
 		() => GenrePage,
@@ -21,9 +18,9 @@ export class GenreController {
 	async list(
 		@QueryParams() page: PageArgs,
 		@QueryParams() filter: GenreFilterArgs,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<GenrePage> {
-		const genres = await this.genreService.getGenres(orm, filter.rootID);
+		const genres = await engine.genre.getGenres(orm, filter.rootID);
 		return paginate(genres, page);
 	}
 
@@ -32,8 +29,8 @@ export class GenreController {
 		() => GenreIndex,
 		{description: 'Get the Navigation Index for Genres', summary: 'Get Genre Index'}
 	)
-	async index(@Ctx() {orm}: Context): Promise<GenreIndex> {
-		return await this.genreService.index(orm);
+	async index(@Ctx() {orm, engine}: Context): Promise<GenreIndex> {
+		return await engine.genre.index(orm);
 	}
 
 }

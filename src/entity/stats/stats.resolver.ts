@@ -8,7 +8,7 @@ export class StatsResolver {
 
 	@Query(() => StatsQL)
 	async stats(@Args() args: StatsArgs, @Ctx() {engine, orm}: Context): Promise<StatsQL> {
-		return await engine.statsService.getStats(orm, args?.rootID);
+		return await engine.stats.getStats(orm, args?.rootID);
 	}
 }
 

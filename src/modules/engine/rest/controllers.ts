@@ -14,7 +14,6 @@ import {PingController} from '../../../entity/ping/ping.controller';
 import {ChatController} from '../../../entity/chat/chat.controller';
 import {UserController} from '../../../entity/user/user.controller';
 import {PlayQueueController} from '../../../entity/playqueue/playqueue.controller';
-import {BaseController} from '../../../entity/base/base.controller';
 import {PlaylistController} from '../../../entity/playlist/playlist.controller';
 import {StatsController} from '../../../entity/stats/stats.controller';
 import {GenreController} from '../../../entity/genre/genre.controller';
@@ -37,7 +36,6 @@ export function RestControllers(): Array<any> {
 		ArtworkController,
 		AuthController,
 		AutocompleteController,
-		BaseController,
 		BookmarkController,
 		ChatController,
 		DownloadController,

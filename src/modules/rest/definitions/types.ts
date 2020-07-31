@@ -16,6 +16,7 @@ export declare type ReturnTypeFunc = (returns?: void) => ReturnTypeFuncValue;
 export interface DecoratorTypeOptions {
 	nullable?: boolean | NullableListOptions;
 	defaultValue?: any;
+	generic?: boolean;
 	isID?: boolean;
 }
 

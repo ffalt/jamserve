@@ -22,48 +22,49 @@ import {StateService} from '../../../entity/state/state.service';
 import {NowPlayingService} from '../../../entity/nowplaying/nowplaying.service';
 import {PlayQueueService} from '../../../entity/playqueue/playqueue.service';
 import {ChatService} from '../../../entity/chat/chat.service';
+import {TrackService} from '../../../entity/track/track.service';
+import {ArtworkService} from '../../../entity/artwork/artwork.service';
+import {DownloadService} from '../../../entity/download/download.service';
+import {FolderService} from '../../../entity/folder/folder.service';
+import {ImageService} from '../../../entity/image/image.service';
+import {PlaylistService} from '../../../entity/playlist/playlist.service';
+import {StreamService} from '../../../entity/stream/stream.service';
+import {TransformService} from './transform.service';
+import {BookmarkService} from '../../../entity/bookmark/bookmark.service';
 
 const log = logger('Engine');
 
 @InRequestScope
 export class EngineService {
-	@Inject
-	public configService!: ConfigService;
-	@Inject
-	public orm!: OrmService;
-	@Inject
-	public settingsService!: SettingsService;
-	@Inject
-	public stateService!: StateService;
-	@Inject
-	public ioService!: IoService;
-	@Inject
-	public audioModule!: AudioModule;
-	@Inject
-	public waveformService!: WaveformService;
-	@Inject
-	public metadataService!: MetaDataService;
-	@Inject
-	public userService!: UserService;
-	@Inject
-	public nowPlayingService!: NowPlayingService;
-	@Inject
-	public sessionService!: SessionService;
-	@Inject
-	public podcastService!: PodcastService;
-	@Inject
-	public episodeService!: EpisodeService;
-	@Inject
-	public genreService!: GenreService;
-	@Inject
-	public statsService!: StatsService;
-	@Inject
-	public playQueueService!: PlayQueueService;
-	@Inject
-	public chatService!: ChatService;
+	@Inject public artwork!: ArtworkService;
+	@Inject public audio!: AudioModule;
+	@Inject public chat!: ChatService;
+	@Inject public config!: ConfigService;
+	@Inject public download!: DownloadService;
+	@Inject public episode!: EpisodeService;
+	@Inject public folder!: FolderService;
+	@Inject public genre!: GenreService;
+	@Inject public image!: ImageService;
+	@Inject public io!: IoService;
+	@Inject public metadata!: MetaDataService;
+	@Inject public nowPlaying!: NowPlayingService;
+	@Inject public orm!: OrmService;
+	@Inject public playlist!: PlaylistService;
+	@Inject public playQueue!: PlayQueueService;
+	@Inject public podcast!: PodcastService;
+	@Inject public session!: SessionService;
+	@Inject public settings!: SettingsService;
+	@Inject public state!: StateService;
+	@Inject public stats!: StatsService;
+	@Inject public stream!: StreamService;
+	@Inject public track!: TrackService;
+	@Inject public transform!: TransformService;
+	@Inject public user!: UserService;
+	@Inject public waveform!: WaveformService;
+	@Inject public bookmark!: BookmarkService;
 
 	constructor() {
-		this.ioService.registerAfterRefresh((): Promise<void> => this.afterRefresh())
+		this.io.registerAfterRefresh((): Promise<void> => this.afterRefresh())
 	}
 
 	private async afterRefresh(): Promise<void> {
@@ -72,25 +73,25 @@ export class EngineService {
 
 	private resolveCachePaths(): Array<string> {
 		return [
-			this.configService.getDataPath(['cache', 'waveforms']),
-			this.configService.getDataPath(['cache', 'uploads']),
-			this.configService.getDataPath(['cache', 'images']),
-			this.configService.getDataPath(['cache', 'transcode']),
-			this.configService.getDataPath(['images']),
-			this.configService.getDataPath(['podcasts'])
+			this.config.getDataPath(['cache', 'waveforms']),
+			this.config.getDataPath(['cache', 'uploads']),
+			this.config.getDataPath(['cache', 'images']),
+			this.config.getDataPath(['cache', 'transcode']),
+			this.config.getDataPath(['images']),
+			this.config.getDataPath(['podcasts'])
 		];
 	}
 
 	private async checkRescan(orm: Orm): Promise<void> {
-		const version = await this.settingsService.settingsVersion(orm);
+		const version = await this.settings.settingsVersion(orm);
 		const forceRescan = !!version && version !== JAMSERVE_VERSION;
 		if (forceRescan) {
 			log.info(`Updating from version ${version || '-'}`);
 		}
-		if (forceRescan || this.settingsService.settings.library.scanAtStart) {
+		if (forceRescan || this.settings.settings.library.scanAtStart) {
 			log.info(`Starting rescan`);
-			this.ioService.refresh(orm).then(() => {
-				return forceRescan ? this.settingsService.saveSettings(orm) : undefined;
+			this.io.refresh(orm).then(() => {
+				return forceRescan ? this.settings.saveSettings(orm) : undefined;
 			}).catch(e => {
 				log.error('Error on startup scanning', e);
 			});
@@ -98,7 +99,7 @@ export class EngineService {
 	}
 
 	private async checkDataPaths(): Promise<void> {
-		await fse.ensureDir(path.resolve(this.configService.env.paths.data));
+		await fse.ensureDir(path.resolve(this.config.env.paths.data));
 		const paths = this.resolveCachePaths();
 		for (const p of paths) {
 			await fse.ensureDir(p);
@@ -111,7 +112,7 @@ export class EngineService {
 		await this.checkDataPaths();
 		// init orm
 		log.debug(`start orm`);
-		await this.orm.start(this.configService.env.paths.data);
+		await this.orm.start(this.config.env.paths.data);
 		const orm = this.orm.fork();
 		// first start?
 		log.debug(`check first start`);
@@ -152,19 +153,19 @@ export class EngineService {
 	}
 
 	private async checkFirstStart(orm: Orm): Promise<void> {
-		if (!this.configService.firstStart) {
+		if (!this.config.firstStart) {
 			return;
 		}
-		if (this.configService.firstStart.adminUser) {
+		if (this.config.firstStart.adminUser) {
 			const count = await orm.User.count();
 			if (count === 0) {
-				await this.buildAdminUser(orm, this.configService.firstStart.adminUser);
+				await this.buildAdminUser(orm, this.config.firstStart.adminUser);
 			}
 		}
-		if (this.configService.firstStart.roots) {
+		if (this.config.firstStart.roots) {
 			const count = await orm.Root.count();
 			if (count === 0) {
-				await this.buildRoots(orm, this.configService.firstStart.roots);
+				await this.buildRoots(orm, this.config.firstStart.roots);
 			}
 		}
 	}

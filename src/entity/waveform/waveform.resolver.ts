@@ -20,12 +20,12 @@ export class WaveformResolver {
 
 	@FieldResolver(() => String)
 	async json(@GQLRoot() waveform: Waveform, @Ctx() {engine}: Context): Promise<string> {
-		return JSON.stringify(await engine.waveformService.getWaveformJSON(waveform.obj, waveform.objType));
+		return JSON.stringify(await engine.waveform.getWaveformJSON(waveform.obj, waveform.objType));
 	}
 
 	@FieldResolver(() => String)
 	async svg(@GQLRoot() waveform: Waveform, @Arg('width', () => Int) width: number, @Ctx() {engine}: Context): Promise<string> {
-		return (await engine.waveformService.getWaveformSVG(waveform.obj, waveform.objType, width)) || '';
+		return (await engine.waveform.getWaveformSVG(waveform.obj, waveform.objType, width)) || '';
 	}
 }
 

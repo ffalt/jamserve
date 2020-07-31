@@ -50,7 +50,7 @@ export class TrackFixArgs {
 export class MediaTagRawUpdateArgs {
 	@ObjField({description: 'Tag Version'})
 	version!: number;
-	@ObjField(() => Object, {description: 'Tag Frames'})
+	@ObjField(() => Object, {description: 'Tag Frames', generic: true})
 	frames!: any;
 }
 

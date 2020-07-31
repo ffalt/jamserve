@@ -27,7 +27,7 @@ export class RootResolver {
 
 	@FieldResolver(() => RootStatusQL)
 	async status(@GQLRoot() root: Root, @Ctx() {engine}: Context): Promise<RootStatus> {
-		return engine.ioService.getRootStatus(root.id);
+		return engine.io.getRootStatus(root.id);
 	}
 
 	@FieldResolver(() => [TrackQL])

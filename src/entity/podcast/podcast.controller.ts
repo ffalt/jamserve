@@ -1,24 +1,17 @@
 import {Podcast, PodcastIndex, PodcastPage, PodcastUpdateStatus} from './podcast.model';
 import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
-import {BaseController} from '../base/base.controller';
 import {Episode, EpisodePage} from '../episode/episode.model';
 import {IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs} from './podcast.args';
 import {EpisodeOrderArgs, IncludesEpisodeArgs} from '../episode/episode.args';
 import {ListArgs, PageArgs} from '../base/base.args';
-import {InRequestScope, Inject} from 'typescript-ioc';
-import {PodcastService} from './podcast.service';
 import {logger} from '../../utils/logger';
 import {Context} from '../../modules/engine/rest/context';
 
 const log = logger('PodcastController');
 
-@InRequestScope
 @Controller('/podcast', {tags: ['Podcast'], roles: [UserRole.stream]})
-export class PodcastController extends BaseController {
-	@Inject
-	podcastService!: PodcastService;
-
+export class PodcastController {
 	@Get(
 		'/id',
 		() => Podcast,
@@ -29,9 +22,9 @@ export class PodcastController extends BaseController {
 		@QueryParams() podcastArgs: IncludesPodcastArgs,
 		@QueryParams() podcastChildrenArgs: IncludesPodcastChildrenArgs,
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<Podcast> {
-		return this.transform.podcast(
+		return engine.transform.podcast(
 			orm, await orm.Podcast.oneOrFailByID(id),
 			podcastArgs, podcastChildrenArgs, episodeArgs, user
 		);
@@ -42,9 +35,9 @@ export class PodcastController extends BaseController {
 		() => PodcastIndex,
 		{description: 'Get the Navigation Index for Podcasts', summary: 'Get Index'}
 	)
-	async index(@QueryParams() filter: PodcastFilterArgs, @Ctx() {orm, user}: Context): Promise<PodcastIndex> {
+	async index(@QueryParams() filter: PodcastFilterArgs, @Ctx() {orm, engine, user}: Context): Promise<PodcastIndex> {
 		const result = await orm.Podcast.indexFilter(filter, user);
-		return this.transform.podcastIndex(orm, result);
+		return engine.transform.podcastIndex(orm, result);
 	}
 
 	@Get(
@@ -60,16 +53,16 @@ export class PodcastController extends BaseController {
 		@QueryParams() filter: PodcastFilterArgs,
 		@QueryParams() order: PodcastOrderArgs,
 		@QueryParams() list: ListArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<PodcastPage> {
 		if (list.list) {
 			return await orm.Podcast.findListTransformFilter(list.list, filter, [order], page, user,
-				o => this.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user)
+				o => engine.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user)
 			);
 		}
 		return await orm.Podcast.searchTransformFilter<Podcast>(
 			filter, [order], page, user,
-			o => this.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user)
+			o => engine.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user)
 		);
 	}
 
@@ -83,12 +76,12 @@ export class PodcastController extends BaseController {
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
 		@QueryParams() filter: PodcastFilterArgs,
 		@QueryParams() order: EpisodeOrderArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<EpisodePage> {
 		const podcastIDs = await orm.Podcast.findIDsFilter(filter, user);
 		return await orm.Episode.searchTransformFilter<Episode>(
 			{podcastIDs}, [order], page, user,
-			o => this.transform.episodeBase(orm, o, episodeArgs, user)
+			o => engine.transform.episodeBase(orm, o, episodeArgs, user)
 		)
 	}
 
@@ -99,9 +92,9 @@ export class PodcastController extends BaseController {
 	)
 	async status(
 		@QueryParam('id', {description: 'Podcast Id', isID: true}) id: string,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<PodcastUpdateStatus> {
-		return this.transform.podcastStatus(await orm.Podcast.oneOrFailByID(id));
+		return engine.transform.podcastStatus(await orm.Podcast.oneOrFailByID(id));
 	}
 
 	@Post(
@@ -111,11 +104,11 @@ export class PodcastController extends BaseController {
 	)
 	async create(
 		@BodyParams() args: PodcastCreateArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<Podcast> {
-		const podcast = await this.podcastService.create(orm, args.url);
-		this.podcastService.refresh(orm, podcast).catch(e => log.error(e)); // do not wait
-		return this.transform.podcast(orm, podcast, {}, {}, {}, user);
+		const podcast = await engine.podcast.create(orm, args.url);
+		engine.podcast.refresh(orm, podcast).catch(e => log.error(e)); // do not wait
+		return engine.transform.podcast(orm, podcast, {}, {}, {}, user);
 	}
 
 	@Post(
@@ -124,13 +117,13 @@ export class PodcastController extends BaseController {
 	)
 	async refresh(
 		@BodyParams() args: PodcastRefreshArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<void> {
 		if (args.id) {
 			const podcast = await orm.Podcast.oneOrFailByID(args.id);
-			this.podcastService.refresh(orm, podcast).catch(e => log.error(e)); // do not wait
+			engine.podcast.refresh(orm, podcast).catch(e => log.error(e)); // do not wait
 		} else {
-			this.podcastService.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
+			engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
 		}
 	}
 
@@ -140,10 +133,10 @@ export class PodcastController extends BaseController {
 	)
 	async remove(
 		@BodyParam('id', {description: 'Podcast ID to remove', isID: true}) id: string,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<void> {
 		const podcast = await orm.Podcast.oneOrFailByID(id);
-		await this.podcastService.remove(orm, podcast);
+		await engine.podcast.remove(orm, podcast);
 	}
 
 }

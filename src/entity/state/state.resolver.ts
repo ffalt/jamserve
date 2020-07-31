@@ -26,7 +26,7 @@ export class StateResolver {
 		@Arg('remove', () => Boolean, {nullable: true}) remove: boolean | undefined,
 		@Ctx() {engine, orm, user}: Context
 	): Promise<State> {
-		return await engine.stateService.fav(orm, id, remove, user);
+		return await engine.state.fav(orm, id, remove, user);
 	}
 
 	@Mutation(() => StateQL)
@@ -34,7 +34,7 @@ export class StateResolver {
 		@Arg('id', () => ID!) id: string,
 		@Arg('rating', () => Int) rating: number,
 		@Ctx() {engine, orm, user}: Context): Promise<State> {
-		return await engine.stateService.rate(orm, id, rating, user);
+		return await engine.state.rate(orm, id, rating, user);
 	}
 
 	@FieldResolver(() => Date, {nullable: true})

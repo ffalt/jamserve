@@ -49,7 +49,7 @@ describe('REST', function() {
 
 		request = supertest(`http://${server.configService.env.host}:${server.configService.env.port}`);
 
-		await server.engine.userService.createUser(orm,'all', 'all@localhost', 'all', true, true, true, true);
+		await server.engine.user.createUser(orm,'all', 'all@localhost', 'all', true, true, true, true);
 		const res = await request.post(apiPrefix + 'auth/login')
 			.send({username: 'all', password: 'all', client: 'supertest-tests', jwt: true});
 		if (res.status !== 200) {
@@ -58,7 +58,7 @@ describe('REST', function() {
 		tokens.all = res.body.jwt;
 
 		for (const role of roles) {
-			await server.engine.userService.createUser(orm, role, role + '@localhost', role,
+			await server.engine.user.createUser(orm, role, role + '@localhost', role,
 				role === UserRole.admin,
 				role === UserRole.stream,
 				role === UserRole.upload,
@@ -174,7 +174,7 @@ describe('REST', function() {
 			const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
 			await fse.mkdir(mediaPath);
 			mockRoot = buildMockRoot(mediaPath, 1, RootScanStrategy.auto);
-			await writeAndStoreMock(mockRoot, server.engine.ioService.workerService, server.engine.orm.fork());
+			await writeAndStoreMock(mockRoot, server.engine.io.workerService, server.engine.orm.fork());
 		});
 
 		afterEach(async () => {

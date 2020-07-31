@@ -33,7 +33,7 @@ export class PodcastResolver {
 
 	@FieldResolver(() => PodcastStatus)
 	status(@GQLRoot() podcast: Podcast, @Ctx() {engine}: Context): PodcastStatus {
-		return engine.podcastService.isDownloading(podcast.id) ? PodcastStatus.downloading : podcast.status;
+		return engine.podcast.isDownloading(podcast.id) ? PodcastStatus.downloading : podcast.status;
 	}
 
 	@FieldResolver(() => [EpisodeQL])

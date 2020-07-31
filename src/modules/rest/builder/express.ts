@@ -14,7 +14,6 @@ import {ensureTrailingPathSeparator, fileDeleteIfExists} from '../../../utils/fs
 import finishedRequest from 'on-finished';
 import {logger} from '../../../utils/logger';
 import {getEnumReverseValuesMap} from '../helpers/enums';
-import {Container} from 'typescript-ioc';
 
 const log = logger('RestAPI');
 
@@ -117,13 +116,27 @@ function prepareParameter(param: RestParamMetadata | FieldMetadata, data: any, i
 				}
 			}
 		} else {
+			if (typeof value !== 'object') {
+				throw new Error(`Internal: Invalid Parameter Object Type for field '${param.name}'`);
+			}
+			const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === type);
+			if (argumentType) {
+				const result = new (argumentType.target as any)();
+				for (const field of argumentType.fields) {
+					result[field.name] = prepareParameter(field, value, true);
+				}
+				return result;
+			}
+			if (param.typeOptions.generic) {
+				return value;
+			}
 			throw new Error(`Internal: Unknown Parameter Type, did you forget to register an enum? '${param.name}'`);
 		}
 	}
 	return value;
 }
 
-function prepareParameterSingle(param: RestParamMetadata, context: RestContext<any, any>): any {
+function prepareParameterSingle(param: RestParamMetadata, context: RestContext<any, any, any>): any {
 	let data: any = {};
 	switch (param.mode) {
 		case 'body':
@@ -145,8 +158,9 @@ function mapArgFields(argumentType: ClassMetadata, data: any, args: any = {}): v
 	});
 }
 
-function prepareParameterObj(param: RestParamsMetadata, context: RestContext<any, any>): any {
-	const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === param.getType());
+function prepareParameterObj(param: RestParamsMetadata, context: RestContext<any, any, any>): any {
+	const type = param.getType();
+	const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === type);
 	if (!argumentType) {
 		throw GenericError(
 			`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
@@ -178,7 +192,7 @@ function prepareParameterObj(param: RestParamsMetadata, context: RestContext<any
 	return args;
 }
 
-function prepareArg(param: ParamMetadata, context: RestContext<any, any>): any {
+function prepareArg(param: ParamMetadata, context: RestContext<any, any, any>): any {
 	switch (param.kind) {
 		case 'context':
 			return param.propertyName ? (context as any)[param.propertyName] : context;
@@ -200,13 +214,13 @@ function registerAutoClean(req: express.Request, res: express.Response): void {
 	});
 }
 
-async function callMethod(method: MethodMetadata, context: RestContext<any, any>, name: string): Promise<void> {
+async function callMethod(method: MethodMetadata, context: RestContext<any, any, any>, name: string): Promise<void> {
 	try {
 		const Controller = method.controllerClassMetadata?.target as any;
 		if (!Controller) {
 			throw GenericError(`Internal: Invalid controller in method ${method.methodName}`);
 		}
-		const instance = Container.get(Controller) as any;
+		const instance = new Controller();// Container.get(Controller) as any;
 		const func = instance[method.methodName];
 		const args = [];
 		const params = method.params.sort((a, b) => a.index - b.index)
@@ -244,6 +258,7 @@ async function callMethod(method: MethodMetadata, context: RestContext<any, any>
 		const result = await instance[method.methodName].apply(instance, args);
 		ApiBaseResponder.sendJSON(context.req, context.res, result);
 	} catch (e) {
+		console.error(e);
 		log.error(e);
 		ApiBaseResponder.sendError(context.req, context.res, e);
 	}
@@ -395,7 +410,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 							), pathParameters: undefined
 						} as any;
 					}
-					await callMethod(get, {req, res, orm: (req as any).orm, next, user: req.user}, 'Get');
+					await callMethod(get, {req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user}, 'Get');
 				} catch (e) {
 					ApiBaseResponder.sendError(req, res, e);
 				}
@@ -430,7 +445,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 							), pathParameters: undefined
 						} as any;
 					}
-					await callMethod(post, {req, res, next, orm: (req as any).orm, user: req.user}, 'Post');
+					await callMethod(post, {req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user}, 'Post');
 				} catch (e) {
 					ApiBaseResponder.sendError(req, res, e);
 				}

@@ -3,9 +3,7 @@ import {AutoComplete} from './autocomplete.model';
 import {UserRole} from '../../types/enums';
 import {AutoCompleteFilterArgs} from './autocomplete.args';
 import {Context} from '../../modules/engine/rest/context';
-import {InRequestScope} from 'typescript-ioc';
 
-@InRequestScope
 @Controller('/autocomplete', {tags: ['Various'], roles: [UserRole.stream]})
 export class AutocompleteController {
 	@Get(
@@ -14,7 +12,7 @@ export class AutocompleteController {
 	)
 	async autocomplete(
 		@QueryParams() filter: AutoCompleteFilterArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<AutoComplete> {
 		const result: AutoComplete = {};
 		const {query} = filter;

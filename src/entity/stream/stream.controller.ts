@@ -1,21 +1,12 @@
-import {InRequestScope, Inject} from 'typescript-ioc';
 import {Controller, Ctx, Get} from '../../modules/rest';
 import {AudioFormatType, UserRole} from '../../types/enums';
-import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
-import {NotFoundError} from '../../modules/rest/builder/express-error';
-import {PathParam} from '../../modules/rest/decorators/PathParam';
-import {PathParams} from '../../modules/rest/decorators/PathParams';
+import {ApiBinaryResult, NotFoundError, PathParam, PathParams} from '../../modules/rest/';
 import {StreamArgs} from './stream.args';
-import {StreamService} from './stream.service';
 import {ApiStreamTypes} from '../../types/consts';
 import {Context} from '../../modules/engine/rest/context';
 
-@InRequestScope
 @Controller('/stream', {tags: ['Stream'], roles: [UserRole.stream]})
 export class StreamController {
-	@Inject
-	private streamService!: StreamService;
-
 	@Get(
 		'/{id}_{maxBitRate}.{format}',
 		{
@@ -40,13 +31,13 @@ export class StreamController {
 	async stream(
 		@PathParam('id', {description: 'Media Id', isID: true}) id: string,
 		@PathParams() streamArgs: StreamArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInStreamTypes(id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		return this.streamService.streamDBObject(result.obj, result.objType, streamArgs.format, streamArgs.maxBitRate, user);
+		return engine.stream.streamDBObject(result.obj, result.objType, streamArgs.format, streamArgs.maxBitRate, user);
 	}
 
 }

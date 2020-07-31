@@ -27,7 +27,7 @@ export class ArtistResolver {
 
 	@Query(() => ArtistIndexQL, {description: 'Get the Navigation Index for Albums'})
 	async artistIndex(@Args() {filter}: ArtistIndexArgsQL, @Ctx() {orm, engine, user}: Context): Promise<ArtistIndexQL> {
-		return await orm.Artist.indexFilter(filter, user, engine.settingsService.settings.index.ignoreArticles);
+		return await orm.Artist.indexFilter(filter, user, engine.settings.settings.index.ignoreArticles);
 	}
 
 	@FieldResolver(() => StateQL)

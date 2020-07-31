@@ -2,7 +2,7 @@ import {EngineService} from '../../modules/engine/services/engine.service';
 
 export async function waitEngineStart(engine: EngineService): Promise<void> {
 	function wait(cb: () => void): void {
-		if (engine.ioService.scanning) {
+		if (engine.io.scanning) {
 			setTimeout(() => {
 				wait(cb);
 			}, 100);

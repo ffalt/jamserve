@@ -50,7 +50,7 @@ describe('WorkerService', () => {
 		dir = tmp.dirSync();
 		bindMockConfig(dir.name);
 		engine = Container.get(EngineService);
-		workerService = engine.ioService.workerService;
+		workerService = engine.io.workerService;
 		await engine.start();
 		await waitEngineStart(engine);
 		orm = engine.orm.fork();

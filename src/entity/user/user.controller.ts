@@ -1,24 +1,16 @@
 import {User, UserPage} from './user.model';
 import {User as ORMUser} from './user';
 import {Orm} from '../../modules/engine/services/orm.service';
-import {InRequestScope, Inject} from 'typescript-ioc';
-import {TransformService} from '../../modules/engine/services/transform.service';
 import {BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs} from './user.args';
-import {UserService} from './user.service';
 import {randomString} from '../../utils/random';
 import {PageArgs} from '../base/base.args';
 import {Context} from '../../modules/engine/rest/context';
+import {EngineService} from '../../modules/engine/services/engine.service';
 
-@InRequestScope
 @Controller('/user', {tags: ['User']})
 export class UserController {
-	@Inject
-	private transform!: TransformService;
-	@Inject
-	private userService!: UserService;
-
 	@Get('/id',
 		() => User,
 		{description: 'Get an User by Id', roles: [UserRole.admin], summary: 'Get User'}
@@ -26,9 +18,9 @@ export class UserController {
 	async id(
 		@QueryParam('id', {description: 'User Id', isID: true}) id: string,
 		@QueryParams() userArgs: IncludesUserArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<User> {
-		return this.transform.user(
+		return engine.transform.user(
 			orm, await orm.User.oneOrFailByID(id),
 			userArgs, user
 		);
@@ -44,11 +36,11 @@ export class UserController {
 		@QueryParams() userArgs: IncludesUserArgs,
 		@QueryParams() filter: UserFilterArgs,
 		@QueryParams() order: UserOrderArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<UserPage> {
 		return await orm.User.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.user(orm, o, userArgs, user)
+			o => engine.transform.user(orm, o, userArgs, user)
 		);
 	}
 
@@ -59,10 +51,10 @@ export class UserController {
 	)
 	async create(
 		@BodyParams() args: UserMutateArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<User> {
-		await this.validatePassword(orm, args.password, user);
-		return this.transform.user(orm, await this.userService.create(orm, args), {}, user);
+		await this.validatePassword(orm, engine, args.password, user);
+		return engine.transform.user(orm, await engine.user.create(orm, args), {}, user);
 	}
 
 	@Post(
@@ -73,9 +65,9 @@ export class UserController {
 	async update(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@BodyParams() args: UserMutateArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<User> {
-		await this.validatePassword(orm, args.password, user);
+		await this.validatePassword(orm, engine, args.password, user);
 		const u = id === user.id ? user : await orm.User.oneOrFailByID(id);
 		if (user.id === id) {
 			if (!args.roleAdmin) {
@@ -85,7 +77,7 @@ export class UserController {
 				throw InvalidParamError('roleStream', `You can't remove api access for yourself`);
 			}
 		}
-		return this.transform.user(orm, await this.userService.update(orm, u, args), {}, user);
+		return engine.transform.user(orm, await engine.user.update(orm, u, args), {}, user);
 	}
 
 	@Post(
@@ -94,13 +86,13 @@ export class UserController {
 	)
 	async remove(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<void> {
 		if (user.id === id) {
 			throw InvalidParamError('id', `You can't remove yourself`);
 		}
 		const u = await orm.User.oneOrFailByID(id);
-		await this.userService.remove(orm, u);
+		await engine.user.remove(orm, u);
 	}
 
 	@Post(
@@ -110,10 +102,10 @@ export class UserController {
 	async changePassword(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@BodyParams() args: UserPasswordUpdateArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<void> {
-		const u = await this.checkUserAccess(orm, id, args.password, user);
-		return this.userService.setUserPassword(orm, u, args.newPassword);
+		const u = await this.checkUserAccess(orm, engine, id, args.password, user);
+		return engine.user.setUserPassword(orm, u, args.newPassword);
 	}
 
 	@Post(
@@ -123,10 +115,10 @@ export class UserController {
 	async changeEmail(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@BodyParams() args: UserEmailUpdateArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<void> {
-		const u = await this.checkUserAccess(orm, id, args.password, user);
-		return this.userService.setUserEmail(orm, u, args.email);
+		const u = await this.checkUserAccess(orm, engine, id, args.password, user);
+		return engine.user.setUserEmail(orm, u, args.email);
 	}
 
 	@Post(
@@ -136,10 +128,10 @@ export class UserController {
 	async generateUserImage(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@BodyParams() args: UserGenerateImageArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<void> {
 		const u = await this.validateUserOrAdmin(orm, id, user);
-		await this.userService.generateAvatar(u, args.seed || randomString(42));
+		await engine.user.generateAvatar(u, args.seed || randomString(42));
 	}
 
 	@Post(
@@ -149,21 +141,21 @@ export class UserController {
 	async uploadUserImage(
 		@BodyParam('id', {description: 'User Id', isID: true}) id: string,
 		@Upload('image') file: UploadFile,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<void> {
 		const u = await this.validateUserOrAdmin(orm, id, user);
-		return this.userService.setUserImage(u, file.name, file.type);
+		return engine.user.setUserImage(u, file.name, file.type);
 	}
 
-	private async validatePassword(orm: Orm, password: string, user: ORMUser): Promise<void> {
-		const result = await this.userService.auth(orm, user.name, password);
+	private async validatePassword(orm: Orm, engine: EngineService, password: string, user: ORMUser): Promise<void> {
+		const result = await engine.user.auth(orm, user.name, password);
 		if (!result) {
 			return Promise.reject(UnauthError());
 		}
 	}
 
-	private async checkUserAccess(orm: Orm, userID: string, password: string, user: ORMUser): Promise<ORMUser> {
-		await this.validatePassword(orm, password, user);
+	private async checkUserAccess(orm: Orm, engine: EngineService, userID: string, password: string, user: ORMUser): Promise<ORMUser> {
+		await this.validatePassword(orm, engine, password, user);
 		if (userID === user.id || user.roleAdmin) {
 			return userID === user.id ? user : await orm.User.oneOrFailByID(userID);
 		}

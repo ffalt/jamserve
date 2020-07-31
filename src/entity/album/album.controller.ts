@@ -1,7 +1,6 @@
 import {Album, AlbumIndex, AlbumPage} from './album.model';
 import {Controller, Ctx, Get, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
-import {BaseController} from '../base/base.controller';
 import {ExtendedInfoResult} from '../metadata/metadata.model';
 import {TrackPage} from '../track/track.model';
 import {AlbumFilterArgs, AlbumOrderArgs, IncludesAlbumArgs, IncludesAlbumChildrenArgs} from './album.args';
@@ -9,11 +8,9 @@ import {IncludesTrackArgs, TrackOrderArgs} from '../track/track.args';
 import {IncludesArtistArgs} from '../artist/artist.args';
 import {ListArgs, PageArgs} from '../base/base.args';
 import {Context} from '../../modules/engine/rest/context';
-import {InRequestScope} from 'typescript-ioc';
 
-@InRequestScope
 @Controller('/album', {tags: ['Album'], roles: [UserRole.stream]})
-export class AlbumController extends BaseController {
+export class AlbumController {
 	@Get(
 		'/id',
 		() => Album,
@@ -25,9 +22,9 @@ export class AlbumController extends BaseController {
 		@QueryParams() albumChildrenArgs: IncludesAlbumChildrenArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() artistArgs: IncludesArtistArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<Album> {
-		return this.transform.album(
+		return engine.transform.album(
 			orm, await orm.Album.oneOrFailByID(id),
 			albumArgs, albumChildrenArgs, trackArgs, artistArgs, user
 		);
@@ -40,9 +37,9 @@ export class AlbumController extends BaseController {
 	)
 	async index(
 		@QueryParams() filter: AlbumFilterArgs,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<AlbumIndex> {
-		return await this.transform.albumIndex(orm, await orm.Album.indexFilter(filter));
+		return await engine.transform.albumIndex(orm, await orm.Album.indexFilter(filter));
 	}
 
 	@Get(
@@ -59,16 +56,16 @@ export class AlbumController extends BaseController {
 		@QueryParams() filter: AlbumFilterArgs,
 		@QueryParams() order: AlbumOrderArgs,
 		@QueryParams() list: ListArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<AlbumPage> {
 		if (list.list) {
 			return await orm.Album.findListTransformFilter(list.list, filter, [order], page, user,
-				o => this.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user)
+				o => engine.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user)
 			)
 		}
 		return await orm.Album.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user)
+			o => engine.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user)
 		);
 	}
 
@@ -79,10 +76,10 @@ export class AlbumController extends BaseController {
 	)
 	async info(
 		@QueryParam('id', {description: 'Album Id', isID: true}) id: string,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<ExtendedInfoResult> {
 		const album = await orm.Album.oneOrFailByID(id);
-		return {info: await this.metadata.extInfo.byAlbum(orm, album)};
+		return {info: await engine.metadata.extInfo.byAlbum(orm, album)};
 	}
 
 	@Get(
@@ -95,12 +92,12 @@ export class AlbumController extends BaseController {
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() filter: AlbumFilterArgs,
 		@QueryParams() order: TrackOrderArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<TrackPage> {
 		const albumIDs = await orm.Album.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
 			{albumIDs}, [order], page, user,
-			o => this.transform.trackBase(orm, o, trackArgs, user)
+			o => engine.transform.trackBase(orm, o, trackArgs, user)
 		);
 	}
 
@@ -113,11 +110,11 @@ export class AlbumController extends BaseController {
 		@QueryParam('id', {description: 'Album Id', isID: true}) id: string,
 		@QueryParams() page: PageArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<TrackPage> {
 		const album = await orm.Album.oneOrFailByID(id);
-		const result = await this.metadata.similarTracks.byAlbum(orm, album, page);
-		return {...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user)))}
+		const result = await engine.metadata.similarTracks.byAlbum(orm, album, page);
+		return {...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user)))}
 	}
 
 }

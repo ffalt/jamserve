@@ -56,7 +56,7 @@ export class EpisodeResolver {
 
 	@FieldResolver(() => PodcastStatus)
 	async status(@GQLRoot() episode: Episode, @Ctx() {engine}: Context): Promise<PodcastStatus> {
-		return engine.episodeService.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status;
+		return engine.episode.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status;
 	}
 
 	@FieldResolver(() => Date)

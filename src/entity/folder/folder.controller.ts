@@ -3,25 +3,16 @@ import {BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, Qu
 import {UserRole} from '../../types/enums';
 import {TrackPage} from '../track/track.model';
 import {ArtworkPage} from '../artwork/artwork.model';
-import {BaseController} from '../base/base.controller';
 import {ExtendedInfoResult} from '../metadata/metadata.model';
 import {IncludesTrackArgs, TrackOrderArgs} from '../track/track.args';
 import {FolderCreateArgs, FolderFilterArgs, FolderMoveArgs, FolderOrderArgs, FolderRenameArgs, IncludesFolderArgs, IncludesFolderChildrenArgs} from './folder.args';
 import {ArtworkOrderArgs, IncludesArtworkArgs} from '../artwork/artwork.args';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {FolderService} from './folder.service';
 import {ListArgs, PageArgs} from '../base/base.args';
 import {AdminChangeQueueInfo} from '../admin/admin';
-import {IoService} from '../../modules/engine/services/io.service';
 import {Context} from '../../modules/engine/rest/context';
 
-@InRequestScope
 @Controller('/folder', {tags: ['Folder'], roles: [UserRole.stream]})
-export class FolderController extends BaseController {
-	@Inject
-	folderService!: FolderService;
-	@Inject
-	ioService!: IoService;
+export class FolderController {
 
 	@Get('/id',
 		() => Folder,
@@ -33,9 +24,9 @@ export class FolderController extends BaseController {
 		@QueryParams() folderChildrenArgs: IncludesFolderChildrenArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() artworkArgs: IncludesArtworkArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<Folder> {
-		return this.transform.folder(
+		return engine.transform.folder(
 			orm, await orm.Folder.oneOrFailByID(id),
 			folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user
 		);
@@ -48,10 +39,10 @@ export class FolderController extends BaseController {
 	)
 	async index(
 		@QueryParams() filter: FolderFilterArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<FolderIndex> {
 		const result = await orm.Folder.indexFilter(filter, user);
-		return this.transform.folderIndex(orm, result);
+		return engine.transform.folderIndex(orm, result);
 	}
 
 	@Get(
@@ -68,16 +59,16 @@ export class FolderController extends BaseController {
 		@QueryParams() filter: FolderFilterArgs,
 		@QueryParams() order: FolderOrderArgs,
 		@QueryParams() list: ListArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<FolderPage> {
 		if (list.list) {
 			return await orm.Folder.findListTransformFilter(list.list, filter, [order], page, user,
-				o => this.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user)
+				o => engine.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user)
 			);
 		}
 		return await orm.Folder.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user)
+			o => engine.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user)
 		);
 	}
 
@@ -91,12 +82,12 @@ export class FolderController extends BaseController {
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() filter: FolderFilterArgs,
 		@QueryParams() order: TrackOrderArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<TrackPage> {
 		const folderIDs = await orm.Folder.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
 			{folderIDs}, [order], page, user,
-			o => this.transform.trackBase(orm, o, trackArgs, user)
+			o => engine.transform.trackBase(orm, o, trackArgs, user)
 		);
 	}
 
@@ -110,12 +101,12 @@ export class FolderController extends BaseController {
 		@QueryParams() folderArgs: IncludesFolderArgs,
 		@QueryParams() filter: FolderFilterArgs,
 		@QueryParams() order: FolderOrderArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<FolderPage> {
 		const folderIDs = await orm.Folder.findIDsFilter(filter, user);
 		return await orm.Folder.searchTransformFilter(
 			{parentIDs: folderIDs}, [order], page, user,
-			o => this.transform.folderBase(orm, o, folderArgs, user)
+			o => engine.transform.folderBase(orm, o, folderArgs, user)
 		);
 	}
 
@@ -129,12 +120,12 @@ export class FolderController extends BaseController {
 		@QueryParams() artworkArgs: IncludesArtworkArgs,
 		@QueryParams() filter: FolderFilterArgs,
 		@QueryParams() order: ArtworkOrderArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<ArtworkPage> {
 		const folderIDs = await orm.Folder.findIDsFilter(filter, user);
 		return await orm.Artwork.searchTransformFilter(
 			{folderIDs}, [order], page, user,
-			o => this.transform.artworkBase(orm, o, artworkArgs, user)
+			o => engine.transform.artworkBase(orm, o, artworkArgs, user)
 		);
 	}
 
@@ -145,10 +136,10 @@ export class FolderController extends BaseController {
 	)
 	async artistInfo(
 		@QueryParam('id', {description: 'Folder Id', isID: true}) id: string,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<ExtendedInfoResult> {
 		const folder = await orm.Folder.oneOrFailByID(id);
-		return {info: await this.metadata.extInfo.byFolderArtist(orm, folder)};
+		return {info: await engine.metadata.extInfo.byFolderArtist(orm, folder)};
 	}
 
 	@Get(
@@ -158,10 +149,10 @@ export class FolderController extends BaseController {
 	)
 	async albumInfo(
 		@QueryParam('id', {description: 'Folder Id', isID: true}) id: string,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<ExtendedInfoResult> {
 		const folder = await orm.Folder.oneOrFailByID(id);
-		return {info: await this.metadata.extInfo.byFolderAlbum(orm, folder)};
+		return {info: await engine.metadata.extInfo.byFolderAlbum(orm, folder)};
 	}
 
 	@Get(
@@ -173,11 +164,11 @@ export class FolderController extends BaseController {
 		@QueryParam('id', {description: 'Folder Id', isID: true}) id: string,
 		@QueryParams() page: PageArgs,
 		@QueryParams() folderArgs: IncludesFolderArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<FolderPage> {
 		const folder = await orm.Folder.oneOrFailByID(id);
-		const result = await this.metadata.similarArtists.byFolder(orm, folder, page);
-		return {...result, items: await Promise.all(result.items.map(o => this.transform.folderBase(orm, o, folderArgs, user)))}
+		const result = await engine.metadata.similarArtists.byFolder(orm, folder, page);
+		return {...result, items: await Promise.all(result.items.map(o => engine.transform.folderBase(orm, o, folderArgs, user)))}
 	}
 
 	@Get(
@@ -189,11 +180,11 @@ export class FolderController extends BaseController {
 		@QueryParam('id', {description: 'Folder Id', isID: true}) id: string,
 		@QueryParams() page: PageArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<TrackPage> {
 		const folder = await orm.Folder.oneOrFailByID(id);
-		const result = await this.metadata.similarTracks.byFolder(orm, folder, page);
-		return {...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user)))}
+		const result = await engine.metadata.similarTracks.byFolder(orm, folder, page);
+		return {...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user)))}
 	}
 
 	@Get(
@@ -204,14 +195,14 @@ export class FolderController extends BaseController {
 	async health(
 		@QueryParams() filter: FolderFilterArgs,
 		@QueryParams() folderArgs: IncludesFolderArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<Array<FolderHealth>> {
 		const folders = await orm.Folder.findFilter(filter, [], {}, user);
-		const list = await this.folderService.health(orm, folders);
+		const list = await engine.folder.health(orm, folders);
 		const result: Array<FolderHealth> = [];
 		for (const item of list) {
 			result.push({
-				folder: await this.transform.folderBase(orm, item.folder, folderArgs, user),
+				folder: await engine.transform.folderBase(orm, item.folder, folderArgs, user),
 				health: item.health
 			});
 		}
@@ -225,10 +216,10 @@ export class FolderController extends BaseController {
 	)
 	async create(
 		@BodyParams() args: FolderCreateArgs,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const folder = await orm.Folder.oneOrFailByID(args.id);
-		return await this.ioService.newFolder(folder.id, args.name, folder.root.idOrFail());
+		return await engine.io.newFolder(folder.id, args.name, folder.root.idOrFail());
 	}
 
 	@Post(
@@ -238,10 +229,10 @@ export class FolderController extends BaseController {
 	)
 	async rename(
 		@BodyParams() args: FolderRenameArgs,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const folder = await orm.Folder.oneOrFailByID(args.id);
-		return await this.ioService.renameFolder(folder.id, args.name, folder.root.idOrFail());
+		return await engine.io.renameFolder(folder.id, args.name, folder.root.idOrFail());
 	}
 
 	@Post(
@@ -251,13 +242,13 @@ export class FolderController extends BaseController {
 	)
 	async move(
 		@BodyParams() args: FolderMoveArgs,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		if (args.ids.length === 0) {
 			throw InvalidParamError('ids', 'Must have entries');
 		}
 		const folder = await orm.Folder.oneOrFailByID(args.ids[0]);
-		return await this.ioService.moveFolders(args.ids, args.newParentID, folder.root.idOrFail());
+		return await engine.io.moveFolders(args.ids, args.newParentID, folder.root.idOrFail());
 	}
 
 	@Post(
@@ -267,10 +258,10 @@ export class FolderController extends BaseController {
 	)
 	async remove(
 		@BodyParam('id', {description: 'Folder Id', isID: true}) id: string,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const folder = await orm.Folder.oneOrFailByID(id);
-		return await this.ioService.deleteFolder(folder.id, folder.root.idOrFail());
+		return await engine.io.deleteFolder(folder.id, folder.root.idOrFail());
 	}
 
 }

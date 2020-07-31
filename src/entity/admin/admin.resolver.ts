@@ -12,12 +12,12 @@ export class AdminResolver {
 	@Authorized(UserRole.admin)
 	@Query(() => AdminSettingsQL, {description: 'Get the Server Admin Settings'})
 	async adminSettings(@Ctx() {engine}: Context): Promise<AdminSettings> {
-		return engine.settingsService.get();
+		return engine.settings.get();
 	}
 
 	@Authorized(UserRole.admin)
 	@Query(() => AdminChangeQueueInfoQL, {description: 'Get Queue Information for Admin Change Tasks'})
 	async adminQueue(@Arg('id', () => ID!, {description: 'Queue Task Id'}) id: string, @Ctx() {engine}: Context): Promise<AdminChangeQueueInfo> {
-		return engine.ioService.getAdminChangeQueueInfoStatus(id);
+		return engine.io.getAdminChangeQueueInfoStatus(id);
 	}
 }

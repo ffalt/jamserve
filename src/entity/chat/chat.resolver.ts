@@ -8,7 +8,7 @@ import {Root as GQLRoot} from 'type-graphql/dist/decorators/Root';
 export class ChatResolver {
 	@Query(() => [ChatQL], {description: 'Get Chat Messages'})
 	async chats(@Args() {since}: ChatFilterArgs, @Ctx() {engine}: Context): Promise<Array<Chat>> {
-		return engine.chatService.get(since);
+		return engine.chat.get(since);
 	}
 
 	@FieldResolver(() => Date)

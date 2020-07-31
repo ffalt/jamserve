@@ -94,12 +94,12 @@ export class TrackResolver {
 
 	@FieldResolver(() => TrackLyricsQL)
 	async lyrics(@GQLRoot() track: Track, @Ctx() {engine, orm}: Context): Promise<TrackLyrics> {
-		return engine.metadataService.lyricsByTrack(orm, track);
+		return engine.metadata.lyricsByTrack(orm, track);
 	}
 
 	@FieldResolver(() => MediaTagRawQL)
 	async rawTag(@GQLRoot() track: Track, @Ctx() {engine}: Context): Promise<MediaTagRaw> {
-		return (await engine.audioModule.readRawTag(path.join(track.path, track.fileName))) || {};
+		return (await engine.track.getRawTag(track)) || {};
 	}
 
 	@FieldResolver(() => StateQL)

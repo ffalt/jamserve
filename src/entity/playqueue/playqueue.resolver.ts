@@ -8,7 +8,7 @@ import {PlayQueueEntry, PlayQueueEntryQL} from '../playqueueentry/playqueue-entr
 export class PlayQueueResolver {
 	@Query(() => PlayQueueQL, {description: 'Get a PlayQueue for the calling user'})
 	async playQueue(@Ctx() {engine, orm, user}: Context): Promise<PlayQueue> {
-		return engine.playQueueService.get(orm, user);
+		return engine.playQueue.get(orm, user);
 	}
 
 	@FieldResolver(() => [PlayQueueEntryQL])

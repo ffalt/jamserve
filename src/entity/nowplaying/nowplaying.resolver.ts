@@ -7,7 +7,7 @@ export class NowPlayingResolver {
 
 	@Query(() => [NowPlayingQL], {description: 'Get a List of media [Track, Episode] played currently by Users'})
 	async nowPlaying(@Ctx() {engine}: Context): Promise<Array<NowPlaying>> {
-		return engine.nowPlayingService.getNowPlaying();
+		return engine.nowPlaying.getNowPlaying();
 	}
 
 	@FieldResolver(() => ID)
@@ -22,7 +22,7 @@ export class NowPlayingResolver {
 
 	@Mutation(() => NowPlayingQL)
 	async scrobble(@Arg('id', () => ID!) id: string, @Ctx() {engine, orm, user}: Context): Promise<NowPlaying> {
-		return await engine.nowPlayingService.scrobble(orm, id, user);
+		return await engine.nowPlaying.scrobble(orm, id, user);
 	}
 }
 

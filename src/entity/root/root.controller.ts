@@ -1,20 +1,13 @@
 import {Root, RootPage, RootUpdateStatus} from './root.model';
 import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
-import {BaseController} from '../base/base.controller';
 import {IncludesRootArgs, RootFilterArgs, RootMutateArgs, RootOrderArgs, RootRefreshArgs} from './root.args';
 import {AdminChangeQueueInfo} from '../admin/admin';
-import {InRequestScope, Inject} from 'typescript-ioc';
-import {IoService} from '../../modules/engine/services/io.service';
 import {PageArgs} from '../base/base.args';
 import {Context} from '../../modules/engine/rest/context';
 
-@InRequestScope
 @Controller('/root', {tags: ['Root'], roles: [UserRole.stream]})
-export class RootController extends BaseController {
-	@Inject
-	ioService!: IoService;
-
+export class RootController {
 	@Get('/id',
 		() => Root,
 		{description: 'Get a Root by Id', summary: 'Get Root'}
@@ -22,9 +15,9 @@ export class RootController extends BaseController {
 	async id(
 		@QueryParam('id', {description: 'Root Id', isID: true}) id: string,
 		@QueryParams() rootArgs: IncludesRootArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<Root> {
-		return this.transform.root(
+		return engine.transform.root(
 			orm, await orm.Root.oneOrFailByID(id),
 			rootArgs, user
 		);
@@ -40,11 +33,11 @@ export class RootController extends BaseController {
 		@QueryParams() rootArgs: IncludesRootArgs,
 		@QueryParams() filter: RootFilterArgs,
 		@QueryParams() order: RootOrderArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<RootPage> {
 		return await orm.Root.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.root(orm, o, rootArgs, user)
+			o => engine.transform.root(orm, o, rootArgs, user)
 		);
 	}
 
@@ -55,9 +48,9 @@ export class RootController extends BaseController {
 	)
 	async status(
 		@QueryParam('id', {description: 'Root Id', isID: true}) id: string,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<RootUpdateStatus> {
-		return this.transform.rootStatus(await orm.Root.oneOrFailByID(id));
+		return engine.transform.rootStatus(await orm.Root.oneOrFailByID(id));
 	}
 
 	@Post(
@@ -67,9 +60,9 @@ export class RootController extends BaseController {
 	)
 	async create(
 		@BodyParams() args: RootMutateArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {engine}: Context
 	): Promise<AdminChangeQueueInfo> {
-		return await this.ioService.createRoot(args.name, args.path, args.strategy);
+		return await engine.io.createRoot(args.name, args.path, args.strategy);
 	}
 
 	@Post(
@@ -80,9 +73,9 @@ export class RootController extends BaseController {
 	async update(
 		@BodyParam('id', {description: 'Root Id', isID: true}) id: string,
 		@BodyParams() args: RootMutateArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {engine}: Context
 	): Promise<AdminChangeQueueInfo> {
-		return await this.ioService.updateRoot(id, args.name, args.path, args.strategy);
+		return await engine.io.updateRoot(id, args.name, args.path, args.strategy);
 	}
 
 	@Post(
@@ -92,9 +85,9 @@ export class RootController extends BaseController {
 	)
 	async remove(
 		@BodyParam('id', {description: 'Root Id', isID: true}) id: string,
-		@Ctx() {orm, user}: Context
+		@Ctx() {engine}: Context
 	): Promise<AdminChangeQueueInfo> {
-		return await this.ioService.removeRoot(id);
+		return await engine.io.removeRoot(id);
 	}
 
 	@Post(
@@ -104,12 +97,12 @@ export class RootController extends BaseController {
 	)
 	async refresh(
 		@BodyParams() args: RootRefreshArgs,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		if (args.id) {
-			return await this.ioService.refreshRoot(args.id);
+			return await engine.io.refreshRoot(args.id);
 		} else {
-			const result = await this.ioService.refresh(orm);
+			const result = await engine.io.refresh(orm);
 			return result[result.length - 1];
 		}
 	}

@@ -12,16 +12,12 @@ import {Context} from '../../modules/engine/rest/context';
 
 const log = logger('AuthController');
 
-@InRequestScope
 @Controller('/auth', {tags: ['Access']})
 export class AuthController {
-	@Inject
-	private configService!: ConfigService;
-
 	@Post('/login', () => Session, {description: 'Start session or jwt access', summary: 'Login'})
 	async login(
 		@BodyParams() credentials: CredentialsArgs,
-		@Ctx() context: Context
+		@Ctx() {engine, req, res, next}: Context
 	): Promise<Session> {
 		return new Promise<Session>((resolve, reject) => {
 			passport.authenticate('local', (err, user) => {
@@ -29,27 +25,27 @@ export class AuthController {
 					log.error(err);
 					return reject(new Error('Invalid Auth'));
 				}
-				context.req.login(user, (err2: Error) => {
+				req.login(user, (err2: Error) => {
 					if (err2) {
 						log.error(err2);
 						console.error(err2);
 						return reject(new Error('Invalid Auth'));
 					}
-					const client = context.req.body.client || 'Unknown Client';
+					const client = req.body.client || 'Unknown Client';
 					// context.req.client = client;
 					const token = credentials.jwt ? generateJWT(user.id, client,
-						this.configService.env.jwt.secret,
-						this.configService.env.jwt.maxAge
+						engine.config.env.jwt.secret,
+						engine.config.env.jwt.maxAge
 					) : undefined;
-					if (context.req.session) { // express session data obj
-						context.req.session.client = client;
-						context.req.session.userAgent = context.req.headers['user-agent'] || client;
+					if (req.session) { // express session data obj
+						req.session.client = client;
+						req.session.userAgent = req.headers['user-agent'] || client;
 						if (token) {
-							context.req.session.jwth = jwtHash(token);
+							req.session.jwth = jwtHash(token);
 						}
 					}
 					resolve({
-						allowedCookieDomains: this.configService.env.session.allowedCookieDomains,
+						allowedCookieDomains: engine.config.env.session.allowedCookieDomains,
 						version: JAMAPI_VERSION,
 						jwt: token,
 						user: {
@@ -64,7 +60,7 @@ export class AuthController {
 						}
 					});
 				});
-			})(context.req, context.res, context.next);
+			})(req, res, next);
 		});
 	}
 

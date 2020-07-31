@@ -1,7 +1,6 @@
 import {Episode, EpisodePage, EpisodeUpdateStatus} from './episode.model';
 import {BodyParam, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
-import {BaseController} from '../base/base.controller';
 import {IncludesPodcastArgs} from '../podcast/podcast.args';
 import {EpisodeFilterArgs, EpisodeOrderArgs, IncludesEpisodeArgs, IncludesEpisodeParentArgs} from './episode.args';
 import {ListArgs, PageArgs} from '../base/base.args';
@@ -12,12 +11,8 @@ import {Context} from '../../modules/engine/rest/context';
 
 const log = logger('EpisodeController');
 
-@InRequestScope
 @Controller('/episode', {tags: ['Episode'], roles: [UserRole.stream]})
-export class EpisodeController extends BaseController {
-	@Inject
-	episodeService!: EpisodeService;
-
+export class EpisodeController {
 	@Get(
 		'/id',
 		() => Episode,
@@ -28,9 +23,9 @@ export class EpisodeController extends BaseController {
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
 		@QueryParams() episodeParentArgs: IncludesEpisodeParentArgs,
 		@QueryParams() podcastArgs: IncludesPodcastArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<Episode> {
-		return this.transform.episode(
+		return engine.transform.episode(
 			orm, await orm.Episode.oneOrFailByID(id),
 			episodeArgs, episodeParentArgs, podcastArgs, user
 		);
@@ -49,16 +44,16 @@ export class EpisodeController extends BaseController {
 		@QueryParams() filter: EpisodeFilterArgs,
 		@QueryParams() order: EpisodeOrderArgs,
 		@QueryParams() list: ListArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<EpisodePage> {
 		if (list.list) {
 			return await orm.Episode.findListTransformFilter(list.list, filter, [order], page, user,
-				o => this.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user)
+				o => engine.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user)
 			);
 		}
 		return await orm.Episode.searchTransformFilter(
 			filter, [order], page, user,
-			o => this.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user)
+			o => engine.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user)
 		);
 	}
 
@@ -69,9 +64,9 @@ export class EpisodeController extends BaseController {
 	)
 	async status(
 		@QueryParam('id', {description: 'Episode Id', isID: true}) id: string,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine, user}: Context
 	): Promise<EpisodeUpdateStatus> {
-		return this.transform.episodeStatus(await orm.Episode.oneOrFailByID(id));
+		return engine.transform.episodeStatus(await orm.Episode.oneOrFailByID(id));
 	}
 
 
@@ -81,11 +76,11 @@ export class EpisodeController extends BaseController {
 	)
 	async retrieve(
 		@BodyParam('id', {description: 'Episode Id', isID: true}) id: string,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<void> {
 		const episode = await orm.Episode.oneOrFailByID(id);
 		if (!episode.path) {
-			this.episodeService.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
+			engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
 		}
 	}
 

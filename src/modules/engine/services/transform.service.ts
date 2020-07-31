@@ -66,6 +66,7 @@ import {IndexResult, IndexResultGroup} from '../../../entity/base/base';
 import {AudioModule} from '../../audio/audio.module';
 import {MetaDataService} from '../../../entity/metadata/metadata.service';
 import {ExtendedInfo} from '../../../entity/metadata/metadata.model';
+import {TrackService} from '../../../entity/track/track.service';
 
 @InRequestScope
 export class TransformService {
@@ -75,6 +76,8 @@ export class TransformService {
 	public podcastService!: PodcastService;
 	@Inject
 	public episodeService!: EpisodeService;
+	@Inject
+	public trackService!: TrackService;
 	@Inject
 	public audioModule!: AudioModule;
 	@Inject
@@ -95,7 +98,7 @@ export class TransformService {
 			seriesID: o.series.id(),
 			tag: trackArgs.trackIncTag ? await this.mediaTag(orm, tag) : undefined,
 			media: trackArgs.trackIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
-			tagRaw: trackArgs.trackIncRawTag ? await this.mediaRawTag(path.join(o.path, o.fileName)) : undefined,
+			tagRaw: trackArgs.trackIncRawTag ? await this.trackService.getRawTag(o) : undefined,
 			state: trackArgs.trackIncState ? await this.state(orm, o.id, DBObjectType.track, user.id) : undefined
 		};
 	}
@@ -139,7 +142,7 @@ export class TransformService {
 			duration: tag?.mediaDuration ?? o.duration ?? 0,
 			tag: episodeArgs.episodeIncTag ? await this.mediaTag(orm, tag) : undefined,
 			media: episodeArgs.episodeIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
-			tagRaw: episodeArgs.episodeIncRawTag && o.path ? await this.mediaRawTag(o.path) : undefined,
+			tagRaw: episodeArgs.episodeIncRawTag && o.path ? await this.audioModule.readRawTag(o.path) : undefined,
 			state: episodeArgs.episodeIncState ? await this.state(orm, o.id, DBObjectType.episode, user.id) : undefined
 		};
 	}
@@ -563,11 +566,6 @@ export class TransformService {
 			entriesIDs: playQueueArgs.playQueueEntriesIDs ? entries.map(t => (t.track.id()) || (t.episode.id())) as Array<string> : undefined,
 			entries: playQueueArgs.playQueueEntries ? await Promise.all(entries.map(t => this.playQueueEntry(orm, t, trackArgs, episodeArgs, user))) : undefined
 		}
-	}
-
-
-	async mediaRawTag(filename: string): Promise<any> {
-		return this.audioModule.readRawTag(filename)
 	}
 
 	async mediaTag(orm: Orm, o?: ORMTag): Promise<MediaTag> {

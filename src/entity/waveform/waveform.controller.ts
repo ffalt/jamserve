@@ -1,34 +1,28 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
 import {Controller, Ctx, Get, QueryParam} from '../../modules/rest';
 import {UserRole, WaveformFormatType} from '../../types/enums';
 import {ApiBinaryResult, NotFoundError} from '../../modules/rest/builder';
 import {PathParam, PathParams, QueryParams} from '../../modules/rest/decorators';
 import fse from 'fs-extra';
 import {WaveformArgs, WaveformSVGArgs} from './waveform.args';
-import {WaveformService} from './waveform.service';
 import {WaveFormData} from './waveform.model';
 import {ApiWaveformTypes} from '../../types/consts';
 import {Context} from '../../modules/engine/rest/context';
 
-@InRequestScope
 @Controller('/waveform', {tags: ['Waveform'], roles: [UserRole.stream]})
 export class WaveformController {
-	@Inject
-	private waveformService!: WaveformService;
-
 	@Get('/json',
 		() => WaveFormData,
 		{description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON'}
 	)
 	async json(
 		@QueryParam('id', {description: 'Object Id', isID: true}) id: string,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<WaveFormData | undefined> {
 		const result = await orm.findInWaveformTypes(id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		const bin = await this.waveformService.getWaveform(result.obj, result.objType, WaveformFormatType.json);
+		const bin = await engine.waveform.getWaveform(result.obj, result.objType, WaveformFormatType.json);
 		if (bin.json) {
 			return bin.json;
 		}
@@ -50,13 +44,13 @@ export class WaveformController {
 	)
 	async svg(
 		@QueryParams() args: WaveformSVGArgs,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<string> {
 		const result = await orm.findInWaveformTypes(args.id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		const bin = await this.waveformService.getWaveform(result.obj, result.objType, WaveformFormatType.svg, args.width);
+		const bin = await engine.waveform.getWaveform(result.obj, result.objType, WaveformFormatType.svg, args.width);
 		if (bin.buffer) {
 			return bin.buffer.buffer.toString();
 		}
@@ -88,13 +82,13 @@ export class WaveformController {
 	async waveform(
 		@PathParam('id', {description: 'Media Id', isID: true}) id: string,
 		@PathParams() waveformArgs: WaveformArgs,
-		@Ctx() {orm}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInWaveformTypes(id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		return this.waveformService.getWaveform(result.obj, result.objType, waveformArgs.format, waveformArgs.width);
+		return engine.waveform.getWaveform(result.obj, result.objType, waveformArgs.format, waveformArgs.width);
 	}
 
 }

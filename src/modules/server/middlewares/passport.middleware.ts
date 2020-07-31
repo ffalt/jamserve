@@ -29,28 +29,28 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		done(null, user?.id || '_invalid_');
 	});
 	passport.deserializeUser((id: string, done) => {
-		engine.userService.findByID(engine.orm.fork(), id).then(user => done(null, user ? user : false)).catch(done);
+		engine.user.findByID(engine.orm.fork(), id).then(user => done(null, user ? user : false)).catch(done);
 	});
 
 	passport.use('local', new passportLocal.Strategy(
 		{usernameField: 'username', passwordField: 'password'},
 		(username, password, done) => {
-			engine.userService.auth(engine.orm.fork(), username, password).then(user => done(null, user ? user : false)).catch(done);
+			engine.user.auth(engine.orm.fork(), username, password).then(user => done(null, user ? user : false)).catch(done);
 		}
 	));
 	const resolvePayload = (jwtPayload: any, done: passportJWT.VerifiedCallback): void => {
-		engine.userService.findByID(engine.orm.fork(),jwtPayload.id)
+		engine.user.findByID(engine.orm.fork(),jwtPayload.id)
 			.then(user => done(null, user ? user : false, jwtPayload))
 			.catch(done);
 	};
 	passport.use('jwt-header', new passportJWT.Strategy({
 			jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
-			secretOrKey: engine.configService.env.jwt.secret
+			secretOrKey: engine.config.env.jwt.secret
 		}, resolvePayload
 	));
 	passport.use('jwt-parameter', new passportJWT.Strategy({
 			jwtFromRequest: passportJWT.ExtractJwt.fromUrlQueryParameter('bearer'),
-			secretOrKey: engine.configService.env.jwt.secret
+			secretOrKey: engine.config.env.jwt.secret
 		}, resolvePayload
 	));
 
@@ -82,7 +82,7 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 			if (info instanceof Error || !user) {
 				return next();
 			}
-			req.engine.sessionService.isRevoked(jwth)
+			req.engine.session.isRevoked(jwth)
 				.then(revoked => {
 					if (!revoked) {
 						req.jwt = !!user;

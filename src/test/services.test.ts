@@ -41,18 +41,18 @@ describe('Services', () => {
 		let podcast: Podcast;
 
 		beforeEach(async () => {
-			podcast = await engine.podcastService.create(orm, mockNockURL('podcast.xml'));
+			podcast = await engine.podcast.create(orm, mockNockURL('podcast.xml'));
 		});
 
 		it('should fail to refresh a podcast', async () => {
-			await engine.podcastService.refresh(orm, podcast);
+			await engine.podcast.refresh(orm, podcast);
 			expect(podcast.errorMessage).toEqual(expect.stringMatching(/NetConnectNotAllowedError/));
 		});
 
 		it('should try to refresh a podcast', async () => {
 			const scope = mockNock()
 				.get('/podcast.xml').reply(404);
-			await engine.podcastService.refresh(orm, podcast);
+			await engine.podcast.refresh(orm, podcast);
 			expect(scope.isDone(), 'No request has been made').toBe(true);
 			expect(podcast.errorMessage).toEqual(expect.stringMatching(/Bad status code 404/));
 		});
@@ -61,14 +61,14 @@ describe('Services', () => {
 			const feed = '';
 			const scope = mockNock()
 				.get('/podcast.xml').reply(200, feed, {'Content-Type': ''});
-			await engine.podcastService.refresh(orm, podcast);
+			await engine.podcast.refresh(orm, podcast);
 			expect(scope.isDone(), 'No request has been made').toBe(true);
 		});
 
 		it('should refresh a podcast', async () => {
 			const scope = mockNock()
 				.get('/podcast.xml').reply(200, MockFeed1.xml, {'Content-Type': 'application/xml; charset=utf-8'});
-			await engine.podcastService.refresh(orm, podcast);
+			await engine.podcast.refresh(orm, podcast);
 			expect(scope.isDone(), 'No request has been made').toBe(true);
 			expect(podcast).toEqual(expect.objectContaining(MockFeed1.expected.podcast));
 			expect(await podcast.episodes.count()).toBe(1);
@@ -79,11 +79,11 @@ describe('Services', () => {
 		it('should update a podcast', async () => {
 			let scope = mockNock()
 				.get('/podcast.xml').reply(200, MockFeed1.xml, {'Content-Type': 'application/xml; charset=utf-8'});
-			await engine.podcastService.refresh(orm, podcast);
+			await engine.podcast.refresh(orm, podcast);
 			expect(scope.isDone(), 'No request has been made').toBe(true);
 			scope = mockNock()
 				.get('/podcast.xml').reply(200, MockFeed1.xml_update, {'Content-Type': 'application/xml; charset=utf-8'});
-			await engine.podcastService.refresh(orm, podcast);
+			await engine.podcast.refresh(orm, podcast);
 			expect(scope.isDone(), 'No request has been made').toBe(true);
 
 			expect(podcast).toEqual(expect.objectContaining(MockFeed1.expected.podcast));

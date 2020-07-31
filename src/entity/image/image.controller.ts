@@ -2,17 +2,11 @@ import {ApiBinaryResult, Controller, Ctx, Get, NotFoundError} from '../../module
 import {ImageFormatType, UserRole} from '../../types/enums';
 import {ApiImageTypes} from '../../types/consts';
 import {ImageArgs} from './image.args';
-import {ImageService} from './image.service';
 import {PathParams} from '../../modules/rest/decorators';
 import {Context} from '../../modules/engine/rest/context';
-import {InRequestScope, Inject} from 'typescript-ioc';
 
-@InRequestScope
 @Controller('/image', {tags: ['Image'], roles: [UserRole.stream]})
 export class ImageController {
-	@Inject
-	private imageService!: ImageService;
-
 	@Get(
 		'/{id}_{size}.{format}',
 		{
@@ -36,13 +30,13 @@ export class ImageController {
 	)
 	async image(
 		@PathParams() imageArgs: ImageArgs,
-		@Ctx() {orm, user}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInImageTypes(imageArgs.id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		return await this.imageService.getObjImage(orm, result.obj, result.objType, imageArgs.size, imageArgs.format);
+		return await engine.image.getObjImage(orm, result.obj, result.objType, imageArgs.size, imageArgs.format);
 	}
 
 }
