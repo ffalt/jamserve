@@ -71,6 +71,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 			let header = size;
 			header |= (this.type << 24);
 			header |= (this.isLast ? 0x80000000 : 0);
+			header = header >>> 0;
 			buffer.writeUInt32BE(header, pos);
 			pos += 4;
 
