@@ -32,11 +32,11 @@ export class StateController {
 		@QueryParams() args: StatesArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<States> {
-		const states: States = {states: []}
+		const states: States = {states: []};
 		for (const id of args.ids) {
 			const result = await orm.findInStateTypes(id);
 			if (result) {
-				states.states.push({id, state: await engine.transform.state(orm, id, result.objType, user.id)})
+				states.states.push({id, state: await engine.transform.state(orm, id, result.objType, user.id)});
 			}
 		}
 		return states;

@@ -1,6 +1,4 @@
 import {Session} from '../session/session.model';
-import {ConfigService} from '../../modules/engine/services/config.service';
-import {Inject, InRequestScope} from 'typescript-ioc';
 import {BodyParams, Controller, Ctx, Post} from '../../modules/rest';
 import passport from 'passport';
 import {generateJWT, jwtHash} from '../../utils/jwt';

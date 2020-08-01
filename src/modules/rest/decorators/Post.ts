@@ -11,7 +11,7 @@ export function Post(
 	const {options, returnTypeFunc} = getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
 	return (prototype, methodName) => {
 		if (!route) {
-			throw new Error(`Must specify REST route for POST function ${String(methodName)}`)
+			throw new Error(`Must specify REST route for POST function ${String(methodName)}`);
 		}
 		const metadata = getMethodMetadata(prototype, methodName, route, returnTypeFunc, options);
 		getMetadataStorage().collectPostHandlerMetadata(metadata);

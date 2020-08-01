@@ -59,7 +59,7 @@ export class PlaylistController {
 		if (list.list) {
 			return await orm.Playlist.findListTransformFilter(list.list, filter, [order], page, user,
 				o => engine.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user)
-			)
+			);
 		}
 		return await orm.Playlist.searchTransformFilter(
 			filter, [order], page, user,

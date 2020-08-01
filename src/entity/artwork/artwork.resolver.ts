@@ -10,7 +10,7 @@ export class ArtworkResolver {
 
 	@Query(() => ArtworkQL, {description: 'Get an Artwork by Id'})
 	async artwork(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Artwork> {
-		return await orm.Artwork.oneOrFailByID(id)
+		return await orm.Artwork.oneOrFailByID(id);
 	}
 
 	@Query(() => ArtworkPageQL, {description: 'Search Artworks'})

@@ -8,5 +8,5 @@ export function useLogMiddleware(): express.RequestHandler {
 		// log all requests
 		log.info(`${req.method} ${req.originalUrl}`);
 		next();
-	}
+	};
 }

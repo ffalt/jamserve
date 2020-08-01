@@ -51,7 +51,7 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 					const key = (o as Array<string>)[0];
 					const list: Includeable[] = (options.include as Includeable[]) || [];
 					if (!list.find((i: any) => i.association === key)) {
-						list.push({association: key})
+						list.push({association: key});
 						options.include = list;
 					}
 				}
@@ -152,8 +152,8 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 				const av = (a[property] || '') as string;
 				const bv = (b[property] || '') as string;
 				return av.localeCompare(bv);
-			})
-		})
+			});
+		});
 		return {groups};
 	}
 
@@ -271,7 +271,7 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 	private async getFilteredIDs(ids: Array<string>, options: FindOptions<Entity>): Promise<Array<string>> {
 		let where: WhereOptions<Entity> = {id: {[Op.in]: ids}};
 		if (options.where && Object.keys(options.where).length > 0) {
-			where = {[Op.and]: [where, options.where]}
+			where = {[Op.and]: [where, options.where]};
 		}
 		const list = await this.findIDs({...options, where});
 		return list.sort((a, b) => {

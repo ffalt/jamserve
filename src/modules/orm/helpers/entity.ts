@@ -44,7 +44,7 @@ export function mapManagedToSource(instance: ManagedEntity): void {
 
 export async function saveManagedEntity(instance: ManagedEntity): Promise<void> {
 	mapManagedToSource(instance);
-	await instance._source.save()
+	await instance._source.save();
 }
 
 export function cleanManagedEntityRelations(instance: ManagedEntity): void {

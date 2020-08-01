@@ -72,7 +72,7 @@ export class PodcastService {
 					chapters: undefined,
 					enclosures: undefined,
 					status: PodcastStatus.new
-				})
+				});
 				newEpisodes.push(episode);
 			}
 			await episode.podcast.set(podcast);

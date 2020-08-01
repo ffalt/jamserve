@@ -14,7 +14,7 @@ import {Artist, ArtistQL} from '../artist/artist';
 export class SeriesResolver {
 	@Query(() => SeriesQL, {description: 'Get a Series by Id'})
 	async series(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Series> {
-		return await orm.Series.oneOrFailByID(id)
+		return await orm.Series.oneOrFailByID(id);
 	}
 
 	@Query(() => SeriesPageQL, {description: 'Search Series'})

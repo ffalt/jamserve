@@ -9,7 +9,7 @@ import {RadioIndexArgs, RadiosArgs} from './radio.args';
 export class RadioResolver {
 	@Query(() => RadioQL, {description: 'Get a Radio by Id'})
 	async radio(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Radio> {
-		return await orm.Radio.oneOrFailByID(id)
+		return await orm.Radio.oneOrFailByID(id);
 	}
 
 	@Query(() => RadioPageQL, {description: 'Search Radios'})

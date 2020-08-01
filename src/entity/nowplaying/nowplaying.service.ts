@@ -65,7 +65,7 @@ export class NowPlayingService {
 			case DBObjectType.track:
 				return await this.reportTrack(result.obj as Track, user);
 			case DBObjectType.episode:
-				return this.reportEpisode(result.obj as Episode, user)
+				return this.reportEpisode(result.obj as Episode, user);
 			default:
 				return Promise.reject(Error('Invalid Object Type for Scrobbling'));
 		}

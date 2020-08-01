@@ -20,7 +20,7 @@ export class StatsService {
 		if (!stat) {
 			const inAlbumTypes = (albumType: AlbumType): WhereOptions<Artist> => {
 				return QHelper.inStringArray('albumTypes', [albumType])[0];
-			}
+			};
 			let rootIDs: Array<string> | undefined;
 			if (rootID) {
 				rootIDs = [rootID];

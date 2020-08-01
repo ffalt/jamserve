@@ -27,7 +27,7 @@ export class PlayQueueService {
 	}
 
 	async get(orm: Orm, user: User): Promise<PlayQueue> {
-		let queue = await orm.PlayQueue.findOne({where: {user: user.id}})
+		let queue = await orm.PlayQueue.findOne({where: {user: user.id}});
 		if (!queue) {
 			queue = orm.PlayQueue.create({user});
 		}
@@ -35,7 +35,7 @@ export class PlayQueueService {
 	}
 
 	async set(orm: Orm, args: PlayQueueSetArgs, user: User, client: string): Promise<void> {
-		let queue = await orm.PlayQueue.findOne({where: {user: user.id}})
+		let queue = await orm.PlayQueue.findOne({where: {user: user.id}});
 		if (!queue) {
 			queue = orm.PlayQueue.create({user});
 		}

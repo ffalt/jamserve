@@ -50,7 +50,7 @@ export class ModelBuilder {
 				allowNull
 			};
 		}
-		const enumInfo = this.metadata.enums.find(e => e.enumObj === type)
+		const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
 		if (enumInfo) {
 			return {
 				type: DataTypes.TEXT,

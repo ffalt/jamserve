@@ -16,7 +16,7 @@ export class ChatService {
 		this.settingsService.registerChangeListener(async () => {
 			this.updateSettings();
 			await this.cleanOld();
-		})
+		});
 		this.updateSettings();
 	}
 

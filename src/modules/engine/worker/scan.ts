@@ -218,7 +218,7 @@ export class WorkerScan {
 				if (!subFolder) {
 					result.children.push(await this.buildNode(subDir, folder));
 				} else {
-					result.children.push(await this.scanNode(subDir, subFolder))
+					result.children.push(await this.scanNode(subDir, subFolder));
 				}
 			}
 		}
@@ -259,7 +259,7 @@ export class WorkerScan {
 		for (const newArtwork of newArtworks) {
 			result.changed = true;
 			result.artworksCount += 1;
-			await this.buildArtwork(newArtwork, folder)
+			await this.buildArtwork(newArtwork, folder);
 		}
 	}
 
@@ -311,7 +311,7 @@ export class WorkerScan {
 		if (!parent) {
 			rootMatch = await this.buildNode(dir);
 		} else {
-			rootMatch = await this.scanNode(dir, parent)
+			rootMatch = await this.scanNode(dir, parent);
 		}
 		if (this.orm.em.hasChanges()) {
 			log.debug('Syncing Track/Artwork Changes to DB');

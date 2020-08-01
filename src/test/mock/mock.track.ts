@@ -54,7 +54,7 @@ export async function writeMockTrack(mock: MockTrack): Promise<void> {
 		.mbTrackID(mock.mbTrackID)
 		.albumArtist(mock.albumArtist)
 		.work(mock.groupNr)
-		.grouping(mock.group)
+		.grouping(mock.group);
 	const id3v2 = new ID3v2();
 	await id3v2.writeBuilder(mock.path, builder, {keepBackup: false});
 }

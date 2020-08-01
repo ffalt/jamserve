@@ -119,7 +119,7 @@ async function writePartService(key: string, part: string, calls: Array<Mustache
 }
 
 export async function buildAngularClientList(): Promise<Array<{ name: string; content: string }>> {
-	const metadata = getMetadataStorage()
+	const metadata = getMetadataStorage();
 	const sections: { [name: string]: Array<MustacheDataClientCallFunction> } = {};
 	for (const call of metadata.gets) {
 		const ctrl = call.controllerClassMetadata!;

@@ -11,7 +11,6 @@ import {Context} from '../../modules/server/middlewares/apollo.context';
 import {TrackLyrics} from './track.model';
 import {MediaTagRawQL, Tag, TagQL} from '../tag/tag';
 import {MediaTagRaw} from '../tag/tag.model';
-import path from 'path';
 import {Series, SeriesQL} from '../series/series';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {TracksArgs} from './track.args';
@@ -21,7 +20,7 @@ export class TrackResolver {
 
 	@Query(() => TrackQL)
 	async track(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Track> {
-		return await orm.Track.oneOrFailByID(id)
+		return await orm.Track.oneOrFailByID(id);
 	}
 
 	@Query(() => TrackPageQL)

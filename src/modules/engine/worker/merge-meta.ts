@@ -119,13 +119,13 @@ export class MetaMerger {
 		const trackIDs = this.changes.tracks.updated.ids().concat(this.changes.tracks.removed.ids());
 		if (trackIDs.length > 0) {
 			// Load all artists/albums/series for track, in case track artist changed
-			const artists = await this.orm.Artist.findIDsFilter({trackIDs})
+			const artists = await this.orm.Artist.findIDsFilter({trackIDs});
 			this.changes.artists.updated.appendIDs(artists);
-			const albumArtists = await this.orm.Artist.findIDsFilter({albumTrackIDs: trackIDs})
+			const albumArtists = await this.orm.Artist.findIDsFilter({albumTrackIDs: trackIDs});
 			this.changes.artists.updated.appendIDs(albumArtists);
-			const albums = await this.orm.Album.findIDsFilter({trackIDs})
+			const albums = await this.orm.Album.findIDsFilter({trackIDs});
 			this.changes.albums.updated.appendIDs(albums);
-			const series = await this.orm.Series.findIDsFilter({trackIDs})
+			const series = await this.orm.Series.findIDsFilter({trackIDs});
 			this.changes.series.updated.appendIDs(series);
 		}
 		if (this.orm.em.hasChanges()) {

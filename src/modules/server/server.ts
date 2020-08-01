@@ -111,7 +111,7 @@ export class Server {
 		], [
 			{name: 'Content', alignment: 'right'},
 			{name: 'URL', alignment: 'left'}
-		])
+		]);
 	}
 
 	async stop(): Promise<void> {

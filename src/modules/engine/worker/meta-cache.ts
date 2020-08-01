@@ -242,7 +242,7 @@ export class MetaMergerCache {
 			albumTypes: trackInfo.folder.albumType ? [trackInfo.folder.albumType] : [],
 		});
 		await artist.roots.add(this.root);
-		await artist.folders.add(trackInfo.folder)
+		await artist.folders.add(trackInfo.folder);
 		await artist.tracks.add(trackInfo.track);
 		this.orm.Artist.persistLater(artist);
 		return artist;

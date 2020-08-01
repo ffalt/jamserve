@@ -82,7 +82,7 @@ export class PodcastController {
 		return await orm.Episode.searchTransformFilter<Episode>(
 			{podcastIDs}, [order], page, user,
 			o => engine.transform.episodeBase(orm, o, episodeArgs, user)
-		)
+		);
 	}
 
 	@Get(

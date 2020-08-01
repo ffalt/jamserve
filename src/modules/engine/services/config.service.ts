@@ -37,7 +37,7 @@ export class ConfigService {
 			this.firstStart = {
 				adminUser: undefined,
 				roots: []
-			}
+			};
 		}
 	}
 

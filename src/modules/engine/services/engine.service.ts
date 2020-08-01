@@ -64,7 +64,7 @@ export class EngineService {
 	@Inject public bookmark!: BookmarkService;
 
 	constructor() {
-		this.io.registerAfterRefresh((): Promise<void> => this.afterRefresh())
+		this.io.registerAfterRefresh((): Promise<void> => this.afterRefresh());
 	}
 
 	private async afterRefresh(): Promise<void> {
@@ -137,7 +137,7 @@ export class EngineService {
 			rolePodcast: true,
 			roleStream: true,
 			roleUpload: true
-		})
+		});
 		await orm.User.persistAndFlush(user);
 	}
 
@@ -147,7 +147,7 @@ export class EngineService {
 				name: first.name,
 				path: first.path,
 				strategy: first.strategy as RootScanStrategy || RootScanStrategy.auto
-			})
+			});
 			await orm.Root.persistAndFlush(root);
 		}
 	}

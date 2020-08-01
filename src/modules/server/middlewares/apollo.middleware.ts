@@ -123,7 +123,7 @@ const apolloLogger: any = {
 		}
 		return requestContext;
 	}
-}
+};
 
 @InRequestScope
 export class ApolloMiddleware {

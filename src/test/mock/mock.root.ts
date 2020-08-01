@@ -755,7 +755,7 @@ export async function writeAndStoreMock(mockRoot: MockRoot, workerService: Worke
 		const bookmark = orm.Bookmark.create({
 			position: 1,
 			comment: 'awesome!'
-		})
+		});
 		await bookmark.user.set(admin);
 		await bookmark.track.set(track);
 		await orm.Bookmark.persistAndFlush(bookmark);

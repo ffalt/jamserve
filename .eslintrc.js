@@ -34,7 +34,8 @@ module.exports = {
 		"@typescript-eslint/camelcase": 0,
 		"@typescript-eslint/no-empty-interface": 0,
 		"@typescript-eslint/no-namespace": 0,
-		"no-prototype-builtins": 0
+		"no-prototype-builtins": 0,
+		"semi": "warn"
 	},
 	"overrides": [
 		{

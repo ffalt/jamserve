@@ -14,7 +14,7 @@ import {FolderIndexArgs, FoldersArgs} from './folder.args';
 export class FolderResolver {
 	@Query(() => FolderQL, {description: 'Get a Folder by Id'})
 	async folder(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Folder> {
-		return await orm.Folder.oneOrFailByID(id)
+		return await orm.Folder.oneOrFailByID(id);
 	}
 
 	@Query(() => FolderPageQL, {description: 'Search Folders'})

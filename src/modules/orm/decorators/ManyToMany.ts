@@ -15,6 +15,6 @@ export function ManyToMany<T>(
 		const opt = (options || {}) as ManyToManyFieldRelation<T>;
 		opt.relation = 'many2many';
 		opt.mappedBy = mappedBy;
-		registerRelation<T>(prototype, propertyKey, returnTypeFunc, opt)
+		registerRelation<T>(prototype, propertyKey, returnTypeFunc, opt);
 	};
 }

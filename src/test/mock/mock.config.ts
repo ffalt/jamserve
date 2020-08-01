@@ -9,7 +9,7 @@ export const mockEnv = {
 	jwt: {maxAge: 800000, secret: 'secret'},
 	session: {proxy: false, maxAge: 800000, secret: 'secret', secure: false, allowedCookieDomains: []},
 	host: '0.0.0.0'
-}
+};
 
 export function bindMockConfig(dataPath: string, withAdmin: boolean = true): void {
 

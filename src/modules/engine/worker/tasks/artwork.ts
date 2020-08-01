@@ -118,7 +118,7 @@ export class ArtworkWorker extends BaseWorker {
 		}
 		// TODO: backup old file in case copy fails
 		await fileDeleteIfExists(path.join(artwork.path, artwork.name));
-		artwork.name = `${name}.${suffix}`
+		artwork.name = `${name}.${suffix}`;
 		try {
 			await fse.copy(artworkFilename, path.join(artwork.path, artwork.name));
 		} catch (e) {

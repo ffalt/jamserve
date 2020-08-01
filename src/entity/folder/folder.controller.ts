@@ -168,7 +168,7 @@ export class FolderController {
 	): Promise<FolderPage> {
 		const folder = await orm.Folder.oneOrFailByID(id);
 		const result = await engine.metadata.similarArtists.byFolder(orm, folder, page);
-		return {...result, items: await Promise.all(result.items.map(o => engine.transform.folderBase(orm, o, folderArgs, user)))}
+		return {...result, items: await Promise.all(result.items.map(o => engine.transform.folderBase(orm, o, folderArgs, user)))};
 	}
 
 	@Get(
@@ -184,7 +184,7 @@ export class FolderController {
 	): Promise<TrackPage> {
 		const folder = await orm.Folder.oneOrFailByID(id);
 		const result = await engine.metadata.similarTracks.byFolder(orm, folder, page);
-		return {...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user)))}
+		return {...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user)))};
 	}
 
 	@Get(

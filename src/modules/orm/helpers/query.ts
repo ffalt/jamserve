@@ -24,11 +24,11 @@ export class QHelper {
 		}
 		const expressions = list.map(entry => {
 			const o: any = {};
-			o[propertyName] = {[Op.like]: `%|${entry.replace(/%/g, '')}|%`}
+			o[propertyName] = {[Op.like]: `%|${entry.replace(/%/g, '')}|%`};
 			return o;
-		})
+		});
 		if (expressions.length === 1) {
-			return expressions
+			return expressions;
 		}
 		return [{[Op.or]: expressions}];
 	}
@@ -37,7 +37,7 @@ export class QHelper {
 		if (!list || list.length === 0) {
 			return;
 		}
-		return list.length > 1 ? {[Op.in]: list} : list[0]
+		return list.length > 1 ? {[Op.in]: list} : list[0];
 	}
 
 	static cleanList<Entity>(list: Array<WhereOptions<Entity> | { [name: string]: undefined }>): Array<WhereOptions<Entity>> | undefined {

@@ -1,5 +1,3 @@
-import {GenreService} from './genre.service';
-import {InRequestScope, Inject} from 'typescript-ioc';
 import {GenreIndex, GenrePage} from './genre.model';
 import {Controller, Ctx, Get, QueryParams} from '../../modules/rest/decorators';
 import {UserRole} from '../../types/enums';

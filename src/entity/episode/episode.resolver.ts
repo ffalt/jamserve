@@ -13,7 +13,7 @@ import {EpisodesArgs} from './episode.args';
 export class EpisodeResolver {
 	@Query(() => EpisodeQL, {description: 'Get a Episode by Id'})
 	async episode(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Episode> {
-		return await orm.Episode.oneOrFailByID(id)
+		return await orm.Episode.oneOrFailByID(id);
 	}
 
 	@Query(() => EpisodePageQL, {description: 'Search Episodes'})

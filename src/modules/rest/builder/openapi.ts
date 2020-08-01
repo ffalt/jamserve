@@ -43,7 +43,7 @@ class OpenApiBuilder {
 				deprecated: field.deprecationReason ? true : undefined,
 				required: !typeOptions.nullable || mode === 'path',
 				example: typeOptions.isID ? exampleID : typeOptions.example
-			}
+			};
 			const type = field.getType();
 			o.schema = this.buildFieldSchema(type, typeOptions, schemas);
 			if (!o.schema) {
@@ -60,7 +60,7 @@ class OpenApiBuilder {
 		if (typeOptions.isID) {
 			return {$ref: SCHEMA_ID};
 		} else if (type === String) {
-			return {type: 'string', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined}
+			return {type: 'string', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined};
 		} else if (type === Number) {
 			return {
 				type: 'integer', default: typeOptions.defaultValue,
@@ -69,7 +69,7 @@ class OpenApiBuilder {
 		} else if (type === Boolean) {
 			return {type: 'boolean', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined};
 		} else {
-			const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === type)
+			const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === type);
 			if (enumInfo) {
 				return {$ref: this.getEnumRef(enumInfo, schemas)};
 			}
@@ -82,7 +82,7 @@ class OpenApiBuilder {
 			if (resultClassValue === Object) {
 				return SCHEMA_JSON;
 			}
-			throw new Error(`Missing ReturnType for method ${name}`)
+			throw new Error(`Missing ReturnType for method ${name}`);
 		}
 		if (!schemas[argumentType.name]) {
 			const argumentInstance = new (argumentType.target as any)();
@@ -109,7 +109,7 @@ class OpenApiBuilder {
 				type: 'object',
 				properties,
 				required: required.length > 0 ? required : undefined
-			}
+			};
 			const superClass = Object.getPrototypeOf(argumentType.target);
 			if (superClass.prototype !== undefined) {
 				// const superArgumentType = getMetadataStorage().argumentTypes.find(it => it.target === superClass);
@@ -124,7 +124,7 @@ class OpenApiBuilder {
 				};
 			}
 		}
-		return '#/components/schemas/' + argumentType.name
+		return '#/components/schemas/' + argumentType.name;
 	}
 
 	getParamRef(paramClass: TypeValueThunk, schemas: Schemas): string {
@@ -149,7 +149,7 @@ class OpenApiBuilder {
 				const type = field.getType();
 				let f: Property | undefined = this.buildFieldSchema(type, typeOptions, schemas);
 				if (!f) {
-					f = {$ref: this.getParamRef(field.getType, schemas)}
+					f = {$ref: this.getParamRef(field.getType, schemas)};
 				}
 				properties[field.name] = typeOptions.array ? {type: 'array', items: f} : f;
 			}
@@ -157,9 +157,9 @@ class OpenApiBuilder {
 				type: 'object',
 				properties,
 				required: required.length > 0 ? required : undefined
-			}
+			};
 		}
-		return '#/components/schemas/' + argumentType.name
+		return '#/components/schemas/' + argumentType.name;
 	}
 
 	getEnumRef(enumInfo: EnumMetadata, schemas: Schemas): string {
@@ -186,7 +186,7 @@ class OpenApiBuilder {
 			required: !param.typeOptions.nullable || param.mode === 'path',
 			example: typeOptions.isID ? exampleID : typeOptions.example,
 			schema: this.buildParameterSchema(param, schemas)
-		}
+		};
 		parameters.push(o);
 	}
 
@@ -244,7 +244,7 @@ class OpenApiBuilder {
 		if (method.binary) {
 			const content: ContentObject = {};
 			method.binary.forEach(mime => {
-				content[mime] = {schema: {type: 'string', format: 'binary'}}
+				content[mime] = {schema: {type: 'string', format: 'binary'}};
 			});
 			responses['200'] = {description: 'binary data', content};
 		} else if (method.getReturnType && method.getReturnType()) {
@@ -253,7 +253,7 @@ class OpenApiBuilder {
 			if (type === String) {
 				const mimeTypes = (method.responseStringMimeTypes || ['text/plain']);
 				mimeTypes.forEach(mime => {
-					content[mime] = {schema: {type: 'string'}}
+					content[mime] = {schema: {type: 'string'}};
 				});
 				responses['200'] = {description: 'string data', content};
 			} else {
@@ -283,7 +283,7 @@ class OpenApiBuilder {
 		} else if (param.getType() === Boolean) {
 			result = {type: 'boolean', default: typeOptions.defaultValue};
 		} else {
-			const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === param.getType())
+			const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === param.getType());
 			if (enumInfo) {
 				result = {$ref: this.getEnumRef(enumInfo, schemas)};
 			} else {
@@ -330,7 +330,7 @@ class OpenApiBuilder {
 						}
 					},
 					required: ['type', 'file']
-				}
+				};
 				const upload: SchemaObject = {properties, required: [param.name], description: 'Binary Part'};
 				refs.push(upload);
 			}
@@ -352,7 +352,7 @@ class OpenApiBuilder {
 
 	buildOpenApiMethod(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, isPost: boolean, alias?: CustomPathParameterAliasRouteOptions): { path: string; o: OperationObject } {
 		const parameters: Array<ParameterObject> = this.buildParameters(method, ctrl, schemas, alias);
-		const path = (ctrl.route || '') + (alias?.route || method.route || '')
+		const path = (ctrl.route || '') + (alias?.route || method.route || '');
 		const roles = method.roles || ctrl.roles || [];
 		const o: OperationObject = {
 			operationId: `${ctrl.name}.${method.methodName}${alias?.route || ''}`,
@@ -364,7 +364,7 @@ class OpenApiBuilder {
 			requestBody: isPost ? this.buildRequestBody(method, schemas) : undefined,
 			responses: this.buildResponses(method, parameters, roles, schemas),
 			security: roles.length === 0 ? [] : [{cookieAuth: roles}, {bearerAuth: roles}]
-		}
+		};
 		return {path, o};
 	}
 
@@ -413,7 +413,7 @@ class OpenApiBuilder {
 	}
 
 	build(): OpenAPIObject {
-		const metadata = getMetadataStorage()
+		const metadata = getMetadataStorage();
 		const openapi: OpenAPIObject = this.buildOpenApiBase(JAMAPI_VERSION);
 		const schemas = {
 			'ID': {type: 'string', format: 'uuid'},
@@ -422,21 +422,21 @@ class OpenApiBuilder {
 
 		const controllers = metadata.controllerClasses.filter(c => !c.abstract).sort((a, b) => {
 			return a.name.localeCompare(b.name);
-		})
+		});
 
 		for (const ctrl of controllers) {
 			if (ctrl.abstract) {
 				continue;
 			}
-			let gets = metadata.gets.filter(g => g.controllerClassMetadata === ctrl)
-			let posts = metadata.posts.filter(g => g.controllerClassMetadata === ctrl)
+			let gets = metadata.gets.filter(g => g.controllerClassMetadata === ctrl);
+			let posts = metadata.posts.filter(g => g.controllerClassMetadata === ctrl);
 
 			let superClass = Object.getPrototypeOf(ctrl.target);
 			while (superClass.prototype !== undefined) {
 				const superClassType = getMetadataStorage().controllerClasses.find(it => it.target === superClass);
 				if (superClassType) {
-					gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === superClassType))
-					posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === superClassType))
+					gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === superClassType));
+					posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === superClassType));
 				}
 				superClass = Object.getPrototypeOf(superClass);
 			}
@@ -447,8 +447,8 @@ class OpenApiBuilder {
 		openapi.components = {schemas, securitySchemes: openapi.components?.securitySchemes};
 		if (this.extended) {
 			const apiTags = new Set();
-			const tags = []
-			const tagNames = []
+			const tags = [];
+			const tagNames = [];
 			for (const key of Object.keys(openapi.paths)) {
 				const p = openapi.paths[key];
 				const list = (p.get ? p.get.tags : p.post.tags) || [];
@@ -463,7 +463,7 @@ class OpenApiBuilder {
 					'name': modelName,
 					'x-displayName': key,
 					'description': `<SchemaDefinition schemaRef="#/components/schemas/${key}" />\n`
-				}
+				};
 				tags.push(tag);
 			}
 			tagNames.sort();

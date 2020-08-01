@@ -87,7 +87,7 @@ function prepareParameter(param: RestParamMetadata | FieldMetadata, data: any, i
 					throw InvalidParamError(param.name);
 				}
 				return v.length > 0;
-			})
+			});
 		} else {
 			value = String(value);
 			if (value.length === 0) {
@@ -95,7 +95,7 @@ function prepareParameter(param: RestParamMetadata | FieldMetadata, data: any, i
 			}
 		}
 	} else {
-		const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === type)
+		const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === type);
 		if (enumInfo) {
 			const enumObj: any = enumInfo.enumObj;
 			const enumValues = getEnumReverseValuesMap(enumObj);
@@ -223,7 +223,7 @@ async function callMethod(method: MethodMetadata, context: RestContext<any, any,
 		const instance = new Controller();// Container.get(Controller) as any;
 		const func = instance[method.methodName];
 		const args = [];
-		const params = method.params.sort((a, b) => a.index - b.index)
+		const params = method.params.sort((a, b) => a.index - b.index);
 		for (const param of params) {
 			const arg = prepareArg(param, context);
 			args.push(arg);
@@ -314,8 +314,8 @@ function validateCustomPathParameterValue(rElement: string | undefined, group: C
 			throw InvalidParamError(group.name, 'number not in allowed range');
 		}
 	} else {
-		const metadata = getMetadataStorage()
-		const enumInfo = metadata.enums.find(e => e.enumObj === type)
+		const metadata = getMetadataStorage();
+		const enumInfo = metadata.enums.find(e => e.enumObj === type);
 		if (enumInfo) {
 			const enumObj: any = enumInfo.enumObj;
 			if (!enumObj[value]) {
@@ -333,7 +333,7 @@ function processCustomPathParameters(customPathParameters: CustomPathParameters,
 	const result: any = {};
 	const route = '/' + customPathParameters.groups.filter((g, index) => r[index + 1]).map(g => `${g.prefix || ''}{${g.name}}`).join('');
 
-	const alias = (method.aliasRoutes || []).find(a => a.route === route)
+	const alias = (method.aliasRoutes || []).find(a => a.route === route);
 	for (const group of customPathParameters.groups) {
 		if (!alias || !alias.hideParameters.includes(group.name)) {
 			result[group.name] = validateCustomPathParameterValue(r[index], group, method);
@@ -346,7 +346,7 @@ function processCustomPathParameters(customPathParameters: CustomPathParameters,
 export function buildRestRouter(api: express.Router, options: RestOptions): Array<RouteInfo> {
 	const routeInfos: Array<RouteInfo> = [];
 	const upload = multer({dest: ensureTrailingPathSeparator(options.tmpPath)});
-	const metadata = getMetadataStorage()
+	const metadata = getMetadataStorage();
 
 	const uploadHandler = (field: string, autoClean: boolean = true): express.RequestHandler => {
 		const mu = upload.single(field);
@@ -356,27 +356,27 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 			}
 			mu(req, res, next);
 		};
-	}
+	};
 	for (const ctrl of metadata.controllerClasses) {
 		if (ctrl.abstract) {
 			continue;
 		}
 		const router = express.Router();
-		let gets = metadata.gets.filter(g => g.controllerClassMetadata === ctrl)
-		let posts = metadata.posts.filter(g => g.controllerClassMetadata === ctrl)
+		let gets = metadata.gets.filter(g => g.controllerClassMetadata === ctrl);
+		let posts = metadata.posts.filter(g => g.controllerClassMetadata === ctrl);
 
 		let superClass = Object.getPrototypeOf(ctrl.target);
 		while (superClass.prototype !== undefined) {
 			const superClassType = getMetadataStorage().controllerClasses.find(it => it.target === superClass);
 			if (superClassType) {
-				gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === superClassType))
-				posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === superClassType))
+				gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === superClassType));
+				posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === superClassType));
 			}
 			superClass = Object.getPrototypeOf(superClass);
 		}
 
 		for (const get of gets) {
-			let route = (get.route || '/')
+			let route = (get.route || '/');
 			if (get.customPathParameters) {
 				// TODO: formalize replacement route parameters instead of hardcoding {
 				route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
@@ -391,7 +391,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 			const handlers: Array<express.RequestHandler> = [];
 			for (const param of get.params) {
 				if ((param.kind === 'arg' && param.mode === 'file')) {
-					handlers.push(uploadHandler(param.name))
+					handlers.push(uploadHandler(param.name));
 				}
 			}
 			router.get(route, ...handlers, async (req, res, next) => {
@@ -418,7 +418,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 		}
 
 		for (const post of posts) {
-			let route = (post.route || '/')
+			let route = (post.route || '/');
 			if (post.customPathParameters) {
 				route = (!post.route) ? '/:pathParameters' : post.route.split('{')[0] + ':pathParameters';
 			}
@@ -428,7 +428,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 				endpoint: ctrl.route + route,
 				role: roles.length > 0 ? roles.join(',') : 'public',
 				format: getMethodResultFormat(post)
-			})
+			});
 			router.post(route, async (req, res, next) => {
 				try {
 					if (!options.validateRoles(req.user, roles)) {

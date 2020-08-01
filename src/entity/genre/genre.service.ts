@@ -41,7 +41,7 @@ export class GenreService {
 			const tag = await track.tag.get();
 			let genres = tag?.genres;
 			if (!genres || genres.length === 0) {
-				genres = ['[No genre]']
+				genres = ['[No genre]'];
 			}
 			for (const genre of genres) {
 				const data = genreHash[genre] || {roots: {}};

@@ -50,11 +50,11 @@ export async function writeParts(name: string, template: string, serviceParts: A
 	list.forEach((p, i) => {
 		p.isLast = i === list.length - 1;
 	});
-	return writeTemplate(name, template, {list})
+	return writeTemplate(name, template, {list});
 }
 
 export function getResultType(call: MethodMetadata): string | undefined {
-	const metadata = getMetadataStorage()
+	const metadata = getMetadataStorage();
 	let resultType: string | undefined;
 	if (call.getReturnType) {
 		const type = call.getReturnType();
@@ -65,7 +65,7 @@ export function getResultType(call: MethodMetadata): string | undefined {
 		} else if (type === Boolean) {
 			resultType = 'boolean';
 		} else {
-			const enumInfo = metadata.enums.find(e => e.enumObj === type)
+			const enumInfo = metadata.enums.find(e => e.enumObj === type);
 			if (enumInfo) {
 				resultType = enumInfo.name;
 			} else {
@@ -81,7 +81,7 @@ export function getResultType(call: MethodMetadata): string | undefined {
 }
 
 export function getCallParamType(call: MethodMetadata): string {
-	const metadata = getMetadataStorage()
+	const metadata = getMetadataStorage();
 	const types: Array<string> = [];
 	if (call.params.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
 		types.push('JamParameters.' + call.controllerClassMetadata?.name.replace('Controller', '') + call.methodName[0].toUpperCase() + call.methodName.slice(1) + 'Args');
@@ -100,7 +100,7 @@ export function getCallParamType(call: MethodMetadata): string {
 				} else if (type === String) {
 					typeString = `{${param.name}${optional}: string}`;
 				} else {
-					const enumInfo = metadata.enums.find(e => e.enumObj === type)
+					const enumInfo = metadata.enums.find(e => e.enumObj === type);
 					if (enumInfo) {
 						typeString = `{${param.name}${optional}: ${enumInfo.name}`;
 					} else {
@@ -136,14 +136,14 @@ export function getCustomParameterTemplate(customPathParameters: CustomPathParam
 	const routeParts: Array<string> = [];
 	const validateNames: Array<string> = [];
 	customPathParameters.groups.forEach(g => {
-		const hasOptionalAlias = !!(call.aliasRoutes || []).find(alias => alias.hideParameters.includes(g.name))
+		const hasOptionalAlias = !!(call.aliasRoutes || []).find(alias => alias.hideParameters.includes(g.name));
 		if (hasOptionalAlias) {
 			routeParts.push('${params.' + g.name + ' ? ' + '`' + (g.prefix || '') + '${params.' + g.name + '}` : \'\'}');
 		} else {
 			validateNames.push(g.name);
 			routeParts.push((g.prefix || '') + '${params.' + g.name + '}');
 		}
-	})
+	});
 	const validateCode = 'if (' + validateNames.map(s => '!params.' + s).join(' && ') + ') { ' + result + '; }';
 	return {paramRoute: `/${routeParts.join('')}`, validateCode};
 }
@@ -172,7 +172,7 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 				}
 				archive.pipe(stream);
 				archive.finalize().catch(e => {
-					console.error(e)
+					console.error(e);
 				});
 			}
 		}

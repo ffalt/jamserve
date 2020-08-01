@@ -184,7 +184,7 @@ export class Feed {
 				guid: post.guid || post.link,
 				summary: post.summary,
 				enclosures: (post.enclosures || []).map(e => {
-					return {...e, length: e.length ? Number(e.length) : undefined}
+					return {...e, length: e.length ? Number(e.length) : undefined};
 				}),
 				date: post.date ? post.date.valueOf() : undefined,
 				name: post.title,

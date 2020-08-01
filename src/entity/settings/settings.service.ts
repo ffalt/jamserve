@@ -76,7 +76,7 @@ export class SettingsService {
 				section: 'jamserve',
 				data: JSON.stringify(defaultEngineSettings),
 				version: JAMSERVE_VERSION
-			})
+			});
 		}
 		return settings;
 	}

@@ -146,7 +146,7 @@ export class EntityManager {
 		const model = this.model(entityName);
 		options.attributes = ['id'];
 		const result = await model.findAll<any>(options);
-		return result.map((o: { id: string }) => o.id)
+		return result.map((o: { id: string }) => o.id);
 	}
 
 	async findAndCount<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; entities: T[] }> {

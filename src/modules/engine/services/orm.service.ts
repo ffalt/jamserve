@@ -50,7 +50,7 @@ import {ORMEntities} from '../orm/entities';
 import {ORMRepositories} from '../orm/repositories';
 import {registerORMEnums} from '../orm/enum-registration';
 
-registerORMEnums()
+registerORMEnums();
 
 export class Orm {
 	public Album!: AlbumRepository;

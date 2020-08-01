@@ -62,7 +62,7 @@ export class AudioModule {
 		this.waveform = new WaveformModule(this.waveformCachePath);
 		this.settingsService.registerChangeListener(async () => {
 			this.setSettings(this.settingsService.settings.externalServices);
-		})
+		});
 		this.setSettings(this.settingsService.settings.externalServices);
 	}
 

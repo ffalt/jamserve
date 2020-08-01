@@ -9,7 +9,7 @@ const tab = '\t';
 const tabtab = '\t\t';
 
 export function buildTSEnums(): string {
-	const metadata = getMetadataStorage()
+	const metadata = getMetadataStorage();
 	const sl: Array<string> = [
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',
@@ -19,7 +19,7 @@ export function buildTSEnums(): string {
 		const entries: Array<string> = [];
 		Object.keys(enumObj).forEach(key => {
 			entries.push(`${tab + key} = '${enumObj[key]}'`);
-		})
+		});
 		sl.push('export enum ' + enumInfo.name + ' {\n' + entries.join(',\n') + '\n}\n');
 	}
 	return sl.join('\n');
@@ -48,7 +48,7 @@ function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array
 		fieldType = 'boolean';
 		jsDoc.push(`@TJS-type boolean`);
 	} else {
-		const enumInfo = metadata.enums.find(e => e.enumObj === fType)
+		const enumInfo = metadata.enums.find(e => e.enumObj === fType);
 		if (enumInfo) {
 			fieldType = 'JamEnums.' + enumInfo.name;
 		} else {
@@ -63,7 +63,7 @@ function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array
 		jsDoc.push(`@default ${typeOptions.defaultValue}`);
 	}
 	if (jsDoc.length === 1) {
-		sl.push(`${tabtab}/** ${jsDoc[0]} */`)
+		sl.push(`${tabtab}/** ${jsDoc[0]} */`);
 	} else if (jsDoc.length > 1) {
 		sl.push(`${tabtab}/**\n${jsDoc.map(s => tabtab + ' * ' + s).join('\n')}\n${tabtab} */`);
 	}
@@ -86,11 +86,11 @@ function buildTSType(type: ClassMetadata, metadata: MetadataStorage, sl: Array<s
 	for (const field of type.fields) {
 		buildTSField(field, metadata, sl, withDefault);
 	}
-	sl.push(`${tab}}\n`)
+	sl.push(`${tab}}\n`);
 }
 
 export function buildTSResultTypes(): string {
-	const metadata = getMetadataStorage()
+	const metadata = getMetadataStorage();
 	const sl: Array<string> = [
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',
@@ -132,7 +132,7 @@ function getCombinedType(call: MethodMetadata) {
 }
 
 export function buildTSParameterTypes(): string {
-	const metadata = getMetadataStorage()
+	const metadata = getMetadataStorage();
 	const sl: Array<string> = [
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',

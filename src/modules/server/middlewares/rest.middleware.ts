@@ -45,7 +45,7 @@ export class RestMiddleware {
 				}
 				return true;
 			}
-		}
+		};
 
 		const routeInfos = buildRestRouter(api, options);
 		log.table(routeInfos, [

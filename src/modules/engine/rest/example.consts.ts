@@ -10,5 +10,5 @@ export const examples = {
 	mbTrackID: '0eee4027-47fc-4993-b389-edb1d82a73a9',
 	mbRecordingID: 'f30de354-76dd-49d5-b3cc-fed22d43e0e6',
 	mbRecordingTrackID: 'f30de354-76dd-49d5-b3cc-fed22d43e0e6'
-}
+};
 

@@ -34,7 +34,6 @@ import {Folder, FolderBase, FolderIndex, FolderParent, FolderTag} from '../../..
 import {Artwork, ArtworkBase} from '../../../entity/artwork/artwork.model';
 import {Episode, EpisodeBase, EpisodeUpdateStatus} from '../../../entity/episode/episode.model';
 import {Podcast, PodcastBase, PodcastIndex, PodcastUpdateStatus} from '../../../entity/podcast/podcast.model';
-import path from 'path';
 import {Radio, RadioIndex} from '../../../entity/radio/radio.model';
 import {Bookmark, BookmarkBase} from '../../../entity/bookmark/bookmark.model';
 import {Root, RootUpdateStatus} from '../../../entity/root/root.model';
@@ -151,7 +150,7 @@ export class TransformService {
 		return {
 			...(await this.episodeBase(orm, o, episodeArgs, user)),
 			podcast: await this.podcastBase(orm, await o.podcast.getOrFail(), podcastArgs, user)
-		}
+		};
 	}
 
 	episodeStatus(o: ORMEpisode): EpisodeUpdateStatus {
@@ -179,7 +178,7 @@ export class TransformService {
 		return {
 			...(await this.podcastBase(orm, o, podcastArgs, user)),
 			episodes: podcastChildrenArgs.podcastIncEpisodes ? await Promise.all((await o.episodes.getItems()).map(t => this.episodeBase(orm, t, episodeArgs, user))) : undefined,
-		}
+		};
 	}
 
 	async podcastIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMPodcast>>): Promise<PodcastIndex> {
@@ -189,7 +188,7 @@ export class TransformService {
 				name: item.name,
 				episodeCount: await item.episodes.count()
 			};
-		})
+		});
 	}
 
 	podcastStatus(o: ORMPodcast): PodcastUpdateStatus {
@@ -248,7 +247,7 @@ export class TransformService {
 				name: item.name,
 				trackCount: await item.tracks.count()
 			};
-		})
+		});
 	}
 
 	folderTag(o: ORMFolder): FolderTag {
@@ -262,7 +261,7 @@ export class TransformService {
 			mbArtistID: o.mbArtistID,
 			mbReleaseID: o.mbReleaseID,
 			mbReleaseGroupID: o.mbReleaseGroupID
-		}
+		};
 	}
 
 	async folderParents(orm: Orm, o: ORMFolder): Promise<Array<FolderParent>> {
@@ -293,7 +292,7 @@ export class TransformService {
 			albumIDs: seriesArgs.seriesIncAlbumIDs ? (await o.albums.getItems()).map(a => a.id) : undefined,
 			info: seriesArgs.seriesIncInfo ? await this.metaDataService.extInfo.bySeries(orm, o) : undefined,
 			state: seriesArgs.seriesIncState ? await this.state(orm, o.id, DBObjectType.series, user.id) : undefined
-		}
+		};
 	}
 
 	async series(orm: Orm, o: ORMSeries, seriesArgs: IncludesSeriesArgs, seriesChildrenArgs: IncludesSeriesChildrenArgs, albumArgs: IncludesAlbumArgs, trackArgs: IncludesTrackArgs, user: User): Promise<Series> {
@@ -301,7 +300,7 @@ export class TransformService {
 			...(await this.seriesBase(orm, o, seriesArgs, user)),
 			tracks: seriesChildrenArgs.seriesIncTracks ? await Promise.all((await o.tracks.getItems()).map(t => this.trackBase(orm, t, trackArgs, user))) : undefined,
 			albums: seriesChildrenArgs.seriesIncAlbums ? await Promise.all((await o.albums.getItems()).map(t => this.albumBase(orm, t, albumArgs, user))) : undefined
-		}
+		};
 	}
 
 	async transformSeriesIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMSeries>>): Promise<SeriesIndex> {
@@ -352,7 +351,7 @@ export class TransformService {
 				albumCount: await item.albums.count(),
 				trackCount: await item.tracks.count()
 			};
-		})
+		});
 	}
 
 
@@ -381,13 +380,13 @@ export class TransformService {
 	}
 
 	async album(orm: Orm, o: ORMAlbum, albumArgs: IncludesAlbumArgs, albumChildrenArgs: IncludesAlbumChildrenArgs, trackArgs: IncludesTrackArgs, artistIncludes: IncludesArtistArgs, user: User): Promise<Album> {
-		const tracks = albumChildrenArgs.albumIncTracks ? await Promise.all((await o.tracks.getItems()).map(t => this.trackBase(orm, t, trackArgs, user))) : undefined
+		const tracks = albumChildrenArgs.albumIncTracks ? await Promise.all((await o.tracks.getItems()).map(t => this.trackBase(orm, t, trackArgs, user))) : undefined;
 		const artist = albumChildrenArgs.albumIncArtist ? await this.artistBase(orm, await o.artist.getOrFail(), artistIncludes, user) : undefined;
 		return {
 			...(await this.albumBase(orm, o, albumArgs, user)),
 			tracks,
 			artist
-		}
+		};
 	}
 
 	async albumIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMAlbum>>): Promise<AlbumIndex> {
@@ -400,7 +399,7 @@ export class TransformService {
 				artistID: artist.id,
 				trackCount: await item.tracks.count()
 			};
-		})
+		});
 	}
 
 
@@ -432,7 +431,7 @@ export class TransformService {
 			lastPlayed: o.lastPlayed ? o.lastPlayed.valueOf() : undefined,
 			faved: o.faved,
 			rated: o.rated
-		}
+		};
 	}
 
 	async state(orm: Orm, id: string, type: DBObjectType, userID: string): Promise<State> {
@@ -501,7 +500,7 @@ export class TransformService {
 			entriesIDs: playlistArgs.playlistIncEntriesIDs ? entries.map(t => (t.track.id()) || (t.episode.id())) as Array<string> : undefined,
 			entries: playlistArgs.playlistIncEntries ? await Promise.all(entries.map(t => this.playlistEntry(orm, t, trackArgs, episodeArgs, user))) : undefined,
 			state: playlistArgs.playlistIncState ? await this.state(orm, o.id, DBObjectType.playlist, user.id) : undefined
-		}
+		};
 	}
 
 	async playlistIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMPlaylist>>): Promise<PlaylistIndex> {
@@ -521,7 +520,7 @@ export class TransformService {
 		if (o.episode.id()) {
 			return await this.episodeBase(orm, await o.episode.getOrFail(), episodeArgs, user);
 		}
-		throw new Error('Internal: Invalid Playlist Entry')
+		throw new Error('Internal: Invalid Playlist Entry');
 	}
 
 
@@ -548,7 +547,7 @@ export class TransformService {
 		if (o.episode.id()) {
 			return await this.episodeBase(orm, await o.episode.getOrFail(), episodeArgs, user);
 		}
-		throw new Error('Internal: Invalid PlayQueue Entry')
+		throw new Error('Internal: Invalid PlayQueue Entry');
 	}
 
 	async playQueue(orm: Orm, o: ORMPlayQueue, playQueueArgs: IncludesPlayQueueArgs, trackArgs: IncludesTrackArgs, episodeArgs: IncludesEpisodeArgs, user: User): Promise<PlayQueue> {
@@ -565,7 +564,7 @@ export class TransformService {
 			entriesCount: await o.entries.count(),
 			entriesIDs: playQueueArgs.playQueueEntriesIDs ? entries.map(t => (t.track.id()) || (t.episode.id())) as Array<string> : undefined,
 			entries: playQueueArgs.playQueueEntries ? await Promise.all(entries.map(t => this.playQueueEntry(orm, t, trackArgs, episodeArgs, user))) : undefined
-		}
+		};
 	}
 
 	async mediaTag(orm: Orm, o?: ORMTag): Promise<MediaTag> {
@@ -588,7 +587,7 @@ export class TransformService {
 			mbReleaseID: o.mbReleaseID,
 			mbArtistID: o.mbArtistID,
 			mbAlbumArtistID: o.mbAlbumArtistID
-		}
+		};
 	}
 
 
@@ -621,7 +620,7 @@ export class TransformService {
 
 	chats(chats: Array<ORMChat>): Array<Chat> {
 		return chats.map(c => {
-			return {...c, created: c.created.valueOf()}
+			return {...c, created: c.created.valueOf()};
 		});
 	}
 
@@ -650,7 +649,7 @@ export class TransformService {
 					items: await Promise.all(group.items.map(async (item) => {
 						return await mapItem(item);
 					}))
-				}
+				};
 			}))
 		};
 	}

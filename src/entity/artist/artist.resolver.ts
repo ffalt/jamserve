@@ -14,7 +14,7 @@ import {ArtistIndexArgsQL, ArtistsArgsQL} from './artist.args';
 export class ArtistResolver {
 	@Query(() => ArtistQL, {description: 'Get an Artist by Id'})
 	async artist(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Artist> {
-		return await orm.Artist.oneOrFailByID(id)
+		return await orm.Artist.oneOrFailByID(id);
 	}
 
 	@Query(() => ArtistPageQL, {description: 'Search Artists'})

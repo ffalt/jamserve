@@ -12,7 +12,7 @@ export class UserResolver {
 	@Authorized(UserRole.admin)
 	@Query(() => UserQL)
 	async user(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<User> {
-		return await orm.User.oneOrFailByID(id)
+		return await orm.User.oneOrFailByID(id);
 	}
 
 	@Authorized(UserRole.admin)

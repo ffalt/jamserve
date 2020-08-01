@@ -4,8 +4,6 @@ import {UserRole} from '../../types/enums';
 import {IncludesPodcastArgs} from '../podcast/podcast.args';
 import {EpisodeFilterArgs, EpisodeOrderArgs, IncludesEpisodeArgs, IncludesEpisodeParentArgs} from './episode.args';
 import {ListArgs, PageArgs} from '../base/base.args';
-import {InRequestScope, Inject} from 'typescript-ioc';
-import {EpisodeService} from './episode.service';
 import {logger} from '../../utils/logger';
 import {Context} from '../../modules/engine/rest/context';
 

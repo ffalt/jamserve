@@ -27,7 +27,7 @@ export class Reference<T extends IDEntity<T>> {
 			const entity = this.owner as ManagedEntity;
 			const id = entity._source.get(this.field.name);
 			if (id && this.field.linkedEntity) {
-				this.obj = await entity._em.findOneOrFailByID<T>(this.field.linkedEntity.name, id)
+				this.obj = await entity._em.findOneOrFailByID<T>(this.field.linkedEntity.name, id);
 			}
 			this.initialized = true;
 		}

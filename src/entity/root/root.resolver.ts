@@ -14,7 +14,7 @@ export class RootResolver {
 
 	@Query(() => RootQL, {description: 'Get a Root by Id'})
 	async root(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Root> {
-		return await orm.Root.oneOrFailByID(id)
+		return await orm.Root.oneOrFailByID(id);
 	}
 
 	@Query(() => RootPageQL, {description: 'Search Roots'})

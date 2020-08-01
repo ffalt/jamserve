@@ -61,7 +61,7 @@ export class AlbumController {
 		if (list.list) {
 			return await orm.Album.findListTransformFilter(list.list, filter, [order], page, user,
 				o => engine.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user)
-			)
+			);
 		}
 		return await orm.Album.searchTransformFilter(
 			filter, [order], page, user,
@@ -114,7 +114,7 @@ export class AlbumController {
 	): Promise<TrackPage> {
 		const album = await orm.Album.oneOrFailByID(id);
 		const result = await engine.metadata.similarTracks.byAlbum(orm, album, page);
-		return {...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user)))}
+		return {...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user)))};
 	}
 
 }

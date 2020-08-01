@@ -27,7 +27,7 @@ export class FolderService {
 			}
 			result.unshift(f);
 			await collect(await f.parent.get());
-		}
+		};
 		await collect(folder);
 		return result;
 	}

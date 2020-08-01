@@ -21,7 +21,7 @@ export class Collection<T extends IDEntity<T>> {
 		if (this.list) {
 			return this.list.length;
 		}
-		const func = this.sourceFunc('count')
+		const func = this.sourceFunc('count');
 		return await func();
 	}
 
@@ -45,7 +45,7 @@ export class Collection<T extends IDEntity<T>> {
 			return this.list;
 		}
 		const entity = this.owner as ManagedEntity;
-		const func = this.sourceFunc('get')
+		const func = this.sourceFunc('get');
 		const sources: Array<Model<T>> = await func();
 		let list: Array<T> = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name || '', source));
 		if (this.changeSet) {
@@ -79,15 +79,15 @@ export class Collection<T extends IDEntity<T>> {
 	async flush(transaction?: Transaction): Promise<void> {
 		if (this.changeSet) {
 			if (this.changeSet.set) {
-				const func = this.sourceFunc('set')
+				const func = this.sourceFunc('set');
 				await func(this.changeSet.set.map(d => (d as any as ManagedEntity)._source), {transaction});
 			}
 			if (this.changeSet.add) {
-				const func = this.sourceFunc('add')
+				const func = this.sourceFunc('add');
 				await func(this.changeSet.add.map(d => (d as any as ManagedEntity)._source), {transaction});
 			}
 			if (this.changeSet.remove) {
-				const func = this.sourceFunc('remove')
+				const func = this.sourceFunc('remove');
 				await func(this.changeSet.remove.map(d => (d as any as ManagedEntity)._source), {transaction});
 			}
 			this.changeSet = undefined;

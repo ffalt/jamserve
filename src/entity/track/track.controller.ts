@@ -91,7 +91,7 @@ export class TrackController {
 		const result: Array<MediaIDTagRaw> = [];
 		for (const track of tracks) {
 			const raw = await engine.track.getRawTag(track) || {};
-			result.push({id: track.id, ...raw})
+			result.push({id: track.id, ...raw});
 		}
 		return result;
 	}
@@ -107,7 +107,7 @@ export class TrackController {
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<Array<TrackHealth>> {
-		const tracks = await orm.Track.findFilter(filter, [], {}, user)
+		const tracks = await orm.Track.findFilter(filter, [], {}, user);
 		const list = await engine.track.health(tracks, mediaHealthArgs.healthMedia);
 		const result: Array<TrackHealth> = [];
 		for (const item of list) {

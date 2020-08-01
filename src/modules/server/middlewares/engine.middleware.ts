@@ -12,5 +12,5 @@ export function useEngineMiddleware(engine: EngineService): express.RequestHandl
 		(req as EngineRequest).engine = engine;
 		(req as EngineRequest).orm = engine.orm.fork();
 		next();
-	}
+	};
 }
