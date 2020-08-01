@@ -5,7 +5,11 @@
     "./src/modules/audio/formats/tasks/task-analyze-mp3.ts",
     "./src/modules/audio/formats/tasks/task-fix-mp3.ts",
     "./src/modules/audio/formats/tasks/task-rewrite-mp3.ts",
-    "./src/modules/audio/formats/tasks/task-remove-id3v1.ts"
+    "./src/modules/audio/formats/tasks/task-remove-id3v1.ts",
+    "./config/firststart.config.dist.js",
+    "./deploy.ts",
+    "./jest.config.js",
+    "./.eslintrc.js"
   ],
   "exclude": [
     "bin",
