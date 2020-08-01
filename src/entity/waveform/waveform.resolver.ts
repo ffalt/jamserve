@@ -15,7 +15,7 @@ export class WaveformResolver {
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		return result;
+		return result as Waveform;
 	}
 
 	@FieldResolver(() => String)

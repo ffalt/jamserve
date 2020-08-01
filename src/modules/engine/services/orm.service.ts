@@ -99,11 +99,7 @@ export class Orm {
 		this.User = em.getRepository<User, UserRepository>(User);
 	}
 
-	public async findInStreamTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		const repos: Array<BaseRepository<any, any, any>> = [
-			this.Track,
-			this.Episode
-		];
+	private async findInReposTypes(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
 		for (const repo of repos) {
 			const obj = await repo.findOneByID(id);
 			if (obj) {
@@ -112,8 +108,12 @@ export class Orm {
 		}
 	}
 
+	public async findInStreamTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
+		return this.findInReposTypes(id, [this.Track, this.Episode]);
+	}
+
 	public async findInImageTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		const repos: Array<BaseRepository<any, any, any>> = [
+		return this.findInReposTypes(id, [
 			this.Album,
 			this.Artist,
 			this.Artwork,
@@ -126,17 +126,11 @@ export class Orm {
 			this.Series,
 			this.Track,
 			this.User
-		];
-		for (const repo of repos) {
-			const obj = await repo.findOneByID(id);
-			if (obj) {
-				return {obj: obj as any, objType: repo.objType};
-			}
-		}
+		]);
 	}
 
 	public async findInDownloadTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		const repos: Array<BaseRepository<any, any, any>> = [
+		return this.findInReposTypes(id, [
 			this.Album,
 			this.Artist,
 			this.Artwork,
@@ -146,17 +140,11 @@ export class Orm {
 			this.Podcast,
 			this.Series,
 			this.Track
-		];
-		for (const repo of repos) {
-			const obj = await repo.findOneByID(id);
-			if (obj) {
-				return {obj: obj as any, objType: repo.objType};
-			}
-		}
+		]);
 	}
 
 	async findInStateTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		const repos: Array<BaseRepository<any, any, any>> = [
+		return this.findInReposTypes(id, [
 			this.Album,
 			this.Artist,
 			this.Artwork,
@@ -168,23 +156,11 @@ export class Orm {
 			this.Series,
 			this.Radio,
 			this.Track
-		];
-		for (const repo of repos) {
-			const obj = await repo.findOneByID(id);
-			if (obj) {
-				return {obj: obj as any, objType: repo.objType};
-			}
-		}
+		]);
 	}
 
-	async findInWaveformTypes(id: string): Promise<{ obj: Track | Episode; objType: DBObjectType } | undefined> {
-		const repos: Array<BaseRepository<any, any, any>> = [this.Track, this.Episode];
-		for (const repo of repos) {
-			const obj = await repo.findOneByID(id);
-			if (obj) {
-				return {obj: obj as any, objType: repo.objType};
-			}
-		}
+	async findInWaveformTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
+		return this.findInReposTypes(id, [this.Track, this.Episode]);
 	}
 }
 
