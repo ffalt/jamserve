@@ -8,6 +8,8 @@ engines:
     enabled: true
   markdownlint:
     enabled: true
+  tslint:
+    enabled: false
 exclude_paths:
   - static/redoc/**/*
   - static/voyager/**/*
