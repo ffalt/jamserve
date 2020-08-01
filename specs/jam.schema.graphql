@@ -209,7 +209,7 @@ type SeriesQL {
   updatedAt: DateTime!
   name: String!
   albumTypes: [AlbumType!]!
-  artist: ArtistQL!
+  artist: ArtistQL
   tracks: [TrackQL!]!
   albums: [AlbumQL!]!
   roots: [RootQL!]!
