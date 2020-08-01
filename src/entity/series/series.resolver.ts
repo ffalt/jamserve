@@ -4,6 +4,11 @@ import {State, StateQL} from '../state/state';
 import {Series, SeriesIndexQL, SeriesPageQL, SeriesQL} from './series';
 import {Context} from '../../modules/server/middlewares/apollo.context';
 import {SeriesArgsQL, SeriesIndexArgsQL} from './series.args';
+import {Album, AlbumQL} from '../album/album';
+import {Track, TrackQL} from '../track/track';
+import {Folder, FolderQL} from '../folder/folder';
+import {Root, RootQL} from '../root/root';
+import {Artist, ArtistQL} from '../artist/artist';
 
 @Resolver(SeriesQL)
 export class SeriesResolver {
@@ -25,9 +30,19 @@ export class SeriesResolver {
 		return await orm.Series.indexFilter(filter, user);
 	}
 
+	@FieldResolver(() => [RootQL])
+	async roots(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<Array<Root>> {
+		return series.roots.getItems();
+	}
+
 	@FieldResolver(() => Int)
 	async rootsCount(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<number> {
 		return series.roots.count();
+	}
+
+	@FieldResolver(() => [FolderQL])
+	async folders(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<Array<Folder>> {
+		return series.folders.getItems();
 	}
 
 	@FieldResolver(() => Int)
@@ -35,14 +50,29 @@ export class SeriesResolver {
 		return series.folders.count();
 	}
 
+	@FieldResolver(() => [TrackQL])
+	async tracks(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<Array<Track>> {
+		return series.tracks.getItems();
+	}
+
 	@FieldResolver(() => Int)
 	async tracksCount(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<number> {
 		return series.tracks.count();
 	}
 
+	@FieldResolver(() => [AlbumQL])
+	async albums(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<Array<Album>> {
+		return series.albums.getItems();
+	}
+
 	@FieldResolver(() => Int)
 	async albumsCount(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<number> {
 		return series.albums.count();
+	}
+
+	@FieldResolver(() => ArtistQL, {nullable: true})
+	async artist(@GQLRoot() series: Series, @Ctx() {orm}: Context): Promise<Artist | undefined> {
+		return series.artist.get();
 	}
 
 	@FieldResolver(() => StateQL)
