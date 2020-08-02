@@ -36,62 +36,62 @@ export class ArtistResolver {
 	}
 
 	@FieldResolver(() => [TrackQL])
-	async tracks(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Track>> {
+	async tracks(@GQLRoot() artist: Artist): Promise<Array<Track>> {
 		return artist.tracks.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async tracksCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
+	async tracksCount(@GQLRoot() artist: Artist): Promise<number> {
 		return artist.tracks.count();
 	}
 
 	@FieldResolver(() => [TrackQL])
-	async albumTracks(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Track>> {
+	async albumTracks(@GQLRoot() artist: Artist): Promise<Array<Track>> {
 		return artist.albumTracks.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async albumsTracksCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
+	async albumsTracksCount(@GQLRoot() artist: Artist): Promise<number> {
 		return artist.albumTracks.count();
 	}
 
 	@FieldResolver(() => [AlbumQL])
-	async albums(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Album>> {
+	async albums(@GQLRoot() artist: Artist): Promise<Array<Album>> {
 		return artist.albums.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async albumsCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
+	async albumsCount(@GQLRoot() artist: Artist): Promise<number> {
 		return artist.albums.count();
 	}
 
 	@FieldResolver(() => [RootQL])
-	async roots(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Root>> {
+	async roots(@GQLRoot() artist: Artist): Promise<Array<Root>> {
 		return artist.roots.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async rootsCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
+	async rootsCount(@GQLRoot() artist: Artist): Promise<number> {
 		return artist.roots.count();
 	}
 
 	@FieldResolver(() => [FolderQL])
-	async folders(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Folder>> {
+	async folders(@GQLRoot() artist: Artist): Promise<Array<Folder>> {
 		return artist.folders.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async foldersCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
+	async foldersCount(@GQLRoot() artist: Artist): Promise<number> {
 		return artist.folders.count();
 	}
 
 	@FieldResolver(() => [SeriesQL])
-	async series(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<Array<Series>> {
+	async series(@GQLRoot() artist: Artist): Promise<Array<Series>> {
 		return artist.series.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async seriesCount(@GQLRoot() artist: Artist, @Ctx() {orm}: Context): Promise<number> {
+	async seriesCount(@GQLRoot() artist: Artist): Promise<number> {
 		return artist.series.count();
 	}
 }

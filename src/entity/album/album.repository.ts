@@ -1,10 +1,10 @@
 import {BaseRepository} from '../base/base.repository';
-import {AlbumOrderFields, DBObjectType} from '../../types/enums';
+import {AlbumOrderFields, DBObjectType, TrackOrderFields} from '../../types/enums';
 import {Album} from './album';
 import {OrderHelper} from '../base/base';
 import {AlbumFilterArgs, AlbumOrderArgs} from './album.args';
 import {User} from '../user/user';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {FindOptions, OrderItem, QHelper, QueryOrder} from '../../modules/orm';
 
 export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, AlbumOrderArgs> {
 	objType = DBObjectType.album;
@@ -21,14 +21,19 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 				return [['name', direction]];
 			case AlbumOrderFields.duration:
 				return [['duration', direction]];
+			case AlbumOrderFields.albumType:
+				return [['albumType', direction]];
 			case AlbumOrderFields.artist:
 				return [['artistORM', 'name', direction]];
 			case AlbumOrderFields.year:
 				return [['year', direction]];
+			case AlbumOrderFields.seriesNr:
+				return [['seriesNr', direction]];
 			case AlbumOrderFields.default:
 				// order of setting properties matches order of sort queries. important!
 				return [
 					['artistORM', 'name', direction],
+					['albumType', direction],
 					['year', direction === 'ASC' ? 'DESC' : 'ASC'],
 					['name', direction]
 				];

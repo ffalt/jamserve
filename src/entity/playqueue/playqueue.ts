@@ -3,6 +3,7 @@ import {PlayQueueEntry, PlayQueueEntryQL} from '../playqueueentry/playqueue-entr
 import {Field, Float, Int, ObjectType} from 'type-graphql';
 import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, QueryOrder} from '../../modules/orm';
 import {Base} from '../base/base';
+import {DefaultOrderFields, PlayQueueEntryOrderFields} from '../../types/enums';
 
 @ObjectType()
 @Entity()
@@ -27,7 +28,7 @@ export class PlayQueue extends Base {
 	user!: User;
 
 	@Field(() => [PlayQueueEntryQL])
-	@OneToMany<PlayQueueEntry>(() => PlayQueueEntry, entry => entry.playQueue, {orderBy: {position: QueryOrder.ASC}})
+	@OneToMany<PlayQueueEntry>(() => PlayQueueEntry, entry => entry.playQueue, {order: [{orderBy: PlayQueueEntryOrderFields.position}]})
 	entries: Collection<PlayQueueEntry> = new Collection<PlayQueueEntry>(this);
 }
 

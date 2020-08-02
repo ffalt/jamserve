@@ -8,8 +8,8 @@ An audio library server written in Typescript for NodeJS
 
 ## Preamble
 
-This is my current pet project to manage/stream/edit my own music collection. 
-It's not ready yet a.k.a. work in progress. Everything is subject to change. 
+This is my current pet project to manage/stream/edit my own music collection.
+It's not ready yet a.k.a. work in progress. Everything is subject to change.
 Please do not use it for other than testing purposes until further notice.
 
 This is the backend development repository. See

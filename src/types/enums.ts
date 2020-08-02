@@ -258,6 +258,8 @@ export enum TrackOrderFields {
 	updated = 'updated',
 	trackNr = 'trackNr',
 	discNr = 'discNr',
+	seriesNr = 'seriesNr',
+	album = 'album',
 	title = 'title',
 	parent = 'parent'
 }
@@ -275,6 +277,7 @@ export enum BookmarkOrderFields {
 	default = 'default',
 	created = 'created',
 	updated = 'updated',
+	media = 'media',
 	position = 'position',
 }
 
@@ -285,16 +288,29 @@ export enum DefaultOrderFields {
 	name = 'name',
 }
 
+export enum SessionOrderFields {
+	default = 'default',
+	expires = 'expires'
+}
+
 export enum FolderOrderFields {
 	default = 'default',
 	created = 'created',
 	updated = 'updated',
+	level = 'level',
 	name = 'name',
 	title = 'title',
 	year = 'year'
 }
 
 export enum PlaylistEntryOrderFields {
+	default = 'default',
+	created = 'created',
+	updated = 'updated',
+	position = 'position'
+}
+
+export enum PlayQueueEntryOrderFields {
 	default = 'default',
 	created = 'created',
 	updated = 'updated',
@@ -316,7 +332,9 @@ export enum AlbumOrderFields {
 	name = 'name',
 	artist = 'artist',
 	year = 'year',
-	duration = 'duration'
+	seriesNr = 'seriesNr',
+	duration = 'duration',
+	albumType = 'albumType'
 }
 
 export enum ArtistOrderFields {

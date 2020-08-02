@@ -1,5 +1,4 @@
 import {ClassType} from 'type-graphql';
-import {OrderByObj} from './query';
 
 export const bannedTypes: Function[] = [Promise, Array, Object, Function];
 
@@ -38,7 +37,7 @@ export interface EnumConfig {
 }
 
 export interface OrderByOptions {
-	orderBy?: OrderByObj;
+	order?: Array<{ orderBy: string; orderDesc?: boolean }>;
 }
 
 export interface OwnerOptions {

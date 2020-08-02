@@ -13,7 +13,7 @@ export class AlbumService {
 	@Inject
 	private folderService!: FolderService;
 
-	private async getAlbumFolder(orm: Orm, album: Album): Promise<Folder | undefined> {
+	private async getAlbumFolder(album: Album): Promise<Folder | undefined> {
 		const folders = await album.folders.getItems();
 		if (folders.length > 0) {
 			return folders.sort((a, b) => b.level - a.level)[0];
@@ -28,7 +28,7 @@ export class AlbumService {
 	}
 
 	private async getAlbumFolderImage(orm: Orm, album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
-		const folder = await this.getAlbumFolder(orm, album);
+		const folder = await this.getAlbumFolder(album);
 		if (folder) {
 			return this.folderService.getImage(orm, folder, size, format);
 		}

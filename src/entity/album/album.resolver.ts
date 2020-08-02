@@ -31,27 +31,27 @@ export class AlbumResolver {
 	}
 
 	@FieldResolver(() => ArtistQL)
-	async artist(@GQLRoot() album: Album, @Ctx() {orm}: Context): Promise<Artist> {
+	async artist(@GQLRoot() album: Album): Promise<Artist> {
 		return album.artist.getOrFail();
 	}
 
 	@FieldResolver(() => [TrackQL])
-	async tracks(@GQLRoot() album: Album, @Ctx() {orm}: Context): Promise<Array<Track>> {
+	async tracks(@GQLRoot() album: Album): Promise<Array<Track>> {
 		return album.tracks.getItems();
 	}
 
 	@FieldResolver(() => [RootQL])
-	async roots(@GQLRoot() album: Album, @Ctx() {orm}: Context): Promise<Array<Root>> {
+	async roots(@GQLRoot() album: Album): Promise<Array<Root>> {
 		return album.roots.getItems();
 	}
 
 	@FieldResolver(() => [FolderQL])
-	async folders(@GQLRoot() album: Album, @Ctx() {orm}: Context): Promise<Array<Folder>> {
+	async folders(@GQLRoot() album: Album): Promise<Array<Folder>> {
 		return album.folders.getItems();
 	}
 
 	@FieldResolver(() => SeriesQL, {nullable: true})
-	async series(@GQLRoot() album: Album, @Ctx() {orm}: Context): Promise<Series | undefined> {
+	async series(@GQLRoot() album: Album): Promise<Series | undefined> {
 		return album.series.get();
 	}
 
@@ -61,17 +61,17 @@ export class AlbumResolver {
 	}
 
 	@FieldResolver(() => Int)
-	async foldersCount(@GQLRoot() album: Album, @Ctx() {orm}: Context): Promise<number> {
+	async foldersCount(@GQLRoot() album: Album): Promise<number> {
 		return album.folders.count();
 	}
 
 	@FieldResolver(() => Int)
-	async tracksCount(@GQLRoot() album: Album, @Ctx() {orm}: Context): Promise<number> {
+	async tracksCount(@GQLRoot() album: Album): Promise<number> {
 		return album.tracks.count();
 	}
 
 	@FieldResolver(() => Int)
-	async rootsCount(@GQLRoot() album: Album, @Ctx() {orm}: Context): Promise<number> {
+	async rootsCount(@GQLRoot() album: Album): Promise<number> {
 		return album.roots.count();
 	}
 }

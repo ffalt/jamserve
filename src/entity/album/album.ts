@@ -3,7 +3,7 @@ import {Root, RootQL} from '../root/root';
 import {Folder, FolderQL} from '../folder/folder';
 import {Series, SeriesQL} from '../series/series';
 import {Artist, ArtistQL} from '../artist/artist';
-import {AlbumType} from '../../types/enums';
+import {AlbumType, DefaultOrderFields, FolderOrderFields, TrackOrderFields} from '../../types/enums';
 import {Field, Float, Int, ObjectType} from 'type-graphql';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
@@ -49,15 +49,15 @@ export class Album extends Base {
 	genres: Array<string> = [];
 
 	@Field(() => [TrackQL])
-	@OneToMany<Track>(() => Track, track => track.album, {orderBy: {tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC, title: QueryOrder.ASC}}})
+	@OneToMany<Track>(() => Track, track => track.album, {order: [{orderBy: TrackOrderFields.default}]})
 	tracks: Collection<Track> = new Collection<Track>(this);
 
 	@Field(() => [RootQL])
-	@ManyToMany<Root>(() => Root, root => root.albums, {owner: true, orderBy: {name: QueryOrder.ASC}})
+	@ManyToMany<Root>(() => Root, root => root.albums, {owner: true, order: [{orderBy: DefaultOrderFields.default}]})
 	roots: Collection<Root> = new Collection<Root>(this);
 
 	@Field(() => [FolderQL])
-	@ManyToMany<Folder>(() => Folder, folder => folder.albums, {owner: true, orderBy: {path: QueryOrder.ASC}})
+	@ManyToMany<Folder>(() => Folder, folder => folder.albums, {owner: true, order: [{orderBy: FolderOrderFields.default}]})
 	folders: Collection<Folder> = new Collection<Folder>(this);
 
 	@Field(() => [SeriesQL], {nullable: true})

@@ -31,6 +31,12 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 		return [];
 	}
 
+	buildOrderByFindOptions(order?: Array<{ orderBy: any; orderDesc?: boolean }>): FindOptions<Entity> | undefined {
+		const options = {order: this.buildOrderBy(order as Array<any>)};
+		this.ensureOrderIncludes(options);
+		return options;
+	}
+
 	buildOrderBy(order?: Array<OrderBy>): Order | undefined {
 		if (!order) {
 			return;
@@ -40,11 +46,7 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 		return result.length > 0 ? result : undefined;
 	}
 
-	async buildFindOptions(filter?: Filter, order?: Array<OrderBy>, user?: User, page?: PageArgs): Promise<FindOptions<Entity>> {
-		const options = filter ? await this.buildFilter(filter, user) : {};
-		options.limit = page?.take;
-		options.offset = page?.skip;
-		options.order = this.buildOrderBy(order);
+	ensureOrderIncludes(options: FindOptions<Entity>): void {
 		if (options.order) {
 			(options.order as OrderItem[]).map(o => {
 				if ((o as Array<any>).length === 3) {
@@ -57,6 +59,14 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 				}
 			});
 		}
+	}
+
+	async buildFindOptions(filter?: Filter, order?: Array<OrderBy>, user?: User, page?: PageArgs): Promise<FindOptions<Entity>> {
+		const options = filter ? await this.buildFilter(filter, user) : {};
+		options.limit = page?.take;
+		options.offset = page?.skip;
+		options.order = this.buildOrderBy(order);
+		this.ensureOrderIncludes(options);
 		return options;
 	}
 

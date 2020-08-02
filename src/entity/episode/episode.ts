@@ -1,9 +1,9 @@
 import {Podcast, PodcastQL} from '../podcast/podcast';
 import {Tag, TagQL} from '../tag/tag';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
-import {PodcastStatus} from '../../types/enums';
+import {BookmarkOrderFields, PodcastStatus} from '../../types/enums';
 import {Field, Float, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_INT, ORM_TIMESTAMP, Property, QueryOrder, Reference} from '../../modules/orm';
+import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_INT, ORM_TIMESTAMP, Property, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {Waveform, WaveformQL} from '../waveform/waveform';
@@ -103,7 +103,7 @@ export class Episode extends Base {
 	podcast: Reference<Podcast> = new Reference<Podcast>(this);
 
 	@Field(() => [BookmarkQL])
-	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.episode, {orderBy: {position: QueryOrder.ASC}})
+	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.episode, {order: [{orderBy: BookmarkOrderFields.default}]})
 	bookmarks: Collection<Bookmark> = new Collection<Bookmark>(this);
 
 	@OneToMany<PlayQueueEntry>(() => PlayQueueEntry, playqueueEntry => playqueueEntry.episode)

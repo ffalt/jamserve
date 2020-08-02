@@ -5,7 +5,7 @@ import {Field, Int, ObjectType} from 'type-graphql';
 import {State} from '../state/state';
 import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
-import {UserRole} from '../../types/enums';
+import {BookmarkOrderFields, SessionOrderFields, UserRole} from '../../types/enums';
 import {Playlist, PlaylistQL} from '../playlist/playlist';
 
 @ObjectType()
@@ -42,17 +42,11 @@ export class User extends Base {
 	rolePodcast!: boolean;
 
 	@Field(() => [SessionQL])
-	@OneToMany<Session>(() => Session, session => session.user, {orderBy: {expires: QueryOrder.ASC}})
+	@OneToMany<Session>(() => Session, session => session.user, {order: [{orderBy: SessionOrderFields.expires}]})
 	sessions: Collection<Session> = new Collection<Session>(this);
 
 	@Field(() => [BookmarkQL])
-	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.user, {
-		orderBy: {
-			track: {path: QueryOrder.ASC, tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC}},
-			episode: {path: QueryOrder.ASC, tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC}},
-			position: QueryOrder.ASC
-		}
-	})
+	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.user, {order: [{orderBy: BookmarkOrderFields.media}, {orderBy: BookmarkOrderFields.position}]})
 	bookmarks: Collection<Bookmark> = new Collection<Bookmark>(this);
 
 	@Field(() => PlayQueueQL, {nullable: true})
@@ -63,7 +57,7 @@ export class User extends Base {
 	@OneToMany<Playlist>(() => Playlist, playlist => playlist.user)
 	playlists: Collection<Playlist> = new Collection<Playlist>(this);
 
-	@OneToMany<State>(() => State, state => state.user, {orderBy: {destType: QueryOrder.ASC}})
+	@OneToMany<State>(() => State, state => state.user)
 	states: Collection<State> = new Collection<State>(this);
 }
 

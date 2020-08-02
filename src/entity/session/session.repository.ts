@@ -1,16 +1,22 @@
 import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 import {BaseRepository} from '../base/base.repository';
-import {DBObjectType} from '../../types/enums';
+import {DBObjectType, SessionOrderFields} from '../../types/enums';
 import {Session} from './session';
 import {User} from '../user/user';
 import {SessionFilterArgs, SessionOrderArgs} from './session.args';
+import {OrderHelper} from '../base/base';
 
-// @Repository(Session)
 export class SessionRepository extends BaseRepository<Session, SessionFilterArgs, SessionOrderArgs> {
 	objType = DBObjectType.session;
 
 	buildOrder(order?: SessionOrderArgs): Array<OrderItem> {
-		return this.buildDefaultOrder(order);
+		const direction = OrderHelper.direction(order);
+		switch (order?.orderBy) {
+			case SessionOrderFields.expires:
+			case SessionOrderFields.default:
+				return [['expires', direction]];
+		}
+		return [];
 	}
 
 	async buildFilter(filter?: SessionFilterArgs, user?: User): Promise<FindOptions<Session>> {

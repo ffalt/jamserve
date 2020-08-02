@@ -4,7 +4,7 @@ import {Track, TrackQL} from '../track/track';
 import {Album, AlbumQL} from '../album/album';
 import {Artist, ArtistQL} from '../artist/artist';
 import {Series, SeriesQL} from '../series/series';
-import {AlbumType, FolderType} from '../../types/enums';
+import {AlbumOrderFields, AlbumType, ArtistOrderFields, BookmarkOrderFields, DefaultOrderFields, FolderOrderFields, FolderType, TrackOrderFields} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
 import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_INT, ORM_TIMESTAMP, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
@@ -91,7 +91,7 @@ export class Folder extends Base {
 	parent: Reference<Folder> = new Reference<Folder>(this);
 
 	@Field(() => [FolderQL])
-	@OneToMany<Folder>(() => Folder, folder => folder.parent, {orderBy: {path: QueryOrder.ASC}})
+	@OneToMany<Folder>(() => Folder, folder => folder.parent, {order: [{orderBy: FolderOrderFields.name}]})
 	children: Collection<Folder> = new Collection<Folder>(this);
 
 	@Field(() => RootQL)
@@ -99,23 +99,23 @@ export class Folder extends Base {
 	root: Reference<Root> = new Reference<Root>(this);
 
 	@Field(() => [ArtworkQL])
-	@OneToMany<Artwork>(() => Artwork, artwork => artwork.folder, {orderBy: {name: QueryOrder.ASC}})
+	@OneToMany<Artwork>(() => Artwork, artwork => artwork.folder, {order: [{orderBy: DefaultOrderFields.default}]})
 	artworks: Collection<Artwork> = new Collection<Artwork>(this);
 
 	@Field(() => [TrackQL])
-	@OneToMany<Track>(() => Track, track => track.folder, {orderBy: {tag: {disc: QueryOrder.ASC, trackNr: QueryOrder.ASC}}})
+	@OneToMany<Track>(() => Track, track => track.folder, {order: [{orderBy: TrackOrderFields.default}]})
 	tracks: Collection<Track> = new Collection<Track>(this);
 
 	@Field(() => [AlbumQL])
-	@ManyToMany<Album>(() => Album, album => album.folders, {orderBy: {albumType: QueryOrder.ASC, name: QueryOrder.ASC}})
+	@ManyToMany<Album>(() => Album, album => album.folders, {order: [{orderBy: AlbumOrderFields.default}]})
 	albums: Collection<Album> = new Collection<Album>(this);
 
 	@Field(() => [ArtistQL])
-	@ManyToMany<Artist>(() => Artist, artist => artist.folders, {orderBy: {nameSort: QueryOrder.ASC}})
+	@ManyToMany<Artist>(() => Artist, artist => artist.folders, {order: [{orderBy: ArtistOrderFields.default}]})
 	artists: Collection<Artist> = new Collection<Artist>(this);
 
 	@Field(() => [SeriesQL])
-	@ManyToMany<Series>(() => Series, series => series.folders, {orderBy: {name: QueryOrder.ASC}})
+	@ManyToMany<Series>(() => Series, series => series.folders, {order: [{orderBy: DefaultOrderFields.default}]})
 	series: Collection<Series> = new Collection<Series>(this);
 }
 

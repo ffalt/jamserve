@@ -81,7 +81,7 @@ export class ArtistController {
 	)
 	async info(
 		@QueryParam('id', {description: 'Artist Id', isID: true}) id: string,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<ExtendedInfoResult> {
 		const artist = await orm.Artist.oneOrFailByID(id);
 		return {info: await engine.metadata.extInfo.byArtist(orm, artist)};

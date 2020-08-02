@@ -3,6 +3,8 @@ import {PropertyMetadata} from '../definitions/property-metadata';
 import {ManagedEntity} from '../definitions/managed-entity';
 import {Model} from 'sequelize';
 import {Transaction} from 'sequelize/types/lib/transaction';
+import {FindOptions} from '..';
+import {OrderByOptions} from '../definitions/types';
 
 export class Collection<T extends IDEntity<T>> {
 	private initialized = false;
@@ -40,13 +42,14 @@ export class Collection<T extends IDEntity<T>> {
 		this.changeSet = undefined;
 	}
 
-	async getItems(): Promise<Array<T>> {
+	async getItems(options?: FindOptions<T>): Promise<Array<T>> {
 		if (this.list) {
 			return this.list;
 		}
 		const entity = this.owner as ManagedEntity;
 		const func = this.sourceFunc('get');
-		const sources: Array<Model<T>> = await func();
+		options = options || this.getOrderOptions();
+		const sources: Array<Model<T>> = await func(options);
 		let list: Array<T> = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name || '', source));
 		if (this.changeSet) {
 			if (this.changeSet.set) {
@@ -105,4 +108,10 @@ export class Collection<T extends IDEntity<T>> {
 		}
 	}
 
+	private getOrderOptions(): FindOptions<T> | undefined {
+		const order = (this.field.typeOptions as OrderByOptions).order;
+		if (order && this.field.linkedEntity) {
+			return (this.owner as ManagedEntity)._em.getOrderFindOptions(this.field.linkedEntity.name, order);
+		}
+	}
 }

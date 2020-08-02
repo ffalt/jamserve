@@ -380,7 +380,9 @@ export class TransformService {
 	}
 
 	async album(orm: Orm, o: ORMAlbum, albumArgs: IncludesAlbumArgs, albumChildrenArgs: IncludesAlbumChildrenArgs, trackArgs: IncludesTrackArgs, artistIncludes: IncludesArtistArgs, user: User): Promise<Album> {
-		const tracks = albumChildrenArgs.albumIncTracks ? await Promise.all((await o.tracks.getItems()).map(t => this.trackBase(orm, t, trackArgs, user))) : undefined;
+		const tracks = albumChildrenArgs.albumIncTracks ?
+			await Promise.all((await o.tracks.getItems()).map(t => this.trackBase(orm, t, trackArgs, user))) :
+			undefined;
 		const artist = albumChildrenArgs.albumIncArtist ? await this.artistBase(orm, await o.artist.getOrFail(), artistIncludes, user) : undefined;
 		return {
 			...(await this.albumBase(orm, o, albumArgs, user)),

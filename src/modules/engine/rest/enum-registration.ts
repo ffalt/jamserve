@@ -18,11 +18,11 @@ import {
 	ListType,
 	MusicBrainzLookupType,
 	MusicBrainzSearchType,
-	PlaylistEntryOrderFields,
+	PlaylistEntryOrderFields, PlayQueueEntryOrderFields,
 	PodcastOrderFields,
 	PodcastStatus,
 	RootScanStrategy,
-	SessionMode,
+	SessionMode, SessionOrderFields,
 	TagFormatType,
 	TrackHealthID,
 	TrackOrderFields,
@@ -39,7 +39,9 @@ export function registerRestEnums(): void {
 	registerEnumType(ArtistOrderFields, {name: 'ArtistOrderFields'});
 	registerEnumType(FolderOrderFields, {name: 'FolderOrderFields'});
 	registerEnumType(PlaylistEntryOrderFields, {name: 'PlaylistEntryOrderFields'});
+	registerEnumType(PlayQueueEntryOrderFields, {name: 'PlayQueueEntryOrderFields'});
 	registerEnumType(BookmarkOrderFields, {name: 'BookmarkOrderFields'});
+	registerEnumType(SessionOrderFields, {name: 'SessionOrderFields'});
 	registerEnumType(EpisodeOrderFields, {name: 'EpisodeOrderFields'});
 	registerEnumType(AlbumOrderFields, {name: 'AlbumOrderFields'});
 	registerEnumType(JamObjectType, {name: 'JamObjectType'});

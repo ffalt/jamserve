@@ -1,7 +1,7 @@
 import {Episode, EpisodeQL} from '../episode/episode';
-import {PodcastStatus} from '../../types/enums';
+import {EpisodeOrderFields, PodcastStatus} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, OneToMany, ORM_TIMESTAMP, Property, QueryOrder} from '../../modules/orm';
+import {Collection, Entity, OneToMany, ORM_TIMESTAMP, Property} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 
@@ -60,7 +60,7 @@ export class Podcast extends Base {
 	categories!: Array<string>;
 
 	@Field(() => [EpisodeQL])
-	@OneToMany<Episode>(() => Episode, episode => episode.podcast, {orderBy: {date: QueryOrder.DESC}})
+	@OneToMany<Episode>(() => Episode, episode => episode.podcast, {order: [{orderBy: EpisodeOrderFields.date, orderDesc: true}]})
 	episodes: Collection<Episode> = new Collection<Episode>(this);
 }
 

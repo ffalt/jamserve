@@ -15,6 +15,7 @@ import {MediaTagRaw} from '../tag/tag.model';
 import {TrackLyrics} from './track.model';
 import {PlayQueueEntry} from '../playqueueentry/playqueue-entry';
 import {PlaylistEntry} from '../playlistentry/playlist-entry';
+import {BookmarkOrderFields} from '../../types/enums';
 
 @ObjectType()
 @Entity()
@@ -66,7 +67,7 @@ export class Track extends Base {
 	root = new Reference<Root>(this);
 
 	@Field(() => [BookmarkQL])
-	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.track, {orderBy: {position: QueryOrder.ASC}, onDelete: 'cascade'})
+	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.track, {order: [{orderBy: BookmarkOrderFields.default}], onDelete: 'cascade'})
 	bookmarks: Collection<Bookmark> = new Collection<Bookmark>(this);
 
 	@OneToMany<PlayQueueEntry>(() => PlayQueueEntry, playqueueEntry => playqueueEntry.track)

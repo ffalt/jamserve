@@ -19,6 +19,8 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 				return [['updatedAt', direction]];
 			case FolderOrderFields.year:
 				return [['year', direction]];
+			case FolderOrderFields.level:
+				return [['level', direction]];
 			case FolderOrderFields.title:
 				return [
 					['title', direction],

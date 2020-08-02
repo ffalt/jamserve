@@ -21,17 +21,22 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 				return [['updatedAt', direction]];
 			case TrackOrderFields.parent:
 				return [['path', direction]];
+			case TrackOrderFields.album:
+				return [['albumORM', 'name', direction]];
 			case TrackOrderFields.trackNr:
 				return [['tagORM', 'trackNr', direction]];
 			case TrackOrderFields.discNr:
 				return [['tagORM', 'disc', direction]];
+			case TrackOrderFields.seriesNr:
+				return [['tagORM', 'seriesNr', direction]];
 			case TrackOrderFields.title:
 				return [['tagORM', 'title', direction]];
 			case TrackOrderFields.default:
 				return [
 					['path', direction],
 					['tagORM', 'disc', direction],
-					['tagORM', 'trackNr', direction]
+					['tagORM', 'trackNr', direction],
+					['tagORM', 'title', direction]
 				];
 		}
 		return [];
@@ -63,7 +68,7 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 				{folder: QHelper.inOrEqual(folderIDs.length > 0 ? folderIDs : undefined)}
 			]
 		);
-		result.include =  QHelper.includeQueries<Series>([
+		result.include = QHelper.includeQueries<Series>([
 			{bookmarks: [{id: QHelper.inOrEqual(filter.bookmarkIDs)}]},
 			{artist: [{name: QHelper.eq(filter.artist)}]},
 			{album: [{name: QHelper.eq(filter.album)}]},

@@ -4,6 +4,8 @@ import {Field, Float, ID, Int, ObjectType} from 'type-graphql';
 import {Collection, Entity, ManyToOne, OneToMany, ORM_INT, Property, QueryOrder, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
+import {DefaultOrderFields, PlaylistEntryOrderFields} from '../../types/enums';
+import {PlaylistEntryOrderArgs} from '../playlistentry/playlist-entry.args';
 
 @ObjectType()
 @Entity()
@@ -31,7 +33,7 @@ export class Playlist extends Base {
 	duration: number = 0;
 
 	@Field(() => [PlaylistEntryQL])
-	@OneToMany<PlaylistEntry>(() => PlaylistEntry, entry => entry.playlist, {orderBy: {position: QueryOrder.ASC}})
+	@OneToMany<PlaylistEntry>(() => PlaylistEntry, entry => entry.playlist, {order: [{orderBy: PlaylistEntryOrderFields.position}]})
 	entries: Collection<PlaylistEntry> = new Collection<PlaylistEntry>(this);
 }
 

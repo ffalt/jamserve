@@ -16,6 +16,11 @@ export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterA
 				return [['createdAt', direction]];
 			case BookmarkOrderFields.updated:
 				return [['updatedAt', direction]];
+			case BookmarkOrderFields.media:
+				return [
+					['trackORM', 'path', direction],
+					['episodeORM', 'path', direction]
+				];
 			case BookmarkOrderFields.default:
 			case BookmarkOrderFields.position:
 				return [['position', direction]];

@@ -8,6 +8,11 @@ export class EntityRepository<Entity extends IDEntity<Entity>> {
 				protected readonly entityName: EntityName<Entity>) {
 	}
 
+	buildOrderByFindOptions(order?: Array<{ orderBy: any; orderDesc?: boolean }>): FindOptions<Entity> | undefined {
+		// to be overwritten
+		return;
+	}
+
 	persist(entity: Entity | Entity[], flush = false): void | Promise<void> {
 		return this.em.persist(this.entityName, entity, flush);
 	}

@@ -17,10 +17,10 @@ import {
 	FolderOrderFields,
 	FolderType,
 	ListType,
-	PlaylistEntryOrderFields, PodcastOrderFields,
+	PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields,
 	PodcastStatus,
 	RootScanStrategy,
-	SessionMode,
+	SessionMode, SessionOrderFields,
 	TagFormatType,
 	TrackOrderFields,
 	UserRole
@@ -56,7 +56,9 @@ function registerEnums(): void {
 	registerEnumType(ArtistOrderFields, {name: 'ArtistOrderFields'});
 	registerEnumType(FolderOrderFields, {name: 'FolderOrderFields'});
 	registerEnumType(PlaylistEntryOrderFields, {name: 'PlaylistEntryOrderFields'});
+	registerEnumType(PlayQueueEntryOrderFields, {name: 'PlayQueueEntryOrderFields'});
 	registerEnumType(BookmarkOrderFields, {name: 'BookmarkOrderFields'});
+	registerEnumType(SessionOrderFields, {name: 'SessionOrderFields'});
 	registerEnumType(EpisodeOrderFields, {name: 'EpisodeOrderFields'});
 	registerEnumType(AlbumOrderFields, {name: 'AlbumOrderFields'});
 	registerEnumType(PodcastStatus, {name: 'PodcastStatus'});
