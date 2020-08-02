@@ -90,7 +90,7 @@ export class OrderHelper {
 }
 
 export function dateOrUndefined(timestamp?: number): Date | undefined {
-	if (timestamp === undefined || timestamp === null) {
+	if (timestamp === undefined || timestamp === null || timestamp === 0) {
 		return undefined;
 	}
 	return new Date(timestamp);

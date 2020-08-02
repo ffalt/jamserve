@@ -38,13 +38,13 @@ export class StateResolver {
 	}
 
 	@FieldResolver(() => Date, {nullable: true})
-	async faved(@GQLRoot() timestamp?: number): Promise<Date | undefined> {
-		return dateOrUndefined(timestamp);
+	async faved(@GQLRoot() state?: State): Promise<Date | undefined> {
+		return dateOrUndefined(state?.faved);
 	}
 
 	@FieldResolver(() => Date, {nullable: true})
-	async lastPlayed(@GQLRoot() timestamp?: number): Promise<Date | undefined> {
-		return dateOrUndefined(timestamp);
+	async lastPlayed(@GQLRoot() state?: State): Promise<Date | undefined> {
+		return dateOrUndefined(state?.lastPlayed);
 	}
 }
 
