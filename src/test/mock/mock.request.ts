@@ -66,7 +66,8 @@ export class ValidData {
 export class InvalidData {
 
 	static generateInvalidDataByParameter(param: ParameterObject): Array<{ name: string; data: any; invalid?: string }> {
-		return InvalidData.generateInvalidDataBySchema(param.schema as SchemaObject)
+		const schema = param.schema as SchemaObject;
+		return InvalidData.generateInvalidDataBySchema(schema, false, !!schema.required)
 			.map(o => ({...o, name: param.name}));
 	}
 
@@ -103,9 +104,9 @@ export class InvalidData {
 		return result;
 	}
 
-	static generateInvalidStringData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+	static generateInvalidStringData(schema: SchemaObject, isField: boolean, required: boolean): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
-		if (schema.default === undefined) { // if the default value available, these parameter are always valid to omit
+		if (schema.default === undefined && isField && required) { // if the default value available, these parameter are always valid to omit
 			result.push({data: '', invalid: 'empty string'});
 		}
 		if (schema.enum) {
@@ -123,29 +124,31 @@ export class InvalidData {
 		return result;
 	}
 
-	static generateInvalidArrayData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+	static generateInvalidArrayData(schema: SchemaObject, isField: boolean): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
-		result.push({data: null, invalid: 'null'});
+		if (schema.required && isField) {
+			result.push({data: null, invalid: 'null'});
+		}
 		const array = [ValidData.generateValidDataSchema(schema.items as SchemaObject).data];
-		const invalids = InvalidData.generateInvalidDataBySchema(schema.items as SchemaObject);
+		const invalids = InvalidData.generateInvalidDataBySchema(schema.items as SchemaObject, isField, !!schema.required);
 		for (const invalid of invalids) {
 			result.push({data: array.concat([invalid.data]), invalid: invalid.invalid});
 		}
 		return result;
 	}
 
-	static generateInvalidDataBySchema(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+	static generateInvalidDataBySchema(schema: SchemaObject, isField: boolean, required: boolean): Array<{ data: any; invalid: string }> {
 		switch (schema.type) {
 			case 'integer':
 				return InvalidData.generateInvalidIntegerData(schema);
 			case 'number':
 				return InvalidData.generateInvalidNumberData(schema);
 			case 'string':
-				return InvalidData.generateInvalidStringData(schema);
+				return InvalidData.generateInvalidStringData(schema, isField, required);
 			case 'boolean':
 				return InvalidData.generateInvalidBooleanData(schema);
 			case 'array':
-				return InvalidData.generateInvalidArrayData(schema);
+				return InvalidData.generateInvalidArrayData(schema, isField);
 			default:
 				console.error(`TODO: mock invalid data for type ${schema.type} ${JSON.stringify(schema)}`);
 				return [];

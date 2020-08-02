@@ -258,7 +258,7 @@ async function callMethod(method: MethodMetadata, context: RestContext<any, any,
 		const result = await instance[method.methodName].apply(instance, args);
 		ApiBaseResponder.sendJSON(context.req, context.res, result);
 	} catch (e) {
-		console.error(e);
+		// console.error(e);
 		log.error(e);
 		ApiBaseResponder.sendError(context.req, context.res, e);
 	}
