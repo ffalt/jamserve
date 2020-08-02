@@ -31,27 +31,27 @@ export class RootResolver {
 	}
 
 	@FieldResolver(() => [TrackQL])
-	async tracks(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Track>> {
+	async tracks(@GQLRoot() root: Root): Promise<Array<Track>> {
 		return root.tracks.getItems();
 	}
 
 	@FieldResolver(() => [FolderQL])
-	async folders(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Folder>> {
+	async folders(@GQLRoot() root: Root): Promise<Array<Folder>> {
 		return root.folders.getItems();
 	}
 
 	@FieldResolver(() => [AlbumQL])
-	async albums(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Album>> {
+	async albums(@GQLRoot() root: Root): Promise<Array<Album>> {
 		return root.albums.getItems();
 	}
 
 	@FieldResolver(() => [SeriesQL])
-	async series(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Series>> {
+	async series(@GQLRoot() root: Root): Promise<Array<Series>> {
 		return root.series.getItems();
 	}
 
 	@FieldResolver(() => [ArtistQL])
-	async artists(@GQLRoot() root: Root, @Ctx() {orm}: Context): Promise<Array<Artist>> {
+	async artists(@GQLRoot() root: Root): Promise<Array<Artist>> {
 		return root.artists.getItems();
 	}
 }

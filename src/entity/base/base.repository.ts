@@ -120,7 +120,7 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 		return {skip: options.offset, take: options.limit, total: count, items};
 	}
 
-	private getIndexChar(name: string): string {
+	private static getIndexChar(name: string): string {
 		const s = name.replace(/[¿…¡?[\]{}<>‘`“'&_~=:./;@#«!%$*()+\-\\|]/g, '').trim();
 		if (s.length === 0) {
 			return '#';
@@ -132,7 +132,7 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 		return c;
 	}
 
-	private removeArticles(ignore: string, name: string): string {
+	private static removeArticles(ignore: string, name: string): string {
 		// /^(?:(?:the|los|les)\s+)?(.*)/gi
 		const matches = new RegExp(`^(?:(?:${ignore})\\s+)?(.*)`, 'gi').exec(name);
 		return matches ? matches[1] : name;
@@ -144,7 +144,7 @@ export abstract class BaseRepository<Entity extends { id: string }, Filter, Orde
 		const map = new Map<string, Array<Entity>>();
 		for (const item of items) {
 			const value = (item[property] || '') as string;
-			const c = this.getIndexChar(ignore ? this.removeArticles(ignore, value) : value);
+			const c = BaseRepository.getIndexChar(ignore ? BaseRepository.removeArticles(ignore, value) : value);
 			const list = map.get(c) || [];
 			list.push(item);
 			map.set(c, list);

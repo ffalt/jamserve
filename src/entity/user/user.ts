@@ -3,7 +3,7 @@ import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {PlayQueue, PlayQueueQL} from '../playqueue/playqueue';
 import {Field, Int, ObjectType} from 'type-graphql';
 import {State} from '../state/state';
-import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, QueryOrder, Reference} from '../../modules/orm';
+import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {BookmarkOrderFields, SessionOrderFields, UserRole} from '../../types/enums';
 import {Playlist, PlaylistQL} from '../playlist/playlist';

@@ -2,7 +2,7 @@ import {Inject, InRequestScope} from 'typescript-ioc';
 import {Artist} from './artist';
 import {MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../types/consts';
 import {Folder} from '../folder/folder';
-import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
+import {ApiBinaryResult} from '../../modules/rest';
 import {FolderService} from '../folder/folder.service';
 import {FolderType} from '../../types/enums';
 import {Orm} from '../../modules/engine/services/orm.service';

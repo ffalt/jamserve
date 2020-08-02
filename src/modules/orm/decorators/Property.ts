@@ -14,7 +14,7 @@ export function Property(
 	returnTypeFuncOrOptions?: ReturnTypeFunc | FieldOptions,
 	maybeOptions?: FieldOptions,
 ): MethodDecorator | PropertyDecorator {
-	return (prototype, propertyKey, descriptor) => {
+	return (prototype, propertyKey, _) => {
 		if (typeof propertyKey === 'symbol') {
 			throw new SymbolKeysNotSupportedError();
 		}

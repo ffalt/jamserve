@@ -22,7 +22,7 @@ export class ArtworkResolver {
 	}
 
 	@FieldResolver(() => FolderQL, {description: 'Get the Navigation Index for Albums'})
-	async folder(@GQLRoot() artwork: Artwork, @Ctx() {orm}: Context): Promise<Folder> {
+	async folder(@GQLRoot() artwork: Artwork): Promise<Folder> {
 		return artwork.folder.getOrFail();
 	}
 

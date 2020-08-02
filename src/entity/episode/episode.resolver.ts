@@ -25,22 +25,22 @@ export class EpisodeResolver {
 	}
 
 	@FieldResolver(() => TagQL, {nullable: true})
-	async tag(@GQLRoot() episode: Episode, @Ctx() {orm}: Context): Promise<Tag | undefined> {
+	async tag(@GQLRoot() episode: Episode): Promise<Tag | undefined> {
 		return episode.tag.get();
 	}
 
 	@FieldResolver(() => PodcastQL)
-	async podcast(@GQLRoot() episode: Episode, @Ctx() {orm}: Context): Promise<Podcast> {
+	async podcast(@GQLRoot() episode: Episode): Promise<Podcast> {
 		return episode.podcast.getOrFail();
 	}
 
 	@FieldResolver(() => [BookmarkQL])
-	async bookmarks(@GQLRoot() episode: Episode, @Ctx() {orm}: Context): Promise<Array<Bookmark>> {
+	async bookmarks(@GQLRoot() episode: Episode): Promise<Array<Bookmark>> {
 		return episode.bookmarks.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async bookmarksCount(@GQLRoot() episode: Episode, @Ctx() {orm}: Context): Promise<number> {
+	async bookmarksCount(@GQLRoot() episode: Episode): Promise<number> {
 		return episode.bookmarks.count();
 	}
 

@@ -7,9 +7,8 @@ import {Episode} from '../episode/episode';
 import {Track} from '../track/track';
 import {User} from '../user/user';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
+import {ApiBinaryResult, GenericError} from '../../modules/rest';
 import {AudioFormatType, DBObjectType} from '../../types/enums';
-import {GenericError} from '../../modules/rest/builder/express-error';
 import {Base} from '../base/base';
 
 @InRequestScope
@@ -38,14 +37,12 @@ export class StreamService {
 		return {file: {filename, name: `${id}.${destFormat}`}};
 	}
 
-	async streamTrack(track: Track, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
+	async streamTrack(track: Track, format: string | undefined, maxBitRate: number | undefined): Promise<ApiBinaryResult> {
 		const tag = await track.tag.get();
-		// this.nowPlayingService.reportTrack(track, user).catch(e => log.error(e)); // do not wait
 		return await this.streamFile(path.join(track.path, track.fileName), track.id, tag?.mediaFormat, format, maxBitRate);
 	}
 
-	async streamEpisode(episode: Episode, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
-		// this.nowPlayingService.reportEpisode(episode, user).catch(e => log.error(e)); // do not wait
+	async streamEpisode(episode: Episode, format: string | undefined, maxBitRate: number | undefined): Promise<ApiBinaryResult> {
 		const tag = await episode.tag.get();
 		if (episode.path && tag?.mediaFormat) {
 			return this.streamFile(episode.path, episode.id, tag?.mediaFormat, format, maxBitRate);
@@ -56,9 +53,9 @@ export class StreamService {
 	async streamDBObject(o: Base, type: DBObjectType, format: string | undefined, maxBitRate: number | undefined, user: User): Promise<ApiBinaryResult> {
 		switch (type) {
 			case DBObjectType.track:
-				return this.streamTrack(o as Track, format, maxBitRate, user);
+				return this.streamTrack(o as Track, format, maxBitRate);
 			case DBObjectType.episode:
-				return this.streamEpisode(o as Episode, format, maxBitRate, user);
+				return this.streamEpisode(o as Episode, format, maxBitRate);
 			default:
 		}
 		return Promise.reject(Error('Invalid Object Type for Streaming'));

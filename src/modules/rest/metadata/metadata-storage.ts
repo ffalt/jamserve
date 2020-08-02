@@ -6,6 +6,7 @@ import {EnumMetadata} from '../definitions/enum-metadata';
 import {ControllerClassMetadata} from '../definitions/controller-metadata';
 import {FieldMetadata} from '../definitions/field-metadata';
 import {ParamMetadata} from '../definitions/param-metadata';
+import {TypeValue} from '../definitions/types';
 
 export class MetadataStorage {
 	initialized = false;
@@ -21,6 +22,10 @@ export class MetadataStorage {
 
 	constructor() {
 		ensureReflectMetadataExists();
+	}
+
+	resultType(target: TypeValue): ResultClassMetadata | undefined {
+		return this.resultTypes.find(it => it.target === target);
 	}
 
 	collectGetHandlerMetadata(definition: MethodMetadata): void {

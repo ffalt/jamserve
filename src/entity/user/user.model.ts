@@ -15,8 +15,8 @@ export class UserRoles {
 
 @ResultType()
 export class User extends Base {
-	@ObjField({description: 'User Email', example: 'user@example.com'})
-	email!: string;
+	@ObjField({description: 'User Email', example: 'user@example.com', nullable: true})
+	email?: string;
 	@ObjField(() => UserRoles, {description: 'User Roles'})
 	roles!: UserRoles;
 }

@@ -6,7 +6,7 @@ import {JWTPayload} from '../../utils/jwt';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import path from 'path';
 import fse from 'fs-extra';
-import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
+import {ApiBinaryResult} from '../../modules/rest';
 import {ConfigService} from '../../modules/engine/services/config.service';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import {ImageModule} from '../../modules/image/image.module';
@@ -100,7 +100,7 @@ export class UserService {
 		await this.imageModule.clearImageCacheByIDs([user.id]);
 	}
 
-	async setUserImage(user: User, filename: string, mimetype?: string): Promise<void> {
+	async setUserImage(user: User, filename: string): Promise<void> {
 		const destName = this.avatarImageFilename(user);
 		await this.imageModule.createAvatar(filename, destName);
 		await fileDeleteIfExists(filename);

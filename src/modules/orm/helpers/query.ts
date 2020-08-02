@@ -52,7 +52,7 @@ export class QHelper {
 	}
 
 	static includeQueries<Entity>(list: Array<{ [name: string]: Array<{ [field: string]: any }> }>): Array<Includeable> {
-		const result = list.map(q => {
+		return list.map(q => {
 			if (!q) {
 				return false;
 			}
@@ -67,7 +67,6 @@ export class QHelper {
 				where: result.length === 1 ? result[0] : {[Op.and]: result}
 			};
 		}).filter(q => !!q) as Array<Includeable>;
-		return result;
 	}
 
 	static buildQuery<Entity>(list?: Array<WhereOptions<Entity>>): FindOptions<Entity> {

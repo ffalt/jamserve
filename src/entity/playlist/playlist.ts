@@ -1,11 +1,10 @@
 import {User} from '../user/user';
 import {PlaylistEntry, PlaylistEntryQL} from '../playlistentry/playlist-entry';
 import {Field, Float, ID, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToOne, OneToMany, ORM_INT, Property, QueryOrder, Reference} from '../../modules/orm';
+import {Collection, Entity, ManyToOne, OneToMany, ORM_INT, Property, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
-import {DefaultOrderFields, PlaylistEntryOrderFields} from '../../types/enums';
-import {PlaylistEntryOrderArgs} from '../playlistentry/playlist-entry.args';
+import {PlaylistEntryOrderFields} from '../../types/enums';
 
 @ObjectType()
 @Entity()

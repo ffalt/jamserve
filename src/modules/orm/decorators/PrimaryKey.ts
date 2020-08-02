@@ -5,7 +5,7 @@ import {ORM_ID} from '../definitions/orm-types';
 
 export function PrimaryKey(): MethodAndPropDecorator;
 export function PrimaryKey(): MethodDecorator | PropertyDecorator {
-	return (prototype, propertyKey, descriptor) => {
+	return (prototype, propertyKey, _) => {
 		if (typeof propertyKey === 'symbol') {
 			throw new SymbolKeysNotSupportedError();
 		}

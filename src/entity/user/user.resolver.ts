@@ -33,12 +33,12 @@ export class UserResolver {
 	}
 
 	@FieldResolver(() => [SessionQL])
-	async sessions(@GQLRoot() user: User, @Ctx() {orm}: Context): Promise<Array<Session>> {
+	async sessions(@GQLRoot() user: User): Promise<Array<Session>> {
 		return user.sessions.getItems();
 	}
 
 	@FieldResolver(() => [BookmarkQL])
-	async bookmarks(@GQLRoot() user: User, @Ctx() {orm}: Context): Promise<Array<Bookmark>> {
+	async bookmarks(@GQLRoot() user: User): Promise<Array<Bookmark>> {
 		return user.bookmarks.getItems();
 	}
 

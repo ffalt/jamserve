@@ -14,7 +14,7 @@ export class RadioRepository extends BaseRepository<Radio, RadioFilterArgs, Radi
 		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: RadioFilterArgs, user?: User): Promise<FindOptions<Radio>> {
+	async buildFilter(filter?: RadioFilterArgs, _?: User): Promise<FindOptions<Radio>> {
 		return filter ? QHelper.buildQuery<Radio>(
 			[
 				{id: filter.ids},

@@ -5,7 +5,7 @@ import {Folder, FolderQL} from '../folder/folder';
 import {Series, SeriesQL} from '../series/series';
 import {AlbumOrderFields, AlbumType, DefaultOrderFields, FolderOrderFields, TrackOrderFields} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToMany, OneToMany, Property, QueryOrder} from '../../modules/orm';
+import {Collection, Entity, ManyToMany, OneToMany, Property} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 

@@ -48,7 +48,7 @@ export class ArtworkWorker extends BaseWorker {
 		changes.folders.updated.add(await artwork.folder.get());
 	}
 
-	private getArtworkName(folder: Folder, types: Array<ArtworkImageType>): string {
+	private static getArtworkName(folder: Folder, types: Array<ArtworkImageType>): string {
 		let name = types.sort((a, b) => a.localeCompare(b)).join('-');
 		if (!name) {
 			name = FolderTypeImageName[folder.folderType];
@@ -57,7 +57,7 @@ export class ArtworkWorker extends BaseWorker {
 	}
 
 	async getArtworkFilenameUnique(folder: Folder, importFilename: string, types: Array<ArtworkImageType>): Promise<string> {
-		const name = this.getArtworkName(folder, types);
+		const name = ArtworkWorker.getArtworkName(folder, types);
 		let suffix = fileSuffix(importFilename);
 		if (suffix.length === 0) {
 			const info = await this.imageModule.getImageInfo(importFilename);

@@ -3,7 +3,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import {SupportedTranscodeAudioFormat} from '../../../utils/filetype';
 import {logger} from '../../../utils/logger';
 import {AudioFormatType} from '../../../types/enums';
-import {StreamData} from '../../rest/builder/express-responder';
+import {StreamData} from '../../rest';
 
 const log = logger('transcoder.stream');
 

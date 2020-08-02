@@ -7,7 +7,7 @@ import {AlbumType, DefaultOrderFields, FolderOrderFields, TrackOrderFields} from
 import {Field, Float, Int, ObjectType} from 'type-graphql';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
-import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_INT, Property, QueryOrder, Reference} from '../../modules/orm';
+import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_INT, Property, Reference} from '../../modules/orm';
 
 @ObjectType()
 @Entity()

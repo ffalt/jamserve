@@ -75,7 +75,7 @@ function prepareParameter(param: RestParamMetadata | FieldMetadata, data: any, i
 		}
 	} else if (type === String) {
 		if (typeOptions.array) {
-			if (!Array.isArray(value)) {
+			if (value && !Array.isArray(value)) {
 				if (value.length === 0) {
 					throw InvalidParamError(param.name);
 				}
@@ -247,7 +247,7 @@ async function callMethod(method: MethodMetadata, context: RestContext<any, any,
 			ApiBaseResponder.sendString(context.req, context.res, result);
 			return;
 		}
-		const resultType = getMetadataStorage().resultTypes.find(it => it.target === target);
+		const resultType = getMetadataStorage().resultType(target);
 		if (!resultType) {
 			throw GenericError(
 				`The value used as a result type of '@${name}' for '${String(method.getReturnType())}' of '${method.target.name}.${method.methodName}' ` +
@@ -291,7 +291,7 @@ export interface RestOptions {
 	tmpPath: string;
 }
 
-function validateCustomPathParameterValue(rElement: string | undefined, group: CustomPathParameterGroup, method: MethodMetadata): any {
+function validateCustomPathParameterValue(rElement: string | undefined, group: CustomPathParameterGroup): any {
 	const type = group.getType();
 	let value: string = rElement || '';
 	if (group.prefix) {
@@ -327,7 +327,7 @@ function validateCustomPathParameterValue(rElement: string | undefined, group: C
 	}
 }
 
-function processCustomPathParameters(customPathParameters: CustomPathParameters, pathParameters: string, method: MethodMetadata, req: express.Request): any {
+function processCustomPathParameters(customPathParameters: CustomPathParameters, pathParameters: string, method: MethodMetadata): any {
 	const r = customPathParameters.regex.exec(pathParameters) || [];
 	let index = 1;
 	const result: any = {};
@@ -336,7 +336,7 @@ function processCustomPathParameters(customPathParameters: CustomPathParameters,
 	const alias = (method.aliasRoutes || []).find(a => a.route === route);
 	for (const group of customPathParameters.groups) {
 		if (!alias || !alias.hideParameters.includes(group.name)) {
-			result[group.name] = validateCustomPathParameterValue(r[index], group, method);
+			result[group.name] = validateCustomPathParameterValue(r[index], group);
 		}
 		index++;
 	}
@@ -405,8 +405,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 							...processCustomPathParameters(
 								get.customPathParameters,
 								req.params.pathParameters,
-								get,
-								req
+								get
 							), pathParameters: undefined
 						} as any;
 					}
@@ -440,8 +439,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 							...processCustomPathParameters(
 								post.customPathParameters,
 								req.params.pathParameters,
-								post,
-								req
+								post
 							), pathParameters: undefined
 						} as any;
 					}

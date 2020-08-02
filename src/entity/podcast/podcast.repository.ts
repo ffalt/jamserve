@@ -26,7 +26,7 @@ export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterArgs
 		return [];
 	}
 
-	async buildFilter(filter?: PodcastFilterArgs, user?: User): Promise<FindOptions<Podcast>> {
+	async buildFilter(filter?: PodcastFilterArgs, _?: User): Promise<FindOptions<Podcast>> {
 		if (!filter) {
 			return {};
 		}

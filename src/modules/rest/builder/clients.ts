@@ -69,7 +69,7 @@ export function getResultType(call: MethodMetadata): string | undefined {
 			if (enumInfo) {
 				resultType = enumInfo.name;
 			} else {
-				const fObjectType = metadata.resultTypes.find(it => it.target === type);
+				const fObjectType = metadata.resultType(type);
 				resultType = fObjectType?.name ? ('Jam.' + fObjectType?.name) : 'any';
 			}
 		}

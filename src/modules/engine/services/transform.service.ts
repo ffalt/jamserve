@@ -610,7 +610,7 @@ export class TransformService {
 			id: o.id,
 			name: o.name,
 			created: o.createdAt.valueOf(),
-			email: o.email,
+			email: (currentUser?.id === o.id || currentUser?.roleAdmin) ? o.email : undefined,
 			roles: {
 				admin: o.roleAdmin,
 				podcast: o.rolePodcast,

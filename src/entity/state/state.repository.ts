@@ -3,17 +3,16 @@ import {DBObjectType} from '../../types/enums';
 import {State} from './state';
 import {User} from '../user/user';
 import {FindOptions, OrderItem} from '../../modules/orm';
+import {DefaultOrderArgs} from '../base/base.args';
 
 export class StateRepository extends BaseRepository<State, any, any> {
 	objType = DBObjectType.state;
 
-	buildOrder(order?: any): Array<OrderItem> {
-		//currently none
+	buildOrder(_?: DefaultOrderArgs): Array<OrderItem> {
 		return [];
 	}
 
-	async buildFilter(filter?: any, user?: User): Promise<FindOptions<State>> {
-		//currently none
+	async buildFilter(_?: any, __?: User): Promise<FindOptions<State>> {
 		return {};
 	}
 

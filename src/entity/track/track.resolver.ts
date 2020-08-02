@@ -32,12 +32,12 @@ export class TrackResolver {
 	}
 
 	@FieldResolver(() => [BookmarkQL])
-	async bookmarks(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Array<Bookmark>> {
+	async bookmarks(@GQLRoot() track: Track): Promise<Array<Bookmark>> {
 		return track.bookmarks.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async bookmarksCount(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<number> {
+	async bookmarksCount(@GQLRoot() track: Track): Promise<number> {
 		return track.bookmarks.count();
 	}
 
@@ -52,37 +52,37 @@ export class TrackResolver {
 	}
 
 	@FieldResolver(() => FolderQL)
-	async folder(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Folder> {
+	async folder(@GQLRoot() track: Track): Promise<Folder> {
 		return track.folder.getOrFail();
 	}
 
 	@FieldResolver(() => TagQL, {nullable: true})
-	async tag(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Tag | undefined> {
+	async tag(@GQLRoot() track: Track): Promise<Tag | undefined> {
 		return track.tag.get();
 	}
 
 	@FieldResolver(() => AlbumQL, {nullable: true})
-	async album(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Album | undefined> {
+	async album(@GQLRoot() track: Track): Promise<Album | undefined> {
 		return track.album.get();
 	}
 
 	@FieldResolver(() => SeriesQL, {nullable: true})
-	async series(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Series | undefined> {
+	async series(@GQLRoot() track: Track): Promise<Series | undefined> {
 		return track.series.get();
 	}
 
 	@FieldResolver(() => ArtistQL, {nullable: true})
-	async albumArtist(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Artist | undefined> {
+	async albumArtist(@GQLRoot() track: Track): Promise<Artist | undefined> {
 		return track.albumArtist.get();
 	}
 
 	@FieldResolver(() => ArtistQL, {nullable: true})
-	async artist(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Artist | undefined> {
+	async artist(@GQLRoot() track: Track): Promise<Artist | undefined> {
 		return track.artist.get();
 	}
 
 	@FieldResolver(() => RootQL)
-	async root(@GQLRoot() track: Track, @Ctx() {orm}: Context): Promise<Root> {
+	async root(@GQLRoot() track: Track): Promise<Root> {
 		return track.root.getOrFail();
 	}
 

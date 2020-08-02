@@ -15,7 +15,7 @@ export class RootRepository extends BaseRepository<Root, RootFilterArgs, RootOrd
 		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: RootFilterArgs, user?: User): Promise<FindOptions<Root>> {
+	async buildFilter(filter?: RootFilterArgs, _?: User): Promise<FindOptions<Root>> {
 		if (!filter) {
 			return {};
 		}

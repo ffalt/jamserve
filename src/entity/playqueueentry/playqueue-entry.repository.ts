@@ -23,7 +23,7 @@ export class PlayQueueEntryRepository extends BaseRepository<PlayQueueEntry, any
 		return [];
 	}
 
-	async buildFilter(filter?: any, user?: User): Promise<FindOptions<PlayQueueEntry>> {
+	async buildFilter(_?: any, __?: User): Promise<FindOptions<PlayQueueEntry>> {
 		return {};
 	}
 }

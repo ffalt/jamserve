@@ -23,7 +23,7 @@ export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, any, 
 		return [];
 	}
 
-	async buildFilter(filter?: any, user?: User): Promise<FindOptions<PlaylistEntry>> {
+	async buildFilter(_?: any, __?: User): Promise<FindOptions<PlaylistEntry>> {
 		return {};
 	}
 

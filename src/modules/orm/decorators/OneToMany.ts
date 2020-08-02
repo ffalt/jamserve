@@ -11,7 +11,7 @@ export function OneToMany<T>(
 	mappedBy: MappedByFunc<T>,
 	options?: OneToManyFieldOptions<T>,
 ): MethodDecorator | PropertyDecorator {
-	return (prototype, propertyKey, descriptor) => {
+	return (prototype, propertyKey, _) => {
 		const opt = (options || {}) as OneToManyFieldRelation<T>;
 		opt.relation = 'one2many';
 		opt.mappedBy = mappedBy;

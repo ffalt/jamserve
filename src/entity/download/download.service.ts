@@ -1,7 +1,7 @@
 import path from 'path';
 import {InRequestScope} from 'typescript-ioc';
 import {Episode} from '../episode/episode';
-import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
+import {ApiBinaryResult, UnauthError} from '../../modules/rest';
 import {Track} from '../track/track';
 import {Folder} from '../folder/folder';
 import {Artist} from '../artist/artist';
@@ -12,7 +12,6 @@ import {Playlist} from '../playlist/playlist';
 import {CompressListStream} from '../../utils/compress-list-stream';
 import {CompressFolderStream} from '../../utils/compress-folder-stream';
 import {User} from '../user/user';
-import {UnauthError} from '../../modules/rest/builder/express-error';
 import {DBObjectType} from '../../types/enums';
 import {Base} from '../base/base';
 import {Artwork} from '../artwork/artwork';

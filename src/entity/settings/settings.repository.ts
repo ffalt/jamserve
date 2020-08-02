@@ -7,13 +7,11 @@ import {FindOptions, OrderItem} from '../../modules/orm';
 export class SettingsRepository extends BaseRepository<Settings, any, any> {
 	objType = DBObjectType.settings;
 
-	buildOrder(order?: any): Array<OrderItem> {
-		//currently none
+	buildOrder(_?: any): Array<OrderItem> {
 		return [];
 	}
 
-	async buildFilter(filter?: any, user?: User): Promise<FindOptions<Settings>> {
-		//currently none
+	async buildFilter(_?: any, __?: User): Promise<FindOptions<Settings>> {
 		return {};
 	}
 }

@@ -11,7 +11,7 @@ export async function waitEngineStart(engine: EngineService): Promise<void> {
 		}
 	}
 
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		wait(resolve);
 	});
 }

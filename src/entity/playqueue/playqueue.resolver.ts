@@ -12,12 +12,12 @@ export class PlayQueueResolver {
 	}
 
 	@FieldResolver(() => [PlayQueueEntryQL])
-	async entries(@GQLRoot() playQueue: PlayQueue, @Ctx() {orm}: Context): Promise<Array<PlayQueueEntry>> {
+	async entries(@GQLRoot() playQueue: PlayQueue): Promise<Array<PlayQueueEntry>> {
 		return playQueue.entries.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async entriesCount(@GQLRoot() playQueue: PlayQueue, @Ctx() {orm}: Context): Promise<number> {
+	async entriesCount(@GQLRoot() playQueue: PlayQueue): Promise<number> {
 		return playQueue.entries.count();
 	}
 

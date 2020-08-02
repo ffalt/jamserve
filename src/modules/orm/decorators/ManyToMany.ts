@@ -11,7 +11,7 @@ export function ManyToMany<T>(
 	mappedBy: MappedByFunc<T>,
 	options?: ManyToManyFieldOptions<T>,
 ): MethodDecorator | PropertyDecorator {
-	return (prototype, propertyKey, descriptor) => {
+	return (prototype, propertyKey, _) => {
 		const opt = (options || {}) as ManyToManyFieldRelation<T>;
 		opt.relation = 'many2many';
 		opt.mappedBy = mappedBy;

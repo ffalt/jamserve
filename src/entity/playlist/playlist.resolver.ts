@@ -28,22 +28,22 @@ export class PlaylistResolver {
 	}
 
 	@FieldResolver(() => [PlaylistEntryQL])
-	async entries(@GQLRoot() playlist: Playlist, @Ctx() {orm}: Context): Promise<Array<PlaylistEntry>> {
+	async entries(@GQLRoot() playlist: Playlist): Promise<Array<PlaylistEntry>> {
 		return playlist.entries.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async entriesCount(@GQLRoot() playlist: Playlist, @Ctx() {orm}: Context): Promise<number> {
+	async entriesCount(@GQLRoot() playlist: Playlist): Promise<number> {
 		return playlist.entries.count();
 	}
 
 	@FieldResolver(() => ID)
-	userID(@GQLRoot() playlist: Playlist, @Ctx() {orm}: Context): string {
+	userID(@GQLRoot() playlist: Playlist): string {
 		return playlist.user.idOrFail();
 	}
 
 	@FieldResolver(() => String)
-	async userName(@GQLRoot() playlist: Playlist, @Ctx() {orm}: Context): Promise<string> {
+	async userName(@GQLRoot() playlist: Playlist): Promise<string> {
 		return (await playlist.user.getOrFail()).name;
 	}
 

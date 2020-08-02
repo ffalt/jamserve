@@ -3,7 +3,7 @@ import {InRequestScope} from 'typescript-ioc';
 import {Orm} from '../../modules/engine/services/orm.service';
 import {User} from '../user/user';
 import {DBObjectType} from '../../types/enums';
-import {NotFoundError} from '../../modules/rest/builder/express-error';
+import {NotFoundError} from '../../modules/rest';
 import {Episode} from '../episode/episode';
 import {Base} from '../base/base';
 import {PlayQueueSetArgs} from './playqueue.args';

@@ -48,7 +48,7 @@ export class RootController {
 	)
 	async status(
 		@QueryParam('id', {description: 'Root Id', isID: true}) id: string,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<RootUpdateStatus> {
 		return engine.transform.rootStatus(await orm.Root.oneOrFailByID(id));
 	}

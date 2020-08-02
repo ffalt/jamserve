@@ -14,7 +14,7 @@ export class ArtworkRepository extends BaseRepository<Artwork, ArtworkFilterArgs
 		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: ArtworkFilterArgs, user?: User): Promise<FindOptions<Artwork>> {
+	async buildFilter(filter?: ArtworkFilterArgs, _?: User): Promise<FindOptions<Artwork>> {
 		if (!filter) {
 			return {};
 		}
@@ -28,7 +28,7 @@ export class ArtworkRepository extends BaseRepository<Artwork, ArtworkFilterArgs
 		if (filter?.folderIDs) {
 			folderIDs = folderIDs.concat(filter.folderIDs);
 		}
-		const result = QHelper.buildQuery<Artwork>([
+		return QHelper.buildQuery<Artwork>([
 				{id: filter.ids},
 				{name: QHelper.like(filter.query)},
 				{name: QHelper.eq(filter.name)},
@@ -45,7 +45,6 @@ export class ArtworkRepository extends BaseRepository<Artwork, ArtworkFilterArgs
 				...QHelper.inStringArray('types', filter.types)
 			]
 		);
-		return result;
 	}
 
 }

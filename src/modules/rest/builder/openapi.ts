@@ -77,7 +77,7 @@ class OpenApiBuilder {
 	}
 
 	getResultRef(resultClassValue: TypeValue, name: string, schemas: Schemas): string {
-		const argumentType = getMetadataStorage().resultTypes.find(it => it.target === resultClassValue);
+		const argumentType = getMetadataStorage().resultType(resultClassValue);
 		if (!argumentType) {
 			if (resultClassValue === Object) {
 				return SCHEMA_JSON;

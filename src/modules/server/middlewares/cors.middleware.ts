@@ -2,7 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import {ConfigService} from '../../engine/services/config.service';
 
-export function registerPublicCORS(router: express.Router): express.RequestHandler {
+export function registerPublicCORS(_: express.Router): express.RequestHandler {
 	return cors({
 		preflightContinue: false,
 		credentials: true,

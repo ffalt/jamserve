@@ -3,17 +3,16 @@ import {BaseRepository} from '../base/base.repository';
 import {DBObjectType} from '../../types/enums';
 import {MetaData} from './metadata';
 import {User} from '../user/user';
+import {DefaultOrderArgs} from '../base/base.args';
 
 export class MetaDataRepository extends BaseRepository<MetaData, any, any> {
 	objType = DBObjectType.metadata;
 
-	buildOrder(order?: any): Array<OrderItem> {
-		//currently none
+	buildOrder(_?: DefaultOrderArgs): Array<OrderItem> {
 		return [];
 	}
 
-	async buildFilter(filter?: any, user?: User): Promise<FindOptions<MetaData>> {
-		//currently none
+	async buildFilter(_?: any, __?: User): Promise<FindOptions<MetaData>> {
 		return {};
 	}
 

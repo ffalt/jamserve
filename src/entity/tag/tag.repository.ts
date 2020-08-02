@@ -7,13 +7,11 @@ import {FindOptions, OrderItem} from '../../modules/orm';
 export class TagRepository extends BaseRepository<Tag, any, any> {
 	objType = DBObjectType.tag;
 
-	buildOrder(order?: any): Array<OrderItem> {
-		//currently none
+	buildOrder(_?: any): Array<OrderItem> {
 		return [];
 	}
 
-	async buildFilter(filter?: any, user?: User): Promise<FindOptions<Tag>> {
-		//currently none
+	async buildFilter(_?: any, __?: User): Promise<FindOptions<Tag>> {
 		return {};
 	}
 

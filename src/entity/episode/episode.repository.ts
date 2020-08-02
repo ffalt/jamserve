@@ -27,7 +27,7 @@ export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs
 		return [];
 	}
 
-	async buildFilter(filter?: EpisodeFilterArgs, user?: User): Promise<FindOptions<Episode>> {
+	async buildFilter(filter?: EpisodeFilterArgs, _?: User): Promise<FindOptions<Episode>> {
 		return filter ? QHelper.buildQuery<Episode>(
 			[
 				{id: filter.ids},

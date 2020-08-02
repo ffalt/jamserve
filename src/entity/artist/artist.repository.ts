@@ -26,7 +26,7 @@ export class ArtistRepository extends BaseRepository<Artist, ArtistFilterArgs, A
 		return [];
 	}
 
-	async buildFilter(filter?: ArtistFilterArgs, user?: User): Promise<FindOptions<Artist>> {
+	async buildFilter(filter?: ArtistFilterArgs, _?: User): Promise<FindOptions<Artist>> {
 		if (!filter) {
 			return {};
 		}

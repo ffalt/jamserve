@@ -77,7 +77,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		id: TrackHealthID.tagValuesExists,
 		name: 'Tag Values missing',
 		all: true,
-		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+		run: async (folder: Folder, track: Track, tag: Tag | undefined): Promise<RuleResult | undefined> => {
 			const missing = [];
 			if (!tag?.album) {
 				missing.push('album');
@@ -119,7 +119,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		id: TrackHealthID.id3v2Exists,
 		name: 'ID3v2 Tag is missing',
 		mp3: true,
-		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+		run: async (folder: Folder, track: Track, tag: Tag | undefined): Promise<RuleResult | undefined> => {
 			if (!hasID3v2Tag(track, tag)) {
 				return {};
 			}

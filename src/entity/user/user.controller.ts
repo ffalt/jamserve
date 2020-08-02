@@ -144,7 +144,7 @@ export class UserController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<void> {
 		const u = await this.validateUserOrAdmin(orm, id, user);
-		return engine.user.setUserImage(u, file.name, file.type);
+		return engine.user.setUserImage(u, file.name);
 	}
 
 	private async validatePassword(orm: Orm, engine: EngineService, password: string, user: ORMUser): Promise<void> {

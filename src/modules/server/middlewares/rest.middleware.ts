@@ -1,7 +1,6 @@
 import express from 'express';
-import {buildRestMeta} from '../../rest/builder/builder';
+import {buildRestMeta, buildRestRouter, RestOptions} from '../../rest';
 import {UserRole} from '../../../types/enums';
-import {buildRestRouter, RestOptions} from '../../rest/builder/express';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../../utils/logger';
 import {User} from '../../../entity/user/user';

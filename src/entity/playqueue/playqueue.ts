@@ -1,9 +1,9 @@
 import {User} from '../user/user';
 import {PlayQueueEntry, PlayQueueEntryQL} from '../playqueueentry/playqueue-entry';
 import {Field, Float, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, QueryOrder} from '../../modules/orm';
+import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property} from '../../modules/orm';
 import {Base} from '../base/base';
-import {DefaultOrderFields, PlayQueueEntryOrderFields} from '../../types/enums';
+import {PlayQueueEntryOrderFields} from '../../types/enums';
 
 @ObjectType()
 @Entity()

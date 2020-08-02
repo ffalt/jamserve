@@ -29,7 +29,7 @@ export class ValidData {
 		return chance.floating({min: schema.minimum !== undefined ? schema.minimum : 1, max: schema.maximum !== undefined ? schema.maximum - 1 : 100, fixed: 2});
 	}
 
-	static generateValidBooleanData(schema: SchemaObject): any {
+	static generateValidBooleanData(_: SchemaObject): any {
 		return chance.bool();
 	}
 
@@ -114,7 +114,7 @@ export class InvalidData {
 		return result;
 	}
 
-	static generateInvalidBooleanData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+	static generateInvalidBooleanData(_: SchemaObject): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
 		result.push({data: '', invalid: 'empty string'});
 		result.push({data: chance.string(), invalid: 'string'});

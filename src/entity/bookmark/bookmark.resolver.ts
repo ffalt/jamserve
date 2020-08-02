@@ -19,12 +19,12 @@ export class BookmarkResolver {
 	}
 
 	@FieldResolver(() => TrackQL, {nullable: true})
-	async track(@GQLRoot() bookmark: Bookmark, @Ctx() {orm}: Context): Promise<Track | undefined> {
+	async track(@GQLRoot() bookmark: Bookmark): Promise<Track | undefined> {
 		return bookmark.track.get();
 	}
 
 	@FieldResolver(() => EpisodeQL, {nullable: true})
-	async episode(@GQLRoot() bookmark: Bookmark, @Ctx() {orm}: Context): Promise<Episode | undefined> {
+	async episode(@GQLRoot() bookmark: Bookmark): Promise<Episode | undefined> {
 		return bookmark.episode.get();
 	}
 

@@ -42,7 +42,7 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 		return [];
 	}
 
-	async buildFilter(filter?: TrackFilterArgs, user?: User): Promise<FindOptions<Track>> {
+	async buildFilter(filter?: TrackFilterArgs, _?: User): Promise<FindOptions<Track>> {
 		if (!filter) {
 			return {};
 		}

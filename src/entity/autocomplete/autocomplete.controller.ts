@@ -12,7 +12,7 @@ export class AutocompleteController {
 	)
 	async autocomplete(
 		@QueryParams() filter: AutoCompleteFilterArgs,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() {orm, user}: Context
 	): Promise<AutoComplete> {
 		const result: AutoComplete = {};
 		const {query} = filter;

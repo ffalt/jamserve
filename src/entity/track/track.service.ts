@@ -8,7 +8,7 @@ import {processQueue} from '../../utils/queue';
 import {TrackRulesChecker} from '../health/track.rule';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {RawTag} from '../../modules/audio/rawTag';
-import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
+import {ApiBinaryResult} from '../../modules/rest';
 import {FolderService} from '../folder/folder.service';
 import {TrackHealthHint} from '../health/health.model';
 import {Orm} from '../../modules/engine/services/orm.service';

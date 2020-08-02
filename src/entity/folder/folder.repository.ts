@@ -33,7 +33,7 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 		return [];
 	}
 
-	async buildFilter(filter?: FolderFilterArgs, user?: User): Promise<FindOptions<Folder>> {
+	async buildFilter(filter?: FolderFilterArgs, _?: User): Promise<FindOptions<Folder>> {
 		if (!filter) {
 			return {};
 		}

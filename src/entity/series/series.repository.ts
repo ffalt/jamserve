@@ -14,7 +14,7 @@ export class SeriesRepository extends BaseRepository<Series, SeriesFilterArgs, S
 		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: SeriesFilterArgs, user?: User): Promise<FindOptions<Series>> {
+	async buildFilter(filter?: SeriesFilterArgs, _?: User): Promise<FindOptions<Series>> {
 		if (!filter) {
 			return {};
 		}

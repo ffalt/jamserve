@@ -37,12 +37,12 @@ export class PodcastResolver {
 	}
 
 	@FieldResolver(() => [EpisodeQL])
-	async episodes(@GQLRoot() podcast: Podcast, @Ctx() {orm}: Context): Promise<Array<Episode>> {
+	async episodes(@GQLRoot() podcast: Podcast): Promise<Array<Episode>> {
 		return podcast.episodes.getItems();
 	}
 
 	@FieldResolver(() => Int)
-	async episodesCount(@GQLRoot() podcast: Podcast, @Ctx() {orm}: Context): Promise<number> {
+	async episodesCount(@GQLRoot() podcast: Podcast): Promise<number> {
 		return podcast.episodes.count();
 	}
 

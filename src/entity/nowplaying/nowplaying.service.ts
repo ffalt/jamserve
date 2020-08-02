@@ -25,34 +25,33 @@ export class NowPlayingService {
 		this.playing = [];
 	}
 
-	async report(entries: Array<{ userID: string; id?: string; type: DBObjectType }>): Promise<void> {
-		// await this.stateService.reportPlaying(episode.id, DBObjectType.episode, user.id);
-		// await this.stateService.reportPlaying(episode.podcastID, DBObjectType.podcast, user.id);
+	async report(orm: Orm, entries: Array<{ id?: string; type: DBObjectType }>, user: User): Promise<void> {
+		await this.stateService.reportPlaying(orm, entries, user);
 	}
 
-	async reportEpisode(episode: Episode, user: User): Promise<NowPlaying> {
+	async reportEpisode(orm: Orm, episode: Episode, user: User): Promise<NowPlaying> {
 		this.playing = this.playing.filter(np => (np.user.id !== user.id));
 		const result = {time: Date.now(), episode, user};
 		this.playing.push(result);
-		this.report([
-			{id: episode.id, type: DBObjectType.episode, userID: user.id},
-			{id: episode.podcast.idOrFail(), type: DBObjectType.podcast, userID: user.id},
-		]).catch(e => log.error(e)); // do not wait
+		this.report(orm, [
+			{id: episode.id, type: DBObjectType.episode},
+			{id: episode.podcast.idOrFail(), type: DBObjectType.podcast},
+		], user).catch(e => log.error(e)); // do not wait
 		return result;
 	}
 
-	async reportTrack(track: Track, user: User): Promise<NowPlaying> {
+	async reportTrack(orm: Orm, track: Track, user: User): Promise<NowPlaying> {
 		this.playing = this.playing.filter(np => (np.user.id !== user.id));
 		const result = {time: Date.now(), track, user};
 		this.playing.push(result);
-		this.report([
-			{id: track.id, type: DBObjectType.track, userID: user.id},
-			{id: track.album.id(), type: DBObjectType.album, userID: user.id},
-			{id: track.artist.id(), type: DBObjectType.artist, userID: user.id},
-			{id: track.folder.id(), type: DBObjectType.folder, userID: user.id},
-			{id: track.series.id(), type: DBObjectType.series, userID: user.id},
-			{id: track.root.id(), type: DBObjectType.root, userID: user.id},
-		]).catch(e => log.error(e)); // do not wait
+		this.report(orm, [
+			{id: track.id, type: DBObjectType.track},
+			{id: track.album.id(), type: DBObjectType.album},
+			{id: track.artist.id(), type: DBObjectType.artist},
+			{id: track.folder.id(), type: DBObjectType.folder},
+			{id: track.series.id(), type: DBObjectType.series},
+			{id: track.root.id(), type: DBObjectType.root},
+		], user).catch(e => log.error(e)); // do not wait
 		return result;
 	}
 
@@ -63,9 +62,9 @@ export class NowPlayingService {
 		}
 		switch (result.objType) {
 			case DBObjectType.track:
-				return await this.reportTrack(result.obj as Track, user);
+				return await this.reportTrack(orm, result.obj as Track, user);
 			case DBObjectType.episode:
-				return this.reportEpisode(result.obj as Episode, user);
+				return this.reportEpisode(orm, result.obj as Episode, user);
 			default:
 				return Promise.reject(Error('Invalid Object Type for Scrobbling'));
 		}

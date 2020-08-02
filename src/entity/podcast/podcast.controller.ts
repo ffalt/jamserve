@@ -92,7 +92,7 @@ export class PodcastController {
 	)
 	async status(
 		@QueryParam('id', {description: 'Podcast Id', isID: true}) id: string,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() {orm, engine}: Context
 	): Promise<PodcastUpdateStatus> {
 		return engine.transform.podcastStatus(await orm.Podcast.oneOrFailByID(id));
 	}

@@ -11,7 +11,7 @@ import {PodcastStatus} from '../../types/enums';
 import {ConfigService} from '../../modules/engine/services/config.service';
 import {Episode} from '../episode/episode';
 import {EpisodeData, Feed, PodcastTag} from './podcast-feed';
-import {ApiBinaryResult} from '../../modules/rest/builder/express-responder';
+import {ApiBinaryResult} from '../../modules/rest';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {EpisodeService} from '../episode/episode.service';
 
