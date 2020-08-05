@@ -1,6 +1,6 @@
 
 export const examples = {
-	timestamp: new Date().valueOf(),
+	timestamp: new Date(2001, 0, 1),
 	year: 2001,
 	token: 'eyfsfkwefwesdfsdlkfgmergergweefw.wefkljnsvdpvnssd',
 	genres: ['Pop'],

@@ -77,7 +77,7 @@
 						"name": "id",
 						"description": "Queue Task Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -392,7 +392,7 @@
 						"name": "id",
 						"description": "Album Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -494,7 +494,7 @@
 						"name": "ids",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -507,7 +507,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -520,7 +520,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -533,7 +533,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -546,7 +546,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -559,7 +559,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -635,7 +635,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -790,7 +790,7 @@
 						"name": "ids",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -803,7 +803,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -816,7 +816,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -829,7 +829,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -842,7 +842,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -855,7 +855,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -931,7 +931,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -1253,7 +1253,7 @@
 						"name": "id",
 						"description": "Album Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -1375,7 +1375,7 @@
 						"name": "ids",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -1388,7 +1388,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -1401,7 +1401,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -1414,7 +1414,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -1427,7 +1427,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -1440,7 +1440,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -1516,7 +1516,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -1743,7 +1743,7 @@
 						"name": "id",
 						"description": "Album Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -2113,7 +2113,7 @@
 						"name": "id",
 						"description": "Artist Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -2204,7 +2204,7 @@
 						"name": "ids",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2217,7 +2217,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2230,7 +2230,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2243,7 +2243,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2256,7 +2256,7 @@
 						"name": "albumTrackIDs",
 						"description": "filter by Album Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2269,7 +2269,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2282,7 +2282,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2342,7 +2342,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -2462,7 +2462,7 @@
 						"name": "ids",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2475,7 +2475,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2488,7 +2488,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2501,7 +2501,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2514,7 +2514,7 @@
 						"name": "albumTrackIDs",
 						"description": "filter by Album Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2527,7 +2527,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2540,7 +2540,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -2600,7 +2600,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -2994,7 +2994,7 @@
 						"name": "id",
 						"description": "Artist Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -3173,7 +3173,7 @@
 						"name": "id",
 						"description": "Artist Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -3304,7 +3304,7 @@
 						"name": "id",
 						"description": "Artist Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -3415,7 +3415,7 @@
 						"name": "ids",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3428,7 +3428,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3441,7 +3441,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3454,7 +3454,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3467,7 +3467,7 @@
 						"name": "albumTrackIDs",
 						"description": "filter by Album Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3480,7 +3480,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3493,7 +3493,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3553,7 +3553,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -3736,7 +3736,7 @@
 						"name": "ids",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3749,7 +3749,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3762,7 +3762,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3775,7 +3775,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3788,7 +3788,7 @@
 						"name": "albumTrackIDs",
 						"description": "filter by Album Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3801,7 +3801,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3814,7 +3814,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -3874,7 +3874,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -4046,7 +4046,7 @@
 						"name": "ids",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -4074,7 +4074,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -4086,7 +4086,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -4099,7 +4099,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -4112,7 +4112,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -4125,7 +4125,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -4138,7 +4138,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -4449,7 +4449,7 @@
 						"name": "id",
 						"description": "Artwork Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -4559,7 +4559,7 @@
 						"name": "ids",
 						"description": "filter by Artwork Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -4588,7 +4588,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -4601,7 +4601,7 @@
 						"name": "childOfID",
 						"description": "filter if artwork is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -4624,7 +4624,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -5583,7 +5583,7 @@
 						"name": "id",
 						"description": "Bookmark Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -5683,7 +5683,7 @@
 						"name": "ids",
 						"description": "filter by Bookmark Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -5696,7 +5696,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -5709,7 +5709,7 @@
 						"name": "episodeIDs",
 						"description": "filter by Episode Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -5722,7 +5722,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -6058,7 +6058,7 @@
 						"name": "since",
 						"description": "filter by message timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -6207,7 +6207,7 @@
 						"name": "id",
 						"description": "Object Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -6272,7 +6272,7 @@
 						"name": "id",
 						"description": "Object Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -6433,7 +6433,7 @@
 						"name": "id",
 						"description": "Episode Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -6543,7 +6543,7 @@
 						"name": "ids",
 						"description": "filter by Episode Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -6556,7 +6556,7 @@
 						"name": "podcastIDs",
 						"description": "filter by Podcast Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -6569,7 +6569,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -6794,7 +6794,7 @@
 						"name": "id",
 						"description": "Episode Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -7141,7 +7141,7 @@
 						"name": "id",
 						"description": "Folder Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -7221,7 +7221,7 @@
 						"name": "ids",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7234,7 +7234,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -7246,7 +7246,7 @@
 						"name": "parentIDs",
 						"description": "filter by Folder Parent Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7259,7 +7259,7 @@
 						"name": "childOfID",
 						"description": "filter if folder is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -7477,7 +7477,7 @@
 						"name": "artworksIDs",
 						"description": "filter by Artwork Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7490,7 +7490,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7503,7 +7503,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7516,7 +7516,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7529,7 +7529,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7542,7 +7542,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7652,7 +7652,7 @@
 						"name": "ids",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7665,7 +7665,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -7677,7 +7677,7 @@
 						"name": "parentIDs",
 						"description": "filter by Folder Parent Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7690,7 +7690,7 @@
 						"name": "childOfID",
 						"description": "filter if folder is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -7908,7 +7908,7 @@
 						"name": "artworksIDs",
 						"description": "filter by Artwork Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7921,7 +7921,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7934,7 +7934,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7947,7 +7947,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7960,7 +7960,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -7973,7 +7973,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8338,7 +8338,7 @@
 						"name": "ids",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8351,7 +8351,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -8363,7 +8363,7 @@
 						"name": "parentIDs",
 						"description": "filter by Folder Parent Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8376,7 +8376,7 @@
 						"name": "childOfID",
 						"description": "filter if folder is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -8594,7 +8594,7 @@
 						"name": "artworksIDs",
 						"description": "filter by Artwork Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8607,7 +8607,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8620,7 +8620,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8633,7 +8633,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8646,7 +8646,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8659,7 +8659,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8832,7 +8832,7 @@
 						"name": "ids",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8845,7 +8845,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -8857,7 +8857,7 @@
 						"name": "parentIDs",
 						"description": "filter by Folder Parent Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -8870,7 +8870,7 @@
 						"name": "childOfID",
 						"description": "filter if folder is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -9088,7 +9088,7 @@
 						"name": "artworksIDs",
 						"description": "filter by Artwork Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9101,7 +9101,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9114,7 +9114,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9127,7 +9127,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9140,7 +9140,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9153,7 +9153,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9410,7 +9410,7 @@
 						"name": "ids",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9423,7 +9423,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -9435,7 +9435,7 @@
 						"name": "parentIDs",
 						"description": "filter by Folder Parent Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9448,7 +9448,7 @@
 						"name": "childOfID",
 						"description": "filter if folder is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -9666,7 +9666,7 @@
 						"name": "artworksIDs",
 						"description": "filter by Artwork Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9679,7 +9679,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9692,7 +9692,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9705,7 +9705,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9718,7 +9718,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9731,7 +9731,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -9826,7 +9826,7 @@
 						"name": "id",
 						"description": "Folder Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -9884,7 +9884,7 @@
 						"name": "id",
 						"description": "Folder Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -10099,7 +10099,7 @@
 						"name": "id",
 						"description": "Folder Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -10230,7 +10230,7 @@
 						"name": "id",
 						"description": "Folder Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -10442,7 +10442,7 @@
 						"name": "ids",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -10455,7 +10455,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -10467,7 +10467,7 @@
 						"name": "parentIDs",
 						"description": "filter by Folder Parent Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -10480,7 +10480,7 @@
 						"name": "childOfID",
 						"description": "filter if folder is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -10698,7 +10698,7 @@
 						"name": "artworksIDs",
 						"description": "filter by Artwork Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -10711,7 +10711,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -10724,7 +10724,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -10737,7 +10737,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -10750,7 +10750,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -10763,7 +10763,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -11024,7 +11024,7 @@
 						"name": "rootID",
 						"description": "filter genre by Root Id",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -11155,7 +11155,7 @@
 						"name": "id",
 						"description": "Object Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -11249,7 +11249,7 @@
 						"name": "id",
 						"description": "Object Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -11320,7 +11320,7 @@
 						"name": "id",
 						"description": "Object Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -11401,7 +11401,7 @@
 						"name": "id",
 						"description": "Object Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -12571,7 +12571,7 @@
 						"name": "id",
 						"description": "Playlist Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -12662,7 +12662,7 @@
 						"name": "ids",
 						"description": "filter by Playlist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -12675,7 +12675,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -12687,7 +12687,7 @@
 						"name": "userIDs",
 						"description": "filter by User Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -12711,7 +12711,7 @@
 						"name": "durationFrom",
 						"description": "filter by since Playlist duration",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -12723,7 +12723,7 @@
 						"name": "durationTo",
 						"description": "filter by until Playlist duration",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -12843,7 +12843,7 @@
 						"name": "ids",
 						"description": "filter by Playlist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -12856,7 +12856,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -12868,7 +12868,7 @@
 						"name": "userIDs",
 						"description": "filter by User Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -12892,7 +12892,7 @@
 						"name": "durationFrom",
 						"description": "filter by since Playlist duration",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -12904,7 +12904,7 @@
 						"name": "durationTo",
 						"description": "filter by until Playlist duration",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -13171,7 +13171,7 @@
 						"name": "ids",
 						"description": "filter by Playlist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -13184,7 +13184,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -13196,7 +13196,7 @@
 						"name": "userIDs",
 						"description": "filter by User Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -13220,7 +13220,7 @@
 						"name": "durationFrom",
 						"description": "filter by since Playlist duration",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -13232,7 +13232,7 @@
 						"name": "durationTo",
 						"description": "filter by until Playlist duration",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -13900,7 +13900,7 @@
 						"name": "id",
 						"description": "Podcast Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -13980,7 +13980,7 @@
 						"name": "ids",
 						"description": "filter by Podcast Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -13993,7 +13993,7 @@
 						"name": "episodeIDs",
 						"description": "filter by Episode Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -14006,7 +14006,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -14044,7 +14044,7 @@
 						"name": "lastCheckFrom",
 						"description": "filter by since Last Check timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -14056,7 +14056,7 @@
 						"name": "lastCheckTo",
 						"description": "filter by until Last Check timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -14225,7 +14225,7 @@
 						"name": "ids",
 						"description": "filter by Podcast Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -14238,7 +14238,7 @@
 						"name": "episodeIDs",
 						"description": "filter by Episode Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -14251,7 +14251,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -14289,7 +14289,7 @@
 						"name": "lastCheckFrom",
 						"description": "filter by since Last Check timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -14301,7 +14301,7 @@
 						"name": "lastCheckTo",
 						"description": "filter by until Last Check timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -14581,7 +14581,7 @@
 						"name": "ids",
 						"description": "filter by Podcast Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -14594,7 +14594,7 @@
 						"name": "episodeIDs",
 						"description": "filter by Episode Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -14607,7 +14607,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -14645,7 +14645,7 @@
 						"name": "lastCheckFrom",
 						"description": "filter by since Last Check timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -14657,7 +14657,7 @@
 						"name": "lastCheckTo",
 						"description": "filter by until Last Check timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -14847,7 +14847,7 @@
 						"name": "id",
 						"description": "Podcast Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -15055,7 +15055,7 @@
 						"name": "id",
 						"description": "Radio Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -15135,7 +15135,7 @@
 						"name": "ids",
 						"description": "filter by Radio Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -15170,7 +15170,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -15280,7 +15280,7 @@
 						"name": "ids",
 						"description": "filter by Radio Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -15315,7 +15315,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -15566,7 +15566,7 @@
 						"name": "id",
 						"description": "Root Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -15666,7 +15666,7 @@
 						"name": "ids",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -15679,7 +15679,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -15706,7 +15706,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -15719,7 +15719,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -15732,7 +15732,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -15745,7 +15745,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -15758,7 +15758,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -15841,7 +15841,7 @@
 						"name": "id",
 						"description": "Root Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -16306,7 +16306,7 @@
 						"name": "id",
 						"description": "Series Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -16386,7 +16386,7 @@
 						"name": "ids",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16414,7 +16414,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -16426,7 +16426,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16439,7 +16439,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16452,7 +16452,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16465,7 +16465,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16478,7 +16478,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16588,7 +16588,7 @@
 						"name": "ids",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16616,7 +16616,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -16628,7 +16628,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16641,7 +16641,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16654,7 +16654,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16667,7 +16667,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16680,7 +16680,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -16955,7 +16955,7 @@
 						"name": "id",
 						"description": "Series Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -17055,7 +17055,7 @@
 						"name": "ids",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17083,7 +17083,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -17095,7 +17095,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17108,7 +17108,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17121,7 +17121,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17134,7 +17134,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17147,7 +17147,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17320,7 +17320,7 @@
 						"name": "ids",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17348,7 +17348,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -17360,7 +17360,7 @@
 						"name": "trackIDs",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17373,7 +17373,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17386,7 +17386,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17399,7 +17399,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17412,7 +17412,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17657,7 +17657,7 @@
 						"name": "id",
 						"description": "Object Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -17715,7 +17715,7 @@
 						"name": "ids",
 						"description": "IDs",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -17872,7 +17872,7 @@
 						"name": "rootID",
 						"description": "filter stats by Root Id",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -17950,7 +17950,7 @@
 						"name": "id",
 						"description": "Media Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -18043,7 +18043,7 @@
 						"name": "id",
 						"description": "Media Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -18139,7 +18139,7 @@
 						"name": "id",
 						"description": "Media Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -18222,7 +18222,7 @@
 						"name": "id",
 						"description": "Media Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -18353,7 +18353,7 @@
 						"name": "id",
 						"description": "Track Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -18463,7 +18463,7 @@
 						"name": "ids",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -18476,7 +18476,7 @@
 						"name": "childOfID",
 						"description": "filter if track is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -18524,7 +18524,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -18536,7 +18536,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -18549,7 +18549,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -18562,7 +18562,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -18575,7 +18575,7 @@
 						"name": "albumArtistIDs",
 						"description": "filter by Album Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -18588,7 +18588,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -18601,7 +18601,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -18614,7 +18614,7 @@
 						"name": "bookmarkIDs",
 						"description": "filter by Bookmark Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -18842,7 +18842,7 @@
 						"name": "id",
 						"description": "Track Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -18900,7 +18900,7 @@
 						"name": "id",
 						"description": "Track Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -18980,7 +18980,7 @@
 						"name": "ids",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -18993,7 +18993,7 @@
 						"name": "childOfID",
 						"description": "filter if track is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -19041,7 +19041,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -19053,7 +19053,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19066,7 +19066,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19079,7 +19079,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19092,7 +19092,7 @@
 						"name": "albumArtistIDs",
 						"description": "filter by Album Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19105,7 +19105,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19118,7 +19118,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19131,7 +19131,7 @@
 						"name": "bookmarkIDs",
 						"description": "filter by Bookmark Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19286,7 +19286,7 @@
 						"name": "ids",
 						"description": "filter by Track Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19299,7 +19299,7 @@
 						"name": "childOfID",
 						"description": "filter if track is in folder id (or its child folders)",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -19347,7 +19347,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -19359,7 +19359,7 @@
 						"name": "seriesIDs",
 						"description": "filter by Series Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19372,7 +19372,7 @@
 						"name": "albumIDs",
 						"description": "filter by Album Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19385,7 +19385,7 @@
 						"name": "artistIDs",
 						"description": "filter by Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19398,7 +19398,7 @@
 						"name": "albumArtistIDs",
 						"description": "filter by Album Artist Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19411,7 +19411,7 @@
 						"name": "rootIDs",
 						"description": "filter by Root Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19424,7 +19424,7 @@
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19437,7 +19437,7 @@
 						"name": "bookmarkIDs",
 						"description": "filter by Bookmark Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19781,7 +19781,7 @@
 						"name": "id",
 						"description": "User Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -19881,7 +19881,7 @@
 						"name": "ids",
 						"description": "filter by User Ids",
 						"required": false,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"type": "array",
 							"items": {
@@ -19894,7 +19894,7 @@
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
-						"example": 1596284524484,
+						"example": "2000-12-31T23:00:00.000Z",
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
@@ -20409,7 +20409,7 @@
 						"name": "id",
 						"description": "Object Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -20558,7 +20558,7 @@
 						"name": "id",
 						"description": "Media Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -20639,7 +20639,7 @@
 						"name": "id",
 						"description": "Media Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -20710,7 +20710,7 @@
 						"name": "id",
 						"description": "Media Id",
 						"required": true,
-						"example": "8dff578f-5f7d-444a-9e7e-716c8c3ae8b1",
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
@@ -21131,7 +21131,7 @@
 					},
 					"created": {
 						"type": "integer",
-						"default": 1596284535801,
+						"default": 1596625108183,
 						"minimum": 0,
 						"description": "Created Timestamp"
 					}
@@ -21440,7 +21440,9 @@
 					"name",
 					"artist",
 					"year",
-					"duration"
+					"seriesNr",
+					"duration",
+					"albumType"
 				]
 			},
 			"AlbumPage": {
@@ -21499,6 +21501,8 @@
 					"updated",
 					"trackNr",
 					"discNr",
+					"seriesNr",
+					"album",
 					"title",
 					"parent"
 				]
@@ -22374,6 +22378,7 @@
 					"default",
 					"created",
 					"updated",
+					"media",
 					"position"
 				]
 			},
@@ -22636,6 +22641,7 @@
 					"default",
 					"created",
 					"updated",
+					"level",
 					"name",
 					"title",
 					"year"
@@ -23033,7 +23039,7 @@
 							},
 							"created": {
 								"type": "integer",
-								"default": 1596284535808,
+								"default": 1596625108190,
 								"minimum": 0,
 								"description": "Playlist Created Timestamp"
 							},
@@ -24209,7 +24215,6 @@
 							}
 						},
 						"required": [
-							"email",
 							"roles"
 						]
 					}

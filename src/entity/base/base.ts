@@ -7,16 +7,16 @@ import {OrderByArgs} from './base.args';
 export abstract class Base {
 	@Field(() => ID)
 	@PrimaryKey()
-	id!: string;// = v4();
+	id!: string;
 
 	// @Property() added by default Sequelize
 	@Field(() => Date)
-	createdAt!: Date;// = new Date();
+	createdAt!: Date;
 
-	// @Property() added by default Sequelize
+	// @Property() added and managed by default Sequelize
 	// @Property({onUpdate: () => new Date()})
 	@Field(() => Date)
-	updatedAt!: Date; // = new Date();
+	updatedAt!: Date;
 }
 
 export interface IndexResultGroup<Entity> {

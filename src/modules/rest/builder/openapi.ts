@@ -10,10 +10,8 @@ import {MethodMetadata} from '../definitions/method-metadata';
 import {OpenAPIObject, OperationObject, ParameterLocation, ParameterObject, ReferenceObject, ResponsesObject, SchemaObject} from 'openapi3-ts';
 import {Errors} from './express-error';
 import {ContentObject, PathsObject, RequestBodyObject} from 'openapi3-ts/src/model/OpenApi';
-import {v4} from 'uuid';
 
-export const exampleID = v4();
-
+export const exampleID = "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0";
 type Schemas = { [schema: string]: SchemaObject | ReferenceObject };
 type Property = (SchemaObject | ReferenceObject);
 type Properties = { [propertyName: string]: (SchemaObject | ReferenceObject) };

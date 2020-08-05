@@ -708,7 +708,9 @@ enum AlbumOrderFields {
   name
   artist
   year
+  seriesNr
   duration
+  albumType
 }
 
 """Type of List Request"""
@@ -830,6 +832,7 @@ enum BookmarkOrderFields {
   default
   created
   updated
+  media
   position
 }
 
@@ -917,6 +920,7 @@ enum FolderOrderFields {
   default
   created
   updated
+  level
   name
   title
   year
@@ -1148,7 +1152,12 @@ input SessionFilterArgsQL {
 
 input SessionOrderArgsQL {
   orderDesc: Boolean
-  orderBy: DefaultOrderFields
+  orderBy: SessionOrderFields
+}
+
+enum SessionOrderFields {
+  default
+  expires
 }
 
 type TrackPageQL {
@@ -1189,6 +1198,8 @@ enum TrackOrderFields {
   updated
   trackNr
   discNr
+  seriesNr
+  album
   title
   parent
 }
