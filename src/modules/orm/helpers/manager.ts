@@ -6,6 +6,7 @@ import {FindOptions, Sequelize} from 'sequelize';
 import {Model, ModelCtor} from 'sequelize/types/lib/model';
 import {ManagedEntity} from '../definitions/managed-entity';
 import {cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations} from './entity';
+import {v4} from 'uuid';
 
 export class EntityManager {
 	private readonly repositoryMap: Dictionary<EntityRepository<IDEntity>> = {};
@@ -171,10 +172,11 @@ export class EntityManager {
 		return createManagedEntity<T>(meta, source, this);
 	}
 
-	create<T extends AnyEntity<T>>(entityName: EntityName<T>, data: EntityData<T>): T {
-		const _source = this.model<T>(entityName).build(data);
+	create<T extends IDEntity<T>>(entityName: EntityName<T>, data: EntityData<T>): T {
+		const idData = {id: v4(), createdAt: new Date(), updatedAt: new Date(), ...data};
+		const _source = this.model<T>(entityName).build(idData);
 		const entity = this.mapEntity(entityName, _source);
-		Object.keys(data).forEach(key => (entity as any)[key] = data[key]);
+		Object.keys(idData).forEach(key => (entity as any)[key] = (idData as any)[key]);
 		return entity;
 	}
 

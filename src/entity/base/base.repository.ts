@@ -3,13 +3,13 @@ import {randomItems} from '../../utils/random';
 import {InvalidParamError, NotFoundError} from '../../modules/rest/builder';
 import {IndexResult, IndexResultGroup, OrderHelper, PageResult} from './base';
 import {StateHelper} from '../state/state.helper';
-import {EntityRepository, FindOptions, Op, Order, OrderItem, WhereOptions} from '../../modules/orm';
+import {EntityRepository, FindOptions, IDEntity, Op, Order, OrderItem, WhereOptions} from '../../modules/orm';
 import {User} from '../user/user';
 import {DefaultOrderArgs, PageArgs} from './base.args';
 import {paginate} from './base.utils';
 import {Includeable} from 'sequelize';
 
-export abstract class BaseRepository<Entity extends { id: string }, Filter, OrderBy extends { orderDesc?: boolean }> extends EntityRepository<Entity> {
+export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy extends { orderDesc?: boolean }> extends EntityRepository<Entity> {
 	objType!: DBObjectType;
 	indexProperty!: string;
 

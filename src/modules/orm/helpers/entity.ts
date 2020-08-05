@@ -93,12 +93,11 @@ export function createManagedEntity<T extends AnyEntity<T>>(meta: EntityMetadata
 				const collection = refOrCollection as Collection<any>;
 				collection.manage(field);
 			}
-		} else if (!source.isNewRecord) {
+		} else {
 			entity[field.name] = transformValueForUse(source.get(field.name), field);
 		}
 	});
-	if (source.isNewRecord) {
-		source.set('id', entity.id);
-	}
+	entity['createdAt'] = source.get('createdAt');
+	entity['updatedAt'] = source.get('updatedAt');
 	return entity;
 }
