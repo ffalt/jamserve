@@ -178,12 +178,16 @@ export class OrmService {
 		await this.orm.ensureDatabase();
 	}
 
-	public fork(): Orm {
-		return new Orm(this.orm.manager());
+	async stop(): Promise<void> {
+		await this.orm.close();
 	}
 
-	public async stop() {
-		await this.orm.close();
+	fork(noCache?: boolean): Orm {
+		return new Orm(this.orm.manager(!noCache));
+	}
+
+	clearCache(): void {
+		this.orm.clearCache();
 	}
 
 }

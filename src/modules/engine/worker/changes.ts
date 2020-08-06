@@ -234,7 +234,7 @@ export class ChangesWorker extends BaseWorker {
 	*/
 
 	async start(rootID: string): Promise<{ changes: Changes; orm: Orm; root: Root }> {
-		const orm = this.ormService.fork();
+		const orm = this.ormService.fork(true);
 		const root = await orm.Root.findOneOrFailByID(rootID);
 		return {root, orm, changes: new Changes()};
 	}
@@ -246,6 +246,7 @@ export class ChangesWorker extends BaseWorker {
 		await this.mergeRemovals(orm, changes);
 		changes.end = Date.now();
 		logChanges(changes);
+		this.ormService.clearCache();
 		return changes;
 	}
 

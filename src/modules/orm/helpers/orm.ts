@@ -1,10 +1,12 @@
-import {EntityManager} from './manager';
+import {EntityCache, EntityManager} from './manager';
 import {Sequelize} from 'sequelize';
 import {getMetadataStorage} from '../metadata';
 import {ORMConfig} from '../definitions/config';
 import {ModelBuilder} from '../builder/schema';
 
 export class ORM {
+	public cache = new EntityCache();
+
 	static async init(config: ORMConfig): Promise<ORM> {
 		const sequelize = new Sequelize({
 			dialect: 'sqlite',
@@ -48,8 +50,12 @@ export class ORM {
 		await schema.build();
 	}
 
-	manager(): EntityManager {
-		return new EntityManager(this.sequelize, getMetadataStorage(), this.config);
+	manager(useCache: boolean): EntityManager {
+		return new EntityManager(this.sequelize, getMetadataStorage(), this.config, this, useCache);
+	}
+
+	clearCache(): void {
+		this.cache.clear();
 	}
 
 	async close(): Promise<void> {

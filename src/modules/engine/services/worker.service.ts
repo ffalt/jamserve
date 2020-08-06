@@ -66,7 +66,7 @@ export class WorkerService {
 	}
 
 	async createRoot(parameters: WorkerRequestCreateRoot): Promise<Changes> {
-		const root = await this.rootWorker.create(this.changes.ormService.fork(), parameters.name, parameters.path, parameters.strategy);
+		const root = await this.rootWorker.create(this.changes.ormService.fork(true), parameters.name, parameters.path, parameters.strategy);
 		const {orm, changes} = await this.changes.start(root.id);
 		return this.changes.finish(orm, changes, root);
 	}

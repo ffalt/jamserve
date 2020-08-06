@@ -47,17 +47,32 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	ensureOrderIncludes(options: FindOptions<Entity>): void {
+		let hasOrder = false;
 		if (options.order) {
-			(options.order as OrderItem[]).map(o => {
-				if ((o as Array<any>).length === 3) {
-					const key = (o as Array<string>)[0];
+			(options.order as OrderItem[]).forEach(o => {
+				const array = (o as Array<any>);
+				hasOrder = true;
+				if (array.length === 3) {
+					const key = array[0];
 					const list: Includeable[] = (options.include as Includeable[]) || [];
-					if (!list.find((i: any) => i.association === key)) {
-						list.push({association: key});
+					const includeEntry: any = list.find((i: any) => i.association === key);
+					if (!includeEntry) {
+						list.push({association: key, attributes: [array[1]]});
 						options.include = list;
+					} else {
+						includeEntry.attributes.push(array[1]);
 					}
 				}
 			});
+		}
+		if (hasOrder && options.include && ((options.include as Array<any>).length > 0)) {
+			if ((options.include as Array<any>).find(o => !!o.where)) {
+				// workaround for:
+				// https://github.com/sequelize/sequelize/issues/12348
+				// https://github.com/sequelize/sequelize/issues/7778
+				// TODO: check if workaround is still needed
+				options.subQuery = false;
+			}
 		}
 	}
 

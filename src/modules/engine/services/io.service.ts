@@ -38,7 +38,7 @@ export class IoService {
 	public workerService!: WorkerService;
 	public scanning = false;
 	private afterRefreshListeners: Array<() => Promise<void>> = [];
-	private rootstatus = new Map<string, RootStatus>();
+	private rootStatus = new Map<string, RootStatus>();
 	private current: IoRequest<WorkerRequestParameters> | undefined;
 	private queue: Array<IoRequest<WorkerRequestParameters>> = [];
 	private delayedTrackTagWrite = new Map<string, { request: IoRequest<WorkerRequestWriteTrackTags>; timeout?: NodeJS.Timeout | number }>();
@@ -54,11 +54,11 @@ export class IoService {
 
 	private async runRequest(cmd: IoRequest<WorkerRequestParameters>): Promise<void> {
 		this.clearAfterRefresh();
-		this.rootstatus.set(cmd.parameters.rootID, {lastScan: Date.now(), scanning: true});
+		this.rootStatus.set(cmd.parameters.rootID, {lastScan: Date.now(), scanning: true});
 		try {
 			this.current = cmd;
 			await cmd.run();
-			this.rootstatus.set(cmd.parameters.rootID, {lastScan: Date.now()});
+			this.rootStatus.set(cmd.parameters.rootID, {lastScan: Date.now()});
 			this.history.push({id: cmd.id, date: Date.now()});
 			this.current = undefined;
 		} catch (e) {
@@ -68,7 +68,7 @@ export class IoService {
 			if (msg.startsWith('Error:')) {
 				msg = msg.slice(6).trim();
 			}
-			this.rootstatus.set(cmd.parameters.rootID, {lastScan: Date.now(), error: msg});
+			this.rootStatus.set(cmd.parameters.rootID, {lastScan: Date.now(), error: msg});
 			this.history.push({id: cmd.id, error: msg, date: Date.now()});
 		}
 		if (this.queue.length === 0) {
@@ -168,7 +168,7 @@ export class IoService {
 	}
 
 	getRootStatus(id: string): RootStatus {
-		let status = this.rootstatus.get(id);
+		let status = this.rootStatus.get(id);
 		if (!status) {
 			status = {lastScan: Date.now()};
 		}

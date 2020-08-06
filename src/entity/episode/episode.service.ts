@@ -74,6 +74,7 @@ export class EpisodeService {
 					orm.Tag.removeLater(oldTag);
 				}
 				const tag = orm.Tag.create({...result, chapters: result.chapters ? JSON.stringify(result.chapters) : undefined});
+				orm.Tag.persistLater(tag);
 				await episode.tag.set(tag);
 				episode.status = PodcastStatus.completed;
 				episode.statCreated = stat.ctime.valueOf();

@@ -7,12 +7,48 @@ import {Model, ModelCtor} from 'sequelize/types/lib/model';
 import {ManagedEntity} from '../definitions/managed-entity';
 import {cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations} from './entity';
 import {v4} from 'uuid';
+import {ORM} from './orm';
+
+export class EntityCache {
+	private cache = new Map<string, IDEntity>();
+
+	get<T>(entityName: EntityName<T>, id: string): IDEntity | undefined {
+		return this.cache.get(`${entityName}${id}`);
+	}
+
+	set<T>(entityName: EntityName<T>, entity: IDEntity): void {
+		this.cache.set(`${entityName}${entity.id}`, entity);
+	}
+
+	remove<T>(entityName: EntityName<T>, entity: IDEntity): void {
+		this.cache.delete(`${entityName}${entity.id}`);
+	}
+
+	clear() {
+		this.cache = new Map();
+	}
+
+	removePrefixed(entityName: string) {
+		const keys = this.cache.keys();
+		for (const key of keys) {
+			if (key.startsWith(entityName)) {
+				this.cache.delete(key);
+			}
+		}
+	}
+}
 
 export class EntityManager {
 	private readonly repositoryMap: Dictionary<EntityRepository<IDEntity>> = {};
 	private changeSet: Array<{ entityName: string; persist?: ManagedEntity; remove?: { entity?: ManagedEntity; query?: FindOptions; resultCount?: number } }> = [];
 
-	constructor(public readonly sequelize: Sequelize, private readonly metadata: MetadataStorage, private readonly config: ORMConfig) {
+	constructor(
+		public readonly sequelize: Sequelize,
+		private readonly metadata: MetadataStorage,
+		private readonly config: ORMConfig,
+		private readonly parent: ORM,
+		public readonly useCache: boolean
+	) {
 	}
 
 	getRepository<T extends IDEntity<T>, U extends EntityRepository<T> = EntityRepository<T>>(entityName: EntityName<T>): U {
@@ -52,9 +88,11 @@ export class EntityManager {
 					await change.persist._source.save({transaction: t});
 				} else if (change.remove && change.remove.entity) {
 					await change.remove.entity._source.destroy({transaction: t});
+					this.parent.cache.remove(change.entityName, change.remove.entity);
 				} else if (change.remove && change.remove.query) {
 					const model = this.model(change.entityName);
 					change.remove.resultCount = await model.destroy({where: change.remove.query.where, transaction: t});
+					this.parent.cache.removePrefixed(change.entityName);
 				}
 			}
 			for (const change of this.changeSet) {
@@ -65,6 +103,7 @@ export class EntityManager {
 			for (const change of this.changeSet) {
 				if (change.persist) {
 					cleanManagedEntityRelations(change.persist as ManagedEntity);
+					this.parent.cache.remove(change.entityName, change.persist);
 				}
 			}
 			this.changeSet = [];
@@ -83,28 +122,104 @@ export class EntityManager {
 		}
 	}
 
-	async findOne<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<T | undefined> {
+	// *
+
+	private async fromCacheOrLoad<T extends IDEntity<T>>(entityName: EntityName<T>, ids: Array<string>): Promise<T[]> {
+		const toLoadIDs: Array<string> = [];
+		const fromCache: Array<T> = [];
+		for (const id of ids) {
+			const c = this.parent.cache.get(entityName, id);
+			if (c) {
+				fromCache.push(c as T);
+			} else {
+				toLoadIDs.push(id);
+			}
+		}
+		if (toLoadIDs.length === 0) {
+			return fromCache;
+		}
+		const model = this.model(entityName);
+		const loadedSources = await model.findAll({where: {id: toLoadIDs}});
+		const loaded = loadedSources.map(source => this.mapEntity(entityName, source));
+		for (const item of loaded) {
+			this.parent.cache.set(entityName, item);
+		}
+		return loaded.concat(fromCache).sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+	}
+
+	async findOne<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<T | undefined> {
+		if (this.useCache) {
+			const id = await this.findOneID(entityName, options);
+			if (!id) {
+				return;
+			}
+			const cached = this.parent.cache.get(entityName, id);
+			if (cached) {
+				return cached as T;
+			}
+		}
 		const model = this.model(entityName);
 		const source = await model.findOne(options);
 		if (!source) {
 			return;
 		}
-		return this.mapEntity(entityName, source);
+		const result = this.mapEntity(entityName, source);
+		if (this.useCache) {
+			this.parent.cache.set(entityName, result);
+		}
+		return result;
 	}
 
-	async findOneByID<T extends AnyEntity<T>>(entityName: EntityName<T>, id: string): Promise<T | undefined> {
+	async findOneByID<T extends IDEntity<T>>(entityName: EntityName<T>, id: string): Promise<T | undefined> {
 		if (!id || id.trim().length === 0) {
 			return Promise.reject(Error('Invalid ID'));
+		}
+		if (this.useCache) {
+			const cached = this.parent.cache.get(entityName, id);
+			if (cached) {
+				return cached as T;
+			}
 		}
 		const model = this.model(entityName);
 		const source = await model.findOne({where: {id}});
 		if (!source) {
 			return;
 		}
-		return this.mapEntity(entityName, source);
+		const result = this.mapEntity(entityName, source);
+		if (this.useCache) {
+			this.parent.cache.set(entityName, result);
+		}
+		return result;
 	}
 
-	async findOneOrFail<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<T> {
+	async find<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<T[]> {
+		if (this.useCache) {
+			const ids = await this.findIDs(entityName, options);
+			return await this.fromCacheOrLoad(entityName, ids);
+		}
+		const model = this.model(entityName);
+		const rows = await model.findAll(options);
+		return rows.map(source => this.mapEntity(entityName, source));
+	}
+
+	async findAndCount<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; entities: T[] }> {
+		if (this.useCache) {
+			const {count, ids} = await this.findIDsAndCount(entityName, options);
+			const entities = await this.fromCacheOrLoad(entityName, ids);
+			return {count, entities};
+		}
+		const model = this.model(entityName);
+		const {count, rows} = await model.findAndCountAll(options);
+		return {count, entities: rows.map(source => this.mapEntity(entityName, source))};
+	}
+
+	// *
+
+	async all<T extends IDEntity<T>>(entityName: EntityName<T>): Promise<T[]> {
+		return this.find(entityName, {});
+	}
+
+	async findOneOrFail<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<T> {
 		const result = await this.findOne<T>(entityName, options);
 		if (!result) {
 			throw new Error(`${entityName} not found`);
@@ -120,40 +235,31 @@ export class EntityManager {
 		return result;
 	}
 
-	async all<T extends AnyEntity<T>>(entityName: EntityName<T>): Promise<T[]> {
-		return this.find(entityName, {});
-	}
-
-	public findByIDs<T>(entityName: EntityName<T>, ids: Array<string>): Promise<T[]> {
+	public findByIDs<T extends IDEntity>(entityName: EntityName<T>, ids: Array<string>): Promise<T[]> {
 		return this.find(entityName, {where: {id: ids} as any});
 	}
 
-	async find<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<T[]> {
+	async findOneID<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<string | undefined> {
 		const model = this.model(entityName);
-		const rows = await model.findAll(options);
-		return rows.map(source => this.mapEntity(entityName, source));
-	}
-
-	async findOneID<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<string | undefined> {
-		const model = this.model(entityName);
-		options.attributes = ['id'];
-		const result = await model.findOne<any>(options);
+		const opts = {...options, raw: true, attributes: ['id']};
+		const result = await model.findOne<any>(opts);
 		if (result) {
 			return result.id;
 		}
 	}
 
-	async findIDs<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<string[]> {
+	async findIDs<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<string[]> {
 		const model = this.model(entityName);
-		options.attributes = ['id'];
-		const result = await model.findAll<any>(options);
-		return result.map((o: { id: string }) => o.id);
+		const opts = {...options, raw: true, attributes: ['id']};
+		const result = await model.findAll<any>(opts);
+		return result.map(o => o.id);
 	}
 
-	async findAndCount<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; entities: T[] }> {
+	async findIDsAndCount<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; ids: string[] }> {
 		const model = this.model(entityName);
-		const {count, rows} = await model.findAndCountAll(options);
-		return {count, entities: rows.map(source => this.mapEntity(entityName, source))};
+		const opts = {...options, raw: true, attributes: ['id']};
+		const {count, rows} = await model.findAndCountAll<any>(opts);
+		return {count, ids: rows.map(o => o.id)};
 	}
 
 	async count<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T> = {}): Promise<number> {

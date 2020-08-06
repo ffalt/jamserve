@@ -10,6 +10,7 @@ export class Collection<T extends IDEntity<T>> {
 	private initialized = false;
 	private field!: PropertyMetadata;
 	private list?: Array<T>;
+	private itemCount?: number;
 	public changeSet?: { add?: Array<T>; set?: Array<T>; remove?: Array<T> };
 
 	constructor(private owner: AnyEntity) {
@@ -23,8 +24,13 @@ export class Collection<T extends IDEntity<T>> {
 		if (this.list) {
 			return this.list.length;
 		}
+		if (this.itemCount !== undefined) {
+			return this.itemCount;
+		}
 		const func = this.sourceFunc('count');
-		return await func();
+		const result = await func();
+		this.itemCount = result;
+		return result;
 	}
 
 	private sourceFunc(mode: string): Function {
@@ -38,6 +44,7 @@ export class Collection<T extends IDEntity<T>> {
 
 	public clear() {
 		this.list = undefined;
+		this.itemCount = undefined;
 		this.initialized = false;
 		this.changeSet = undefined;
 	}
@@ -49,6 +56,7 @@ export class Collection<T extends IDEntity<T>> {
 		const entity = this.owner as ManagedEntity;
 		const func = this.sourceFunc('get');
 		options = options || this.getOrderOptions();
+		// TODO: get from entity cache
 		const sources: Array<Model<T>> = await func(options);
 		let list: Array<T> = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name || '', source));
 		if (this.changeSet) {

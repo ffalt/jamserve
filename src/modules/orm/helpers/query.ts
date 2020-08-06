@@ -62,8 +62,11 @@ export class QHelper {
 			if (result.length === 0) {
 				return false;
 			}
+			let attributes: Array<string> = [];
+			result.forEach(o => attributes = attributes.concat(Object.keys(o)));
 			return {
 				association: `${key}ORM`,
+				attributes,
 				where: result.length === 1 ? result[0] : {[Op.and]: result}
 			};
 		}).filter(q => !!q) as Array<Includeable>;
