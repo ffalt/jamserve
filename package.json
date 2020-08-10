@@ -58,7 +58,7 @@
     "moment": "2.27.0",
     "multer": "1.4.2",
     "mustache": "4.0.1",
-    "node-worker-threads-pool": "1.4.0",
+    "node-worker-threads-pool": "1.4.1",
     "on-finished": "2.3.0",
     "p-queue": "6.6.0",
     "passport": "0.4.1",
