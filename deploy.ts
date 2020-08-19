@@ -17,7 +17,7 @@ export async function spawnNPM(): Promise<void> {
 }
 
 async function start(): Promise<void> {
-	console.log('Cleaning output path "deploy"');
+	console.log('Cleanup output path "deploy"');
 	await fse.remove('deploy');
 	console.log('Create output path "deploy"');
 	await fse.ensureDir('deploy');
