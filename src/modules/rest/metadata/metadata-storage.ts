@@ -28,6 +28,10 @@ export class MetadataStorage {
 		return this.resultTypes.find(it => it.target === target);
 	}
 
+	argumentType(target: TypeValue): ClassMetadata | undefined {
+		return this.argumentTypes.find(it => it.target === target);
+	}
+
 	collectGetHandlerMetadata(definition: MethodMetadata): void {
 		this.gets.push(definition);
 	}

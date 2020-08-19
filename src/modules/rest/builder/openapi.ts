@@ -2,7 +2,7 @@ import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version';
 import {getMetadataStorage} from '../metadata';
 import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata';
 import {ClassMetadata} from '../definitions/class-metadata';
-import {CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue, TypeValueThunk} from '../definitions/types';
+import {CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue} from '../definitions/types';
 import {getDefaultValue} from '../helpers/default-value';
 import {ControllerClassMetadata} from '../definitions/controller-metadata';
 import {EnumMetadata} from '../definitions/enum-metadata';
@@ -11,7 +11,7 @@ import {OpenAPIObject, OperationObject, ParameterLocation, ParameterObject, Refe
 import {Errors} from './express-error';
 import {ContentObject, PathsObject, RequestBodyObject} from 'openapi3-ts/src/model/OpenApi';
 
-export const exampleID = "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0";
+export const exampleID = 'c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0';
 type Schemas = { [schema: string]: SchemaObject | ReferenceObject };
 type Property = (SchemaObject | ReferenceObject);
 type Properties = { [propertyName: string]: (SchemaObject | ReferenceObject) };
@@ -83,79 +83,57 @@ class OpenApiBuilder {
 			throw new Error(`Missing ReturnType for method ${name}`);
 		}
 		if (!schemas[argumentType.name]) {
-			const argumentInstance = new (argumentType.target as any)();
-			const properties: Properties = {};
-			const required: Array<string> = [];
-			for (const field of argumentType.fields) {
-				field.typeOptions.defaultValue = getDefaultValue(
-					argumentInstance,
-					field.typeOptions,
-					field.name
-				);
-				const typeOptions = field.typeOptions;
-				if (!typeOptions.nullable) {
-					required.push(field.name);
-				}
-				const type = field.getType();
-				let f: Property | undefined = this.buildFieldSchema(type, typeOptions, schemas);
-				if (!f) {
-					f = {$ref: this.getResultRef(type, argumentType.name, schemas)};
-				}
-				properties[field.name] = typeOptions.array ? {type: 'array', items: f} : f;
-			}
-			schemas[argumentType.name] = {
-				type: 'object',
-				properties,
-				required: required.length > 0 ? required : undefined
-			};
-			const superClass = Object.getPrototypeOf(argumentType.target);
-			if (superClass.prototype !== undefined) {
-				// const superArgumentType = getMetadataStorage().argumentTypes.find(it => it.target === superClass);
-				schemas[argumentType.name] = {
-					allOf: [
-						{$ref: this.getResultRef(superClass, argumentType.name, schemas)},
-						{
-							properties,
-							required: required.length > 0 ? required : undefined
-						}
-					]
-				};
-			}
+			this.buildRef(argumentType, schemas, this.getResultRef.bind(this));
 		}
 		return '#/components/schemas/' + argumentType.name;
 	}
 
-	getParamRef(paramClass: TypeValueThunk, schemas: Schemas): string {
-		const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === paramClass());
+	buildRef(argumentType: ClassMetadata, schemas: Schemas, recursiveBuild: (classValue: TypeValue, name: string, schemas: Schemas) => string) {
+		const argumentInstance = new (argumentType.target as any)();
+		const properties: Properties = {};
+		const required: Array<string> = [];
+		for (const field of argumentType.fields) {
+			field.typeOptions.defaultValue = getDefaultValue(
+				argumentInstance,
+				field.typeOptions,
+				field.name
+			);
+			const typeOptions = field.typeOptions;
+			if (!typeOptions.nullable) {
+				required.push(field.name);
+			}
+			const type = field.getType();
+			let f: Property | undefined = this.buildFieldSchema(type, typeOptions, schemas);
+			if (!f) {
+				f = {$ref: recursiveBuild(type, argumentType.name, schemas)};
+			}
+			properties[field.name] = typeOptions.array ? {type: 'array', items: f} : f;
+		}
+		schemas[argumentType.name] = {
+			type: 'object',
+			properties,
+			required: required.length > 0 ? required : undefined
+		};
+		const superClass = Object.getPrototypeOf(argumentType.target);
+		if (superClass.prototype !== undefined) {
+			const allOf: (SchemaObject | ReferenceObject)[] = [{$ref: recursiveBuild(superClass, argumentType.name, schemas)}];
+			if (Object.keys(properties).length > 0) {
+				allOf.push({
+					properties,
+					required: required.length > 0 ? required : undefined
+				});
+			}
+			schemas[argumentType.name] = {allOf};
+		}
+	}
+
+	getParamRef(paramClass: TypeValue, name: string, schemas: Schemas): string {
+		const argumentType = getMetadataStorage().argumentType(paramClass);
 		if (!argumentType) {
 			return SCHEMA_JSON;
 		}
 		if (!schemas[argumentType.name]) {
-			const argumentInstance = new (argumentType.target as any)();
-			const properties: Properties = {};
-			const required: Array<string> = [];
-			for (const field of argumentType.fields) {
-				field.typeOptions.defaultValue = getDefaultValue(
-					argumentInstance,
-					field.typeOptions,
-					field.name
-				);
-				const typeOptions: FieldOptions & TypeOptions = field.typeOptions;
-				if (!typeOptions.nullable) {
-					required.push(field.name);
-				}
-				const type = field.getType();
-				let f: Property | undefined = this.buildFieldSchema(type, typeOptions, schemas);
-				if (!f) {
-					f = {$ref: this.getParamRef(field.getType, schemas)};
-				}
-				properties[field.name] = typeOptions.array ? {type: 'array', items: f} : f;
-			}
-			schemas[argumentType.name] = {
-				type: 'object',
-				properties,
-				required: required.length > 0 ? required : undefined
-			};
+			this.buildRef(argumentType, schemas, this.getParamRef.bind(this));
 		}
 		return '#/components/schemas/' + argumentType.name;
 	}
@@ -304,7 +282,7 @@ class OpenApiBuilder {
 		let isJson = true;
 		for (const param of params) {
 			if (param.kind === 'args' && param.mode === 'body') {
-				refs.push({$ref: this.getParamRef(param.getType, schemas)});
+				refs.push({$ref: this.getParamRef(param.getType(), param.methodName, schemas)});
 			} else if (param.kind === 'arg' && param.mode === 'body') {
 				const schema = this.buildParameterSchema(param, schemas);
 				const properties: { [propertyName: string]: (SchemaObject | ReferenceObject) } = {};

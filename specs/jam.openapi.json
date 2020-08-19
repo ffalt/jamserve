@@ -20898,8 +20898,11 @@
 				]
 			},
 			"AdminSettingsArgs": {
-				"type": "object",
-				"properties": {}
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/AdminSettings"
+					}
+				]
 			},
 			"TrackBase": {
 				"allOf": [
@@ -21131,7 +21134,7 @@
 					},
 					"created": {
 						"type": "integer",
-						"default": 1596625108183,
+						"default": 1597847044767,
 						"minimum": 0,
 						"description": "Created Timestamp"
 					}
@@ -22010,15 +22013,21 @@
 				]
 			},
 			"ArtworkNewArgs": {
-				"type": "object",
-				"properties": {
-					"url": {
-						"type": "string",
-						"description": "URL of an image"
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/ArtworkNewUploadArgs"
+					},
+					{
+						"properties": {
+							"url": {
+								"type": "string",
+								"description": "URL of an image"
+							}
+						},
+						"required": [
+							"url"
+						]
 					}
-				},
-				"required": [
-					"url"
 				]
 			},
 			"ArtworkNewUploadArgs": {
@@ -23039,7 +23048,7 @@
 							},
 							"created": {
 								"type": "integer",
-								"default": 1596625108190,
+								"default": 1597847044781,
 								"minimum": 0,
 								"description": "Playlist Created Timestamp"
 							},
