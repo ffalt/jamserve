@@ -14,10 +14,11 @@ import {probe} from './tools/ffprobe';
 import {TranscoderModule} from './transcoder/transcoder.module';
 import {WaveformModule} from './waveform/waveform.module';
 import {AudioFormatType, TagFormatType} from '../../types/enums';
-import {AdminSettingsExternal, SettingsService} from '../../entity/settings/settings.service';
+import {SettingsService} from '../../entity/settings/settings.service';
 import {RawTag} from './rawTag';
 import {ConfigService} from '../engine/services/config.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
+import {AdminSettingsExternal} from '../../entity/admin/admin';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
 }

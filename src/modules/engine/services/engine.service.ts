@@ -11,7 +11,7 @@ import {WaveformService} from '../../../entity/waveform/waveform.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../../utils/logger';
 import {UserService} from '../../../entity/user/user.service';
-import {SessionService} from '../../../entity/settings/session.service';
+import {SessionService} from '../../../entity/session/session.service';
 import {PodcastService} from '../../../entity/podcast/podcast.service';
 import {EpisodeService} from '../../../entity/episode/episode.service';
 import {GenreService} from '../../../entity/genre/genre.service';
