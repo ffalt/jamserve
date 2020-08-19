@@ -2,33 +2,7 @@ import {Settings} from './settings';
 import {JAMSERVE_VERSION} from '../../version';
 import {Orm} from '../../modules/engine/services/orm.service';
 import {InRequestScope} from 'typescript-ioc';
-
-export interface AdminSettingsChat {
-	maxMessages: number;
-	maxAge: {
-		value: number;
-		unit: string;
-	};
-}
-
-export interface AdminSettingsIndex {
-	ignoreArticles: Array<string>;
-}
-
-export interface AdminSettingsLibrary {
-	scanAtStart: boolean;
-}
-
-export interface AdminSettingsExternal {
-	enabled: boolean;
-}
-
-export interface AdminSettings {
-	chat: AdminSettingsChat;
-	index: AdminSettingsIndex;
-	library: AdminSettingsLibrary;
-	externalServices: AdminSettingsExternal;
-}
+import {AdminSettings} from '../admin/admin';
 
 export const defaultEngineSettings: AdminSettings = {
 	chat: {

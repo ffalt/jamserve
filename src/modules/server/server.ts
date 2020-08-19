@@ -16,7 +16,7 @@ import {usePassPortMiddleWare} from './middlewares/passport.middleware';
 import {JAMAPI_URL_VERSION} from '../engine/rest/version';
 import {DocsMiddleware} from './middlewares/docs.middleware';
 import {useAuthenticatedCors} from './middlewares/cors.middleware';
-import {SessionService} from '../../entity/settings/session.service';
+import {SessionService} from '../../entity/session/session.service';
 
 const log = logger('Server');
 

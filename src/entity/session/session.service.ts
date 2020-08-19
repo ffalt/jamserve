@@ -1,5 +1,5 @@
 import {OrmService} from '../../modules/engine/services/orm.service';
-import {Session} from '../session/session';
+import {Session} from './session';
 import {SessionMode} from '../../types/enums';
 import {Express} from 'express';
 import {Inject, InRequestScope} from 'typescript-ioc';

@@ -1,6 +1,6 @@
 import {Field, ID, Int, ObjectType} from 'type-graphql';
 import {Min} from 'class-validator';
-import {ObjField, ResultType} from '../../modules/rest/decorators';
+import {ObjField, ObjParamsType, ResultType} from '../../modules/rest/decorators';
 
 
 const AdminSettingsChatMaxAgeDesc = {
@@ -11,6 +11,7 @@ const AdminSettingsChatMaxAgeDesc = {
 
 @ResultType({description: AdminSettingsChatMaxAgeDesc._})
 @ObjectType({description: AdminSettingsChatMaxAgeDesc._})
+@ObjParamsType()
 export class AdminSettingsChatMaxAge {
 	@ObjField({description: AdminSettingsChatMaxAgeDesc.value, min: 0, example: 1})
 	@Field(() => Int, {description: AdminSettingsChatMaxAgeDesc.value})
@@ -34,6 +35,7 @@ const AdminSettingsChatDesc = {
 
 @ResultType({description: AdminSettingsChatDesc._})
 @ObjectType({description: AdminSettingsChatDesc._})
+@ObjParamsType()
 export class AdminSettingsChat {
 	@Field(() => Int, {description: AdminSettingsChatDesc.maxMessages})
 	@ObjField({description: AdminSettingsChatDesc.maxMessages, min: 0, example: 50})
@@ -56,6 +58,7 @@ const AdminSettingsIndexDesc = {
 
 @ResultType({description: AdminSettingsIndexDesc._})
 @ObjectType({description: AdminSettingsIndexDesc._})
+@ObjParamsType()
 export class AdminSettingsIndex {
 	@ObjField(() => [String], {description: AdminSettingsIndexDesc.ignoreArticles, example: ['the', 'les', 'die']})
 	@Field(() => [String], {description: AdminSettingsIndexDesc.ignoreArticles})
@@ -74,6 +77,7 @@ const AdminSettingsLibraryDesc = {
 
 @ResultType({description: AdminSettingsLibraryDesc._})
 @ObjectType({description: AdminSettingsLibraryDesc._})
+@ObjParamsType()
 export class AdminSettingsLibrary {
 	@ObjField(() => Boolean, {description: AdminSettingsLibraryDesc.scanAtStart, example: true})
 	@Field(() => Boolean, {description: AdminSettingsLibraryDesc.scanAtStart})
@@ -92,6 +96,7 @@ const AdminSettingsExternalDesc = {
 
 @ResultType({description: AdminSettingsExternalDesc._})
 @ObjectType({description: AdminSettingsExternalDesc._})
+@ObjParamsType()
 export class AdminSettingsExternal {
 	@ObjField(() => Boolean, {description: AdminSettingsExternalDesc.enabled, example: true})
 	@Field(() => Boolean, {description: AdminSettingsExternalDesc.enabled})
@@ -109,6 +114,7 @@ const AdminSettingsDesc = {
 
 @ResultType({description: AdminSettingsDesc._})
 @ObjectType({description: AdminSettingsDesc._})
+@ObjParamsType()
 export class AdminSettings {
 	@ObjField(() => AdminSettingsChat, {description: AdminSettingsChatDesc._})
 	@Field(() => AdminSettingsChatQL)

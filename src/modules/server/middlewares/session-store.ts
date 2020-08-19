@@ -1,6 +1,6 @@
 import {Express} from 'express';
 import {Store} from 'express-session';
-import {SessionNotifyEventObject, SessionService} from '../../../entity/settings/session.service';
+import {SessionNotifyEventObject, SessionService} from '../../../entity/session/session.service';
 
 export class ExpressSessionStore extends Store implements SessionNotifyEventObject {
 	private cache = new Map<string, Express.SessionData>();
