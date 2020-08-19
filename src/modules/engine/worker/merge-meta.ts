@@ -2,12 +2,14 @@ import {MetaMergerCache, MetaMergeTrackInfo} from './meta-cache';
 import {logger} from '../../../utils/logger';
 import {Changes} from './changes';
 import {Root} from '../../../entity/root/root';
-import {MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
+import {cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
 import {Artist} from '../../../entity/artist/artist';
 import {Orm} from '../services/orm.service';
 import {AlbumType} from '../../../types/enums';
 import {Album} from '../../../entity/album/album';
 import {Folder} from '../../../entity/folder/folder';
+import {MetaStatBuilder} from '../../../utils/stats-builder';
+import {slugify} from '../../../utils/slug';
 
 const log = logger('Worker.MetaMerger');
 
@@ -25,6 +27,24 @@ export class MetaMerger {
 			folder.genres.forEach(genre => genres.add(genre));
 		}
 		return [...genres];
+	}
+
+	private async collectArtistNames(artist: Artist): Promise<{ artistName: string, artistSortName: string, slug: string }> {
+		const metaStatBuilder = new MetaStatBuilder();
+		const tracks = await artist.tracks.getItems();
+		for (const track of tracks) {
+			const tag = await track.tag.getOrFail();
+			if (track.artist.id() === artist.id) {
+				metaStatBuilder.statSlugValue('artist', tag.artist);
+				metaStatBuilder.statSlugValue('artistSort', tag.artistSort);
+			}
+			if (track.albumArtist.id() === artist.id) {
+				metaStatBuilder.statSlugValue('artist', tag.albumArtist);
+				metaStatBuilder.statSlugValue('artistSort', tag.albumArtistSort);
+			}
+		}
+		const artistName = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
+		return {artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name}
 	}
 
 	private async collectArtistGenres(artist: Artist): Promise<Array<string>> {
@@ -134,34 +154,44 @@ export class MetaMerger {
 		}
 	}
 
-	private async applyChangedArtistMeta(): Promise<void> {
+	private async applyChangedArtistMeta(id: string): Promise<void> {
+		const artist = await this.orm.Artist.oneOrFailByID(id);
+		log.debug('Updating artist', artist.name);
+		const currentTracks = await this.orm.Track.findFilter({artistIDs: [id]});
+		const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
+		await artist.tracks.set(tracks);
+		const currentAlbumArtistTracks = await this.orm.Track.findFilter({albumArtistIDs: [id]});
+		const albumTracks = currentAlbumArtistTracks.filter(t => !this.changes.tracks.removed.has(t));
+		await artist.albumTracks.set(albumTracks);
+		if (tracks.length === 0 && albumTracks.length === 0) {
+			this.changes.artists.removed.add(artist);
+			this.changes.artists.updated.delete(artist);
+		} else {
+			if (artist.name !== MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
+				const {artistName, artistSortName, slug} = await this.collectArtistNames(artist);
+				artist.name = artistName;
+				artist.slug = slug;
+				artist.nameSort = artistSortName;
+			}
+			const albums = (await artist.albums.getItems()).filter(t => t.artist.id() === artist.id && !this.changes.albums.removed.has(t));
+			await artist.albums.set(albums);
+			const folders: Array<Folder> = [];
+			for (const folder of (await artist.folders.getItems())) {
+				if ((await folder.albums.getItems()).find(a => (a.artist.id() === artist.id) && !this.changes.folders.removed.has(folder))) {
+					folders.push(folder);
+				}
+			}
+			await artist.folders.set(folders);
+			artist.genres = await this.collectArtistGenres(artist);
+			artist.albumTypes = await this.collectArtistAlbumTypes(artist);
+			this.orm.Artist.persistLater(artist);
+		}
+	}
+
+	private async applyChangedArtistsMeta(): Promise<void> {
 		const artistIDs = this.changes.artists.updated.ids().concat(this.changes.artists.added.ids());
 		for (const id of artistIDs) {
-			const artist = await this.orm.Artist.oneOrFailByID(id);
-			log.debug('Updating artist', artist.name);
-			const currentTracks = await this.orm.Track.findFilter({artistIDs: [id]});
-			const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
-			await artist.tracks.set(tracks);
-			const currentAlbumArtistTracks = await this.orm.Track.findFilter({albumArtistIDs: [id]});
-			const albumTracks = currentAlbumArtistTracks.filter(t => !this.changes.tracks.removed.has(t));
-			await artist.albumTracks.set(albumTracks);
-			if (tracks.length === 0 && albumTracks.length === 0) {
-				this.changes.artists.removed.add(artist);
-				this.changes.artists.updated.delete(artist);
-			} else {
-				const albums = (await artist.albums.getItems()).filter(t => t.artist.id() === artist.id && !this.changes.albums.removed.has(t));
-				await artist.albums.set(albums);
-				const folders: Array<Folder> = [];
-				for (const folder of (await artist.folders.getItems())) {
-					if ((await folder.albums.getItems()).find(a => (a.artist.id() === artist.id) && !this.changes.folders.removed.has(folder))) {
-						folders.push(folder);
-					}
-				}
-				await artist.folders.set(folders);
-				artist.genres = await this.collectArtistGenres(artist);
-				artist.albumTypes = await this.collectArtistAlbumTypes(artist);
-				this.orm.Artist.persistLater(artist);
-			}
+			await this.applyChangedArtistMeta(id);
 			if (this.orm.em.changesCount() > 500) {
 				log.debug('Syncing new Artist Meta to DB');
 				await this.orm.em.flush();
@@ -249,7 +279,7 @@ export class MetaMerger {
 		await this.loadChangedMeta(); // register all album/series/artist to check for changes
 		await this.applyChangedTrackMeta(); // add/update track meta
 		await this.applyChangedAlbumMeta(); // update albums
-		await this.applyChangedArtistMeta(); // update artists
+		await this.applyChangedArtistsMeta(); // update artists
 		await this.applyChangedSeriesMeta(); // update series
 	}
 }
