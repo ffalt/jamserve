@@ -31,7 +31,7 @@ export class MetaDataService {
 	@Inject
 	private audioModule!: AudioModule;
 
-	private async addToStore(orm: Orm, name: string, dataType: MetaDataType, data: any): Promise<void> {
+	private async addToStore(orm: Orm, name: string, dataType: MetaDataType, data: string): Promise<void> {
 		const item = await orm.MetaData.create({
 				name,
 				dataType,
@@ -59,7 +59,7 @@ export class MetaDataService {
 			return JSON.parse(result.data);
 		}
 		const data = await generate();
-		await this.addToStore(orm, name, dataType, data);
+		await this.addToStore(orm, name, dataType, JSON.stringify(data));
 		return data;
 	}
 
