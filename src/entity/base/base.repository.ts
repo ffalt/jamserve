@@ -252,7 +252,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	private async getListIDs(list: ListType, options: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {
 		let ids: Array<string> = [];
 		let total: number | undefined;
-		const opts = {options, limit: undefined, offset: undefined};
+		const opts = {...options, limit: undefined, offset: undefined};
 		const page = {skip: options.offset, take: options.limit};
 		switch (list) {
 			case ListType.random:
