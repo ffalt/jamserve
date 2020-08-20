@@ -32,36 +32,32 @@ export class SettingsService {
 	}
 
 	async settingsVersion(orm: Orm): Promise<string | undefined> {
-		const settings = await this.getSettings(orm);
-		return settings.version;
+		const settingsStore = await this.getSettings(orm);
+		return settingsStore.version;
 	}
 
 	async saveSettings(orm: Orm): Promise<void> {
-		const settings = await this.getSettings(orm);
-		settings.version = JAMSERVE_VERSION;
-		settings.data = JSON.stringify(this.settings);
-		await orm.Settings.persistAndFlush(settings);
+		const settingsStore = await this.getSettings(orm);
+		settingsStore.version = JAMSERVE_VERSION;
+		settingsStore.data = JSON.stringify(this.settings);
+		await orm.Settings.persistAndFlush(settingsStore);
 	}
 
 	private async getSettings(orm: Orm): Promise<Settings> {
-		let settings = await orm.Settings.findOne({where: {section: 'jamserve'}});
-		if (!settings) {
-			settings = orm.Settings.create({
+		let settingsStore = await orm.Settings.findOne({where: {section: 'jamserve'}});
+		if (!settingsStore) {
+			settingsStore = orm.Settings.create({
 				section: 'jamserve',
 				data: JSON.stringify(defaultEngineSettings),
 				version: JAMSERVE_VERSION
 			});
 		}
-		return settings;
-	}
-
-	async loadSettings(orm: Orm): Promise<void> {
-		const settings = await this.getSettings(orm);
-		await this.setSettings(JSON.parse(settings.data));
+		this.settings = JSON.parse(settingsStore.data);
+		return settingsStore;
 	}
 
 	async updateSettings(orm: Orm, settings: AdminSettings): Promise<void> {
-		await this.setSettings(settings);
+		await this.setSettings({...this.settings, ...settings});
 		await this.saveSettings(orm);
 	}
 
