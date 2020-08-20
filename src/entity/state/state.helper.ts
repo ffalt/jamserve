@@ -32,7 +32,7 @@ export class StateHelper {
 			if (state.faved === undefined) {
 				return state;
 			}
-			state.faved = undefined;
+			(state as any).faved = null;
 		} else {
 			if (state.faved !== undefined) {
 				return state;
@@ -40,6 +40,9 @@ export class StateHelper {
 			state.faved = Date.now();
 		}
 		await this.stateRepo.persistAndFlush(state);
+		if ((state as any).faved === null) {
+			state.faved = undefined;
+		}
 		return state;
 	}
 
