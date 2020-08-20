@@ -313,6 +313,7 @@ function validateCustomPathParameterValue(rElement: string | undefined, group: C
 			(group.max !== undefined && number > group.max)) {
 			throw InvalidParamError(group.name, 'number not in allowed range');
 		}
+		return number;
 	} else {
 		const metadata = getMetadataStorage();
 		const enumInfo = metadata.enums.find(e => e.enumObj === type);
