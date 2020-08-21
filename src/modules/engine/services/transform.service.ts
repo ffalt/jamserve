@@ -555,14 +555,15 @@ export class TransformService {
 	async playQueue(orm: Orm, o: ORMPlayQueue, playQueueArgs: IncludesPlayQueueArgs, trackArgs: IncludesTrackArgs, episodeArgs: IncludesEpisodeArgs, user: User): Promise<PlayQueue> {
 		const entries = playQueueArgs.playQueueEntriesIDs || playQueueArgs.playQueueEntries ?
 			await o.entries.getItems() : [];
+		const u = o.user.id() === user.id ? user : await o.user.getOrFail();
 		return {
 			changed: o.updatedAt.valueOf(),
 			changedBy: o.changedBy,
 			created: o.createdAt.valueOf(),
 			currentIndex: o.current,
 			mediaPosition: o.position,
-			userID: o.user.id,
-			userName: o.user.name,
+			userID: u.id,
+			userName: u.name,
 			entriesCount: await o.entries.count(),
 			entriesIDs: playQueueArgs.playQueueEntriesIDs ? entries.map(t => (t.track.id()) || (t.episode.id())) as Array<string> : undefined,
 			entries: playQueueArgs.playQueueEntries ? await Promise.all(entries.map(t => this.playQueueEntry(orm, t, trackArgs, episodeArgs, user))) : undefined

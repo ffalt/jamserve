@@ -6,6 +6,7 @@ import {UserService} from './user.service';
 import {UserIndexArgs, UsersArgs} from './user.args';
 import {Session, SessionQL} from '../session/session';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
+import {PlayQueue, PlayQueueQL} from '../playqueue/playqueue';
 
 @Resolver(UserQL)
 export class UserResolver {
@@ -40,6 +41,11 @@ export class UserResolver {
 	@FieldResolver(() => [BookmarkQL])
 	async bookmarks(@GQLRoot() user: User): Promise<Array<Bookmark>> {
 		return user.bookmarks.getItems();
+	}
+
+	@FieldResolver(() => PlayQueueQL, {nullable: true})
+	async playQueue(@GQLRoot() user: User): Promise<PlayQueue | undefined> {
+		return user.playQueue.get();
 	}
 
 }

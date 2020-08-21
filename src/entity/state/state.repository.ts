@@ -18,7 +18,7 @@ export class StateRepository extends BaseRepository<State, any, any> {
 
 	async findOrCreate(destID: string, destType: DBObjectType, userID: string): Promise<State> {
 		const state = await this.findOne({where: {user: userID, destID, destType}});
-		return state || new State();
+		return state || this.create({});
 	}
 
 	async findMany(destIDs: Array<string>, destType: DBObjectType, userID: string): Promise<Array<State>> {

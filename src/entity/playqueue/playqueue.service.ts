@@ -29,7 +29,8 @@ export class PlayQueueService {
 	async get(orm: Orm, user: User): Promise<PlayQueue> {
 		let queue = await orm.PlayQueue.findOne({where: {user: user.id}});
 		if (!queue) {
-			queue = orm.PlayQueue.create({user});
+			queue = orm.PlayQueue.create({});
+			await queue.user.set(user);
 		}
 		return queue;
 	}
@@ -37,7 +38,8 @@ export class PlayQueueService {
 	async set(orm: Orm, args: PlayQueueSetArgs, user: User, client: string): Promise<void> {
 		let queue = await orm.PlayQueue.findOne({where: {user: user.id}});
 		if (!queue) {
-			queue = orm.PlayQueue.create({user});
+			queue = orm.PlayQueue.create({});
+			await queue.user.set(user);
 		}
 		queue.changedBy = client;
 		const ids = args.mediaIDs || [];

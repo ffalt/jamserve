@@ -1,7 +1,7 @@
 import {User} from '../user/user';
 import {PlayQueueEntry, PlayQueueEntryQL} from '../playqueueentry/playqueue-entry';
 import {Field, Float, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property} from '../../modules/orm';
+import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference} from '../../modules/orm';
 import {Base} from '../base/base';
 import {PlayQueueEntryOrderFields} from '../../types/enums';
 
@@ -25,7 +25,7 @@ export class PlayQueue extends Base {
 	changedBy!: string;
 
 	@OneToOne<User>(() => User, user => user.playQueue, {owner: true})
-	user!: User;
+	user = new Reference<User>(this);
 
 	@Field(() => [PlayQueueEntryQL])
 	@OneToMany<PlayQueueEntry>(() => PlayQueueEntry, entry => entry.playQueue, {order: [{orderBy: PlayQueueEntryOrderFields.position}]})
