@@ -17,10 +17,13 @@ import {
 	FolderOrderFields,
 	FolderType,
 	ListType,
-	PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields,
+	PlaylistEntryOrderFields,
+	PlayQueueEntryOrderFields,
+	PodcastOrderFields,
 	PodcastStatus,
 	RootScanStrategy,
-	SessionMode, SessionOrderFields,
+	SessionMode,
+	SessionOrderFields,
 	TagFormatType,
 	TrackOrderFields,
 	UserRole
@@ -48,6 +51,7 @@ import {StatsResolver} from '../../../entity/stats/stats.resolver';
 import {StateResolver} from '../../../entity/state/state.resolver';
 import {NowPlayingResolver} from '../../../entity/nowplaying/nowplaying.resolver';
 import {AdminResolver} from '../../../entity/admin/admin.resolver';
+import path from 'path';
 
 function registerEnums(): void {
 	registerEnumType(DefaultOrderFields, {name: 'DefaultOrderFields'});
@@ -135,18 +139,56 @@ export class ApolloMiddleware {
 	private engine!: EngineService
 	private schema!: GraphQLSchema;
 
+	async playground(): Promise<express.Router> {
+		const api = express.Router();
+		api.get('/middleware.js', (req, res) => {
+			res.type('text/javascript');
+			res.sendFile(path.resolve('./static/graphql/middleware.min.js'));
+		});
+		api.get('/middleware.js.map', (req, res) => {
+			res.type('text/json');
+			res.sendFile(path.resolve('./static/graphql/middleware.min.js.map'));
+		});
+		api.get('/main.js', (req, res) => {
+			res.type('text/javascript');
+			res.sendFile(path.resolve('./static/graphql/main.js'));
+		});
+		api.get('/index.css', (req, res) => {
+			res.type('text/css');
+			res.sendFile(path.resolve('./static/graphql/index.min.css'));
+		});
+		api.get('/favicon.png', (req, res) => {
+			res.type('image/png');
+			res.sendFile(path.resolve('./static/graphql/favicon.png'));
+		});
+		api.get('/', (req, res) => {
+			res.type('text/html');
+			res.sendFile(path.resolve('./static/graphql/index.html'));
+		});
+		return api;
+	}
+
 	async middleware(): Promise<express.Router> {
 		this.schema = await buildGraphQlSchema();
 		const apollo = new ApolloServer({
 			schema: this.schema,
 			debug: true,
 			plugins: [() => apolloLogger],
-			playground: {
-				settings: {
-					'request.credentials': 'same-origin'
-					// 'request.credentials': 'include',
-				}
+			playground: false,
+			introspection: true,
+			formatError: (err): Error => {
+				// if (err.message.startsWith('Database Error: ')) {
+				// 	return new Error('Internal server error');
+				// }
+				return err;
 			},
+			// {
+			// cdnUrl: './graphql',
+			// settings: {
+			// 	'request.credentials': 'same-origin'
+			// 	// 'request.credentials': 'include',
+			// }
+			// },
 			context: async ({req, res}): Promise<Context> => {
 				if (!req.user) throw new AuthenticationError('you must be logged in');
 				return {

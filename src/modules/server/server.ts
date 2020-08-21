@@ -68,8 +68,13 @@ export class Server {
 
 		log.debug(`registering jam api middleware`);
 		app.use(`/jam/${JAMAPI_URL_VERSION}`, this.rest.middleware());
+
+		log.debug(`registering graphql playground`);
+		app.use('/graphql/playground', await this.apollo.playground());
+
 		log.debug(`registering graphql middleware`);
 		app.use('/graphql', await this.apollo.middleware());
+
 		log.debug(`registering docs middleware`);
 		app.use('/docs', await this.docs.middleware());
 
