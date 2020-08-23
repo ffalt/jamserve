@@ -5,6 +5,7 @@ import {OrderHelper} from '../base/base';
 import {AlbumFilterArgs, AlbumOrderArgs} from './album.args';
 import {User} from '../user/user';
 import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import Sequelize from 'sequelize';
 
 export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, AlbumOrderArgs> {
 	objType = DBObjectType.album;
@@ -28,7 +29,9 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 			case AlbumOrderFields.year:
 				return [['year', direction]];
 			case AlbumOrderFields.seriesNr:
-				return [['seriesNr', direction]];
+				return [[
+					Sequelize.literal('substr(\'0000000000\'||`Album`.`seriesNr`, -10, 10)'),
+					direction]];
 			case AlbumOrderFields.default:
 				// order of setting properties matches order of sort queries. important!
 				return [
