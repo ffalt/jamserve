@@ -6,7 +6,6 @@ import {cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/c
 import {Artist} from '../../../entity/artist/artist';
 import {Orm} from '../services/orm.service';
 import {AlbumType} from '../../../types/enums';
-import {Album} from '../../../entity/album/album';
 import {Folder} from '../../../entity/folder/folder';
 import {MetaStatBuilder} from '../../../utils/stats-builder';
 import {slugify} from '../../../utils/slug';
@@ -20,16 +19,7 @@ export class MetaMerger {
 	constructor(private orm: Orm, private changes: Changes, private rootID: string) {
 	}
 
-	private async collectAlbumGenres(album: Album): Promise<Array<string>> {
-		const genres = new Set<string>();
-		const folders = await album.folders.getItems();
-		for (const folder of folders) {
-			folder.genres.forEach(genre => genres.add(genre));
-		}
-		return [...genres];
-	}
-
-	private async collectArtistNames(artist: Artist): Promise<{ artistName: string, artistSortName: string, slug: string }> {
+	private async collectArtistNames(artist: Artist): Promise<{ artistName: string; artistSortName: string; slug: string }> {
 		const metaStatBuilder = new MetaStatBuilder();
 		const tracks = await artist.tracks.getItems();
 		for (const track of tracks) {
@@ -258,7 +248,25 @@ export class MetaMerger {
 					}
 				}
 				await album.folders.set(folders);
-				album.genres = await this.collectAlbumGenres(album);
+
+				const genres = new Set<string>();
+				const metaStatBuilder = new MetaStatBuilder();
+				for (const folder of folders) {
+					folder.genres.forEach(genre => genres.add(genre));
+					metaStatBuilder.statID('albumType', folder.albumType);
+				}
+				album.genres = [...genres];
+				album.albumType = (metaStatBuilder.mostUsed('albumType') as AlbumType) || AlbumType.unknown;
+				let duration = 0;
+				for (const track of tracks) {
+					const tag = await track.tag.get();
+					duration += (tag?.mediaDuration || 0);
+					metaStatBuilder.statID('seriesNr', tag?.seriesNr);
+					metaStatBuilder.statNumber('year', tag?.year);
+				}
+				album.duration = duration;
+				album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
+				album.year = metaStatBuilder.mostUsedNumber('year');
 				this.orm.Album.persistLater(album);
 			}
 			if (this.orm.em.changesCount() > 500) {

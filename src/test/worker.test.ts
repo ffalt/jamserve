@@ -27,7 +27,7 @@ import {
 	WorkerRequestRenameArtwork,
 	WorkerRequestRenameTrack,
 	WorkerRequestReplaceArtwork,
-	WorkerRequestUpdateRoot
+	WorkerRequestUpdateRoot, WorkerRequestWriteTrackTags
 } from '../modules/engine/services/worker.types';
 import {Track} from '../entity/track/track';
 import {mockImage, writeMockImage} from './mock/mock.image';
@@ -36,6 +36,7 @@ import {writeMockFolder} from './mock/mock.folder';
 import {initTest} from './init';
 import {expectChanges, validateMockRoot} from './mock/mock.changes';
 import {Orm} from '../modules/engine/services/orm.service';
+import exp = require('constants');
 
 initTest();
 
@@ -469,7 +470,7 @@ describe('WorkerService', () => {
 					if (!child) {
 						throw Error('Invalid Test Setup');
 					}
-					const parentID =  child.parent.idOrFail();
+					const parentID = child.parent.idOrFail();
 					await expect(workerService.createFolder({rootID: mockRoot.id, parentID, name: path.basename(child.path)})).rejects.toThrow('Folder name already used in Destination');
 				});
 
@@ -1136,6 +1137,31 @@ describe('WorkerService', () => {
 				it('should refresh a track', async () => {
 					const changes = await workerService.refreshTracks(opts);
 					expectChanges(changes, {foldersUpdate: 1, tracksUpdate: 1, artistsUpdate: 1, albumsUpdate: 1});
+				});
+
+				it('should refresh change an album type after track updates', async () => {
+
+					const album = await orm.Album.oneOrFailFilter({artist: 'artist 1', name: 'album 1'});
+					expect(album.albumType).toBe(AlbumType.album);
+					const tracks = await album.tracks.getItems();
+					const req: WorkerRequestWriteTrackTags = {
+						rootID: mockRoot.id,
+						tags: []
+					};
+					for (const track of tracks) {
+						const rawTag = await engine.audio.readRawTag(path.join(track.path, track.fileName));
+						if (!rawTag) {
+							throw new Error('Invalid Test Setup');
+						}
+						rawTag.frames.TXXX = [
+							{id:'TXXX', value: {id: 'MusicBrainz Album Status', text: 'bootleg'}}
+						];
+						req.tags.push({trackID: track.id, tag: rawTag});
+					}
+					const changes = await workerService.writeTrackTags(req);
+					expectChanges(changes, {foldersUpdate: 3, tracksUpdate: tracks.length, artistsUpdate: 1, albumsUpdate: 1});
+					const updatedAlbum = await orm.Album.oneOrFailFilter({artist: 'artist 1', name: 'album 1'});
+					expect(updatedAlbum.albumType).toBe(AlbumType.bootleg);
 				});
 			});
 

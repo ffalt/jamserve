@@ -153,18 +153,18 @@ export class ModelBuilder {
 										foreignKey:
 											{
 												allowNull: o2o.nullable,
-												name: sourceField.name,
+												name: sourceField.name
 											}
 									});
-									destModel.hasOne(sourceModel, {
-										as: destField.name + 'ORM'
+									// destModel.hasOne(sourceModel, {
+									// 	as: sourceField.name // + 'ORM',
 										// foreignKey:
 										// 	{
 										// 		allowNull: o2o.nullable,
 										// 		name: destField.name,
 										// 		as: destField.name + 'ORM'
 										// 	}
-									});
+									// });
 									// console.log(sourceModel.name + ' belongsTo '+destModel.name);
 									// console.log(destModel.name + ' hasOne '+sourceModel.name);
 								}

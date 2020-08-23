@@ -99,7 +99,7 @@ export class WorkerScan {
 
 	private async setTrackValues(file: ScanFile, track: Track): Promise<MatchTrack> {
 		const data = await this.audioModule.read(file.path);
-		const tag = this.orm.Tag.create(data);
+		const tag = this.orm.Tag.createByScan(data, file.path);
 		this.orm.Tag.persistLater(tag);
 		const oldTag = await track.tag.get();
 		if (oldTag) {

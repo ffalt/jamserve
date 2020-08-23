@@ -20,9 +20,11 @@ export class TrackWorker extends BaseWorker {
 			if (track) {
 				const filename = path.join(track.path, track.fileName);
 				await this.audioModule.writeRawTag(filename, tag.tag);
-				await this.updateTrackStats(track);
+				// await this.updateTrackStats(track);
+				// await this.updateTrackTag(orm, track);
 				changes.tracks.updated.add(track);
 				changes.folders.updated.add(await track.folder.get());
+				// orm.Track.persistLater(track);
 			}
 		}
 	}

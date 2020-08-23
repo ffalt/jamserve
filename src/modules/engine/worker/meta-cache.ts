@@ -100,7 +100,7 @@ export class MetaMergerCache {
 			mbReleaseID: trackInfo.tag.mbReleaseID,
 			seriesNr: trackInfo.tag.seriesNr,
 			year: trackInfo.tag.year,
-			duration: trackInfo.tag.mediaDuration || 0
+			duration: 0
 		});
 		await album.artist.set(artist);
 		await album.folders.add(trackInfo.folder);
