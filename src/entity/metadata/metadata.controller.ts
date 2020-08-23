@@ -61,7 +61,7 @@ export class MetaDataController {
 		@QueryParams() args: MusicBrainzSearchArgs,
 		@Ctx() {orm, engine}: Context
 	): Promise<MetaDataResult> {
-		return {data: await engine.metadata.musicbrainzSearch(orm, args.type, args)};
+		return {data: await engine.metadata.musicbrainzSearch(orm, args.type, {...args, type: undefined})};
 	}
 
 	@Get('/acousticbrainz/lookup', () => MetaDataResult,
