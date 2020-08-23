@@ -372,6 +372,7 @@ export class TransformService {
 			artistName: artist.name,
 			series: series?.name,
 			seriesID: series?.id,
+			seriesNr: o.seriesNr,
 			state: albumArgs.albumIncState ? await this.state(orm, o.id, DBObjectType.album, user.id) : undefined,
 			trackCount: albumArgs.albumIncTrackCount ? await o.tracks.count() : undefined,
 			trackIDs: albumArgs.albumIncTrackIDs ? (await o.tracks.getItems()).map(t => t.id) : undefined,
