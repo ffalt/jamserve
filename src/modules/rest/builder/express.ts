@@ -379,7 +379,6 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 		for (const get of gets) {
 			let route = (get.route || '/');
 			if (get.customPathParameters) {
-				// TODO: formalize replacement route parameters instead of hardcoding {
 				route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
 			}
 			const roles = get.roles || ctrl.roles || [];

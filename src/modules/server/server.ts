@@ -105,7 +105,8 @@ export class Server {
 		this.server.setTimeout(4 * 60000); // 4 minutes
 		log.table([
 			{Content: 'Frontend', URL: `${this.getURL()}`},
-			{Content: 'GraphQl', URL: `${this.getURL()}/graphql`},
+			{Content: 'GraphQl Api', URL: `${this.getURL()}/graphql`},
+			{Content: 'GraphQl Playground', URL: `${this.getURL()}/graphql/playground`},
 			{Content: 'REST Api', URL: `${this.getURL()}/jam/${JAMAPI_URL_VERSION}/ping`},
 			{Content: 'REST Documentation', URL: `${this.getURL()}/docs`},
 			{Content: 'OpenApi Spec', URL: `${this.getURL()}/docs/openapi.json`},
