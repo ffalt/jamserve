@@ -144,7 +144,7 @@ export class WorkerService {
 	async writeTrackTags(parameters: WorkerRequestWriteTrackTags): Promise<Changes> {
 		const {root, orm, changes} = await this.changes.start(parameters.rootID);
 		await this.trackWorker.writeTags(orm, parameters.tags, changes);
-		await this.rootWorker.scan(orm, root, changes);
+		await this.rootWorker.mergeChanges(orm, root, changes);
 		return this.changes.finish(orm, changes, root);
 	}
 

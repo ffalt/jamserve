@@ -1,11 +1,13 @@
 import {Root} from '../../../../entity/root/root';
 import {RootScanStrategy} from '../../../../types/enums';
 import {DirScanner} from '../../../../utils/scan-dir';
-import {WorkerScan} from '../scan';
+import {MatchTrack, WorkerScan} from '../scan';
 import {Changes} from '../changes';
 import {BaseWorker} from './base';
 import {InRequestScope} from 'typescript-ioc';
 import {Orm} from '../../services/orm.service';
+import {MergeNode, WorkerMergeScan} from '../merge-scan';
+import {Folder} from '../../../../entity/folder/folder';
 
 @InRequestScope
 export class RootWorker extends BaseWorker {
@@ -42,7 +44,50 @@ export class RootWorker extends BaseWorker {
 		const dirScanner = new DirScanner();
 		const scanDir = await dirScanner.scan(root.path);
 		const scanMatcher = new WorkerScan(orm, root.id, this.audioModule, this.imageModule, changes);
-		await scanMatcher.match(scanDir);
+		const rootMatch = await scanMatcher.match(scanDir);
+		const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
+		await scanMerger.mergeMatch(rootMatch);
+	}
+
+	async mergeChanges(orm: Orm, root: Root, changes: Changes): Promise<void> {
+		const folders = await orm.Folder.findByIDs(changes.folders.updated.ids());
+		let rootMatch: MergeNode | undefined;
+		for (const folder of folders) {
+			const parents = await this.getParents(folder);
+			if (!rootMatch) {
+				const tracks = await this.buildMergeTracks(parents[0]);
+				rootMatch = {changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length};
+			}
+			const pathToChild = parents.slice(1).concat([folder]);
+			await this.buildMergeNode(pathToChild, rootMatch);
+		}
+		if (rootMatch) {
+			// console.log(this.logNode(rootMatch));
+			// console.log(this.logNode(rootMatch));
+			await this.loadEmptyUnchanged(rootMatch);
+			const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
+			await scanMerger.merge(rootMatch);
+		}
+	}
+
+	private async buildMergeNode(pathToChild: Array<Folder>, merge: MergeNode) {
+		const folder = pathToChild[0];
+		let node = merge.children.find(c => c.folder.id === folder.id);
+		if (!node) {
+			const tracks = await this.buildMergeTracks(folder)
+			node = {
+				changed: true,
+				folder,
+				path: folder.path,
+				children: [],
+				tracks,
+				nrOfTracks: tracks.length
+			};
+			merge.children.push(node);
+		}
+		if (pathToChild.length > 1) {
+			await this.buildMergeNode(pathToChild.slice(1), node);
+		}
 	}
 
 	async create(orm: Orm, name: string, path: string, strategy: RootScanStrategy): Promise<Root> {
@@ -61,4 +106,49 @@ export class RootWorker extends BaseWorker {
 		root.strategy = strategy;
 		orm.Root.persistLater(root);
 	}
+
+	private async getParents(folder: Folder): Promise<Array<Folder>> {
+		const parent = await folder.parent.get();
+		if (!parent) {
+			return [];
+		}
+		return (await this.getParents(parent)).concat([parent]);
+	}
+
+	private async loadEmptyUnchanged(node: MergeNode): Promise<void> {
+		const folders = await node.folder.children.getItems();
+		for (const folder of folders) {
+			const child = node.children.find(f => f.folder.id === folder.id);
+			if (child) {
+				await this.loadEmptyUnchanged(child);
+			} else {
+				node.children.push({
+					changed: false,
+					folder,
+					path: folder.path,
+					children: [],
+					nrOfTracks: await folder.tracks.count(),
+					tracks: []
+				});
+			}
+		}
+	}
+
+	private logNode(node?: MergeNode): Array<string> {
+		let stat = [' '.repeat(node?.folder?.level || 0) + (node?.changed ? '** ' : '|- ') + node?.folder?.path];
+		(node?.children || []).forEach(n => {
+			stat = stat.concat(this.logNode(n));
+		});
+		return stat;
+	}
+
+	private async buildMergeTracks(folder: Folder): Promise<Array<MatchTrack>> {
+		const tracks = await folder.tracks.getItems();
+		const list: Array<MatchTrack> = [];
+		for (const track of tracks) {
+			list.push(await WorkerScan.buildTrackMatch(track));
+		}
+		return list;
+	}
+
 }

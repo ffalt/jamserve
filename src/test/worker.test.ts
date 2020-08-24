@@ -1140,7 +1140,6 @@ describe('WorkerService', () => {
 				});
 
 				it('should refresh change an album type after track updates', async () => {
-
 					const album = await orm.Album.oneOrFailFilter({artist: 'artist 1', name: 'album 1'});
 					expect(album.albumType).toBe(AlbumType.album);
 					const tracks = await album.tracks.getItems();
@@ -1162,6 +1161,28 @@ describe('WorkerService', () => {
 					expectChanges(changes, {foldersUpdate: 3, tracksUpdate: tracks.length, artistsUpdate: 1, albumsUpdate: 1});
 					const updatedAlbum = await orm.Album.oneOrFailFilter({artist: 'artist 1', name: 'album 1'});
 					expect(updatedAlbum.albumType).toBe(AlbumType.bootleg);
+				});
+				it('should refresh change an album artist after track updates', async () => {
+					const album = await orm.Album.oneOrFailFilter({artist: 'artist 1', name: 'album 1'});
+					expect(album.albumType).toBe(AlbumType.album);
+					const tracks = await album.tracks.getItems();
+					const req: WorkerRequestWriteTrackTags = {
+						rootID: mockRoot.id,
+						tags: []
+					};
+					for (const track of tracks) {
+						const rawTag = await engine.audio.readRawTag(path.join(track.path, track.fileName));
+						if (!rawTag) {
+							throw new Error('Invalid Test Setup');
+						}
+						rawTag.frames.TPE1 = [
+							{id:'TPE1', value: {text: 'artist 5'}}
+						];
+						req.tags.push({trackID: track.id, tag: rawTag});
+					}
+					const changes = await workerService.writeTrackTags(req);
+					expectChanges(changes, {foldersUpdate: 3, tracksUpdate: tracks.length, artistsUpdate: 2, albumsRemoved: 1, albumsNew:1});
+					await orm.Album.oneOrFailFilter({artist: 'artist 5', name: 'album 1'});
 				});
 			});
 

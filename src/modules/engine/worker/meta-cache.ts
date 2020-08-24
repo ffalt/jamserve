@@ -32,7 +32,7 @@ export function getAlbumSlug(trackInfo: MetaMergeTrackInfo): string {
 export class MetaMergerCache {
 	private artistCache: Array<{ artist: Artist; slugs: Array<string> }> = [];
 	private seriesCache: Array<{ artist: Artist; series: Series }> = [];
-	private albumCache: Array<{ artist: Artist; album: Album }> = [];
+	private albumCache: Array<{ artist: Artist; album: Album; series?: string }> = [];
 
 	constructor(private orm: Orm, private changes: Changes, private root: Root) {
 	}
@@ -127,8 +127,16 @@ export class MetaMergerCache {
 			}
 		}
 		const name = getAlbumName(trackInfo);
-		const cache = this.albumCache.find(a => (a.album.name === name) && (a.artist.id === artist.id));
-		return cache?.album;
+
+		for (const a of this.albumCache) {
+			if ((a.album.name === name) &&
+				(a.artist.id === artist.id) &&
+				(!trackInfo.tag.seriesNr || (trackInfo.tag.seriesNr === a.album.seriesNr)) &&
+				(!trackInfo.tag.series || (trackInfo.tag.series === a.series))
+			) {
+				return a.album;
+			}
+		}
 	}
 
 	async getAlbumByID(id: string): Promise<Album | undefined> {
@@ -138,7 +146,7 @@ export class MetaMergerCache {
 		}
 		const album = await this.orm.Album.findOneByID(id);
 		if (album) {
-			this.albumCache.push({album, artist: await album.artist.getOrFail()});
+			this.albumCache.push({album, artist: await album.artist.getOrFail(), series: (await album.series.get())?.name});
 			this.changes.albums.updated.add(album);
 		}
 		return album || undefined;
@@ -156,7 +164,7 @@ export class MetaMergerCache {
 		} else {
 			this.changes.albums.updated.add(album);
 		}
-		this.albumCache.push({album, artist});
+		this.albumCache.push({album, artist, series: trackInfo.tag.series});
 		return album;
 	}
 

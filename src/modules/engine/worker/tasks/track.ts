@@ -15,17 +15,27 @@ import {Orm} from '../../services/orm.service';
 export class TrackWorker extends BaseWorker {
 
 	public async writeTags(orm: Orm, tags: Array<{ trackID: string; tag: RawTag }>, changes: Changes): Promise<void> {
-		for (const tag of tags) {
-			const track = await orm.Track.findOneByID(tag.trackID);
+		for (const writeTag of tags) {
+			const track = await orm.Track.findOneByID(writeTag.trackID);
 			if (track) {
 				const filename = path.join(track.path, track.fileName);
-				await this.audioModule.writeRawTag(filename, tag.tag);
-				// await this.updateTrackStats(track);
-				// await this.updateTrackTag(orm, track);
+				await this.audioModule.writeRawTag(filename, writeTag.tag);
+				const oldTag = await track.tag.get();
+				if (oldTag) {
+					orm.Tag.removeLater(oldTag);
+				}
+				const result = await this.audioModule.read(filename);
+				const tag = orm.Tag.createByScan(result, filename);
+				orm.Tag.persistLater(tag);
+				await track.tag.set(tag);
+				await this.updateTrackStats(track);
+				orm.Track.persistLater(track);
 				changes.tracks.updated.add(track);
-				changes.folders.updated.add(await track.folder.get());
-				// orm.Track.persistLater(track);
+				changes.folders.updated.addID(track.folder.id());
 			}
+		}
+		if (orm.em.hasChanges()) {
+			await orm.em.flush();
 		}
 	}
 

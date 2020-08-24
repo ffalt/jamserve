@@ -5,6 +5,7 @@ import {extractAlbumName} from '../../../utils/album-name';
 import {MatchNode, MatchTrack} from './scan';
 import {MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
 import {Folder} from '../../../entity/folder/folder';
+import {MergeNode} from './merge-scan';
 
 export interface MetaStat {
 	artist?: string;
@@ -93,7 +94,7 @@ export class MatchNodeMetaStats {
 		builder.statID('mbReleaseGroupID', match.mbReleaseGroupID);
 	}
 
-	private static async buildTracksSlugs(node: MatchNode, builder: MetaStatBuilder): Promise<void> {
+	private static async buildTracksSlugs(node: MergeNode, builder: MetaStatBuilder): Promise<void> {
 		for (const track of node.tracks) {
 			await MatchNodeMetaStats.buildTrackSlugs(track, builder);
 		}
@@ -115,7 +116,7 @@ export class MatchNodeMetaStats {
 		builder.statID('mbReleaseGroupID', folder.mbReleaseGroupID);
 	}
 
-	private static recursiveCount(dir: MatchNode): { subFolderTrackCount: number; subFolderCount: number } {
+	private static recursiveCount(dir: MergeNode): { subFolderTrackCount: number; subFolderCount: number } {
 		let subFolderTrackCount = 0;
 		let subFolderCount = 0;
 		for (const child of dir.children) {
@@ -124,12 +125,12 @@ export class MatchNodeMetaStats {
 				subFolderCount += result.subFolderCount + 1;
 				subFolderTrackCount += result.subFolderTrackCount;
 			}
-			subFolderTrackCount += child.tracks.length;
+			subFolderTrackCount += child.nrOfTracks;
 		}
 		return {subFolderTrackCount, subFolderCount};
 	}
 
-	private static async buildSubFoldersSlugs(dir: MatchNode, builder: MetaStatBuilder): Promise<void> {
+	private static async buildSubFoldersSlugs(dir: MergeNode, builder: MetaStatBuilder): Promise<void> {
 		for (const child of dir.children) {
 			if (child.folder.folderType !== FolderType.extras) {
 				await MatchNodeMetaStats.buildSubFolderSlugs(child.folder, builder);
@@ -138,7 +139,7 @@ export class MatchNodeMetaStats {
 	}
 
 	private static getAlbumInfo(builder: MetaStatBuilder, strategy: RootScanStrategy): { albumType: AlbumType; artist?: string; genres?: Array<string>; mbAlbumType?: string; hasMultipleArtists: boolean } {
-		// heuristically most used values
+		// somewhat heuristically most used values
 		const artist = builder.mostUsed('artist', MUSICBRAINZ_VARIOUS_ARTISTS_NAME);
 		const genre = builder.mostUsed('genre');
 		const mbAlbumType = builder.mostUsed('mbAlbumType', '');
@@ -164,14 +165,14 @@ export class MatchNodeMetaStats {
 	}
 
 
-	static async buildMetaStat(node: MatchNode, strategy: RootScanStrategy): Promise<MetaStat> {
+	static async buildMetaStat(node: MergeNode, strategy: RootScanStrategy): Promise<MetaStat> {
 		const builder = new MetaStatBuilder();
 		await MatchNodeMetaStats.buildTracksSlugs(node, builder);
 		const {subFolderTrackCount, subFolderCount} = MatchNodeMetaStats.recursiveCount(node);
 		await MatchNodeMetaStats.buildSubFoldersSlugs(node, builder);
 		const {albumType, artist, hasMultipleArtists, mbAlbumType, genres} = MatchNodeMetaStats.getAlbumInfo(builder, strategy);
 		return {
-			trackCount: node.tracks.length,
+			trackCount: node.nrOfTracks,
 			folderCount: node.children.filter(c => c.folder.folderType !== FolderType.extras).length,
 			subFolderTrackCount,
 			subFolderCount,
@@ -181,7 +182,7 @@ export class MatchNodeMetaStats {
 			hasMultipleArtists,
 			mbAlbumType,
 			hasMultipleAlbums: builder.asList('album').length > 1,
-			album: builder.mostUsed('album', extractAlbumName(path.basename(node.scan.path))),
+			album: builder.mostUsed('album', extractAlbumName(path.basename(node.path))),
 			artistSort: hasMultipleArtists ? undefined : builder.mostUsed('artistSort'),
 			mbReleaseID: builder.mostUsed('mbReleaseID', ''),
 			mbReleaseGroupID: builder.mostUsed('mbReleaseGroupID', ''),

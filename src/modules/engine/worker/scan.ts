@@ -13,7 +13,6 @@ import {Orm} from '../services/orm.service';
 import {Artwork} from '../../../entity/artwork/artwork';
 import {artWorkImageNameToType} from '../../../utils/artwork-type';
 import {ImageModule} from '../../image/image.module';
-import {WorkerMergeScan} from './merge-scan';
 
 const log = logger('Worker.Scan');
 
@@ -39,7 +38,7 @@ export interface MatchNode {
 	folder: Folder;
 	children: Array<MatchNode>;
 	tracks: Array<MatchTrack>;
-	artworksCount: number;//Array<Artwork>;
+	artworksCount: number;
 	changed: boolean;
 }
 
@@ -78,7 +77,7 @@ export class WorkerScan {
 		this.changes.artworks.updated.add(artwork);
 	}
 
-	private async buildTrackMatch(track: Track): Promise<MatchTrack> {
+	static async buildTrackMatch(track: Track): Promise<MatchTrack> {
 		const tag = await track.tag.get();
 		return {
 			artist: tag?.albumArtist || tag?.artist,
@@ -110,7 +109,7 @@ export class WorkerScan {
 		track.statCreated = file.ctime;
 		track.statModified = file.mtime;
 		this.orm.Track.persistLater(track);
-		return this.buildTrackMatch(track);
+		return WorkerScan.buildTrackMatch(track);
 	}
 
 	private async buildTrack(file: ScanFile, parent: Folder): Promise<MatchTrack> {
@@ -283,7 +282,7 @@ export class WorkerScan {
 					}
 					result.changed = true;
 				} else {
-					result.tracks.push(await this.buildTrackMatch(track));
+					result.tracks.push(await WorkerScan.buildTrackMatch(track));
 				}
 			} else {
 				log.info('Track has been removed', filename);
@@ -298,7 +297,7 @@ export class WorkerScan {
 		}
 	}
 
-	async match(dir: ScanDir): Promise<void> {
+	async match(dir: ScanDir): Promise<MatchNode> {
 		this.root = await this.orm.Root.oneOrFailByID(this.rootID);
 		const parent = await this.orm.Folder.findOne({where: {path: dir.path}});
 		if (!parent) {
@@ -317,7 +316,6 @@ export class WorkerScan {
 			log.debug('Syncing Track/Artwork Changes to DB');
 			await this.orm.em.flush();
 		}
-		const scanMerger = new WorkerMergeScan(this.orm, this.root.strategy, this.changes);
-		await scanMerger.merge(rootMatch);
+		return rootMatch;
 	}
 }

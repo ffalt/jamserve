@@ -1,47 +1,62 @@
 import {Changes} from './changes';
-import {MatchNode} from './scan';
+import {MatchNode, MatchTrack} from './scan';
 import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums';
 import {splitDirectoryName} from '../../../utils/dir-name';
 import path from 'path';
 import {logger} from '../../../utils/logger';
 import {MatchNodeMetaStats, MetaStat} from './meta-stats';
 import {Orm} from '../services/orm.service';
+import {Folder} from '../../../entity/folder/folder';
 
 const log = logger('Worker.MergeScan');
+
+export interface MergeNode {
+	path: string;
+	folder: Folder;
+	nrOfTracks: number;
+	children: Array<MergeNode>;
+	tracks: Array<MatchTrack>;
+	changed: boolean;
+}
 
 export class WorkerMergeScan {
 
 	constructor(private orm: Orm, private strategy: RootScanStrategy, private changes: Changes) {
 	}
 
-	async merge(matchRoot: MatchNode): Promise<void> {
-		this.markChangedParents(matchRoot);
-		await this.mergeNode(matchRoot);
+	async mergeMatch(matchRoot: MatchNode): Promise<void> {
+		const mergeRoot = WorkerMergeScan.buildNodes(matchRoot);
+		return this.merge(mergeRoot);
+	}
+
+	async merge(mergeRoot: MergeNode): Promise<void> {
+		this.markChangedParents(mergeRoot);
+		await this.mergeNode(mergeRoot);
 		if (this.orm.em.hasChanges()) {
 			log.debug('Syncing Folder Changes to DB');
 			await this.orm.em.flush();
 		}
 	}
 
-	private static isExtraFolder(node: MatchNode): boolean {
+	private static isExtraFolder(node: MergeNode): boolean {
 		// TODO: generalise extra folder detection (an admin setting?)
-		const name = path.basename(node.scan.path).toLowerCase();
+		const name = path.basename(node.path).toLowerCase();
 		return !!name.match(/(\[(extra|various)]|^(extra|various)$)/);
 	}
 
-	private static getMultiAlbumFolderType(node: MatchNode): FolderType {
+	private static getMultiAlbumFolderType(node: MergeNode): FolderType {
 		const a = node.children.find(d => {
 			return (d.folder.folderType === FolderType.artist);
 		});
 		return a ? FolderType.collection : FolderType.multialbum;
 	}
 
-	private static getMixedFolderType(node: MatchNode, _: MetaStat, __: RootScanStrategy): FolderType {
+	private static getMixedFolderType(node: MergeNode, _: MetaStat, __: RootScanStrategy): FolderType {
 		return WorkerMergeScan.getMultiAlbumFolderType(node);
 	}
 
-	private static getFolderType(node: MatchNode, metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
-		if (node.scan.level === 0) {
+	private static getFolderType(node: MergeNode, metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
+		if (node.folder.level === 0) {
 			return FolderType.collection;
 		}
 		if (WorkerMergeScan.isExtraFolder(node)) {
@@ -72,14 +87,14 @@ export class WorkerMergeScan {
 		return WorkerMergeScan.getMultiAlbumFolderType(node);
 	}
 
-	private static setFolderType(node: MatchNode, type: FolderType): void {
+	private static setFolderType(node: MergeNode, type: FolderType): void {
 		if (node.folder.folderType !== type) {
 			node.folder.folderType = type;
 			node.changed = true;
 		}
 		switch (type) {
 			case FolderType.collection:
-				node.folder.albumType = undefined;
+				// node.folder.albumType = undefined;
 				node.folder.mbArtistID = undefined;
 				node.folder.mbReleaseID = undefined;
 				node.folder.mbAlbumType = undefined;
@@ -100,7 +115,7 @@ export class WorkerMergeScan {
 		}
 	}
 
-	private static markMultiAlbumChildDirs(node: MatchNode): void {
+	private static markMultiAlbumChildDirs(node: MergeNode): void {
 		if (node.folder.folderType !== FolderType.extras) {
 			WorkerMergeScan.setFolderType(node, FolderType.multialbum);
 		}
@@ -116,7 +131,7 @@ export class WorkerMergeScan {
 		}
 	}
 
-	private static markArtistChildDirs(node: MatchNode): void {
+	private static markArtistChildDirs(node: MergeNode): void {
 		if (node.folder.folderType === FolderType.artist) {
 			WorkerMergeScan.setFolderType(node, FolderType.collection);
 		}
@@ -125,10 +140,10 @@ export class WorkerMergeScan {
 		}
 	}
 
-	private async buildFolderMeta(node: MatchNode): Promise<void> {
-		log.debug('Merge Folder Meta', node.scan.path);
+	private async buildFolderMeta(node: MergeNode): Promise<void> {
+		log.debug('Merge Folder Meta', node.path);
 		const metaStat = await MatchNodeMetaStats.buildMetaStat(node, this.strategy);
-		const nameSplit = splitDirectoryName(node.scan.path);
+		const nameSplit = splitDirectoryName(node.path);
 		const folder = node.folder;
 		folder.album = metaStat.album;
 		folder.albumType = metaStat.albumType;
@@ -155,7 +170,7 @@ export class WorkerMergeScan {
 		this.orm.Folder.persistLater(folder);
 	}
 
-	private async mergeNode(node: MatchNode): Promise<void> {
+	private async mergeNode(node: MergeNode): Promise<void> {
 		// merge children first
 		for (const child of node.children) {
 			await this.mergeNode(child);
@@ -165,7 +180,7 @@ export class WorkerMergeScan {
 		}
 	}
 
-	private markChangedParents(node: MatchNode): void {
+	private markChangedParents(node: MergeNode): void {
 		let changed = node.changed;
 		for (const child of node.children) {
 			this.markChangedParents(child);
@@ -179,5 +194,16 @@ export class WorkerMergeScan {
 			}
 		}
 		node.changed = changed;
+	}
+
+	private static buildNodes(node: MatchNode): MergeNode {
+		return {
+			path: node.scan.path,
+			children: node.children.map(c => WorkerMergeScan.buildNodes(c)),
+			tracks: node.tracks,
+			nrOfTracks: node.tracks.length,
+			folder: node.folder,
+			changed: node.changed
+		};
 	}
 }
