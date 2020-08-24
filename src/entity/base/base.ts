@@ -86,6 +86,10 @@ export class OrderHelper {
 	static direction(args?: OrderByArgs): string {
 		return args?.orderDesc ? 'DESC' : 'ASC';
 	}
+
+	static inverse(order: string): string {
+		return order === 'ASC' ? 'DESC' : 'ASC';
+	}
 }
 
 export function dateOrUndefined(timestamp?: number): Date | undefined {

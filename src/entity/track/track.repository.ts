@@ -33,7 +33,7 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 				return [['tagORM', 'title', direction]];
 			case TrackOrderFields.default:
 				return [
-					['path', direction],
+					['path', OrderHelper.inverse(direction)],
 					['tagORM', 'disc', direction],
 					['tagORM', 'trackNr', direction],
 					['tagORM', 'title', direction]

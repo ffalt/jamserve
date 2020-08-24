@@ -86,7 +86,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	async all(): Promise<Array<Entity>> {
-		return this.find({});
+		return this.find({order: [['createdAt', 'ASC']]});
 	}
 
 	async oneOrFailByID(id: string): Promise<Entity> {
@@ -101,7 +101,6 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		try {
 			return await super.findOneOrFail(options);
 		} catch (e) {
-			console.log(e);
 			throw NotFoundError();
 		}
 	}
