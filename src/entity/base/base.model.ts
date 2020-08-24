@@ -11,7 +11,7 @@ export class Base {
 	@ObjField({nullable: true, description: 'User State Info'})
 	state?: State;
 	@ObjField({description: 'Created Timestamp', min: 0, example: examples.timestamp})
-	created: number = Date.now();
+	created!: number;
 }
 
 @ResultType()

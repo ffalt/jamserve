@@ -21134,7 +21134,6 @@
 					},
 					"created": {
 						"type": "integer",
-						"default": 1597920500979,
 						"minimum": 0,
 						"description": "Created Timestamp"
 					}
@@ -23045,7 +23044,6 @@
 							},
 							"created": {
 								"type": "integer",
-								"default": 1597920500991,
 								"minimum": 0,
 								"description": "Playlist Created Timestamp"
 							},
