@@ -1202,6 +1202,7 @@ enum TrackOrderFields {
   album
   title
   parent
+  filename
 }
 
 type StatsQL {
