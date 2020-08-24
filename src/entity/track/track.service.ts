@@ -12,6 +12,7 @@ import {ApiBinaryResult} from '../../modules/rest';
 import {FolderService} from '../folder/folder.service';
 import {TrackHealthHint} from '../health/health.model';
 import {Orm} from '../../modules/engine/services/orm.service';
+import {basenameStripExt} from '../../utils/fs-utils';
 
 const log = logger('TrackService');
 
@@ -63,6 +64,12 @@ export class TrackService {
 		}
 		const folder = await track.folder.get();
 		if (folder) {
+			const name = basenameStripExt(track.fileName);
+			const artworks = await folder.artworks.getItems();
+			const artwork = artworks.find(a => a.name.startsWith(name));
+			if (artwork) {
+				return this.imageModule.get(artwork.id, path.join(artwork.path, artwork.name), size, format);
+			}
 			return this.folderService.getImage(orm, folder, size, format);
 		}
 	}
