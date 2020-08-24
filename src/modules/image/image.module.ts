@@ -13,6 +13,7 @@ import {AvatarGen} from './image.avatar';
 import {ImageResult} from './image.format';
 import {ConfigService} from '../engine/services/config.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
+import {ImageFormatType} from '../../types/enums';
 
 export interface ImageInfo {
 	width: number;
@@ -120,39 +121,37 @@ export class ImageModule {
 
 	private async getImageBufferAs(buffer: Buffer, format: string | undefined, size: number | undefined): Promise<ImageResult> {
 		const info = await this.getImageInfoBuffer(buffer);
-		format = format || info.format;
-		const mime = mimeTypes.lookup(format);
-		if (!mime) {
+		if (!format && size && !SupportedWriteImageFormat.includes(info.format)) {
+			format = ImageFormatType.jpeg;
+		}
+		const destFormat = format || info.format;
+		const contentType = mimeTypes.lookup(destFormat);
+		if (!contentType) {
 			return Promise.reject(`Unknown Image Format Request: ${format}`);
 		}
 		if (size) {
 			return {
 				buffer: {
 					buffer: await sharp(buffer, {failOnError: false})
-						.resize(size, size,
-							{
-								fit: sharp.fit.cover // ,position: sharp.strategy.entropy
-							}).toFormat(format)
+						.resize(size, size, {fit: sharp.fit.cover})
+						.toFormat(destFormat)
 						.toBuffer(),
-					contentType: mime
+					contentType
 				}
 			};
 		}
-		if (format && info.format !== format) {
+		if (format && info.format !== destFormat) {
 			return {
 				buffer: {
 					buffer: await sharp(buffer, {failOnError: false})
-						.toFormat(format)
+						.toFormat(destFormat)
 						.toBuffer(),
-					contentType: mime
+					contentType
 				}
 			};
 		}
 		return {
-			buffer: {
-				buffer,
-				contentType: mimeTypes.lookup(info.format) || 'image'
-			}
+			buffer: {buffer, contentType}
 		};
 	}
 
@@ -259,4 +258,5 @@ export class ImageModule {
 	async getImageInfoBuffer(bin: Buffer): Promise<ImageInfo> {
 		return this.formatImageInfo(sharp(bin, {failOnError: false}));
 	}
+
 }
