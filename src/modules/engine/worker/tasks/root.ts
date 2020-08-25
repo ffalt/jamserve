@@ -50,6 +50,9 @@ export class RootWorker extends BaseWorker {
 	}
 
 	async mergeChanges(orm: Orm, root: Root, changes: Changes): Promise<void> {
+		if (orm.em.hasChanges()) {
+			await orm.em.flush();
+		}
 		const folders = await orm.Folder.findByIDs(changes.folders.updated.ids());
 		let rootMatch: MergeNode | undefined;
 		for (const folder of folders) {
@@ -63,8 +66,8 @@ export class RootWorker extends BaseWorker {
 		}
 		if (rootMatch) {
 			// console.log(this.logNode(rootMatch));
-			// console.log(this.logNode(rootMatch));
 			await this.loadEmptyUnchanged(rootMatch);
+			// console.log(this.logNode(rootMatch));
 			const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
 			await scanMerger.merge(rootMatch);
 		}

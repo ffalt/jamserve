@@ -86,7 +86,8 @@ export class FolderWorker extends BaseWorker {
 			path: destination,
 			folderType: FolderType.extras,
 			level: parent.level + 1,
-			title, year,
+			title: name !== title ? title : undefined,
+			year,
 			statCreated: stat.ctime.valueOf(),
 			statModified: stat.mtime.valueOf()
 		});
@@ -138,20 +139,19 @@ export class FolderWorker extends BaseWorker {
 		} catch (e) {
 			return Promise.reject(Error('Folder renaming failed'));
 		}
-
 		const folders = await orm.Folder.findAllDescendants(folder);
 		const dest = ensureTrailingPathSeparator(newPath);
-		for (const child of folders) {
-			child.path = child.path.replace(oldPath, dest);
-			changes.folders.updated.add(child);
-			orm.Folder.persistLater(child);
-			const tracks = await child.tracks.getItems();
+		for (const item of folders) {
+			item.path = item.path.replace(oldPath, dest);
+			changes.folders.updated.add(item);
+			orm.Folder.persistLater(item);
+			const tracks = await item.tracks.getItems();
 			for (const track of tracks) {
 				track.path = track.path.replace(oldPath, dest);
 				changes.tracks.updated.add(track);
 				orm.Track.persistLater(track);
 			}
-			const artworks = await child.artworks.getItems();
+			const artworks = await item.artworks.getItems();
 			for (const artwork of artworks) {
 				artwork.path = artwork.path.replace(oldPath, dest);
 				changes.artworks.updated.add(artwork);

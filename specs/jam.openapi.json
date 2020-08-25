@@ -713,243 +713,32 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "skip",
-						"description": "return items starting from offset position",
+						"name": "list",
+						"description": "filter by special list",
 						"required": false,
-						"example": 0,
+						"example": "faved",
 						"schema": {
-							"type": "integer",
-							"default": 0,
-							"minimum": 0,
-							"description": "return items starting from offset position"
+							"$ref": "#/components/schemas/ListType"
 						}
 					},
 					{
 						"in": "query",
-						"name": "take",
-						"description": "amount of returned items",
+						"name": "orderDesc",
+						"description": "order direction ascending or descending",
 						"required": false,
-						"example": 25,
-						"schema": {
-							"type": "integer",
-							"minimum": 1,
-							"description": "amount of returned items"
-						}
-					},
-					{
-						"in": "query",
-						"name": "albumIncTrackIDs",
-						"description": "include track ids on album(s)",
-						"required": false,
-						"example": false,
+						"example": true,
 						"schema": {
 							"type": "boolean",
-							"default": false,
-							"description": "include track ids on album(s)"
+							"description": "order direction ascending or descending"
 						}
 					},
 					{
 						"in": "query",
-						"name": "albumIncTrackCount",
-						"description": "include track count on album(s)",
+						"name": "orderBy",
+						"description": "order by field",
 						"required": false,
-						"example": false,
 						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track count on album(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "albumIncState",
-						"description": "include user states (fav,rate) on album(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on album(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "albumIncInfo",
-						"description": "include extended meta data on album(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include extended meta data on album(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "albumIncTracks",
-						"description": "include tracks on album(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tracks on album(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "albumIncArtist",
-						"description": "include artist on album(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include artist on album(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncMedia",
-						"description": "include media information on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include media information on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncTag",
-						"description": "include tag on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncRawTag",
-						"description": "include raw tag on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include raw tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncState",
-						"description": "include user states (fav,rate) on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncAlbumIDs",
-						"description": "include album ids on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include album ids on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncAlbumCount",
-						"description": "include album count on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include album count on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncState",
-						"description": "include user states (fav,rate) on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncTrackIDs",
-						"description": "include track ids on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track ids on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncTrackCount",
-						"description": "include track count on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track count on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncSeriesIDs",
-						"description": "include series ids on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include series ids on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncSeriesCount",
-						"description": "include series count on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include series count on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncInfo",
-						"description": "include extended meta data on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include extended meta data on artist(s)"
+							"$ref": "#/components/schemas/AlbumOrderFields"
 						}
 					},
 					{
@@ -1175,32 +964,243 @@
 					},
 					{
 						"in": "query",
-						"name": "orderDesc",
-						"description": "order direction ascending or descending",
+						"name": "artistIncAlbumIDs",
+						"description": "include album ids on artist(s)",
 						"required": false,
-						"example": true,
+						"example": false,
 						"schema": {
 							"type": "boolean",
-							"description": "order direction ascending or descending"
+							"default": false,
+							"description": "include album ids on artist(s)"
 						}
 					},
 					{
 						"in": "query",
-						"name": "orderBy",
-						"description": "order by field",
+						"name": "artistIncAlbumCount",
+						"description": "include album count on artist(s)",
 						"required": false,
+						"example": false,
 						"schema": {
-							"$ref": "#/components/schemas/AlbumOrderFields"
+							"type": "boolean",
+							"default": false,
+							"description": "include album count on artist(s)"
 						}
 					},
 					{
 						"in": "query",
-						"name": "list",
-						"description": "filter by special list",
+						"name": "artistIncState",
+						"description": "include user states (fav,rate) on artist(s)",
 						"required": false,
-						"example": "faved",
+						"example": false,
 						"schema": {
-							"$ref": "#/components/schemas/ListType"
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncTrackIDs",
+						"description": "include track ids on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track ids on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncTrackCount",
+						"description": "include track count on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track count on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncSeriesIDs",
+						"description": "include series ids on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include series ids on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncSeriesCount",
+						"description": "include series count on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include series count on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncInfo",
+						"description": "include extended meta data on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncMedia",
+						"description": "include media information on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include media information on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncTag",
+						"description": "include tag on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncRawTag",
+						"description": "include raw tag on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncState",
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncTracks",
+						"description": "include tracks on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tracks on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncArtist",
+						"description": "include artist on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include artist on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncTrackIDs",
+						"description": "include track ids on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track ids on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncTrackCount",
+						"description": "include track count on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track count on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncState",
+						"description": "include user states (fav,rate) on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncInfo",
+						"description": "include extended meta data on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"description": "return items starting from offset position",
+						"required": false,
+						"example": 0,
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0,
+							"description": "return items starting from offset position"
+						}
+					},
+					{
+						"in": "query",
+						"name": "take",
+						"description": "amount of returned items",
+						"required": false,
+						"example": 25,
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "amount of returned items"
 						}
 					}
 				],
@@ -2396,339 +2396,32 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "skip",
-						"description": "return items starting from offset position",
+						"name": "list",
+						"description": "filter by special list",
 						"required": false,
-						"example": 0,
+						"example": "faved",
 						"schema": {
-							"type": "integer",
-							"default": 0,
-							"minimum": 0,
-							"description": "return items starting from offset position"
+							"$ref": "#/components/schemas/ListType"
 						}
 					},
 					{
 						"in": "query",
-						"name": "take",
-						"description": "amount of returned items",
+						"name": "orderDesc",
+						"description": "order direction ascending or descending",
 						"required": false,
-						"example": 25,
-						"schema": {
-							"type": "integer",
-							"minimum": 1,
-							"description": "amount of returned items"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncAlbumIDs",
-						"description": "include album ids on artist(s)",
-						"required": false,
-						"example": false,
+						"example": true,
 						"schema": {
 							"type": "boolean",
-							"default": false,
-							"description": "include album ids on artist(s)"
+							"description": "order direction ascending or descending"
 						}
 					},
 					{
 						"in": "query",
-						"name": "artistIncAlbumCount",
-						"description": "include album count on artist(s)",
+						"name": "orderBy",
+						"description": "order by field",
 						"required": false,
-						"example": false,
 						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include album count on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncState",
-						"description": "include user states (fav,rate) on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncTrackIDs",
-						"description": "include track ids on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track ids on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncTrackCount",
-						"description": "include track count on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track count on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncSeriesIDs",
-						"description": "include series ids on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include series ids on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncSeriesCount",
-						"description": "include series count on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include series count on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncInfo",
-						"description": "include extended meta data on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include extended meta data on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncAlbums",
-						"description": "include albums on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include albums on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncTracks",
-						"description": "include tracks on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tracks on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncSeries",
-						"description": "include series on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include series on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artistIncSimilar",
-						"description": "include similar artists on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include similar artists on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncMedia",
-						"description": "include media information on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include media information on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncTag",
-						"description": "include tag on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncRawTag",
-						"description": "include raw tag on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include raw tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncState",
-						"description": "include user states (fav,rate) on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "albumIncTrackIDs",
-						"description": "include track ids on album(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track ids on album(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "albumIncTrackCount",
-						"description": "include track count on album(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track count on album(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "albumIncState",
-						"description": "include user states (fav,rate) on album(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on album(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "albumIncInfo",
-						"description": "include extended meta data on album(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include extended meta data on album(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "seriesIncAlbumIDs",
-						"description": "include album ids on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include album ids on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "seriesIncAlbumCount",
-						"description": "include album counts on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include album counts on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "seriesIncState",
-						"description": "include user states (fav,rate) on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "seriesIncTrackIDs",
-						"description": "include track ids on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track ids on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "seriesIncTrackCount",
-						"description": "include track counts on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track counts on artist(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "seriesIncInfo",
-						"description": "include extended meta data on artist(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include extended meta data on artist(s)"
+							"$ref": "#/components/schemas/ArtistOrderFields"
 						}
 					},
 					{
@@ -2916,32 +2609,339 @@
 					},
 					{
 						"in": "query",
-						"name": "orderDesc",
-						"description": "order direction ascending or descending",
+						"name": "seriesIncAlbumIDs",
+						"description": "include album ids on artist(s)",
 						"required": false,
-						"example": true,
+						"example": false,
 						"schema": {
 							"type": "boolean",
-							"description": "order direction ascending or descending"
+							"default": false,
+							"description": "include album ids on artist(s)"
 						}
 					},
 					{
 						"in": "query",
-						"name": "orderBy",
-						"description": "order by field",
+						"name": "seriesIncAlbumCount",
+						"description": "include album counts on artist(s)",
 						"required": false,
+						"example": false,
 						"schema": {
-							"$ref": "#/components/schemas/ArtistOrderFields"
+							"type": "boolean",
+							"default": false,
+							"description": "include album counts on artist(s)"
 						}
 					},
 					{
 						"in": "query",
-						"name": "list",
-						"description": "filter by special list",
+						"name": "seriesIncState",
+						"description": "include user states (fav,rate) on artist(s)",
 						"required": false,
-						"example": "faved",
+						"example": false,
 						"schema": {
-							"$ref": "#/components/schemas/ListType"
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "seriesIncTrackIDs",
+						"description": "include track ids on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track ids on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "seriesIncTrackCount",
+						"description": "include track counts on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track counts on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "seriesIncInfo",
+						"description": "include extended meta data on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncTrackIDs",
+						"description": "include track ids on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track ids on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncTrackCount",
+						"description": "include track count on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track count on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncState",
+						"description": "include user states (fav,rate) on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncInfo",
+						"description": "include extended meta data on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncMedia",
+						"description": "include media information on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include media information on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncTag",
+						"description": "include tag on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncRawTag",
+						"description": "include raw tag on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncState",
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncAlbums",
+						"description": "include albums on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include albums on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncTracks",
+						"description": "include tracks on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tracks on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncSeries",
+						"description": "include series on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include series on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncSimilar",
+						"description": "include similar artists on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include similar artists on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncAlbumIDs",
+						"description": "include album ids on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include album ids on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncAlbumCount",
+						"description": "include album count on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include album count on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncState",
+						"description": "include user states (fav,rate) on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncTrackIDs",
+						"description": "include track ids on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track ids on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncTrackCount",
+						"description": "include track count on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track count on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncSeriesIDs",
+						"description": "include series ids on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include series ids on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncSeriesCount",
+						"description": "include series count on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include series count on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncInfo",
+						"description": "include extended meta data on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"description": "return items starting from offset position",
+						"required": false,
+						"example": 0,
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0,
+							"description": "return items starting from offset position"
+						}
+					},
+					{
+						"in": "query",
+						"name": "take",
+						"description": "amount of returned items",
+						"required": false,
+						"example": 25,
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "amount of returned items"
 						}
 					}
 				],
@@ -6898,12 +6898,110 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "id",
-						"description": "Folder Id",
-						"required": true,
-						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"name": "artworkIncState",
+						"description": "include state (fav,rate) on artwork(s)",
+						"required": false,
+						"example": false,
 						"schema": {
-							"$ref": "#/components/schemas/ID"
+							"type": "boolean",
+							"default": false,
+							"description": "include state (fav,rate) on artwork(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncMedia",
+						"description": "include media information on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include media information on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncTag",
+						"description": "include tag on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncRawTag",
+						"description": "include raw tag on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncState",
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncArtworks",
+						"description": "include artwork images list on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include artwork images list on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncChildren",
+						"description": "include tracks and sub folders on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tracks and sub folders on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncFolders",
+						"description": "include child folders on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child folders on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncTracks",
+						"description": "include tracks on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tracks on folder(s)"
 						}
 					},
 					{
@@ -7040,110 +7138,12 @@
 					},
 					{
 						"in": "query",
-						"name": "folderIncArtworks",
-						"description": "include artwork images list on folder(s)",
-						"required": false,
-						"example": false,
+						"name": "id",
+						"description": "Folder Id",
+						"required": true,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include artwork images list on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncChildren",
-						"description": "include tracks and sub folders on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tracks and sub folders on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncFolders",
-						"description": "include child folders on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include child folders on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncTracks",
-						"description": "include tracks on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tracks on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncMedia",
-						"description": "include media information on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include media information on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncTag",
-						"description": "include tag on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncRawTag",
-						"description": "include raw tag on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include raw tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncState",
-						"description": "include user states (fav,rate) on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artworkIncState",
-						"description": "include state (fav,rate) on artwork(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include state (fav,rate) on artwork(s)"
+							"$ref": "#/components/schemas/ID"
 						}
 					}
 				],
@@ -7597,267 +7597,32 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "skip",
-						"description": "return items starting from offset position",
+						"name": "list",
+						"description": "filter by special list",
 						"required": false,
-						"example": 0,
+						"example": "faved",
 						"schema": {
-							"type": "integer",
-							"default": 0,
-							"minimum": 0,
-							"description": "return items starting from offset position"
+							"$ref": "#/components/schemas/ListType"
 						}
 					},
 					{
 						"in": "query",
-						"name": "take",
-						"description": "amount of returned items",
+						"name": "orderDesc",
+						"description": "order direction ascending or descending",
 						"required": false,
-						"example": 25,
-						"schema": {
-							"type": "integer",
-							"minimum": 1,
-							"description": "amount of returned items"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncTag",
-						"description": "include tag on folder(s)",
-						"required": false,
-						"example": false,
+						"example": true,
 						"schema": {
 							"type": "boolean",
-							"default": false,
-							"description": "include tag on folder(s)"
+							"description": "order direction ascending or descending"
 						}
 					},
 					{
 						"in": "query",
-						"name": "folderIncState",
-						"description": "include state (fav,rate) on folder(s)",
+						"name": "orderBy",
+						"description": "order by field",
 						"required": false,
-						"example": false,
 						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include state (fav,rate) on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncChildFolderCount",
-						"description": "include child folder count on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include child folder count on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncTrackCount",
-						"description": "include track count on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track count on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncArtworkCount",
-						"description": "include artwork count on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include artwork count on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncParents",
-						"description": "include a list of all parent folder ids/names on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include a list of all parent folder ids/names on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncInfo",
-						"description": "include extended meta data on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include extended meta data on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncSimilar",
-						"description": "include similar folders list on folder(s) - only for folders of type artist",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include similar folders list on folder(s) - only for folders of type artist"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncArtworkIDs",
-						"description": "include artwork images Ids on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include artwork images Ids on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncTrackIDs",
-						"description": "include track Ids on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include track Ids on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncFolderIDs",
-						"description": "include children folder Ids on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include children folder Ids on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncArtworks",
-						"description": "include artwork images list on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include artwork images list on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncChildren",
-						"description": "include tracks and sub folders on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tracks and sub folders on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncFolders",
-						"description": "include child folders on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include child folders on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "folderIncTracks",
-						"description": "include tracks on folder(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tracks on folder(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncMedia",
-						"description": "include media information on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include media information on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncTag",
-						"description": "include tag on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncRawTag",
-						"description": "include raw tag on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include raw tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncState",
-						"description": "include user states (fav,rate) on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "artworkIncState",
-						"description": "include state (fav,rate) on artwork(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include state (fav,rate) on artwork(s)"
+							"$ref": "#/components/schemas/FolderOrderFields"
 						}
 					},
 					{
@@ -8218,32 +7983,267 @@
 					},
 					{
 						"in": "query",
-						"name": "orderDesc",
-						"description": "order direction ascending or descending",
+						"name": "artworkIncState",
+						"description": "include state (fav,rate) on artwork(s)",
 						"required": false,
-						"example": true,
+						"example": false,
 						"schema": {
 							"type": "boolean",
-							"description": "order direction ascending or descending"
+							"default": false,
+							"description": "include state (fav,rate) on artwork(s)"
 						}
 					},
 					{
 						"in": "query",
-						"name": "orderBy",
-						"description": "order by field",
+						"name": "trackIncMedia",
+						"description": "include media information on track(s)",
 						"required": false,
+						"example": false,
 						"schema": {
-							"$ref": "#/components/schemas/FolderOrderFields"
+							"type": "boolean",
+							"default": false,
+							"description": "include media information on track(s)"
 						}
 					},
 					{
 						"in": "query",
-						"name": "list",
-						"description": "filter by special list",
+						"name": "trackIncTag",
+						"description": "include tag on track(s)",
 						"required": false,
-						"example": "faved",
+						"example": false,
 						"schema": {
-							"$ref": "#/components/schemas/ListType"
+							"type": "boolean",
+							"default": false,
+							"description": "include tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncRawTag",
+						"description": "include raw tag on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncState",
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncArtworks",
+						"description": "include artwork images list on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include artwork images list on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncChildren",
+						"description": "include tracks and sub folders on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tracks and sub folders on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncFolders",
+						"description": "include child folders on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child folders on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncTracks",
+						"description": "include tracks on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tracks on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncTag",
+						"description": "include tag on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tag on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncState",
+						"description": "include state (fav,rate) on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include state (fav,rate) on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncChildFolderCount",
+						"description": "include child folder count on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child folder count on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncTrackCount",
+						"description": "include track count on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track count on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncArtworkCount",
+						"description": "include artwork count on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include artwork count on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncParents",
+						"description": "include a list of all parent folder ids/names on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include a list of all parent folder ids/names on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncInfo",
+						"description": "include extended meta data on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncSimilar",
+						"description": "include similar folders list on folder(s) - only for folders of type artist",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include similar folders list on folder(s) - only for folders of type artist"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncArtworkIDs",
+						"description": "include artwork images Ids on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include artwork images Ids on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncTrackIDs",
+						"description": "include track Ids on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track Ids on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncFolderIDs",
+						"description": "include children folder Ids on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include children folder Ids on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"description": "return items starting from offset position",
+						"required": false,
+						"example": 0,
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0,
+							"description": "return items starting from offset position"
+						}
+					},
+					{
+						"in": "query",
+						"name": "take",
+						"description": "amount of returned items",
+						"required": false,
+						"example": 25,
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "amount of returned items"
 						}
 					}
 				],
@@ -18408,75 +18408,32 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "skip",
-						"description": "return items starting from offset position",
+						"name": "list",
+						"description": "filter by special list",
 						"required": false,
-						"example": 0,
+						"example": "faved",
 						"schema": {
-							"type": "integer",
-							"default": 0,
-							"minimum": 0,
-							"description": "return items starting from offset position"
+							"$ref": "#/components/schemas/ListType"
 						}
 					},
 					{
 						"in": "query",
-						"name": "take",
-						"description": "amount of returned items",
+						"name": "orderDesc",
+						"description": "order direction ascending or descending",
 						"required": false,
-						"example": 25,
-						"schema": {
-							"type": "integer",
-							"minimum": 1,
-							"description": "amount of returned items"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncMedia",
-						"description": "include media information on track(s)",
-						"required": false,
-						"example": false,
+						"example": true,
 						"schema": {
 							"type": "boolean",
-							"default": false,
-							"description": "include media information on track(s)"
+							"description": "order direction ascending or descending"
 						}
 					},
 					{
 						"in": "query",
-						"name": "trackIncTag",
-						"description": "include tag on track(s)",
+						"name": "orderBy",
+						"description": "order by field",
 						"required": false,
-						"example": false,
 						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncRawTag",
-						"description": "include raw tag on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include raw tag on track(s)"
-						}
-					},
-					{
-						"in": "query",
-						"name": "trackIncState",
-						"description": "include user states (fav,rate) on track(s)",
-						"required": false,
-						"example": false,
-						"schema": {
-							"type": "boolean",
-							"default": false,
-							"description": "include user states (fav,rate) on track(s)"
+							"$ref": "#/components/schemas/TrackOrderFields"
 						}
 					},
 					{
@@ -18691,32 +18648,75 @@
 					},
 					{
 						"in": "query",
-						"name": "orderDesc",
-						"description": "order direction ascending or descending",
+						"name": "trackIncMedia",
+						"description": "include media information on track(s)",
 						"required": false,
-						"example": true,
+						"example": false,
 						"schema": {
 							"type": "boolean",
-							"description": "order direction ascending or descending"
+							"default": false,
+							"description": "include media information on track(s)"
 						}
 					},
 					{
 						"in": "query",
-						"name": "orderBy",
-						"description": "order by field",
+						"name": "trackIncTag",
+						"description": "include tag on track(s)",
 						"required": false,
+						"example": false,
 						"schema": {
-							"$ref": "#/components/schemas/TrackOrderFields"
+							"type": "boolean",
+							"default": false,
+							"description": "include tag on track(s)"
 						}
 					},
 					{
 						"in": "query",
-						"name": "list",
-						"description": "filter by special list",
+						"name": "trackIncRawTag",
+						"description": "include raw tag on track(s)",
 						"required": false,
-						"example": "faved",
+						"example": false,
 						"schema": {
-							"$ref": "#/components/schemas/ListType"
+							"type": "boolean",
+							"default": false,
+							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncState",
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"description": "return items starting from offset position",
+						"required": false,
+						"example": 0,
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0,
+							"description": "return items starting from offset position"
+						}
+					},
+					{
+						"in": "query",
+						"name": "take",
+						"description": "amount of returned items",
+						"required": false,
+						"example": 25,
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "amount of returned items"
 						}
 					}
 				],
@@ -21422,6 +21422,17 @@
 					"groups"
 				]
 			},
+			"ListType": {
+				"type": "string",
+				"enum": [
+					"random",
+					"highest",
+					"avghighest",
+					"frequent",
+					"faved",
+					"recent"
+				]
+			},
 			"AlbumOrderFields": {
 				"type": "string",
 				"enum": [
@@ -21434,17 +21445,6 @@
 					"seriesNr",
 					"duration",
 					"albumType"
-				]
-			},
-			"ListType": {
-				"type": "string",
-				"enum": [
-					"random",
-					"highest",
-					"avghighest",
-					"frequent",
-					"faved",
-					"recent"
 				]
 			},
 			"AlbumPage": {
@@ -21851,6 +21851,10 @@
 					},
 					{
 						"properties": {
+							"title": {
+								"type": "string",
+								"description": "Title"
+							},
 							"type": {
 								"$ref": "#/components/schemas/FolderType"
 							},

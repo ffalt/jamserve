@@ -136,11 +136,12 @@ export class WorkerScan {
 	private async buildFolder(dir: ScanDir, parent?: Folder): Promise<Folder> {
 		log.info('New Folder', dir.path);
 		const {title, year} = splitDirectoryName(dir.path);
+		const name = path.basename(dir.path);
 		const folder = this.orm.Folder.create({
 			level: dir.level,
 			path: dir.path,
-			name: title,
-			title,
+			name,
+			title: name !== title ? title : undefined,
 			year,
 			folderType: FolderType.unknown,
 			statCreated: dir.ctime,

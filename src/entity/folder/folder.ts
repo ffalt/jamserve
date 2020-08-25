@@ -18,9 +18,9 @@ export class Folder extends Base {
 	@Property(() => String)
 	name!: string;
 
-	@Field(() => String)
-	@Property(() => String)
-	title!: string;
+	@Field(() => String, {nullable: true})
+	@Property(() => String, {nullable: true})
+	title?: string;
 
 	@Field(() => String)
 	@Property(() => String)

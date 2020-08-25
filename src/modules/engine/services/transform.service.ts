@@ -208,6 +208,7 @@ export class TransformService {
 		return {
 			id: o.id,
 			name: o.name,
+			title: o.title,
 			created: o.createdAt.valueOf(),
 			type: o.folderType,
 			level: o.level,

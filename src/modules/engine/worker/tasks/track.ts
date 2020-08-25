@@ -34,9 +34,6 @@ export class TrackWorker extends BaseWorker {
 				changes.folders.updated.addID(track.folder.id());
 			}
 		}
-		if (orm.em.hasChanges()) {
-			await orm.em.flush();
-		}
 	}
 
 	public async fix(orm: Orm, fixes: Array<{ trackID: string; fixID: TrackHealthID }>, changes: Changes): Promise<void> {

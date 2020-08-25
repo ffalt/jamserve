@@ -39,6 +39,8 @@ export class FolderParent {
 
 @ResultType({description: 'Folder'})
 export class FolderBase extends Base {
+	@ObjField({nullable: true, description: 'Title', example: 'Awesome'})
+	title?: string;
 	@ObjField(() => FolderType, {description: 'Album Type', example: FolderType.multialbum})
 	type!: FolderType;
 	@ObjField({description: 'Level in Root', example: 3})

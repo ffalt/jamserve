@@ -143,21 +143,22 @@ export class WorkerMergeScan {
 	private async buildFolderMeta(node: MergeNode): Promise<void> {
 		log.debug('Merge Folder Meta', node.path);
 		const metaStat = await MatchNodeMetaStats.buildMetaStat(node, this.strategy);
-		const nameSplit = splitDirectoryName(node.path);
+		const name = path.basename(node.path)
+		const {title, year} = splitDirectoryName(node.path);
 		const folder = node.folder;
 		folder.album = metaStat.album;
 		folder.albumType = metaStat.albumType;
 		folder.artist = metaStat.artist;
 		folder.artistSort = metaStat.artistSort;
-		folder.title = nameSplit.title;
-		folder.name = nameSplit.title || folder.name;
+		folder.title = title !== name ? title : undefined;
+		folder.name = name;
 		folder.genres = metaStat.genres || [];
 		folder.mbReleaseID = metaStat.mbReleaseID;
 		folder.mbReleaseGroupID = metaStat.mbReleaseGroupID;
 		folder.mbAlbumType = metaStat.mbAlbumType;
 		folder.mbArtistID = metaStat.mbArtistID;
 		folder.albumTrackCount = metaStat.trackCount;
-		folder.year = (nameSplit.year !== undefined && nameSplit.year > 0) ? nameSplit.year : metaStat.year;
+		folder.year = (year !== undefined && year > 0) ? year : metaStat.year;
 		folder.folderType = WorkerMergeScan.getFolderType(node, metaStat, this.strategy);
 		WorkerMergeScan.setFolderType(node, folder.folderType);
 		if (folder.folderType === FolderType.multialbum) {

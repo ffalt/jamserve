@@ -106,6 +106,7 @@ export class WorkerService {
 	async renameFolder(parameters: WorkerRequestRenameFolder): Promise<Changes> {
 		const {root, orm, changes} = await this.changes.start(parameters.rootID);
 		await this.folderWorker.rename(orm, parameters.folderID, parameters.newName, changes);
+		await this.rootWorker.mergeChanges(orm, root, changes);
 		return this.changes.finish(orm, changes, root);
 	}
 
