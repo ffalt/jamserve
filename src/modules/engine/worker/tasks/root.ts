@@ -1,7 +1,7 @@
 import {Root} from '../../../../entity/root/root';
 import {RootScanStrategy} from '../../../../types/enums';
 import {DirScanner} from '../../../../utils/scan-dir';
-import {MatchTrack, WorkerScan} from '../scan';
+import {ObjLoadTrackMatch, OnDemandTrackMatch, WorkerScan} from '../scan';
 import {Changes} from '../changes';
 import {BaseWorker} from './base';
 import {InRequestScope} from 'typescript-ioc';
@@ -145,11 +145,11 @@ export class RootWorker extends BaseWorker {
 		return stat;
 	}
 
-	private async buildMergeTracks(folder: Folder): Promise<Array<MatchTrack>> {
+	private async buildMergeTracks(folder: Folder): Promise<Array<OnDemandTrackMatch>> {
 		const tracks = await folder.tracks.getItems();
-		const list: Array<MatchTrack> = [];
+		const list: Array<OnDemandTrackMatch> = [];
 		for (const track of tracks) {
-			list.push(await WorkerScan.buildTrackMatch(track));
+			list.push(new ObjLoadTrackMatch(track));
 		}
 		return list;
 	}

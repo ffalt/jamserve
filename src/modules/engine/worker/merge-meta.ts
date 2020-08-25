@@ -128,6 +128,7 @@ export class MetaMerger {
 	private async loadChangedMeta(): Promise<void> {
 		const trackIDs = this.changes.tracks.updated.ids().concat(this.changes.tracks.removed.ids());
 		if (trackIDs.length > 0) {
+			log.info('Updating Metadata');
 			// Load all artists/albums/series for track, in case track artist changed
 			const artists = await this.orm.Artist.findIDsFilter({trackIDs});
 			this.changes.artists.updated.appendIDs(artists);
@@ -281,7 +282,6 @@ export class MetaMerger {
 	}
 
 	async mergeMeta(): Promise<void> {
-		log.info('Updating Metadata');
 		this.root = await this.orm.Root.oneOrFailByID(this.rootID);
 		this.cache = new MetaMergerCache(this.orm, this.changes, this.root);
 		await this.loadChangedMeta(); // register all album/series/artist to check for changes

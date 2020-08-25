@@ -1,5 +1,5 @@
 import {Changes} from './changes';
-import {MatchNode, MatchTrack} from './scan';
+import {MatchNode, MatchTrack, OnDemandTrackMatch} from './scan';
 import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums';
 import {splitDirectoryName} from '../../../utils/dir-name';
 import path from 'path';
@@ -15,7 +15,7 @@ export interface MergeNode {
 	folder: Folder;
 	nrOfTracks: number;
 	children: Array<MergeNode>;
-	tracks: Array<MatchTrack>;
+	tracks: Array<OnDemandTrackMatch>;
 	changed: boolean;
 }
 

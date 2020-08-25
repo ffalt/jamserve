@@ -33,11 +33,33 @@ export interface MatchTrack {
 	genres?: Array<string>;
 }
 
+export abstract class OnDemandTrackMatch {
+	abstract async get(): Promise<MatchTrack>;
+}
+
+export class ObjTrackMatch {
+	constructor(private match: MatchTrack) {
+	}
+
+	async get(): Promise<MatchTrack> {
+		return this.match;
+	}
+}
+
+export class ObjLoadTrackMatch {
+	constructor(private track: Track) {
+	}
+
+	async get(): Promise<MatchTrack> {
+		return WorkerScan.buildTrackMatch(this.track);
+	}
+}
+
 export interface MatchNode {
 	scan: ScanDir;
 	folder: Folder;
 	children: Array<MatchNode>;
-	tracks: Array<MatchTrack>;
+	tracks: Array<OnDemandTrackMatch>;
 	artworksCount: number;
 	changed: boolean;
 }
@@ -171,7 +193,7 @@ export class WorkerScan {
 		}
 		for (const file of dir.files) {
 			if (file.type === FileTyp.audio) {
-				result.tracks.push(await this.buildTrack(file, folder));
+				result.tracks.push(new ObjTrackMatch(await this.buildTrack(file, folder)));
 			} else if (file.type === FileTyp.image) {
 				result.artworksCount += 1;
 				await this.buildArtwork(file, folder);
@@ -279,11 +301,11 @@ export class WorkerScan {
 				) {
 					const t = await this.updateTrack(scanTrack, track);
 					if (t) {
-						result.tracks.push(t);
+						result.tracks.push(new ObjTrackMatch(t));
 					}
 					result.changed = true;
 				} else {
-					result.tracks.push(await WorkerScan.buildTrackMatch(track));
+					result.tracks.push(new ObjLoadTrackMatch(track));
 				}
 			} else {
 				log.info('Track has been removed', filename);
@@ -294,7 +316,7 @@ export class WorkerScan {
 		const newTracks = scanTracks.filter(t => !foundScanTracks.includes(t));
 		for (const newTrack of newTracks) {
 			result.changed = true;
-			result.tracks.push(await this.buildTrack(newTrack, folder));
+			result.tracks.push(new ObjTrackMatch(await this.buildTrack(newTrack, folder)));
 		}
 	}
 

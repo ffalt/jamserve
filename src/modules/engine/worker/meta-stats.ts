@@ -96,7 +96,7 @@ export class MatchNodeMetaStats {
 
 	private static async buildTracksSlugs(node: MergeNode, builder: MetaStatBuilder): Promise<void> {
 		for (const track of node.tracks) {
-			await MatchNodeMetaStats.buildTrackSlugs(track, builder);
+			await MatchNodeMetaStats.buildTrackSlugs(await track.get(), builder);
 		}
 	}
 

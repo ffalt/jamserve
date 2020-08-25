@@ -11,7 +11,7 @@ export class ORM {
 		const sequelize = new Sequelize({
 			dialect: 'sqlite',
 			// logging: (sql: string, timing?: number) => {
-			// 	log.debug(sql);
+			// 	console.log(sql);
 			// },
 			logging: false,
 			logQueryParameters: false,
