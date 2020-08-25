@@ -43,6 +43,13 @@ export class SettingsService {
 		await orm.Settings.persistAndFlush(settingsStore);
 	}
 
+	async loadSettings(orm: Orm): Promise<void> {
+		const settingsStore = await this.getSettings(orm);
+		if (settingsStore) {
+			this.settings = JSON.parse(settingsStore.data);
+		}
+	}
+
 	private async getSettings(orm: Orm): Promise<Settings> {
 		let settingsStore = await orm.Settings.findOne({where: {section: 'jamserve'}});
 		if (!settingsStore) {
@@ -52,7 +59,6 @@ export class SettingsService {
 				version: JAMSERVE_VERSION
 			});
 		}
-		this.settings = JSON.parse(settingsStore.data);
 		return settingsStore;
 	}
 

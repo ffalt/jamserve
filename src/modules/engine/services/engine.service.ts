@@ -114,6 +114,8 @@ export class EngineService {
 		log.debug(`start orm`);
 		await this.orm.start(this.config.env.paths.data);
 		const orm = this.orm.fork();
+		log.debug(`load settings`);
+		await this.settings.loadSettings(orm);
 		// first start?
 		log.debug(`check first start`);
 		await this.checkFirstStart(orm);
