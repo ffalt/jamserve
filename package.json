@@ -24,7 +24,7 @@
     "coverage": "jest --runInBand --coverage"
   },
   "dependencies": {
-    "apollo-server-express": "2.16.1",
+    "apollo-server-express": "2.17.0",
     "apollo-server-logger": "1.0.1",
     "archiver": "5.0.0",
     "body-parser": "1.19.0",
