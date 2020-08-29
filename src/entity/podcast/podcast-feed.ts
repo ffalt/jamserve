@@ -1,8 +1,7 @@
 import FeedParser from 'feedparser';
 import iconv from 'iconv-lite';
 import moment from 'moment';
-import request from 'request';
-import stream from 'stream';
+import fetch from 'node-fetch';
 import zlib from 'zlib';
 import {Podcast} from './podcast';
 import {EpisodeChapter} from '../episode/episode';
@@ -64,7 +63,7 @@ export class Feed {
 			}, {});
 	}
 
-	static maybeDecompress(res: stream.Readable, encoding: string, done: (err?: Error) => void): stream.Readable {
+	static maybeDecompress(res: NodeJS.ReadableStream, encoding: string, done: (err?: Error) => void): NodeJS.ReadableStream {
 		let decompress;
 		if (encoding.match(/\bdeflate\b/)) {
 			decompress = zlib.createInflate();
@@ -76,7 +75,7 @@ export class Feed {
 		return decompress ? res.pipe(decompress) : res;
 	}
 
-	static maybeTranslate(res: stream.Readable, charset: string, done: (err?: Error) => void): stream.Readable {
+	static maybeTranslate(res: NodeJS.ReadableStream, charset: string, done: (err?: Error) => void): NodeJS.ReadableStream {
 		// Use iconv if its not utf8 already.
 		if (charset && !/utf-*8/i.test(charset)) {
 			try {
@@ -84,7 +83,7 @@ export class Feed {
 				iv.on('error', done);
 				// If we're using iconv, stream will be the output of iconv
 				// otherwise it will remain the output of request
-				res = res.pipe(iv) as any; // TODO: iconv stream doesn't return a stream.Readable?
+				res = res.pipe(iv);
 			} catch (err) {
 				res.emit('error', err);
 			}
@@ -95,57 +94,48 @@ export class Feed {
 	private async fetch(url: string): Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
 		let feed: any;
-		let doneReported = false;
-		const req = request(url, {timeout: 10000, pool: false});
-		req.setMaxListeners(50);
-		// Some feeds do not respond without user-agent and accept headers.
-		req.setHeader('user-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36');
-		req.setHeader('accept', 'text/html,application/xhtml+xml');
-
-		const feedParser = new FeedParser({});
-
-		feedParser.on('readable', function streamResponse(): void {
-			const response = feedParser;
-			feed = response.meta;
-			let item = response.read();
-			while (item) {
-				posts.push(item);
-				item = response.read();
+		const res = await fetch(url, {
+			timeout: 10000,
+			headers: {
+				// Some feeds do not respond without user-agent and accept headers.
+				'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
+				'accept': 'text/html,application/xhtml+xml'
 			}
 		});
-
-		return new Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }>((resolve, reject) => {
-			const done = (err?: Error): void => {
-				if (doneReported) {
-					return;
-				}
-				doneReported = true;
-				if (err) {
-					reject(err);
-				} else {
-					resolve({feed, posts});
-				}
-			};
-
-			req.on('error', done);
-			req.on('response', (res: request.Response) => {
-				if (res.statusCode !== 200) {
-					req.abort();
-					return done(new Error(`Bad status code ${res.statusCode}${res.statusMessage ? ` ${res.statusMessage}` : ''}`));
-				}
-				const encoding = res.headers['content-encoding'] || 'identity';
-				const charset = Feed.getParams(res.headers['content-type'] || '').charset;
-				let pipestream = Feed.maybeDecompress(res, encoding, done);
+		if (res.ok && res.status === 200) {
+			return new Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }>((resolve, reject) => {
+				const done = (err?: Error): void => {
+					if (err) {
+						reject(err);
+					} else {
+						resolve({feed, posts});
+					}
+				};
+				const feedParser = new FeedParser({});
+				feedParser.on('readable', function streamResponse(): void {
+					const response = feedParser;
+					feed = response.meta;
+					let item = response.read();
+					while (item) {
+						posts.push(item);
+						item = response.read();
+					}
+				});
+				feedParser.on('error', done);
+				feedParser.on('end', done);
+				const encoding = res.headers.get('content-encoding') || 'identity';
+				const charset = Feed.getParams(res.headers.get('content-type') || '').charset;
+				let pipestream = Feed.maybeDecompress(res.body, encoding, done);
 				pipestream = Feed.maybeTranslate(pipestream, charset, done);
 				pipestream.pipe(feedParser);
 			});
-
-			feedParser.on('error', done);
-			feedParser.on('end', done);
-		});
+		} else {
+			throw new Error(`Bad status code ${res.status}${res.statusText ? ` ${res.statusText}` : ''}`)
+		}
 	}
 
 	public async get(podcast: Podcast): Promise<{ tag: PodcastTag; episodes: Array<EpisodeData> }> {
+		console.log('podcast feed get');
 		const data = await this.fetch(podcast.url);
 		const tag: PodcastTag = {
 			title: data.feed.title,
