@@ -361,8 +361,8 @@ type ArtworkQL {
   name: String!
   path: String!
   types: [ArtworkImageType!]!
-  statCreated: Int!
-  statModified: Int!
+  statCreated: DateTime!
+  statModified: DateTime!
   fileSize: Int!
   width: Int
   height: Int
@@ -396,7 +396,7 @@ type StateQL {
   createdAt: DateTime!
   updatedAt: DateTime!
   faved: DateTime
-  played: Int
+  played: DateTime
   rated: Int
   lastPlayed: DateTime
 }

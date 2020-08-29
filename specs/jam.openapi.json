@@ -23845,7 +23845,6 @@
 				"required": [
 					"id",
 					"client",
-					"expires",
 					"mode",
 					"agent"
 				]
