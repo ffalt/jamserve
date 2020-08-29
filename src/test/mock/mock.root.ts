@@ -783,7 +783,6 @@ export async function writeAndStoreMock(mockRoot: MockRoot, workerService: Worke
 	await orm.Radio.persistAndFlush(radio);
 	const podcast = orm.Podcast.create({
 		name: 'podcast',
-		lastCheck: 0,
 		url: 'http://podcast!stream',
 		status: PodcastStatus.new,
 		categories: []
@@ -791,7 +790,7 @@ export async function writeAndStoreMock(mockRoot: MockRoot, workerService: Worke
 	await orm.Podcast.persistAndFlush(podcast);
 	const episode = orm.Episode.create({
 		name: 'episode',
-		date: Date.now(),
+		date: new Date(),
 		status: PodcastStatus.new
 	});
 	await episode.podcast.set(podcast);
