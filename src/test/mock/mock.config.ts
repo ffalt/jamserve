@@ -5,7 +5,7 @@ import {Container, Scope} from 'typescript-ioc';
 import {OrmService} from '../../modules/engine/services/orm.service';
 
 export const DBConfigs: Array<ENVConfigDB> = [
-	// {dialect: 'sqlite', name: 'jamtest'},
+	{dialect: 'sqlite', name: 'jamtest'},
 	{dialect: 'postgres', name: 'jamtest', host: 'localhost', port: 5432, user: 'test'}
 ];
 

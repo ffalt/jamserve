@@ -27,7 +27,8 @@ Features:
 *   REST & GraphQL API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
 *   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/specs/jam.openapi.json)
 *   Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
-*   Database Support for SQLite (planned: some more supported by [sequelize](https://sequelize.org))
+*   Database Support for [postgresql](https://www.postgresql.org/) and SQLite for local development
+    (planned: some more supported by [sequelize](https://sequelize.org))
 
 ## Requirements
 
@@ -116,6 +117,28 @@ JAM_SESSION_TRUST_PROXY=false
 
 # Max Age for a valid session cookie (set 0 for no expiration)
 JAM_SESSION_MAXAGE=1 day
+
+# DB to use: "postgres" 
+# or: "sqlite" (does not support multiuser, so only use it for testing/development)
+JAM_DB_DIALECT=sqlite
+
+# Database name
+JAM_DB_NAME=jam
+
+# Database user
+JAM_DB_USER=jam
+
+# Database user password
+JAM_DB_PASSWORD=jam
+
+# Datebase Unix Socket to connect (or use host/port)
+JAM_DB_SOCKET=/tmp/.s.PGSQL.5432
+
+# Datebase Host
+JAM_DB_HOST=127.0.0.1
+
+# Datebase Port
+JAM_DB_PORT=5432
 
 ```
 
