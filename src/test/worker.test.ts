@@ -27,7 +27,8 @@ import {
 	WorkerRequestRenameArtwork,
 	WorkerRequestRenameTrack,
 	WorkerRequestReplaceArtwork,
-	WorkerRequestUpdateRoot, WorkerRequestWriteTrackTags
+	WorkerRequestUpdateRoot,
+	WorkerRequestWriteTrackTags
 } from '../modules/engine/services/worker.types';
 import {Track} from '../entity/track/track';
 import {mockImage, writeMockImage} from './mock/mock.image';
@@ -37,14 +38,15 @@ import {initTest} from './init';
 import {expectChanges, validateMockRoot} from './mock/mock.changes';
 import {Orm} from '../modules/engine/services/orm.service';
 import {v4} from 'uuid';
+import nock = require('nock');
 
 const UNKNOWN_UUID = v4();
 
 initTest();
 
-for (const db of DBConfigs) {
-	describe(db.dialect, () => {
-		describe('WorkerService', () => {
+describe('WorkerService', () => {
+	for (const db of DBConfigs) {
+		describe(db.dialect, () => {
 			let engine: EngineService;
 			let workerService: WorkerService;
 			let dir: tmp.DirResult;
@@ -52,6 +54,7 @@ for (const db of DBConfigs) {
 			let orm: Orm;
 
 			beforeEach(async () => {
+				nock.cleanAll();
 				dir = tmp.dirSync();
 				bindMockConfig(dir.name, db);
 				engine = Container.get(EngineService);
@@ -1195,5 +1198,5 @@ for (const db of DBConfigs) {
 				});
 			});
 		});
-	});
-}
+	}
+});
