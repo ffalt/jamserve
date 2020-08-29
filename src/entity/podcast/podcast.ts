@@ -1,7 +1,7 @@
 import {Episode, EpisodeQL} from '../episode/episode';
 import {EpisodeOrderFields, PodcastStatus} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, OneToMany, ORM_TIMESTAMP, Property} from '../../modules/orm';
+import {Collection, Entity, OneToMany, ORM_DATETIME, Property} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 
@@ -16,8 +16,8 @@ export class Podcast extends Base {
 	@Property(() => String)
 	url!: string;
 
-	@Property(() => ORM_TIMESTAMP)
-	lastCheck!: number;
+	@Property(() => ORM_DATETIME, {nullable: true})
+	lastCheck?: Date;
 
 	@Field(() => PodcastStatus)
 	@Property(() => PodcastStatus)
@@ -70,7 +70,7 @@ export class PodcastQL extends Podcast {
 	episodesCount!: number;
 
 	@Field(() => Date)
-	lastCheck!: number;
+	lastCheck!: Date;
 
 	@Field(() => StateQL)
 	state!: State

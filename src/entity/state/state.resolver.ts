@@ -36,15 +36,5 @@ export class StateResolver {
 		@Ctx() {engine, orm, user}: Context): Promise<State> {
 		return await engine.state.rate(orm, id, rating, user);
 	}
-
-	@FieldResolver(() => Date, {nullable: true})
-	async faved(@GQLRoot() state?: State): Promise<Date | undefined> {
-		return dateOrUndefined(state?.faved);
-	}
-
-	@FieldResolver(() => Date, {nullable: true})
-	async lastPlayed(@GQLRoot() state?: State): Promise<Date | undefined> {
-		return dateOrUndefined(state?.lastPlayed);
-	}
 }
 

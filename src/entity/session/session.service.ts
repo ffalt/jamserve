@@ -17,7 +17,7 @@ export class SessionService {
 	private jwthCache: Array<string> = [];
 
 	expired(data: Session): boolean {
-		return data.expires < Date.now();
+		return data.expires ? (data.expires < new Date()) : false;
 	}
 
 	async exists(sessionID: string): Promise<boolean> {
@@ -45,8 +45,7 @@ export class SessionService {
 			await session.user.set(await orm.User.oneOrFailByID(data.passport.user));
 		}
 		session.expires = typeof data.cookie.expires === 'boolean' ?
-			(data.cookie.expires ? Date.now() : 0) :
-			(data.cookie.expires?.valueOf() || 0);
+			(data.cookie.expires ? new Date() : undefined) : data.cookie.expires;
 		await orm.Session.persistAndFlush(session);
 	}
 

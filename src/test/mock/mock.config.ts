@@ -1,21 +1,25 @@
-import {ConfigService} from '../../modules/engine/services/config.service';
+import {ConfigService, ENVConfig, ENVConfigDB} from '../../modules/engine/services/config.service';
 import path from 'path';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import {Container, Scope} from 'typescript-ioc';
 import {OrmService} from '../../modules/engine/services/orm.service';
 
-export const mockEnv = {
-	port: 4141,
-	jwt: {maxAge: 800000, secret: 'secret'},
-	session: {proxy: false, maxAge: 800000, secret: 'secret', secure: false, allowedCookieDomains: []},
-	host: '0.0.0.0'
-};
+export const DBConfigs: Array<ENVConfigDB> = [
+	// {dialect: 'sqlite', name: 'jamtest'},
+	{dialect: 'postgres', name: 'jamtest', host: 'localhost', port: 5432, user: 'test'}
+];
 
-export function bindMockConfig(dataPath: string, withAdmin: boolean = true): void {
+export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boolean = true): void {
 
 	class MockConfigService implements ConfigService {
-		public env = {...mockEnv, paths: {data: dataPath, frontend: './static/jamberry'}};
-
+		env: ENVConfig = {
+			host: '0.0.0.0',
+			port: 4141,
+			jwt: {maxAge: 800000, secret: 'secret'},
+			session: {proxy: false, maxAge: 800000, secret: 'secret', secure: false, allowedCookieDomains: []},
+			db,
+			paths: {data: dataPath, frontend: './static/jamberry'}
+		};
 		firstStart = {
 			adminUser: withAdmin ? {
 				name: 'admin',
@@ -24,12 +28,11 @@ export function bindMockConfig(dataPath: string, withAdmin: boolean = true): voi
 			} : undefined,
 			roots: []
 		};
+		tools = ThirdPartyConfig;
 
-		public getDataPath(parts: Array<string>): string {
+		getDataPath(parts: Array<string>): string {
 			return path.join(this.env.paths.data, ...parts);
 		}
-
-		public tools = ThirdPartyConfig;
 	}
 
 	Container.bind(ConfigService).to(MockConfigService);

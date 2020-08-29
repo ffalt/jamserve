@@ -8,8 +8,8 @@ export class UserSession {
 	id!: string;
 	@ObjField({description: 'Session Client', example: 'Jamberry v1'})
 	client!: string;
-	@ObjField({description: 'Session Expiration', example: examples.timestamp})
-	expires!: number;
+	@ObjField({nullable: true, description: 'Session Expiration', example: examples.timestamp})
+	expires?: number;
 	@ObjField(() => SessionMode, {description: 'Session Mode', example: SessionMode.browser})
 	mode!: SessionMode;
 	@ObjField({nullable: true, description: 'Session Platform', example: 'Amiga 500'})

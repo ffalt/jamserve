@@ -106,20 +106,21 @@ export class EngineService {
 		}
 	}
 
-	async start(): Promise<void> {
-		// check paths
+	async init(): Promise<void> {
 		log.debug(`check data paths`);
 		await this.checkDataPaths();
-		// init orm
+		log.debug(`init orm`);
+		await this.orm.init(this.config);
+	}
+
+	async start(): Promise<void> {
 		log.debug(`start orm`);
-		await this.orm.start(this.config.env.paths.data);
+		await this.orm.start();
 		const orm = this.orm.fork();
 		log.debug(`load settings`);
 		await this.settings.loadSettings(orm);
-		// first start?
 		log.debug(`check first start`);
 		await this.checkFirstStart(orm);
-		// check rescan?
 		log.debug(`check for rescan`);
 		await this.checkRescan(orm);
 	}

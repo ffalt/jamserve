@@ -3,7 +3,7 @@ import {Tag, TagQL} from '../tag/tag';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {BookmarkOrderFields, PodcastStatus} from '../../types/enums';
 import {Field, Float, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_INT, ORM_TIMESTAMP, Property, Reference} from '../../modules/orm';
+import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {Waveform, WaveformQL} from '../waveform/waveform';
@@ -51,11 +51,11 @@ export class Episode extends Base {
 	@Property(() => ORM_INT, {nullable: true})
 	fileSize?: number;
 
-	@Property(() => ORM_TIMESTAMP, {nullable: true})
-	statCreated?: number;
+	@Property(() => ORM_DATETIME, {nullable: true})
+	statCreated?: Date;
 
-	@Property(() => ORM_TIMESTAMP, {nullable: true})
-	statModified?: number;
+	@Property(() => ORM_DATETIME, {nullable: true})
+	statModified?: Date;
 
 	@Field(() => String, {nullable: true})
 	@Property(() => String, {nullable: true})
@@ -73,8 +73,8 @@ export class Episode extends Base {
 	@Property(() => String, {nullable: true})
 	summary?: string;
 
-	@Property(() => ORM_TIMESTAMP)
-	date!: number;
+	@Property(() => ORM_DATETIME)
+	date!: Date;
 
 	@Field(() => Float, {nullable: true})
 	@Property(() => ORM_INT, {nullable: true})
@@ -129,7 +129,7 @@ export class EpisodeQL extends Episode {
 	fileModified?: Date;
 
 	@Field(() => Date)
-	date!: number;
+	date!: Date;
 
 	@Field(() => [EpisodeChapterQL!], {nullable: true})
 	chapters?: Array<EpisodeChapter>;

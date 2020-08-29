@@ -99,7 +99,7 @@ export const MockFeed1 = {
 			name: '#163 Candidate One',
 			status: 'new',
 			summary: 'The story of an election in America where everything went wrong -- bribery, hacking, ballot-stuffing. And the 17 year old kid who tried to save the day.',
-			date: 1593684000000,
+			date: new Date('Thu, 02 Jul 2020 10:00:00 -0000'),
 			duration: 2898000,
 			guid: 'c12efe66-e2c3-11e9-be80-f323214a92a2',
 			author: 'Gimlet',
@@ -113,9 +113,9 @@ export const MockFeed1 = {
 				'Long Distance Part I\n' +
 				'Long Distance Part II\n' +
 				'\n' +
-				"Akash's YouTube\n" +
-				"Akash's podcast episode",
-			date: 1594893600000,
+				'Akash\'s YouTube\n' +
+				'Akash\'s podcast episode',
+			date: new Date('Thu, 16 Jul 2020 10:00:00 -0000'),
 			duration: 2049000,
 			guid: 'c1335c36-e2c3-11e9-be80-c3b0fad514de',
 			author: 'Gimlet',

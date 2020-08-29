@@ -165,7 +165,7 @@ export class TransformService {
 			created: o.createdAt.valueOf(),
 			url: o.url,
 			status: this.podcastService.isDownloading(o.id) ? PodcastStatus.downloading : o.status,
-			lastCheck: o.lastCheck.valueOf(),
+			lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined,
 			error: o.errorMessage,
 			description: o.description,
 			episodeIDs: podcastArgs.podcastIncEpisodeIDs ? (await o.episodes.getItems()).map(t => t.id) : undefined,
@@ -192,7 +192,7 @@ export class TransformService {
 	}
 
 	podcastStatus(o: ORMPodcast): PodcastUpdateStatus {
-		return this.podcastService.isDownloading(o.id) ? {status: PodcastStatus.downloading} : {status: o.status, error: o.errorMessage, lastCheck: o.lastCheck};
+		return this.podcastService.isDownloading(o.id) ? {status: PodcastStatus.downloading} : {status: o.status, error: o.errorMessage, lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined};
 	}
 
 
@@ -433,7 +433,7 @@ export class TransformService {
 		return {
 			played: o.played,
 			lastPlayed: o.lastPlayed ? o.lastPlayed.valueOf() : undefined,
-			faved: o.faved,
+			faved: o.faved ? o.faved.valueOf() : undefined,
 			rated: o.rated
 		};
 	}
@@ -634,7 +634,7 @@ export class TransformService {
 		return {
 			id: o.id,
 			client: o.client,
-			expires: o.expires,
+			expires: o.expires ? o.expires.valueOf() : undefined,
 			mode: o.mode,
 			platform: ua?.platform,
 			os: ua?.os,

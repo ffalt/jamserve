@@ -77,8 +77,8 @@ export class EpisodeService {
 				orm.Tag.persistLater(tag);
 				await episode.tag.set(tag);
 				episode.status = PodcastStatus.completed;
-				episode.statCreated = stat.ctime.valueOf();
-				episode.statModified = stat.mtime.valueOf();
+				episode.statCreated = stat.ctime;
+				episode.statModified = stat.mtime;
 				episode.fileSize = stat.size;
 				episode.duration = result.mediaDuration;
 				episode.path = filename;

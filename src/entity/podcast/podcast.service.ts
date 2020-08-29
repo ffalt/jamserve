@@ -40,7 +40,7 @@ export class PodcastService {
 
 	async create(orm: Orm, url: string): Promise<Podcast> {
 		const podcast: Podcast = orm.Podcast.create({
-			lastCheck: 0,
+			lastCheck: new Date(),
 			url,
 			name: url,
 			categories: [],
@@ -79,7 +79,7 @@ export class PodcastService {
 			episode.duration = epi.duration !== undefined ? epi.duration * 1000 : undefined;
 			episode.chaptersJSON = epi.chapters && epi.chapters.length > 0 ? JSON.stringify(epi.chapters) : undefined;
 			episode.enclosuresJSON = epi.enclosures && epi.enclosures.length > 0 ? JSON.stringify(epi.enclosures) : undefined;
-			episode.date = epi.date ? epi.date.valueOf() : episode.date;
+			episode.date = epi.date ? epi.date : episode.date;
 			episode.summary = epi.summary;
 			episode.name = epi.name || episode.name;
 			episode.guid = epi.guid || epi.link;
@@ -142,7 +142,7 @@ export class PodcastService {
 				podcast.status = PodcastStatus.error;
 				podcast.errorMessage = (e || '').toString();
 			}
-			podcast.lastCheck = Date.now();
+			podcast.lastCheck = new Date();
 			await orm.Podcast.persistAndFlush(podcast);
 			this.podcastRefreshDebounce.resolve(podcast.id, undefined);
 		} catch (e) {

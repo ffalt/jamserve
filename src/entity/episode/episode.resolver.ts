@@ -61,12 +61,12 @@ export class EpisodeResolver {
 
 	@FieldResolver(() => Date)
 	fileCreated(@GQLRoot() episode: Episode): Date | undefined {
-		return episode.statCreated ? new Date(episode.statCreated) : undefined;
+		return episode.statCreated;
 	}
 
 	@FieldResolver(() => Date)
 	fileModified(@GQLRoot() episode: Episode): Date | undefined {
-		return episode.statModified ? new Date(episode.statModified) : undefined;
+		return episode.statModified;
 	}
 
 	@FieldResolver(() => Date)

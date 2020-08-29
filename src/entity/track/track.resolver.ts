@@ -43,12 +43,12 @@ export class TrackResolver {
 
 	@FieldResolver(() => Date)
 	fileCreated(@GQLRoot() track: Track): Date {
-		return new Date(track.statCreated);
+		return track.statCreated;
 	}
 
 	@FieldResolver(() => Date)
 	fileModified(@GQLRoot() track: Track): Date {
-		return new Date(track.statModified);
+		return track.statModified;
 	}
 
 	@FieldResolver(() => FolderQL)

@@ -1,7 +1,7 @@
 import {User} from '../user/user';
 import {SessionMode} from '../../types/enums';
 import {Field, ObjectType} from 'type-graphql';
-import {Entity, ManyToOne, ORM_TIMESTAMP, Property, Reference} from '../../modules/orm';
+import {Entity, ManyToOne, ORM_DATETIME, Property, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 
 @ObjectType()
@@ -18,9 +18,9 @@ export class Session extends Base {
 	@Property(() => String)
 	agent!: string;
 
-	@Field(() => Date)
-	@Property(() => ORM_TIMESTAMP)
-	expires!: number;
+	@Field(() => Date, {nullable:true})
+	@Property(() => ORM_DATETIME, {nullable: true})
+	expires?: Date;
 
 	@Field(() => SessionMode)
 	@Property(() => SessionMode)

@@ -13,6 +13,7 @@ import {Orm} from '../services/orm.service';
 import {Artwork} from '../../../entity/artwork/artwork';
 import {artWorkImageNameToType} from '../../../utils/artwork-type';
 import {ImageModule} from '../../image/image.module';
+import moment from 'moment';
 
 const log = logger('Worker.Scan');
 
@@ -265,8 +266,8 @@ export class WorkerScan {
 				result.artworksCount += 1; //.push(artwork);
 				if (
 					scanArtwork.size !== artwork.fileSize ||
-					scanArtwork.ctime !== artwork.statCreated ||
-					scanArtwork.mtime !== artwork.statModified
+					!moment(scanArtwork.ctime).isSame(artwork.statCreated) ||
+					!moment(scanArtwork.mtime).isSame(artwork.statModified)
 				) {
 					result.changed = true;
 					await this.updateArtwork(scanArtwork, artwork);
@@ -296,8 +297,8 @@ export class WorkerScan {
 				foundScanTracks.push(scanTrack);
 				if (
 					scanTrack.size !== track.fileSize ||
-					scanTrack.ctime !== track.statCreated ||
-					scanTrack.mtime !== track.statModified
+					!moment(scanTrack.ctime).isSame(track.statCreated) ||
+					!moment(scanTrack.mtime).isSame(track.statModified)
 				) {
 					const t = await this.updateTrack(scanTrack, track);
 					if (t) {

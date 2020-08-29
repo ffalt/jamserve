@@ -11,8 +11,8 @@ const log = logger('IO.DirScanner');
 export interface ScanDir {
 	path: string;
 	level: number;
-	ctime: number;
-	mtime: number;
+	ctime: Date;
+	mtime: Date;
 	directories: Array<ScanDir>;
 	files: Array<ScanFile>;
 }
@@ -20,8 +20,8 @@ export interface ScanDir {
 export interface ScanFile {
 	path: string;
 	type: FileTyp;
-	ctime: number;
-	mtime: number;
+	ctime: Date;
+	mtime: Date;
 	size: number;
 }
 
@@ -32,8 +32,8 @@ export class DirScanner {
 		const result: ScanDir = {
 			path: ensureTrailingPathSeparator(dir),
 			level,
-			ctime: stat.ctime.valueOf(),
-			mtime: stat.mtime.valueOf(),
+			ctime: stat.ctime,
+			mtime: stat.mtime,
 			directories: [],
 			files: []
 		};
@@ -49,8 +49,8 @@ export class DirScanner {
 					const file: ScanFile = {
 						path: sub,
 						type: getFileType(sub),
-						ctime: subStat.ctime.valueOf(),
-						mtime: subStat.mtime.valueOf(),
+						ctime: subStat.ctime,
+						mtime: subStat.mtime,
 						size: subStat.size
 					};
 					result.files.push(file);

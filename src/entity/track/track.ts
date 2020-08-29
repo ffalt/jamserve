@@ -6,7 +6,7 @@ import {Artist, ArtistQL} from '../artist/artist';
 import {MediaTagRawQL, Tag, TagQL} from '../tag/tag';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {Field, Float, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_INT, ORM_TIMESTAMP, Property, Reference} from '../../modules/orm';
+import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {Waveform, WaveformQL} from '../waveform/waveform';
@@ -32,11 +32,11 @@ export class Track extends Base {
 	@Property(() => String)
 	path!: string;
 
-	@Property(() => ORM_TIMESTAMP)
-	statCreated!: number;
+	@Property(() => ORM_DATETIME)
+	statCreated!: Date;
 
-	@Property(() => ORM_TIMESTAMP)
-	statModified!: number;
+	@Property(() => ORM_DATETIME)
+	statModified!: Date;
 
 	@Field(() => Float)
 	@Property(() => ORM_INT)

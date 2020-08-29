@@ -49,6 +49,8 @@ import {EntityManager, ORM} from '../../orm';
 import {ORMEntities} from '../orm/entities';
 import {ORMRepositories} from '../orm/repositories';
 import {registerORMEnums} from '../orm/enum-registration';
+import {ConfigService} from './config.service';
+import {Options} from 'sequelize';
 
 registerORMEnums();
 
@@ -168,14 +170,39 @@ export class Orm {
 export class OrmService {
 	private orm!: ORM;
 
-	async start(dataPath: string): Promise<void> {
+	async init(config: ConfigService): Promise<void> {
+		const db: Partial<Options> = config.env.db.dialect === 'sqlite' ? {
+				dialect: 'sqlite',
+				storage: path.resolve(config.env.paths.data, 'jam.sqlite')
+			} :
+			{
+				dialect: config.env.db.dialect,
+				username: config.env.db.user,
+				password: config.env.db.password,
+				database: config.env.db.name,
+				dialectOptions: {
+					socketPath: config.env.db.socket ? config.env.db.socket : undefined,
+				},
+				port: config.env.db.port ? Number(config.env.db.port) : undefined
+			};
+
 		this.orm = await ORM.init({
 			entities: ORMEntities,
 			repositories: ORMRepositories,
-			storage: path.resolve(dataPath, 'jam.sqlite'),
+			options: {
+				...db,
+				// logging: (sql: string, timing?: number) => {
+				// 	console.log(sql);
+				// },
+				logging: false,
+				logQueryParameters: true,
+				retry: {max: 0}
+			}
 		});
-		// await this.orm.dropSchema();
-		await this.orm.ensureDatabase();
+	}
+
+	async start(): Promise<void> {
+		await this.orm.ensureSchema();
 	}
 
 	async stop(): Promise<void> {
@@ -190,4 +217,7 @@ export class OrmService {
 		this.orm.clearCache();
 	}
 
+	async drop(): Promise<void> {
+		await this.orm.dropSchema();
+	}
 }

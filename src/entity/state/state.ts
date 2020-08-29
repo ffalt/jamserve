@@ -2,7 +2,7 @@ import {User} from '../user/user';
 import {DBObjectType} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
 import {Base} from '../base/base';
-import {Entity, ManyToOne, ORM_ID, ORM_INT, ORM_TIMESTAMP, Property, Reference} from '../../modules/orm';
+import {Entity, ManyToOne, ORM_DATETIME, ORM_ID, ORM_INT, Property, Reference} from '../../modules/orm';
 
 @ObjectType()
 @Entity()
@@ -14,11 +14,11 @@ export class State extends Base {
 	destType!: DBObjectType;
 
 	@Field(() => Date, {nullable: true})
-	@Property(() => ORM_TIMESTAMP, {nullable: true})
-	faved?: number;
+	@Property(() => ORM_DATETIME, {nullable: true})
+	faved?: Date;
 
-	@Field(() => Int, {nullable: true})
-	@Property(() => ORM_INT, {nullable: true})
+	@Field(() => Date, {nullable: true})
+	@Property(() => ORM_DATETIME, {nullable: true})
 	played?: number;
 
 	@Field(() => Int, {nullable: true})
@@ -26,8 +26,8 @@ export class State extends Base {
 	rated?: number;
 
 	@Field(() => Date, {nullable: true})
-	@Property(() => ORM_TIMESTAMP, {nullable: true})
-	lastPlayed?: number;
+	@Property(() => ORM_DATETIME, {nullable: true})
+	lastPlayed?: Date;
 
 	@ManyToOne<User>(() => User, user => user.states)
 	user: Reference<User> = new Reference<User>(this);

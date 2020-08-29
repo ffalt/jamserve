@@ -88,8 +88,8 @@ export class FolderWorker extends BaseWorker {
 			level: parent.level + 1,
 			title: name !== title ? title : undefined,
 			year,
-			statCreated: stat.ctime.valueOf(),
-			statModified: stat.mtime.valueOf()
+			statCreated: stat.ctime,
+			statModified: stat.mtime
 		});
 		await folder.parent.set(parent);
 		await folder.root.set(root);

@@ -26,7 +26,7 @@ export interface EpisodeEnclosure {
 
 export interface EpisodeData {
 	name?: string;
-	date?: number;
+	date?: Date;
 	author?: string;
 	link?: string;
 	guid?: string;
@@ -186,7 +186,7 @@ export class Feed {
 				enclosures: (post.enclosures || []).map(e => {
 					return {...e, length: e.length ? Number(e.length) : undefined};
 				}),
-				date: post.date ? post.date.valueOf() : undefined,
+				date: post.date ? post.date : undefined,
 				name: post.title,
 				duration,
 				chapters

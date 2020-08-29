@@ -28,8 +28,8 @@ export class ArtworkWorker extends BaseWorker {
 		const stat = await fse.stat(destFile);
 		const info = await this.imageModule.getImageInfo(destFile);
 		artwork.types = artWorkImageNameToType(artwork.name);
-		artwork.statCreated = stat.ctime.valueOf();
-		artwork.statModified = stat.mtime.valueOf();
+		artwork.statCreated = stat.ctime;
+		artwork.statModified = stat.mtime;
 		artwork.fileSize = stat.size;
 		artwork.format = info?.format;
 		artwork.height = info?.height;

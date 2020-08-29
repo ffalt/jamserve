@@ -28,10 +28,13 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 				return [['artistORM', 'name', direction]];
 			case AlbumOrderFields.year:
 				return [['year', direction]];
-			case AlbumOrderFields.seriesNr:
+			case AlbumOrderFields.seriesNr: {
+				// TODO generalize sql dialect formatting
+				const col = this.em.sequelize.getDialect() === 'sqlite' ? '`Album`.`seriesNr`' : '"Album"."seriesNr"';
 				return [[
-					Sequelize.literal('substr(\'0000000000\'||`Album`.`seriesNr`, -10, 10)'),
+					Sequelize.literal(`substr('0000000000'||${col}, -10, 10)`),
 					direction]];
+			}
 			case AlbumOrderFields.default:
 				// order of setting properties matches order of sort queries. important!
 				return [

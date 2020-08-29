@@ -3,10 +3,43 @@ import {InRequestScope} from 'typescript-ioc';
 import path from 'path';
 import {FirstStartConfig} from '../../../config/firststart.config';
 import {getMaxAge} from '../../../utils/max-age';
+import {Dialect} from 'sequelize';
+
+export interface ENVConfigDB {
+	dialect: Dialect;
+	name: string;
+	user?: string;
+	password?: string;
+	host?: string;
+	socket?: string;
+	port?: number;
+}
+
+export interface ENVConfig {
+	host: string;
+	port: number;
+	jwt: {
+		secret: string;
+		maxAge: number;
+	};
+	session: {
+		secure: boolean;
+		proxy: boolean;
+		secret: string;
+		allowedCookieDomains: Array<string>;
+		maxAge: number;
+	};
+	paths: {
+		data: string;
+		frontend: string;
+	};
+	db: ENVConfigDB;
+}
+
 
 @InRequestScope
 export class ConfigService {
-	env = {
+	env: ENVConfig = {
 		host: process.env.JAM_HOST || '127.0.0.1',
 		port: Number(process.env.JAM_PORT) || 4040,
 		jwt: {
@@ -23,6 +56,15 @@ export class ConfigService {
 		paths: {
 			data: process.env.JAM_DATA_PATH || './data/',
 			frontend: process.env.JAM_FRONTEND_PATH || './static/jamberry/'
+		},
+		db: {
+			dialect: (process.env.JAM_DB_DIALECT as Dialect) || 'sqlite',
+			name: process.env.JAM_DB_NAME || 'jam',
+			user: process.env.JAM_DB_USER,
+			password: process.env.JAM_DB_PASSWORD,
+			socket: process.env.JAM_DB_SOCKET,
+			host: process.env.JAM_DB_HOST,
+			port: Number(process.env.JAM_DB_PORT) || undefined
 		}
 	}
 	getDataPath = (parts: Array<string>): string => path.resolve(this.env.paths.data, ...parts)

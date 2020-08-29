@@ -8,16 +8,7 @@ export class ORM {
 	public cache = new EntityCache();
 
 	static async init(config: ORMConfig): Promise<ORM> {
-		const sequelize = new Sequelize({
-			dialect: 'sqlite',
-			// logging: (sql: string, timing?: number) => {
-			// 	console.log(sql);
-			// },
-			logging: false,
-			logQueryParameters: false,
-			retry: {max: 0},
-			storage: config.storage
-		});
+		const sequelize = new Sequelize(config.options);
 		const orm = new ORM(sequelize, config);
 		await orm.init();
 		return orm;
@@ -37,7 +28,7 @@ export class ORM {
 		await this.sequelize.drop();
 	}
 
-	async ensureDatabase(): Promise<void> {
+	async ensureSchema(): Promise<void> {
 		await this.sequelize.sync();
 	}
 

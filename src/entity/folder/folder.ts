@@ -6,7 +6,7 @@ import {Artist, ArtistQL} from '../artist/artist';
 import {Series, SeriesQL} from '../series/series';
 import {AlbumOrderFields, AlbumType, ArtistOrderFields, DefaultOrderFields, FolderOrderFields, FolderType, TrackOrderFields} from '../../types/enums';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_INT, ORM_TIMESTAMP, Property, Reference} from '../../modules/orm';
+import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {FolderHealthHint} from '../health/health.model';
@@ -27,12 +27,12 @@ export class Folder extends Base {
 	path!: string;
 
 	@Field(() => Date)
-	@Property(() => ORM_TIMESTAMP)
-	statCreated!: number;
+	@Property(() => ORM_DATETIME)
+	statCreated!: Date;
 
 	@Field(() => Date)
-	@Property(() => ORM_TIMESTAMP)
-	statModified!: number;
+	@Property(() => ORM_DATETIME)
+	statModified!: Date;
 
 	@Field(() => Int)
 	@Property(() => ORM_INT)

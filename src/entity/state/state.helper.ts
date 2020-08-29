@@ -37,7 +37,7 @@ export class StateHelper {
 			if (state.faved !== undefined) {
 				return state;
 			}
-			state.faved = Date.now();
+			state.faved = new Date();
 		}
 		await this.stateRepo.persistAndFlush(state);
 		if ((state as any).faved === null) {
@@ -100,7 +100,7 @@ export class StateHelper {
 	async reportPlaying(destID: string, destType: DBObjectType, user: User): Promise<State> {
 		const state = await this.findOrCreate(destID, destType, user);
 		state.played = (state.played || 0) + 1;
-		state.lastPlayed = Date.now();
+		state.lastPlayed = new Date();
 		await this.stateRepo.persistAndFlush(state);
 		return state;
 	}

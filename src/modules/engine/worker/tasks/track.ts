@@ -62,8 +62,8 @@ export class TrackWorker extends BaseWorker {
 
 	private async updateTrackStats(track: Track): Promise<void> {
 		const stat = await fse.stat(path.join(track.path, track.fileName));
-		track.statCreated = stat.ctime.valueOf();
-		track.statModified = stat.mtime.valueOf();
+		track.statCreated = stat.ctime;
+		track.statModified = stat.mtime;
 		track.fileSize = stat.size;
 	}
 

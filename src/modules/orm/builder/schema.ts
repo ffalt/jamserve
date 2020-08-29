@@ -3,7 +3,7 @@ import {DataTypes, ModelAttributes, Sequelize} from 'sequelize';
 import {ModelAttributeColumnOptions, ModelOptions} from 'sequelize/types/lib/model';
 import {PropertyMetadata} from '../definitions/property-metadata';
 import {DataType} from 'sequelize/types/lib/data-types';
-import {ORM_FLOAT, ORM_ID, ORM_INT, ORM_TIMESTAMP} from '..';
+import {ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT} from '..';
 import {ManyToManyFieldRelation, ManyToOneFieldRelation, MappedByOptions, OneToManyFieldRelation, OneToOneFieldRelation, OwnerOptions, PrimaryFieldOptions, RelationOptions} from '../definitions/types';
 import {MetadataStorage} from '../metadata/metadata-storage';
 
@@ -23,14 +23,15 @@ export class ModelBuilder {
 		const allowNull = opts.nullable === true;
 		if (type === ORM_ID && (opts as PrimaryFieldOptions).primaryKey) {
 			return {
-				type: DataTypes.UUIDV4,
+				type: DataTypes.UUID,
+				defaultValue: DataTypes.UUIDV4,
 				allowNull: false,
 				unique: true,
 				primaryKey: true
 			};
 		}
 		if (type === ORM_ID) {
-			return {type: DataTypes.UUIDV4, allowNull};
+			return {type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull};
 		}
 		if (type === Boolean) {
 			return {type: DataTypes.BOOLEAN, allowNull};
@@ -38,8 +39,8 @@ export class ModelBuilder {
 		if (type === ORM_INT) {
 			return {type: DataTypes.INTEGER, allowNull};
 		}
-		if (type === ORM_TIMESTAMP) {
-			return {type: DataTypes.TIME, allowNull};
+		if (type === ORM_DATETIME || type === Date) {
+			return {type: DataTypes.DATE, allowNull};
 		}
 		if (type === ORM_FLOAT || type === Number) {
 			return {type: DataTypes.FLOAT, allowNull};
@@ -100,13 +101,13 @@ export class ModelBuilder {
 								}
 								// console.log(destModel.name + ' belongsTo ' + sourceModel.name);
 								sourceModel.hasMany(destModel, {
-									type: DataTypes.UUIDV4,
+									type: DataTypes.UUID,
 									as: sourceField.name + 'ORM',
 									onDelete: o2m.onDelete,
 									foreignKey: destField.name
 								});
 								destModel.belongsTo(sourceModel, {
-									type: DataTypes.UUIDV4,
+									type: DataTypes.UUID,
 									as: destField.name + 'ORM',
 									// onDelete: o2m.onDelete,
 									foreignKey: {
