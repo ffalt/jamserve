@@ -24,7 +24,7 @@
     "coverage": "jest --runInBand --coverage"
   },
   "dependencies": {
-    "apollo-server-express": "2.16.1",
+    "apollo-server-express": "2.17.0",
     "apollo-server-logger": "1.0.1",
     "archiver": "5.0.0",
     "body-parser": "1.19.0",
@@ -51,7 +51,7 @@
     "graphql-type-json": "0.3.2",
     "helmet": "4.1.0",
     "jamp3": "0.4.1",
-    "jimp": "0.16.0",
+    "jimp": "0.16.1",
     "limiter": "1.1.5",
     "method-override": "3.0.0",
     "mime-types": "2.1.27",
@@ -74,7 +74,7 @@
     "sqlite3": "5.0.0",
     "type-graphql": "1.0.0",
     "typescript-ioc": "3.2.2",
-    "waveform-data": "3.3.2",
+    "waveform-data": "3.3.3",
     "which": "2.0.2",
     "winston": "3.3.3"
   },
@@ -99,7 +99,7 @@
     "@types/mime-types": "2.1.0",
     "@types/multer": "1.4.4",
     "@types/mustache": "4.0.1",
-    "@types/node": "14.6.0",
+    "@types/node": "14.6.2",
     "@types/on-finished": "2.3.1",
     "@types/passport": "1.0.4",
     "@types/passport-jwt": "3.0.3",
