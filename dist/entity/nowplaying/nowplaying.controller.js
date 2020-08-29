@@ -13,32 +13,21 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NowPlayingController = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const transform_service_1 = require("../../modules/engine/services/transform.service");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const nowplaying_service_1 = require("./nowplaying.service");
 const nowplaying_model_1 = require("./nowplaying.model");
 const nowplaying_args_1 = require("./nowplaying.args");
 const track_args_1 = require("../track/track.args");
 const episode_args_1 = require("../episode/episode.args");
 let NowPlayingController = class NowPlayingController {
-    async list(nowPlayingArgs, trackArgs, episodeArgs, { orm, user }) {
-        const result = await this.nowPlayingService.getNowPlaying();
-        return await Promise.all(result.map(o => this.transform.nowPlaying(orm, o, nowPlayingArgs, trackArgs, episodeArgs, user)));
+    async list(nowPlayingArgs, trackArgs, episodeArgs, { orm, engine, user }) {
+        const result = await engine.nowPlaying.getNowPlaying();
+        return await Promise.all(result.map(o => engine.transform.nowPlaying(orm, o, nowPlayingArgs, trackArgs, episodeArgs, user)));
     }
-    async scrobble(id, { orm, user }) {
-        await this.nowPlayingService.scrobble(orm, id, user);
+    async scrobble(id, { orm, engine, user }) {
+        await engine.nowPlaying.scrobble(orm, id, user);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", transform_service_1.TransformService)
-], NowPlayingController.prototype, "transform", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", nowplaying_service_1.NowPlayingService)
-], NowPlayingController.prototype, "nowPlayingService", void 0);
 __decorate([
     rest_1.Get('/list', () => [nowplaying_model_1.NowPlaying], { description: 'Get a List of media [Track, Episode] played currently by Users', summary: 'Get Now Playing' }),
     __param(0, rest_1.QueryParams()),
@@ -60,7 +49,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], NowPlayingController.prototype, "scrobble", null);
 NowPlayingController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/nowPlaying', { tags: ['Now Playing'], roles: [enums_1.UserRole.stream] })
 ], NowPlayingController);
 exports.NowPlayingController = NowPlayingController;

@@ -93,7 +93,7 @@ let UserService = class UserService {
         await this.imageModule.generateAvatar(seed || user.name, filename);
         await this.imageModule.clearImageCacheByIDs([user.id]);
     }
-    async setUserImage(user, filename, mimetype) {
+    async setUserImage(user, filename) {
         const destName = this.avatarImageFilename(user);
         await this.imageModule.createAvatar(filename, destName);
         await fs_utils_1.fileDeleteIfExists(filename);

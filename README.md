@@ -8,7 +8,9 @@ An audio library server written in Typescript for NodeJS
 
 ## Preamble
 
-This is my current pet project to manage/stream/edit my own music collection. It's not ready yet a.k.a. work in progress. Everything is subject to change. Please do not use it for other than testing purposes until further notice.
+This is my current pet project to manage/stream/edit my own music collection.
+It's not ready yet a.k.a. work in progress. Everything is subject to change.
+Please do not use it for other than testing purposes until further notice.
 
 This is the backend development repository. See
 
@@ -16,46 +18,47 @@ This is the backend development repository. See
 
 [Jampacked](https://github.com/ffalt/jampacked) for mobile app development
 
-[Jam-Dockerimage](https://github.com/ffalt/jam-dockerimage)  Bare Docker-Image with JamServe, Jamberry
+[Jam-Dockerimage](https://github.com/ffalt/jam-dockerimage) Docker-Image for JamServe & Jamberry
 
-[Jam-Docker](https://github.com/ffalt/jam-docker) run JamServe, Jamberry & ElasticSearch with Docker,
+[Jam-Docker](https://github.com/ffalt/jam-docker) run JamServe & Jamberry with Docker
 
 Features:
 
 *   REST & GraphQL API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
 *   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/specs/jam.openapi.json)
 *   Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
-*   Database Support for SQLite (planned: some more supported by [sequelize](https://sequelize.org))
+*   Database Support for [postgresql](https://www.postgresql.org/) and SQLite for local development
+    (planned: some more supported by [sequelize](https://sequelize.org))
 
 ## Requirements
 
 *   install [NodeJS](https://nodejs.org/) >= 13.x and [NPM](https://www.npmjs.com/)
+
 *   install [FFMPEG](https://ffmpeg.org/)
- 
+
     `apt-get install ffmpeg`
 
-      manual installation: available in PATH or [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe): *FFPROBE_PATH* and *FFMPEG_PATH*
+     manual installation: available in PATH or [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe): *FFPROBE_PATH* and *FFMPEG_PATH*
 
 optional for meta data matching & mp3 repair support
 
 *   install [fpcalc](https://github.com/acoustid/chromaprint/releases/)
 
     `apt-get install libchromaprint-tools`
-     
+
      manual installation: available in PATH or environment variable *FPCALC_PATH*
-     
-*   install [mp3val](http://mp3val.sourceforge.net/) 
+
+*   install [mp3val](http://mp3val.sourceforge.net/)
 
     `apt-get install mp3val`
-     
+
      manual installation: available in PATH or environment variable *MP3VAL_PATH*
-     
+
 *   install [flac](https://xiph.org/flac/)
 
     `apt-get install flac`
-     
-     manual installation: available in PATH or environment variable *FLAC_PATH*
 
+     manual installation: available in PATH or environment variable *FLAC_PATH*
 
 ## Installation
 
@@ -65,9 +68,9 @@ optional for meta data matching & mp3 repair support
 
 ## Environment Variables
 
-Example `.env` file for debugging on localhost 
+Example `.env` file for debugging on localhost
 
-```
+```dosini
 ## Server
 
 # Server listen address
@@ -90,7 +93,7 @@ JAM_FRONTEND_PATH=./static/jamberry/
 # An unique string for your instance to sign the jwt tokens
 JAM_JWT_SECRET=keyboard cat is stomping
 
-# Max Age for a valid jwt (set 0 for no expiration) 
+# Max Age for a valid jwt (set 0 for no expiration)
 # possible values: 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute'
 JAM_JWT_MAXAGE=1 day
 
@@ -114,6 +117,28 @@ JAM_SESSION_TRUST_PROXY=false
 
 # Max Age for a valid session cookie (set 0 for no expiration)
 JAM_SESSION_MAXAGE=1 day
+
+# DB to use: "postgres" 
+# or: "sqlite" (does not support multiuser, so only use it for testing/development)
+JAM_DB_DIALECT=sqlite
+
+# Database name
+JAM_DB_NAME=jam
+
+# Database user
+JAM_DB_USER=jam
+
+# Database user password
+JAM_DB_PASSWORD=jam
+
+# Datebase Unix Socket to connect (or use host/port)
+JAM_DB_SOCKET=/tmp/.s.PGSQL.5432
+
+# Datebase Host
+JAM_DB_HOST=127.0.0.1
+
+# Datebase Port
+JAM_DB_PORT=5432
 
 ```
 

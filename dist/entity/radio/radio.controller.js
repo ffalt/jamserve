@@ -16,34 +16,32 @@ exports.RadioController = void 0;
 const radio_model_1 = require("./radio.model");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const base_controller_1 = require("../base/base.controller");
 const radio_args_1 = require("./radio.args");
 const base_args_1 = require("../base/base.args");
-const typescript_ioc_1 = require("typescript-ioc");
-let RadioController = class RadioController extends base_controller_1.BaseController {
-    async id(id, radioArgs, { orm, user }) {
-        return this.transform.radio(orm, await orm.Radio.oneOrFailByID(id), radioArgs, user);
+let RadioController = class RadioController {
+    async id(id, radioArgs, { orm, engine, user }) {
+        return engine.transform.radio(orm, await orm.Radio.oneOrFailByID(id), radioArgs, user);
     }
-    async index(filter, { orm }) {
+    async index(filter, { orm, engine }) {
         const result = await orm.Radio.indexFilter(filter);
-        return this.transform.radioIndex(orm, result);
+        return engine.transform.radioIndex(orm, result);
     }
-    async search(page, radioArgs, filter, order, { orm, user }) {
-        return await orm.Radio.searchTransformFilter(filter, [order], page, user, o => this.transform.radio(orm, o, radioArgs, user));
+    async search(page, radioArgs, filter, order, { orm, engine, user }) {
+        return await orm.Radio.searchTransformFilter(filter, [order], page, user, o => engine.transform.radio(orm, o, radioArgs, user));
     }
-    async create(args, { orm, user }) {
+    async create(args, { orm, engine, user }) {
         const radio = orm.Radio.create(args);
         await orm.Radio.persistAndFlush(radio);
-        return await this.transform.radio(orm, radio, {}, user);
+        return await engine.transform.radio(orm, radio, {}, user);
     }
-    async update(id, args, { orm, user }) {
+    async update(id, args, { orm, engine, user }) {
         const radio = await orm.Radio.oneOrFailByID(id);
         radio.disabled = !!args.disabled;
         radio.homepage = args.homepage;
         radio.name = args.name;
         radio.url = args.url;
         await orm.Radio.persistAndFlush(radio);
-        return await this.transform.radio(orm, radio, {}, user);
+        return await engine.transform.radio(orm, radio, {}, user);
     }
     async remove(id, { orm }) {
         const radio = await orm.Radio.oneOrFailByID(id);
@@ -107,7 +105,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RadioController.prototype, "remove", null);
 RadioController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/radio', { tags: ['Radio'], roles: [enums_1.UserRole.stream] })
 ], RadioController);
 exports.RadioController = RadioController;

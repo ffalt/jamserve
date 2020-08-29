@@ -25,7 +25,7 @@ let Bookmark = class Bookmark extends base_1.Base {
     }
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    type_graphql_1.Field(() => type_graphql_1.Float),
     orm_1.Property(() => orm_1.ORM_INT),
     __metadata("design:type", Number)
 ], Bookmark.prototype, "position", void 0);

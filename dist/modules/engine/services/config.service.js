@@ -36,6 +36,15 @@ let ConfigService = class ConfigService {
             paths: {
                 data: process.env.JAM_DATA_PATH || './data/',
                 frontend: process.env.JAM_FRONTEND_PATH || './static/jamberry/'
+            },
+            db: {
+                dialect: process.env.JAM_DB_DIALECT || 'sqlite',
+                name: process.env.JAM_DB_NAME || 'jam',
+                user: process.env.JAM_DB_USER,
+                password: process.env.JAM_DB_PASSWORD,
+                socket: process.env.JAM_DB_SOCKET,
+                host: process.env.JAM_DB_HOST,
+                port: Number(process.env.JAM_DB_PORT) || undefined
             }
         };
         this.getDataPath = (parts) => path_1.default.resolve(this.env.paths.data, ...parts);

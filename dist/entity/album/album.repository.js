@@ -1,10 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AlbumRepository = void 0;
 const base_repository_1 = require("../base/base.repository");
 const enums_1 = require("../../types/enums");
 const base_1 = require("../base/base");
 const orm_1 = require("../../modules/orm");
+const sequelize_1 = __importDefault(require("sequelize"));
 class AlbumRepository extends base_repository_1.BaseRepository {
     constructor() {
         super(...arguments);
@@ -22,20 +26,30 @@ class AlbumRepository extends base_repository_1.BaseRepository {
                 return [['name', direction]];
             case enums_1.AlbumOrderFields.duration:
                 return [['duration', direction]];
+            case enums_1.AlbumOrderFields.albumType:
+                return [['albumType', direction]];
             case enums_1.AlbumOrderFields.artist:
                 return [['artistORM', 'name', direction]];
             case enums_1.AlbumOrderFields.year:
                 return [['year', direction]];
+            case enums_1.AlbumOrderFields.seriesNr: {
+                const col = this.em.sequelize.getDialect() === 'sqlite' ? '`Album`.`seriesNr`' : '"Album"."seriesNr"';
+                return [[
+                        sequelize_1.default.literal(`substr('0000000000'||${col}, -10, 10)`),
+                        direction
+                    ]];
+            }
             case enums_1.AlbumOrderFields.default:
                 return [
                     ['artistORM', 'name', direction],
+                    ['albumType', direction],
                     ['year', direction === 'ASC' ? 'DESC' : 'ASC'],
                     ['name', direction]
                 ];
         }
         return [];
     }
-    async buildFilter(filter, user) {
+    async buildFilter(filter, _) {
         if (!filter) {
             return {};
         }

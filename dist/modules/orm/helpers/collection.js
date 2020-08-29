@@ -13,8 +13,13 @@ class Collection {
         if (this.list) {
             return this.list.length;
         }
+        if (this.itemCount !== undefined) {
+            return this.itemCount;
+        }
         const func = this.sourceFunc('count');
-        return await func();
+        const result = await func();
+        this.itemCount = result;
+        return result;
     }
     sourceFunc(mode) {
         const entity = this.owner;
@@ -25,16 +30,18 @@ class Collection {
     }
     clear() {
         this.list = undefined;
+        this.itemCount = undefined;
         this.initialized = false;
         this.changeSet = undefined;
     }
-    async getItems() {
+    async getItems(options) {
         if (this.list) {
             return this.list;
         }
         const entity = this.owner;
         const func = this.sourceFunc('get');
-        const sources = await func();
+        options = options || this.getOrderOptions();
+        const sources = await func(options);
         let list = sources.map(source => { var _a; return entity._em.mapEntity(((_a = this.field.linkedEntity) === null || _a === void 0 ? void 0 : _a.name) || '', source); });
         if (this.changeSet) {
             if (this.changeSet.set) {
@@ -86,6 +93,12 @@ class Collection {
             if (this.list) {
                 this.list.push(item);
             }
+        }
+    }
+    getOrderOptions() {
+        const order = this.field.typeOptions.order;
+        if (order && this.field.linkedEntity) {
+            return this.owner._em.getOrderFindOptions(this.field.linkedEntity.name, order);
         }
     }
 }

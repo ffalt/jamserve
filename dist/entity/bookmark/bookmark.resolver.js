@@ -26,10 +26,10 @@ let BookmarkResolver = class BookmarkResolver {
     async bookmarks({ filter, page, order }, { orm, user }) {
         return await orm.Bookmark.searchFilter(filter, order, page, user);
     }
-    async track(bookmark, { orm }) {
+    async track(bookmark) {
         return bookmark.track.get();
     }
-    async episode(bookmark, { orm }) {
+    async episode(bookmark) {
         return bookmark.episode.get();
     }
 };
@@ -49,16 +49,16 @@ __decorate([
 ], BookmarkResolver.prototype, "bookmarks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => track_1.TrackQL, { nullable: true }),
-    __param(0, Root_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, Root_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [bookmark_1.Bookmark, Object]),
+    __metadata("design:paramtypes", [bookmark_1.Bookmark]),
     __metadata("design:returntype", Promise)
 ], BookmarkResolver.prototype, "track", null);
 __decorate([
     type_graphql_1.FieldResolver(() => episode_1.EpisodeQL, { nullable: true }),
-    __param(0, Root_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, Root_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [bookmark_1.Bookmark, Object]),
+    __metadata("design:paramtypes", [bookmark_1.Bookmark]),
     __metadata("design:returntype", Promise)
 ], BookmarkResolver.prototype, "episode", null);
 BookmarkResolver = __decorate([

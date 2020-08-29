@@ -48,7 +48,7 @@ const trackRules = [
         id: enums_1.TrackHealthID.tagValuesExists,
         name: 'Tag Values missing',
         all: true,
-        run: async (folder, track, tag, tagCache) => {
+        run: async (folder, track, tag) => {
             const missing = [];
             if (!(tag === null || tag === void 0 ? void 0 : tag.album)) {
                 missing.push('album');
@@ -90,7 +90,7 @@ const trackRules = [
         id: enums_1.TrackHealthID.id3v2Exists,
         name: 'ID3v2 Tag is missing',
         mp3: true,
-        run: async (folder, track, tag, tagCache) => {
+        run: async (folder, track, tag) => {
             if (!hasID3v2Tag(track, tag)) {
                 return {};
             }

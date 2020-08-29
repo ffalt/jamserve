@@ -22,7 +22,7 @@ class PlaylistEntryRepository extends base_repository_1.BaseRepository {
         }
         return [];
     }
-    async buildFilter(filter, user) {
+    async buildFilter(_, __) {
         return {};
     }
 }

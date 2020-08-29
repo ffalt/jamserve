@@ -7,7 +7,7 @@ exports.Feed = void 0;
 const feedparser_1 = __importDefault(require("feedparser"));
 const iconv_lite_1 = __importDefault(require("iconv-lite"));
 const moment_1 = __importDefault(require("moment"));
-const request_1 = __importDefault(require("request"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
 const zlib_1 = __importDefault(require("zlib"));
 class Feed {
     static parseDurationMilliseconds(s) {
@@ -60,51 +60,48 @@ class Feed {
     async fetch(url) {
         const posts = [];
         let feed;
-        let doneReported = false;
-        const req = request_1.default(url, { timeout: 10000, pool: false });
-        req.setMaxListeners(50);
-        req.setHeader('user-agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36');
-        req.setHeader('accept', 'text/html,application/xhtml+xml');
-        const feedParser = new feedparser_1.default({});
-        feedParser.on('readable', function streamResponse() {
-            const response = feedParser;
-            feed = response.meta;
-            let item = response.read();
-            while (item) {
-                posts.push(item);
-                item = response.read();
+        const res = await node_fetch_1.default(url, {
+            timeout: 10000,
+            headers: {
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
+                'accept': 'text/html,application/xhtml+xml'
             }
         });
-        return new Promise((resolve, reject) => {
-            const done = (err) => {
-                if (doneReported) {
-                    return;
-                }
-                doneReported = true;
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    resolve({ feed, posts });
-                }
-            };
-            req.on('error', done);
-            req.on('response', (res) => {
-                if (res.statusCode !== 200) {
-                    req.abort();
-                    return done(new Error(`Bad status code ${res.statusCode}${res.statusMessage ? ` ${res.statusMessage}` : ''}`));
-                }
-                const encoding = res.headers['content-encoding'] || 'identity';
-                const charset = Feed.getParams(res.headers['content-type'] || '').charset;
-                let pipestream = Feed.maybeDecompress(res, encoding, done);
+        if (res.ok && res.status === 200) {
+            return new Promise((resolve, reject) => {
+                const done = (err) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve({ feed, posts });
+                    }
+                };
+                const feedParser = new feedparser_1.default({});
+                feedParser.on('readable', function streamResponse() {
+                    const response = feedParser;
+                    feed = response.meta;
+                    let item = response.read();
+                    while (item) {
+                        posts.push(item);
+                        item = response.read();
+                    }
+                });
+                feedParser.on('error', done);
+                feedParser.on('end', done);
+                const encoding = res.headers.get('content-encoding') || 'identity';
+                const charset = Feed.getParams(res.headers.get('content-type') || '').charset;
+                let pipestream = Feed.maybeDecompress(res.body, encoding, done);
                 pipestream = Feed.maybeTranslate(pipestream, charset, done);
                 pipestream.pipe(feedParser);
             });
-            feedParser.on('error', done);
-            feedParser.on('end', done);
-        });
+        }
+        else {
+            throw new Error(`Bad status code ${res.status}${res.statusText ? ` ${res.statusText}` : ''}`);
+        }
     }
     async get(podcast) {
+        console.log('podcast feed get');
         const data = await this.fetch(podcast.url);
         const tag = {
             title: data.feed.title,
@@ -144,7 +141,7 @@ class Feed {
                 enclosures: (post.enclosures || []).map(e => {
                     return { ...e, length: e.length ? Number(e.length) : undefined };
                 }),
-                date: post.date ? post.date.valueOf() : undefined,
+                date: post.date ? post.date : undefined,
                 name: post.title,
                 duration,
                 chapters

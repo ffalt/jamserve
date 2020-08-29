@@ -33,7 +33,8 @@ __decorate([
 ], AdminSettingsChatMaxAge.prototype, "unit", void 0);
 AdminSettingsChatMaxAge = __decorate([
     decorators_1.ResultType({ description: AdminSettingsChatMaxAgeDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsChatMaxAgeDesc._ })
+    type_graphql_1.ObjectType({ description: AdminSettingsChatMaxAgeDesc._ }),
+    decorators_1.ObjParamsType()
 ], AdminSettingsChatMaxAge);
 exports.AdminSettingsChatMaxAge = AdminSettingsChatMaxAge;
 let AdminSettingsChatMaxAgeQL = class AdminSettingsChatMaxAgeQL extends AdminSettingsChatMaxAge {
@@ -62,7 +63,8 @@ __decorate([
 ], AdminSettingsChat.prototype, "maxAge", void 0);
 AdminSettingsChat = __decorate([
     decorators_1.ResultType({ description: AdminSettingsChatDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsChatDesc._ })
+    type_graphql_1.ObjectType({ description: AdminSettingsChatDesc._ }),
+    decorators_1.ObjParamsType()
 ], AdminSettingsChat);
 exports.AdminSettingsChat = AdminSettingsChat;
 let AdminSettingsChatQL = class AdminSettingsChatQL extends AdminSettingsChat {
@@ -84,7 +86,8 @@ __decorate([
 ], AdminSettingsIndex.prototype, "ignoreArticles", void 0);
 AdminSettingsIndex = __decorate([
     decorators_1.ResultType({ description: AdminSettingsIndexDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsIndexDesc._ })
+    type_graphql_1.ObjectType({ description: AdminSettingsIndexDesc._ }),
+    decorators_1.ObjParamsType()
 ], AdminSettingsIndex);
 exports.AdminSettingsIndex = AdminSettingsIndex;
 let AdminSettingsIndexQL = class AdminSettingsIndexQL extends AdminSettingsIndex {
@@ -106,7 +109,8 @@ __decorate([
 ], AdminSettingsLibrary.prototype, "scanAtStart", void 0);
 AdminSettingsLibrary = __decorate([
     decorators_1.ResultType({ description: AdminSettingsLibraryDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsLibraryDesc._ })
+    type_graphql_1.ObjectType({ description: AdminSettingsLibraryDesc._ }),
+    decorators_1.ObjParamsType()
 ], AdminSettingsLibrary);
 exports.AdminSettingsLibrary = AdminSettingsLibrary;
 let AdminSettingsLibraryQL = class AdminSettingsLibraryQL extends AdminSettingsLibrary {
@@ -128,7 +132,8 @@ __decorate([
 ], AdminSettingsExternal.prototype, "enabled", void 0);
 AdminSettingsExternal = __decorate([
     decorators_1.ResultType({ description: AdminSettingsExternalDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsExternalDesc._ })
+    type_graphql_1.ObjectType({ description: AdminSettingsExternalDesc._ }),
+    decorators_1.ObjParamsType()
 ], AdminSettingsExternal);
 exports.AdminSettingsExternal = AdminSettingsExternal;
 let AdminSettingsExternalQL = class AdminSettingsExternalQL extends AdminSettingsExternal {
@@ -164,7 +169,8 @@ __decorate([
 ], AdminSettings.prototype, "externalServices", void 0);
 AdminSettings = __decorate([
     decorators_1.ResultType({ description: AdminSettingsDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsDesc._ })
+    type_graphql_1.ObjectType({ description: AdminSettingsDesc._ }),
+    decorators_1.ObjParamsType()
 ], AdminSettings);
 exports.AdminSettings = AdminSettings;
 let AdminSettingsQL = class AdminSettingsQL extends AdminSettings {

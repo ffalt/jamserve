@@ -25,10 +25,10 @@ let WaveformResolver = class WaveformResolver {
         return result;
     }
     async json(waveform, { engine }) {
-        return JSON.stringify(await engine.waveformService.getWaveformJSON(waveform.obj, waveform.objType));
+        return JSON.stringify(await engine.waveform.getWaveformJSON(waveform.obj, waveform.objType));
     }
     async svg(waveform, width, { engine }) {
-        return (await engine.waveformService.getWaveformSVG(waveform.obj, waveform.objType, width)) || '';
+        return (await engine.waveform.getWaveformSVG(waveform.obj, waveform.objType, width)) || '';
     }
 };
 __decorate([

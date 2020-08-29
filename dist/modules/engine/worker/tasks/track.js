@@ -19,14 +19,23 @@ const base_1 = require("./base");
 const typescript_ioc_1 = require("typescript-ioc");
 let TrackWorker = class TrackWorker extends base_1.BaseWorker {
     async writeTags(orm, tags, changes) {
-        for (const tag of tags) {
-            const track = await orm.Track.findOneByID(tag.trackID);
+        for (const writeTag of tags) {
+            const track = await orm.Track.findOneByID(writeTag.trackID);
             if (track) {
                 const filename = path_1.default.join(track.path, track.fileName);
-                await this.audioModule.writeRawTag(filename, tag.tag);
+                await this.audioModule.writeRawTag(filename, writeTag.tag);
+                const oldTag = await track.tag.get();
+                if (oldTag) {
+                    orm.Tag.removeLater(oldTag);
+                }
+                const result = await this.audioModule.read(filename);
+                const tag = orm.Tag.createByScan(result, filename);
+                orm.Tag.persistLater(tag);
+                await track.tag.set(tag);
                 await this.updateTrackStats(track);
+                orm.Track.persistLater(track);
                 changes.tracks.updated.add(track);
-                changes.folders.updated.add(await track.folder.get());
+                changes.folders.updated.addID(track.folder.id());
             }
         }
     }
@@ -57,8 +66,8 @@ let TrackWorker = class TrackWorker extends base_1.BaseWorker {
     }
     async updateTrackStats(track) {
         const stat = await fs_extra_1.default.stat(path_1.default.join(track.path, track.fileName));
-        track.statCreated = stat.ctime.valueOf();
-        track.statModified = stat.mtime.valueOf();
+        track.statCreated = stat.ctime;
+        track.statModified = stat.mtime;
         track.fileSize = stat.size;
     }
     async rename(orm, trackID, newName, changes) {

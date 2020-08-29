@@ -175,12 +175,12 @@ __decorate([
     __metadata("design:type", String)
 ], Tag.prototype, "chapters", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Tag.prototype, "mediaDuration", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Tag.prototype, "mediaBitRate", void 0);
@@ -190,7 +190,7 @@ __decorate([
     __metadata("design:type", String)
 ], Tag.prototype, "mediaFormat", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Tag.prototype, "mediaSampleRate", void 0);
@@ -230,11 +230,11 @@ exports.Tag = Tag;
 let TagChapterQL = class TagChapterQL {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    type_graphql_1.Field(() => type_graphql_1.Float),
     __metadata("design:type", Number)
 ], TagChapterQL.prototype, "start", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    type_graphql_1.Field(() => type_graphql_1.Float),
     __metadata("design:type", Number)
 ], TagChapterQL.prototype, "end", void 0);
 __decorate([

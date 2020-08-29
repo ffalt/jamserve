@@ -72,7 +72,7 @@ class MatchNodeMetaStats {
     }
     static async buildTracksSlugs(node, builder) {
         for (const track of node.tracks) {
-            await MatchNodeMetaStats.buildTrackSlugs(track, builder);
+            await MatchNodeMetaStats.buildTrackSlugs(await track.get(), builder);
         }
     }
     static buildSubFolderSlugs(folder, builder) {
@@ -99,7 +99,7 @@ class MatchNodeMetaStats {
                 subFolderCount += result.subFolderCount + 1;
                 subFolderTrackCount += result.subFolderTrackCount;
             }
-            subFolderTrackCount += child.tracks.length;
+            subFolderTrackCount += child.nrOfTracks;
         }
         return { subFolderTrackCount, subFolderCount };
     }
@@ -140,7 +140,7 @@ class MatchNodeMetaStats {
         await MatchNodeMetaStats.buildSubFoldersSlugs(node, builder);
         const { albumType, artist, hasMultipleArtists, mbAlbumType, genres } = MatchNodeMetaStats.getAlbumInfo(builder, strategy);
         return {
-            trackCount: node.tracks.length,
+            trackCount: node.nrOfTracks,
             folderCount: node.children.filter(c => c.folder.folderType !== enums_1.FolderType.extras).length,
             subFolderTrackCount,
             subFolderCount,
@@ -150,7 +150,7 @@ class MatchNodeMetaStats {
             hasMultipleArtists,
             mbAlbumType,
             hasMultipleAlbums: builder.asList('album').length > 1,
-            album: builder.mostUsed('album', album_name_1.extractAlbumName(path_1.default.basename(node.scan.path))),
+            album: builder.mostUsed('album', album_name_1.extractAlbumName(path_1.default.basename(node.path))),
             artistSort: hasMultipleArtists ? undefined : builder.mostUsed('artistSort'),
             mbReleaseID: builder.mostUsed('mbReleaseID', ''),
             mbReleaseGroupID: builder.mostUsed('mbReleaseGroupID', ''),

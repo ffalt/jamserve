@@ -24,7 +24,7 @@ const playlist_entry_1 = require("../playlistentry/playlist-entry");
 let EpisodeChapter = class EpisodeChapter {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    type_graphql_1.Field(() => type_graphql_1.Float),
     __metadata("design:type", Number)
 ], EpisodeChapter.prototype, "start", void 0);
 __decorate([
@@ -46,7 +46,7 @@ __decorate([
     __metadata("design:type", String)
 ], EpisodeEnclosure.prototype, "type", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     __metadata("design:type", Number)
 ], EpisodeEnclosure.prototype, "length", void 0);
 EpisodeEnclosure = __decorate([
@@ -91,12 +91,12 @@ __decorate([
     __metadata("design:type", Number)
 ], Episode.prototype, "fileSize", void 0);
 __decorate([
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP, { nullable: true }),
-    __metadata("design:type", Number)
+    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    __metadata("design:type", Date)
 ], Episode.prototype, "statCreated", void 0);
 __decorate([
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP, { nullable: true }),
-    __metadata("design:type", Number)
+    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    __metadata("design:type", Date)
 ], Episode.prototype, "statModified", void 0);
 __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
@@ -119,11 +119,11 @@ __decorate([
     __metadata("design:type", String)
 ], Episode.prototype, "summary", void 0);
 __decorate([
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
-    __metadata("design:type", Number)
+    orm_1.Property(() => orm_1.ORM_DATETIME),
+    __metadata("design:type", Date)
 ], Episode.prototype, "date", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Episode.prototype, "duration", void 0);
@@ -157,7 +157,7 @@ __decorate([
 ], Episode.prototype, "podcast", void 0);
 __decorate([
     type_graphql_1.Field(() => [bookmark_1.BookmarkQL]),
-    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.episode, { orderBy: { position: orm_1.QueryOrder.ASC } }),
+    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.episode, { order: [{ orderBy: enums_1.BookmarkOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Episode.prototype, "bookmarks", void 0);
 __decorate([
@@ -193,7 +193,7 @@ __decorate([
 ], EpisodeQL.prototype, "fileModified", void 0);
 __decorate([
     type_graphql_1.Field(() => Date),
-    __metadata("design:type", Number)
+    __metadata("design:type", Date)
 ], EpisodeQL.prototype, "date", void 0);
 __decorate([
     type_graphql_1.Field(() => [EpisodeChapterQL], { nullable: true }),

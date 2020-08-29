@@ -14,27 +14,24 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const user_model_1 = require("./user.model");
-const typescript_ioc_1 = require("typescript-ioc");
-const transform_service_1 = require("../../modules/engine/services/transform.service");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const user_args_1 = require("./user.args");
-const user_service_1 = require("./user.service");
 const random_1 = require("../../utils/random");
 const base_args_1 = require("../base/base.args");
 let UserController = class UserController {
-    async id(id, userArgs, { orm, user }) {
-        return this.transform.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);
+    async id(id, userArgs, { orm, engine, user }) {
+        return engine.transform.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);
     }
-    async search(page, userArgs, filter, order, { orm, user }) {
-        return await orm.User.searchTransformFilter(filter, [order], page, user, o => this.transform.user(orm, o, userArgs, user));
+    async search(page, userArgs, filter, order, { orm, engine, user }) {
+        return await orm.User.searchTransformFilter(filter, [order], page, user, o => engine.transform.user(orm, o, userArgs, user));
     }
-    async create(args, { orm, user }) {
-        await this.validatePassword(orm, args.password, user);
-        return this.transform.user(orm, await this.userService.create(orm, args), {}, user);
+    async create(args, { orm, engine, user }) {
+        await this.validatePassword(orm, engine, args.password, user);
+        return engine.transform.user(orm, await engine.user.create(orm, args), {}, user);
     }
-    async update(id, args, { orm, user }) {
-        await this.validatePassword(orm, args.password, user);
+    async update(id, args, { orm, engine, user }) {
+        await this.validatePassword(orm, engine, args.password, user);
         const u = id === user.id ? user : await orm.User.oneOrFailByID(id);
         if (user.id === id) {
             if (!args.roleAdmin) {
@@ -44,39 +41,39 @@ let UserController = class UserController {
                 throw rest_1.InvalidParamError('roleStream', `You can't remove api access for yourself`);
             }
         }
-        return this.transform.user(orm, await this.userService.update(orm, u, args), {}, user);
+        return engine.transform.user(orm, await engine.user.update(orm, u, args), {}, user);
     }
-    async remove(id, { orm, user }) {
+    async remove(id, { orm, engine, user }) {
         if (user.id === id) {
             throw rest_1.InvalidParamError('id', `You can't remove yourself`);
         }
         const u = await orm.User.oneOrFailByID(id);
-        await this.userService.remove(orm, u);
+        await engine.user.remove(orm, u);
     }
-    async changePassword(id, args, { orm, user }) {
-        const u = await this.checkUserAccess(orm, id, args.password, user);
-        return this.userService.setUserPassword(orm, u, args.newPassword);
+    async changePassword(id, args, { orm, engine, user }) {
+        const u = await this.checkUserAccess(orm, engine, id, args.password, user);
+        return engine.user.setUserPassword(orm, u, args.newPassword);
     }
-    async changeEmail(id, args, { orm, user }) {
-        const u = await this.checkUserAccess(orm, id, args.password, user);
-        return this.userService.setUserEmail(orm, u, args.email);
+    async changeEmail(id, args, { orm, engine, user }) {
+        const u = await this.checkUserAccess(orm, engine, id, args.password, user);
+        return engine.user.setUserEmail(orm, u, args.email);
     }
-    async generateUserImage(id, args, { orm, user }) {
+    async generateUserImage(id, args, { orm, engine, user }) {
         const u = await this.validateUserOrAdmin(orm, id, user);
-        await this.userService.generateAvatar(u, args.seed || random_1.randomString(42));
+        await engine.user.generateAvatar(u, args.seed || random_1.randomString(42));
     }
-    async uploadUserImage(id, file, { orm, user }) {
+    async uploadUserImage(id, file, { orm, engine, user }) {
         const u = await this.validateUserOrAdmin(orm, id, user);
-        return this.userService.setUserImage(u, file.name, file.type);
+        return engine.user.setUserImage(u, file.name);
     }
-    async validatePassword(orm, password, user) {
-        const result = await this.userService.auth(orm, user.name, password);
+    async validatePassword(orm, engine, password, user) {
+        const result = await engine.user.auth(orm, user.name, password);
         if (!result) {
             return Promise.reject(rest_1.UnauthError());
         }
     }
-    async checkUserAccess(orm, userID, password, user) {
-        await this.validatePassword(orm, password, user);
+    async checkUserAccess(orm, engine, userID, password, user) {
+        await this.validatePassword(orm, engine, password, user);
         if (userID === user.id || user.roleAdmin) {
             return userID === user.id ? user : await orm.User.oneOrFailByID(userID);
         }
@@ -92,14 +89,6 @@ let UserController = class UserController {
         return await orm.User.oneOrFailByID(id);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", transform_service_1.TransformService)
-], UserController.prototype, "transform", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", user_service_1.UserService)
-], UserController.prototype, "userService", void 0);
 __decorate([
     rest_1.Get('/id', () => user_model_1.User, { description: 'Get an User by Id', roles: [enums_1.UserRole.admin], summary: 'Get User' }),
     __param(0, rest_1.QueryParam('id', { description: 'User Id', isID: true })),
@@ -185,7 +174,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "uploadUserImage", null);
 UserController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/user', { tags: ['User'] })
 ], UserController);
 exports.UserController = UserController;

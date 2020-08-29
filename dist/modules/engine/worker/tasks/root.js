@@ -11,6 +11,7 @@ const scan_dir_1 = require("../../../../utils/scan-dir");
 const scan_1 = require("../scan");
 const base_1 = require("./base");
 const typescript_ioc_1 = require("typescript-ioc");
+const merge_scan_1 = require("../merge-scan");
 let RootWorker = class RootWorker extends base_1.BaseWorker {
     async validateRootPath(orm, dir) {
         const d = dir.trim();
@@ -42,7 +43,49 @@ let RootWorker = class RootWorker extends base_1.BaseWorker {
         const dirScanner = new scan_dir_1.DirScanner();
         const scanDir = await dirScanner.scan(root.path);
         const scanMatcher = new scan_1.WorkerScan(orm, root.id, this.audioModule, this.imageModule, changes);
-        await scanMatcher.match(scanDir);
+        const rootMatch = await scanMatcher.match(scanDir);
+        const scanMerger = new merge_scan_1.WorkerMergeScan(orm, root.strategy, changes);
+        await scanMerger.mergeMatch(rootMatch);
+    }
+    async mergeChanges(orm, root, changes) {
+        if (orm.em.hasChanges()) {
+            await orm.em.flush();
+        }
+        const folders = await orm.Folder.findByIDs(changes.folders.updated.ids());
+        let rootMatch;
+        for (const folder of folders) {
+            const parents = await this.getParents(folder);
+            if (!rootMatch) {
+                const tracks = await this.buildMergeTracks(parents[0]);
+                rootMatch = { changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length };
+            }
+            const pathToChild = parents.slice(1).concat([folder]);
+            await this.buildMergeNode(pathToChild, rootMatch);
+        }
+        if (rootMatch) {
+            await this.loadEmptyUnchanged(rootMatch);
+            const scanMerger = new merge_scan_1.WorkerMergeScan(orm, root.strategy, changes);
+            await scanMerger.merge(rootMatch);
+        }
+    }
+    async buildMergeNode(pathToChild, merge) {
+        const folder = pathToChild[0];
+        let node = merge.children.find(c => c.folder.id === folder.id);
+        if (!node) {
+            const tracks = await this.buildMergeTracks(folder);
+            node = {
+                changed: true,
+                folder,
+                path: folder.path,
+                children: [],
+                tracks,
+                nrOfTracks: tracks.length
+            };
+            merge.children.push(node);
+        }
+        if (pathToChild.length > 1) {
+            await this.buildMergeNode(pathToChild.slice(1), node);
+        }
     }
     async create(orm, name, path, strategy) {
         await this.validateRootPath(orm, path);
@@ -58,6 +101,48 @@ let RootWorker = class RootWorker extends base_1.BaseWorker {
         }
         root.strategy = strategy;
         orm.Root.persistLater(root);
+    }
+    async getParents(folder) {
+        const parent = await folder.parent.get();
+        if (!parent) {
+            return [];
+        }
+        return (await this.getParents(parent)).concat([parent]);
+    }
+    async loadEmptyUnchanged(node) {
+        const folders = await node.folder.children.getItems();
+        for (const folder of folders) {
+            const child = node.children.find(f => f.folder.id === folder.id);
+            if (child) {
+                await this.loadEmptyUnchanged(child);
+            }
+            else {
+                node.children.push({
+                    changed: false,
+                    folder,
+                    path: folder.path,
+                    children: [],
+                    nrOfTracks: await folder.tracks.count(),
+                    tracks: []
+                });
+            }
+        }
+    }
+    logNode(node) {
+        var _a, _b;
+        let stat = [' '.repeat(((_a = node === null || node === void 0 ? void 0 : node.folder) === null || _a === void 0 ? void 0 : _a.level) || 0) + ((node === null || node === void 0 ? void 0 : node.changed) ? '** ' : '|- ') + ((_b = node === null || node === void 0 ? void 0 : node.folder) === null || _b === void 0 ? void 0 : _b.path)];
+        ((node === null || node === void 0 ? void 0 : node.children) || []).forEach(n => {
+            stat = stat.concat(this.logNode(n));
+        });
+        return stat;
+    }
+    async buildMergeTracks(folder) {
+        const tracks = await folder.tracks.getItems();
+        const list = [];
+        for (const track of tracks) {
+            list.push(new scan_1.ObjLoadTrackMatch(track));
+        }
+        return list;
     }
 };
 RootWorker = __decorate([

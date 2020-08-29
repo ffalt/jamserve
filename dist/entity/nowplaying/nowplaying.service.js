@@ -26,30 +26,31 @@ let NowPlayingService = class NowPlayingService {
     clear() {
         this.playing = [];
     }
-    async report(entries) {
+    async report(orm, entries, user) {
+        await this.stateService.reportPlaying(orm, entries, user);
     }
-    async reportEpisode(episode, user) {
+    async reportEpisode(orm, episode, user) {
         this.playing = this.playing.filter(np => (np.user.id !== user.id));
         const result = { time: Date.now(), episode, user };
         this.playing.push(result);
-        this.report([
-            { id: episode.id, type: enums_1.DBObjectType.episode, userID: user.id },
-            { id: episode.podcast.idOrFail(), type: enums_1.DBObjectType.podcast, userID: user.id },
-        ]).catch(e => log.error(e));
+        this.report(orm, [
+            { id: episode.id, type: enums_1.DBObjectType.episode },
+            { id: episode.podcast.idOrFail(), type: enums_1.DBObjectType.podcast },
+        ], user).catch(e => log.error(e));
         return result;
     }
-    async reportTrack(track, user) {
+    async reportTrack(orm, track, user) {
         this.playing = this.playing.filter(np => (np.user.id !== user.id));
         const result = { time: Date.now(), track, user };
         this.playing.push(result);
-        this.report([
-            { id: track.id, type: enums_1.DBObjectType.track, userID: user.id },
-            { id: track.album.id(), type: enums_1.DBObjectType.album, userID: user.id },
-            { id: track.artist.id(), type: enums_1.DBObjectType.artist, userID: user.id },
-            { id: track.folder.id(), type: enums_1.DBObjectType.folder, userID: user.id },
-            { id: track.series.id(), type: enums_1.DBObjectType.series, userID: user.id },
-            { id: track.root.id(), type: enums_1.DBObjectType.root, userID: user.id },
-        ]).catch(e => log.error(e));
+        this.report(orm, [
+            { id: track.id, type: enums_1.DBObjectType.track },
+            { id: track.album.id(), type: enums_1.DBObjectType.album },
+            { id: track.artist.id(), type: enums_1.DBObjectType.artist },
+            { id: track.folder.id(), type: enums_1.DBObjectType.folder },
+            { id: track.series.id(), type: enums_1.DBObjectType.series },
+            { id: track.root.id(), type: enums_1.DBObjectType.root },
+        ], user).catch(e => log.error(e));
         return result;
     }
     async scrobble(orm, id, user) {
@@ -59,9 +60,9 @@ let NowPlayingService = class NowPlayingService {
         }
         switch (result.objType) {
             case enums_1.DBObjectType.track:
-                return await this.reportTrack(result.obj, user);
+                return await this.reportTrack(orm, result.obj, user);
             case enums_1.DBObjectType.episode:
-                return this.reportEpisode(result.obj, user);
+                return this.reportEpisode(orm, result.obj, user);
             default:
                 return Promise.reject(Error('Invalid Object Type for Scrobbling'));
         }

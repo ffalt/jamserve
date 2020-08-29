@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ManyToOne = void 0;
 const relation_register_1 = require("../helpers/relation-register");
 function ManyToOne(returnTypeFunc, mappedBy, options) {
-    return (prototype, propertyKey, descriptor) => {
+    return (prototype, propertyKey, _) => {
         const opt = (options || {});
         opt.relation = 'many2one';
         opt.mappedBy = mappedBy;

@@ -16,38 +16,31 @@ exports.EpisodeController = void 0;
 const episode_model_1 = require("./episode.model");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const base_controller_1 = require("../base/base.controller");
 const podcast_args_1 = require("../podcast/podcast.args");
 const episode_args_1 = require("./episode.args");
 const base_args_1 = require("../base/base.args");
-const typescript_ioc_1 = require("typescript-ioc");
-const episode_service_1 = require("./episode.service");
 const logger_1 = require("../../utils/logger");
 const log = logger_1.logger('EpisodeController');
-let EpisodeController = class EpisodeController extends base_controller_1.BaseController {
-    async id(id, episodeArgs, episodeParentArgs, podcastArgs, { orm, user }) {
-        return this.transform.episode(orm, await orm.Episode.oneOrFailByID(id), episodeArgs, episodeParentArgs, podcastArgs, user);
+let EpisodeController = class EpisodeController {
+    async id(id, episodeArgs, episodeParentArgs, podcastArgs, { orm, engine, user }) {
+        return engine.transform.episode(orm, await orm.Episode.oneOrFailByID(id), episodeArgs, episodeParentArgs, podcastArgs, user);
     }
-    async search(page, episodeArgs, episodeParentArgs, podcastArgs, filter, order, list, { orm, user }) {
+    async search(page, episodeArgs, episodeParentArgs, podcastArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Episode.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
+            return await orm.Episode.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
         }
-        return await orm.Episode.searchTransformFilter(filter, [order], page, user, o => this.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
+        return await orm.Episode.searchTransformFilter(filter, [order], page, user, o => engine.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
     }
-    async status(id, { orm, user }) {
-        return this.transform.episodeStatus(await orm.Episode.oneOrFailByID(id));
+    async status(id, { orm, engine }) {
+        return engine.transform.episodeStatus(await orm.Episode.oneOrFailByID(id));
     }
-    async retrieve(id, { orm }) {
+    async retrieve(id, { orm, engine }) {
         const episode = await orm.Episode.oneOrFailByID(id);
         if (!episode.path) {
-            this.episodeService.downloadEpisode(orm, episode).catch(e => log.error(e));
+            engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e));
         }
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", episode_service_1.EpisodeService)
-], EpisodeController.prototype, "episodeService", void 0);
 __decorate([
     rest_1.Get('/id', () => episode_model_1.Episode, { description: 'Get a Episode by Id', summary: 'Get Episode' }),
     __param(0, rest_1.QueryParam('id', { description: 'Episode Id', isID: true })),
@@ -98,7 +91,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], EpisodeController.prototype, "retrieve", null);
 EpisodeController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/episode', { tags: ['Episode'], roles: [enums_1.UserRole.stream] })
 ], EpisodeController);
 exports.EpisodeController = EpisodeController;

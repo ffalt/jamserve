@@ -16,6 +16,7 @@ const type_graphql_1 = require("type-graphql");
 const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 const state_1 = require("../state/state");
+const enums_1 = require("../../types/enums");
 let Playlist = class Playlist extends base_1.Base {
     constructor() {
         super(...arguments);
@@ -49,13 +50,13 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Playlist.prototype, "isPublic", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    type_graphql_1.Field(() => type_graphql_1.Float),
     orm_1.Property(() => orm_1.ORM_INT),
     __metadata("design:type", Number)
 ], Playlist.prototype, "duration", void 0);
 __decorate([
     type_graphql_1.Field(() => [playlist_entry_1.PlaylistEntryQL]),
-    orm_1.OneToMany(() => playlist_entry_1.PlaylistEntry, entry => entry.playlist, { orderBy: { position: orm_1.QueryOrder.ASC } }),
+    orm_1.OneToMany(() => playlist_entry_1.PlaylistEntry, entry => entry.playlist, { order: [{ orderBy: enums_1.PlaylistEntryOrderFields.position }] }),
     __metadata("design:type", orm_1.Collection)
 ], Playlist.prototype, "entries", void 0);
 Playlist = __decorate([

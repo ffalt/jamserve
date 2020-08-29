@@ -1,13 +1,42 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EntityManager = void 0;
+exports.EntityManager = exports.EntityCache = void 0;
 const repository_1 = require("./repository");
 const entity_1 = require("./entity");
+const uuid_1 = require("uuid");
+class EntityCache {
+    constructor() {
+        this.cache = new Map();
+    }
+    get(entityName, id) {
+        return this.cache.get(`${entityName}${id}`);
+    }
+    set(entityName, entity) {
+        this.cache.set(`${entityName}${entity.id}`, entity);
+    }
+    remove(entityName, entity) {
+        this.cache.delete(`${entityName}${entity.id}`);
+    }
+    clear() {
+        this.cache = new Map();
+    }
+    removePrefixed(entityName) {
+        const keys = this.cache.keys();
+        for (const key of keys) {
+            if (key.startsWith(entityName)) {
+                this.cache.delete(key);
+            }
+        }
+    }
+}
+exports.EntityCache = EntityCache;
 class EntityManager {
-    constructor(sequelize, metadata, config) {
+    constructor(sequelize, metadata, config, parent, useCache) {
         this.sequelize = sequelize;
         this.metadata = metadata;
         this.config = config;
+        this.parent = parent;
+        this.useCache = useCache;
         this.repositoryMap = {};
         this.changeSet = [];
     }
@@ -46,10 +75,12 @@ class EntityManager {
                 }
                 else if (change.remove && change.remove.entity) {
                     await change.remove.entity._source.destroy({ transaction: t });
+                    this.parent.cache.remove(change.entityName, change.remove.entity);
                 }
                 else if (change.remove && change.remove.query) {
                     const model = this.model(change.entityName);
                     change.remove.resultCount = await model.destroy({ where: change.remove.query.where, transaction: t });
+                    this.parent.cache.removePrefixed(change.entityName);
                 }
             }
             for (const change of this.changeSet) {
@@ -60,6 +91,7 @@ class EntityManager {
             for (const change of this.changeSet) {
                 if (change.persist) {
                     entity_1.cleanManagedEntityRelations(change.persist);
+                    this.parent.cache.remove(change.entityName, change.persist);
                 }
             }
             this.changeSet = [];
@@ -78,24 +110,93 @@ class EntityManager {
             this.persistLater(entityName, entity);
         }
     }
+    async fromCacheOrLoad(entityName, ids) {
+        const toLoadIDs = [];
+        const fromCache = [];
+        for (const id of ids) {
+            const c = this.parent.cache.get(entityName, id);
+            if (c) {
+                fromCache.push(c);
+            }
+            else {
+                toLoadIDs.push(id);
+            }
+        }
+        if (toLoadIDs.length === 0) {
+            return fromCache;
+        }
+        const model = this.model(entityName);
+        const loadedSources = await model.findAll({ where: { id: toLoadIDs } });
+        const loaded = loadedSources.map(source => this.mapEntity(entityName, source));
+        for (const item of loaded) {
+            this.parent.cache.set(entityName, item);
+        }
+        return loaded.concat(fromCache).sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+    }
     async findOne(entityName, options) {
+        if (this.useCache) {
+            const id = await this.findOneID(entityName, options);
+            if (!id) {
+                return;
+            }
+            const cached = this.parent.cache.get(entityName, id);
+            if (cached) {
+                return cached;
+            }
+        }
         const model = this.model(entityName);
         const source = await model.findOne(options);
         if (!source) {
             return;
         }
-        return this.mapEntity(entityName, source);
+        const result = this.mapEntity(entityName, source);
+        if (this.useCache) {
+            this.parent.cache.set(entityName, result);
+        }
+        return result;
     }
     async findOneByID(entityName, id) {
         if (!id || id.trim().length === 0) {
             return Promise.reject(Error('Invalid ID'));
+        }
+        if (this.useCache) {
+            const cached = this.parent.cache.get(entityName, id);
+            if (cached) {
+                return cached;
+            }
         }
         const model = this.model(entityName);
         const source = await model.findOne({ where: { id } });
         if (!source) {
             return;
         }
-        return this.mapEntity(entityName, source);
+        const result = this.mapEntity(entityName, source);
+        if (this.useCache) {
+            this.parent.cache.set(entityName, result);
+        }
+        return result;
+    }
+    async find(entityName, options) {
+        if (this.useCache) {
+            const ids = await this.findIDs(entityName, options);
+            return await this.fromCacheOrLoad(entityName, ids);
+        }
+        const model = this.model(entityName);
+        const rows = await model.findAll(options);
+        return rows.map(source => this.mapEntity(entityName, source));
+    }
+    async findAndCount(entityName, options) {
+        if (this.useCache) {
+            const { count, ids } = await this.findIDsAndCount(entityName, options);
+            const entities = await this.fromCacheOrLoad(entityName, ids);
+            return { count, entities };
+        }
+        const model = this.model(entityName);
+        const { count, rows } = await model.findAndCountAll(options);
+        return { count, entities: rows.map(source => this.mapEntity(entityName, source)) };
+    }
+    async all(entityName) {
+        return this.find(entityName, {});
     }
     async findOneOrFail(entityName, options) {
         const result = await this.findOne(entityName, options);
@@ -111,35 +212,28 @@ class EntityManager {
         }
         return result;
     }
-    async all(entityName) {
-        return this.find(entityName, {});
-    }
     findByIDs(entityName, ids) {
         return this.find(entityName, { where: { id: ids } });
     }
-    async find(entityName, options) {
-        const model = this.model(entityName);
-        const rows = await model.findAll(options);
-        return rows.map(source => this.mapEntity(entityName, source));
-    }
     async findOneID(entityName, options) {
         const model = this.model(entityName);
-        options.attributes = ['id'];
-        const result = await model.findOne(options);
+        const opts = { ...options, raw: true, attributes: ['id'] };
+        const result = await model.findOne(opts);
         if (result) {
             return result.id;
         }
     }
     async findIDs(entityName, options) {
         const model = this.model(entityName);
-        options.attributes = ['id'];
-        const result = await model.findAll(options);
-        return result.map((o) => o.id);
+        const opts = { ...options, raw: true, attributes: ['id'] };
+        const result = await model.findAll(opts);
+        return result.map(o => o.id);
     }
-    async findAndCount(entityName, options) {
+    async findIDsAndCount(entityName, options) {
         const model = this.model(entityName);
-        const { count, rows } = await model.findAndCountAll(options);
-        return { count, entities: rows.map(source => this.mapEntity(entityName, source)) };
+        const opts = { ...options, raw: true, attributes: ['id'] };
+        const { count, rows } = await model.findAndCountAll(opts);
+        return { count, ids: rows.map(o => o.id) };
     }
     async count(entityName, options = {}) {
         return await this.model(entityName).count(options);
@@ -155,9 +249,10 @@ class EntityManager {
         return entity_1.createManagedEntity(meta, source, this);
     }
     create(entityName, data) {
-        const _source = this.model(entityName).build(data);
+        const idData = { id: uuid_1.v4(), createdAt: new Date(), updatedAt: new Date(), ...data };
+        const _source = this.model(entityName).build(idData);
         const entity = this.mapEntity(entityName, _source);
-        Object.keys(data).forEach(key => entity[key] = data[key]);
+        Object.keys(idData).forEach(key => entity[key] = idData[key]);
         return entity;
     }
     remove(entityName, entity, flush) {
@@ -187,6 +282,12 @@ class EntityManager {
     }
     changesCount() {
         return this.changeSet.length;
+    }
+    getOrderFindOptions(entityName, order) {
+        const repo = this.getRepository(entityName);
+        if (repo) {
+            return repo.buildOrderByFindOptions(order);
+        }
     }
 }
 exports.EntityManager = EntityManager;

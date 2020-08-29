@@ -20,6 +20,7 @@ const user_service_1 = require("./user.service");
 const user_args_1 = require("./user.args");
 const session_1 = require("../session/session");
 const bookmark_1 = require("../bookmark/bookmark");
+const playqueue_1 = require("../playqueue/playqueue");
 let UserResolver = class UserResolver {
     async user(id, { orm }) {
         return await orm.User.oneOrFailByID(id);
@@ -33,11 +34,14 @@ let UserResolver = class UserResolver {
     roles(user) {
         return user_service_1.UserService.listfyRoles(user);
     }
-    async sessions(user, { orm }) {
+    async sessions(user) {
         return user.sessions.getItems();
     }
-    async bookmarks(user, { orm }) {
+    async bookmarks(user) {
         return user.bookmarks.getItems();
+    }
+    async playQueue(user) {
+        return user.playQueue.get();
     }
 };
 __decorate([
@@ -73,18 +77,25 @@ __decorate([
 ], UserResolver.prototype, "roles", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [session_1.SessionQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User, Object]),
+    __metadata("design:paramtypes", [user_1.User]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "sessions", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [bookmark_1.BookmarkQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User, Object]),
+    __metadata("design:paramtypes", [user_1.User]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "bookmarks", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => playqueue_1.PlayQueueQL, { nullable: true }),
+    __param(0, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_1.User]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "playQueue", null);
 UserResolver = __decorate([
     type_graphql_1.Resolver(user_1.UserQL)
 ], UserResolver);

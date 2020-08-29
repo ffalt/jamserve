@@ -8,10 +8,10 @@ class MetaDataRepository extends base_repository_1.BaseRepository {
         super(...arguments);
         this.objType = enums_1.DBObjectType.metadata;
     }
-    buildOrder(order) {
+    buildOrder(_) {
         return [];
     }
-    async buildFilter(filter, user) {
+    async buildFilter(_, __) {
         return {};
     }
 }

@@ -14,9 +14,6 @@ const state_model_1 = require("../state/state.model");
 const decorators_1 = require("../../modules/rest/decorators");
 const example_consts_1 = require("../../modules/engine/rest/example.consts");
 let Base = class Base {
-    constructor() {
-        this.created = Date.now();
-    }
 };
 __decorate([
     decorators_1.ObjField({ description: 'ID', isID: true }),

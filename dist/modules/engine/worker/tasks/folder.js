@@ -90,9 +90,10 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends base_1.BaseWorker
             path: destination,
             folderType: enums_1.FolderType.extras,
             level: parent.level + 1,
-            title, year,
-            statCreated: stat.ctime.valueOf(),
-            statModified: stat.mtime.valueOf()
+            title: name !== title ? title : undefined,
+            year,
+            statCreated: stat.ctime,
+            statModified: stat.mtime
         });
         await folder.parent.set(parent);
         await folder.root.set(root);
@@ -144,17 +145,17 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends base_1.BaseWorker
         }
         const folders = await orm.Folder.findAllDescendants(folder);
         const dest = fs_utils_1.ensureTrailingPathSeparator(newPath);
-        for (const child of folders) {
-            child.path = child.path.replace(oldPath, dest);
-            changes.folders.updated.add(child);
-            orm.Folder.persistLater(child);
-            const tracks = await child.tracks.getItems();
+        for (const item of folders) {
+            item.path = item.path.replace(oldPath, dest);
+            changes.folders.updated.add(item);
+            orm.Folder.persistLater(item);
+            const tracks = await item.tracks.getItems();
             for (const track of tracks) {
                 track.path = track.path.replace(oldPath, dest);
                 changes.tracks.updated.add(track);
                 orm.Track.persistLater(track);
             }
-            const artworks = await child.artworks.getItems();
+            const artworks = await item.artworks.getItems();
             for (const artwork of artworks) {
                 artwork.path = artwork.path.replace(oldPath, dest);
                 changes.artworks.updated.add(artwork);

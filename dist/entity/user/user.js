@@ -70,18 +70,12 @@ __decorate([
 ], User.prototype, "rolePodcast", void 0);
 __decorate([
     type_graphql_1.Field(() => [session_1.SessionQL]),
-    orm_1.OneToMany(() => session_1.Session, session => session.user, { orderBy: { expires: orm_1.QueryOrder.ASC } }),
+    orm_1.OneToMany(() => session_1.Session, session => session.user, { order: [{ orderBy: enums_1.SessionOrderFields.expires }] }),
     __metadata("design:type", orm_1.Collection)
 ], User.prototype, "sessions", void 0);
 __decorate([
     type_graphql_1.Field(() => [bookmark_1.BookmarkQL]),
-    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.user, {
-        orderBy: {
-            track: { path: orm_1.QueryOrder.ASC, tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC } },
-            episode: { path: orm_1.QueryOrder.ASC, tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC } },
-            position: orm_1.QueryOrder.ASC
-        }
-    }),
+    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.user, { order: [{ orderBy: enums_1.BookmarkOrderFields.media }, { orderBy: enums_1.BookmarkOrderFields.position }] }),
     __metadata("design:type", orm_1.Collection)
 ], User.prototype, "bookmarks", void 0);
 __decorate([
@@ -95,7 +89,7 @@ __decorate([
     __metadata("design:type", orm_1.Collection)
 ], User.prototype, "playlists", void 0);
 __decorate([
-    orm_1.OneToMany(() => state_1.State, state => state.user, { orderBy: { destType: orm_1.QueryOrder.ASC } }),
+    orm_1.OneToMany(() => state_1.State, state => state.user),
     __metadata("design:type", orm_1.Collection)
 ], User.prototype, "states", void 0);
 User = __decorate([

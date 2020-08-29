@@ -17,8 +17,8 @@ class DirScanner {
         const result = {
             path: fs_utils_1.ensureTrailingPathSeparator(dir),
             level,
-            ctime: stat.ctime.valueOf(),
-            mtime: stat.mtime.valueOf(),
+            ctime: stat.ctime,
+            mtime: stat.mtime,
             directories: [],
             files: []
         };
@@ -35,8 +35,8 @@ class DirScanner {
                     const file = {
                         path: sub,
                         type: filetype_1.getFileType(sub),
-                        ctime: subStat.ctime.valueOf(),
-                        mtime: subStat.mtime.valueOf(),
+                        ctime: subStat.ctime,
+                        mtime: subStat.mtime,
                         size: subStat.size
                     };
                     result.files.push(file);

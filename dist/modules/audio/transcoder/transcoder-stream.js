@@ -49,10 +49,10 @@ class TranscoderStream {
                 return proc
                     .toFormat('mp4')
                     .withAudioBitrate(`${maxBitRate || 128}k`);
-            case enums_1.AudioFormatType.webma:
+            case enums_1.AudioFormatType.webma: {
                 return proc
-                    .toFormat('webm')
-                    .withAudioBitrate(`${maxBitRate || 128}k`);
+                    .toFormat('webm');
+            }
             default:
                 return proc
                     .toFormat(format)

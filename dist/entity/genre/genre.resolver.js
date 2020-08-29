@@ -17,10 +17,10 @@ const type_graphql_1 = require("type-graphql");
 const genre_1 = require("./genre");
 let GenreResolver = class GenreResolver {
     async genres({ engine, orm }) {
-        return engine.genreService.getGenres(orm);
+        return engine.genre.getGenres(orm);
     }
     async genresIndex({ engine, orm }) {
-        return await engine.genreService.index(orm);
+        return await engine.genre.index(orm);
     }
 };
 __decorate([

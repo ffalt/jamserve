@@ -18,14 +18,15 @@ class ModelBuilder {
         const allowNull = opts.nullable === true;
         if (type === __1.ORM_ID && opts.primaryKey) {
             return {
-                type: sequelize_1.DataTypes.UUIDV4,
+                type: sequelize_1.DataTypes.UUID,
+                defaultValue: sequelize_1.DataTypes.UUIDV4,
                 allowNull: false,
                 unique: true,
                 primaryKey: true
             };
         }
         if (type === __1.ORM_ID) {
-            return { type: sequelize_1.DataTypes.UUIDV4, allowNull };
+            return { type: sequelize_1.DataTypes.UUID, defaultValue: sequelize_1.DataTypes.UUIDV4, allowNull };
         }
         if (type === Boolean) {
             return { type: sequelize_1.DataTypes.BOOLEAN, allowNull };
@@ -33,8 +34,8 @@ class ModelBuilder {
         if (type === __1.ORM_INT) {
             return { type: sequelize_1.DataTypes.INTEGER, allowNull };
         }
-        if (type === __1.ORM_TIMESTAMP) {
-            return { type: sequelize_1.DataTypes.TIME, allowNull };
+        if (type === __1.ORM_DATETIME || type === Date) {
+            return { type: sequelize_1.DataTypes.DATE, allowNull };
         }
         if (type === __1.ORM_FLOAT || type === Number) {
             return { type: sequelize_1.DataTypes.FLOAT, allowNull };
@@ -92,13 +93,13 @@ class ModelBuilder {
                                     throw new Error(`Invalid ManyToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
                                 }
                                 sourceModel.hasMany(destModel, {
-                                    type: sequelize_1.DataTypes.UUIDV4,
+                                    type: sequelize_1.DataTypes.UUID,
                                     as: sourceField.name + 'ORM',
                                     onDelete: o2m.onDelete,
                                     foreignKey: destField.name
                                 });
                                 destModel.belongsTo(sourceModel, {
-                                    type: sequelize_1.DataTypes.UUIDV4,
+                                    type: sequelize_1.DataTypes.UUID,
                                     as: destField.name + 'ORM',
                                     foreignKey: {
                                         name: destField.name,
@@ -142,11 +143,8 @@ class ModelBuilder {
                                         as: sourceField.name + 'ORM',
                                         foreignKey: {
                                             allowNull: o2o.nullable,
-                                            name: sourceField.name,
+                                            name: sourceField.name
                                         }
-                                    });
-                                    destModel.hasOne(sourceModel, {
-                                        as: destField.name + 'ORM'
                                     });
                                 }
                                 break;

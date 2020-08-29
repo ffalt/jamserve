@@ -8,12 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApolloMiddleware = exports.buildGraphQlSchema = exports.customAuthChecker = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
 const orm_service_1 = require("../../engine/services/orm.service");
 const engine_service_1 = require("../../engine/services/engine.service");
 const typescript_ioc_1 = require("typescript-ioc");
+const express_1 = __importDefault(require("express"));
 const type_graphql_1 = require("type-graphql");
 const enums_1 = require("../../../types/enums");
 const user_resolver_1 = require("../../../entity/user/user.resolver");
@@ -39,6 +43,7 @@ const stats_resolver_1 = require("../../../entity/stats/stats.resolver");
 const state_resolver_1 = require("../../../entity/state/state.resolver");
 const nowplaying_resolver_1 = require("../../../entity/nowplaying/nowplaying.resolver");
 const admin_resolver_1 = require("../../../entity/admin/admin.resolver");
+const path_1 = __importDefault(require("path"));
 function registerEnums() {
     type_graphql_1.registerEnumType(enums_1.DefaultOrderFields, { name: 'DefaultOrderFields' });
     type_graphql_1.registerEnumType(enums_1.PodcastOrderFields, { name: 'PodcastOrderFields' });
@@ -46,7 +51,9 @@ function registerEnums() {
     type_graphql_1.registerEnumType(enums_1.ArtistOrderFields, { name: 'ArtistOrderFields' });
     type_graphql_1.registerEnumType(enums_1.FolderOrderFields, { name: 'FolderOrderFields' });
     type_graphql_1.registerEnumType(enums_1.PlaylistEntryOrderFields, { name: 'PlaylistEntryOrderFields' });
+    type_graphql_1.registerEnumType(enums_1.PlayQueueEntryOrderFields, { name: 'PlayQueueEntryOrderFields' });
     type_graphql_1.registerEnumType(enums_1.BookmarkOrderFields, { name: 'BookmarkOrderFields' });
+    type_graphql_1.registerEnumType(enums_1.SessionOrderFields, { name: 'SessionOrderFields' });
     type_graphql_1.registerEnumType(enums_1.EpisodeOrderFields, { name: 'EpisodeOrderFields' });
     type_graphql_1.registerEnumType(enums_1.AlbumOrderFields, { name: 'AlbumOrderFields' });
     type_graphql_1.registerEnumType(enums_1.PodcastStatus, { name: 'PodcastStatus' });
@@ -111,16 +118,44 @@ const apolloLogger = {
     }
 };
 let ApolloMiddleware = class ApolloMiddleware {
+    async playground() {
+        const api = express_1.default.Router();
+        api.get('/middleware.js', (req, res) => {
+            res.type('text/javascript');
+            res.sendFile(path_1.default.resolve('./static/graphql/middleware.min.js'));
+        });
+        api.get('/middleware.js.map', (req, res) => {
+            res.type('text/json');
+            res.sendFile(path_1.default.resolve('./static/graphql/middleware.min.js.map'));
+        });
+        api.get('/main.js', (req, res) => {
+            res.type('text/javascript');
+            res.sendFile(path_1.default.resolve('./static/graphql/main.js'));
+        });
+        api.get('/index.css', (req, res) => {
+            res.type('text/css');
+            res.sendFile(path_1.default.resolve('./static/graphql/index.min.css'));
+        });
+        api.get('/favicon.png', (req, res) => {
+            res.type('image/png');
+            res.sendFile(path_1.default.resolve('./static/graphql/favicon.png'));
+        });
+        api.get('/', (req, res) => {
+            res.type('text/html');
+            res.sendFile(path_1.default.resolve('./static/graphql/index.html'));
+        });
+        return api;
+    }
     async middleware() {
         this.schema = await buildGraphQlSchema();
         const apollo = new apollo_server_express_1.ApolloServer({
             schema: this.schema,
             debug: true,
             plugins: [() => apolloLogger],
-            playground: {
-                settings: {
-                    'request.credentials': 'same-origin'
-                }
+            playground: false,
+            introspection: true,
+            formatError: (err) => {
+                return err;
             },
             context: async ({ req, res }) => {
                 var _a;

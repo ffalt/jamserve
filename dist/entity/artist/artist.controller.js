@@ -16,7 +16,6 @@ exports.ArtistController = void 0;
 const artist_model_1 = require("./artist.model");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const base_controller_1 = require("../base/base.controller");
 const metadata_model_1 = require("../metadata/metadata.model");
 const track_model_1 = require("../track/track.model");
 const album_model_1 = require("../album/album.model");
@@ -26,46 +25,45 @@ const series_args_1 = require("../series/series.args");
 const track_args_1 = require("../track/track.args");
 const artist_args_1 = require("./artist.args");
 const base_args_1 = require("../base/base.args");
-const typescript_ioc_1 = require("typescript-ioc");
-let ArtistController = class ArtistController extends base_controller_1.BaseController {
-    async id(id, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, { orm, user }) {
-        return this.transform.artist(orm, await orm.Artist.oneOrFailByID(id), artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user);
+let ArtistController = class ArtistController {
+    async id(id, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, { orm, engine, user }) {
+        return engine.transform.artist(orm, await orm.Artist.oneOrFailByID(id), artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user);
     }
-    async index(filter, { orm }) {
-        const result = await orm.Artist.indexFilter(filter);
-        return await this.transform.artistIndex(orm, result);
+    async index(filter, { orm, engine, user }) {
+        const result = await orm.Artist.indexFilter(filter, user, engine.settings.settings.index.ignoreArticles);
+        return await engine.transform.artistIndex(orm, result);
     }
-    async search(page, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, filter, order, list, { orm, user }) {
+    async search(page, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Artist.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user));
+            return await orm.Artist.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user));
         }
-        return await orm.Artist.searchTransformFilter(filter, [order], page, user, o => this.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user));
+        return await orm.Artist.searchTransformFilter(filter, [order], page, user, o => engine.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user));
     }
-    async info(id, { orm, user }) {
+    async info(id, { orm, engine }) {
         const artist = await orm.Artist.oneOrFailByID(id);
-        return { info: await this.metadata.extInfo.byArtist(orm, artist) };
+        return { info: await engine.metadata.extInfo.byArtist(orm, artist) };
     }
-    async similar(id, page, artistArgs, { orm, user }) {
+    async similar(id, page, artistArgs, { orm, engine, user }) {
         const artist = await orm.Artist.oneOrFailByID(id);
-        const result = await this.metadata.similarArtists.byArtist(orm, artist, page);
-        return { ...result, items: await Promise.all(result.items.map(o => this.transform.artistBase(orm, o, artistArgs, user))) };
+        const result = await engine.metadata.similarArtists.byArtist(orm, artist, page);
+        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.artistBase(orm, o, artistArgs, user))) };
     }
-    async similarTracks(id, page, trackArgs, { orm, user }) {
+    async similarTracks(id, page, trackArgs, { orm, engine, user }) {
         const artist = await orm.Artist.oneOrFailByID(id);
-        const result = await this.metadata.similarTracks.byArtist(orm, artist, page);
-        return { ...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user))) };
+        const result = await engine.metadata.similarTracks.byArtist(orm, artist, page);
+        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user))) };
     }
-    async tracks(page, trackArgs, filter, order, { orm, user }) {
+    async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const artistIDs = await orm.Artist.findIDsFilter(filter, user);
-        return await orm.Track.searchTransformFilter({ artistIDs }, [order], page, user, o => this.transform.trackBase(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter({ artistIDs }, [order], page, user, o => engine.transform.trackBase(orm, o, trackArgs, user));
     }
-    async albums(page, albumArgs, filter, order, { orm, user }) {
+    async albums(page, albumArgs, filter, order, { orm, engine, user }) {
         const artistIDs = await orm.Artist.findIDsFilter(filter, user);
-        return await orm.Album.searchTransformFilter({ artistIDs }, [order], page, user, o => this.transform.albumBase(orm, o, albumArgs, user));
+        return await orm.Album.searchTransformFilter({ artistIDs }, [order], page, user, o => engine.transform.albumBase(orm, o, albumArgs, user));
     }
-    async series(page, seriesArgs, filter, order, { orm, user }) {
+    async series(page, seriesArgs, filter, order, { orm, engine, user }) {
         const artistIDs = await orm.Artist.findIDsFilter(filter, user);
-        return await orm.Series.searchTransformFilter({ artistIDs }, [order], page, user, o => this.transform.seriesBase(orm, o, seriesArgs, user));
+        return await orm.Series.searchTransformFilter({ artistIDs }, [order], page, user, o => engine.transform.seriesBase(orm, o, seriesArgs, user));
     }
 };
 __decorate([
@@ -190,7 +188,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ArtistController.prototype, "series", null);
 ArtistController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/artist', { tags: ['Artist'], roles: [enums_1.UserRole.stream] })
 ], ArtistController);
 exports.ArtistController = ArtistController;

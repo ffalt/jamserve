@@ -32,16 +32,16 @@ let EpisodeResolver = class EpisodeResolver {
         }
         return await orm.Episode.searchFilter(filter, order, page, user);
     }
-    async tag(episode, { orm }) {
+    async tag(episode) {
         return episode.tag.get();
     }
-    async podcast(episode, { orm }) {
+    async podcast(episode) {
         return episode.podcast.getOrFail();
     }
-    async bookmarks(episode, { orm }) {
+    async bookmarks(episode) {
         return episode.bookmarks.getItems();
     }
-    async bookmarksCount(episode, { orm }) {
+    async bookmarksCount(episode) {
         return episode.bookmarks.count();
     }
     async waveform(episode) {
@@ -51,13 +51,13 @@ let EpisodeResolver = class EpisodeResolver {
         return await orm.State.findOrCreate(episode.id, enums_1.DBObjectType.episode, user.id);
     }
     async status(episode, { engine }) {
-        return engine.episodeService.isDownloading(episode.id) ? enums_1.PodcastStatus.downloading : episode.status;
+        return engine.episode.isDownloading(episode.id) ? enums_1.PodcastStatus.downloading : episode.status;
     }
     fileCreated(episode) {
-        return episode.statCreated ? new Date(episode.statCreated) : undefined;
+        return episode.statCreated;
     }
     fileModified(episode) {
-        return episode.statModified ? new Date(episode.statModified) : undefined;
+        return episode.statModified;
     }
     date(episode) {
         return new Date(episode.date);
@@ -85,30 +85,30 @@ __decorate([
 ], EpisodeResolver.prototype, "episodes", null);
 __decorate([
     type_graphql_1.FieldResolver(() => tag_1.TagQL, { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [episode_1.Episode, Object]),
+    __metadata("design:paramtypes", [episode_1.Episode]),
     __metadata("design:returntype", Promise)
 ], EpisodeResolver.prototype, "tag", null);
 __decorate([
     type_graphql_1.FieldResolver(() => podcast_1.PodcastQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [episode_1.Episode, Object]),
+    __metadata("design:paramtypes", [episode_1.Episode]),
     __metadata("design:returntype", Promise)
 ], EpisodeResolver.prototype, "podcast", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [bookmark_1.BookmarkQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [episode_1.Episode, Object]),
+    __metadata("design:paramtypes", [episode_1.Episode]),
     __metadata("design:returntype", Promise)
 ], EpisodeResolver.prototype, "bookmarks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [episode_1.Episode, Object]),
+    __metadata("design:paramtypes", [episode_1.Episode]),
     __metadata("design:returntype", Promise)
 ], EpisodeResolver.prototype, "bookmarksCount", null);
 __decorate([

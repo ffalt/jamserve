@@ -16,51 +16,44 @@ exports.PlaylistController = void 0;
 const playlist_model_1 = require("./playlist.model");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const base_controller_1 = require("../base/base.controller");
 const playlist_entry_model_1 = require("../playlistentry/playlist-entry.model");
 const track_args_1 = require("../track/track.args");
 const playlist_args_1 = require("./playlist.args");
 const episode_args_1 = require("../episode/episode.args");
 const base_args_1 = require("../base/base.args");
-const typescript_ioc_1 = require("typescript-ioc");
-const playlist_service_1 = require("./playlist.service");
 const playlist_entry_args_1 = require("../playlistentry/playlist-entry.args");
-let PlaylistController = class PlaylistController extends base_controller_1.BaseController {
-    async id(id, playlistArgs, trackArgs, episodeArgs, { orm, user }) {
-        return this.transform.playlist(orm, await orm.Playlist.oneOrFailFilter({ ids: [id] }, user), playlistArgs, trackArgs, episodeArgs, user);
+let PlaylistController = class PlaylistController {
+    async id(id, playlistArgs, trackArgs, episodeArgs, { orm, engine, user }) {
+        return engine.transform.playlist(orm, await orm.Playlist.oneOrFailFilter({ ids: [id] }, user), playlistArgs, trackArgs, episodeArgs, user);
     }
-    async index(filter, { orm, user }) {
+    async index(filter, { orm, engine, user }) {
         const result = await orm.Playlist.indexFilter(filter, user);
-        return this.transform.playlistIndex(orm, result);
+        return engine.transform.playlistIndex(orm, result);
     }
-    async search(page, playlistArgs, trackArgs, episodeArgs, filter, order, list, { orm, user }) {
+    async search(page, playlistArgs, trackArgs, episodeArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Playlist.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user));
+            return await orm.Playlist.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user));
         }
-        return await orm.Playlist.searchTransformFilter(filter, [order], page, user, o => this.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user));
+        return await orm.Playlist.searchTransformFilter(filter, [order], page, user, o => engine.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user));
     }
-    async entries(page, trackArgs, episodeArgs, filter, order, { orm, user }) {
+    async entries(page, trackArgs, episodeArgs, filter, order, { orm, engine, user }) {
         const playlistIDs = await orm.Playlist.findIDsFilter(filter, user);
-        return await orm.PlaylistEntry.searchTransformFilter({ playlistIDs }, [order], page, user, o => this.transform.playlistEntry(orm, o, trackArgs, episodeArgs, user));
+        return await orm.PlaylistEntry.searchTransformFilter({ playlistIDs }, [order], page, user, o => engine.transform.playlistEntry(orm, o, trackArgs, episodeArgs, user));
     }
-    async create(args, { orm, user }) {
-        const playlist = await this.playlistService.create(orm, args, user);
-        return this.transform.playlist(orm, playlist, {}, {}, {}, user);
+    async create(args, { orm, engine, user }) {
+        const playlist = await engine.playlist.create(orm, args, user);
+        return engine.transform.playlist(orm, playlist, {}, {}, {}, user);
     }
-    async update(id, args, { orm, user }) {
+    async update(id, args, { orm, engine, user }) {
         const playlist = await orm.Playlist.oneOrFail({ where: { id, user: user.id } });
-        await this.playlistService.update(orm, args, playlist);
-        return this.transform.playlist(orm, playlist, {}, {}, {}, user);
+        await engine.playlist.update(orm, args, playlist);
+        return engine.transform.playlist(orm, playlist, {}, {}, {}, user);
     }
-    async remove(id, { orm, user }) {
+    async remove(id, { orm, engine, user }) {
         const playlist = await orm.Playlist.oneOrFail({ where: { id, user: user.id } });
-        await this.playlistService.remove(orm, playlist);
+        await engine.playlist.remove(orm, playlist);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", playlist_service_1.PlaylistService)
-], PlaylistController.prototype, "playlistService", void 0);
 __decorate([
     rest_1.Get('/id', () => playlist_model_1.Playlist, { description: 'Get a Playlist by Id', summary: 'Get Playlist' }),
     __param(0, rest_1.QueryParam('id', { description: 'Playlist Id', isID: true })),
@@ -144,7 +137,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PlaylistController.prototype, "remove", null);
 PlaylistController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/playlist', { tags: ['Playlist'], roles: [enums_1.UserRole.stream] })
 ], PlaylistController);
 exports.PlaylistController = PlaylistController;

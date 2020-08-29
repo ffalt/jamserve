@@ -96,7 +96,7 @@ __decorate([
     __metadata("design:type", Number)
 ], MediaTagRawUpdateArgs.prototype, "version", void 0);
 __decorate([
-    decorators_1.ObjField(() => Object, { description: 'Tag Frames' }),
+    decorators_1.ObjField(() => Object, { description: 'Tag Frames', generic: true }),
     __metadata("design:type", Object)
 ], MediaTagRawUpdateArgs.prototype, "frames", void 0);
 MediaTagRawUpdateArgs = __decorate([
@@ -155,7 +155,7 @@ __decorate([
     __metadata("design:type", Array)
 ], TrackFilterArgs.prototype, "genres", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     decorators_1.ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: example_consts_1.examples.timestamp }),
     __metadata("design:type", Number)
 ], TrackFilterArgs.prototype, "since", void 0);

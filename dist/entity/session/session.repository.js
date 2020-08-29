@@ -4,13 +4,20 @@ exports.SessionRepository = void 0;
 const orm_1 = require("../../modules/orm");
 const base_repository_1 = require("../base/base.repository");
 const enums_1 = require("../../types/enums");
+const base_1 = require("../base/base");
 class SessionRepository extends base_repository_1.BaseRepository {
     constructor() {
         super(...arguments);
         this.objType = enums_1.DBObjectType.session;
     }
     buildOrder(order) {
-        return this.buildDefaultOrder(order);
+        const direction = base_1.OrderHelper.direction(order);
+        switch (order === null || order === void 0 ? void 0 : order.orderBy) {
+            case enums_1.SessionOrderFields.expires:
+            case enums_1.SessionOrderFields.default:
+                return [['expires', direction]];
+        }
+        return [];
     }
     async buildFilter(filter, user) {
         return filter ? orm_1.QHelper.buildQuery([

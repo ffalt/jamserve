@@ -13,26 +13,20 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DownloadController = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const consts_1 = require("../../types/consts");
 const download_args_1 = require("./download.args");
-const download_service_1 = require("./download.service");
 const description = 'Download Archive Binary [Album, Artist, Artwork, Episode, Folder, Playlist, Podcast, Series, Track]';
 let DownloadController = class DownloadController {
-    async download(id, downloadArgs, { orm, user }) {
+    async download(id, downloadArgs, { orm, engine, user }) {
         const result = await orm.findInDownloadTypes(id);
         if (!result) {
             return Promise.reject(rest_1.NotFoundError());
         }
-        return await this.downloadService.getObjDownload(result.obj, result.objType, downloadArgs.format, user);
+        return await engine.download.getObjDownload(result.obj, result.objType, downloadArgs.format, user);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", download_service_1.DownloadService)
-], DownloadController.prototype, "downloadService", void 0);
 __decorate([
     rest_1.Get('/{id}.{format}', {
         description,
@@ -57,7 +51,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], DownloadController.prototype, "download", null);
 DownloadController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/download', { tags: ['Download'], roles: [enums_1.UserRole.stream] })
 ], DownloadController);
 exports.DownloadController = DownloadController;

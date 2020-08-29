@@ -32,16 +32,16 @@ let PlaylistResolver = class PlaylistResolver {
     async playlistIndex({ filter }, { orm, user }) {
         return await orm.Playlist.indexFilter(filter, user);
     }
-    async entries(playlist, { orm }) {
+    async entries(playlist) {
         return playlist.entries.getItems();
     }
-    async entriesCount(playlist, { orm }) {
+    async entriesCount(playlist) {
         return playlist.entries.count();
     }
-    userID(playlist, { orm }) {
+    userID(playlist) {
         return playlist.user.idOrFail();
     }
-    async userName(playlist, { orm }) {
+    async userName(playlist) {
         return (await playlist.user.getOrFail()).name;
     }
     async state(playlist, { orm, user }) {
@@ -71,30 +71,30 @@ __decorate([
 ], PlaylistResolver.prototype, "playlistIndex", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [playlist_entry_1.PlaylistEntryQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_1.Playlist, Object]),
+    __metadata("design:paramtypes", [playlist_1.Playlist]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "entries", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_1.Playlist, Object]),
+    __metadata("design:paramtypes", [playlist_1.Playlist]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "entriesCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.ID),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_1.Playlist, Object]),
+    __metadata("design:paramtypes", [playlist_1.Playlist]),
     __metadata("design:returntype", String)
 ], PlaylistResolver.prototype, "userID", null);
 __decorate([
     type_graphql_1.FieldResolver(() => String),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_1.Playlist, Object]),
+    __metadata("design:paramtypes", [playlist_1.Playlist]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "userName", null);
 __decorate([

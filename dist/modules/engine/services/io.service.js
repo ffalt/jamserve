@@ -20,7 +20,7 @@ let IoService = class IoService {
     constructor() {
         this.scanning = false;
         this.afterRefreshListeners = [];
-        this.rootstatus = new Map();
+        this.rootStatus = new Map();
         this.queue = [];
         this.delayedTrackTagWrite = new Map();
         this.delayedTrackFix = new Map();
@@ -33,11 +33,11 @@ let IoService = class IoService {
     }
     async runRequest(cmd) {
         this.clearAfterRefresh();
-        this.rootstatus.set(cmd.parameters.rootID, { lastScan: Date.now(), scanning: true });
+        this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), scanning: true });
         try {
             this.current = cmd;
             await cmd.run();
-            this.rootstatus.set(cmd.parameters.rootID, { lastScan: Date.now() });
+            this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now() });
             this.history.push({ id: cmd.id, date: Date.now() });
             this.current = undefined;
         }
@@ -48,7 +48,7 @@ let IoService = class IoService {
             if (msg.startsWith('Error:')) {
                 msg = msg.slice(6).trim();
             }
-            this.rootstatus.set(cmd.parameters.rootID, { lastScan: Date.now(), error: msg });
+            this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), error: msg });
             this.history.push({ id: cmd.id, error: msg, date: Date.now() });
         }
         if (this.queue.length === 0) {
@@ -137,7 +137,7 @@ let IoService = class IoService {
         return { id, error: 'ID not found', done: Date.now() };
     }
     getRootStatus(id) {
-        let status = this.rootstatus.get(id);
+        let status = this.rootStatus.get(id);
         if (!status) {
             status = { lastScan: Date.now() };
         }

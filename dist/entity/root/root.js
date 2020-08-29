@@ -46,27 +46,27 @@ __decorate([
 ], Root.prototype, "strategy", void 0);
 __decorate([
     type_graphql_1.Field(() => [folder_1.FolderQL]),
-    orm_1.OneToMany(() => folder_1.Folder, folder => folder.root, { orderBy: { path: orm_1.QueryOrder.ASC } }),
+    orm_1.OneToMany(() => folder_1.Folder, folder => folder.root, { order: [{ orderBy: enums_1.FolderOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "folders", void 0);
 __decorate([
     type_graphql_1.Field(() => [track_1.TrackQL]),
-    orm_1.OneToMany(() => track_1.Track, track => track.root, { orderBy: { path: orm_1.QueryOrder.ASC, tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC } } }),
+    orm_1.OneToMany(() => track_1.Track, track => track.root, { order: [{ orderBy: enums_1.TrackOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "tracks", void 0);
 __decorate([
     type_graphql_1.Field(() => [album_1.AlbumQL]),
-    orm_1.ManyToMany(() => album_1.Album, album => album.roots, { orderBy: { artist: { nameSort: orm_1.QueryOrder.ASC }, albumType: orm_1.QueryOrder.ASC, name: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => album_1.Album, album => album.roots, { order: [{ orderBy: enums_1.AlbumOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "albums", void 0);
 __decorate([
     type_graphql_1.Field(() => [artist_1.ArtistQL]),
-    orm_1.ManyToMany(() => artist_1.Artist, artist => artist.roots, { orderBy: { nameSort: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => artist_1.Artist, artist => artist.roots, { order: [{ orderBy: enums_1.ArtistOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "artists", void 0);
 __decorate([
     type_graphql_1.Field(() => [series_1.SeriesQL]),
-    orm_1.ManyToMany(() => series_1.Series, series => series.roots, { orderBy: { name: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => series_1.Series, series => series.roots, { order: [{ orderBy: enums_1.DefaultOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Root.prototype, "series", void 0);
 Root = __decorate([
@@ -81,7 +81,7 @@ __decorate([
     __metadata("design:type", Date)
 ], RootStatusQL.prototype, "lastScan", void 0);
 __decorate([
-    type_graphql_1.Field(() => Boolean),
+    type_graphql_1.Field(() => Boolean, { nullable: true }),
     __metadata("design:type", Boolean)
 ], RootStatusQL.prototype, "scanning", void 0);
 __decorate([

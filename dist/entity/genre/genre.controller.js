@@ -13,8 +13,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenreController = void 0;
-const genre_service_1 = require("./genre.service");
-const typescript_ioc_1 = require("typescript-ioc");
 const genre_model_1 = require("./genre.model");
 const decorators_1 = require("../../modules/rest/decorators");
 const enums_1 = require("../../types/enums");
@@ -22,18 +20,14 @@ const base_args_1 = require("../base/base.args");
 const base_utils_1 = require("../base/base.utils");
 const genre_args_1 = require("./genre.args");
 let GenreController = class GenreController {
-    async list(page, filter, { orm }) {
-        const genres = await this.genreService.getGenres(orm, filter.rootID);
+    async list(page, filter, { orm, engine }) {
+        const genres = await engine.genre.getGenres(orm, filter.rootID);
         return base_utils_1.paginate(genres, page);
     }
-    async index({ orm }) {
-        return await this.genreService.index(orm);
+    async index({ orm, engine }) {
+        return await engine.genre.index(orm);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", genre_service_1.GenreService)
-], GenreController.prototype, "genreService", void 0);
 __decorate([
     decorators_1.Get('/list', () => genre_model_1.GenrePage, { description: 'Get a list of genres found in the library', summary: 'Get Genres' }),
     __param(0, decorators_1.QueryParams()),
@@ -52,7 +46,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "index", null);
 GenreController = __decorate([
-    typescript_ioc_1.InRequestScope,
     decorators_1.Controller('/genre', { tags: ['Genres'], roles: [enums_1.UserRole.stream] })
 ], GenreController);
 exports.GenreController = GenreController;

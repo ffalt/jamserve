@@ -28,7 +28,7 @@ let ArtworkResolver = class ArtworkResolver {
         }
         return await orm.Artwork.searchFilter(filter, order, page, user);
     }
-    async folder(artwork, { orm }) {
+    async folder(artwork) {
         return artwork.folder.getOrFail();
     }
 };
@@ -48,9 +48,9 @@ __decorate([
 ], ArtworkResolver.prototype, "artworks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => folder_1.FolderQL, { description: 'Get the Navigation Index for Albums' }),
-    __param(0, Root_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, Root_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artwork_1.Artwork, Object]),
+    __metadata("design:paramtypes", [artwork_1.Artwork]),
     __metadata("design:returntype", Promise)
 ], ArtworkResolver.prototype, "folder", null);
 ArtworkResolver = __decorate([

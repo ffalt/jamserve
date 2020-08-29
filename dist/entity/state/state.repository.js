@@ -3,21 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StateRepository = void 0;
 const base_repository_1 = require("../base/base.repository");
 const enums_1 = require("../../types/enums");
-const state_1 = require("./state");
 class StateRepository extends base_repository_1.BaseRepository {
     constructor() {
         super(...arguments);
         this.objType = enums_1.DBObjectType.state;
     }
-    buildOrder(order) {
+    buildOrder(_) {
         return [];
     }
-    async buildFilter(filter, user) {
+    async buildFilter(_, __) {
         return {};
     }
     async findOrCreate(destID, destType, userID) {
         const state = await this.findOne({ where: { user: userID, destID, destType } });
-        return state || new state_1.State();
+        return state || this.create({});
     }
     async findMany(destIDs, destType, userID) {
         return await this.find({ where: { user: userID, destID: destIDs, destType } });

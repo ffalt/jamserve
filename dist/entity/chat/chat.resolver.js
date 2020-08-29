@@ -16,9 +16,13 @@ exports.ChatResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const chat_1 = require("./chat");
 const chat_args_1 = require("./chat.args");
+const Root_1 = require("type-graphql/dist/decorators/Root");
 let ChatResolver = class ChatResolver {
     async chats({ since }, { engine }) {
-        return engine.chatService.get(since);
+        return engine.chat.get(since);
+    }
+    created(timestamp) {
+        return new Date(timestamp);
     }
 };
 __decorate([
@@ -28,6 +32,13 @@ __decorate([
     __metadata("design:paramtypes", [chat_args_1.ChatFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], ChatResolver.prototype, "chats", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => Date),
+    __param(0, Root_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Date)
+], ChatResolver.prototype, "created", null);
 ChatResolver = __decorate([
     type_graphql_1.Resolver(chat_1.ChatQL)
 ], ChatResolver);

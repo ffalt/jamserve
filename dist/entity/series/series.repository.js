@@ -13,7 +13,7 @@ class SeriesRepository extends base_repository_1.BaseRepository {
     buildOrder(order) {
         return this.buildDefaultOrder(order);
     }
-    async buildFilter(filter, user) {
+    async buildFilter(filter, _) {
         if (!filter) {
             return {};
         }

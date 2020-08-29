@@ -17,8 +17,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const session_model_1 = require("../session/session.model");
-const config_service_1 = require("../../modules/engine/services/config.service");
-const typescript_ioc_1 = require("typescript-ioc");
 const rest_1 = require("../../modules/rest");
 const passport_1 = __importDefault(require("passport"));
 const jwt_1 = require("../../utils/jwt");
@@ -28,30 +26,30 @@ const enums_1 = require("../../types/enums");
 const logger_1 = require("../../utils/logger");
 const log = logger_1.logger('AuthController');
 let AuthController = class AuthController {
-    async login(credentials, context) {
+    async login(credentials, { engine, req, res, next }) {
         return new Promise((resolve, reject) => {
             passport_1.default.authenticate('local', (err, user) => {
                 if (err || !user) {
                     log.error(err);
                     return reject(new Error('Invalid Auth'));
                 }
-                context.req.login(user, (err2) => {
+                req.login(user, (err2) => {
                     if (err2) {
                         log.error(err2);
                         console.error(err2);
                         return reject(new Error('Invalid Auth'));
                     }
-                    const client = context.req.body.client || 'Unknown Client';
-                    const token = credentials.jwt ? jwt_1.generateJWT(user.id, client, this.configService.env.jwt.secret, this.configService.env.jwt.maxAge) : undefined;
-                    if (context.req.session) {
-                        context.req.session.client = client;
-                        context.req.session.userAgent = context.req.headers['user-agent'] || client;
+                    const client = req.body.client || 'Unknown Client';
+                    const token = credentials.jwt ? jwt_1.generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
+                    if (req.session) {
+                        req.session.client = client;
+                        req.session.userAgent = req.headers['user-agent'] || client;
                         if (token) {
-                            context.req.session.jwth = jwt_1.jwtHash(token);
+                            req.session.jwth = jwt_1.jwtHash(token);
                         }
                     }
                     resolve({
-                        allowedCookieDomains: this.configService.env.session.allowedCookieDomains,
+                        allowedCookieDomains: engine.config.env.session.allowedCookieDomains,
                         version: version_1.JAMAPI_VERSION,
                         jwt: token,
                         user: {
@@ -66,17 +64,13 @@ let AuthController = class AuthController {
                         }
                     });
                 });
-            })(context.req, context.res, context.next);
+            })(req, res, next);
         });
     }
     logout({ req }) {
         req.logout();
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", config_service_1.ConfigService)
-], AuthController.prototype, "configService", void 0);
 __decorate([
     rest_1.Post('/login', () => session_model_1.Session, { description: 'Start session or jwt access', summary: 'Login' }),
     __param(0, rest_1.BodyParams()),
@@ -93,7 +87,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "logout", null);
 AuthController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/auth', { tags: ['Access'] })
 ], AuthController);
 exports.AuthController = AuthController;

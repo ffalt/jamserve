@@ -10,7 +10,9 @@ function registerRestEnums() {
     enums_2.registerEnumType(enums_1.ArtistOrderFields, { name: 'ArtistOrderFields' });
     enums_2.registerEnumType(enums_1.FolderOrderFields, { name: 'FolderOrderFields' });
     enums_2.registerEnumType(enums_1.PlaylistEntryOrderFields, { name: 'PlaylistEntryOrderFields' });
+    enums_2.registerEnumType(enums_1.PlayQueueEntryOrderFields, { name: 'PlayQueueEntryOrderFields' });
     enums_2.registerEnumType(enums_1.BookmarkOrderFields, { name: 'BookmarkOrderFields' });
+    enums_2.registerEnumType(enums_1.SessionOrderFields, { name: 'SessionOrderFields' });
     enums_2.registerEnumType(enums_1.EpisodeOrderFields, { name: 'EpisodeOrderFields' });
     enums_2.registerEnumType(enums_1.AlbumOrderFields, { name: 'AlbumOrderFields' });
     enums_2.registerEnumType(enums_1.JamObjectType, { name: 'JamObjectType' });

@@ -19,12 +19,12 @@ const Root_1 = require("type-graphql/dist/decorators/Root");
 const playqueue_entry_1 = require("../playqueueentry/playqueue-entry");
 let PlayQueueResolver = class PlayQueueResolver {
     async playQueue({ engine, orm, user }) {
-        return engine.playQueueService.get(orm, user);
+        return engine.playQueue.get(orm, user);
     }
-    async entries(playQueue, { orm }) {
+    async entries(playQueue) {
         return playQueue.entries.getItems();
     }
-    async entriesCount(playQueue, { orm }) {
+    async entriesCount(playQueue) {
         return playQueue.entries.count();
     }
 };
@@ -37,16 +37,16 @@ __decorate([
 ], PlayQueueResolver.prototype, "playQueue", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [playqueue_entry_1.PlayQueueEntryQL]),
-    __param(0, Root_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, Root_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playqueue_1.PlayQueue, Object]),
+    __metadata("design:paramtypes", [playqueue_1.PlayQueue]),
     __metadata("design:returntype", Promise)
 ], PlayQueueResolver.prototype, "entries", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, Root_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, Root_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playqueue_1.PlayQueue, Object]),
+    __metadata("design:paramtypes", [playqueue_1.PlayQueue]),
     __metadata("design:returntype", Promise)
 ], PlayQueueResolver.prototype, "entriesCount", null);
 PlayQueueResolver = __decorate([

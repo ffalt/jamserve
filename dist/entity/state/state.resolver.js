@@ -25,10 +25,10 @@ let StateResolver = class StateResolver {
         return await orm.State.findOrCreate(result.obj.id, result.objType, user.id);
     }
     async fav(id, remove, { engine, orm, user }) {
-        return await engine.stateService.fav(orm, id, remove, user);
+        return await engine.state.fav(orm, id, remove, user);
     }
     async rate(id, rating, { engine, orm, user }) {
-        return await engine.stateService.rate(orm, id, rating, user);
+        return await engine.state.rate(orm, id, rating, user);
     }
 };
 __decorate([

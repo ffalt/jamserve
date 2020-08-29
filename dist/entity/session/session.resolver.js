@@ -17,6 +17,7 @@ const type_graphql_1 = require("type-graphql");
 const session_1 = require("./session");
 const version_1 = require("../../modules/engine/rest/version");
 const session_args_1 = require("./session.args");
+const Root_1 = require("type-graphql/dist/decorators/Root");
 let SessionResolver = class SessionResolver {
     async version() {
         return version_1.JAMAPI_VERSION;
@@ -26,6 +27,9 @@ let SessionResolver = class SessionResolver {
     }
     async sessions({ page, filter, order }, { orm, user }) {
         return await orm.Session.searchFilter(filter, order, page, user);
+    }
+    async expires(timestamp) {
+        return new Date(timestamp);
     }
 };
 __decorate([
@@ -48,6 +52,13 @@ __decorate([
     __metadata("design:paramtypes", [session_args_1.SessionsArgs, Object]),
     __metadata("design:returntype", Promise)
 ], SessionResolver.prototype, "sessions", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => Date),
+    __param(0, Root_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], SessionResolver.prototype, "expires", null);
 SessionResolver = __decorate([
     type_graphql_1.Resolver(session_1.SessionQL)
 ], SessionResolver);

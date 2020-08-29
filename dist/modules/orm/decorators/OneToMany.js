@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OneToMany = void 0;
 const relation_register_1 = require("../helpers/relation-register");
 function OneToMany(returnTypeFunc, mappedBy, options) {
-    return (prototype, propertyKey, descriptor) => {
+    return (prototype, propertyKey, _) => {
         const opt = (options || {});
         opt.relation = 'one2many';
         opt.mappedBy = mappedBy;

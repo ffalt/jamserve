@@ -19,8 +19,8 @@ const audio_module_1 = require("../../modules/audio/audio.module");
 const transcoder_stream_1 = require("../../modules/audio/transcoder/transcoder-stream");
 const fs_utils_1 = require("../../utils/fs-utils");
 const typescript_ioc_1 = require("typescript-ioc");
+const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const express_error_1 = require("../../modules/rest/builder/express-error");
 let StreamService = class StreamService {
     async streamFile(filename, id, sourceFormat, destFormat, maxBitRate) {
         let stats;
@@ -43,23 +43,23 @@ let StreamService = class StreamService {
         }
         return { file: { filename, name: `${id}.${destFormat}` } };
     }
-    async streamTrack(track, format, maxBitRate, user) {
+    async streamTrack(track, format, maxBitRate) {
         const tag = await track.tag.get();
         return await this.streamFile(path_1.default.join(track.path, track.fileName), track.id, tag === null || tag === void 0 ? void 0 : tag.mediaFormat, format, maxBitRate);
     }
-    async streamEpisode(episode, format, maxBitRate, user) {
+    async streamEpisode(episode, format, maxBitRate) {
         const tag = await episode.tag.get();
         if (episode.path && (tag === null || tag === void 0 ? void 0 : tag.mediaFormat)) {
             return this.streamFile(episode.path, episode.id, tag === null || tag === void 0 ? void 0 : tag.mediaFormat, format, maxBitRate);
         }
-        return Promise.reject(express_error_1.GenericError('Podcast episode not ready'));
+        return Promise.reject(rest_1.GenericError('Podcast episode not ready'));
     }
     async streamDBObject(o, type, format, maxBitRate, user) {
         switch (type) {
             case enums_1.DBObjectType.track:
-                return this.streamTrack(o, format, maxBitRate, user);
+                return this.streamTrack(o, format, maxBitRate);
             case enums_1.DBObjectType.episode:
-                return this.streamEpisode(o, format, maxBitRate, user);
+                return this.streamEpisode(o, format, maxBitRate);
             default:
         }
         return Promise.reject(Error('Invalid Object Type for Streaming'));

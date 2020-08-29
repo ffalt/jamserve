@@ -16,6 +16,12 @@ class MetadataStorage {
         this.params = [];
         utils_1.ensureReflectMetadataExists();
     }
+    resultType(target) {
+        return this.resultTypes.find(it => it.target === target);
+    }
+    argumentType(target) {
+        return this.argumentTypes.find(it => it.target === target);
+    }
     collectGetHandlerMetadata(definition) {
         this.gets.push(definition);
     }

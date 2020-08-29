@@ -27,6 +27,14 @@ let StateService = class StateService {
         const helper = new state_helper_1.StateHelper(orm.em);
         return await helper.rate(result.obj.id, result.objType, user, rating);
     }
+    async reportPlaying(orm, entries, user) {
+        const helper = new state_helper_1.StateHelper(orm.em);
+        for (const entry of entries) {
+            if (entry.id) {
+                await helper.reportPlaying(entry.id, entry.type, user);
+            }
+        }
+    }
 };
 StateService = __decorate([
     typescript_ioc_1.InRequestScope

@@ -106,7 +106,7 @@ function logChanges(changes) {
 exports.logChanges = logChanges;
 let ChangesWorker = class ChangesWorker extends base_1.BaseWorker {
     async start(rootID) {
-        const orm = this.ormService.fork();
+        const orm = this.ormService.fork(true);
         const root = await orm.Root.findOneOrFailByID(rootID);
         return { root, orm, changes: new Changes() };
     }
@@ -116,6 +116,7 @@ let ChangesWorker = class ChangesWorker extends base_1.BaseWorker {
         await this.mergeRemovals(orm, changes);
         changes.end = Date.now();
         logChanges(changes);
+        this.ormService.clearCache();
         return changes;
     }
     async mergeRemovals(orm, changes) {

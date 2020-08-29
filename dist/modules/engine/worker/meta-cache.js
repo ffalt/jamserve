@@ -81,7 +81,7 @@ class MetaMergerCache {
             mbReleaseID: trackInfo.tag.mbReleaseID,
             seriesNr: trackInfo.tag.seriesNr,
             year: trackInfo.tag.year,
-            duration: trackInfo.tag.mediaDuration || 0
+            duration: 0
         });
         await album.artist.set(artist);
         await album.folders.add(trackInfo.folder);
@@ -106,17 +106,24 @@ class MetaMergerCache {
             }
         }
         const name = getAlbumName(trackInfo);
-        const cache = this.albumCache.find(a => (a.album.name === name) && (a.artist.id === artist.id));
-        return cache === null || cache === void 0 ? void 0 : cache.album;
+        for (const a of this.albumCache) {
+            if ((a.album.name === name) &&
+                (a.artist.id === artist.id) &&
+                (!trackInfo.tag.seriesNr || (trackInfo.tag.seriesNr === a.album.seriesNr)) &&
+                (!trackInfo.tag.series || (trackInfo.tag.series === a.series))) {
+                return a.album;
+            }
+        }
     }
     async getAlbumByID(id) {
+        var _a;
         const cache = this.albumCache.find(a => a.album.id === id);
         if (cache === null || cache === void 0 ? void 0 : cache.album) {
             return cache.album;
         }
         const album = await this.orm.Album.findOneByID(id);
         if (album) {
-            this.albumCache.push({ album, artist: await album.artist.getOrFail() });
+            this.albumCache.push({ album, artist: await album.artist.getOrFail(), series: (_a = (await album.series.get())) === null || _a === void 0 ? void 0 : _a.name });
             this.changes.albums.updated.add(album);
         }
         return album || undefined;
@@ -134,7 +141,7 @@ class MetaMergerCache {
         else {
             this.changes.albums.updated.add(album);
         }
-        this.albumCache.push({ album, artist });
+        this.albumCache.push({ album, artist, series: trackInfo.tag.series });
         return album;
     }
     async findArtistInDB(trackInfo, albumArtist) {

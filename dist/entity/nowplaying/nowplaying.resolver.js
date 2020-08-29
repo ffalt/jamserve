@@ -17,7 +17,7 @@ const type_graphql_1 = require("type-graphql");
 const nowplaying_1 = require("./nowplaying");
 let NowPlayingResolver = class NowPlayingResolver {
     async nowPlaying({ engine }) {
-        return engine.nowPlayingService.getNowPlaying();
+        return engine.nowPlaying.getNowPlaying();
     }
     async userID(nowPlaying) {
         return nowPlaying.user.id;
@@ -26,7 +26,7 @@ let NowPlayingResolver = class NowPlayingResolver {
         return nowPlaying.user.name;
     }
     async scrobble(id, { engine, orm, user }) {
-        return await engine.nowPlayingService.scrobble(orm, id, user);
+        return await engine.nowPlaying.scrobble(orm, id, user);
     }
 };
 __decorate([

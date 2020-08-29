@@ -77,6 +77,10 @@ exports.FolderParent = FolderParent;
 let FolderBase = class FolderBase extends base_model_1.Base {
 };
 __decorate([
+    decorators_1.ObjField({ nullable: true, description: 'Title', example: 'Awesome' }),
+    __metadata("design:type", String)
+], FolderBase.prototype, "title", void 0);
+__decorate([
     decorators_1.ObjField(() => enums_1.FolderType, { description: 'Album Type', example: enums_1.FolderType.multialbum }),
     __metadata("design:type", String)
 ], FolderBase.prototype, "type", void 0);

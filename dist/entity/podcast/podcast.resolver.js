@@ -36,16 +36,16 @@ let PodcastResolver = class PodcastResolver {
         return await orm.State.findOrCreate(podcast.id, enums_1.DBObjectType.podcast, user.id);
     }
     status(podcast, { engine }) {
-        return engine.podcastService.isDownloading(podcast.id) ? enums_1.PodcastStatus.downloading : podcast.status;
+        return engine.podcast.isDownloading(podcast.id) ? enums_1.PodcastStatus.downloading : podcast.status;
     }
-    lastCheck(podcast) {
-        return new Date(podcast.lastCheck);
-    }
-    async episodes(podcast, { orm }) {
+    async episodes(podcast) {
         return podcast.episodes.getItems();
     }
-    async episodesCount(podcast, { orm }) {
+    async episodesCount(podcast) {
         return podcast.episodes.count();
+    }
+    async lastCheck(timestamp) {
+        return new Date(timestamp);
     }
 };
 __decorate([
@@ -84,26 +84,26 @@ __decorate([
     __metadata("design:returntype", String)
 ], PodcastResolver.prototype, "status", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => Date),
+    type_graphql_1.FieldResolver(() => [episode_1.EpisodeQL]),
     __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [podcast_1.Podcast]),
-    __metadata("design:returntype", Date)
-], PodcastResolver.prototype, "lastCheck", null);
-__decorate([
-    type_graphql_1.FieldResolver(() => [episode_1.EpisodeQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_1.Podcast, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "episodes", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_1.Podcast, Object]),
+    __metadata("design:paramtypes", [podcast_1.Podcast]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "episodesCount", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => Date),
+    __param(0, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], PodcastResolver.prototype, "lastCheck", null);
 PodcastResolver = __decorate([
     type_graphql_1.Resolver(podcast_1.PodcastQL)
 ], PodcastResolver);

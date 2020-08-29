@@ -16,48 +16,41 @@ exports.ArtworkController = void 0;
 const artwork_model_1 = require("./artwork.model");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const base_controller_1 = require("../base/base.controller");
 const artwork_args_1 = require("./artwork.args");
 const base_args_1 = require("../base/base.args");
-const typescript_ioc_1 = require("typescript-ioc");
-const artwork_service_1 = require("./artwork.service");
 const admin_1 = require("../admin/admin");
 const folder_args_1 = require("../folder/folder.args");
-let ArtworkController = class ArtworkController extends base_controller_1.BaseController {
-    async id(id, artworkArgs, artworkChildrenArgs, folderArgs, { orm, user }) {
-        return this.transform.artwork(orm, await orm.Artwork.oneOrFailByID(id), artworkArgs, artworkChildrenArgs, folderArgs, user);
+let ArtworkController = class ArtworkController {
+    async id(id, artworkArgs, artworkChildrenArgs, folderArgs, { orm, engine, user }) {
+        return engine.transform.artwork(orm, await orm.Artwork.oneOrFailByID(id), artworkArgs, artworkChildrenArgs, folderArgs, user);
     }
-    async search(page, artworkArgs, artworkChildrenArgs, folderArgs, filter, order, list, { orm, user }) {
+    async search(page, artworkArgs, artworkChildrenArgs, folderArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Artwork.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user));
+            return await orm.Artwork.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user));
         }
-        return await orm.Artwork.searchTransformFilter(filter, [order], page, user, o => this.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user));
+        return await orm.Artwork.searchTransformFilter(filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user));
     }
-    async createByUrl(args, { orm, user }) {
+    async createByUrl(args, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(args.folderID);
-        return await this.artworkService.createByUrl(folder, args.url, args.types);
+        return await engine.artwork.createByUrl(folder, args.url, args.types);
     }
-    async createByUpload(args, file, { orm, user }) {
+    async createByUpload(args, file, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(args.folderID);
-        return await this.artworkService.createByFile(folder, file.name, args.types);
+        return await engine.artwork.createByFile(folder, file.name, args.types);
     }
-    async update(id, file, { orm, user }) {
+    async update(id, file, { orm, engine }) {
         const artwork = await orm.Artwork.oneOrFailByID(id);
-        return await this.artworkService.upload(artwork, file.name);
+        return await engine.artwork.upload(artwork, file.name);
     }
-    async rename(args, { orm, user }) {
+    async rename(args, { orm, engine }) {
         const artwork = await orm.Artwork.oneOrFailByID(args.id);
-        return await this.artworkService.rename(artwork, args.newName);
+        return await engine.artwork.rename(artwork, args.newName);
     }
-    async remove(id, { orm, user }) {
+    async remove(id, { orm, engine }) {
         const artwork = await orm.Artwork.oneOrFailByID(id);
-        return await this.artworkService.remove(artwork);
+        return await engine.artwork.remove(artwork);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", artwork_service_1.ArtworkService)
-], ArtworkController.prototype, "artworkService", void 0);
 __decorate([
     rest_1.Get('/id', () => artwork_model_1.Artwork, { description: 'Get an Artwork by Id', summary: 'Get Artwork' }),
     __param(0, rest_1.QueryParam('id', { description: 'Artwork Id', isID: true })),
@@ -135,7 +128,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ArtworkController.prototype, "remove", null);
 ArtworkController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/artwork', { tags: ['Artwork'], roles: [enums_1.UserRole.stream] })
 ], ArtworkController);
 exports.ArtworkController = ArtworkController;

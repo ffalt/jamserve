@@ -16,59 +16,52 @@ exports.PodcastController = void 0;
 const podcast_model_1 = require("./podcast.model");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const base_controller_1 = require("../base/base.controller");
 const episode_model_1 = require("../episode/episode.model");
 const podcast_args_1 = require("./podcast.args");
 const episode_args_1 = require("../episode/episode.args");
 const base_args_1 = require("../base/base.args");
-const typescript_ioc_1 = require("typescript-ioc");
-const podcast_service_1 = require("./podcast.service");
 const logger_1 = require("../../utils/logger");
 const log = logger_1.logger('PodcastController');
-let PodcastController = class PodcastController extends base_controller_1.BaseController {
-    async id(id, podcastArgs, podcastChildrenArgs, episodeArgs, { orm, user }) {
-        return this.transform.podcast(orm, await orm.Podcast.oneOrFailByID(id), podcastArgs, podcastChildrenArgs, episodeArgs, user);
+let PodcastController = class PodcastController {
+    async id(id, podcastArgs, podcastChildrenArgs, episodeArgs, { orm, engine, user }) {
+        return engine.transform.podcast(orm, await orm.Podcast.oneOrFailByID(id), podcastArgs, podcastChildrenArgs, episodeArgs, user);
     }
-    async index(filter, { orm, user }) {
+    async index(filter, { orm, engine, user }) {
         const result = await orm.Podcast.indexFilter(filter, user);
-        return this.transform.podcastIndex(orm, result);
+        return engine.transform.podcastIndex(orm, result);
     }
-    async search(page, podcastArgs, podcastChildrenArgs, episodeArgs, filter, order, list, { orm, user }) {
+    async search(page, podcastArgs, podcastChildrenArgs, episodeArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Podcast.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user));
+            return await orm.Podcast.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user));
         }
-        return await orm.Podcast.searchTransformFilter(filter, [order], page, user, o => this.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user));
+        return await orm.Podcast.searchTransformFilter(filter, [order], page, user, o => engine.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user));
     }
-    async episodes(page, episodeArgs, filter, order, { orm, user }) {
+    async episodes(page, episodeArgs, filter, order, { orm, engine, user }) {
         const podcastIDs = await orm.Podcast.findIDsFilter(filter, user);
-        return await orm.Episode.searchTransformFilter({ podcastIDs }, [order], page, user, o => this.transform.episodeBase(orm, o, episodeArgs, user));
+        return await orm.Episode.searchTransformFilter({ podcastIDs }, [order], page, user, o => engine.transform.episodeBase(orm, o, episodeArgs, user));
     }
-    async status(id, { orm, user }) {
-        return this.transform.podcastStatus(await orm.Podcast.oneOrFailByID(id));
+    async status(id, { orm, engine }) {
+        return engine.transform.podcastStatus(await orm.Podcast.oneOrFailByID(id));
     }
-    async create(args, { orm, user }) {
-        const podcast = await this.podcastService.create(orm, args.url);
-        this.podcastService.refresh(orm, podcast).catch(e => log.error(e));
-        return this.transform.podcast(orm, podcast, {}, {}, {}, user);
+    async create(args, { orm, engine, user }) {
+        const podcast = await engine.podcast.create(orm, args.url);
+        engine.podcast.refresh(orm, podcast).catch(e => log.error(e));
+        return engine.transform.podcast(orm, podcast, {}, {}, {}, user);
     }
-    async refresh(args, { orm, user }) {
+    async refresh(args, { orm, engine }) {
         if (args.id) {
             const podcast = await orm.Podcast.oneOrFailByID(args.id);
-            this.podcastService.refresh(orm, podcast).catch(e => log.error(e));
+            engine.podcast.refresh(orm, podcast).catch(e => log.error(e));
         }
         else {
-            this.podcastService.refreshPodcasts(orm).catch(e => log.error(e));
+            engine.podcast.refreshPodcasts(orm).catch(e => log.error(e));
         }
     }
-    async remove(id, { orm, user }) {
+    async remove(id, { orm, engine }) {
         const podcast = await orm.Podcast.oneOrFailByID(id);
-        await this.podcastService.remove(orm, podcast);
+        await engine.podcast.remove(orm, podcast);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", podcast_service_1.PodcastService)
-], PodcastController.prototype, "podcastService", void 0);
 __decorate([
     rest_1.Get('/id', () => podcast_model_1.Podcast, { description: 'Get a Podcast by Id', summary: 'Get Podcast' }),
     __param(0, rest_1.QueryParam('id', { description: 'Podcast Id', isID: true })),
@@ -156,7 +149,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "remove", null);
 PodcastController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/podcast', { tags: ['Podcast'], roles: [enums_1.UserRole.stream] })
 ], PodcastController);
 exports.PodcastController = PodcastController;

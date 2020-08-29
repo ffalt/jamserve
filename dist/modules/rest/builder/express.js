@@ -14,7 +14,6 @@ const fs_utils_1 = require("../../../utils/fs-utils");
 const on_finished_1 = __importDefault(require("on-finished"));
 const logger_1 = require("../../../utils/logger");
 const enums_1 = require("../helpers/enums");
-const typescript_ioc_1 = require("typescript-ioc");
 const log = logger_1.logger('RestAPI');
 function prepareParameter(param, data, isField) {
     if (isField) {
@@ -73,7 +72,7 @@ function prepareParameter(param, data, isField) {
     }
     else if (type === String) {
         if (typeOptions.array) {
-            if (!Array.isArray(value)) {
+            if (value && !Array.isArray(value)) {
                 if (value.length === 0) {
                     throw express_error_1.InvalidParamError(param.name);
                 }
@@ -118,6 +117,20 @@ function prepareParameter(param, data, isField) {
             }
         }
         else {
+            if (typeof value !== 'object') {
+                throw new Error(`Internal: Invalid Parameter Object Type for field '${param.name}'`);
+            }
+            const argumentType = metadata_1.getMetadataStorage().argumentTypes.find(it => it.target === type);
+            if (argumentType) {
+                const result = new argumentType.target();
+                for (const field of argumentType.fields) {
+                    result[field.name] = prepareParameter(field, value, true);
+                }
+                return result;
+            }
+            if (param.typeOptions.generic) {
+                return value;
+            }
             throw new Error(`Internal: Unknown Parameter Type, did you forget to register an enum? '${param.name}'`);
         }
     }
@@ -144,7 +157,8 @@ function mapArgFields(argumentType, data, args = {}) {
     });
 }
 function prepareParameterObj(param, context) {
-    const argumentType = metadata_1.getMetadataStorage().argumentTypes.find(it => it.target === param.getType());
+    const type = param.getType();
+    const argumentType = metadata_1.getMetadataStorage().argumentTypes.find(it => it.target === type);
     if (!argumentType) {
         throw express_error_1.GenericError(`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
             `is not a class decorated with '@ObjParamsType' decorator!`);
@@ -200,7 +214,7 @@ async function callMethod(method, context, name) {
         if (!Controller) {
             throw express_error_1.GenericError(`Internal: Invalid controller in method ${method.methodName}`);
         }
-        const instance = typescript_ioc_1.Container.get(Controller);
+        const instance = new Controller();
         const func = instance[method.methodName];
         const args = [];
         const params = method.params.sort((a, b) => a.index - b.index);
@@ -224,7 +238,7 @@ async function callMethod(method, context, name) {
             express_responder_1.ApiBaseResponder.sendString(context.req, context.res, result);
             return;
         }
-        const resultType = metadata_1.getMetadataStorage().resultTypes.find(it => it.target === target);
+        const resultType = metadata_1.getMetadataStorage().resultType(target);
         if (!resultType) {
             throw express_error_1.GenericError(`The value used as a result type of '@${name}' for '${String(method.getReturnType())}' of '${method.target.name}.${method.methodName}' ` +
                 `is not a class decorated with '@ResultType' decorator!`);
@@ -250,7 +264,7 @@ function getMethodResultFormat(method) {
     }
     return 'json';
 }
-function validateCustomPathParameterValue(rElement, group, method) {
+function validateCustomPathParameterValue(rElement, group) {
     const type = group.getType();
     let value = rElement || '';
     if (group.prefix) {
@@ -274,6 +288,7 @@ function validateCustomPathParameterValue(rElement, group, method) {
             (group.max !== undefined && number > group.max)) {
             throw express_error_1.InvalidParamError(group.name, 'number not in allowed range');
         }
+        return number;
     }
     else {
         const metadata = metadata_1.getMetadataStorage();
@@ -288,7 +303,7 @@ function validateCustomPathParameterValue(rElement, group, method) {
         throw new Error('Internal: Invalid Custom Path Parameter Type ' + group.name);
     }
 }
-function processCustomPathParameters(customPathParameters, pathParameters, method, req) {
+function processCustomPathParameters(customPathParameters, pathParameters, method) {
     const r = customPathParameters.regex.exec(pathParameters) || [];
     let index = 1;
     const result = {};
@@ -296,7 +311,7 @@ function processCustomPathParameters(customPathParameters, pathParameters, metho
     const alias = (method.aliasRoutes || []).find(a => a.route === route);
     for (const group of customPathParameters.groups) {
         if (!alias || !alias.hideParameters.includes(group.name)) {
-            result[group.name] = validateCustomPathParameterValue(r[index], group, method);
+            result[group.name] = validateCustomPathParameterValue(r[index], group);
         }
         index++;
     }
@@ -357,10 +372,10 @@ function buildRestRouter(api, options) {
                     if (get.customPathParameters) {
                         req.params = {
                             ...req.params,
-                            ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get, req), pathParameters: undefined
+                            ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get), pathParameters: undefined
                         };
                     }
-                    await callMethod(get, { req, res, orm: req.orm, next, user: req.user }, 'Get');
+                    await callMethod(get, { req, res, orm: req.orm, engine: req.engine, next, user: req.user }, 'Get');
                 }
                 catch (e) {
                     express_responder_1.ApiBaseResponder.sendError(req, res, e);
@@ -387,10 +402,10 @@ function buildRestRouter(api, options) {
                     if (post.customPathParameters) {
                         req.params = {
                             ...req.params,
-                            ...processCustomPathParameters(post.customPathParameters, req.params.pathParameters, post, req), pathParameters: undefined
+                            ...processCustomPathParameters(post.customPathParameters, req.params.pathParameters, post), pathParameters: undefined
                         };
                     }
-                    await callMethod(post, { req, res, next, orm: req.orm, user: req.user }, 'Post');
+                    await callMethod(post, { req, res, next, orm: req.orm, engine: req.engine, user: req.user }, 'Post');
                 }
                 catch (e) {
                     express_responder_1.ApiBaseResponder.sendError(req, res, e);

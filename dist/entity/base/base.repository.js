@@ -22,6 +22,11 @@ class BaseRepository extends orm_1.EntityRepository {
         }
         return [];
     }
+    buildOrderByFindOptions(order) {
+        const options = { order: this.buildOrderBy(order) };
+        this.ensureOrderIncludes(options);
+        return options;
+    }
     buildOrderBy(order) {
         if (!order) {
             return;
@@ -30,27 +35,42 @@ class BaseRepository extends orm_1.EntityRepository {
         order.forEach(o => result = result.concat(this.buildOrder(o)));
         return result.length > 0 ? result : undefined;
     }
+    ensureOrderIncludes(options) {
+        let hasOrder = false;
+        if (options.order) {
+            options.order.forEach(o => {
+                const array = o;
+                hasOrder = true;
+                if (array.length === 3) {
+                    const key = array[0];
+                    const list = options.include || [];
+                    const includeEntry = list.find((i) => i.association === key);
+                    if (!includeEntry) {
+                        list.push({ association: key, attributes: [array[1]] });
+                        options.include = list;
+                    }
+                    else {
+                        includeEntry.attributes.push(array[1]);
+                    }
+                }
+            });
+        }
+        if (hasOrder && options.include && (options.include.length > 0)) {
+            if (options.include.find(o => !!o.where)) {
+                options.subQuery = false;
+            }
+        }
+    }
     async buildFindOptions(filter, order, user, page) {
         const options = filter ? await this.buildFilter(filter, user) : {};
         options.limit = page === null || page === void 0 ? void 0 : page.take;
         options.offset = page === null || page === void 0 ? void 0 : page.skip;
         options.order = this.buildOrderBy(order);
-        if (options.order) {
-            options.order.map(o => {
-                if (o.length === 3) {
-                    const key = o[0];
-                    const list = options.include || [];
-                    if (!list.find((i) => i.association === key)) {
-                        list.push({ association: key });
-                        options.include = list;
-                    }
-                }
-            });
-        }
+        this.ensureOrderIncludes(options);
         return options;
     }
     async all() {
-        return this.find({});
+        return this.find({ order: [['createdAt', 'ASC']] });
     }
     async oneOrFailByID(id) {
         try {
@@ -65,7 +85,6 @@ class BaseRepository extends orm_1.EntityRepository {
             return await super.findOneOrFail(options);
         }
         catch (e) {
-            console.log(e);
             throw builder_1.NotFoundError();
         }
     }
@@ -92,12 +111,28 @@ class BaseRepository extends orm_1.EntityRepository {
         const items = await Promise.all(entities.map(o => transform(o)));
         return { skip: options.offset, take: options.limit, total: count, items };
     }
-    async index(property, options) {
+    static getIndexChar(name) {
+        const s = name.replace(/[¿…¡?[\]{}<>‘`“'&_~=:./;@#«!%$*()+\-\\|]/g, '').trim();
+        if (s.length === 0) {
+            return '#';
+        }
+        const c = s.charAt(0).toUpperCase();
+        if (!isNaN(Number(c))) {
+            return '#';
+        }
+        return c;
+    }
+    static removeArticles(ignore, name) {
+        const matches = new RegExp(`^(?:(?:${ignore})\\s+)?(.*)`, 'gi').exec(name);
+        return matches ? matches[1] : name;
+    }
+    async index(property, options, ignoreArticles) {
+        const ignore = ignoreArticles ? ignoreArticles.join('|') : undefined;
         const items = await this.find(options);
         const map = new Map();
         for (const item of items) {
             const value = (item[property] || '');
-            const c = value[0];
+            const c = BaseRepository.getIndexChar(ignore ? BaseRepository.removeArticles(ignore, value) : value);
             const list = map.get(c) || [];
             list.push(item);
             map.set(c, list);
@@ -109,6 +144,14 @@ class BaseRepository extends orm_1.EntityRepository {
                 items: value
             });
         }
+        groups.sort((a, b) => a.name.localeCompare(b.name));
+        groups.forEach(g => {
+            g.items.sort((a, b) => {
+                const av = (a[property] || '');
+                const bv = (b[property] || '');
+                return av.localeCompare(bv);
+            });
+        });
         return { groups };
     }
     async findOneIDorFail(options) {
@@ -153,13 +196,13 @@ class BaseRepository extends orm_1.EntityRepository {
             items: await Promise.all(result.items.map(o => transform(o)))
         };
     }
-    async indexFilter(filter, user) {
-        return await this.index(this.indexProperty, await this.buildFilter(filter, user));
+    async indexFilter(filter, user, ignoreArticles) {
+        return await this.index(this.indexProperty, await this.buildFilter(filter, user), ignoreArticles);
     }
     async getListIDs(list, options, userID) {
         let ids = [];
         let total;
-        const opts = { options, limit: undefined, offset: undefined };
+        const opts = { ...options, limit: undefined, offset: undefined };
         const page = { skip: options.offset, take: options.limit };
         switch (list) {
             case enums_1.ListType.random:

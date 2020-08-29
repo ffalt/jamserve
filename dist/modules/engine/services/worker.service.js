@@ -32,7 +32,7 @@ let WorkerService = class WorkerService {
         return this.changes.finish(orm, changes, root);
     }
     async createRoot(parameters) {
-        const root = await this.rootWorker.create(this.changes.ormService.fork(), parameters.name, parameters.path, parameters.strategy);
+        const root = await this.rootWorker.create(this.changes.ormService.fork(true), parameters.name, parameters.path, parameters.strategy);
         const { orm, changes } = await this.changes.start(root.id);
         return this.changes.finish(orm, changes, root);
     }
@@ -64,6 +64,7 @@ let WorkerService = class WorkerService {
     async renameFolder(parameters) {
         const { root, orm, changes } = await this.changes.start(parameters.rootID);
         await this.folderWorker.rename(orm, parameters.folderID, parameters.newName, changes);
+        await this.rootWorker.mergeChanges(orm, root, changes);
         return this.changes.finish(orm, changes, root);
     }
     async refreshTracks(parameters) {
@@ -94,6 +95,7 @@ let WorkerService = class WorkerService {
     async writeTrackTags(parameters) {
         const { root, orm, changes } = await this.changes.start(parameters.rootID);
         await this.trackWorker.writeTags(orm, parameters.tags, changes);
+        await this.rootWorker.mergeChanges(orm, root, changes);
         return this.changes.finish(orm, changes, root);
     }
     async renameArtwork(parameters) {

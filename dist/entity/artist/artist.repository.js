@@ -26,7 +26,7 @@ class ArtistRepository extends base_repository_1.BaseRepository {
         }
         return [];
     }
-    async buildFilter(filter, user) {
+    async buildFilter(filter, _) {
         if (!filter) {
             return {};
         }

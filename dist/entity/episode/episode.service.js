@@ -72,11 +72,12 @@ let EpisodeService = class EpisodeService {
                 if (oldTag) {
                     orm.Tag.removeLater(oldTag);
                 }
-                const tag = orm.Tag.create({ ...result, chapters: result.chapters ? JSON.stringify(result.chapters) : undefined });
+                const tag = orm.Tag.createByScan(result, filename);
+                orm.Tag.persistLater(tag);
                 await episode.tag.set(tag);
                 episode.status = enums_1.PodcastStatus.completed;
-                episode.statCreated = stat.ctime.valueOf();
-                episode.statModified = stat.mtime.valueOf();
+                episode.statCreated = stat.ctime;
+                episode.statModified = stat.mtime;
                 episode.fileSize = stat.size;
                 episode.duration = result.mediaDuration;
                 episode.path = filename;

@@ -20,23 +20,23 @@ function usePassPortMiddleWare(router, engine) {
         done(null, (user === null || user === void 0 ? void 0 : user.id) || '_invalid_');
     });
     passport_1.default.deserializeUser((id, done) => {
-        engine.userService.findByID(engine.orm.fork(), id).then(user => done(null, user ? user : false)).catch(done);
+        engine.user.findByID(engine.orm.fork(), id).then(user => done(null, user ? user : false)).catch(done);
     });
     passport_1.default.use('local', new passport_local_1.default.Strategy({ usernameField: 'username', passwordField: 'password' }, (username, password, done) => {
-        engine.userService.auth(engine.orm.fork(), username, password).then(user => done(null, user ? user : false)).catch(done);
+        engine.user.auth(engine.orm.fork(), username, password).then(user => done(null, user ? user : false)).catch(done);
     }));
     const resolvePayload = (jwtPayload, done) => {
-        engine.userService.findByID(engine.orm.fork(), jwtPayload.id)
+        engine.user.findByID(engine.orm.fork(), jwtPayload.id)
             .then(user => done(null, user ? user : false, jwtPayload))
             .catch(done);
     };
     passport_1.default.use('jwt-header', new passport_jwt_1.default.Strategy({
         jwtFromRequest: passport_jwt_1.default.ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: engine.configService.env.jwt.secret
+        secretOrKey: engine.config.env.jwt.secret
     }, resolvePayload));
     passport_1.default.use('jwt-parameter', new passport_jwt_1.default.Strategy({
         jwtFromRequest: passport_jwt_1.default.ExtractJwt.fromUrlQueryParameter('bearer'),
-        secretOrKey: engine.configService.env.jwt.secret
+        secretOrKey: engine.config.env.jwt.secret
     }, resolvePayload));
     function jwtAuthMiddleware(req, res, next) {
         if (req.user) {
@@ -66,7 +66,7 @@ function usePassPortMiddleWare(router, engine) {
             if (info instanceof Error || !user) {
                 return next();
             }
-            req.engine.sessionService.isRevoked(jwth)
+            req.engine.session.isRevoked(jwth)
                 .then(revoked => {
                 if (!revoked) {
                     req.jwt = !!user;

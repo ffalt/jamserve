@@ -23,7 +23,7 @@ function buildTSEnums() {
 exports.buildTSEnums = buildTSEnums;
 function buildTSField(field, metadata, sl, withDefault = false) {
     const typeOptions = field.typeOptions;
-    let fieldType = 'any';
+    let fieldType;
     const jsDoc = [];
     if (field.description) {
         jsDoc.push(`${field.description}`);
@@ -52,7 +52,7 @@ function buildTSField(field, metadata, sl, withDefault = false) {
             fieldType = 'JamEnums.' + enumInfo.name;
         }
         else {
-            const fObjectType = metadata.resultTypes.find(it => it.target === fType);
+            const fObjectType = metadata.resultType(fType);
             fieldType = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) || 'any';
         }
     }

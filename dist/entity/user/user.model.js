@@ -37,7 +37,7 @@ exports.UserRoles = UserRoles;
 let User = class User extends base_model_1.Base {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'User Email', example: 'user@example.com' }),
+    decorators_1.ObjField({ description: 'User Email', example: 'user@example.com', nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([

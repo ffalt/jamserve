@@ -16,6 +16,7 @@ const server = typescript_ioc_1.Container.get(server_1.Server);
 async function run() {
     log.info(`Jamserve ${version_1.JAMSERVE_VERSION} starting`);
     await server.init();
+    await server.engine.init();
     await server.engine.start();
     await server.start();
 }

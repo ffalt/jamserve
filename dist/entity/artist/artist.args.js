@@ -143,7 +143,7 @@ __decorate([
     __metadata("design:type", Array)
 ], ArtistFilterArgs.prototype, "mbArtistIDs", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     decorators_1.ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: example_consts_1.examples.timestamp }),
     __metadata("design:type", Number)
 ], ArtistFilterArgs.prototype, "since", void 0);

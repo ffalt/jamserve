@@ -36,31 +36,31 @@ let AlbumResolver = class AlbumResolver {
     async albumIndex({ filter }, { orm }) {
         return await orm.Album.indexFilter(filter);
     }
-    async artist(album, { orm }) {
+    async artist(album) {
         return album.artist.getOrFail();
     }
-    async tracks(album, { orm }) {
+    async tracks(album) {
         return album.tracks.getItems();
     }
-    async roots(album, { orm }) {
+    async roots(album) {
         return album.roots.getItems();
     }
-    async folders(album, { orm }) {
+    async folders(album) {
         return album.folders.getItems();
     }
-    async series(album, { orm }) {
+    async series(album) {
         return album.series.get();
     }
     async state(album, { orm, user }) {
         return await orm.State.findOrCreate(album.id, enums_1.DBObjectType.album, user.id);
     }
-    async foldersCount(album, { orm }) {
+    async foldersCount(album) {
         return album.folders.count();
     }
-    async tracksCount(album, { orm }) {
+    async tracksCount(album) {
         return album.tracks.count();
     }
-    async rootsCount(album, { orm }) {
+    async rootsCount(album) {
         return album.roots.count();
     }
 };
@@ -87,37 +87,37 @@ __decorate([
 ], AlbumResolver.prototype, "albumIndex", null);
 __decorate([
     type_graphql_1.FieldResolver(() => artist_1.ArtistQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [album_1.Album, Object]),
+    __metadata("design:paramtypes", [album_1.Album]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "artist", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [track_1.TrackQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [album_1.Album, Object]),
+    __metadata("design:paramtypes", [album_1.Album]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "tracks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [root_1.RootQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [album_1.Album, Object]),
+    __metadata("design:paramtypes", [album_1.Album]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "roots", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [folder_1.FolderQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [album_1.Album, Object]),
+    __metadata("design:paramtypes", [album_1.Album]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "folders", null);
 __decorate([
     type_graphql_1.FieldResolver(() => series_1.SeriesQL, { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [album_1.Album, Object]),
+    __metadata("design:paramtypes", [album_1.Album]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "series", null);
 __decorate([
@@ -129,23 +129,23 @@ __decorate([
 ], AlbumResolver.prototype, "state", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [album_1.Album, Object]),
+    __metadata("design:paramtypes", [album_1.Album]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "foldersCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [album_1.Album, Object]),
+    __metadata("design:paramtypes", [album_1.Album]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "tracksCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [album_1.Album, Object]),
+    __metadata("design:paramtypes", [album_1.Album]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "rootsCount", null);
 AlbumResolver = __decorate([

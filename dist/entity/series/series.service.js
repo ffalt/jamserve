@@ -12,9 +12,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SeriesService = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
 const folder_service_1 = require("../folder/folder.service");
+const enums_1 = require("../../types/enums");
 let SeriesService = class SeriesService {
     async getImage(orm, series, size, format) {
-        const folders = (await series.folders.getItems()).sort((a, b) => b.level - a.level);
+        const folders = await series.folders.getItems();
+        let p = folders[0];
+        while (p) {
+            if (p.folderType === enums_1.FolderType.artist) {
+                break;
+            }
+            p = await p.parent.get();
+        }
+        if (p) {
+            return this.folderService.getImage(orm, p, size, format);
+        }
         for (const folder of folders) {
             const result = this.folderService.getImage(orm, folder, size, format);
             if (result) {

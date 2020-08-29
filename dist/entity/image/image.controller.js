@@ -17,22 +17,16 @@ const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const consts_1 = require("../../types/consts");
 const image_args_1 = require("./image.args");
-const image_service_1 = require("./image.service");
 const decorators_1 = require("../../modules/rest/decorators");
-const typescript_ioc_1 = require("typescript-ioc");
 let ImageController = class ImageController {
-    async image(imageArgs, { orm, user }) {
+    async image(imageArgs, { orm, engine }) {
         const result = await orm.findInImageTypes(imageArgs.id);
         if (!result) {
             return Promise.reject(rest_1.NotFoundError());
         }
-        return await this.imageService.getObjImage(orm, result.obj, result.objType, imageArgs.size, imageArgs.format);
+        return await engine.image.getObjImage(orm, result.obj, result.objType, imageArgs.size, imageArgs.format);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", image_service_1.ImageService)
-], ImageController.prototype, "imageService", void 0);
 __decorate([
     rest_1.Get('/{id}_{size}.{format}', {
         description: 'Image Binary [Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track, User]',
@@ -59,7 +53,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ImageController.prototype, "image", null);
 ImageController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/image', { tags: ['Image'], roles: [enums_1.UserRole.stream] })
 ], ImageController);
 exports.ImageController = ImageController;

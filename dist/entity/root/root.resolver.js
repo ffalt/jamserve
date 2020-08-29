@@ -32,21 +32,21 @@ let RootResolver = class RootResolver {
         return await orm.Root.searchFilter(filter, order, page, user);
     }
     async status(root, { engine }) {
-        return engine.ioService.getRootStatus(root.id);
+        return engine.io.getRootStatus(root.id);
     }
-    async tracks(root, { orm }) {
+    async tracks(root) {
         return root.tracks.getItems();
     }
-    async folders(root, { orm }) {
+    async folders(root) {
         return root.folders.getItems();
     }
-    async albums(root, { orm }) {
+    async albums(root) {
         return root.albums.getItems();
     }
-    async series(root, { orm }) {
+    async series(root) {
         return root.series.getItems();
     }
-    async artists(root, { orm }) {
+    async artists(root) {
         return root.artists.getItems();
     }
 };
@@ -73,37 +73,37 @@ __decorate([
 ], RootResolver.prototype, "status", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [track_1.TrackQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [root_1.Root, Object]),
+    __metadata("design:paramtypes", [root_1.Root]),
     __metadata("design:returntype", Promise)
 ], RootResolver.prototype, "tracks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [folder_1.FolderQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [root_1.Root, Object]),
+    __metadata("design:paramtypes", [root_1.Root]),
     __metadata("design:returntype", Promise)
 ], RootResolver.prototype, "folders", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [album_1.AlbumQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [root_1.Root, Object]),
+    __metadata("design:paramtypes", [root_1.Root]),
     __metadata("design:returntype", Promise)
 ], RootResolver.prototype, "albums", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [series_1.SeriesQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [root_1.Root, Object]),
+    __metadata("design:paramtypes", [root_1.Root]),
     __metadata("design:returntype", Promise)
 ], RootResolver.prototype, "series", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [artist_1.ArtistQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [root_1.Root, Object]),
+    __metadata("design:paramtypes", [root_1.Root]),
     __metadata("design:returntype", Promise)
 ], RootResolver.prototype, "artists", null);
 RootResolver = __decorate([

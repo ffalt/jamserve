@@ -36,44 +36,50 @@ let FolderResolver = class FolderResolver {
     async folderIndex({ filter }, { orm, user }) {
         return await orm.Folder.indexFilter(filter, user);
     }
-    async children(folder, { orm }) {
+    async children(folder) {
         return folder.children.getItems();
     }
-    async childrenCount(folder, { orm }) {
+    async childrenCount(folder) {
         return folder.children.count();
     }
-    async series(folder, { orm }) {
+    async series(folder) {
         return folder.series.getItems();
     }
-    async seriesCount(folder, { orm }) {
+    async seriesCount(folder) {
         return folder.series.count();
     }
-    async artists(folder, { orm }) {
+    async artists(folder) {
         return folder.artists.getItems();
     }
-    async artistsCount(folder, { orm }) {
+    async artistsCount(folder) {
         return folder.artists.count();
     }
-    async albums(folder, { orm }) {
+    async albums(folder) {
         return folder.albums.getItems();
     }
-    async albumsCount(folder, { orm }) {
+    async albumsCount(folder) {
         return folder.albums.count();
     }
-    async tracks(folder, { orm }) {
+    async tracks(folder) {
         return folder.tracks.getItems();
     }
-    async tracksCount(folder, { orm }) {
+    async tracksCount(folder) {
         return folder.tracks.count();
     }
-    async artworks(folder, { orm }) {
+    async artworks(folder) {
         return folder.artworks.getItems();
     }
-    async artworksCount(folder, { orm }) {
+    async artworksCount(folder) {
         return folder.artworks.count();
     }
     async state(folder, { orm, user }) {
         return await orm.State.findOrCreate(folder.id, enums_1.DBObjectType.folder, user.id);
+    }
+    statCreated(timestamp) {
+        return new Date(timestamp);
+    }
+    statModified(timestamp) {
+        return new Date(timestamp);
     }
 };
 __decorate([
@@ -99,86 +105,86 @@ __decorate([
 ], FolderResolver.prototype, "folderIndex", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [folder_1.FolderQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "children", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "childrenCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [series_1.SeriesQL], { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "series", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "seriesCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [artist_1.ArtistQL], { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "artists", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "artistsCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [album_1.AlbumQL], { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "albums", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "albumsCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [track_1.TrackQL], { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "tracks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "tracksCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [artwork_1.ArtworkQL], { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "artworks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_1.Folder, Object]),
+    __metadata("design:paramtypes", [folder_1.Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "artworksCount", null);
 __decorate([
@@ -188,6 +194,20 @@ __decorate([
     __metadata("design:paramtypes", [folder_1.Folder, Object]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "state", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => Date),
+    __param(0, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Date)
+], FolderResolver.prototype, "statCreated", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => Date),
+    __param(0, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Date)
+], FolderResolver.prototype, "statModified", null);
 FolderResolver = __decorate([
     type_graphql_1.Resolver(folder_1.FolderQL)
 ], FolderResolver);

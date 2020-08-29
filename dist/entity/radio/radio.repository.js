@@ -13,7 +13,7 @@ class RadioRepository extends base_repository_1.BaseRepository {
     buildOrder(order) {
         return this.buildDefaultOrder(order);
     }
-    async buildFilter(filter, user) {
+    async buildFilter(filter, _) {
         return filter ? orm_1.QHelper.buildQuery([
             { id: filter.ids },
             { name: orm_1.QHelper.like(filter.query) },

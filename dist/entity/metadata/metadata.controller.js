@@ -13,49 +13,43 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MetaDataController = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const metadata_model_1 = require("./metadata.model");
-const metadata_service_1 = require("./metadata.service");
 const metadata_args_1 = require("./metadata.args");
 let MetaDataController = class MetaDataController {
-    async lastfmLookup(args, { orm }) {
-        return { data: await this.metadataService.lastFMLookup(orm, args.type, args.mbID) };
+    async lastfmLookup(args, { orm, engine }) {
+        return { data: await engine.metadata.lastFMLookup(orm, args.type, args.mbID) };
     }
-    async lyricsovhSearch(args, { orm }) {
-        return { data: await this.metadataService.lyrics(orm, args.artist, args.title) };
+    async lyricsovhSearch(args, { orm, engine }) {
+        return { data: await engine.metadata.lyrics(orm, args.artist, args.title) };
     }
-    async acoustidLookup(args, { orm }) {
+    async acoustidLookup(args, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(args.trackID);
-        return { data: await this.metadataService.acoustidLookupTrack(track, args.inc) };
+        return { data: await engine.metadata.acoustidLookupTrack(track, args.inc) };
     }
-    async musicbrainzLookup(args, { orm }) {
-        return { data: await this.metadataService.musicbrainzLookup(orm, args.type, args.mbID, args.inc) };
+    async musicbrainzLookup(args, { orm, engine }) {
+        return { data: await engine.metadata.musicbrainzLookup(orm, args.type, args.mbID, args.inc) };
     }
-    async musicbrainzSearch(args, { orm }) {
-        return { data: await this.metadataService.musicbrainzSearch(orm, args.type, args) };
+    async musicbrainzSearch(args, { orm, engine }) {
+        return { data: await engine.metadata.musicbrainzSearch(orm, args.type, { ...args, type: undefined }) };
     }
-    async acousticbrainzLookup(args, { orm }) {
-        return { data: await this.metadataService.acousticbrainzLookup(orm, args.mbID, args.nr) };
+    async acousticbrainzLookup(args, { orm, engine }) {
+        return { data: await engine.metadata.acousticbrainzLookup(orm, args.mbID, args.nr) };
     }
-    async coverartarchiveLookup(args, { orm }) {
-        return { data: await this.metadataService.coverartarchiveLookup(orm, args.type, args.mbID) };
+    async coverartarchiveLookup(args, { orm, engine }) {
+        return { data: await engine.metadata.coverartarchiveLookup(orm, args.type, args.mbID) };
     }
-    async wikipediaSummarySearch(args, { orm }) {
-        return { data: await this.metadataService.wikipediaSummary(orm, args.title, args.lang) };
+    async wikipediaSummarySearch(args, { orm, engine }) {
+        return { data: await engine.metadata.wikipediaSummary(orm, args.title, args.lang) };
     }
-    async wikidataSummarySearch(args, { orm }) {
-        return { data: await this.metadataService.wikidataSummary(orm, args.wikiDataID, args.lang) };
+    async wikidataSummarySearch(args, { orm, engine }) {
+        return { data: await engine.metadata.wikidataSummary(orm, args.wikiDataID, args.lang) };
     }
-    async wikidataLookup(args, { orm }) {
-        return { data: await this.metadataService.wikidataLookup(orm, args.wikiDataID) };
+    async wikidataLookup(args, { orm, engine }) {
+        return { data: await engine.metadata.wikidataLookup(orm, args.wikiDataID) };
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", metadata_service_1.MetaDataService)
-], MetaDataController.prototype, "metadataService", void 0);
 __decorate([
     rest_1.Get('/lastfm/lookup', () => metadata_model_1.MetaDataResult, { description: 'Lookup LastFM data', summary: 'Lookup LastFM' }),
     __param(0, rest_1.QueryParams()),
@@ -137,7 +131,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "wikidataLookup", null);
 MetaDataController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/metadata', { tags: ['Meta Data'], roles: [enums_1.UserRole.stream] })
 ], MetaDataController);
 exports.MetaDataController = MetaDataController;

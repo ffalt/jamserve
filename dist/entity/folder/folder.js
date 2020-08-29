@@ -43,8 +43,8 @@ __decorate([
     __metadata("design:type", String)
 ], Folder.prototype, "name", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
-    orm_1.Property(() => String),
+    type_graphql_1.Field(() => String, { nullable: true }),
+    orm_1.Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Folder.prototype, "title", void 0);
 __decorate([
@@ -53,14 +53,14 @@ __decorate([
     __metadata("design:type", String)
 ], Folder.prototype, "path", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
-    __metadata("design:type", Number)
+    type_graphql_1.Field(() => Date),
+    orm_1.Property(() => orm_1.ORM_DATETIME),
+    __metadata("design:type", Date)
 ], Folder.prototype, "statCreated", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
-    __metadata("design:type", Number)
+    type_graphql_1.Field(() => Date),
+    orm_1.Property(() => orm_1.ORM_DATETIME),
+    __metadata("design:type", Date)
 ], Folder.prototype, "statModified", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
@@ -134,7 +134,7 @@ __decorate([
 ], Folder.prototype, "parent", void 0);
 __decorate([
     type_graphql_1.Field(() => [FolderQL]),
-    orm_1.OneToMany(() => Folder_1, folder => folder.parent, { orderBy: { path: orm_1.QueryOrder.ASC } }),
+    orm_1.OneToMany(() => Folder_1, folder => folder.parent, { order: [{ orderBy: enums_1.FolderOrderFields.name }] }),
     __metadata("design:type", orm_1.Collection)
 ], Folder.prototype, "children", void 0);
 __decorate([
@@ -144,27 +144,27 @@ __decorate([
 ], Folder.prototype, "root", void 0);
 __decorate([
     type_graphql_1.Field(() => [artwork_1.ArtworkQL]),
-    orm_1.OneToMany(() => artwork_1.Artwork, artwork => artwork.folder, { orderBy: { name: orm_1.QueryOrder.ASC } }),
+    orm_1.OneToMany(() => artwork_1.Artwork, artwork => artwork.folder, { order: [{ orderBy: enums_1.DefaultOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Folder.prototype, "artworks", void 0);
 __decorate([
     type_graphql_1.Field(() => [track_1.TrackQL]),
-    orm_1.OneToMany(() => track_1.Track, track => track.folder, { orderBy: { tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC } } }),
+    orm_1.OneToMany(() => track_1.Track, track => track.folder, { order: [{ orderBy: enums_1.TrackOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Folder.prototype, "tracks", void 0);
 __decorate([
     type_graphql_1.Field(() => [album_1.AlbumQL]),
-    orm_1.ManyToMany(() => album_1.Album, album => album.folders, { orderBy: { albumType: orm_1.QueryOrder.ASC, name: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => album_1.Album, album => album.folders, { order: [{ orderBy: enums_1.AlbumOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Folder.prototype, "albums", void 0);
 __decorate([
     type_graphql_1.Field(() => [artist_1.ArtistQL]),
-    orm_1.ManyToMany(() => artist_1.Artist, artist => artist.folders, { orderBy: { nameSort: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => artist_1.Artist, artist => artist.folders, { order: [{ orderBy: enums_1.ArtistOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Folder.prototype, "artists", void 0);
 __decorate([
     type_graphql_1.Field(() => [series_1.SeriesQL]),
-    orm_1.ManyToMany(() => series_1.Series, series => series.folders, { orderBy: { name: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => series_1.Series, series => series.folders, { order: [{ orderBy: enums_1.DefaultOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Folder.prototype, "series", void 0);
 Folder = Folder_1 = __decorate([

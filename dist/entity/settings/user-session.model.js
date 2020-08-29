@@ -24,7 +24,7 @@ __decorate([
     __metadata("design:type", String)
 ], UserSession.prototype, "client", void 0);
 __decorate([
-    rest_1.ObjField({ description: 'Session Expiration', example: example_consts_1.examples.timestamp }),
+    rest_1.ObjField({ nullable: true, description: 'Session Expiration', example: example_consts_1.examples.timestamp }),
     __metadata("design:type", Number)
 ], UserSession.prototype, "expires", void 0);
 __decorate([

@@ -63,11 +63,7 @@ class Orm {
         this.Track = em.getRepository(track_1.Track);
         this.User = em.getRepository(user_1.User);
     }
-    async findInStreamTypes(id) {
-        const repos = [
-            this.Track,
-            this.Episode
-        ];
+    async findInReposTypes(id, repos) {
         for (const repo of repos) {
             const obj = await repo.findOneByID(id);
             if (obj) {
@@ -75,8 +71,11 @@ class Orm {
             }
         }
     }
+    async findInStreamTypes(id) {
+        return this.findInReposTypes(id, [this.Track, this.Episode]);
+    }
     async findInImageTypes(id) {
-        const repos = [
+        return this.findInReposTypes(id, [
             this.Album,
             this.Artist,
             this.Artwork,
@@ -89,16 +88,10 @@ class Orm {
             this.Series,
             this.Track,
             this.User
-        ];
-        for (const repo of repos) {
-            const obj = await repo.findOneByID(id);
-            if (obj) {
-                return { obj: obj, objType: repo.objType };
-            }
-        }
+        ]);
     }
     async findInDownloadTypes(id) {
-        const repos = [
+        return this.findInReposTypes(id, [
             this.Album,
             this.Artist,
             this.Artwork,
@@ -108,16 +101,10 @@ class Orm {
             this.Podcast,
             this.Series,
             this.Track
-        ];
-        for (const repo of repos) {
-            const obj = await repo.findOneByID(id);
-            if (obj) {
-                return { obj: obj, objType: repo.objType };
-            }
-        }
+        ]);
     }
     async findInStateTypes(id) {
-        const repos = [
+        return this.findInReposTypes(id, [
             this.Album,
             this.Artist,
             this.Artwork,
@@ -129,39 +116,54 @@ class Orm {
             this.Series,
             this.Radio,
             this.Track
-        ];
-        for (const repo of repos) {
-            const obj = await repo.findOneByID(id);
-            if (obj) {
-                return { obj: obj, objType: repo.objType };
-            }
-        }
+        ]);
     }
     async findInWaveformTypes(id) {
-        const repos = [this.Track, this.Episode];
-        for (const repo of repos) {
-            const obj = await repo.findOneByID(id);
-            if (obj) {
-                return { obj: obj, objType: repo.objType };
-            }
-        }
+        return this.findInReposTypes(id, [this.Track, this.Episode]);
     }
 }
 exports.Orm = Orm;
 let OrmService = class OrmService {
-    async start(dataPath) {
+    async init(config) {
+        const db = config.env.db.dialect === 'sqlite' ? {
+            dialect: 'sqlite',
+            storage: path_1.default.resolve(config.env.paths.data, 'jam.sqlite')
+        } :
+            {
+                dialect: config.env.db.dialect,
+                username: config.env.db.user,
+                password: config.env.db.password,
+                database: config.env.db.name,
+                dialectOptions: {
+                    socketPath: config.env.db.socket ? config.env.db.socket : undefined,
+                },
+                port: config.env.db.port ? Number(config.env.db.port) : undefined
+            };
         this.orm = await orm_1.ORM.init({
             entities: entities_1.ORMEntities,
             repositories: repositories_1.ORMRepositories,
-            storage: path_1.default.resolve(dataPath, 'jam.sqlite'),
+            options: {
+                ...db,
+                logging: false,
+                logQueryParameters: true,
+                retry: { max: 0 }
+            }
         });
-        await this.orm.ensureDatabase();
     }
-    fork() {
-        return new Orm(this.orm.manager());
+    async start() {
+        await this.orm.ensureSchema();
     }
     async stop() {
         await this.orm.close();
+    }
+    fork(noCache) {
+        return new Orm(this.orm.manager(!noCache));
+    }
+    clearCache() {
+        this.orm.clearCache();
+    }
+    async drop() {
+        await this.orm.dropSchema();
     }
 };
 OrmService = __decorate([

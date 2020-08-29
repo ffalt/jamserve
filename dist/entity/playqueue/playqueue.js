@@ -15,9 +15,11 @@ const playqueue_entry_1 = require("../playqueueentry/playqueue-entry");
 const type_graphql_1 = require("type-graphql");
 const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
+const enums_1 = require("../../types/enums");
 let PlayQueue = class PlayQueue extends base_1.Base {
     constructor() {
         super(...arguments);
+        this.user = new orm_1.Reference(this);
         this.entries = new orm_1.Collection(this);
     }
 };
@@ -27,12 +29,12 @@ __decorate([
     __metadata("design:type", Number)
 ], PlayQueue.prototype, "current", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], PlayQueue.prototype, "position", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], PlayQueue.prototype, "duration", void 0);
@@ -43,11 +45,11 @@ __decorate([
 ], PlayQueue.prototype, "changedBy", void 0);
 __decorate([
     orm_1.OneToOne(() => user_1.User, user => user.playQueue, { owner: true }),
-    __metadata("design:type", user_1.User)
+    __metadata("design:type", Object)
 ], PlayQueue.prototype, "user", void 0);
 __decorate([
     type_graphql_1.Field(() => [playqueue_entry_1.PlayQueueEntryQL]),
-    orm_1.OneToMany(() => playqueue_entry_1.PlayQueueEntry, entry => entry.playQueue, { orderBy: { position: orm_1.QueryOrder.ASC } }),
+    orm_1.OneToMany(() => playqueue_entry_1.PlayQueueEntry, entry => entry.playQueue, { order: [{ orderBy: enums_1.PlayQueueEntryOrderFields.position }] }),
     __metadata("design:type", orm_1.Collection)
 ], PlayQueue.prototype, "entries", void 0);
 PlayQueue = __decorate([

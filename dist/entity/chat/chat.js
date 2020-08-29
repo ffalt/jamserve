@@ -18,7 +18,7 @@ __decorate([
     __metadata("design:type", String)
 ], Chat.prototype, "message", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    type_graphql_1.Field(() => Date),
     __metadata("design:type", Number)
 ], Chat.prototype, "created", void 0);
 __decorate([

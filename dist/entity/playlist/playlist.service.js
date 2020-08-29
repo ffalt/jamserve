@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlaylistService = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
 const enums_1 = require("../../types/enums");
-const express_error_1 = require("../../modules/rest/builder/express-error");
+const rest_1 = require("../../modules/rest");
 let PlaylistService = class PlaylistService {
     async getDuration(media) {
         switch (media.objType) {
@@ -39,7 +39,7 @@ let PlaylistService = class PlaylistService {
         for (const id of ids) {
             const media = await orm.findInStreamTypes(id);
             if (!media) {
-                return Promise.reject(express_error_1.NotFoundError());
+                return Promise.reject(rest_1.NotFoundError());
             }
             duration += await this.getDuration(media);
             const entry = orm.PlaylistEntry.create({ position });
@@ -59,7 +59,7 @@ let PlaylistService = class PlaylistService {
         for (const id of ids) {
             const media = await orm.findInStreamTypes(id);
             if (!media) {
-                return Promise.reject(express_error_1.NotFoundError());
+                return Promise.reject(rest_1.NotFoundError());
             }
             mediaList.push(media);
         }

@@ -16,39 +16,37 @@ exports.AlbumController = void 0;
 const album_model_1 = require("./album.model");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const base_controller_1 = require("../base/base.controller");
 const metadata_model_1 = require("../metadata/metadata.model");
 const track_model_1 = require("../track/track.model");
 const album_args_1 = require("./album.args");
 const track_args_1 = require("../track/track.args");
 const artist_args_1 = require("../artist/artist.args");
 const base_args_1 = require("../base/base.args");
-const typescript_ioc_1 = require("typescript-ioc");
-let AlbumController = class AlbumController extends base_controller_1.BaseController {
-    async id(id, albumArgs, albumChildrenArgs, trackArgs, artistArgs, { orm, user }) {
-        return this.transform.album(orm, await orm.Album.oneOrFailByID(id), albumArgs, albumChildrenArgs, trackArgs, artistArgs, user);
+let AlbumController = class AlbumController {
+    async id(id, albumArgs, albumChildrenArgs, trackArgs, artistArgs, { orm, engine, user }) {
+        return engine.transform.album(orm, await orm.Album.oneOrFailByID(id), albumArgs, albumChildrenArgs, trackArgs, artistArgs, user);
     }
-    async index(filter, { orm }) {
-        return await this.transform.albumIndex(orm, await orm.Album.indexFilter(filter));
+    async index(filter, { orm, engine }) {
+        return await engine.transform.albumIndex(orm, await orm.Album.indexFilter(filter));
     }
-    async search(page, albumArgs, albumChildrenArgs, trackArgs, artistArgs, filter, order, list, { orm, user }) {
+    async search(page, albumArgs, albumChildrenArgs, trackArgs, artistArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Album.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user));
+            return await orm.Album.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user));
         }
-        return await orm.Album.searchTransformFilter(filter, [order], page, user, o => this.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user));
+        return await orm.Album.searchTransformFilter(filter, [order], page, user, o => engine.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user));
     }
-    async info(id, { orm }) {
+    async info(id, { orm, engine }) {
         const album = await orm.Album.oneOrFailByID(id);
-        return { info: await this.metadata.extInfo.byAlbum(orm, album) };
+        return { info: await engine.metadata.extInfo.byAlbum(orm, album) };
     }
-    async tracks(page, trackArgs, filter, order, { orm, user }) {
+    async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const albumIDs = await orm.Album.findIDsFilter(filter, user);
-        return await orm.Track.searchTransformFilter({ albumIDs }, [order], page, user, o => this.transform.trackBase(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter({ albumIDs }, [order], page, user, o => engine.transform.trackBase(orm, o, trackArgs, user));
     }
-    async similarTracks(id, page, trackArgs, { orm, user }) {
+    async similarTracks(id, page, trackArgs, { orm, engine, user }) {
         const album = await orm.Album.oneOrFailByID(id);
-        const result = await this.metadata.similarTracks.byAlbum(orm, album, page);
-        return { ...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user))) };
+        const result = await engine.metadata.similarTracks.byAlbum(orm, album, page);
+        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user))) };
     }
 };
 __decorate([
@@ -130,7 +128,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AlbumController.prototype, "similarTracks", null);
 AlbumController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/album', { tags: ['Album'], roles: [enums_1.UserRole.stream] })
 ], AlbumController);
 exports.AlbumController = AlbumController;

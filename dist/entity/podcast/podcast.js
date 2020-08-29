@@ -33,8 +33,8 @@ __decorate([
     __metadata("design:type", String)
 ], Podcast.prototype, "url", void 0);
 __decorate([
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
-    __metadata("design:type", Number)
+    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    __metadata("design:type", Date)
 ], Podcast.prototype, "lastCheck", void 0);
 __decorate([
     type_graphql_1.Field(() => enums_1.PodcastStatus),
@@ -88,7 +88,7 @@ __decorate([
 ], Podcast.prototype, "categories", void 0);
 __decorate([
     type_graphql_1.Field(() => [episode_1.EpisodeQL]),
-    orm_1.OneToMany(() => episode_1.Episode, episode => episode.podcast, { orderBy: { date: orm_1.QueryOrder.DESC } }),
+    orm_1.OneToMany(() => episode_1.Episode, episode => episode.podcast, { order: [{ orderBy: enums_1.EpisodeOrderFields.date, orderDesc: true }] }),
     __metadata("design:type", orm_1.Collection)
 ], Podcast.prototype, "episodes", void 0);
 Podcast = __decorate([
@@ -104,7 +104,7 @@ __decorate([
 ], PodcastQL.prototype, "episodesCount", void 0);
 __decorate([
     type_graphql_1.Field(() => Date),
-    __metadata("design:type", Number)
+    __metadata("design:type", Date)
 ], PodcastQL.prototype, "lastCheck", void 0);
 __decorate([
     type_graphql_1.Field(() => state_1.StateQL),

@@ -14,9 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RestMiddleware = void 0;
 const express_1 = __importDefault(require("express"));
-const builder_1 = require("../../rest/builder/builder");
+const rest_1 = require("../../rest");
 const enums_1 = require("../../../types/enums");
-const express_2 = require("../../rest/builder/express");
 const typescript_ioc_1 = require("typescript-ioc");
 const logger_1 = require("../../../utils/logger");
 const controllers_1 = require("../../engine/rest/controllers");
@@ -27,7 +26,7 @@ enum_registration_1.registerRestEnums();
 let RestMiddleware = class RestMiddleware {
     middleware() {
         const api = express_1.default.Router();
-        builder_1.buildRestMeta();
+        rest_1.buildRestMeta();
         const options = {
             tmpPath: this.configService.getDataPath(['cache', 'uploads']),
             controllers: controllers_1.RestControllers(),
@@ -53,7 +52,7 @@ let RestMiddleware = class RestMiddleware {
                 return true;
             }
         };
-        const routeInfos = express_2.buildRestRouter(api, options);
+        const routeInfos = rest_1.buildRestRouter(api, options);
         log.table(routeInfos, [
             { name: 'method', alignment: 'right' },
             { name: 'endpoint', alignment: 'left' },

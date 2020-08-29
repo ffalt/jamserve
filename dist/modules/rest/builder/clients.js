@@ -53,7 +53,7 @@ function getResultType(call) {
                 resultType = enumInfo.name;
             }
             else {
-                const fObjectType = metadata.resultTypes.find(it => it.target === type);
+                const fObjectType = metadata.resultType(type);
                 resultType = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) ? ('Jam.' + (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name)) : 'any';
             }
         }

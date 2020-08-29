@@ -36,9 +36,9 @@ __decorate([
     __metadata("design:type", String)
 ], Session.prototype, "agent", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
-    __metadata("design:type", Number)
+    type_graphql_1.Field(() => Date, { nullable: true }),
+    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    __metadata("design:type", Date)
 ], Session.prototype, "expires", void 0);
 __decorate([
     type_graphql_1.Field(() => enums_1.SessionMode),

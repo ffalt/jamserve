@@ -5,7 +5,7 @@ const metadata_1 = require("../metadata");
 const type_graphql_1 = require("type-graphql");
 const orm_types_1 = require("../definitions/orm-types");
 function PrimaryKey() {
-    return (prototype, propertyKey, descriptor) => {
+    return (prototype, propertyKey, _) => {
         if (typeof propertyKey === 'symbol') {
             throw new type_graphql_1.SymbolKeysNotSupportedError();
         }

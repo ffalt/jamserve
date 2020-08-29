@@ -16,7 +16,7 @@ const type_graphql_1 = require("type-graphql");
 let NowPlaying = class NowPlaying {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    type_graphql_1.Field(() => type_graphql_1.Float),
     __metadata("design:type", Number)
 ], NowPlaying.prototype, "time", void 0);
 __decorate([

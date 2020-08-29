@@ -20,10 +20,10 @@ class AdminChangeQueueInfo {
 }
 let AdminResolver = class AdminResolver {
     async adminSettings({ engine }) {
-        return engine.settingsService.get();
+        return engine.settings.get();
     }
     async adminQueue(id, { engine }) {
-        return engine.ioService.getAdminChangeQueueInfoStatus(id);
+        return engine.io.getAdminChangeQueueInfoStatus(id);
     }
 };
 __decorate([

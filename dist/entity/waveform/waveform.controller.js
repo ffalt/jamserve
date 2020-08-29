@@ -16,23 +16,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaveformController = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const builder_1 = require("../../modules/rest/builder");
 const decorators_1 = require("../../modules/rest/decorators");
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const waveform_args_1 = require("./waveform.args");
-const waveform_service_1 = require("./waveform.service");
 const waveform_model_1 = require("./waveform.model");
 const consts_1 = require("../../types/consts");
 let WaveformController = class WaveformController {
-    async json(id, { orm }) {
+    async json(id, { orm, engine }) {
         const result = await orm.findInWaveformTypes(id);
         if (!result) {
             return Promise.reject(builder_1.NotFoundError());
         }
-        const bin = await this.waveformService.getWaveform(result.obj, result.objType, enums_1.WaveformFormatType.json);
+        const bin = await engine.waveform.getWaveform(result.obj, result.objType, enums_1.WaveformFormatType.json);
         if (bin.json) {
             return bin.json;
         }
@@ -44,12 +42,12 @@ let WaveformController = class WaveformController {
         }
         return Promise.reject(Error('Error on Waveform generation'));
     }
-    async svg(args, { orm }) {
+    async svg(args, { orm, engine }) {
         const result = await orm.findInWaveformTypes(args.id);
         if (!result) {
             return Promise.reject(builder_1.NotFoundError());
         }
-        const bin = await this.waveformService.getWaveform(result.obj, result.objType, enums_1.WaveformFormatType.svg, args.width);
+        const bin = await engine.waveform.getWaveform(result.obj, result.objType, enums_1.WaveformFormatType.svg, args.width);
         if (bin.buffer) {
             return bin.buffer.buffer.toString();
         }
@@ -58,18 +56,14 @@ let WaveformController = class WaveformController {
         }
         return Promise.reject(Error('Error on Waveform generation'));
     }
-    async waveform(id, waveformArgs, { orm }) {
+    async waveform(id, waveformArgs, { orm, engine }) {
         const result = await orm.findInWaveformTypes(id);
         if (!result) {
             return Promise.reject(builder_1.NotFoundError());
         }
-        return this.waveformService.getWaveform(result.obj, result.objType, waveformArgs.format, waveformArgs.width);
+        return engine.waveform.getWaveform(result.obj, result.objType, waveformArgs.format, waveformArgs.width);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", waveform_service_1.WaveformService)
-], WaveformController.prototype, "waveformService", void 0);
 __decorate([
     rest_1.Get('/json', () => waveform_model_1.WaveFormData, { description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON' }),
     __param(0, rest_1.QueryParam('id', { description: 'Object Id', isID: true })),
@@ -114,7 +108,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], WaveformController.prototype, "waveform", null);
 WaveformController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/waveform', { tags: ['Waveform'], roles: [enums_1.UserRole.stream] })
 ], WaveformController);
 exports.WaveformController = WaveformController;

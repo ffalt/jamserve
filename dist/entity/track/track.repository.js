@@ -20,22 +20,32 @@ class TrackRepository extends base_repository_1.BaseRepository {
                 return [['updatedAt', direction]];
             case enums_1.TrackOrderFields.parent:
                 return [['path', direction]];
+            case enums_1.TrackOrderFields.filename:
+                return [
+                    ['path', direction],
+                    ['fileName', direction]
+                ];
+            case enums_1.TrackOrderFields.album:
+                return [['albumORM', 'name', direction]];
             case enums_1.TrackOrderFields.trackNr:
                 return [['tagORM', 'trackNr', direction]];
             case enums_1.TrackOrderFields.discNr:
                 return [['tagORM', 'disc', direction]];
+            case enums_1.TrackOrderFields.seriesNr:
+                return [['tagORM', 'seriesNr', direction]];
             case enums_1.TrackOrderFields.title:
                 return [['tagORM', 'title', direction]];
             case enums_1.TrackOrderFields.default:
                 return [
-                    ['path', direction],
+                    ['path', base_1.OrderHelper.inverse(direction)],
                     ['tagORM', 'disc', direction],
-                    ['tagORM', 'trackNr', direction]
+                    ['tagORM', 'trackNr', direction],
+                    ['tagORM', 'title', direction]
                 ];
         }
         return [];
     }
-    async buildFilter(filter, user) {
+    async buildFilter(filter, _) {
         if (!filter) {
             return {};
         }

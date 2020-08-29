@@ -17,7 +17,6 @@ const decorators_1 = require("../../modules/rest/decorators");
 const autocomplete_model_1 = require("./autocomplete.model");
 const enums_1 = require("../../types/enums");
 const autocomplete_args_1 = require("./autocomplete.args");
-const typescript_ioc_1 = require("typescript-ioc");
 let AutocompleteController = class AutocompleteController {
     async autocomplete(filter, { orm, user }) {
         const result = {};
@@ -70,7 +69,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AutocompleteController.prototype, "autocomplete", null);
 AutocompleteController = __decorate([
-    typescript_ioc_1.InRequestScope,
     decorators_1.Controller('/autocomplete', { tags: ['Various'], roles: [enums_1.UserRole.stream] })
 ], AutocompleteController);
 exports.AutocompleteController = AutocompleteController;

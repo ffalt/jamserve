@@ -30,7 +30,7 @@ const passport_middleware_1 = require("./middlewares/passport.middleware");
 const version_1 = require("../engine/rest/version");
 const docs_middleware_1 = require("./middlewares/docs.middleware");
 const cors_middleware_1 = require("./middlewares/cors.middleware");
-const session_service_1 = require("../../entity/settings/session.service");
+const session_service_1 = require("../../entity/session/session.service");
 const log = logger_1.logger('Server');
 let Server = class Server {
     async init() {
@@ -50,6 +50,8 @@ let Server = class Server {
         app.use(cors_middleware_1.useAuthenticatedCors(this.configService));
         log.debug(`registering jam api middleware`);
         app.use(`/jam/${version_1.JAMAPI_URL_VERSION}`, this.rest.middleware());
+        log.debug(`registering graphql playground`);
+        app.use('/graphql/playground', await this.apollo.playground());
         log.debug(`registering graphql middleware`);
         app.use('/graphql', await this.apollo.middleware());
         log.debug(`registering docs middleware`);
@@ -76,7 +78,8 @@ let Server = class Server {
         this.server.setTimeout(4 * 60000);
         log.table([
             { Content: 'Frontend', URL: `${this.getURL()}` },
-            { Content: 'GraphQl', URL: `${this.getURL()}/graphql` },
+            { Content: 'GraphQl Api', URL: `${this.getURL()}/graphql` },
+            { Content: 'GraphQl Playground', URL: `${this.getURL()}/graphql/playground` },
             { Content: 'REST Api', URL: `${this.getURL()}/jam/${version_1.JAMAPI_URL_VERSION}/ping` },
             { Content: 'REST Documentation', URL: `${this.getURL()}/docs` },
             { Content: 'OpenApi Spec', URL: `${this.getURL()}/docs/openapi.json` },

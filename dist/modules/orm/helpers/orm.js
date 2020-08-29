@@ -9,15 +9,10 @@ class ORM {
     constructor(sequelize, config) {
         this.sequelize = sequelize;
         this.config = config;
+        this.cache = new manager_1.EntityCache();
     }
     static async init(config) {
-        const sequelize = new sequelize_1.Sequelize({
-            dialect: 'sqlite',
-            logging: false,
-            logQueryParameters: false,
-            retry: { max: 0 },
-            storage: config.storage
-        });
+        const sequelize = new sequelize_1.Sequelize(config.options);
         const orm = new ORM(sequelize, config);
         await orm.init();
         return orm;
@@ -31,7 +26,7 @@ class ORM {
     async dropSchema() {
         await this.sequelize.drop();
     }
-    async ensureDatabase() {
+    async ensureSchema() {
         await this.sequelize.sync();
     }
     async testConnection() {
@@ -41,8 +36,11 @@ class ORM {
         const schema = new schema_1.ModelBuilder(this.sequelize, metadata_1.getMetadataStorage());
         await schema.build();
     }
-    manager() {
-        return new manager_1.EntityManager(this.sequelize, metadata_1.getMetadataStorage(), this.config);
+    manager(useCache) {
+        return new manager_1.EntityManager(this.sequelize, metadata_1.getMetadataStorage(), this.config, this, useCache);
+    }
+    clearCache() {
+        this.cache.clear();
     }
     async close() {
         await this.sequelize.close();

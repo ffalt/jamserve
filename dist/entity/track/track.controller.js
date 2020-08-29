@@ -16,83 +16,71 @@ exports.TrackController = void 0;
 const track_model_1 = require("./track.model");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const base_controller_1 = require("../base/base.controller");
 const track_args_1 = require("./track.args");
-const typescript_ioc_1 = require("typescript-ioc");
-const track_service_1 = require("./track.service");
 const tag_model_1 = require("../tag/tag.model");
 const base_args_1 = require("../base/base.args");
 const admin_1 = require("../admin/admin");
-const io_service_1 = require("../../modules/engine/services/io.service");
-let TrackController = class TrackController extends base_controller_1.BaseController {
-    async id(id, trackArgs, { orm, user }) {
-        return this.transform.track(orm, await orm.Track.oneOrFailByID(id), trackArgs, user);
+let TrackController = class TrackController {
+    async id(id, trackArgs, { orm, engine, user }) {
+        return engine.transform.track(orm, await orm.Track.oneOrFailByID(id), trackArgs, user);
     }
-    async search(page, trackArgs, filter, order, list, { orm, user }) {
+    async search(page, trackArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Track.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.track(orm, o, trackArgs, user));
+            return await orm.Track.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.track(orm, o, trackArgs, user));
         }
-        return await orm.Track.searchTransformFilter(filter, [order], page, user, o => this.transform.track(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter(filter, [order], page, user, o => engine.transform.track(orm, o, trackArgs, user));
     }
-    async similar(id, page, trackArgs, { orm, user }) {
+    async similar(id, page, trackArgs, { orm, engine, user }) {
         const track = await orm.Track.oneOrFailByID(id);
-        const result = await this.metadata.similarTracks.byTrack(orm, track, page);
-        return { ...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user))) };
+        const result = await engine.metadata.similarTracks.byTrack(orm, track, page);
+        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user))) };
     }
-    async lyrics(id, { orm }) {
+    async lyrics(id, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(id);
-        return this.metadata.lyricsByTrack(orm, track);
+        return engine.metadata.lyricsByTrack(orm, track);
     }
-    async rawTagGet(filter, { orm, user }) {
+    async rawTagGet(filter, { orm, engine, user }) {
         const tracks = await orm.Track.findFilter(filter, [], {}, user);
         const result = [];
         for (const track of tracks) {
-            const raw = await this.trackService.getRawTag(track) || {};
+            const raw = await engine.track.getRawTag(track) || {};
             result.push({ id: track.id, ...raw });
         }
         return result;
     }
-    async health(mediaHealthArgs, filter, trackArgs, { orm, user }) {
+    async health(mediaHealthArgs, filter, trackArgs, { orm, engine, user }) {
         const tracks = await orm.Track.findFilter(filter, [], {}, user);
-        const list = await this.trackService.health(tracks, mediaHealthArgs.healthMedia);
+        const list = await engine.track.health(tracks, mediaHealthArgs.healthMedia);
         const result = [];
         for (const item of list) {
             result.push({
-                track: await this.transform.trackBase(orm, item.track, trackArgs, user),
+                track: await engine.transform.trackBase(orm, item.track, trackArgs, user),
                 health: item.health
             });
         }
         return result;
     }
-    async rename(args, { orm }) {
+    async rename(args, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(args.id);
-        return await this.ioService.renameTrack(args.id, args.name, track.root.idOrFail());
+        return await engine.io.renameTrack(args.id, args.name, track.root.idOrFail());
     }
-    async move(args, { orm }) {
+    async move(args, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(args.folderID);
-        return await this.ioService.moveTracks(args.ids, args.folderID, folder.root.idOrFail());
+        return await engine.io.moveTracks(args.ids, args.folderID, folder.root.idOrFail());
     }
-    async remove(id, { orm }) {
+    async remove(id, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(id);
-        return await this.ioService.removeTrack(id, track.root.idOrFail());
+        return await engine.io.removeTrack(id, track.root.idOrFail());
     }
-    async fix(args, { orm }) {
+    async fix(args, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(args.id);
-        return await this.ioService.fixTrack(args.id, args.fixID, track.root.idOrFail());
+        return await engine.io.fixTrack(args.id, args.fixID, track.root.idOrFail());
     }
-    async rawTagSet(args, { orm }) {
+    async rawTagSet(args, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(args.id);
-        return await this.ioService.writeRawTag(args.id, args.tag, track.root.idOrFail());
+        return await engine.io.writeRawTag(args.id, args.tag, track.root.idOrFail());
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", track_service_1.TrackService)
-], TrackController.prototype, "trackService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", io_service_1.IoService)
-], TrackController.prototype, "ioService", void 0);
 __decorate([
     rest_1.Get('/id', () => track_model_1.Track, { description: 'Get a Track by Id', summary: 'Get Track' }),
     __param(0, rest_1.QueryParam('id', { description: 'Track Id', isID: true })),
@@ -198,7 +186,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "rawTagSet", null);
 TrackController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/track', { tags: ['Track'], roles: [enums_1.UserRole.stream] })
 ], TrackController);
 exports.TrackController = TrackController;

@@ -23,7 +23,7 @@ __decorate([
 ], SessionFilterArgs.prototype, "ids", void 0);
 __decorate([
     decorators_1.ObjField(() => Number, { nullable: true, description: 'filter by session timestamp', min: 0, example: example_consts_1.examples.timestamp }),
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     __metadata("design:type", Number)
 ], SessionFilterArgs.prototype, "since", void 0);
 __decorate([
@@ -38,12 +38,12 @@ __decorate([
 ], SessionFilterArgs.prototype, "agent", void 0);
 __decorate([
     decorators_1.ObjField(() => Number, { nullable: true, description: 'filter by since expiry date', min: 0, example: example_consts_1.examples.timestamp }),
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     __metadata("design:type", Number)
 ], SessionFilterArgs.prototype, "expiresFrom", void 0);
 __decorate([
     decorators_1.ObjField(() => Number, { nullable: true, description: 'filter by to expiry date', min: 0, example: example_consts_1.examples.timestamp }),
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     __metadata("design:type", Number)
 ], SessionFilterArgs.prototype, "expiresTo", void 0);
 __decorate([
@@ -62,8 +62,13 @@ SessionFilterArgsQL = __decorate([
     type_graphql_1.InputType()
 ], SessionFilterArgsQL);
 exports.SessionFilterArgsQL = SessionFilterArgsQL;
-let SessionOrderArgs = class SessionOrderArgs extends base_args_1.DefaultOrderArgs {
+let SessionOrderArgs = class SessionOrderArgs extends base_args_1.OrderByArgs {
 };
+__decorate([
+    type_graphql_1.Field(() => enums_1.SessionOrderFields, { nullable: true }),
+    decorators_1.ObjField(() => enums_1.SessionOrderFields, { nullable: true, description: 'order by field' }),
+    __metadata("design:type", String)
+], SessionOrderArgs.prototype, "orderBy", void 0);
 SessionOrderArgs = __decorate([
     type_graphql_1.InputType(),
     decorators_1.ObjParamsType()

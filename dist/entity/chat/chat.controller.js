@@ -13,40 +13,30 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatController = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const transform_service_1 = require("../../modules/engine/services/transform.service");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const chat_model_1 = require("./chat.model");
-const chat_service_1 = require("./chat.service");
 const chat_args_1 = require("./chat.args");
 let ChatController = class ChatController {
-    async list({ since }) {
-        return this.transform.chats(await this.chatService.get(since));
+    async list({ since }, { engine }) {
+        return engine.transform.chats(await engine.chat.get(since));
     }
-    async create(args, { orm, user }) {
-        await this.chatService.add(args.message, user);
+    async create(args, { engine, user }) {
+        await engine.chat.add(args.message, user);
     }
-    async remove(args, { orm, user }) {
-        const chat = await this.chatService.find(args.time);
+    async remove(args, { engine, user }) {
+        const chat = await engine.chat.find(args.time);
         if (chat && chat.userID === user.id) {
-            await this.chatService.remove(chat);
+            await engine.chat.remove(chat);
         }
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", transform_service_1.TransformService)
-], ChatController.prototype, "transform", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", chat_service_1.ChatService)
-], ChatController.prototype, "chatService", void 0);
-__decorate([
     rest_1.Get('/list', () => [chat_model_1.Chat], { description: 'Get Chat Messages', summary: 'Get Chat' }),
     __param(0, rest_1.QueryParams()),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [chat_args_1.ChatFilterArgs]),
+    __metadata("design:paramtypes", [chat_args_1.ChatFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "list", null);
 __decorate([
@@ -66,7 +56,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "remove", null);
 ChatController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/chat', { tags: ['Chat'], roles: [enums_1.UserRole.stream] })
 ], ChatController);
 exports.ChatController = ChatController;

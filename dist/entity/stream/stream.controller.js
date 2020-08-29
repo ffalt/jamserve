@@ -13,28 +13,20 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StreamController = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const express_error_1 = require("../../modules/rest/builder/express-error");
-const PathParam_1 = require("../../modules/rest/decorators/PathParam");
-const PathParams_1 = require("../../modules/rest/decorators/PathParams");
+const rest_2 = require("../../modules/rest/");
 const stream_args_1 = require("./stream.args");
-const stream_service_1 = require("./stream.service");
 const consts_1 = require("../../types/consts");
 let StreamController = class StreamController {
-    async stream(id, streamArgs, { orm, user }) {
+    async stream(id, streamArgs, { orm, engine, user }) {
         const result = await orm.findInStreamTypes(id);
         if (!result) {
-            return Promise.reject(express_error_1.NotFoundError());
+            return Promise.reject(rest_2.NotFoundError());
         }
-        return this.streamService.streamDBObject(result.obj, result.objType, streamArgs.format, streamArgs.maxBitRate, user);
+        return engine.stream.streamDBObject(result.obj, result.objType, streamArgs.format, streamArgs.maxBitRate, user);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", stream_service_1.StreamService)
-], StreamController.prototype, "streamService", void 0);
 __decorate([
     rest_1.Get('/{id}_{maxBitRate}.{format}', {
         description: 'Stream a media file in a format [Episode, Track]',
@@ -54,15 +46,14 @@ __decorate([
             { route: '/{id}', name: 'by Id', hideParameters: ['format', 'maxBitRate'] }
         ]
     }),
-    __param(0, PathParam_1.PathParam('id', { description: 'Media Id', isID: true })),
-    __param(1, PathParams_1.PathParams()),
+    __param(0, rest_2.PathParam('id', { description: 'Media Id', isID: true })),
+    __param(1, rest_2.PathParams()),
     __param(2, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, stream_args_1.StreamArgs, Object]),
     __metadata("design:returntype", Promise)
 ], StreamController.prototype, "stream", null);
 StreamController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/stream', { tags: ['Stream'], roles: [enums_1.UserRole.stream] })
 ], StreamController);
 exports.StreamController = StreamController;

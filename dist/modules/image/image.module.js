@@ -27,6 +27,7 @@ const random_1 = require("../../utils/random");
 const image_avatar_1 = require("./image.avatar");
 const config_service_1 = require("../engine/services/config.service");
 const typescript_ioc_1 = require("typescript-ioc");
+const enums_1 = require("../../types/enums");
 const log = logger_1.logger('Images');
 sharp_1.default.cache(false);
 sharp_1.default.simd(false);
@@ -106,38 +107,37 @@ let ImageModule = class ImageModule {
     }
     async getImageBufferAs(buffer, format, size) {
         const info = await this.getImageInfoBuffer(buffer);
-        format = format || info.format;
-        const mime = mime_types_1.default.lookup(format);
-        if (!mime) {
+        if (!format && size && !filetype_1.SupportedWriteImageFormat.includes(info.format)) {
+            format = enums_1.ImageFormatType.jpeg;
+        }
+        const destFormat = format || info.format;
+        const contentType = mime_types_1.default.lookup(destFormat);
+        if (!contentType) {
             return Promise.reject(`Unknown Image Format Request: ${format}`);
         }
         if (size) {
             return {
                 buffer: {
                     buffer: await sharp_1.default(buffer, { failOnError: false })
-                        .resize(size, size, {
-                        fit: sharp_1.default.fit.cover
-                    }).toFormat(format)
+                        .resize(size, size, { fit: sharp_1.default.fit.cover })
+                        .toFormat(destFormat)
                         .toBuffer(),
-                    contentType: mime
+                    contentType
                 }
             };
         }
-        if (format && info.format !== format) {
+        if (format && info.format !== destFormat) {
             return {
                 buffer: {
                     buffer: await sharp_1.default(buffer, { failOnError: false })
-                        .toFormat(format)
+                        .toFormat(destFormat)
                         .toBuffer(),
-                    contentType: mime
+                    contentType
                 }
             };
         }
         return {
-            buffer: {
-                buffer,
-                contentType: mime_types_1.default.lookup(info.format) || 'image'
-            }
+            buffer: { buffer, contentType }
         };
     }
     async getExisting(id, size, format) {

@@ -12,9 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DownloadService = void 0;
 const path_1 = __importDefault(require("path"));
 const typescript_ioc_1 = require("typescript-ioc");
+const rest_1 = require("../../modules/rest");
 const compress_list_stream_1 = require("../../utils/compress-list-stream");
 const compress_folder_stream_1 = require("../../utils/compress-folder-stream");
-const express_error_1 = require("../../modules/rest/builder/express-error");
 const enums_1 = require("../../types/enums");
 let DownloadService = class DownloadService {
     async downloadEpisode(episode, format) {
@@ -55,7 +55,7 @@ let DownloadService = class DownloadService {
     async downloadPlaylist(playlist, format, user) {
         const userID = await playlist.user.id();
         if (userID !== user.id && !playlist.isPublic) {
-            return Promise.reject(express_error_1.UnauthError());
+            return Promise.reject(rest_1.UnauthError());
         }
         const entries = await playlist.entries.getItems();
         const fileList = [];

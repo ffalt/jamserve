@@ -9,16 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrderHelper = exports.PaginatedResponse = exports.Index = exports.IndexGroup = exports.Base = void 0;
+exports.dateOrUndefined = exports.OrderHelper = exports.PaginatedResponse = exports.Index = exports.IndexGroup = exports.Base = void 0;
 const type_graphql_1 = require("type-graphql");
-const uuid_1 = require("uuid");
 const orm_1 = require("../../modules/orm");
 let Base = class Base {
-    constructor() {
-        this.id = uuid_1.v4();
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-    }
 };
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.ID),
@@ -97,6 +91,16 @@ class OrderHelper {
     static direction(args) {
         return (args === null || args === void 0 ? void 0 : args.orderDesc) ? 'DESC' : 'ASC';
     }
+    static inverse(order) {
+        return order === 'ASC' ? 'DESC' : 'ASC';
+    }
 }
 exports.OrderHelper = OrderHelper;
+function dateOrUndefined(timestamp) {
+    if (timestamp === undefined || timestamp === null || timestamp === 0) {
+        return undefined;
+    }
+    return new Date(timestamp);
+}
+exports.dateOrUndefined = dateOrUndefined;
 //# sourceMappingURL=base.js.map

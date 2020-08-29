@@ -16,40 +16,31 @@ exports.AdminController = void 0;
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const admin_1 = require("./admin");
-const typescript_ioc_1 = require("typescript-ioc");
-const settings_service_1 = require("../settings/settings.service");
-const io_service_1 = require("../../modules/engine/services/io.service");
 const admin_args_1 = require("./admin.args");
 let AdminController = class AdminController {
-    async settings() {
-        return this.settingsService.get();
+    async settings({ engine }) {
+        return engine.settings.get();
     }
-    async queueId(id) {
-        return this.ioService.getAdminChangeQueueInfoStatus(id);
+    async queueId(id, { engine }) {
+        return engine.io.getAdminChangeQueueInfoStatus(id);
     }
-    async settingsUpdate(args, { orm }) {
-        await this.settingsService.updateSettings(orm, args);
+    async settingsUpdate(args, { engine, orm }) {
+        await engine.settings.updateSettings(orm, args);
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", settings_service_1.SettingsService)
-], AdminController.prototype, "settingsService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", io_service_1.IoService)
-], AdminController.prototype, "ioService", void 0);
-__decorate([
     rest_1.Get('/settings/get', () => admin_1.AdminSettings, { description: 'Get the Server Admin Settings', summary: 'Get Settings' }),
+    __param(0, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "settings", null);
 __decorate([
     rest_1.Get('/queue/id', () => admin_1.AdminChangeQueueInfo, { description: 'Get Queue Information for Admin Change Tasks', summary: 'Get Queue Info' }),
     __param(0, rest_1.QueryParam('id', { description: 'Queue Task Id', isID: true })),
+    __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "queueId", null);
 __decorate([
@@ -61,7 +52,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "settingsUpdate", null);
 AdminController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/admin', { tags: ['Administration'], roles: [enums_1.UserRole.admin] })
 ], AdminController);
 exports.AdminController = AdminController;

@@ -27,7 +27,7 @@ class EpisodeRepository extends base_repository_1.BaseRepository {
         }
         return [];
     }
-    async buildFilter(filter, user) {
+    async buildFilter(filter, _) {
         return filter ? orm_1.QHelper.buildQuery([
             { id: filter.ids },
             { name: orm_1.QHelper.like(filter.query) },

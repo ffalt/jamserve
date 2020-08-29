@@ -13,7 +13,7 @@ class ArtworkRepository extends base_repository_1.BaseRepository {
     buildOrder(order) {
         return this.buildDefaultOrder(order);
     }
-    async buildFilter(filter, user) {
+    async buildFilter(filter, _) {
         if (!filter) {
             return {};
         }
@@ -27,7 +27,7 @@ class ArtworkRepository extends base_repository_1.BaseRepository {
         if (filter === null || filter === void 0 ? void 0 : filter.folderIDs) {
             folderIDs = folderIDs.concat(filter.folderIDs);
         }
-        const result = orm_1.QHelper.buildQuery([
+        return orm_1.QHelper.buildQuery([
             { id: filter.ids },
             { name: orm_1.QHelper.like(filter.query) },
             { name: orm_1.QHelper.eq(filter.name) },
@@ -43,7 +43,6 @@ class ArtworkRepository extends base_repository_1.BaseRepository {
             { height: orm_1.QHelper.lte(filter.heightTo) },
             ...orm_1.QHelper.inStringArray('types', filter.types)
         ]);
-        return result;
     }
 }
 exports.ArtworkRepository = ArtworkRepository;

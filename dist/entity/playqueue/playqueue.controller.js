@@ -14,34 +14,23 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayQueueController = void 0;
 const playqueue_model_1 = require("./playqueue.model");
-const typescript_ioc_1 = require("typescript-ioc");
-const transform_service_1 = require("../../modules/engine/services/transform.service");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const track_args_1 = require("../track/track.args");
 const playqueue_args_1 = require("./playqueue.args");
 const episode_args_1 = require("../episode/episode.args");
-const playqueue_service_1 = require("./playqueue.service");
 let PlayQueueController = class PlayQueueController {
-    async get(playqueueArgs, trackArgs, episodeArgs, { orm, user }) {
-        return this.transform.playQueue(orm, await this.playQueueService.get(orm, user), playqueueArgs, trackArgs, episodeArgs, user);
+    async get(playqueueArgs, trackArgs, episodeArgs, { orm, engine, user }) {
+        return engine.transform.playQueue(orm, await engine.playQueue.get(orm, user), playqueueArgs, trackArgs, episodeArgs, user);
     }
-    async set(args, { req, orm, user }) {
+    async set(args, { req, engine, orm, user }) {
         var _a;
-        await this.playQueueService.set(orm, args, user, ((_a = req.session) === null || _a === void 0 ? void 0 : _a.client) || 'unknown');
+        await engine.playQueue.set(orm, args, user, ((_a = req.session) === null || _a === void 0 ? void 0 : _a.client) || 'unknown');
     }
-    async clear({ orm, user }) {
-        await this.playQueueService.clear(orm, user);
+    async clear({ orm, engine, user }) {
+        await engine.playQueue.clear(orm, user);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", transform_service_1.TransformService)
-], PlayQueueController.prototype, "transform", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", playqueue_service_1.PlayQueueService)
-], PlayQueueController.prototype, "playQueueService", void 0);
 __decorate([
     rest_1.Get('/get', () => playqueue_model_1.PlayQueue, { description: 'Get a PlayQueue for the calling user', summary: 'Get PlayQueue' }),
     __param(0, rest_1.QueryParams()),
@@ -70,7 +59,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PlayQueueController.prototype, "clear", null);
 PlayQueueController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/playqueue', { tags: ['PlayQueue'], roles: [enums_1.UserRole.stream] })
 ], PlayQueueController);
 exports.PlayQueueController = PlayQueueController;

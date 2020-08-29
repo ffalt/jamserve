@@ -58,7 +58,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Album.prototype, "year", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Album.prototype, "duration", void 0);
@@ -79,17 +79,17 @@ __decorate([
 ], Album.prototype, "genres", void 0);
 __decorate([
     type_graphql_1.Field(() => [track_1.TrackQL]),
-    orm_1.OneToMany(() => track_1.Track, track => track.album, { orderBy: { tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC, title: orm_1.QueryOrder.ASC } } }),
+    orm_1.OneToMany(() => track_1.Track, track => track.album, { order: [{ orderBy: enums_1.TrackOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Album.prototype, "tracks", void 0);
 __decorate([
     type_graphql_1.Field(() => [root_1.RootQL]),
-    orm_1.ManyToMany(() => root_1.Root, root => root.albums, { owner: true, orderBy: { name: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => root_1.Root, root => root.albums, { owner: true, order: [{ orderBy: enums_1.DefaultOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Album.prototype, "roots", void 0);
 __decorate([
     type_graphql_1.Field(() => [folder_1.FolderQL]),
-    orm_1.ManyToMany(() => folder_1.Folder, folder => folder.albums, { owner: true, orderBy: { path: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => folder_1.Folder, folder => folder.albums, { owner: true, order: [{ orderBy: enums_1.FolderOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Album.prototype, "folders", void 0);
 __decorate([

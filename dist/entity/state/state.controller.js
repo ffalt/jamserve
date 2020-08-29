@@ -13,47 +13,36 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StateController = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const transform_service_1 = require("../../modules/engine/services/transform.service");
 const state_model_1 = require("./state.model");
 const state_args_1 = require("./state.args");
-const state_service_1 = require("./state.service");
 const description = '[Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track]';
 let StateController = class StateController {
-    async state(id, { orm, user }) {
+    async state(id, { orm, engine, user }) {
         const result = await orm.findInStateTypes(id);
         if (!result) {
             return Promise.reject(rest_1.NotFoundError());
         }
-        return this.transform.state(orm, id, result.objType, user.id);
+        return engine.transform.state(orm, id, result.objType, user.id);
     }
-    async states(args, { orm, user }) {
+    async states(args, { orm, engine, user }) {
         const states = { states: [] };
         for (const id of args.ids) {
             const result = await orm.findInStateTypes(id);
             if (result) {
-                states.states.push({ id, state: await this.transform.state(orm, id, result.objType, user.id) });
+                states.states.push({ id, state: await engine.transform.state(orm, id, result.objType, user.id) });
             }
         }
         return states;
     }
-    async fav(args, { orm, user }) {
-        return this.stateService.fav(orm, args.id, args.remove, user);
+    async fav(args, { orm, engine, user }) {
+        return await engine.transform.stateBase(orm, await engine.state.fav(orm, args.id, args.remove, user));
     }
-    async rate(args, { orm, user }) {
-        return this.stateService.rate(orm, args.id, args.rating, user);
+    async rate(args, { orm, engine, user }) {
+        return await engine.transform.stateBase(orm, await engine.state.rate(orm, args.id, args.rating, user));
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", state_service_1.StateService)
-], StateController.prototype, "stateService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", transform_service_1.TransformService)
-], StateController.prototype, "transform", void 0);
 __decorate([
     rest_1.Get('/id', () => state_model_1.State, { description: `Get User State (fav/rate/etc) ${description}`, summary: 'Get State' }),
     __param(0, rest_1.QueryParam('id', { description: 'Object Id', isID: true })),
@@ -87,7 +76,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], StateController.prototype, "rate", null);
 StateController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/state', { tags: ['State'], roles: [enums_1.UserRole.stream] })
 ], StateController);
 exports.StateController = StateController;

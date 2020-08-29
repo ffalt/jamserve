@@ -26,7 +26,7 @@ const waveform_service_1 = require("../../../entity/waveform/waveform.service");
 const typescript_ioc_1 = require("typescript-ioc");
 const logger_1 = require("../../../utils/logger");
 const user_service_1 = require("../../../entity/user/user.service");
-const session_service_1 = require("../../../entity/settings/session.service");
+const session_service_1 = require("../../../entity/session/session.service");
 const podcast_service_1 = require("../../../entity/podcast/podcast.service");
 const episode_service_1 = require("../../../entity/episode/episode.service");
 const genre_service_1 = require("../../../entity/genre/genre.service");
@@ -37,51 +37,66 @@ const state_service_1 = require("../../../entity/state/state.service");
 const nowplaying_service_1 = require("../../../entity/nowplaying/nowplaying.service");
 const playqueue_service_1 = require("../../../entity/playqueue/playqueue.service");
 const chat_service_1 = require("../../../entity/chat/chat.service");
+const track_service_1 = require("../../../entity/track/track.service");
+const artwork_service_1 = require("../../../entity/artwork/artwork.service");
+const download_service_1 = require("../../../entity/download/download.service");
+const folder_service_1 = require("../../../entity/folder/folder.service");
+const image_service_1 = require("../../../entity/image/image.service");
+const playlist_service_1 = require("../../../entity/playlist/playlist.service");
+const stream_service_1 = require("../../../entity/stream/stream.service");
+const transform_service_1 = require("./transform.service");
+const bookmark_service_1 = require("../../../entity/bookmark/bookmark.service");
 const log = logger_1.logger('Engine');
 let EngineService = class EngineService {
     constructor() {
-        this.ioService.registerAfterRefresh(() => this.afterRefresh());
+        this.io.registerAfterRefresh(() => this.afterRefresh());
     }
     async afterRefresh() {
     }
     resolveCachePaths() {
         return [
-            this.configService.getDataPath(['cache', 'waveforms']),
-            this.configService.getDataPath(['cache', 'uploads']),
-            this.configService.getDataPath(['cache', 'images']),
-            this.configService.getDataPath(['cache', 'transcode']),
-            this.configService.getDataPath(['images']),
-            this.configService.getDataPath(['podcasts'])
+            this.config.getDataPath(['cache', 'waveforms']),
+            this.config.getDataPath(['cache', 'uploads']),
+            this.config.getDataPath(['cache', 'images']),
+            this.config.getDataPath(['cache', 'transcode']),
+            this.config.getDataPath(['images']),
+            this.config.getDataPath(['podcasts'])
         ];
     }
     async checkRescan(orm) {
-        const version = await this.settingsService.settingsVersion(orm);
+        const version = await this.settings.settingsVersion(orm);
         const forceRescan = !!version && version !== version_1.JAMSERVE_VERSION;
         if (forceRescan) {
             log.info(`Updating from version ${version || '-'}`);
         }
-        if (forceRescan || this.settingsService.settings.library.scanAtStart) {
+        if (forceRescan || this.settings.settings.library.scanAtStart) {
             log.info(`Starting rescan`);
-            this.ioService.refresh(orm).then(() => {
-                return forceRescan ? this.settingsService.saveSettings(orm) : undefined;
+            this.io.refresh(orm).then(() => {
+                return forceRescan ? this.settings.saveSettings(orm) : undefined;
             }).catch(e => {
                 log.error('Error on startup scanning', e);
             });
         }
     }
     async checkDataPaths() {
-        await fs_extra_1.default.ensureDir(path_1.default.resolve(this.configService.env.paths.data));
+        await fs_extra_1.default.ensureDir(path_1.default.resolve(this.config.env.paths.data));
         const paths = this.resolveCachePaths();
         for (const p of paths) {
             await fs_extra_1.default.ensureDir(p);
         }
     }
-    async start() {
+    async init() {
         log.debug(`check data paths`);
         await this.checkDataPaths();
+        log.debug(`init orm`);
+        await this.orm.init(this.config);
+    }
+    async start() {
         log.debug(`start orm`);
-        await this.orm.start(this.configService.env.paths.data);
+        await this.orm.start();
         const orm = this.orm.fork();
+        log.debug(`load settings`);
+        await this.settings.loadSettings(orm);
         log.debug(`check first start`);
         await this.checkFirstStart(orm);
         log.debug(`check for rescan`);
@@ -115,91 +130,127 @@ let EngineService = class EngineService {
         }
     }
     async checkFirstStart(orm) {
-        if (!this.configService.firstStart) {
+        if (!this.config.firstStart) {
             return;
         }
-        if (this.configService.firstStart.adminUser) {
+        if (this.config.firstStart.adminUser) {
             const count = await orm.User.count();
             if (count === 0) {
-                await this.buildAdminUser(orm, this.configService.firstStart.adminUser);
+                await this.buildAdminUser(orm, this.config.firstStart.adminUser);
             }
         }
-        if (this.configService.firstStart.roots) {
+        if (this.config.firstStart.roots) {
             const count = await orm.Root.count();
             if (count === 0) {
-                await this.buildRoots(orm, this.configService.firstStart.roots);
+                await this.buildRoots(orm, this.config.firstStart.roots);
             }
         }
     }
 };
 __decorate([
     typescript_ioc_1.Inject,
+    __metadata("design:type", artwork_service_1.ArtworkService)
+], EngineService.prototype, "artwork", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", audio_module_1.AudioModule)
+], EngineService.prototype, "audio", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", chat_service_1.ChatService)
+], EngineService.prototype, "chat", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
     __metadata("design:type", config_service_1.ConfigService)
-], EngineService.prototype, "configService", void 0);
+], EngineService.prototype, "config", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", download_service_1.DownloadService)
+], EngineService.prototype, "download", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", episode_service_1.EpisodeService)
+], EngineService.prototype, "episode", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", folder_service_1.FolderService)
+], EngineService.prototype, "folder", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", genre_service_1.GenreService)
+], EngineService.prototype, "genre", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", image_service_1.ImageService)
+], EngineService.prototype, "image", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", io_service_1.IoService)
+], EngineService.prototype, "io", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", metadata_service_1.MetaDataService)
+], EngineService.prototype, "metadata", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", nowplaying_service_1.NowPlayingService)
+], EngineService.prototype, "nowPlaying", void 0);
 __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", orm_service_1.OrmService)
 ], EngineService.prototype, "orm", void 0);
 __decorate([
     typescript_ioc_1.Inject,
-    __metadata("design:type", settings_service_1.SettingsService)
-], EngineService.prototype, "settingsService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", state_service_1.StateService)
-], EngineService.prototype, "stateService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", io_service_1.IoService)
-], EngineService.prototype, "ioService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", audio_module_1.AudioModule)
-], EngineService.prototype, "audioModule", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", waveform_service_1.WaveformService)
-], EngineService.prototype, "waveformService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", metadata_service_1.MetaDataService)
-], EngineService.prototype, "metadataService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", user_service_1.UserService)
-], EngineService.prototype, "userService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", nowplaying_service_1.NowPlayingService)
-], EngineService.prototype, "nowPlayingService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", session_service_1.SessionService)
-], EngineService.prototype, "sessionService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", podcast_service_1.PodcastService)
-], EngineService.prototype, "podcastService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", episode_service_1.EpisodeService)
-], EngineService.prototype, "episodeService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", genre_service_1.GenreService)
-], EngineService.prototype, "genreService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", stats_service_1.StatsService)
-], EngineService.prototype, "statsService", void 0);
+    __metadata("design:type", playlist_service_1.PlaylistService)
+], EngineService.prototype, "playlist", void 0);
 __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", playqueue_service_1.PlayQueueService)
-], EngineService.prototype, "playQueueService", void 0);
+], EngineService.prototype, "playQueue", void 0);
 __decorate([
     typescript_ioc_1.Inject,
-    __metadata("design:type", chat_service_1.ChatService)
-], EngineService.prototype, "chatService", void 0);
+    __metadata("design:type", podcast_service_1.PodcastService)
+], EngineService.prototype, "podcast", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", session_service_1.SessionService)
+], EngineService.prototype, "session", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", settings_service_1.SettingsService)
+], EngineService.prototype, "settings", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", state_service_1.StateService)
+], EngineService.prototype, "state", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", stats_service_1.StatsService)
+], EngineService.prototype, "stats", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", stream_service_1.StreamService)
+], EngineService.prototype, "stream", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", track_service_1.TrackService)
+], EngineService.prototype, "track", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", transform_service_1.TransformService)
+], EngineService.prototype, "transform", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", user_service_1.UserService)
+], EngineService.prototype, "user", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", waveform_service_1.WaveformService)
+], EngineService.prototype, "waveform", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", bookmark_service_1.BookmarkService)
+], EngineService.prototype, "bookmark", void 0);
 EngineService = __decorate([
     typescript_ioc_1.InRequestScope,
     __metadata("design:paramtypes", [])

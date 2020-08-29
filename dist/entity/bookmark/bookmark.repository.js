@@ -17,6 +17,11 @@ class BookmarkRepository extends base_repository_1.BaseRepository {
                 return [['createdAt', direction]];
             case enums_1.BookmarkOrderFields.updated:
                 return [['updatedAt', direction]];
+            case enums_1.BookmarkOrderFields.media:
+                return [
+                    ['trackORM', 'path', direction],
+                    ['episodeORM', 'path', direction]
+                ];
             case enums_1.BookmarkOrderFields.default:
             case enums_1.BookmarkOrderFields.position:
                 return [['position', direction]];

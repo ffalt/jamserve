@@ -27,6 +27,7 @@ const tag_model_1 = require("../tag/tag.model");
 const track_model_1 = require("./track.model");
 const playqueue_entry_1 = require("../playqueueentry/playqueue-entry");
 const playlist_entry_1 = require("../playlistentry/playlist-entry");
+const enums_1 = require("../../types/enums");
 let Track = class Track extends base_1.Base {
     constructor() {
         super(...arguments);
@@ -58,15 +59,15 @@ __decorate([
     __metadata("design:type", String)
 ], Track.prototype, "path", void 0);
 __decorate([
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
-    __metadata("design:type", Number)
+    orm_1.Property(() => orm_1.ORM_DATETIME),
+    __metadata("design:type", Date)
 ], Track.prototype, "statCreated", void 0);
 __decorate([
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
-    __metadata("design:type", Number)
+    orm_1.Property(() => orm_1.ORM_DATETIME),
+    __metadata("design:type", Date)
 ], Track.prototype, "statModified", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    type_graphql_1.Field(() => type_graphql_1.Float),
     orm_1.Property(() => orm_1.ORM_INT),
     __metadata("design:type", Number)
 ], Track.prototype, "fileSize", void 0);
@@ -102,7 +103,7 @@ __decorate([
 ], Track.prototype, "root", void 0);
 __decorate([
     type_graphql_1.Field(() => [bookmark_1.BookmarkQL]),
-    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.track, { orderBy: { position: orm_1.QueryOrder.ASC }, onDelete: 'cascade' }),
+    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.track, { order: [{ orderBy: enums_1.BookmarkOrderFields.default }], onDelete: 'cascade' }),
     __metadata("design:type", orm_1.Collection)
 ], Track.prototype, "bookmarks", void 0);
 __decorate([

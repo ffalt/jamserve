@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayQueueService = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
 const enums_1 = require("../../types/enums");
-const express_error_1 = require("../../modules/rest/builder/express-error");
+const rest_1 = require("../../modules/rest");
 let PlayQueueService = class PlayQueueService {
     async getDuration(media) {
         switch (media.objType) {
@@ -27,14 +27,16 @@ let PlayQueueService = class PlayQueueService {
     async get(orm, user) {
         let queue = await orm.PlayQueue.findOne({ where: { user: user.id } });
         if (!queue) {
-            queue = orm.PlayQueue.create({ user });
+            queue = orm.PlayQueue.create({});
+            await queue.user.set(user);
         }
         return queue;
     }
     async set(orm, args, user, client) {
         let queue = await orm.PlayQueue.findOne({ where: { user: user.id } });
         if (!queue) {
-            queue = orm.PlayQueue.create({ user });
+            queue = orm.PlayQueue.create({});
+            await queue.user.set(user);
         }
         queue.changedBy = client;
         const ids = args.mediaIDs || [];
@@ -42,7 +44,7 @@ let PlayQueueService = class PlayQueueService {
         for (const id of ids) {
             const media = await orm.findInStreamTypes(id);
             if (!media) {
-                return Promise.reject(express_error_1.NotFoundError());
+                return Promise.reject(rest_1.NotFoundError());
             }
             mediaList.push(media);
         }

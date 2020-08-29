@@ -16,18 +16,12 @@ exports.StatsController = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const stats_model_1 = require("./stats.model");
 const stats_filter_1 = require("./stats.filter");
-const typescript_ioc_1 = require("typescript-ioc");
 const enums_1 = require("../../types/enums");
-const stats_service_1 = require("./stats.service");
 let StatsController = class StatsController {
-    async get(filter, { orm }) {
-        return await this.statsService.getStats(orm, filter === null || filter === void 0 ? void 0 : filter.rootID);
+    async get(filter, { orm, engine }) {
+        return await engine.stats.getStats(orm, filter === null || filter === void 0 ? void 0 : filter.rootID);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", stats_service_1.StatsService)
-], StatsController.prototype, "statsService", void 0);
 __decorate([
     decorators_1.Get(() => stats_model_1.Stats, { description: 'Get count Stats for Folders/Tracks/Albums/...', summary: 'Get Stats' }),
     __param(0, decorators_1.QueryParams()),
@@ -37,7 +31,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], StatsController.prototype, "get", null);
 StatsController = __decorate([
-    typescript_ioc_1.InRequestScope,
     decorators_1.Controller('/stats', { tags: ['Various'], roles: [enums_1.UserRole.stream] })
 ], StatsController);
 exports.StatsController = StatsController;

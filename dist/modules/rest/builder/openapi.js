@@ -5,8 +5,7 @@ const version_1 = require("../../engine/rest/version");
 const metadata_1 = require("../metadata");
 const default_value_1 = require("../helpers/default-value");
 const express_error_1 = require("./express-error");
-const uuid_1 = require("uuid");
-exports.exampleID = uuid_1.v4();
+exports.exampleID = 'c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0';
 const SCHEMA_JSON = '#/components/schemas/JSON';
 const SCHEMA_ID = '#/components/schemas/ID';
 class OpenApiBuilder {
@@ -64,7 +63,7 @@ class OpenApiBuilder {
         }
     }
     getResultRef(resultClassValue, name, schemas) {
-        const argumentType = metadata_1.getMetadataStorage().resultTypes.find(it => it.target === resultClassValue);
+        const argumentType = metadata_1.getMetadataStorage().resultType(resultClassValue);
         if (!argumentType) {
             if (resultClassValue === Object) {
                 return SCHEMA_JSON;
@@ -72,69 +71,51 @@ class OpenApiBuilder {
             throw new Error(`Missing ReturnType for method ${name}`);
         }
         if (!schemas[argumentType.name]) {
-            const argumentInstance = new argumentType.target();
-            const properties = {};
-            const required = [];
-            for (const field of argumentType.fields) {
-                field.typeOptions.defaultValue = default_value_1.getDefaultValue(argumentInstance, field.typeOptions, field.name);
-                const typeOptions = field.typeOptions;
-                if (!typeOptions.nullable) {
-                    required.push(field.name);
-                }
-                const type = field.getType();
-                let f = this.buildFieldSchema(type, typeOptions, schemas);
-                if (!f) {
-                    f = { $ref: this.getResultRef(type, argumentType.name, schemas) };
-                }
-                properties[field.name] = typeOptions.array ? { type: 'array', items: f } : f;
-            }
-            schemas[argumentType.name] = {
-                type: 'object',
-                properties,
-                required: required.length > 0 ? required : undefined
-            };
-            const superClass = Object.getPrototypeOf(argumentType.target);
-            if (superClass.prototype !== undefined) {
-                schemas[argumentType.name] = {
-                    allOf: [
-                        { $ref: this.getResultRef(superClass, argumentType.name, schemas) },
-                        {
-                            properties,
-                            required: required.length > 0 ? required : undefined
-                        }
-                    ]
-                };
-            }
+            this.buildRef(argumentType, schemas, this.getResultRef.bind(this));
         }
         return '#/components/schemas/' + argumentType.name;
     }
-    getParamRef(paramClass, schemas) {
-        const argumentType = metadata_1.getMetadataStorage().argumentTypes.find(it => it.target === paramClass());
+    buildRef(argumentType, schemas, recursiveBuild) {
+        const argumentInstance = new argumentType.target();
+        const properties = {};
+        const required = [];
+        for (const field of argumentType.fields) {
+            field.typeOptions.defaultValue = default_value_1.getDefaultValue(argumentInstance, field.typeOptions, field.name);
+            const typeOptions = field.typeOptions;
+            if (!typeOptions.nullable) {
+                required.push(field.name);
+            }
+            const type = field.getType();
+            let f = this.buildFieldSchema(type, typeOptions, schemas);
+            if (!f) {
+                f = { $ref: recursiveBuild(type, argumentType.name, schemas) };
+            }
+            properties[field.name] = typeOptions.array ? { type: 'array', items: f } : f;
+        }
+        schemas[argumentType.name] = {
+            type: 'object',
+            properties,
+            required: required.length > 0 ? required : undefined
+        };
+        const superClass = Object.getPrototypeOf(argumentType.target);
+        if (superClass.prototype !== undefined) {
+            const allOf = [{ $ref: recursiveBuild(superClass, argumentType.name, schemas) }];
+            if (Object.keys(properties).length > 0) {
+                allOf.push({
+                    properties,
+                    required: required.length > 0 ? required : undefined
+                });
+            }
+            schemas[argumentType.name] = { allOf };
+        }
+    }
+    getParamRef(paramClass, name, schemas) {
+        const argumentType = metadata_1.getMetadataStorage().argumentType(paramClass);
         if (!argumentType) {
             return SCHEMA_JSON;
         }
         if (!schemas[argumentType.name]) {
-            const argumentInstance = new argumentType.target();
-            const properties = {};
-            const required = [];
-            for (const field of argumentType.fields) {
-                field.typeOptions.defaultValue = default_value_1.getDefaultValue(argumentInstance, field.typeOptions, field.name);
-                const typeOptions = field.typeOptions;
-                if (!typeOptions.nullable) {
-                    required.push(field.name);
-                }
-                const type = field.getType();
-                let f = this.buildFieldSchema(type, typeOptions, schemas);
-                if (!f) {
-                    f = { $ref: this.getParamRef(field.getType, schemas) };
-                }
-                properties[field.name] = typeOptions.array ? { type: 'array', items: f } : f;
-            }
-            schemas[argumentType.name] = {
-                type: 'object',
-                properties,
-                required: required.length > 0 ? required : undefined
-            };
+            this.buildRef(argumentType, schemas, this.getParamRef.bind(this));
         }
         return '#/components/schemas/' + argumentType.name;
     }
@@ -281,7 +262,7 @@ class OpenApiBuilder {
         let isJson = true;
         for (const param of params) {
             if (param.kind === 'args' && param.mode === 'body') {
-                refs.push({ $ref: this.getParamRef(param.getType, schemas) });
+                refs.push({ $ref: this.getParamRef(param.getType(), param.methodName, schemas) });
             }
             else if (param.kind === 'arg' && param.mode === 'body') {
                 const schema = this.buildParameterSchema(param, schemas);

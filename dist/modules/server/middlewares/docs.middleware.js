@@ -17,14 +17,11 @@ const typescript_ioc_1 = require("typescript-ioc");
 const express_1 = __importDefault(require("express"));
 const apollo_middleware_1 = require("./apollo.middleware");
 const rest_middleware_1 = require("./rest.middleware");
-const openapi_1 = require("../../rest/builder/openapi");
+const rest_1 = require("../../rest");
 const path_1 = __importDefault(require("path"));
-const angular_1 = require("../../rest/builder/angular");
-const express_responder_1 = require("../../rest/builder/express-responder");
-const axios_1 = require("../../rest/builder/axios");
 let DocsMiddleware = class DocsMiddleware {
     getOpenApiSchema(extended = true) {
-        const openapi = openapi_1.buildOpenApi(extended);
+        const openapi = rest_1.buildOpenApi(extended);
         return JSON.stringify(openapi, null, '\t');
     }
     async middleware() {
@@ -42,14 +39,14 @@ let DocsMiddleware = class DocsMiddleware {
             res.send(this.getOpenApiSchema());
         });
         api.get('/angular-client.zip', async (req, res) => {
-            const result = await angular_1.buildAngularClientZip();
+            const result = await rest_1.buildAngularClientZip();
             res.type('application/zip');
-            express_responder_1.ApiBaseResponder.sendBinary(req, res, result);
+            rest_1.ApiBaseResponder.sendBinary(req, res, result);
         });
         api.get('/axios-client.zip', async (req, res) => {
-            const result = await axios_1.buildAxiosClientZip();
+            const result = await rest_1.buildAxiosClientZip();
             res.type('application/zip');
-            express_responder_1.ApiBaseResponder.sendBinary(req, res, result);
+            rest_1.ApiBaseResponder.sendBinary(req, res, result);
         });
         api.get('/redoc.standalone.min.js', (req, res) => {
             res.type('text/javascript');

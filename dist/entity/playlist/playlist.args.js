@@ -78,7 +78,7 @@ __decorate([
     __metadata("design:type", Array)
 ], PlaylistFilterArgs.prototype, "ids", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     decorators_1.ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: example_consts_1.examples.timestamp }),
     __metadata("design:type", Number)
 ], PlaylistFilterArgs.prototype, "since", void 0);
@@ -93,12 +93,12 @@ __decorate([
     __metadata("design:type", Boolean)
 ], PlaylistFilterArgs.prototype, "isPublic", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     decorators_1.ObjField({ nullable: true, description: 'filter by since Playlist duration', min: 0, example: example_consts_1.examples.timestamp }),
     __metadata("design:type", Number)
 ], PlaylistFilterArgs.prototype, "durationFrom", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     decorators_1.ObjField({ nullable: true, description: 'filter by until Playlist duration', min: 0, example: example_consts_1.examples.timestamp }),
     __metadata("design:type", Number)
 ], PlaylistFilterArgs.prototype, "durationTo", void 0);

@@ -16,6 +16,10 @@ const type_graphql_1 = require("type-graphql");
 const base_1 = require("../base/base");
 const orm_1 = require("../../modules/orm");
 let State = class State extends base_1.Base {
+    constructor() {
+        super(...arguments);
+        this.user = new orm_1.Reference(this);
+    }
 };
 __decorate([
     orm_1.Property(() => orm_1.ORM_ID),
@@ -26,13 +30,13 @@ __decorate([
     __metadata("design:type", String)
 ], State.prototype, "destType", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP, { nullable: true }),
-    __metadata("design:type", Number)
+    type_graphql_1.Field(() => Date, { nullable: true }),
+    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    __metadata("design:type", Date)
 ], State.prototype, "faved", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
+    type_graphql_1.Field(() => Date, { nullable: true }),
+    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
     __metadata("design:type", Number)
 ], State.prototype, "played", void 0);
 __decorate([
@@ -41,13 +45,13 @@ __decorate([
     __metadata("design:type", Number)
 ], State.prototype, "rated", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP, { nullable: true }),
-    __metadata("design:type", Number)
+    type_graphql_1.Field(() => Date, { nullable: true }),
+    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    __metadata("design:type", Date)
 ], State.prototype, "lastPlayed", void 0);
 __decorate([
     orm_1.ManyToOne(() => user_1.User, user => user.states),
-    __metadata("design:type", user_1.User)
+    __metadata("design:type", orm_1.Reference)
 ], State.prototype, "user", void 0);
 State = __decorate([
     type_graphql_1.ObjectType(),

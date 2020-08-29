@@ -17,7 +17,6 @@ const ping_controller_1 = require("../../../entity/ping/ping.controller");
 const chat_controller_1 = require("../../../entity/chat/chat.controller");
 const user_controller_1 = require("../../../entity/user/user.controller");
 const playqueue_controller_1 = require("../../../entity/playqueue/playqueue.controller");
-const base_controller_1 = require("../../../entity/base/base.controller");
 const playlist_controller_1 = require("../../../entity/playlist/playlist.controller");
 const stats_controller_1 = require("../../../entity/stats/stats.controller");
 const genre_controller_1 = require("../../../entity/genre/genre.controller");
@@ -39,7 +38,6 @@ function RestControllers() {
         artwork_controller_1.ArtworkController,
         auth_controller_1.AuthController,
         autocomplete_controller_1.AutocompleteController,
-        base_controller_1.BaseController,
         bookmark_controller_1.BookmarkController,
         chat_controller_1.ChatController,
         download_controller_1.DownloadController,

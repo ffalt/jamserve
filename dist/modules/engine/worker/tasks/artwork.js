@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var ArtworkWorker_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArtworkWorker = exports.FolderTypeImageName = void 0;
 const fs_extra_1 = __importDefault(require("fs-extra"));
@@ -24,14 +25,14 @@ exports.FolderTypeImageName = {
     multialbum: 'cover',
     extras: 'folder'
 };
-let ArtworkWorker = class ArtworkWorker extends base_1.BaseWorker {
+let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends base_1.BaseWorker {
     async updateArtworkImageFile(artwork) {
         const destFile = path_1.default.join(artwork.path, artwork.name);
         const stat = await fs_extra_1.default.stat(destFile);
         const info = await this.imageModule.getImageInfo(destFile);
         artwork.types = artwork_type_1.artWorkImageNameToType(artwork.name);
-        artwork.statCreated = stat.ctime.valueOf();
-        artwork.statModified = stat.mtime.valueOf();
+        artwork.statCreated = stat.ctime;
+        artwork.statModified = stat.mtime;
         artwork.fileSize = stat.size;
         artwork.format = info === null || info === void 0 ? void 0 : info.format;
         artwork.height = info === null || info === void 0 ? void 0 : info.height;
@@ -48,7 +49,7 @@ let ArtworkWorker = class ArtworkWorker extends base_1.BaseWorker {
         changes.artworks.updated.add(artwork);
         changes.folders.updated.add(await artwork.folder.get());
     }
-    getArtworkName(folder, types) {
+    static getArtworkName(folder, types) {
         let name = types.sort((a, b) => a.localeCompare(b)).join('-');
         if (!name) {
             name = exports.FolderTypeImageName[folder.folderType];
@@ -56,7 +57,7 @@ let ArtworkWorker = class ArtworkWorker extends base_1.BaseWorker {
         return name;
     }
     async getArtworkFilenameUnique(folder, importFilename, types) {
-        const name = this.getArtworkName(folder, types);
+        const name = ArtworkWorker_1.getArtworkName(folder, types);
         let suffix = fs_utils_1.fileSuffix(importFilename);
         if (suffix.length === 0) {
             const info = await this.imageModule.getImageInfo(importFilename);
@@ -174,7 +175,7 @@ let ArtworkWorker = class ArtworkWorker extends base_1.BaseWorker {
         }
     }
 };
-ArtworkWorker = __decorate([
+ArtworkWorker = ArtworkWorker_1 = __decorate([
     typescript_ioc_1.InRequestScope
 ], ArtworkWorker);
 exports.ArtworkWorker = ArtworkWorker;

@@ -56,7 +56,7 @@ let MetaDataService = class MetaDataService {
             return JSON.parse(result.data);
         }
         const data = await generate();
-        await this.addToStore(orm, name, dataType, data);
+        await this.addToStore(orm, name, dataType, JSON.stringify(data));
         return data;
     }
     async musicbrainzSearch(orm, type, query) {

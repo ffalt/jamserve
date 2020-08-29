@@ -22,6 +22,7 @@ const queue_1 = require("../../utils/queue");
 const track_rule_1 = require("../health/track.rule");
 const typescript_ioc_1 = require("typescript-ioc");
 const folder_service_1 = require("../folder/folder.service");
+const fs_utils_1 = require("../../utils/fs-utils");
 const log = logger_1.logger('TrackService');
 let TrackService = class TrackService {
     constructor() {
@@ -62,6 +63,12 @@ let TrackService = class TrackService {
         }
         const folder = await track.folder.get();
         if (folder) {
+            const name = fs_utils_1.basenameStripExt(track.fileName);
+            const artworks = await folder.artworks.getItems();
+            const artwork = artworks.find(a => a.name.startsWith(name));
+            if (artwork) {
+                return this.imageModule.get(artwork.id, path_1.default.join(artwork.path, artwork.name), size, format);
+            }
             return this.folderService.getImage(orm, folder, size, format);
         }
     }

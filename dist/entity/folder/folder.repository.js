@@ -20,6 +20,8 @@ class FolderRepository extends base_repository_1.BaseRepository {
                 return [['updatedAt', direction]];
             case enums_1.FolderOrderFields.year:
                 return [['year', direction]];
+            case enums_1.FolderOrderFields.level:
+                return [['level', direction]];
             case enums_1.FolderOrderFields.title:
                 return [
                     ['title', direction],
@@ -31,7 +33,7 @@ class FolderRepository extends base_repository_1.BaseRepository {
         }
         return [];
     }
-    async buildFilter(filter, user) {
+    async buildFilter(filter, _) {
         if (!filter) {
             return {};
         }

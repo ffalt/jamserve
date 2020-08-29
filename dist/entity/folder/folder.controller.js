@@ -18,100 +18,88 @@ const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const track_model_1 = require("../track/track.model");
 const artwork_model_1 = require("../artwork/artwork.model");
-const base_controller_1 = require("../base/base.controller");
 const metadata_model_1 = require("../metadata/metadata.model");
 const track_args_1 = require("../track/track.args");
 const folder_args_1 = require("./folder.args");
 const artwork_args_1 = require("../artwork/artwork.args");
-const typescript_ioc_1 = require("typescript-ioc");
-const folder_service_1 = require("./folder.service");
 const base_args_1 = require("../base/base.args");
 const admin_1 = require("../admin/admin");
-const io_service_1 = require("../../modules/engine/services/io.service");
-let FolderController = class FolderController extends base_controller_1.BaseController {
-    async id(id, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, { orm, user }) {
-        return this.transform.folder(orm, await orm.Folder.oneOrFailByID(id), folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user);
+let FolderController = class FolderController {
+    async id(id, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, { orm, engine, user }) {
+        return engine.transform.folder(orm, await orm.Folder.oneOrFailByID(id), folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user);
     }
-    async index(filter, { orm, user }) {
+    async index(filter, { orm, engine, user }) {
         const result = await orm.Folder.indexFilter(filter, user);
-        return this.transform.folderIndex(orm, result);
+        return engine.transform.folderIndex(orm, result);
     }
-    async search(page, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, filter, order, list, { orm, user }) {
+    async search(page, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Folder.findListTransformFilter(list.list, filter, [order], page, user, o => this.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user));
+            return await orm.Folder.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user));
         }
-        return await orm.Folder.searchTransformFilter(filter, [order], page, user, o => this.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user));
+        return await orm.Folder.searchTransformFilter(filter, [order], page, user, o => engine.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user));
     }
-    async tracks(page, trackArgs, filter, order, { orm, user }) {
+    async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const folderIDs = await orm.Folder.findIDsFilter(filter, user);
-        return await orm.Track.searchTransformFilter({ folderIDs }, [order], page, user, o => this.transform.trackBase(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter({ folderIDs }, [order], page, user, o => engine.transform.trackBase(orm, o, trackArgs, user));
     }
-    async subfolders(page, folderArgs, filter, order, { orm, user }) {
+    async subfolders(page, folderArgs, filter, order, { orm, engine, user }) {
         const folderIDs = await orm.Folder.findIDsFilter(filter, user);
-        return await orm.Folder.searchTransformFilter({ parentIDs: folderIDs }, [order], page, user, o => this.transform.folderBase(orm, o, folderArgs, user));
+        return await orm.Folder.searchTransformFilter({ parentIDs: folderIDs }, [order], page, user, o => engine.transform.folderBase(orm, o, folderArgs, user));
     }
-    async artworks(page, artworkArgs, filter, order, { orm, user }) {
+    async artworks(page, artworkArgs, filter, order, { orm, engine, user }) {
         const folderIDs = await orm.Folder.findIDsFilter(filter, user);
-        return await orm.Artwork.searchTransformFilter({ folderIDs }, [order], page, user, o => this.transform.artworkBase(orm, o, artworkArgs, user));
+        return await orm.Artwork.searchTransformFilter({ folderIDs }, [order], page, user, o => engine.transform.artworkBase(orm, o, artworkArgs, user));
     }
-    async artistInfo(id, { orm }) {
+    async artistInfo(id, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(id);
-        return { info: await this.metadata.extInfo.byFolderArtist(orm, folder) };
+        return { info: await engine.metadata.extInfo.byFolderArtist(orm, folder) };
     }
-    async albumInfo(id, { orm }) {
+    async albumInfo(id, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(id);
-        return { info: await this.metadata.extInfo.byFolderAlbum(orm, folder) };
+        return { info: await engine.metadata.extInfo.byFolderAlbum(orm, folder) };
     }
-    async artistsSimilar(id, page, folderArgs, { orm, user }) {
+    async artistsSimilar(id, page, folderArgs, { orm, engine, user }) {
         const folder = await orm.Folder.oneOrFailByID(id);
-        const result = await this.metadata.similarArtists.byFolder(orm, folder, page);
-        return { ...result, items: await Promise.all(result.items.map(o => this.transform.folderBase(orm, o, folderArgs, user))) };
+        const result = await engine.metadata.similarArtists.byFolder(orm, folder, page);
+        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.folderBase(orm, o, folderArgs, user))) };
     }
-    async artistsSimilarTracks(id, page, trackArgs, { orm, user }) {
+    async artistsSimilarTracks(id, page, trackArgs, { orm, engine, user }) {
         const folder = await orm.Folder.oneOrFailByID(id);
-        const result = await this.metadata.similarTracks.byFolder(orm, folder, page);
-        return { ...result, items: await Promise.all(result.items.map(o => this.transform.trackBase(orm, o, trackArgs, user))) };
+        const result = await engine.metadata.similarTracks.byFolder(orm, folder, page);
+        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user))) };
     }
-    async health(filter, folderArgs, { orm, user }) {
+    async health(filter, folderArgs, { orm, engine, user }) {
         const folders = await orm.Folder.findFilter(filter, [], {}, user);
-        const list = await this.folderService.health(orm, folders);
+        const list = await engine.folder.health(orm, folders);
         const result = [];
         for (const item of list) {
             result.push({
-                folder: await this.transform.folderBase(orm, item.folder, folderArgs, user),
+                folder: await engine.transform.folderBase(orm, item.folder, folderArgs, user),
                 health: item.health
             });
         }
         return result;
     }
-    async create(args, { orm }) {
+    async create(args, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(args.id);
-        return await this.ioService.newFolder(folder.id, args.name, folder.root.idOrFail());
+        return await engine.io.newFolder(folder.id, args.name, folder.root.idOrFail());
     }
-    async rename(args, { orm }) {
+    async rename(args, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(args.id);
-        return await this.ioService.renameFolder(folder.id, args.name, folder.root.idOrFail());
+        return await engine.io.renameFolder(folder.id, args.name, folder.root.idOrFail());
     }
-    async move(args, { orm }) {
+    async move(args, { orm, engine }) {
         if (args.ids.length === 0) {
             throw rest_1.InvalidParamError('ids', 'Must have entries');
         }
         const folder = await orm.Folder.oneOrFailByID(args.ids[0]);
-        return await this.ioService.moveFolders(args.ids, args.newParentID, folder.root.idOrFail());
+        return await engine.io.moveFolders(args.ids, args.newParentID, folder.root.idOrFail());
     }
-    async remove(id, { orm }) {
+    async remove(id, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(id);
-        return await this.ioService.deleteFolder(folder.id, folder.root.idOrFail());
+        return await engine.io.deleteFolder(folder.id, folder.root.idOrFail());
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", folder_service_1.FolderService)
-], FolderController.prototype, "folderService", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", io_service_1.IoService)
-], FolderController.prototype, "ioService", void 0);
 __decorate([
     rest_1.Get('/id', () => folder_model_1.Folder, { description: 'Get a Folder by Id', summary: 'Get Folder' }),
     __param(0, rest_1.QueryParam('id', { description: 'Folder Id', isID: true })),
@@ -280,7 +268,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "remove", null);
 FolderController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/folder', { tags: ['Folder'], roles: [enums_1.UserRole.stream] })
 ], FolderController);
 exports.FolderController = FolderController;

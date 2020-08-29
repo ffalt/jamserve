@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useAuthenticatedCors = exports.registerPublicCORS = void 0;
 const cors_1 = __importDefault(require("cors"));
-function registerPublicCORS(router) {
+function registerPublicCORS(_) {
     return cors_1.default({
         preflightContinue: false,
         credentials: true,

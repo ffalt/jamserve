@@ -65,32 +65,32 @@ __decorate([
 ], Artist.prototype, "genres", void 0);
 __decorate([
     type_graphql_1.Field(() => [track_1.TrackQL]),
-    orm_1.OneToMany(() => track_1.Track, track => track.artist, { orderBy: { album: { name: orm_1.QueryOrder.ASC }, tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC } } }),
+    orm_1.OneToMany(() => track_1.Track, track => track.artist, { order: [{ orderBy: enums_1.TrackOrderFields.album }, { orderBy: enums_1.TrackOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "tracks", void 0);
 __decorate([
     type_graphql_1.Field(() => [track_1.TrackQL]),
-    orm_1.OneToMany(() => track_1.Track, track => track.albumArtist, { orderBy: { album: { name: orm_1.QueryOrder.ASC }, tag: { disc: orm_1.QueryOrder.ASC, trackNr: orm_1.QueryOrder.ASC } } }),
+    orm_1.OneToMany(() => track_1.Track, track => track.albumArtist, { order: [{ orderBy: enums_1.TrackOrderFields.album }, { orderBy: enums_1.TrackOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "albumTracks", void 0);
 __decorate([
     type_graphql_1.Field(() => [album_1.AlbumQL]),
-    orm_1.OneToMany(() => album_1.Album, album => album.artist, { orderBy: { albumType: orm_1.QueryOrder.ASC, year: orm_1.QueryOrder.DESC } }),
+    orm_1.OneToMany(() => album_1.Album, album => album.artist, { order: [{ orderBy: enums_1.AlbumOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "albums", void 0);
 __decorate([
     type_graphql_1.Field(() => [root_1.RootQL]),
-    orm_1.ManyToMany(() => root_1.Root, root => root.artists, { owner: true, orderBy: { name: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => root_1.Root, root => root.artists, { owner: true, order: [{ orderBy: enums_1.DefaultOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "roots", void 0);
 __decorate([
     type_graphql_1.Field(() => [folder_1.FolderQL]),
-    orm_1.ManyToMany(() => folder_1.Folder, folder => folder.artists, { owner: true, orderBy: { path: orm_1.QueryOrder.ASC } }),
+    orm_1.ManyToMany(() => folder_1.Folder, folder => folder.artists, { owner: true, order: [{ orderBy: enums_1.FolderOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "folders", void 0);
 __decorate([
     type_graphql_1.Field(() => [series_1.SeriesQL]),
-    orm_1.OneToMany(() => series_1.Series, series => series.artist, { orderBy: { name: orm_1.QueryOrder.ASC } }),
+    orm_1.OneToMany(() => series_1.Series, series => series.artist, { order: [{ orderBy: enums_1.DefaultOrderFields.default }] }),
     __metadata("design:type", orm_1.Collection)
 ], Artist.prototype, "series", void 0);
 Artist = __decorate([

@@ -38,14 +38,14 @@ __decorate([
     __metadata("design:type", Array)
 ], Artwork.prototype, "types", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
-    __metadata("design:type", Number)
+    type_graphql_1.Field(() => Date),
+    orm_1.Property(() => orm_1.ORM_DATETIME),
+    __metadata("design:type", Date)
 ], Artwork.prototype, "statCreated", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
-    orm_1.Property(() => orm_1.ORM_TIMESTAMP),
-    __metadata("design:type", Number)
+    type_graphql_1.Field(() => Date),
+    orm_1.Property(() => orm_1.ORM_DATETIME),
+    __metadata("design:type", Date)
 ], Artwork.prototype, "statModified", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),

@@ -11,9 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrackResolver = void 0;
 const type_graphql_1 = require("type-graphql");
@@ -26,7 +23,6 @@ const album_1 = require("../album/album");
 const artist_1 = require("../artist/artist");
 const root_1 = require("../root/root");
 const tag_1 = require("../tag/tag");
-const path_1 = __importDefault(require("path"));
 const series_1 = require("../series/series");
 const bookmark_1 = require("../bookmark/bookmark");
 const track_args_1 = require("./track.args");
@@ -40,47 +36,47 @@ let TrackResolver = class TrackResolver {
         }
         return await orm.Track.searchFilter(filter, order, page, user);
     }
-    async bookmarks(track, { orm }) {
+    async bookmarks(track) {
         return track.bookmarks.getItems();
     }
-    async bookmarksCount(track, { orm }) {
+    async bookmarksCount(track) {
         return track.bookmarks.count();
     }
     fileCreated(track) {
-        return new Date(track.statCreated);
+        return track.statCreated;
     }
     fileModified(track) {
-        return new Date(track.statModified);
+        return track.statModified;
     }
-    async folder(track, { orm }) {
+    async folder(track) {
         return track.folder.getOrFail();
     }
-    async tag(track, { orm }) {
+    async tag(track) {
         return track.tag.get();
     }
-    async album(track, { orm }) {
+    async album(track) {
         return track.album.get();
     }
-    async series(track, { orm }) {
+    async series(track) {
         return track.series.get();
     }
-    async albumArtist(track, { orm }) {
+    async albumArtist(track) {
         return track.albumArtist.get();
     }
-    async artist(track, { orm }) {
+    async artist(track) {
         return track.artist.get();
     }
-    async root(track, { orm }) {
+    async root(track) {
         return track.root.getOrFail();
     }
     async waveform(track) {
         return { obj: track, objType: enums_1.DBObjectType.track };
     }
     async lyrics(track, { engine, orm }) {
-        return engine.metadataService.lyricsByTrack(orm, track);
+        return engine.metadata.lyricsByTrack(orm, track);
     }
     async rawTag(track, { engine }) {
-        return (await engine.audioModule.readRawTag(path_1.default.join(track.path, track.fileName))) || {};
+        return (await engine.track.getRawTag(track)) || {};
     }
     async state(track, { orm, user }) {
         return await orm.State.findOrCreate(track.id, enums_1.DBObjectType.track, user.id);
@@ -102,16 +98,16 @@ __decorate([
 ], TrackResolver.prototype, "tracks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [bookmark_1.BookmarkQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_1.Track, Object]),
+    __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "bookmarks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_1.Track, Object]),
+    __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "bookmarksCount", null);
 __decorate([
@@ -130,51 +126,51 @@ __decorate([
 ], TrackResolver.prototype, "fileModified", null);
 __decorate([
     type_graphql_1.FieldResolver(() => folder_1.FolderQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_1.Track, Object]),
+    __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "folder", null);
 __decorate([
     type_graphql_1.FieldResolver(() => tag_1.TagQL, { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_1.Track, Object]),
+    __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "tag", null);
 __decorate([
     type_graphql_1.FieldResolver(() => album_1.AlbumQL, { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_1.Track, Object]),
+    __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "album", null);
 __decorate([
     type_graphql_1.FieldResolver(() => series_1.SeriesQL, { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_1.Track, Object]),
+    __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "series", null);
 __decorate([
     type_graphql_1.FieldResolver(() => artist_1.ArtistQL, { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_1.Track, Object]),
+    __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "albumArtist", null);
 __decorate([
     type_graphql_1.FieldResolver(() => artist_1.ArtistQL, { nullable: true }),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_1.Track, Object]),
+    __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "artist", null);
 __decorate([
     type_graphql_1.FieldResolver(() => root_1.RootQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_1.Track, Object]),
+    __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "root", null);
 __decorate([

@@ -16,13 +16,13 @@ exports.TransformService = void 0;
 const moment_1 = __importDefault(require("moment"));
 const enums_1 = require("../../../types/enums");
 const typescript_ioc_1 = require("typescript-ioc");
-const path_1 = __importDefault(require("path"));
 const io_service_1 = require("./io.service");
 const podcast_service_1 = require("../../../entity/podcast/podcast.service");
 const episode_service_1 = require("../../../entity/episode/episode.service");
 const session_utils_1 = require("../../../entity/session/session.utils");
 const audio_module_1 = require("../../audio/audio.module");
 const metadata_service_1 = require("../../../entity/metadata/metadata.service");
+const track_service_1 = require("../../../entity/track/track.service");
 let TransformService = class TransformService {
     async trackBase(orm, o, trackArgs, user) {
         var _a;
@@ -40,7 +40,7 @@ let TransformService = class TransformService {
             seriesID: o.series.id(),
             tag: trackArgs.trackIncTag ? await this.mediaTag(orm, tag) : undefined,
             media: trackArgs.trackIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
-            tagRaw: trackArgs.trackIncRawTag ? await this.mediaRawTag(path_1.default.join(o.path, o.fileName)) : undefined,
+            tagRaw: trackArgs.trackIncRawTag ? await this.trackService.getRawTag(o) : undefined,
             state: trackArgs.trackIncState ? await this.state(orm, o.id, enums_1.DBObjectType.track, user.id) : undefined
         };
     }
@@ -81,7 +81,7 @@ let TransformService = class TransformService {
             duration: (_b = (_a = tag === null || tag === void 0 ? void 0 : tag.mediaDuration) !== null && _a !== void 0 ? _a : o.duration) !== null && _b !== void 0 ? _b : 0,
             tag: episodeArgs.episodeIncTag ? await this.mediaTag(orm, tag) : undefined,
             media: episodeArgs.episodeIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
-            tagRaw: episodeArgs.episodeIncRawTag && o.path ? await this.mediaRawTag(o.path) : undefined,
+            tagRaw: episodeArgs.episodeIncRawTag && o.path ? await this.audioModule.readRawTag(o.path) : undefined,
             state: episodeArgs.episodeIncState ? await this.state(orm, o.id, enums_1.DBObjectType.episode, user.id) : undefined
         };
     }
@@ -101,7 +101,7 @@ let TransformService = class TransformService {
             created: o.createdAt.valueOf(),
             url: o.url,
             status: this.podcastService.isDownloading(o.id) ? enums_1.PodcastStatus.downloading : o.status,
-            lastCheck: o.lastCheck.valueOf(),
+            lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined,
             error: o.errorMessage,
             description: o.description,
             episodeIDs: podcastArgs.podcastIncEpisodeIDs ? (await o.episodes.getItems()).map(t => t.id) : undefined,
@@ -125,7 +125,7 @@ let TransformService = class TransformService {
         });
     }
     podcastStatus(o) {
-        return this.podcastService.isDownloading(o.id) ? { status: enums_1.PodcastStatus.downloading } : { status: o.status, error: o.errorMessage, lastCheck: o.lastCheck };
+        return this.podcastService.isDownloading(o.id) ? { status: enums_1.PodcastStatus.downloading } : { status: o.status, error: o.errorMessage, lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined };
     }
     async folderBase(orm, o, folderArgs, user) {
         let info;
@@ -139,6 +139,7 @@ let TransformService = class TransformService {
         return {
             id: o.id,
             name: o.name,
+            title: o.title,
             created: o.createdAt.valueOf(),
             type: o.folderType,
             level: o.level,
@@ -289,6 +290,7 @@ let TransformService = class TransformService {
             artistName: artist.name,
             series: series === null || series === void 0 ? void 0 : series.name,
             seriesID: series === null || series === void 0 ? void 0 : series.id,
+            seriesNr: o.seriesNr,
             state: albumArgs.albumIncState ? await this.state(orm, o.id, enums_1.DBObjectType.album, user.id) : undefined,
             trackCount: albumArgs.albumIncTrackCount ? await o.tracks.count() : undefined,
             trackIDs: albumArgs.albumIncTrackIDs ? (await o.tracks.getItems()).map(t => t.id) : undefined,
@@ -296,7 +298,9 @@ let TransformService = class TransformService {
         };
     }
     async album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistIncludes, user) {
-        const tracks = albumChildrenArgs.albumIncTracks ? await Promise.all((await o.tracks.getItems()).map(t => this.trackBase(orm, t, trackArgs, user))) : undefined;
+        const tracks = albumChildrenArgs.albumIncTracks ?
+            await Promise.all((await o.tracks.getItems()).map(t => this.trackBase(orm, t, trackArgs, user))) :
+            undefined;
         const artist = albumChildrenArgs.albumIncArtist ? await this.artistBase(orm, await o.artist.getOrFail(), artistIncludes, user) : undefined;
         return {
             ...(await this.albumBase(orm, o, albumArgs, user)),
@@ -339,7 +343,7 @@ let TransformService = class TransformService {
         return {
             played: o.played,
             lastPlayed: o.lastPlayed ? o.lastPlayed.valueOf() : undefined,
-            faved: o.faved,
+            faved: o.faved ? o.faved.valueOf() : undefined,
             rated: o.rated
         };
     }
@@ -447,21 +451,19 @@ let TransformService = class TransformService {
     async playQueue(orm, o, playQueueArgs, trackArgs, episodeArgs, user) {
         const entries = playQueueArgs.playQueueEntriesIDs || playQueueArgs.playQueueEntries ?
             await o.entries.getItems() : [];
+        const u = o.user.id() === user.id ? user : await o.user.getOrFail();
         return {
             changed: o.updatedAt.valueOf(),
             changedBy: o.changedBy,
             created: o.createdAt.valueOf(),
             currentIndex: o.current,
             mediaPosition: o.position,
-            userID: o.user.id,
-            userName: o.user.name,
+            userID: u.id,
+            userName: u.name,
             entriesCount: await o.entries.count(),
             entriesIDs: playQueueArgs.playQueueEntriesIDs ? entries.map(t => (t.track.id()) || (t.episode.id())) : undefined,
             entries: playQueueArgs.playQueueEntries ? await Promise.all(entries.map(t => this.playQueueEntry(orm, t, trackArgs, episodeArgs, user))) : undefined
         };
-    }
-    async mediaRawTag(filename) {
-        return this.audioModule.readRawTag(filename);
     }
     async mediaTag(orm, o) {
         if (!o) {
@@ -502,7 +504,7 @@ let TransformService = class TransformService {
             id: o.id,
             name: o.name,
             created: o.createdAt.valueOf(),
-            email: o.email,
+            email: ((currentUser === null || currentUser === void 0 ? void 0 : currentUser.id) === o.id || (currentUser === null || currentUser === void 0 ? void 0 : currentUser.roleAdmin)) ? o.email : undefined,
             roles: {
                 admin: o.roleAdmin,
                 podcast: o.rolePodcast,
@@ -521,7 +523,7 @@ let TransformService = class TransformService {
         return {
             id: o.id,
             client: o.client,
-            expires: o.expires,
+            expires: o.expires ? o.expires.valueOf() : undefined,
             mode: o.mode,
             platform: ua === null || ua === void 0 ? void 0 : ua.platform,
             os: ua === null || ua === void 0 ? void 0 : ua.os,
@@ -554,6 +556,10 @@ __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", episode_service_1.EpisodeService)
 ], TransformService.prototype, "episodeService", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", track_service_1.TrackService)
+], TransformService.prototype, "trackService", void 0);
 __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", audio_module_1.AudioModule)

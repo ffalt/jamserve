@@ -14,40 +14,29 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookmarkController = void 0;
 const bookmark_model_1 = require("./bookmark.model");
-const typescript_ioc_1 = require("typescript-ioc");
-const transform_service_1 = require("../../modules/engine/services/transform.service");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const track_args_1 = require("../track/track.args");
 const bookmark_args_1 = require("./bookmark.args");
 const episode_args_1 = require("../episode/episode.args");
-const bookmark_service_1 = require("./bookmark.service");
 const base_args_1 = require("../base/base.args");
 let BookmarkController = class BookmarkController {
-    async id(id, bookmarkChildrenArgs, trackArgs, episodeArgs, { orm, user }) {
-        return this.transform.bookmark(orm, await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id } } : { where: { id, user: user.id } }), bookmarkChildrenArgs, trackArgs, episodeArgs, user);
+    async id(id, bookmarkChildrenArgs, trackArgs, episodeArgs, { orm, engine, user }) {
+        return engine.transform.bookmark(orm, await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id } } : { where: { id, user: user.id } }), bookmarkChildrenArgs, trackArgs, episodeArgs, user);
     }
-    async search(page, bookmarkChildrenArgs, trackArgs, episodeArgs, filter, order, { orm, user }) {
-        return await orm.Bookmark.searchTransformFilter(filter, [order], page, user, o => this.transform.bookmark(orm, o, bookmarkChildrenArgs, trackArgs, episodeArgs, user));
+    async search(page, bookmarkChildrenArgs, trackArgs, episodeArgs, filter, order, { orm, engine, user }) {
+        return await orm.Bookmark.searchTransformFilter(filter, [order], page, user, o => engine.transform.bookmark(orm, o, bookmarkChildrenArgs, trackArgs, episodeArgs, user));
     }
-    async create(createArgs, { orm, user }) {
-        return await this.transform.bookmark(orm, await this.bookmarkService.create(orm, createArgs.mediaID, user, createArgs.position, createArgs.comment), {}, {}, {}, user);
+    async create(createArgs, { orm, engine, user }) {
+        return await engine.transform.bookmark(orm, await engine.bookmark.create(orm, createArgs.mediaID, user, createArgs.position, createArgs.comment), {}, {}, {}, user);
     }
-    async remove(id, { orm, user }) {
-        await this.bookmarkService.remove(orm, id, user.id);
+    async remove(id, { orm, engine, user }) {
+        await engine.bookmark.remove(orm, id, user.id);
     }
-    async removeByMedia(id, { orm, user }) {
-        await this.bookmarkService.removeByDest(orm, id, user.id);
+    async removeByMedia(id, { orm, engine, user }) {
+        await engine.bookmark.removeByDest(orm, id, user.id);
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", transform_service_1.TransformService)
-], BookmarkController.prototype, "transform", void 0);
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", bookmark_service_1.BookmarkService)
-], BookmarkController.prototype, "bookmarkService", void 0);
 __decorate([
     rest_1.Get('/id', () => bookmark_model_1.Bookmark, { description: 'Get a Bookmark by Id', summary: 'Get Bookmark' }),
     __param(0, rest_1.QueryParam('id', { description: 'Bookmark Id', isID: true })),
@@ -104,7 +93,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], BookmarkController.prototype, "removeByMedia", null);
 BookmarkController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/bookmark', { tags: ['Bookmark'], roles: [enums_1.UserRole.stream] })
 ], BookmarkController);
 exports.BookmarkController = BookmarkController;

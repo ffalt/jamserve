@@ -33,46 +33,46 @@ let ArtistResolver = class ArtistResolver {
         }
         return await orm.Artist.searchFilter(filter, order, page, user);
     }
-    async artistIndex({ filter }, { orm }) {
-        return await orm.Artist.indexFilter(filter);
+    async artistIndex({ filter }, { orm, engine, user }) {
+        return await orm.Artist.indexFilter(filter, user, engine.settings.settings.index.ignoreArticles);
     }
     async state(artist, { orm, user }) {
         return await orm.State.findOrCreate(artist.id, enums_1.DBObjectType.artist, user.id);
     }
-    async tracks(artist, { orm }) {
+    async tracks(artist) {
         return artist.tracks.getItems();
     }
-    async tracksCount(artist, { orm }) {
+    async tracksCount(artist) {
         return artist.tracks.count();
     }
-    async albumTracks(artist, { orm }) {
+    async albumTracks(artist) {
         return artist.albumTracks.getItems();
     }
-    async albumsTracksCount(artist, { orm }) {
+    async albumsTracksCount(artist) {
         return artist.albumTracks.count();
     }
-    async albums(artist, { orm }) {
+    async albums(artist) {
         return artist.albums.getItems();
     }
-    async albumsCount(artist, { orm }) {
+    async albumsCount(artist) {
         return artist.albums.count();
     }
-    async roots(artist, { orm }) {
+    async roots(artist) {
         return artist.roots.getItems();
     }
-    async rootsCount(artist, { orm }) {
+    async rootsCount(artist) {
         return artist.roots.count();
     }
-    async folders(artist, { orm }) {
+    async folders(artist) {
         return artist.folders.getItems();
     }
-    async foldersCount(artist, { orm }) {
+    async foldersCount(artist) {
         return artist.folders.count();
     }
-    async series(artist, { orm }) {
+    async series(artist) {
         return artist.series.getItems();
     }
-    async seriesCount(artist, { orm }) {
+    async seriesCount(artist) {
         return artist.series.count();
     }
 };
@@ -106,86 +106,86 @@ __decorate([
 ], ArtistResolver.prototype, "state", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [track_1.TrackQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "tracks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "tracksCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [track_1.TrackQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "albumTracks", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "albumsTracksCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [album_1.AlbumQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "albums", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "albumsCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [root_1.RootQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "roots", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "rootsCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [folder_1.FolderQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "folders", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "foldersCount", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [series_1.SeriesQL]),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "series", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Root()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artist_1.Artist, Object]),
+    __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "seriesCount", null);
 ArtistResolver = __decorate([

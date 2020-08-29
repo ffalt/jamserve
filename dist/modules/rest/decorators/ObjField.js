@@ -6,7 +6,7 @@ const metadata_1 = require("../metadata");
 const decorators_1 = require("../helpers/decorators");
 const type_graphql_1 = require("type-graphql");
 function ObjField(returnTypeFuncOrOptions, maybeOptions) {
-    return (prototype, propertyKey, descriptor) => {
+    return (prototype, propertyKey, _) => {
         if (typeof propertyKey === 'symbol') {
             throw new type_graphql_1.SymbolKeysNotSupportedError();
         }

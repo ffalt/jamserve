@@ -46,7 +46,7 @@ class QHelper {
         return result.length > 0 ? result : undefined;
     }
     static includeQueries(list) {
-        const result = list.map(q => {
+        return list.map(q => {
             if (!q) {
                 return false;
             }
@@ -56,12 +56,14 @@ class QHelper {
             if (result.length === 0) {
                 return false;
             }
+            let attributes = [];
+            result.forEach(o => attributes = attributes.concat(Object.keys(o)));
             return {
                 association: `${key}ORM`,
+                attributes,
                 where: result.length === 1 ? result[0] : { [sequelize_1.Op.and]: result }
             };
         }).filter(q => !!q);
-        return result;
     }
     static buildQuery(list) {
         if (!list || list.length === 0) {

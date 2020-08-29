@@ -16,45 +16,38 @@ exports.RootController = void 0;
 const root_model_1 = require("./root.model");
 const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
-const base_controller_1 = require("../base/base.controller");
 const root_args_1 = require("./root.args");
 const admin_1 = require("../admin/admin");
-const typescript_ioc_1 = require("typescript-ioc");
-const io_service_1 = require("../../modules/engine/services/io.service");
 const base_args_1 = require("../base/base.args");
-let RootController = class RootController extends base_controller_1.BaseController {
-    async id(id, rootArgs, { orm, user }) {
-        return this.transform.root(orm, await orm.Root.oneOrFailByID(id), rootArgs, user);
+let RootController = class RootController {
+    async id(id, rootArgs, { orm, engine, user }) {
+        return engine.transform.root(orm, await orm.Root.oneOrFailByID(id), rootArgs, user);
     }
-    async search(page, rootArgs, filter, order, { orm, user }) {
-        return await orm.Root.searchTransformFilter(filter, [order], page, user, o => this.transform.root(orm, o, rootArgs, user));
+    async search(page, rootArgs, filter, order, { orm, engine, user }) {
+        return await orm.Root.searchTransformFilter(filter, [order], page, user, o => engine.transform.root(orm, o, rootArgs, user));
     }
-    async status(id, { orm, user }) {
-        return this.transform.rootStatus(await orm.Root.oneOrFailByID(id));
+    async status(id, { orm, engine }) {
+        return engine.transform.rootStatus(await orm.Root.oneOrFailByID(id));
     }
-    async create(args, { orm, user }) {
-        return await this.ioService.createRoot(args.name, args.path, args.strategy);
+    async create(args, { engine }) {
+        return await engine.io.createRoot(args.name, args.path, args.strategy);
     }
-    async update(id, args, { orm, user }) {
-        return await this.ioService.updateRoot(id, args.name, args.path, args.strategy);
+    async update(id, args, { engine }) {
+        return await engine.io.updateRoot(id, args.name, args.path, args.strategy);
     }
-    async remove(id, { orm, user }) {
-        return await this.ioService.removeRoot(id);
+    async remove(id, { engine }) {
+        return await engine.io.removeRoot(id);
     }
-    async refresh(args, { orm }) {
+    async refresh(args, { orm, engine }) {
         if (args.id) {
-            return await this.ioService.refreshRoot(args.id);
+            return await engine.io.refreshRoot(args.id);
         }
         else {
-            const result = await this.ioService.refresh(orm);
+            const result = await engine.io.refresh(orm);
             return result[result.length - 1];
         }
     }
 };
-__decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", io_service_1.IoService)
-], RootController.prototype, "ioService", void 0);
 __decorate([
     rest_1.Get('/id', () => root_model_1.Root, { description: 'Get a Root by Id', summary: 'Get Root' }),
     __param(0, rest_1.QueryParam('id', { description: 'Root Id', isID: true })),
@@ -120,7 +113,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "refresh", null);
 RootController = __decorate([
-    typescript_ioc_1.InRequestScope,
     rest_1.Controller('/root', { tags: ['Root'], roles: [enums_1.UserRole.stream] })
 ], RootController);
 exports.RootController = RootController;

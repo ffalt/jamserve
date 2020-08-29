@@ -6,6 +6,9 @@ class EntityRepository {
         this.em = em;
         this.entityName = entityName;
     }
+    buildOrderByFindOptions(order) {
+        return;
+    }
     persist(entity, flush = false) {
         return this.em.persist(this.entityName, entity, flush);
     }
