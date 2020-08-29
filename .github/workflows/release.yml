@@ -8,9 +8,6 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [13.x]
     steps:
       - uses: actions/checkout@v2
       - name: Update apt
@@ -20,16 +17,16 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v2.6.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+          node-version: '13.x'
+      - name: Setup PostgreSQL
+        uses: harmon758/postgresql-action@v1.0.0
         with:
-          coverageCommand: npm run coverage
-          coverageLocations: ${{github.workspace}}/coverage/lcov.info:lcov
-          debug: true
+          postgresql version: '12.4'
+          postgresql db: jamtest
+          postgresql user: test
+          postgresql password: test
+      - run: npm ci
+      - run: npm run test
 
   release:
     runs-on: ubuntu-latest
