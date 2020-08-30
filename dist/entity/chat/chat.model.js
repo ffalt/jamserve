@@ -15,7 +15,7 @@ const example_consts_1 = require("../../modules/engine/rest/example.consts");
 let Chat = class Chat {
 };
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'User Name', isID: true }),
+    decorators_1.ObjField({ description: 'User Name', example: 'Awesome User' }),
     __metadata("design:type", String)
 ], Chat.prototype, "userName", void 0);
 __decorate([

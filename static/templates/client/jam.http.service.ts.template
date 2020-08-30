@@ -10,10 +10,10 @@ export interface HTTPOptions {
 	params?: HttpParams;
 	reportProgress?: boolean;
 	withCredentials?: boolean;
-	responseType?: 'arraybuffer' | 'text' |  'json';
+	responseType?: 'arraybuffer' | 'text' | 'json';
 }
 
-async function handleError(e): Promise<any> {
+async function handleError(e: any): Promise<any> {
 	console.error(e);
 	if (e.status === 0) {
 		return Promise.reject(Error('Could not reach server'));

@@ -32,7 +32,7 @@ Features:
 
 ## Requirements
 
-*   install [NodeJS](https://nodejs.org/) >= 13.x and [NPM](https://www.npmjs.com/)
+*   install [NodeJS](https://nodejs.org/) >= 14.x and [NPM](https://www.npmjs.com/)
 
 *   install [FFMPEG](https://ffmpeg.org/)
 
