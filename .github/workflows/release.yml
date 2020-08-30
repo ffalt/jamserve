@@ -17,7 +17,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: '13.x'
+          node-version: '14.x'
       - name: Setup PostgreSQL
         uses: harmon758/postgresql-action@v1.0.0
         with:
@@ -58,11 +58,11 @@ jobs:
         if: steps.check.outputs.changed != 'true'
         run: 'echo "No version change :/"'
 
-      - name: Install Node.js 13.x
+      - name: Install Node.js
         if: steps.check.outputs.changed == 'true'
         uses: actions/setup-node@v1
         with:
-          node-version: 13.x
+          node-version: 14.x
 
       - name: Install and Build
         if: steps.check.outputs.changed == 'true'
