@@ -3,7 +3,7 @@ import {examples} from '../../modules/engine/rest/example.consts';
 
 @ResultType({description: 'Chat'})
 export class Chat {
-	@ObjField({nullable: true, description: 'User Name', isID: true})
+	@ObjField({description: 'User Name', example: 'Awesome User'})
 	userName!: string;
 	@ObjField({description: 'User Id', isID: true})
 	userID!: string;
