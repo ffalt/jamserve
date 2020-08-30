@@ -180,6 +180,7 @@ export class OrmService {
 				username: config.env.db.user,
 				password: config.env.db.password,
 				database: config.env.db.name,
+				host: config.env.db.host,
 				dialectOptions: {
 					socketPath: config.env.db.socket ? config.env.db.socket : undefined,
 				},
