@@ -74,6 +74,9 @@ export class JamAuthService {
 				password,
 				jwt: !canUseSession
 			}, {withCredentials: canUseSession});
+			if (!data.user) {
+				throw new Error('Invalid login response');
+			}
 			this.user = data.user;
 			this.auth = {
 				server,
