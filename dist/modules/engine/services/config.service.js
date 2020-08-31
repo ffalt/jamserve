@@ -20,6 +20,7 @@ const max_age_1 = require("../../../utils/max-age");
 let ConfigService = class ConfigService {
     constructor() {
         this.env = {
+            domain: process.env.JAM_DOMAIN || 'http://localhost',
             host: process.env.JAM_HOST || '127.0.0.1',
             port: Number(process.env.JAM_PORT) || 4040,
             jwt: {

@@ -101,7 +101,6 @@ class Feed {
         }
     }
     async get(podcast) {
-        console.log('podcast feed get');
         const data = await this.fetch(podcast.url);
         const tag = {
             title: data.feed.title,

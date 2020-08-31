@@ -73,6 +73,9 @@ Example `.env` file for debugging on localhost
 ```dosini
 ## Server
 
+# Server Domain URL (e.g. https://music.yourdomain.somewhere)
+JAM_DOMAIN=http://localhost:4040
+
 # Server listen address
 JAM_HOST=0.0.0.0
 
@@ -131,8 +134,9 @@ JAM_DB_USER=jam
 # Database user password
 JAM_DB_PASSWORD=jam
 
-# Datebase Unix Socket to connect (or use host/port)
-JAM_DB_SOCKET=/tmp/.s.PGSQL.5432
+# Datebase Unix Socket Path to connect (or use host/port)
+# NOT the socket itself /var/run/postgresql/.s.PGSQL.5432
+JAM_DB_SOCKET=/var/run/postgresql/
 
 # Datebase Host
 JAM_DB_HOST=127.0.0.1
