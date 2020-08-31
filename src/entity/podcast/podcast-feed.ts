@@ -135,7 +135,6 @@ export class Feed {
 	}
 
 	public async get(podcast: Podcast): Promise<{ tag: PodcastTag; episodes: Array<EpisodeData> }> {
-		console.log('podcast feed get');
 		const data = await this.fetch(podcast.url);
 		const tag: PodcastTag = {
 			title: data.feed.title,

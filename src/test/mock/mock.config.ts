@@ -13,6 +13,7 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 
 	class MockConfigService implements ConfigService {
 		env: ENVConfig = {
+			domain: 'http://localhost:4141',
 			host: '0.0.0.0',
 			port: 4141,
 			jwt: {maxAge: 800000, secret: 'secret'},
