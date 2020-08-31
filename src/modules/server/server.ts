@@ -79,10 +79,11 @@ export class Server {
 		app.use('/docs', await this.docs.middleware());
 
 		log.debug(`registering static middleware`);
-		// frontend (jamberry config file)
-		const configFile = path.resolve(this.configService.getDataPath(['config']), 'jamberry.config.js');
+		// frontend (jamberry domain config file)
+		const jamberry_config = `document.jamberry_config = ${JSON.stringify({name: 'Jam', fixed: {server: this.configService.env.domain}})}`;
 		app.get('/assets/config/config.js', (req, res) => {
-			res.sendFile(configFile);
+			res.type('text/javascript');
+			res.send(jamberry_config);
 		});
 		// frontend (any)
 		app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend)));

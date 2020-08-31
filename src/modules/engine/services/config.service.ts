@@ -16,6 +16,7 @@ export interface ENVConfigDB {
 }
 
 export interface ENVConfig {
+	domain: string;
 	host: string;
 	port: number;
 	jwt: {
@@ -40,6 +41,7 @@ export interface ENVConfig {
 @InRequestScope
 export class ConfigService {
 	env: ENVConfig = {
+		domain: process.env.JAM_DOMAIN || 'http://localhost',
 		host: process.env.JAM_HOST || '127.0.0.1',
 		port: Number(process.env.JAM_PORT) || 4040,
 		jwt: {
