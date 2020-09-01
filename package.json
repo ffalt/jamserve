@@ -70,7 +70,7 @@
     "reflect-metadata": "0.1.13",
     "request": "2.88.2",
     "seedrandom": "3.0.5",
-    "sequelize": "6.3.4",
+    "sequelize": "6.3.5",
     "sharp": "0.26.0",
     "sqlite3": "5.0.0",
     "type-graphql": "1.0.0",
