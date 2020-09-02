@@ -28,7 +28,7 @@ export class RootRepository extends BaseRepository<Root, RootFilterArgs, RootOrd
 				{strategy: QHelper.inOrEqual(filter.strategies)},
 			]
 		);
-		result.include = QHelper.includeQueries<Root>([
+		result.include = QHelper.includeQueries([
 			{tracks: [{id: QHelper.inOrEqual(filter.trackIDs)}]},
 			{folders: [{id: QHelper.inOrEqual(filter.folderIDs)}]},
 			{albums: [{id: QHelper.inOrEqual(filter.albumIDs)}]},

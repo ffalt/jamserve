@@ -1,5 +1,5 @@
 import {Changes} from './changes';
-import {MatchNode, MatchTrack, OnDemandTrackMatch} from './scan';
+import {MatchNode, OnDemandTrackMatch} from './scan';
 import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums';
 import {splitDirectoryName} from '../../../utils/dir-name';
 import path from 'path';
@@ -143,7 +143,7 @@ export class WorkerMergeScan {
 	private async buildFolderMeta(node: MergeNode): Promise<void> {
 		log.debug('Merge Folder Meta', node.path);
 		const metaStat = await MatchNodeMetaStats.buildMetaStat(node, this.strategy);
-		const name = path.basename(node.path)
+		const name = path.basename(node.path);
 		const {title, year} = splitDirectoryName(node.path);
 		const folder = node.folder;
 		folder.album = metaStat.album;

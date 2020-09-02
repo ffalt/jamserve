@@ -130,7 +130,7 @@ export class Feed {
 				pipestream.pipe(feedParser);
 			});
 		} else {
-			throw new Error(`Bad status code ${res.status}${res.statusText ? ` ${res.statusText}` : ''}`)
+			throw new Error(`Bad status code ${res.status}${res.statusText ? ` ${res.statusText}` : ''}`);
 		}
 	}
 

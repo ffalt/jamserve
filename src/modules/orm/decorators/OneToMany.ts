@@ -15,6 +15,6 @@ export function OneToMany<T>(
 		const opt = (options || {}) as OneToManyFieldRelation<T>;
 		opt.relation = 'one2many';
 		opt.mappedBy = mappedBy;
-		registerRelation<T>(prototype, propertyKey, returnTypeFunc, opt);
+		registerRelation(prototype, propertyKey, returnTypeFunc, opt);
 	};
 }

@@ -28,7 +28,7 @@ export class SeriesRepository extends BaseRepository<Series, SeriesFilterArgs, S
 				...QHelper.inStringArray('albumTypes', filter.albumTypes)
 			]
 		);
-		result.include = QHelper.includeQueries<Series>([
+		result.include = QHelper.includeQueries([
 			{tracks: [{id: QHelper.inOrEqual(filter.trackIDs)}]},
 			{albums: [{id: QHelper.inOrEqual(filter.albumIDs)}]},
 			{folders: [{id: QHelper.inOrEqual(filter.folderIDs)}]},

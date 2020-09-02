@@ -77,7 +77,7 @@ export class RootWorker extends BaseWorker {
 		const folder = pathToChild[0];
 		let node = merge.children.find(c => c.folder.id === folder.id);
 		if (!node) {
-			const tracks = await this.buildMergeTracks(folder)
+			const tracks = await this.buildMergeTracks(folder);
 			node = {
 				changed: true,
 				folder,

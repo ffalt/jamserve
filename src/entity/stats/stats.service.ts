@@ -5,7 +5,6 @@ import {AlbumType} from '../../types/enums';
 import {MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../types/consts';
 import {Artist} from '../artist/artist';
 import {Op, QHelper, WhereOptions} from '../../modules/orm';
-import {Album} from '../album/album';
 
 @InRequestScope
 export class StatsService {
@@ -36,7 +35,7 @@ export class StatsService {
 					album: await orm.Album.countFilter({rootIDs, albumTypes: [AlbumType.album]}),
 					compilation: await orm.Album.countFilter({rootIDs, albumTypes: [AlbumType.compilation], mbArtistIDs: [MUSICBRAINZ_VARIOUS_ARTISTS_ID]}),
 					artistCompilation: await orm.Album.count({
-						include: QHelper.includeQueries<Album>([{roots: [{id: QHelper.inOrEqual(rootIDs)}]}]),
+						include: QHelper.includeQueries([{roots: [{id: QHelper.inOrEqual(rootIDs)}]}]),
 						where: {albumType: AlbumType.compilation, mbArtistID: {[Op.ne]: MUSICBRAINZ_VARIOUS_ARTISTS_ID}}
 					}),
 					audiobook: await orm.Album.countFilter({rootIDs, albumTypes: [AlbumType.audiobook]}),
@@ -52,7 +51,7 @@ export class StatsService {
 					album: await orm.Artist.countFilter({rootIDs, albumTypes: [AlbumType.album]}),
 					compilation: await orm.Artist.countFilter({rootIDs, albumTypes: [AlbumType.compilation], mbArtistIDs: [MUSICBRAINZ_VARIOUS_ARTISTS_ID]}),
 					artistCompilation: await orm.Artist.count({
-						include: QHelper.includeQueries<Artist>([{roots: [{id: QHelper.inOrEqual(rootIDs)}]}]),
+						include: QHelper.includeQueries([{roots: [{id: QHelper.inOrEqual(rootIDs)}]}]),
 						where: {...inAlbumTypes(AlbumType.compilation), mbArtistID: {[Op.ne]: MUSICBRAINZ_VARIOUS_ARTISTS_ID}}
 					}),
 					audiobook: await orm.Artist.countFilter({rootIDs, albumTypes: [AlbumType.audiobook]}),

@@ -73,7 +73,7 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 				...QHelper.inStringArray('genres', filter.genres)
 			]
 		);
-		result.include = QHelper.includeQueries<Folder>([
+		result.include = QHelper.includeQueries([
 			{tracks: [{id: QHelper.inOrEqual(filter.trackIDs)}]},
 			{artworks: [{id: QHelper.inOrEqual(filter.artworksIDs)}]},
 			{series: [{id: QHelper.inOrEqual(filter.seriesIDs)}]},

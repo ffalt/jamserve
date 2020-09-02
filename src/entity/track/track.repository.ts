@@ -7,7 +7,6 @@ import {FolderRepository} from '../folder/folder.repository';
 import {TrackFilterArgs, TrackOrderArgs} from './track.args';
 import {User} from '../user/user';
 import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
-import {Series} from '../series/series';
 
 export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, TrackOrderArgs> {
 	objType = DBObjectType.track;
@@ -73,7 +72,7 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 				{folder: QHelper.inOrEqual(folderIDs.length > 0 ? folderIDs : undefined)}
 			]
 		);
-		result.include = QHelper.includeQueries<Series>([
+		result.include = QHelper.includeQueries([
 			{bookmarks: [{id: QHelper.inOrEqual(filter.bookmarkIDs)}]},
 			{artist: [{name: QHelper.eq(filter.artist)}]},
 			{album: [{name: QHelper.eq(filter.album)}]},

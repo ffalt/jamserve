@@ -47,7 +47,7 @@ export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterArgs
 				...QHelper.inStringArray('categories', filter.categories)
 			]
 		);
-		result.include = QHelper.includeQueries<Podcast>([
+		result.include = QHelper.includeQueries([
 			{episodes: [{id: QHelper.inOrEqual(filter.episodeIDs)}]}
 		]);
 		return result;

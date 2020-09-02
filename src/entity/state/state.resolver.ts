@@ -1,9 +1,7 @@
-import {Arg, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver} from 'type-graphql';
+import {Arg, Ctx, ID, Int, Mutation, Query, Resolver} from 'type-graphql';
 import {Context} from '../../modules/server/middlewares/apollo.context';
 import {State, StateQL} from './state';
 import {NotFoundError} from '../../modules/rest/builder';
-import {dateOrUndefined} from '../base/base';
-import {Root as GQLRoot} from 'type-graphql/dist/decorators/Root';
 
 @Resolver(StateQL)
 export class StateResolver {

@@ -2,7 +2,7 @@ import path from 'path';
 import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums';
 import {MetaStatBuilder} from '../../../utils/stats-builder';
 import {extractAlbumName} from '../../../utils/album-name';
-import {MatchNode, MatchTrack} from './scan';
+import {MatchTrack} from './scan';
 import {MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
 import {Folder} from '../../../entity/folder/folder';
 import {MergeNode} from './merge-scan';

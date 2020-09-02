@@ -51,7 +51,7 @@ export class QHelper {
 		return result.length > 0 ? result : undefined;
 	}
 
-	static includeQueries<Entity>(list: Array<{ [name: string]: Array<{ [field: string]: any }> }>): Array<Includeable> {
+	static includeQueries(list: Array<{ [name: string]: Array<{ [field: string]: any }> }>): Array<Includeable> {
 		return list.map(q => {
 			if (!q) {
 				return false;

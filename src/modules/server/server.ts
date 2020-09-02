@@ -100,21 +100,26 @@ export class Server {
 			this.configService.env.host}:${this.configService.env.port}`;
 	}
 
+	getDomain(): string {
+		return this.configService.env.domain || this.getDomain();
+	}
+
 	async start(): Promise<void> {
 		log.debug(`starting express on ${this.getURL()}`);
 		this.server = this.app.listen(this.configService.env.port, this.configService.env.host);
 		this.server.setTimeout(4 * 60000); // 4 minutes
+		const domain = this.getDomain();
 		log.table([
-			{Content: 'Frontend', URL: `${this.getURL()}`},
-			{Content: 'GraphQl Api', URL: `${this.getURL()}/graphql`},
-			{Content: 'GraphQl Playground', URL: `${this.getURL()}/graphql/playground`},
-			{Content: 'REST Api', URL: `${this.getURL()}/jam/${JAMAPI_URL_VERSION}/ping`},
-			{Content: 'REST Documentation', URL: `${this.getURL()}/docs`},
-			{Content: 'OpenApi Spec', URL: `${this.getURL()}/docs/openapi.json`},
-			{Content: 'GraphQL Spec', URL: `${this.getURL()}/docs/schema.graphql`},
-			{Content: 'GraphQL Voyager', URL: `${this.getURL()}/docs/voyager`},
-			{Content: 'Angular Client', URL: `${this.getURL()}/docs/angular-client.zip`},
-			{Content: 'Axios Client', URL: `${this.getURL()}/docs/axios-client.zip`}
+			{Content: 'Frontend', URL: `${domain}`},
+			{Content: 'GraphQl Api', URL: `${domain}/graphql`},
+			{Content: 'GraphQl Playground', URL: `${domain}/graphql/playground`},
+			{Content: 'REST Api', URL: `${domain}/jam/${JAMAPI_URL_VERSION}/ping`},
+			{Content: 'REST Documentation', URL: `${domain}/docs`},
+			{Content: 'OpenApi Spec', URL: `${domain}/docs/openapi.json`},
+			{Content: 'GraphQL Spec', URL: `${domain}/docs/schema.graphql`},
+			{Content: 'GraphQL Voyager', URL: `${domain}/docs/voyager`},
+			{Content: 'Angular Client', URL: `${domain}/docs/angular-client.zip`},
+			{Content: 'Axios Client', URL: `${domain}/docs/axios-client.zip`}
 		], [
 			{name: 'Content', alignment: 'right'},
 			{name: 'URL', alignment: 'left'}

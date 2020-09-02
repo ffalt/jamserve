@@ -3,7 +3,7 @@ import {getMetadataStorage} from '../metadata';
 import {FieldOptions, ReturnTypeFunc} from '../definitions/types';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 
-export function registerRelation<T>(
+export function registerRelation(
 	prototype: Object,
 	propertyKey: string | symbol,
 	returnTypeFunc: ReturnTypeFunc,

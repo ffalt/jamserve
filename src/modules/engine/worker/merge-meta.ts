@@ -34,7 +34,7 @@ export class MetaMerger {
 			}
 		}
 		const artistName = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
-		return {artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name}
+		return {artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name};
 	}
 
 	private async collectArtistGenres(artist: Artist): Promise<Array<string>> {

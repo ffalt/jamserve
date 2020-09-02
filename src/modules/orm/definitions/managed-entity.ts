@@ -1,4 +1,4 @@
-import {AnyEntity, IDEntity} from '../typings';
+import {IDEntity} from '../typings';
 import {EntityMetadata} from './entity-metadata';
 import {EntityManager} from '../helpers/manager';
 import {Model} from 'sequelize/types/lib/model';
