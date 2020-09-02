@@ -40,6 +40,29 @@ export class IncludesFolderChildrenArgs {
 	folderIncFolders?: boolean;
 	@ObjField({nullable: true, description: 'include tracks on folder(s)', defaultValue: false, example: false})
 	folderIncTracks?: boolean;
+
+	@ObjField({nullable: true, description: 'include tag on child folder(s)', defaultValue: false, example: false})
+	folderChildIncTag?: boolean;
+	@ObjField({nullable: true, description: 'include state (fav,rate) on child folder(s)', defaultValue: false, example: false})
+	folderChildIncState?: boolean;
+	@ObjField({nullable: true, description: 'include child folder count on child folder(s)', defaultValue: false, example: false})
+	folderChildIncChildFolderCount?: boolean;
+	@ObjField({nullable: true, description: 'include track count on child folder(s)', defaultValue: false, example: false})
+	folderChildIncTrackCount?: boolean;
+	@ObjField({nullable: true, description: 'include artwork count on child folder(s)', defaultValue: false, example: false})
+	folderChildIncArtworkCount?: boolean;
+	@ObjField({nullable: true, description: 'include a list of all parent folder ids/names on child folder(s)', defaultValue: false, example: false})
+	folderChildIncParents?: boolean;
+	@ObjField({nullable: true, description: 'include extended meta data on child folder(s)', defaultValue: false, example: false})
+	folderChildIncInfo?: boolean;
+	@ObjField({nullable: true, description: 'include similar folders list on child folder(s) - only for folders of type artist', defaultValue: false, example: false})
+	folderChildIncSimilar?: boolean;
+	@ObjField({nullable: true, description: 'include artwork images Ids on child folder(s)', defaultValue: false, example: false})
+	folderChildIncArtworkIDs?: boolean;
+	@ObjField({nullable: true, description: 'include track Ids on child folder(s)', defaultValue: false, example: false})
+	folderChildIncTrackIDs?: boolean;
+	@ObjField({nullable: true, description: 'include children folder Ids on child folder(s)', defaultValue: false, example: false})
+	folderChildIncFolderIDs?: boolean;
 }
 
 @ObjParamsType()

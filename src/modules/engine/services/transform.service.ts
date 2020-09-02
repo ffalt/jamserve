@@ -226,6 +226,23 @@ export class TransformService {
 		};
 	}
 
+	async folderChildren(orm: Orm, o: ORMFolder, folderChildrenArgs: IncludesFolderChildrenArgs, user: User): Promise<Array<FolderBase>> {
+		const folderArgs: IncludesFolderArgs = {
+			folderIncTag: folderChildrenArgs.folderChildIncTag,
+			folderIncState: folderChildrenArgs.folderChildIncState,
+			folderIncChildFolderCount: folderChildrenArgs.folderChildIncChildFolderCount,
+			folderIncTrackCount: folderChildrenArgs.folderChildIncTrackCount,
+			folderIncArtworkCount: folderChildrenArgs.folderChildIncArtworkCount,
+			folderIncParents: folderChildrenArgs.folderChildIncParents,
+			folderIncInfo: folderChildrenArgs.folderChildIncInfo,
+			folderIncSimilar: folderChildrenArgs.folderChildIncSimilar,
+			folderIncArtworkIDs: folderChildrenArgs.folderChildIncArtworkIDs,
+			folderIncTrackIDs: folderChildrenArgs.folderChildIncTrackIDs,
+			folderIncFolderIDs: folderChildrenArgs.folderChildIncFolderIDs,
+		};
+		return await Promise.all((await o.children.getItems()).map(t => this.folderBase(orm, t, folderArgs, user)));
+	}
+
 	async folder(orm: Orm, o: ORMFolder, folderArgs: IncludesFolderArgs, folderChildrenArgs: IncludesFolderChildrenArgs, trackArgs: IncludesTrackArgs, artworkArgs: IncludesArtworkArgs, user: User): Promise<Folder> {
 		return {
 			...(await this.folderBase(orm, o, folderArgs, user)),
@@ -233,8 +250,8 @@ export class TransformService {
 				await Promise.all((await o.tracks.getItems()).map(t => this.trackBase(orm, t, trackArgs, user))) :
 				undefined,
 			folders: folderChildrenArgs.folderIncChildren || folderChildrenArgs.folderIncFolders ?
-				await Promise.all((await o.children.getItems()).map(t => this.folderBase(orm, t, folderArgs, user))) :
-				undefined,
+				await this.folderChildren(orm, o, folderChildrenArgs, user)
+				: undefined,
 			artworks: folderChildrenArgs.folderIncArtworks ?
 				await Promise.all((await o.artworks.getItems()).map(t => this.artworkBase(orm, t, artworkArgs, user))) :
 				undefined

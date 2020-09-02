@@ -7006,6 +7006,138 @@
 					},
 					{
 						"in": "query",
+						"name": "folderChildIncTag",
+						"description": "include tag on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tag on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncState",
+						"description": "include state (fav,rate) on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include state (fav,rate) on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncChildFolderCount",
+						"description": "include child folder count on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child folder count on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncTrackCount",
+						"description": "include track count on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track count on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncArtworkCount",
+						"description": "include artwork count on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include artwork count on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncParents",
+						"description": "include a list of all parent folder ids/names on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include a list of all parent folder ids/names on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncInfo",
+						"description": "include extended meta data on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncSimilar",
+						"description": "include similar folders list on child folder(s) - only for folders of type artist",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include similar folders list on child folder(s) - only for folders of type artist"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncArtworkIDs",
+						"description": "include artwork images Ids on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include artwork images Ids on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncTrackIDs",
+						"description": "include track Ids on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track Ids on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncFolderIDs",
+						"description": "include children folder Ids on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include children folder Ids on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "folderIncTag",
 						"description": "include tag on folder(s)",
 						"required": false,
@@ -8087,6 +8219,138 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include tracks on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncTag",
+						"description": "include tag on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tag on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncState",
+						"description": "include state (fav,rate) on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include state (fav,rate) on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncChildFolderCount",
+						"description": "include child folder count on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child folder count on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncTrackCount",
+						"description": "include track count on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track count on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncArtworkCount",
+						"description": "include artwork count on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include artwork count on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncParents",
+						"description": "include a list of all parent folder ids/names on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include a list of all parent folder ids/names on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncInfo",
+						"description": "include extended meta data on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncSimilar",
+						"description": "include similar folders list on child folder(s) - only for folders of type artist",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include similar folders list on child folder(s) - only for folders of type artist"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncArtworkIDs",
+						"description": "include artwork images Ids on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include artwork images Ids on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncTrackIDs",
+						"description": "include track Ids on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track Ids on child folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderChildIncFolderIDs",
+						"description": "include children folder Ids on child folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include children folder Ids on child folder(s)"
 						}
 					},
 					{
