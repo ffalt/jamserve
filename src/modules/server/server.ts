@@ -117,7 +117,6 @@ export class Server {
 			{Content: 'REST Documentation', URL: `${domain}/docs`},
 			{Content: 'OpenApi Spec', URL: `${domain}/docs/openapi.json`},
 			{Content: 'GraphQL Spec', URL: `${domain}/docs/schema.graphql`},
-			{Content: 'GraphQL Voyager', URL: `${domain}/docs/voyager`},
 			{Content: 'Angular Client', URL: `${domain}/docs/angular-client.zip`},
 			{Content: 'Axios Client', URL: `${domain}/docs/axios-client.zip`}
 		], [
