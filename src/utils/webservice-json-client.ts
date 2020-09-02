@@ -67,7 +67,6 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 		if (statusCode === 502 || statusCode === 503) {
 			return this.retry(e, req);
 		}
-		log.error(e);
 		return Promise.reject(e);
 	}
 
@@ -78,7 +77,7 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 	protected async get(req: T): Promise<R> {
 		const url = this.reqToUrl(req);
 
-		log.info('requesting', url, JSON.stringify(req));
+		log.debug('requesting', url, JSON.stringify(req));
 		try {
 			const data = await this.getJson<any>(url, undefined);
 			if (this.isRateLimitError(data)) {

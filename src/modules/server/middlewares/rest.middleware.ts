@@ -47,12 +47,14 @@ export class RestMiddleware {
 		};
 
 		const routeInfos = buildRestRouter(api, options);
-		log.table(routeInfos, [
-			{name: 'method', alignment: 'right'},
-			{name: 'endpoint', alignment: 'left'},
-			{name: 'role', alignment: 'right'},
-			{name: 'format', alignment: 'left'}
-		]);
+		if (process.env.NODE_ENV !== 'production') {
+			log.table(routeInfos, [
+				{name: 'method', alignment: 'right'},
+				{name: 'endpoint', alignment: 'left'},
+				{name: 'role', alignment: 'right'},
+				{name: 'format', alignment: 'left'}
+			]);
+		}
 
 		api.use((req, res) => {
 			res.status(404).send('Api Path not found');

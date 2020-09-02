@@ -8,7 +8,7 @@ import {MatchNodeMetaStats, MetaStat} from './meta-stats';
 import {Orm} from '../services/orm.service';
 import {Folder} from '../../../entity/folder/folder';
 
-const log = logger('Worker.MergeScan');
+const log = logger('IO.MergeScan');
 
 export interface MergeNode {
 	path: string;

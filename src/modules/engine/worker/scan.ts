@@ -15,7 +15,7 @@ import {artWorkImageNameToType} from '../../../utils/artwork-type';
 import {ImageModule} from '../../image/image.module';
 import moment from 'moment';
 
-const log = logger('Worker.Scan');
+const log = logger('IO.Scan');
 
 export interface MatchTrack {
 	artist?: string;

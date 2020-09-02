@@ -26,7 +26,7 @@ export class Logger {
 	}
 
 	private applyLog(level: string, format: string, ...params: Array<any>): void {
-		winston.log(level, `${(new Date()).toISOString()} ${this.name}: ${[format].concat(params).join(' ')}`);
+		winston.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format].concat(params).join(' ')}`);
 	}
 
 	debug(format: string, ...params: Array<any>): void {
@@ -54,6 +54,9 @@ export class Logger {
 		}
 	}
 
+	access(format: string, ...params: Array<any>): void {
+		this.applyLog('debug', format, params);
+	}
 }
 
 export function logger(name: string): Logger {

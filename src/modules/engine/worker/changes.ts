@@ -12,7 +12,7 @@ import {BaseWorker} from './tasks/base';
 import {Orm, OrmService} from '../services/orm.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
 
-const log = logger('Worker.Changes');
+const log = logger('IO.Changes');
 
 class IdSet<T extends { id: string }> {
 	private set = new Set<string>();// map: Map<string, T> = new Map();
