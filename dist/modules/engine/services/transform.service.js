@@ -156,6 +156,22 @@ let TransformService = class TransformService {
             state: folderArgs.folderIncSimilar ? await this.state(orm, o.id, enums_1.DBObjectType.folder, user.id) : undefined
         };
     }
+    async folderChildren(orm, o, folderChildrenArgs, user) {
+        const folderArgs = {
+            folderIncTag: folderChildrenArgs.folderChildIncTag,
+            folderIncState: folderChildrenArgs.folderChildIncState,
+            folderIncChildFolderCount: folderChildrenArgs.folderChildIncChildFolderCount,
+            folderIncTrackCount: folderChildrenArgs.folderChildIncTrackCount,
+            folderIncArtworkCount: folderChildrenArgs.folderChildIncArtworkCount,
+            folderIncParents: folderChildrenArgs.folderChildIncParents,
+            folderIncInfo: folderChildrenArgs.folderChildIncInfo,
+            folderIncSimilar: folderChildrenArgs.folderChildIncSimilar,
+            folderIncArtworkIDs: folderChildrenArgs.folderChildIncArtworkIDs,
+            folderIncTrackIDs: folderChildrenArgs.folderChildIncTrackIDs,
+            folderIncFolderIDs: folderChildrenArgs.folderChildIncFolderIDs,
+        };
+        return await Promise.all((await o.children.getItems()).map(t => this.folderBase(orm, t, folderArgs, user)));
+    }
     async folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user) {
         return {
             ...(await this.folderBase(orm, o, folderArgs, user)),
@@ -163,8 +179,8 @@ let TransformService = class TransformService {
                 await Promise.all((await o.tracks.getItems()).map(t => this.trackBase(orm, t, trackArgs, user))) :
                 undefined,
             folders: folderChildrenArgs.folderIncChildren || folderChildrenArgs.folderIncFolders ?
-                await Promise.all((await o.children.getItems()).map(t => this.folderBase(orm, t, folderArgs, user))) :
-                undefined,
+                await this.folderChildren(orm, o, folderChildrenArgs, user)
+                : undefined,
             artworks: folderChildrenArgs.folderIncArtworks ?
                 await Promise.all((await o.artworks.getItems()).map(t => this.artworkBase(orm, t, artworkArgs, user))) :
                 undefined

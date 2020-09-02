@@ -83,6 +83,50 @@ __decorate([
     decorators_1.ObjField({ nullable: true, description: 'include tracks on folder(s)', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesFolderChildrenArgs.prototype, "folderIncTracks", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include tag on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncTag", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include state (fav,rate) on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncState", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include child folder count on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncChildFolderCount", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include track count on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncTrackCount", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include artwork count on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncArtworkCount", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include a list of all parent folder ids/names on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncParents", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include extended meta data on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncInfo", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include similar folders list on child folder(s) - only for folders of type artist', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncSimilar", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include artwork images Ids on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncArtworkIDs", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include track Ids on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncTrackIDs", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include children folder Ids on child folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderChildrenArgs.prototype, "folderChildIncFolderIDs", void 0);
 IncludesFolderChildrenArgs = __decorate([
     decorators_1.ObjParamsType()
 ], IncludesFolderChildrenArgs);

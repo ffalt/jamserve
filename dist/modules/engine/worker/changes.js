@@ -19,7 +19,7 @@ const merge_meta_1 = require("./merge-meta");
 const base_1 = require("./tasks/base");
 const orm_service_1 = require("../services/orm.service");
 const typescript_ioc_1 = require("typescript-ioc");
-const log = logger_1.logger('Worker.Changes');
+const log = logger_1.logger('IO.Changes');
 class IdSet {
     constructor() {
         this.set = new Set();

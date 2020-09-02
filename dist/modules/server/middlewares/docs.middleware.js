@@ -55,24 +55,6 @@ let DocsMiddleware = class DocsMiddleware {
         api.get('', (req, res) => {
             res.sendFile(path_1.default.resolve('./static/redoc/index.html'));
         });
-        api.get('/voyager/voyager.min.js', (req, res) => {
-            res.type('text/javascript');
-            res.sendFile(path_1.default.resolve('./static/voyager/voyager.min.js'));
-        });
-        api.get('/voyager/voyager.worker.js', (req, res) => {
-            res.type('text/javascript');
-            res.sendFile(path_1.default.resolve('./static/voyager/voyager.worker.js'));
-        });
-        api.get('/voyager/voyager.css', (req, res) => {
-            res.type('text/css');
-            res.sendFile(path_1.default.resolve('./static/voyager/voyager.css'));
-        });
-        api.get('/voyager/', (req, res) => {
-            res.sendFile(path_1.default.resolve('./static/voyager/index.html'));
-        });
-        api.get('', (req, res) => {
-            res.sendFile(path_1.default.resolve('./static/redoc/index.html'));
-        });
         return api;
     }
 };

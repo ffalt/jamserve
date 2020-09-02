@@ -22,7 +22,7 @@ class Logger {
         this.name = name;
     }
     applyLog(level, format, ...params) {
-        winston_1.default.log(level, `${(new Date()).toISOString()} ${this.name}: ${[format].concat(params).join(' ')}`);
+        winston_1.default.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format].concat(params).join(' ')}`);
     }
     debug(format, ...params) {
         this.applyLog('debug', format, params);
@@ -42,6 +42,9 @@ class Logger {
             p.addRows(items);
             p.printTable();
         }
+    }
+    access(format, ...params) {
+        this.applyLog('debug', format, params);
     }
 }
 exports.Logger = Logger;

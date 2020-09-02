@@ -46,7 +46,6 @@ class WebserviceJSONClient extends webservice_client_1.WebserviceClient {
         if (statusCode === 502 || statusCode === 503) {
             return this.retry(e, req);
         }
-        log.error(e);
         return Promise.reject(e);
     }
     isRateLimitError(body) {
@@ -55,7 +54,7 @@ class WebserviceJSONClient extends webservice_client_1.WebserviceClient {
     }
     async get(req) {
         const url = this.reqToUrl(req);
-        log.info('requesting', url, JSON.stringify(req));
+        log.debug('requesting', url, JSON.stringify(req));
         try {
             const data = await this.getJson(url, undefined);
             if (this.isRateLimitError(data)) {

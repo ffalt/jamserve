@@ -11,7 +11,7 @@ const path_1 = __importDefault(require("path"));
 const fs_utils_1 = require("../../../utils/fs-utils");
 const artwork_type_1 = require("../../../utils/artwork-type");
 const moment_1 = __importDefault(require("moment"));
-const log = logger_1.logger('Worker.Scan');
+const log = logger_1.logger('IO.Scan');
 class OnDemandTrackMatch {
 }
 exports.OnDemandTrackMatch = OnDemandTrackMatch;

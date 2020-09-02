@@ -9,7 +9,7 @@ const dir_name_1 = require("../../../utils/dir-name");
 const path_1 = __importDefault(require("path"));
 const logger_1 = require("../../../utils/logger");
 const meta_stats_1 = require("./meta-stats");
-const log = logger_1.logger('Worker.MergeScan');
+const log = logger_1.logger('IO.MergeScan');
 class WorkerMergeScan {
     constructor(orm, strategy, changes) {
         this.orm = orm;
