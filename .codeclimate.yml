@@ -14,5 +14,4 @@ plugins:
     enabled: false
 exclude_patterns:
   - static/redoc/**/*
-  - static/voyager/**/*
   - node_modules/**
