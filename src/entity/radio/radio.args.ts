@@ -1,7 +1,7 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {ArgsType, Field, ID, InputType, Int} from 'type-graphql';
 import {ListType} from '../../types/enums';
-import {DefaultOrderArgs, FilterArgs, PaginatedArgs} from '../base/base.args';
+import {DefaultOrderArgs, FilterArgs, PaginatedFilterArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 
 @ObjParamsType()
@@ -72,7 +72,7 @@ export class RadioIndexArgs extends FilterArgs(RadioFilterArgsQL) {
 }
 
 @ArgsType()
-export class RadiosArgs extends PaginatedArgs(RadioFilterArgsQL, RadioOrderArgsQL) {
+export class RadiosArgs extends PaginatedFilterArgs(RadioFilterArgsQL, RadioOrderArgsQL) {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
 }

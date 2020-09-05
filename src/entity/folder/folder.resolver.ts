@@ -8,7 +8,7 @@ import {Artist, ArtistQL} from '../artist/artist';
 import {Album, AlbumQL} from '../album/album';
 import {Track, TrackQL} from '../track/track';
 import {Artwork, ArtworkQL} from '../artwork/artwork';
-import {FolderIndexArgs, FoldersArgs} from './folder.args';
+import {FolderIndexArgs, FoldersArgsQL} from './folder.args';
 
 @Resolver(FolderQL)
 export class FolderResolver {
@@ -18,7 +18,7 @@ export class FolderResolver {
 	}
 
 	@Query(() => FolderPageQL, {description: 'Search Folders'})
-	async folders(@Args() {page, filter, order, list}: FoldersArgs, @Ctx() {orm, user}: Context): Promise<FolderPageQL> {
+	async folders(@Args() {page, filter, order, list}: FoldersArgsQL, @Ctx() {orm, user}: Context): Promise<FolderPageQL> {
 		if (list) {
 			return await orm.Folder.findListFilter(list, filter, order, page, user);
 		}

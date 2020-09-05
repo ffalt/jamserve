@@ -13,7 +13,7 @@ import {MediaTagRawQL, Tag, TagQL} from '../tag/tag';
 import {MediaTagRaw} from '../tag/tag.model';
 import {Series, SeriesQL} from '../series/series';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
-import {TracksArgs} from './track.args';
+import {TracksArgsQL} from './track.args';
 
 @Resolver(TrackQL)
 export class TrackResolver {
@@ -24,7 +24,7 @@ export class TrackResolver {
 	}
 
 	@Query(() => TrackPageQL)
-	async tracks(@Args() {page, filter, order, list}: TracksArgs, @Ctx() {orm, user}: Context): Promise<TrackPageQL> {
+	async tracks(@Args() {page, filter, order, list}: TracksArgsQL, @Ctx() {orm, user}: Context): Promise<TrackPageQL> {
 		if (list) {
 			return await orm.Track.findListFilter(list, filter, order, page, user);
 		}

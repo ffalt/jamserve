@@ -28,7 +28,7 @@ import {
 	TrackOrderFields,
 	UserRole
 } from '../../../types/enums';
-import {UserResolver} from '../../../entity/user/user.resolver';
+import {UserFavoritesResolver, UserResolver} from '../../../entity/user/user.resolver';
 import {AlbumResolver} from '../../../entity/album/album.resolver';
 import {ArtistResolver} from '../../../entity/artist/artist.resolver';
 import {ArtworkResolver} from '../../../entity/artwork/artwork.resolver';
@@ -112,7 +112,7 @@ export async function buildGraphQlSchema(): Promise<GraphQLSchema> {
 			UserResolver, AlbumResolver, ArtistResolver, ArtworkResolver, BookmarkResolver, ChatResolver,
 			EpisodeResolver, FolderResolver, NowPlayingResolver, WaveformResolver, GenreResolver,
 			PlaylistResolver, PlayQueueResolver, PodcastResolver, RadioResolver, RootResolver,
-			RootStatusResolver, SeriesResolver,
+			RootStatusResolver, SeriesResolver, UserFavoritesResolver,
 			SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
 		],
 		authChecker: customAuthChecker

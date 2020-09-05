@@ -2,7 +2,7 @@ import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {ListType, RootScanStrategy} from '../../types/enums';
 import {examples} from '../../modules/engine/rest/example.consts';
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {DefaultOrderArgs, PaginatedArgs} from '../base/base.args';
+import {DefaultOrderArgs, PaginatedFilterArgs} from '../base/base.args';
 
 @ObjParamsType()
 export class IncludesRootArgs {
@@ -82,7 +82,7 @@ export class RootOrderArgsQL extends RootOrderArgs {
 }
 
 @ArgsType()
-export class RootsArgs extends PaginatedArgs(RootFilterArgsQL, RootOrderArgsQL) {
+export class RootsArgs extends PaginatedFilterArgs(RootFilterArgsQL, RootOrderArgsQL) {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
 }

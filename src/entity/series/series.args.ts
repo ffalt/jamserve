@@ -1,7 +1,7 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
 import {AlbumType, ListType} from '../../types/enums';
-import {DefaultOrderArgs, FilterArgs, PaginatedArgs} from '../base/base.args';
+import {DefaultOrderArgs, FilterArgs, PaginatedFilterArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 
 @ObjParamsType()
@@ -90,7 +90,11 @@ export class SeriesIndexArgsQL extends FilterArgs(SeriesFilterArgsQL) {
 }
 
 @ArgsType()
-export class SeriesArgsQL extends PaginatedArgs(SeriesFilterArgsQL, SeriesOrderArgsQL) {
+export class SeriesPageArgsQL extends PaginatedFilterArgs(SeriesFilterArgsQL, SeriesOrderArgsQL) {
+}
+
+@ArgsType()
+export class SeriesArgsQL extends SeriesPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
 }

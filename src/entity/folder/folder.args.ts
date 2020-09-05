@@ -1,7 +1,7 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {AlbumType, FolderOrderFields, FolderType, ListType} from '../../types/enums';
 import {ArgsType, Field, Float, ID, InputType, Int} from 'type-graphql';
-import {FilterArgs, OrderByArgs, PaginatedArgs} from '../base/base.args';
+import {FilterArgs, OrderByArgs, PaginatedFilterArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 
 @ObjParamsType()
@@ -218,7 +218,11 @@ export class FolderIndexArgs extends FilterArgs(FolderFilterArgsQL) {
 }
 
 @ArgsType()
-export class FoldersArgs extends PaginatedArgs(FolderFilterArgsQL, FolderOrderArgsQL) {
+export class FolderPageArgsQL extends PaginatedFilterArgs(FolderFilterArgsQL, FolderOrderArgsQL) {
+}
+
+@ArgsType()
+export class FoldersArgsQL extends FolderPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
 }

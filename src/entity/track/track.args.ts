@@ -1,7 +1,7 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {ListType, TrackHealthID, TrackOrderFields} from '../../types/enums';
 import {ArgsType, Field, Float, ID, InputType, Int} from 'type-graphql';
-import {OrderByArgs, PaginatedArgs} from '../base/base.args';
+import {OrderByArgs, PaginatedFilterArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 
 @ObjParamsType()
@@ -151,7 +151,11 @@ export class TrackOrderArgsQL extends TrackOrderArgs {
 }
 
 @ArgsType()
-export class TracksArgs extends PaginatedArgs(TrackFilterArgsQL, TrackOrderArgsQL) {
+export class TrackPageArgsQL extends PaginatedFilterArgs(TrackFilterArgsQL, TrackOrderArgsQL) {
+}
+
+@ArgsType()
+export class TracksArgsQL extends TrackPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
 }

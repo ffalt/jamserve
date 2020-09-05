@@ -29,6 +29,7 @@ export class SessionRepository extends BaseRepository<Session, SessionFilterArgs
 				{mode: QHelper.eq(filter.mode)},
 				{expires: QHelper.lte(filter.expiresTo)},
 				{expires: QHelper.gte(filter.expiresFrom)},
+				{user: QHelper.inOrEqual(filter.userIDs)},
 				{user: user?.id}
 			]
 		) : {};

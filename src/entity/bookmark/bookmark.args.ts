@@ -1,7 +1,7 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {BookmarkOrderFields} from '../../types/enums';
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {OrderByArgs, PaginatedArgs} from '../base/base.args';
+import {OrderByArgs, PaginatedFilterArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 
 @ObjParamsType()
@@ -46,6 +46,10 @@ export class BookmarkFilterArgs {
 	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;
+
+	@Field(() => [ID], {nullable: true})
+	@ObjField(() => [String], {nullable: true, description: 'filter by User Ids', isID: true})
+	userIDs?: Array<string>;
 }
 
 @InputType()
@@ -65,5 +69,9 @@ export class BookmarkOrderArgsQL extends BookmarkOrderArgs {
 }
 
 @ArgsType()
-export class BookmarksArgs extends PaginatedArgs(BookmarkFilterArgsQL, BookmarkOrderArgsQL) {
+export class BookmarksPageArgsQL extends PaginatedFilterArgs(BookmarkFilterArgsQL, BookmarkOrderArgsQL) {
+}
+
+@ArgsType()
+export class BookmarksArgs extends BookmarksPageArgsQL {
 }

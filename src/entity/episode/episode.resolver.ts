@@ -7,7 +7,7 @@ import {Context} from '../../modules/server/middlewares/apollo.context';
 import {Tag, TagQL} from '../tag/tag';
 import {Podcast, PodcastQL} from '../podcast/podcast';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
-import {EpisodesArgs} from './episode.args';
+import {EpisodesArgsQL} from './episode.args';
 
 @Resolver(EpisodeQL)
 export class EpisodeResolver {
@@ -17,7 +17,7 @@ export class EpisodeResolver {
 	}
 
 	@Query(() => EpisodePageQL, {description: 'Search Episodes'})
-	async episodes(@Args() {page, filter, order, list}: EpisodesArgs, @Ctx() {orm, user}: Context): Promise<EpisodePageQL> {
+	async episodes(@Args() {page, filter, order, list}: EpisodesArgsQL, @Ctx() {orm, user}: Context): Promise<EpisodePageQL> {
 		if (list) {
 			return await orm.Episode.findListFilter(list, filter, order, page, user);
 		}

@@ -1,6 +1,6 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {DefaultOrderArgs, FilterArgs, PaginatedArgs} from '../base/base.args';
+import {DefaultOrderArgs, FilterArgs, PaginatedFilterArgs} from '../base/base.args';
 import {examples} from '../../modules/engine/rest/example.consts';
 import {UserRole} from '../../types/enums';
 
@@ -94,5 +94,5 @@ export class UserIndexArgs extends FilterArgs(UserFilterArgsQL) {
 }
 
 @ArgsType()
-export class UsersArgs extends PaginatedArgs(UserFilterArgsQL, UserOrderArgsQL) {
+export class UsersArgs extends PaginatedFilterArgs(UserFilterArgsQL, UserOrderArgsQL) {
 }

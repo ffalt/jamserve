@@ -1,6 +1,6 @@
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {OrderByArgs, PaginatedArgs} from '../base/base.args';
-import {SessionOrderFields, SessionMode} from '../../types/enums';
+import {OrderByArgs, PaginatedFilterArgs} from '../base/base.args';
+import {SessionMode, SessionOrderFields} from '../../types/enums';
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {examples} from '../../modules/engine/rest/example.consts';
 
@@ -33,6 +33,10 @@ export class SessionFilterArgs {
 	@ObjField(() => SessionMode, {nullable: true, description: 'filter by session mode', example: SessionMode.browser})
 	@Field(() => SessionMode, {nullable: true})
 	mode?: SessionMode;
+
+	@Field(() => [ID], {nullable: true})
+	@ObjField(() => [String], {nullable: true, description: 'filter by User Ids', isID: true})
+	userIDs?: Array<string>;
 }
 
 @InputType()
@@ -52,5 +56,10 @@ export class SessionOrderArgsQL extends SessionOrderArgs {
 }
 
 @ArgsType()
-export class SessionsArgs extends PaginatedArgs(SessionFilterArgsQL, SessionOrderArgsQL) {
+export class SessionsPageArgsQL extends PaginatedFilterArgs(SessionFilterArgsQL, SessionOrderArgsQL) {
 }
+
+@ArgsType()
+export class SessionsArgs extends SessionsPageArgsQL {
+}
+

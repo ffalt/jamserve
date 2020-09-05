@@ -2,7 +2,7 @@ import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {examples} from '../../modules/engine/rest/example.consts';
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
 import {ListType, PodcastOrderFields, PodcastStatus} from '../../types/enums';
-import {FilterArgs, OrderByArgs, PaginatedArgs} from '../base/base.args';
+import {FilterArgs, OrderByArgs, PaginatedFilterArgs} from '../base/base.args';
 
 @ObjParamsType()
 export class IncludesPodcastArgs {
@@ -154,7 +154,11 @@ export class PodcastIndexArgsQL extends FilterArgs(PodcastFilterArgsQL) {
 }
 
 @ArgsType()
-export class PodcastsArgsQL extends PaginatedArgs(PodcastFilterArgsQL, PodcastOrderArgsQL) {
+export class PodcastPageArgsQL extends PaginatedFilterArgs(PodcastFilterArgsQL, PodcastOrderArgsQL) {
+}
+
+@ArgsType()
+export class PodcastsArgsQL extends PodcastPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
 }

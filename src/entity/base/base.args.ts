@@ -43,9 +43,24 @@ export class PageArgs {
 }
 
 @InputType()
-export class PageArgsQL extends PageArgs {}
+export class PageArgsQL extends PageArgs {
+}
 
-export function PaginatedArgs<TFilter, TOrder>(TFilterClass: ClassType<TFilter>, TOrderClass: ClassType<TOrder>) {
+export function PaginatedArgs<TOrder>(TOrderClass: ClassType<TOrder>) {
+
+	@ArgsType()
+	abstract class PaginatedArgsClass {
+		@Field(() => PageArgsQL, {nullable: true})
+		page?: PageArgs;
+
+		@Field(() => [TOrderClass], {nullable: true})
+		order?: Array<TOrder>;
+	}
+
+	return PaginatedArgsClass;
+}
+
+export function PaginatedFilterArgs<TFilter, TOrder>(TFilterClass: ClassType<TFilter>, TOrderClass: ClassType<TOrder>) {
 
 	@ArgsType()
 	abstract class PaginatedArgsClass {
