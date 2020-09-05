@@ -58,7 +58,7 @@ export class MetaDataService {
 		if (result) {
 			return JSON.parse(result.data);
 		}
-		const data = await generate();
+		const data = (await generate()) || {};
 		await this.addToStore(orm, name, dataType, JSON.stringify(data));
 		return data;
 	}
