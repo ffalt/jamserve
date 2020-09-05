@@ -99,7 +99,7 @@ async function buildGraphQlSchema() {
             user_resolver_1.UserResolver, album_resolver_1.AlbumResolver, artist_resolver_1.ArtistResolver, artwork_resolver_1.ArtworkResolver, bookmark_resolver_1.BookmarkResolver, chat_resolver_1.ChatResolver,
             episode_resolver_1.EpisodeResolver, folder_resolver_1.FolderResolver, nowplaying_resolver_1.NowPlayingResolver, waveform_resolver_1.WaveformResolver, genre_resolver_1.GenreResolver,
             playlist_resolver_1.PlaylistResolver, playqueue_resolver_1.PlayQueueResolver, podcast_resolver_1.PodcastResolver, radio_resolver_1.RadioResolver, root_resolver_1.RootResolver,
-            root_resolver_1.RootStatusResolver, series_resolver_1.SeriesResolver,
+            root_resolver_1.RootStatusResolver, series_resolver_1.SeriesResolver, user_resolver_1.UserFavoritesResolver,
             session_resolver_1.SessionResolver, state_resolver_1.StateResolver, stats_resolver_1.StatsResolver, track_resolver_1.TrackResolver, admin_resolver_1.AdminResolver
         ],
         authChecker: exports.customAuthChecker

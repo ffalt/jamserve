@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PodcastsArgsQL = exports.PodcastIndexArgsQL = exports.PodcastOrderArgsQL = exports.PodcastOrderArgs = exports.PodcastFilterArgsQL = exports.PodcastFilterArgs = exports.PodcastRefreshArgs = exports.PodcastCreateArgs = exports.IncludesPodcastChildrenArgs = exports.IncludesPodcastArgs = void 0;
+exports.PodcastsArgsQL = exports.PodcastPageArgsQL = exports.PodcastIndexArgsQL = exports.PodcastOrderArgsQL = exports.PodcastOrderArgs = exports.PodcastFilterArgsQL = exports.PodcastFilterArgs = exports.PodcastRefreshArgs = exports.PodcastCreateArgs = exports.IncludesPodcastChildrenArgs = exports.IncludesPodcastArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const example_consts_1 = require("../../modules/engine/rest/example.consts");
 const type_graphql_1 = require("type-graphql");
@@ -226,7 +226,13 @@ PodcastIndexArgsQL = __decorate([
     type_graphql_1.ArgsType()
 ], PodcastIndexArgsQL);
 exports.PodcastIndexArgsQL = PodcastIndexArgsQL;
-let PodcastsArgsQL = class PodcastsArgsQL extends base_args_1.PaginatedArgs(PodcastFilterArgsQL, PodcastOrderArgsQL) {
+let PodcastPageArgsQL = class PodcastPageArgsQL extends base_args_1.PaginatedFilterArgs(PodcastFilterArgsQL, PodcastOrderArgsQL) {
+};
+PodcastPageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], PodcastPageArgsQL);
+exports.PodcastPageArgsQL = PodcastPageArgsQL;
+let PodcastsArgsQL = class PodcastsArgsQL extends PodcastPageArgsQL {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),

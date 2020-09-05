@@ -93,7 +93,7 @@ __decorate([
     type_graphql_1.Query(() => folder_1.FolderPageQL, { description: 'Search Folders' }),
     __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_args_1.FoldersArgs, Object]),
+    __metadata("design:paramtypes", [folder_args_1.FoldersArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "folders", null);
 __decorate([

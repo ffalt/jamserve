@@ -155,7 +155,7 @@ UserIndexArgs = __decorate([
     type_graphql_1.ArgsType()
 ], UserIndexArgs);
 exports.UserIndexArgs = UserIndexArgs;
-let UsersArgs = class UsersArgs extends base_args_1.PaginatedArgs(UserFilterArgsQL, UserOrderArgsQL) {
+let UsersArgs = class UsersArgs extends base_args_1.PaginatedFilterArgs(UserFilterArgsQL, UserOrderArgsQL) {
 };
 UsersArgs = __decorate([
     type_graphql_1.ArgsType()

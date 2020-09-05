@@ -144,8 +144,8 @@ function buildTSParameterTypes() {
     metadata.argumentTypes
         .sort((a, b) => a.name.localeCompare(b.name))
         .forEach(type => buildTSType(type, metadata, sl, true, metadata.argumentTypes));
-    sl.push(`${tab}export interface ID {${tabtab}id: string;${tab}}\n`);
-    sl.push(`${tab}export interface MaybeID {${tabtab}id?: string;${tab}}\n`);
+    sl.push(`${tab}export interface ID {\n${tabtab}id: string;\n${tab}}\n`);
+    sl.push(`${tab}export interface MaybeID {\n${tabtab}id?: string;\n${tab}}\n`);
     for (const get of metadata.gets) {
         sl.push(...getCombinedType(get));
     }

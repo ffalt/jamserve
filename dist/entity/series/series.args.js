@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SeriesArgsQL = exports.SeriesIndexArgsQL = exports.SeriesOrderArgsQL = exports.SeriesOrderArgs = exports.SeriesFilterArgsQL = exports.SeriesFilterArgs = exports.IncludesSeriesChildrenArgs = exports.IncludesSeriesArgs = void 0;
+exports.SeriesArgsQL = exports.SeriesPageArgsQL = exports.SeriesIndexArgsQL = exports.SeriesOrderArgsQL = exports.SeriesOrderArgs = exports.SeriesFilterArgsQL = exports.SeriesFilterArgs = exports.IncludesSeriesChildrenArgs = exports.IncludesSeriesArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const type_graphql_1 = require("type-graphql");
 const enums_1 = require("../../types/enums");
@@ -141,7 +141,13 @@ SeriesIndexArgsQL = __decorate([
     type_graphql_1.ArgsType()
 ], SeriesIndexArgsQL);
 exports.SeriesIndexArgsQL = SeriesIndexArgsQL;
-let SeriesArgsQL = class SeriesArgsQL extends base_args_1.PaginatedArgs(SeriesFilterArgsQL, SeriesOrderArgsQL) {
+let SeriesPageArgsQL = class SeriesPageArgsQL extends base_args_1.PaginatedFilterArgs(SeriesFilterArgsQL, SeriesOrderArgsQL) {
+};
+SeriesPageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], SeriesPageArgsQL);
+exports.SeriesPageArgsQL = SeriesPageArgsQL;
+let SeriesArgsQL = class SeriesArgsQL extends SeriesPageArgsQL {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),

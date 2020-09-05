@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AlbumsArgsQL = exports.AlbumIndexArgsQL = exports.AlbumOrderArgsQL = exports.AlbumOrderArgs = exports.AlbumFilterArgsQL = exports.AlbumFilterArgs = exports.IncludesAlbumChildrenArgs = exports.IncludesAlbumArgs = void 0;
+exports.AlbumsArgsQL = exports.AlbumPageArgsQL = exports.AlbumIndexArgsQL = exports.AlbumOrderArgsQL = exports.AlbumOrderArgs = exports.AlbumFilterArgsQL = exports.AlbumFilterArgs = exports.IncludesAlbumChildrenArgs = exports.IncludesAlbumArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
@@ -173,7 +173,13 @@ AlbumIndexArgsQL = __decorate([
     type_graphql_1.ArgsType()
 ], AlbumIndexArgsQL);
 exports.AlbumIndexArgsQL = AlbumIndexArgsQL;
-let AlbumsArgsQL = class AlbumsArgsQL extends base_args_1.PaginatedArgs(AlbumFilterArgsQL, AlbumOrderArgsQL) {
+let AlbumPageArgsQL = class AlbumPageArgsQL extends base_args_1.PaginatedFilterArgs(AlbumFilterArgsQL, AlbumOrderArgsQL) {
+};
+AlbumPageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], AlbumPageArgsQL);
+exports.AlbumPageArgsQL = AlbumPageArgsQL;
+let AlbumsArgsQL = class AlbumsArgsQL extends AlbumPageArgsQL {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),

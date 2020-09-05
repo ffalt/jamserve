@@ -33,11 +33,17 @@ class AlbumRepository extends base_repository_1.BaseRepository {
             case enums_1.AlbumOrderFields.year:
                 return [['year', direction]];
             case enums_1.AlbumOrderFields.seriesNr: {
-                const col = this.em.sequelize.getDialect() === 'sqlite' ? '`Album`.`seriesNr`' : '"Album"."seriesNr"';
-                return [[
-                        sequelize_1.default.literal(`substr('0000000000'||${col}, -10, 10)`),
-                        direction
-                    ]];
+                switch (this.em.sequelize.getDialect()) {
+                    case 'sqlite': {
+                        return [[sequelize_1.default.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
+                    }
+                    case 'postgres': {
+                        return [[sequelize_1.default.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
+                    }
+                    default: {
+                        throw new Error(`Implement LPAD request for dialect ${this.em.sequelize.getDialect()}`);
+                    }
+                }
             }
             case enums_1.AlbumOrderFields.default:
                 return [

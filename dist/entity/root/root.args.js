@@ -125,7 +125,7 @@ RootOrderArgsQL = __decorate([
     type_graphql_1.InputType()
 ], RootOrderArgsQL);
 exports.RootOrderArgsQL = RootOrderArgsQL;
-let RootsArgs = class RootsArgs extends base_args_1.PaginatedArgs(RootFilterArgsQL, RootOrderArgsQL) {
+let RootsArgs = class RootsArgs extends base_args_1.PaginatedFilterArgs(RootFilterArgsQL, RootOrderArgsQL) {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),

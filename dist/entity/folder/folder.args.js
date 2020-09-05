@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FoldersArgs = exports.FolderIndexArgs = exports.FolderOrderArgsQL = exports.FolderOrderArgs = exports.FolderFilterArgsQL = exports.FolderFilterArgs = exports.FolderMoveArgs = exports.FolderRenameArgs = exports.FolderCreateArgs = exports.IncludesFolderChildrenArgs = exports.IncludesFolderArgs = void 0;
+exports.FoldersArgsQL = exports.FolderPageArgsQL = exports.FolderIndexArgs = exports.FolderOrderArgsQL = exports.FolderOrderArgs = exports.FolderFilterArgsQL = exports.FolderFilterArgs = exports.FolderMoveArgs = exports.FolderRenameArgs = exports.FolderCreateArgs = exports.IncludesFolderChildrenArgs = exports.IncludesFolderArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
@@ -340,14 +340,20 @@ FolderIndexArgs = __decorate([
     type_graphql_1.ArgsType()
 ], FolderIndexArgs);
 exports.FolderIndexArgs = FolderIndexArgs;
-let FoldersArgs = class FoldersArgs extends base_args_1.PaginatedArgs(FolderFilterArgsQL, FolderOrderArgsQL) {
+let FolderPageArgsQL = class FolderPageArgsQL extends base_args_1.PaginatedFilterArgs(FolderFilterArgsQL, FolderOrderArgsQL) {
+};
+FolderPageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], FolderPageArgsQL);
+exports.FolderPageArgsQL = FolderPageArgsQL;
+let FoldersArgsQL = class FoldersArgsQL extends FolderPageArgsQL {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),
     __metadata("design:type", String)
-], FoldersArgs.prototype, "list", void 0);
-FoldersArgs = __decorate([
+], FoldersArgsQL.prototype, "list", void 0);
+FoldersArgsQL = __decorate([
     type_graphql_1.ArgsType()
-], FoldersArgs);
-exports.FoldersArgs = FoldersArgs;
+], FoldersArgsQL);
+exports.FoldersArgsQL = FoldersArgsQL;
 //# sourceMappingURL=folder.args.js.map

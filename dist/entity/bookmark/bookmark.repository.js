@@ -37,6 +37,7 @@ class BookmarkRepository extends base_repository_1.BaseRepository {
                 { track: orm_1.QHelper.inOrEqual(filter.trackIDs) },
                 { episode: orm_1.QHelper.inOrEqual(filter.episodeIDs) },
                 { createdAt: orm_1.QHelper.gte(filter.since) },
+                { user: orm_1.QHelper.inOrEqual(filter.userIDs) },
                 { user: (user === null || user === void 0 ? void 0 : user.roleAdmin) ? undefined : user === null || user === void 0 ? void 0 : user.id }
             ]
             : [{ user: (user === null || user === void 0 ? void 0 : user.roleAdmin) ? undefined : user === null || user === void 0 ? void 0 : user.id }]);

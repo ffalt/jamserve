@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtworksArgsQL = exports.ArtworkFilterArgsQL = exports.ArtworkFilterArgs = exports.ArtworkOrderArgsQL = exports.ArtworkOrderArgs = exports.ArtworkRenameArgs = exports.ArtworkNewArgs = exports.ArtworkNewUploadArgs = exports.IncludesArtworkChildrenArgs = exports.IncludesArtworkArgs = void 0;
+exports.ArtworksArgsQL = exports.ArtworkPageArgsQL = exports.ArtworkFilterArgsQL = exports.ArtworkFilterArgs = exports.ArtworkOrderArgsQL = exports.ArtworkOrderArgs = exports.ArtworkRenameArgs = exports.ArtworkNewArgs = exports.ArtworkNewUploadArgs = exports.IncludesArtworkChildrenArgs = exports.IncludesArtworkArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
@@ -169,7 +169,13 @@ ArtworkFilterArgsQL = __decorate([
     type_graphql_1.InputType()
 ], ArtworkFilterArgsQL);
 exports.ArtworkFilterArgsQL = ArtworkFilterArgsQL;
-let ArtworksArgsQL = class ArtworksArgsQL extends base_args_1.PaginatedArgs(ArtworkFilterArgsQL, ArtworkOrderArgsQL) {
+let ArtworkPageArgsQL = class ArtworkPageArgsQL extends base_args_1.PaginatedFilterArgs(ArtworkFilterArgsQL, ArtworkOrderArgsQL) {
+};
+ArtworkPageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], ArtworkPageArgsQL);
+exports.ArtworkPageArgsQL = ArtworkPageArgsQL;
+let ArtworksArgsQL = class ArtworksArgsQL extends ArtworkPageArgsQL {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),

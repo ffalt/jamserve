@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserIndexQL = exports.UserIndexGroupQL = exports.UserPageQL = exports.UserQL = exports.User = void 0;
+exports.UserIndexQL = exports.UserIndexGroupQL = exports.UserPageQL = exports.UserQL = exports.UserFavoritesQL = exports.User = void 0;
 const session_1 = require("../session/session");
 const bookmark_1 = require("../bookmark/bookmark");
 const playqueue_1 = require("../playqueue/playqueue");
@@ -23,8 +23,8 @@ let User = class User extends base_1.Base {
     constructor() {
         super(...arguments);
         this.sessions = new orm_1.Collection(this);
-        this.bookmarks = new orm_1.Collection(this);
         this.playQueue = new orm_1.Reference(this);
+        this.bookmarks = new orm_1.Collection(this);
         this.playlists = new orm_1.Collection(this);
         this.states = new orm_1.Collection(this);
     }
@@ -69,22 +69,19 @@ __decorate([
     __metadata("design:type", Boolean)
 ], User.prototype, "rolePodcast", void 0);
 __decorate([
-    type_graphql_1.Field(() => [session_1.SessionQL]),
     orm_1.OneToMany(() => session_1.Session, session => session.user, { order: [{ orderBy: enums_1.SessionOrderFields.expires }] }),
     __metadata("design:type", orm_1.Collection)
 ], User.prototype, "sessions", void 0);
-__decorate([
-    type_graphql_1.Field(() => [bookmark_1.BookmarkQL]),
-    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.user, { order: [{ orderBy: enums_1.BookmarkOrderFields.media }, { orderBy: enums_1.BookmarkOrderFields.position }] }),
-    __metadata("design:type", orm_1.Collection)
-], User.prototype, "bookmarks", void 0);
 __decorate([
     type_graphql_1.Field(() => playqueue_1.PlayQueueQL, { nullable: true }),
     orm_1.OneToOne(() => playqueue_1.PlayQueue, playQueue => playQueue.user, { nullable: true }),
     __metadata("design:type", orm_1.Reference)
 ], User.prototype, "playQueue", void 0);
 __decorate([
-    type_graphql_1.Field(() => [playlist_1.PlaylistQL]),
+    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.user, { order: [{ orderBy: enums_1.BookmarkOrderFields.media }, { orderBy: enums_1.BookmarkOrderFields.position }] }),
+    __metadata("design:type", orm_1.Collection)
+], User.prototype, "bookmarks", void 0);
+__decorate([
     orm_1.OneToMany(() => playlist_1.Playlist, playlist => playlist.user),
     __metadata("design:type", orm_1.Collection)
 ], User.prototype, "playlists", void 0);
@@ -97,12 +94,22 @@ User = __decorate([
     orm_1.Entity()
 ], User);
 exports.User = User;
+let UserFavoritesQL = class UserFavoritesQL {
+};
+UserFavoritesQL = __decorate([
+    type_graphql_1.ObjectType()
+], UserFavoritesQL);
+exports.UserFavoritesQL = UserFavoritesQL;
 let UserQL = class UserQL extends User {
 };
 __decorate([
     type_graphql_1.Field(() => [enums_1.UserRole]),
     __metadata("design:type", Array)
 ], UserQL.prototype, "roles", void 0);
+__decorate([
+    type_graphql_1.Field(() => UserFavoritesQL, { nullable: true }),
+    __metadata("design:type", UserFavoritesQL)
+], UserQL.prototype, "favorites", void 0);
 UserQL = __decorate([
     type_graphql_1.ObjectType()
 ], UserQL);

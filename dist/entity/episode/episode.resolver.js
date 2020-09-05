@@ -80,7 +80,7 @@ __decorate([
     type_graphql_1.Query(() => episode_1.EpisodePageQL, { description: 'Search Episodes' }),
     __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [episode_args_1.EpisodesArgs, Object]),
+    __metadata("design:paramtypes", [episode_args_1.EpisodesArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], EpisodeResolver.prototype, "episodes", null);
 __decorate([

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlaylistsArgs = exports.PlaylistIndexArgs = exports.PlaylistOrderArgsQL = exports.PlaylistOrderArgs = exports.PlaylistFilterArgsQL = exports.PlaylistFilterArgs = exports.PlaylistMutateArgs = exports.IncludesPlaylistArgs = void 0;
+exports.PlaylistsArgs = exports.PlaylistPageArgsQL = exports.PlaylistIndexArgs = exports.PlaylistOrderArgsQL = exports.PlaylistOrderArgs = exports.PlaylistFilterArgsQL = exports.PlaylistFilterArgs = exports.PlaylistMutateArgs = exports.IncludesPlaylistArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const type_graphql_1 = require("type-graphql");
 const enums_1 = require("../../types/enums");
@@ -132,7 +132,13 @@ PlaylistIndexArgs = __decorate([
     type_graphql_1.ArgsType()
 ], PlaylistIndexArgs);
 exports.PlaylistIndexArgs = PlaylistIndexArgs;
-let PlaylistsArgs = class PlaylistsArgs extends base_args_1.PaginatedArgs(PlaylistFilterArgsQL, PlaylistOrderArgsQL) {
+let PlaylistPageArgsQL = class PlaylistPageArgsQL extends base_args_1.PaginatedFilterArgs(PlaylistFilterArgsQL, PlaylistOrderArgsQL) {
+};
+PlaylistPageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], PlaylistPageArgsQL);
+exports.PlaylistPageArgsQL = PlaylistPageArgsQL;
+let PlaylistsArgs = class PlaylistsArgs extends PlaylistPageArgsQL {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),

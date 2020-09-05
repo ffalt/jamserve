@@ -132,7 +132,7 @@ export declare namespace MusicBrainz {
 
 	export interface Relation {
 		direction: string;
-		attributeValues?: {};
+		attributeValues?: Record<string, unknown>;
 		targetCredit?: string;
 		targetType: string;
 		sourceCredit?: string;

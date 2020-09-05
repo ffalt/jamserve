@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EpisodesArgs = exports.EpisodeOrderArgsQL = exports.EpisodeOrderArgs = exports.EpisodeFilterArgsQL = exports.EpisodeFilterArgs = exports.IncludesEpisodeParentArgs = exports.IncludesEpisodeArgs = void 0;
+exports.EpisodesArgsQL = exports.EpisodePageArgsQL = exports.EpisodeOrderArgsQL = exports.EpisodeOrderArgs = exports.EpisodeFilterArgsQL = exports.EpisodeFilterArgs = exports.IncludesEpisodeParentArgs = exports.IncludesEpisodeArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
@@ -118,14 +118,20 @@ EpisodeOrderArgsQL = __decorate([
     type_graphql_1.InputType()
 ], EpisodeOrderArgsQL);
 exports.EpisodeOrderArgsQL = EpisodeOrderArgsQL;
-let EpisodesArgs = class EpisodesArgs extends base_args_1.PaginatedArgs(EpisodeFilterArgsQL, EpisodeOrderArgsQL) {
+let EpisodePageArgsQL = class EpisodePageArgsQL extends base_args_1.PaginatedFilterArgs(EpisodeFilterArgsQL, EpisodeOrderArgsQL) {
+};
+EpisodePageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], EpisodePageArgsQL);
+exports.EpisodePageArgsQL = EpisodePageArgsQL;
+let EpisodesArgsQL = class EpisodesArgsQL extends EpisodePageArgsQL {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),
     __metadata("design:type", String)
-], EpisodesArgs.prototype, "list", void 0);
-EpisodesArgs = __decorate([
+], EpisodesArgsQL.prototype, "list", void 0);
+EpisodesArgsQL = __decorate([
     type_graphql_1.ArgsType()
-], EpisodesArgs);
-exports.EpisodesArgs = EpisodesArgs;
+], EpisodesArgsQL);
+exports.EpisodesArgsQL = EpisodesArgsQL;
 //# sourceMappingURL=episode.args.js.map

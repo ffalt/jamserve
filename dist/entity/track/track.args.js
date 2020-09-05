@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TracksArgs = exports.TrackOrderArgsQL = exports.TrackOrderArgs = exports.TrackFilterArgsQL = exports.TrackFilterArgs = exports.RawTagUpdateArgs = exports.MediaTagRawUpdateArgs = exports.TrackFixArgs = exports.TrackMoveArgs = exports.TrackRenameArgs = exports.MediaHealthArgs = exports.IncludesTrackArgs = void 0;
+exports.TracksArgsQL = exports.TrackPageArgsQL = exports.TrackOrderArgsQL = exports.TrackOrderArgs = exports.TrackFilterArgsQL = exports.TrackFilterArgs = exports.RawTagUpdateArgs = exports.MediaTagRawUpdateArgs = exports.TrackFixArgs = exports.TrackMoveArgs = exports.TrackRenameArgs = exports.MediaHealthArgs = exports.IncludesTrackArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
@@ -233,14 +233,20 @@ TrackOrderArgsQL = __decorate([
     type_graphql_1.InputType()
 ], TrackOrderArgsQL);
 exports.TrackOrderArgsQL = TrackOrderArgsQL;
-let TracksArgs = class TracksArgs extends base_args_1.PaginatedArgs(TrackFilterArgsQL, TrackOrderArgsQL) {
+let TrackPageArgsQL = class TrackPageArgsQL extends base_args_1.PaginatedFilterArgs(TrackFilterArgsQL, TrackOrderArgsQL) {
+};
+TrackPageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], TrackPageArgsQL);
+exports.TrackPageArgsQL = TrackPageArgsQL;
+let TracksArgsQL = class TracksArgsQL extends TrackPageArgsQL {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),
     __metadata("design:type", String)
-], TracksArgs.prototype, "list", void 0);
-TracksArgs = __decorate([
+], TracksArgsQL.prototype, "list", void 0);
+TracksArgsQL = __decorate([
     type_graphql_1.ArgsType()
-], TracksArgs);
-exports.TracksArgs = TracksArgs;
+], TracksArgsQL);
+exports.TracksArgsQL = TracksArgsQL;
 //# sourceMappingURL=track.args.js.map

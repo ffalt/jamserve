@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SessionsArgs = exports.SessionOrderArgsQL = exports.SessionOrderArgs = exports.SessionFilterArgsQL = exports.SessionFilterArgs = void 0;
+exports.SessionsArgs = exports.SessionsPageArgsQL = exports.SessionOrderArgsQL = exports.SessionOrderArgs = exports.SessionFilterArgsQL = exports.SessionFilterArgs = void 0;
 const type_graphql_1 = require("type-graphql");
 const base_args_1 = require("../base/base.args");
 const enums_1 = require("../../types/enums");
@@ -51,6 +51,11 @@ __decorate([
     type_graphql_1.Field(() => enums_1.SessionMode, { nullable: true }),
     __metadata("design:type", String)
 ], SessionFilterArgs.prototype, "mode", void 0);
+__decorate([
+    type_graphql_1.Field(() => [type_graphql_1.ID], { nullable: true }),
+    decorators_1.ObjField(() => [String], { nullable: true, description: 'filter by User Ids', isID: true }),
+    __metadata("design:type", Array)
+], SessionFilterArgs.prototype, "userIDs", void 0);
 SessionFilterArgs = __decorate([
     type_graphql_1.InputType(),
     decorators_1.ObjParamsType()
@@ -80,7 +85,13 @@ SessionOrderArgsQL = __decorate([
     type_graphql_1.InputType()
 ], SessionOrderArgsQL);
 exports.SessionOrderArgsQL = SessionOrderArgsQL;
-let SessionsArgs = class SessionsArgs extends base_args_1.PaginatedArgs(SessionFilterArgsQL, SessionOrderArgsQL) {
+let SessionsPageArgsQL = class SessionsPageArgsQL extends base_args_1.PaginatedFilterArgs(SessionFilterArgsQL, SessionOrderArgsQL) {
+};
+SessionsPageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], SessionsPageArgsQL);
+exports.SessionsPageArgsQL = SessionsPageArgsQL;
+let SessionsArgs = class SessionsArgs extends SessionsPageArgsQL {
 };
 SessionsArgs = __decorate([
     type_graphql_1.ArgsType()

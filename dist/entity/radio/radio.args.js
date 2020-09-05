@@ -114,7 +114,7 @@ RadioIndexArgs = __decorate([
     type_graphql_1.ArgsType()
 ], RadioIndexArgs);
 exports.RadioIndexArgs = RadioIndexArgs;
-let RadiosArgs = class RadiosArgs extends base_args_1.PaginatedArgs(RadioFilterArgsQL, RadioOrderArgsQL) {
+let RadiosArgs = class RadiosArgs extends base_args_1.PaginatedFilterArgs(RadioFilterArgsQL, RadioOrderArgsQL) {
 };
 __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),

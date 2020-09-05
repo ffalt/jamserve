@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BookmarksArgs = exports.BookmarkOrderArgsQL = exports.BookmarkOrderArgs = exports.BookmarkFilterArgsQL = exports.BookmarkFilterArgs = exports.BookmarkCreateArgs = exports.IncludesBookmarkChildrenArgs = void 0;
+exports.BookmarksArgs = exports.BookmarksPageArgsQL = exports.BookmarkOrderArgsQL = exports.BookmarkOrderArgs = exports.BookmarkFilterArgsQL = exports.BookmarkFilterArgs = exports.BookmarkCreateArgs = exports.IncludesBookmarkChildrenArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
@@ -75,6 +75,11 @@ __decorate([
     decorators_1.ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: example_consts_1.examples.timestamp }),
     __metadata("design:type", Number)
 ], BookmarkFilterArgs.prototype, "since", void 0);
+__decorate([
+    type_graphql_1.Field(() => [type_graphql_1.ID], { nullable: true }),
+    decorators_1.ObjField(() => [String], { nullable: true, description: 'filter by User Ids', isID: true }),
+    __metadata("design:type", Array)
+], BookmarkFilterArgs.prototype, "userIDs", void 0);
 BookmarkFilterArgs = __decorate([
     type_graphql_1.InputType(),
     decorators_1.ObjParamsType()
@@ -104,7 +109,13 @@ BookmarkOrderArgsQL = __decorate([
     type_graphql_1.InputType()
 ], BookmarkOrderArgsQL);
 exports.BookmarkOrderArgsQL = BookmarkOrderArgsQL;
-let BookmarksArgs = class BookmarksArgs extends base_args_1.PaginatedArgs(BookmarkFilterArgsQL, BookmarkOrderArgsQL) {
+let BookmarksPageArgsQL = class BookmarksPageArgsQL extends base_args_1.PaginatedFilterArgs(BookmarkFilterArgsQL, BookmarkOrderArgsQL) {
+};
+BookmarksPageArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], BookmarksPageArgsQL);
+exports.BookmarksPageArgsQL = BookmarksPageArgsQL;
+let BookmarksArgs = class BookmarksArgs extends BookmarksPageArgsQL {
 };
 BookmarksArgs = __decorate([
     type_graphql_1.ArgsType()

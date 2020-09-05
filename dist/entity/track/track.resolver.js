@@ -93,7 +93,7 @@ __decorate([
     type_graphql_1.Query(() => track_1.TrackPageQL),
     __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.TracksArgs, Object]),
+    __metadata("design:paramtypes", [track_args_1.TracksArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "tracks", null);
 __decorate([
