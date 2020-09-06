@@ -79,6 +79,10 @@ export class AlbumFilterArgs {
 	@ObjField(() => [String], {nullable: true, description: 'filter by MusicBrainz Artist Ids', example: [examples.mbArtistID]})
 	mbArtistIDs?: Array<string>;
 
+	@Field(() => String, {nullable: true})
+	@ObjField(() => String, {nullable: true, description: 'exclude by MusicBrainz Artist Id', example: examples.mbArtistID})
+	notMbArtistID?: string;
+
 	@Field(() => [String], {nullable: true})
 	@ObjField(() => [String], {nullable: true, description: 'filter by Genres', example: examples.genres})
 	genres?: Array<string>;

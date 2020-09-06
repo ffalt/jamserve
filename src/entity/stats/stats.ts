@@ -45,3 +45,33 @@ export class StatsQL {
 	@Field(() => StatsAlbumTypesQL)
 	albumTypes!: StatsAlbumTypesQL;
 }
+
+@ObjectType()
+export class UserDetailStatsQL {
+	@Field(() => Int)
+	track!: number;
+	@Field(() => Int)
+	folder!: number;
+	@Field(() => Int)
+	series!: number;
+	@Field(() => Int)
+	artist!: number;
+	@Field(() => StatsAlbumTypesQL)
+	artistTypes!: StatsAlbumTypesQL;
+	@Field(() => Int)
+	album!: number;
+	@Field(() => StatsAlbumTypesQL)
+	albumTypes!: StatsAlbumTypesQL;
+}
+
+@ObjectType()
+export class UserStatsQL {
+	@Field(() => Int)
+	playlist!: number;
+	@Field(() => Int)
+	bookmark!: number;
+	@Field(() => UserDetailStatsQL)
+	favorite!: UserDetailStatsQL;
+	@Field(() => UserDetailStatsQL)
+	played!: UserDetailStatsQL;
+}

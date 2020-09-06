@@ -197,6 +197,17 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		};
 	}
 
+	async countList(list: ListType, options: FindOptions<Entity>, userID: string): Promise<number> {
+		const result = await this.getListIDs(list, {...options, limit: 0}, userID);
+		return result.total;
+	}
+
+	async countListFilter(list: ListType, filter: Filter | undefined, user: User): Promise<number> {
+		const options = await this.buildFilter(filter, user);
+		const result = await this.getListIDs(list, {...options, limit: 0}, user.id);
+		return result.total;
+	}
+
 	async countFilter(filter: Filter | undefined, user?: User): Promise<number> {
 		return await this.count(await this.buildFilter(filter, user));
 	}

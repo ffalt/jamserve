@@ -91,6 +91,10 @@ export class ArtistFilterArgs {
 	@ObjField(() => [String], {nullable: true, description: 'filter by MusicBrainz Artist Ids', example: [examples.mbArtistID]})
 	mbArtistIDs?: Array<string>;
 
+	@Field(() => String, {nullable: true})
+	@ObjField(() => String, {nullable: true, description: 'exclude by MusicBrainz Artist Id', example: examples.mbArtistID})
+	notMbArtistID?: string;
+
 	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
 	since?: number;

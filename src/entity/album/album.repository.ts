@@ -63,6 +63,7 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 				{name: QHelper.eq(filter.name)},
 				{mbReleaseID: QHelper.inOrEqual(filter.mbReleaseIDs)},
 				{mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs)},
+				{mbArtistID: QHelper.neq(filter.notMbArtistID)},
 				{albumType: QHelper.inOrEqual(filter.albumTypes)},
 				{createdAt: QHelper.gte(filter.since)},
 				{artist: QHelper.inOrEqual(filter.artistIDs)},

@@ -27,6 +27,8 @@ import {FolderPageQL} from '../folder/folder';
 import {FolderPageArgsQL} from '../folder/folder.args';
 import {ArtworkPageQL} from '../artwork/artwork';
 import {ArtworkPageArgsQL} from '../artwork/artwork.args';
+import {UserStats} from '../stats/stats.model';
+import {UserStatsQL} from '../stats/stats';
 
 @ObjectType()
 export class UserFavorites {
@@ -111,6 +113,11 @@ export class UserResolver {
 	@FieldResolver(() => [UserRole])
 	roles(@GQLRoot() user: User): Array<UserRole> {
 		return UserService.listfyRoles(user);
+	}
+
+	@FieldResolver(() => UserStatsQL)
+	async stats(@GQLRoot() user: User, @Ctx() {orm, engine}: Context): Promise<UserStats> {
+		return engine.stats.getUserStats(orm, user);
 	}
 
 	@FieldResolver(() => PlaylistPageQL)

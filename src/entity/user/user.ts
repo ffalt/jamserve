@@ -7,6 +7,7 @@ import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference} f
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {BookmarkOrderFields, SessionOrderFields, UserRole} from '../../types/enums';
 import {Playlist} from '../playlist/playlist';
+import {UserStatsQL} from '../stats/stats';
 
 @ObjectType()
 @Entity()
@@ -68,8 +69,10 @@ export class UserFavoritesQL {
 export class UserQL extends User {
 	@Field(() => [UserRole])
 	roles!: Array<UserRole>;
-	@Field(() => UserFavoritesQL, {nullable: true})
+	@Field(() => UserFavoritesQL)
 	favorites!: UserFavoritesQL;
+	@Field(() => UserStatsQL)
+	stats!: UserStatsQL;
 }
 
 @ObjectType()

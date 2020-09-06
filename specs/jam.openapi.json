@@ -616,6 +616,17 @@
 					},
 					{
 						"in": "query",
+						"name": "notMbArtistID",
+						"description": "exclude by MusicBrainz Artist Id",
+						"required": false,
+						"example": "b15ebd71-a252-417d-9e1c-3e6863da68f8",
+						"schema": {
+							"type": "string",
+							"description": "exclude by MusicBrainz Artist Id"
+						}
+					},
+					{
+						"in": "query",
 						"name": "genres",
 						"description": "filter by Genres",
 						"required": false,
@@ -908,6 +919,17 @@
 								"type": "string",
 								"description": "filter by MusicBrainz Artist Ids"
 							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "notMbArtistID",
+						"description": "exclude by MusicBrainz Artist Id",
+						"required": false,
+						"example": "b15ebd71-a252-417d-9e1c-3e6863da68f8",
+						"schema": {
+							"type": "string",
+							"description": "exclude by MusicBrainz Artist Id"
 						}
 					},
 					{
@@ -1493,6 +1515,17 @@
 								"type": "string",
 								"description": "filter by MusicBrainz Artist Ids"
 							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "notMbArtistID",
+						"description": "exclude by MusicBrainz Artist Id",
+						"required": false,
+						"example": "b15ebd71-a252-417d-9e1c-3e6863da68f8",
+						"schema": {
+							"type": "string",
+							"description": "exclude by MusicBrainz Artist Id"
 						}
 					},
 					{
@@ -2339,6 +2372,17 @@
 					},
 					{
 						"in": "query",
+						"name": "notMbArtistID",
+						"description": "exclude by MusicBrainz Artist Id",
+						"required": false,
+						"example": "b15ebd71-a252-417d-9e1c-3e6863da68f8",
+						"schema": {
+							"type": "string",
+							"description": "exclude by MusicBrainz Artist Id"
+						}
+					},
+					{
+						"in": "query",
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
@@ -2593,6 +2637,17 @@
 								"type": "string",
 								"description": "filter by MusicBrainz Artist Ids"
 							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "notMbArtistID",
+						"description": "exclude by MusicBrainz Artist Id",
+						"required": false,
+						"example": "b15ebd71-a252-417d-9e1c-3e6863da68f8",
+						"schema": {
+							"type": "string",
+							"description": "exclude by MusicBrainz Artist Id"
 						}
 					},
 					{
@@ -3550,6 +3605,17 @@
 					},
 					{
 						"in": "query",
+						"name": "notMbArtistID",
+						"description": "exclude by MusicBrainz Artist Id",
+						"required": false,
+						"example": "b15ebd71-a252-417d-9e1c-3e6863da68f8",
+						"schema": {
+							"type": "string",
+							"description": "exclude by MusicBrainz Artist Id"
+						}
+					},
+					{
+						"in": "query",
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
@@ -3867,6 +3933,17 @@
 								"type": "string",
 								"description": "filter by MusicBrainz Artist Ids"
 							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "notMbArtistID",
+						"description": "exclude by MusicBrainz Artist Id",
+						"required": false,
+						"example": "b15ebd71-a252-417d-9e1c-3e6863da68f8",
+						"schema": {
+							"type": "string",
+							"description": "exclude by MusicBrainz Artist Id"
 						}
 					},
 					{
@@ -5727,6 +5804,19 @@
 							"type": "integer",
 							"minimum": 0,
 							"description": "filter by Creation timestamp"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userIDs",
+						"description": "filter by User Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
 						}
 					},
 					{
@@ -18177,6 +18267,44 @@
 				]
 			}
 		},
+		"/stats/user": {
+			"get": {
+				"operationId": "StatsController.user",
+				"summary": "Get USER STATS",
+				"description": "Get count Stats for the current User: Playlists/Favorites/Played",
+				"tags": [
+					"Various"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserStats"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
 		"/stream/{id}_{maxBitRate}.{format}": {
 			"get": {
 				"operationId": "StreamController.stream",
@@ -24205,12 +24333,12 @@
 					"audiobook": {
 						"type": "integer",
 						"minimum": 0,
-						"description": "Number of Type Live"
+						"description": "Number of Type Audiobooks"
 					},
 					"soundtrack": {
 						"type": "integer",
 						"minimum": 0,
-						"description": "Number of Type Live"
+						"description": "Number of Type Soundtracks"
 					},
 					"series": {
 						"type": "integer",
@@ -24220,17 +24348,17 @@
 					"bootleg": {
 						"type": "integer",
 						"minimum": 0,
-						"description": "Number of Type Live"
+						"description": "Number of Type Bootlegs"
 					},
 					"ep": {
 						"type": "integer",
 						"minimum": 0,
-						"description": "Number of Type Live"
+						"description": "Number of Type EPs"
 					},
 					"single": {
 						"type": "integer",
 						"minimum": 0,
-						"description": "Number of Type Live"
+						"description": "Number of Type Singles"
 					},
 					"unknown": {
 						"type": "integer",
@@ -24298,6 +24426,78 @@
 					"artistTypes",
 					"album",
 					"albumTypes"
+				]
+			},
+			"UserDetailStats": {
+				"type": "object",
+				"properties": {
+					"track": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Number of Tracks"
+					},
+					"folder": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Number of Folders"
+					},
+					"series": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Number of Series"
+					},
+					"artist": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Number of Artist"
+					},
+					"artistTypes": {
+						"$ref": "#/components/schemas/StatsAlbumTypes"
+					},
+					"album": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Number of Albums"
+					},
+					"albumTypes": {
+						"$ref": "#/components/schemas/StatsAlbumTypes"
+					}
+				},
+				"required": [
+					"track",
+					"folder",
+					"series",
+					"artist",
+					"artistTypes",
+					"album",
+					"albumTypes"
+				]
+			},
+			"UserStats": {
+				"type": "object",
+				"properties": {
+					"playlist": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Number of Playlists"
+					},
+					"bookmark": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Number of Bookmarks"
+					},
+					"favorite": {
+						"$ref": "#/components/schemas/UserDetailStats"
+					},
+					"played": {
+						"$ref": "#/components/schemas/UserDetailStats"
+					}
+				},
+				"required": [
+					"playlist",
+					"bookmark",
+					"favorite",
+					"played"
 				]
 			},
 			"AudioFormatType": {

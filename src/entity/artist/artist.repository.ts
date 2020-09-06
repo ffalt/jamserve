@@ -37,6 +37,7 @@ export class ArtistRepository extends BaseRepository<Artist, ArtistFilterArgs, A
 				{slug: QHelper.eq(filter.slug)},
 				{name: QHelper.eq(filter.name)},
 				{mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs)},
+				{mbArtistID: QHelper.neq(filter.notMbArtistID)},
 				{createdAt: QHelper.gte(filter.since)},
 				...QHelper.inStringArray('genres', filter.genres),
 				...QHelper.inStringArray('albumTypes', filter.albumTypes)
