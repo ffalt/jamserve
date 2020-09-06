@@ -1,10 +1,13 @@
 version: "2"
 plugins:
+  structure:
+    enabled: true
   duplication:
     enabled: true
     config:
       languages:
         - javascript
+        - typescript
   eslint:
     enabled: true
     channel: "eslint-7"
@@ -18,4 +21,5 @@ plugins:
     enabled: false
 exclude_patterns:
   - static/redoc/**/*
+  - static/graphql/**/*
   - node_modules/**
