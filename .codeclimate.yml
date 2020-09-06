@@ -8,6 +8,10 @@ plugins:
   eslint:
     enabled: true
     channel: "eslint-7"
+    config:
+      extensions:
+        - .js
+        - .ts
   markdownlint:
     enabled: true
   tslint:
