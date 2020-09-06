@@ -1,7 +1,7 @@
 import moment from 'moment';
 import path from 'path';
 import {AudioModule} from '../../modules/audio/audio.module';
-import {MusicbrainzClientApi} from '../../modules/audio/clients/musicbrainz-client.interface';
+import * as MusicbrainzClientApi from '../../modules/audio/clients/musicbrainz-client.interface';
 import {logger} from '../../utils/logger';
 import {MetadataServiceExtendedInfo} from './metadata.service.extended-info';
 import {MetadataServiceSimilarArtists} from './metadata.service.similar-artists';

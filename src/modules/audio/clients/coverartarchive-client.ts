@@ -2,14 +2,9 @@ import request from 'request';
 import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client';
 import {CoverArtArchive} from './coverartarchive-rest-data';
 
-declare namespace CoverArtArchiveClientApi {
-	export type Request = JSONRequest;
-	export type Options = JSONOptions;
-}
+export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, CoverArtArchive.Response> {
 
-export class CoverArtArchiveClient extends WebserviceJSONClient<CoverArtArchiveClientApi.Request, CoverArtArchive.Response> {
-
-	constructor(options: CoverArtArchiveClientApi.Options) {
+	constructor(options: JSONOptions) {
 		const defaultOptions = {
 			host: 'https://coverartarchive.org',
 			basePath: '/'
@@ -27,7 +22,7 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<CoverArtArchiveC
 		return super.parseResult<T>(response, body);
 	}
 
-	protected async processError(e: any, req: CoverArtArchiveClientApi.Request): Promise<CoverArtArchive.Response> {
+	protected async processError(e: any, req: JSONRequest): Promise<CoverArtArchive.Response> {
 		if (e instanceof SyntaxError) {
 			// coverartarchive response may be code 200 with html on empty data
 			// <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">

@@ -5,11 +5,9 @@ export interface MetaStatValue<T> {
 	val: T;
 }
 
-export interface MetaStatString extends MetaStatValue<string> {
-}
+export type MetaStatString = MetaStatValue<string>;
 
-export interface MetaStatNumber extends MetaStatValue<number> {
-}
+export type MetaStatNumber = MetaStatValue<number>;
 
 export class MetaStatBuilder {
 	stats: {

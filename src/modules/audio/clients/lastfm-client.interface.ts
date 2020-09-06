@@ -1,9 +1,5 @@
-export namespace LastFMClientApi {
-
-	export interface LastFMClientApiOptions {
-		userAgent: string;
-		key: string;
-		meta?: string;
-	}
-
+export interface LastFMClientApiOptions {
+	userAgent: string;
+	key: string;
+	meta?: string;
 }

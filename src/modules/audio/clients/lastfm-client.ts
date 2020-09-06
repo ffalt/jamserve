@@ -1,7 +1,7 @@
 import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
-import {LastFMClientApi} from './lastfm-client.interface';
 import {LastFM} from './lastfm-rest-data';
+import {LastFMClientApiOptions} from './lastfm-client.interface';
 
 const log = logger('LastFM');
 
@@ -78,9 +78,9 @@ class LastFMClientBeautify {
 }
 
 export class LastFMClient extends WebserviceClient {
-	options: LastFMClientApi.LastFMClientApiOptions;
+	options: LastFMClientApiOptions;
 
-	constructor(options: LastFMClientApi.LastFMClientApiOptions) {
+	constructor(options: LastFMClientApiOptions) {
 		// "not make more than 5 requests per originating IP address per second" https://www.last.fm/api/tos
 		super(5, 1000, options.userAgent);
 		this.options = options;

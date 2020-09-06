@@ -33,6 +33,10 @@ export class QHelper {
 		return [{[Op.or]: expressions}];
 	}
 
+	static neq<Entity>(value?: string): WhereValue<Entity> | undefined {
+		return (value !== undefined && value !== null) ? {[Op.ne]: value} : undefined;
+	}
+
 	static inOrEqual<T, Entity>(list?: Array<T>): WhereValue<Entity> | undefined {
 		if (!list || list.length === 0) {
 			return;

@@ -4,95 +4,89 @@ import {WikiData} from './wikidata-rest-data';
 
 const log = logger('Wikipedia');
 
-export declare namespace Wikipedia {
 
-	export interface Summary {
-		type: string;
-		title: string;
-		displaytitle: string;
-		namespace: {
-			id: number;
-			text: string;
+export interface WikipediaSummary {
+	type: string;
+	title: string;
+	displaytitle: string;
+	namespace: {
+		id: number;
+		text: string;
+	};
+	wikibase_item: string;
+	titles: {
+		canonical: string;
+		normalized: string;
+		display: string;
+	};
+	pageid: number;
+	thumbnail: {
+		source: string;
+		width: number;
+		height: number;
+	};
+	originalimage: {
+		source: string;
+		width: number;
+		height: number;
+	};
+	lang: string;
+	dir: string;
+	revision: string;
+	tid: string;
+	timestamp: string;
+	description: string;
+	content_urls: {
+		desktop: {
+			page: string;
+			revisions: string;
+			edit: string;
+			talk: string;
 		};
-		wikibase_item: string;
-		titles: {
-			canonical: string;
-			normalized: string;
-			display: string;
+		mobile: {
+			page: string;
+			revisions: string;
+			edit: string;
+			talk: string;
 		};
-		pageid: number;
-		thumbnail: {
-			source: string;
-			width: number;
-			height: number;
-		};
-		originalimage: {
-			source: string;
-			width: number;
-			height: number;
-		};
-		lang: string;
-		dir: string;
-		revision: string;
-		tid: string;
-		timestamp: string;
-		description: string;
-		content_urls: {
-			desktop: {
-				page: string;
-				revisions: string;
-				edit: string;
-				talk: string;
-			};
-			mobile: {
-				page: string;
-				revisions: string;
-				edit: string;
-				talk: string;
-			};
-		};
-		api_urls: {
-			summary: string;
-			metadata: string;
-			references: string;
-			media: string;
-			edit_html: string;
-			talk_page_html: string;
-		};
-		extract: string;
-		extract_html: string;
-	}
-
-	export interface Response {
-		summary?: Summary;
-	}
-
+	};
+	api_urls: {
+		summary: string;
+		metadata: string;
+		references: string;
+		media: string;
+		edit_html: string;
+		talk_page_html: string;
+	};
+	extract: string;
+	extract_html: string;
 }
 
-export declare namespace WikiPHPApi {
-
-	export interface Page {
-		pageid: number;
-		ns: number;
-		title: string;
-		extract: string;
-	}
-
-	export interface Summary {
-		batchcomplete: string;
-		warnings?: {
-			extracts?: {
-				[id: string]: string;
-			};
-		};
-		query: {
-			pages: {
-				[name: string]: Page;
-			};
-		};
-	}
-
+export interface WikipediaResponse {
+	summary?: WikipediaSummary;
 }
+
+export interface WikiPHPApiPage {
+	pageid: number;
+	ns: number;
+	title: string;
+	extract: string;
+}
+
+export interface WikiPHPApiSummary {
+	batchcomplete: string;
+	warnings?: {
+		extracts?: {
+			[id: string]: string;
+		};
+	};
+	query: {
+		pages: {
+			[name: string]: WikiPHPApiPage;
+		};
+	};
+}
+
 
 export class WikipediaClient extends WebserviceClient {
 
@@ -104,7 +98,7 @@ export class WikipediaClient extends WebserviceClient {
 	async summary(title: string, lang: string | undefined): Promise<{ title: string; url: string; summary: string } | undefined> {
 		log.info('requesting summary', title);
 		const url = `https://${(lang || 'en')}.wikipedia.org/w/api.php`;
-		const data: WikiPHPApi.Summary = await this.getJson<WikiPHPApi.Summary>(url, {
+		const data: WikiPHPApiSummary = await this.getJson<WikiPHPApiSummary>(url, {
 			action: 'query',
 			prop: 'extracts',
 			format: 'json',
@@ -126,7 +120,7 @@ export class WikipediaClient extends WebserviceClient {
 	async summary_rest(title: string, lang: string | undefined): Promise<string | undefined> {
 		log.info('requesting summary', title);
 		const url = `https://${(lang || 'en')}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-		const data: Wikipedia.Summary = await this.getJson<Wikipedia.Summary>(url, {redirect: 'true'});
+		const data: WikipediaSummary = await this.getJson<WikipediaSummary>(url, {redirect: 'true'});
 		if (!data) {
 			return;
 		}

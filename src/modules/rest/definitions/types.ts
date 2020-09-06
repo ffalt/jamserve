@@ -4,8 +4,7 @@ import {ClassType, TypeResolver} from 'type-graphql';
 export const allowedTypes: Function[] = [String, Number, Date, Boolean];
 export const bannedTypes: Function[] = [Promise, Array, Object, Function];
 
-export interface RecursiveArray<TValue> extends Array<RecursiveArray<TValue> | TValue> {
-}
+export type RecursiveArray<TValue> = Array<RecursiveArray<TValue> | TValue>;
 
 export declare type TypeValue = ClassType | Function | object | symbol;
 export declare type TypeValueThunk = (type?: void) => TypeValue;

@@ -1,14 +1,9 @@
 import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client';
 import {AcousticBrainz} from './acousticbrainz-rest-data';
 
-declare namespace AcousticbrainzClientApi {
-	export type Request = JSONRequest;
-	export type Options = JSONOptions;
-}
+export class AcousticbrainzClient extends WebserviceJSONClient<JSONRequest, AcousticBrainz.Response> {
 
-export class AcousticbrainzClient extends WebserviceJSONClient<AcousticbrainzClientApi.Request, AcousticBrainz.Response> {
-
-	constructor(options: AcousticbrainzClientApi.Options) {
+	constructor(options: JSONOptions) {
 		const defaultOptions = {
 			host: 'https://acousticbrainz.org',
 			basePath: '/api/v1/'

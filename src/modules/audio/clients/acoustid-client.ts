@@ -9,21 +9,17 @@ const log = logger('Acoustid');
 
 const META_DEFAULT = 'recordings releases releasegroups tracks compress usermeta sources';
 
-declare namespace AcoustidClient {
-
-	export interface AcoustidClientOptions {
-		key: string;
-		userAgent: string;
-		meta?: string;
-		fpcalc?: FPCalcOptions;
-	}
-
+export interface AcoustidClientOptions {
+	key: string;
+	userAgent: string;
+	meta?: string;
+	fpcalc?: FPCalcOptions;
 }
 
 export class AcoustidClient extends WebserviceClient {
-	options: AcoustidClient.AcoustidClientOptions;
+	options: AcoustidClientOptions;
 
-	constructor(options: AcoustidClient.AcoustidClientOptions) {
+	constructor(options: AcoustidClientOptions) {
 		// https://acoustid.org/webservice
 		super(1, 3000, 'JamServe/0.1.0');
 		this.options = options;

@@ -50,8 +50,7 @@ export interface WorkerRequestWriteTrackTags extends WorkerRequestParameters {
 	tags: Array<{ trackID: string; tag: RawTag }>;
 }
 
-export interface WorkerRequestRefreshRoot extends WorkerRequestParameters {
-}
+export type WorkerRequestRefreshRoot = WorkerRequestParameters;
 
 export interface WorkerRequestRefreshFolders extends WorkerRequestParameters {
 	folderIDs: Array<string>;
@@ -62,8 +61,7 @@ export interface WorkerRequestMoveFolders extends WorkerRequestParameters {
 	folderIDs: Array<string>;
 }
 
-export interface WorkerRequestRemoveRoot extends WorkerRequestParameters {
-}
+export type WorkerRequestRemoveRoot = WorkerRequestParameters;
 
 export interface WorkerRequestRefreshTracks extends WorkerRequestParameters {
 	trackIDs: Array<string>;
