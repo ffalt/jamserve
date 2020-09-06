@@ -18216,7 +18216,7 @@
 			"get": {
 				"operationId": "StatsController.get",
 				"summary": "Get Stats",
-				"description": "Get count Stats for Folders/Tracks/Albums/...",
+				"description": "Get count stats for Folders/Tracks/Albums/...",
 				"tags": [
 					"Various"
 				],
@@ -18270,8 +18270,8 @@
 		"/stats/user": {
 			"get": {
 				"operationId": "StatsController.user",
-				"summary": "Get USER STATS",
-				"description": "Get count Stats for the current User: Playlists/Favorites/Played",
+				"summary": "Get User Stats",
+				"description": "Get count stats for the calling User: Playlists/Favorites/Played",
 				"tags": [
 					"Various"
 				],
