@@ -36,6 +36,7 @@ class ArtistRepository extends base_repository_1.BaseRepository {
             { slug: orm_1.QHelper.eq(filter.slug) },
             { name: orm_1.QHelper.eq(filter.name) },
             { mbArtistID: orm_1.QHelper.inOrEqual(filter.mbArtistIDs) },
+            { mbArtistID: orm_1.QHelper.neq(filter.notMbArtistID) },
             { createdAt: orm_1.QHelper.gte(filter.since) },
             ...orm_1.QHelper.inStringArray('genres', filter.genres),
             ...orm_1.QHelper.inStringArray('albumTypes', filter.albumTypes)

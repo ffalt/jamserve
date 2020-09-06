@@ -10,7 +10,6 @@ exports.StatsService = void 0;
 const typescript_ioc_1 = require("typescript-ioc");
 const enums_1 = require("../../types/enums");
 const consts_1 = require("../../types/consts");
-const orm_1 = require("../../modules/orm");
 let StatsService = class StatsService {
     constructor() {
         this.stats = [];
@@ -21,9 +20,6 @@ let StatsService = class StatsService {
     async getStats(orm, rootID) {
         let stat = this.stats.find(s => s.rootID === rootID);
         if (!stat) {
-            const inAlbumTypes = (albumType) => {
-                return orm_1.QHelper.inStringArray('albumTypes', [albumType])[0];
-            };
             let rootIDs;
             if (rootID) {
                 rootIDs = [rootID];
@@ -38,10 +34,7 @@ let StatsService = class StatsService {
                 albumTypes: {
                     album: await orm.Album.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.album] }),
                     compilation: await orm.Album.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.compilation], mbArtistIDs: [consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID] }),
-                    artistCompilation: await orm.Album.count({
-                        include: orm_1.QHelper.includeQueries([{ roots: [{ id: orm_1.QHelper.inOrEqual(rootIDs) }] }]),
-                        where: { albumType: enums_1.AlbumType.compilation, mbArtistID: { [orm_1.Op.ne]: consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID } }
-                    }),
+                    artistCompilation: await orm.Album.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.compilation], notMbArtistID: consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID }),
                     audiobook: await orm.Album.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.audiobook] }),
                     series: await orm.Album.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.series] }),
                     soundtrack: await orm.Album.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.soundtrack] }),
@@ -54,10 +47,7 @@ let StatsService = class StatsService {
                 artistTypes: {
                     album: await orm.Artist.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.album] }),
                     compilation: await orm.Artist.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.compilation], mbArtistIDs: [consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID] }),
-                    artistCompilation: await orm.Artist.count({
-                        include: orm_1.QHelper.includeQueries([{ roots: [{ id: orm_1.QHelper.inOrEqual(rootIDs) }] }]),
-                        where: { ...inAlbumTypes(enums_1.AlbumType.compilation), mbArtistID: { [orm_1.Op.ne]: consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID } }
-                    }),
+                    artistCompilation: await orm.Artist.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.compilation], notMbArtistID: consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID }),
                     audiobook: await orm.Artist.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.audiobook] }),
                     series: await orm.Artist.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.series] }),
                     soundtrack: await orm.Artist.countFilter({ rootIDs, albumTypes: [enums_1.AlbumType.soundtrack] }),
@@ -71,6 +61,51 @@ let StatsService = class StatsService {
             this.stats.push(stat);
         }
         return stat;
+    }
+    async getUserStatsDetails(orm, user, list) {
+        const result = {
+            album: await orm.Album.countList(list, {}, user.id),
+            artist: await orm.Artist.countList(list, {}, user.id),
+            folder: await orm.Folder.countList(list, {}, user.id),
+            track: await orm.Track.countList(list, {}, user.id),
+            series: await orm.Series.countList(list, {}, user.id),
+            albumTypes: {
+                album: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.album] }, user),
+                compilation: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.compilation], mbArtistIDs: [consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID] }, user),
+                artistCompilation: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.compilation], notMbArtistID: consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID }, user),
+                audiobook: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.audiobook] }, user),
+                series: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.series] }, user),
+                soundtrack: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.soundtrack] }, user),
+                bootleg: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.bootleg] }, user),
+                live: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.live] }, user),
+                ep: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.ep] }, user),
+                unknown: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.unknown] }, user),
+                single: await orm.Album.countListFilter(list, { albumTypes: [enums_1.AlbumType.single] }, user),
+            },
+            artistTypes: {
+                album: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.album] }, user),
+                compilation: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.compilation], mbArtistIDs: [consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID] }, user),
+                artistCompilation: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.compilation], notMbArtistID: consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_ID }, user),
+                audiobook: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.audiobook] }, user),
+                series: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.series] }, user),
+                soundtrack: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.soundtrack] }, user),
+                bootleg: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.bootleg] }, user),
+                live: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.live] }, user),
+                ep: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.ep] }, user),
+                unknown: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.unknown] }, user),
+                single: await orm.Artist.countListFilter(list, { albumTypes: [enums_1.AlbumType.single] }, user),
+            }
+        };
+        return result;
+    }
+    async getUserStats(orm, user) {
+        const result = {
+            bookmark: await user.bookmarks.count(),
+            playlist: await user.playlists.count(),
+            favorite: await this.getUserStatsDetails(orm, user, enums_1.ListType.faved),
+            played: await this.getUserStatsDetails(orm, user, enums_1.ListType.recent)
+        };
+        return result;
     }
 };
 StatsService = __decorate([

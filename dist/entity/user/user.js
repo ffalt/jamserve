@@ -19,6 +19,7 @@ const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 const enums_1 = require("../../types/enums");
 const playlist_1 = require("../playlist/playlist");
+const stats_1 = require("../stats/stats");
 let User = class User extends base_1.Base {
     constructor() {
         super(...arguments);
@@ -107,9 +108,13 @@ __decorate([
     __metadata("design:type", Array)
 ], UserQL.prototype, "roles", void 0);
 __decorate([
-    type_graphql_1.Field(() => UserFavoritesQL, { nullable: true }),
+    type_graphql_1.Field(() => UserFavoritesQL),
     __metadata("design:type", UserFavoritesQL)
 ], UserQL.prototype, "favorites", void 0);
+__decorate([
+    type_graphql_1.Field(() => stats_1.UserStatsQL),
+    __metadata("design:type", stats_1.UserStatsQL)
+], UserQL.prototype, "stats", void 0);
 UserQL = __decorate([
     type_graphql_1.ObjectType()
 ], UserQL);

@@ -65,6 +65,7 @@ class AlbumRepository extends base_repository_1.BaseRepository {
             { name: orm_1.QHelper.eq(filter.name) },
             { mbReleaseID: orm_1.QHelper.inOrEqual(filter.mbReleaseIDs) },
             { mbArtistID: orm_1.QHelper.inOrEqual(filter.mbArtistIDs) },
+            { mbArtistID: orm_1.QHelper.neq(filter.notMbArtistID) },
             { albumType: orm_1.QHelper.inOrEqual(filter.albumTypes) },
             { createdAt: orm_1.QHelper.gte(filter.since) },
             { artist: orm_1.QHelper.inOrEqual(filter.artistIDs) },

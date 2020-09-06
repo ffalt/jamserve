@@ -29,6 +29,9 @@ class QHelper {
         }
         return [{ [sequelize_1.Op.or]: expressions }];
     }
+    static neq(value) {
+        return (value !== undefined && value !== null) ? { [sequelize_1.Op.ne]: value } : undefined;
+    }
     static inOrEqual(list) {
         if (!list || list.length === 0) {
             return;

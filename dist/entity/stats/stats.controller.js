@@ -21,15 +21,24 @@ let StatsController = class StatsController {
     async get(filter, { orm, engine }) {
         return await engine.stats.getStats(orm, filter === null || filter === void 0 ? void 0 : filter.rootID);
     }
+    async user({ orm, engine, user }) {
+        return engine.stats.getUserStats(orm, user);
+    }
 };
 __decorate([
-    decorators_1.Get(() => stats_model_1.Stats, { description: 'Get count Stats for Folders/Tracks/Albums/...', summary: 'Get Stats' }),
-    __param(0, decorators_1.QueryParams()),
-    __param(1, decorators_1.Ctx()),
+    decorators_1.Get(() => stats_model_1.Stats, { description: 'Get count stats for Folders/Tracks/Albums/...', summary: 'Get Stats' }),
+    __param(0, decorators_1.QueryParams()), __param(1, decorators_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [stats_filter_1.StatsFilter, Object]),
     __metadata("design:returntype", Promise)
 ], StatsController.prototype, "get", null);
+__decorate([
+    decorators_1.Get('/user', () => stats_model_1.UserStats, { description: 'Get count stats for the calling User: Playlists/Favorites/Played', summary: 'Get User Stats' }),
+    __param(0, decorators_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], StatsController.prototype, "user", null);
 StatsController = __decorate([
     decorators_1.Controller('/stats', { tags: ['Various'], roles: [enums_1.UserRole.stream] })
 ], StatsController);

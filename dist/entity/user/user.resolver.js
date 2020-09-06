@@ -35,6 +35,7 @@ const episode_args_1 = require("../episode/episode.args");
 const track_args_1 = require("../track/track.args");
 const folder_args_1 = require("../folder/folder.args");
 const artwork_args_1 = require("../artwork/artwork.args");
+const stats_1 = require("../stats/stats");
 let UserFavorites = class UserFavorites {
 };
 UserFavorites = __decorate([
@@ -153,6 +154,9 @@ let UserResolver = class UserResolver {
     roles(user) {
         return user_service_1.UserService.listfyRoles(user);
     }
+    async stats(user, { orm, engine }) {
+        return engine.stats.getUserStats(orm, user);
+    }
     async playlists(owner, { orm, user }, { filter, order, page }) {
         return orm.Playlist.searchFilter({ ...filter, userIDs: [owner.id] }, order, page, owner);
     }
@@ -209,6 +213,13 @@ __decorate([
     __metadata("design:paramtypes", [user_1.User]),
     __metadata("design:returntype", Array)
 ], UserResolver.prototype, "roles", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => stats_1.UserStatsQL),
+    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_1.User, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "stats", null);
 __decorate([
     type_graphql_1.FieldResolver(() => playlist_1.PlaylistPageQL),
     __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),

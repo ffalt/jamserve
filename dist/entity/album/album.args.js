@@ -119,6 +119,11 @@ __decorate([
     __metadata("design:type", Array)
 ], AlbumFilterArgs.prototype, "mbArtistIDs", void 0);
 __decorate([
+    type_graphql_1.Field(() => String, { nullable: true }),
+    decorators_1.ObjField(() => String, { nullable: true, description: 'exclude by MusicBrainz Artist Id', example: example_consts_1.examples.mbArtistID }),
+    __metadata("design:type", String)
+], AlbumFilterArgs.prototype, "notMbArtistID", void 0);
+__decorate([
     type_graphql_1.Field(() => [String], { nullable: true }),
     decorators_1.ObjField(() => [String], { nullable: true, description: 'filter by Genres', example: example_consts_1.examples.genres }),
     __metadata("design:type", Array)

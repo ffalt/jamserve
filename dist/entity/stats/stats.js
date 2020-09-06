@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatsQL = exports.StatsAlbumTypesQL = void 0;
+exports.UserStatsQL = exports.UserDetailStatsQL = exports.StatsQL = exports.StatsAlbumTypesQL = void 0;
 const type_graphql_1 = require("type-graphql");
 let StatsAlbumTypesQL = class StatsAlbumTypesQL {
 };
@@ -99,4 +99,60 @@ StatsQL = __decorate([
     type_graphql_1.ObjectType()
 ], StatsQL);
 exports.StatsQL = StatsQL;
+let UserDetailStatsQL = class UserDetailStatsQL {
+};
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], UserDetailStatsQL.prototype, "track", void 0);
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], UserDetailStatsQL.prototype, "folder", void 0);
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], UserDetailStatsQL.prototype, "series", void 0);
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], UserDetailStatsQL.prototype, "artist", void 0);
+__decorate([
+    type_graphql_1.Field(() => StatsAlbumTypesQL),
+    __metadata("design:type", StatsAlbumTypesQL)
+], UserDetailStatsQL.prototype, "artistTypes", void 0);
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], UserDetailStatsQL.prototype, "album", void 0);
+__decorate([
+    type_graphql_1.Field(() => StatsAlbumTypesQL),
+    __metadata("design:type", StatsAlbumTypesQL)
+], UserDetailStatsQL.prototype, "albumTypes", void 0);
+UserDetailStatsQL = __decorate([
+    type_graphql_1.ObjectType()
+], UserDetailStatsQL);
+exports.UserDetailStatsQL = UserDetailStatsQL;
+let UserStatsQL = class UserStatsQL {
+};
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], UserStatsQL.prototype, "playlist", void 0);
+__decorate([
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    __metadata("design:type", Number)
+], UserStatsQL.prototype, "bookmark", void 0);
+__decorate([
+    type_graphql_1.Field(() => UserDetailStatsQL),
+    __metadata("design:type", UserDetailStatsQL)
+], UserStatsQL.prototype, "favorite", void 0);
+__decorate([
+    type_graphql_1.Field(() => UserDetailStatsQL),
+    __metadata("design:type", UserDetailStatsQL)
+], UserStatsQL.prototype, "played", void 0);
+UserStatsQL = __decorate([
+    type_graphql_1.ObjectType()
+], UserStatsQL);
+exports.UserStatsQL = UserStatsQL;
 //# sourceMappingURL=stats.js.map

@@ -168,6 +168,15 @@ class BaseRepository extends orm_1.EntityRepository {
             items: await this.findByIDs(result.items)
         };
     }
+    async countList(list, options, userID) {
+        const result = await this.getListIDs(list, { ...options, limit: 0 }, userID);
+        return result.total;
+    }
+    async countListFilter(list, filter, user) {
+        const options = await this.buildFilter(filter, user);
+        const result = await this.getListIDs(list, { ...options, limit: 0 }, user.id);
+        return result.total;
+    }
     async countFilter(filter, user) {
         return await this.count(await this.buildFilter(filter, user));
     }

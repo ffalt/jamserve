@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Stats = exports.StatsAlbumTypes = void 0;
+exports.UserStats = exports.UserDetailStats = exports.Stats = exports.StatsAlbumTypes = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 let StatsAlbumTypes = class StatsAlbumTypes {
 };
@@ -30,11 +30,11 @@ __decorate([
     __metadata("design:type", Number)
 ], StatsAlbumTypes.prototype, "live", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Number of Type Live', min: 0, example: 6 }),
+    decorators_1.ObjField({ description: 'Number of Type Audiobooks', min: 0, example: 6 }),
     __metadata("design:type", Number)
 ], StatsAlbumTypes.prototype, "audiobook", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Number of Type Live', min: 0, example: 5 }),
+    decorators_1.ObjField({ description: 'Number of Type Soundtracks', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], StatsAlbumTypes.prototype, "soundtrack", void 0);
 __decorate([
@@ -42,15 +42,15 @@ __decorate([
     __metadata("design:type", Number)
 ], StatsAlbumTypes.prototype, "series", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Number of Type Live', min: 0, example: 3 }),
+    decorators_1.ObjField({ description: 'Number of Type Bootlegs', min: 0, example: 3 }),
     __metadata("design:type", Number)
 ], StatsAlbumTypes.prototype, "bootleg", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Number of Type Live', min: 0, example: 2 }),
+    decorators_1.ObjField({ description: 'Number of Type EPs', min: 0, example: 2 }),
     __metadata("design:type", Number)
 ], StatsAlbumTypes.prototype, "ep", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Number of Type Live', min: 0, example: 1 }),
+    decorators_1.ObjField({ description: 'Number of Type Singles', min: 0, example: 1 }),
     __metadata("design:type", Number)
 ], StatsAlbumTypes.prototype, "single", void 0);
 __decorate([
@@ -84,7 +84,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Stats.prototype, "artist", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Detailed Artists Stats', min: 0, example: 5 }),
+    decorators_1.ObjField({ description: 'Detailed Artists Stats' }),
     __metadata("design:type", StatsAlbumTypes)
 ], Stats.prototype, "artistTypes", void 0);
 __decorate([
@@ -92,11 +92,67 @@ __decorate([
     __metadata("design:type", Number)
 ], Stats.prototype, "album", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Detailed Album Stats', min: 0, example: 5 }),
+    decorators_1.ObjField({ description: 'Detailed Album Stats' }),
     __metadata("design:type", StatsAlbumTypes)
 ], Stats.prototype, "albumTypes", void 0);
 Stats = __decorate([
     decorators_1.ResultType({ description: 'Library Stats' })
 ], Stats);
 exports.Stats = Stats;
+let UserDetailStats = class UserDetailStats {
+};
+__decorate([
+    decorators_1.ObjField({ description: 'Number of Tracks', min: 0, example: 555 }),
+    __metadata("design:type", Number)
+], UserDetailStats.prototype, "track", void 0);
+__decorate([
+    decorators_1.ObjField({ description: 'Number of Folders', min: 0, example: 55 }),
+    __metadata("design:type", Number)
+], UserDetailStats.prototype, "folder", void 0);
+__decorate([
+    decorators_1.ObjField({ description: 'Number of Series', min: 0, example: 5 }),
+    __metadata("design:type", Number)
+], UserDetailStats.prototype, "series", void 0);
+__decorate([
+    decorators_1.ObjField({ description: 'Number of Artist', min: 0, example: 5 }),
+    __metadata("design:type", Number)
+], UserDetailStats.prototype, "artist", void 0);
+__decorate([
+    decorators_1.ObjField({ description: 'Detailed Artists Stats' }),
+    __metadata("design:type", StatsAlbumTypes)
+], UserDetailStats.prototype, "artistTypes", void 0);
+__decorate([
+    decorators_1.ObjField({ description: 'Number of Albums', min: 0, example: 5 }),
+    __metadata("design:type", Number)
+], UserDetailStats.prototype, "album", void 0);
+__decorate([
+    decorators_1.ObjField({ description: 'Detailed Album Stats' }),
+    __metadata("design:type", StatsAlbumTypes)
+], UserDetailStats.prototype, "albumTypes", void 0);
+UserDetailStats = __decorate([
+    decorators_1.ResultType({ description: 'User Detail Stats' })
+], UserDetailStats);
+exports.UserDetailStats = UserDetailStats;
+let UserStats = class UserStats {
+};
+__decorate([
+    decorators_1.ObjField({ description: 'Number of Playlists', min: 0, example: 55 }),
+    __metadata("design:type", Number)
+], UserStats.prototype, "playlist", void 0);
+__decorate([
+    decorators_1.ObjField({ description: 'Number of Bookmarks', min: 0, example: 55 }),
+    __metadata("design:type", Number)
+], UserStats.prototype, "bookmark", void 0);
+__decorate([
+    decorators_1.ObjField({ description: 'Detailed User Favorites Stats' }),
+    __metadata("design:type", UserDetailStats)
+], UserStats.prototype, "favorite", void 0);
+__decorate([
+    decorators_1.ObjField({ description: 'Detailed User Played Stats' }),
+    __metadata("design:type", UserDetailStats)
+], UserStats.prototype, "played", void 0);
+UserStats = __decorate([
+    decorators_1.ResultType({ description: 'User Stats' })
+], UserStats);
+exports.UserStats = UserStats;
 //# sourceMappingURL=stats.model.js.map
