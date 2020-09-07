@@ -305,7 +305,10 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 
 	private async getFilteredIDs(ids: Array<string>, options: FindOptions<Entity>): Promise<Array<string>> {
 		let where: WhereOptions<Entity> = {id: {[Op.in]: ids}};
-		if (options.where && Object.keys(options.where).length > 0) {
+		if (options.where &&
+			(Object.keys(options.where).length > 0 ||
+			Object.getOwnPropertySymbols(options.where).length > 0)
+		) {
 			where = {[Op.and]: [where, options.where]};
 		}
 		const list = await this.findIDs({...options, where});
