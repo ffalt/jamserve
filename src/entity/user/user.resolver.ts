@@ -38,17 +38,17 @@ export class UserFavorites {
 @Resolver(UserFavoritesQL)
 export class UserFavoritesResolver {
 
-	@FieldResolver(() => PlaylistPageQL)
+	@FieldResolver(() => AlbumPageQL)
 	async albums(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: AlbumPageArgsQL): Promise<AlbumPageQL> {
 		return orm.Album.findListFilter(ListType.faved, filter, order, page, owner.user);
 	}
 
-	@FieldResolver(() => PlaylistPageQL)
+	@FieldResolver(() => ArtistPageQL)
 	async artists(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: ArtistPageArgsQL): Promise<ArtistPageQL> {
 		return orm.Artist.findListFilter(ListType.faved, filter, order, page, owner.user);
 	}
 
-	@FieldResolver(() => PlaylistPageQL)
+	@FieldResolver(() => SeriesPageQL)
 	async series(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: SeriesPageArgsQL): Promise<SeriesPageQL> {
 		return orm.Series.findListFilter(ListType.faved, filter, order, page, owner.user);
 	}
@@ -63,22 +63,22 @@ export class UserFavoritesResolver {
 		return orm.Episode.findListFilter(ListType.faved, filter, order, page, owner.user);
 	}
 
-	@FieldResolver(() => EpisodePageQL)
+	@FieldResolver(() => TrackPageQL)
 	async tracks(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: TrackPageArgsQL): Promise<TrackPageQL> {
 		return orm.Track.findListFilter(ListType.faved, filter, order, page, owner.user);
 	}
 
-	@FieldResolver(() => EpisodePageQL)
+	@FieldResolver(() => FolderPageQL)
 	async folders(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: FolderPageArgsQL): Promise<FolderPageQL> {
 		return orm.Folder.findListFilter(ListType.faved, filter, order, page, owner.user);
 	}
 
-	@FieldResolver(() => EpisodePageQL)
+	@FieldResolver(() => PlaylistPageQL)
 	async playlists(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: PlaylistPageArgsQL): Promise<PlaylistPageQL> {
 		return orm.Playlist.findListFilter(ListType.faved, filter, order, page, owner.user);
 	}
 
-	@FieldResolver(() => EpisodePageQL)
+	@FieldResolver(() => ArtistPageQL)
 	async artworks(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: ArtworkPageArgsQL): Promise<ArtworkPageQL> {
 		return orm.Artwork.findListFilter(ListType.faved, filter, order, page, owner.user);
 	}
