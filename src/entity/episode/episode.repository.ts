@@ -31,7 +31,7 @@ export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs
 		return filter ? QHelper.buildQuery<Episode>(
 			[
 				{id: filter.ids},
-				{name: QHelper.like(filter.query)},
+				{name: QHelper.ilike(filter.query)},
 				{name: QHelper.eq(filter.name)},
 				{status: QHelper.inOrEqual(filter.statuses)},
 				{guid: QHelper.inOrEqual(filter.guids)},

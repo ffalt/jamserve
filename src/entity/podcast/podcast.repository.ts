@@ -33,7 +33,7 @@ export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterArgs
 		const result = QHelper.buildQuery<Podcast>(
 			[
 				{id: filter.ids},
-				{name: QHelper.like(filter.query)},
+				{name: QHelper.ilike(filter.query)},
 				{name: QHelper.eq(filter.name)},
 				{description: QHelper.eq(filter.description)},
 				{url: QHelper.eq(filter.url)},

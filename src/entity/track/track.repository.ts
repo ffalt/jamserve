@@ -79,7 +79,7 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 			{
 				tag: [
 					...QHelper.inStringArray('genres', filter.genres),
-					{title: QHelper.like(filter.name)},
+					{title: QHelper.ilike(filter.name)},
 					{title: QHelper.eq(filter.query)},
 					{year: QHelper.lte(filter.toYear)},
 					{year: QHelper.gte(filter.fromYear)}

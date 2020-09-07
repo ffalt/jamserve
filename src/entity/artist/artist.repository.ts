@@ -33,7 +33,7 @@ export class ArtistRepository extends BaseRepository<Artist, ArtistFilterArgs, A
 		const result = QHelper.buildQuery<Artist>(
 			[
 				{id: filter.ids},
-				{name: QHelper.like(filter.query)},
+				{name: QHelper.ilike(filter.query)},
 				{slug: QHelper.eq(filter.slug)},
 				{name: QHelper.eq(filter.name)},
 				{mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs)},

@@ -59,7 +59,7 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 		}
 		const result = QHelper.buildQuery<Album>([
 				{id: filter.ids},
-				{name: QHelper.like(filter.query)},
+				{name: QHelper.ilike(filter.query)},
 				{name: QHelper.eq(filter.name)},
 				{mbReleaseID: QHelper.inOrEqual(filter.mbReleaseIDs)},
 				{mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs)},

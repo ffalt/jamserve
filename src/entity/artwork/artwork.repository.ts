@@ -30,7 +30,7 @@ export class ArtworkRepository extends BaseRepository<Artwork, ArtworkFilterArgs
 		}
 		return QHelper.buildQuery<Artwork>([
 				{id: filter.ids},
-				{name: QHelper.like(filter.query)},
+				{name: QHelper.ilike(filter.query)},
 				{name: QHelper.eq(filter.name)},
 				{format: QHelper.inOrEqual(filter.formats)},
 				{createdAt: QHelper.gte(filter.since)},

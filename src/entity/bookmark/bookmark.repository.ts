@@ -32,7 +32,7 @@ export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterA
 		return QHelper.buildQuery<Bookmark>(filter ?
 			[
 				{id: filter.ids},
-				{comment: QHelper.like(filter.query)},
+				{comment: QHelper.ilike(filter.query)},
 				{comment: QHelper.eq(filter.comment)},
 				{track: QHelper.inOrEqual(filter.trackIDs)},
 				{episode: QHelper.inOrEqual(filter.episodeIDs)},
