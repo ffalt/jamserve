@@ -588,47 +588,22 @@ enum UserRole {
 }
 
 type UserFavoritesQL {
-  albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!]): PlaylistPageQL!
-  artists(page: PageArgsQL, filter: ArtistFilterArgsQL, order: [ArtistOrderArgsQL!]): PlaylistPageQL!
-  series(page: PageArgsQL, filter: SeriesFilterArgsQL, order: [SeriesOrderArgsQL!]): PlaylistPageQL!
+  albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!]): AlbumPageQL!
+  artists(page: PageArgsQL, filter: ArtistFilterArgsQL, order: [ArtistOrderArgsQL!]): ArtistPageQL!
+  series(page: PageArgsQL, filter: SeriesFilterArgsQL, order: [SeriesOrderArgsQL!]): SeriesPageQL!
   podcasts(page: PageArgsQL, filter: PodcastFilterArgsQL, order: [PodcastOrderArgsQL!]): PodcastPageQL!
   episodes(page: PageArgsQL, filter: EpisodeFilterArgsQL, order: [EpisodeOrderArgsQL!]): EpisodePageQL!
-  tracks(page: PageArgsQL, filter: TrackFilterArgsQL, order: [TrackOrderArgsQL!]): EpisodePageQL!
-  folders(page: PageArgsQL, filter: FolderFilterArgsQL, order: [FolderOrderArgsQL!]): EpisodePageQL!
-  playlists(page: PageArgsQL, filter: PlaylistFilterArgsQL, order: [PlaylistOrderArgsQL!]): EpisodePageQL!
-  artworks(page: PageArgsQL, filter: ArtworkFilterArgsQL, order: [ArtworkOrderArgsQL!]): EpisodePageQL!
+  tracks(page: PageArgsQL, filter: TrackFilterArgsQL, order: [TrackOrderArgsQL!]): TrackPageQL!
+  folders(page: PageArgsQL, filter: FolderFilterArgsQL, order: [FolderOrderArgsQL!]): FolderPageQL!
+  playlists(page: PageArgsQL, filter: PlaylistFilterArgsQL, order: [PlaylistOrderArgsQL!]): PlaylistPageQL!
+  artworks(page: PageArgsQL, filter: ArtworkFilterArgsQL, order: [ArtworkOrderArgsQL!]): ArtistPageQL!
 }
 
-type PlaylistPageQL {
-  items: [PlaylistQL!]!
+type AlbumPageQL {
+  items: [AlbumQL!]!
   total: Int!
   take: Int
   skip: Int
-}
-
-type PlaylistQL {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  name: String!
-  comment: String
-  isPublic: Boolean!
-  duration: Float!
-  entries: [PlaylistEntryQL!]!
-  userID: ID!
-  userName: String!
-  entriesCount: Int!
-  state: StateQL!
-}
-
-type PlaylistEntryQL {
-  id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  position: Float!
-  playlist: PlaylistQL!
-  track: TrackQL!
-  episode: EpisodeQL!
 }
 
 input PageArgsQL {
@@ -677,6 +652,13 @@ enum AlbumOrderFields {
   albumType
 }
 
+type ArtistPageQL {
+  items: [ArtistQL!]!
+  total: Int!
+  take: Int
+  skip: Int
+}
+
 input ArtistFilterArgsQL {
   query: String
   name: String
@@ -706,6 +688,13 @@ enum ArtistOrderFields {
   updated
   name
   nameSort
+}
+
+type SeriesPageQL {
+  items: [SeriesQL!]!
+  total: Int!
+  take: Int
+  skip: Int
 }
 
 input SeriesFilterArgsQL {
@@ -802,6 +791,13 @@ enum EpisodeOrderFields {
   date
 }
 
+type TrackPageQL {
+  items: [TrackQL!]!
+  total: Int!
+  take: Int
+  skip: Int
+}
+
 input TrackFilterArgsQL {
   query: String
   name: String
@@ -838,6 +834,13 @@ enum TrackOrderFields {
   title
   parent
   filename
+}
+
+type FolderPageQL {
+  items: [FolderQL!]!
+  total: Int!
+  take: Int
+  skip: Int
 }
 
 input FolderFilterArgsQL {
@@ -882,6 +885,38 @@ enum FolderOrderFields {
   name
   title
   year
+}
+
+type PlaylistPageQL {
+  items: [PlaylistQL!]!
+  total: Int!
+  take: Int
+  skip: Int
+}
+
+type PlaylistQL {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  comment: String
+  isPublic: Boolean!
+  duration: Float!
+  entries: [PlaylistEntryQL!]!
+  userID: ID!
+  userName: String!
+  entriesCount: Int!
+  state: StateQL!
+}
+
+type PlaylistEntryQL {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  position: Float!
+  playlist: PlaylistQL!
+  track: TrackQL!
+  episode: EpisodeQL!
 }
 
 input PlaylistFilterArgsQL {
@@ -1057,13 +1092,6 @@ type UserIndexGroupQL {
   name: String!
 }
 
-type AlbumPageQL {
-  items: [AlbumQL!]!
-  total: Int!
-  take: Int
-  skip: Int
-}
-
 """Type of List Request"""
 enum ListType {
   random
@@ -1081,13 +1109,6 @@ type AlbumIndexQL {
 type AlbumIndexGroupQL {
   items: [AlbumQL!]!
   name: String!
-}
-
-type ArtistPageQL {
-  items: [ArtistQL!]!
-  total: Int!
-  take: Int
-  skip: Int
 }
 
 type ArtistIndexQL {
@@ -1111,13 +1132,6 @@ type ChatQL {
   created: DateTime!
   userName: String!
   userID: ID!
-}
-
-type FolderPageQL {
-  items: [FolderQL!]!
-  total: Int!
-  take: Int
-  skip: Int
 }
 
 type FolderIndexQL {
@@ -1232,13 +1246,6 @@ input RootOrderArgsQL {
   orderBy: DefaultOrderFields
 }
 
-type SeriesPageQL {
-  items: [SeriesQL!]!
-  total: Int!
-  take: Int
-  skip: Int
-}
-
 type SeriesIndexQL {
   groups: [SeriesIndexGroupQL!]!
 }
@@ -1246,13 +1253,6 @@ type SeriesIndexQL {
 type SeriesIndexGroupQL {
   items: [SeriesQL!]!
   name: String!
-}
-
-type TrackPageQL {
-  items: [TrackQL!]!
-  total: Int!
-  take: Int
-  skip: Int
 }
 
 type StatsQL {
