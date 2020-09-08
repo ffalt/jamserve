@@ -1,6 +1,6 @@
 import {Album, AlbumIndex, AlbumPage} from './album.model';
 import {Controller, Ctx, Get, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
+import {TrackOrderFields, UserRole} from '../../types/enums';
 import {ExtendedInfoResult} from '../metadata/metadata.model';
 import {TrackPage} from '../track/track.model';
 import {AlbumFilterArgs, AlbumOrderArgs, IncludesAlbumArgs, IncludesAlbumChildrenArgs} from './album.args';
@@ -95,8 +95,9 @@ export class AlbumController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<TrackPage> {
 		const albumIDs = await orm.Album.findIDsFilter(filter, user);
+		const orders = [{orderBy: order?.orderBy ? order.orderBy : TrackOrderFields.default, orderDesc: order?.orderDesc || false}];
 		return await orm.Track.searchTransformFilter(
-			{albumIDs}, [order], page, user,
+			{albumIDs}, orders, page, user,
 			o => engine.transform.trackBase(orm, o, trackArgs, user)
 		);
 	}
