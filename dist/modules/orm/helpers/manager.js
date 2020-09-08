@@ -40,6 +40,9 @@ class EntityManager {
         this.repositoryMap = {};
         this.changeSet = [];
     }
+    get dialect() {
+        return this.sequelize.getDialect();
+    }
     getRepository(entityName) {
         entityName = typeof entityName === 'string' ? entityName : entityName.name;
         if (!this.repositoryMap[entityName]) {
@@ -219,9 +222,7 @@ class EntityManager {
         const model = this.model(entityName);
         const opts = { ...options, raw: true, attributes: ['id'] };
         const result = await model.findOne(opts);
-        if (result) {
-            return result.id;
-        }
+        return result === null || result === void 0 ? void 0 : result.id;
     }
     async findIDs(entityName, options) {
         const model = this.model(entityName);
@@ -288,6 +289,7 @@ class EntityManager {
         if (repo) {
             return repo.buildOrderByFindOptions(order);
         }
+        return;
     }
 }
 exports.EntityManager = EntityManager;

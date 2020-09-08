@@ -42,6 +42,7 @@ class IDFolderCache {
         if (exists) {
             return { file: { filename: cachefile, name: cacheID } };
         }
+        return;
     }
     async get(id, params, build) {
         const cacheID = this.cacheFilename(id, params);

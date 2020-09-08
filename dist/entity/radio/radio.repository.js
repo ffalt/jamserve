@@ -16,7 +16,7 @@ class RadioRepository extends base_repository_1.BaseRepository {
     async buildFilter(filter, _) {
         return filter ? orm_1.QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query) },
+            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
             { name: orm_1.QHelper.eq(filter.name) },
             { url: orm_1.QHelper.eq(filter.url) },
             { homepage: orm_1.QHelper.eq(filter.homepage) },

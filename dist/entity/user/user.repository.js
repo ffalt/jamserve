@@ -17,7 +17,7 @@ class UserRepository extends base_repository_1.BaseRepository {
         var _a, _b, _c, _d;
         return filter ? orm_1.QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query) },
+            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
             { name: orm_1.QHelper.eq(filter.name) },
             { email: orm_1.QHelper.eq(filter.email) },
             { createdAt: orm_1.QHelper.gte(filter.since) },

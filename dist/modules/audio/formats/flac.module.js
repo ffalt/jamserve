@@ -58,6 +58,7 @@ class AudioModuleFLAC {
                 return pic.pictureData;
             }
         }
+        return;
     }
 }
 exports.AudioModuleFLAC = AudioModuleFLAC;

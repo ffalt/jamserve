@@ -114,6 +114,7 @@ class MetaMergerCache {
                 return a.album;
             }
         }
+        return;
     }
     async getAlbumByID(id) {
         var _a;
@@ -174,6 +175,7 @@ class MetaMergerCache {
             }
             return slugArtist.artist;
         }
+        return;
     }
     async getArtistByID(id) {
         const artistCache = this.artistCache.find(a => a.artist.id === id);

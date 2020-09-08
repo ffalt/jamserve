@@ -70,6 +70,7 @@ class Orm {
                 return { obj: obj, objType: repo.objType };
             }
         }
+        return;
     }
     async findInStreamTypes(id) {
         return this.findInReposTypes(id, [this.Track, this.Episode]);

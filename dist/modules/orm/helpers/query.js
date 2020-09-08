@@ -6,8 +6,13 @@ class QHelper {
     static eq(value) {
         return (value !== undefined && value !== null) ? value : undefined;
     }
-    static like(value) {
-        return (value) ? { [sequelize_1.Op.like]: `%${value}%` } : undefined;
+    static like(value, dialect) {
+        if (dialect === 'postgres') {
+            return (value) ? { [sequelize_1.Op.iLike]: `%${value}%` } : undefined;
+        }
+        else {
+            return (value) ? { [sequelize_1.Op.like]: `%${value}%` } : undefined;
+        }
     }
     static gte(value) {
         return (value !== undefined) ? { [sequelize_1.Op.gte]: value } : undefined;

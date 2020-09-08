@@ -18,6 +18,7 @@ const enums_1 = require("../../types/enums");
 const typescript_ioc_1 = require("typescript-ioc");
 const path_1 = __importDefault(require("path"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
+const rest_1 = require("../../modules/rest");
 const config_service_1 = require("../../modules/engine/services/config.service");
 const fs_utils_1 = require("../../utils/fs-utils");
 const image_module_1 = require("../../modules/image/image.module");
@@ -29,7 +30,7 @@ let UserService = class UserService {
     }
     async findByName(orm, name) {
         if (!name || name.trim().length === 0) {
-            return Promise.reject(Error('Invalid Username'));
+            return Promise.reject(rest_1.UnauthError('Invalid Username'));
         }
         return await orm.User.findOne({ where: { name } });
     }
@@ -39,21 +40,21 @@ let UserService = class UserService {
     }
     async auth(orm, name, pass) {
         if ((!pass) || (!pass.length)) {
-            return Promise.reject(Error('Invalid Password'));
+            return Promise.reject(rest_1.InvalidParamError('password', 'Invalid Password'));
         }
         const user = await this.findByName(orm, name);
         if (!user) {
-            return Promise.reject(Error('Invalid Username'));
+            return Promise.reject(rest_1.InvalidParamError('username', 'Invalid Username'));
         }
         const hash = hash_1.hashSaltSHA512(pass, user.salt);
         if (hash !== user.hash) {
-            return Promise.reject(Error('Invalid Password'));
+            return Promise.reject(rest_1.InvalidParamError('password', 'Invalid Password'));
         }
         return user;
     }
     async authJWT(orm, jwtPayload) {
         if (!jwtPayload || !jwtPayload.id) {
-            return Promise.reject(Error('Invalid token'));
+            return Promise.reject(rest_1.InvalidParamError('token', 'Invalid token'));
         }
         return await orm.User.findOneByID(jwtPayload.id);
     }
@@ -86,6 +87,7 @@ let UserService = class UserService {
         if (exists) {
             return this.imageModule.get(user.id, filename, size, format);
         }
+        return;
     }
     async generateAvatar(user, seed) {
         const filename = this.avatarImageFilename(user);
@@ -101,10 +103,10 @@ let UserService = class UserService {
     }
     async testPassword(password) {
         if ((!password) || (!password.trim().length)) {
-            return Promise.reject(Error('Invalid Password'));
+            return Promise.reject(rest_1.InvalidParamError('Invalid Password'));
         }
         if (password.length < 4) {
-            return Promise.reject(Error('Password is too short'));
+            return Promise.reject(rest_1.InvalidParamError('Password is too short'));
         }
         if (common_password_checker_1.default(password)) {
             return Promise.reject(Error('Your password is found in the most frequently used password list and too easy to guess'));
@@ -119,7 +121,7 @@ let UserService = class UserService {
     }
     async setUserEmail(orm, user, email) {
         if ((!email) || (!email.trim().length)) {
-            return Promise.reject(Error('Invalid Email'));
+            return Promise.reject(rest_1.InvalidParamError('email', 'Invalid Email'));
         }
         user.email = email;
         await orm.User.persistAndFlush(user);
@@ -137,22 +139,22 @@ let UserService = class UserService {
     }
     async create(orm, args) {
         if (!args.name || args.name.trim().length === 0) {
-            return Promise.reject(Error('Invalid Username'));
+            return Promise.reject(rest_1.InvalidParamError('name', 'Invalid Username'));
         }
         const existingUser = await orm.User.findOne({ where: { name: args.name } });
         if (existingUser) {
-            return Promise.reject(Error('Username already exists'));
+            return Promise.reject(rest_1.InvalidParamError('name', 'Username already exists'));
         }
         const pass = random_1.randomString(16);
         return await this.createUser(orm, args.name, args.email || '', pass, !!args.roleAdmin, !!args.roleStream, !!args.roleUpload, !!args.rolePodcast);
     }
     async update(orm, user, args) {
         if (!args.name || args.name.trim().length === 0) {
-            return Promise.reject(Error('Invalid Username'));
+            return Promise.reject(rest_1.InvalidParamError('name', 'Invalid Username'));
         }
         const existingUser = await orm.User.findOne({ where: { name: args.name } });
         if (existingUser && existingUser.id !== user.id) {
-            return Promise.reject(Error('Username already exists'));
+            return Promise.reject(rest_1.InvalidParamError('name', 'Username already exists'));
         }
         user.name = args.name;
         user.email = args.email || user.email;

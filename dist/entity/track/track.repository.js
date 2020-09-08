@@ -37,8 +37,8 @@ class TrackRepository extends base_repository_1.BaseRepository {
                 return [['tagORM', 'title', direction]];
             case enums_1.TrackOrderFields.default:
                 return [
-                    ['path', base_1.OrderHelper.inverse(direction)],
                     ['tagORM', 'disc', direction],
+                    ['path', base_1.OrderHelper.inverse(direction)],
                     ['tagORM', 'trackNr', direction],
                     ['tagORM', 'title', direction]
                 ];
@@ -76,7 +76,7 @@ class TrackRepository extends base_repository_1.BaseRepository {
             {
                 tag: [
                     ...orm_1.QHelper.inStringArray('genres', filter.genres),
-                    { title: orm_1.QHelper.like(filter.name) },
+                    { title: orm_1.QHelper.like(filter.name, this.em.dialect) },
                     { title: orm_1.QHelper.eq(filter.query) },
                     { year: orm_1.QHelper.lte(filter.toYear) },
                     { year: orm_1.QHelper.gte(filter.fromYear) }

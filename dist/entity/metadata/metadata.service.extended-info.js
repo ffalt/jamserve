@@ -14,6 +14,7 @@ class MetadataServiceExtendedInfo {
         if (wiki && wiki.summary) {
             return metadata_format_1.MetaDataFormat.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
         }
+        return;
     }
     async getMusicBrainzIDWikipediaArtistInfo(orm, mbArtistID) {
         const result = await this.service.musicbrainzLookup(orm, enums_1.MusicBrainzLookupType.artist, mbArtistID);
@@ -38,6 +39,7 @@ class MetadataServiceExtendedInfo {
                 }
             }
         }
+        return;
     }
     async getMusicBrainzIDWikipediaAlbumInfo(orm, mbReleaseID) {
         const lookup = await this.service.musicbrainzLookup(orm, enums_1.MusicBrainzLookupType.release, mbReleaseID);
@@ -49,18 +51,21 @@ class MetadataServiceExtendedInfo {
                 return this.getWikiDataExtendedInfo(orm, id, 'en');
             }
         }
+        return;
     }
     async getLastFMArtistInfo(orm, mbArtistID) {
         const lookup = await this.service.lastFMLookup(orm, enums_1.LastFMLookupType.artist, mbArtistID);
         if (lookup && lookup.artist && lookup.artist.bio && lookup.artist.bio.content) {
             return metadata_format_1.MetaDataFormat.formatLastFMExtendedInfo(lookup.artist.url, lookup.artist.bio.content);
         }
+        return;
     }
     async getLastFMAlbumInfo(orm, mbReleaseID) {
         const lookup = await this.service.lastFMLookup(orm, enums_1.LastFMLookupType.album, mbReleaseID);
         if (lookup && lookup.album && lookup.album.wiki && lookup.album.wiki.content) {
             return metadata_format_1.MetaDataFormat.formatLastFMExtendedInfo(lookup.album.url, lookup.album.wiki.content);
         }
+        return;
     }
     async getArtistInfoByMusicBrainzID(orm, mbArtistID) {
         const info = await this.getMusicBrainzIDWikipediaArtistInfo(orm, mbArtistID);
@@ -131,6 +136,7 @@ class MetadataServiceExtendedInfo {
         catch (e) {
             log.error(e);
         }
+        return;
     }
     async byAlbum(orm, album) {
         let info;

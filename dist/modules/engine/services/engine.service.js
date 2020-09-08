@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var EngineService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EngineService = void 0;
 const hash_1 = require("../../../utils/hash");
@@ -47,7 +48,7 @@ const stream_service_1 = require("../../../entity/stream/stream.service");
 const transform_service_1 = require("./transform.service");
 const bookmark_service_1 = require("../../../entity/bookmark/bookmark.service");
 const log = logger_1.logger('Engine');
-let EngineService = class EngineService {
+let EngineService = EngineService_1 = class EngineService {
     constructor() {
         this.io.registerAfterRefresh(() => this.afterRefresh());
     }
@@ -105,7 +106,7 @@ let EngineService = class EngineService {
     async stop() {
         await this.orm.stop();
     }
-    async buildAdminUser(orm, admin) {
+    static async buildAdminUser(orm, admin) {
         const pw = hash_1.hashAndSaltSHA512(admin.pass || '');
         const user = orm.User.create({
             name: admin.name,
@@ -119,7 +120,7 @@ let EngineService = class EngineService {
         });
         await orm.User.persistAndFlush(user);
     }
-    async buildRoots(orm, roots) {
+    static async buildRoots(orm, roots) {
         for (const first of roots) {
             const root = orm.Root.create({
                 name: first.name,
@@ -136,13 +137,13 @@ let EngineService = class EngineService {
         if (this.config.firstStart.adminUser) {
             const count = await orm.User.count();
             if (count === 0) {
-                await this.buildAdminUser(orm, this.config.firstStart.adminUser);
+                await EngineService_1.buildAdminUser(orm, this.config.firstStart.adminUser);
             }
         }
         if (this.config.firstStart.roots) {
             const count = await orm.Root.count();
             if (count === 0) {
-                await this.buildRoots(orm, this.config.firstStart.roots);
+                await EngineService_1.buildRoots(orm, this.config.firstStart.roots);
             }
         }
     }
@@ -251,7 +252,7 @@ __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", bookmark_service_1.BookmarkService)
 ], EngineService.prototype, "bookmark", void 0);
-EngineService = __decorate([
+EngineService = EngineService_1 = __decorate([
     typescript_ioc_1.InRequestScope,
     __metadata("design:paramtypes", [])
 ], EngineService);

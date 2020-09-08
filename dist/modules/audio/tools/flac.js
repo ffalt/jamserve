@@ -8,6 +8,7 @@ async function flac_test(filename) {
     if (result.errMsg && result.errMsg.length > 0) {
         return result.errMsg;
     }
+    return;
 }
 exports.flac_test = flac_test;
 //# sourceMappingURL=flac.js.map

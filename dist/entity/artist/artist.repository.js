@@ -32,7 +32,7 @@ class ArtistRepository extends base_repository_1.BaseRepository {
         }
         const result = orm_1.QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query) },
+            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
             { slug: orm_1.QHelper.eq(filter.slug) },
             { name: orm_1.QHelper.eq(filter.name) },
             { mbArtistID: orm_1.QHelper.inOrEqual(filter.mbArtistIDs) },

@@ -59,18 +59,21 @@ class FORMAT {
             }
             return n;
         }
+        return;
     }
     static parseYear(s) {
-        if (s !== undefined) {
-            s = s.slice(0, 4).trim();
-            if (s.length === 4) {
-                const n = Number(s);
-                if (isNaN(n)) {
-                    return;
-                }
-                return n;
-            }
+        if (s === undefined) {
+            return;
         }
+        s = s.slice(0, 4).trim();
+        if (s.length === 4) {
+            const n = Number(s);
+            if (isNaN(n)) {
+                return;
+            }
+            return n;
+        }
+        return;
     }
     static packProbeJamServeTag(data) {
         if (!data || !data.format || !data.format.tags) {

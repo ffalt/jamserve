@@ -44,6 +44,7 @@ let FolderService = class FolderService {
         if (artwork) {
             return this.imageModule.get(artwork.id, path_1.default.join(artwork.path, artwork.name), size, format);
         }
+        return;
     }
     async health(orm, list) {
         const folders = list.sort((a, b) => a.path.localeCompare(b.path));

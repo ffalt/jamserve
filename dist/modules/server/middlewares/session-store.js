@@ -67,6 +67,7 @@ class ExpressSessionStore extends express_session_1.Store {
             this.cache.set(sid, session);
             return session;
         }
+        return;
     }
 }
 exports.ExpressSessionStore = ExpressSessionStore;

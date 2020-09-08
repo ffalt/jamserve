@@ -19,6 +19,7 @@ const audio_module_1 = require("../../modules/audio/audio.module");
 const enums_1 = require("../../types/enums");
 const typescript_ioc_1 = require("typescript-ioc");
 const logger_1 = require("../../utils/logger");
+const builder_1 = require("../../modules/rest/builder");
 const log = logger_1.logger('Waveform');
 exports.WaveformDefaultFormat = enums_1.WaveformFormatType.svg;
 let WaveformService = class WaveformService {
@@ -31,7 +32,7 @@ let WaveformService = class WaveformService {
                 return this.getEpisodeWaveform(obj, format, width);
             default:
         }
-        return Promise.reject(Error('Invalid Object Type for Waveform generation'));
+        return Promise.reject(builder_1.InvalidParamError('Invalid Object Type for Waveform generation'));
     }
     async getWaveformSVG(obj, objType, width) {
         const result = await this.getWaveform(obj, objType, enums_1.WaveformFormatType.svg, width);
@@ -45,11 +46,12 @@ let WaveformService = class WaveformService {
                 }
                 catch (e) {
                     log.error(e);
-                    return Promise.reject(Error('Invalid waveform result'));
+                    return Promise.reject(builder_1.GenericError('Invalid waveform result'));
                 }
             }
-            return Promise.reject(Error('Invalid svg waveform result'));
+            return Promise.reject(builder_1.GenericError('Invalid svg waveform result'));
         }
+        return;
     }
     async getWaveformJSON(obj, objType) {
         const result = await this.getWaveform(obj, objType, enums_1.WaveformFormatType.json);
@@ -66,11 +68,12 @@ let WaveformService = class WaveformService {
                 }
                 catch (e) {
                     log.error(e);
-                    return Promise.reject(Error('Invalid json waveform result'));
+                    return Promise.reject(builder_1.GenericError('Invalid json waveform result'));
                 }
             }
-            return Promise.reject(Error('Invalid waveform result'));
+            return Promise.reject(builder_1.GenericError('Invalid waveform result'));
         }
+        return;
     }
     async getTrackWaveform(track, format, width) {
         return this.audioModule.waveform.get(track.id, path_1.default.join(track.path, track.fileName), format, width);
@@ -79,7 +82,7 @@ let WaveformService = class WaveformService {
         if (episode.path && episode.path) {
             return this.audioModule.waveform.get(episode.id, episode.path, format, width);
         }
-        return Promise.reject(Error('Podcast episode not ready'));
+        return Promise.reject(builder_1.GenericError('Podcast episode not ready'));
     }
 };
 __decorate([

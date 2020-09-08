@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GenericError = exports.UnauthError = exports.NotFoundError = exports.InvalidParamError = exports.MissingParamError = exports.Errors = void 0;
+exports.GenericError = exports.UnauthError = exports.NotFoundError = exports.InvalidParamError = exports.MissingParamError = exports.Errors = exports.ApiError = void 0;
 class ApiError extends Error {
     constructor(message, failCode) {
         super(message);
@@ -9,6 +9,7 @@ class ApiError extends Error {
         this.failCode = failCode || 500;
     }
 }
+exports.ApiError = ApiError;
 exports.Errors = {
     itemNotFound: 'Item not found',
     invalidParameter: 'Invalid parameter',
@@ -21,15 +22,15 @@ function MissingParamError(param) {
 }
 exports.MissingParamError = MissingParamError;
 function InvalidParamError(param, msg) {
-    return new ApiError(`${exports.Errors.invalidParameter}: ${param}${msg ? ' - ' + msg : ''}`, 422);
+    return new ApiError(`${exports.Errors.invalidParameter}: ${param}${msg ? ` - ${msg}` : ''}`, 422);
 }
 exports.InvalidParamError = InvalidParamError;
 function NotFoundError(msg) {
-    return new ApiError(`${exports.Errors.itemNotFound}${msg ? ': ' + msg : ''}`, 404);
+    return new ApiError(`${exports.Errors.itemNotFound}${msg ? `: ${msg}` : ''}`, 404);
 }
 exports.NotFoundError = NotFoundError;
-function UnauthError() {
-    return new ApiError(exports.Errors.unauthorized, 401);
+function UnauthError(msg) {
+    return new ApiError(`${exports.Errors.unauthorized}${msg ? `: ${msg}` : ''}`, 401);
 }
 exports.UnauthError = UnauthError;
 function GenericError(msg) {

@@ -55,12 +55,14 @@ let RootWorker = class RootWorker extends base_1.BaseWorker {
         let rootMatch;
         for (const folder of folders) {
             const parents = await this.getParents(folder);
-            if (!rootMatch) {
-                const tracks = await this.buildMergeTracks(parents[0]);
-                rootMatch = { changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length };
+            if (parents[0]) {
+                if (!rootMatch) {
+                    const tracks = await this.buildMergeTracks(parents[0]);
+                    rootMatch = { changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length };
+                }
+                const pathToChild = parents.slice(1).concat([folder]);
+                await this.buildMergeNode(pathToChild, rootMatch);
             }
-            const pathToChild = parents.slice(1).concat([folder]);
-            await this.buildMergeNode(pathToChild, rootMatch);
         }
         if (rootMatch) {
             await this.loadEmptyUnchanged(rootMatch);

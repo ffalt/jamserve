@@ -31,7 +31,7 @@ let StreamService = class StreamService {
             stats = undefined;
         }
         if (!stats) {
-            return Promise.reject(Error('File not found'));
+            return Promise.reject(rest_1.GenericError('File not found'));
         }
         destFormat = destFormat || enums_1.AudioFormatType.mp3;
         if (destFormat[0] === '.') {
@@ -62,7 +62,7 @@ let StreamService = class StreamService {
                 return this.streamEpisode(o, format, maxBitRate);
             default:
         }
-        return Promise.reject(Error('Invalid Object Type for Streaming'));
+        return Promise.reject(rest_1.InvalidParamError('Invalid Object Type for Streaming'));
     }
 };
 __decorate([

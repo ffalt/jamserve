@@ -44,6 +44,7 @@ class WaveformStream extends stream_1.Transform {
             if (!errored) {
                 return this.emit('done');
             }
+            return;
         });
         this._ffmpeg.writeToStream(this._out);
         this._out.on('readable', () => this.start());

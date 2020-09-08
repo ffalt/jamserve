@@ -40,6 +40,7 @@ const folderRules = [
                     };
                 }
             }
+            return;
         }
     },
     {
@@ -64,6 +65,7 @@ const folderRules = [
                     };
                 }
             }
+            return;
         }
     },
     {
@@ -80,6 +82,7 @@ const folderRules = [
                     };
                 }
             }
+            return;
         }
     },
     {
@@ -124,6 +127,7 @@ const folderRules = [
                 if (nameSlug.localeCompare(nicenameSlug) !== 0) {
                     return { details: [{ reason: 'not equal', actual: path_1.default.basename(folder.path), expected: nicename }] };
                 }
+                return;
             }
             if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum)) {
                 const hasArtist = parents.find(p => p.folderType === enums_1.FolderType.artist);
@@ -136,6 +140,7 @@ const folderRules = [
                     return checkNiceName(getNiceOtherFolderName(folder.album));
                 }
             }
+            return;
         }
     },
     {
@@ -148,6 +153,7 @@ const folderRules = [
                     return {};
                 }
             }
+            return;
         }
     },
     {
@@ -170,6 +176,7 @@ const folderRules = [
                     }
                 }
             }
+            return;
         }
     },
     {
@@ -182,6 +189,7 @@ const folderRules = [
                     return { details: [{ reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300' }] };
                 }
             }
+            return;
         }
     },
     {
@@ -194,6 +202,7 @@ const folderRules = [
                     return {};
                 }
             }
+            return;
         }
     },
     {
@@ -216,6 +225,7 @@ const folderRules = [
                     }
                 }
             }
+            return;
         }
     },
     {
@@ -230,6 +240,7 @@ const folderRules = [
                     return { details: [{ reason: 'not equal', actual: path_1.default.basename(folder.path), expected: artistName }] };
                 }
             }
+            return;
         }
     }
 ];

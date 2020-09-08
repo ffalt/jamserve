@@ -5,11 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiBaseResponder = void 0;
 const path_1 = __importDefault(require("path"));
+const express_error_1 = require("./express-error");
 class ApiBaseResponder {
-    static sendJSONP(req, res, callback, data) {
-        res.writeHead(200, { 'Content-Type': 'application/javascript' });
-        res.end(`${callback}(${JSON.stringify(data)});`);
-    }
     static sendOK(req, res) {
         res.status(200).json({ ok: true });
     }
@@ -25,9 +22,19 @@ class ApiBaseResponder {
         res.status(200).send(data);
     }
     static sendError(req, res, err) {
-        const msg = (typeof err === 'string' ? err : (err.message || 'Guru Meditation')).toString();
-        const code = (typeof err.failCode === 'number' ? err.failCode : 500);
-        ApiBaseResponder.sendErrorMsg(req, res, code || 500, msg);
+        let failCode = 0;
+        let message = '';
+        if (typeof err === 'string') {
+            message = err;
+        }
+        else if (err instanceof express_error_1.ApiError) {
+            failCode = err.failCode;
+            message = err.message;
+        }
+        else if (err instanceof Error) {
+            message = err.message;
+        }
+        ApiBaseResponder.sendErrorMsg(req, res, failCode || 500, message || 'Guru Meditation');
     }
     static sendErrorMsg(req, res, code, msg) {
         res.status(code).json({ error: msg });

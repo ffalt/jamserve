@@ -82,6 +82,7 @@ let AudioModule = class AudioModule {
         if (suffix === enums_1.AudioFormatType.flac) {
             return this.flac.readRaw(filename);
         }
+        return;
     }
     async writeRawTag(filename, tag) {
         const suffix = fs_utils_1.fileSuffix(filename);
@@ -108,6 +109,7 @@ let AudioModule = class AudioModule {
         if (suffix === enums_1.AudioFormatType.flac) {
             return this.flac.extractTagImage(filename);
         }
+        return;
     }
     async clearCacheByIDs(ids) {
         await this.transcoder.clearCacheByIDs(ids);

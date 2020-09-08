@@ -26,6 +26,7 @@ let ArtistService = class ArtistService {
             }
             p = await p.parent.get();
         }
+        return;
     }
     async getImage(orm, artist, size, format) {
         if (this.canHaveArtistImage(artist)) {
@@ -34,6 +35,7 @@ let ArtistService = class ArtistService {
                 return this.folderService.getImage(orm, folder, size, format);
             }
         }
+        return;
     }
 };
 __decorate([

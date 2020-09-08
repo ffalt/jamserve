@@ -61,6 +61,7 @@ class OpenApiBuilder {
                 return { $ref: this.getEnumRef(enumInfo, schemas) };
             }
         }
+        return;
     }
     getResultRef(resultClassValue, name, schemas) {
         const argumentType = metadata_1.getMetadataStorage().resultType(resultClassValue);
@@ -307,6 +308,7 @@ class OpenApiBuilder {
             }
             return result;
         }
+        return;
     }
     buildOpenApiMethod(method, ctrl, schemas, isPost, alias) {
         const parameters = this.buildParameters(method, ctrl, schemas, alias);

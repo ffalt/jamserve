@@ -19,6 +19,7 @@ class RootService {
         if (folder) {
             return this.folderService.getImage(orm, folder, size, format);
         }
+        return;
     }
 }
 __decorate([

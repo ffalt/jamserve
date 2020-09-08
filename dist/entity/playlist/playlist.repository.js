@@ -16,7 +16,7 @@ class PlaylistRepository extends base_repository_1.BaseRepository {
     async buildFilter(filter, user) {
         return filter ? orm_1.QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query) },
+            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
             { name: orm_1.QHelper.eq(filter.name) },
             { comment: orm_1.QHelper.eq(filter.comment) },
             { createdAt: orm_1.QHelper.gte(filter.since) },

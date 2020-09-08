@@ -29,7 +29,7 @@ class ArtworkRepository extends base_repository_1.BaseRepository {
         }
         return orm_1.QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query) },
+            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
             { name: orm_1.QHelper.eq(filter.name) },
             { format: orm_1.QHelper.inOrEqual(filter.formats) },
             { createdAt: orm_1.QHelper.gte(filter.since) },

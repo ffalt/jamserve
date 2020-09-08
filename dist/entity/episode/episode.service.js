@@ -141,6 +141,7 @@ let EpisodeService = class EpisodeService {
                 log.error('getImage', 'Extracting image from audio failed: ' + episode.path);
             }
         }
+        return;
     }
     async countEpisodes(orm, podcastID) {
         return await orm.Episode.count({ where: { podcast: podcastID } });

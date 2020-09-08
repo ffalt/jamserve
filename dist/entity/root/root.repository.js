@@ -19,7 +19,7 @@ class RootRepository extends base_repository_1.BaseRepository {
         }
         const result = orm_1.QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query) },
+            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
             { name: orm_1.QHelper.eq(filter.name) },
             { createdAt: orm_1.QHelper.gte(filter.since) },
             { strategy: orm_1.QHelper.inOrEqual(filter.strategies) },

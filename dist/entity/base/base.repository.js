@@ -101,6 +101,7 @@ class BaseRepository extends orm_1.EntityRepository {
         if (result !== null) {
             return result;
         }
+        return;
     }
     async search(options) {
         const { entities, count } = await this.findAndCount(options);
@@ -252,7 +253,9 @@ class BaseRepository extends orm_1.EntityRepository {
     }
     async getFilteredIDs(ids, options) {
         let where = { id: { [orm_1.Op.in]: ids } };
-        if (options.where && Object.keys(options.where).length > 0) {
+        if (options.where &&
+            (Object.keys(options.where).length > 0 ||
+                Object.getOwnPropertySymbols(options.where).length > 0)) {
             where = { [orm_1.Op.and]: [where, options.where] };
         }
         const list = await this.findIDs({ ...options, where });

@@ -25,14 +25,19 @@ const playlist_1 = require("../playlist/playlist");
 const playlist_args_1 = require("../playlist/playlist.args");
 const bookmark_args_1 = require("../bookmark/bookmark.args");
 const session_args_1 = require("../session/session.args");
+const album_1 = require("../album/album");
 const album_args_1 = require("../album/album.args");
+const artist_1 = require("../artist/artist");
 const artist_args_1 = require("../artist/artist.args");
+const series_1 = require("../series/series");
 const series_args_1 = require("../series/series.args");
 const podcast_1 = require("../podcast/podcast");
 const podcast_args_1 = require("../podcast/podcast.args");
 const episode_1 = require("../episode/episode");
 const episode_args_1 = require("../episode/episode.args");
+const track_1 = require("../track/track");
 const track_args_1 = require("../track/track.args");
+const folder_1 = require("../folder/folder");
 const folder_args_1 = require("../folder/folder.args");
 const artwork_args_1 = require("../artwork/artwork.args");
 const stats_1 = require("../stats/stats");
@@ -72,21 +77,21 @@ let UserFavoritesResolver = class UserFavoritesResolver {
     }
 };
 __decorate([
-    type_graphql_1.FieldResolver(() => playlist_1.PlaylistPageQL),
+    type_graphql_1.FieldResolver(() => album_1.AlbumPageQL),
     __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [UserFavorites, Object, album_args_1.AlbumPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "albums", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => playlist_1.PlaylistPageQL),
+    type_graphql_1.FieldResolver(() => artist_1.ArtistPageQL),
     __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [UserFavorites, Object, artist_args_1.ArtistPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "artists", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => playlist_1.PlaylistPageQL),
+    type_graphql_1.FieldResolver(() => series_1.SeriesPageQL),
     __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [UserFavorites, Object, series_args_1.SeriesPageArgsQL]),
@@ -107,28 +112,28 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "episodes", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => episode_1.EpisodePageQL),
+    type_graphql_1.FieldResolver(() => track_1.TrackPageQL),
     __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [UserFavorites, Object, track_args_1.TrackPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "tracks", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => episode_1.EpisodePageQL),
+    type_graphql_1.FieldResolver(() => folder_1.FolderPageQL),
     __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [UserFavorites, Object, folder_args_1.FolderPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "folders", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => episode_1.EpisodePageQL),
+    type_graphql_1.FieldResolver(() => playlist_1.PlaylistPageQL),
     __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [UserFavorites, Object, playlist_args_1.PlaylistPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "playlists", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => episode_1.EpisodePageQL),
+    type_graphql_1.FieldResolver(() => artist_1.ArtistPageQL),
     __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [UserFavorites, Object, artwork_args_1.ArtworkPageArgsQL]),

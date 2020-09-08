@@ -27,6 +27,7 @@ async function localBin(name) {
     if (exists) {
         return s;
     }
+    return;
 }
 async function environment(envName) {
     const s = process.env[envName];
@@ -36,6 +37,7 @@ async function environment(envName) {
             return s;
         }
     }
+    return;
 }
 async function getBinPath(name, envName) {
     if (name in cache) {
@@ -68,6 +70,7 @@ async function getBinPath(name, envName) {
     }
     catch (e) {
     }
+    return;
 }
 exports.getBinPath = getBinPath;
 //# sourceMappingURL=which.js.map

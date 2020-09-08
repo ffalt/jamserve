@@ -33,7 +33,7 @@ class AlbumRepository extends base_repository_1.BaseRepository {
             case enums_1.AlbumOrderFields.year:
                 return [['year', direction]];
             case enums_1.AlbumOrderFields.seriesNr: {
-                switch (this.em.sequelize.getDialect()) {
+                switch (this.em.dialect) {
                     case 'sqlite': {
                         return [[sequelize_1.default.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
                     }
@@ -41,7 +41,7 @@ class AlbumRepository extends base_repository_1.BaseRepository {
                         return [[sequelize_1.default.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
                     }
                     default: {
-                        throw new Error(`Implement LPAD request for dialect ${this.em.sequelize.getDialect()}`);
+                        throw new Error(`Implement LPAD request for dialect ${this.em.dialect}`);
                     }
                 }
             }
@@ -61,7 +61,7 @@ class AlbumRepository extends base_repository_1.BaseRepository {
         }
         const result = orm_1.QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query) },
+            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
             { name: orm_1.QHelper.eq(filter.name) },
             { mbReleaseID: orm_1.QHelper.inOrEqual(filter.mbReleaseIDs) },
             { mbArtistID: orm_1.QHelper.inOrEqual(filter.mbArtistIDs) },

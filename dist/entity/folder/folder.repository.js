@@ -50,7 +50,7 @@ class FolderRepository extends base_repository_1.BaseRepository {
         }
         const result = orm_1.QHelper.buildQuery([
             { id: filter.ids },
-            { title: orm_1.QHelper.like(filter.query) },
+            { title: orm_1.QHelper.like(filter.query, this.em.dialect) },
             { name: orm_1.QHelper.eq(filter.name) },
             { album: orm_1.QHelper.eq(filter.album) },
             { artist: orm_1.QHelper.eq(filter.artist) },

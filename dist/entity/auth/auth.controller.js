@@ -31,13 +31,13 @@ let AuthController = class AuthController {
             passport_1.default.authenticate('local', (err, user) => {
                 if (err || !user) {
                     log.error(err);
-                    return reject(new Error('Invalid Auth'));
+                    return reject(rest_1.UnauthError('Invalid Auth'));
                 }
                 req.login(user, (err2) => {
                     if (err2) {
                         log.error(err2);
                         console.error(err2);
-                        return reject(new Error('Invalid Auth'));
+                        return reject(rest_1.UnauthError('Invalid Auth'));
                     }
                     const client = req.body.client || 'Unknown Client';
                     const token = credentials.jwt ? jwt_1.generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;

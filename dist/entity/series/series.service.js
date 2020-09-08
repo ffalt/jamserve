@@ -32,6 +32,7 @@ let SeriesService = class SeriesService {
                 return result;
             }
         }
+        return;
     }
 };
 __decorate([

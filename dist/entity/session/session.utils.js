@@ -11,6 +11,7 @@ function parseAgent(session) {
     }
     catch (e) {
     }
+    return;
 }
 exports.parseAgent = parseAgent;
 //# sourceMappingURL=session.utils.js.map

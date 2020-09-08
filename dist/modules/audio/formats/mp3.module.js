@@ -128,6 +128,7 @@ class AudioModuleMP3 {
                 return (frame.value).bin;
             }
         }
+        return;
     }
 }
 exports.AudioModuleMP3 = AudioModuleMP3;

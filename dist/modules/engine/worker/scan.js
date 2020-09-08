@@ -118,6 +118,7 @@ class WorkerScan {
             this.changes.tracks.updated.add(track);
             return await this.setTrackValues(file, track);
         }
+        return;
     }
     async buildFolder(dir, parent) {
         log.info('New Folder', dir.path);

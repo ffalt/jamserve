@@ -74,6 +74,7 @@ const trackRules = [
             if (missing.length > 0) {
                 return { details: missing.map(m => ({ reason: m })) };
             }
+            return;
         }
     },
     {
@@ -84,6 +85,7 @@ const trackRules = [
             if (hasID3v2Tag(track, tag) && tagCache.id3v1) {
                 return {};
             }
+            return;
         }
     },
     {
@@ -94,6 +96,7 @@ const trackRules = [
             if (!hasID3v2Tag(track, tag)) {
                 return {};
             }
+            return;
         }
     },
     {
@@ -108,6 +111,7 @@ const trackRules = [
                     })
                 };
             }
+            return;
         }
     },
     {
@@ -131,6 +135,7 @@ const trackRules = [
                     };
                 }
             }
+            return;
         }
     },
     {
@@ -138,7 +143,8 @@ const trackRules = [
         name: 'MP3 has unaccounted data',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
-            if (tagCache.mp3Warnings && tagCache.mp3Warnings.mpeg) {
+            var _a;
+            if ((_a = tagCache.mp3Warnings) === null || _a === void 0 ? void 0 : _a.mpeg) {
                 const warnings = tagCache.mp3Warnings.mpeg.filter(m => analyzeErrors.mpeg.includes(m.msg));
                 if (warnings.length > 0) {
                     return {
@@ -148,6 +154,7 @@ const trackRules = [
                     };
                 }
             }
+            return;
         }
     },
     {
@@ -155,7 +162,8 @@ const trackRules = [
         name: 'VBR Header is missing',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
-            if (tagCache.mp3Warnings && tagCache.mp3Warnings.xing) {
+            var _a;
+            if ((_a = tagCache.mp3Warnings) === null || _a === void 0 ? void 0 : _a.xing) {
                 const warning = tagCache.mp3Warnings.xing.find(m => {
                     return analyzeErrors.xingMissing.includes(m.msg);
                 });
@@ -163,6 +171,7 @@ const trackRules = [
                     return {};
                 }
             }
+            return;
         }
     },
     {
@@ -170,7 +179,8 @@ const trackRules = [
         name: 'VBR Header is invalid',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
-            if (tagCache.mp3Warnings && tagCache.mp3Warnings.xing) {
+            var _a;
+            if ((_a = tagCache.mp3Warnings) === null || _a === void 0 ? void 0 : _a.xing) {
                 const warnings = tagCache.mp3Warnings.xing.filter(m => analyzeErrors.xing.includes(m.msg));
                 if (warnings.length > 0) {
                     return {
@@ -180,6 +190,7 @@ const trackRules = [
                     };
                 }
             }
+            return;
         }
     },
     {
@@ -197,6 +208,7 @@ const trackRules = [
                     };
                 }
             }
+            return;
         }
     },
     {
@@ -207,6 +219,7 @@ const trackRules = [
             if (tagCache.flacWarnings) {
                 return { details: [{ reason: tagCache.flacWarnings }] };
             }
+            return;
         }
     }
 ];

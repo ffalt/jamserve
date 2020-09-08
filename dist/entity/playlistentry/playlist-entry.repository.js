@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlaylistEntryRepository = void 0;
 const base_repository_1 = require("../base/base.repository");
 const enums_1 = require("../../types/enums");
+const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 class PlaylistEntryRepository extends base_repository_1.BaseRepository {
     constructor() {
@@ -22,8 +23,13 @@ class PlaylistEntryRepository extends base_repository_1.BaseRepository {
         }
         return [];
     }
-    async buildFilter(_, __) {
-        return {};
+    async buildFilter(filter, __) {
+        if (!filter) {
+            return {};
+        }
+        return orm_1.QHelper.buildQuery([
+            { playlist: orm_1.QHelper.inOrEqual(filter.playlistIDs) },
+        ]);
     }
 }
 exports.PlaylistEntryRepository = PlaylistEntryRepository;

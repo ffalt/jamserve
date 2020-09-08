@@ -95,7 +95,7 @@ let DownloadService = class DownloadService {
                 return this.downloadPlaylist(o, format, user);
             default:
         }
-        return Promise.reject(Error('Invalid Download Type'));
+        return Promise.reject(rest_1.InvalidParamError('type', 'Invalid Download Type'));
     }
 };
 DownloadService = __decorate([

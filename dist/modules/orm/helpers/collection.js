@@ -100,6 +100,7 @@ class Collection {
         if (order && this.field.linkedEntity) {
             return this.owner._em.getOrderFindOptions(this.field.linkedEntity.name, order);
         }
+        return;
     }
 }
 exports.Collection = Collection;

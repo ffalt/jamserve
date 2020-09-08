@@ -158,6 +158,7 @@ let PodcastService = class PodcastService {
         if (podcast.image) {
             return this.imageModule.get(podcast.id, path_1.default.join(this.podcastsPath, podcast.id, podcast.image), size, format);
         }
+        return;
     }
     async getEpisodeImage(orm, episode, size, format) {
         const result = await this.episodeService.getImage(episode, size, format);

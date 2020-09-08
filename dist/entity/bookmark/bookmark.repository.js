@@ -32,7 +32,7 @@ class BookmarkRepository extends base_repository_1.BaseRepository {
         return orm_1.QHelper.buildQuery(filter ?
             [
                 { id: filter.ids },
-                { comment: orm_1.QHelper.like(filter.query) },
+                { comment: orm_1.QHelper.like(filter.query, this.em.dialect) },
                 { comment: orm_1.QHelper.eq(filter.comment) },
                 { track: orm_1.QHelper.inOrEqual(filter.trackIDs) },
                 { episode: orm_1.QHelper.inOrEqual(filter.episodeIDs) },

@@ -71,6 +71,7 @@ let TrackService = class TrackService {
             }
             return this.folderService.getImage(orm, folder, size, format);
         }
+        return;
     }
     async health(tracks, media) {
         const result = [];

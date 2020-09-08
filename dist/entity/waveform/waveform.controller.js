@@ -40,7 +40,7 @@ let WaveformController = class WaveformController {
         if (bin.file) {
             return JSON.parse((await fs_extra_1.default.readFile(bin.file.filename)).toString());
         }
-        return Promise.reject(Error('Error on Waveform generation'));
+        return Promise.reject(rest_1.GenericError('Error on Waveform generation'));
     }
     async svg(args, { orm, engine }) {
         const result = await orm.findInWaveformTypes(args.id);
@@ -54,7 +54,7 @@ let WaveformController = class WaveformController {
         if (bin.file) {
             return (await fs_extra_1.default.readFile(bin.file.filename)).toString();
         }
-        return Promise.reject(Error('Error on Waveform generation'));
+        return Promise.reject(rest_1.GenericError('Error on Waveform generation'));
     }
     async waveform(id, waveformArgs, { orm, engine }) {
         const result = await orm.findInWaveformTypes(id);

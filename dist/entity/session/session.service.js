@@ -127,6 +127,7 @@ let SessionService = class SessionService {
         if (session) {
             return this.toExpress(session);
         }
+        return;
     }
     toExpress(session) {
         return {
