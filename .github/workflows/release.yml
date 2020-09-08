@@ -73,6 +73,13 @@ jobs:
         with:
           node-version: 14.x
 
+      - name: Look for NPM Cache
+          uses: actions/cache@v2
+          if: steps.check.outputs.changed == 'true'
+          with:
+            path: '**/node_modules'
+            key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.lock') }}
+
       - name: Install and Build
         if: steps.check.outputs.changed == 'true'
         run: |

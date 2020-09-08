@@ -14,7 +14,11 @@ jobs:
       JAM_DB_HOST: postgres
     steps:
       - uses: actions/checkout@v2
-      - run: npm ci
+      - uses: actions/cache@v2
+          with:
+            path: '**/node_modules'
+            key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.lock') }}
+      - run: npm install
       - run: npm run test
     services:
       postgres:
