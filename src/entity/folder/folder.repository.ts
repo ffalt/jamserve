@@ -51,7 +51,7 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 		const result = QHelper.buildQuery<Folder>(
 			[
 				{id: filter.ids},
-				{title: QHelper.ilike(filter.query)},
+				{title: QHelper.like(filter.query, this.em.dialect)},
 				{name: QHelper.eq(filter.name)},
 				{album: QHelper.eq(filter.album)},
 				{artist: QHelper.eq(filter.artist)},

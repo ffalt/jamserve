@@ -51,6 +51,10 @@ export class EntityManager {
 	) {
 	}
 
+	get dialect(): string {
+		return this.sequelize.getDialect();
+	}
+
 	getRepository<T extends IDEntity<T>, U extends EntityRepository<T> = EntityRepository<T>>(entityName: EntityName<T>): U {
 		entityName = typeof entityName === 'string' ? entityName : entityName.name;
 		if (!this.repositoryMap[entityName]) {

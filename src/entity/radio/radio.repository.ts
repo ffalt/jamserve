@@ -18,7 +18,7 @@ export class RadioRepository extends BaseRepository<Radio, RadioFilterArgs, Radi
 		return filter ? QHelper.buildQuery<Radio>(
 			[
 				{id: filter.ids},
-				{name: QHelper.ilike(filter.query)},
+				{name: QHelper.like(filter.query, this.em.dialect)},
 				{name: QHelper.eq(filter.name)},
 				{url: QHelper.eq(filter.url)},
 				{homepage: QHelper.eq(filter.homepage)},

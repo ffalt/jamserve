@@ -22,7 +22,7 @@ export class RootRepository extends BaseRepository<Root, RootFilterArgs, RootOrd
 		const result = QHelper.buildQuery<Root>(
 			[
 				{id: filter.ids},
-				{name: QHelper.ilike(filter.query)},
+				{name: QHelper.like(filter.query, this.em.dialect)},
 				{name: QHelper.eq(filter.name)},
 				{createdAt: QHelper.gte(filter.since)},
 				{strategy: QHelper.inOrEqual(filter.strategies)},

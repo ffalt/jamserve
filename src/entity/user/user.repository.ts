@@ -16,7 +16,7 @@ export class UserRepository extends BaseRepository<User, UserFilterArgs, UserOrd
 		return filter ? QHelper.buildQuery<User>(
 			[
 				{id: filter.ids},
-				{name: QHelper.ilike(filter.query)},
+				{name: QHelper.like(filter.query, this.em.dialect)},
 				{name: QHelper.eq(filter.name)},
 				{email: QHelper.eq(filter.email)},
 				{createdAt: QHelper.gte(filter.since)},

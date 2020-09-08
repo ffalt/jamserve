@@ -6,12 +6,12 @@ export class QHelper {
 		return (value !== undefined && value !== null) ? value : undefined;
 	}
 
-	static ilike<Entity>(value?: string): WhereValue<Entity> | undefined {
-		return (value) ? {[Op.iLike]: `%${value}%`} : undefined;
-	}
-
-	static like<Entity>(value?: string): WhereValue<Entity> | undefined {
-		return (value) ? {[Op.iLike]: `%${value}%`} : undefined;
+	static like<Entity>(value?: string, dialect?: string): WhereValue<Entity> | undefined {
+		if (dialect === 'postgres') {
+			return (value) ? {[Op.iLike]: `%${value}%`} : undefined;
+		} else {
+			return (value) ? {[Op.like]: `%${value}%`} : undefined;
+		}
 	}
 
 	static gte<Entity>(value?: number): WhereValue<Entity> | undefined {

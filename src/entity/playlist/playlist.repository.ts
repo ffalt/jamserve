@@ -18,7 +18,7 @@ export class PlaylistRepository extends BaseRepository<Playlist, PlaylistFilterA
 		return filter ? QHelper.buildQuery<Playlist>(
 			[
 				{id: filter.ids},
-				{name: QHelper.ilike(filter.query)},
+				{name: QHelper.like(filter.query, this.em.dialect)},
 				{name: QHelper.eq(filter.name)},
 				{comment: QHelper.eq(filter.comment)},
 				{createdAt: QHelper.gte(filter.since)},

@@ -21,7 +21,7 @@ export class SeriesRepository extends BaseRepository<Series, SeriesFilterArgs, S
 		const result = QHelper.buildQuery<Series>(
 			[
 				{id: filter.ids},
-				{name: QHelper.ilike(filter.query)},
+				{name: QHelper.like(filter.query, this.em.dialect)},
 				{name: QHelper.eq(filter.name)},
 				{createdAt: QHelper.gte(filter.since)},
 				{artist: QHelper.inOrEqual(filter.artistIDs)},
