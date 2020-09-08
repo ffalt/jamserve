@@ -103,6 +103,7 @@ const trackRules: Array<TrackRuleInfo> = [
 			if (missing.length > 0) {
 				return {details: missing.map(m => ({reason: m}))};
 			}
+			return;
 		}
 	},
 	{
@@ -113,6 +114,7 @@ const trackRules: Array<TrackRuleInfo> = [
 			if (hasID3v2Tag(track, tag) && tagCache.id3v1) {
 				return {};
 			}
+			return;
 		}
 	},
 	{
@@ -123,6 +125,7 @@ const trackRules: Array<TrackRuleInfo> = [
 			if (!hasID3v2Tag(track, tag)) {
 				return {};
 			}
+			return;
 		}
 	},
 	{
@@ -137,6 +140,7 @@ const trackRules: Array<TrackRuleInfo> = [
 					})
 				};
 			}
+			return;
 		}
 	},
 	{
@@ -160,6 +164,7 @@ const trackRules: Array<TrackRuleInfo> = [
 					};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -167,7 +172,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		name: 'MP3 has unaccounted data',
 		mp3: true,
 		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
-			if (tagCache.mp3Warnings && tagCache.mp3Warnings.mpeg) {
+			if (tagCache.mp3Warnings?.mpeg) {
 				const warnings = tagCache.mp3Warnings.mpeg.filter(m => analyzeErrors.mpeg.includes(m.msg));
 				if (warnings.length > 0) {
 					return {
@@ -177,6 +182,7 @@ const trackRules: Array<TrackRuleInfo> = [
 					};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -184,7 +190,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		name: 'VBR Header is missing',
 		mp3: true,
 		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
-			if (tagCache.mp3Warnings && tagCache.mp3Warnings.xing) {
+			if (tagCache.mp3Warnings?.xing) {
 				const warning = tagCache.mp3Warnings.xing.find(m => {
 					return analyzeErrors.xingMissing.includes(m.msg);
 				});
@@ -192,6 +198,7 @@ const trackRules: Array<TrackRuleInfo> = [
 					return {};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -199,7 +206,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		name: 'VBR Header is invalid',
 		mp3: true,
 		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
-			if (tagCache.mp3Warnings && tagCache.mp3Warnings.xing) {
+			if (tagCache.mp3Warnings?.xing) {
 				const warnings = tagCache.mp3Warnings.xing.filter(m => analyzeErrors.xing.includes(m.msg));
 				if (warnings.length > 0) {
 					return {
@@ -209,6 +216,7 @@ const trackRules: Array<TrackRuleInfo> = [
 					};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -226,6 +234,7 @@ const trackRules: Array<TrackRuleInfo> = [
 					};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -236,6 +245,7 @@ const trackRules: Array<TrackRuleInfo> = [
 			if (tagCache.flacWarnings) {
 				return {details: [{reason: tagCache.flacWarnings}]};
 			}
+			return;
 		}
 	}
 ];

@@ -137,6 +137,7 @@ export class MetaMergerCache {
 				return a.album;
 			}
 		}
+		return;
 	}
 
 	async getAlbumByID(id: string): Promise<Album | undefined> {
@@ -208,6 +209,7 @@ export class MetaMergerCache {
 			}
 			return slugArtist.artist;
 		}
+		return;
 	}
 
 	async getArtistByID(id: string): Promise<Artist | undefined> {

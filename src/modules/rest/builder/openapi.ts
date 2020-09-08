@@ -72,6 +72,7 @@ class OpenApiBuilder {
 				return {$ref: this.getEnumRef(enumInfo, schemas)};
 			}
 		}
+		return;
 	}
 
 	getResultRef(resultClassValue: TypeValue, name: string, schemas: Schemas): string {
@@ -324,6 +325,7 @@ class OpenApiBuilder {
 			}
 			return result;
 		}
+		return;
 	}
 
 	buildOpenApiMethod(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, isPost: boolean, alias?: CustomPathParameterAliasRouteOptions): { path: string; o: OperationObject } {

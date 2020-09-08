@@ -1,7 +1,7 @@
 import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
 import {PlaylistEntryOrderFields} from '../../types/enums';
 import {OrderByArgs} from '../base/base.args';
-import {Field, InputType} from 'type-graphql';
+import {Field, ID, InputType} from 'type-graphql';
 
 @InputType()
 @ObjParamsType()
@@ -13,4 +13,12 @@ export class PlaylistEntryOrderArgs extends OrderByArgs {
 
 @InputType()
 export class PlaylistEntryOrderArgsQL extends PlaylistEntryOrderArgs {
+}
+
+@ObjParamsType()
+@InputType()
+export class PlaylistEntryFilterArgs {
+	@Field(() => [ID], {nullable: true})
+	@ObjField(() => [String], {nullable: true, description: 'filter by Playlist Ids', isID: true})
+	playlistIDs?: Array<string>;
 }

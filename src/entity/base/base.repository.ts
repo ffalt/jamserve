@@ -118,6 +118,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		if (result !== null) {
 			return result;
 		}
+		return;
 	}
 
 	async search(options: FindOptions<Entity>): Promise<PageResult<Entity>> {

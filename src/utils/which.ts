@@ -24,6 +24,7 @@ async function localBin(name: string): Promise<string | undefined> {
 	if (exists) {
 		return s;
 	}
+	return;
 }
 
 async function environment(envName: string): Promise<string | undefined> {
@@ -34,6 +35,7 @@ async function environment(envName: string): Promise<string | undefined> {
 			return s;
 		}
 	}
+	return;
 }
 
 export async function getBinPath(name: string, envName: string): Promise<string | undefined> {
@@ -70,4 +72,5 @@ export async function getBinPath(name: string, envName: string): Promise<string 
 	} catch (e) {
 		// nop
 	}
+	return;
 }

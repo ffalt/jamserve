@@ -61,6 +61,7 @@ export class AudioModuleFLAC {
 				return pic.pictureData;
 			}
 		}
+		return;
 	}
 
 }

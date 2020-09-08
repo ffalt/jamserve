@@ -141,6 +141,7 @@ export class SessionService {
 		if (session) {
 			return this.toExpress(session);
 		}
+		return;
 	}
 
 	private toExpress(session: Session): Express.SessionData {

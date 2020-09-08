@@ -72,6 +72,7 @@ export class TrackService {
 			}
 			return this.folderService.getImage(orm, folder, size, format);
 		}
+		return;
 	}
 
 	async health(tracks: Array<Track>, media?: boolean): Promise<Array<TrackHealth>> {

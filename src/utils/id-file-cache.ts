@@ -47,6 +47,7 @@ export class IDFolderCache<T> {
 		if (exists) {
 			return {file: {filename: cachefile, name: cacheID}};
 		}
+		return;
 	}
 
 	async get(id: string, params: T, build: (cacheFilename: string) => Promise<void>): Promise<IDCacheResult> {

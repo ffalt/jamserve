@@ -139,6 +139,7 @@ export class AudioModuleMP3 {
 				return (frame.value).bin;
 			}
 		}
+		return;
 	}
 
 }

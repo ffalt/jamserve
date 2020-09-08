@@ -18,6 +18,7 @@ export class AlbumService {
 		if (folders.length > 0) {
 			return folders.sort((a, b) => b.level - a.level)[0];
 		}
+		return;
 	}
 
 	private async getAlbumTrackImage(orm: Orm, album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
@@ -25,6 +26,7 @@ export class AlbumService {
 		if (tracks.length > 0) {
 			return this.trackService.getImage(orm, tracks[0], size, format);
 		}
+		return;
 	}
 
 	private async getAlbumFolderImage(orm: Orm, album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
@@ -32,6 +34,7 @@ export class AlbumService {
 		if (folder) {
 			return this.folderService.getImage(orm, folder, size, format);
 		}
+		return;
 	}
 
 	async getImage(orm: Orm, album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {

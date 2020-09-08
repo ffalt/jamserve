@@ -154,6 +154,7 @@ export class WorkerScan {
 			this.changes.tracks.updated.add(track);
 			return await this.setTrackValues(file, track);
 		}
+		return;
 	}
 
 	private async buildFolder(dir: ScanDir, parent?: Folder): Promise<Folder> {

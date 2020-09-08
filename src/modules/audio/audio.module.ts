@@ -101,6 +101,7 @@ export class AudioModule {
 		if (suffix === AudioFormatType.flac) {
 			return this.flac.readRaw(filename);
 		}
+		return;
 	}
 
 	async writeRawTag(filename: string, tag: RawTag): Promise<void> {
@@ -126,6 +127,7 @@ export class AudioModule {
 		if (suffix === AudioFormatType.flac) {
 			return this.flac.extractTagImage(filename);
 		}
+		return;
 	}
 
 	async clearCacheByIDs(ids: Array<string>): Promise<void> {

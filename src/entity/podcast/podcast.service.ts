@@ -164,6 +164,7 @@ export class PodcastService {
 		if (podcast.image) {
 			return this.imageModule.get(podcast.id, path.join(this.podcastsPath, podcast.id, podcast.image), size, format);
 		}
+		return;
 	}
 
 	async getEpisodeImage(orm: Orm, episode: Episode, size: number | undefined, format: string | undefined): Promise<ApiBinaryResult | undefined> {

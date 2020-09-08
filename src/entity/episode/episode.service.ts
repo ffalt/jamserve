@@ -142,7 +142,7 @@ export class EpisodeService {
 				log.error('getImage', 'Extracting image from audio failed: ' + episode.path);
 			}
 		}
-
+		return;
 	}
 
 	async countEpisodes(orm: Orm, podcastID: string): Promise<number> {

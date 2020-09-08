@@ -29,6 +29,7 @@ export class SeriesService {
 				return result;
 			}
 		}
+		return;
 	}
 
 }

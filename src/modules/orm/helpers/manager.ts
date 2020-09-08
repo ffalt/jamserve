@@ -247,9 +247,7 @@ export class EntityManager {
 		const model = this.model(entityName);
 		const opts = {...options, raw: true, attributes: ['id']};
 		const result = await model.findOne<any>(opts);
-		if (result) {
-			return result.id;
-		}
+		return result?.id;
 	}
 
 	async findIDs<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<string[]> {
@@ -328,5 +326,6 @@ export class EntityManager {
 		if (repo) {
 			return repo.buildOrderByFindOptions(order);
 		}
+		return;
 	}
 }

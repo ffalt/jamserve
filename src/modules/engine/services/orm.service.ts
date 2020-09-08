@@ -108,6 +108,7 @@ export class Orm {
 				return {obj: obj as any, objType: repo.objType};
 			}
 		}
+		return;
 	}
 
 	public async findInStreamTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {

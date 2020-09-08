@@ -120,5 +120,6 @@ export class Collection<T extends IDEntity<T>> {
 		if (order && this.field.linkedEntity) {
 			return (this.owner as ManagedEntity)._em.getOrderFindOptions(this.field.linkedEntity.name, order);
 		}
+		return;
 	}
 }

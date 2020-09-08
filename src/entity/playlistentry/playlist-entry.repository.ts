@@ -1,12 +1,12 @@
 import {BaseRepository} from '../base/base.repository';
 import {DBObjectType, PlaylistEntryOrderFields} from '../../types/enums';
 import {PlaylistEntry} from './playlist-entry';
-import {PlaylistEntryOrderArgs} from './playlist-entry.args';
+import {PlaylistEntryFilterArgs, PlaylistEntryOrderArgs} from './playlist-entry.args';
 import {User} from '../user/user';
-import {FindOptions, OrderItem} from '../../modules/orm';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 import {OrderHelper} from '../base/base';
 
-export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, void, PlaylistEntryOrderArgs> {
+export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, PlaylistEntryFilterArgs, PlaylistEntryOrderArgs> {
 	objType = DBObjectType.playlistentry;
 
 	buildOrder(order?: PlaylistEntryOrderArgs): Array<OrderItem> {
@@ -23,8 +23,13 @@ export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, void,
 		return [];
 	}
 
-	async buildFilter(_?: void, __?: User): Promise<FindOptions<PlaylistEntry>> {
-		return {};
+	async buildFilter(filter?: PlaylistEntryFilterArgs, __?: User): Promise<FindOptions<PlaylistEntry>> {
+		if (!filter) {
+			return {};
+		}
+		return QHelper.buildQuery<PlaylistEntry>([
+			{playlist: QHelper.inOrEqual(filter.playlistIDs)},
+		]);
 	}
 
 }

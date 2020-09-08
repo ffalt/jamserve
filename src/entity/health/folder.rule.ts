@@ -46,6 +46,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -69,6 +70,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -85,6 +87,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -134,6 +137,7 @@ const folderRules: Array<FolderRuleInfo> = [
 				if (nameSlug.localeCompare(nicenameSlug) !== 0) {
 					return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: nicename}]};
 				}
+				return;
 			}
 
 			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum)) {
@@ -147,6 +151,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					return checkNiceName(getNiceOtherFolderName(folder.album));
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -159,6 +164,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					return {};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -181,6 +187,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					}
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -193,6 +200,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					return {details: [{reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300'}]};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -205,6 +213,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					return {};
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -227,6 +236,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					}
 				}
 			}
+			return;
 		}
 	},
 	{
@@ -241,6 +251,7 @@ const folderRules: Array<FolderRuleInfo> = [
 					return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: artistName}]};
 				}
 			}
+			return;
 		}
 	}
 ];

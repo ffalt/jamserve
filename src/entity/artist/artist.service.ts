@@ -24,6 +24,7 @@ export class ArtistService {
 			}
 			p = await p.parent.get();
 		}
+		return;
 	}
 
 	async getImage(orm: Orm, artist: Artist, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
@@ -33,6 +34,7 @@ export class ArtistService {
 				return this.folderService.getImage(orm, folder, size, format);
 			}
 		}
+		return;
 	}
 
 }

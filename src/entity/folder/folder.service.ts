@@ -37,6 +37,7 @@ export class FolderService {
 		if (artwork) {
 			return this.imageModule.get(artwork.id, path.join(artwork.path, artwork.name), size, format);
 		}
+		return;
 	}
 
 	async health(orm: Orm, list: Array<Folder>): Promise<Array<FolderHealth>> {

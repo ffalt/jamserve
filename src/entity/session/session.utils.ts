@@ -7,4 +7,5 @@ export function parseAgent(session: Session): useragent.Details | undefined {
 	} catch (e) {
 		//
 	}
+	return;
 }

@@ -6,4 +6,5 @@ export async function flac_test(filename: string): Promise<string | undefined> {
 	if (result.errMsg && result.errMsg.length > 0) {
 		return result.errMsg;
 	}
+	return;
 }

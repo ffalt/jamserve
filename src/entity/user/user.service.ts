@@ -91,6 +91,7 @@ export class UserService {
 		if (exists) {
 			return this.imageModule.get(user.id, filename, size, format);
 		}
+		return;
 	}
 
 	async generateAvatar(user: User, seed?: string): Promise<void> {

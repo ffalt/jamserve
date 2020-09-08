@@ -64,6 +64,7 @@ export class WaveformService {
 			}
 			return Promise.reject(GenericError('Invalid svg waveform result'));
 		}
+		return;
 	}
 
 	async getWaveformJSON(obj: Base, objType: DBObjectType): Promise<WaveFormData | undefined> {
@@ -85,6 +86,7 @@ export class WaveformService {
 			}
 			return Promise.reject(GenericError('Invalid waveform result'));
 		}
+		return;
 	}
 
 	async getTrackWaveform(track: Track, format: WaveformFormatType, width?: number): Promise<WaveformResult> {

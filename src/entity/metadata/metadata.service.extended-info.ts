@@ -21,6 +21,7 @@ export class MetadataServiceExtendedInfo {
 		if (wiki && wiki.summary) {
 			return MetaDataFormat.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
 		}
+		return;
 	}
 
 	private async getMusicBrainzIDWikipediaArtistInfo(orm: Orm, mbArtistID: string): Promise<ExtendedInfo | undefined> {
@@ -46,6 +47,7 @@ export class MetadataServiceExtendedInfo {
 				}
 			}
 		}
+		return;
 	}
 
 	private async getMusicBrainzIDWikipediaAlbumInfo(orm: Orm, mbReleaseID: string): Promise<ExtendedInfo | undefined> {
@@ -58,6 +60,7 @@ export class MetadataServiceExtendedInfo {
 				return this.getWikiDataExtendedInfo(orm, id, 'en');
 			}
 		}
+		return;
 	}
 
 	private async getLastFMArtistInfo(orm: Orm, mbArtistID: string): Promise<ExtendedInfo | undefined> {
@@ -65,6 +68,7 @@ export class MetadataServiceExtendedInfo {
 		if (lookup && lookup.artist && lookup.artist.bio && lookup.artist.bio.content) {
 			return MetaDataFormat.formatLastFMExtendedInfo(lookup.artist.url, lookup.artist.bio.content);
 		}
+		return;
 	}
 
 	private async getLastFMAlbumInfo(orm: Orm, mbReleaseID: string): Promise<ExtendedInfo | undefined> {
@@ -72,6 +76,7 @@ export class MetadataServiceExtendedInfo {
 		if (lookup && lookup.album && lookup.album.wiki && lookup.album.wiki.content) {
 			return MetaDataFormat.formatLastFMExtendedInfo(lookup.album.url, lookup.album.wiki.content);
 		}
+		return;
 	}
 
 	private async getArtistInfoByMusicBrainzID(orm: Orm, mbArtistID: string): Promise<ExtendedInfo | undefined> {
@@ -146,6 +151,7 @@ export class MetadataServiceExtendedInfo {
 		} catch (e) {
 			log.error(e);
 		}
+		return;
 	}
 
 	async byAlbum(orm: Orm, album: Album): Promise<ExtendedInfo | undefined> {
