@@ -2,7 +2,7 @@
 
 An audio library server written in Typescript for NodeJS
 
-![Test](https://github.com/ffalt/jamserve/workflows/test/badge.svg)
+[![Test](https://github.com/ffalt/jamserve/workflows/test/badge.svg)](https://github.com/ffalt/jamserve/actions?query=workflow%3Atest)
 [![Maintainability](https://api.codeclimate.com/v1/badges/78793d8ce54f2e8e6236/maintainability)](https://codeclimate.com/github/ffalt/jamserve/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/78793d8ce54f2e8e6236/test_coverage)](https://codeclimate.com/github/ffalt/jamserve/test_coverage)
 
