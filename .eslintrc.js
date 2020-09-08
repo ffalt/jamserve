@@ -20,7 +20,6 @@ module.exports = {
 	},
 	rules: {
 		"@typescript-eslint/no-unused-vars": ["error", {"args": "none"}],
-		"@typescript-eslint/no-var-requires": 2,
 		"@typescript-eslint/ban-types": "off",
 		"@typescript-eslint/no-inferrable-types": "off",
 		"@typescript-eslint/no-explicit-any": "off",
