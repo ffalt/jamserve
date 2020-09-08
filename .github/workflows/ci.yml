@@ -8,23 +8,24 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ffalt/jam-base
+    env:
+      JAM_DB_HOST: postgres
     steps:
       - uses: actions/checkout@v2
-      - name: Update apt
-        run: sudo apt-get update
-      - name: Install ffmpeg & fpcalc & mp3val
-        run: sudo apt-get install ffmpeg flac libchromaprint-tools mp3val
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14.x'
-      - name: Setup PostgreSQL
-        uses: harmon758/postgresql-action@v1.0.0
-        with:
-          postgresql version: '12.4'
-          postgresql db: jamtest
-          postgresql user: test
-          postgresql password: test
       - run: npm ci
       - run: npm run test
-
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: jamtest
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
