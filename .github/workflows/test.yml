@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ffalt/jam-base
+    env:
+      JAM_DB_HOST: "postgres"
     steps:
       - uses: actions/checkout@v2
       - run: npm ci
@@ -21,8 +23,8 @@ jobs:
           POSTGRES_DB: jamtest
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
-        ports:
-          - "5432:5432"
+#        ports:
+        #          - "5432:5432"
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
