@@ -8,23 +8,12 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ffalt/jam-base
+    env:
+      JAM_DB_HOST: postgres
     steps:
       - uses: actions/checkout@v2
-      - name: Update apt
-        run: sudo apt-get update
-      - name: Install ffmpeg & fpcalc & mp3val
-        run: sudo apt-get install ffmpeg flac libchromaprint-tools mp3val
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14.x'
-      - name: Setup PostgreSQL
-        uses: harmon758/postgresql-action@v1.0.0
-        with:
-          postgresql version: '12.4'
-          postgresql db: jamtest
-          postgresql user: test
-          postgresql password: test
       - run: npm ci
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
@@ -51,6 +40,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           file-url: https://github.com/ffalt/jamserve/raw/release/package.json
           static-checking: localIsNew
+
       - name: Log when changed
         if: steps.check.outputs.changed == 'true'
         run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
@@ -79,6 +69,7 @@ jobs:
           BRANCH: release # The branch the action should deploy to.
           FOLDER: deploy # The folder the action should deploy.
           CLEAN: true
+
       - name: Create Release Tag
         if: steps.check.outputs.changed == 'true'
         uses: fleskesvor/create-release@feature/support-target-commitish
