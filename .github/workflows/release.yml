@@ -12,13 +12,14 @@ jobs:
       image: ffalt/jam-base
     env:
       JAM_DB_HOST: postgres
+      NODE_ENV: development
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.lock') }}
-      - run: npm ci
+      - run: npm install
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
         env:
