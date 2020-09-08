@@ -20,9 +20,9 @@ export class LyricsOVHClient extends WebserviceClient {
 		super(1, 1000, userAgent);
 	}
 
-	protected async parseResult<T>(response: request.Response, body: any): Promise<T> {
+	protected async parseResult<T>(response: request.Response, body: string): Promise<T | undefined> {
 		if (response.statusCode === 404) {
-			return Promise.resolve(undefined as any);
+			return Promise.resolve(undefined);
 		}
 		return super.parseResult<T>(response, body);
 	}

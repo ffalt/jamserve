@@ -24,11 +24,11 @@ export class EntityCache {
 		this.cache.delete(`${entityName}${entity.id}`);
 	}
 
-	clear() {
+	clear(): void {
 		this.cache = new Map();
 	}
 
-	removePrefixed(entityName: string) {
+	removePrefixed(entityName: string): void {
 		const keys = this.cache.keys();
 		for (const key of keys) {
 			if (key.startsWith(entityName)) {

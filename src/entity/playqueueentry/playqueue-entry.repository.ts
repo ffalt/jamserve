@@ -6,7 +6,7 @@ import {User} from '../user/user';
 import {PlayQueueEntryOrderArgs} from './playqueue-entry.args';
 import {OrderHelper} from '../base/base';
 
-export class PlayQueueEntryRepository extends BaseRepository<PlayQueueEntry, any, any> {
+export class PlayQueueEntryRepository extends BaseRepository<PlayQueueEntry, void, PlayQueueEntryOrderArgs> {
 	objType = DBObjectType.playqueueentry;
 
 	buildOrder(order?: PlayQueueEntryOrderArgs): Array<OrderItem> {
@@ -23,7 +23,7 @@ export class PlayQueueEntryRepository extends BaseRepository<PlayQueueEntry, any
 		return [];
 	}
 
-	async buildFilter(_?: any, __?: User): Promise<FindOptions<PlayQueueEntry>> {
+	async buildFilter(_?: void, __?: User): Promise<FindOptions<PlayQueueEntry>> {
 		return {};
 	}
 }

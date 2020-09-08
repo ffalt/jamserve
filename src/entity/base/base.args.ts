@@ -46,6 +46,7 @@ export class PageArgs {
 export class PageArgsQL extends PageArgs {
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function PaginatedArgs<TOrder>(TOrderClass: ClassType<TOrder>) {
 
 	@ArgsType()
@@ -60,6 +61,7 @@ export function PaginatedArgs<TOrder>(TOrderClass: ClassType<TOrder>) {
 	return PaginatedArgsClass;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function PaginatedFilterArgs<TFilter, TOrder>(TFilterClass: ClassType<TFilter>, TOrderClass: ClassType<TOrder>) {
 
 	@ArgsType()
@@ -77,6 +79,7 @@ export function PaginatedFilterArgs<TFilter, TOrder>(TFilterClass: ClassType<TFi
 	return PaginatedArgsClass;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function FilterArgs<TFilter>(TFilterClass: ClassType<TFilter>) {
 
 	@ArgsType()

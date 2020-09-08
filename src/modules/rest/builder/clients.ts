@@ -37,7 +37,7 @@ export function wrapLong(s: string): string {
 	return s;
 }
 
-export async function writeTemplate(name: string, template: string, data: any): Promise<{ name: string; content: string }> {
+export async function writeTemplate(name: string, template: string, data: unknown): Promise<{ name: string; content: string }> {
 	return {
 		name,
 		content: Mustache.render((await fse.readFile(template)).toString(), data)

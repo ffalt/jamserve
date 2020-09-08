@@ -15,14 +15,14 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 		super(10, 1000, options.userAgent, {...defaultOptions, ...options});
 	}
 
-	protected async parseResult<T>(response: request.Response, body: any): Promise<T> {
+	protected async parseResult<T>(response: request.Response, body: string): Promise<T | undefined> {
 		if (response.statusCode === 404) {
 			return Promise.resolve({images: []} as any);
 		}
 		return super.parseResult<T>(response, body);
 	}
 
-	protected async processError(e: any, req: JSONRequest): Promise<CoverArtArchive.Response> {
+	protected async processError(e: Error, req: JSONRequest): Promise<CoverArtArchive.Response> {
 		if (e instanceof SyntaxError) {
 			// coverartarchive response may be code 200 with html on empty data
 			// <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">

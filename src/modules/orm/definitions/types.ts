@@ -71,14 +71,14 @@ export declare type AdvancedOptions = BasicOptions & SchemaNameOptions;
 export declare type FieldOptions = AdvancedOptions;
 export declare type PrimaryFieldOptions = FieldOptions & PrimaryOptions;
 
-export declare type OneToManyFieldOptions<T> = FieldOptions & OrderByOptions & CascadeOptions;
-export declare type ManyToManyFieldOptions<T> = FieldOptions & OrderByOptions & OwnerOptions;
-export declare type ManyToOneFieldOptions<T> = FieldOptions;
-export declare type OneToOneFieldOptions<T> = FieldOptions & OwnerOptions;
+export declare type OneToManyFieldOptions = FieldOptions & OrderByOptions & CascadeOptions;
+export declare type ManyToManyFieldOptions = FieldOptions & OrderByOptions & OwnerOptions;
+export declare type ManyToOneFieldOptions = FieldOptions;
+export declare type OneToOneFieldOptions = FieldOptions & OwnerOptions;
 
-export declare type OneToManyFieldRelation<T> = OneToManyFieldOptions<T> & { relation: 'one2many' } & MappedByOptions<T>;
-export declare type ManyToManyFieldRelation<T> = ManyToManyFieldOptions<T> & { relation: 'many2many' } & MappedByOptions<T>;
-export declare type ManyToOneFieldRelation<T> = ManyToOneFieldOptions<T> & { relation: 'many2one' } & MappedByOptions<T>;
-export declare type OneToOneFieldRelation<T> = OneToOneFieldOptions<T> & { relation: 'one2one' } & MappedByOptions<T>;
+export declare type OneToManyFieldRelation<T> = OneToManyFieldOptions & { relation: 'one2many' } & MappedByOptions<T>;
+export declare type ManyToManyFieldRelation<T> = ManyToManyFieldOptions & { relation: 'many2many' } & MappedByOptions<T>;
+export declare type ManyToOneFieldRelation<T> = ManyToOneFieldOptions & { relation: 'many2one' } & MappedByOptions<T>;
+export declare type OneToOneFieldRelation<T> = OneToOneFieldOptions & { relation: 'one2one' } & MappedByOptions<T>;
 
 export declare type EntityTypeOptions = AbstractClassOptions & SchemaNameOptions;

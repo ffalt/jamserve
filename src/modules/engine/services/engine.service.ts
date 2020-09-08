@@ -125,11 +125,11 @@ export class EngineService {
 		await this.checkRescan(orm);
 	}
 
-	public async stop() {
+	async stop(): Promise<void> {
 		await this.orm.stop();
 	}
 
-	private async buildAdminUser(orm: Orm, admin: { name: string; pass: string; mail: string }): Promise<void> {
+	private static async buildAdminUser(orm: Orm, admin: { name: string; pass: string; mail: string }): Promise<void> {
 		const pw = hashAndSaltSHA512(admin.pass || '');
 		const user = orm.User.create({
 			name: admin.name,
@@ -144,7 +144,7 @@ export class EngineService {
 		await orm.User.persistAndFlush(user);
 	}
 
-	private async buildRoots(orm: Orm, roots: Array<{ name: string; path: string; strategy?: RootScanStrategy }>): Promise<void> {
+	private static async buildRoots(orm: Orm, roots: Array<{ name: string; path: string; strategy?: RootScanStrategy }>): Promise<void> {
 		for (const first of roots) {
 			const root = orm.Root.create({
 				name: first.name,
@@ -162,13 +162,13 @@ export class EngineService {
 		if (this.config.firstStart.adminUser) {
 			const count = await orm.User.count();
 			if (count === 0) {
-				await this.buildAdminUser(orm, this.config.firstStart.adminUser);
+				await EngineService.buildAdminUser(orm, this.config.firstStart.adminUser);
 			}
 		}
 		if (this.config.firstStart.roots) {
 			const count = await orm.Root.count();
 			if (count === 0) {
-				await this.buildRoots(orm, this.config.firstStart.roots);
+				await EngineService.buildRoots(orm, this.config.firstStart.roots);
 			}
 		}
 	}

@@ -8,7 +8,7 @@ export function registerRelation(
 	propertyKey: string | symbol,
 	returnTypeFunc: ReturnTypeFunc,
 	opt: FieldOptions
-) {
+): void {
 	if (typeof propertyKey === 'symbol') {
 		throw new SymbolKeysNotSupportedError();
 	}

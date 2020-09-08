@@ -66,9 +66,9 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 		return `${this.reqToHost(req)}${req.path}?${q.join('&')}`;
 	}
 
-	protected isRateLimitError(body: any): boolean {
+	protected isRateLimitError(body?: { error?: string }): boolean {
 		// "error":"Your requests are exceeding the allowable rate limit. Please see http://wiki.musicbrainz.org/XMLWebService for more information."
-		return (body && body.error && body.error.includes('allowable rate limit'));
+		return !!(body?.error && body.error.includes('allowable rate limit'));
 	}
 
 	async search(params: MusicbrainzClientApi.ParameterSearch): Promise<MusicBrainz.Response> {

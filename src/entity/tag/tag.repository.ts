@@ -5,19 +5,20 @@ import {User} from '../user/user';
 import {FindOptions, OrderItem} from '../../modules/orm';
 import {AudioScanResult} from '../../modules/audio/audio.module';
 import {basenameStripExt} from '../../utils/fs-utils';
+import {DefaultOrderArgs} from '../base/base.args';
 
-export class TagRepository extends BaseRepository<Tag, any, any> {
+export class TagRepository extends BaseRepository<Tag, void, DefaultOrderArgs> {
 	objType = DBObjectType.tag;
 
 	createByScan(data: AudioScanResult, filename: string): Tag {
 		return this.create({...data, title: data.title || basenameStripExt(filename), chapters: data.chapters ? JSON.stringify(data.chapters) : undefined});
 	}
 
-	buildOrder(_?: any): Array<OrderItem> {
+	buildOrder(_?: DefaultOrderArgs): Array<OrderItem> {
 		return [];
 	}
 
-	async buildFilter(_?: any, __?: User): Promise<FindOptions<Tag>> {
+	async buildFilter(_?: void, __?: User): Promise<FindOptions<Tag>> {
 		return {};
 	}
 

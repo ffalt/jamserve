@@ -1,4 +1,4 @@
-import {Controller, Ctx, Get, QueryParam} from '../../modules/rest';
+import {Controller, Ctx, GenericError, Get, QueryParam} from '../../modules/rest';
 import {UserRole, WaveformFormatType} from '../../types/enums';
 import {ApiBinaryResult, NotFoundError} from '../../modules/rest/builder';
 import {PathParam, PathParams, QueryParams} from '../../modules/rest/decorators';
@@ -32,7 +32,7 @@ export class WaveformController {
 		if (bin.file) {
 			return JSON.parse((await fse.readFile(bin.file.filename)).toString());
 		}
-		return Promise.reject(Error('Error on Waveform generation'));
+		return Promise.reject(GenericError('Error on Waveform generation'));
 	}
 
 	@Get('/svg',
@@ -57,7 +57,7 @@ export class WaveformController {
 		if (bin.file) {
 			return (await fse.readFile(bin.file.filename)).toString();
 		}
-		return Promise.reject(Error('Error on Waveform generation'));
+		return Promise.reject(GenericError('Error on Waveform generation'));
 	}
 
 	@Get(

@@ -5,14 +5,14 @@ import {User} from '../user/user';
 import {FindOptions, OrderItem} from '../../modules/orm';
 import {DefaultOrderArgs} from '../base/base.args';
 
-export class StateRepository extends BaseRepository<State, any, any> {
+export class StateRepository extends BaseRepository<State, void, DefaultOrderArgs> {
 	objType = DBObjectType.state;
 
 	buildOrder(_?: DefaultOrderArgs): Array<OrderItem> {
 		return [];
 	}
 
-	async buildFilter(_?: any, __?: User): Promise<FindOptions<State>> {
+	async buildFilter(_?: void, __?: User): Promise<FindOptions<State>> {
 		return {};
 	}
 

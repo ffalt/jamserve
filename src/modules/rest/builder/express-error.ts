@@ -1,4 +1,4 @@
-class ApiError extends Error {
+export class ApiError extends Error {
 	failCode: number;
 
 	constructor(message: string, failCode: number) {
@@ -32,15 +32,15 @@ export function MissingParamError(param: string): ApiError {
 }
 
 export function InvalidParamError(param: string, msg?: string): ApiError {
-	return new ApiError(`${Errors.invalidParameter}: ${param}${msg ? ' - ' + msg : ''}`, 422);
+	return new ApiError(`${Errors.invalidParameter}: ${param}${msg ? ` - ${msg}` : ''}`, 422);
 }
 
 export function NotFoundError(msg?: string): ApiError {
-	return new ApiError(`${Errors.itemNotFound}${msg ? ': ' + msg : ''}`, 404);
+	return new ApiError(`${Errors.itemNotFound}${msg ? `: ${msg}` : ''}`, 404);
 }
 
-export function UnauthError(): ApiError {
-	return new ApiError(Errors.unauthorized, 401);
+export function UnauthError(msg?: string): ApiError {
+	return new ApiError(`${Errors.unauthorized}${msg ? `: ${msg}` : ''}`, 401);
 }
 
 export function GenericError(msg?: string): ApiError {

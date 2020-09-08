@@ -4,12 +4,12 @@ import {registerRelation} from '../helpers/relation-register';
 export function OneToMany<T>(
 	returnTypeFunction: ReturnTypeFunc,
 	mappedBy: MappedByFunc<T>,
-	options?: OneToManyFieldOptions<T>,
+	options?: OneToManyFieldOptions
 ): MethodAndPropDecorator;
 export function OneToMany<T>(
 	returnTypeFunc: ReturnTypeFunc,
 	mappedBy: MappedByFunc<T>,
-	options?: OneToManyFieldOptions<T>,
+	options?: OneToManyFieldOptions
 ): MethodDecorator | PropertyDecorator {
 	return (prototype, propertyKey, _) => {
 		const opt = (options || {}) as OneToManyFieldRelation<T>;

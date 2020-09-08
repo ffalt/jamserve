@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import {ApiError} from './express-error';
 
 export interface StreamData {
 	pipe(stream: express.Response): void;
@@ -17,11 +18,10 @@ export interface ApiBinaryResult {
 }
 
 export class ApiBaseResponder {
-
-	static sendJSONP(req: express.Request, res: express.Response, callback: string, data: any): void {
-		res.writeHead(200, {'Content-Type': 'application/javascript'});
-		res.end(`${callback}(${JSON.stringify(data)});`);
-	}
+	// static sendJSONP(req: express.Request, res: express.Response, callback: string, data: unknown): void {
+	// 	res.writeHead(200, {'Content-Type': 'application/javascript'});
+	// 	res.end(`${callback}(${JSON.stringify(data)});`);
+	// }
 
 	static sendOK(req: express.Request, res: express.Response): void {
 		res.status(200).json({ok: true});
@@ -32,7 +32,7 @@ export class ApiBaseResponder {
 		res.status(200).send(data);
 	}
 
-	static sendJSON(req: express.Request, res: express.Response, data: any): void {
+	static sendJSON(req: express.Request, res: express.Response, data: unknown): void {
 		res.status(200).json(data);
 	}
 
@@ -41,10 +41,18 @@ export class ApiBaseResponder {
 		res.status(200).send(data);
 	}
 
-	static sendError(req: express.Request, res: express.Response, err: any): void {
-		const msg = (typeof err === 'string' ? err : (err.message || 'Guru Meditation')).toString();
-		const code = (typeof err.failCode === 'number' ? err.failCode : 500);
-		ApiBaseResponder.sendErrorMsg(req, res, code || 500, msg);
+	static sendError(req: express.Request, res: express.Response, err: string | Error | ApiError): void {
+		let failCode = 0;
+		let message: string = '';
+		if (typeof err === 'string') {
+			message = err;
+		} else if (err instanceof ApiError) {
+			failCode = err.failCode;
+			message = err.message;
+		} else if (err instanceof Error) {
+			message = err.message;
+		}
+		ApiBaseResponder.sendErrorMsg(req, res, failCode || 500, message || 'Guru Meditation');
 	}
 
 	static sendErrorMsg(req: express.Request, res: express.Response, code: number, msg: string): void {

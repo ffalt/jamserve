@@ -16,7 +16,7 @@ export class Collection<T extends IDEntity<T>> {
 	constructor(private owner: AnyEntity) {
 	}
 
-	public manage(field: PropertyMetadata) {
+	manage(field: PropertyMetadata): void {
 		this.field = field;
 	}
 
@@ -41,8 +41,7 @@ export class Collection<T extends IDEntity<T>> {
 		return func;
 	}
 
-
-	public clear() {
+	clear(): void {
 		this.list = undefined;
 		this.itemCount = undefined;
 		this.initialized = false;

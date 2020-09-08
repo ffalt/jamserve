@@ -1,5 +1,5 @@
 import {Session} from '../session/session.model';
-import {BodyParams, Controller, Ctx, Post} from '../../modules/rest';
+import {BodyParams, Controller, Ctx, Post, UnauthError} from '../../modules/rest';
 import passport from 'passport';
 import {generateJWT, jwtHash} from '../../utils/jwt';
 import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
@@ -21,13 +21,13 @@ export class AuthController {
 			passport.authenticate('local', (err, user) => {
 				if (err || !user) {
 					log.error(err);
-					return reject(new Error('Invalid Auth'));
+					return reject(UnauthError('Invalid Auth'));
 				}
 				req.login(user, (err2: Error) => {
 					if (err2) {
 						log.error(err2);
 						console.error(err2);
-						return reject(new Error('Invalid Auth'));
+						return reject(UnauthError('Invalid Auth'));
 					}
 					const client = req.body.client || 'Unknown Client';
 					// context.req.client = client;

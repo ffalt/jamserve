@@ -7,6 +7,7 @@ import {Artwork} from './artwork';
 import path from 'path';
 import {ImageModule} from '../../modules/image/image.module';
 import {Orm} from '../../modules/engine/services/orm.service';
+import {ImageResult} from '../../modules/image/image.format';
 
 @InRequestScope
 export class ArtworkService {
@@ -35,7 +36,7 @@ export class ArtworkService {
 		return this.ioService.deleteArtwork(artwork.id, (await artwork.folder.getOrFail()).root.idOrFail());
 	}
 
-	public async getImage(orm: Orm, artwork: Artwork, size: number | undefined, format: string | undefined) {
+	async getImage(orm: Orm, artwork: Artwork, size: number | undefined, format: string | undefined): Promise<ImageResult> {
 		return this.imageModule.get(artwork.id, path.join(artwork.path, artwork.name), size, format);
 	}
 }

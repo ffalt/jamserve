@@ -10,11 +10,11 @@ export class Reference<T extends IDEntity<T>> {
 	constructor(private owner: AnyEntity) {
 	}
 
-	public manage(field: PropertyMetadata) {
+	manage(field: PropertyMetadata): void {
 		this.field = field;
 	}
 
-	public clear() {
+	clear(): void {
 		this.obj = undefined;
 		this.initialized = false;
 	}

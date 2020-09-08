@@ -8,6 +8,7 @@ import {Episode} from '../episode/episode';
 import {Base} from '../base/base';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../utils/logger';
+import {GenericError, InvalidParamError} from '../../modules/rest/builder';
 
 const log = logger('Waveform');
 
@@ -44,7 +45,7 @@ export class WaveformService {
 				return this.getEpisodeWaveform(obj as Episode, format as WaveformFormatType, width);
 			default:
 		}
-		return Promise.reject(Error('Invalid Object Type for Waveform generation'));
+		return Promise.reject(InvalidParamError('Invalid Object Type for Waveform generation'));
 	}
 
 	async getWaveformSVG(obj: Base, objType: DBObjectType, width?: number): Promise<string | undefined> {
@@ -58,10 +59,10 @@ export class WaveformService {
 					return (await fse.readFile(result.file.filename)).toString();
 				} catch (e) {
 					log.error(e);
-					return Promise.reject(Error('Invalid waveform result'));
+					return Promise.reject(GenericError('Invalid waveform result'));
 				}
 			}
-			return Promise.reject(Error('Invalid svg waveform result'));
+			return Promise.reject(GenericError('Invalid svg waveform result'));
 		}
 	}
 
@@ -79,10 +80,10 @@ export class WaveformService {
 					return await fse.readJSON(result.file.filename);
 				} catch (e) {
 					log.error(e);
-					return Promise.reject(Error('Invalid json waveform result'));
+					return Promise.reject(GenericError('Invalid json waveform result'));
 				}
 			}
-			return Promise.reject(Error('Invalid waveform result'));
+			return Promise.reject(GenericError('Invalid waveform result'));
 		}
 	}
 
@@ -94,6 +95,6 @@ export class WaveformService {
 		if (episode.path && episode.path) {
 			return this.audioModule.waveform.get(episode.id, episode.path, format, width);
 		}
-		return Promise.reject(Error('Podcast episode not ready'));
+		return Promise.reject(GenericError('Podcast episode not ready'));
 	}
 }

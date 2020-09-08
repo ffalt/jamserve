@@ -1,7 +1,7 @@
 import path from 'path';
 import {InRequestScope} from 'typescript-ioc';
 import {Episode} from '../episode/episode';
-import {ApiBinaryResult, UnauthError} from '../../modules/rest';
+import {ApiBinaryResult, InvalidParamError, UnauthError} from '../../modules/rest';
 import {Track} from '../track/track';
 import {Folder} from '../folder/folder';
 import {Artist} from '../artist/artist';
@@ -105,7 +105,7 @@ export class DownloadService {
 				return this.downloadPlaylist(o as Playlist, format, user);
 			default:
 		}
-		return Promise.reject(Error('Invalid Download Type'));
+		return Promise.reject(InvalidParamError('type', 'Invalid Download Type'));
 	}
 
 }

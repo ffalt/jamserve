@@ -41,7 +41,7 @@ export class FolderWorker extends BaseWorker {
 		await this.updateFolder(orm, folder, newParent, newPath, changes);
 	}
 
-	private async updateFolder(orm: Orm, folder: Folder, newParent: Folder, newPath: string, changes: Changes) {
+	private async updateFolder(orm: Orm, folder: Folder, newParent: Folder, newPath: string, changes: Changes): Promise<void> {
 		const source = ensureTrailingPathSeparator(folder.path);
 		const folders = await orm.Folder.findAllDescendants(folder);
 		await folder.parent.set(newParent);
@@ -69,7 +69,7 @@ export class FolderWorker extends BaseWorker {
 		}
 	}
 
-	public async create(orm: Orm, parentID: string, name: string, root: Root, changes: Changes): Promise<void> {
+	async create(orm: Orm, parentID: string, name: string, root: Root, changes: Changes): Promise<void> {
 		const parent = await orm.Folder.findOneByID(parentID);
 		if (!parent) {
 			return Promise.reject(Error('Destination Folder not found'));
@@ -98,7 +98,7 @@ export class FolderWorker extends BaseWorker {
 		changes.folders.updated.add(parent);
 	}
 
-	public async delete(orm: Orm, root: Root, folderIDs: Array<string>, changes: Changes): Promise<void> {
+	async delete(orm: Orm, root: Root, folderIDs: Array<string>, changes: Changes): Promise<void> {
 		const folders = await orm.Folder.findByIDs(folderIDs);
 		const trashPath = path.join(root.path, '.trash');
 		for (const folder of folders) {
@@ -124,7 +124,7 @@ export class FolderWorker extends BaseWorker {
 		}
 	}
 
-	public async rename(orm: Orm, folderID: string, newName: string, changes: Changes): Promise<void> {
+	async rename(orm: Orm, folderID: string, newName: string, changes: Changes): Promise<void> {
 		const folder = await orm.Folder.findOneByID(folderID);
 		if (!folder) {
 			return Promise.reject(Error('Folder not found'));
@@ -160,7 +160,7 @@ export class FolderWorker extends BaseWorker {
 		}
 	}
 
-	public async move(orm: Orm, newParentID: string, moveFolderIDs: Array<string>, changes: Changes): Promise<void> {
+	async move(orm: Orm, newParentID: string, moveFolderIDs: Array<string>, changes: Changes): Promise<void> {
 		const newParent = await orm.Folder.findOneByID(newParentID);
 		if (!newParent) {
 			return Promise.reject(Error('Destination Folder not found'));
@@ -179,7 +179,7 @@ export class FolderWorker extends BaseWorker {
 		}
 	}
 
-	public async refresh(orm: Orm, folderIDs: Array<string>, changes: Changes) {
+	async refresh(orm: Orm, folderIDs: Array<string>, changes: Changes): Promise<void> {
 		for (const id of folderIDs) {
 			const folder = await orm.Folder.findOneOrFailByID(id);
 			changes.folders.updated.add(folder);

@@ -6,7 +6,7 @@ import {User} from '../user/user';
 import {FindOptions, OrderItem} from '../../modules/orm';
 import {OrderHelper} from '../base/base';
 
-export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, any, PlaylistEntryOrderArgs> {
+export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, void, PlaylistEntryOrderArgs> {
 	objType = DBObjectType.playlistentry;
 
 	buildOrder(order?: PlaylistEntryOrderArgs): Array<OrderItem> {
@@ -23,7 +23,7 @@ export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, any, 
 		return [];
 	}
 
-	async buildFilter(_?: any, __?: User): Promise<FindOptions<PlaylistEntry>> {
+	async buildFilter(_?: void, __?: User): Promise<FindOptions<PlaylistEntry>> {
 		return {};
 	}
 

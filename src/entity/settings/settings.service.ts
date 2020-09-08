@@ -74,11 +74,11 @@ export class SettingsService {
 		}
 	}
 
-	public registerChangeListener(listener: SettingChangesListener) {
+	registerChangeListener(listener: SettingChangesListener): void {
 		this.settingsChangeListeners.push(listener);
 	}
 
-	public unRegisterChangeListener(listener: SettingChangesListener) {
+	unRegisterChangeListener(listener: SettingChangesListener): void {
 		this.settingsChangeListeners = this.settingsChangeListeners.filter(l => l !== listener);
 	}
 

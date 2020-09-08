@@ -7,7 +7,7 @@ import {Episode} from '../episode/episode';
 import {Track} from '../track/track';
 import {User} from '../user/user';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {ApiBinaryResult, GenericError} from '../../modules/rest';
+import {ApiBinaryResult, GenericError, InvalidParamError} from '../../modules/rest';
 import {AudioFormatType, DBObjectType} from '../../types/enums';
 import {Base} from '../base/base';
 
@@ -24,7 +24,7 @@ export class StreamService {
 			stats = undefined;
 		}
 		if (!stats) {
-			return Promise.reject(Error('File not found'));
+			return Promise.reject(GenericError('File not found'));
 		}
 		destFormat = destFormat || AudioFormatType.mp3;
 		if (destFormat[0] === '.') {
@@ -58,7 +58,7 @@ export class StreamService {
 				return this.streamEpisode(o as Episode, format, maxBitRate);
 			default:
 		}
-		return Promise.reject(Error('Invalid Object Type for Streaming'));
+		return Promise.reject(InvalidParamError('Invalid Object Type for Streaming'));
 	}
 
 }

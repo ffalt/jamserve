@@ -6,7 +6,7 @@ import {JWTPayload} from '../../utils/jwt';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import path from 'path';
 import fse from 'fs-extra';
-import {ApiBinaryResult} from '../../modules/rest';
+import {ApiBinaryResult, InvalidParamError, UnauthError} from '../../modules/rest';
 import {ConfigService} from '../../modules/engine/services/config.service';
 import {fileDeleteIfExists} from '../../utils/fs-utils';
 import {ImageModule} from '../../modules/image/image.module';
@@ -28,7 +28,7 @@ export class UserService {
 
 	async findByName(orm: Orm, name: string): Promise<User | undefined> {
 		if (!name || name.trim().length === 0) {
-			return Promise.reject(Error('Invalid Username'));
+			return Promise.reject(UnauthError('Invalid Username'));
 		}
 		return await orm.User.findOne({where: {name}});
 	}
@@ -40,22 +40,22 @@ export class UserService {
 
 	async auth(orm: Orm, name: string, pass: string): Promise<User> {
 		if ((!pass) || (!pass.length)) {
-			return Promise.reject(Error('Invalid Password'));
+			return Promise.reject(InvalidParamError('password', 'Invalid Password'));
 		}
 		const user = await this.findByName(orm, name);
 		if (!user) {
-			return Promise.reject(Error('Invalid Username'));
+			return Promise.reject(InvalidParamError('username', 'Invalid Username'));
 		}
 		const hash = hashSaltSHA512(pass, user.salt);
 		if (hash !== user.hash) {
-			return Promise.reject(Error('Invalid Password'));
+			return Promise.reject(InvalidParamError('password', 'Invalid Password'));
 		}
 		return user;
 	}
 
 	public async authJWT(orm: Orm, jwtPayload: JWTPayload): Promise<User | undefined> {
 		if (!jwtPayload || !jwtPayload.id) {
-			return Promise.reject(Error('Invalid token'));
+			return Promise.reject(InvalidParamError('token', 'Invalid token'));
 		}
 		return await orm.User.findOneByID(jwtPayload.id);
 	}
@@ -109,10 +109,10 @@ export class UserService {
 
 	async testPassword(password: string): Promise<void> {
 		if ((!password) || (!password.trim().length)) {
-			return Promise.reject(Error('Invalid Password'));
+			return Promise.reject(InvalidParamError('Invalid Password'));
 		}
 		if (password.length < 4) {
-			return Promise.reject(Error('Password is too short'));
+			return Promise.reject(InvalidParamError('Password is too short'));
 		}
 		if (commonPassword(password)) {
 			return Promise.reject(Error('Your password is found in the most frequently used password list and too easy to guess'));
@@ -129,7 +129,7 @@ export class UserService {
 
 	async setUserEmail(orm: Orm, user: User, email: string): Promise<void> {
 		if ((!email) || (!email.trim().length)) {
-			return Promise.reject(Error('Invalid Email'));
+			return Promise.reject(InvalidParamError('email', 'Invalid Email'));
 		}
 		user.email = email;
 		await orm.User.persistAndFlush(user);
@@ -166,11 +166,11 @@ export class UserService {
 
 	public async create(orm: Orm, args: UserMutateArgs): Promise<User> {
 		if (!args.name || args.name.trim().length === 0) {
-			return Promise.reject(Error('Invalid Username'));
+			return Promise.reject(InvalidParamError('name', 'Invalid Username'));
 		}
 		const existingUser = await orm.User.findOne({where: {name: args.name}});
 		if (existingUser) {
-			return Promise.reject(Error('Username already exists'));
+			return Promise.reject(InvalidParamError('name', 'Username already exists'));
 		}
 		const pass = randomString(16);
 		return await this.createUser(orm, args.name,
@@ -179,11 +179,11 @@ export class UserService {
 
 	public async update(orm: Orm, user: User, args: UserMutateArgs): Promise<User> {
 		if (!args.name || args.name.trim().length === 0) {
-			return Promise.reject(Error('Invalid Username'));
+			return Promise.reject(InvalidParamError('name', 'Invalid Username'));
 		}
 		const existingUser = await orm.User.findOne({where: {name: args.name}});
 		if (existingUser && existingUser.id !== user.id) {
-			return Promise.reject(Error('Username already exists'));
+			return Promise.reject(InvalidParamError('name', 'Username already exists'));
 		}
 		user.name = args.name;
 		user.email = args.email || user.email;

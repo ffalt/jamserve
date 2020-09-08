@@ -151,7 +151,7 @@ export class ArtworkWorker extends BaseWorker {
 		changes.folders.updated.add(await artwork.folder.get());
 	}
 
-	async move(orm: Orm, artworkIDs: Array<string>, newParentID: string, changes: Changes) {
+	async move(orm: Orm, artworkIDs: Array<string>, newParentID: string, changes: Changes): Promise<void> {
 		const artworks = await orm.Artwork.findByIDs(artworkIDs);
 		if (artworks.length !== artworkIDs.length) {
 			return Promise.reject(Error('Artwork not found'));

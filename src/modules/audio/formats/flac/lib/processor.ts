@@ -54,6 +54,7 @@ export class FlacProcessorStream extends Transform {
 		super(options);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	_transform(buffer: any, encoding: string, callback: TransformCallback): void {
 		const chunk: Chunk = {buffer, pos: 0, length: buffer.length, done: false};
 		while (!chunk.done) {

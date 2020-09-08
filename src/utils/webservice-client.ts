@@ -11,7 +11,7 @@ export class WebserviceClient {
 		this.userAgent = userAgent;
 	}
 
-	protected async parseResult<T>(response: request.Response, body: string): Promise<T> {
+	protected async parseResult<T>(response: request.Response, body: string): Promise<T | undefined> {
 		if (response.statusCode === 404) {
 			return Promise.reject(Error(`${response.statusCode} ${response.statusMessage || ''}`));
 		}
