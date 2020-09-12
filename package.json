@@ -90,7 +90,7 @@
     "@types/express-session": "1.17.0",
     "@types/express-useragent": "1.0.0",
     "@types/feedparser": "2.2.3",
-    "@types/fluent-ffmpeg": "2.1.14",
+    "@types/fluent-ffmpeg": "2.1.15",
     "@types/fs-extra": "9.0.1",
     "@types/graphql-type-json": "0.3.2",
     "@types/helmet": "0.0.48",
