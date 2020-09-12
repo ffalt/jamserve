@@ -26,7 +26,7 @@
   "dependencies": {
     "apollo-server-express": "2.17.0",
     "apollo-server-logger": "1.0.1",
-    "archiver": "5.0.0",
+    "archiver": "5.0.2",
     "body-parser": "1.19.0",
     "class-validator": "0.12.2",
     "common-password-checker": "0.1.0",
