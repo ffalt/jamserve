@@ -223,6 +223,7 @@ class BaseRepository extends orm_1.EntityRepository {
                 if (!s) {
                     s = `${userID}_${new Date().toISOString().split('T')[0]}`;
                 }
+                ids.sort();
                 ids = shuffle_seed_1.default.shuffle(ids, s);
                 break;
             }
@@ -244,8 +245,8 @@ class BaseRepository extends orm_1.EntityRepository {
             default:
                 return Promise.reject(builder_1.InvalidParamError('Unknown List Type'));
         }
-        ids = base_utils_1.paginate(ids, page).items;
         const total = ids.length;
+        ids = base_utils_1.paginate(ids, page).items;
         return { total, ...page, items: ids };
     }
     async getFilteredIDs(ids, options) {
