@@ -263,7 +263,6 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 
 	private async getListIDs(list: ListType, seed: string | undefined, options: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {
 		let ids: Array<string> = [];
-		let total: number | undefined;
 		const opts = {...options, limit: undefined, offset: undefined};
 		const page = {skip: options.offset, take: options.limit};
 		switch (list) {
@@ -298,7 +297,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 				return Promise.reject(InvalidParamError('Unknown List Type'));
 		}
 		ids = paginate(ids, page).items;
-		total = ids.length;
+		const total = ids.length;
 		return {total, ...page, items: ids};
 	}
 
