@@ -1,6 +1,6 @@
 {
   "name": "jamserve",
-  "version": "0.3.9-alpha",
+  "version": "0.3.10-alpha",
   "author": "ffalt",
   "license": "MIT",
   "description": "jamserve streaming audio server",
@@ -21,7 +21,9 @@
     "clean": "rimraf dist",
     "test": "jest --maxWorkers=1",
     "test:watch": "jest --maxWorkers=1 --watch",
-    "coverage": "jest --runInBand --coverage"
+    "coverage": "jest --runInBand --coverage",
+    "changelog:start": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
     "@react-native-community/netinfo": "^5.9.6",
@@ -118,6 +120,7 @@
     "@typescript-eslint/eslint-plugin": "4.1.0",
     "@typescript-eslint/parser": "4.1.0",
     "chance": "1.1.7",
+    "conventional-changelog-cli": "^2.1.0",
     "eslint": "7.9.0",
     "jest": "26.4.2",
     "jest-expect-message": "1.0.2",
