@@ -214,7 +214,6 @@ class BaseRepository extends orm_1.EntityRepository {
     }
     async getListIDs(list, seed, options, userID) {
         let ids = [];
-        let total;
         const opts = { ...options, limit: undefined, offset: undefined };
         const page = { skip: options.offset, take: options.limit };
         switch (list) {
@@ -246,7 +245,7 @@ class BaseRepository extends orm_1.EntityRepository {
                 return Promise.reject(builder_1.InvalidParamError('Unknown List Type'));
         }
         ids = base_utils_1.paginate(ids, page).items;
-        total = ids.length;
+        const total = ids.length;
         return { total, ...page, items: ids };
     }
     async getFilteredIDs(ids, options) {
