@@ -1,13 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseRepository = void 0;
 const enums_1 = require("../../types/enums");
-const random_1 = require("../../utils/random");
 const builder_1 = require("../../modules/rest/builder");
 const base_1 = require("./base");
 const state_helper_1 = require("../state/state.helper");
 const orm_1 = require("../../modules/orm");
 const base_utils_1 = require("./base.utils");
+const shuffle_seed_1 = __importDefault(require("shuffle-seed"));
 class BaseRepository extends orm_1.EntityRepository {
     buildDefaultOrder(order) {
         const direction = base_1.OrderHelper.direction(order);
@@ -162,20 +165,20 @@ class BaseRepository extends orm_1.EntityRepository {
         }
         return result;
     }
-    async findList(list, options, userID) {
-        const result = await this.getListIDs(list, options, userID);
+    async findList(list, seed, options, userID) {
+        const result = await this.getListIDs(list, seed, options, userID);
         return {
             ...result,
             items: await this.findByIDs(result.items)
         };
     }
     async countList(list, options, userID) {
-        const result = await this.getListIDs(list, { ...options, limit: 0 }, userID);
+        const result = await this.getListIDs(list, undefined, { ...options, limit: 0 }, userID);
         return result.total;
     }
     async countListFilter(list, filter, user) {
         const options = await this.buildFilter(filter, user);
-        const result = await this.getListIDs(list, { ...options, limit: 0 }, user.id);
+        const result = await this.getListIDs(list, undefined, { ...options, limit: 0 }, user.id);
         return result.total;
     }
     async countFilter(filter, user) {
@@ -187,11 +190,11 @@ class BaseRepository extends orm_1.EntityRepository {
     async findIDsFilter(filter, user) {
         return await this.findIDs(await this.buildFilter(filter, user));
     }
-    async findListFilter(list, filter, order, page, user) {
-        return await this.findList(list, await this.buildFindOptions(filter, order, user, page), user.id);
+    async findListFilter(list, seed, filter, order, page, user) {
+        return await this.findList(list, seed, await this.buildFindOptions(filter, order, user, page), user.id);
     }
-    async findListTransformFilter(list, filter, order, page, user, transform) {
-        return await this.findListTransform(list, await this.buildFindOptions(filter, order, user, page), user.id, transform);
+    async findListTransformFilter(list, seed, filter, order, page, user, transform) {
+        return await this.findListTransform(list, seed, await this.buildFindOptions(filter, order, user, page), user.id, transform);
     }
     async searchFilter(filter, order, page, user) {
         return await this.search(await this.buildFindOptions(filter, order, user, page));
@@ -199,8 +202,8 @@ class BaseRepository extends orm_1.EntityRepository {
     async searchTransformFilter(filter, order, page, user, transform) {
         return await this.searchTransform(await this.buildFindOptions(filter, order, user, page), transform);
     }
-    async findListTransform(list, options, userID, transform) {
-        const result = await this.findList(list, options, userID);
+    async findListTransform(list, seed, options, userID, transform) {
+        const result = await this.findList(list, seed, options, userID);
         return {
             ...result,
             items: await Promise.all(result.items.map(o => transform(o)))
@@ -209,46 +212,41 @@ class BaseRepository extends orm_1.EntityRepository {
     async indexFilter(filter, user, ignoreArticles) {
         return await this.index(this.indexProperty, await this.buildFilter(filter, user), ignoreArticles);
     }
-    async getListIDs(list, options, userID) {
+    async getListIDs(list, seed, options, userID) {
         let ids = [];
         let total;
         const opts = { ...options, limit: undefined, offset: undefined };
         const page = { skip: options.offset, take: options.limit };
         switch (list) {
-            case enums_1.ListType.random:
+            case enums_1.ListType.random: {
                 ids = await this.findIDs(opts);
-                page.take = page.take || 20;
-                total = ids.length;
-                ids = random_1.randomItems(ids, page.take);
+                let s = seed;
+                if (!s) {
+                    s = `${userID}_${new Date().toISOString().split('T')[0]}`;
+                }
+                ids = shuffle_seed_1.default.shuffle(ids, s);
                 break;
+            }
             case enums_1.ListType.highest:
                 ids = await this.getHighestRatedIDs(opts, userID);
-                total = ids.length;
-                ids = base_utils_1.paginate(ids, page).items;
                 break;
             case enums_1.ListType.avghighest:
                 ids = await this.getAvgHighestIDs(opts);
-                total = ids.length;
-                ids = base_utils_1.paginate(ids, page).items;
                 break;
             case enums_1.ListType.frequent:
                 ids = await this.getFrequentlyPlayedIDs(opts, userID);
-                total = ids.length;
-                ids = base_utils_1.paginate(ids, page).items;
                 break;
             case enums_1.ListType.faved:
                 ids = await this.getFavedIDs(opts, userID);
-                total = ids.length;
-                ids = base_utils_1.paginate(ids, page).items;
                 break;
             case enums_1.ListType.recent:
                 ids = await this.getRecentlyPlayedIDs(opts, userID);
-                total = ids.length;
-                ids = base_utils_1.paginate(ids, page).items;
                 break;
             default:
                 return Promise.reject(builder_1.InvalidParamError('Unknown List Type'));
         }
+        ids = base_utils_1.paginate(ids, page).items;
+        total = ids.length;
         return { total, ...page, items: ids };
     }
     async getFilteredIDs(ids, options) {

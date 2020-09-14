@@ -9,7 +9,7 @@ class FolderRepository extends base_repository_1.BaseRepository {
     constructor() {
         super(...arguments);
         this.objType = enums_1.DBObjectType.folder;
-        this.indexProperty = 'title';
+        this.indexProperty = 'name';
     }
     buildOrder(order) {
         const direction = base_1.OrderHelper.direction(order);

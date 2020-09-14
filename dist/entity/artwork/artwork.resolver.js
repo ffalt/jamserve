@@ -22,9 +22,9 @@ let ArtworkResolver = class ArtworkResolver {
     async artwork(id, { orm }) {
         return await orm.Artwork.oneOrFailByID(id);
     }
-    async artworks({ page, filter, order, list }, { orm, user }) {
+    async artworks({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Artwork.findListFilter(list, filter, order, page, user);
+            return await orm.Artwork.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Artwork.searchFilter(filter, order, page, user);
     }

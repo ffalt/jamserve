@@ -26,9 +26,9 @@ let EpisodeResolver = class EpisodeResolver {
     async episode(id, { orm }) {
         return await orm.Episode.oneOrFailByID(id);
     }
-    async episodes({ page, filter, order, list }, { orm, user }) {
+    async episodes({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Episode.findListFilter(list, filter, order, page, user);
+            return await orm.Episode.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Episode.searchFilter(filter, order, page, user);
     }

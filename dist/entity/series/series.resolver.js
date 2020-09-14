@@ -27,9 +27,9 @@ let SeriesResolver = class SeriesResolver {
     async series(id, { orm }) {
         return await orm.Series.oneOrFailByID(id);
     }
-    async serieses({ page, filter, order, list }, { orm, user }) {
+    async serieses({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Series.findListFilter(list, filter, order, page, user);
+            return await orm.Series.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Series.searchFilter(filter, order, page, user);
     }

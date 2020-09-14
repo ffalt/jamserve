@@ -33,7 +33,7 @@ let SeriesController = class SeriesController {
     }
     async search(page, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Series.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.series(orm, o, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user));
+            return await orm.Series.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.series(orm, o, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user));
         }
         return await orm.Series.searchTransformFilter(filter, [order], page, user, o => engine.transform.series(orm, o, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user));
     }

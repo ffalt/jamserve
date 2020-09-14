@@ -144,6 +144,10 @@ __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),
     __metadata("design:type", String)
 ], PlaylistsArgs.prototype, "list", void 0);
+__decorate([
+    type_graphql_1.Field(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], PlaylistsArgs.prototype, "seed", void 0);
 PlaylistsArgs = __decorate([
     type_graphql_1.ArgsType()
 ], PlaylistsArgs);

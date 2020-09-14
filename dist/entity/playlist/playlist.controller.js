@@ -32,7 +32,7 @@ let PlaylistController = class PlaylistController {
     }
     async search(page, playlistArgs, trackArgs, episodeArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Playlist.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user));
+            return await orm.Playlist.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user));
         }
         return await orm.Playlist.searchTransformFilter(filter, [order], page, user, o => engine.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user));
     }

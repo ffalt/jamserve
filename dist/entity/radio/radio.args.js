@@ -120,6 +120,10 @@ __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),
     __metadata("design:type", String)
 ], RadiosArgs.prototype, "list", void 0);
+__decorate([
+    type_graphql_1.Field(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], RadiosArgs.prototype, "seed", void 0);
 RadiosArgs = __decorate([
     type_graphql_1.ArgsType()
 ], RadiosArgs);

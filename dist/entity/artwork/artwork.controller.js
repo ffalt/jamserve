@@ -26,7 +26,7 @@ let ArtworkController = class ArtworkController {
     }
     async search(page, artworkArgs, artworkChildrenArgs, folderArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Artwork.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user));
+            return await orm.Artwork.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user));
         }
         return await orm.Artwork.searchTransformFilter(filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user));
     }

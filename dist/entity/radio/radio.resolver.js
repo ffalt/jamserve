@@ -22,9 +22,9 @@ let RadioResolver = class RadioResolver {
     async radio(id, { orm }) {
         return await orm.Radio.oneOrFailByID(id);
     }
-    async radios({ page, filter, order, list }, { orm, user }) {
+    async radios({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Radio.findListFilter(list, filter, order, page, user);
+            return await orm.Radio.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Radio.searchFilter(filter, order, page, user);
     }

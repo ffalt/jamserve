@@ -26,7 +26,7 @@ let TrackController = class TrackController {
     }
     async search(page, trackArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Track.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.track(orm, o, trackArgs, user));
+            return await orm.Track.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.track(orm, o, trackArgs, user));
         }
         return await orm.Track.searchTransformFilter(filter, [order], page, user, o => engine.transform.track(orm, o, trackArgs, user));
     }

@@ -190,6 +190,10 @@ __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),
     __metadata("design:type", String)
 ], AlbumsArgsQL.prototype, "list", void 0);
+__decorate([
+    type_graphql_1.Field(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], AlbumsArgsQL.prototype, "seed", void 0);
 AlbumsArgsQL = __decorate([
     type_graphql_1.ArgsType()
 ], AlbumsArgsQL);

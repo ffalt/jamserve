@@ -352,6 +352,10 @@ __decorate([
     type_graphql_1.Field(() => enums_1.ListType, { nullable: true }),
     __metadata("design:type", String)
 ], FoldersArgsQL.prototype, "list", void 0);
+__decorate([
+    type_graphql_1.Field(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], FoldersArgsQL.prototype, "seed", void 0);
 FoldersArgsQL = __decorate([
     type_graphql_1.ArgsType()
 ], FoldersArgsQL);

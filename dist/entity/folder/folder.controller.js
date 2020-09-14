@@ -34,7 +34,7 @@ let FolderController = class FolderController {
     }
     async search(page, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Folder.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user));
+            return await orm.Folder.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user));
         }
         return await orm.Folder.searchTransformFilter(filter, [order], page, user, o => engine.transform.folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user));
     }

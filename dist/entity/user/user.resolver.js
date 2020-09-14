@@ -49,31 +49,31 @@ UserFavorites = __decorate([
 exports.UserFavorites = UserFavorites;
 let UserFavoritesResolver = class UserFavoritesResolver {
     async albums(owner, { orm }, { filter, order, page }) {
-        return orm.Album.findListFilter(enums_1.ListType.faved, filter, order, page, owner.user);
+        return orm.Album.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
     }
     async artists(owner, { orm }, { filter, order, page }) {
-        return orm.Artist.findListFilter(enums_1.ListType.faved, filter, order, page, owner.user);
+        return orm.Artist.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
     }
     async series(owner, { orm }, { filter, order, page }) {
-        return orm.Series.findListFilter(enums_1.ListType.faved, filter, order, page, owner.user);
+        return orm.Series.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
     }
     async podcasts(owner, { orm }, { filter, order, page }) {
-        return orm.Podcast.findListFilter(enums_1.ListType.faved, filter, order, page, owner.user);
+        return orm.Podcast.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
     }
     async episodes(owner, { orm }, { filter, order, page }) {
-        return orm.Episode.findListFilter(enums_1.ListType.faved, filter, order, page, owner.user);
+        return orm.Episode.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
     }
     async tracks(owner, { orm }, { filter, order, page }) {
-        return orm.Track.findListFilter(enums_1.ListType.faved, filter, order, page, owner.user);
+        return orm.Track.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
     }
     async folders(owner, { orm }, { filter, order, page }) {
-        return orm.Folder.findListFilter(enums_1.ListType.faved, filter, order, page, owner.user);
+        return orm.Folder.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
     }
     async playlists(owner, { orm }, { filter, order, page }) {
-        return orm.Playlist.findListFilter(enums_1.ListType.faved, filter, order, page, owner.user);
+        return orm.Playlist.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
     }
     async artworks(owner, { orm }, { filter, order, page }) {
-        return orm.Artwork.findListFilter(enums_1.ListType.faved, filter, order, page, owner.user);
+        return orm.Artwork.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
     }
 };
 __decorate([

@@ -27,9 +27,9 @@ let ArtistResolver = class ArtistResolver {
     async artist(id, { orm }) {
         return await orm.Artist.oneOrFailByID(id);
     }
-    async artists({ page, filter, order, list }, { orm, user }) {
+    async artists({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Artist.findListFilter(list, filter, order, page, user);
+            return await orm.Artist.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Artist.searchFilter(filter, order, page, user);
     }

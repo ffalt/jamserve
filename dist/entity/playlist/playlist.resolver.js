@@ -23,9 +23,9 @@ let PlaylistResolver = class PlaylistResolver {
     async playlist(id, { orm, user }) {
         return await orm.Playlist.oneOrFail({ where: { id, user: user.id, isPublic: true } });
     }
-    async playlists({ page, filter, order, list }, { orm, user }) {
+    async playlists({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Playlist.findListFilter(list, filter, order, page, user);
+            return await orm.Playlist.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Playlist.searchFilter(filter, order, page, user);
     }

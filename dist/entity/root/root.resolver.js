@@ -25,9 +25,9 @@ let RootResolver = class RootResolver {
     async root(id, { orm }) {
         return await orm.Root.oneOrFailByID(id);
     }
-    async roots({ page, filter, order, list }, { orm, user }) {
+    async roots({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Root.findListFilter(list, filter, order, page, user);
+            return await orm.Root.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Root.searchFilter(filter, order, page, user);
     }

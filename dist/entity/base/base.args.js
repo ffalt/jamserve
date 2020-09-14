@@ -20,6 +20,10 @@ __decorate([
     rest_1.ObjField(() => enums_1.ListType, { nullable: true, description: 'filter by special list', example: enums_1.ListType.faved }),
     __metadata("design:type", String)
 ], ListArgs.prototype, "list", void 0);
+__decorate([
+    rest_1.ObjField(() => String, { nullable: true, description: 'seed for random list', example: 'jksfb23jhsdf' }),
+    __metadata("design:type", String)
+], ListArgs.prototype, "seed", void 0);
 ListArgs = __decorate([
     rest_1.ObjParamsType()
 ], ListArgs);

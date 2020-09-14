@@ -2,7 +2,7 @@
 
 An audio library server written in Typescript for NodeJS
 
-![Test](https://github.com/ffalt/jamserve/workflows/test/badge.svg)
+[![Test](https://github.com/ffalt/jamserve/workflows/test/badge.svg)](https://github.com/ffalt/jamserve/actions?query=workflow%3Atest)
 [![Maintainability](https://api.codeclimate.com/v1/badges/78793d8ce54f2e8e6236/maintainability)](https://codeclimate.com/github/ffalt/jamserve/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/78793d8ce54f2e8e6236/test_coverage)](https://codeclimate.com/github/ffalt/jamserve/test_coverage)
 
@@ -63,8 +63,8 @@ optional for meta data matching & mp3 repair support
 ## Installation
 
 *   run command `npm install` in the root folder of this repository
-*   in folder 'config': copy file 'config.dist.js' to 'config.js' and make the changes to reflect your infrastructure
-*   in folder 'config': copy file 'firststart.config.dist.js' to 'firststart.config.js' and add a first user / add some media folders
+*   in folder `config`: 
+    copy file `firststart.config.dist.js` to `firststart.config.js` and add an admin user / add some media folders
 
 ## Environment Variables
 

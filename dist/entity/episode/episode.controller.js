@@ -27,7 +27,7 @@ let EpisodeController = class EpisodeController {
     }
     async search(page, episodeArgs, episodeParentArgs, podcastArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Episode.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
+            return await orm.Episode.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
         }
         return await orm.Episode.searchTransformFilter(filter, [order], page, user, o => engine.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
     }

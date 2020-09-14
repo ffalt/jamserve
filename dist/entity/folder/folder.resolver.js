@@ -27,9 +27,9 @@ let FolderResolver = class FolderResolver {
     async folder(id, { orm }) {
         return await orm.Folder.oneOrFailByID(id);
     }
-    async folders({ page, filter, order, list }, { orm, user }) {
+    async folders({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Folder.findListFilter(list, filter, order, page, user);
+            return await orm.Folder.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Folder.searchFilter(filter, order, page, user);
     }

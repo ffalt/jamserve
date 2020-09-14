@@ -30,9 +30,9 @@ let TrackResolver = class TrackResolver {
     async track(id, { orm }) {
         return await orm.Track.oneOrFailByID(id);
     }
-    async tracks({ page, filter, order, list }, { orm, user }) {
+    async tracks({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Track.findListFilter(list, filter, order, page, user);
+            return await orm.Track.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Track.searchFilter(filter, order, page, user);
     }

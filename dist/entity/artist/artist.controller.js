@@ -35,7 +35,7 @@ let ArtistController = class ArtistController {
     }
     async search(page, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Artist.findListTransformFilter(list.list, filter, [order], page, user, o => engine.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user));
+            return await orm.Artist.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user));
         }
         return await orm.Artist.searchTransformFilter(filter, [order], page, user, o => engine.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user));
     }

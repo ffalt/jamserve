@@ -27,9 +27,9 @@ let AlbumResolver = class AlbumResolver {
     async album(id, { orm }) {
         return await orm.Album.oneOrFailByID(id);
     }
-    async albums({ filter, page, order, list }, { orm, user }) {
+    async albums({ filter, page, order, list, seed }, { orm, user }) {
         if (list) {
-            return await orm.Album.findListFilter(list, filter, order, page, user);
+            return await orm.Album.findListFilter(list, seed, filter, order, page, user);
         }
         return await orm.Album.searchFilter(filter, order, page, user);
     }
