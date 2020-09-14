@@ -58,7 +58,7 @@ export class SeriesController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<SeriesPage> {
 		if (list.list) {
-			return await orm.Series.findListTransformFilter(list.list, filter, [order], page, user,
+			return await orm.Series.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
 				o => engine.transform.series(orm, o, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user)
 			);
 		}

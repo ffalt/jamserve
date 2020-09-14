@@ -56,7 +56,7 @@ export class PodcastController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<PodcastPage> {
 		if (list.list) {
-			return await orm.Podcast.findListTransformFilter(list.list, filter, [order], page, user,
+			return await orm.Podcast.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
 				o => engine.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user)
 			);
 		}

@@ -18,9 +18,9 @@ export class ArtistResolver {
 	}
 
 	@Query(() => ArtistPageQL, {description: 'Search Artists'})
-	async artists(@Args() {page, filter, order, list}: ArtistsArgsQL, @Ctx() {orm, user}: Context): Promise<ArtistPageQL> {
+	async artists(@Args() {page, filter, order, list, seed}: ArtistsArgsQL, @Ctx() {orm, user}: Context): Promise<ArtistPageQL> {
 		if (list) {
-			return await orm.Artist.findListFilter(list, filter, order, page, user);
+			return await orm.Artist.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Artist.searchFilter(filter, order, page, user);
 	}

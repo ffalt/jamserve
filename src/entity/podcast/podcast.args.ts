@@ -161,4 +161,6 @@ export class PodcastPageArgsQL extends PaginatedFilterArgs(PodcastFilterArgsQL, 
 export class PodcastsArgsQL extends PodcastPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
+	@Field(() => String, {nullable: true})
+	seed?: string;
 }

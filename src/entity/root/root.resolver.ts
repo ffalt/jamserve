@@ -18,9 +18,9 @@ export class RootResolver {
 	}
 
 	@Query(() => RootPageQL, {description: 'Search Roots'})
-	async roots(@Args() {page, filter, order, list}: RootsArgs, @Ctx() {orm, user}: Context): Promise<RootPageQL> {
+	async roots(@Args() {page, filter, order, list, seed}: RootsArgs, @Ctx() {orm, user}: Context): Promise<RootPageQL> {
 		if (list) {
-			return await orm.Root.findListFilter(list, filter, order, page, user);
+			return await orm.Root.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Root.searchFilter(filter, order, page, user);
 	}

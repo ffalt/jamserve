@@ -1,5 +1,4 @@
 import {DBObjectType, DefaultOrderFields, ListType} from '../../types/enums';
-import {randomItems} from '../../utils/random';
 import {InvalidParamError, NotFoundError} from '../../modules/rest/builder';
 import {IndexResult, IndexResultGroup, OrderHelper, PageResult} from './base';
 import {StateHelper} from '../state/state.helper';
@@ -8,6 +7,7 @@ import {User} from '../user/user';
 import {DefaultOrderArgs, PageArgs} from './base.args';
 import {paginate} from './base.utils';
 import {Includeable} from 'sequelize';
+import shuffleSeed from 'shuffle-seed';
 
 export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy extends { orderDesc?: boolean }> extends EntityRepository<Entity> {
 	objType!: DBObjectType;
@@ -190,8 +190,8 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		return result;
 	}
 
-	async findList(list: ListType, options: FindOptions<Entity>, userID: string): Promise<PageResult<Entity>> {
-		const result = await this.getListIDs(list, options, userID);
+	async findList(list: ListType, seed: string | undefined, options: FindOptions<Entity>, userID: string): Promise<PageResult<Entity>> {
+		const result = await this.getListIDs(list, seed, options, userID);
 		return {
 			...result,
 			items: await this.findByIDs(result.items)
@@ -199,13 +199,13 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	async countList(list: ListType, options: FindOptions<Entity>, userID: string): Promise<number> {
-		const result = await this.getListIDs(list, {...options, limit: 0}, userID);
+		const result = await this.getListIDs(list, undefined, {...options, limit: 0}, userID);
 		return result.total;
 	}
 
 	async countListFilter(list: ListType, filter: Filter | undefined, user: User): Promise<number> {
 		const options = await this.buildFilter(filter, user);
-		const result = await this.getListIDs(list, {...options, limit: 0}, user.id);
+		const result = await this.getListIDs(list, undefined, {...options, limit: 0}, user.id);
 		return result.total;
 	}
 
@@ -221,12 +221,12 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		return await this.findIDs(await this.buildFilter(filter, user));
 	}
 
-	async findListFilter(list: ListType, filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageArgs | undefined, user: User): Promise<PageResult<Entity>> {
-		return await this.findList(list, await this.buildFindOptions(filter, order, user, page), user.id);
+	async findListFilter(list: ListType, seed: string | undefined, filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageArgs | undefined, user: User): Promise<PageResult<Entity>> {
+		return await this.findList(list, seed, await this.buildFindOptions(filter, order, user, page), user.id);
 	}
 
-	async findListTransformFilter<T>(list: ListType, filter: Filter, order: Array<OrderBy> | undefined, page: PageArgs, user: User, transform: (item: Entity) => Promise<T>): Promise<PageResult<T>> {
-		return await this.findListTransform<T>(list, await this.buildFindOptions(filter, order, user, page), user.id, transform);
+	async findListTransformFilter<T>(list: ListType, seed: string | undefined, filter: Filter, order: Array<OrderBy> | undefined, page: PageArgs, user: User, transform: (item: Entity) => Promise<T>): Promise<PageResult<T>> {
+		return await this.findListTransform<T>(list, seed, await this.buildFindOptions(filter, order, user, page), user.id, transform);
 	}
 
 	async searchFilter(filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageArgs | undefined, user: User): Promise<PageResult<Entity>> {
@@ -245,11 +245,12 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 
 	async findListTransform<T>(
 		list: ListType,
+		seed: string | undefined,
 		options: FindOptions<Entity>,
 		userID: string,
 		transform: (item: Entity) => Promise<T>
 	): Promise<PageResult<T>> {
-		const result = await this.findList(list, options, userID);
+		const result = await this.findList(list, seed, options, userID);
 		return {
 			...result,
 			items: await Promise.all(result.items.map(o => transform(o)))
@@ -260,47 +261,44 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		return await this.index(this.indexProperty as keyof Entity, await this.buildFilter(filter, user), ignoreArticles);
 	}
 
-	private async getListIDs(list: ListType, options: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {
+	private async getListIDs(list: ListType, seed: string | undefined, options: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {
 		let ids: Array<string> = [];
 		let total: number | undefined;
 		const opts = {...options, limit: undefined, offset: undefined};
 		const page = {skip: options.offset, take: options.limit};
 		switch (list) {
-			case ListType.random:
-				// TODO: cache ids to avoid duplicates in random items pagination?
+			case ListType.random: {
 				ids = await this.findIDs(opts);
-				page.take = page.take || 20;
-				total = ids.length;
-				ids = randomItems<string>(ids, page.take);
+				let s = seed;
+				// to avoid duplicate entries, shuffle MUST be seeded
+				if (!s) {
+					// if the api caller does not specify a seed, the random list will be "random" only per day for a user
+					// (dups can still occure on day change between two requests)
+					s = `${userID}_${new Date().toISOString().split('T')[0]}`;
+				}
+				ids = shuffleSeed.shuffle(ids, s);
 				break;
+			}
 			case ListType.highest:
 				ids = await this.getHighestRatedIDs(opts, userID);
-				total = ids.length;
-				ids = paginate(ids, page).items;
 				break;
 			case ListType.avghighest:
 				ids = await this.getAvgHighestIDs(opts);
-				total = ids.length;
-				ids = paginate(ids, page).items;
 				break;
 			case ListType.frequent:
 				ids = await this.getFrequentlyPlayedIDs(opts, userID);
-				total = ids.length;
-				ids = paginate(ids, page).items;
 				break;
 			case ListType.faved:
 				ids = await this.getFavedIDs(opts, userID);
-				total = ids.length;
-				ids = paginate(ids, page).items;
 				break;
 			case ListType.recent:
 				ids = await this.getRecentlyPlayedIDs(opts, userID);
-				total = ids.length;
-				ids = paginate(ids, page).items;
 				break;
 			default:
 				return Promise.reject(InvalidParamError('Unknown List Type'));
 		}
+		ids = paginate(ids, page).items;
+		total = ids.length;
 		return {total, ...page, items: ids};
 	}
 
@@ -308,7 +306,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		let where: WhereOptions<Entity> = {id: {[Op.in]: ids}};
 		if (options.where &&
 			(Object.keys(options.where).length > 0 ||
-			Object.getOwnPropertySymbols(options.where).length > 0)
+				Object.getOwnPropertySymbols(options.where).length > 0)
 		) {
 			where = {[Op.and]: [where, options.where]};
 		}

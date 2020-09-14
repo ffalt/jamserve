@@ -158,4 +158,6 @@ export class TrackPageArgsQL extends PaginatedFilterArgs(TrackFilterArgsQL, Trac
 export class TracksArgsQL extends TrackPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
+	@Field(() => String, {nullable: true})
+	seed?: string;
 }

@@ -82,4 +82,6 @@ export class EpisodePageArgsQL extends PaginatedFilterArgs(EpisodeFilterArgsQL, 
 export class EpisodesArgsQL extends EpisodePageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
+	@Field(() => String, {nullable: true})
+	seed?: string;
 }

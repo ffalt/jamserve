@@ -64,7 +64,7 @@ export class ArtistController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<ArtistPage> {
 		if (list.list) {
-			return await orm.Artist.findListTransformFilter(list.list, filter, [order], page, user,
+			return await orm.Artist.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
 				o => engine.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user)
 			);
 		}

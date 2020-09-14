@@ -85,4 +85,6 @@ export class RootOrderArgsQL extends RootOrderArgs {
 export class RootsArgs extends PaginatedFilterArgs(RootFilterArgsQL, RootOrderArgsQL) {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
+	@Field(() => String, {nullable: true})
+	seed?: string;
 }

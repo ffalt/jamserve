@@ -8,7 +8,7 @@ type Query {
   album(id: ID!): AlbumQL!
 
   """Search albums"""
-  albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!], list: ListType): AlbumPageQL!
+  albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!], list: ListType, seed: String): AlbumPageQL!
 
   """Get the Navigation Index for Albums"""
   albumIndex(filter: AlbumFilterArgsQL): AlbumIndexQL!
@@ -17,7 +17,7 @@ type Query {
   artist(id: ID!): ArtistQL!
 
   """Search Artists"""
-  artists(page: PageArgsQL, filter: ArtistFilterArgsQL, order: [ArtistOrderArgsQL!], list: ListType): ArtistPageQL!
+  artists(page: PageArgsQL, filter: ArtistFilterArgsQL, order: [ArtistOrderArgsQL!], list: ListType, seed: String): ArtistPageQL!
 
   """Get the Navigation Index for Albums"""
   artistIndex(filter: ArtistFilterArgsQL): ArtistIndexQL!
@@ -26,7 +26,7 @@ type Query {
   artwork(id: ID!): ArtworkQL!
 
   """Search Artworks"""
-  artworks(page: PageArgsQL, filter: ArtworkFilterArgsQL, order: [ArtworkOrderArgsQL!], list: ListType): ArtworkPageQL!
+  artworks(page: PageArgsQL, filter: ArtworkFilterArgsQL, order: [ArtworkOrderArgsQL!], list: ListType, seed: String): ArtworkPageQL!
 
   """Get a Bookmark by Id"""
   bookmark(id: ID!): BookmarkQL!
@@ -41,13 +41,13 @@ type Query {
   episode(id: ID!): EpisodeQL!
 
   """Search Episodes"""
-  episodes(page: PageArgsQL, filter: EpisodeFilterArgsQL, order: [EpisodeOrderArgsQL!], list: ListType): EpisodePageQL!
+  episodes(page: PageArgsQL, filter: EpisodeFilterArgsQL, order: [EpisodeOrderArgsQL!], list: ListType, seed: String): EpisodePageQL!
 
   """Get a Folder by Id"""
   folder(id: ID!): FolderQL!
 
   """Search Folders"""
-  folders(page: PageArgsQL, filter: FolderFilterArgsQL, order: [FolderOrderArgsQL!], list: ListType): FolderPageQL!
+  folders(page: PageArgsQL, filter: FolderFilterArgsQL, order: [FolderOrderArgsQL!], list: ListType, seed: String): FolderPageQL!
 
   """Get the Navigation Index for Folders"""
   folderIndex(filter: FolderFilterArgsQL): FolderIndexQL!
@@ -63,7 +63,7 @@ type Query {
   playlist(id: ID!): PlaylistQL!
 
   """Search Playlists"""
-  playlists(page: PageArgsQL, filter: PlaylistFilterArgsQL, order: [PlaylistOrderArgsQL!], list: ListType): PlaylistPageQL!
+  playlists(page: PageArgsQL, filter: PlaylistFilterArgsQL, order: [PlaylistOrderArgsQL!], list: ListType, seed: String): PlaylistPageQL!
 
   """Get the Navigation Index for Playlists"""
   playlistIndex(filter: PlaylistFilterArgsQL): PlaylistIndexQL!
@@ -75,7 +75,7 @@ type Query {
   podcast(id: ID!): PodcastQL!
 
   """Search Podcasts"""
-  podcasts(page: PageArgsQL, filter: PodcastFilterArgsQL, order: [PodcastOrderArgsQL!], list: ListType): PodcastPageQL!
+  podcasts(page: PageArgsQL, filter: PodcastFilterArgsQL, order: [PodcastOrderArgsQL!], list: ListType, seed: String): PodcastPageQL!
 
   """Get the Navigation Index for Podcasts"""
   podcastIndex(filter: PodcastFilterArgsQL): PodcastIndexQL!
@@ -84,7 +84,7 @@ type Query {
   radio(id: ID!): RadioQL!
 
   """Search Radios"""
-  radios(page: PageArgsQL, filter: RadioFilterArgsQL, order: [RadioOrderArgsQL!], list: ListType): RadioPageQL!
+  radios(page: PageArgsQL, filter: RadioFilterArgsQL, order: [RadioOrderArgsQL!], list: ListType, seed: String): RadioPageQL!
 
   """Get the Navigation Index for Radios"""
   radioIndex(filter: RadioFilterArgsQL): RadioIndexQL!
@@ -93,13 +93,13 @@ type Query {
   root(id: ID!): RootQL!
 
   """Search Roots"""
-  roots(page: PageArgsQL, filter: RootFilterArgsQL, order: [RootOrderArgsQL!], list: ListType): RootPageQL!
+  roots(page: PageArgsQL, filter: RootFilterArgsQL, order: [RootOrderArgsQL!], list: ListType, seed: String): RootPageQL!
 
   """Get a Series by Id"""
   series(id: ID!): SeriesQL!
 
   """Search Series"""
-  serieses(page: PageArgsQL, filter: SeriesFilterArgsQL, order: [SeriesOrderArgsQL!], list: ListType): SeriesPageQL!
+  serieses(page: PageArgsQL, filter: SeriesFilterArgsQL, order: [SeriesOrderArgsQL!], list: ListType, seed: String): SeriesPageQL!
 
   """Get the Navigation Index for Series"""
   seriesIndex(filter: SeriesFilterArgsQL): SeriesIndexQL!
@@ -113,7 +113,7 @@ type Query {
   """Get a list of all sessions of the current user"""
   sessions(page: PageArgsQL, filter: SessionFilterArgsQL, order: [SessionOrderArgsQL!]): SessionPageQL!
   track(id: ID!): TrackQL!
-  tracks(page: PageArgsQL, filter: TrackFilterArgsQL, order: [TrackOrderArgsQL!], list: ListType): TrackPageQL!
+  tracks(page: PageArgsQL, filter: TrackFilterArgsQL, order: [TrackOrderArgsQL!], list: ListType, seed: String): TrackPageQL!
   stats(rootID: ID): StatsQL!
 
   """Get User State (fav/rate/etc) for Base Objects"""

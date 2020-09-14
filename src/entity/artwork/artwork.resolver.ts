@@ -14,9 +14,9 @@ export class ArtworkResolver {
 	}
 
 	@Query(() => ArtworkPageQL, {description: 'Search Artworks'})
-	async artworks(@Args() {page, filter, order, list}: ArtworksArgsQL, @Ctx() {orm, user}: Context): Promise<ArtworkPageQL> {
+	async artworks(@Args() {page, filter, order, list, seed}: ArtworksArgsQL, @Ctx() {orm, user}: Context): Promise<ArtworkPageQL> {
 		if (list) {
-			return await orm.Artwork.findListFilter(list, filter, order, page, user);
+			return await orm.Artwork.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Artwork.searchFilter(filter, order, page, user);
 	}

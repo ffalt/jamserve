@@ -8,7 +8,7 @@ import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 
 export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, FolderOrderArgs> {
 	objType = DBObjectType.folder;
-	indexProperty = 'title';
+	indexProperty = 'name';
 
 	buildOrder(order?: FolderOrderArgs): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);

@@ -59,7 +59,7 @@ export class AlbumController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<AlbumPage> {
 		if (list.list) {
-			return await orm.Album.findListTransformFilter(list.list, filter, [order], page, user,
+			return await orm.Album.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
 				o => engine.transform.album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistArgs, user)
 			);
 		}

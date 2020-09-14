@@ -17,9 +17,9 @@ export class EpisodeResolver {
 	}
 
 	@Query(() => EpisodePageQL, {description: 'Search Episodes'})
-	async episodes(@Args() {page, filter, order, list}: EpisodesArgsQL, @Ctx() {orm, user}: Context): Promise<EpisodePageQL> {
+	async episodes(@Args() {page, filter, order, list, seed}: EpisodesArgsQL, @Ctx() {orm, user}: Context): Promise<EpisodePageQL> {
 		if (list) {
-			return await orm.Episode.findListFilter(list, filter, order, page, user);
+			return await orm.Episode.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Episode.searchFilter(filter, order, page, user);
 	}

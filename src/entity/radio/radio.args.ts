@@ -75,4 +75,6 @@ export class RadioIndexArgs extends FilterArgs(RadioFilterArgsQL) {
 export class RadiosArgs extends PaginatedFilterArgs(RadioFilterArgsQL, RadioOrderArgsQL) {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
+	@Field(() => String, {nullable: true})
+	seed?: string;
 }

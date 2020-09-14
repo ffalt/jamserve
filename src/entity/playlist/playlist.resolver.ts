@@ -15,9 +15,9 @@ export class PlaylistResolver {
 	}
 
 	@Query(() => PlaylistPageQL, {description: 'Search Playlists'})
-	async playlists(@Args() {page, filter, order, list}: PlaylistsArgs, @Ctx() {orm, user}: Context): Promise<PlaylistPageQL> {
+	async playlists(@Args() {page, filter, order, list, seed}: PlaylistsArgs, @Ctx() {orm, user}: Context): Promise<PlaylistPageQL> {
 		if (list) {
-			return await orm.Playlist.findListFilter(list, filter, order, page, user);
+			return await orm.Playlist.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Playlist.searchFilter(filter, order, page, user);
 	}

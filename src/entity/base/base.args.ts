@@ -7,6 +7,8 @@ import {Max, Min} from 'class-validator';
 export class ListArgs {
 	@ObjField(() => ListType, {nullable: true, description: 'filter by special list', example: ListType.faved})
 	list?: ListType;
+	@ObjField(() => String, {nullable: true, description: 'seed for random list', example: 'jksfb23jhsdf'})
+	seed?: string;
 }
 
 @InputType()

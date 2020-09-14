@@ -734,6 +734,17 @@
 					},
 					{
 						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
+						}
+					},
+					{
+						"in": "query",
 						"name": "orderDesc",
 						"description": "order direction ascending or descending",
 						"required": false,
@@ -2446,6 +2457,17 @@
 						"example": "faved",
 						"schema": {
 							"$ref": "#/components/schemas/ListType"
+						}
+					},
+					{
+						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
 						}
 					},
 					{
@@ -4591,6 +4613,17 @@
 					},
 					{
 						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
+						}
+					},
+					{
+						"in": "query",
 						"name": "orderBy",
 						"description": "order by field",
 						"required": false,
@@ -6588,6 +6621,17 @@
 					},
 					{
 						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
+						}
+					},
+					{
+						"in": "query",
 						"name": "orderDesc",
 						"description": "order direction ascending or descending",
 						"required": false,
@@ -7825,6 +7869,17 @@
 						"example": "faved",
 						"schema": {
 							"$ref": "#/components/schemas/ListType"
+						}
+					},
+					{
+						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
 						}
 					},
 					{
@@ -13141,6 +13196,17 @@
 					},
 					{
 						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
+						}
+					},
+					{
+						"in": "query",
 						"name": "orderBy",
 						"description": "order by field",
 						"required": false,
@@ -14530,6 +14596,17 @@
 						"example": "faved",
 						"schema": {
 							"$ref": "#/components/schemas/ListType"
+						}
+					},
+					{
+						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
 						}
 					},
 					{
@@ -16897,6 +16974,17 @@
 					},
 					{
 						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
+						}
+					},
+					{
+						"in": "query",
 						"name": "orderBy",
 						"description": "order by field",
 						"required": false,
@@ -18806,6 +18894,17 @@
 						"example": "faved",
 						"schema": {
 							"$ref": "#/components/schemas/ListType"
+						}
+					},
+					{
+						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
 						}
 					},
 					{

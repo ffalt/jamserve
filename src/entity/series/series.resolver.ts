@@ -18,9 +18,9 @@ export class SeriesResolver {
 	}
 
 	@Query(() => SeriesPageQL, {description: 'Search Series'})
-	async serieses(@Args() {page, filter, order, list}: SeriesArgsQL, @Ctx() {orm, user}: Context): Promise<SeriesPageQL> {
+	async serieses(@Args() {page, filter, order, list, seed}: SeriesArgsQL, @Ctx() {orm, user}: Context): Promise<SeriesPageQL> {
 		if (list) {
-			return await orm.Series.findListFilter(list, filter, order, page, user);
+			return await orm.Series.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Series.searchFilter(filter, order, page, user);
 	}

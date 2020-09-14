@@ -24,9 +24,9 @@ export class TrackResolver {
 	}
 
 	@Query(() => TrackPageQL)
-	async tracks(@Args() {page, filter, order, list}: TracksArgsQL, @Ctx() {orm, user}: Context): Promise<TrackPageQL> {
+	async tracks(@Args() {page, filter, order, list, seed}: TracksArgsQL, @Ctx() {orm, user}: Context): Promise<TrackPageQL> {
 		if (list) {
-			return await orm.Track.findListFilter(list, filter, order, page, user);
+			return await orm.Track.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Track.searchFilter(filter, order, page, user);
 	}

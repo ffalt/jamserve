@@ -13,9 +13,9 @@ export class RadioResolver {
 	}
 
 	@Query(() => RadioPageQL, {description: 'Search Radios'})
-	async radios(@Args() {page, filter, order, list}: RadiosArgs, @Ctx() {orm, user}: Context): Promise<RadioPageQL> {
+	async radios(@Args() {page, filter, order, list, seed}: RadiosArgs, @Ctx() {orm, user}: Context): Promise<RadioPageQL> {
 		if (list) {
-			return await orm.Radio.findListFilter(list, filter, order, page, user);
+			return await orm.Radio.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Radio.searchFilter(filter, order, page, user);
 	}

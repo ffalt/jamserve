@@ -128,4 +128,6 @@ export class ArtistPageArgsQL extends PaginatedFilterArgs(ArtistFilterArgsQL, Ar
 export class ArtistsArgsQL extends ArtistPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
+	@Field(() => String, {nullable: true})
+	seed?: string;
 }

@@ -91,5 +91,7 @@ export class PlaylistPageArgsQL extends PaginatedFilterArgs(PlaylistFilterArgsQL
 export class PlaylistsArgs extends PlaylistPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
+	@Field(() => String, {nullable: true})
+	seed?: string;
 }
 

@@ -57,7 +57,7 @@ export class PlaylistController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<PlaylistPage> {
 		if (list.list) {
-			return await orm.Playlist.findListTransformFilter(list.list, filter, [order], page, user,
+			return await orm.Playlist.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
 				o => engine.transform.playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user)
 			);
 		}

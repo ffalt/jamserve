@@ -128,4 +128,6 @@ export class AlbumPageArgsQL extends PaginatedFilterArgs(AlbumFilterArgsQL, Albu
 export class AlbumsArgsQL extends AlbumPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
+	@Field(() => String, {nullable: true})
+	seed?: string;
 }

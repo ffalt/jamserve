@@ -39,7 +39,7 @@ export class TrackController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<TrackPage> {
 		if (list.list) {
-			return await orm.Track.findListTransformFilter(list.list, filter, [order], page, user,
+			return await orm.Track.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
 				o => engine.transform.track(orm, o, trackArgs, user)
 			);
 		}

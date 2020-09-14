@@ -18,9 +18,9 @@ export class AlbumResolver {
 	}
 
 	@Query(() => AlbumPageQL, {description: 'Search albums'})
-	async albums(@Args() {filter, page, order, list}: AlbumsArgsQL, @Ctx() {orm, user}: Context): Promise<AlbumPageQL> {
+	async albums(@Args() {filter, page, order, list, seed}: AlbumsArgsQL, @Ctx() {orm, user}: Context): Promise<AlbumPageQL> {
 		if (list) {
-			return await orm.Album.findListFilter(list, filter, order, page, user);
+			return await orm.Album.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Album.searchFilter(filter, order, page, user);
 	}

@@ -40,47 +40,47 @@ export class UserFavoritesResolver {
 
 	@FieldResolver(() => AlbumPageQL)
 	async albums(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: AlbumPageArgsQL): Promise<AlbumPageQL> {
-		return orm.Album.findListFilter(ListType.faved, filter, order, page, owner.user);
+		return orm.Album.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
 	}
 
 	@FieldResolver(() => ArtistPageQL)
 	async artists(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: ArtistPageArgsQL): Promise<ArtistPageQL> {
-		return orm.Artist.findListFilter(ListType.faved, filter, order, page, owner.user);
+		return orm.Artist.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
 	}
 
 	@FieldResolver(() => SeriesPageQL)
 	async series(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: SeriesPageArgsQL): Promise<SeriesPageQL> {
-		return orm.Series.findListFilter(ListType.faved, filter, order, page, owner.user);
+		return orm.Series.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
 	}
 
 	@FieldResolver(() => PodcastPageQL)
 	async podcasts(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: PodcastPageArgsQL): Promise<PodcastPageQL> {
-		return orm.Podcast.findListFilter(ListType.faved, filter, order, page, owner.user);
+		return orm.Podcast.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
 	}
 
 	@FieldResolver(() => EpisodePageQL)
 	async episodes(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: EpisodePageArgsQL): Promise<EpisodePageQL> {
-		return orm.Episode.findListFilter(ListType.faved, filter, order, page, owner.user);
+		return orm.Episode.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
 	}
 
 	@FieldResolver(() => TrackPageQL)
 	async tracks(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: TrackPageArgsQL): Promise<TrackPageQL> {
-		return orm.Track.findListFilter(ListType.faved, filter, order, page, owner.user);
+		return orm.Track.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
 	}
 
 	@FieldResolver(() => FolderPageQL)
 	async folders(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: FolderPageArgsQL): Promise<FolderPageQL> {
-		return orm.Folder.findListFilter(ListType.faved, filter, order, page, owner.user);
+		return orm.Folder.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
 	}
 
 	@FieldResolver(() => PlaylistPageQL)
 	async playlists(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: PlaylistPageArgsQL): Promise<PlaylistPageQL> {
-		return orm.Playlist.findListFilter(ListType.faved, filter, order, page, owner.user);
+		return orm.Playlist.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
 	}
 
 	@FieldResolver(() => ArtistPageQL)
 	async artworks(@GQLRoot() owner: UserFavorites, @Ctx() {orm}: Context, @Args() {filter, order, page}: ArtworkPageArgsQL): Promise<ArtworkPageQL> {
-		return orm.Artwork.findListFilter(ListType.faved, filter, order, page, owner.user);
+		return orm.Artwork.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
 	}
 
 }

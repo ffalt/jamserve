@@ -225,4 +225,6 @@ export class FolderPageArgsQL extends PaginatedFilterArgs(FolderFilterArgsQL, Fo
 export class FoldersArgsQL extends FolderPageArgsQL {
 	@Field(() => ListType, {nullable: true})
 	list?: ListType;
+	@Field(() => String, {nullable: true})
+	seed?: string;
 }

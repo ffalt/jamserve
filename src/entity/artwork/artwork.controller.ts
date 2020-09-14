@@ -42,7 +42,7 @@ export class ArtworkController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<ArtworkPage> {
 		if (list.list) {
-			return await orm.Artwork.findListTransformFilter(list.list, filter, [order], page, user,
+			return await orm.Artwork.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
 				o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user)
 			);
 		}

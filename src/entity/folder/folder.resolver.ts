@@ -18,9 +18,9 @@ export class FolderResolver {
 	}
 
 	@Query(() => FolderPageQL, {description: 'Search Folders'})
-	async folders(@Args() {page, filter, order, list}: FoldersArgsQL, @Ctx() {orm, user}: Context): Promise<FolderPageQL> {
+	async folders(@Args() {page, filter, order, list, seed}: FoldersArgsQL, @Ctx() {orm, user}: Context): Promise<FolderPageQL> {
 		if (list) {
-			return await orm.Folder.findListFilter(list, filter, order, page, user);
+			return await orm.Folder.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Folder.searchFilter(filter, order, page, user);
 	}
