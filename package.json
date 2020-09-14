@@ -31,7 +31,7 @@
     "class-validator": "0.12.2",
     "common-password-checker": "0.1.0",
     "compression": "1.7.4",
-    "console-table-printer": "2.3.31",
+    "console-table-printer": "2.4.2",
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
     "d3": "6.1.1",
