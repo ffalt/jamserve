@@ -56,8 +56,6 @@ jobs:
           diff-search: true
           file-name: package.json
           token: ${{ secrets.GITHUB_TOKEN }}
-          file-url: https://github.com/ffalt/jamserve/raw/release/package.json
-          static-checking: localIsNew
 
       - name: Log when changed
         if: steps.check.outputs.changed == 'true'
@@ -95,13 +93,21 @@ jobs:
           FOLDER: deploy # The folder the action should deploy.
           CLEAN: true
 
+      - name: Build Changelog message
+        id: changelog
+        uses: scottbrenner/generate-changelog-action@master
+        env:
+          REPO: ${{ github.repository }}
+
       - name: Create Release Tag
         if: steps.check.outputs.changed == 'true'
-        uses: fleskesvor/create-release@feature/support-target-commitish
+        uses: actions/create-release@v1
         with:
           commitish: "release"
           tag_name: "v${{ steps.check.outputs.version }}"
           release_name: "Release v${{ steps.check.outputs.version }}"
+          body: |
+            ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: false
         env:
