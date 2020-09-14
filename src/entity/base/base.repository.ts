@@ -275,6 +275,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 					// (dups can still occure on day change between two requests)
 					s = `${userID}_${new Date().toISOString().split('T')[0]}`;
 				}
+				ids.sort();
 				ids = shuffleSeed.shuffle(ids, s);
 				break;
 			}
@@ -296,8 +297,8 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 			default:
 				return Promise.reject(InvalidParamError('Unknown List Type'));
 		}
-		ids = paginate(ids, page).items;
 		const total = ids.length;
+		ids = paginate(ids, page).items;
 		return {total, ...page, items: ids};
 	}
 
