@@ -1,5 +1,5 @@
 import express from 'express';
-import {buildRestMeta, buildRestRouter, RestOptions} from '../../rest';
+import {buildRestMeta, restRouter, RestOptions} from '../../rest';
 import {UserRole} from '../../../types/enums';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../../utils/logger';
@@ -46,7 +46,7 @@ export class RestMiddleware {
 			}
 		};
 
-		const routeInfos = buildRestRouter(api, options);
+		const routeInfos = restRouter(api, options);
 		if (process.env.NODE_ENV !== 'production') {
 			log.table(routeInfos, [
 				{name: 'method', alignment: 'right'},

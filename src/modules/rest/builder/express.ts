@@ -1,9 +1,9 @@
-import express from 'express';
+import express, {Router} from 'express';
 import {getMetadataStorage} from '../metadata';
 import {ParamMetadata, RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata';
 import {FieldMetadata} from '../definitions/field-metadata';
 import {getDefaultValue} from '../helpers/default-value';
-import {CustomPathParameterGroup, CustomPathParameters, FieldOptions, TypeOptions} from '../definitions/types';
+import {CustomPathParameterGroup, CustomPathParameters, FieldOptions, TypeOptions, TypeValue} from '../definitions/types';
 import {RestContext} from '../helpers/context';
 import {ClassMetadata} from '../definitions/class-metadata';
 import {ApiBaseResponder} from './express-responder';
@@ -14,10 +14,119 @@ import {ensureTrailingPathSeparator, fileDeleteIfExists} from '../../../utils/fs
 import finishedRequest from 'on-finished';
 import {logger} from '../../../utils/logger';
 import {getEnumReverseValuesMap} from '../helpers/enums';
+import {ControllerClassMetadata} from '../definitions/controller-metadata';
+import {EnumMetadata} from '../definitions/enum-metadata';
+import {UploadFile} from '..';
 
 const log = logger('RestAPI');
 
-function prepareParameter(param: RestParamMetadata | FieldMetadata, data: any, isField: boolean): any {
+function validateBoolean(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): boolean {
+	if (typeOptions.array) {
+		throw InvalidParamError(param.name);
+	}
+	if (typeof value !== 'boolean') {
+		if (value === 'true') {
+			return true;
+		} else if (value === 'false') {
+			return false;
+		} else {
+			throw InvalidParamError(param.name);
+		}
+	}
+	return value;
+}
+
+function validateNumber(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number {
+	if (typeOptions.array) {
+		//TODO: support number arrays
+		throw InvalidParamError(param.name);
+	}
+	if (typeof value === 'string' && value.length === 0) {
+		throw InvalidParamError(param.name);
+	}
+	const val = Number(value);
+	if (isNaN(val)) {
+		throw InvalidParamError(param.name, `Parameter value is not a number`);
+	}
+	if (val % 1 !== 0) {
+		throw InvalidParamError(param.name, `Parameter value is not an integer`);
+	}
+	if (typeOptions.min !== undefined && val < typeOptions.min) {
+		throw InvalidParamError(param.name, `Parameter value too small`);
+	}
+	if (typeOptions.max !== undefined && val > typeOptions.max) {
+		throw InvalidParamError(param.name, `Parameter value too high`);
+	}
+	return val;
+}
+
+function validateString(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): string | Array<string> {
+	if (typeOptions.array) {
+		let array: Array<string> = [];
+		if (value && Array.isArray(value)) {
+			array = value;
+		} else if (value) {
+			const s = `${value}`;
+			if (s.length === 0) {
+				throw InvalidParamError(param.name);
+			}
+			array = [s];
+		}
+		return array.map((v: any) => String(v)).filter((v: string) => {
+			if (v.length === 0 && !typeOptions.nullable) {
+				throw InvalidParamError(param.name);
+			}
+			return v.length > 0;
+		});
+	} else {
+		const val = String(value);
+		if (val.length === 0) {
+			throw InvalidParamError(param.name);
+		}
+		return val;
+	}
+}
+
+function validateEnum(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata, enumInfo: EnumMetadata): string | Array<string> {
+	const enumObj: any = enumInfo.enumObj;
+	const enumValues = getEnumReverseValuesMap(enumObj);
+	if (typeOptions.array) {
+		let array = Array.isArray(value) ? value : [value];
+		array = (array || []).map((v: any) => String(v)).filter(s => s.length > 0);
+		for (const val of array) {
+			if (!enumValues[val]) {
+				throw InvalidParamError(param.name, `Enum value not valid`);
+			}
+		}
+		return array;
+	} else {
+		const val = String(value);
+		if (!enumValues[val]) {
+			throw InvalidParamError(param.name, `Enum value not valid`);
+		}
+		return val;
+	}
+}
+
+function validateObjOrFail(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata, type: TypeValue): any {
+	if (typeof value !== 'object') {
+		throw new Error(`Internal: Invalid Parameter Object Type for field '${param.name}'`);
+	}
+	const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === type);
+	if (argumentType) {
+		const result = new (argumentType.target as any)();
+		for (const field of argumentType.fields) {
+			result[field.name] = validateParameter(field, value, true);
+		}
+		return result;
+	}
+	if (param.typeOptions.generic) {
+		return value;
+	}
+	throw new Error(`Internal: Unknown Parameter Type, did you forget to register an enum? '${param.name}'`);
+}
+
+function validateParameter(param: RestParamMetadata | FieldMetadata, data: any, isField: boolean): any {
 	if (isField) {
 		const argumentInstance = new (param.target as any)();
 		param.typeOptions.defaultValue = getDefaultValue(
@@ -40,97 +149,17 @@ function prepareParameter(param: RestParamMetadata | FieldMetadata, data: any, i
 	}
 	const type = param.getType();
 	if (type === Boolean) {
-		if (typeOptions.array) {
-			throw InvalidParamError(param.name);
-		}
-		if (typeof value !== 'boolean') {
-			if (value === 'true') {
-				value = true;
-			} else if (value === 'false') {
-				value = false;
-			} else {
-				throw InvalidParamError(param.name);
-			}
-		}
+		value = validateBoolean(value, typeOptions, param);
 	} else if (type === Number) {
-		if (typeOptions.array) {
-			//TODO: support number arrays
-			throw InvalidParamError(param.name);
-		}
-		if (typeof value === 'string' && value.length === 0) {
-			throw InvalidParamError(param.name);
-		}
-		value = Number(value);
-		if (isNaN(value)) {
-			throw InvalidParamError(param.name, `Parameter value is not a number`);
-		}
-		if (value % 1 !== 0) {
-			throw InvalidParamError(param.name, `Parameter value is not an integer`);
-		}
-		if (typeOptions.min !== undefined && value < typeOptions.min) {
-			throw InvalidParamError(param.name, `Parameter value too small`);
-		}
-		if (typeOptions.max !== undefined && value > typeOptions.max) {
-			throw InvalidParamError(param.name, `Parameter value too high`);
-		}
+		value = validateNumber(value, typeOptions, param);
 	} else if (type === String) {
-		if (typeOptions.array) {
-			if (value && !Array.isArray(value)) {
-				if (value.length === 0) {
-					throw InvalidParamError(param.name);
-				}
-				value = [value];
-			}
-			value = (value || []).map((v: any) => String(v));
-			value = value.filter((v: string) => {
-				if (v.length === 0 && !typeOptions.nullable) {
-					throw InvalidParamError(param.name);
-				}
-				return v.length > 0;
-			});
-		} else {
-			value = String(value);
-			if (value.length === 0) {
-				throw InvalidParamError(param.name);
-			}
-		}
+		value = validateString(value, typeOptions, param);
 	} else {
 		const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === type);
 		if (enumInfo) {
-			const enumObj: any = enumInfo.enumObj;
-			const enumValues = getEnumReverseValuesMap(enumObj);
-			if (typeOptions.array) {
-				if (!Array.isArray(value)) {
-					value = [value];
-				}
-				value = (value || []).map((v: any) => String(v));
-				for (const val of value) {
-					if (!enumValues[val]) {
-						throw InvalidParamError(param.name, `Enum value not valid`);
-					}
-				}
-			} else {
-				value = String(value);
-				if (!enumValues[value]) {
-					throw InvalidParamError(param.name, `Enum value not valid`);
-				}
-			}
+			value = validateEnum(value, typeOptions, param, enumInfo);
 		} else {
-			if (typeof value !== 'object') {
-				throw new Error(`Internal: Invalid Parameter Object Type for field '${param.name}'`);
-			}
-			const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === type);
-			if (argumentType) {
-				const result = new (argumentType.target as any)();
-				for (const field of argumentType.fields) {
-					result[field.name] = prepareParameter(field, value, true);
-				}
-				return result;
-			}
-			if (param.typeOptions.generic) {
-				return value;
-			}
-			throw new Error(`Internal: Unknown Parameter Type, did you forget to register an enum? '${param.name}'`);
+			value = validateObjOrFail(value, typeOptions, param, type);
 		}
 	}
 	return value;
@@ -148,13 +177,22 @@ function prepareParameterSingle(param: RestParamMetadata, context: RestContext<a
 		case 'path':
 			data = context.req.params;
 			break;
+		case 'file': {
+			const upload: UploadFile = {
+				name: context.req.file.path,
+				size: context.req.file.size,
+				originalname: context.req.file.originalname,
+				type: context.req.file.mimetype
+			};
+			return upload;
+		}
 	}
-	return prepareParameter(param, data, false);
+	return validateParameter(param, data, false);
 }
 
 function mapArgFields(argumentType: ClassMetadata, data: any, args: any = {}): void {
 	argumentType.fields!.forEach(field => {
-		args[field.name] = prepareParameter(field, data, true);
+		args[field.name] = validateParameter(field, data, true);
 	});
 }
 
@@ -192,12 +230,13 @@ function prepareParameterObj(param: RestParamsMetadata, context: RestContext<any
 	return args;
 }
 
-function prepareArg(param: ParamMetadata, context: RestContext<any, any, any>): any {
+function validateArgument(param: ParamMetadata, context: RestContext<any, any, any>): any {
 	switch (param.kind) {
 		case 'context':
 			return param.propertyName ? (context as any)[param.propertyName] : context;
-		case 'arg':
+		case 'arg': {
 			return prepareParameterSingle(param, context);
+		}
 		case 'args':
 			return prepareParameterObj(param, context);
 	}
@@ -225,8 +264,10 @@ async function callMethod(method: MethodMetadata, context: RestContext<any, any,
 		const args = [];
 		const params = method.params.sort((a, b) => a.index - b.index);
 		for (const param of params) {
-			const arg = prepareArg(param, context);
-			args.push(arg);
+			const arg = validateArgument(param, context);
+			if (arg) {
+				args.push(arg);
+			}
 		}
 		if (method.binary !== undefined) {
 			// eslint-disable-next-line prefer-spread
@@ -333,7 +374,6 @@ function processCustomPathParameters(customPathParameters: CustomPathParameters,
 	let index = 1;
 	const result: any = {};
 	const route = '/' + customPathParameters.groups.filter((g, index) => r[index + 1]).map(g => `${g.prefix || ''}{${g.name}}`).join('');
-
 	const alias = (method.aliasRoutes || []).find(a => a.route === route);
 	for (const group of customPathParameters.groups) {
 		if (!alias || !alias.hideParameters.includes(group.name)) {
@@ -344,7 +384,84 @@ function processCustomPathParameters(customPathParameters: CustomPathParameters,
 	return result;
 }
 
-export function buildRestRouter(api: express.Router, options: RestOptions): Array<RouteInfo> {
+function restPOST(
+	post: MethodMetadata, ctrl: ControllerClassMetadata, router: Router, options: RestOptions,
+	uploadHandler: (field: string, autoClean?: boolean) => express.RequestHandler
+): RouteInfo {
+	let route = (post.route || '/');
+	if (post.customPathParameters) {
+		route = (!post.route) ? '/:pathParameters' : post.route.split('{')[0] + ':pathParameters';
+	}
+	const roles = post.roles || ctrl.roles || [];
+	const handlers: Array<express.RequestHandler> = [];
+	for (const param of post.params) {
+		if ((param.kind === 'arg' && param.mode === 'file')) {
+			handlers.push(uploadHandler(param.name));
+		}
+	}
+	router.post(route, ...handlers, async (req, res, next) => {
+		try {
+			if (!options.validateRoles(req.user, roles)) {
+				throw UnauthError();
+			}
+			if (post.customPathParameters) {
+				req.params = {
+					...req.params,
+					...processCustomPathParameters(
+						post.customPathParameters,
+						req.params.pathParameters,
+						post
+					), pathParameters: undefined
+				} as any;
+			}
+			await callMethod(post, {req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user}, 'Post');
+		} catch (e) {
+			ApiBaseResponder.sendError(req, res, e);
+		}
+	});
+	return {
+		method: 'POST',
+		endpoint: ctrl.route + route,
+		role: roles.length > 0 ? roles.join(',') : 'public',
+		format: getMethodResultFormat(post)
+	};
+}
+
+function restGET(get: MethodMetadata, ctrl: ControllerClassMetadata, router: Router, options: RestOptions): RouteInfo {
+	let route = (get.route || '/');
+	if (get.customPathParameters) {
+		route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
+	}
+	const roles = get.roles || ctrl.roles || [];
+	router.get(route, async (req, res, next) => {
+		try {
+			if (!options.validateRoles(req.user, roles)) {
+				throw UnauthError();
+			}
+			if (get.customPathParameters) {
+				req.params = {
+					...req.params,
+					...processCustomPathParameters(
+						get.customPathParameters,
+						req.params.pathParameters,
+						get
+					), pathParameters: undefined
+				} as any;
+			}
+			await callMethod(get, {req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user}, 'Get');
+		} catch (e) {
+			ApiBaseResponder.sendError(req, res, e);
+		}
+	});
+	return {
+		method: 'GET',
+		endpoint: ctrl.route + route,
+		role: roles.length > 0 ? roles.join(',') : 'public',
+		format: getMethodResultFormat(get)
+	};
+}
+
+export function restRouter(api: express.Router, options: RestOptions): Array<RouteInfo> {
 	const routeInfos: Array<RouteInfo> = [];
 	const upload = multer({dest: ensureTrailingPathSeparator(options.tmpPath)});
 	const metadata = getMetadataStorage();
@@ -358,6 +475,7 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 			mu(req, res, next);
 		};
 	};
+
 	for (const ctrl of metadata.controllerClasses) {
 		if (ctrl.abstract) {
 			continue;
@@ -375,79 +493,11 @@ export function buildRestRouter(api: express.Router, options: RestOptions): Arra
 			}
 			superClass = Object.getPrototypeOf(superClass);
 		}
-
 		for (const get of gets) {
-			let route = (get.route || '/');
-			if (get.customPathParameters) {
-				route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
-			}
-			const roles = get.roles || ctrl.roles || [];
-			routeInfos.push({
-				method: 'GET',
-				endpoint: ctrl.route + route,
-				role: roles.length > 0 ? roles.join(',') : 'public',
-				format: getMethodResultFormat(get)
-			});
-			const handlers: Array<express.RequestHandler> = [];
-			for (const param of get.params) {
-				if ((param.kind === 'arg' && param.mode === 'file')) {
-					handlers.push(uploadHandler(param.name));
-				}
-			}
-			router.get(route, ...handlers, async (req, res, next) => {
-				try {
-					if (!options.validateRoles(req.user, roles)) {
-						throw UnauthError();
-					}
-					if (get.customPathParameters) {
-						req.params = {
-							...req.params,
-							...processCustomPathParameters(
-								get.customPathParameters,
-								req.params.pathParameters,
-								get
-							), pathParameters: undefined
-						} as any;
-					}
-					await callMethod(get, {req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user}, 'Get');
-				} catch (e) {
-					ApiBaseResponder.sendError(req, res, e);
-				}
-			});
+			routeInfos.push(restGET(get, ctrl, router, options));
 		}
-
 		for (const post of posts) {
-			let route = (post.route || '/');
-			if (post.customPathParameters) {
-				route = (!post.route) ? '/:pathParameters' : post.route.split('{')[0] + ':pathParameters';
-			}
-			const roles = post.roles || ctrl.roles || [];
-			routeInfos.push({
-				method: 'POST',
-				endpoint: ctrl.route + route,
-				role: roles.length > 0 ? roles.join(',') : 'public',
-				format: getMethodResultFormat(post)
-			});
-			router.post(route, async (req, res, next) => {
-				try {
-					if (!options.validateRoles(req.user, roles)) {
-						throw UnauthError();
-					}
-					if (post.customPathParameters) {
-						req.params = {
-							...req.params,
-							...processCustomPathParameters(
-								post.customPathParameters,
-								req.params.pathParameters,
-								post
-							), pathParameters: undefined
-						} as any;
-					}
-					await callMethod(post, {req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user}, 'Post');
-				} catch (e) {
-					ApiBaseResponder.sendError(req, res, e);
-				}
-			});
+			routeInfos.push(restPOST(post, ctrl, router, options, uploadHandler));
 		}
 		api.use(ctrl.route, router);
 	}
