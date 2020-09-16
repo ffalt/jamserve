@@ -52,7 +52,7 @@ let RestMiddleware = class RestMiddleware {
                 return true;
             }
         };
-        const routeInfos = rest_1.buildRestRouter(api, options);
+        const routeInfos = rest_1.restRouter(api, options);
         if (process.env.NODE_ENV !== 'production') {
             log.table(routeInfos, [
                 { name: 'method', alignment: 'right' },

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildRestRouter = void 0;
+exports.restRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const metadata_1 = require("../metadata");
 const default_value_1 = require("../helpers/default-value");
@@ -15,7 +15,112 @@ const on_finished_1 = __importDefault(require("on-finished"));
 const logger_1 = require("../../../utils/logger");
 const enums_1 = require("../helpers/enums");
 const log = logger_1.logger('RestAPI');
-function prepareParameter(param, data, isField) {
+function validateBoolean(value, typeOptions, param) {
+    if (typeOptions.array) {
+        throw express_error_1.InvalidParamError(param.name);
+    }
+    if (typeof value !== 'boolean') {
+        if (value === 'true') {
+            return true;
+        }
+        else if (value === 'false') {
+            return false;
+        }
+        else {
+            throw express_error_1.InvalidParamError(param.name);
+        }
+    }
+    return value;
+}
+function validateNumber(value, typeOptions, param) {
+    if (typeOptions.array) {
+        throw express_error_1.InvalidParamError(param.name);
+    }
+    if (typeof value === 'string' && value.length === 0) {
+        throw express_error_1.InvalidParamError(param.name);
+    }
+    const val = Number(value);
+    if (isNaN(val)) {
+        throw express_error_1.InvalidParamError(param.name, `Parameter value is not a number`);
+    }
+    if (val % 1 !== 0) {
+        throw express_error_1.InvalidParamError(param.name, `Parameter value is not an integer`);
+    }
+    if (typeOptions.min !== undefined && val < typeOptions.min) {
+        throw express_error_1.InvalidParamError(param.name, `Parameter value too small`);
+    }
+    if (typeOptions.max !== undefined && val > typeOptions.max) {
+        throw express_error_1.InvalidParamError(param.name, `Parameter value too high`);
+    }
+    return val;
+}
+function validateString(value, typeOptions, param) {
+    if (typeOptions.array) {
+        let array = [];
+        if (value && Array.isArray(value)) {
+            array = value;
+        }
+        else if (value) {
+            const s = `${value}`;
+            if (s.length === 0) {
+                throw express_error_1.InvalidParamError(param.name);
+            }
+            array = [s];
+        }
+        return array.map((v) => String(v)).filter((v) => {
+            if (v.length === 0 && !typeOptions.nullable) {
+                throw express_error_1.InvalidParamError(param.name);
+            }
+            return v.length > 0;
+        });
+    }
+    else {
+        const val = String(value);
+        if (val.length === 0) {
+            throw express_error_1.InvalidParamError(param.name);
+        }
+        return val;
+    }
+}
+function validateEnum(value, typeOptions, param, enumInfo) {
+    const enumObj = enumInfo.enumObj;
+    const enumValues = enums_1.getEnumReverseValuesMap(enumObj);
+    if (typeOptions.array) {
+        let array = Array.isArray(value) ? value : [value];
+        array = (array || []).map((v) => String(v)).filter(s => s.length > 0);
+        for (const val of array) {
+            if (!enumValues[val]) {
+                throw express_error_1.InvalidParamError(param.name, `Enum value not valid`);
+            }
+        }
+        return array;
+    }
+    else {
+        const val = String(value);
+        if (!enumValues[val]) {
+            throw express_error_1.InvalidParamError(param.name, `Enum value not valid`);
+        }
+        return val;
+    }
+}
+function validateObjOrFail(value, typeOptions, param, type) {
+    if (typeof value !== 'object') {
+        throw new Error(`Internal: Invalid Parameter Object Type for field '${param.name}'`);
+    }
+    const argumentType = metadata_1.getMetadataStorage().argumentTypes.find(it => it.target === type);
+    if (argumentType) {
+        const result = new argumentType.target();
+        for (const field of argumentType.fields) {
+            result[field.name] = validateParameter(field, value, true);
+        }
+        return result;
+    }
+    if (param.typeOptions.generic) {
+        return value;
+    }
+    throw new Error(`Internal: Unknown Parameter Type, did you forget to register an enum? '${param.name}'`);
+}
+function validateParameter(param, data, isField) {
     if (isField) {
         const argumentInstance = new param.target();
         param.typeOptions.defaultValue = default_value_1.getDefaultValue(argumentInstance, param.typeOptions, param.name);
@@ -34,104 +139,21 @@ function prepareParameter(param, data, isField) {
     }
     const type = param.getType();
     if (type === Boolean) {
-        if (typeOptions.array) {
-            throw express_error_1.InvalidParamError(param.name);
-        }
-        if (typeof value !== 'boolean') {
-            if (value === 'true') {
-                value = true;
-            }
-            else if (value === 'false') {
-                value = false;
-            }
-            else {
-                throw express_error_1.InvalidParamError(param.name);
-            }
-        }
+        value = validateBoolean(value, typeOptions, param);
     }
     else if (type === Number) {
-        if (typeOptions.array) {
-            throw express_error_1.InvalidParamError(param.name);
-        }
-        if (typeof value === 'string' && value.length === 0) {
-            throw express_error_1.InvalidParamError(param.name);
-        }
-        value = Number(value);
-        if (isNaN(value)) {
-            throw express_error_1.InvalidParamError(param.name, `Parameter value is not a number`);
-        }
-        if (value % 1 !== 0) {
-            throw express_error_1.InvalidParamError(param.name, `Parameter value is not an integer`);
-        }
-        if (typeOptions.min !== undefined && value < typeOptions.min) {
-            throw express_error_1.InvalidParamError(param.name, `Parameter value too small`);
-        }
-        if (typeOptions.max !== undefined && value > typeOptions.max) {
-            throw express_error_1.InvalidParamError(param.name, `Parameter value too high`);
-        }
+        value = validateNumber(value, typeOptions, param);
     }
     else if (type === String) {
-        if (typeOptions.array) {
-            if (value && !Array.isArray(value)) {
-                if (value.length === 0) {
-                    throw express_error_1.InvalidParamError(param.name);
-                }
-                value = [value];
-            }
-            value = (value || []).map((v) => String(v));
-            value = value.filter((v) => {
-                if (v.length === 0 && !typeOptions.nullable) {
-                    throw express_error_1.InvalidParamError(param.name);
-                }
-                return v.length > 0;
-            });
-        }
-        else {
-            value = String(value);
-            if (value.length === 0) {
-                throw express_error_1.InvalidParamError(param.name);
-            }
-        }
+        value = validateString(value, typeOptions, param);
     }
     else {
         const enumInfo = metadata_1.getMetadataStorage().enums.find(e => e.enumObj === type);
         if (enumInfo) {
-            const enumObj = enumInfo.enumObj;
-            const enumValues = enums_1.getEnumReverseValuesMap(enumObj);
-            if (typeOptions.array) {
-                if (!Array.isArray(value)) {
-                    value = [value];
-                }
-                value = (value || []).map((v) => String(v));
-                for (const val of value) {
-                    if (!enumValues[val]) {
-                        throw express_error_1.InvalidParamError(param.name, `Enum value not valid`);
-                    }
-                }
-            }
-            else {
-                value = String(value);
-                if (!enumValues[value]) {
-                    throw express_error_1.InvalidParamError(param.name, `Enum value not valid`);
-                }
-            }
+            value = validateEnum(value, typeOptions, param, enumInfo);
         }
         else {
-            if (typeof value !== 'object') {
-                throw new Error(`Internal: Invalid Parameter Object Type for field '${param.name}'`);
-            }
-            const argumentType = metadata_1.getMetadataStorage().argumentTypes.find(it => it.target === type);
-            if (argumentType) {
-                const result = new argumentType.target();
-                for (const field of argumentType.fields) {
-                    result[field.name] = prepareParameter(field, value, true);
-                }
-                return result;
-            }
-            if (param.typeOptions.generic) {
-                return value;
-            }
-            throw new Error(`Internal: Unknown Parameter Type, did you forget to register an enum? '${param.name}'`);
+            value = validateObjOrFail(value, typeOptions, param, type);
         }
     }
     return value;
@@ -148,12 +170,21 @@ function prepareParameterSingle(param, context) {
         case 'path':
             data = context.req.params;
             break;
+        case 'file': {
+            const upload = {
+                name: context.req.file.path,
+                size: context.req.file.size,
+                originalname: context.req.file.originalname,
+                type: context.req.file.mimetype
+            };
+            return upload;
+        }
     }
-    return prepareParameter(param, data, false);
+    return validateParameter(param, data, false);
 }
 function mapArgFields(argumentType, data, args = {}) {
     argumentType.fields.forEach(field => {
-        args[field.name] = prepareParameter(field, data, true);
+        args[field.name] = validateParameter(field, data, true);
     });
 }
 function prepareParameterObj(param, context) {
@@ -187,12 +218,13 @@ function prepareParameterObj(param, context) {
     mapArgFields(argumentType, data, args);
     return args;
 }
-function prepareArg(param, context) {
+function validateArgument(param, context) {
     switch (param.kind) {
         case 'context':
             return param.propertyName ? context[param.propertyName] : context;
-        case 'arg':
+        case 'arg': {
             return prepareParameterSingle(param, context);
+        }
         case 'args':
             return prepareParameterObj(param, context);
     }
@@ -219,8 +251,10 @@ async function callMethod(method, context, name) {
         const args = [];
         const params = method.params.sort((a, b) => a.index - b.index);
         for (const param of params) {
-            const arg = prepareArg(param, context);
-            args.push(arg);
+            const arg = validateArgument(param, context);
+            if (arg) {
+                args.push(arg);
+            }
         }
         if (method.binary !== undefined) {
             const result = await func.apply(instance, args);
@@ -317,7 +351,73 @@ function processCustomPathParameters(customPathParameters, pathParameters, metho
     }
     return result;
 }
-function buildRestRouter(api, options) {
+function restPOST(post, ctrl, router, options, uploadHandler) {
+    let route = (post.route || '/');
+    if (post.customPathParameters) {
+        route = (!post.route) ? '/:pathParameters' : post.route.split('{')[0] + ':pathParameters';
+    }
+    const roles = post.roles || ctrl.roles || [];
+    const handlers = [];
+    for (const param of post.params) {
+        if ((param.kind === 'arg' && param.mode === 'file')) {
+            handlers.push(uploadHandler(param.name));
+        }
+    }
+    router.post(route, ...handlers, async (req, res, next) => {
+        try {
+            if (!options.validateRoles(req.user, roles)) {
+                throw express_error_1.UnauthError();
+            }
+            if (post.customPathParameters) {
+                req.params = {
+                    ...req.params,
+                    ...processCustomPathParameters(post.customPathParameters, req.params.pathParameters, post), pathParameters: undefined
+                };
+            }
+            await callMethod(post, { req, res, next, orm: req.orm, engine: req.engine, user: req.user }, 'Post');
+        }
+        catch (e) {
+            express_responder_1.ApiBaseResponder.sendError(req, res, e);
+        }
+    });
+    return {
+        method: 'POST',
+        endpoint: ctrl.route + route,
+        role: roles.length > 0 ? roles.join(',') : 'public',
+        format: getMethodResultFormat(post)
+    };
+}
+function restGET(get, ctrl, router, options) {
+    let route = (get.route || '/');
+    if (get.customPathParameters) {
+        route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
+    }
+    const roles = get.roles || ctrl.roles || [];
+    router.get(route, async (req, res, next) => {
+        try {
+            if (!options.validateRoles(req.user, roles)) {
+                throw express_error_1.UnauthError();
+            }
+            if (get.customPathParameters) {
+                req.params = {
+                    ...req.params,
+                    ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get), pathParameters: undefined
+                };
+            }
+            await callMethod(get, { req, res, orm: req.orm, engine: req.engine, next, user: req.user }, 'Get');
+        }
+        catch (e) {
+            express_responder_1.ApiBaseResponder.sendError(req, res, e);
+        }
+    });
+    return {
+        method: 'GET',
+        endpoint: ctrl.route + route,
+        role: roles.length > 0 ? roles.join(',') : 'public',
+        format: getMethodResultFormat(get)
+    };
+}
+function restRouter(api, options) {
     const routeInfos = [];
     const upload = multer_1.default({ dest: fs_utils_1.ensureTrailingPathSeparator(options.tmpPath) });
     const metadata = metadata_1.getMetadataStorage();
@@ -347,74 +447,14 @@ function buildRestRouter(api, options) {
             superClass = Object.getPrototypeOf(superClass);
         }
         for (const get of gets) {
-            let route = (get.route || '/');
-            if (get.customPathParameters) {
-                route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
-            }
-            const roles = get.roles || ctrl.roles || [];
-            routeInfos.push({
-                method: 'GET',
-                endpoint: ctrl.route + route,
-                role: roles.length > 0 ? roles.join(',') : 'public',
-                format: getMethodResultFormat(get)
-            });
-            const handlers = [];
-            for (const param of get.params) {
-                if ((param.kind === 'arg' && param.mode === 'file')) {
-                    handlers.push(uploadHandler(param.name));
-                }
-            }
-            router.get(route, ...handlers, async (req, res, next) => {
-                try {
-                    if (!options.validateRoles(req.user, roles)) {
-                        throw express_error_1.UnauthError();
-                    }
-                    if (get.customPathParameters) {
-                        req.params = {
-                            ...req.params,
-                            ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get), pathParameters: undefined
-                        };
-                    }
-                    await callMethod(get, { req, res, orm: req.orm, engine: req.engine, next, user: req.user }, 'Get');
-                }
-                catch (e) {
-                    express_responder_1.ApiBaseResponder.sendError(req, res, e);
-                }
-            });
+            routeInfos.push(restGET(get, ctrl, router, options));
         }
         for (const post of posts) {
-            let route = (post.route || '/');
-            if (post.customPathParameters) {
-                route = (!post.route) ? '/:pathParameters' : post.route.split('{')[0] + ':pathParameters';
-            }
-            const roles = post.roles || ctrl.roles || [];
-            routeInfos.push({
-                method: 'POST',
-                endpoint: ctrl.route + route,
-                role: roles.length > 0 ? roles.join(',') : 'public',
-                format: getMethodResultFormat(post)
-            });
-            router.post(route, async (req, res, next) => {
-                try {
-                    if (!options.validateRoles(req.user, roles)) {
-                        throw express_error_1.UnauthError();
-                    }
-                    if (post.customPathParameters) {
-                        req.params = {
-                            ...req.params,
-                            ...processCustomPathParameters(post.customPathParameters, req.params.pathParameters, post), pathParameters: undefined
-                        };
-                    }
-                    await callMethod(post, { req, res, next, orm: req.orm, engine: req.engine, user: req.user }, 'Post');
-                }
-                catch (e) {
-                    express_responder_1.ApiBaseResponder.sendError(req, res, e);
-                }
-            });
+            routeInfos.push(restPOST(post, ctrl, router, options, uploadHandler));
         }
         api.use(ctrl.route, router);
     }
     return routeInfos.sort((a, b) => a.endpoint.localeCompare(b.endpoint));
 }
-exports.buildRestRouter = buildRestRouter;
+exports.restRouter = restRouter;
 //# sourceMappingURL=express.js.map
