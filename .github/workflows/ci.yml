@@ -18,7 +18,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-modules-test-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-modules-ci-${{ hashFiles('**/package-lock.json') }}
       - run: npm install
       - run: npm run test
     services:
