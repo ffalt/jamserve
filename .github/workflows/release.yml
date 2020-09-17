@@ -29,7 +29,7 @@ jobs:
 
       - name: Build Changelog message
         id: changelog
-        uses: scottbrenner/generate-changelog-action@master
+        uses: scottbrenner/generate-changelog-action@1.0.1
         env:
           REPO: ${{ github.repository }}
 
