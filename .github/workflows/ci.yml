@@ -8,6 +8,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    name: CI
     container:
       image: ffalt/jam-base
     env:
