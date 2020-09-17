@@ -1,6 +1,6 @@
 {
   "name": "jamserve",
-  "version": "0.3.11-alpha",
+  "version": "0.4.0",
   "author": "ffalt",
   "license": "MIT",
   "description": "jamserve streaming audio server",
@@ -22,6 +22,7 @@
     "test": "jest --maxWorkers=1",
     "test:watch": "jest --maxWorkers=1 --watch",
     "coverage": "jest --runInBand --coverage",
+    "release": "standard-version",
     "changelog:start": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
