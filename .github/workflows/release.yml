@@ -34,7 +34,6 @@ jobs:
         uses: montudor/action-zip@v0.1.0
         with:
           args: zip -X -r ./jamserve-release.zip ./deploy
-          zip deploy
       - name: Build Changelog message
         id: changelog
         uses: scottbrenner/generate-changelog-action@master
