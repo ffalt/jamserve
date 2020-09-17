@@ -19,7 +19,7 @@ jobs:
           node-version: 14.x
       - name: Install Dependencies
         run: |
-        npm install
+          npm install
       - name: Build
         run: |
           npm run build:deploy
