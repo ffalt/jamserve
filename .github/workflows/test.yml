@@ -16,7 +16,9 @@ jobs:
       JAM_DB_HOST: postgres
       NODE_ENV: development
     steps:
+      - run: git --version
       - run: apt-get install git -y
+      - run: git --version
       - uses: actions/checkout@v2
       - run: git log --pretty=oneline
       - uses: actions/cache@v2
