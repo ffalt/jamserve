@@ -67,6 +67,7 @@ export class StateHelper {
 	}
 
 	async getAvgHighestDestIDs(destType: DBObjectType): Promise<Array<string>> {
+		// TODO: calc avg in db
 		const states = await this.stateRepo.find({where: {destType, rated: {[Op.gte]: 1}}});
 		const ratings: { [id: string]: Array<number> } = {};
 		states.forEach(state => {
@@ -92,12 +93,12 @@ export class StateHelper {
 				['lastPlayed', 'DESC']
 			]
 		});
-		return states.sort((a, b) => Number(b.played) - Number(a.played)).map(a => a.destID);
+		return states.map(a => a.destID);
 	}
 
 	async getFavedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateRepo.find({
-			where: {user: userID, destType, faved: {[Op.gte]: 1}},
+			where: {user: userID, destType, faved: {[Op.ne]: null}},
 			order: [['faved', 'DESC']]
 		});
 		return states.map(a => a.destID);
