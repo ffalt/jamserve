@@ -37,6 +37,7 @@ const orm_1 = require("../../orm");
 const entities_1 = require("../orm/entities");
 const repositories_1 = require("../orm/repositories");
 const enum_registration_1 = require("../orm/enum-registration");
+const builder_1 = require("../../rest/builder");
 enum_registration_1.registerORMEnums();
 class Orm {
     constructor(em) {
@@ -74,6 +75,17 @@ class Orm {
     }
     async findInStreamTypes(id) {
         return this.findInReposTypes(id, [this.Track, this.Episode]);
+    }
+    async findListInStreamTypes(ids) {
+        const list = [];
+        for (const id of ids) {
+            const media = await this.findInStreamTypes(id);
+            if (!media) {
+                return Promise.reject(builder_1.NotFoundError());
+            }
+            list.push(media);
+        }
+        return list;
     }
     async findInImageTypes(id) {
         return this.findInReposTypes(id, [

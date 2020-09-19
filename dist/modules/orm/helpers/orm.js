@@ -26,8 +26,17 @@ class ORM {
     async dropSchema() {
         await this.sequelize.drop();
     }
+    async updateSchema() {
+        const queryInterface = this.sequelize.getQueryInterface();
+        const table = await queryInterface.describeTable('State');
+        if ((table === null || table === void 0 ? void 0 : table.played) && table.played.type !== 'INTEGER') {
+            await queryInterface.removeColumn('State', 'played');
+            await queryInterface.addColumn('State', 'played', { type: sequelize_1.DataTypes.INTEGER, allowNull: true });
+        }
+    }
     async ensureSchema() {
         await this.sequelize.sync();
+        await this.updateSchema();
     }
     async testConnection() {
         await this.sequelize.authenticate();

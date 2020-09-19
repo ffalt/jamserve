@@ -53,12 +53,14 @@ class StateHelper {
         return state || await this.emptyState(destID, destType, user);
     }
     async getHighestRatedDestIDs(destType, userID) {
-        const states = await this.stateRepo.find({ where: { user: userID, destType, rated: { [orm_1.Op.gte]: 1 } } });
-        const ratings = states.sort((a, b) => Number(b.rated) - Number(a.rated));
-        return ratings.map(a => a.destID);
+        const states = await this.stateRepo.find({
+            where: { user: userID, destType, rated: { [orm_1.Op.gte]: 1 } },
+            order: [['rated', 'DESC']]
+        });
+        return states.map(a => a.destID);
     }
     async getAvgHighestDestIDs(destType) {
-        const states = await this.stateRepo.find({ where: { destType } });
+        const states = await this.stateRepo.find({ where: { destType, rated: { [orm_1.Op.gte]: 1 } } });
         const ratings = {};
         states.forEach(state => {
             if (state.rated !== undefined) {
@@ -75,16 +77,28 @@ class StateHelper {
         return list.map(a => a.id);
     }
     async getFrequentlyPlayedDestIDs(destType, userID) {
-        const states = await this.stateRepo.find({ where: { user: userID, destType, played: { [orm_1.Op.gte]: 1 } } });
-        return states.sort((a, b) => Number(b.played) - Number(a.played)).map(a => a.destID);
+        const states = await this.stateRepo.find({
+            where: { user: userID, destType, played: { [orm_1.Op.gte]: 1 } },
+            order: [
+                ['played', 'DESC'],
+                ['lastPlayed', 'DESC']
+            ]
+        });
+        return states.map(a => a.destID);
     }
     async getFavedDestIDs(destType, userID) {
-        const states = await this.stateRepo.find({ where: { user: userID, destType, faved: { [orm_1.Op.gte]: 1 } } });
-        return states.sort((a, b) => Number(b.faved) - Number(a.faved)).map(a => a.destID);
+        const states = await this.stateRepo.find({
+            where: { user: userID, destType, faved: { [orm_1.Op.ne]: null } },
+            order: [['faved', 'DESC']]
+        });
+        return states.map(a => a.destID);
     }
     async getRecentlyPlayedDestIDs(destType, userID) {
-        const states = await this.stateRepo.find({ where: { user: userID, destType, played: { [orm_1.Op.gte]: 1 } } });
-        return states.sort((a, b) => Number(b.lastPlayed) - Number(a.lastPlayed)).map(a => a.destID);
+        const states = await this.stateRepo.find({
+            where: { user: userID, destType, played: { [orm_1.Op.gte]: 1 } },
+            order: [['lastPlayed', 'DESC']]
+        });
+        return states.map(a => a.destID);
     }
     async reportPlaying(destID, destType, user) {
         const state = await this.findOrCreate(destID, destType, user);

@@ -74,17 +74,8 @@ function generateBinaryClientCalls(call, name, paramType) {
         generateBinClientCall(call, name, paramType)
     ];
 }
-function generateClientCalls(call, method) {
+function generateRequestClientCalls(call, name, paramType, method) {
     var _a;
-    const name = call.methodName.replace(/\//g, '_');
-    const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
-    const paramType = clients_1.getCallParamType(call);
-    if (upload) {
-        return generateUploadClientCalls(call, name, paramType, upload);
-    }
-    if (call.binary) {
-        return generateBinaryClientCalls(call, name, paramType);
-    }
     const resultType = clients_1.getResultType(call);
     return [{
             name,
@@ -100,6 +91,18 @@ function generateClientCalls(call, method) {
             apiPath: (((_a = call.controllerClassMetadata) === null || _a === void 0 ? void 0 : _a.route) || '') + (call.route || ''),
             description: clients_1.callDescription(call)
         }];
+}
+function generateClientCalls(call, method) {
+    const name = call.methodName.replace(/\//g, '_');
+    const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
+    const paramType = clients_1.getCallParamType(call);
+    if (upload) {
+        return generateUploadClientCalls(call, name, paramType, upload);
+    }
+    if (call.binary) {
+        return generateBinaryClientCalls(call, name, paramType);
+    }
+    return generateRequestClientCalls(call, name, paramType, method);
 }
 async function writePartService(key, part, calls) {
     const l = calls.map(call => {

@@ -60,6 +60,9 @@ class EntityRepository {
     removeLater(entity) {
         this.em.removeLater(this.entityName, entity);
     }
+    removeListLater(entities) {
+        this.em.removeLater(this.entityName, entities);
+    }
     async flush() {
         return this.em.flush();
     }

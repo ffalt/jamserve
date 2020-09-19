@@ -35,8 +35,8 @@ __decorate([
     __metadata("design:type", Date)
 ], State.prototype, "faved", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], State.prototype, "played", void 0);
 __decorate([

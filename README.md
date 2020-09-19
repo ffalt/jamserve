@@ -9,7 +9,7 @@ An audio library server written in Typescript for NodeJS
 ## Preamble
 
 This is my current pet project to manage/stream/edit my own music collection.
-It's not ready yet a.k.a. work in progress. Everything is subject to change.
+It's not ready yet, a.k.a. work in progress. Everything is subject to change.
 Please do not use it for other than testing purposes until further notice.
 
 This is the backend development repository. See
@@ -40,7 +40,7 @@ Features:
 
      manual installation: available in PATH or [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe): *FFPROBE_PATH* and *FFMPEG_PATH*
 
-optional for meta data matching & mp3 repair support
+optional for metadata matching & mp3 repair support
 
 *   install [fpcalc](https://github.com/acoustid/chromaprint/releases/)
 
@@ -64,7 +64,9 @@ optional for meta data matching & mp3 repair support
 
 *   run command `npm install` in the root folder of this repository
 *   in folder `config`: 
-    copy file `firststart.config.dist.js` to `firststart.config.js` and add an admin user / add some media folders
+    copy file `firststart.config.dist.js` to `firststart.config.js` and 
+    add an admin user / add some media folders (can be changed on runtime via the frontend UI)
+*   set environment variables or create an environment variables file `.env`
 
 ## Environment Variables
 

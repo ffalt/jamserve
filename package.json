@@ -1,6 +1,6 @@
 {
   "name": "jamserve",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "ffalt",
   "description": "jamserve streaming audio server",
   "license": "MIT",
@@ -19,7 +19,7 @@
     "class-validator": "0.12.2",
     "common-password-checker": "0.1.0",
     "compression": "1.7.4",
-    "console-table-printer": "2.4.2",
+    "console-table-printer": "2.4.6",
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
     "d3": "6.1.1",
@@ -66,6 +66,7 @@
     "typescript-ioc": "3.2.2",
     "waveform-data": "3.3.4",
     "which": "2.0.2",
-    "winston": "3.3.3"
+    "winston": "3.3.3",
+    "yauzl": "^2.10.0"
   }
 }

@@ -64,6 +64,46 @@ function getResultType(call) {
     return resultType;
 }
 exports.getResultType = getResultType;
+function getCallParamArgType(param, metadata) {
+    const type = param.getType();
+    let typeString;
+    const optional = param.typeOptions.nullable ? '?' : '';
+    if (param.name === 'id') {
+        typeString = param.typeOptions.nullable ? 'JamParameters.MaybeID' : 'JamParameters.ID';
+    }
+    else if (type === Boolean) {
+        typeString = `{${param.name}${optional}: boolean}`;
+    }
+    else if (type === Number) {
+        typeString = `{${param.name}${optional}: number}`;
+    }
+    else if (type === String) {
+        typeString = `{${param.name}${optional}: string}`;
+    }
+    else {
+        const enumInfo = metadata.enums.find(e => e.enumObj === type);
+        if (enumInfo) {
+            typeString = `{${param.name}${optional}: ${enumInfo.name}`;
+        }
+        else {
+            const fObjectType = metadata.argumentTypes.find(it => it.target === type);
+            typeString = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) ? ('JamParameter.' + (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name)) : 'any';
+        }
+    }
+    if (param.typeOptions.array) {
+        typeString = 'Array<' + typeString + '>';
+    }
+    return typeString;
+}
+function getCallParamArgsType(param, metadata) {
+    const type = param.getType();
+    const fObjectType = metadata.argumentTypes.find(it => it.target === type);
+    let typeString = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) ? ('JamParameters.' + (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name)) : 'any';
+    if (param.typeOptions.array) {
+        typeString = 'Array<' + typeString + '>';
+    }
+    return typeString;
+}
 function getCallParamType(call) {
     var _a;
     const metadata = metadata_1.getMetadataStorage();
@@ -74,44 +114,10 @@ function getCallParamType(call) {
     else {
         for (const param of call.params) {
             if (param.kind === 'arg' && param.mode !== 'file') {
-                const type = param.getType();
-                let typeString = '';
-                const optional = param.typeOptions.nullable ? '?' : '';
-                if (param.name === 'id') {
-                    typeString = param.typeOptions.nullable ? 'JamParameters.MaybeID' : 'JamParameters.ID';
-                }
-                else if (type === Boolean) {
-                    typeString = `{${param.name}${optional}: boolean}`;
-                }
-                else if (type === Number) {
-                    typeString = `{${param.name}${optional}: number}`;
-                }
-                else if (type === String) {
-                    typeString = `{${param.name}${optional}: string}`;
-                }
-                else {
-                    const enumInfo = metadata.enums.find(e => e.enumObj === type);
-                    if (enumInfo) {
-                        typeString = `{${param.name}${optional}: ${enumInfo.name}`;
-                    }
-                    else {
-                        const fObjectType = metadata.argumentTypes.find(it => it.target === type);
-                        typeString = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) ? ('JamParameter.' + (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name)) : 'any';
-                    }
-                }
-                if (param.typeOptions.array) {
-                    typeString = 'Array<' + typeString + '>';
-                }
-                types.push(typeString);
+                types.push(getCallParamArgType(param, metadata));
             }
             else if (param.kind === 'args') {
-                const type = param.getType();
-                const fObjectType = metadata.argumentTypes.find(it => it.target === type);
-                let typeString = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) ? ('JamParameters.' + (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name)) : 'any';
-                if (param.typeOptions.array) {
-                    typeString = 'Array<' + typeString + '>';
-                }
-                types.push(typeString);
+                types.push(getCallParamArgsType(param, metadata));
             }
         }
     }

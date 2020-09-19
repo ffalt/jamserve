@@ -67,27 +67,33 @@ function registerEnums() {
     type_graphql_1.registerEnumType(enums_1.UserRole, { name: 'UserRole', description: 'User Roles' });
     type_graphql_1.registerEnumType(enums_1.ListType, { name: 'ListType', description: 'Type of List Request' });
 }
+function checkRole(role, context) {
+    switch (role) {
+        case enums_1.UserRole.admin:
+            if (!context.user.roleAdmin)
+                return false;
+            break;
+        case enums_1.UserRole.podcast:
+            if (!context.user.rolePodcast)
+                return false;
+            break;
+        case enums_1.UserRole.upload:
+            if (!context.user.roleUpload)
+                return false;
+            break;
+        case enums_1.UserRole.stream:
+            if (!context.user.roleStream)
+                return false;
+            break;
+        default:
+            return false;
+    }
+    return true;
+}
 exports.customAuthChecker = ({ root, args, context, info }, roles) => {
     for (const role of roles) {
-        switch (role) {
-            case enums_1.UserRole.admin:
-                if (!context.user.roleAdmin)
-                    return false;
-                break;
-            case enums_1.UserRole.podcast:
-                if (!context.user.rolePodcast)
-                    return context.user.rolePodcast;
-                break;
-            case enums_1.UserRole.upload:
-                if (!context.user.roleUpload)
-                    return context.user.roleUpload;
-                break;
-            case enums_1.UserRole.stream:
-                if (!context.user.roleStream)
-                    return context.user.roleStream;
-                break;
-            default:
-                return false;
+        if (!checkRole(role, context)) {
+            return false;
         }
     }
     return true;

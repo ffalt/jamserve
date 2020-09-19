@@ -53,19 +53,8 @@ let PlaylistService = class PlaylistService {
         await orm.Playlist.persistAndFlush(playlist);
         return playlist;
     }
-    async update(orm, args, playlist) {
-        const ids = args.mediaIDs || [];
-        const mediaList = [];
-        for (const id of ids) {
-            const media = await orm.findInStreamTypes(id);
-            if (!media) {
-                return Promise.reject(rest_1.NotFoundError());
-            }
-            mediaList.push(media);
-        }
-        playlist.name = (args.name !== undefined) ? args.name : playlist.name;
-        playlist.isPublic = (args.isPublic !== undefined) ? args.isPublic : playlist.isPublic;
-        playlist.comment = (args.comment !== undefined) ? args.comment : playlist.comment;
+    async updateEntries(orm, ids, args, playlist) {
+        const mediaList = await orm.findListInStreamTypes(ids);
         const oldEntries = (await playlist.entries.getItems()).sort((a, b) => b.position - a.position);
         let duration = 0;
         let position = 1;
@@ -82,10 +71,14 @@ let PlaylistService = class PlaylistService {
             position++;
             orm.PlaylistEntry.persistLater(entry);
         }
-        playlist.duration = duration;
-        for (const o of oldEntries) {
-            orm.PlaylistEntry.removeLater(o);
-        }
+        orm.PlaylistEntry.removeListLater(oldEntries);
+        return duration;
+    }
+    async update(orm, args, playlist) {
+        playlist.name = (args.name !== undefined) ? args.name : playlist.name;
+        playlist.isPublic = (args.isPublic !== undefined) ? args.isPublic : playlist.isPublic;
+        playlist.comment = (args.comment !== undefined) ? args.comment : playlist.comment;
+        playlist.duration = await this.updateEntries(orm, args.mediaIDs || [], args, playlist);
         orm.Playlist.persistLater(playlist);
         await orm.em.flush();
     }
