@@ -17,8 +17,8 @@ export class State extends Base {
 	@Property(() => ORM_DATETIME, {nullable: true})
 	faved?: Date;
 
-	@Field(() => Date, {nullable: true})
-	@Property(() => ORM_DATETIME, {nullable: true})
+	@Field(() => Int, {nullable: true})
+	@Property(() => ORM_INT, {nullable: true})
 	played?: number;
 
 	@Field(() => Int, {nullable: true})

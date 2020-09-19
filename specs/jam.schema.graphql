@@ -396,7 +396,7 @@ type StateQL {
   createdAt: DateTime!
   updatedAt: DateTime!
   faved: DateTime
-  played: DateTime
+  played: Int
   rated: Int
   lastPlayed: DateTime
 }

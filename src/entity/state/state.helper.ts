@@ -93,8 +93,10 @@ export class StateHelper {
 	}
 
 	async getRecentlyPlayedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
-		const states = await this.stateRepo.find({where: {user: userID, destType, played: {[Op.gte]: 1}}});
-		return states.sort((a, b) => Number(b.lastPlayed) - Number(a.lastPlayed)).map(a => a.destID);
+		return await this.stateRepo.findIDs({
+			where: {user: userID, destType, played: {[Op.gte]: 1}},
+			order: [['lastPlayed', 'DESC']]
+		});
 	}
 
 	async reportPlaying(destID: string, destType: DBObjectType, user: User): Promise<State> {

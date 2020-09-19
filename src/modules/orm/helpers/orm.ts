@@ -1,5 +1,5 @@
 import {EntityCache, EntityManager} from './manager';
-import {Sequelize} from 'sequelize';
+import {DataTypes, Sequelize} from 'sequelize';
 import {getMetadataStorage} from '../metadata';
 import {ORMConfig} from '../definitions/config';
 import {ModelBuilder} from '../builder/schema';
@@ -28,8 +28,19 @@ export class ORM {
 		await this.sequelize.drop();
 	}
 
+	async updateSchema(): Promise<void> {
+		// TODO: run migration only if needed
+		const queryInterface = this.sequelize.getQueryInterface();
+		const table = await queryInterface.describeTable('State');
+		if (table?.played && table.played.type !== 'INTEGER') {
+			await queryInterface.removeColumn('State', 'played');
+			await queryInterface.addColumn('State', 'played', {type: DataTypes.INTEGER, allowNull: true});
+		}
+	}
+
 	async ensureSchema(): Promise<void> {
 		await this.sequelize.sync();
+		await this.updateSchema();
 	}
 
 	async testConnection(): Promise<void> {
