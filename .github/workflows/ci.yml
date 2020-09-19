@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     name: CI
     container:
-      image: ffalt/jam-base
+      image: ffalt/jam-test
     env:
       JAM_DB_HOST: postgres
     steps:
