@@ -64,7 +64,8 @@ optional for meta data matching & mp3 repair support
 
 *   run command `npm install` in the root folder of this repository
 *   in folder `config`: 
-    copy file `firststart.config.dist.js` to `firststart.config.js` and add an admin user / add some media folders
+    copy file `firststart.config.dist.js` to `firststart.config.js` and add an admin user / add some media folders (can be changed on runtime via UI)
+*   set environment variables or create an environment variables file `.env`
 
 ## Environment Variables
 
