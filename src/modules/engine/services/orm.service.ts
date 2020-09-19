@@ -51,6 +51,7 @@ import {ORMRepositories} from '../orm/repositories';
 import {registerORMEnums} from '../orm/enum-registration';
 import {ConfigService} from './config.service';
 import {Options} from 'sequelize';
+import {NotFoundError} from '../../rest/builder';
 
 registerORMEnums();
 
@@ -113,6 +114,18 @@ export class Orm {
 
 	public async findInStreamTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
 		return this.findInReposTypes(id, [this.Track, this.Episode]);
+	}
+
+	public async findListInStreamTypes(ids: Array<string>): Promise<Array<{ obj: Base; objType: DBObjectType }>> {
+		const list = [];
+		for (const id of ids) {
+			const media = await this.findInStreamTypes(id);
+			if (!media) {
+				return Promise.reject(NotFoundError());
+			}
+			list.push(media);
+		}
+		return list;
 	}
 
 	public async findInImageTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {

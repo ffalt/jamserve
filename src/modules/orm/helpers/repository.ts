@@ -81,6 +81,10 @@ export class EntityRepository<Entity extends IDEntity<Entity>> {
 		this.em.removeLater(this.entityName, entity);
 	}
 
+	removeListLater(entities: Array<Entity>): void {
+		this.em.removeLater(this.entityName, entities);
+	}
+
 	async flush(): Promise<void> {
 		return this.em.flush();
 	}
