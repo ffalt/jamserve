@@ -16,8 +16,8 @@ jobs:
       JAM_DB_HOST: postgres
       NODE_ENV: development
     steps:
-      - run: git log --pretty=oneline
       - uses: actions/checkout@v2
+      - run: git log --pretty=oneline
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
