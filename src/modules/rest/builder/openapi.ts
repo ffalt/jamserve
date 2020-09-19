@@ -393,7 +393,7 @@ class OpenApiBuilder {
 	build(): OpenAPIObject {
 		const metadata = getMetadataStorage();
 		const openapi: OpenAPIObject = this.buildOpenApiBase(JAMAPI_VERSION);
-		const schemas = {
+		const schemas: Schemas = {
 			'ID': {type: 'string', format: 'uuid'},
 			'JSON': {type: 'object'}
 		};
