@@ -77,33 +77,38 @@ function registerEnums(): void {
 	registerEnumType(ListType, {name: 'ListType', description: 'Type of List Request'});
 }
 
-export const customAuthChecker: AuthChecker<Context> = (
-	{root, args, context, info},
-	roles,
-) => {
-	// here you can read user from context
-	// and check his permission in db against `roles` argument
-	// that comes from `@Authorized`, eg. ["ADMIN", "MODERATOR"]
-	for (const role of roles) {
-		switch (role) {
-			case UserRole.admin:
-				if (!context.user.roleAdmin) return false;
-				break;
-			case UserRole.podcast:
-				if (!context.user.rolePodcast) return context.user.rolePodcast;
-				break;
-			case UserRole.upload:
-				if (!context.user.roleUpload) return context.user.roleUpload;
-				break;
-			case UserRole.stream:
-				if (!context.user.roleStream) return context.user.roleStream;
-				break;
-			default:
-				return false;
-		}
+function checkRole(role: string, context: Context): boolean {
+	switch (role) {
+		case UserRole.admin:
+			if (!context.user.roleAdmin) return false;
+			break;
+		case UserRole.podcast:
+			if (!context.user.rolePodcast) return false;
+			break;
+		case UserRole.upload:
+			if (!context.user.roleUpload) return false;
+			break;
+		case UserRole.stream:
+			if (!context.user.roleStream) return false;
+			break;
+		default:
+			return false;
 	}
 	return true;
-};
+}
+
+export const customAuthChecker: AuthChecker<Context> =
+	({root, args, context, info}, roles) => {
+		// here you can read user from context
+		// and check his permission in db against `roles` argument
+		// that comes from `@Authorized`, eg. ["ADMIN", "MODERATOR"]
+		for (const role of roles) {
+			if (!checkRole(role, context)) {
+				return false;
+			}
+		}
+		return true;
+	};
 
 export async function buildGraphQlSchema(): Promise<GraphQLSchema> {
 	registerEnums();
