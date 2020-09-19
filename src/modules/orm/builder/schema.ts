@@ -84,98 +84,117 @@ export class ModelBuilder {
 			return;
 		}
 		for (const sourceField of sourceEntity.fields) {
-			const opts = sourceField.typeOptions;
-			const relation = (opts as RelationOptions).relation;
-			if (relation) {
-				const type = sourceField.getType();
-				const destEntity = this.metadata.entities.find(it => it.target === type);
-				if (destEntity) {
-					const destModel = this.modelMap.get(destEntity.name);
-					if (destModel) {
-						switch (relation) {
-							case 'one2many': {
-								const o2m = (opts as OneToManyFieldRelation<any>);
-								const destField = this.resolveMappedBy(o2m, sourceEntity, sourceField, destEntity);
-								if ((destField.typeOptions as RelationOptions).relation !== 'many2one') {
-									throw new Error(`Invalid ManyToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
-								}
-								// console.log(destModel.name + ' belongsTo ' + sourceModel.name);
-								sourceModel.hasMany(destModel, {
-									type: DataTypes.UUID,
-									as: sourceField.name + 'ORM',
-									onDelete: o2m.onDelete,
-									foreignKey: destField.name
-								});
-								destModel.belongsTo(sourceModel, {
-									type: DataTypes.UUID,
-									as: destField.name + 'ORM',
-									// onDelete: o2m.onDelete,
-									foreignKey: {
-										name: destField.name,
-										allowNull: o2m.nullable,
-									}
-								});
-								break;
-							}
-							case 'many2one': {
-								const m2o = (opts as ManyToOneFieldRelation<any>);
-								const destField = this.resolveMappedBy(m2o, sourceEntity, sourceField, destEntity);
-								if ((destField.typeOptions as RelationOptions).relation !== 'one2many') {
-									throw new Error(`Invalid OneToMany Relation Spec for ${destEntity.name}.${destField.name}.`);
-								}
-								// is handled by opposite side
-								break;
-							}
-							case 'many2many': {
-								const m2m = (opts as ManyToManyFieldRelation<any>);
-								const destField = this.resolveMappedBy(m2m, sourceEntity, sourceField, destEntity);
-								if ((destField.typeOptions as RelationOptions).relation !== 'many2many') {
-									throw new Error(`Invalid ManyToMany Relation Spec for ${destEntity.name}.${destField.name}.`);
-								}
-								const through = [sourceEntity, destEntity].sort((a, b) => a.name.localeCompare(b.name)).map(f => f.name).join('_to_');
-								destModel.belongsToMany(sourceModel, {through, as: destField.name + 'ORM', foreignKey: sourceField.name});
-								break;
-							}
-							case 'one2one': {
-								const o2o = (opts as OneToOneFieldRelation<any>);
-								const destField = this.resolveMappedBy(o2o, sourceEntity, sourceField, destEntity);
-								if ((destField.typeOptions as RelationOptions).relation !== 'one2one') {
-									throw new Error(`Invalid OneToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
-								}
-								if (!o2o.owner && !(destField.typeOptions as OwnerOptions).owner) {
-									throw new Error(`Missing owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destEntity.name}.${destField.name}.`);
-								}
-								if (o2o.owner && (destField.typeOptions as OwnerOptions).owner) {
-									throw new Error(`Invalid both sides owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destEntity.name}.${destField.name}.`);
-								}
-								if (o2o.owner) {
-									sourceModel.belongsTo(destModel, {
-										as: sourceField.name + 'ORM',
-										foreignKey:
-											{
-												allowNull: o2o.nullable,
-												name: sourceField.name
-											}
-									});
-									// destModel.hasOne(sourceModel, {
-									// 	as: sourceField.name // + 'ORM',
-										// foreignKey:
-										// 	{
-										// 		allowNull: o2o.nullable,
-										// 		name: destField.name,
-										// 		as: destField.name + 'ORM'
-										// 	}
-									// });
-									// console.log(sourceModel.name + ' belongsTo '+destModel.name);
-									// console.log(destModel.name + ' hasOne '+sourceModel.name);
-								}
-								break;
-							}
-						}
+			const opts = sourceField.typeOptions as RelationOptions;
+			if (opts.relation) {
+				this.buildRelation(opts, sourceEntity, sourceField, sourceModel);
+			}
+		}
+	}
+
+	private buildRelation(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, sourceModel: any) {
+		const type = sourceField.getType();
+		const destEntity = this.metadata.entities.find(it => it.target === type);
+		if (destEntity) {
+			const destModel = this.modelMap.get(destEntity.name);
+			if (destModel) {
+				switch (opts.relation) {
+					case 'one2many': {
+						this.oneToMany(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel);
+						break;
+					}
+					case 'many2one': {
+						this.manyToOne(opts, sourceEntity, sourceField, destEntity);
+						break;
+					}
+					case 'many2many': {
+						this.manyToMany(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel);
+						break;
+					}
+					case 'one2one': {
+						this.oneToOne(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel);
+						break;
 					}
 				}
 			}
 		}
+	}
+
+	private oneToOne(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destEntity: EntityMetadata, sourceModel: any, destModel: any) {
+		const o2o = (opts as OneToOneFieldRelation<any>);
+		const destField = this.resolveMappedBy(o2o, sourceEntity, sourceField, destEntity);
+		if ((destField.typeOptions as RelationOptions).relation !== 'one2one') {
+			throw new Error(`Invalid OneToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
+		}
+		if (!o2o.owner && !(destField.typeOptions as OwnerOptions).owner) {
+			throw new Error(`Missing owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destEntity.name}.${destField.name}.`);
+		}
+		if (o2o.owner && (destField.typeOptions as OwnerOptions).owner) {
+			throw new Error(`Invalid both sides owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destEntity.name}.${destField.name}.`);
+		}
+		if (o2o.owner) {
+			sourceModel.belongsTo(destModel, {
+				as: sourceField.name + 'ORM',
+				foreignKey:
+					{
+						allowNull: o2o.nullable,
+						name: sourceField.name
+					}
+			});
+			// destModel.hasOne(sourceModel, {
+			// 	as: sourceField.name // + 'ORM',
+			// foreignKey:
+			// 	{
+			// 		allowNull: o2o.nullable,
+			// 		name: destField.name,
+			// 		as: destField.name + 'ORM'
+			// 	}
+			// });
+			// console.log(sourceModel.name + ' belongsTo '+destModel.name);
+			// console.log(destModel.name + ' hasOne '+sourceModel.name);
+		}
+	}
+
+	private manyToMany(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destEntity: EntityMetadata, sourceModel: any, destModel: any) {
+		const m2m = (opts as ManyToManyFieldRelation<any>);
+		const destField = this.resolveMappedBy(m2m, sourceEntity, sourceField, destEntity);
+		if ((destField.typeOptions as RelationOptions).relation !== 'many2many') {
+			throw new Error(`Invalid ManyToMany Relation Spec for ${destEntity.name}.${destField.name}.`);
+		}
+		const through = [sourceEntity, destEntity].sort((a, b) => a.name.localeCompare(b.name)).map(f => f.name).join('_to_');
+		destModel.belongsToMany(sourceModel, {through, as: destField.name + 'ORM', foreignKey: sourceField.name});
+	}
+
+	private manyToOne(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destEntity: EntityMetadata) {
+		const m2o = (opts as ManyToOneFieldRelation<any>);
+		const destField = this.resolveMappedBy(m2o, sourceEntity, sourceField, destEntity);
+		if ((destField.typeOptions as RelationOptions).relation !== 'one2many') {
+			throw new Error(`Invalid OneToMany Relation Spec for ${destEntity.name}.${destField.name}.`);
+		}
+		// is handled by opposite side
+	}
+
+	private oneToMany(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destEntity: EntityMetadata, sourceModel: any, destModel: any) {
+		const o2m = (opts as OneToManyFieldRelation<any>);
+		const destField = this.resolveMappedBy(o2m, sourceEntity, sourceField, destEntity);
+		if ((destField.typeOptions as RelationOptions).relation !== 'many2one') {
+			throw new Error(`Invalid ManyToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
+		}
+		// console.log(destModel.name + ' belongsTo ' + sourceModel.name);
+		sourceModel.hasMany(destModel, {
+			type: DataTypes.UUID,
+			as: sourceField.name + 'ORM',
+			onDelete: o2m.onDelete,
+			foreignKey: destField.name
+		});
+		destModel.belongsTo(sourceModel, {
+			type: DataTypes.UUID,
+			as: destField.name + 'ORM',
+			// onDelete: o2m.onDelete,
+			foreignKey: {
+				name: destField.name,
+				allowNull: o2m.nullable,
+			}
+		});
 	}
 
 	private async buildEntityModel(entity: EntityMetadata): Promise<void> {

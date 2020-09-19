@@ -76,16 +76,7 @@ function generateBinaryClientCalls(call: MethodMetadata, name: string, paramType
 	];
 }
 
-function generateClientCalls(call: MethodMetadata, method: 'post' | 'get'): Array<MustacheDataClientCallFunction> {
-	const name = call.methodName.replace(/\//g, '_');
-	const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
-	const paramType = getCallParamType(call);
-	if (upload) {
-		return generateUploadClientCalls(call, name, paramType, upload as RestParamMetadata);
-	}
-	if (call.binary) {
-		return generateBinaryClientCalls(call, name, paramType);
-	}
+function generateRequestClientCalls(call: MethodMetadata, name: string, paramType: string, method: 'post' | 'get'): Array<MustacheDataClientCallFunction> {
 	const resultType = getResultType(call);
 	return [{
 		name,
@@ -102,6 +93,19 @@ function generateClientCalls(call: MethodMetadata, method: 'post' | 'get'): Arra
 		apiPath: (call.controllerClassMetadata?.route || '') + (call.route || ''),
 		description: callDescription(call)
 	}];
+}
+
+function generateClientCalls(call: MethodMetadata, method: 'post' | 'get'): Array<MustacheDataClientCallFunction> {
+	const name = call.methodName.replace(/\//g, '_');
+	const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
+	const paramType = getCallParamType(call);
+	if (upload) {
+		return generateUploadClientCalls(call, name, paramType, upload as RestParamMetadata);
+	}
+	if (call.binary) {
+		return generateBinaryClientCalls(call, name, paramType);
+	}
+	return generateRequestClientCalls(call, name, paramType, method);
 }
 
 async function writePartService(key: string, part: string, calls: Array<MustacheDataClientCallFunction>): Promise<{ name: string; content: string }> {
