@@ -59,13 +59,15 @@ export class StateHelper {
 	}
 
 	async getHighestRatedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
-		const states = await this.stateRepo.find({where: {user: userID, destType, rated: {[Op.gte]: 1}}});
-		const ratings = states.sort((a, b) => Number(b.rated) - Number(a.rated));
-		return ratings.map(a => a.destID);
+		const states = await this.stateRepo.find({
+			where: {user: userID, destType, rated: {[Op.gte]: 1}},
+			order: [['rated', 'DESC']]
+		});
+		return states.map(a => a.destID);
 	}
 
 	async getAvgHighestDestIDs(destType: DBObjectType): Promise<Array<string>> {
-		const states = await this.stateRepo.find({where: {destType}});
+		const states = await this.stateRepo.find({where: {destType, rated: {[Op.gte]: 1}}});
 		const ratings: { [id: string]: Array<number> } = {};
 		states.forEach(state => {
 			if (state.rated !== undefined) {
@@ -83,20 +85,30 @@ export class StateHelper {
 	}
 
 	async getFrequentlyPlayedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
-		const states = await this.stateRepo.find({where: {user: userID, destType, played: {[Op.gte]: 1}}});
+		const states = await this.stateRepo.find({
+			where: {user: userID, destType, played: {[Op.gte]: 1}},
+			order: [
+				['played', 'DESC'],
+				['lastPlayed', 'DESC']
+			]
+		});
 		return states.sort((a, b) => Number(b.played) - Number(a.played)).map(a => a.destID);
 	}
 
 	async getFavedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
-		const states = await this.stateRepo.find({where: {user: userID, destType, faved: {[Op.gte]: 1}}});
-		return states.sort((a, b) => Number(b.faved) - Number(a.faved)).map(a => a.destID);
+		const states = await this.stateRepo.find({
+			where: {user: userID, destType, faved: {[Op.gte]: 1}},
+			order: [['faved', 'DESC']]
+		});
+		return states.map(a => a.destID);
 	}
 
 	async getRecentlyPlayedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
-		return await this.stateRepo.findIDs({
+		const states = await this.stateRepo.find({
 			where: {user: userID, destType, played: {[Op.gte]: 1}},
 			order: [['lastPlayed', 'DESC']]
 		});
+		return states.map(a => a.destID);
 	}
 
 	async reportPlaying(destID: string, destType: DBObjectType, user: User): Promise<State> {
