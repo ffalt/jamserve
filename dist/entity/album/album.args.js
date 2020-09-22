@@ -33,6 +33,10 @@ __decorate([
     decorators_1.ObjField({ nullable: true, description: 'include extended meta data on album(s)', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesAlbumArgs.prototype, "albumIncInfo", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include genre on album(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesAlbumArgs.prototype, "albumIncGenres", void 0);
 IncludesAlbumArgs = __decorate([
     decorators_1.ObjParamsType()
 ], IncludesAlbumArgs);
@@ -128,6 +132,11 @@ __decorate([
     decorators_1.ObjField(() => [String], { nullable: true, description: 'filter by Genres', example: example_consts_1.examples.genres }),
     __metadata("design:type", Array)
 ], AlbumFilterArgs.prototype, "genres", void 0);
+__decorate([
+    type_graphql_1.Field(() => [type_graphql_1.ID], { nullable: true }),
+    decorators_1.ObjField(() => [String], { nullable: true, description: 'filter by Genre Ids', isID: true }),
+    __metadata("design:type", Array)
+], AlbumFilterArgs.prototype, "genreIDs", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     decorators_1.ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: example_consts_1.examples.timestamp }),

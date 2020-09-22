@@ -38,6 +38,7 @@ const entities_1 = require("../orm/entities");
 const repositories_1 = require("../orm/repositories");
 const enum_registration_1 = require("../orm/enum-registration");
 const builder_1 = require("../../rest/builder");
+const genre_1 = require("../../../entity/genre/genre");
 enum_registration_1.registerORMEnums();
 class Orm {
     constructor(em) {
@@ -63,6 +64,7 @@ class Orm {
         this.Tag = em.getRepository(tag_1.Tag);
         this.Track = em.getRepository(track_1.Track);
         this.User = em.getRepository(user_1.User);
+        this.Genre = em.getRepository(genre_1.Genre);
     }
     async findInReposTypes(id, repos) {
         for (const repo of repos) {
@@ -94,6 +96,7 @@ class Orm {
             this.Artwork,
             this.Episode,
             this.Folder,
+            this.Genre,
             this.Root,
             this.Playlist,
             this.Podcast,
@@ -124,6 +127,7 @@ class Orm {
             this.Episode,
             this.Folder,
             this.Root,
+            this.Genre,
             this.Playlist,
             this.Podcast,
             this.Series,

@@ -31,14 +31,6 @@ class MetaMerger {
         const artistName = metaStatBuilder.mostUsed('artist') || consts_1.cUnknownArtist;
         return { artistName, slug: slug_1.slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name };
     }
-    async collectArtistGenres(artist) {
-        const genres = new Set();
-        const albums = await artist.albums.getItems();
-        for (const album of albums) {
-            album.genres.forEach(genre => genres.add(genre));
-        }
-        return [...genres];
-    }
     async collectArtistAlbumTypes(artist) {
         const types = new Set();
         const albums = await artist.albums.getItems();
@@ -122,6 +114,8 @@ class MetaMerger {
             this.changes.albums.updated.appendIDs(albums);
             const series = await this.orm.Series.findIDsFilter({ trackIDs });
             this.changes.series.updated.appendIDs(series);
+            const genres = await this.orm.Genre.findIDsFilter({ trackIDs });
+            this.changes.genres.updated.appendIDs(genres);
         }
         if (this.orm.em.hasChanges()) {
             log.debug('Syncing Track/Folder Changes to DB');
@@ -137,7 +131,8 @@ class MetaMerger {
         const currentAlbumArtistTracks = await this.orm.Track.findFilter({ albumArtistIDs: [id] });
         const albumTracks = currentAlbumArtistTracks.filter(t => !this.changes.tracks.removed.has(t));
         await artist.albumTracks.set(albumTracks);
-        if (tracks.length === 0 && albumTracks.length === 0) {
+        const allTracks = tracks.concat(albumTracks);
+        if (allTracks.length === 0) {
             this.changes.artists.removed.add(artist);
             this.changes.artists.updated.delete(artist);
         }
@@ -157,7 +152,14 @@ class MetaMerger {
                 }
             }
             await artist.folders.set(folders);
-            artist.genres = await this.collectArtistGenres(artist);
+            const genreMap = new Map();
+            for (const track of allTracks) {
+                const genres = await track.genres.getItems();
+                for (const genre of genres) {
+                    genreMap.set(genre.id, genre);
+                }
+            }
+            await artist.genres.set([...genreMap.values()]);
             artist.albumTypes = await this.collectArtistAlbumTypes(artist);
             this.orm.Artist.persistLater(artist);
         }
@@ -231,24 +233,27 @@ class MetaMerger {
                     }
                 }
                 await album.folders.set(folders);
-                const genres = new Set();
                 const metaStatBuilder = new stats_builder_1.MetaStatBuilder();
                 for (const folder of folders) {
-                    folder.genres.forEach(genre => genres.add(genre));
                     metaStatBuilder.statID('albumType', folder.albumType);
                 }
-                album.genres = [...genres];
                 album.albumType = metaStatBuilder.mostUsed('albumType') || enums_1.AlbumType.unknown;
                 let duration = 0;
+                const genreMap = new Map();
                 for (const track of tracks) {
                     const tag = await track.tag.get();
                     duration += ((tag === null || tag === void 0 ? void 0 : tag.mediaDuration) || 0);
                     metaStatBuilder.statID('seriesNr', tag === null || tag === void 0 ? void 0 : tag.seriesNr);
                     metaStatBuilder.statNumber('year', tag === null || tag === void 0 ? void 0 : tag.year);
+                    const genres = await track.genres.getItems();
+                    for (const genre of genres) {
+                        genreMap.set(genre.id, genre);
+                    }
                 }
                 album.duration = duration;
                 album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
                 album.year = metaStatBuilder.mostUsedNumber('year');
+                await album.genres.set([...genreMap.values()]);
                 this.orm.Album.persistLater(album);
             }
             if (this.orm.em.changesCount() > 500) {
@@ -261,6 +266,32 @@ class MetaMerger {
             await this.orm.em.flush();
         }
     }
+    async applyChangedGenresMeta() {
+        const genreIDs = this.changes.genres.updated.ids();
+        for (const id of genreIDs) {
+            const genre = await this.orm.Genre.oneOrFailByID(id);
+            log.debug('Updating genre', genre.name);
+            const currentTracks = await this.orm.Track.findFilter({ genreIDs: [id] });
+            const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
+            if (tracks.length === 0) {
+                this.changes.genres.removed.add(genre);
+                this.changes.genres.updated.delete(genre);
+                this.orm.Genre.removeLater(genre);
+            }
+            else {
+                await genre.tracks.set(tracks);
+                this.orm.Genre.persistLater(genre);
+            }
+            if (this.orm.em.changesCount() > 500) {
+                log.debug('Syncing new Genre Meta to DB');
+                await this.orm.em.flush();
+            }
+        }
+        if (this.orm.em.hasChanges()) {
+            log.debug('Syncing new Genre Meta to DB');
+            await this.orm.em.flush();
+        }
+    }
     async mergeMeta() {
         this.root = await this.orm.Root.oneOrFailByID(this.rootID);
         this.cache = new meta_cache_1.MetaMergerCache(this.orm, this.changes, this.root);
@@ -269,6 +300,7 @@ class MetaMerger {
         await this.applyChangedAlbumMeta();
         await this.applyChangedArtistsMeta();
         await this.applyChangedSeriesMeta();
+        await this.applyChangedGenresMeta();
     }
 }
 exports.MetaMerger = MetaMerger;

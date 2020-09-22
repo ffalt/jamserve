@@ -70,10 +70,11 @@ class AlbumRepository extends base_repository_1.BaseRepository {
             { createdAt: orm_1.QHelper.gte(filter.since) },
             { artist: orm_1.QHelper.inOrEqual(filter.artistIDs) },
             { year: orm_1.QHelper.lte(filter.toYear) },
-            { year: orm_1.QHelper.gte(filter.fromYear) },
-            ...orm_1.QHelper.inStringArray('genres', filter.genres)
+            { year: orm_1.QHelper.gte(filter.fromYear) }
         ]);
         result.include = orm_1.QHelper.includeQueries([
+            { genres: [{ id: orm_1.QHelper.inOrEqual(filter.genreIDs) }] },
+            { genres: [{ name: orm_1.QHelper.inOrEqual(filter.genres) }] },
             { tracks: [{ id: orm_1.QHelper.inOrEqual(filter.trackIDs) }] },
             { series: [{ id: orm_1.QHelper.inOrEqual(filter.seriesIDs) }] },
             { artist: [{ name: orm_1.QHelper.eq(filter.artist) }] },

@@ -17,6 +17,7 @@ const metadata_model_1 = require("../metadata/metadata.model");
 const decorators_1 = require("../../modules/rest/decorators");
 const example_consts_1 = require("../../modules/engine/rest/example.consts");
 const artist_model_1 = require("../artist/artist.model");
+const genre_model_1 = require("../genre/genre.model");
 let AlbumBase = class AlbumBase extends base_model_1.Base {
 };
 __decorate([
@@ -44,7 +45,7 @@ __decorate([
     __metadata("design:type", Array)
 ], AlbumBase.prototype, "trackIDs", void 0);
 __decorate([
-    decorators_1.ObjField(() => [String], { nullable: true, description: 'List of Genres', example: example_consts_1.examples.genres }),
+    decorators_1.ObjField(() => [genre_model_1.GenreBase], { nullable: true, description: 'Genres' }),
     __metadata("design:type", Array)
 ], AlbumBase.prototype, "genres", void 0);
 __decorate([
@@ -114,7 +115,7 @@ __decorate([
     __metadata("design:type", String)
 ], AlbumIndexEntry.prototype, "name", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Name', example: 'Primus' }),
+    decorators_1.ObjField({ description: 'Artist', example: 'Primus' }),
     __metadata("design:type", String)
 ], AlbumIndexEntry.prototype, "artist", void 0);
 __decorate([

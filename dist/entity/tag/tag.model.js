@@ -14,6 +14,7 @@ const decorators_1 = require("../../modules/rest/decorators");
 const base_model_1 = require("../base/base.model");
 const example_consts_1 = require("../../modules/engine/rest/example.consts");
 const enums_1 = require("../../types/enums");
+const genre_model_1 = require("../genre/genre.model");
 let MediaTagRaw = class MediaTagRaw {
 };
 __decorate([
@@ -79,7 +80,7 @@ __decorate([
     __metadata("design:type", String)
 ], MediaTag.prototype, "artist", void 0);
 __decorate([
-    decorators_1.ObjField(() => [String], { nullable: true, description: 'Genres', example: ['Experimental Rock'] }),
+    decorators_1.ObjField(() => [String], { nullable: true, description: 'Genres', example: example_consts_1.examples.genres }),
     __metadata("design:type", Array)
 ], MediaTag.prototype, "genres", void 0);
 __decorate([
@@ -153,21 +154,25 @@ __decorate([
     __metadata("design:type", MediaInfo)
 ], MediaBase.prototype, "media", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Artist Id', nullable: true, isID: true }),
+    decorators_1.ObjField({ nullable: true, description: 'Artist Id', isID: true }),
     __metadata("design:type", String)
 ], MediaBase.prototype, "artistID", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Album Artist Id', nullable: true, isID: true }),
+    decorators_1.ObjField({ nullable: true, description: 'Album Artist Id', isID: true }),
     __metadata("design:type", String)
 ], MediaBase.prototype, "albumArtistID", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Album Id', nullable: true, isID: true }),
+    decorators_1.ObjField({ nullable: true, description: 'Album Id', isID: true }),
     __metadata("design:type", String)
 ], MediaBase.prototype, "albumID", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Series Id', nullable: true, isID: true }),
+    decorators_1.ObjField({ nullable: true, description: 'Series Id', isID: true }),
     __metadata("design:type", String)
 ], MediaBase.prototype, "seriesID", void 0);
+__decorate([
+    decorators_1.ObjField(() => [genre_model_1.GenreBase], { nullable: true, description: 'Genres' }),
+    __metadata("design:type", Array)
+], MediaBase.prototype, "genres", void 0);
 MediaBase = __decorate([
     decorators_1.ResultType({ description: 'Media Base' })
 ], MediaBase);

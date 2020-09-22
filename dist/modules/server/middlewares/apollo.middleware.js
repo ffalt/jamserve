@@ -56,6 +56,7 @@ function registerEnums() {
     type_graphql_1.registerEnumType(enums_1.SessionOrderFields, { name: 'SessionOrderFields' });
     type_graphql_1.registerEnumType(enums_1.EpisodeOrderFields, { name: 'EpisodeOrderFields' });
     type_graphql_1.registerEnumType(enums_1.AlbumOrderFields, { name: 'AlbumOrderFields' });
+    type_graphql_1.registerEnumType(enums_1.GenreOrderFields, { name: 'GenreOrderFields' });
     type_graphql_1.registerEnumType(enums_1.PodcastStatus, { name: 'PodcastStatus' });
     type_graphql_1.registerEnumType(enums_1.AudioFormatType, { name: 'AudioFormatType' });
     type_graphql_1.registerEnumType(enums_1.ArtworkImageType, { name: 'ArtworkImageType' });

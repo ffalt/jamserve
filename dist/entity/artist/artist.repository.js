@@ -38,10 +38,11 @@ class ArtistRepository extends base_repository_1.BaseRepository {
             { mbArtistID: orm_1.QHelper.inOrEqual(filter.mbArtistIDs) },
             { mbArtistID: orm_1.QHelper.neq(filter.notMbArtistID) },
             { createdAt: orm_1.QHelper.gte(filter.since) },
-            ...orm_1.QHelper.inStringArray('genres', filter.genres),
             ...orm_1.QHelper.inStringArray('albumTypes', filter.albumTypes)
         ]);
         result.include = orm_1.QHelper.includeQueries([
+            { genres: [{ name: orm_1.QHelper.inOrEqual(filter.genres) }] },
+            { genres: [{ id: orm_1.QHelper.inOrEqual(filter.genreIDs) }] },
             { tracks: [{ id: orm_1.QHelper.inOrEqual(filter.trackIDs) }] },
             { albumTracks: [{ id: orm_1.QHelper.inOrEqual(filter.albumTrackIDs) }] },
             { series: [{ id: orm_1.QHelper.inOrEqual(filter.seriesIDs) }] },

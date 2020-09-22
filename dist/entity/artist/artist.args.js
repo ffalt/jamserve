@@ -49,6 +49,10 @@ __decorate([
     decorators_1.ObjField({ nullable: true, description: 'include extended meta data on artist(s)', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesArtistArgs.prototype, "artistIncInfo", void 0);
+__decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include genre on artist(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesArtistArgs.prototype, "artistIncGenres", void 0);
 IncludesArtistArgs = __decorate([
     decorators_1.ObjParamsType()
 ], IncludesArtistArgs);
@@ -132,6 +136,11 @@ __decorate([
     decorators_1.ObjField(() => [String], { nullable: true, description: 'filter by Genres', example: example_consts_1.examples.genres }),
     __metadata("design:type", Array)
 ], ArtistFilterArgs.prototype, "genres", void 0);
+__decorate([
+    type_graphql_1.Field(() => [type_graphql_1.ID], { nullable: true }),
+    decorators_1.ObjField(() => [String], { nullable: true, description: 'filter by Genre Ids', isID: true }),
+    __metadata("design:type", Array)
+], ArtistFilterArgs.prototype, "genreIDs", void 0);
 __decorate([
     type_graphql_1.Field(() => [enums_1.AlbumType], { nullable: true }),
     decorators_1.ObjField(() => [enums_1.AlbumType], { nullable: true, description: 'filter by Album Types', example: [enums_1.AlbumType.audiobook] }),

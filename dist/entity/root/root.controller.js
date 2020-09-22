@@ -47,6 +47,15 @@ let RootController = class RootController {
             return result[result.length - 1];
         }
     }
+    async refreshMeta(args, { orm, engine }) {
+        if (args.id) {
+            return await engine.io.refreshRootMeta(args.id);
+        }
+        else {
+            const result = await engine.io.refresh(orm);
+            return result[result.length - 1];
+        }
+    }
 };
 __decorate([
     rest_1.Get('/id', () => root_model_1.Root, { description: 'Get a Root by Id', summary: 'Get Root' }),
@@ -105,13 +114,21 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "remove", null);
 __decorate([
-    rest_1.Post('/refresh', () => admin_1.AdminChangeQueueInfo, { description: 'Check podcast feeds for new episodes', roles: [enums_1.UserRole.admin] }),
+    rest_1.Post('/refresh', () => admin_1.AdminChangeQueueInfo, { description: 'Check & update a root folder for file system changes', roles: [enums_1.UserRole.admin] }),
     __param(0, rest_1.BodyParams()),
     __param(1, rest_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [root_args_1.RootRefreshArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "refresh", null);
+__decorate([
+    rest_1.Post('/refreshMeta', () => admin_1.AdminChangeQueueInfo, { description: 'Rebuild all metadata (Artists/Albums/...) for a root folder', roles: [enums_1.UserRole.admin] }),
+    __param(0, rest_1.BodyParams()),
+    __param(1, rest_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [root_args_1.RootRefreshArgs, Object]),
+    __metadata("design:returntype", Promise)
+], RootController.prototype, "refreshMeta", null);
 RootController = __decorate([
     rest_1.Controller('/root', { tags: ['Root'], roles: [enums_1.UserRole.stream] })
 ], RootController);

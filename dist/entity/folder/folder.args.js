@@ -34,6 +34,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], IncludesFolderArgs.prototype, "folderIncTrackCount", void 0);
 __decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include genre on folder(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderArgs.prototype, "folderIncGenres", void 0);
+__decorate([
     decorators_1.ObjField({ nullable: true, description: 'include artwork count on folder(s)', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesFolderArgs.prototype, "folderIncArtworkCount", void 0);

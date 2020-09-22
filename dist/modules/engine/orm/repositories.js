@@ -22,6 +22,7 @@ const playqueue_repository_1 = require("../../../entity/playqueue/playqueue.repo
 const playqueue_entry_repository_1 = require("../../../entity/playqueueentry/playqueue-entry.repository");
 const settings_repository_1 = require("../../../entity/settings/settings.repository");
 const metadata_repository_1 = require("../../../entity/metadata/metadata.repository");
+const genre_repository_1 = require("../../../entity/genre/genre.repository");
 exports.ORMRepositories = {
     Album: album_repository_1.AlbumRepository,
     Artist: artist_repository_1.ArtistRepository,
@@ -43,6 +44,7 @@ exports.ORMRepositories = {
     PlayQueue: playqueue_repository_1.PlayQueueRepository,
     PlayQueueEntry: playqueue_entry_repository_1.PlayQueueEntryRepository,
     Settings: settings_repository_1.SettingsRepository,
-    MetaData: metadata_repository_1.MetaDataRepository
+    MetaData: metadata_repository_1.MetaDataRepository,
+    Genre: genre_repository_1.GenreRepository
 };
 //# sourceMappingURL=repositories.js.map

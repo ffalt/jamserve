@@ -18,6 +18,7 @@ const decorators_1 = require("../../modules/rest/decorators");
 const example_consts_1 = require("../../modules/engine/rest/example.consts");
 const artwork_model_1 = require("../artwork/artwork.model");
 const health_model_1 = require("../health/health.model");
+const genre_model_1 = require("../genre/genre.model");
 let FolderTag = class FolderTag {
 };
 __decorate([
@@ -37,7 +38,7 @@ __decorate([
     __metadata("design:type", String)
 ], FolderTag.prototype, "artistSort", void 0);
 __decorate([
-    decorators_1.ObjField(() => [String], { nullable: true, description: 'Genres', example: ['Rock'] }),
+    decorators_1.ObjField(() => [String], { nullable: true, description: 'Genres', example: example_consts_1.examples.genres }),
     __metadata("design:type", Array)
 ], FolderTag.prototype, "genres", void 0);
 __decorate([
@@ -104,6 +105,10 @@ __decorate([
     decorators_1.ObjField({ nullable: true, description: 'Number of Artworks', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], FolderBase.prototype, "artworkCount", void 0);
+__decorate([
+    decorators_1.ObjField(() => [genre_model_1.GenreBase], { nullable: true, description: 'Genres' }),
+    __metadata("design:type", Array)
+], FolderBase.prototype, "genres", void 0);
 __decorate([
     decorators_1.ObjField(() => FolderTag, { nullable: true, description: 'Folder Meta Information' }),
     __metadata("design:type", FolderTag)

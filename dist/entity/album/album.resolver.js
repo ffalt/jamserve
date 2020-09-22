@@ -23,6 +23,7 @@ const root_1 = require("../root/root");
 const folder_1 = require("../folder/folder");
 const series_1 = require("../series/series");
 const album_args_1 = require("./album.args");
+const genre_1 = require("../genre/genre");
 let AlbumResolver = class AlbumResolver {
     async album(id, { orm }) {
         return await orm.Album.oneOrFailByID(id);
@@ -41,6 +42,9 @@ let AlbumResolver = class AlbumResolver {
     }
     async tracks(album) {
         return album.tracks.getItems();
+    }
+    async genres(album) {
+        return album.genres.getItems();
     }
     async roots(album) {
         return album.roots.getItems();
@@ -99,6 +103,13 @@ __decorate([
     __metadata("design:paramtypes", [album_1.Album]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "tracks", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => [genre_1.GenreQL]),
+    __param(0, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [album_1.Album]),
+    __metadata("design:returntype", Promise)
+], AlbumResolver.prototype, "genres", null);
 __decorate([
     type_graphql_1.FieldResolver(() => [root_1.RootQL]),
     __param(0, type_graphql_1.Root()),

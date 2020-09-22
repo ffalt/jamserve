@@ -77,6 +77,7 @@ class Changes {
         this.folders = new ChangeSet();
         this.series = new ChangeSet();
         this.artworks = new ChangeSet();
+        this.genres = new ChangeSet();
         this.start = Date.now();
         this.end = 0;
     }
@@ -102,6 +103,7 @@ function logChanges(changes) {
     logChangeSet('Series', changes.series);
     logChangeSet('Artworks', changes.artworks);
     logChangeSet('Roots', changes.roots);
+    logChangeSet('Genres', changes.genres);
 }
 exports.logChanges = logChanges;
 let ChangesWorker = class ChangesWorker extends base_1.BaseWorker {

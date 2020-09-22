@@ -169,7 +169,7 @@ class BaseRepository extends orm_1.EntityRepository {
         const result = await this.getListIDs(list, seed, options, userID);
         return {
             ...result,
-            items: await this.findByIDs(result.items)
+            items: (await this.findByIDs(result.items)).sort((a, b) => result.items.indexOf(a.id) - result.items.indexOf(b.id))
         };
     }
     async countList(list, options, userID) {
@@ -250,6 +250,9 @@ class BaseRepository extends orm_1.EntityRepository {
         return { total, ...page, items: ids };
     }
     async getFilteredIDs(ids, options) {
+        if (!options.where) {
+            return ids;
+        }
         let where = { id: { [orm_1.Op.in]: ids } };
         if (options.where &&
             (Object.keys(options.where).length > 0 ||
@@ -257,9 +260,7 @@ class BaseRepository extends orm_1.EntityRepository {
             where = { [orm_1.Op.and]: [where, options.where] };
         }
         const list = await this.findIDs({ ...options, where });
-        return list.sort((a, b) => {
-            return ids.indexOf(a) - ids.indexOf(b);
-        });
+        return list.sort((a, b) => ids.indexOf(a) - ids.indexOf(b));
     }
     async getHighestRatedIDs(options, userID) {
         const helper = new state_helper_1.StateHelper(this.em);

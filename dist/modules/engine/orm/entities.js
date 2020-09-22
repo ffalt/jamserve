@@ -23,6 +23,7 @@ const state_1 = require("../../../entity/state/state");
 const tag_1 = require("../../../entity/tag/tag");
 const track_1 = require("../../../entity/track/track");
 const user_1 = require("../../../entity/user/user");
+const genre_1 = require("../../../entity/genre/genre");
 exports.ORMEntities = [
     base_1.Base,
     album_1.Album,
@@ -31,6 +32,7 @@ exports.ORMEntities = [
     bookmark_1.Bookmark,
     episode_1.Episode,
     folder_1.Folder,
+    genre_1.Genre,
     root_1.Root,
     metadata_1.MetaData,
     playlist_1.Playlist,

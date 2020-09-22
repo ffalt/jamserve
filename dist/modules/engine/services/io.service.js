@@ -162,6 +162,13 @@ let IoService = class IoService {
         }
         return this.newRequest(io_types_1.WorkerRequestMode.refreshRoot, p => this.workerService.refreshRoot(p), { rootID });
     }
+    async refreshRootMeta(rootID) {
+        const oldRequest = this.findRequest(rootID, io_types_1.WorkerRequestMode.refreshRootMeta);
+        if (oldRequest) {
+            return this.getRequestInfo(oldRequest);
+        }
+        return this.newRequest(io_types_1.WorkerRequestMode.refreshRootMeta, p => this.workerService.refreshRootMeta(p), { rootID });
+    }
     async removeRoot(rootID) {
         const oldRequest = this.findRequest(rootID, io_types_1.WorkerRequestMode.removeRoot);
         if (oldRequest) {

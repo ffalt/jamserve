@@ -23,10 +23,11 @@ const orm_1 = require("../../modules/orm");
 const base_1 = require("../base/base");
 const state_1 = require("../state/state");
 const health_model_1 = require("../health/health.model");
+const genre_1 = require("../genre/genre");
 let Folder = Folder_1 = class Folder extends base_1.Base {
     constructor() {
         super(...arguments);
-        this.genres = [];
+        this.genres = new orm_1.Collection(this);
         this.parent = new orm_1.Reference(this);
         this.children = new orm_1.Collection(this);
         this.root = new orm_1.Reference(this);
@@ -123,9 +124,9 @@ __decorate([
     __metadata("design:type", String)
 ], Folder.prototype, "folderType", void 0);
 __decorate([
-    type_graphql_1.Field(() => [String]),
-    orm_1.Property(() => [String]),
-    __metadata("design:type", Array)
+    type_graphql_1.Field(() => [genre_1.GenreQL]),
+    orm_1.ManyToMany(() => genre_1.Genre, genre => genre.folders),
+    __metadata("design:type", orm_1.Collection)
 ], Folder.prototype, "genres", void 0);
 __decorate([
     type_graphql_1.Field(() => FolderQL, { nullable: true }),

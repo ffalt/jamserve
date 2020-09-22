@@ -40,6 +40,7 @@ class WorkerScan {
         this.audioModule = audioModule;
         this.imageModule = imageModule;
         this.changes = changes;
+        this.genresCache = [];
     }
     async setArtworkValues(file, artwork) {
         const name = path_1.default.basename(file.path);
@@ -66,6 +67,30 @@ class WorkerScan {
         log.info('Artwork has changed', file.path);
         await this.setArtworkValues(file, artwork);
         this.changes.artworks.updated.add(artwork);
+    }
+    async findOrCreateGenres(tag) {
+        const names = tag.genres || [];
+        if (names.length === 0) {
+            return [];
+        }
+        const genres = [];
+        for (const name of names) {
+            let genre = this.genresCache.find(g => g.name === name);
+            if (!genre) {
+                genre = await this.orm.Genre.findOne({ where: { name } });
+                if (genre) {
+                    this.genresCache.push(genre);
+                }
+            }
+            if (!genre) {
+                genre = this.orm.Genre.create({ name });
+                this.orm.Genre.persistLater(genre);
+                this.genresCache.push(genre);
+                this.changes.genres.added.add(genre);
+            }
+            genres.push(genre);
+        }
+        return genres;
     }
     static async buildTrackMatch(track) {
         const tag = await track.tag.get();
@@ -97,6 +122,8 @@ class WorkerScan {
         track.fileSize = file.size;
         track.statCreated = file.ctime;
         track.statModified = file.mtime;
+        const genres = await this.findOrCreateGenres(tag);
+        await track.genres.set(genres);
         this.orm.Track.persistLater(track);
         return WorkerScan.buildTrackMatch(track);
     }

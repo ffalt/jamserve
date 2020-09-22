@@ -28,6 +28,7 @@ const track_model_1 = require("./track.model");
 const playqueue_entry_1 = require("../playqueueentry/playqueue-entry");
 const playlist_entry_1 = require("../playlistentry/playlist-entry");
 const enums_1 = require("../../types/enums");
+const genre_1 = require("../genre/genre");
 let Track = class Track extends base_1.Base {
     constructor() {
         super(...arguments);
@@ -36,6 +37,7 @@ let Track = class Track extends base_1.Base {
         this.folder = new orm_1.Reference(this);
         this.artist = new orm_1.Reference(this);
         this.albumArtist = new orm_1.Reference(this);
+        this.genres = new orm_1.Collection(this);
         this.root = new orm_1.Reference(this);
         this.bookmarks = new orm_1.Collection(this);
         this.playqueueEntries = new orm_1.Collection(this);
@@ -96,6 +98,11 @@ __decorate([
     orm_1.ManyToOne(() => artist_1.Artist, artist => artist.albumTracks, { nullable: true }),
     __metadata("design:type", Object)
 ], Track.prototype, "albumArtist", void 0);
+__decorate([
+    type_graphql_1.Field(() => [genre_1.GenreQL]),
+    orm_1.ManyToMany(() => genre_1.Genre, genre => genre.tracks),
+    __metadata("design:type", orm_1.Collection)
+], Track.prototype, "genres", void 0);
 __decorate([
     type_graphql_1.Field(() => root_1.RootQL),
     orm_1.ManyToOne(() => root_1.Root, root => root.tracks),

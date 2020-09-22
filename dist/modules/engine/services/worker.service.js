@@ -25,6 +25,11 @@ let WorkerService = class WorkerService {
         await this.rootWorker.scan(orm, root, changes);
         return this.changes.finish(orm, changes, root);
     }
+    async refreshRootMeta(parameters) {
+        const { root, orm, changes } = await this.changes.start(parameters.rootID);
+        await this.rootWorker.refreshMeta(orm, root, changes);
+        return this.changes.finish(orm, changes, root);
+    }
     async updateRoot(parameters) {
         const { root, orm, changes } = await this.changes.start(parameters.rootID);
         await this.rootWorker.update(orm, root, parameters.name, parameters.path, parameters.strategy);

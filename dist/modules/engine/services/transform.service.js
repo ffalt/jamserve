@@ -38,6 +38,7 @@ let TransformService = class TransformService {
             albumArtistID: o.albumArtist.id(),
             albumID: o.album.id(),
             seriesID: o.series.id(),
+            genres: trackArgs.trackIncGenres ? await Promise.all((await o.genres.getItems()).map(g => this.genreBase(orm, g, {}, user))) : undefined,
             tag: trackArgs.trackIncTag ? await this.mediaTag(orm, tag) : undefined,
             media: trackArgs.trackIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
             tagRaw: trackArgs.trackIncRawTag ? await this.trackService.getRawTag(o) : undefined,
@@ -144,10 +145,11 @@ let TransformService = class TransformService {
             type: o.folderType,
             level: o.level,
             parentID,
+            genres: folderArgs.folderIncGenres ? await Promise.all((await o.genres.getItems()).map(g => this.genreBase(orm, g, {}, user))) : undefined,
             trackCount: folderArgs.folderIncTrackCount ? await o.tracks.count() : undefined,
             folderCount: folderArgs.folderIncChildFolderCount ? await o.children.count() : undefined,
             artworkCount: folderArgs.folderIncArtworkCount ? await o.children.count() : undefined,
-            tag: folderArgs.folderIncTag ? this.folderTag(o) : undefined,
+            tag: folderArgs.folderIncTag ? await this.folderTag(o) : undefined,
             parents: folderArgs.folderIncParents ? await this.folderParents(orm, o) : undefined,
             trackIDs: folderArgs.folderIncTrackIDs ? (await o.tracks.getItems()).map(t => t.id) : undefined,
             folderIDs: folderArgs.folderIncFolderIDs ? (await o.children.getItems()).map(t => t.id) : undefined,
@@ -195,13 +197,13 @@ let TransformService = class TransformService {
             };
         });
     }
-    folderTag(o) {
+    async folderTag(o) {
         return {
             album: o.album,
             albumType: o.albumType,
             artist: o.artist,
             artistSort: o.artistSort,
-            genres: o.genres,
+            genres: (await o.genres.getItems()).map(g => g.name),
             year: o.year,
             mbArtistID: o.mbArtistID,
             mbReleaseID: o.mbReleaseID,
@@ -262,7 +264,7 @@ let TransformService = class TransformService {
             trackCount: artistArgs.artistIncTrackCount ? await o.tracks.count() : undefined,
             seriesCount: artistArgs.artistIncSeriesCount ? await o.series.count() : undefined,
             mbArtistID: o.mbArtistID,
-            genres: o.genres,
+            genres: artistArgs.artistIncGenres ? await Promise.all((await o.genres.getItems()).map(g => this.genreBase(orm, g, {}, user))) : undefined,
             albumTypes: o.albumTypes,
             state: artistArgs.artistIncState ? await this.state(orm, o.id, enums_1.DBObjectType.artist, user.id) : undefined,
             trackIDs: artistArgs.artistIncTrackIDs ? (await o.tracks.getItems()).map(t => t.id) : undefined,
@@ -296,7 +298,7 @@ let TransformService = class TransformService {
             id: o.id,
             name: o.name,
             created: o.createdAt.valueOf(),
-            genres: o.genres,
+            genres: albumArgs.albumIncGenres ? await Promise.all((await o.genres.getItems()).map(g => this.genreBase(orm, g, {}, user))) : undefined,
             year: o.year,
             mbArtistID: o.mbArtistID,
             mbReleaseID: o.mbReleaseID,
@@ -402,6 +404,35 @@ let TransformService = class TransformService {
                 id: item.id,
                 name: item.name,
                 url: item.url
+            };
+        });
+    }
+    async genreBase(orm, o, genreArgs, user) {
+        return {
+            id: o.id,
+            name: o.name,
+            created: o.createdAt.valueOf(),
+            state: genreArgs.genreState ? await this.state(orm, o.id, enums_1.DBObjectType.genre, user.id) : undefined
+        };
+    }
+    async genre(orm, o, genreArgs, user) {
+        return {
+            ...(await this.genreBase(orm, o, genreArgs, user)),
+            albumCount: await o.albums.count(),
+            trackCount: await o.tracks.count(),
+            artistCount: await o.artists.count(),
+            folderCount: await o.folders.count()
+        };
+    }
+    async genreIndex(orm, result) {
+        return this.index(result, async (item) => {
+            return {
+                id: item.id,
+                name: item.name,
+                albumCount: await item.albums.count(),
+                trackCount: await item.tracks.count(),
+                artistCount: await item.artists.count(),
+                folderCount: await item.folders.count()
             };
         });
     }

@@ -26,6 +26,7 @@ const tag_1 = require("../tag/tag");
 const series_1 = require("../series/series");
 const bookmark_1 = require("../bookmark/bookmark");
 const track_args_1 = require("./track.args");
+const genre_1 = require("../genre/genre");
 let TrackResolver = class TrackResolver {
     async track(id, { orm }) {
         return await orm.Track.oneOrFailByID(id);
@@ -38,6 +39,9 @@ let TrackResolver = class TrackResolver {
     }
     async bookmarks(track) {
         return track.bookmarks.getItems();
+    }
+    async genres(track) {
+        return track.genres.getItems();
     }
     async bookmarksCount(track) {
         return track.bookmarks.count();
@@ -103,6 +107,13 @@ __decorate([
     __metadata("design:paramtypes", [track_1.Track]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "bookmarks", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => [genre_1.GenreQL]),
+    __param(0, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [track_1.Track]),
+    __metadata("design:returntype", Promise)
+], TrackResolver.prototype, "genres", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
     __param(0, type_graphql_1.Root()),

@@ -30,6 +30,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], IncludesTrackArgs.prototype, "trackIncRawTag", void 0);
 __decorate([
+    decorators_1.ObjField({ nullable: true, description: 'include genre on track(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesTrackArgs.prototype, "trackIncGenres", void 0);
+__decorate([
     decorators_1.ObjField({ nullable: true, description: 'include user states (fav,rate) on track(s)', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesTrackArgs.prototype, "trackIncState", void 0);
@@ -154,6 +158,11 @@ __decorate([
     decorators_1.ObjField(() => [String], { nullable: true, description: 'filter by genres', example: ['Folk Pop'] }),
     __metadata("design:type", Array)
 ], TrackFilterArgs.prototype, "genres", void 0);
+__decorate([
+    type_graphql_1.Field(() => [type_graphql_1.ID], { nullable: true }),
+    decorators_1.ObjField(() => [String], { nullable: true, description: 'filter by Genre Ids', isID: true }),
+    __metadata("design:type", Array)
+], TrackFilterArgs.prototype, "genreIDs", void 0);
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
     decorators_1.ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: example_consts_1.examples.timestamp }),

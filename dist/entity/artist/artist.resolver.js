@@ -23,6 +23,7 @@ const root_1 = require("../root/root");
 const folder_1 = require("../folder/folder");
 const series_1 = require("../series/series");
 const artist_args_1 = require("./artist.args");
+const genre_1 = require("../genre/genre");
 let ArtistResolver = class ArtistResolver {
     async artist(id, { orm }) {
         return await orm.Artist.oneOrFailByID(id);
@@ -41,6 +42,9 @@ let ArtistResolver = class ArtistResolver {
     }
     async tracks(artist) {
         return artist.tracks.getItems();
+    }
+    async genres(artist) {
+        return artist.genres.getItems();
     }
     async tracksCount(artist) {
         return artist.tracks.count();
@@ -111,6 +115,13 @@ __decorate([
     __metadata("design:paramtypes", [artist_1.Artist]),
     __metadata("design:returntype", Promise)
 ], ArtistResolver.prototype, "tracks", null);
+__decorate([
+    type_graphql_1.FieldResolver(() => [genre_1.GenreQL]),
+    __param(0, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [artist_1.Artist]),
+    __metadata("design:returntype", Promise)
+], ArtistResolver.prototype, "genres", null);
 __decorate([
     type_graphql_1.FieldResolver(() => type_graphql_1.Int),
     __param(0, type_graphql_1.Root()),

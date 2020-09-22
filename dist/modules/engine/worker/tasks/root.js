@@ -47,6 +47,10 @@ let RootWorker = class RootWorker extends base_1.BaseWorker {
         const scanMerger = new merge_scan_1.WorkerMergeScan(orm, root.strategy, changes);
         await scanMerger.mergeMatch(rootMatch);
     }
+    async refreshMeta(orm, root, changes) {
+        const trackIDs = await orm.Track.findIDs({});
+        changes.tracks.updated.appendIDs(trackIDs);
+    }
     async mergeChanges(orm, root, changes) {
         if (orm.em.hasChanges()) {
             await orm.em.flush();

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtistOrderFields = exports.AlbumOrderFields = exports.PodcastOrderFields = exports.PlayQueueEntryOrderFields = exports.PlaylistEntryOrderFields = exports.FolderOrderFields = exports.SessionOrderFields = exports.DefaultOrderFields = exports.BookmarkOrderFields = exports.EpisodeOrderFields = exports.TrackOrderFields = exports.JamObjectType = exports.MusicBrainzSearchType = exports.MusicBrainzLookupType = exports.CoverArtArchiveLookupType = exports.LastFMLookupType = exports.DownloadFormatTypes = exports.DownloadFormatType = exports.FolderHealthID = exports.ListType = exports.WaveformFormatTypes = exports.WaveformFormatType = exports.FileTyp = exports.TrackHealthID = exports.UserRole = exports.TagFormatType = exports.AudioFormatType = exports.DBObjectType = exports.SessionMode = exports.MetaDataType = exports.FolderTypesAlbum = exports.FolderType = exports.PodcastStatus = exports.ArtworkImageType = exports.ImageFormatType = exports.AlbumTypesArtistMusic = exports.AlbumType = exports.RootScanStrategy = void 0;
+exports.GenreOrderFields = exports.ArtistOrderFields = exports.AlbumOrderFields = exports.PodcastOrderFields = exports.PlayQueueEntryOrderFields = exports.PlaylistEntryOrderFields = exports.FolderOrderFields = exports.SessionOrderFields = exports.DefaultOrderFields = exports.BookmarkOrderFields = exports.EpisodeOrderFields = exports.TrackOrderFields = exports.JamObjectType = exports.MusicBrainzSearchType = exports.MusicBrainzLookupType = exports.CoverArtArchiveLookupType = exports.LastFMLookupType = exports.DownloadFormatTypes = exports.DownloadFormatType = exports.FolderHealthID = exports.ListType = exports.WaveformFormatTypes = exports.WaveformFormatType = exports.FileTyp = exports.TrackHealthID = exports.UserRole = exports.TagFormatType = exports.AudioFormatType = exports.DBObjectType = exports.SessionMode = exports.MetaDataType = exports.FolderTypesAlbum = exports.FolderType = exports.PodcastStatus = exports.ArtworkImageType = exports.ImageFormatType = exports.AlbumTypesArtistMusic = exports.AlbumType = exports.RootScanStrategy = void 0;
 var RootScanStrategy;
 (function (RootScanStrategy) {
     RootScanStrategy["auto"] = "auto";
@@ -104,6 +104,7 @@ var DBObjectType;
     DBObjectType["session"] = "session";
     DBObjectType["tag"] = "tag";
     DBObjectType["series"] = "series";
+    DBObjectType["genre"] = "genre";
 })(DBObjectType = exports.DBObjectType || (exports.DBObjectType = {}));
 var AudioFormatType;
 (function (AudioFormatType) {
@@ -250,6 +251,7 @@ var JamObjectType;
     JamObjectType["artist"] = "artist";
     JamObjectType["playqueue"] = "playqueue";
     JamObjectType["radio"] = "radio";
+    JamObjectType["genre"] = "genre";
 })(JamObjectType = exports.JamObjectType || (exports.JamObjectType = {}));
 var TrackOrderFields;
 (function (TrackOrderFields) {
@@ -345,4 +347,11 @@ var ArtistOrderFields;
     ArtistOrderFields["name"] = "name";
     ArtistOrderFields["nameSort"] = "nameSort";
 })(ArtistOrderFields = exports.ArtistOrderFields || (exports.ArtistOrderFields = {}));
+var GenreOrderFields;
+(function (GenreOrderFields) {
+    GenreOrderFields["default"] = "default";
+    GenreOrderFields["created"] = "created";
+    GenreOrderFields["updated"] = "updated";
+    GenreOrderFields["name"] = "name";
+})(GenreOrderFields = exports.GenreOrderFields || (exports.GenreOrderFields = {}));
 //# sourceMappingURL=enums.js.map

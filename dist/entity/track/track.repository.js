@@ -71,6 +71,7 @@ class TrackRepository extends base_repository_1.BaseRepository {
         ]);
         result.include = orm_1.QHelper.includeQueries([
             { bookmarks: [{ id: orm_1.QHelper.inOrEqual(filter.bookmarkIDs) }] },
+            { genres: [{ id: orm_1.QHelper.inOrEqual(filter.genreIDs) }] },
             { artist: [{ name: orm_1.QHelper.eq(filter.artist) }] },
             { album: [{ name: orm_1.QHelper.eq(filter.album) }] },
             {

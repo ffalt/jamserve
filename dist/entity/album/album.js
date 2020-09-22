@@ -20,11 +20,12 @@ const type_graphql_1 = require("type-graphql");
 const base_1 = require("../base/base");
 const state_1 = require("../state/state");
 const orm_1 = require("../../modules/orm");
+const genre_1 = require("../genre/genre");
 let Album = class Album extends base_1.Base {
     constructor() {
         super(...arguments);
         this.albumType = enums_1.AlbumType.unknown;
-        this.genres = [];
+        this.genres = new orm_1.Collection(this);
         this.tracks = new orm_1.Collection(this);
         this.roots = new orm_1.Collection(this);
         this.folders = new orm_1.Collection(this);
@@ -73,9 +74,9 @@ __decorate([
     __metadata("design:type", String)
 ], Album.prototype, "mbReleaseID", void 0);
 __decorate([
-    type_graphql_1.Field(() => [String]),
-    orm_1.Property(() => [String]),
-    __metadata("design:type", Array)
+    type_graphql_1.Field(() => [genre_1.GenreQL]),
+    orm_1.ManyToMany(() => genre_1.Genre, genre => genre.albums),
+    __metadata("design:type", orm_1.Collection)
 ], Album.prototype, "genres", void 0);
 __decorate([
     type_graphql_1.Field(() => [track_1.TrackQL]),
