@@ -15,7 +15,6 @@ import {artWorkImageNameToType} from '../../../utils/artwork-type';
 import {ImageModule} from '../../image/image.module';
 import moment from 'moment';
 import {Genre} from '../../../entity/genre/genre';
-import {MetaMergeTrackInfo} from './meta-cache';
 import {TrackTag} from '../../audio/audio.format';
 
 const log = logger('IO.Scan');

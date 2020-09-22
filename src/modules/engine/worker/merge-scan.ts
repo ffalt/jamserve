@@ -165,7 +165,7 @@ export class WorkerMergeScan {
 		const genreNames = metaStat.genres || [];
 		let genres: Array<Genre> = [];
 		if (genreNames.length > 0) {
-			genres = await this.orm.Genre.find({where: {name: QHelper.inOrEqual(genreNames)}})
+			genres = await this.orm.Genre.find({where: {name: QHelper.inOrEqual(genreNames)}});
 		}
 		await folder.genres.set(genres);
 
