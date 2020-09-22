@@ -18,6 +18,7 @@ import {
 	WorkerRequestMoveTracks,
 	WorkerRequestRefreshFolders,
 	WorkerRequestRefreshRoot,
+	WorkerRequestRefreshRootMeta,
 	WorkerRequestRefreshTracks,
 	WorkerRequestRemoveArtwork,
 	WorkerRequestRemoveRoot,
@@ -55,6 +56,12 @@ export class WorkerService {
 	async refreshRoot(parameters: WorkerRequestRefreshRoot): Promise<Changes> {
 		const {root, orm, changes} = await this.changes.start(parameters.rootID);
 		await this.rootWorker.scan(orm, root, changes);
+		return this.changes.finish(orm, changes, root);
+	}
+
+	async refreshRootMeta(parameters: WorkerRequestRefreshRootMeta): Promise<Changes> {
+		const {root, orm, changes} = await this.changes.start(parameters.rootID);
+		await this.rootWorker.refreshMeta(orm, root, changes);
 		return this.changes.finish(orm, changes, root);
 	}
 

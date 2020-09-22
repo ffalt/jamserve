@@ -22,6 +22,8 @@ export class IncludesArtistArgs {
 	artistIncSeriesCount?: boolean;
 	@ObjField({nullable: true, description: 'include extended meta data on artist(s)', defaultValue: false, example: false})
 	artistIncInfo?: boolean;
+	@ObjField({nullable: true, description: 'include genre on artist(s)', defaultValue: false, example: false})
+	artistIncGenres?: boolean;
 }
 
 @ObjParamsType()
@@ -82,6 +84,10 @@ export class ArtistFilterArgs {
 	@Field(() => [String], {nullable: true})
 	@ObjField(() => [String], {nullable: true, description: 'filter by Genres', example: examples.genres})
 	genres?: Array<string>;
+
+	@Field(() => [ID], {nullable: true})
+	@ObjField(() => [String], {nullable: true, description: 'filter by Genre Ids', isID: true})
+	genreIDs?: Array<string>;
 
 	@Field(() => [AlbumType], {nullable: true})
 	@ObjField(() => [AlbumType], {nullable: true, description: 'filter by Album Types', example: [AlbumType.audiobook]})

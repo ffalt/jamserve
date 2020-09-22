@@ -10,6 +10,7 @@ import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_DATETIME, ORM_
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {FolderHealthHint} from '../health/health.model';
+import {Genre, GenreQL} from '../genre/genre';
 
 @ObjectType()
 @Entity()
@@ -82,9 +83,9 @@ export class Folder extends Base {
 	@Property(() => FolderType)
 	folderType!: FolderType;
 
-	@Field(() => [String])
-	@Property(() => [String])
-	genres: Array<string> = [];
+	@Field(() => [GenreQL])
+	@ManyToMany<Genre>(() => Genre, genre => genre.folders)
+	genres: Collection<Genre> = new Collection<Genre>(this);
 
 	@Field(() => FolderQL, {nullable: true})
 	@ManyToOne<Folder>(() => Folder, folder => folder.children, {nullable: true})

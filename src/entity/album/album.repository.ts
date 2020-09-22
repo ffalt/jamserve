@@ -68,11 +68,12 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 				{createdAt: QHelper.gte(filter.since)},
 				{artist: QHelper.inOrEqual(filter.artistIDs)},
 				{year: QHelper.lte(filter.toYear)},
-				{year: QHelper.gte(filter.fromYear)},
-				...QHelper.inStringArray('genres', filter.genres)
+				{year: QHelper.gte(filter.fromYear)}
 			]
 		);
 		result.include = QHelper.includeQueries([
+			{genres: [{id: QHelper.inOrEqual(filter.genreIDs)}]},
+			{genres: [{name: QHelper.inOrEqual(filter.genres)}]},
 			{tracks: [{id: QHelper.inOrEqual(filter.trackIDs)}]},
 			{series: [{id: QHelper.inOrEqual(filter.seriesIDs)}]},
 			{artist: [{name: QHelper.eq(filter.artist)}]},

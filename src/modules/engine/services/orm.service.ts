@@ -52,6 +52,8 @@ import {registerORMEnums} from '../orm/enum-registration';
 import {ConfigService} from './config.service';
 import {Options} from 'sequelize';
 import {NotFoundError} from '../../rest/builder';
+import {GenreRepository} from '../../../entity/genre/genre.repository';
+import {Genre} from '../../../entity/genre/genre';
 
 registerORMEnums();
 
@@ -70,6 +72,7 @@ export class Orm {
 	public Track!: TrackRepository;
 	public User!: UserRepository;
 	public Tag!: TagRepository;
+	public Genre!: GenreRepository;
 	public State!: StateRepository;
 	public Root!: RootRepository;
 	public PlaylistEntry!: PlaylistEntryRepository;
@@ -100,6 +103,7 @@ export class Orm {
 		this.Tag = em.getRepository<Tag, TagRepository>(Tag);
 		this.Track = em.getRepository<Track, TrackRepository>(Track);
 		this.User = em.getRepository<User, UserRepository>(User);
+		this.Genre = em.getRepository<Genre, GenreRepository>(Genre);
 	}
 
 	private async findInReposTypes(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
@@ -135,6 +139,7 @@ export class Orm {
 			this.Artwork,
 			this.Episode,
 			this.Folder,
+			this.Genre,
 			this.Root,
 			this.Playlist,
 			this.Podcast,
@@ -167,6 +172,7 @@ export class Orm {
 			this.Episode,
 			this.Folder,
 			this.Root,
+			this.Genre,
 			this.Playlist,
 			this.Podcast,
 			this.Series,

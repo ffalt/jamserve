@@ -6,6 +6,7 @@ import {ObjField, ResultType} from '../../modules/rest/decorators';
 import {examples} from '../../modules/engine/rest/example.consts';
 import {Artwork} from '../artwork/artwork.model';
 import {FolderHealthHint} from '../health/health.model';
+import {GenreBase} from '../genre/genre.model';
 
 @ResultType({description: 'Folder Meta Information'})
 export class FolderTag {
@@ -17,7 +18,7 @@ export class FolderTag {
 	artist?: string;
 	@ObjField({nullable: true, description: 'Artist Sort Name', example: 'Mr. Bungle'})
 	artistSort?: string;
-	@ObjField(() => [String], {nullable: true, description: 'Genres', example: ['Rock']})
+	@ObjField(() => [String], {nullable: true, description: 'Genres', example: examples.genres})
 	genres?: Array<string>;
 	@ObjField({nullable: true, description: 'Year', example: 1999})
 	year?: number;
@@ -53,6 +54,8 @@ export class FolderBase extends Base {
 	folderCount?: number;
 	@ObjField({nullable: true, description: 'Number of Artworks', min: 0, example: 5})
 	artworkCount?: number;
+	@ObjField(() => [GenreBase], {nullable: true, description: 'Genres'})
+	genres?: Array<GenreBase>;
 	@ObjField(() => FolderTag, {nullable: true, description: 'Folder Meta Information'})
 	tag?: FolderTag;
 	@ObjField(() => [String], {nullable: true, description: 'List of Track Ids', isID: true})

@@ -5,6 +5,7 @@ import {ExtendedInfo} from '../metadata/metadata.model';
 import {ObjField, ResultType} from '../../modules/rest/decorators';
 import {examples} from '../../modules/engine/rest/example.consts';
 import {ArtistBase} from '../artist/artist.model';
+import {GenreBase} from '../genre/genre.model';
 
 @ResultType({description: 'Album'})
 export class AlbumBase extends Base {
@@ -20,8 +21,8 @@ export class AlbumBase extends Base {
 	trackCount?: number;
 	@ObjField(() => [String], {nullable: true, description: 'List of Track Ids', isID: true})
 	trackIDs?: Array<string>;
-	@ObjField(() => [String], {nullable: true, description: 'List of Genres', example: examples.genres})
-	genres?: Array<string>;
+	@ObjField(() => [GenreBase], {nullable: true, description: 'Genres'})
+	genres?: Array<GenreBase>;
 	@ObjField({nullable: true, description: 'Album Release Year', example: examples.year})
 	year?: number;
 	@ObjField({nullable: true, description: 'MusicBrainz Artist Id', example: examples.mbArtistID})
@@ -58,7 +59,7 @@ export class AlbumIndexEntry {
 	id!: string;
 	@ObjField({description: 'Name', example: 'Awesome'})
 	name!: string;
-	@ObjField({description: 'Name', example: 'Primus'})
+	@ObjField({description: 'Artist', example: 'Primus'})
 	artist!: string;
 	@ObjField({description: 'Artist Id', isID: true})
 	artistID!: string;

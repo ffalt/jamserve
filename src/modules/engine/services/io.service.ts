@@ -14,7 +14,7 @@ import {
 	WorkerRequestMoveFolders,
 	WorkerRequestMoveTracks,
 	WorkerRequestParameters,
-	WorkerRequestRefreshRoot,
+	WorkerRequestRefreshRoot, WorkerRequestRefreshRootMeta,
 	WorkerRequestRemoveArtwork,
 	WorkerRequestRemoveRoot,
 	WorkerRequestRemoveTracks,
@@ -195,6 +195,16 @@ export class IoService {
 		}
 		return this.newRequest<WorkerRequestRefreshRoot>(
 			WorkerRequestMode.refreshRoot, p => this.workerService.refreshRoot(p), {rootID}
+		);
+	}
+
+	async refreshRootMeta(rootID: string): Promise<AdminChangeQueueInfo> {
+		const oldRequest = this.findRequest(rootID, WorkerRequestMode.refreshRootMeta);
+		if (oldRequest) {
+			return this.getRequestInfo(oldRequest);
+		}
+		return this.newRequest<WorkerRequestRefreshRootMeta>(
+			WorkerRequestMode.refreshRootMeta, p => this.workerService.refreshRootMeta(p), {rootID}
 		);
 	}
 

@@ -14,6 +14,8 @@ export class IncludesAlbumArgs {
 	albumIncState?: boolean;
 	@ObjField({nullable: true, description: 'include extended meta data on album(s)', defaultValue: false, example: false})
 	albumIncInfo?: boolean;
+	@ObjField({nullable: true, description: 'include genre on album(s)', defaultValue: false, example: false})
+	albumIncGenres?: boolean;
 }
 
 @ObjParamsType()
@@ -86,6 +88,10 @@ export class AlbumFilterArgs {
 	@Field(() => [String], {nullable: true})
 	@ObjField(() => [String], {nullable: true, description: 'filter by Genres', example: examples.genres})
 	genres?: Array<string>;
+
+	@Field(() => [ID], {nullable: true})
+	@ObjField(() => [String], {nullable: true, description: 'filter by Genre Ids', isID: true})
+	genreIDs?: Array<string>;
 
 	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})

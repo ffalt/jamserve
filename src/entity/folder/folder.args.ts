@@ -14,6 +14,8 @@ export class IncludesFolderArgs {
 	folderIncChildFolderCount?: boolean;
 	@ObjField({nullable: true, description: 'include track count on folder(s)', defaultValue: false, example: false})
 	folderIncTrackCount?: boolean;
+	@ObjField({nullable: true, description: 'include genre on folder(s)', defaultValue: false, example: false})
+	folderIncGenres?: boolean;
 	@ObjField({nullable: true, description: 'include artwork count on folder(s)', defaultValue: false, example: false})
 	folderIncArtworkCount?: boolean;
 	@ObjField({nullable: true, description: 'include a list of all parent folder ids/names on folder(s)', defaultValue: false, example: false})

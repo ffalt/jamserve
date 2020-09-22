@@ -104,11 +104,11 @@ export class MatchNodeMetaStats {
 		builder.statSlugValue('artist', folder.artist);
 		builder.statSlugValue('artistSort', folder.artistSort);
 		builder.statSlugValue('album', folder.album ? extractAlbumName(folder.album) : undefined);
-		if (folder.genres) {
-			for (const genre of folder.genres) {
-				builder.statSlugValue('genre', genre);
-			}
-		}
+		// if (folder.genres) {
+		// 	for (const genre of folder.genres) {
+		// 		builder.statSlugValue('genre', genre);
+		// 	}
+		// }
 		builder.statNumber('year', folder.year);
 		builder.statSlugValue('mbAlbumType', folder.mbAlbumType);
 		builder.statID('mbArtistID', folder.mbArtistID);

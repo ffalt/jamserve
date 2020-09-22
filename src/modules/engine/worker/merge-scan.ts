@@ -7,6 +7,8 @@ import {logger} from '../../../utils/logger';
 import {MatchNodeMetaStats, MetaStat} from './meta-stats';
 import {Orm} from '../services/orm.service';
 import {Folder} from '../../../entity/folder/folder';
+import {QHelper} from '../../orm';
+import {Genre} from '../../../entity/genre/genre';
 
 const log = logger('IO.MergeScan');
 
@@ -152,7 +154,6 @@ export class WorkerMergeScan {
 		folder.artistSort = metaStat.artistSort;
 		folder.title = title !== name ? title : undefined;
 		folder.name = name;
-		folder.genres = metaStat.genres || [];
 		folder.mbReleaseID = metaStat.mbReleaseID;
 		folder.mbReleaseGroupID = metaStat.mbReleaseGroupID;
 		folder.mbAlbumType = metaStat.mbAlbumType;
@@ -160,6 +161,14 @@ export class WorkerMergeScan {
 		folder.albumTrackCount = metaStat.trackCount;
 		folder.year = (year !== undefined && year > 0) ? year : metaStat.year;
 		folder.folderType = WorkerMergeScan.getFolderType(node, metaStat, this.strategy);
+
+		const genreNames = metaStat.genres || [];
+		let genres: Array<Genre> = [];
+		if (genreNames.length > 0) {
+			genres = await this.orm.Genre.find({where: {name: QHelper.inOrEqual(genreNames)}})
+		}
+		await folder.genres.set(genres);
+
 		WorkerMergeScan.setFolderType(node, folder.folderType);
 		if (folder.folderType === FolderType.multialbum) {
 			WorkerMergeScan.markMultiAlbumChildDirs(node);

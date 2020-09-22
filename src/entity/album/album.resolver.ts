@@ -9,6 +9,7 @@ import {Root, RootQL} from '../root/root';
 import {Folder, FolderQL} from '../folder/folder';
 import {Series, SeriesQL} from '../series/series';
 import {AlbumIndexArgsQL, AlbumsArgsQL} from './album.args';
+import {Genre, GenreQL} from '../genre/genre';
 
 @Resolver(AlbumQL)
 export class AlbumResolver {
@@ -38,6 +39,11 @@ export class AlbumResolver {
 	@FieldResolver(() => [TrackQL])
 	async tracks(@GQLRoot() album: Album): Promise<Array<Track>> {
 		return album.tracks.getItems();
+	}
+
+	@FieldResolver(() => [GenreQL])
+	async genres(@GQLRoot() album: Album): Promise<Array<Genre>> {
+		return album.genres.getItems();
 	}
 
 	@FieldResolver(() => [RootQL])

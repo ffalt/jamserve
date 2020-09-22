@@ -51,6 +51,7 @@ export interface WorkerRequestWriteTrackTags extends WorkerRequestParameters {
 }
 
 export type WorkerRequestRefreshRoot = WorkerRequestParameters;
+export type WorkerRequestRefreshRootMeta = WorkerRequestParameters;
 
 export interface WorkerRequestRefreshFolders extends WorkerRequestParameters {
 	folderIDs: Array<string>;

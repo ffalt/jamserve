@@ -28,6 +28,9 @@ export function expectChanges(changes: Changes, expected: {
 	artworksNew?: number;
 	artworksUpdate?: number;
 	artworksRemoved?: number;
+	genresNew?: number;
+	genresUpdate?: number;
+	genresRemoved?: number;
 }): void {
 	validateChangeSet('Folder', changes.folders, expected.foldersNew || 0, expected.foldersUpdate || 0, expected.foldersRemoved || 0);
 	validateChangeSet('Track', changes.tracks, expected.tracksNew || 0, expected.tracksUpdate || 0, expected.tracksRemoved || 0);
@@ -35,6 +38,7 @@ export function expectChanges(changes: Changes, expected: {
 	validateChangeSet('Artist', changes.artists, expected.artistsNew || 0, expected.artistsUpdate || 0, expected.artistsRemoved || 0);
 	validateChangeSet('Album', changes.albums, expected.albumsNew || 0, expected.albumsUpdate || 0, expected.albumsRemoved || 0);
 	validateChangeSet('Series', changes.series, expected.seriesNew || 0, expected.seriesUpdate || 0, expected.seriesRemoved || 0);
+	validateChangeSet('Genres', changes.genres, expected.genresNew || 0, expected.genresUpdate || 0, expected.genresRemoved || 0);
 }
 
 export async function validateMockRoot(mockRoot: MockRoot, changes: Changes, workerService: WorkerService, orm: Orm): Promise<void> {
@@ -44,6 +48,7 @@ export async function validateMockRoot(mockRoot: MockRoot, changes: Changes, wor
 	validateChangeSet('Artworks', changes.artworks, mockRoot.expected.artworks, 0, 0);
 	validateChangeSet('Album', changes.albums, mockRoot.expected.albums, 0, 0);
 	validateChangeSet('Series', changes.series, mockRoot.expected.series, 0, 0);
+	validateChangeSet('Genres', changes.genres, mockRoot.expected.genres, 0, 0);
 	for (const a of mockRoot.expected.artists) {
 		expect(await orm.Artist.findOne({where: {name: a}}), `Missing Artist ${a}`).toBeDefined();
 	}

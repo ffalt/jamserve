@@ -49,6 +49,11 @@ export class RootWorker extends BaseWorker {
 		await scanMerger.mergeMatch(rootMatch);
 	}
 
+	async refreshMeta(orm: Orm, root: Root, changes: Changes): Promise<void> {
+		const trackIDs = await orm.Track.findIDs({});
+		changes.tracks.updated.appendIDs(trackIDs);
+	}
+
 	async mergeChanges(orm: Orm, root: Root, changes: Changes): Promise<void> {
 		if (orm.em.hasChanges()) {
 			await orm.em.flush();
@@ -155,5 +160,4 @@ export class RootWorker extends BaseWorker {
 		}
 		return list;
 	}
-
 }

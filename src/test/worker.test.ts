@@ -6,8 +6,7 @@ import {WorkerService} from '../modules/engine/services/worker.service';
 import {ensureTrailingPathSeparator} from '../utils/fs-utils';
 import 'jest-expect-message';
 import {AlbumType, ArtworkImageType, FolderType, RootScanStrategy} from '../types/enums';
-import {randomItem, randomString} from '../utils/random';
-import {Genres} from '../utils/genres';
+import {randomString} from '../utils/random';
 import {bindMockConfig, DBConfigs} from './mock/mock.config';
 import {waitEngineStart} from './mock/mock.engine';
 import {Folder} from '../entity/folder/folder';
@@ -115,7 +114,8 @@ describe('WorkerService', () => {
 							artistsRemoved: mockRoot.expected.artists.length,
 							albumsRemoved: mockRoot.expected.albums,
 							seriesRemoved: mockRoot.expected.series,
-							artworksRemoved: mockRoot.expected.artworks
+							artworksRemoved: mockRoot.expected.artworks,
+							genresRemoved: mockRoot.expected.genres
 						});
 						expect(await orm.Folder.count()).toBe(1);
 						expect(await orm.Track.count()).toBe(0);
@@ -124,6 +124,7 @@ describe('WorkerService', () => {
 						expect(await orm.Series.count()).toBe(0);
 						expect(await orm.Artwork.count()).toBe(0);
 						expect(await orm.Bookmark.count()).toBe(0);
+						expect(await orm.Genre.count()).toBe(0);
 						expect(await orm.State.count()).toBe(0);
 					});
 					it('should scan added in the root', async () => {
@@ -144,7 +145,8 @@ describe('WorkerService', () => {
 							artistsNew: mockRoot.expected.artists.length,
 							artworksNew: mockRoot.expected.artworks,
 							albumsNew: mockRoot.expected.albums,
-							seriesNew: mockRoot.expected.series
+							seriesNew: mockRoot.expected.series,
+							genresNew: mockRoot.expected.genres
 						});
 						await validateMock(mockRoot, workerService, orm);
 					});
@@ -174,6 +176,7 @@ describe('WorkerService', () => {
 							artworksRemoved: mockRoot2.expected.artworks,
 							seriesUpdate: mockRoot2.expected.series,
 							albumsUpdate: mockRoot2.expected.albums,
+							genresUpdate: mockRoot2.expected.genres,
 							artistsUpdate: mockRoot2.expected.artists.length
 						});
 					});
@@ -186,12 +189,12 @@ describe('WorkerService', () => {
 							folders: [
 								{
 									name: 'run dmc',
-									genre: '',
+									genre: 'test',
 									images: [],
 									folders: [
 										{
 											name: 'album 1',
-											genre: randomItem(Genres),
+											genre: 'test',
 											folders: [],
 											images: [],
 											tracks: [
@@ -201,7 +204,7 @@ describe('WorkerService', () => {
 													album: 'album 1',
 													number: 1,
 													total: 3,
-													genre: randomItem(Genres)
+													genre: 'test'
 												},
 												{
 													name: '2 - title 2 - Run DMC.mp3',
@@ -209,7 +212,7 @@ describe('WorkerService', () => {
 													album: 'album 1',
 													number: 2,
 													total: 3,
-													genre: randomItem(Genres)
+													genre: 'test'
 												},
 												{
 													name: '3 - title 2 - Run D_M_C_.mp3',
@@ -217,7 +220,7 @@ describe('WorkerService', () => {
 													album: 'album 1',
 													number: 3,
 													total: 3,
-													genre: randomItem(Genres)
+													genre: 'test'
 												}
 											],
 											expected: {
@@ -241,6 +244,7 @@ describe('WorkerService', () => {
 								artworks: 0,
 								artists: ['Run Dmc'],
 								albums: 1,
+								genres: 1,
 								folderType: FolderType.collection
 							}
 						};
@@ -250,7 +254,8 @@ describe('WorkerService', () => {
 							tracksNew: mockRoot2.expected.tracks,
 							foldersNew: mockRoot2.expected.folders,
 							artistsNew: mockRoot2.expected.artists.length,
-							albumsNew: mockRoot2.expected.albums
+							albumsNew: mockRoot2.expected.albums,
+							genresNew: mockRoot2.expected.genres
 						});
 						await validateMock(mockRoot2, workerService, orm);
 						await fse.remove(mockRoot2.path);
@@ -265,11 +270,11 @@ describe('WorkerService', () => {
 							folders: [
 								{
 									name: 'collection',
-									genre: '',
+									genre: 'test 1',
 									folders: [
 										{
 											name: 'album 1',
-											genre: randomItem(Genres),
+											genre: 'test 1',
 											folders: [],
 											images: [],
 											tracks: [
@@ -278,14 +283,14 @@ describe('WorkerService', () => {
 													artist: 'artist A',
 													album: 'album 1',
 													number: 1,
-													genre: randomItem(Genres)
+													genre: 'test 1'
 												},
 												{
 													name: '2 - title 2 - artist A.mp3',
 													artist: 'artist A',
 													album: 'album 1',
 													number: 2,
-													genre: randomItem(Genres)
+													genre: 'test 1'
 												}
 											],
 											expected: {
@@ -295,7 +300,7 @@ describe('WorkerService', () => {
 										},
 										{
 											name: 'album 2',
-											genre: randomItem(Genres),
+											genre: 'test 2',
 											folders: [],
 											images: [],
 											tracks: [
@@ -304,14 +309,14 @@ describe('WorkerService', () => {
 													artist: 'artist B',
 													album: 'album 2',
 													number: 1,
-													genre: randomItem(Genres)
+													genre: 'test 2'
 												},
 												{
 													name: '2 - title 2 - artist B.mp3',
 													artist: 'artist B',
 													album: 'album 2',
 													number: 2,
-													genre: randomItem(Genres)
+													genre: 'test 2'
 												}
 											],
 											expected: {
@@ -336,6 +341,7 @@ describe('WorkerService', () => {
 								artworks: 0,
 								series: 0,
 								albums: 2,
+								genres: 2,
 								folderType: FolderType.collection
 							}
 						};
@@ -345,7 +351,8 @@ describe('WorkerService', () => {
 							tracksNew: mockRoot2.expected.tracks,
 							foldersNew: mockRoot2.expected.folders,
 							artistsNew: mockRoot2.expected.artists.length,
-							albumsNew: mockRoot2.expected.albums
+							albumsNew: mockRoot2.expected.albums,
+							genresNew: mockRoot2.expected.genres
 						});
 						await validateMock(mockRoot2, workerService, orm);
 
@@ -355,7 +362,7 @@ describe('WorkerService', () => {
 						mockRoot2.folders[0].folders[1] = {
 							path: path.join(rootDir, 'collection', 'album 2'),
 							name: 'album 2',
-							genre: randomItem(Genres),
+							genre: 'genre 3',
 							folders: [],
 							images: [],
 							tracks: [
@@ -365,7 +372,7 @@ describe('WorkerService', () => {
 									artist: 'artist A',
 									album: 'album 2',
 									number: 1,
-									genre: randomItem(Genres)
+									genre: 'genre 3'
 								},
 								{
 									name: '2 - title 2 - artist B.mp3',
@@ -373,7 +380,7 @@ describe('WorkerService', () => {
 									artist: 'artist A',
 									album: 'album 2',
 									number: 2,
-									genre: randomItem(Genres)
+									genre: 'genre 3'
 								}
 							],
 							expected: {
@@ -393,7 +400,9 @@ describe('WorkerService', () => {
 							albumsRemoved: 1, // (Album 2 by Artist B) must be removed
 							albumsNew: 1, // (Album 2 by Artist A) must be added
 							artistsRemoved: 1, 	// Artist B must be removed
-							artistsUpdate: 1 // Artist A must be updated
+							artistsUpdate: 1, // Artist A must be updated
+							genresNew: 1, // New Genre
+							genresUpdate: 1 // Updated Genre
 						});
 						await validateMock(mockRoot2, workerService, orm);
 						await fse.remove(mockRoot2.path);
@@ -467,12 +476,13 @@ describe('WorkerService', () => {
 							await expect(workerService.createFolder({rootID: mockRoot.id, parentID: folder.id, name: '//..*.'})).rejects.toThrow('Invalid Directory Name');
 							await expect(workerService.createFolder({rootID: mockRoot.id, parentID: UNKNOWN_UUID, name: 'valid'})).rejects.toThrow('Destination Folder not found');
 
-							const findWithParent = async () => {
+							const findWithParent = async (): Promise<Folder | undefined> => {
 								for (const f of folders) {
 									if (await f.parent.get()) {
 										return f;
 									}
 								}
+								return;
 							};
 
 							const child = await findWithParent();
@@ -588,7 +598,8 @@ describe('WorkerService', () => {
 								foldersRemoved: folderCount,
 								artistsRemoved: 2,	// ['artist 1', 'artist 1 with another artist']
 								albumsRemoved: albumCount,
-								artworksRemoved: artworkCount
+								artworksRemoved: artworkCount,
+								genresUpdate: 3
 							});
 							// restore the folder and rescan
 							const mockFolder = mockRoot.folders.find(f => f.name === 'artist 1');
@@ -648,6 +659,7 @@ describe('WorkerService', () => {
 								foldersUpdate: 5, // 3 = the multialbum with 2 childs, 1 = the old parent, 1 = the new parent
 								artistsUpdate: 1,
 								albumsUpdate: 1,
+								genresUpdate: 1,
 								artworksUpdate: artworkCount,
 								tracksUpdate: trackCount
 							});
@@ -657,6 +669,7 @@ describe('WorkerService', () => {
 								foldersUpdate: 5,
 								albumsUpdate: 1,
 								artistsUpdate: 1,
+								genresUpdate: 1,
 								artworksUpdate: artworkCount,
 								tracksUpdate: trackCount
 							});
@@ -738,7 +751,8 @@ describe('WorkerService', () => {
 								albumsRemoved: mockRoot.expected.albums,
 								foldersRemoved: mockRoot.expected.folders,
 								artworksRemoved: mockRoot.expected.artworks,
-								seriesRemoved: mockRoot.expected.series
+								seriesRemoved: mockRoot.expected.series,
+								genresRemoved: mockRoot.expected.genres
 							});
 						});
 					});
@@ -772,7 +786,8 @@ describe('WorkerService', () => {
 								albumsRemoved: mockRoot.expected.albums,
 								foldersRemoved: mockRoot.expected.folders,
 								artworksRemoved: mockRoot.expected.artworks,
-								seriesRemoved: mockRoot.expected.series
+								seriesRemoved: mockRoot.expected.series,
+								genresRemoved: mockRoot.expected.genres
 							});
 						});
 					});
@@ -1042,7 +1057,8 @@ describe('WorkerService', () => {
 								artistsUpdate: 1,
 								foldersUpdate: 2,
 								tracksUpdate: trackIDs.length,
-								albumsUpdate: 1
+								albumsUpdate: 1,
+								genresUpdate: 1
 							});
 
 							changes = await workerService.moveTracks({...opts, newParentID: albumFolder.id});
@@ -1050,7 +1066,8 @@ describe('WorkerService', () => {
 								artistsUpdate: 1,
 								foldersUpdate: 2,
 								tracksUpdate: trackIDs.length,
-								albumsUpdate: 1
+								albumsUpdate: 1,
+								genresUpdate: 1
 							});
 						});
 
@@ -1093,7 +1110,8 @@ describe('WorkerService', () => {
 								foldersUpdate: 1,
 								tracksUpdate: 1,
 								albumsUpdate: 1,
-								artistsUpdate: 1
+								artistsUpdate: 1,
+								genresUpdate: 1
 							});
 						});
 					});
@@ -1126,7 +1144,8 @@ describe('WorkerService', () => {
 								foldersUpdate: 1,
 								tracksRemoved: 1,
 								albumsUpdate: 1,
-								artistsUpdate: 1
+								artistsUpdate: 1,
+								genresUpdate: 1
 							});
 						});
 					});
@@ -1147,7 +1166,7 @@ describe('WorkerService', () => {
 
 						it('should refresh a track', async () => {
 							const changes = await workerService.refreshTracks(opts);
-							expectChanges(changes, {foldersUpdate: 1, tracksUpdate: 1, artistsUpdate: 1, albumsUpdate: 1});
+							expectChanges(changes, {foldersUpdate: 1, tracksUpdate: 1, artistsUpdate: 1, albumsUpdate: 1, genresUpdate: 1});
 						});
 
 						it('should refresh change an album type after track updates', async () => {
@@ -1169,7 +1188,7 @@ describe('WorkerService', () => {
 								req.tags.push({trackID: track.id, tag: rawTag});
 							}
 							const changes = await workerService.writeTrackTags(req);
-							expectChanges(changes, {foldersUpdate: 3, tracksUpdate: tracks.length, artistsUpdate: 1, albumsUpdate: 1});
+							expectChanges(changes, {foldersUpdate: 3, tracksUpdate: tracks.length, artistsUpdate: 1, albumsUpdate: 1, genresUpdate: 1});
 							const updatedAlbum = await orm.Album.oneOrFailFilter({artist: 'artist 1', name: 'album 1'});
 							expect(updatedAlbum.albumType).toBe(AlbumType.bootleg);
 						});
@@ -1192,7 +1211,7 @@ describe('WorkerService', () => {
 								req.tags.push({trackID: track.id, tag: rawTag});
 							}
 							const changes = await workerService.writeTrackTags(req);
-							expectChanges(changes, {foldersUpdate: 3, tracksUpdate: tracks.length, artistsUpdate: 2, albumsRemoved: 1, albumsNew: 1});
+							expectChanges(changes, {foldersUpdate: 3, tracksUpdate: tracks.length, artistsUpdate: 2, albumsRemoved: 1, albumsNew: 1, genresUpdate: 1});
 							await orm.Album.oneOrFailFilter({artist: 'artist 5', name: 'album 1'});
 						});
 					});

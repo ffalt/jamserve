@@ -14,6 +14,7 @@ import {MediaTagRaw} from '../tag/tag.model';
 import {Series, SeriesQL} from '../series/series';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {TracksArgsQL} from './track.args';
+import {Genre, GenreQL} from '../genre/genre';
 
 @Resolver(TrackQL)
 export class TrackResolver {
@@ -34,6 +35,11 @@ export class TrackResolver {
 	@FieldResolver(() => [BookmarkQL])
 	async bookmarks(@GQLRoot() track: Track): Promise<Array<Bookmark>> {
 		return track.bookmarks.getItems();
+	}
+
+	@FieldResolver(() => [GenreQL])
+	async genres(@GQLRoot() track: Track): Promise<Array<Genre>> {
+		return track.genres.getItems();
 	}
 
 	@FieldResolver(() => Int)

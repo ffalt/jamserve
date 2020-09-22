@@ -20,6 +20,7 @@ import {PlayQueueEntryRepository} from '../../../entity/playqueueentry/playqueue
 import {SettingsRepository} from '../../../entity/settings/settings.repository';
 import {MetaDataRepository} from '../../../entity/metadata/metadata.repository';
 import {ORMConfigRepositories} from '../../orm/definitions/config';
+import {GenreRepository} from '../../../entity/genre/genre.repository';
 
 export const ORMRepositories: ORMConfigRepositories = {
 	Album: AlbumRepository,
@@ -42,5 +43,6 @@ export const ORMRepositories: ORMConfigRepositories = {
 	PlayQueue: PlayQueueRepository,
 	PlayQueueEntry: PlayQueueEntryRepository,
 	Settings: SettingsRepository,
-	MetaData: MetaDataRepository
+	MetaData: MetaDataRepository,
+	Genre: GenreRepository
 };

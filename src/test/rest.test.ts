@@ -204,6 +204,7 @@ describe('REST', () => {
 					const radio = await orm.Radio.oneOrFailFilter({since: 1});
 					const podcast = await orm.Podcast.oneOrFailFilter({since: 1});
 					const episode = await orm.Episode.oneOrFailFilter({since: 1});
+					const genre = await orm.Genre.oneOrFailFilter({since: 1});
 					const user = await orm.User.oneOrFailFilter({name: 'admin'});
 					for (const call of mocks) {
 						if (call.valid && call.method === 'get') {
@@ -221,6 +222,10 @@ describe('REST', () => {
 								}
 								case 'artwork/id': {
 									call.data.id = artwork.id;
+									break;
+								}
+								case 'genre/id': {
+									call.data.id = genre.id;
 									break;
 								}
 								case 'folder/artworks':

@@ -101,7 +101,8 @@ export enum DBObjectType {
 	settings = 'settings',
 	session = 'session',
 	tag = 'tag',
-	series = 'series'
+	series = 'series',
+	genre = 'genre'
 }
 
 export enum AudioFormatType {
@@ -249,7 +250,8 @@ export enum JamObjectType {
 	album = 'album',
 	artist = 'artist',
 	playqueue = 'playqueue',
-	radio = 'radio'
+	radio = 'radio',
+	genre = 'genre'
 }
 
 export enum TrackOrderFields {
@@ -344,4 +346,11 @@ export enum ArtistOrderFields {
 	updated = 'updated',
 	name = 'name',
 	nameSort = 'nameSort'
+}
+
+export enum GenreOrderFields {
+	default = 'default',
+	created = 'created',
+	updated = 'updated',
+	name = 'name'
 }

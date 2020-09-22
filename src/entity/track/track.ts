@@ -6,7 +6,7 @@ import {Artist, ArtistQL} from '../artist/artist';
 import {MediaTagRawQL, Tag, TagQL} from '../tag/tag';
 import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
 import {Field, Float, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm';
+import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm';
 import {Base, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {Waveform, WaveformQL} from '../waveform/waveform';
@@ -16,6 +16,7 @@ import {TrackLyrics} from './track.model';
 import {PlayQueueEntry} from '../playqueueentry/playqueue-entry';
 import {PlaylistEntry} from '../playlistentry/playlist-entry';
 import {BookmarkOrderFields} from '../../types/enums';
+import {Genre, GenreQL} from '../genre/genre';
 
 @ObjectType()
 @Entity()
@@ -61,6 +62,10 @@ export class Track extends Base {
 	@Field(() => ArtistQL, {nullable: true})
 	@ManyToOne<Artist>(() => Artist, artist => artist.albumTracks, {nullable: true})
 	albumArtist = new Reference<Artist>(this);
+
+	@Field(() => [GenreQL])
+	@ManyToMany<Genre>(() => Genre, genre => genre.tracks)
+	genres: Collection<Genre> = new Collection<Genre>(this);
 
 	@Field(() => RootQL)
 	@ManyToOne<Root>(() => Root, root => root.tracks)

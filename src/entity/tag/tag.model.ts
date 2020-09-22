@@ -2,6 +2,7 @@ import {ObjField, ResultType} from '../../modules/rest/decorators';
 import {Base} from '../base/base.model';
 import {examples} from '../../modules/engine/rest/example.consts';
 import {JamObjectType} from '../../types/enums';
+import {GenreBase} from '../genre/genre.model';
 
 @ResultType({description: 'Media Raw Tag'})
 export class MediaTagRaw {
@@ -39,7 +40,7 @@ export class MediaTag {
 	album?: string;
 	@ObjField({nullable: true, description: 'Artist Name', example: 'Mr. Bungle'})
 	artist?: string;
-	@ObjField(() => [String], {nullable: true, description: 'Genres', example: ['Experimental Rock']})
+	@ObjField(() => [String], {nullable: true, description: 'Genres', example: examples.genres})
 	genres?: Array<string>;
 	@ObjField({nullable: true, description: 'Year', example: 1999})
 	year?: number;
@@ -77,12 +78,14 @@ export class MediaBase extends Base {
 	tagRaw?: MediaTagRaw;
 	@ObjField(() => MediaInfo, {nullable: true, description: 'Media Information'})
 	media?: MediaInfo;
-	@ObjField({description: 'Artist Id', nullable: true, isID: true})
+	@ObjField({nullable: true, description: 'Artist Id', isID: true})
 	artistID?: string;
-	@ObjField({description: 'Album Artist Id', nullable: true, isID: true})
+	@ObjField({nullable: true, description: 'Album Artist Id', isID: true})
 	albumArtistID?: string;
-	@ObjField({description: 'Album Id', nullable: true, isID: true})
+	@ObjField({nullable: true, description: 'Album Id', isID: true})
 	albumID?: string;
-	@ObjField({description: 'Series Id', nullable: true, isID: true})
+	@ObjField({nullable: true, description: 'Series Id', isID: true})
 	seriesID?: string;
+	@ObjField(() => [GenreBase], {nullable: true, description: 'Genres'})
+	genres?: Array<GenreBase>;
 }

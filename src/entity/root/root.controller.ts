@@ -93,7 +93,7 @@ export class RootController {
 	@Post(
 		'/refresh',
 		() => AdminChangeQueueInfo,
-		{description: 'Check podcast feeds for new episodes', roles: [UserRole.admin]}
+		{description: 'Check & update a root folder for file system changes', roles: [UserRole.admin]}
 	)
 	async refresh(
 		@BodyParams() args: RootRefreshArgs,
@@ -101,6 +101,23 @@ export class RootController {
 	): Promise<AdminChangeQueueInfo> {
 		if (args.id) {
 			return await engine.io.refreshRoot(args.id);
+		} else {
+			const result = await engine.io.refresh(orm);
+			return result[result.length - 1];
+		}
+	}
+
+	@Post(
+		'/refreshMeta',
+		() => AdminChangeQueueInfo,
+		{description: 'Rebuild all metadata (Artists/Albums/...) for a root folder', roles: [UserRole.admin]}
+	)
+	async refreshMeta(
+		@BodyParams() args: RootRefreshArgs,
+		@Ctx() {orm, engine}: Context
+	): Promise<AdminChangeQueueInfo> {
+		if (args.id) {
+			return await engine.io.refreshRootMeta(args.id);
 		} else {
 			const result = await engine.io.refresh(orm);
 			return result[result.length - 1];

@@ -1,18 +1,18 @@
 import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {Page} from '../base/base.model';
+import {Base, Page} from '../base/base.model';
 
 @ResultType({description: 'Genre'})
-export class Genre {
-	@ObjField({description: 'Name', example: 'Pop'})
-	name!: string;
+export class GenreBase extends Base {
+}
+
+@ResultType({description: 'Genre'})
+export class Genre extends GenreBase {
 	@ObjField({description: 'Album Count', min: 0, example: 5})
 	albumCount!: number;
 	@ObjField({description: 'Track Count', min: 0, example: 55})
 	trackCount!: number;
 	@ObjField({description: 'Artist Count', min: 0, example: 55})
 	artistCount!: number;
-	@ObjField({description: 'Series Count', min: 0, example: 5})
-	seriesCount!: number;
 	@ObjField({description: 'Folder Count', min: 0, example: 55})
 	folderCount!: number;
 }
@@ -23,13 +23,28 @@ export class GenrePage extends Page {
 	items!: Array<Genre>;
 }
 
+@ResultType({description: 'Genre Index Entry'})
+export class GenreIndexEntry {
+	@ObjField({description: 'ID', isID: true})
+	id!: string;
+	@ObjField({description: 'Name', example: 'Awesome'})
+	name!: string;
+	@ObjField({description: 'Track Count', min: 0, example: 5})
+	trackCount!: number;
+	@ObjField({description: 'Artist Count', min: 0, example: 5})
+	artistCount!: number;
+	@ObjField({description: 'Album Count', min: 0, example: 5})
+	albumCount!: number;
+	@ObjField({description: 'Folder Count', min: 0, example: 5})
+	folderCount!: number;
+}
 
-@ResultType({description: 'Playlist Index Group'})
+@ResultType({description: 'Genre Index Group'})
 export class GenreIndexGroup {
 	@ObjField({description: 'Genre Group Name', example: 'A'})
 	name!: string;
-	@ObjField(() => [Genre])
-	items!: Array<Genre>;
+	@ObjField(() => [GenreIndexEntry])
+	items!: Array<GenreIndexEntry>;
 }
 
 @ResultType({description: 'Genre Index'})

@@ -11,6 +11,7 @@ import {MetaMerger} from './merge-meta';
 import {BaseWorker} from './tasks/base';
 import {Orm, OrmService} from '../services/orm.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
+import {Genre} from '../../../entity/genre/genre';
 
 const log = logger('IO.Changes');
 
@@ -82,6 +83,7 @@ export class Changes {
 	folders = new ChangeSet<Folder>();
 	series = new ChangeSet<Series>();
 	artworks = new ChangeSet<Artwork>();
+	genres = new ChangeSet<Genre>();
 	start: number = Date.now();
 	end: number = 0;
 }
@@ -109,6 +111,7 @@ export function logChanges(changes: Changes): void {
 	logChangeSet('Series', changes.series);
 	logChangeSet('Artworks', changes.artworks);
 	logChangeSet('Roots', changes.roots);
+	logChangeSet('Genres', changes.genres);
 }
 
 @InRequestScope

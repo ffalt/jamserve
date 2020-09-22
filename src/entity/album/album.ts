@@ -8,6 +8,7 @@ import {Field, Float, Int, ObjectType} from 'type-graphql';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
 import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_INT, Property, Reference} from '../../modules/orm';
+import {Genre, GenreQL} from '../genre/genre';
 
 @ObjectType()
 @Entity()
@@ -44,9 +45,9 @@ export class Album extends Base {
 	@Property(() => String, {nullable: true})
 	mbReleaseID?: string;
 
-	@Field(() => [String])
-	@Property(() => [String])
-	genres: Array<string> = [];
+	@Field(() => [GenreQL])
+	@ManyToMany<Genre>(() => Genre, genre => genre.albums)
+	genres: Collection<Genre> = new Collection<Genre>(this);
 
 	@Field(() => [TrackQL])
 	@OneToMany<Track>(() => Track, track => track.album, {order: [{orderBy: TrackOrderFields.default}]})

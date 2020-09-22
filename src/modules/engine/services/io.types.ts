@@ -19,6 +19,7 @@ export enum WorkerRequestMode {
 	removeRoot,
 	updateRoot,
 	createRoot,
+	refreshRootMeta,
 
 	fixTrack,
 	moveTracks,

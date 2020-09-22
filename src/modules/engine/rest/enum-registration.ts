@@ -9,6 +9,7 @@ import {
 	DefaultOrderFields,
 	DownloadFormatType,
 	EpisodeOrderFields,
+	GenreOrderFields,
 	FolderHealthID,
 	FolderOrderFields,
 	FolderType,
@@ -43,6 +44,7 @@ export function registerRestEnums(): void {
 	registerEnumType(BookmarkOrderFields, {name: 'BookmarkOrderFields'});
 	registerEnumType(SessionOrderFields, {name: 'SessionOrderFields'});
 	registerEnumType(EpisodeOrderFields, {name: 'EpisodeOrderFields'});
+	registerEnumType(GenreOrderFields, {name: 'GenreOrderFields'});
 	registerEnumType(AlbumOrderFields, {name: 'AlbumOrderFields'});
 	registerEnumType(JamObjectType, {name: 'JamObjectType'});
 	registerEnumType(FolderHealthID, {name: 'FolderHealthID'});

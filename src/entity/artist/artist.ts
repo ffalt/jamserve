@@ -8,6 +8,7 @@ import {Field, Int, ObjectType} from 'type-graphql';
 import {Collection, Entity, ManyToMany, OneToMany, Property} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
+import {Genre, GenreQL} from '../genre/genre';
 
 @ObjectType()
 @Entity()
@@ -32,9 +33,9 @@ export class Artist extends Base {
 	@Property(() => [AlbumType])
 	albumTypes: Array<AlbumType> = [];
 
-	@Field(() => [String])
-	@Property(() => [String])
-	genres: Array<string> = [];
+	@Field(() => [GenreQL])
+	@ManyToMany<Genre>(() => Genre, genre => genre.artists)
+	genres: Collection<Genre> = new Collection<Genre>(this);
 
 	@Field(() => [TrackQL])
 	@OneToMany<Track>(() => Track, track => track.artist, {order: [{orderBy: TrackOrderFields.album}, {orderBy: TrackOrderFields.default}]})

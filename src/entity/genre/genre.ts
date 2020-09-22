@@ -1,10 +1,34 @@
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Index, IndexGroup} from '../base/base';
+import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
+import {Entity, ManyToMany, Property} from '../../modules/orm/decorators';
+import {Collection} from '../../modules/orm';
+import {Track, TrackQL} from '../track/track';
+import {Album, AlbumQL} from '../album/album';
+import {Artist, ArtistQL} from '../artist/artist';
+import {Folder, FolderQL} from '../folder/folder';
+
+@Entity()
+@ObjectType()
+export class Genre extends Base {
+	@Field(() => String)
+	@Property(() => String)
+	name!: string;
+	@Field(() => [TrackQL])
+	@ManyToMany<Track>(() => Track, track => track.genres, {owner: true})
+	tracks: Collection<Track> = new Collection<Track>(this);
+	@Field(() => [AlbumQL])
+	@ManyToMany<Track>(() => Album, album => album.genres, {owner: true})
+	albums: Collection<Album> = new Collection<Album>(this);
+	@Field(() => [ArtistQL])
+	@ManyToMany<Artist>(() => Artist, artist => artist.genres, {owner: true})
+	artists: Collection<Artist> = new Collection<Artist>(this);
+	@Field(() => [FolderQL])
+	@ManyToMany<Folder>(() => Folder, folder => folder.genres, {owner: true})
+	folders: Collection<Folder> = new Collection<Folder>(this);
+}
 
 @ObjectType()
-export class Genre {
-	@Field(() => String)
-	name!: string;
+export class GenreQL extends Genre {
 	@Field(() => Int)
 	trackCount!: number;
 	@Field(() => Int)
@@ -12,17 +36,15 @@ export class Genre {
 	@Field(() => Int)
 	artistCount!: number;
 	@Field(() => Int)
-	seriesCount!: number;
-	@Field(() => Int)
 	folderCount!: number;
 }
 
 @ObjectType()
-export class GenreQL extends Genre {
+export class GenrePageQL extends PaginatedResponse(Genre, GenreQL) {
 }
 
 @ObjectType()
-export class GenreIndexGroupQL extends IndexGroup(Genre, GenreQL) {
+export class GenreIndexGroupQL extends IndexGroup(GenreQL, GenreQL) {
 }
 
 @ObjectType()

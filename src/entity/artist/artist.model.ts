@@ -6,13 +6,14 @@ import {AlbumBase} from '../album/album.model';
 import {ExtendedInfo} from '../metadata/metadata.model';
 import {ObjField, ResultType} from '../../modules/rest/decorators';
 import {examples} from '../../modules/engine/rest/example.consts';
+import {GenreBase} from '../genre/genre.model';
 
 @ResultType({description: 'Artist'})
 export class ArtistBase extends Base {
 	@ObjField(() => [AlbumType], {description: 'List of Album Type', example: [AlbumType.album, AlbumType.compilation]})
 	albumTypes!: Array<AlbumType>;
-	@ObjField(() => [String], {nullable: true, description: 'List of Genres', example: examples.genres})
-	genres?: Array<string>;
+	@ObjField(() => [GenreBase], {nullable: true, description: 'Genres'})
+	genres?: Array<GenreBase>;
 	@ObjField({nullable: true, description: 'MusicBrainz Artist Id', example: examples.mbArtistID})
 	mbArtistID?: string;
 	@ObjField({nullable: true, description: 'Number of Albums', min: 0, example: 5})

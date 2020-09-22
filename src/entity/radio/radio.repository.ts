@@ -5,7 +5,6 @@ import {User} from '../user/user';
 import {RadioFilterArgs, RadioOrderArgs} from './radio.args';
 import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
 
-// @Repository(Radio)
 export class RadioRepository extends BaseRepository<Radio, RadioFilterArgs, RadioOrderArgs> {
 	objType = DBObjectType.radio;
 	indexProperty = 'name';

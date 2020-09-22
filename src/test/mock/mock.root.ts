@@ -18,6 +18,7 @@ export interface MockSpecRoot extends MockSpecFolder {
 		series: number;
 		artworks: number;
 		albums: number;
+		genres: number;
 		folderType?: FolderType;
 	};
 }
@@ -346,6 +347,7 @@ export function buildMockRoot(dir: string, nr: number, strategy: RootScanStrateg
 			artists: ['artist 1', 'artist 1 with another artist', 'artist 2', 'artist c1', 'Various Artists', 'artist c2', 'artist c3', 'artist 5'],
 			albums: 8,
 			series: 1,
+			genres: 4,
 			artworks: 11,
 			folderType: FolderType.collection
 		}
@@ -708,6 +710,7 @@ export function buildSeriesMockRoot(dir: string, nr: number, strategy: RootScanS
 			series: 3,
 			artists: ['audiobook series 1', 'audiobook series 2', 'audiobook series 3'],
 			albums: 10,
+			genres: 1,
 			artworks: 6,
 			folderType: FolderType.collection
 		}

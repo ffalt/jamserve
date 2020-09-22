@@ -53,11 +53,14 @@ type Query {
   folderIndex(filter: FolderFilterArgsQL): FolderIndexQL!
   waveform(id: ID!): WaveformQL!
 
-  """Get a list of genres found in the library"""
-  genres: [GenreQL!]!
+  """Get an Genre by Id"""
+  genre(id: ID!): GenreQL!
+
+  """Search Genres"""
+  genres(page: PageArgsQL, filter: GenreFilterArgsQL, order: [GenreOrderArgsQL!], list: ListType, seed: String): GenrePageQL!
 
   """Get the Navigation Index for Genres"""
-  genresIndex: GenreIndexQL!
+  genreIndex(filter: GenreFilterArgsQL): GenreIndexQL!
 
   """Get a Playlist by Id"""
   playlist(id: ID!): PlaylistQL!
@@ -191,6 +194,7 @@ type TrackQL {
   folder: FolderQL!
   artist: ArtistQL
   albumArtist: ArtistQL
+  genres: [GenreQL!]!
   root: RootQL!
   bookmarks: [BookmarkQL!]!
   tag: TagQL
@@ -243,7 +247,7 @@ type ArtistQL {
   nameSort: String!
   mbArtistID: String
   albumTypes: [AlbumType!]!
-  genres: [String!]!
+  genres: [GenreQL!]!
   tracks: [TrackQL!]!
   albumTracks: [TrackQL!]!
   albums: [AlbumQL!]!
@@ -259,6 +263,82 @@ type ArtistQL {
   albumsTracksCount: Int!
 }
 
+type GenreQL {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  tracks(page: PageArgsQL, filter: TrackFilterArgsQL, order: [TrackOrderArgsQL!]): TrackPageQL!
+  albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!]): AlbumPageQL!
+  artists(page: PageArgsQL, filter: ArtistFilterArgsQL, order: [ArtistOrderArgsQL!]): ArtistPageQL!
+  folders: [FolderQL!]!
+  trackCount: Int!
+  albumCount: Int!
+  artistCount: Int!
+  folderCount: Int!
+}
+
+type TrackPageQL {
+  items: [TrackQL!]!
+  total: Int!
+  take: Int
+  skip: Int
+}
+
+input PageArgsQL {
+  """return items starting from offset position"""
+  skip: Int = 0
+
+  """amount of returned items"""
+  take: Int
+}
+
+input TrackFilterArgsQL {
+  query: String
+  name: String
+  ids: [ID!]
+  childOfID: ID
+  artist: String
+  album: String
+  genres: [String!]
+  genreIDs: [ID!]
+  since: Float
+  seriesIDs: [ID!]
+  albumIDs: [ID!]
+  artistIDs: [ID!]
+  albumArtistIDs: [ID!]
+  rootIDs: [ID!]
+  folderIDs: [ID!]
+  bookmarkIDs: [ID!]
+  fromYear: Int
+  toYear: Int
+}
+
+input TrackOrderArgsQL {
+  orderDesc: Boolean
+  orderBy: TrackOrderFields
+}
+
+enum TrackOrderFields {
+  default
+  created
+  updated
+  trackNr
+  discNr
+  seriesNr
+  album
+  title
+  parent
+  filename
+}
+
+type AlbumPageQL {
+  items: [AlbumQL!]!
+  total: Int!
+  take: Int
+  skip: Int
+}
+
 type AlbumQL {
   id: ID!
   createdAt: DateTime!
@@ -271,7 +351,7 @@ type AlbumQL {
   duration: Float
   mbArtistID: String
   mbReleaseID: String
-  genres: [String!]!
+  genres: [GenreQL!]!
   tracks: [TrackQL!]!
   roots: [RootQL!]!
   folders: [FolderQL!]!
@@ -326,7 +406,7 @@ type FolderQL {
   mbArtistID: String
   albumType: AlbumType
   folderType: FolderType!
-  genres: [String!]!
+  genres: [GenreQL!]!
   parent: FolderQL
   children: [FolderQL!]!
   root: RootQL!
@@ -405,6 +485,84 @@ type RootStatusQL {
   lastScan: DateTime
   scanning: Boolean
   error: String
+}
+
+input AlbumFilterArgsQL {
+  query: String
+  name: String
+  slug: String
+  artist: String
+  ids: [ID!]
+  rootIDs: [ID!]
+  artistIDs: [ID!]
+  trackIDs: [ID!]
+  folderIDs: [ID!]
+  seriesIDs: [ID!]
+  albumTypes: [AlbumType!]
+  mbReleaseIDs: [String!]
+  mbArtistIDs: [String!]
+  notMbArtistID: String
+  genres: [String!]
+  genreIDs: [ID!]
+  since: Float
+  fromYear: Int
+  toYear: Int
+}
+
+input AlbumOrderArgsQL {
+  orderDesc: Boolean
+  orderBy: AlbumOrderFields
+}
+
+enum AlbumOrderFields {
+  default
+  created
+  updated
+  name
+  artist
+  year
+  seriesNr
+  duration
+  albumType
+}
+
+type ArtistPageQL {
+  items: [ArtistQL!]!
+  total: Int!
+  take: Int
+  skip: Int
+}
+
+input ArtistFilterArgsQL {
+  query: String
+  name: String
+  slug: String
+  ids: [ID!]
+  rootIDs: [ID!]
+  albumIDs: [ID!]
+  trackIDs: [ID!]
+  albumTrackIDs: [ID!]
+  seriesIDs: [ID!]
+  folderIDs: [ID!]
+  genres: [String!]
+  genreIDs: [ID!]
+  albumTypes: [AlbumType!]
+  mbArtistIDs: [String!]
+  notMbArtistID: String
+  since: Float
+}
+
+input ArtistOrderArgsQL {
+  orderDesc: Boolean
+  orderBy: ArtistOrderFields
+}
+
+enum ArtistOrderFields {
+  default
+  created
+  updated
+  name
+  nameSort
 }
 
 type BookmarkQL {
@@ -599,97 +757,6 @@ type UserFavoritesQL {
   artworks(page: PageArgsQL, filter: ArtworkFilterArgsQL, order: [ArtworkOrderArgsQL!]): ArtistPageQL!
 }
 
-type AlbumPageQL {
-  items: [AlbumQL!]!
-  total: Int!
-  take: Int
-  skip: Int
-}
-
-input PageArgsQL {
-  """return items starting from offset position"""
-  skip: Int = 0
-
-  """amount of returned items"""
-  take: Int
-}
-
-input AlbumFilterArgsQL {
-  query: String
-  name: String
-  slug: String
-  artist: String
-  ids: [ID!]
-  rootIDs: [ID!]
-  artistIDs: [ID!]
-  trackIDs: [ID!]
-  folderIDs: [ID!]
-  seriesIDs: [ID!]
-  albumTypes: [AlbumType!]
-  mbReleaseIDs: [String!]
-  mbArtistIDs: [String!]
-  notMbArtistID: String
-  genres: [String!]
-  since: Float
-  fromYear: Int
-  toYear: Int
-}
-
-input AlbumOrderArgsQL {
-  orderDesc: Boolean
-  orderBy: AlbumOrderFields
-}
-
-enum AlbumOrderFields {
-  default
-  created
-  updated
-  name
-  artist
-  year
-  seriesNr
-  duration
-  albumType
-}
-
-type ArtistPageQL {
-  items: [ArtistQL!]!
-  total: Int!
-  take: Int
-  skip: Int
-}
-
-input ArtistFilterArgsQL {
-  query: String
-  name: String
-  slug: String
-  ids: [ID!]
-  rootIDs: [ID!]
-  albumIDs: [ID!]
-  trackIDs: [ID!]
-  albumTrackIDs: [ID!]
-  seriesIDs: [ID!]
-  folderIDs: [ID!]
-  genres: [String!]
-  albumTypes: [AlbumType!]
-  mbArtistIDs: [String!]
-  notMbArtistID: String
-  since: Float
-}
-
-input ArtistOrderArgsQL {
-  orderDesc: Boolean
-  orderBy: ArtistOrderFields
-}
-
-enum ArtistOrderFields {
-  default
-  created
-  updated
-  name
-  nameSort
-}
-
 type SeriesPageQL {
   items: [SeriesQL!]!
   total: Int!
@@ -789,51 +856,6 @@ enum EpisodeOrderFields {
   name
   status
   date
-}
-
-type TrackPageQL {
-  items: [TrackQL!]!
-  total: Int!
-  take: Int
-  skip: Int
-}
-
-input TrackFilterArgsQL {
-  query: String
-  name: String
-  ids: [ID!]
-  childOfID: ID
-  artist: String
-  album: String
-  genres: [String!]
-  since: Float
-  seriesIDs: [ID!]
-  albumIDs: [ID!]
-  artistIDs: [ID!]
-  albumArtistIDs: [ID!]
-  rootIDs: [ID!]
-  folderIDs: [ID!]
-  bookmarkIDs: [ID!]
-  fromYear: Int
-  toYear: Int
-}
-
-input TrackOrderArgsQL {
-  orderDesc: Boolean
-  orderBy: TrackOrderFields
-}
-
-enum TrackOrderFields {
-  default
-  created
-  updated
-  trackNr
-  discNr
-  seriesNr
-  album
-  title
-  parent
-  filename
 }
 
 type FolderPageQL {
@@ -1143,13 +1165,31 @@ type FolderIndexGroupQL {
   name: String!
 }
 
-type GenreQL {
-  name: String!
-  trackCount: Int!
-  albumCount: Int!
-  artistCount: Int!
-  seriesCount: Int!
-  folderCount: Int!
+type GenrePageQL {
+  items: [GenreQL!]!
+  total: Int!
+  take: Int
+  skip: Int
+}
+
+input GenreFilterArgsQL {
+  query: String
+  name: String
+  ids: [ID!]
+  trackIDs: [ID!]
+  since: Float
+}
+
+input GenreOrderArgsQL {
+  orderDesc: Boolean
+  orderBy: GenreOrderFields
+}
+
+enum GenreOrderFields {
+  default
+  created
+  updated
+  name
 }
 
 type GenreIndexQL {

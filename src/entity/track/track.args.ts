@@ -12,6 +12,8 @@ export class IncludesTrackArgs {
 	trackIncTag?: boolean;
 	@ObjField({nullable: true, description: 'include raw tag on track(s)', defaultValue: false, example: false})
 	trackIncRawTag?: boolean;
+	@ObjField({nullable: true, description: 'include genre on track(s)', defaultValue: false, example: false})
+	trackIncGenres?: boolean;
 	@ObjField({nullable: true, description: 'include user states (fav,rate) on track(s)', defaultValue: false, example: false})
 	trackIncState?: boolean;
 }
@@ -92,6 +94,10 @@ export class TrackFilterArgs {
 	@Field(() => [String], {nullable: true})
 	@ObjField(() => [String], {nullable: true, description: 'filter by genres', example: ['Folk Pop']})
 	genres?: Array<string>;
+
+	@Field(() => [ID], {nullable: true})
+	@ObjField(() => [String], {nullable: true, description: 'filter by Genre Ids', isID: true})
+	genreIDs?: Array<string>;
 
 	@Field(() => Float, {nullable: true})
 	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})

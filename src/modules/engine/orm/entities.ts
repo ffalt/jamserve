@@ -20,6 +20,7 @@ import {State} from '../../../entity/state/state';
 import {Tag} from '../../../entity/tag/tag';
 import {Track} from '../../../entity/track/track';
 import {User} from '../../../entity/user/user';
+import {Genre} from '../../../entity/genre/genre';
 
 export const ORMEntities = [
 	Base,
@@ -29,6 +30,7 @@ export const ORMEntities = [
 	Bookmark,
 	Episode,
 	Folder,
+	Genre,
 	Root,
 	MetaData,
 	Playlist,

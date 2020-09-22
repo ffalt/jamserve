@@ -15,7 +15,7 @@ import {
 	DefaultOrderFields,
 	EpisodeOrderFields,
 	FolderOrderFields,
-	FolderType,
+	FolderType, GenreOrderFields,
 	ListType,
 	PlaylistEntryOrderFields,
 	PlayQueueEntryOrderFields,
@@ -65,6 +65,7 @@ function registerEnums(): void {
 	registerEnumType(SessionOrderFields, {name: 'SessionOrderFields'});
 	registerEnumType(EpisodeOrderFields, {name: 'EpisodeOrderFields'});
 	registerEnumType(AlbumOrderFields, {name: 'AlbumOrderFields'});
+	registerEnumType(GenreOrderFields, {name: 'GenreOrderFields'});
 	registerEnumType(PodcastStatus, {name: 'PodcastStatus'});
 	registerEnumType(AudioFormatType, {name: 'AudioFormatType'});
 	registerEnumType(ArtworkImageType, {name: 'ArtworkImageType'});

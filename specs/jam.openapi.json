@@ -2,7 +2,7 @@
 	"openapi": "3.0.0",
 	"info": {
 		"description": "Api for JamServe",
-		"version": "0.2.0",
+		"version": "0.2.1",
 		"title": "JamApi",
 		"license": {
 			"name": "MIT",
@@ -269,6 +269,18 @@
 					},
 					{
 						"in": "query",
+						"name": "artistIncGenres",
+						"description": "include genre on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on artist(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncMedia",
 						"description": "include media information on track(s)",
 						"required": false,
@@ -301,6 +313,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -385,6 +409,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include extended meta data on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncGenres",
+						"description": "include genre on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on album(s)"
 						}
 					},
 					{
@@ -638,6 +674,19 @@
 							"items": {
 								"type": "string",
 								"description": "filter by Genres"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
 							}
 						}
 					},
@@ -961,6 +1010,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
@@ -1093,6 +1155,18 @@
 					},
 					{
 						"in": "query",
+						"name": "artistIncGenres",
+						"description": "include genre on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on artist(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncMedia",
 						"description": "include media information on track(s)",
 						"required": false,
@@ -1125,6 +1199,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -1209,6 +1295,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include extended meta data on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncGenres",
+						"description": "include genre on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on album(s)"
 						}
 					},
 					{
@@ -1557,6 +1655,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
@@ -1625,6 +1736,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -1743,6 +1866,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -1962,6 +2097,18 @@
 					},
 					{
 						"in": "query",
+						"name": "albumIncGenres",
+						"description": "include genre on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on album(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncMedia",
 						"description": "include media information on track(s)",
 						"required": false,
@@ -1994,6 +2141,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -2150,6 +2309,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include extended meta data on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncGenres",
+						"description": "include genre on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on artist(s)"
 						}
 					},
 					{
@@ -2347,6 +2518,19 @@
 							"items": {
 								"type": "string",
 								"description": "filter by Genres"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
 							}
 						}
 					},
@@ -2632,6 +2816,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "albumTypes",
 						"description": "filter by Album Types",
 						"required": false,
@@ -2806,6 +3003,18 @@
 					},
 					{
 						"in": "query",
+						"name": "albumIncGenres",
+						"description": "include genre on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on album(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncMedia",
 						"description": "include media information on track(s)",
 						"required": false,
@@ -2838,6 +3047,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -2994,6 +3215,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include extended meta data on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncGenres",
+						"description": "include genre on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on artist(s)"
 						}
 					},
 					{
@@ -3222,6 +3455,18 @@
 					},
 					{
 						"in": "query",
+						"name": "artistIncGenres",
+						"description": "include genre on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on artist(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "skip",
 						"description": "return items starting from offset position",
 						"required": false,
@@ -3337,6 +3582,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -3596,6 +3853,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "albumTypes",
 						"description": "filter by Album Types",
 						"required": false,
@@ -3682,6 +3952,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -3928,6 +4210,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "albumTypes",
 						"description": "filter by Album Types",
 						"required": false,
@@ -4026,6 +4321,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include extended meta data on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncGenres",
+						"description": "include genre on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on album(s)"
 						}
 					},
 					{
@@ -4433,6 +4740,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include track count on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncGenres",
+						"description": "include genre on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on folder(s)"
 						}
 					},
 					{
@@ -4859,6 +5178,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include track count on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncGenres",
+						"description": "include genre on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on folder(s)"
 						}
 					},
 					{
@@ -5666,6 +5997,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -5934,6 +6277,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -7080,6 +7435,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -7316,6 +7683,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include track count on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncGenres",
+						"description": "include genre on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on folder(s)"
 						}
 					},
 					{
@@ -8308,6 +8687,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -8544,6 +8935,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include track count on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncGenres",
+						"description": "include genre on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on folder(s)"
 						}
 					},
 					{
@@ -9114,6 +9517,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -9616,6 +10031,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include track count on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncGenres",
+						"description": "include genre on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on folder(s)"
 						}
 					},
 					{
@@ -10396,6 +10823,18 @@
 					},
 					{
 						"in": "query",
+						"name": "folderIncGenres",
+						"description": "include genre on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on folder(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "folderIncArtworkCount",
 						"description": "include artwork count on folder(s)",
 						"required": false,
@@ -10599,6 +11038,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -10738,6 +11189,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include track count on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncGenres",
+						"description": "include genre on folder(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on folder(s)"
 						}
 					},
 					{
@@ -11419,23 +11882,196 @@
 				]
 			}
 		},
-		"/genre/list": {
+		"/genre/id": {
 			"get": {
-				"operationId": "GenreController.list",
-				"summary": "Get Genres",
-				"description": "Get a list of genres found in the library",
+				"operationId": "GenreController.id",
+				"summary": "Get Genre",
+				"description": "Get a Genre by Id",
 				"tags": [
 					"Genres"
 				],
 				"parameters": [
 					{
 						"in": "query",
-						"name": "rootID",
-						"description": "filter genre by Root Id",
+						"name": "genreState",
+						"description": "include state (fav,rate) on genre(s)",
 						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include state (fav,rate) on genre(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"description": "Genre Id",
+						"required": true,
 						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Genre"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/genre/search": {
+			"get": {
+				"operationId": "GenreController.search",
+				"summary": "Search genres",
+				"description": "Search genres",
+				"tags": [
+					"Genres"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "orderDesc",
+						"description": "order direction ascending or descending",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"description": "order direction ascending or descending"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderBy",
+						"description": "order by field",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/GenreOrderFields"
+						}
+					},
+					{
+						"in": "query",
+						"name": "list",
+						"description": "filter by special list",
+						"required": false,
+						"example": "faved",
+						"schema": {
+							"$ref": "#/components/schemas/ListType"
+						}
+					},
+					{
+						"in": "query",
+						"name": "seed",
+						"description": "seed for random list",
+						"required": false,
+						"example": "jksfb23jhsdf",
+						"schema": {
+							"type": "string",
+							"description": "seed for random list"
+						}
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"description": "filter by Search Query",
+						"required": false,
+						"example": "pink",
+						"schema": {
+							"type": "string",
+							"description": "filter by Search Query"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"description": "filter by Genre Name",
+						"required": false,
+						"example": "Pop",
+						"schema": {
+							"type": "string",
+							"description": "filter by Genre Name"
+						}
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIDs",
+						"description": "filter by Track Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "since",
+						"description": "filter by Creation timestamp",
+						"required": false,
+						"example": "2000-12-31T23:00:00.000Z",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "filter by Creation timestamp"
+						}
+					},
+					{
+						"in": "query",
+						"name": "genreState",
+						"description": "include state (fav,rate) on genre(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include state (fav,rate) on genre(s)"
 						}
 					},
 					{
@@ -11507,7 +12143,68 @@
 				"tags": [
 					"Genres"
 				],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"description": "filter by Search Query",
+						"required": false,
+						"example": "pink",
+						"schema": {
+							"type": "string",
+							"description": "filter by Search Query"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"description": "filter by Genre Name",
+						"required": false,
+						"example": "Pop",
+						"schema": {
+							"type": "string",
+							"description": "filter by Genre Name"
+						}
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIDs",
+						"description": "filter by Track Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "since",
+						"description": "filter by Creation timestamp",
+						"required": false,
+						"example": "2000-12-31T23:00:00.000Z",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "filter by Creation timestamp"
+						}
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "json data",
@@ -11521,6 +12218,690 @@
 					},
 					"401": {
 						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/genre/tracks": {
+			"get": {
+				"operationId": "GenreController.tracks",
+				"summary": "Get Tracks",
+				"description": "Get Tracks of Genres",
+				"tags": [
+					"Genres"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "orderDesc",
+						"description": "order direction ascending or descending",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"description": "order direction ascending or descending"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderBy",
+						"description": "order by field",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/TrackOrderFields"
+						}
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"description": "filter by Search Query",
+						"required": false,
+						"example": "pink",
+						"schema": {
+							"type": "string",
+							"description": "filter by Search Query"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"description": "filter by Genre Name",
+						"required": false,
+						"example": "Pop",
+						"schema": {
+							"type": "string",
+							"description": "filter by Genre Name"
+						}
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIDs",
+						"description": "filter by Track Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "since",
+						"description": "filter by Creation timestamp",
+						"required": false,
+						"example": "2000-12-31T23:00:00.000Z",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "filter by Creation timestamp"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncMedia",
+						"description": "include media information on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include media information on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncTag",
+						"description": "include tag on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncRawTag",
+						"description": "include raw tag on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncState",
+						"description": "include user states (fav,rate) on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"description": "return items starting from offset position",
+						"required": false,
+						"example": 0,
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0,
+							"description": "return items starting from offset position"
+						}
+					},
+					{
+						"in": "query",
+						"name": "take",
+						"description": "amount of returned items",
+						"required": false,
+						"example": 25,
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "amount of returned items"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TrackPage"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/genre/albums": {
+			"get": {
+				"operationId": "GenreController.albums",
+				"summary": "Get Albums",
+				"description": "Get Albums of Genres",
+				"tags": [
+					"Genres"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "orderDesc",
+						"description": "order direction ascending or descending",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"description": "order direction ascending or descending"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderBy",
+						"description": "order by field",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/AlbumOrderFields"
+						}
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"description": "filter by Search Query",
+						"required": false,
+						"example": "pink",
+						"schema": {
+							"type": "string",
+							"description": "filter by Search Query"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"description": "filter by Genre Name",
+						"required": false,
+						"example": "Pop",
+						"schema": {
+							"type": "string",
+							"description": "filter by Genre Name"
+						}
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIDs",
+						"description": "filter by Track Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "since",
+						"description": "filter by Creation timestamp",
+						"required": false,
+						"example": "2000-12-31T23:00:00.000Z",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "filter by Creation timestamp"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncTrackIDs",
+						"description": "include track ids on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track ids on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncTrackCount",
+						"description": "include track count on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track count on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncState",
+						"description": "include user states (fav,rate) on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncInfo",
+						"description": "include extended meta data on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncGenres",
+						"description": "include genre on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"description": "return items starting from offset position",
+						"required": false,
+						"example": 0,
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0,
+							"description": "return items starting from offset position"
+						}
+					},
+					{
+						"in": "query",
+						"name": "take",
+						"description": "amount of returned items",
+						"required": false,
+						"example": 25,
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "amount of returned items"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AlbumPage"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/genre/artists": {
+			"get": {
+				"operationId": "GenreController.artists",
+				"summary": "Get Artists",
+				"description": "Get Artists of Genres",
+				"tags": [
+					"Genres"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "orderDesc",
+						"description": "order direction ascending or descending",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"description": "order direction ascending or descending"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderBy",
+						"description": "order by field",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/ArtistOrderFields"
+						}
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"description": "filter by Search Query",
+						"required": false,
+						"example": "pink",
+						"schema": {
+							"type": "string",
+							"description": "filter by Search Query"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"description": "filter by Genre Name",
+						"required": false,
+						"example": "Pop",
+						"schema": {
+							"type": "string",
+							"description": "filter by Genre Name"
+						}
+					},
+					{
+						"in": "query",
+						"name": "ids",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIDs",
+						"description": "filter by Track Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "since",
+						"description": "filter by Creation timestamp",
+						"required": false,
+						"example": "2000-12-31T23:00:00.000Z",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "filter by Creation timestamp"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncAlbumIDs",
+						"description": "include album ids on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include album ids on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncAlbumCount",
+						"description": "include album count on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include album count on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncState",
+						"description": "include user states (fav,rate) on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include user states (fav,rate) on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncTrackIDs",
+						"description": "include track ids on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track ids on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncTrackCount",
+						"description": "include track count on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include track count on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncSeriesIDs",
+						"description": "include series ids on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include series ids on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncSeriesCount",
+						"description": "include series count on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include series count on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncInfo",
+						"description": "include extended meta data on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include extended meta data on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artistIncGenres",
+						"description": "include genre on artist(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on artist(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"description": "return items starting from offset position",
+						"required": false,
+						"example": 0,
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0,
+							"description": "return items starting from offset position"
+						}
+					},
+					{
+						"in": "query",
+						"name": "take",
+						"description": "amount of returned items",
+						"required": false,
+						"example": 25,
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "amount of returned items"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ArtistPage"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"422": {
+						"description": "Invalid parameter"
 					}
 				},
 				"security": [
@@ -12667,6 +14048,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -12925,6 +14318,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -13417,6 +14822,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -13745,6 +15162,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -14067,6 +15496,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -16486,8 +17927,56 @@
 		"/root/refresh": {
 			"post": {
 				"operationId": "RootController.refresh",
-				"summary": "Check podcast feeds for new episodes",
-				"description": "Check podcast feeds for new episodes",
+				"summary": "Check & update a root folder for file system changes",
+				"description": "Check & update a root folder for file system changes",
+				"tags": [
+					"Root"
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RootRefreshArgs"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"admin"
+						]
+					},
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				]
+			}
+		},
+		"/root/refreshMeta": {
+			"post": {
+				"operationId": "RootController.refreshMeta",
+				"summary": "Rebuild all metadata (Artists/Albums/...) for a root folder",
+				"description": "Rebuild all metadata (Artists/Albums/...) for a root folder",
 				"tags": [
 					"Root"
 				],
@@ -16578,6 +18067,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -16634,6 +18135,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include extended meta data on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncGenres",
+						"description": "include genre on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on album(s)"
 						}
 					},
 					{
@@ -17168,6 +18681,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -17224,6 +18749,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include extended meta data on album(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "albumIncGenres",
+						"description": "include genre on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on album(s)"
 						}
 					},
 					{
@@ -17647,6 +19184,18 @@
 					},
 					{
 						"in": "query",
+						"name": "albumIncGenres",
+						"description": "include genre on album(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on album(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "skip",
 						"description": "return items starting from offset position",
 						"required": false,
@@ -17896,6 +19445,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -18818,6 +20379,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -19012,6 +20585,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
@@ -19175,6 +20761,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -19289,6 +20887,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include raw tag on track(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
 						}
 					},
 					{
@@ -19529,6 +21139,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "since",
 						"description": "filter by Creation timestamp",
 						"required": false,
@@ -19740,6 +21363,18 @@
 					},
 					{
 						"in": "query",
+						"name": "trackIncGenres",
+						"description": "include genre on track(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include genre on track(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "trackIncState",
 						"description": "include user states (fav,rate) on track(s)",
 						"required": false,
@@ -19830,6 +21465,19 @@
 							"items": {
 								"type": "string",
 								"description": "filter by genres"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
 							}
 						}
 					},
@@ -21429,7 +23077,8 @@
 					"album",
 					"artist",
 					"playqueue",
-					"radio"
+					"radio",
+					"genre"
 				]
 			},
 			"MediaTag": {
@@ -21540,47 +23189,10 @@
 					"bitRate"
 				]
 			},
-			"MediaBase": {
+			"GenreBase": {
 				"allOf": [
 					{
 						"$ref": "#/components/schemas/Base"
-					},
-					{
-						"properties": {
-							"objType": {
-								"$ref": "#/components/schemas/JamObjectType"
-							},
-							"duration": {
-								"type": "integer",
-								"minimum": 0,
-								"description": "Duration of Track"
-							},
-							"tag": {
-								"$ref": "#/components/schemas/MediaTag"
-							},
-							"tagRaw": {
-								"$ref": "#/components/schemas/MediaTagRaw"
-							},
-							"media": {
-								"$ref": "#/components/schemas/MediaInfo"
-							},
-							"artistID": {
-								"$ref": "#/components/schemas/ID"
-							},
-							"albumArtistID": {
-								"$ref": "#/components/schemas/ID"
-							},
-							"albumID": {
-								"$ref": "#/components/schemas/ID"
-							},
-							"seriesID": {
-								"$ref": "#/components/schemas/ID"
-							}
-						},
-						"required": [
-							"objType",
-							"duration"
-						]
 					}
 				]
 			},
@@ -21633,6 +23245,56 @@
 					"id",
 					"name",
 					"created"
+				]
+			},
+			"MediaBase": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Base"
+					},
+					{
+						"properties": {
+							"objType": {
+								"$ref": "#/components/schemas/JamObjectType"
+							},
+							"duration": {
+								"type": "integer",
+								"minimum": 0,
+								"description": "Duration of Track"
+							},
+							"tag": {
+								"$ref": "#/components/schemas/MediaTag"
+							},
+							"tagRaw": {
+								"$ref": "#/components/schemas/MediaTagRaw"
+							},
+							"media": {
+								"$ref": "#/components/schemas/MediaInfo"
+							},
+							"artistID": {
+								"$ref": "#/components/schemas/ID"
+							},
+							"albumArtistID": {
+								"$ref": "#/components/schemas/ID"
+							},
+							"albumID": {
+								"$ref": "#/components/schemas/ID"
+							},
+							"seriesID": {
+								"$ref": "#/components/schemas/ID"
+							},
+							"genres": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/GenreBase"
+								}
+							}
+						},
+						"required": [
+							"objType",
+							"duration"
+						]
+					}
 				]
 			},
 			"AlbumType": {
@@ -21698,8 +23360,7 @@
 							"genres": {
 								"type": "array",
 								"items": {
-									"type": "string",
-									"description": "List of Genres"
+									"$ref": "#/components/schemas/GenreBase"
 								}
 							},
 							"mbArtistID": {
@@ -21804,8 +23465,7 @@
 							"genres": {
 								"type": "array",
 								"items": {
-									"type": "string",
-									"description": "List of Genres"
+									"$ref": "#/components/schemas/GenreBase"
 								}
 							},
 							"year": {
@@ -21856,7 +23516,7 @@
 					},
 					"artist": {
 						"type": "string",
-						"description": "Name"
+						"description": "Artist"
 					},
 					"artistID": {
 						"$ref": "#/components/schemas/ID"
@@ -22370,6 +24030,12 @@
 								"type": "integer",
 								"minimum": 0,
 								"description": "Number of Artworks"
+							},
+							"genres": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/GenreBase"
+								}
 							},
 							"tag": {
 								"$ref": "#/components/schemas/FolderTag"
@@ -23309,45 +24975,49 @@
 				]
 			},
 			"Genre": {
-				"type": "object",
-				"properties": {
-					"name": {
-						"type": "string",
-						"description": "Name"
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/GenreBase"
 					},
-					"albumCount": {
-						"type": "integer",
-						"minimum": 0,
-						"description": "Album Count"
-					},
-					"trackCount": {
-						"type": "integer",
-						"minimum": 0,
-						"description": "Track Count"
-					},
-					"artistCount": {
-						"type": "integer",
-						"minimum": 0,
-						"description": "Artist Count"
-					},
-					"seriesCount": {
-						"type": "integer",
-						"minimum": 0,
-						"description": "Series Count"
-					},
-					"folderCount": {
-						"type": "integer",
-						"minimum": 0,
-						"description": "Folder Count"
+					{
+						"properties": {
+							"albumCount": {
+								"type": "integer",
+								"minimum": 0,
+								"description": "Album Count"
+							},
+							"trackCount": {
+								"type": "integer",
+								"minimum": 0,
+								"description": "Track Count"
+							},
+							"artistCount": {
+								"type": "integer",
+								"minimum": 0,
+								"description": "Artist Count"
+							},
+							"folderCount": {
+								"type": "integer",
+								"minimum": 0,
+								"description": "Folder Count"
+							}
+						},
+						"required": [
+							"albumCount",
+							"trackCount",
+							"artistCount",
+							"folderCount"
+						]
 					}
-				},
-				"required": [
-					"name",
-					"albumCount",
-					"trackCount",
-					"artistCount",
-					"seriesCount",
-					"folderCount"
+				]
+			},
+			"GenreOrderFields": {
+				"type": "string",
+				"enum": [
+					"default",
+					"created",
+					"updated",
+					"name"
 				]
 			},
 			"GenrePage": {
@@ -23370,6 +25040,46 @@
 					}
 				]
 			},
+			"GenreIndexEntry": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"$ref": "#/components/schemas/ID"
+					},
+					"name": {
+						"type": "string",
+						"description": "Name"
+					},
+					"trackCount": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Track Count"
+					},
+					"artistCount": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Artist Count"
+					},
+					"albumCount": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Album Count"
+					},
+					"folderCount": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Folder Count"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"trackCount",
+					"artistCount",
+					"albumCount",
+					"folderCount"
+				]
+			},
 			"GenreIndexGroup": {
 				"type": "object",
 				"properties": {
@@ -23380,7 +25090,7 @@
 					"items": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/Genre"
+							"$ref": "#/components/schemas/GenreIndexEntry"
 						}
 					}
 				},

@@ -74,6 +74,7 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 		);
 		result.include = QHelper.includeQueries([
 			{bookmarks: [{id: QHelper.inOrEqual(filter.bookmarkIDs)}]},
+			{genres: [{id: QHelper.inOrEqual(filter.genreIDs)}]},
 			{artist: [{name: QHelper.eq(filter.artist)}]},
 			{album: [{name: QHelper.eq(filter.album)}]},
 			{

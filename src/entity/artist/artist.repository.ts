@@ -39,11 +39,12 @@ export class ArtistRepository extends BaseRepository<Artist, ArtistFilterArgs, A
 				{mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs)},
 				{mbArtistID: QHelper.neq(filter.notMbArtistID)},
 				{createdAt: QHelper.gte(filter.since)},
-				...QHelper.inStringArray('genres', filter.genres),
 				...QHelper.inStringArray('albumTypes', filter.albumTypes)
 			]
 		);
 		result.include = QHelper.includeQueries([
+			{genres: [{name: QHelper.inOrEqual(filter.genres)}]},
+			{genres: [{id: QHelper.inOrEqual(filter.genreIDs)}]},
 			{tracks: [{id: QHelper.inOrEqual(filter.trackIDs)}]},
 			{albumTracks: [{id: QHelper.inOrEqual(filter.albumTrackIDs)}]},
 			{series: [{id: QHelper.inOrEqual(filter.seriesIDs)}]},
