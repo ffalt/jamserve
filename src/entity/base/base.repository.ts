@@ -194,7 +194,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		const result = await this.getListIDs(list, seed, options, userID);
 		return {
 			...result,
-			items: await this.findByIDs(result.items)
+			items: (await this.findByIDs(result.items)).sort((a, b) => result.items.indexOf(a.id) - result.items.indexOf(b.id))
 		};
 	}
 
@@ -303,6 +303,9 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	private async getFilteredIDs(ids: Array<string>, options: FindOptions<Entity>): Promise<Array<string>> {
+		if (!options.where) {
+			return ids;
+		}
 		let where: WhereOptions<Entity> = {id: {[Op.in]: ids}};
 		if (options.where &&
 			(Object.keys(options.where).length > 0 ||
@@ -311,9 +314,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 			where = {[Op.and]: [where, options.where]};
 		}
 		const list = await this.findIDs({...options, where});
-		return list.sort((a, b) => {
-			return ids.indexOf(a) - ids.indexOf(b);
-		});
+		return list.sort((a, b) => ids.indexOf(a) - ids.indexOf(b));
 	}
 
 	private async getHighestRatedIDs(options: FindOptions<Entity>, userID: string): Promise<Array<string>> {
