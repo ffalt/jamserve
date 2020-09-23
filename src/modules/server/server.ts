@@ -45,6 +45,28 @@ export class Server {
 		app.use(bodyParser.json({type: 'application/vnd.api+json', limit: '10mb'}));
 
 		app.use(helmet());
+		const self = '\'self\'';
+		app.use(
+			helmet.contentSecurityPolicy({
+				directives: {
+					defaultSrc: [self],
+					scriptSrc: [self],
+					styleSrc: [self, `https: 'unsafe-inline'`],
+					connectSrc: [self,
+						'https://en.wikipedia.org',
+						'https://commons.wikimedia.org',
+						'https://gpodder.net'
+					],
+					imgSrc: [
+						self,
+						'data:',
+						'https://coverartarchive.org'
+					],
+					fontSrc: [self, 'data:'],
+					// reportUri: '/cspviolation'
+				},
+			})
+		);
 
 		if (this.configService.env.session.proxy) {
 			app.enable('trust proxy'); // trust first proxy
