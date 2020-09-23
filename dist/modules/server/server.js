@@ -40,6 +40,25 @@ let Server = class Server {
         app.use(body_parser_1.default.json({ limit: '10mb' }));
         app.use(body_parser_1.default.json({ type: 'application/vnd.api+json', limit: '10mb' }));
         app.use(helmet_1.default());
+        const self = '\'self\'';
+        app.use(helmet_1.default.contentSecurityPolicy({
+            directives: {
+                defaultSrc: [self],
+                scriptSrc: [self],
+                styleSrc: [self, `https: 'unsafe-inline'`],
+                connectSrc: [self,
+                    'https://en.wikipedia.org',
+                    'https://commons.wikimedia.org',
+                    'https://gpodder.net'
+                ],
+                imgSrc: [
+                    self,
+                    'data:',
+                    'https://coverartarchive.org'
+                ],
+                fontSrc: [self, 'data:'],
+            },
+        }));
         if (this.configService.env.session.proxy) {
             app.enable('trust proxy');
         }
