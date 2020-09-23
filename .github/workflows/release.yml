@@ -7,12 +7,44 @@ on:
 name: release
 
 jobs:
+  test:
+    name: Test Release
+    runs-on: ubuntu-latest
+    container:
+      image: ffalt/jam-test
+    env:
+      JAM_DB_HOST: postgres
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-ci-${{ hashFiles('**/package-lock.json') }}
+      - run: npm install
+      - run: npm run test
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: jamtest
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
   build:
     name: Release
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Install Node.js
         uses: actions/setup-node@v1
@@ -27,11 +59,9 @@ jobs:
         run: |
           npm run build:deploy
 
-      - name: Build Changelog message
-        id: changelog
-        uses: scottbrenner/generate-changelog-action@1.0.1
-        env:
-          REPO: ${{ github.repository }}
+      - name: Generate Releaselog
+        run: |
+          npm run releaselog
 
       - name: Deploy to Release Branch 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
@@ -53,8 +83,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: |
-            ${{ steps.changelog.outputs.changelog }}
+          body_path: ./RELEASELOG.md
           draft: false
           prerelease: false
 
