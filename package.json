@@ -38,7 +38,7 @@
     "console-table-printer": "2.4.8",
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
-    "d3": "6.1.1",
+    "d3": "6.2.0",
     "d3-array": "2.7.1",
     "d3-node": "2.2.2",
     "d3-scale": "3.2.2",
