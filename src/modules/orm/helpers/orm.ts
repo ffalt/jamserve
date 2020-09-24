@@ -46,7 +46,7 @@ export class ORM {
 		}
 		table = await queryInterface.describeTable('Album');
 		if (table?.genres) {
-			await queryInterface.removeColumn('album', 'genres');
+			await queryInterface.removeColumn('Album', 'genres');
 		}
 	}
 
