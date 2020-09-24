@@ -182,7 +182,7 @@ export class WorkerScan {
 
 	private async updateTrack(file: ScanFile, track: Track): Promise<MatchTrack | undefined> {
 		if (!this.changes.tracks.removed.has(track)) {
-			log.info('Track has changed', file.path);
+			log.info('Updating Track', file.path);
 			this.changes.tracks.updated.add(track);
 		}
 		if (this.changes.tracks.updated.has(track)) {
@@ -330,7 +330,7 @@ export class WorkerScan {
 			const scanTrack = scanTracks.find(t => t.path == filename);
 			if (scanTrack) {
 				foundScanTracks.push(scanTrack);
-				if (
+				if (this.changes.tracks.updated.has(track) ||
 					scanTrack.size !== track.fileSize ||
 					!moment(scanTrack.ctime).isSame(track.statCreated) ||
 					!moment(scanTrack.mtime).isSame(track.statModified)
