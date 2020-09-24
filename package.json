@@ -28,7 +28,7 @@
     "releaselog": "conventional-changelog -p angular -r 2 -o RELEASELOG.md"
   },
   "dependencies": {
-    "apollo-server-express": "2.18.0",
+    "apollo-server-express": "2.18.1",
     "apollo-server-logger": "1.0.1",
     "archiver": "5.0.2",
     "body-parser": "1.19.0",
