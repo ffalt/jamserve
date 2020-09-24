@@ -42,7 +42,9 @@ export class Server {
 		log.debug(`registering express standard middleware`);
 		app.use(bodyParser.urlencoded({extended: true, limit: '10mb'}));
 		app.use(bodyParser.json({limit: '10mb'}));
+		app.use(bodyParser.json({type: 'application/json', limit: '10mb'}));
 		app.use(bodyParser.json({type: 'application/vnd.api+json', limit: '10mb'}));
+		app.use(bodyParser.json({type: 'application/csp-report', limit: '10mb'}));
 
 		app.use(helmet());
 		const self = '\'self\'';
