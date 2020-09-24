@@ -43,7 +43,7 @@ class ORM {
         }
         table = await queryInterface.describeTable('Album');
         if (table === null || table === void 0 ? void 0 : table.genres) {
-            await queryInterface.removeColumn('album', 'genres');
+            await queryInterface.removeColumn('Album', 'genres');
         }
     }
     async ensureSchema() {
