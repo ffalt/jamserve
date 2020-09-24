@@ -31,10 +31,22 @@ export class ORM {
 	async updateSchema(): Promise<void> {
 		// TODO: run migration only if needed
 		const queryInterface = this.sequelize.getQueryInterface();
-		const table = await queryInterface.describeTable('State');
+		let table = await queryInterface.describeTable('State');
 		if (table?.played && table.played.type !== 'INTEGER') {
 			await queryInterface.removeColumn('State', 'played');
 			await queryInterface.addColumn('State', 'played', {type: DataTypes.INTEGER, allowNull: true});
+		}
+		table = await queryInterface.describeTable('Artist');
+		if (table?.genres) {
+			await queryInterface.removeColumn('Artist', 'genres');
+		}
+		table = await queryInterface.describeTable('Folder');
+		if (table?.genres) {
+			await queryInterface.removeColumn('Folder', 'genres');
+		}
+		table = await queryInterface.describeTable('Album');
+		if (table?.genres) {
+			await queryInterface.removeColumn('album', 'genres');
 		}
 	}
 
