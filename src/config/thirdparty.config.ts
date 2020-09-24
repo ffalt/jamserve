@@ -25,6 +25,9 @@ export interface ThirdpartyToolsConfig {
 	wikipedia: {
 		userAgent: string;
 	};
+	gpodder: {
+		userAgent: string;
+	};
 	lyricsovh: {
 		userAgent: string;
 	};
@@ -73,4 +76,9 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		https://lyrics.ovh/
  	*/
 	lyricsovh: {userAgent: `${userAgent} ( jamserve@protonmail.com )`},
+	/*
+		gPodder
+		https://gpodder.net/
+ 	*/
+	gpodder: {userAgent: `${userAgent} ( jamserve@protonmail.com )`},
 };

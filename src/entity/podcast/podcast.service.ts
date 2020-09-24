@@ -14,6 +14,10 @@ import {EpisodeData, Feed, PodcastTag} from './podcast-feed';
 import {ApiBinaryResult} from '../../modules/rest';
 import {AudioModule} from '../../modules/audio/audio.module';
 import {EpisodeService} from '../episode/episode.service';
+import {GpodderPodcast, GpodderTag} from '../../modules/audio/clients/gpodder-rest-data';
+import {PageResult} from '../base/base';
+import {paginate} from '../base/base.utils';
+import {PageArgs} from '../base/base.args';
 
 const log = logger('PodcastService');
 
@@ -175,4 +179,22 @@ export class PodcastService {
 		return result;
 	}
 
+	async discoverTags(page: PageArgs): Promise<PageResult<GpodderTag>> {
+		const list = await this.audioModule.gpodder.tags(1000);
+		return paginate(list, page);
+	}
+
+	async discoverByTag(tag: string, page: PageArgs): Promise<PageResult<GpodderPodcast>> {
+		const list = await this.audioModule.gpodder.byTag(tag, 100);
+		return paginate(list, page);
+	}
+
+	async discover(name: string): Promise<Array<GpodderPodcast>> {
+		return this.audioModule.gpodder.search(name);
+	}
+
+	async discoverTop(page: PageArgs): Promise<PageResult<GpodderPodcast>> {
+		const list = await this.audioModule.gpodder.top(300);
+		return paginate(list, page);
+	}
 }

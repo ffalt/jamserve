@@ -32,6 +32,7 @@ export class DefaultOrderArgs extends OrderByArgs {
 
 @InputType()
 @ObjParamsType()
+@ArgsType()
 export class PageArgs {
 	@ObjField({nullable: true, description: 'return items starting from offset position', defaultValue: 0, min: 0, example: 0})
 	@Field(() => Int, {nullable: true, description: 'return items starting from offset position'})
@@ -44,23 +45,9 @@ export class PageArgs {
 	take?: number;
 }
 
+@ArgsType()
 @InputType()
 export class PageArgsQL extends PageArgs {
-}
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function PaginatedArgs<TOrder>(TOrderClass: ClassType<TOrder>) {
-
-	@ArgsType()
-	abstract class PaginatedArgsClass {
-		@Field(() => PageArgsQL, {nullable: true})
-		page?: PageArgs;
-
-		@Field(() => [TOrderClass], {nullable: true})
-		order?: Array<TOrder>;
-	}
-
-	return PaginatedArgsClass;
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

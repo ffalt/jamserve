@@ -164,3 +164,27 @@ export class PodcastsArgsQL extends PodcastPageArgsQL {
 	@Field(() => String, {nullable: true})
 	seed?: string;
 }
+
+@ArgsType()
+@ObjParamsType()
+export class PodcastDiscoverArgs {
+	@Field(() => String)
+	@ObjField({description: 'search podcast by name', example: 'awesome'})
+	query!: string;
+}
+
+@ArgsType()
+export class PodcastDiscoverArgsQL extends PodcastDiscoverArgs {
+}
+
+@ArgsType()
+@ObjParamsType()
+export class PodcastDiscoverByTagArgs {
+	@Field(() => String)
+	@ObjField({description: 'search podcast by tag', example: 'awesome'})
+	tag!: string;
+}
+
+@ArgsType()
+export class PodcastDiscoverByTagArgsQL extends PodcastDiscoverByTagArgs {
+}

@@ -83,6 +83,37 @@ type Query {
   """Get the Navigation Index for Podcasts"""
   podcastIndex(filter: PodcastFilterArgsQL): PodcastIndexQL!
 
+  """Discover Podcasts via gpodder.net"""
+  podcastsDiscover(query: String!): [PodcastDiscoverQL!]!
+
+  """Discover Podcast Tags via gpodder.net"""
+  podcastsDiscoverTags(
+    """return items starting from offset position"""
+    skip: Int = 0
+
+    """amount of returned items"""
+    take: Int
+  ): PodcastDiscoverTagPageQL!
+
+  """Discover Podcasts by Tag via gpodder.net"""
+  podcastsDiscoverByTag(
+    """return items starting from offset position"""
+    skip: Int = 0
+
+    """amount of returned items"""
+    take: Int
+    tag: String!
+  ): PodcastDiscoverPageQL!
+
+  """Discover Top Podcasts via gpodder.net"""
+  podcastsDiscoverTop(
+    """return items starting from offset position"""
+    skip: Int = 0
+
+    """amount of returned items"""
+    take: Int
+  ): PodcastDiscoverPageQL!
+
   """Get a Radio by Id"""
   radio(id: ID!): RadioQL!
 
@@ -1217,6 +1248,39 @@ type PodcastIndexQL {
 type PodcastIndexGroupQL {
   items: [PodcastQL!]!
   name: String!
+}
+
+type PodcastDiscoverQL {
+  url: String!
+  title: String!
+  author: String!
+  description: String!
+  subscribers: Float!
+  subscribers_last_week: Float!
+  logo_url: String!
+  scaled_logo_url: String!
+  website: String!
+  mygpo_link: String!
+}
+
+type PodcastDiscoverTagPageQL {
+  items: [PodcastDiscoverTagQL!]!
+  total: Int!
+  take: Int
+  skip: Int
+}
+
+type PodcastDiscoverTagQL {
+  title: String!
+  tag: String!
+  usage: Float!
+}
+
+type PodcastDiscoverPageQL {
+  items: [PodcastDiscoverQL!]!
+  total: Int!
+  take: Int
+  skip: Int
 }
 
 type RadioQL {

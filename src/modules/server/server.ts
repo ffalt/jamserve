@@ -54,12 +54,12 @@ export class Server {
 					styleSrc: [self, `https: 'unsafe-inline'`],
 					connectSrc: [self,
 						'https://en.wikipedia.org',
-						'https://commons.wikimedia.org',
-						'https://gpodder.net'
+						'https://commons.wikimedia.org'
 					],
 					imgSrc: [
 						self,
 						'data:',
+						'https://gpodder.net',
 						'https://coverartarchive.org'
 					],
 					objectSrc: [`'none'`],

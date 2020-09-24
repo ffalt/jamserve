@@ -1,8 +1,8 @@
-import {Podcast, PodcastIndex, PodcastPage, PodcastUpdateStatus} from './podcast.model';
+import {Podcast, PodcastDiscover, PodcastDiscoverPage, PodcastDiscoverTagPage, PodcastIndex, PodcastPage, PodcastUpdateStatus} from './podcast.model';
 import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {Episode, EpisodePage} from '../episode/episode.model';
-import {IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs} from './podcast.args';
+import {IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastDiscoverArgs, PodcastDiscoverByTagArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs} from './podcast.args';
 import {EpisodeOrderArgs, IncludesEpisodeArgs} from '../episode/episode.args';
 import {ListArgs, PageArgs} from '../base/base.args';
 import {logger} from '../../utils/logger';
@@ -137,6 +137,57 @@ export class PodcastController {
 	): Promise<void> {
 		const podcast = await orm.Podcast.oneOrFailByID(id);
 		await engine.podcast.remove(orm, podcast);
+	}
+
+	//
+	// @Get(
+	// 	'/discover',
+	// 	() => PodcastDiscover,
+	// 	{description: 'Get the Navigation Index for Podcasts', summary: 'Get Index'}
+	// )
+	// async discover(@QueryParams() args: PodcastDiscoverArgs, @Ctx() {orm, engine, user}: Context): Promise<PodcastDiscover> {
+	// 	// const result = await orm.Podcast.indexFilter(filter, user);
+	// 	// return engine.transform.podcastIndex(orm, result);
+	// }
+
+	@Get(
+		'/discover',
+		() => [PodcastDiscover],
+		{description: 'Discover Podcasts via gpodder.net', summary: 'Discover Podcasts'}
+	)
+	async discover(@QueryParams() {query}: PodcastDiscoverArgs, @Ctx() {engine}: Context): Promise<Array<PodcastDiscover>> {
+		return await engine.podcast.discover(query);
+	}
+
+	@Get(
+		'/discover/tags',
+		() => PodcastDiscoverTagPage,
+		{description: 'Discover Podcast Tags via gpodder.net', summary: 'Discover Podcast Tags'}
+	)
+	async podcastsDiscoverTags(@QueryParams() page: PageArgs, @Ctx() {engine}: Context): Promise<PodcastDiscoverTagPage> {
+		return await engine.podcast.discoverTags(page);
+	}
+
+	@Get(
+		'/discover/byTag',
+		() => PodcastDiscoverTagPage,
+		{description: 'Discover Podcasts by Tag via gpodder.net', summary: 'Discover Podcasts by Tag'}
+	)
+	async podcastsDiscoverByTag(
+		@QueryParams() {tag}: PodcastDiscoverByTagArgs,
+		@QueryParams() page: PageArgs,
+		@Ctx() {engine}: Context
+	): Promise<PodcastDiscoverPage> {
+		return await engine.podcast.discoverByTag(tag, page);
+	}
+
+	@Get(
+		'/discover/top',
+		() => PodcastDiscoverTagPage,
+		{description: 'Discover Top Podcasts via gpodder.net', summary: 'Discover Top Podcasts'}
+	)
+	async podcastsDiscoverTop(@QueryParams() page: PageArgs, @Ctx() {engine}: Context): Promise<PodcastDiscoverPage> {
+		return await engine.podcast.discoverTop(page);
 	}
 
 }

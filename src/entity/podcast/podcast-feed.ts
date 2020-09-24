@@ -93,7 +93,6 @@ export class Feed {
 
 	private async fetch(url: string): Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
-		let feed: any;
 		const res = await fetch(url, {
 			timeout: 10000,
 			headers: {
@@ -103,6 +102,7 @@ export class Feed {
 			}
 		});
 		if (res.ok && res.status === 200) {
+			let feed: { [key: string]: any };
 			return new Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }>((resolve, reject) => {
 				const done = (err?: Error): void => {
 					if (err) {
@@ -123,11 +123,11 @@ export class Feed {
 				});
 				feedParser.on('error', done);
 				feedParser.on('end', done);
-				const encoding = res.headers.get('content-encoding') || 'identity';
-				const charset = Feed.getParams(res.headers.get('content-type') || '').charset;
-				let pipestream = Feed.maybeDecompress(res.body, encoding, done);
-				pipestream = Feed.maybeTranslate(pipestream, charset, done);
-				pipestream.pipe(feedParser);
+				// const charset = Feed.getParams(res.headers.get('content-type') || '').charset;
+				// const encoding = res.headers.get('content-encoding') || 'identity';
+				// let pipestream = Feed.maybeDecompress(res.body, encoding, done);
+				// const pipestream = Feed.maybeTranslate(res.body, charset, done);
+				res.body.pipe(feedParser);
 			});
 		} else {
 			throw new Error(`Bad status code ${res.status}${res.statusText ? ` ${res.statusText}` : ''}`);

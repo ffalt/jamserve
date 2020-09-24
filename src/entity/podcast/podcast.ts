@@ -4,6 +4,7 @@ import {Field, Int, ObjectType} from 'type-graphql';
 import {Collection, Entity, OneToMany, ORM_DATETIME, Property} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
+import {GpodderPodcast, GpodderTag} from '../../modules/audio/clients/gpodder-rest-data';
 
 @ObjectType()
 @Entity()
@@ -86,4 +87,46 @@ export class PodcastIndexGroupQL extends IndexGroup(Podcast, PodcastQL) {
 
 @ObjectType()
 export class PodcastIndexQL extends Index(PodcastIndexGroupQL) {
+}
+
+@ObjectType()
+export class PodcastDiscoverQL implements GpodderPodcast {
+	@Field(() => String)
+	url!: string;
+	@Field(() => String)
+	title!: string;
+	@Field(() => String)
+	author!: string;
+	@Field(() => String)
+	description!: string;
+	@Field(() => Number)
+	subscribers!: number;
+	@Field(() => Number)
+	subscribers_last_week!: number;
+	@Field(() => String)
+	logo_url!: string;
+	@Field(() => String)
+	scaled_logo_url!: string;
+	@Field(() => String)
+	website!: string;
+	@Field(() => String)
+	mygpo_link!: string;
+}
+
+@ObjectType()
+export class PodcastDiscoverPageQL extends PaginatedResponse(PodcastDiscoverQL, PodcastDiscoverQL) {
+}
+
+@ObjectType()
+export class PodcastDiscoverTagQL implements GpodderTag {
+	@Field(() => String)
+	title!: string;
+	@Field(() => String)
+	tag!: string;
+	@Field(() => Number)
+	usage!: number;
+}
+
+@ObjectType()
+export class PodcastDiscoverTagPageQL extends PaginatedResponse(PodcastDiscoverTagQL, PodcastDiscoverTagQL) {
 }

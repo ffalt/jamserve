@@ -1,10 +1,11 @@
 import {DBObjectType, PodcastStatus} from '../../types/enums';
 import {Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot} from 'type-graphql';
 import {State, StateQL} from '../state/state';
-import {Podcast, PodcastIndexQL, PodcastPageQL, PodcastQL} from './podcast';
+import {Podcast, PodcastDiscoverPageQL, PodcastDiscoverQL, PodcastDiscoverTagPageQL, PodcastIndexQL, PodcastPageQL, PodcastQL} from './podcast';
 import {Context} from '../../modules/server/middlewares/apollo.context';
-import {PodcastIndexArgsQL, PodcastsArgsQL} from './podcast.args';
+import {PodcastDiscoverArgsQL, PodcastDiscoverByTagArgsQL, PodcastIndexArgsQL, PodcastsArgsQL} from './podcast.args';
 import {Episode, EpisodeQL} from '../episode/episode';
+import {PageArgsQL} from '../base/base.args';
 
 @Resolver(PodcastQL)
 export class PodcastResolver {
@@ -50,4 +51,25 @@ export class PodcastResolver {
 	async lastCheck(@GQLRoot() timestamp: number): Promise<Date> {
 		return new Date(timestamp);
 	}
+
+	@Query(() => [PodcastDiscoverQL], {description: 'Discover Podcasts via gpodder.net'})
+	async podcastsDiscover(@Args() {query}: PodcastDiscoverArgsQL, @Ctx() {engine}: Context): Promise<Array<PodcastDiscoverQL>> {
+		return await engine.podcast.discover(query);
+	}
+
+	@Query(() => PodcastDiscoverTagPageQL, {description: 'Discover Podcast Tags via gpodder.net'})
+	async podcastsDiscoverTags(@Args() page: PageArgsQL, @Ctx() {engine, user}: Context): Promise<PodcastDiscoverTagPageQL> {
+		return await engine.podcast.discoverTags(page);
+	}
+
+	@Query(() => PodcastDiscoverPageQL, {description: 'Discover Podcasts by Tag via gpodder.net'})
+	async podcastsDiscoverByTag(@Args() {tag}: PodcastDiscoverByTagArgsQL, @Args() page: PageArgsQL, @Ctx() {engine}: Context): Promise<PodcastDiscoverPageQL> {
+		return await engine.podcast.discoverByTag(tag, page);
+	}
+
+	@Query(() => PodcastDiscoverPageQL, {description: 'Discover Top Podcasts via gpodder.net'})
+	async podcastsDiscoverTop(@Args() page: PageArgsQL, @Ctx() {engine}: Context): Promise<PodcastDiscoverPageQL> {
+		return await engine.podcast.discoverTop(page);
+	}
+
 }

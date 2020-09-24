@@ -19,6 +19,7 @@ import {RawTag} from './rawTag';
 import {ConfigService} from '../engine/services/config.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {AdminSettingsExternal} from '../../entity/admin/admin';
+import {GpodderClient} from './clients/gpodder-client';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
 }
@@ -34,6 +35,7 @@ export class AudioModule {
 	acousticbrainz: AcousticbrainzClient;
 	coverArtArchive: CoverArtArchiveClient;
 	wikipedia: WikipediaClient;
+	gpodder: GpodderClient;
 	mp3: AudioModuleMP3;
 	flac: AudioModuleFLAC;
 	transcoder: TranscoderModule;
@@ -56,6 +58,8 @@ export class AudioModule {
 		this.acoustid = new AcoustidClient({key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent});
 		this.lyricsOVH = new LyricsOVHClient(this.configService.tools.lyricsovh.userAgent);
 		this.wikipedia = new WikipediaClient(this.configService.tools.wikipedia.userAgent);
+		this.gpodder = new GpodderClient(this.configService.tools.gpodder.userAgent);
+
 		this.coverArtArchive = new CoverArtArchiveClient({userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true});
 		this.transcoder = new TranscoderModule(this.transcodeCachePath);
 		this.mp3 = new AudioModuleMP3();
@@ -68,7 +72,7 @@ export class AudioModule {
 	}
 
 	setSettings(externalServices: AdminSettingsExternal): void {
-		const enabled = externalServices && externalServices.enabled;
+		const enabled = externalServices?.enabled;
 		this.musicbrainz.enabled = enabled;
 		this.acoustid.enabled = enabled;
 		this.lastFM.enabled = enabled;
@@ -76,6 +80,7 @@ export class AudioModule {
 		this.acousticbrainz.enabled = enabled;
 		this.coverArtArchive.enabled = enabled;
 		this.wikipedia.enabled = enabled;
+		this.gpodder.enabled = enabled;
 	}
 
 	async read(filename: string): Promise<AudioScanResult> {

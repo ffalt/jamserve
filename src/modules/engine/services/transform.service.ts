@@ -153,7 +153,7 @@ export class TransformService {
 	async episode(orm: Orm, o: ORMEpisode, episodeArgs: IncludesEpisodeArgs, episodeParentArgs: IncludesEpisodeParentArgs, podcastArgs: IncludesPodcastArgs, user: User): Promise<Episode> {
 		return {
 			...(await this.episodeBase(orm, o, episodeArgs, user)),
-			podcast: await this.podcastBase(orm, await o.podcast.getOrFail(), podcastArgs, user)
+			podcast: episodeParentArgs.episodeIncParent ? await this.podcastBase(orm, await o.podcast.getOrFail(), podcastArgs, user) : undefined
 		};
 	}
 
