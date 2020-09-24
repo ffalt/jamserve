@@ -28,10 +28,22 @@ class ORM {
     }
     async updateSchema() {
         const queryInterface = this.sequelize.getQueryInterface();
-        const table = await queryInterface.describeTable('State');
+        let table = await queryInterface.describeTable('State');
         if ((table === null || table === void 0 ? void 0 : table.played) && table.played.type !== 'INTEGER') {
             await queryInterface.removeColumn('State', 'played');
             await queryInterface.addColumn('State', 'played', { type: sequelize_1.DataTypes.INTEGER, allowNull: true });
+        }
+        table = await queryInterface.describeTable('Artist');
+        if (table === null || table === void 0 ? void 0 : table.genres) {
+            await queryInterface.removeColumn('Artist', 'genres');
+        }
+        table = await queryInterface.describeTable('Folder');
+        if (table === null || table === void 0 ? void 0 : table.genres) {
+            await queryInterface.removeColumn('Folder', 'genres');
+        }
+        table = await queryInterface.describeTable('Album');
+        if (table === null || table === void 0 ? void 0 : table.genres) {
+            await queryInterface.removeColumn('album', 'genres');
         }
     }
     async ensureSchema() {
