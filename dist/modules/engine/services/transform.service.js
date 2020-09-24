@@ -89,7 +89,7 @@ let TransformService = class TransformService {
     async episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user) {
         return {
             ...(await this.episodeBase(orm, o, episodeArgs, user)),
-            podcast: await this.podcastBase(orm, await o.podcast.getOrFail(), podcastArgs, user)
+            podcast: episodeParentArgs.episodeIncParent ? await this.podcastBase(orm, await o.podcast.getOrFail(), podcastArgs, user) : undefined
         };
     }
     episodeStatus(o) {

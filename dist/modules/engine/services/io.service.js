@@ -147,6 +147,22 @@ let IoService = class IoService {
         }
         return status;
     }
+    async startUpRefresh(orm, forceRescan) {
+        if (!forceRescan) {
+            await this.refresh(orm);
+        }
+        else {
+            await this.refreshMeta(orm);
+        }
+    }
+    async refreshMeta(orm) {
+        const roots = await orm.Root.all();
+        const result = [];
+        for (const root of roots) {
+            result.push(await this.refreshRootMeta(root.id));
+        }
+        return result;
+    }
     async refresh(orm) {
         const roots = await orm.Root.all();
         const result = [];

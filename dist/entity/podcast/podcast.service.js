@@ -25,6 +25,7 @@ const config_service_1 = require("../../modules/engine/services/config.service")
 const podcast_feed_1 = require("./podcast-feed");
 const audio_module_1 = require("../../modules/audio/audio.module");
 const episode_service_1 = require("../episode/episode.service");
+const base_utils_1 = require("../base/base.utils");
 const log = logger_1.logger('PodcastService');
 let PodcastService = class PodcastService {
     constructor() {
@@ -166,6 +167,21 @@ let PodcastService = class PodcastService {
             return this.getImage(orm, await episode.podcast.getOrFail(), size, format);
         }
         return result;
+    }
+    async discoverTags(page) {
+        const list = await this.audioModule.gpodder.tags(1000);
+        return base_utils_1.paginate(list, page);
+    }
+    async discoverByTag(tag, page) {
+        const list = await this.audioModule.gpodder.byTag(tag, 100);
+        return base_utils_1.paginate(list, page);
+    }
+    async discover(name) {
+        return this.audioModule.gpodder.search(name);
+    }
+    async discoverTop(page) {
+        const list = await this.audioModule.gpodder.top(300);
+        return base_utils_1.paginate(list, page);
     }
 };
 __decorate([

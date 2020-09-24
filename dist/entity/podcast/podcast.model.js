@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PodcastIndex = exports.PodcastIndexGroup = exports.PodcastIndexEntry = exports.PodcastUpdateStatus = exports.PodcastPage = exports.Podcast = exports.PodcastBase = void 0;
+exports.PodcastDiscoverTagPage = exports.PodcastDiscoverTag = exports.PodcastDiscoverPage = exports.PodcastDiscover = exports.PodcastIndex = exports.PodcastIndexGroup = exports.PodcastIndexEntry = exports.PodcastUpdateStatus = exports.PodcastPage = exports.Podcast = exports.PodcastBase = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const example_consts_1 = require("../../modules/engine/rest/example.consts");
 const enums_1 = require("../../types/enums");
@@ -133,4 +133,88 @@ PodcastIndex = __decorate([
     decorators_1.ResultType({ description: 'Podcast Index' })
 ], PodcastIndex);
 exports.PodcastIndex = PodcastIndex;
+let PodcastDiscover = class PodcastDiscover {
+};
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscover.prototype, "url", void 0);
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscover.prototype, "title", void 0);
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscover.prototype, "author", void 0);
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscover.prototype, "description", void 0);
+__decorate([
+    decorators_1.ObjField(() => Number),
+    __metadata("design:type", Number)
+], PodcastDiscover.prototype, "subscribers", void 0);
+__decorate([
+    decorators_1.ObjField(() => Number),
+    __metadata("design:type", Number)
+], PodcastDiscover.prototype, "subscribers_last_week", void 0);
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscover.prototype, "logo_url", void 0);
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscover.prototype, "scaled_logo_url", void 0);
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscover.prototype, "website", void 0);
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscover.prototype, "mygpo_link", void 0);
+PodcastDiscover = __decorate([
+    decorators_1.ResultType({ description: 'Podcast Discover Result' })
+], PodcastDiscover);
+exports.PodcastDiscover = PodcastDiscover;
+let PodcastDiscoverPage = class PodcastDiscoverPage extends base_model_1.Page {
+};
+__decorate([
+    decorators_1.ObjField(() => PodcastDiscover, { description: 'List of Podcasts' }),
+    __metadata("design:type", Array)
+], PodcastDiscoverPage.prototype, "items", void 0);
+PodcastDiscoverPage = __decorate([
+    decorators_1.ResultType({ description: 'Podcast Discover Page' })
+], PodcastDiscoverPage);
+exports.PodcastDiscoverPage = PodcastDiscoverPage;
+let PodcastDiscoverTag = class PodcastDiscoverTag {
+};
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverTag.prototype, "title", void 0);
+__decorate([
+    decorators_1.ObjField(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverTag.prototype, "tag", void 0);
+__decorate([
+    decorators_1.ObjField(() => Number),
+    __metadata("design:type", Number)
+], PodcastDiscoverTag.prototype, "usage", void 0);
+PodcastDiscoverTag = __decorate([
+    decorators_1.ResultType({ description: 'Podcast Discover Tag' })
+], PodcastDiscoverTag);
+exports.PodcastDiscoverTag = PodcastDiscoverTag;
+let PodcastDiscoverTagPage = class PodcastDiscoverTagPage extends base_model_1.Page {
+};
+__decorate([
+    decorators_1.ObjField(() => PodcastDiscoverTag, { description: 'List of Podcast Tags' }),
+    __metadata("design:type", Array)
+], PodcastDiscoverTagPage.prototype, "items", void 0);
+PodcastDiscoverTagPage = __decorate([
+    decorators_1.ResultType({ description: 'Podcast Discover Tags Page' })
+], PodcastDiscoverTagPage);
+exports.PodcastDiscoverTagPage = PodcastDiscoverTagPage;
 //# sourceMappingURL=podcast.model.js.map

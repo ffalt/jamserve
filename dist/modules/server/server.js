@@ -48,21 +48,32 @@ let Server = class Server {
                 styleSrc: [self, `https: 'unsafe-inline'`],
                 connectSrc: [self,
                     'https://en.wikipedia.org',
-                    'https://commons.wikimedia.org',
-                    'https://gpodder.net'
+                    'https://commons.wikimedia.org'
                 ],
                 imgSrc: [
                     self,
                     'data:',
+                    'https://gpodder.net',
                     'https://coverartarchive.org'
                 ],
+                objectSrc: [`'none'`],
                 fontSrc: [self, 'data:'],
+                reportUri: '/csp/report-violation'
             },
         }));
         if (this.configService.env.session.proxy) {
             app.enable('trust proxy');
         }
         app.use(log_middleware_1.useLogMiddleware());
+        app.post('/csp/report-violation', async (req, res) => {
+            if (req.body) {
+                log.error('CSP', JSON.stringify(req.body));
+            }
+            else {
+                log.error('CSP', 'No data');
+            }
+            res.status(204).end();
+        });
         app.use(engine_middleware_1.useEngineMiddleware(this.engine));
         app.use(session_middleware_1.useSessionMiddleware(this.configService, this.sessionService));
         app.use(passport_middleware_1.usePassPortMiddleWare(app, this.engine));

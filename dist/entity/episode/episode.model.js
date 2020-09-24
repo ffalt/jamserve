@@ -83,7 +83,7 @@ exports.EpisodeBase = EpisodeBase;
 let Episode = class Episode extends EpisodeBase {
 };
 __decorate([
-    decorators_1.ObjField(() => podcast_model_1.PodcastBase, { nullable: true, description: 'Podcast Id', isID: true }),
+    decorators_1.ObjField(() => podcast_model_1.PodcastBase, { nullable: true, description: 'Podcast', isID: true }),
     __metadata("design:type", podcast_model_1.PodcastBase)
 ], Episode.prototype, "podcast", void 0);
 Episode = __decorate([

@@ -11,5 +11,6 @@ exports.ThirdPartyConfig = {
     coverartarchive: { userAgent: `${exports.userAgent} ( jamserve@protonmail.com )` },
     wikipedia: { userAgent: `${exports.userAgent} ( jamserve@protonmail.com )` },
     lyricsovh: { userAgent: `${exports.userAgent} ( jamserve@protonmail.com )` },
+    gpodder: { userAgent: `${exports.userAgent} ( jamserve@protonmail.com )` },
 };
 //# sourceMappingURL=thirdparty.config.js.map

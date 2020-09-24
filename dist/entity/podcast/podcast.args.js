@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PodcastsArgsQL = exports.PodcastPageArgsQL = exports.PodcastIndexArgsQL = exports.PodcastOrderArgsQL = exports.PodcastOrderArgs = exports.PodcastFilterArgsQL = exports.PodcastFilterArgs = exports.PodcastRefreshArgs = exports.PodcastCreateArgs = exports.IncludesPodcastChildrenArgs = exports.IncludesPodcastArgs = void 0;
+exports.PodcastDiscoverByTagArgsQL = exports.PodcastDiscoverByTagArgs = exports.PodcastDiscoverArgsQL = exports.PodcastDiscoverArgs = exports.PodcastsArgsQL = exports.PodcastPageArgsQL = exports.PodcastIndexArgsQL = exports.PodcastOrderArgsQL = exports.PodcastOrderArgs = exports.PodcastFilterArgsQL = exports.PodcastFilterArgs = exports.PodcastRefreshArgs = exports.PodcastCreateArgs = exports.IncludesPodcastChildrenArgs = exports.IncludesPodcastArgs = void 0;
 const decorators_1 = require("../../modules/rest/decorators");
 const example_consts_1 = require("../../modules/engine/rest/example.consts");
 const type_graphql_1 = require("type-graphql");
@@ -246,4 +246,40 @@ PodcastsArgsQL = __decorate([
     type_graphql_1.ArgsType()
 ], PodcastsArgsQL);
 exports.PodcastsArgsQL = PodcastsArgsQL;
+let PodcastDiscoverArgs = class PodcastDiscoverArgs {
+};
+__decorate([
+    type_graphql_1.Field(() => String),
+    decorators_1.ObjField({ description: 'search podcast by name', example: 'awesome' }),
+    __metadata("design:type", String)
+], PodcastDiscoverArgs.prototype, "query", void 0);
+PodcastDiscoverArgs = __decorate([
+    type_graphql_1.ArgsType(),
+    decorators_1.ObjParamsType()
+], PodcastDiscoverArgs);
+exports.PodcastDiscoverArgs = PodcastDiscoverArgs;
+let PodcastDiscoverArgsQL = class PodcastDiscoverArgsQL extends PodcastDiscoverArgs {
+};
+PodcastDiscoverArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], PodcastDiscoverArgsQL);
+exports.PodcastDiscoverArgsQL = PodcastDiscoverArgsQL;
+let PodcastDiscoverByTagArgs = class PodcastDiscoverByTagArgs {
+};
+__decorate([
+    type_graphql_1.Field(() => String),
+    decorators_1.ObjField({ description: 'search podcast by tag', example: 'awesome' }),
+    __metadata("design:type", String)
+], PodcastDiscoverByTagArgs.prototype, "tag", void 0);
+PodcastDiscoverByTagArgs = __decorate([
+    type_graphql_1.ArgsType(),
+    decorators_1.ObjParamsType()
+], PodcastDiscoverByTagArgs);
+exports.PodcastDiscoverByTagArgs = PodcastDiscoverByTagArgs;
+let PodcastDiscoverByTagArgsQL = class PodcastDiscoverByTagArgsQL extends PodcastDiscoverByTagArgs {
+};
+PodcastDiscoverByTagArgsQL = __decorate([
+    type_graphql_1.ArgsType()
+], PodcastDiscoverByTagArgsQL);
+exports.PodcastDiscoverByTagArgsQL = PodcastDiscoverByTagArgsQL;
 //# sourceMappingURL=podcast.args.js.map

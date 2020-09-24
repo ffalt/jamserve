@@ -61,6 +61,18 @@ let PodcastController = class PodcastController {
         const podcast = await orm.Podcast.oneOrFailByID(id);
         await engine.podcast.remove(orm, podcast);
     }
+    async discover({ query }, { engine }) {
+        return await engine.podcast.discover(query);
+    }
+    async podcastsDiscoverTags(page, { engine }) {
+        return await engine.podcast.discoverTags(page);
+    }
+    async podcastsDiscoverByTag({ tag }, page, { engine }) {
+        return await engine.podcast.discoverByTag(tag, page);
+    }
+    async podcastsDiscoverTop(page, { engine }) {
+        return await engine.podcast.discoverTop(page);
+    }
 };
 __decorate([
     rest_1.Get('/id', () => podcast_model_1.Podcast, { description: 'Get a Podcast by Id', summary: 'Get Podcast' }),
@@ -148,6 +160,37 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "remove", null);
+__decorate([
+    rest_1.Get('/discover', () => [podcast_model_1.PodcastDiscover], { description: 'Discover Podcasts via gpodder.net', summary: 'Discover Podcasts' }),
+    __param(0, rest_1.QueryParams()), __param(1, rest_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [podcast_args_1.PodcastDiscoverArgs, Object]),
+    __metadata("design:returntype", Promise)
+], PodcastController.prototype, "discover", null);
+__decorate([
+    rest_1.Get('/discover/tags', () => podcast_model_1.PodcastDiscoverTagPage, { description: 'Discover Podcast Tags via gpodder.net', summary: 'Discover Podcast Tags' }),
+    __param(0, rest_1.QueryParams()), __param(1, rest_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [base_args_1.PageArgs, Object]),
+    __metadata("design:returntype", Promise)
+], PodcastController.prototype, "podcastsDiscoverTags", null);
+__decorate([
+    rest_1.Get('/discover/byTag', () => podcast_model_1.PodcastDiscoverTagPage, { description: 'Discover Podcasts by Tag via gpodder.net', summary: 'Discover Podcasts by Tag' }),
+    __param(0, rest_1.QueryParams()),
+    __param(1, rest_1.QueryParams()),
+    __param(2, rest_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [podcast_args_1.PodcastDiscoverByTagArgs,
+        base_args_1.PageArgs, Object]),
+    __metadata("design:returntype", Promise)
+], PodcastController.prototype, "podcastsDiscoverByTag", null);
+__decorate([
+    rest_1.Get('/discover/top', () => podcast_model_1.PodcastDiscoverTagPage, { description: 'Discover Top Podcasts via gpodder.net', summary: 'Discover Top Podcasts' }),
+    __param(0, rest_1.QueryParams()), __param(1, rest_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [base_args_1.PageArgs, Object]),
+    __metadata("design:returntype", Promise)
+], PodcastController.prototype, "podcastsDiscoverTop", null);
 PodcastController = __decorate([
     rest_1.Controller('/podcast', { tags: ['Podcast'], roles: [enums_1.UserRole.stream] })
 ], PodcastController);

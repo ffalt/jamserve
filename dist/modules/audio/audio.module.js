@@ -29,6 +29,7 @@ const enums_1 = require("../../types/enums");
 const settings_service_1 = require("../../entity/settings/settings.service");
 const config_service_1 = require("../engine/services/config.service");
 const typescript_ioc_1 = require("typescript-ioc");
+const gpodder_client_1 = require("./clients/gpodder-client");
 exports.ID3TrackTagRawFormatTypes = [enums_1.TagFormatType.id3v20, enums_1.TagFormatType.id3v21, enums_1.TagFormatType.id3v22, enums_1.TagFormatType.id3v23, enums_1.TagFormatType.id3v24];
 let AudioModule = class AudioModule {
     constructor() {
@@ -40,6 +41,7 @@ let AudioModule = class AudioModule {
         this.acoustid = new acoustid_client_1.AcoustidClient({ key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent });
         this.lyricsOVH = new lyricsovh_client_1.LyricsOVHClient(this.configService.tools.lyricsovh.userAgent);
         this.wikipedia = new wikipedia_client_1.WikipediaClient(this.configService.tools.wikipedia.userAgent);
+        this.gpodder = new gpodder_client_1.GpodderClient(this.configService.tools.gpodder.userAgent);
         this.coverArtArchive = new coverartarchive_client_1.CoverArtArchiveClient({ userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true });
         this.transcoder = new transcoder_module_1.TranscoderModule(this.transcodeCachePath);
         this.mp3 = new mp3_module_1.AudioModuleMP3();
@@ -51,7 +53,7 @@ let AudioModule = class AudioModule {
         this.setSettings(this.settingsService.settings.externalServices);
     }
     setSettings(externalServices) {
-        const enabled = externalServices && externalServices.enabled;
+        const enabled = externalServices === null || externalServices === void 0 ? void 0 : externalServices.enabled;
         this.musicbrainz.enabled = enabled;
         this.acoustid.enabled = enabled;
         this.lastFM.enabled = enabled;
@@ -59,6 +61,7 @@ let AudioModule = class AudioModule {
         this.acousticbrainz.enabled = enabled;
         this.coverArtArchive.enabled = enabled;
         this.wikipedia.enabled = enabled;
+        this.gpodder.enabled = enabled;
     }
     async read(filename) {
         const suffix = fs_utils_1.fileSuffix(filename);

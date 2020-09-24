@@ -59,7 +59,6 @@ class Feed {
     }
     async fetch(url) {
         const posts = [];
-        let feed;
         const res = await node_fetch_1.default(url, {
             timeout: 10000,
             headers: {
@@ -68,6 +67,7 @@ class Feed {
             }
         });
         if (res.ok && res.status === 200) {
+            let feed;
             return new Promise((resolve, reject) => {
                 const done = (err) => {
                     if (err) {
@@ -89,11 +89,7 @@ class Feed {
                 });
                 feedParser.on('error', done);
                 feedParser.on('end', done);
-                const encoding = res.headers.get('content-encoding') || 'identity';
-                const charset = Feed.getParams(res.headers.get('content-type') || '').charset;
-                let pipestream = Feed.maybeDecompress(res.body, encoding, done);
-                pipestream = Feed.maybeTranslate(pipestream, charset, done);
-                pipestream.pipe(feedParser);
+                res.body.pipe(feedParser);
             });
         }
         else {

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FilterArgs = exports.PaginatedFilterArgs = exports.PaginatedArgs = exports.PageArgsQL = exports.PageArgs = exports.DefaultOrderArgs = exports.OrderByArgs = exports.ListArgs = void 0;
+exports.FilterArgs = exports.PaginatedFilterArgs = exports.PageArgsQL = exports.PageArgs = exports.DefaultOrderArgs = exports.OrderByArgs = exports.ListArgs = void 0;
 const enums_1 = require("../../types/enums");
 const rest_1 = require("../../modules/rest");
 const type_graphql_1 = require("type-graphql");
@@ -72,32 +72,17 @@ __decorate([
 ], PageArgs.prototype, "take", void 0);
 PageArgs = __decorate([
     type_graphql_1.InputType(),
-    rest_1.ObjParamsType()
+    rest_1.ObjParamsType(),
+    type_graphql_1.ArgsType()
 ], PageArgs);
 exports.PageArgs = PageArgs;
 let PageArgsQL = class PageArgsQL extends PageArgs {
 };
 PageArgsQL = __decorate([
+    type_graphql_1.ArgsType(),
     type_graphql_1.InputType()
 ], PageArgsQL);
 exports.PageArgsQL = PageArgsQL;
-function PaginatedArgs(TOrderClass) {
-    let PaginatedArgsClass = class PaginatedArgsClass {
-    };
-    __decorate([
-        type_graphql_1.Field(() => PageArgsQL, { nullable: true }),
-        __metadata("design:type", PageArgs)
-    ], PaginatedArgsClass.prototype, "page", void 0);
-    __decorate([
-        type_graphql_1.Field(() => [TOrderClass], { nullable: true }),
-        __metadata("design:type", Array)
-    ], PaginatedArgsClass.prototype, "order", void 0);
-    PaginatedArgsClass = __decorate([
-        type_graphql_1.ArgsType()
-    ], PaginatedArgsClass);
-    return PaginatedArgsClass;
-}
-exports.PaginatedArgs = PaginatedArgs;
 function PaginatedFilterArgs(TFilterClass, TOrderClass) {
     let PaginatedArgsClass = class PaginatedArgsClass {
     };

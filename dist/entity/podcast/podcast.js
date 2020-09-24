@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PodcastIndexQL = exports.PodcastIndexGroupQL = exports.PodcastPageQL = exports.PodcastQL = exports.Podcast = void 0;
+exports.PodcastDiscoverTagPageQL = exports.PodcastDiscoverTagQL = exports.PodcastDiscoverPageQL = exports.PodcastDiscoverQL = exports.PodcastIndexQL = exports.PodcastIndexGroupQL = exports.PodcastPageQL = exports.PodcastQL = exports.Podcast = void 0;
 const episode_1 = require("../episode/episode");
 const enums_1 = require("../../types/enums");
 const type_graphql_1 = require("type-graphql");
@@ -132,4 +132,80 @@ PodcastIndexQL = __decorate([
     type_graphql_1.ObjectType()
 ], PodcastIndexQL);
 exports.PodcastIndexQL = PodcastIndexQL;
+let PodcastDiscoverQL = class PodcastDiscoverQL {
+};
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverQL.prototype, "url", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverQL.prototype, "title", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverQL.prototype, "author", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverQL.prototype, "description", void 0);
+__decorate([
+    type_graphql_1.Field(() => Number),
+    __metadata("design:type", Number)
+], PodcastDiscoverQL.prototype, "subscribers", void 0);
+__decorate([
+    type_graphql_1.Field(() => Number),
+    __metadata("design:type", Number)
+], PodcastDiscoverQL.prototype, "subscribers_last_week", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverQL.prototype, "logo_url", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverQL.prototype, "scaled_logo_url", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverQL.prototype, "website", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverQL.prototype, "mygpo_link", void 0);
+PodcastDiscoverQL = __decorate([
+    type_graphql_1.ObjectType()
+], PodcastDiscoverQL);
+exports.PodcastDiscoverQL = PodcastDiscoverQL;
+let PodcastDiscoverPageQL = class PodcastDiscoverPageQL extends base_1.PaginatedResponse(PodcastDiscoverQL, PodcastDiscoverQL) {
+};
+PodcastDiscoverPageQL = __decorate([
+    type_graphql_1.ObjectType()
+], PodcastDiscoverPageQL);
+exports.PodcastDiscoverPageQL = PodcastDiscoverPageQL;
+let PodcastDiscoverTagQL = class PodcastDiscoverTagQL {
+};
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverTagQL.prototype, "title", void 0);
+__decorate([
+    type_graphql_1.Field(() => String),
+    __metadata("design:type", String)
+], PodcastDiscoverTagQL.prototype, "tag", void 0);
+__decorate([
+    type_graphql_1.Field(() => Number),
+    __metadata("design:type", Number)
+], PodcastDiscoverTagQL.prototype, "usage", void 0);
+PodcastDiscoverTagQL = __decorate([
+    type_graphql_1.ObjectType()
+], PodcastDiscoverTagQL);
+exports.PodcastDiscoverTagQL = PodcastDiscoverTagQL;
+let PodcastDiscoverTagPageQL = class PodcastDiscoverTagPageQL extends base_1.PaginatedResponse(PodcastDiscoverTagQL, PodcastDiscoverTagQL) {
+};
+PodcastDiscoverTagPageQL = __decorate([
+    type_graphql_1.ObjectType()
+], PodcastDiscoverTagPageQL);
+exports.PodcastDiscoverTagPageQL = PodcastDiscoverTagPageQL;
 //# sourceMappingURL=podcast.js.map
