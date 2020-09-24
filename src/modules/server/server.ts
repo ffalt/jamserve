@@ -62,8 +62,9 @@ export class Server {
 						'data:',
 						'https://coverartarchive.org'
 					],
+					objectSrc: [`'none'`],
 					fontSrc: [self, 'data:'],
-					// reportUri: '/cspviolation'
+					reportUri: '/csp/report-violation'
 				},
 			})
 		);
@@ -99,6 +100,16 @@ export class Server {
 
 		log.debug(`registering docs middleware`);
 		app.use('/docs', await this.docs.middleware());
+
+		app.post('/csp/report-violation', async (req, res) => {
+			if (req.body) {
+				console.log('CSP', req.body);
+			} else {
+				console.log('CSP', 'No data');
+			}
+
+			res.status(204).end();
+		});
 
 		log.debug(`registering static middleware`);
 		// frontend (jamberry domain config file)
