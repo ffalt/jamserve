@@ -47,13 +47,17 @@ export class Server {
 		app.use(bodyParser.json({type: 'application/csp-report', limit: '10mb'}));
 
 		app.use(helmet());
-		const self = '\'self\'';
+		const self = `'self'`;
+		const none = '\'none\'';
 		app.use(
 			helmet.contentSecurityPolicy({
 				directives: {
-					defaultSrc: [self],
+					defaultSrc: [none],
 					scriptSrc: [self],
+					mediaSrc: [self, 'data:'],
+					frameSrc: [self],
 					styleSrc: [self, `https: 'unsafe-inline'`],
+					childSrc: [self],
 					connectSrc: [self,
 						'https://en.wikipedia.org',
 						'https://commons.wikimedia.org'
@@ -64,7 +68,7 @@ export class Server {
 						'https://gpodder.net',
 						'https://coverartarchive.org'
 					],
-					objectSrc: [`'none'`],
+					objectSrc: [none],
 					fontSrc: [self, 'data:'],
 					reportUri: '/csp/report-violation'
 				},
