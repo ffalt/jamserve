@@ -38,14 +38,20 @@ let Server = class Server {
         log.debug(`registering express standard middleware`);
         app.use(body_parser_1.default.urlencoded({ extended: true, limit: '10mb' }));
         app.use(body_parser_1.default.json({ limit: '10mb' }));
+        app.use(body_parser_1.default.json({ type: 'application/json', limit: '10mb' }));
         app.use(body_parser_1.default.json({ type: 'application/vnd.api+json', limit: '10mb' }));
+        app.use(body_parser_1.default.json({ type: 'application/csp-report', limit: '10mb' }));
         app.use(helmet_1.default());
-        const self = '\'self\'';
+        const self = `'self'`;
+        const none = '\'none\'';
         app.use(helmet_1.default.contentSecurityPolicy({
             directives: {
-                defaultSrc: [self],
+                defaultSrc: [none],
                 scriptSrc: [self],
+                mediaSrc: [self, 'data:'],
+                frameSrc: [self],
                 styleSrc: [self, `https: 'unsafe-inline'`],
+                childSrc: [self],
                 connectSrc: [self,
                     'https://en.wikipedia.org',
                     'https://commons.wikimedia.org'
@@ -56,7 +62,7 @@ let Server = class Server {
                     'https://gpodder.net',
                     'https://coverartarchive.org'
                 ],
-                objectSrc: [`'none'`],
+                objectSrc: [none],
                 fontSrc: [self, 'data:'],
                 reportUri: '/csp/report-violation'
             },

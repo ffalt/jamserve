@@ -141,7 +141,7 @@ class WorkerScan {
     }
     async updateTrack(file, track) {
         if (!this.changes.tracks.removed.has(track)) {
-            log.info('Track has changed', file.path);
+            log.info('Updating Track', file.path);
             this.changes.tracks.updated.add(track);
         }
         if (this.changes.tracks.updated.has(track)) {
@@ -283,7 +283,8 @@ class WorkerScan {
             const scanTrack = scanTracks.find(t => t.path == filename);
             if (scanTrack) {
                 foundScanTracks.push(scanTrack);
-                if (scanTrack.size !== track.fileSize ||
+                if (this.changes.tracks.updated.has(track) ||
+                    scanTrack.size !== track.fileSize ||
                     !moment_1.default(scanTrack.ctime).isSame(track.statCreated) ||
                     !moment_1.default(scanTrack.mtime).isSame(track.statModified)) {
                     const t = await this.updateTrack(scanTrack, track);
