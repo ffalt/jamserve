@@ -358,6 +358,10 @@ describe('REST', () => {
 									call.data.trackID = track.id;
 									break;
 								}
+								case 'podcast/discover/top':
+								case 'podcast/discover/byTag':
+								case 'podcast/discover/tags':
+								case 'podcast/discover':
 								case 'metadata/lyricsovh/search':
 								case 'metadata/musicbrainz/search':
 								case 'metadata/acousticbrainz/lookup':
