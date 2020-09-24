@@ -50,7 +50,7 @@ export class RootWorker extends BaseWorker {
 	}
 
 	async refreshMeta(orm: Orm, root: Root, changes: Changes): Promise<void> {
-		const trackIDs = await orm.Track.findIDs({});
+		const trackIDs = await orm.Track.findIDsFilter({rootIDs: [root.id]});
 		changes.tracks.updated.appendIDs(trackIDs);
 		await this.scan(orm, root, changes);
 	}
