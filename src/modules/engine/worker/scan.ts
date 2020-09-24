@@ -265,6 +265,10 @@ export class WorkerScan {
 		await this.scanSubfolders(folder, dir, result);
 		await this.scanTracks(dir, folder, result);
 		await this.scanArtworks(dir, folder, result);
+		if (this.orm.em.changesCount() > 1000) {
+			log.debug('Syncing Track/Artwork Changes to DB');
+			await this.orm.em.flush();
+		}
 		return result;
 	}
 
