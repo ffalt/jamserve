@@ -184,6 +184,8 @@ export class WorkerScan {
 		if (!this.changes.tracks.removed.has(track)) {
 			log.info('Track has changed', file.path);
 			this.changes.tracks.updated.add(track);
+		}
+		if (this.changes.tracks.updated.has(track)) {
 			return await this.setTrackValues(file, track);
 		}
 		return;

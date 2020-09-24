@@ -52,6 +52,7 @@ export class RootWorker extends BaseWorker {
 	async refreshMeta(orm: Orm, root: Root, changes: Changes): Promise<void> {
 		const trackIDs = await orm.Track.findIDs({});
 		changes.tracks.updated.appendIDs(trackIDs);
+		await this.scan(orm, root, changes);
 	}
 
 	async mergeChanges(orm: Orm, root: Root, changes: Changes): Promise<void> {

@@ -179,6 +179,23 @@ export class IoService {
 		return status;
 	}
 
+	async startUpRefresh(orm: Orm, forceRescan: boolean):Promise<void> {
+		if (!forceRescan) {
+			await this.refresh(orm);
+		} else {
+			await this.refreshMeta(orm);
+		}
+	}
+
+	async refreshMeta(orm: Orm): Promise<Array<AdminChangeQueueInfo>> {
+		const roots = await orm.Root.all();
+		const result: Array<AdminChangeQueueInfo> = [];
+		for (const root of roots) {
+			result.push(await this.refreshRootMeta(root.id));
+		}
+		return result;
+	}
+
 	async refresh(orm: Orm): Promise<Array<AdminChangeQueueInfo>> {
 		const roots = await orm.Root.all();
 		const result: Array<AdminChangeQueueInfo> = [];

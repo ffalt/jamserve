@@ -90,7 +90,7 @@ export class EngineService {
 		}
 		if (forceRescan || this.settings.settings.library.scanAtStart) {
 			log.info(`Starting rescan`);
-			this.io.refresh(orm).then(() => {
+			this.io.startUpRefresh(orm, forceRescan).then(() => {
 				return forceRescan ? this.settings.saveSettings(orm) : undefined;
 			}).catch(e => {
 				log.error('Error on startup scanning', e);
