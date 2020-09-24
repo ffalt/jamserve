@@ -84,6 +84,18 @@ export class Server {
 		 */
 
 		app.use(useLogMiddleware());
+
+		app.post('/csp/report-violation', async (req, res) => {
+			if (req.body) {
+				log.error('CSP', JSON.stringify(req.body));
+			} else {
+				log.error('CSP', 'No data');
+			}
+
+			res.status(204).end();
+		});
+
+
 		app.use(useEngineMiddleware(this.engine));
 		app.use(useSessionMiddleware(this.configService, this.sessionService));
 		app.use(usePassPortMiddleWare(app, this.engine));
@@ -100,16 +112,6 @@ export class Server {
 
 		log.debug(`registering docs middleware`);
 		app.use('/docs', await this.docs.middleware());
-
-		app.post('/csp/report-violation', async (req, res) => {
-			if (req.body) {
-				console.log('CSP', req.body);
-			} else {
-				console.log('CSP', 'No data');
-			}
-
-			res.status(204).end();
-		});
 
 		log.debug(`registering static middleware`);
 		// frontend (jamberry domain config file)
