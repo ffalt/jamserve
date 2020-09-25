@@ -169,7 +169,7 @@ export class PodcastsArgsQL extends PodcastPageArgsQL {
 @ObjParamsType()
 export class PodcastDiscoverArgs {
 	@Field(() => String)
-	@ObjField({description: 'search podcast by name', example: 'awesome'})
+	@ObjField({description: 'Search Podcast by Name', example: 'awesome'})
 	query!: string;
 }
 
@@ -181,7 +181,7 @@ export class PodcastDiscoverArgsQL extends PodcastDiscoverArgs {
 @ObjParamsType()
 export class PodcastDiscoverByTagArgs {
 	@Field(() => String)
-	@ObjField({description: 'search podcast by tag', example: 'awesome'})
+	@ObjField({description: 'Search Podcast by Tag', example: 'awesome'})
 	tag!: string;
 }
 

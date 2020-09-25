@@ -45,7 +45,7 @@ export class AlbumController {
 	@Get(
 		'/search',
 		() => AlbumPage,
-		{description: 'Search albums'}
+		{description: 'Search Albums'}
 	)
 	async search(
 		@QueryParams() page: PageArgs,

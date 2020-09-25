@@ -139,17 +139,6 @@ export class PodcastController {
 		await engine.podcast.remove(orm, podcast);
 	}
 
-	//
-	// @Get(
-	// 	'/discover',
-	// 	() => PodcastDiscover,
-	// 	{description: 'Get the Navigation Index for Podcasts', summary: 'Get Index'}
-	// )
-	// async discover(@QueryParams() args: PodcastDiscoverArgs, @Ctx() {orm, engine, user}: Context): Promise<PodcastDiscover> {
-	// 	// const result = await orm.Podcast.indexFilter(filter, user);
-	// 	// return engine.transform.podcastIndex(orm, result);
-	// }
-
 	@Get(
 		'/discover',
 		() => [PodcastDiscover],

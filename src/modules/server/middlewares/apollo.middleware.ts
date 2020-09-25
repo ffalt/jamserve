@@ -151,10 +151,6 @@ export class ApolloMiddleware {
 			res.type('text/javascript');
 			res.sendFile(path.resolve('./static/graphql/middleware.min.js'));
 		});
-		api.get('/middleware.js.map', (req, res) => {
-			res.type('text/json');
-			res.sendFile(path.resolve('./static/graphql/middleware.min.js.map'));
-		});
 		api.get('/main.js', (req, res) => {
 			res.type('text/javascript');
 			res.sendFile(path.resolve('./static/graphql/main.js'));

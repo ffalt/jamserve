@@ -28,7 +28,7 @@ export class GenreController {
 
 	@Get('/search',
 		() => GenrePage,
-		{description: 'Search genres'}
+		{description: 'Search Genres'}
 	)
 	async search(
 		@QueryParams() page: PageArgs,

@@ -40,15 +40,15 @@ export class MusicBrainzLookupArgs {
 export class MusicBrainzSearchArgs {
 	@ObjField(() => MusicBrainzSearchType, {description: 'MusicBrainz Search Type', example: MusicBrainzSearchType.artist})
 	type!: MusicBrainzSearchType;
-	@ObjField({nullable: true, description: 'Search by recording name'})
+	@ObjField({nullable: true, description: 'Search by Recording Name'})
 	recording?: string;
-	@ObjField({nullable: true, description: 'Search by releasegroup name'})
+	@ObjField({nullable: true, description: 'Search by Releasegroup Name'})
 	releasegroup?: string;
-	@ObjField({nullable: true, description: 'Search by release name'})
+	@ObjField({nullable: true, description: 'Search by Release Name'})
 	release?: string;
-	@ObjField({nullable: true, description: 'Search by artist name'})
+	@ObjField({nullable: true, description: 'Search by Artist Name'})
 	artist?: string;
-	@ObjField({nullable: true, description: 'Search by number of release tracks', min: 0})
+	@ObjField({nullable: true, description: 'Search by Number of Release Tracks', min: 0})
 	tracks?: number;
 }
 
