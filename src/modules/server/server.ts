@@ -69,6 +69,7 @@ export class Server {
 						'https://coverartarchive.org'
 					],
 					objectSrc: [none],
+					workerSrc: [self],
 					fontSrc: [self, 'data:'],
 					reportUri: '/csp/report-violation'
 				},
