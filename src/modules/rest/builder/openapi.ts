@@ -196,7 +196,13 @@ class OpenApiBuilder {
 				this.collectParameter(param, parameters, ctrl, schemas, alias?.hideParameters);
 			}
 		}
-		return parameters;
+		return parameters.sort((a, b) => {
+			const result = (a.required === b.required) ? 0 : a.required ? -1 : 1;
+			if (result === 0) {
+				return a.name.localeCompare(b.name);
+			}
+			return result;
+		});
 	}
 
 	fillErrorResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, responses: ResponsesObject): void {
