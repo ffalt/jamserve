@@ -7,11 +7,11 @@ exports.usePassPortMiddleWare = void 0;
 const passport_jwt_1 = __importDefault(require("passport-jwt"));
 const passport_local_1 = __importDefault(require("passport-local"));
 const passport_1 = __importDefault(require("passport"));
-const hash_1 = require("../../../utils/hash");
 const logger_1 = require("../../../utils/logger");
+const md5_1 = require("../../../utils/md5");
 const log = logger_1.logger('Passport');
 function jwthash(token) {
-    return hash_1.hashMD5(token);
+    return md5_1.hashMD5(token);
 }
 function usePassPortMiddleWare(router, engine) {
     router.use(passport_1.default.initialize());
@@ -26,7 +26,7 @@ function usePassPortMiddleWare(router, engine) {
         engine.user.auth(engine.orm.fork(), username, password).then(user => done(null, user ? user : false)).catch(done);
     }));
     const resolvePayload = (jwtPayload, done) => {
-        engine.user.findByID(engine.orm.fork(), jwtPayload.id)
+        engine.user.authJWT(engine.orm.fork(), jwtPayload)
             .then(user => done(null, user ? user : false, jwtPayload))
             .catch(done);
     };

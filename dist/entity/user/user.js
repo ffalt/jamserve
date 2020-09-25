@@ -38,10 +38,6 @@ __decorate([
 __decorate([
     orm_1.Property(() => String),
     __metadata("design:type", String)
-], User.prototype, "salt", void 0);
-__decorate([
-    orm_1.Property(() => String),
-    __metadata("design:type", String)
 ], User.prototype, "hash", void 0);
 __decorate([
     type_graphql_1.Field(() => String),

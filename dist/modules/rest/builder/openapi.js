@@ -170,7 +170,13 @@ class OpenApiBuilder {
                 this.collectParameter(param, parameters, ctrl, schemas, alias === null || alias === void 0 ? void 0 : alias.hideParameters);
             }
         }
-        return parameters;
+        return parameters.sort((a, b) => {
+            const result = (a.required === b.required) ? 0 : a.required ? -1 : 1;
+            if (result === 0) {
+                return a.name.localeCompare(b.name);
+            }
+            return result;
+        });
     }
     fillErrorResponses(method, parameters, roles, responses) {
         if (parameters.length > 0) {

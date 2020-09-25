@@ -74,7 +74,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AlbumController.prototype, "index", null);
 __decorate([
-    rest_1.Get('/search', () => album_model_1.AlbumPage, { description: 'Search albums' }),
+    rest_1.Get('/search', () => album_model_1.AlbumPage, { description: 'Search Albums' }),
     __param(0, rest_1.QueryParams()),
     __param(1, rest_1.QueryParams()),
     __param(2, rest_1.QueryParams()),

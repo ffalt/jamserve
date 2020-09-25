@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var EngineService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EngineService = void 0;
-const hash_1 = require("../../../utils/hash");
 const enums_1 = require("../../../types/enums");
 const path_1 = __importDefault(require("path"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
@@ -106,19 +105,8 @@ let EngineService = EngineService_1 = class EngineService {
     async stop() {
         await this.orm.stop();
     }
-    static async buildAdminUser(orm, admin) {
-        const pw = hash_1.hashAndSaltSHA512(admin.pass || '');
-        const user = orm.User.create({
-            name: admin.name,
-            salt: pw.salt,
-            hash: pw.hash,
-            email: admin.mail || '',
-            roleAdmin: true,
-            rolePodcast: true,
-            roleStream: true,
-            roleUpload: true
-        });
-        await orm.User.persistAndFlush(user);
+    async buildAdminUser(orm, admin) {
+        await this.user.createUser(orm, admin.name, admin.mail || '', admin.pass, true, true, true, true);
     }
     static async buildRoots(orm, roots) {
         for (const first of roots) {
@@ -137,7 +125,7 @@ let EngineService = EngineService_1 = class EngineService {
         if (this.config.firstStart.adminUser) {
             const count = await orm.User.count();
             if (count === 0) {
-                await EngineService_1.buildAdminUser(orm, this.config.firstStart.adminUser);
+                await this.buildAdminUser(orm, this.config.firstStart.adminUser);
             }
         }
         if (this.config.firstStart.roots) {

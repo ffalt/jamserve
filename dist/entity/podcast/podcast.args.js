@@ -250,7 +250,7 @@ let PodcastDiscoverArgs = class PodcastDiscoverArgs {
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    decorators_1.ObjField({ description: 'search podcast by name', example: 'awesome' }),
+    decorators_1.ObjField({ description: 'Search Podcast by Name', example: 'awesome' }),
     __metadata("design:type", String)
 ], PodcastDiscoverArgs.prototype, "query", void 0);
 PodcastDiscoverArgs = __decorate([
@@ -268,7 +268,7 @@ let PodcastDiscoverByTagArgs = class PodcastDiscoverByTagArgs {
 };
 __decorate([
     type_graphql_1.Field(() => String),
-    decorators_1.ObjField({ description: 'search podcast by tag', example: 'awesome' }),
+    decorators_1.ObjField({ description: 'Search Podcast by Tag', example: 'awesome' }),
     __metadata("design:type", String)
 ], PodcastDiscoverByTagArgs.prototype, "tag", void 0);
 PodcastDiscoverByTagArgs = __decorate([

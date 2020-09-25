@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateJWT = exports.jwtHash = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const hash_1 = require("./hash");
+const md5_1 = require("./md5");
 function jwtHash(token) {
-    return hash_1.hashMD5(token);
+    return md5_1.hashMD5(token);
 }
 exports.jwtHash = jwtHash;
 function generateJWT(userID, client, secret, maxAge) {

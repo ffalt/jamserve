@@ -45,6 +45,10 @@ class ORM {
         if (table === null || table === void 0 ? void 0 : table.genres) {
             await queryInterface.removeColumn('Album', 'genres');
         }
+        table = await queryInterface.describeTable('User');
+        if (table === null || table === void 0 ? void 0 : table.salt) {
+            await queryInterface.removeColumn('User', 'salt');
+        }
     }
     async ensureSchema() {
         await this.sequelize.sync();

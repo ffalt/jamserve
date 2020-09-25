@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
-const hash_1 = require("../../utils/hash");
+const bcrypt_1 = require("../../utils/bcrypt");
 const enums_1 = require("../../types/enums");
 const typescript_ioc_1 = require("typescript-ioc");
 const path_1 = __importDefault(require("path"));
@@ -46,14 +46,13 @@ let UserService = class UserService {
         if (!user) {
             return Promise.reject(rest_1.InvalidParamError('username', 'Invalid Username'));
         }
-        const hash = hash_1.hashSaltSHA512(pass, user.salt);
-        if (hash !== user.hash) {
+        if (!await bcrypt_1.bcryptComparePassword(pass, user.hash)) {
             return Promise.reject(rest_1.InvalidParamError('password', 'Invalid Password'));
         }
         return user;
     }
     async authJWT(orm, jwtPayload) {
-        if (!jwtPayload || !jwtPayload.id) {
+        if (!(jwtPayload === null || jwtPayload === void 0 ? void 0 : jwtPayload.id)) {
             return Promise.reject(rest_1.InvalidParamError('token', 'Invalid token'));
         }
         return await orm.User.findOneByID(jwtPayload.id);
@@ -101,7 +100,7 @@ let UserService = class UserService {
         await fs_utils_1.fileDeleteIfExists(filename);
         await this.imageModule.clearImageCacheByIDs([user.id]);
     }
-    async testPassword(password) {
+    async validatePassword(password) {
         if ((!password) || (!password.trim().length)) {
             return Promise.reject(rest_1.InvalidParamError('Invalid Password'));
         }
@@ -113,10 +112,8 @@ let UserService = class UserService {
         }
     }
     async setUserPassword(orm, user, pass) {
-        await this.testPassword(pass);
-        const pw = hash_1.hashAndSaltSHA512(pass);
-        user.salt = pw.salt;
-        user.hash = pw.hash;
+        await this.validatePassword(pass);
+        user.hash = await bcrypt_1.bcryptPassword(pass);
         await orm.User.persistAndFlush(user);
     }
     async setUserEmail(orm, user, email) {
@@ -132,8 +129,8 @@ let UserService = class UserService {
         await fs_utils_1.fileDeleteIfExists(this.avatarImageFilename(user));
     }
     async createUser(orm, name, email, pass, roleAdmin, roleStream, roleUpload, rolePodcast) {
-        const pw = hash_1.hashAndSaltSHA512(pass);
-        const user = orm.User.create({ name: name || '', salt: pw.salt, hash: pw.hash, email, roleAdmin, roleStream, roleUpload, rolePodcast });
+        const hashAndSalt = await bcrypt_1.bcryptPassword(pass);
+        const user = orm.User.create({ name, hash: hashAndSalt, email, roleAdmin, roleStream, roleUpload, rolePodcast });
         await orm.User.persistAndFlush(user);
         return user;
     }
@@ -145,7 +142,7 @@ let UserService = class UserService {
         if (existingUser) {
             return Promise.reject(rest_1.InvalidParamError('name', 'Username already exists'));
         }
-        const pass = random_1.randomString(16);
+        const pass = random_1.randomString(32);
         return await this.createUser(orm, args.name, args.email || '', pass, !!args.roleAdmin, !!args.roleStream, !!args.roleUpload, !!args.rolePodcast);
     }
     async update(orm, user, args) {

@@ -1,6 +1,6 @@
 {
   "name": "jamserve",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "author": "ffalt",
   "description": "jamserve streaming audio server",
   "license": "MIT",
@@ -12,9 +12,10 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "apollo-server-express": "2.18.0",
+    "apollo-server-express": "2.18.1",
     "apollo-server-logger": "1.0.1",
     "archiver": "5.0.2",
+    "bcrypt": "5.0.0",
     "body-parser": "1.19.0",
     "class-validator": "0.12.2",
     "common-password-checker": "0.1.0",
@@ -38,7 +39,7 @@
     "graphql": "15.3.0",
     "graphql-type-json": "0.3.2",
     "helmet": "4.1.1",
-    "jamp3": "0.4.1",
+    "jamp3": "0.4.2",
     "jimp": "0.16.1",
     "limiter": "1.1.5",
     "method-override": "3.0.0",

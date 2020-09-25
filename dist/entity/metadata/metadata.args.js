@@ -80,23 +80,23 @@ __decorate([
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "type", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by recording name' }),
+    decorators_1.ObjField({ nullable: true, description: 'Search by Recording Name' }),
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "recording", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by releasegroup name' }),
+    decorators_1.ObjField({ nullable: true, description: 'Search by Releasegroup Name' }),
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "releasegroup", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by release name' }),
+    decorators_1.ObjField({ nullable: true, description: 'Search by Release Name' }),
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "release", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by artist name' }),
+    decorators_1.ObjField({ nullable: true, description: 'Search by Artist Name' }),
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "artist", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by number of release tracks', min: 0 }),
+    decorators_1.ObjField({ nullable: true, description: 'Search by Number of Release Tracks', min: 0 }),
     __metadata("design:type", Number)
 ], MusicBrainzSearchArgs.prototype, "tracks", void 0);
 MusicBrainzSearchArgs = __decorate([

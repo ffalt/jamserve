@@ -61,7 +61,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "id", null);
 __decorate([
-    decorators_1.Get('/search', () => genre_model_1.GenrePage, { description: 'Search genres' }),
+    decorators_1.Get('/search', () => genre_model_1.GenrePage, { description: 'Search Genres' }),
     __param(0, decorators_1.QueryParams()),
     __param(1, decorators_1.QueryParams()),
     __param(2, decorators_1.QueryParams()),
