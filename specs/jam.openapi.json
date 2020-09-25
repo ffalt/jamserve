@@ -765,8 +765,8 @@
 		"/album/search": {
 			"get": {
 				"operationId": "AlbumController.search",
-				"summary": "Search albums",
-				"description": "Search albums",
+				"summary": "Search Albums",
+				"description": "Search Albums",
 				"tags": [
 					"Album"
 				],
@@ -11955,8 +11955,8 @@
 		"/genre/search": {
 			"get": {
 				"operationId": "GenreController.search",
-				"summary": "Search genres",
-				"description": "Search genres",
+				"summary": "Search Genres",
+				"description": "Search Genres",
 				"tags": [
 					"Genres"
 				],
@@ -13546,52 +13546,52 @@
 					{
 						"in": "query",
 						"name": "artist",
-						"description": "Search by artist name",
+						"description": "Search by Artist Name",
 						"required": false,
 						"schema": {
 							"type": "string",
-							"description": "Search by artist name"
+							"description": "Search by Artist Name"
 						}
 					},
 					{
 						"in": "query",
 						"name": "recording",
-						"description": "Search by recording name",
+						"description": "Search by Recording Name",
 						"required": false,
 						"schema": {
 							"type": "string",
-							"description": "Search by recording name"
+							"description": "Search by Recording Name"
 						}
 					},
 					{
 						"in": "query",
 						"name": "release",
-						"description": "Search by release name",
+						"description": "Search by Release Name",
 						"required": false,
 						"schema": {
 							"type": "string",
-							"description": "Search by release name"
+							"description": "Search by Release Name"
 						}
 					},
 					{
 						"in": "query",
 						"name": "releasegroup",
-						"description": "Search by releasegroup name",
+						"description": "Search by Releasegroup Name",
 						"required": false,
 						"schema": {
 							"type": "string",
-							"description": "Search by releasegroup name"
+							"description": "Search by Releasegroup Name"
 						}
 					},
 					{
 						"in": "query",
 						"name": "tracks",
-						"description": "Search by number of release tracks",
+						"description": "Search by Number of Release Tracks",
 						"required": false,
 						"schema": {
 							"type": "integer",
 							"minimum": 0,
-							"description": "Search by number of release tracks"
+							"description": "Search by Number of Release Tracks"
 						}
 					}
 				],
@@ -16775,12 +16775,12 @@
 					{
 						"in": "query",
 						"name": "query",
-						"description": "search podcast by name",
+						"description": "Search Podcast by Name",
 						"required": true,
 						"example": "awesome",
 						"schema": {
 							"type": "string",
-							"description": "search podcast by name"
+							"description": "Search Podcast by Name"
 						}
 					}
 				],
@@ -16901,12 +16901,12 @@
 					{
 						"in": "query",
 						"name": "tag",
-						"description": "search podcast by tag",
+						"description": "Search Podcast by Tag",
 						"required": true,
 						"example": "awesome",
 						"schema": {
 							"type": "string",
-							"description": "search podcast by tag"
+							"description": "Search Podcast by Tag"
 						}
 					},
 					{
