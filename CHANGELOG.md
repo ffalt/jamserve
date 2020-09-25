@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.6](https://github.com/ffalt/jamserve/compare/v0.4.5...v0.4.6) (2020-09-25)
+
+
+### Features
+
+* **csp:** add worker-src ([86ae322](https://github.com/ffalt/jamserve/commit/86ae32217d179c610a85016375d883b6f59a855a))
+* **password hashing:** use bcyrpt ([ac313e7](https://github.com/ffalt/jamserve/commit/ac313e756bc9e51091d8507dab8055f5b6a951d9))
+* **password hashing:** use bcyrpt ([3dc0367](https://github.com/ffalt/jamserve/commit/3dc03674f27b70f8d356bcdac735bda0bd99105b))
+
+
+### Bug Fixes
+
+* **podcast:** do not httpsify feed urls ([0db9863](https://github.com/ffalt/jamserve/commit/0db986397b34237222aa4fb0bdc924007257b297))
+* **redoc:** disable search, since it requires loading a worker via blob: (forbidden by csp) ([773dedb](https://github.com/ffalt/jamserve/commit/773dedbfb479bcdf16840d0af24c39930d0a4bde))
+* **scan:** updating must flush changes in smaller transactions ([1a43108](https://github.com/ffalt/jamserve/commit/1a431083beb290d88cd4d64f14779d119aa1c17f))
+
 ### [0.4.5](https://github.com/ffalt/jamserve/compare/v0.4.4...v0.4.5) (2020-09-24)
 
 
