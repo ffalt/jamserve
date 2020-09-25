@@ -31,6 +31,7 @@
     "apollo-server-express": "2.18.1",
     "apollo-server-logger": "1.0.1",
     "archiver": "5.0.2",
+    "bcrypt": "5.0.0",
     "body-parser": "1.19.0",
     "class-validator": "0.12.2",
     "common-password-checker": "0.1.0",
@@ -88,6 +89,7 @@
   "devDependencies": {
     "@apidevtools/json-schema-ref-parser": "9.0.6",
     "@types/archiver": "3.1.0",
+    "@types/bcrypt": "3.0.0",
     "@types/chance": "1.1.0",
     "@types/compression": "1.7.0",
     "@types/cookie-parser": "1.4.2",

@@ -1,4 +1,3 @@
-import {hashAndSaltSHA512} from '../../../utils/hash';
 import {RootScanStrategy} from '../../../types/enums';
 import path from 'path';
 import fse from 'fs-extra';
@@ -129,19 +128,8 @@ export class EngineService {
 		await this.orm.stop();
 	}
 
-	private static async buildAdminUser(orm: Orm, admin: { name: string; pass: string; mail: string }): Promise<void> {
-		const pw = hashAndSaltSHA512(admin.pass || '');
-		const user = orm.User.create({
-			name: admin.name,
-			salt: pw.salt,
-			hash: pw.hash,
-			email: admin.mail || '',
-			roleAdmin: true,
-			rolePodcast: true,
-			roleStream: true,
-			roleUpload: true
-		});
-		await orm.User.persistAndFlush(user);
+	private async buildAdminUser(orm: Orm, admin: { name: string; pass: string; mail: string }): Promise<void> {
+		await this.user.createUser(orm, admin.name, admin.mail || '', admin.pass, true, true, true, true);
 	}
 
 	private static async buildRoots(orm: Orm, roots: Array<{ name: string; path: string; strategy?: RootScanStrategy }>): Promise<void> {
@@ -162,7 +150,7 @@ export class EngineService {
 		if (this.config.firstStart.adminUser) {
 			const count = await orm.User.count();
 			if (count === 0) {
-				await EngineService.buildAdminUser(orm, this.config.firstStart.adminUser);
+				await this.buildAdminUser(orm, this.config.firstStart.adminUser);
 			}
 		}
 		if (this.config.firstStart.roots) {

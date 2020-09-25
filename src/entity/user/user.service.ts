@@ -1,6 +1,6 @@
 import {User} from './user';
 import {Orm} from '../../modules/engine/services/orm.service';
-import {hashAndSaltSHA512, hashSaltSHA512} from '../../utils/hash';
+import {bcryptComparePassword, bcryptPassword} from '../../utils/bcrypt';
 import {UserRole} from '../../types/enums';
 import {JWTPayload} from '../../utils/jwt';
 import {Inject, InRequestScope} from 'typescript-ioc';
@@ -46,15 +46,14 @@ export class UserService {
 		if (!user) {
 			return Promise.reject(InvalidParamError('username', 'Invalid Username'));
 		}
-		const hash = hashSaltSHA512(pass, user.salt);
-		if (hash !== user.hash) {
+		if (!await bcryptComparePassword(pass, user.hash)) {
 			return Promise.reject(InvalidParamError('password', 'Invalid Password'));
 		}
 		return user;
 	}
 
 	public async authJWT(orm: Orm, jwtPayload: JWTPayload): Promise<User | undefined> {
-		if (!jwtPayload || !jwtPayload.id) {
+		if (!jwtPayload?.id) {
 			return Promise.reject(InvalidParamError('token', 'Invalid token'));
 		}
 		return await orm.User.findOneByID(jwtPayload.id);
@@ -108,7 +107,7 @@ export class UserService {
 		await this.imageModule.clearImageCacheByIDs([user.id]);
 	}
 
-	async testPassword(password: string): Promise<void> {
+	async validatePassword(password: string): Promise<void> {
 		if ((!password) || (!password.trim().length)) {
 			return Promise.reject(InvalidParamError('Invalid Password'));
 		}
@@ -121,10 +120,8 @@ export class UserService {
 	}
 
 	async setUserPassword(orm: Orm, user: User, pass: string): Promise<void> {
-		await this.testPassword(pass);
-		const pw = hashAndSaltSHA512(pass);
-		user.salt = pw.salt;
-		user.hash = pw.hash;
+		await this.validatePassword(pass);
+		user.hash = await bcryptPassword(pass);
 		await orm.User.persistAndFlush(user);
 	}
 
@@ -159,8 +156,8 @@ export class UserService {
 							roleUpload: boolean,
 							rolePodcast: boolean
 	): Promise<User> {
-		const pw = hashAndSaltSHA512(pass);
-		const user: User = orm.User.create({name: name || '', salt: pw.salt, hash: pw.hash, email, roleAdmin, roleStream, roleUpload, rolePodcast});
+		const hashAndSalt = await bcryptPassword(pass);
+		const user: User = orm.User.create({name, hash: hashAndSalt, email, roleAdmin, roleStream, roleUpload, rolePodcast});
 		await orm.User.persistAndFlush(user);
 		return user;
 	}
@@ -173,7 +170,7 @@ export class UserService {
 		if (existingUser) {
 			return Promise.reject(InvalidParamError('name', 'Username already exists'));
 		}
-		const pass = randomString(16);
+		const pass = randomString(32);
 		return await this.createUser(orm, args.name,
 			args.email || '', pass, !!args.roleAdmin, !!args.roleStream, !!args.roleUpload, !!args.rolePodcast);
 	}

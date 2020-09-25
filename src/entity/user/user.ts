@@ -17,10 +17,7 @@ export class User extends Base {
 	name!: string;
 
 	@Property(() => String)
-	salt!: string;
-
-	@Property(() => String)
-	hash!: string;
+	hash!: string; // bcrypt hash (with concatenated salt & version)
 
 	@Field(() => String)
 	@Property(() => String)

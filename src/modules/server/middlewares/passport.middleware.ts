@@ -5,8 +5,8 @@ import passport from 'passport';
 import {EngineService} from '../../engine/services/engine.service';
 import {User} from '../../../entity/user/user';
 import {EngineRequest} from './engine.middleware';
-import {hashMD5} from '../../../utils/hash';
 import {logger} from '../../../utils/logger';
+import {hashMD5} from '../../../utils/md5';
 
 const log = logger('Passport');
 
@@ -39,7 +39,7 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		}
 	));
 	const resolvePayload = (jwtPayload: any, done: passportJWT.VerifiedCallback): void => {
-		engine.user.findByID(engine.orm.fork(),jwtPayload.id)
+		engine.user.authJWT(engine.orm.fork(), jwtPayload)
 			.then(user => done(null, user ? user : false, jwtPayload))
 			.catch(done);
 	};
