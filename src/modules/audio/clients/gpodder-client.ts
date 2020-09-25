@@ -87,10 +87,7 @@ export class GpodderClient extends WebserviceClient {
 	private transform(d: GpodderPodcast): GpodderPodcast {
 		return {
 			...d,
-			url: this.ensureHTTPS(d.url),
-			logo_url: this.ensureHTTPS(d.logo_url),
 			scaled_logo_url: this.ensureHTTPS(d.scaled_logo_url),
-			website: this.ensureHTTPS(d.website),
 			mygpo_link: this.ensureHTTPS(d.mygpo_link)
 		};
 	}
