@@ -48,6 +48,10 @@ export class ORM {
 		if (table?.genres) {
 			await queryInterface.removeColumn('Album', 'genres');
 		}
+		table = await queryInterface.describeTable('User');
+		if (table?.salt) {
+			await queryInterface.removeColumn('User', 'salt');
+		}
 	}
 
 	async ensureSchema(): Promise<void> {
