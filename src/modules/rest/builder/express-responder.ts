@@ -18,27 +18,17 @@ export interface ApiBinaryResult {
 }
 
 export class ApiBaseResponder {
-	// static sendJSONP(req: express.Request, res: express.Response, callback: string, data: unknown): void {
-	// 	res.writeHead(200, {'Content-Type': 'application/javascript'});
-	// 	res.end(`${callback}(${JSON.stringify(data)});`);
-	// }
 
 	static sendOK(req: express.Request, res: express.Response): void {
 		res.status(200).json({ok: true});
 	}
 
 	static sendString(req: express.Request, res: express.Response, data: string): void {
-		res.set('Content-Type', 'text/plain');
-		res.status(200).send(data);
+		res.set('Content-Type', 'text/plain').status(200).send(data);
 	}
 
 	static sendJSON(req: express.Request, res: express.Response, data: unknown): void {
 		res.status(200).json(data);
-	}
-
-	static sendXML(req: express.Request, res: express.Response, data: string): void {
-		res.set('Content-Type', 'application/xml');
-		res.status(200).send(data);
 	}
 
 	static sendError(req: express.Request, res: express.Response, err: string | Error | ApiError): void {

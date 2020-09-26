@@ -129,11 +129,7 @@ export class Server {
 		});
 		// frontend (any)
 		app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend)));
-		const indexFile = path.resolve(this.configService.env.paths.frontend, 'index.html');
-		app.get('/*', (req: express.Request, res: express.Response) => {
-			res.sendFile(indexFile);
-		});
-
+		app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend, 'index.html')));
 		this.app = app;
 	}
 

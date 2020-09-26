@@ -161,17 +161,18 @@ export function getCustomParameterTemplate(customPathParameters: CustomPathParam
 export async function getClientZip(filename: string, list: Array<{ name: string; content: string }>, models: Array<string>): Promise<ApiBinaryResult> {
 	return {
 		pipe: {
-			pipe: (stream: express.Response): void => {
+			pipe: (res: express.Response): void => {
 				// log.verbose('Start streaming');
 				const archive = archiver('zip', {zlib: {level: 9}});
 				archive.on('error', err => {
 					// log.error('archiver err ' + err);
 					throw err;
 				});
-				stream.contentType('zip');
-				stream.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+				res.contentType('zip');
+				res.type('application/zip');
+				res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
 				// stream.setHeader('Content-Length', stat.size); do NOT report wrong size!
-				stream.on('finish', () => {
+				res.on('finish', () => {
 					// log.verbose('streamed ' + archive.pointer() + ' total bytes');
 				});
 				for (const entry of list) {
@@ -180,7 +181,7 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 				for (const entry of models) {
 					archive.append(fse.createReadStream(path.resolve(`./static/models/${entry}`)), {name: `model/${entry}`});
 				}
-				archive.pipe(stream);
+				archive.pipe(res);
 				archive.finalize().catch(e => {
 					console.error(e);
 				});

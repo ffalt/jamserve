@@ -15,7 +15,8 @@ import {
 	DefaultOrderFields,
 	EpisodeOrderFields,
 	FolderOrderFields,
-	FolderType, GenreOrderFields,
+	FolderType,
+	GenreOrderFields,
 	ListType,
 	PlaylistEntryOrderFields,
 	PlayQueueEntryOrderFields,
@@ -147,26 +148,11 @@ export class ApolloMiddleware {
 
 	async playground(): Promise<express.Router> {
 		const api = express.Router();
-		api.get('/middleware.js', (req, res) => {
-			res.type('text/javascript');
-			res.sendFile(path.resolve('./static/graphql/middleware.min.js'));
-		});
-		api.get('/main.js', (req, res) => {
-			res.type('text/javascript');
-			res.sendFile(path.resolve('./static/graphql/main.js'));
-		});
-		api.get('/index.css', (req, res) => {
-			res.type('text/css');
-			res.sendFile(path.resolve('./static/graphql/index.min.css'));
-		});
-		api.get('/favicon.png', (req, res) => {
-			res.type('image/png');
-			res.sendFile(path.resolve('./static/graphql/favicon.png'));
-		});
-		api.get('/', (req, res) => {
-			res.type('text/html');
-			res.sendFile(path.resolve('./static/graphql/index.html'));
-		});
+		api.get('/middleware.js', express.static(path.resolve('./static/graphql/middleware.min.js')));
+		api.get('/main.js', express.static(path.resolve('./static/graphql/main.js')));
+		api.get('/index.css', express.static(path.resolve('./static/graphql/index.min.css')));
+		api.get('/favicon.png', express.static(path.resolve('./static/graphql/favicon.png')));
+		api.get('/', express.static(path.resolve('./static/graphql/index.html')));
 		return api;
 	}
 
