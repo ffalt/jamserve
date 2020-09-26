@@ -20,10 +20,7 @@ export class UserController {
 		@QueryParams() userArgs: IncludesUserArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<User> {
-		return engine.transform.user(
-			orm, await orm.User.oneOrFailByID(id),
-			userArgs, user
-		);
+		return engine.transform.User.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);
 	}
 
 	@Get(
@@ -40,7 +37,7 @@ export class UserController {
 	): Promise<UserPage> {
 		return await orm.User.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.user(orm, o, userArgs, user)
+			o => engine.transform.User.user(orm, o, userArgs, user)
 		);
 	}
 
@@ -54,7 +51,7 @@ export class UserController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<User> {
 		await this.validatePassword(orm, engine, args.password, user);
-		return engine.transform.user(orm, await engine.user.create(orm, args), {}, user);
+		return engine.transform.User.user(orm, await engine.user.create(orm, args), {}, user);
 	}
 
 	@Post(
@@ -77,7 +74,7 @@ export class UserController {
 				throw InvalidParamError('roleStream', `You can't remove api access for yourself`);
 			}
 		}
-		return engine.transform.user(orm, await engine.user.update(orm, u, args), {}, user);
+		return engine.transform.User.user(orm, await engine.user.update(orm, u, args), {}, user);
 	}
 
 	@Post(

@@ -23,7 +23,7 @@ export class GenreController {
 		@QueryParams() genreArgs: IncludesGenreArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<Genre> {
-		return engine.transform.genre(orm, await orm.Genre.oneOrFailByID(id), genreArgs, user);
+		return engine.transform.Genre.genre(orm, await orm.Genre.oneOrFailByID(id), genreArgs, user);
 	}
 
 	@Get('/search',
@@ -40,12 +40,12 @@ export class GenreController {
 	): Promise<GenrePage> {
 		if (list.list) {
 			return await orm.Genre.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.genre(orm, o, genreArgs, user)
+				o => engine.transform.Genre.genre(orm, o, genreArgs, user)
 			);
 		}
 		return await orm.Genre.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.genre(orm, o, genreArgs, user)
+			o => engine.transform.Genre.genre(orm, o, genreArgs, user)
 		);
 	}
 
@@ -58,7 +58,7 @@ export class GenreController {
 		@QueryParams() filter: GenreFilterArgs,
 		@Ctx() {orm, engine}: Context
 	): Promise<GenreIndex> {
-		return await engine.transform.genreIndex(orm, await orm.Genre.indexFilter(filter));
+		return await engine.transform.Genre.genreIndex(orm, await orm.Genre.indexFilter(filter));
 	}
 
 	@Get(
@@ -77,7 +77,7 @@ export class GenreController {
 		const orders = [{orderBy: order?.orderBy ? order.orderBy : TrackOrderFields.default, orderDesc: order?.orderDesc || false}];
 		return await orm.Track.searchTransformFilter(
 			{genreIDs}, orders, page, user,
-			o => engine.transform.trackBase(orm, o, trackArgs, user)
+			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)
 		);
 	}
 
@@ -96,7 +96,7 @@ export class GenreController {
 		const genreIDs = await orm.Genre.findIDsFilter(filter, user);
 		return await orm.Album.searchTransformFilter(
 			{genreIDs}, [order], page, user,
-			o => engine.transform.albumBase(orm, o, albumArgs, user)
+			o => engine.transform.Album.albumBase(orm, o, albumArgs, user)
 		);
 	}
 
@@ -115,7 +115,7 @@ export class GenreController {
 		const genreIDs = await orm.Genre.findIDsFilter(filter, user);
 		return await orm.Artist.searchTransformFilter(
 			{genreIDs}, [order], page, user,
-			o => engine.transform.artistBase(orm, o, artistArgs, user)
+			o => engine.transform.Artist.artistBase(orm, o, artistArgs, user)
 		);
 	}
 

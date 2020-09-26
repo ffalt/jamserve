@@ -64,7 +64,7 @@ export class EpisodeController {
 		@QueryParam('id', {description: 'Episode Id', isID: true}) id: string,
 		@Ctx() {orm, engine}: Context
 	): Promise<EpisodeUpdateStatus> {
-		return engine.transform.episodeStatus(await orm.Episode.oneOrFailByID(id));
+		return engine.transform.Episode.episodeStatus(await orm.Episode.oneOrFailByID(id));
 	}
 
 

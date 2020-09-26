@@ -38,7 +38,7 @@ export class PlaylistController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<PlaylistIndex> {
 		const result = await orm.Playlist.indexFilter(filter, user);
-		return engine.transform.playlistIndex(orm, result);
+		return engine.transform.Playlist.playlistIndex(orm, result);
 	}
 
 	@Get(

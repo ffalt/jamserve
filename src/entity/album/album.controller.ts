@@ -39,7 +39,7 @@ export class AlbumController {
 		@QueryParams() filter: AlbumFilterArgs,
 		@Ctx() {orm, engine}: Context
 	): Promise<AlbumIndex> {
-		return await engine.transform.albumIndex(orm, await orm.Album.indexFilter(filter));
+		return await engine.transform.Album.albumIndex(orm, await orm.Album.indexFilter(filter));
 	}
 
 	@Get(
@@ -98,7 +98,7 @@ export class AlbumController {
 		const orders = [{orderBy: order?.orderBy ? order.orderBy : TrackOrderFields.default, orderDesc: order?.orderDesc || false}];
 		return await orm.Track.searchTransformFilter(
 			{albumIDs}, orders, page, user,
-			o => engine.transform.trackBase(orm, o, trackArgs, user)
+			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)
 		);
 	}
 
@@ -115,7 +115,7 @@ export class AlbumController {
 	): Promise<TrackPage> {
 		const album = await orm.Album.oneOrFailByID(id);
 		const result = await engine.metadata.similarTracks.byAlbum(orm, album, page);
-		return {...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user)))};
+		return {...result, items: await engine.transform.Track.trackBases(orm, result.items, trackArgs, user)};
 	}
 
 }

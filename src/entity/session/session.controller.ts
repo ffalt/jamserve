@@ -2,7 +2,7 @@ import {Session} from './session.model';
 import {BodyParam, Controller, Ctx, Get, Post} from '../../modules/rest/decorators';
 import {SessionUser} from './session-user.model';
 import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
-import {UserSession} from '../settings/user-session.model';
+import {UserSession} from './user-session.model';
 import {UserRole} from '../../types/enums';
 import {Context} from '../../modules/engine/rest/context';
 @Controller('/session', {tags: ['Access']})
@@ -36,7 +36,7 @@ export class SessionController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<Array<UserSession>> {
 		const sessions = await engine.session.byUserID(user.id);
-		return sessions.map(session => engine.transform.userSession(orm, session));
+		return sessions.map(session => engine.transform.Session.userSession(orm, session));
 	}
 
 	@Post(

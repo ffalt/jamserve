@@ -43,7 +43,7 @@ export class ArtistController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<ArtistIndex> {
 		const result = await orm.Artist.indexFilter(filter, user, engine.settings.settings.index.ignoreArticles);
-		return await engine.transform.artistIndex(orm, result);
+		return await engine.transform.Artist.artistIndex(orm, result);
 	}
 
 	@Get(
@@ -100,7 +100,7 @@ export class ArtistController {
 	): Promise<ArtistPage> {
 		const artist = await orm.Artist.oneOrFailByID(id);
 		const result = await engine.metadata.similarArtists.byArtist(orm, artist, page);
-		return {...result, items: await Promise.all(result.items.map(o => engine.transform.artistBase(orm, o, artistArgs, user)))};
+		return {...result, items: await engine.transform.Artist.artistBases(orm, result.items, artistArgs, user)};
 	}
 
 	@Get(
@@ -116,7 +116,7 @@ export class ArtistController {
 	): Promise<TrackPage> {
 		const artist = await orm.Artist.oneOrFailByID(id);
 		const result = await engine.metadata.similarTracks.byArtist(orm, artist, page);
-		return {...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user)))};
+		return {...result, items: await engine.transform.Track.trackBases(orm, result.items, trackArgs, user)};
 	}
 
 	@Get(
@@ -134,7 +134,7 @@ export class ArtistController {
 		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
 			{artistIDs}, [order], page, user,
-			o => engine.transform.trackBase(orm, o, trackArgs, user)
+			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)
 		);
 	}
 
@@ -153,7 +153,7 @@ export class ArtistController {
 		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
 		return await orm.Album.searchTransformFilter(
 			{artistIDs}, [order], page, user,
-			o => engine.transform.albumBase(orm, o, albumArgs, user)
+			o => engine.transform.Album.albumBase(orm, o, albumArgs, user)
 		);
 	}
 
@@ -172,7 +172,7 @@ export class ArtistController {
 		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
 		return await orm.Series.searchTransformFilter(
 			{artistIDs}, [order], page, user,
-			o => engine.transform.seriesBase(orm, o, seriesArgs, user)
+			o => engine.transform.Series.seriesBase(orm, o, seriesArgs, user)
 		);
 	}
 

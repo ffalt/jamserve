@@ -17,7 +17,7 @@ export class RootController {
 		@QueryParams() rootArgs: IncludesRootArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<Root> {
-		return engine.transform.root(
+		return engine.transform.Root.root(
 			orm, await orm.Root.oneOrFailByID(id),
 			rootArgs, user
 		);
@@ -37,7 +37,7 @@ export class RootController {
 	): Promise<RootPage> {
 		return await orm.Root.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.root(orm, o, rootArgs, user)
+			o => engine.transform.Root.root(orm, o, rootArgs, user)
 		);
 	}
 
@@ -50,7 +50,7 @@ export class RootController {
 		@QueryParam('id', {description: 'Root Id', isID: true}) id: string,
 		@Ctx() {orm, engine}: Context
 	): Promise<RootUpdateStatus> {
-		return engine.transform.rootStatus(await orm.Root.oneOrFailByID(id));
+		return engine.transform.Root.rootStatus(await orm.Root.oneOrFailByID(id));
 	}
 
 	@Post(

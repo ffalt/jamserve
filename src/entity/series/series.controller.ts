@@ -38,7 +38,7 @@ export class SeriesController {
 	)
 	async index(@QueryParams() filter: SeriesFilterArgs, @Ctx() {orm, engine, user}: Context): Promise<SeriesIndex> {
 		const result = await orm.Series.indexFilter(filter, user);
-		return engine.transform.transformSeriesIndex(orm, result);
+		return engine.transform.Series.seriesIndex(orm, result);
 	}
 
 	@Get(
@@ -96,7 +96,7 @@ export class SeriesController {
 		const seriesIDs = await orm.Series.findIDsFilter(filter, user);
 		return await orm.Album.searchTransformFilter(
 			{seriesIDs}, [order], page, user,
-			o => engine.transform.albumBase(orm, o, albumArgs, user)
+			o => engine.transform.Album.albumBase(orm, o, albumArgs, user)
 		);
 	}
 
@@ -115,7 +115,7 @@ export class SeriesController {
 		const seriesIDs = await orm.Series.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
 			{seriesIDs}, [order], page, user,
-			o => engine.transform.trackBase(orm, o, trackArgs, user)
+			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)
 		);
 	}
 }

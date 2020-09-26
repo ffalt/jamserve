@@ -4,7 +4,7 @@ import {examples} from '../../modules/engine/rest/example.consts';
 import {MediaBase} from '../tag/tag.model';
 
 @ResultType({description: 'Playlist'})
-export class Playlist extends Base {
+export class PlaylistBase extends Base {
 	@ObjField({description: 'Owner User Id', isID: true})
 	userID!: string;
 	@ObjField({description: 'Owner User Name', isID: true})
@@ -23,6 +23,10 @@ export class Playlist extends Base {
 	entriesCount!: number;
 	@ObjField(() => [String], {description: 'List of Media Base IDs', isID: true})
 	entriesIDs?: Array<string>;
+}
+
+@ResultType({description: 'Playlist'})
+export class Playlist extends PlaylistBase {
 	@ObjField(() => [MediaBase], {nullable: true, description: 'List of Media Base Entries'})
 	entries?: Array<MediaBase>;
 }

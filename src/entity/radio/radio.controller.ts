@@ -16,7 +16,7 @@ export class RadioController {
 		@QueryParams() radioArgs: IncludesRadioArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<Radio> {
-		return engine.transform.radio(
+		return engine.transform.Radio.radio(
 			orm, await orm.Radio.oneOrFailByID(id),
 			radioArgs, user
 		);
@@ -32,7 +32,7 @@ export class RadioController {
 		@Ctx() {orm, engine}: Context
 	): Promise<RadioIndex> {
 		const result = await orm.Radio.indexFilter(filter);
-		return engine.transform.radioIndex(orm, result);
+		return engine.transform.Radio.radioIndex(orm, result);
 	}
 
 	@Get(
@@ -49,7 +49,7 @@ export class RadioController {
 	): Promise<RadioPage> {
 		return await orm.Radio.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.radio(orm, o, radioArgs, user)
+			o => engine.transform.Radio.radio(orm, o, radioArgs, user)
 		);
 	}
 
@@ -63,7 +63,7 @@ export class RadioController {
 	): Promise<Radio> {
 		const radio = orm.Radio.create(args);
 		await orm.Radio.persistAndFlush(radio);
-		return await engine.transform.radio(orm, radio, {}, user);
+		return await engine.transform.Radio.radio(orm, radio, {}, user);
 	}
 
 	@Post(
@@ -81,7 +81,7 @@ export class RadioController {
 		radio.name = args.name;
 		radio.url = args.url;
 		await orm.Radio.persistAndFlush(radio);
-		return await engine.transform.radio(orm, radio, {}, user);
+		return await engine.transform.Radio.radio(orm, radio, {}, user);
 	}
 
 	@Post(

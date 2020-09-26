@@ -1,0 +1,22 @@
+import {InRequestScope} from 'typescript-ioc';
+import {BaseTransformService} from '../base/base.transform';
+import {Orm} from '../../modules/engine/services/orm.service';
+import {Bookmark as ORMBookmark} from './bookmark';
+import {BookmarkBase} from './bookmark.model';
+
+@InRequestScope
+export class BookmarkTransformService extends BaseTransformService {
+
+	async bookmarkBase(orm: Orm, o: ORMBookmark): Promise<BookmarkBase> {
+		return {
+			id: o.id,
+			trackID: o.track.id(),
+			episodeID: o.episode.id(),
+			position: o.position,
+			comment: o.comment,
+			created: o.createdAt.valueOf(),
+			changed: o.updatedAt.valueOf()
+		};
+	}
+
+}

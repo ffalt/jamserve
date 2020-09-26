@@ -20,7 +20,7 @@ export class StateController {
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		return engine.transform.state(orm, id, result.objType, user.id);
+		return engine.transform.Base.state(orm, id, result.objType, user.id);
 	}
 
 	@Get(
@@ -36,7 +36,7 @@ export class StateController {
 		for (const id of args.ids) {
 			const result = await orm.findInStateTypes(id);
 			if (result) {
-				states.states.push({id, state: await engine.transform.state(orm, id, result.objType, user.id)});
+				states.states.push({id, state: await engine.transform.Base.state(orm, id, result.objType, user.id)});
 			}
 		}
 		return states;
@@ -51,7 +51,7 @@ export class StateController {
 		@BodyParams() args: FavArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<State> {
-		return await engine.transform.stateBase(orm, await engine.state.fav(orm, args.id, args.remove, user));
+		return await engine.transform.Base.stateBase(orm, await engine.state.fav(orm, args.id, args.remove, user));
 	}
 
 	@Post(
@@ -63,7 +63,7 @@ export class StateController {
 		@BodyParams() args: RateArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<State> {
-		return await engine.transform.stateBase(orm, await engine.state.rate(orm, args.id, args.rating, user));
+		return await engine.transform.Base.stateBase(orm, await engine.state.rate(orm, args.id, args.rating, user));
 	}
 
 }

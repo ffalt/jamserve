@@ -10,7 +10,7 @@ export class ChatController {
 		@QueryParams() {since}: ChatFilterArgs,
 		@Ctx() {engine}: Context
 	): Promise<Array<Chat>> {
-		return engine.transform.chats(await engine.chat.get(since));
+		return engine.transform.Chat.chats(await engine.chat.get(since));
 	}
 
 	@Post(

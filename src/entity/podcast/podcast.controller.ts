@@ -37,7 +37,7 @@ export class PodcastController {
 	)
 	async index(@QueryParams() filter: PodcastFilterArgs, @Ctx() {orm, engine, user}: Context): Promise<PodcastIndex> {
 		const result = await orm.Podcast.indexFilter(filter, user);
-		return engine.transform.podcastIndex(orm, result);
+		return engine.transform.Podcast.podcastIndex(orm, result);
 	}
 
 	@Get(
@@ -81,7 +81,7 @@ export class PodcastController {
 		const podcastIDs = await orm.Podcast.findIDsFilter(filter, user);
 		return await orm.Episode.searchTransformFilter<Episode>(
 			{podcastIDs}, [order], page, user,
-			o => engine.transform.episodeBase(orm, o, episodeArgs, user)
+			o => engine.transform.Episode.episodeBase(orm, o, episodeArgs, user)
 		);
 	}
 
@@ -94,7 +94,7 @@ export class PodcastController {
 		@QueryParam('id', {description: 'Podcast Id', isID: true}) id: string,
 		@Ctx() {orm, engine}: Context
 	): Promise<PodcastUpdateStatus> {
-		return engine.transform.podcastStatus(await orm.Podcast.oneOrFailByID(id));
+		return engine.transform.Podcast.podcastStatus(await orm.Podcast.oneOrFailByID(id));
 	}
 
 	@Post(

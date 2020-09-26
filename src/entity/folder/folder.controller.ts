@@ -42,7 +42,7 @@ export class FolderController {
 		@Ctx() {orm, engine, user}: Context
 	): Promise<FolderIndex> {
 		const result = await orm.Folder.indexFilter(filter, user);
-		return engine.transform.folderIndex(orm, result);
+		return engine.transform.Folder.folderIndex(orm, result);
 	}
 
 	@Get(
@@ -87,7 +87,7 @@ export class FolderController {
 		const folderIDs = await orm.Folder.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
 			{folderIDs}, [order], page, user,
-			o => engine.transform.trackBase(orm, o, trackArgs, user)
+			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)
 		);
 	}
 
@@ -106,7 +106,7 @@ export class FolderController {
 		const folderIDs = await orm.Folder.findIDsFilter(filter, user);
 		return await orm.Folder.searchTransformFilter(
 			{parentIDs: folderIDs}, [order], page, user,
-			o => engine.transform.folderBase(orm, o, folderArgs, user)
+			o => engine.transform.Folder.folderBase(orm, o, folderArgs, user)
 		);
 	}
 
@@ -125,7 +125,7 @@ export class FolderController {
 		const folderIDs = await orm.Folder.findIDsFilter(filter, user);
 		return await orm.Artwork.searchTransformFilter(
 			{folderIDs}, [order], page, user,
-			o => engine.transform.artworkBase(orm, o, artworkArgs, user)
+			o => engine.transform.Artwork.artworkBase(orm, o, artworkArgs, user)
 		);
 	}
 
@@ -168,7 +168,7 @@ export class FolderController {
 	): Promise<FolderPage> {
 		const folder = await orm.Folder.oneOrFailByID(id);
 		const result = await engine.metadata.similarArtists.byFolder(orm, folder, page);
-		return {...result, items: await Promise.all(result.items.map(o => engine.transform.folderBase(orm, o, folderArgs, user)))};
+		return {...result, items: await engine.transform.Folder.folderBases(orm, result.items, folderArgs, user)};
 	}
 
 	@Get(
@@ -184,7 +184,7 @@ export class FolderController {
 	): Promise<TrackPage> {
 		const folder = await orm.Folder.oneOrFailByID(id);
 		const result = await engine.metadata.similarTracks.byFolder(orm, folder, page);
-		return {...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user)))};
+		return {...result, items: await engine.transform.Track.trackBases(orm, result.items, trackArgs, user)};
 	}
 
 	@Get(
@@ -202,7 +202,7 @@ export class FolderController {
 		const result: Array<FolderHealth> = [];
 		for (const item of list) {
 			result.push({
-				folder: await engine.transform.folderBase(orm, item.folder, folderArgs, user),
+				folder: await engine.transform.Folder.folderBase(orm, item.folder, folderArgs, user),
 				health: item.health
 			});
 		}
