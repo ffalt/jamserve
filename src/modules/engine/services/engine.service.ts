@@ -1,4 +1,3 @@
-import {RootScanStrategy} from '../../../types/enums';
 import path from 'path';
 import fse from 'fs-extra';
 import {SettingsService} from '../../../entity/settings/settings.service';
@@ -9,6 +8,7 @@ import {Orm, OrmService} from './orm.service';
 import {WaveformService} from '../../../entity/waveform/waveform.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../../utils/logger';
+import {RootScanStrategy} from '../../../types/enums';
 import {UserService} from '../../../entity/user/user.service';
 import {SessionService} from '../../../entity/session/session.service';
 import {PodcastService} from '../../../entity/podcast/podcast.service';
@@ -30,7 +30,6 @@ import {PlaylistService} from '../../../entity/playlist/playlist.service';
 import {StreamService} from '../../../entity/stream/stream.service';
 import {TransformService} from './transform.service';
 import {BookmarkService} from '../../../entity/bookmark/bookmark.service';
-import express from 'express';
 import {RateLimitService} from './ratelimit.service';
 
 const log = logger('Engine');
