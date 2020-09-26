@@ -16,7 +16,8 @@ import {logger} from '../../../utils/logger';
 import {getEnumReverseValuesMap} from '../helpers/enums';
 import {ControllerClassMetadata} from '../definitions/controller-metadata';
 import {EnumMetadata} from '../definitions/enum-metadata';
-import {UploadFile} from '..';
+import {UploadFile} from '../definitions/upload-file';
+// import slowDown from 'express-slow-down';
 
 const log = logger('RestAPI');
 
@@ -399,6 +400,8 @@ function restPOST(
 			handlers.push(uploadHandler(param.name));
 		}
 	}
+
+
 	router.post(route, ...handlers, async (req, res, next) => {
 		try {
 			if (!options.validateRoles(req.user, roles)) {

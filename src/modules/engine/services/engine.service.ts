@@ -30,6 +30,8 @@ import {PlaylistService} from '../../../entity/playlist/playlist.service';
 import {StreamService} from '../../../entity/stream/stream.service';
 import {TransformService} from './transform.service';
 import {BookmarkService} from '../../../entity/bookmark/bookmark.service';
+import express from 'express';
+import {RateLimitService} from './ratelimit.service';
 
 const log = logger('Engine');
 
@@ -61,6 +63,7 @@ export class EngineService {
 	@Inject public user!: UserService;
 	@Inject public waveform!: WaveformService;
 	@Inject public bookmark!: BookmarkService;
+	@Inject public rateLimit!: RateLimitService;
 
 	constructor() {
 		this.io.registerAfterRefresh((): Promise<void> => this.afterRefresh());
@@ -160,5 +163,4 @@ export class EngineService {
 			}
 		}
 	}
-
 }

@@ -33,6 +33,10 @@ export interface DescriptionOptions {
 	example?: any;
 }
 
+export interface RateLimitOptions {
+	limit?: boolean;
+}
+
 export interface DeprecationOptions {
 	deprecationReason?: string;
 }

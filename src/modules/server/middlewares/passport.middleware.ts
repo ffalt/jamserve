@@ -74,28 +74,35 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 			return next();
 		}
 		const jwth = jwthash(token);
-		passport.authenticate(name, {session: false}, (err, user, info: any) => {
-			if (err) {
-				log.error(err);
-				return next();
-			}
-			if (info instanceof Error || !user) {
-				return next();
-			}
-			req.engine.session.isRevoked(jwth)
-				.then(revoked => {
-					if (!revoked) {
-						req.jwt = !!user;
-						req.jwth = jwth;
-						req.client = info.client;
-						req.user = user;
+		req.engine.rateLimit.loginSlowDown(req, res)
+			.then(() => {
+				passport.authenticate(name, {session: false}, (err, user, info: any) => {
+					if (err) {
+						log.error(err);
+						return next();
 					}
-					next();
-				})
-				.catch(e => {
-					throw e;
-				});
-		})(req, res, next);
+					if (info instanceof Error || !user) {
+						return next();
+					}
+					req.engine.session.isRevoked(jwth)
+						.then(revoked => {
+							if (!revoked) {
+								req.jwt = !!user;
+								req.jwth = jwth;
+								req.client = info.client;
+								req.user = user;
+							}
+							next();
+							req.engine.rateLimit.loginSlowDownReset(req);
+						})
+						.catch(e => {
+							throw e;
+						});
+				})(req, res, next);
+			})
+			.catch(e => {
+				throw e;
+			});
 	}
 
 	return (jwtAuthMiddleware as express.RequestHandler);
