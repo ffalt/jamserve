@@ -17,6 +17,7 @@ import {JAMAPI_URL_VERSION} from '../engine/rest/version';
 import {DocsMiddleware} from './middlewares/docs.middleware';
 import {useAuthenticatedCors} from './middlewares/cors.middleware';
 import {SessionService} from '../../entity/session/session.service';
+import {useCSPMiddleware} from './middlewares/csp.middleware';
 
 const log = logger('Server');
 
@@ -47,61 +48,19 @@ export class Server {
 		app.use(bodyParser.json({type: 'application/csp-report', limit: '10mb'}));
 
 		app.use(helmet());
-		const self = `'self'`;
-		const none = '\'none\'';
-		app.use(
-			helmet.contentSecurityPolicy({
-				directives: {
-					defaultSrc: [none],
-					scriptSrc: [self],
-					mediaSrc: [self, 'data:'],
-					frameSrc: [self],
-					styleSrc: [self, `https: 'unsafe-inline'`],
-					childSrc: [self],
-					connectSrc: [self,
-						'https://en.wikipedia.org',
-						'https://commons.wikimedia.org'
-					],
-					imgSrc: [
-						self,
-						'data:',
-						'https://gpodder.net',
-						'https://coverartarchive.org'
-					],
-					objectSrc: [none],
-					workerSrc: [self],
-					fontSrc: [self, 'data:'],
-					reportUri: '/csp/report-violation'
-				},
-			})
-		);
-
+		app.use(useCSPMiddleware());
 		if (this.configService.env.session.proxy) {
 			app.enable('trust proxy'); // trust first proxy
 		}
-		/*
-		TODO: rateLimit limits normal use, since it's counting and blocking 200 requests
-		const limiter = rateLimit({
-			windowMs: engine.config.server.limit.api.window * 1000,
-			max: engine.config.server.limit.api.max,
-			skipSuccessfulRequests: true,
-			message: 'Too many request fails from this IP, please try again after an hour'
-		});
-		app.use(limiter);
-		 */
+
+		// TODO: rateLimit limits normal use, rateLimit for jwt
 
 		app.use(useLogMiddleware());
 
 		app.post('/csp/report-violation', async (req, res) => {
-			if (req.body) {
-				log.error('CSP', JSON.stringify(req.body));
-			} else {
-				log.error('CSP', 'No data');
-			}
-
+			log.error('CSP', req.body ? JSON.stringify(req.body) : 'No data');
 			res.status(204).end();
 		});
-
 
 		app.use(useEngineMiddleware(this.engine));
 		app.use(useSessionMiddleware(this.configService, this.sessionService));
