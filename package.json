@@ -134,7 +134,7 @@
     "nock": "13.0.4",
     "openapi3-ts": "2.0.0",
     "standard-version": "9.0.0",
-    "supertest": "4.0.2",
+    "supertest": "6.0.1",
     "tmp": "0.2.1",
     "ts-jest": "26.4.0",
     "ts-node": "9.0.0",
