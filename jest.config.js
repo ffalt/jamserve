@@ -3,14 +3,14 @@ module.exports = {
 	testEnvironment: 'node',
 	coverageDirectory: 'coverage',
 	setupFilesAfterEnv: ["jest-expect-message"],
-	testTimeout: 10000000,
+	testTimeout: 1000000,
 	maxWorkers: 1,
 	"roots": [
 		"<rootDir>/src"
 	],
 	globals: {
 		"ts-jest": {
-			tsConfig: "tsconfig.jest.json",
+			tsconfig: "tsconfig.jest.json",
 			diagnostics: true,
 			testEnvironment: "node"
 		}

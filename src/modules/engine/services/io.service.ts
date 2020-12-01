@@ -389,7 +389,7 @@ export class IoService {
 			if (delayedCmd) {
 				this.addRequest(delayedCmd.request);
 			}
-		}, 10000);
+		}, 10000) as NodeJS.Timeout;
 		return this.getRequestInfo(delayedCmd.request);
 	}
 

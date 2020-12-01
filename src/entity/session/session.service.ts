@@ -1,9 +1,9 @@
 import {OrmService} from '../../modules/engine/services/orm.service';
 import {Session} from './session';
 import {SessionMode} from '../../types/enums';
-import {Express} from 'express';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {Op} from '../../modules/orm';
+import {SessionData} from '../../types/express';
 
 export interface SessionNotifyEventObject {
 	clearCache(): Promise<void>;
@@ -24,7 +24,7 @@ export class SessionService {
 		return !!(await this.getSession(sessionID));
 	}
 
-	async set(sid: string, data: Express.SessionData): Promise<void> {
+	async set(sid: string, data: SessionData): Promise<void> {
 		const orm = this.ormService.fork();
 		let session = await this.getSession(sid);
 		if (!data.passport.user) {
@@ -49,7 +49,7 @@ export class SessionService {
 		await orm.Session.persistAndFlush(session);
 	}
 
-	async all(): Promise<Array<Express.SessionData>> {
+	async all(): Promise<Array<SessionData>> {
 		const orm = this.ormService.fork();
 		const sessions = await orm.Session.all();
 		return sessions.map(session => this.toExpress(session));
@@ -136,7 +136,7 @@ export class SessionService {
 		return !session;
 	}
 
-	async get(sessionID: string): Promise<Express.SessionData | undefined> {
+	async get(sessionID: string): Promise<SessionData | undefined> {
 		const session = await this.getSession(sessionID);
 		if (session) {
 			return this.toExpress(session);
@@ -144,12 +144,13 @@ export class SessionService {
 		return;
 	}
 
-	private toExpress(session: Session): Express.SessionData {
+	private toExpress(session: Session): SessionData {
 		return {
 			cookie: JSON.parse(session.cookie),
 			client: session.client,
 			jwth: session.jwth,
 			userAgent: session.agent,
+			sessionID: session.sessionID,
 			passport: {user: session.user.idOrFail()}
 		};
 	}

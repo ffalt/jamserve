@@ -1,9 +1,9 @@
-import express from 'express';
+import {NextFunction, Request, Response} from 'express';
 
 export interface RestContext<USER, ORM, ENGINE> {
-	req: express.Request;
-	res: express.Response;
-	next: express.NextFunction;
+	req: Request;
+	res: Response;
+	next: NextFunction;
 	user: USER;
 	orm: ORM;
 	engine: ENGINE;

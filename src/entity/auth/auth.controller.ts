@@ -10,6 +10,7 @@ import {Context} from '../../modules/engine/rest/context';
 import {User} from '../user/user';
 import {EngineService} from '../../modules/engine/services/engine.service';
 import express from 'express';
+import {SessionData} from '../../types/express';
 
 const log = logger('AuthController');
 
@@ -74,10 +75,11 @@ export class AuthController {
 			engine.config.env.jwt.maxAge
 		) : undefined;
 		if (req.session) { // express session data obj
-			req.session.client = client;
-			req.session.userAgent = req.headers['user-agent'] || client;
+			const session: SessionData = req.session as any;
+			session.client = client;
+			session.userAgent = req.headers['user-agent'] || client;
 			if (token) {
-				req.session.jwth = jwtHash(token);
+				session.jwth = jwtHash(token);
 			}
 		}
 		return {
