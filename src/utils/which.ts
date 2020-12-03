@@ -2,12 +2,12 @@ import fse from 'fs-extra';
 import path from 'path';
 import which from 'which';
 
-export const isWindows =  ['win32', 'cygwin', 'msys'].includes(process.platform);
+export const isWindows = ['win32', 'cygwin', 'msys'].includes(process.platform);
 
 const cache: { [name: string]: string } = {};
 
-async function whichAsync(name: string): Promise<string> {
-	return new Promise<string>((resolve, reject) => {
+async function whichAsync(name: string): Promise<string | undefined> {
+	return new Promise<string | undefined>((resolve, reject) => {
 		which(name, (err, resolvedPath) => {
 			if (err) {
 				reject(err);

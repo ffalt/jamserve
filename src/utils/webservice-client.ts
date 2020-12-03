@@ -44,7 +44,13 @@ export class WebserviceClient {
 						reject(err);
 					} else {
 						this.parseResult<T>(response, body)
-							.then(resolve).catch(reject);
+							.then(result => {
+								if (result === undefined) {
+									reject(new Error('Invalid Result'));
+								} else {
+									resolve(result);
+								}
+							}).catch(reject);
 					}
 				});
 			});

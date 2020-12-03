@@ -15,7 +15,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 
 	abstract buildOrder(order?: OrderBy): Array<OrderItem>;
 
-	abstract async buildFilter(filter?: Filter, user?: User): Promise<FindOptions<Entity>>;
+	abstract buildFilter(filter?: Filter, user?: User): Promise<FindOptions<Entity>>;
 
 	buildDefaultOrder(order?: DefaultOrderArgs): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);

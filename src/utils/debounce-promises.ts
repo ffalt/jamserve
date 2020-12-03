@@ -10,6 +10,8 @@ export class DebouncePromises<T> {
 			const run = (err: Error | null, result?: T): void => {
 				if (err) {
 					reject(err);
+				} else if (!result) {
+					reject(new Error('Invalid Promise Result'));
 				} else {
 					resolve(result);
 				}

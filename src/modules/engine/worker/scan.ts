@@ -37,7 +37,7 @@ export interface MatchTrack {
 }
 
 export abstract class OnDemandTrackMatch {
-	abstract async get(): Promise<MatchTrack>;
+	abstract get(): Promise<MatchTrack>;
 }
 
 export class ObjTrackMatch {
