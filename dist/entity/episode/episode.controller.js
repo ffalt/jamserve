@@ -32,7 +32,7 @@ let EpisodeController = class EpisodeController {
         return await orm.Episode.searchTransformFilter(filter, [order], page, user, o => engine.transform.episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user));
     }
     async status(id, { orm, engine }) {
-        return engine.transform.episodeStatus(await orm.Episode.oneOrFailByID(id));
+        return engine.transform.Episode.episodeStatus(await orm.Episode.oneOrFailByID(id));
     }
     async retrieve(id, { orm, engine }) {
         const episode = await orm.Episode.oneOrFailByID(id);

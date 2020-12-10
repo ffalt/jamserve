@@ -28,7 +28,7 @@ let PodcastController = class PodcastController {
     }
     async index(filter, { orm, engine, user }) {
         const result = await orm.Podcast.indexFilter(filter, user);
-        return engine.transform.podcastIndex(orm, result);
+        return engine.transform.Podcast.podcastIndex(orm, result);
     }
     async search(page, podcastArgs, podcastChildrenArgs, episodeArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
@@ -38,10 +38,10 @@ let PodcastController = class PodcastController {
     }
     async episodes(page, episodeArgs, filter, order, { orm, engine, user }) {
         const podcastIDs = await orm.Podcast.findIDsFilter(filter, user);
-        return await orm.Episode.searchTransformFilter({ podcastIDs }, [order], page, user, o => engine.transform.episodeBase(orm, o, episodeArgs, user));
+        return await orm.Episode.searchTransformFilter({ podcastIDs }, [order], page, user, o => engine.transform.Episode.episodeBase(orm, o, episodeArgs, user));
     }
     async status(id, { orm, engine }) {
-        return engine.transform.podcastStatus(await orm.Podcast.oneOrFailByID(id));
+        return engine.transform.Podcast.podcastStatus(await orm.Podcast.oneOrFailByID(id));
     }
     async create(args, { orm, engine, user }) {
         const podcast = await engine.podcast.create(orm, args.url);

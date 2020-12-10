@@ -31,7 +31,7 @@ let ArtistController = class ArtistController {
     }
     async index(filter, { orm, engine, user }) {
         const result = await orm.Artist.indexFilter(filter, user, engine.settings.settings.index.ignoreArticles);
-        return await engine.transform.artistIndex(orm, result);
+        return await engine.transform.Artist.artistIndex(orm, result);
     }
     async search(page, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
@@ -46,24 +46,24 @@ let ArtistController = class ArtistController {
     async similar(id, page, artistArgs, { orm, engine, user }) {
         const artist = await orm.Artist.oneOrFailByID(id);
         const result = await engine.metadata.similarArtists.byArtist(orm, artist, page);
-        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.artistBase(orm, o, artistArgs, user))) };
+        return { ...result, items: await engine.transform.Artist.artistBases(orm, result.items, artistArgs, user) };
     }
     async similarTracks(id, page, trackArgs, { orm, engine, user }) {
         const artist = await orm.Artist.oneOrFailByID(id);
         const result = await engine.metadata.similarTracks.byArtist(orm, artist, page);
-        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user))) };
+        return { ...result, items: await engine.transform.Track.trackBases(orm, result.items, trackArgs, user) };
     }
     async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const artistIDs = await orm.Artist.findIDsFilter(filter, user);
-        return await orm.Track.searchTransformFilter({ artistIDs }, [order], page, user, o => engine.transform.trackBase(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter({ artistIDs }, [order], page, user, o => engine.transform.Track.trackBase(orm, o, trackArgs, user));
     }
     async albums(page, albumArgs, filter, order, { orm, engine, user }) {
         const artistIDs = await orm.Artist.findIDsFilter(filter, user);
-        return await orm.Album.searchTransformFilter({ artistIDs }, [order], page, user, o => engine.transform.albumBase(orm, o, albumArgs, user));
+        return await orm.Album.searchTransformFilter({ artistIDs }, [order], page, user, o => engine.transform.Album.albumBase(orm, o, albumArgs, user));
     }
     async series(page, seriesArgs, filter, order, { orm, engine, user }) {
         const artistIDs = await orm.Artist.findIDsFilter(filter, user);
-        return await orm.Series.searchTransformFilter({ artistIDs }, [order], page, user, o => engine.transform.seriesBase(orm, o, seriesArgs, user));
+        return await orm.Series.searchTransformFilter({ artistIDs }, [order], page, user, o => engine.transform.Series.seriesBase(orm, o, seriesArgs, user));
     }
 };
 __decorate([

@@ -11,15 +11,10 @@ class ApiBaseResponder {
         res.status(200).json({ ok: true });
     }
     static sendString(req, res, data) {
-        res.set('Content-Type', 'text/plain');
-        res.status(200).send(data);
+        res.set('Content-Type', 'text/plain').status(200).send(data);
     }
     static sendJSON(req, res, data) {
         res.status(200).json(data);
-    }
-    static sendXML(req, res, data) {
-        res.set('Content-Type', 'application/xml');
-        res.status(200).send(data);
     }
     static sendError(req, res, err) {
         let failCode = 0;

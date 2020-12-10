@@ -21,14 +21,14 @@ const random_1 = require("../../utils/random");
 const base_args_1 = require("../base/base.args");
 let UserController = class UserController {
     async id(id, userArgs, { orm, engine, user }) {
-        return engine.transform.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);
+        return engine.transform.User.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);
     }
     async search(page, userArgs, filter, order, { orm, engine, user }) {
-        return await orm.User.searchTransformFilter(filter, [order], page, user, o => engine.transform.user(orm, o, userArgs, user));
+        return await orm.User.searchTransformFilter(filter, [order], page, user, o => engine.transform.User.user(orm, o, userArgs, user));
     }
     async create(args, { orm, engine, user }) {
         await this.validatePassword(orm, engine, args.password, user);
-        return engine.transform.user(orm, await engine.user.create(orm, args), {}, user);
+        return engine.transform.User.user(orm, await engine.user.create(orm, args), {}, user);
     }
     async update(id, args, { orm, engine, user }) {
         await this.validatePassword(orm, engine, args.password, user);
@@ -41,7 +41,7 @@ let UserController = class UserController {
                 throw rest_1.InvalidParamError('roleStream', `You can't remove api access for yourself`);
             }
         }
-        return engine.transform.user(orm, await engine.user.update(orm, u, args), {}, user);
+        return engine.transform.User.user(orm, await engine.user.update(orm, u, args), {}, user);
     }
     async remove(id, { orm, engine, user }) {
         if (user.id === id) {

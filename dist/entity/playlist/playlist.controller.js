@@ -28,7 +28,7 @@ let PlaylistController = class PlaylistController {
     }
     async index(filter, { orm, engine, user }) {
         const result = await orm.Playlist.indexFilter(filter, user);
-        return engine.transform.playlistIndex(orm, result);
+        return engine.transform.Playlist.playlistIndex(orm, result);
     }
     async search(page, playlistArgs, trackArgs, episodeArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {

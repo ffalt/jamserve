@@ -30,7 +30,7 @@ let FolderController = class FolderController {
     }
     async index(filter, { orm, engine, user }) {
         const result = await orm.Folder.indexFilter(filter, user);
-        return engine.transform.folderIndex(orm, result);
+        return engine.transform.Folder.folderIndex(orm, result);
     }
     async search(page, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
@@ -40,15 +40,15 @@ let FolderController = class FolderController {
     }
     async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const folderIDs = await orm.Folder.findIDsFilter(filter, user);
-        return await orm.Track.searchTransformFilter({ folderIDs }, [order], page, user, o => engine.transform.trackBase(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter({ folderIDs }, [order], page, user, o => engine.transform.Track.trackBase(orm, o, trackArgs, user));
     }
     async subfolders(page, folderArgs, filter, order, { orm, engine, user }) {
         const folderIDs = await orm.Folder.findIDsFilter(filter, user);
-        return await orm.Folder.searchTransformFilter({ parentIDs: folderIDs }, [order], page, user, o => engine.transform.folderBase(orm, o, folderArgs, user));
+        return await orm.Folder.searchTransformFilter({ parentIDs: folderIDs }, [order], page, user, o => engine.transform.Folder.folderBase(orm, o, folderArgs, user));
     }
     async artworks(page, artworkArgs, filter, order, { orm, engine, user }) {
         const folderIDs = await orm.Folder.findIDsFilter(filter, user);
-        return await orm.Artwork.searchTransformFilter({ folderIDs }, [order], page, user, o => engine.transform.artworkBase(orm, o, artworkArgs, user));
+        return await orm.Artwork.searchTransformFilter({ folderIDs }, [order], page, user, o => engine.transform.Artwork.artworkBase(orm, o, artworkArgs, user));
     }
     async artistInfo(id, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(id);
@@ -61,12 +61,12 @@ let FolderController = class FolderController {
     async artistsSimilar(id, page, folderArgs, { orm, engine, user }) {
         const folder = await orm.Folder.oneOrFailByID(id);
         const result = await engine.metadata.similarArtists.byFolder(orm, folder, page);
-        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.folderBase(orm, o, folderArgs, user))) };
+        return { ...result, items: await engine.transform.Folder.folderBases(orm, result.items, folderArgs, user) };
     }
     async artistsSimilarTracks(id, page, trackArgs, { orm, engine, user }) {
         const folder = await orm.Folder.oneOrFailByID(id);
         const result = await engine.metadata.similarTracks.byFolder(orm, folder, page);
-        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user))) };
+        return { ...result, items: await engine.transform.Track.trackBases(orm, result.items, trackArgs, user) };
     }
     async health(filter, folderArgs, { orm, engine, user }) {
         const folders = await orm.Folder.findFilter(filter, [], {}, user);
@@ -74,7 +74,7 @@ let FolderController = class FolderController {
         const result = [];
         for (const item of list) {
             result.push({
-                folder: await engine.transform.folderBase(orm, item.folder, folderArgs, user),
+                folder: await engine.transform.Folder.folderBase(orm, item.folder, folderArgs, user),
                 health: item.health
             });
         }

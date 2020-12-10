@@ -26,29 +26,29 @@ const artist_args_1 = require("../artist/artist.args");
 const artist_model_1 = require("../artist/artist.model");
 let GenreController = class GenreController {
     async id(id, genreArgs, { orm, engine, user }) {
-        return engine.transform.genre(orm, await orm.Genre.oneOrFailByID(id), genreArgs, user);
+        return engine.transform.Genre.genre(orm, await orm.Genre.oneOrFailByID(id), genreArgs, user);
     }
     async search(page, genreArgs, filter, list, order, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Genre.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.genre(orm, o, genreArgs, user));
+            return await orm.Genre.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.Genre.genre(orm, o, genreArgs, user));
         }
-        return await orm.Genre.searchTransformFilter(filter, [order], page, user, o => engine.transform.genre(orm, o, genreArgs, user));
+        return await orm.Genre.searchTransformFilter(filter, [order], page, user, o => engine.transform.Genre.genre(orm, o, genreArgs, user));
     }
     async index(filter, { orm, engine }) {
-        return await engine.transform.genreIndex(orm, await orm.Genre.indexFilter(filter));
+        return await engine.transform.Genre.genreIndex(orm, await orm.Genre.indexFilter(filter));
     }
     async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const genreIDs = await orm.Genre.findIDsFilter(filter, user);
         const orders = [{ orderBy: (order === null || order === void 0 ? void 0 : order.orderBy) ? order.orderBy : enums_1.TrackOrderFields.default, orderDesc: (order === null || order === void 0 ? void 0 : order.orderDesc) || false }];
-        return await orm.Track.searchTransformFilter({ genreIDs }, orders, page, user, o => engine.transform.trackBase(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter({ genreIDs }, orders, page, user, o => engine.transform.Track.trackBase(orm, o, trackArgs, user));
     }
     async albums(page, albumArgs, filter, order, { orm, engine, user }) {
         const genreIDs = await orm.Genre.findIDsFilter(filter, user);
-        return await orm.Album.searchTransformFilter({ genreIDs }, [order], page, user, o => engine.transform.albumBase(orm, o, albumArgs, user));
+        return await orm.Album.searchTransformFilter({ genreIDs }, [order], page, user, o => engine.transform.Album.albumBase(orm, o, albumArgs, user));
     }
     async artists(page, artistArgs, filter, order, { orm, engine, user }) {
         const genreIDs = await orm.Genre.findIDsFilter(filter, user);
-        return await orm.Artist.searchTransformFilter({ genreIDs }, [order], page, user, o => engine.transform.artistBase(orm, o, artistArgs, user));
+        return await orm.Artist.searchTransformFilter({ genreIDs }, [order], page, user, o => engine.transform.Artist.artistBase(orm, o, artistArgs, user));
     }
 };
 __decorate([

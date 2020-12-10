@@ -24,23 +24,23 @@ let StateController = class StateController {
         if (!result) {
             return Promise.reject(rest_1.NotFoundError());
         }
-        return engine.transform.state(orm, id, result.objType, user.id);
+        return engine.transform.Base.state(orm, id, result.objType, user.id);
     }
     async states(args, { orm, engine, user }) {
         const states = { states: [] };
         for (const id of args.ids) {
             const result = await orm.findInStateTypes(id);
             if (result) {
-                states.states.push({ id, state: await engine.transform.state(orm, id, result.objType, user.id) });
+                states.states.push({ id, state: await engine.transform.Base.state(orm, id, result.objType, user.id) });
             }
         }
         return states;
     }
     async fav(args, { orm, engine, user }) {
-        return await engine.transform.stateBase(orm, await engine.state.fav(orm, args.id, args.remove, user));
+        return await engine.transform.Base.stateBase(orm, await engine.state.fav(orm, args.id, args.remove, user));
     }
     async rate(args, { orm, engine, user }) {
-        return await engine.transform.stateBase(orm, await engine.state.rate(orm, args.id, args.rating, user));
+        return await engine.transform.Base.stateBase(orm, await engine.state.rate(orm, args.id, args.rating, user));
     }
 };
 __decorate([

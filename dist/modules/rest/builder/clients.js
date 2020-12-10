@@ -151,14 +151,15 @@ exports.getCustomParameterTemplate = getCustomParameterTemplate;
 async function getClientZip(filename, list, models) {
     return {
         pipe: {
-            pipe: (stream) => {
+            pipe: (res) => {
                 const archive = archiver_1.default('zip', { zlib: { level: 9 } });
                 archive.on('error', err => {
                     throw err;
                 });
-                stream.contentType('zip');
-                stream.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-                stream.on('finish', () => {
+                res.contentType('zip');
+                res.type('application/zip');
+                res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+                res.on('finish', () => {
                 });
                 for (const entry of list) {
                     archive.append(entry.content, { name: entry.name });
@@ -166,7 +167,7 @@ async function getClientZip(filename, list, models) {
                 for (const entry of models) {
                     archive.append(fs_extra_1.default.createReadStream(path_1.default.resolve(`./static/models/${entry}`)), { name: `model/${entry}` });
                 }
-                archive.pipe(stream);
+                archive.pipe(res);
                 archive.finalize().catch(e => {
                     console.error(e);
                 });

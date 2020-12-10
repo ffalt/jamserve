@@ -135,6 +135,7 @@ let SessionService = class SessionService {
             client: session.client,
             jwth: session.jwth,
             userAgent: session.agent,
+            sessionID: session.sessionID,
             passport: { user: session.user.idOrFail() }
         };
     }

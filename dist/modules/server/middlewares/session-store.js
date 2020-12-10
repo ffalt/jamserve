@@ -37,7 +37,7 @@ class ExpressSessionStore extends express_session_1.Store {
         this.length = callback => {
             this.sessionService.count()
                 .then(data => callback(null, data))
-                .catch(e => callback(e, undefined));
+                .catch(e => callback(e, 0));
         };
         this.clear = callback => {
             this.cache.clear();

@@ -58,28 +58,35 @@ function usePassPortMiddleWare(router, engine) {
             return next();
         }
         const jwth = jwthash(token);
-        passport_1.default.authenticate(name, { session: false }, (err, user, info) => {
-            if (err) {
-                log.error(err);
-                return next();
-            }
-            if (info instanceof Error || !user) {
-                return next();
-            }
-            req.engine.session.isRevoked(jwth)
-                .then(revoked => {
-                if (!revoked) {
-                    req.jwt = !!user;
-                    req.jwth = jwth;
-                    req.client = info.client;
-                    req.user = user;
+        req.engine.rateLimit.loginSlowDown(req, res)
+            .then(() => {
+            passport_1.default.authenticate(name, { session: false }, (err, user, info) => {
+                if (err) {
+                    log.error(err);
+                    return next();
                 }
-                next();
-            })
-                .catch(e => {
-                throw e;
-            });
-        })(req, res, next);
+                if (info instanceof Error || !user) {
+                    return next();
+                }
+                req.engine.session.isRevoked(jwth)
+                    .then(revoked => {
+                    if (!revoked) {
+                        req.jwt = !!user;
+                        req.jwth = jwth;
+                        req.client = info.client;
+                        req.user = user;
+                    }
+                    next();
+                    req.engine.rateLimit.loginSlowDownReset(req);
+                })
+                    .catch(e => {
+                    throw e;
+                });
+            })(req, res, next);
+        })
+            .catch(e => {
+            throw e;
+        });
     }
     return jwtAuthMiddleware;
 }

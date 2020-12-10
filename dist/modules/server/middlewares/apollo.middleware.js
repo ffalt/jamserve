@@ -91,7 +91,7 @@ function checkRole(role, context) {
     }
     return true;
 }
-exports.customAuthChecker = ({ root, args, context, info }, roles) => {
+const customAuthChecker = ({ root, args, context, info }, roles) => {
     for (const role of roles) {
         if (!checkRole(role, context)) {
             return false;
@@ -99,6 +99,7 @@ exports.customAuthChecker = ({ root, args, context, info }, roles) => {
     }
     return true;
 };
+exports.customAuthChecker = customAuthChecker;
 async function buildGraphQlSchema() {
     registerEnums();
     return await type_graphql_1.buildSchema({
@@ -127,26 +128,11 @@ const apolloLogger = {
 let ApolloMiddleware = class ApolloMiddleware {
     async playground() {
         const api = express_1.default.Router();
-        api.get('/middleware.js', (req, res) => {
-            res.type('text/javascript');
-            res.sendFile(path_1.default.resolve('./static/graphql/middleware.min.js'));
-        });
-        api.get('/main.js', (req, res) => {
-            res.type('text/javascript');
-            res.sendFile(path_1.default.resolve('./static/graphql/main.js'));
-        });
-        api.get('/index.css', (req, res) => {
-            res.type('text/css');
-            res.sendFile(path_1.default.resolve('./static/graphql/index.min.css'));
-        });
-        api.get('/favicon.png', (req, res) => {
-            res.type('image/png');
-            res.sendFile(path_1.default.resolve('./static/graphql/favicon.png'));
-        });
-        api.get('/', (req, res) => {
-            res.type('text/html');
-            res.sendFile(path_1.default.resolve('./static/graphql/index.html'));
-        });
+        api.get('/middleware.js', express_1.default.static(path_1.default.resolve('./static/graphql/middleware.min.js')));
+        api.get('/main.js', express_1.default.static(path_1.default.resolve('./static/graphql/main.js')));
+        api.get('/index.css', express_1.default.static(path_1.default.resolve('./static/graphql/index.min.css')));
+        api.get('/favicon.png', express_1.default.static(path_1.default.resolve('./static/graphql/favicon.png')));
+        api.get('/', express_1.default.static(path_1.default.resolve('./static/graphql/index.html')));
         return api;
     }
     async middleware() {

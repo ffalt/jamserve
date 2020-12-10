@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var EngineService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EngineService = void 0;
-const enums_1 = require("../../../types/enums");
 const path_1 = __importDefault(require("path"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const settings_service_1 = require("../../../entity/settings/settings.service");
@@ -25,6 +24,7 @@ const orm_service_1 = require("./orm.service");
 const waveform_service_1 = require("../../../entity/waveform/waveform.service");
 const typescript_ioc_1 = require("typescript-ioc");
 const logger_1 = require("../../../utils/logger");
+const enums_1 = require("../../../types/enums");
 const user_service_1 = require("../../../entity/user/user.service");
 const session_service_1 = require("../../../entity/session/session.service");
 const podcast_service_1 = require("../../../entity/podcast/podcast.service");
@@ -46,6 +46,7 @@ const playlist_service_1 = require("../../../entity/playlist/playlist.service");
 const stream_service_1 = require("../../../entity/stream/stream.service");
 const transform_service_1 = require("./transform.service");
 const bookmark_service_1 = require("../../../entity/bookmark/bookmark.service");
+const ratelimit_service_1 = require("./ratelimit.service");
 const log = logger_1.logger('Engine');
 let EngineService = EngineService_1 = class EngineService {
     constructor() {
@@ -240,6 +241,10 @@ __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", bookmark_service_1.BookmarkService)
 ], EngineService.prototype, "bookmark", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", ratelimit_service_1.RateLimitService)
+], EngineService.prototype, "rateLimit", void 0);
 EngineService = EngineService_1 = __decorate([
     typescript_ioc_1.InRequestScope,
     __metadata("design:paramtypes", [])

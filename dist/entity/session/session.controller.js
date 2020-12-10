@@ -16,7 +16,7 @@ exports.SessionController = void 0;
 const session_model_1 = require("./session.model");
 const decorators_1 = require("../../modules/rest/decorators");
 const version_1 = require("../../modules/engine/rest/version");
-const user_session_model_1 = require("../settings/user-session.model");
+const user_session_model_1 = require("./user-session.model");
 const enums_1 = require("../../types/enums");
 let SessionController = class SessionController {
     session({ engine, user }) {
@@ -41,7 +41,7 @@ let SessionController = class SessionController {
     }
     async list({ orm, engine, user }) {
         const sessions = await engine.session.byUserID(user.id);
-        return sessions.map(session => engine.transform.userSession(orm, session));
+        return sessions.map(session => engine.transform.Session.userSession(orm, session));
     }
     async remove(id, { engine, user }) {
         await engine.session.removeUserSession(id, user.id);

@@ -27,7 +27,7 @@ let AlbumController = class AlbumController {
         return engine.transform.album(orm, await orm.Album.oneOrFailByID(id), albumArgs, albumChildrenArgs, trackArgs, artistArgs, user);
     }
     async index(filter, { orm, engine }) {
-        return await engine.transform.albumIndex(orm, await orm.Album.indexFilter(filter));
+        return await engine.transform.Album.albumIndex(orm, await orm.Album.indexFilter(filter));
     }
     async search(page, albumArgs, albumChildrenArgs, trackArgs, artistArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
@@ -42,12 +42,12 @@ let AlbumController = class AlbumController {
     async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const albumIDs = await orm.Album.findIDsFilter(filter, user);
         const orders = [{ orderBy: (order === null || order === void 0 ? void 0 : order.orderBy) ? order.orderBy : enums_1.TrackOrderFields.default, orderDesc: (order === null || order === void 0 ? void 0 : order.orderDesc) || false }];
-        return await orm.Track.searchTransformFilter({ albumIDs }, orders, page, user, o => engine.transform.trackBase(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter({ albumIDs }, orders, page, user, o => engine.transform.Track.trackBase(orm, o, trackArgs, user));
     }
     async similarTracks(id, page, trackArgs, { orm, engine, user }) {
         const album = await orm.Album.oneOrFailByID(id);
         const result = await engine.metadata.similarTracks.byAlbum(orm, album, page);
-        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user))) };
+        return { ...result, items: await engine.transform.Track.trackBases(orm, result.items, trackArgs, user) };
     }
 };
 __decorate([

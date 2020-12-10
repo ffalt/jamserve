@@ -29,7 +29,7 @@ let SeriesController = class SeriesController {
     }
     async index(filter, { orm, engine, user }) {
         const result = await orm.Series.indexFilter(filter, user);
-        return engine.transform.transformSeriesIndex(orm, result);
+        return engine.transform.Series.seriesIndex(orm, result);
     }
     async search(page, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, filter, order, list, { orm, engine, user }) {
         if (list.list) {
@@ -43,11 +43,11 @@ let SeriesController = class SeriesController {
     }
     async albums(page, albumArgs, filter, order, { orm, engine, user }) {
         const seriesIDs = await orm.Series.findIDsFilter(filter, user);
-        return await orm.Album.searchTransformFilter({ seriesIDs }, [order], page, user, o => engine.transform.albumBase(orm, o, albumArgs, user));
+        return await orm.Album.searchTransformFilter({ seriesIDs }, [order], page, user, o => engine.transform.Album.albumBase(orm, o, albumArgs, user));
     }
     async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const seriesIDs = await orm.Series.findIDsFilter(filter, user);
-        return await orm.Track.searchTransformFilter({ seriesIDs }, [order], page, user, o => engine.transform.trackBase(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter({ seriesIDs }, [order], page, user, o => engine.transform.Track.trackBase(orm, o, trackArgs, user));
     }
 };
 __decorate([

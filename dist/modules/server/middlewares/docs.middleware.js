@@ -27,34 +27,22 @@ let DocsMiddleware = class DocsMiddleware {
     async middleware() {
         const api = express_1.default.Router();
         api.get('/schema.graphql', (req, res) => {
-            res.type('application/graphql');
-            res.send(this.apollo.printSchema());
+            res.type('application/graphql').send(this.apollo.printSchema());
         });
         api.get('/openapi.json', (req, res) => {
-            res.type('application/json');
-            res.send(this.getOpenApiSchema(false));
+            res.type('application/json').send(this.getOpenApiSchema(false));
         });
         api.get('/openapi.ext.json', (req, res) => {
-            res.type('application/json');
-            res.send(this.getOpenApiSchema());
+            res.type('application/json').send(this.getOpenApiSchema());
         });
         api.get('/angular-client.zip', async (req, res) => {
-            const result = await rest_1.buildAngularClientZip();
-            res.type('application/zip');
-            rest_1.ApiBaseResponder.sendBinary(req, res, result);
+            rest_1.ApiBaseResponder.sendBinary(req, res, await rest_1.buildAngularClientZip());
         });
         api.get('/axios-client.zip', async (req, res) => {
-            const result = await rest_1.buildAxiosClientZip();
-            res.type('application/zip');
-            rest_1.ApiBaseResponder.sendBinary(req, res, result);
+            rest_1.ApiBaseResponder.sendBinary(req, res, await rest_1.buildAxiosClientZip());
         });
-        api.get('/redoc.standalone.min.js', (req, res) => {
-            res.type('text/javascript');
-            res.sendFile(path_1.default.resolve('./static/redoc/redoc.standalone.min.js'));
-        });
-        api.get('', (req, res) => {
-            res.sendFile(path_1.default.resolve('./static/redoc/index.html'));
-        });
+        api.get('/redoc.standalone.min.js', express_1.default.static(path_1.default.resolve('./static/redoc/redoc.standalone.min.js')));
+        api.get('', express_1.default.static(path_1.default.resolve('./static/redoc/index.html')));
         return api;
     }
 };

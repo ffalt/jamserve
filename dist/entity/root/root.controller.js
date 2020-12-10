@@ -21,13 +21,13 @@ const admin_1 = require("../admin/admin");
 const base_args_1 = require("../base/base.args");
 let RootController = class RootController {
     async id(id, rootArgs, { orm, engine, user }) {
-        return engine.transform.root(orm, await orm.Root.oneOrFailByID(id), rootArgs, user);
+        return engine.transform.Root.root(orm, await orm.Root.oneOrFailByID(id), rootArgs, user);
     }
     async search(page, rootArgs, filter, order, { orm, engine, user }) {
-        return await orm.Root.searchTransformFilter(filter, [order], page, user, o => engine.transform.root(orm, o, rootArgs, user));
+        return await orm.Root.searchTransformFilter(filter, [order], page, user, o => engine.transform.Root.root(orm, o, rootArgs, user));
     }
     async status(id, { orm, engine }) {
-        return engine.transform.rootStatus(await orm.Root.oneOrFailByID(id));
+        return engine.transform.Root.rootStatus(await orm.Root.oneOrFailByID(id));
     }
     async create(args, { engine }) {
         return await engine.io.createRoot(args.name, args.path, args.strategy);

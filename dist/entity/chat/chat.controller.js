@@ -19,7 +19,7 @@ const chat_model_1 = require("./chat.model");
 const chat_args_1 = require("./chat.args");
 let ChatController = class ChatController {
     async list({ since }, { engine }) {
-        return engine.transform.chats(await engine.chat.get(since));
+        return engine.transform.Chat.chats(await engine.chat.get(since));
     }
     async create(args, { engine, user }) {
         await engine.chat.add(args.message, user);

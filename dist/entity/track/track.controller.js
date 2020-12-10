@@ -33,7 +33,7 @@ let TrackController = class TrackController {
     async similar(id, page, trackArgs, { orm, engine, user }) {
         const track = await orm.Track.oneOrFailByID(id);
         const result = await engine.metadata.similarTracks.byTrack(orm, track, page);
-        return { ...result, items: await Promise.all(result.items.map(o => engine.transform.trackBase(orm, o, trackArgs, user))) };
+        return { ...result, items: await engine.transform.Track.trackBases(orm, result.items, trackArgs, user) };
     }
     async lyrics(id, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(id);
@@ -54,7 +54,7 @@ let TrackController = class TrackController {
         const result = [];
         for (const item of list) {
             result.push({
-                track: await engine.transform.trackBase(orm, item.track, trackArgs, user),
+                track: await engine.transform.Track.trackBase(orm, item.track, trackArgs, user),
                 health: item.health
             });
         }

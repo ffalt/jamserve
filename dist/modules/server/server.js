@@ -31,6 +31,7 @@ const version_1 = require("../engine/rest/version");
 const docs_middleware_1 = require("./middlewares/docs.middleware");
 const cors_middleware_1 = require("./middlewares/cors.middleware");
 const session_service_1 = require("../../entity/session/session.service");
+const csp_middleware_1 = require("./middlewares/csp.middleware");
 const log = logger_1.logger('Server');
 let Server = class Server {
     async init() {
@@ -42,43 +43,13 @@ let Server = class Server {
         app.use(body_parser_1.default.json({ type: 'application/vnd.api+json', limit: '10mb' }));
         app.use(body_parser_1.default.json({ type: 'application/csp-report', limit: '10mb' }));
         app.use(helmet_1.default());
-        const self = `'self'`;
-        const none = '\'none\'';
-        app.use(helmet_1.default.contentSecurityPolicy({
-            directives: {
-                defaultSrc: [none],
-                scriptSrc: [self],
-                mediaSrc: [self, 'data:'],
-                frameSrc: [self],
-                styleSrc: [self, `https: 'unsafe-inline'`],
-                childSrc: [self],
-                connectSrc: [self,
-                    'https://en.wikipedia.org',
-                    'https://commons.wikimedia.org'
-                ],
-                imgSrc: [
-                    self,
-                    'data:',
-                    'https://gpodder.net',
-                    'https://coverartarchive.org'
-                ],
-                objectSrc: [none],
-                workerSrc: [self],
-                fontSrc: [self, 'data:'],
-                reportUri: '/csp/report-violation'
-            },
-        }));
+        app.use(csp_middleware_1.useCSPMiddleware());
         if (this.configService.env.session.proxy) {
             app.enable('trust proxy');
         }
         app.use(log_middleware_1.useLogMiddleware());
         app.post('/csp/report-violation', async (req, res) => {
-            if (req.body) {
-                log.error('CSP', JSON.stringify(req.body));
-            }
-            else {
-                log.error('CSP', 'No data');
-            }
+            log.error('CSP', req.body ? JSON.stringify(req.body) : 'No data');
             res.status(204).end();
         });
         app.use(engine_middleware_1.useEngineMiddleware(this.engine));
@@ -100,10 +71,7 @@ let Server = class Server {
             res.send(jamberry_config);
         });
         app.get('/*', express_1.default.static(path_1.default.resolve(this.configService.env.paths.frontend)));
-        const indexFile = path_1.default.resolve(this.configService.env.paths.frontend, 'index.html');
-        app.get('/*', (req, res) => {
-            res.sendFile(indexFile);
-        });
+        app.get('/*', express_1.default.static(path_1.default.resolve(this.configService.env.paths.frontend, 'index.html')));
         this.app = app;
     }
     getURL() {

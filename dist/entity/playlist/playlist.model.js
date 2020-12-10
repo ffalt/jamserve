@@ -9,49 +9,55 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlaylistIndex = exports.PlaylistIndexGroup = exports.PlaylistIndexEntry = exports.PlaylistPage = exports.Playlist = void 0;
+exports.PlaylistIndex = exports.PlaylistIndexGroup = exports.PlaylistIndexEntry = exports.PlaylistPage = exports.Playlist = exports.PlaylistBase = void 0;
 const base_model_1 = require("../base/base.model");
 const decorators_1 = require("../../modules/rest/decorators");
 const example_consts_1 = require("../../modules/engine/rest/example.consts");
 const tag_model_1 = require("../tag/tag.model");
-let Playlist = class Playlist extends base_model_1.Base {
+let PlaylistBase = class PlaylistBase extends base_model_1.Base {
 };
 __decorate([
     decorators_1.ObjField({ description: 'Owner User Id', isID: true }),
     __metadata("design:type", String)
-], Playlist.prototype, "userID", void 0);
+], PlaylistBase.prototype, "userID", void 0);
 __decorate([
     decorators_1.ObjField({ description: 'Owner User Name', isID: true }),
     __metadata("design:type", String)
-], Playlist.prototype, "userName", void 0);
+], PlaylistBase.prototype, "userName", void 0);
 __decorate([
     decorators_1.ObjField({ description: 'Playlist is public?', example: false }),
     __metadata("design:type", Boolean)
-], Playlist.prototype, "isPublic", void 0);
+], PlaylistBase.prototype, "isPublic", void 0);
 __decorate([
     decorators_1.ObjField({ nullable: true, description: 'Comment', example: 'Awesome!' }),
     __metadata("design:type", String)
-], Playlist.prototype, "comment", void 0);
+], PlaylistBase.prototype, "comment", void 0);
 __decorate([
     decorators_1.ObjField({ description: 'Playlist Created Timestamp', min: 0, example: example_consts_1.examples.timestamp }),
     __metadata("design:type", Number)
-], Playlist.prototype, "created", void 0);
+], PlaylistBase.prototype, "created", void 0);
 __decorate([
     decorators_1.ObjField({ description: 'Playlist Changed Timestamp', min: 0, example: example_consts_1.examples.timestamp }),
     __metadata("design:type", Number)
-], Playlist.prototype, "changed", void 0);
+], PlaylistBase.prototype, "changed", void 0);
 __decorate([
     decorators_1.ObjField({ description: 'Playlist duration', min: 0, example: 12345 }),
     __metadata("design:type", Number)
-], Playlist.prototype, "duration", void 0);
+], PlaylistBase.prototype, "duration", void 0);
 __decorate([
     decorators_1.ObjField({ description: 'Number of Entries', min: 0, example: 5 }),
     __metadata("design:type", Number)
-], Playlist.prototype, "entriesCount", void 0);
+], PlaylistBase.prototype, "entriesCount", void 0);
 __decorate([
     decorators_1.ObjField(() => [String], { description: 'List of Media Base IDs', isID: true }),
     __metadata("design:type", Array)
-], Playlist.prototype, "entriesIDs", void 0);
+], PlaylistBase.prototype, "entriesIDs", void 0);
+PlaylistBase = __decorate([
+    decorators_1.ResultType({ description: 'Playlist' })
+], PlaylistBase);
+exports.PlaylistBase = PlaylistBase;
+let Playlist = class Playlist extends PlaylistBase {
+};
 __decorate([
     decorators_1.ObjField(() => [tag_model_1.MediaBase], { nullable: true, description: 'List of Media Base Entries' }),
     __metadata("design:type", Array)

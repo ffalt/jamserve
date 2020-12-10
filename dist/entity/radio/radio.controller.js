@@ -20,19 +20,19 @@ const radio_args_1 = require("./radio.args");
 const base_args_1 = require("../base/base.args");
 let RadioController = class RadioController {
     async id(id, radioArgs, { orm, engine, user }) {
-        return engine.transform.radio(orm, await orm.Radio.oneOrFailByID(id), radioArgs, user);
+        return engine.transform.Radio.radio(orm, await orm.Radio.oneOrFailByID(id), radioArgs, user);
     }
     async index(filter, { orm, engine }) {
         const result = await orm.Radio.indexFilter(filter);
-        return engine.transform.radioIndex(orm, result);
+        return engine.transform.Radio.radioIndex(orm, result);
     }
     async search(page, radioArgs, filter, order, { orm, engine, user }) {
-        return await orm.Radio.searchTransformFilter(filter, [order], page, user, o => engine.transform.radio(orm, o, radioArgs, user));
+        return await orm.Radio.searchTransformFilter(filter, [order], page, user, o => engine.transform.Radio.radio(orm, o, radioArgs, user));
     }
     async create(args, { orm, engine, user }) {
         const radio = orm.Radio.create(args);
         await orm.Radio.persistAndFlush(radio);
-        return await engine.transform.radio(orm, radio, {}, user);
+        return await engine.transform.Radio.radio(orm, radio, {}, user);
     }
     async update(id, args, { orm, engine, user }) {
         const radio = await orm.Radio.oneOrFailByID(id);
@@ -41,7 +41,7 @@ let RadioController = class RadioController {
         radio.name = args.name;
         radio.url = args.url;
         await orm.Radio.persistAndFlush(radio);
-        return await engine.transform.radio(orm, radio, {}, user);
+        return await engine.transform.Radio.radio(orm, radio, {}, user);
     }
     async remove(id, { orm }) {
         const radio = await orm.Radio.oneOrFailByID(id);
