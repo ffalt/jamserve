@@ -41,10 +41,10 @@ export class IoService {
 	private rootStatus = new Map<string, RootStatus>();
 	private current: IoRequest<WorkerRequestParameters> | undefined;
 	private queue: Array<IoRequest<WorkerRequestParameters>> = [];
-	private delayedTrackTagWrite = new Map<string, { request: IoRequest<WorkerRequestWriteTrackTags>; timeout?: NodeJS.Timeout | number }>();
+	private delayedTrackTagWrite = new Map<string, { request: IoRequest<WorkerRequestWriteTrackTags>; timeout?: NodeJS.Timeout }>();
 	private delayedTrackFix = new Map<string, { request: IoRequest<WorkerRequestFixTrack>; timeout?: NodeJS.Timeout }>();
 	private nextID: number = Date.now();
-	private afterScanTimeout: NodeJS.Timeout | undefined | number;
+	private afterScanTimeout: NodeJS.Timeout | undefined;
 	private history: Array<{ id: string; error?: string; date: number }> = [];
 
 	private generateRequestID(): string {
@@ -86,7 +86,7 @@ export class IoService {
 						console.error(e);
 					});
 			}
-		}, 10000);
+		}, 10000) as unknown as NodeJS.Timer;
 	}
 
 	private clearAfterRefresh(): void {
@@ -359,7 +359,7 @@ export class IoService {
 			if (delayedCmd) {
 				this.addRequest(delayedCmd.request);
 			}
-		}, 10000);
+		}, 10000) as unknown as NodeJS.Timer;
 		return this.getRequestInfo(delayedCmd.request);
 	}
 
@@ -389,7 +389,7 @@ export class IoService {
 			if (delayedCmd) {
 				this.addRequest(delayedCmd.request);
 			}
-		}, 10000) as NodeJS.Timeout;
+		}, 10000) as unknown as NodeJS.Timer;
 		return this.getRequestInfo(delayedCmd.request);
 	}
 
