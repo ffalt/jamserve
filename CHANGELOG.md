@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.7](https://github.com/ffalt/jamserve/compare/v0.4.6...v0.4.7) (2020-12-10)
+
+
+### Features
+
+* **csp:** add baseUri, formAction & manifestSrc, refactor ([1316470](https://github.com/ffalt/jamserve/commit/1316470cf9f08434d6af9f56745eeb7405c1061a))
+* **rate limit:** add login rate limiter with dynamic block duration ([3672fd6](https://github.com/ffalt/jamserve/commit/3672fd6eb7be6195f8a3c628d96e836f484a6fe9))
+
 ### [0.4.6](https://github.com/ffalt/jamserve/compare/v0.4.5...v0.4.6) (2020-09-25)
 
 
