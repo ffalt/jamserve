@@ -128,11 +128,7 @@ const apolloLogger = {
 let ApolloMiddleware = class ApolloMiddleware {
     async playground() {
         const api = express_1.default.Router();
-        api.get('/middleware.js', express_1.default.static(path_1.default.resolve('./static/graphql/middleware.min.js')));
-        api.get('/main.js', express_1.default.static(path_1.default.resolve('./static/graphql/main.js')));
-        api.get('/index.css', express_1.default.static(path_1.default.resolve('./static/graphql/index.min.css')));
-        api.get('/favicon.png', express_1.default.static(path_1.default.resolve('./static/graphql/favicon.png')));
-        api.get('/', express_1.default.static(path_1.default.resolve('./static/graphql/index.html')));
+        api.get('*', express_1.default.static(path_1.default.resolve('./static/graphql/')));
         return api;
     }
     async middleware() {

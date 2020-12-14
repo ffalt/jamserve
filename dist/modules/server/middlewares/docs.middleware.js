@@ -41,8 +41,7 @@ let DocsMiddleware = class DocsMiddleware {
         api.get('/axios-client.zip', async (req, res) => {
             rest_1.ApiBaseResponder.sendBinary(req, res, await rest_1.buildAxiosClientZip());
         });
-        api.get('/redoc.standalone.min.js', express_1.default.static(path_1.default.resolve('./static/redoc/redoc.standalone.min.js')));
-        api.get('', express_1.default.static(path_1.default.resolve('./static/redoc/index.html')));
+        api.get('*', express_1.default.static(path_1.default.resolve('./static/redoc/')));
         return api;
     }
 };

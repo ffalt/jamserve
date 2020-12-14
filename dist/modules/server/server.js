@@ -70,8 +70,11 @@ let Server = class Server {
             res.type('text/javascript');
             res.send(jamberry_config);
         });
+        const indexHTML = path_1.default.resolve(this.configService.env.paths.frontend, 'index.html');
         app.get('/*', express_1.default.static(path_1.default.resolve(this.configService.env.paths.frontend)));
-        app.get('/*', express_1.default.static(path_1.default.resolve(this.configService.env.paths.frontend, 'index.html')));
+        app.get('*', (req, res) => {
+            res.sendFile(indexHTML);
+        });
         this.app = app;
     }
     getURL() {
