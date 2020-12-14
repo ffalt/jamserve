@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.8](https://github.com/ffalt/jamserve/compare/v0.4.7...v0.4.8) (2020-12-14)
+
+
+### Bug Fixes
+
+* **express:** don't send single hardcoded files with express-static ([9a7f54e](https://github.com/ffalt/jamserve/commit/9a7f54edfea019bae4bcfddc06dfdf4f4f08a6db))
+
 ### [0.4.7](https://github.com/ffalt/jamserve/compare/v0.4.6...v0.4.7) (2020-12-10)
 
 
