@@ -87,8 +87,12 @@ export class Server {
 			res.send(jamberry_config);
 		});
 		// frontend (any)
+		const indexHTML = path.resolve(this.configService.env.paths.frontend, 'index.html');
 		app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend)));
-		app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend, 'index.html')));
+		app.get('*', (req, res) => {
+			res.sendFile(indexHTML);
+		});
+
 		this.app = app;
 	}
 

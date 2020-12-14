@@ -148,11 +148,7 @@ export class ApolloMiddleware {
 
 	async playground(): Promise<express.Router> {
 		const api = express.Router();
-		api.get('/middleware.js', express.static(path.resolve('./static/graphql/middleware.min.js')));
-		api.get('/main.js', express.static(path.resolve('./static/graphql/main.js')));
-		api.get('/index.css', express.static(path.resolve('./static/graphql/index.min.css')));
-		api.get('/favicon.png', express.static(path.resolve('./static/graphql/favicon.png')));
-		api.get('/', express.static(path.resolve('./static/graphql/index.html')));
+		api.get('*', express.static(path.resolve('./static/graphql/')));
 		return api;
 	}
 

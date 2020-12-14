@@ -34,8 +34,7 @@ export class DocsMiddleware {
 		api.get('/axios-client.zip', async (req, res) => {
 			ApiBaseResponder.sendBinary(req, res, await buildAxiosClientZip());
 		});
-		api.get('/redoc.standalone.min.js', express.static(path.resolve('./static/redoc/redoc.standalone.min.js')));
-		api.get('', express.static(path.resolve('./static/redoc/index.html')));
+		api.get('*', express.static(path.resolve('./static/redoc/')));
 		return api;
 	}
 }
