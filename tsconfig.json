@@ -26,7 +26,11 @@
          "node_modules/@types",
          "src/@types",
          "src/types"
-      ]
+      ],
+      "paths": {
+         "d3-node": ["src/@types/d3-node"],
+         "common-password-checker": ["src/@types/common-password-checker"]
+      }
    },
    "include": [
       "./src/**/*.ts",
