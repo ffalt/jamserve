@@ -19,6 +19,8 @@ import {Acoustid} from '../../modules/audio/clients/acoustid-rest-data';
 import {CoverArtArchive} from '../../modules/audio/clients/coverartarchive-rest-data';
 import {MusicBrainz} from '../../modules/audio/clients/musicbrainz-rest-data';
 import {Op} from '../../modules/orm';
+import {ApiBinaryResult, InvalidParamError} from '../../modules/rest';
+import request from 'request';
 
 const log = logger('Metadata');
 
@@ -233,5 +235,14 @@ export class MetaDataService {
 			log.error(e);
 			return {};
 		}
+	}
+
+	async coverartarchiveImage(url?: string): Promise<ApiBinaryResult | undefined> {
+		if (!url || !(url.startsWith('http://coverartarchive.org') || url.startsWith('https://coverartarchive.org'))) {
+			return Promise.reject(InvalidParamError('url'));
+		}
+		return {
+			pipe: request(url)
+		};
 	}
 }

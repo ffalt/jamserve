@@ -13763,6 +13763,74 @@
 				]
 			}
 		},
+		"/metadata/coverartarchive/image": {
+			"get": {
+				"operationId": "MetaDataController.coverartarchiveImage",
+				"summary": "Request CoverArtArchive Image",
+				"description": "Get CoverArtArchive image",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "url",
+						"description": "Coverart URL",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "Coverart URL"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"image/jpeg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/png": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/tiff": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
 		"/metadata/wikipedia/summary": {
 			"get": {
 				"operationId": "MetaDataController.wikipediaSummarySearch",
@@ -25506,6 +25574,23 @@
 			"Playlist": {
 				"allOf": [
 					{
+						"$ref": "#/components/schemas/PlaylistBase"
+					},
+					{
+						"properties": {
+							"entries": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/MediaBase"
+								}
+							}
+						}
+					}
+				]
+			},
+			"PlaylistBase": {
+				"allOf": [
+					{
 						"$ref": "#/components/schemas/Base"
 					},
 					{
@@ -25548,12 +25633,6 @@
 								"type": "array",
 								"items": {
 									"$ref": "#/components/schemas/ID"
-								}
-							},
-							"entries": {
-								"type": "array",
-								"items": {
-									"$ref": "#/components/schemas/MediaBase"
 								}
 							}
 						},
@@ -25703,6 +25782,23 @@
 				}
 			},
 			"PlayQueue": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/PlayQueueBase"
+					},
+					{
+						"properties": {
+							"entries": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/MediaBase"
+								}
+							}
+						}
+					}
+				]
+			},
+			"PlayQueueBase": {
 				"type": "object",
 				"properties": {
 					"userName": {
@@ -25722,12 +25818,6 @@
 						"items": {
 							"type": "string",
 							"description": "List of Media IDs"
-						}
-					},
-					"entries": {
-						"type": "array",
-						"items": {
-							"$ref": "#/components/schemas/MediaBase"
 						}
 					},
 					"currentIndex": {

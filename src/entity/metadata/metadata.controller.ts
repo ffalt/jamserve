@@ -1,9 +1,10 @@
-import {Controller, Ctx, Get, QueryParams} from '../../modules/rest';
+import {ApiBinaryResult, Controller, Ctx, Get, InvalidParamError, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {MetaDataResult} from './metadata.model';
 import {
 	AcousticBrainzLookupArgs,
 	AcoustidLookupArgs,
+	CoverArtArchiveImageArgs,
 	CoverArtArchiveLookupArgs,
 	LastFMLookupArgs,
 	LyricsOVHSearchArgs,
@@ -14,6 +15,7 @@ import {
 	WikipediaSummaryArgs
 } from './metadata.args';
 import {Context} from '../../modules/engine/rest/context';
+import {ApiImageTypes} from '../../types/consts';
 
 @Controller('/metadata', {tags: ['Meta Data'], roles: [UserRole.stream]})
 export class MetaDataController {
@@ -80,6 +82,17 @@ export class MetaDataController {
 		@Ctx() {orm, engine}: Context
 	): Promise<MetaDataResult> {
 		return {data: await engine.metadata.coverartarchiveLookup(orm, args.type, args.mbID)};
+	}
+
+	@Get('/coverartarchive/image', {
+			binary: ApiImageTypes,
+			description: 'Get CoverArtArchive image', summary: 'Request CoverArtArchive Image'
+		})
+	async coverartarchiveImage(
+		@QueryParams() imageArgs: CoverArtArchiveImageArgs,
+		@Ctx() {engine}: Context
+	): Promise<ApiBinaryResult | undefined> {
+		return engine.metadata.coverartarchiveImage(imageArgs.url);
 	}
 
 	@Get('/wikipedia/summary', () => MetaDataResult,

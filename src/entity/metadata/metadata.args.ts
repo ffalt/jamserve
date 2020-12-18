@@ -69,6 +69,12 @@ export class CoverArtArchiveLookupArgs {
 }
 
 @ObjParamsType()
+export class CoverArtArchiveImageArgs {
+	@ObjField({description: 'Coverart URL'})
+	url!: string
+}
+
+@ObjParamsType()
 export class WikipediaSummaryArgs {
 	@ObjField({description: 'MusicBrainz ID', example: 'Primus'})
 	title!: string;
