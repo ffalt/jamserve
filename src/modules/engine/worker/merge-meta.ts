@@ -10,6 +10,7 @@ import {Folder} from '../../../entity/folder/folder';
 import {MetaStatBuilder} from '../../../utils/stats-builder';
 import {slugify} from '../../../utils/slug';
 import {Genre} from '../../../entity/genre/genre';
+import {extractAlbumName} from '../../../utils/album-name';
 
 const log = logger('Worker.MetaMerger');
 
@@ -266,11 +267,14 @@ export class MetaMerger {
 					duration += (tag?.mediaDuration || 0);
 					metaStatBuilder.statID('seriesNr', tag?.seriesNr);
 					metaStatBuilder.statNumber('year', tag?.year);
+					metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag?.album));
 					const genres = await track.genres.getItems();
 					for (const genre of genres) {
 						genreMap.set(genre.id, genre);
 					}
 				}
+				album.name = metaStatBuilder.mostUsed('album', album.name) || album.name;
+				album.slug = slugify(album.name);
 				album.duration = duration;
 				album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
 				album.year = metaStatBuilder.mostUsedNumber('year');
