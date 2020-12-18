@@ -24,6 +24,8 @@ const metadata_service_top_tracks_1 = require("./metadata.service.top-tracks");
 const typescript_ioc_1 = require("typescript-ioc");
 const enums_1 = require("../../types/enums");
 const orm_1 = require("../../modules/orm");
+const rest_1 = require("../../modules/rest");
+const request_1 = __importDefault(require("request"));
 const log = logger_1.logger('Metadata');
 let MetaDataService = class MetaDataService {
     constructor() {
@@ -197,6 +199,17 @@ let MetaDataService = class MetaDataService {
             log.error(e);
             return {};
         }
+    }
+    async coverartarchiveImage(url) {
+        if (!this.audioModule.coverArtArchive.enabled) {
+            throw new Error('External service is disabled');
+        }
+        if (!url || !(url.startsWith('http://coverartarchive.org') || url.startsWith('https://coverartarchive.org'))) {
+            return Promise.reject(rest_1.InvalidParamError('url'));
+        }
+        return {
+            pipe: request_1.default(url)
+        };
     }
 };
 __decorate([

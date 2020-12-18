@@ -17,6 +17,7 @@ const rest_1 = require("../../modules/rest");
 const enums_1 = require("../../types/enums");
 const metadata_model_1 = require("./metadata.model");
 const metadata_args_1 = require("./metadata.args");
+const consts_1 = require("../../types/consts");
 let MetaDataController = class MetaDataController {
     async lastfmLookup(args, { orm, engine }) {
         return { data: await engine.metadata.lastFMLookup(orm, args.type, args.mbID) };
@@ -39,6 +40,9 @@ let MetaDataController = class MetaDataController {
     }
     async coverartarchiveLookup(args, { orm, engine }) {
         return { data: await engine.metadata.coverartarchiveLookup(orm, args.type, args.mbID) };
+    }
+    async coverartarchiveImage(imageArgs, { engine }) {
+        return engine.metadata.coverartarchiveImage(imageArgs.url);
     }
     async wikipediaSummarySearch(args, { orm, engine }) {
         return { data: await engine.metadata.wikipediaSummary(orm, args.title, args.lang) };
@@ -106,6 +110,17 @@ __decorate([
     __metadata("design:paramtypes", [metadata_args_1.CoverArtArchiveLookupArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "coverartarchiveLookup", null);
+__decorate([
+    rest_1.Get('/coverartarchive/image', {
+        binary: consts_1.ApiImageTypes,
+        description: 'Get CoverArtArchive image', summary: 'Request CoverArtArchive Image'
+    }),
+    __param(0, rest_1.QueryParams()),
+    __param(1, rest_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [metadata_args_1.CoverArtArchiveImageArgs, Object]),
+    __metadata("design:returntype", Promise)
+], MetaDataController.prototype, "coverartarchiveImage", null);
 __decorate([
     rest_1.Get('/wikipedia/summary', () => metadata_model_1.MetaDataResult, { description: 'Search Wikipedia Summary data', summary: 'Search Wikipedia' }),
     __param(0, rest_1.QueryParams()),

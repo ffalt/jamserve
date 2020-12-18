@@ -7,6 +7,7 @@ const consts_1 = require("../../../types/consts");
 const enums_1 = require("../../../types/enums");
 const stats_builder_1 = require("../../../utils/stats-builder");
 const slug_1 = require("../../../utils/slug");
+const album_name_1 = require("../../../utils/album-name");
 const log = logger_1.logger('Worker.MetaMerger');
 class MetaMerger {
     constructor(orm, changes, rootID) {
@@ -245,11 +246,14 @@ class MetaMerger {
                     duration += ((tag === null || tag === void 0 ? void 0 : tag.mediaDuration) || 0);
                     metaStatBuilder.statID('seriesNr', tag === null || tag === void 0 ? void 0 : tag.seriesNr);
                     metaStatBuilder.statNumber('year', tag === null || tag === void 0 ? void 0 : tag.year);
+                    metaStatBuilder.statSlugValue('album', (tag === null || tag === void 0 ? void 0 : tag.album) && album_name_1.extractAlbumName(tag === null || tag === void 0 ? void 0 : tag.album));
                     const genres = await track.genres.getItems();
                     for (const genre of genres) {
                         genreMap.set(genre.id, genre);
                     }
                 }
+                album.name = metaStatBuilder.mostUsed('album', album.name) || album.name;
+                album.slug = slug_1.slugify(album.name);
                 album.duration = duration;
                 album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
                 album.year = metaStatBuilder.mostUsedNumber('year');

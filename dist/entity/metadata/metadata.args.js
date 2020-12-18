@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WikidataLookupArgs = exports.WikidataSummaryArgs = exports.WikipediaSummaryArgs = exports.CoverArtArchiveLookupArgs = exports.AcousticBrainzLookupArgs = exports.MusicBrainzSearchArgs = exports.MusicBrainzLookupArgs = exports.AcoustidLookupArgs = exports.LyricsOVHSearchArgs = exports.LastFMLookupArgs = void 0;
+exports.WikidataLookupArgs = exports.WikidataSummaryArgs = exports.WikipediaSummaryArgs = exports.CoverArtArchiveImageArgs = exports.CoverArtArchiveLookupArgs = exports.AcousticBrainzLookupArgs = exports.MusicBrainzSearchArgs = exports.MusicBrainzLookupArgs = exports.AcoustidLookupArgs = exports.LyricsOVHSearchArgs = exports.LastFMLookupArgs = void 0;
 const enums_1 = require("../../types/enums");
 const decorators_1 = require("../../modules/rest/decorators");
 const example_consts_1 = require("../../modules/engine/rest/example.consts");
@@ -131,6 +131,16 @@ CoverArtArchiveLookupArgs = __decorate([
     decorators_1.ObjParamsType()
 ], CoverArtArchiveLookupArgs);
 exports.CoverArtArchiveLookupArgs = CoverArtArchiveLookupArgs;
+let CoverArtArchiveImageArgs = class CoverArtArchiveImageArgs {
+};
+__decorate([
+    decorators_1.ObjField({ description: 'Coverart URL' }),
+    __metadata("design:type", String)
+], CoverArtArchiveImageArgs.prototype, "url", void 0);
+CoverArtArchiveImageArgs = __decorate([
+    decorators_1.ObjParamsType()
+], CoverArtArchiveImageArgs);
+exports.CoverArtArchiveImageArgs = CoverArtArchiveImageArgs;
 let WikipediaSummaryArgs = class WikipediaSummaryArgs {
 };
 __decorate([
