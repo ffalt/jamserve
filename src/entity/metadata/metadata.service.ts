@@ -238,6 +238,9 @@ export class MetaDataService {
 	}
 
 	async coverartarchiveImage(url?: string): Promise<ApiBinaryResult | undefined> {
+		if (!this.audioModule.coverArtArchive.enabled) {
+			throw new Error('External service is disabled');
+		}
 		if (!url || !(url.startsWith('http://coverartarchive.org') || url.startsWith('https://coverartarchive.org'))) {
 			return Promise.reject(InvalidParamError('url'));
 		}

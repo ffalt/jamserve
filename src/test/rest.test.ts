@@ -374,6 +374,11 @@ describe('REST', () => {
 									expected = 500; // External service is disabled
 									break;
 								}
+								case 'metadata/coverartarchive/image': {
+									expected = 500; // External service is disabled
+									call.data.url = 'http://coverartarchive.org/invalid.png';
+									break;
+								}
 								// default: {
 								// 	console.debug(call.apiName, call.data);
 								// }
