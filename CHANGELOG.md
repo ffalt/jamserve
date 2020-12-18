@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.9](https://github.com/ffalt/jamserve/compare/v0.4.8...v0.4.9) (2020-12-18)
+
+
+### Features
+
+* **meta:** proxy coverartarchive to avoid csp violations because of redirects ([574a8b0](https://github.com/ffalt/jamserve/commit/574a8b05f044ca5fbbe92da95b0b082f3245434a))
+
+
+### Bug Fixes
+
+* **meta:** refresh album name after tag edit ([5ab3d5e](https://github.com/ffalt/jamserve/commit/5ab3d5e8a2149a434cce61e44d1d256528c22177))
+
 ### [0.4.8](https://github.com/ffalt/jamserve/compare/v0.4.7...v0.4.8) (2020-12-14)
 
 
