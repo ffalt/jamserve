@@ -25,7 +25,7 @@ const typescript_ioc_1 = require("typescript-ioc");
 const enums_1 = require("../../types/enums");
 const orm_1 = require("../../modules/orm");
 const rest_1 = require("../../modules/rest");
-const request_1 = __importDefault(require("request"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
 const log = logger_1.logger('Metadata');
 let MetaDataService = class MetaDataService {
     constructor() {
@@ -204,11 +204,15 @@ let MetaDataService = class MetaDataService {
         if (!this.audioModule.coverArtArchive.enabled) {
             throw new Error('External service is disabled');
         }
-        if (!url || !(url.startsWith('http://coverartarchive.org') || url.startsWith('https://coverartarchive.org'))) {
+        if (!url || !(url.match(/^http(s)?:\/\/coverartarchive.org/))) {
             return Promise.reject(rest_1.InvalidParamError('url'));
         }
+        const response = await node_fetch_1.default(url);
+        if (!response.ok)
+            throw new Error(`Unexpected coverartarchive response ${response.statusText}`);
+        const buffer = await response.buffer();
         return {
-            pipe: request_1.default(url)
+            buffer: { buffer, contentType: response.headers.get('content-type') || 'image' }
         };
     }
 };

@@ -27,17 +27,24 @@ export class JamHttpService {
 	constructor(public client: HttpClient) {
 	}
 
-	async raw(url: string, options: HTTPOptions): Promise<ArrayBuffer> {
+	async raw(url: string, options: HTTPOptions): Promise<{ buffer: ArrayBuffer; contentType: string }> {
 		try {
-			const opts = {
-				headers: options.headers,
-				params: options.params,
-				reportProgress: options.reportProgress,
-				responseType: 'arraybuffer' as const,
-				withCredentials: options.withCredentials
-			};
-
-			return await this.client.get(url, opts).toPromise();
+			return new Promise<{ buffer: ArrayBuffer; contentType: string }>((resolve, reject) => {
+				this.client.get<ArrayBuffer>(url, {
+					headers: options.headers,
+					params: options.params,
+					reportProgress: options.reportProgress,
+					responseType: 'arraybuffer' as 'json', // angular not detecting overload type for {responseType: 'arraybuffer', observe: 'response'}
+					withCredentials: options.withCredentials,
+					observe: 'response'
+				})
+					.subscribe(res => {
+						if (!res || !res.body) {
+							return reject(new Error('Invalid Binary Server Response'));
+						}
+						resolve({buffer: res.body as ArrayBuffer, contentType: res.headers.get('content-type') || 'invalid'});
+					});
+			});
 		} catch (e) {
 			return handleError(e);
 		}

@@ -8,11 +8,11 @@ class LyricsOVHClient extends webservice_client_1.WebserviceClient {
     constructor(userAgent) {
         super(1, 1000, userAgent);
     }
-    async parseResult(response, body) {
-        if (response.statusCode === 404) {
+    async parseResult(response) {
+        if (response.status === 404) {
             return Promise.resolve(undefined);
         }
-        return super.parseResult(response, body);
+        return super.parseResult(response);
     }
     async search(artistName, songName) {
         const url = `https://api.lyrics.ovh/v1/${this.cleanString(artistName)}/${this.cleanString(songName)}`;

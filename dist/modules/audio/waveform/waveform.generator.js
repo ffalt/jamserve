@@ -5,12 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaveformGenerator = void 0;
 const d3_array_1 = require("d3-array");
-const d3_node_1 = __importDefault(require("d3-node"));
 const d3_scale_1 = require("d3-scale");
 const d3_shape_1 = require("d3-shape");
+const d3_selection_1 = require("d3-selection");
 const fs_1 = __importDefault(require("fs"));
 const waveform_data_1 = __importDefault(require("waveform-data"));
 const waveform_class_1 = require("./waveform.class");
+const jsdom_1 = require("jsdom");
 class WaveformGenerator {
     async binary(filename) {
         const wf = await this.generateWaveform(filename);
@@ -62,15 +63,22 @@ class WaveformGenerator {
             .x((a, i) => x(i))
             .y0((b, i) => y(minArray[i]))
             .y1((c) => y(c));
-        const d3n = new d3_node_1.default();
-        const svg = d3n.createSVG(null, null, { preserveAspectRatio: 'none', width: '100%', height: '100%', viewBox: `0 0 ${width} ${height}` });
+        const fakedom = new jsdom_1.JSDOM('<!DOCTYPE html><html><body></body></html>');
+        const d3Element = d3_selection_1.select(fakedom.window.document).select('body');
+        const svg = d3Element.append('svg')
+            .attr('xmlns', 'http://www.w3.org/2000/svg')
+            .attr('preserveAspectRatio', 'none')
+            .attr('width', '100%')
+            .attr('height', '100%')
+            .attr('viewBox', `0 0 ${width} ${height}`);
         svg
             .append('path')
             .datum(maxArray)
             .attr('stroke', 'green')
             .attr('fill', 'darkgreen')
             .attr('d', waveArea);
-        return d3n.svgString();
+        const node = svg.node();
+        return (node === null || node === void 0 ? void 0 : node.outerHTML) || '';
     }
 }
 exports.WaveformGenerator = WaveformGenerator;

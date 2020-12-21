@@ -10,11 +10,11 @@ class CoverArtArchiveClient extends webservice_json_client_1.WebserviceJSONClien
         };
         super(10, 1000, options.userAgent, { ...defaultOptions, ...options });
     }
-    async parseResult(response, body) {
-        if (response.statusCode === 404) {
+    async parseResult(response) {
+        if (response.status === 404) {
             return Promise.resolve({ images: [] });
         }
-        return super.parseResult(response, body);
+        return super.parseResult(response);
     }
     async processError(e, req) {
         if (e instanceof SyntaxError) {

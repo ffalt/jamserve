@@ -58,7 +58,7 @@ function generateBinClientCall(call, name, paramsType) {
         name: `${name}Binary`,
         paramName: 'params',
         paramsType: paramsType || '{}',
-        resultType: 'ArrayBuffer',
+        resultType: '{ buffer: ArrayBuffer; contentType: string }',
         baseFuncResultType: '',
         baseFunc: 'binary',
         baseFuncParameters: !call.customPathParameters ? 'params' : '{}',

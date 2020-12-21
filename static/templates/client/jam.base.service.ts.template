@@ -40,7 +40,7 @@ export class JamBaseService {
 		return url + (flat ? `?${flat}` : '');
 	}
 
-	async raw(view: string, params: any): Promise<ArrayBuffer> {
+	async raw(view: string, params: any): Promise<{buffer: ArrayBuffer; contentType: string}> {
 		const {url, parameters} = this.buildRequest(view, params, false);
 		return this.http.raw(url, {...this.authService.getHTTPOptions(), params: parameters});
 	}
@@ -87,7 +87,7 @@ export class JamBaseService {
 		return this.buildUrl(view, params, forDom);
 	}
 
-	async binary(path: string, params?: any): Promise<ArrayBuffer> {
+	async binary(path: string, params?: any): Promise<{ buffer: ArrayBuffer; contentType: string }> {
 		if (!this.authService.isLoggedIn()) {
 			return Promise.reject(Error('Not logged in'));
 		}

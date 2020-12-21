@@ -5,28 +5,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.downloadFile = void 0;
 const fs_1 = __importDefault(require("fs"));
-const http_1 = __importDefault(require("http"));
-const request_1 = __importDefault(require("request"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
 const fs_utils_1 = require("./fs-utils");
 async function downloadFile(url, filename) {
+    const response = await node_fetch_1.default(url);
+    if (!response.ok) {
+        throw new Error(`Unexpected Response ${response.statusText}`);
+    }
     return new Promise((resolve, reject) => {
-        request_1.default.get(url)
-            .on('error', (err) => {
-            reject(err);
-        })
-            .on('complete', (res) => {
-            if (res.statusCode !== 200) {
-                fs_utils_1.fileDeleteIfExists(filename).then(() => {
-                    reject(new Error(http_1.default.STATUS_CODES[res.statusCode]));
-                }).catch(_ => {
-                    reject(new Error(http_1.default.STATUS_CODES[res.statusCode]));
-                });
-            }
-            else {
-                resolve();
-            }
-        })
-            .pipe(fs_1.default.createWriteStream(filename));
+        const dest = fs_1.default.createWriteStream(filename);
+        response.body.pipe(dest);
+        dest.on('close', () => resolve());
+        dest.on('error', (e) => {
+            fs_utils_1.fileDeleteIfExists(filename).then(() => {
+                reject(e);
+            }).catch(_ => {
+                reject(e);
+            });
+        });
     });
 }
 exports.downloadFile = downloadFile;
