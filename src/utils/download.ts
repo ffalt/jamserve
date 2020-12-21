@@ -1,25 +1,22 @@
 import fs from 'fs';
-import http from 'http';
-import request from 'request';
+import fetch from 'node-fetch';
 import {fileDeleteIfExists} from './fs-utils';
 
 export async function downloadFile(url: string, filename: string): Promise<void> {
-	return new Promise<void>((resolve, reject) => {
-		request.get(url)
-			.on('error', (err: Error) => {
-				reject(err);
-			})
-			.on('complete', (res: { statusCode: number }) => {
-				if (res.statusCode !== 200) {
-					fileDeleteIfExists(filename).then(() => {
-						reject(new Error(http.STATUS_CODES[res.statusCode]));
-					}).catch(_ => {
-						reject(new Error(http.STATUS_CODES[res.statusCode]));
-					});
-				} else {
-					resolve();
-				}
-			})
-			.pipe(fs.createWriteStream(filename));
+	const response = await fetch(url);
+	if (!response.ok) {
+		throw new Error(`Unexpected Response ${response.statusText}`);
+	}
+	return new Promise((resolve, reject) => {
+		const dest = fs.createWriteStream(filename);
+		response.body.pipe(dest);
+		dest.on('close', () => resolve());
+		dest.on('error', (e) => {
+			fileDeleteIfExists(filename).then(() => {
+				reject(e);
+			}).catch(_ => {
+				reject(e);
+			});
+		});
 	});
 }

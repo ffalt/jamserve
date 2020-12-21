@@ -1,6 +1,6 @@
-import request from 'request';
 import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client';
 import {CoverArtArchive} from './coverartarchive-rest-data';
+import {Response} from 'node-fetch';
 
 export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, CoverArtArchive.Response> {
 
@@ -15,11 +15,11 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 		super(10, 1000, options.userAgent, {...defaultOptions, ...options});
 	}
 
-	protected async parseResult<T>(response: request.Response, body: string): Promise<T | undefined> {
-		if (response.statusCode === 404) {
+	protected async parseResult<T>(response: Response): Promise<T | undefined> {
+		if (response.status === 404) {
 			return Promise.resolve({images: []} as any);
 		}
-		return super.parseResult<T>(response, body);
+		return super.parseResult<T>(response);
 	}
 
 	protected async processError(e: Error, req: JSONRequest): Promise<CoverArtArchive.Response> {

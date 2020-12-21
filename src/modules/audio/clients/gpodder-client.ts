@@ -1,7 +1,7 @@
-import request from 'request';
 import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 import {GpodderPodcast, GpodderTag} from './gpodder-rest-data';
+import {Response} from 'node-fetch';
 
 const log = logger('GPodderClient');
 
@@ -19,11 +19,11 @@ export class GpodderClient extends WebserviceClient {
 		super(1, 1000, userAgent);
 	}
 
-	protected async parseResult<T>(response: request.Response, body: string): Promise<T | undefined> {
-		if (response.statusCode === 404) {
+	protected async parseResult<T>(response: Response): Promise<T | undefined> {
+		if (response.status === 404) {
 			return Promise.resolve(undefined);
 		}
-		return super.parseResult<T>(response, body);
+		return super.parseResult<T>(response);
 	}
 
 	async validateClientConfig(): Promise<GpodderClientConfig> {

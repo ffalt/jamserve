@@ -1,5 +1,5 @@
 import rateLimiter from 'limiter';
-import request from 'request';
+import fetch, {Response} from 'node-fetch';
 
 export class WebserviceClient {
 	enabled = false;
@@ -11,12 +11,12 @@ export class WebserviceClient {
 		this.userAgent = userAgent;
 	}
 
-	protected async parseResult<T>(response: request.Response, body: string): Promise<T | undefined> {
-		if (response.statusCode === 404) {
-			return Promise.reject(Error(`${response.statusCode} ${response.statusMessage || ''}`));
+	protected async parseResult<T>(response: Response): Promise<T | undefined> {
+		if (response.status === 404) {
+			return Promise.reject(Error(`${response.status} ${response.statusText || ''}`));
 		}
 		try {
-			return Promise.resolve(JSON.parse(body) as T);
+			return response.json();
 		} catch (err) {
 			return Promise.reject(err);
 		}
@@ -28,33 +28,25 @@ export class WebserviceClient {
 		}
 	}
 
-	protected async getJson<T>(url: string, parameters?: any | undefined): Promise<T> {
-		this.checkDisabled();
-		const options: request.Options = {
-			url,
-			headers: {'User-Agent': this.userAgent},
-			qs: parameters,
-			timeout: 20000
-		};
+	protected async limit(): Promise<void> {
 		const limiter = this.limiter;
-		return new Promise<T>((resolve, reject) => {
-			limiter.removeTokens(1, () => {
-				request(options, (err, response, body) => {
-					if (err) {
-						reject(err);
-					} else {
-						this.parseResult<T>(response, body)
-							.then(result => {
-								if (result === undefined) {
-									reject(new Error('Invalid Result'));
-								} else {
-									resolve(result);
-								}
-							}).catch(reject);
-					}
-				});
-			});
+		return new Promise<void>(resolve => {
+			limiter.removeTokens(1, () => resolve());
 		});
 	}
 
+	protected async getJson<T>(url: string, parameters?: any | undefined): Promise<T> {
+		this.checkDisabled();
+		await this.limit();
+		const params = parameters ? new URLSearchParams(parameters) : '';
+		const response = await fetch(url + params, {
+			headers: {'User-Agent': this.userAgent},
+			timeout: 20000
+		});
+		const result = await this.parseResult<T>(response);
+		if (result === undefined) {
+			return Promise.reject(new Error('Invalid Result'));
+		}
+		return result;
+	}
 }
