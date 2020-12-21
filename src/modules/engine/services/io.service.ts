@@ -14,7 +14,8 @@ import {
 	WorkerRequestMoveFolders,
 	WorkerRequestMoveTracks,
 	WorkerRequestParameters,
-	WorkerRequestRefreshRoot, WorkerRequestRefreshRootMeta,
+	WorkerRequestRefreshRoot,
+	WorkerRequestRefreshRootMeta,
 	WorkerRequestRemoveArtwork,
 	WorkerRequestRemoveRoot,
 	WorkerRequestRemoveTracks,
@@ -179,7 +180,7 @@ export class IoService {
 		return status;
 	}
 
-	async startUpRefresh(orm: Orm, forceRescan: boolean):Promise<void> {
+	async startUpRefresh(orm: Orm, forceRescan: boolean): Promise<void> {
 		if (!forceRescan) {
 			await this.refresh(orm);
 		} else {
