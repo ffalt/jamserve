@@ -24,7 +24,7 @@ async function handleError(e: any): Promise<any> {
 
 export class JamHttpService {
 
-	async raw(url: string, options: HTTPOptions): Promise<ArrayBuffer> {
+	async raw(url: string, options: HTTPOptions): Promise<{buffer: ArrayBuffer; contentType: string}> {
 		try {
 			const opts = {
 				headers: options.headers,
@@ -34,7 +34,7 @@ export class JamHttpService {
 				withCredentials: options.withCredentials
 			};
 			const result = await axios.get(url, opts);
-			return result.data;
+			return {buffer: result.data, contentType: result.headers['content-type']};
 		} catch (e) {
 			return handleError(e);
 		}
