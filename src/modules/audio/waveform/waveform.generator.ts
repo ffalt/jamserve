@@ -1,10 +1,11 @@
 import {max, min} from 'd3-array';
-import D3Node from 'd3-node';
 import {scaleLinear} from 'd3-scale';
 import {area} from 'd3-shape';
+import {select} from 'd3-selection';
 import fs from 'fs';
 import WaveformData from 'waveform-data';
 import {WaveDataResponse, Waveform} from './waveform.class';
+import {JSDOM} from 'jsdom';
 
 export class WaveformGenerator {
 
@@ -65,15 +66,22 @@ export class WaveformGenerator {
 			.x((a, i) => x(i))
 			.y0((b, i) => y(minArray[i]))
 			.y1((c) => y(c as any));
-		const d3n = new D3Node();
-		const svg = d3n.createSVG(null, null, {preserveAspectRatio: 'none', width: '100%', height: '100%', viewBox: `0 0 ${width} ${height}`});
+		const fakedom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+		const d3Element = select(fakedom.window.document).select('body');
+		const svg = d3Element.append('svg')
+			.attr('xmlns', 'http://www.w3.org/2000/svg')
+			.attr('preserveAspectRatio', 'none')
+			.attr('width', '100%')
+			.attr('height', '100%')
+			.attr('viewBox', `0 0 ${width} ${height}`);
 		svg
 			.append('path')
 			.datum(maxArray)
 			.attr('stroke', 'green')
 			.attr('fill', 'darkgreen')
-			.attr('d', waveArea);
-		return d3n.svgString();
+			.attr('d', waveArea as any);
+		const node = svg.node();
+		return node?.outerHTML || '';
 	}
 
 }
