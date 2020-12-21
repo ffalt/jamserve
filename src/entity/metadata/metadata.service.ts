@@ -20,7 +20,7 @@ import {CoverArtArchive} from '../../modules/audio/clients/coverartarchive-rest-
 import {MusicBrainz} from '../../modules/audio/clients/musicbrainz-rest-data';
 import {Op} from '../../modules/orm';
 import {ApiBinaryResult, InvalidParamError} from '../../modules/rest';
-import request from 'request';
+import fetch from 'node-fetch';
 
 const log = logger('Metadata');
 
@@ -241,11 +241,14 @@ export class MetaDataService {
 		if (!this.audioModule.coverArtArchive.enabled) {
 			throw new Error('External service is disabled');
 		}
-		if (!url || !(url.startsWith('http://coverartarchive.org') || url.startsWith('https://coverartarchive.org'))) {
+		if (!url || !(url.match(/^http(s)?:\/\/coverartarchive.org/))) {
 			return Promise.reject(InvalidParamError('url'));
 		}
+		const response = await fetch(url);
+		if (!response.ok) throw new Error(`Unexpected coverartarchive response ${response.statusText}`);
+		const buffer = await response.buffer();
 		return {
-			pipe: request(url)
+			buffer: {buffer, contentType: response.headers.get('content-type') || 'image'}
 		};
 	}
 }
