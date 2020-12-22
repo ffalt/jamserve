@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.11](https://github.com/ffalt/jamserve/compare/v0.4.10...v0.4.11) (2020-12-22)
+
+
+### Bug Fixes
+
+* **health:** do not report hints for child multialbum folders ([1b1cadc](https://github.com/ffalt/jamserve/commit/1b1cadcfb4a80a6871dd51fd2710c22d7ca08605))
+* **meta:** concat url parameter ([6c6d726](https://github.com/ffalt/jamserve/commit/6c6d726a044111ce7e3d143820c3f714846b0af1))
+* **worker:** cleanup thumbnails, transcodings on removal or changes ([f9e70d2](https://github.com/ffalt/jamserve/commit/f9e70d211bceb1374f10e7e401e363eabc07d204))
+
 ### [0.4.10](https://github.com/ffalt/jamserve/compare/v0.4.9...v0.4.10) (2020-12-21)
 
 ### [0.4.9](https://github.com/ffalt/jamserve/compare/v0.4.8...v0.4.9) (2020-12-18)
