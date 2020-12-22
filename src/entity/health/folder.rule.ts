@@ -14,12 +14,40 @@ interface FolderRuleInfo {
 	run(orm: Orm, folder: Folder, parents: Array<Folder>): Promise<RuleResult | undefined>;
 }
 
+function isAlbumTopMostFolder(orm: Orm, folder: Folder, parents: Array<Folder>): boolean {
+	if (folder.folderType === FolderType.multialbum) {
+		const parent = parents[parents.length - 1];
+		if (parent && parent.folderType === FolderType.multialbum) {
+			return false;
+		}
+	}
+	return (FolderTypesAlbum.includes(folder.folderType));
+}
+
+async function validateFolderArtwork(orm: Orm, folder: Folder): Promise<RuleResult | undefined> {
+	const artwork = await getFolderDisplayArtwork(orm, folder);
+	if (artwork && (artwork.format === 'invalid')) {
+		return {details: [{reason: 'Broken or unsupported File Format'}]};
+	}
+	if (artwork && artwork.path) {
+		let actual = fileSuffix(artwork.name);
+		if (actual === 'jpg') {
+			actual = 'jpeg';
+		}
+		const expected = artwork.format;
+		if (actual !== expected) {
+			return {details: [{reason: 'Wrong File Extension', actual, expected}]};
+		}
+	}
+	return;
+}
+
 const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumTagsExists,
 		name: 'Album folder values are missing',
-		run: async (orm, folder): Promise<RuleResult | undefined> => {
-			if (FolderTypesAlbum.includes(folder.folderType)) {
+		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
+			if (isAlbumTopMostFolder(orm, folder, parents)) {
 				const missing = [];
 				if (!folder.album) {
 					missing.push('album');
@@ -52,8 +80,8 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumMBIDExists,
 		name: 'Album folder musicbrainz id are missing',
-		run: async (orm, folder): Promise<RuleResult | undefined> => {
-			if (FolderTypesAlbum.includes(folder.folderType)) {
+		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
+			if (isAlbumTopMostFolder(orm, folder, parents)) {
 				const missing = [];
 				if (!folder.mbReleaseID) {
 					missing.push('musicbrainz album id');
@@ -95,30 +123,23 @@ const folderRules: Array<FolderRuleInfo> = [
 		name: 'Album folder name is not conform',
 		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
 
-			function getNiceOtherFolderName(s: string): string {
-				let name = s
-					.replace(/[!?]/g, '')
-					.replace(/< >/g, ' - ')
-					.replace(/<>/g, ' - ')
+			function sanitizeName(s: string): string {
+				return s
+					.replace(/[!?]/g, '_')
+					.replace(/< ?>/g, ' - ')
 					.replace(/[/]/g, '-')
 					.replace(/\.\.\./g, '…')
 					.replace(/ {2}/g, ' ')
 					.trim();
-				name = replaceFolderSystemChars(name, '_');
-				return name.trim();
+			}
+
+			function getNiceOtherFolderName(s: string): string {
+				return replaceFolderSystemChars(sanitizeName(s), '_').trim();
 			}
 
 			function getNiceAlbumFolderName(): string {
 				const year = folder.year ? folder.year.toString() : '';
-				let name = (folder.album || '')
-					.replace(/[!?]/g, '')
-					.replace(/< >/g, ' - ')
-					.replace(/<>/g, ' - ')
-					.replace(/[/]/g, '-')
-					.replace(/\.\.\./g, '…')
-					.replace(/ {2}/g, ' ')
-					.trim();
-				name = replaceFolderSystemChars(name, '_');
+				const name = replaceFolderSystemChars(sanitizeName(folder.album || ''), '_');
 				const s = (year.length > 0 ? `[${replaceFolderSystemChars(year, '_')}] ` : '') + name;
 				return s.trim();
 			}
@@ -140,7 +161,7 @@ const folderRules: Array<FolderRuleInfo> = [
 				return;
 			}
 
-			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum)) {
+			if (isAlbumTopMostFolder(orm, folder, parents)) {
 				const hasArtist = parents.find(p => p.folderType === FolderType.artist);
 				if (hasArtist) {
 					if ((folder.album) && (folder.year) && (folder.year > 0)) {
@@ -157,8 +178,8 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumImageExists,
 		name: 'Album folder image is missing',
-		run: async (orm, folder): Promise<RuleResult | undefined> => {
-			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum && (await folder.children.count()) > 0)) {
+		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
+			if (isAlbumTopMostFolder(orm, folder, parents)) {
 				const artwork = await getFolderDisplayArtwork(orm, folder);
 				if (!artwork) {
 					return {};
@@ -170,22 +191,9 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumImageValid,
 		name: 'Album folder image is invalid',
-		run: async (orm, folder): Promise<RuleResult | undefined> => {
-			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum && (await folder.children.count()) > 0)) {
-				const artwork = await getFolderDisplayArtwork(orm, folder);
-				if (artwork && (artwork.format === 'invalid')) {
-					return {details: [{reason: 'Broken or unsupported File Format'}]};
-				}
-				if (artwork && artwork.path) {
-					let actual = fileSuffix(artwork.name);
-					if (actual === 'jpg') {
-						actual = 'jpeg';
-					}
-					const expected = artwork.format;
-					if (actual !== expected) {
-						return {details: [{reason: 'Wrong File Extension', actual, expected}]};
-					}
-				}
+		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
+			if (isAlbumTopMostFolder(orm, folder, parents)) {
+				return validateFolderArtwork(orm, folder);
 			}
 			return;
 		}
@@ -193,8 +201,8 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumImageQuality,
 		name: 'Album folder image is of low quality',
-		run: async (orm, folder): Promise<RuleResult | undefined> => {
-			if ((folder.folderType === FolderType.album) || (folder.folderType === FolderType.multialbum && (await folder.children.count()) > 0)) {
+		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
+			if (isAlbumTopMostFolder(orm, folder, parents)) {
 				const artwork = await getFolderDisplayArtwork(orm, folder);
 				if (artwork && artwork.height && artwork.width && (artwork.height < 300 || artwork.width < 300)) {
 					return {details: [{reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300'}]};
@@ -221,20 +229,7 @@ const folderRules: Array<FolderRuleInfo> = [
 		name: 'Artist folder image is invalid',
 		run: async (orm, folder): Promise<RuleResult | undefined> => {
 			if (folder.folderType === FolderType.artist) {
-				const artwork = await getFolderDisplayArtwork(orm, folder);
-				if (artwork && (artwork.format === 'invalid')) {
-					return {details: [{reason: 'Broken or unsupported File Format'}]};
-				}
-				if (artwork && artwork.format) {
-					let actual = fileSuffix(artwork.name);
-					if (actual === 'jpg') {
-						actual = 'jpeg';
-					}
-					const expected = artwork.format;
-					if (actual !== expected) {
-						return {details: [{reason: 'Wrong File Extension', actual, expected}]};
-					}
-				}
+				return validateFolderArtwork(orm, folder);
 			}
 			return;
 		}
