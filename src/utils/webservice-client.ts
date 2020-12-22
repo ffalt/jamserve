@@ -38,11 +38,14 @@ export class WebserviceClient {
 	protected async getJson<T>(url: string, parameters?: any | undefined): Promise<T> {
 		this.checkDisabled();
 		await this.limit();
-		const params = parameters ? new URLSearchParams(parameters) : '';
+		const params = parameters ? `?${new URLSearchParams(parameters)}` : '';
 		const response = await fetch(url + params, {
 			headers: {'User-Agent': this.userAgent},
 			timeout: 20000
 		});
+		if (response.status !== 200) {
+			return Promise.reject(new Error('Invalid Result'));
+		}
 		const result = await this.parseResult<T>(response);
 		if (result === undefined) {
 			return Promise.reject(new Error('Invalid Result'));
