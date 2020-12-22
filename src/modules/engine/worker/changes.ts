@@ -12,20 +12,17 @@ import {BaseWorker} from './tasks/base';
 import {Orm, OrmService} from '../services/orm.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {Genre} from '../../../entity/genre/genre';
+import {Collection, Reference} from '../../orm';
+import {Base} from '../../../entity/base/base';
 
 const log = logger('IO.Changes');
 
 class IdSet<T extends { id: string }> {
-	private set = new Set<string>();// map: Map<string, T> = new Map();
+	private set = new Set<string>();
 
 	get size(): number {
 		return this.set.size;
 	}
-
-	//
-	// get list(): Array<T> {
-	// 	return [...this.map.values()];
-	// }
 
 	add(item?: T): void {
 		if (item) {
@@ -118,123 +115,7 @@ export function logChanges(changes: Changes): void {
 export class ChangesWorker extends BaseWorker {
 	@Inject
 	ormService!: OrmService;
-
-	/*
-		async cleanChanges(changes: Changes): Promise<void> {
-			let imageCleanIds = new IdSet<string>();
-			let trackCleanIds = new IdSet<string>();
-			if (changes.removedAlbums.length > 0) {
-				log.debug('Removing Albums:', changes.removedAlbums.length);
-				const albumIDs = changes.removedAlbums.map(a => a.id);
-				await this.store.albumStore.remove(albumIDs);
-				await this.store.stateStore.removeByQuery({destIDs: albumIDs, type: DBObjectType.album});
-				imageCleanIds = new IdSet<string>([...imageCleanIds, ...albumIDs]);
-			}
-			if (changes.removedArtists.length > 0) {
-				log.debug('Removing Artists:', changes.removedArtists.length);
-				const artistIDs = changes.removedArtists.map(a => a.id);
-				await this.store.artistStore.remove(artistIDs);
-				await this.store.stateStore.removeByQuery({destIDs: artistIDs, type: DBObjectType.artist});
-				imageCleanIds = new IdSet<string>([...imageCleanIds, ...artistIDs]);
-			}
-			if (changes.removedFolders.length > 0) {
-				log.debug('Removing Folders:', changes.removedFolders.length);
-				const folderIDs = changes.removedFolders.map(folder => folder.id);
-				await this.store.folderStore.remove(folderIDs);
-				await this.store.stateStore.removeByQuery({destIDs: folderIDs, type: DBObjectType.folder});
-				imageCleanIds = new IdSet<string>([...imageCleanIds, ...folderIDs]);
-			}
-			if (changes.removedSeries.length > 0) {
-				log.debug('Removing Series:', changes.removedSeries.length);
-				const seriesIDs = changes.removedSeries.map(series => series.id);
-				await this.store.seriesStore.remove(seriesIDs);
-				await this.store.stateStore.removeByQuery({destIDs: seriesIDs, type: DBObjectType.series});
-				imageCleanIds = new IdSet<string>([...imageCleanIds, ...seriesIDs]);
-			}
-			if (changes.removedTracks.length > 0) {
-				log.debug('Removing Tracks:', changes.removedTracks.length);
-				const trackIDs = changes.removedTracks.map(track => track.id);
-				imageCleanIds = new IdSet<string>([...imageCleanIds, ...trackIDs]);
-				trackCleanIds = new IdSet<string>([...trackCleanIds, ...trackIDs]);
-				await this.store.trackStore.remove(trackIDs);
-				await this.store.stateStore.removeByQuery({destIDs: trackIDs, type: DBObjectType.track});
-				await this.store.bookmarkStore.removeByQuery({destIDs: trackIDs});
-				const playlists = await this.store.playlistStore.search({trackIDs});
-				if (playlists.items.length > 0) {
-					for (const playlist of playlists.items) {
-						const count = playlist.trackIDs.length;
-						playlist.trackIDs = playlist.trackIDs.filter(id => !trackIDs.includes(id));
-						if (count !== playlist.trackIDs.length) {
-							log.debug('Updating Playlist:', playlist.name);
-							await updatePlayListTracks(this.store.trackStore, playlist);
-							await this.store.playlistStore.replace(playlist);
-						}
-					}
-
-				}
-			}
-			if (changes.updateAlbums.length > 0) {
-				const albumIDs = changes.updateAlbums.map(a => a.id);
-				imageCleanIds = new IdSet<string>([...imageCleanIds, ...albumIDs]);
-			}
-			if (changes.updateArtists.length > 0) {
-				const artistIDs = changes.updateArtists.map(a => a.id);
-				imageCleanIds = new IdSet<string>([...imageCleanIds, ...artistIDs]);
-			}
-			if (changes.updateFolders.length > 0) {
-				const folderIDs = changes.updateFolders.map(f => f.id);
-				imageCleanIds = new IdSet<string>([...imageCleanIds, ...folderIDs]);
-			}
-			if (changes.updateSeries.length > 0) {
-				const seriesIDs = changes.updateSeries.map(s => s.id);
-				imageCleanIds = new IdSet<string>([...imageCleanIds, ...seriesIDs]);
-			}
-			if (changes.updateTracks.length > 0) {
-				for (const t of changes.updateTracks) {
-					imageCleanIds.add(t.track.albumID);
-					imageCleanIds.add(t.oldTrack.albumID);
-				}
-			}
-			let ids = [...imageCleanIds];
-			if (ids.length > 0) {
-				log.debug('Cleaning Image Cache IDs:', ids.length);
-				await this.imageModule.clearImageCacheByIDs(ids);
-			}
-			ids = [...trackCleanIds];
-			if (ids.length > 0) {
-				log.debug('Cleaning Audio Cache IDs:', ids.length);
-				await this.audioModule.clearCacheByIDs(ids);
-			}
-		}
-
-		async storeChanges(changes: Changes): Promise<void> {
-			log.debug('Storing New Tracks:', changes.newTracks.length);
-			await this.store.trackStore.bulk(changes.newTracks);
-			log.debug('Updating Tracks:', changes.updateTracks.length);
-			await this.store.trackStore.upsert(changes.updateTracks.map(t => t.track));
-			log.debug('Storing New Folders:', changes.newTracks.length);
-			await this.store.folderStore.bulk(changes.newFolders);
-			log.debug('Updating Folders:', changes.updateFolders.length);
-			await this.store.folderStore.upsert(changes.updateFolders);
-			log.debug('Storing New Albums:', changes.newTracks.length);
-			await this.store.albumStore.bulk(changes.newAlbums);
-			log.debug('Updating Albums:', changes.updateAlbums.length);
-			await this.store.albumStore.upsert(changes.updateAlbums);
-			log.debug('Storing New Artists:', changes.newTracks.length);
-			await this.store.artistStore.bulk(changes.newArtists);
-			log.debug('Updating Artists:', changes.updateArtists.length);
-			await this.store.artistStore.upsert(changes.updateArtists);
-			log.debug('Storing New Series:', changes.newTracks.length);
-			await this.store.seriesStore.bulk(changes.newSeries);
-			log.debug('Updating Series:', changes.updateSeries.length);
-			await this.store.seriesStore.upsert(changes.updateSeries);
-		}
-
-		async mergeMatch(root: Root, rootMatch: MatchDir, rebuildDirTag: (dir: MatchDir) => boolean, forceTrackMetaRefresh: boolean, changes: Changes): Promise<void> {
-			const merger = new MatchDirMerge(this.audioModule, this.imageModule, this.store, this.settings, root.strategy || RootScanStrategy.auto);
-			await merger.merge(rootMatch, root.id, rebuildDirTag, forceTrackMetaRefresh, changes);
-		}
-	*/
+	debugValidate = false;
 
 	async start(rootID: string): Promise<{ changes: Changes; orm: Orm; root: Root }> {
 		const orm = this.ormService.fork(true);
@@ -242,15 +123,168 @@ export class ChangesWorker extends BaseWorker {
 		return {root, orm, changes: new Changes()};
 	}
 
+	async validateCollection(objID: string, collection: Collection<any>, property: string, object: string): Promise<void> {
+		const count = await collection.count();
+		const items = await collection.getItems();
+		if (count !== items.length) {
+			log.error(`Invalid ${property} Count on ${object} [${objID}]`);
+		}
+	}
+
+	async validateReference(objID: string, collection: Reference<any>, property: string, object: string, maybeNull: boolean): Promise<void> {
+		const id = await collection.id();
+		if (!maybeNull && !id) {
+			log.error(`Missing ${property} ID on ${object} [${objID}]`);
+		}
+		const item = await collection.get();
+		if (!maybeNull && !item) {
+			log.error(`Invalid ${property} on ${object} [${objID}]`);
+		}
+		if (id && !item) {
+			log.error(`Invalid ${property} Reference on ${object} [${objID}]`);
+		}
+	}
+
+	private async validateData(orm: Orm): Promise<void> {
+		log.debug(`Validating DB`);
+		const albums = await orm.Album.all();
+		for (const album of albums) {
+			await this.validateReference(album.id, album.artist, 'Artist', 'Album', false);
+			await this.validateReference(album.id, album.series, 'Series', 'Album', true);
+			await this.validateCollection(album.id, album.folders, 'Folders', 'Album');
+			await this.validateCollection(album.id, album.tracks, 'Tracks', 'Album');
+			await this.validateCollection(album.id, album.genres, 'Genres', 'Album');
+			await this.validateCollection(album.id, album.roots, 'Roots', 'Album');
+		}
+		const artists = await orm.Artist.all();
+		for (const artist of artists) {
+			await this.validateCollection(artist.id, artist.folders, 'Folders', 'Artist');
+			await this.validateCollection(artist.id, artist.tracks, 'Tracks', 'Artist');
+			await this.validateCollection(artist.id, artist.albums, 'Albums', 'Artist');
+			await this.validateCollection(artist.id, artist.genres, 'Genres', 'Artist');
+			await this.validateCollection(artist.id, artist.roots, 'Roots', 'Artist');
+			await this.validateCollection(artist.id, artist.series, 'Series', 'Artist');
+		}
+		const series = await orm.Series.all();
+		for (const serie of series) {
+			await this.validateCollection(serie.id, serie.folders, 'Folders', 'Series');
+			await this.validateCollection(serie.id, serie.tracks, 'Tracks', 'Series');
+			await this.validateCollection(serie.id, serie.albums, 'Albums', 'Series');
+			await this.validateCollection(serie.id, serie.roots, 'Roots', 'Series');
+		}
+		const folders = await orm.Folder.all();
+		for (const folder of folders) {
+			await this.validateReference(folder.id, folder.root, 'Root', 'Folder', false);
+			await this.validateCollection(folder.id, folder.artworks, 'Artwork', 'Folder');
+			await this.validateCollection(folder.id, folder.children, 'Children', 'Folder');
+			await this.validateCollection(folder.id, folder.artists, 'Artists', 'Folder');
+			await this.validateCollection(folder.id, folder.tracks, 'Tracks', 'Folder');
+			await this.validateCollection(folder.id, folder.albums, 'Albums', 'Folder');
+		}
+		const tracks = await orm.Track.all();
+		for (const track of tracks) {
+			await this.validateReference(track.id, track.albumArtist, 'AlbumArtist', 'Track', false);
+			await this.validateReference(track.id, track.artist, 'Artist', 'Track', false);
+			await this.validateReference(track.id, track.album, 'Album', 'Track', false);
+			await this.validateReference(track.id, track.folder, 'Folder', 'Track', false);
+			await this.validateReference(track.id, track.root, 'Root', 'Track', false);
+			await this.validateReference(track.id, track.series, 'Series', 'Track', true);
+			await this.validateCollection(track.id, track.playlistEntries, 'playlistEntries', 'Track');
+			await this.validateCollection(track.id, track.playqueueEntries, 'playqueueEntries', 'Track');
+			await this.validateCollection(track.id, track.genres, 'Genres', 'Track');
+		}
+		const playlists = await orm.Playlist.all();
+		for (const playlist of playlists) {
+			await this.validateCollection(playlist.id, playlist.entries, 'Entries', 'Album');
+		}
+		const states = await orm.State.all();
+		for (const state of states) {
+			const repo = orm.byType(state.destType);
+			if (!repo) {
+				log.error(`Invalid DestType "${state.destType}" in State [${state.id}]`)
+			} else {
+				const obj = await repo.findOneByID(state.destID);
+				if (!obj) {
+					log.error(`Missing DestObj "${state.destID}" in State [${state.id}]`)
+				}
+			}
+		}
+	}
+
 	async finish(orm: Orm, changes: Changes, root: Root): Promise<Changes> {
-		// TODO: clean image caches
 		const metaMerger = new MetaMerger(orm, changes, root.id);
 		await metaMerger.mergeMeta();
+		await this.mergeDependendRemovals(orm, changes);
 		await this.mergeRemovals(orm, changes);
+		await this.cleanCacheFiles(changes);
 		changes.end = Date.now();
 		logChanges(changes);
 		this.ormService.clearCache();
+		if (this.debugValidate) {
+			await this.validateData(this.ormService.fork(true));
+		}
 		return changes;
+	}
+
+	private async cleanCacheFiles(changes: Changes) {
+		const imageCleanIds = new IdSet<Base>();
+		for (const changeSet of [
+			changes.albums, changes.artists, changes.artworks, changes.folders,
+			changes.roots, changes.tracks, changes.series, changes.genres
+		]) {
+			imageCleanIds.appendIDs(changeSet.removed.ids());
+			imageCleanIds.appendIDs(changeSet.updated.ids());
+		}
+		const imageIDs = imageCleanIds.ids();
+		if (imageIDs.length > 0) {
+			log.debug('Cleaning Image Cache IDs:', imageIDs.length);
+			await this.imageModule.clearImageCacheByIDs(imageIDs);
+		}
+
+		const trackCleanIds = new IdSet<Base>();
+		trackCleanIds.appendIDs(changes.tracks.removed.ids());
+		trackCleanIds.appendIDs(changes.tracks.updated.ids());
+
+		const trackIDs = trackCleanIds.ids();
+		if (trackIDs.length > 0) {
+			log.debug('Cleaning Audio Cache IDs:', trackIDs.length);
+			await this.audioModule.clearCacheByIDs(trackIDs);
+		}
+	}
+
+	private async mergeDependendRemovals(orm: Orm, changes: Changes) {
+		const stateCleanIds = new IdSet<Base>();
+		const trackIDs = changes.tracks.removed.ids();
+		stateCleanIds.appendIDs(trackIDs);
+		stateCleanIds.appendIDs(changes.albums.removed.ids());
+		stateCleanIds.appendIDs(changes.artists.removed.ids());
+		stateCleanIds.appendIDs(changes.folders.removed.ids());
+		stateCleanIds.appendIDs(changes.genres.removed.ids());
+		stateCleanIds.appendIDs(changes.roots.removed.ids());
+		stateCleanIds.appendIDs(changes.series.removed.ids());
+		const stateDestIDs = stateCleanIds.ids();
+		if (stateDestIDs.length > 0) {
+			const states = await orm.State.findIDs({where: {destID: stateDestIDs}});
+			await orm.State.removeLaterByIDs(states);
+		}
+		const stateBookmarkIDs = await orm.Bookmark.findIDs({where: {track: trackIDs}});
+		if (stateBookmarkIDs.length > 0) {
+			await orm.Bookmark.removeLaterByIDs(stateBookmarkIDs);
+		}
+		const playlistEntryIDs = await orm.PlaylistEntry.findIDs({where: {track: trackIDs}});
+		if (playlistEntryIDs.length > 0) {
+			await orm.PlaylistEntry.removeLaterByIDs(playlistEntryIDs);
+			// TODO: collect and update playlists
+			/*
+							log.debug('Updating Playlist:', playlist.name);
+							await updatePlayListTracks(this.store.trackStore, playlist);
+							await this.store.playlistStore.replace(playlist);
+			*/
+		}
+		if (orm.em.hasChanges()) {
+			log.debug('Syncing Removal Dependend Updates to DB');
+			await orm.em.flush();
+		}
 	}
 
 	private async mergeRemovals(orm: Orm, changes: Changes) {
@@ -261,6 +295,7 @@ export class ChangesWorker extends BaseWorker {
 		await orm.Album.removeLaterByIDs(changes.albums.removed.ids());
 		await orm.Artist.removeLaterByIDs(changes.artists.removed.ids());
 		await orm.Series.removeLaterByIDs(changes.series.removed.ids());
+
 		if (orm.em.hasChanges()) {
 			log.debug('Syncing Removal Updates to DB');
 			await orm.em.flush();
