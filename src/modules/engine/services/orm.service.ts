@@ -132,7 +132,7 @@ export class Orm {
 		return list;
 	}
 
-	byType(destType: DBObjectType) {
+	byType(destType: DBObjectType): BaseRepository<any, any, any> | undefined {
 		return [
 			this.Album,
 			this.Artist,
@@ -155,7 +155,7 @@ export class Orm {
 			this.Tag,
 			this.Track,
 			this.User
-		].find(repo=> repo.objType === destType);
+		].find(repo => repo.objType === destType);
 	}
 
 	public async findInImageTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {

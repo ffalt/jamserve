@@ -1,4 +1,4 @@
-import {ApiBinaryResult, Controller, Ctx, Get, InvalidParamError, QueryParams} from '../../modules/rest';
+import {ApiBinaryResult, Controller, Ctx, Get, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {MetaDataResult} from './metadata.model';
 import {

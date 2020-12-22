@@ -201,11 +201,11 @@ export class ChangesWorker extends BaseWorker {
 		for (const state of states) {
 			const repo = orm.byType(state.destType);
 			if (!repo) {
-				log.error(`Invalid DestType "${state.destType}" in State [${state.id}]`)
+				log.error(`Invalid DestType "${state.destType}" in State [${state.id}]`);
 			} else {
 				const obj = await repo.findOneByID(state.destID);
 				if (!obj) {
-					log.error(`Missing DestObj "${state.destID}" in State [${state.id}]`)
+					log.error(`Missing DestObj "${state.destID}" in State [${state.id}]`);
 				}
 			}
 		}
@@ -226,7 +226,7 @@ export class ChangesWorker extends BaseWorker {
 		return changes;
 	}
 
-	private async cleanCacheFiles(changes: Changes) {
+	private async cleanCacheFiles(changes: Changes): Promise<void> {
 		const imageCleanIds = new IdSet<Base>();
 		for (const changeSet of [
 			changes.albums, changes.artists, changes.artworks, changes.folders,
@@ -252,7 +252,7 @@ export class ChangesWorker extends BaseWorker {
 		}
 	}
 
-	private async mergeDependendRemovals(orm: Orm, changes: Changes) {
+	private async mergeDependendRemovals(orm: Orm, changes: Changes): Promise<void> {
 		const stateCleanIds = new IdSet<Base>();
 		const trackIDs = changes.tracks.removed.ids();
 		stateCleanIds.appendIDs(trackIDs);
@@ -287,7 +287,7 @@ export class ChangesWorker extends BaseWorker {
 		}
 	}
 
-	private async mergeRemovals(orm: Orm, changes: Changes) {
+	private async mergeRemovals(orm: Orm, changes: Changes): Promise<void> {
 		await orm.Track.removeLaterByIDs(changes.tracks.removed.ids());
 		await orm.Artwork.removeLaterByIDs(changes.artworks.removed.ids());
 		await orm.Folder.removeLaterByIDs(changes.folders.removed.ids());
