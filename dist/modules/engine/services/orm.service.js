@@ -89,6 +89,31 @@ class Orm {
         }
         return list;
     }
+    byType(destType) {
+        return [
+            this.Album,
+            this.Artist,
+            this.Artwork,
+            this.Bookmark,
+            this.Episode,
+            this.Folder,
+            this.Genre,
+            this.Root,
+            this.MetaData,
+            this.PlayQueue,
+            this.PlayQueueEntry,
+            this.Playlist,
+            this.PlaylistEntry,
+            this.Podcast,
+            this.Radio,
+            this.State,
+            this.Series,
+            this.Session,
+            this.Tag,
+            this.Track,
+            this.User
+        ].find(repo => repo.objType === destType);
+    }
     async findInImageTypes(id) {
         return this.findInReposTypes(id, [
             this.Album,

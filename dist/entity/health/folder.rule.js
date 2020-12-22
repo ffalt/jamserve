@@ -8,12 +8,38 @@ const path_1 = __importDefault(require("path"));
 const fs_utils_1 = require("../../utils/fs-utils");
 const enums_1 = require("../../types/enums");
 const folder_service_1 = require("../folder/folder.service");
+function isAlbumTopMostFolder(orm, folder, parents) {
+    if (folder.folderType === enums_1.FolderType.multialbum) {
+        const parent = parents[parents.length - 1];
+        if (parent && parent.folderType === enums_1.FolderType.multialbum) {
+            return false;
+        }
+    }
+    return (enums_1.FolderTypesAlbum.includes(folder.folderType));
+}
+async function validateFolderArtwork(orm, folder) {
+    const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
+    if (artwork && (artwork.format === 'invalid')) {
+        return { details: [{ reason: 'Broken or unsupported File Format' }] };
+    }
+    if (artwork && artwork.path) {
+        let actual = fs_utils_1.fileSuffix(artwork.name);
+        if (actual === 'jpg') {
+            actual = 'jpeg';
+        }
+        const expected = artwork.format;
+        if (actual !== expected) {
+            return { details: [{ reason: 'Wrong File Extension', actual, expected }] };
+        }
+    }
+    return;
+}
 const folderRules = [
     {
         id: enums_1.FolderHealthID.albumTagsExists,
         name: 'Album folder values are missing',
-        run: async (orm, folder) => {
-            if (enums_1.FolderTypesAlbum.includes(folder.folderType)) {
+        run: async (orm, folder, parents) => {
+            if (isAlbumTopMostFolder(orm, folder, parents)) {
                 const missing = [];
                 if (!folder.album) {
                     missing.push('album');
@@ -46,8 +72,8 @@ const folderRules = [
     {
         id: enums_1.FolderHealthID.albumMBIDExists,
         name: 'Album folder musicbrainz id are missing',
-        run: async (orm, folder) => {
-            if (enums_1.FolderTypesAlbum.includes(folder.folderType)) {
+        run: async (orm, folder, parents) => {
+            if (isAlbumTopMostFolder(orm, folder, parents)) {
                 const missing = [];
                 if (!folder.mbReleaseID) {
                     missing.push('musicbrainz album id');
@@ -89,29 +115,21 @@ const folderRules = [
         id: enums_1.FolderHealthID.albumNameConform,
         name: 'Album folder name is not conform',
         run: async (orm, folder, parents) => {
-            function getNiceOtherFolderName(s) {
-                let name = s
-                    .replace(/[!?]/g, '')
-                    .replace(/< >/g, ' - ')
-                    .replace(/<>/g, ' - ')
+            function sanitizeName(s) {
+                return s
+                    .replace(/[!?]/g, '_')
+                    .replace(/< ?>/g, ' - ')
                     .replace(/[/]/g, '-')
                     .replace(/\.\.\./g, '…')
                     .replace(/ {2}/g, ' ')
                     .trim();
-                name = fs_utils_1.replaceFolderSystemChars(name, '_');
-                return name.trim();
+            }
+            function getNiceOtherFolderName(s) {
+                return fs_utils_1.replaceFolderSystemChars(sanitizeName(s), '_').trim();
             }
             function getNiceAlbumFolderName() {
                 const year = folder.year ? folder.year.toString() : '';
-                let name = (folder.album || '')
-                    .replace(/[!?]/g, '')
-                    .replace(/< >/g, ' - ')
-                    .replace(/<>/g, ' - ')
-                    .replace(/[/]/g, '-')
-                    .replace(/\.\.\./g, '…')
-                    .replace(/ {2}/g, ' ')
-                    .trim();
-                name = fs_utils_1.replaceFolderSystemChars(name, '_');
+                const name = fs_utils_1.replaceFolderSystemChars(sanitizeName(folder.album || ''), '_');
                 const s = (year.length > 0 ? `[${fs_utils_1.replaceFolderSystemChars(year, '_')}] ` : '') + name;
                 return s.trim();
             }
@@ -129,7 +147,7 @@ const folderRules = [
                 }
                 return;
             }
-            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum)) {
+            if (isAlbumTopMostFolder(orm, folder, parents)) {
                 const hasArtist = parents.find(p => p.folderType === enums_1.FolderType.artist);
                 if (hasArtist) {
                     if ((folder.album) && (folder.year) && (folder.year > 0)) {
@@ -146,8 +164,8 @@ const folderRules = [
     {
         id: enums_1.FolderHealthID.albumImageExists,
         name: 'Album folder image is missing',
-        run: async (orm, folder) => {
-            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum && (await folder.children.count()) > 0)) {
+        run: async (orm, folder, parents) => {
+            if (isAlbumTopMostFolder(orm, folder, parents)) {
                 const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
                 if (!artwork) {
                     return {};
@@ -159,22 +177,9 @@ const folderRules = [
     {
         id: enums_1.FolderHealthID.albumImageValid,
         name: 'Album folder image is invalid',
-        run: async (orm, folder) => {
-            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum && (await folder.children.count()) > 0)) {
-                const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
-                if (artwork && (artwork.format === 'invalid')) {
-                    return { details: [{ reason: 'Broken or unsupported File Format' }] };
-                }
-                if (artwork && artwork.path) {
-                    let actual = fs_utils_1.fileSuffix(artwork.name);
-                    if (actual === 'jpg') {
-                        actual = 'jpeg';
-                    }
-                    const expected = artwork.format;
-                    if (actual !== expected) {
-                        return { details: [{ reason: 'Wrong File Extension', actual, expected }] };
-                    }
-                }
+        run: async (orm, folder, parents) => {
+            if (isAlbumTopMostFolder(orm, folder, parents)) {
+                return validateFolderArtwork(orm, folder);
             }
             return;
         }
@@ -182,8 +187,8 @@ const folderRules = [
     {
         id: enums_1.FolderHealthID.albumImageQuality,
         name: 'Album folder image is of low quality',
-        run: async (orm, folder) => {
-            if ((folder.folderType === enums_1.FolderType.album) || (folder.folderType === enums_1.FolderType.multialbum && (await folder.children.count()) > 0)) {
+        run: async (orm, folder, parents) => {
+            if (isAlbumTopMostFolder(orm, folder, parents)) {
                 const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
                 if (artwork && artwork.height && artwork.width && (artwork.height < 300 || artwork.width < 300)) {
                     return { details: [{ reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300' }] };
@@ -210,20 +215,7 @@ const folderRules = [
         name: 'Artist folder image is invalid',
         run: async (orm, folder) => {
             if (folder.folderType === enums_1.FolderType.artist) {
-                const artwork = await folder_service_1.getFolderDisplayArtwork(orm, folder);
-                if (artwork && (artwork.format === 'invalid')) {
-                    return { details: [{ reason: 'Broken or unsupported File Format' }] };
-                }
-                if (artwork && artwork.format) {
-                    let actual = fs_utils_1.fileSuffix(artwork.name);
-                    if (actual === 'jpg') {
-                        actual = 'jpeg';
-                    }
-                    const expected = artwork.format;
-                    if (actual !== expected) {
-                        return { details: [{ reason: 'Wrong File Extension', actual, expected }] };
-                    }
-                }
+                return validateFolderArtwork(orm, folder);
             }
             return;
         }
