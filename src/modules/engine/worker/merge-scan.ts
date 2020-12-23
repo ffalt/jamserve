@@ -47,43 +47,57 @@ export class WorkerMergeScan {
 	}
 
 	private static getMultiAlbumFolderType(node: MergeNode): FolderType {
-		const a = node.children.find(d => {
-			return (d.folder.folderType === FolderType.artist);
-		});
+		// Multi-Album ( eg. Album with CD1, CD2, etc)
+		const a = node.children.find(d => d.folder.folderType === FolderType.artist);
 		return a ? FolderType.collection : FolderType.multialbum;
+	}
+
+	private static getMultipleAlbumFolderType(metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
+		// Multiple Albums ( different Albums )
+		return (metaStat.hasMultipleArtists || strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
 	}
 
 	private static getMixedFolderType(node: MergeNode, _: MetaStat, __: RootScanStrategy): FolderType {
 		return WorkerMergeScan.getMultiAlbumFolderType(node);
 	}
 
+	private static getTrackFolderType(node: MergeNode, metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
+		if (metaStat.hasMultipleAlbums && metaStat.albumType === AlbumType.series) {
+			return FolderType.artist;
+		}
+		const dirCount = node.children.filter(d => d.folder.folderType !== FolderType.extras).length;
+		if (dirCount > 0) {
+			return WorkerMergeScan.getMixedFolderType(node, metaStat, strategy);
+		}
+		return FolderType.album;
+	}
+
 	private static getFolderType(node: MergeNode, metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
 		if (node.folder.level === 0) {
+			// root folder is always a collection
 			return FolderType.collection;
 		}
 		if (WorkerMergeScan.isExtraFolder(node)) {
+			// special folder handling
 			return FolderType.extras;
 		}
 		if (metaStat.trackCount > 0) {
-			if (metaStat.hasMultipleAlbums && metaStat.albumType === AlbumType.series) {
-				return FolderType.artist;
-			}
-			const dirCount = node.children.filter(d => d.folder.folderType !== FolderType.extras).length;
-			if (dirCount > 0) {
-				return WorkerMergeScan.getMixedFolderType(node, metaStat, strategy);
-			}
-			return FolderType.album;
+			// has tracks
+			return this.getTrackFolderType(node, metaStat, strategy);
 		}
 		if (node.children.length === 0) {
-			return (metaStat.trackCount === 0) ? FolderType.extras : FolderType.album;
+			// no tracks, no children folder
+			return FolderType.extras;
 		}
+		// no tracks, has children folder
 		if (metaStat.hasMultipleAlbums) {
-			return (metaStat.hasMultipleArtists || strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
+			return WorkerMergeScan.getMultipleAlbumFolderType(metaStat, strategy);
 		}
 		if (node.children.length === 1) {
 			return (strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
 		}
-		if (!metaStat.hasMultipleArtists && node.children.filter(d => d.folder.folderType === FolderType.artist).length > 0) {
+		if (!metaStat.hasMultipleArtists && !!node.children.find(d => d.folder.folderType === FolderType.artist)) {
+			// choose artist folder, if it's not an pure album (without artist folders in children nodes)
 			return FolderType.artist;
 		}
 		return WorkerMergeScan.getMultiAlbumFolderType(node);

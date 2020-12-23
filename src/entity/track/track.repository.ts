@@ -21,10 +21,7 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 			case TrackOrderFields.parent:
 				return [['path', direction]];
 			case TrackOrderFields.filename:
-				return [
-					['path', direction],
-					['fileName', direction]
-				];
+				return [['path', direction], ['fileName', direction]];
 			case TrackOrderFields.album:
 				return [['albumORM', 'name', direction]];
 			case TrackOrderFields.trackNr:

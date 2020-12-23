@@ -10,6 +10,7 @@ import {MetaDataService} from '../metadata/metadata.service';
 import {IndexResult, IndexResultGroup} from '../base/base';
 import {GenreTransformService} from '../genre/genre.transform';
 import {ExtendedInfo} from '../metadata/metadata.model';
+import {GenreBase} from '../genre/genre.model';
 
 @InRequestScope
 export class FolderTransformService extends BaseTransformService {
@@ -28,6 +29,10 @@ export class FolderTransformService extends BaseTransformService {
 			await this.metaData.extInfo.byFolderAlbum(orm, o);
 	}
 
+	async folderGenres(orm: Orm, o: ORMFolder, user: User): Promise<Array<GenreBase>> {
+		return this.Genre.genreBases(orm, await o.genres.getItems(), {}, user);
+	}
+
 	async folderBase(orm: Orm, o: ORMFolder, folderArgs: IncludesFolderArgs, user: User): Promise<FolderBase> {
 		return {
 			id: o.id,
@@ -37,7 +42,7 @@ export class FolderTransformService extends BaseTransformService {
 			type: o.folderType,
 			level: o.level,
 			parentID: o.parent.id(),
-			genres: folderArgs.folderIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
+			genres: folderArgs.folderIncGenres ? await this.folderGenres(orm, o, user) : undefined,
 			trackCount: folderArgs.folderIncTrackCount ? await o.tracks.count() : undefined,
 			folderCount: folderArgs.folderIncChildFolderCount ? await o.children.count() : undefined,
 			artworkCount: folderArgs.folderIncArtworkCount ? await o.children.count() : undefined,
@@ -46,7 +51,7 @@ export class FolderTransformService extends BaseTransformService {
 			trackIDs: folderArgs.folderIncTrackIDs ? await o.tracks.getIDs() : undefined,
 			folderIDs: folderArgs.folderIncFolderIDs ? await o.children.getIDs() : undefined,
 			artworkIDs: folderArgs.folderIncArtworkIDs ? await o.artworks.getIDs() : undefined,
-			info: folderArgs.folderIncInfo ? await this.folderInfo(orm, o): undefined,
+			info: folderArgs.folderIncInfo ? await this.folderInfo(orm, o) : undefined,
 			state: folderArgs.folderIncSimilar ? await this.state(orm, o.id, DBObjectType.folder, user.id) : undefined
 		};
 	}
