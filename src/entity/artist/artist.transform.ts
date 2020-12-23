@@ -33,9 +33,9 @@ export class ArtistTransformService extends BaseTransformService {
 			genres: artistArgs.artistIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
 			albumTypes: o.albumTypes,
 			state: artistArgs.artistIncState ? await this.state(orm, o.id, DBObjectType.artist, user.id) : undefined,
-			trackIDs: artistArgs.artistIncTrackIDs ? (await o.tracks.getItems()).map(t => t.id) : undefined,
-			albumIDs: artistArgs.artistIncAlbumIDs ? (await o.albums.getItems()).map(a => a.id) : undefined,
-			seriesIDs: artistArgs.artistIncSeriesIDs ? (await o.series.getItems()).map(s => s.id) : undefined,
+			trackIDs: artistArgs.artistIncTrackIDs ? await o.tracks.getIDs() : undefined,
+			albumIDs: artistArgs.artistIncAlbumIDs ? await o.albums.getIDs() : undefined,
+			seriesIDs: artistArgs.artistIncSeriesIDs ? await o.series.getIDs() : undefined,
 			info: artistArgs.artistIncInfo ? await this.metaData.extInfo.byArtist(orm, o) : undefined
 		};
 	}

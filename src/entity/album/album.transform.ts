@@ -41,7 +41,7 @@ export class AlbumTransformService extends BaseTransformService {
 			seriesNr: o.seriesNr,
 			state: albumArgs.albumIncState ? await this.state(orm, o.id, DBObjectType.album, user.id) : undefined,
 			trackCount: albumArgs.albumIncTrackCount ? await o.tracks.count() : undefined,
-			trackIDs: albumArgs.albumIncTrackIDs ? (await o.tracks.getItems()).map(t => t.id) : undefined,
+			trackIDs: albumArgs.albumIncTrackIDs ? await o.tracks.getIDs() : undefined,
 			info: albumArgs.albumIncInfo ? await this.metaData.extInfo.byAlbum(orm, o) : undefined
 		};
 	}

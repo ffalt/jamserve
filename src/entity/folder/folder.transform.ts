@@ -5,11 +5,11 @@ import {Folder as ORMFolder} from './folder';
 import {IncludesFolderArgs, IncludesFolderChildrenArgs} from './folder.args';
 import {User} from '../user/user';
 import {FolderBase, FolderIndex, FolderParent, FolderTag} from './folder.model';
-import {ExtendedInfo} from '../metadata/metadata.model';
 import {DBObjectType, FolderType} from '../../types/enums';
 import {MetaDataService} from '../metadata/metadata.service';
 import {IndexResult, IndexResultGroup} from '../base/base';
 import {GenreTransformService} from '../genre/genre.transform';
+import {ExtendedInfo} from '../metadata/metadata.model';
 
 @InRequestScope
 export class FolderTransformService extends BaseTransformService {
@@ -22,15 +22,13 @@ export class FolderTransformService extends BaseTransformService {
 		return await Promise.all(list.map(o => this.folderBase(orm, o, folderArgs, user)));
 	}
 
+	async folderInfo(orm: Orm, o: ORMFolder): Promise<ExtendedInfo | undefined> {
+		return o.folderType === FolderType.artist ?
+			await this.metaData.extInfo.byFolderArtist(orm, o) :
+			await this.metaData.extInfo.byFolderAlbum(orm, o);
+	}
+
 	async folderBase(orm: Orm, o: ORMFolder, folderArgs: IncludesFolderArgs, user: User): Promise<FolderBase> {
-		let info: ExtendedInfo | undefined;
-		if (folderArgs.folderIncInfo) {
-			info =
-				o.folderType === FolderType.artist ?
-					await this.metaData.extInfo.byFolderArtist(orm, o) :
-					await this.metaData.extInfo.byFolderAlbum(orm, o);
-		}
-		const parentID = o.parent.id();
 		return {
 			id: o.id,
 			name: o.name,
@@ -38,17 +36,17 @@ export class FolderTransformService extends BaseTransformService {
 			created: o.createdAt.valueOf(),
 			type: o.folderType,
 			level: o.level,
-			parentID,
+			parentID: o.parent.id(),
 			genres: folderArgs.folderIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
 			trackCount: folderArgs.folderIncTrackCount ? await o.tracks.count() : undefined,
 			folderCount: folderArgs.folderIncChildFolderCount ? await o.children.count() : undefined,
 			artworkCount: folderArgs.folderIncArtworkCount ? await o.children.count() : undefined,
 			tag: folderArgs.folderIncTag ? await this.folderTag(o) : undefined,
 			parents: folderArgs.folderIncParents ? await this.folderParents(orm, o) : undefined,
-			trackIDs: folderArgs.folderIncTrackIDs ? (await o.tracks.getItems()).map(t => t.id) : undefined,
-			folderIDs: folderArgs.folderIncFolderIDs ? (await o.children.getItems()).map(t => t.id) : undefined,
-			artworkIDs: folderArgs.folderIncArtworkIDs ? (await o.artworks.getItems()).map(t => t.id) : undefined,
-			info,
+			trackIDs: folderArgs.folderIncTrackIDs ? await o.tracks.getIDs() : undefined,
+			folderIDs: folderArgs.folderIncFolderIDs ? await o.children.getIDs() : undefined,
+			artworkIDs: folderArgs.folderIncArtworkIDs ? await o.artworks.getIDs() : undefined,
+			info: folderArgs.folderIncInfo ? await this.folderInfo(orm, o): undefined,
 			state: folderArgs.folderIncSimilar ? await this.state(orm, o.id, DBObjectType.folder, user.id) : undefined
 		};
 	}

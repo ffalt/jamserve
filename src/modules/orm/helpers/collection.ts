@@ -48,6 +48,10 @@ export class Collection<T extends IDEntity<T>> {
 		this.changeSet = undefined;
 	}
 
+	async getIDs(options?: FindOptions<T>): Promise<Array<string>> {
+		return (await this.getItems(options)).map(item => item.id);
+	}
+
 	async getItems(options?: FindOptions<T>): Promise<Array<T>> {
 		if (this.list) {
 			return this.list;

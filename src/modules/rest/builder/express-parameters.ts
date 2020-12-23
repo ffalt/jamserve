@@ -13,7 +13,7 @@ import {MetadataStorage} from '../metadata/metadata-storage';
 import {iterateArguments} from '../helpers/iterate-super';
 
 export class ExpressParameters {
-	private metadata: MetadataStorage;
+	private readonly metadata: MetadataStorage;
 
 	constructor() {
 		this.metadata = getMetadataStorage();

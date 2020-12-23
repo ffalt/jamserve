@@ -29,8 +29,8 @@ export class SeriesTransformService extends BaseTransformService {
 			albumTypes: o.albumTypes,
 			albumCount: seriesArgs.seriesIncAlbumCount ? await o.albums.count() : undefined,
 			trackCount: seriesArgs.seriesIncTrackCount ? await o.tracks.count() : undefined,
-			trackIDs: seriesArgs.seriesIncTrackIDs ? (await o.tracks.getItems()).map(t => t.id) : undefined,
-			albumIDs: seriesArgs.seriesIncAlbumIDs ? (await o.albums.getItems()).map(a => a.id) : undefined,
+			trackIDs: seriesArgs.seriesIncTrackIDs ? await o.tracks.getIDs() : undefined,
+			albumIDs: seriesArgs.seriesIncAlbumIDs ? await o.albums.getIDs() : undefined,
 			info: seriesArgs.seriesIncInfo ? await this.metaData.extInfo.bySeries(orm, o) : undefined,
 			state: seriesArgs.seriesIncState ? await this.state(orm, o.id, DBObjectType.series, user.id) : undefined
 		};
