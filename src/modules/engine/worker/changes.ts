@@ -12,7 +12,6 @@ import {BaseWorker} from './tasks/base';
 import {Orm, OrmService} from '../services/orm.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {Genre} from '../../../entity/genre/genre';
-import {Collection, Reference} from '../../orm';
 import {Base} from '../../../entity/base/base';
 
 const log = logger('IO.Changes');
