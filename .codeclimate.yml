@@ -16,3 +16,4 @@ exclude_patterns:
   - static/graphql/**/*
   - src/test/**/*
   - node_modules/**
+  - CHANGELOG.md
