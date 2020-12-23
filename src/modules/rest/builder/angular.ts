@@ -1,10 +1,9 @@
 import {MethodMetadata} from '../definitions/method-metadata';
-import {getMetadataStorage} from '../metadata';
 import {RestParamMetadata} from '../definitions/param-metadata';
 import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version';
 import {ApiBinaryResult} from './express-responder';
 import {buildTSEnums, buildTSParameterTypes, buildTSResultTypes} from './typescript';
-import {callDescription, getCallParamType, getClientZip, getCustomParameterTemplate, getResultType, MustacheDataClientCallFunction, Part, writeParts, writeTemplate} from './clients';
+import {buildParts, buildPartService, buildServiceParts, buildTemplate, callDescription, getClientZip, getCustomParameterTemplate, getResultType, MustacheDataClientCallFunction, Part} from './clients';
 
 function generateUploadClientCalls(call: MethodMetadata, name: string, paramType: string, upload: RestParamMetadata): Array<MustacheDataClientCallFunction> {
 	return [{
@@ -70,10 +69,7 @@ function generateBinClientCall(call: MethodMetadata, name: string, paramsType: s
 }
 
 function generateBinaryClientCalls(call: MethodMetadata, name: string, paramType: string): Array<MustacheDataClientCallFunction> {
-	return [
-		generateUrlClientCall(call, name, paramType),
-		generateBinClientCall(call, name, paramType)
-	];
+	return [generateUrlClientCall(call, name, paramType), generateBinClientCall(call, name, paramType)];
 }
 
 function generateRequestClientCalls(call: MethodMetadata, name: string, paramType: string, method: 'post' | 'get'): Array<MustacheDataClientCallFunction> {
@@ -95,67 +91,27 @@ function generateRequestClientCalls(call: MethodMetadata, name: string, paramTyp
 	}];
 }
 
-function generateClientCalls(call: MethodMetadata, method: 'post' | 'get'): Array<MustacheDataClientCallFunction> {
-	const name = call.methodName.replace(/\//g, '_');
-	const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
-	const paramType = getCallParamType(call);
-	if (upload) {
-		return generateUploadClientCalls(call, name, paramType, upload as RestParamMetadata);
-	}
-	if (call.binary) {
-		return generateBinaryClientCalls(call, name, paramType);
-	}
-	return generateRequestClientCalls(call, name, paramType, method);
-}
-
-async function writePartService(key: string, part: string, calls: Array<MustacheDataClientCallFunction>): Promise<{ name: string; content: string }> {
-	const l = calls.map(call => {
-		return {...call, name: call.name.replace(key + '_', ''), paramsType: call.paramsType};
-	});
-	const withHttpEvent = !!calls.find(c => c.resultType.includes('HttpEvent'));
-	const withJam = !!calls.find(c => c.resultType.includes('Jam.'));
-	const withJamParam = !!calls.find(c => c.paramsType.includes('JamParameter'));
-	return writeTemplate(
-		`services/jam.${key.toLowerCase()}.service.ts`,
-		'./static/templates/client/jam.part.service.ts.template',
-		{list: l, part, withHttpEvent, withJam, withJamParam}
-	);
-}
-
 export async function buildAngularClientList(): Promise<Array<{ name: string; content: string }>> {
-	const metadata = getMetadataStorage();
-	const sections: { [name: string]: Array<MustacheDataClientCallFunction> } = {};
-	for (const call of metadata.gets) {
-		const ctrl = call.controllerClassMetadata!;
-		const tag = ctrl.name.replace('Controller', '');
-		sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, 'get'));
-	}
-	for (const call of metadata.posts) {
-		const ctrl = call.controllerClassMetadata!;
-		const tag = ctrl.name.replace('Controller', '');
-		sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, 'post'));
-	}
-	const keys = Object.keys(sections);
-	const parts: Array<Part> = [];
-	const list: Array<{ name: string; content: string }> = [];
-	for (const key of keys) {
-		const part = key[0].toUpperCase() + key.slice(1);
-		if (key !== 'Auth' && key !== 'Base') {
-			parts.push({name: key.toLowerCase(), part});
-			list.push(await writePartService(key, part, sections[key]));
-		}
-	}
-	list.push(await writeParts(`jam.service.ts`, './static/templates/client/jam.service.ts.template', parts));
-	list.push(await writeParts(`jam.module.ts`, './static/templates/client/jam.module.ts.template', parts));
-	list.push(await writeTemplate(`jam.base.service.ts`, './static/templates/client/jam.base.service.ts.template', {}));
-	list.push(await writeTemplate(`jam.http.service.ts`, './static/templates/client/jam.http.service.ts.template', {}));
-	list.push(await writeTemplate(`jam.configuration.ts`, './static/templates/client/jam.configuration.ts.template', {}));
-	list.push(await writeTemplate(`index.ts`, './static/templates/client/index.ts.template', {}));
-	list.push(await writeTemplate(`jam.auth.service.ts`, './static/templates/client/jam.auth.service.ts.template', {apiPrefix: `/jam/${JAMAPI_URL_VERSION}`, version: JAMAPI_VERSION}));
-	list.push({name: 'model/jam-rest-data.ts', content: buildTSResultTypes()});
-	list.push({name: 'model/jam-rest-params.ts', content: buildTSParameterTypes()});
-	list.push({name: 'model/jam-enums.ts', content: buildTSEnums()});
-	return list;
+	const parts: Array<Part> = await buildServiceParts(
+		generateRequestClientCalls,
+		generateBinaryClientCalls,
+		generateUploadClientCalls,
+		(key, part, calls) =>
+			buildPartService('./static/templates/client/jam.part.service.ts.template', key, part, calls)
+	);
+	return parts.map(part => ({name: `services/jam.${part.name}.service.ts`, content: part.content})).concat(
+		...[
+			{name: `jam.service.ts`, content: await buildParts('./static/templates/client/jam.service.ts.template', parts)},
+			{name: `jam.module.ts`, content: await buildParts('./static/templates/client/jam.module.ts.template', parts)},
+			{name: `jam.auth.service.ts`, content: await buildTemplate('./static/templates/client/jam.auth.service.ts.template', {apiPrefix: `/jam/${JAMAPI_URL_VERSION}`, version: JAMAPI_VERSION})},
+			{name: `jam.base.service.ts`, content: await buildTemplate('./static/templates/client/jam.base.service.ts.template')},
+			{name: `jam.http.service.ts`, content: await buildTemplate('./static/templates/client/jam.http.service.ts.template')},
+			{name: `jam.configuration.ts`, content: await buildTemplate('./static/templates/client/jam.configuration.ts.template')},
+			{name: `index.ts`, content: await buildTemplate('./static/templates/client/index.ts.template')},
+			{name: 'model/jam-rest-data.ts', content: buildTSResultTypes()},
+			{name: 'model/jam-rest-params.ts', content: buildTSParameterTypes()},
+			{name: 'model/jam-enums.ts', content: buildTSEnums()}
+		]);
 }
 
 export async function buildAngularClientZip(): Promise<ApiBinaryResult> {

@@ -29,7 +29,77 @@ export interface MustacheDataClientCallFunction {
 export interface Part {
 	name: string;
 	part: string;
+	content: string;
 	isLast?: boolean;
+}
+
+export interface MustacheDataClientCallSections {
+	[name: string]: Array<MustacheDataClientCallFunction>;
+}
+
+export type GenerateRequestClientCallsFunction = (call: MethodMetadata, name: string, paramType: string, method: 'post' | 'get') => Array<MustacheDataClientCallFunction>;
+export type GenerateBinaryClientCallsFunction = (call: MethodMetadata, name: string, paramType: string) => Array<MustacheDataClientCallFunction>;
+export type GenerateUploadClientCallsFunction = (call: MethodMetadata, name: string, paramType: string, upload: RestParamMetadata) => Array<MustacheDataClientCallFunction>;
+
+function generateClientCalls(
+	call: MethodMetadata, method: 'post' | 'get',
+	generateRequestClientCalls: GenerateRequestClientCallsFunction,
+	generateBinaryClientCalls: GenerateBinaryClientCallsFunction,
+	generateUploadClientCalls: GenerateUploadClientCallsFunction
+): Array<MustacheDataClientCallFunction> {
+	const name = call.methodName.replace(/\//g, '_');
+	const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
+	const paramType = getCallParamType(call);
+	if (upload) {
+		return generateUploadClientCalls(call, name, paramType, upload as RestParamMetadata);
+	}
+	if (call.binary) {
+		return generateBinaryClientCalls(call, name, paramType);
+	}
+	return generateRequestClientCalls(call, name, paramType, method);
+}
+
+export async function buildServiceParts(
+	generateRequestClientCalls: GenerateRequestClientCallsFunction,
+	generateBinaryClientCalls: GenerateBinaryClientCallsFunction,
+	generateUploadClientCalls: GenerateUploadClientCallsFunction,
+	buildPartService: (key: string, part: string, methods: Array<MustacheDataClientCallFunction>) => Promise<string>
+): Promise<Array<Part>> {
+	const metadata = getMetadataStorage();
+	const sections: MustacheDataClientCallSections = {};
+	buildCallSections(metadata.gets, 'get', sections, (call, method) =>
+		generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls));
+	buildCallSections(metadata.posts, 'post', sections, (call, method) =>
+		generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls));
+	const keys = Object.keys(sections).filter(key => !['Auth', 'Base'].includes(key));
+	const parts: Array<Part> = [];
+	for (const key of keys) {
+		const part = key[0].toUpperCase() + key.slice(1);
+		parts.push({name: key.toLowerCase(), part, content: await buildPartService(key, part, sections[key])});
+	}
+	return parts;
+}
+
+export async function buildPartService(template: string, key: string, part: string, calls: Array<MustacheDataClientCallFunction>): Promise<string> {
+	const list = calls.map(call => {
+		return {...call, name: call.name.replace(key + '_', ''), paramsType: wrapLong(call.paramsType)};
+	});
+	const withHttpEvent = !!calls.find(c => c.resultType.includes('HttpEvent'));
+	const withJam = !!calls.find(c => c.resultType.includes('Jam.'));
+	const withJamParam = !!calls.find(c => c.paramsType.includes('JamParameter'));
+	return buildTemplate(template, {list, part, withHttpEvent, withJam, withJamParam});
+}
+
+export function buildCallSections(
+	calls: Array<MethodMetadata>,
+	method: 'post' | 'get',
+	sections: MustacheDataClientCallSections,
+	generateClientCalls: (call: MethodMetadata, method: 'post' | 'get') => Array<MustacheDataClientCallFunction>
+): void {
+	for (const call of calls) {
+		const tag = call.controllerClassMetadata!.name.replace('Controller', '');
+		sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, method));
+	}
 }
 
 export function wrapLong(s: string): string {
@@ -39,20 +109,17 @@ export function wrapLong(s: string): string {
 	return s;
 }
 
-export async function writeTemplate(name: string, template: string, data: unknown): Promise<{ name: string; content: string }> {
-	return {
-		name,
-		content: Mustache.render((await fse.readFile(template)).toString(), data)
-	};
+export async function buildTemplate(template: string, data: unknown = {}): Promise<string> {
+	return Mustache.render((await fse.readFile(template)).toString(), data);
 }
 
-export async function writeParts(name: string, template: string, serviceParts: Array<Part>): Promise<{ name: string; content: string }> {
+export async function buildParts(template: string, serviceParts: Array<Part>): Promise<string> {
 	const list: Array<Part> = serviceParts
 		.sort((a, b) => a.name.localeCompare(b.name));
 	list.forEach((p, i) => {
 		p.isLast = i === list.length - 1;
 	});
-	return writeTemplate(name, template, {list});
+	return buildTemplate(template, {list});
 }
 
 export function getResultType(call: MethodMetadata): string | undefined {
