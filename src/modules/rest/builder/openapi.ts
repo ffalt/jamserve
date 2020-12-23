@@ -10,6 +10,8 @@ import {MethodMetadata} from '../definitions/method-metadata';
 import {OpenAPIObject, OperationObject, ParameterLocation, ParameterObject, ReferenceObject, ResponsesObject, SchemaObject} from 'openapi3-ts';
 import {Errors} from './express-error';
 import {ContentObject, PathsObject, RequestBodyObject} from 'openapi3-ts/src/model/OpenApi';
+import {iterateArguments, iterateControllers} from '../helpers/iterate-super';
+import {MetadataStorage} from '../metadata/metadata-storage';
 
 export const exampleID = 'c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0';
 type Schemas = { [schema: string]: SchemaObject | ReferenceObject };
@@ -19,7 +21,10 @@ const SCHEMA_JSON = '#/components/schemas/JSON';
 const SCHEMA_ID = '#/components/schemas/ID';
 
 class OpenApiBuilder {
+	metadata: MetadataStorage;
+
 	constructor(public extended: boolean = true) {
+		this.metadata = getMetadataStorage();
 	}
 
 	mapArgFields(mode: string, argumentType: ClassMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: string[]) {
@@ -67,7 +72,7 @@ class OpenApiBuilder {
 		} else if (type === Boolean) {
 			return {type: 'boolean', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined};
 		} else {
-			const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === type);
+			const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
 			if (enumInfo) {
 				return {$ref: this.getEnumRef(enumInfo, schemas)};
 			}
@@ -129,7 +134,7 @@ class OpenApiBuilder {
 	}
 
 	getParamRef(paramClass: TypeValue, name: string, schemas: Schemas): string {
-		const argumentType = getMetadataStorage().argumentType(paramClass);
+		const argumentType = this.metadata.argumentType(paramClass);
 		if (!argumentType) {
 			return SCHEMA_JSON;
 		}
@@ -168,22 +173,16 @@ class OpenApiBuilder {
 	}
 
 	collectParameterObj(param: RestParamsMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: string[]): void {
-		const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === param.getType());
+		const argumentType = this.metadata.argumentTypes.find(it => it.target === param.getType());
 		if (!argumentType) {
 			throw new Error(
 				`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
 				`is not a class decorated with '@ObjParamsType' decorator!`,
 			);
 		}
-		let superClass = Object.getPrototypeOf(argumentType.target);
-		while (superClass.prototype !== undefined) {
-			const superArgumentType = getMetadataStorage().argumentTypes.find(it => it.target === superClass);
-			if (superArgumentType) {
-				this.mapArgFields(param.mode, superArgumentType, parameters, schemas, hideParameters);
-			}
-			superClass = Object.getPrototypeOf(superClass);
-		}
-		this.mapArgFields(param.mode, argumentType, parameters, schemas, hideParameters);
+		iterateArguments(this.metadata, argumentType, argument => {
+			this.mapArgFields(param.mode, argument, parameters, schemas, hideParameters);
+		});
 	}
 
 	buildParameters(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, alias?: CustomPathParameterAliasRouteOptions): Array<ParameterObject> {
@@ -266,7 +265,7 @@ class OpenApiBuilder {
 		} else if (param.getType() === Boolean) {
 			result = {type: 'boolean', default: typeOptions.defaultValue};
 		} else {
-			const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === param.getType());
+			const enumInfo = this.metadata.enums.find(e => e.enumObj === param.getType());
 			if (enumInfo) {
 				result = {$ref: this.getEnumRef(enumInfo, schemas)};
 			} else {
@@ -397,34 +396,21 @@ class OpenApiBuilder {
 	}
 
 	build(): OpenAPIObject {
-		const metadata = getMetadataStorage();
 		const openapi: OpenAPIObject = this.buildOpenApiBase(JAMAPI_VERSION);
 		const schemas: Schemas = {
 			'ID': {type: 'string', format: 'uuid'},
 			'JSON': {type: 'object'}
 		};
-
-		const controllers = metadata.controllerClasses.filter(c => !c.abstract).sort((a, b) => {
+		const controllers = this.metadata.controllerClasses.filter(c => !c.abstract).sort((a, b) => {
 			return a.name.localeCompare(b.name);
 		});
-
 		for (const ctrl of controllers) {
-			if (ctrl.abstract) {
-				continue;
-			}
-			let gets = metadata.gets.filter(g => g.controllerClassMetadata === ctrl);
-			let posts = metadata.posts.filter(g => g.controllerClassMetadata === ctrl);
-
-			let superClass = Object.getPrototypeOf(ctrl.target);
-			while (superClass.prototype !== undefined) {
-				const superClassType = getMetadataStorage().controllerClasses.find(it => it.target === superClass);
-				if (superClassType) {
-					gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === superClassType));
-					posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === superClassType));
-				}
-				superClass = Object.getPrototypeOf(superClass);
-			}
-
+			let gets: Array<MethodMetadata> = [];
+			let posts: Array<MethodMetadata> = [];
+			iterateControllers(this.metadata, ctrl, (ctrlClass => {
+				gets = gets.concat(this.metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
+				posts = posts.concat(this.metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
+			}));
 			this.buildOpenApiMethods(gets, ctrl, schemas, openapi.paths, false);
 			this.buildOpenApiMethods(posts, ctrl, schemas, openapi.paths, true);
 		}

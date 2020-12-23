@@ -1,61 +1,184 @@
 import {MethodMetadata} from '../definitions/method-metadata';
 import {RestContext} from '../helpers/context';
-import {GenericError} from './express-error';
-import {validateArgument} from './express-parameters';
+import {GenericError, UnauthError} from './express-error';
 import {ApiBaseResponder} from './express-responder';
 import {getMetadataStorage} from '../metadata';
 import {logger} from '../../../utils/logger';
+import {ExpressParameters} from './express-parameters';
+import {MetadataStorage} from '../metadata/metadata-storage';
+import {ControllerClassMetadata} from '../definitions/controller-metadata';
+import express, {Router} from 'express';
+import {processCustomPathParameters} from './express-path-parameters';
 
 const log = logger('RestAPI');
 
-export async function callMethod(method: MethodMetadata, context: RestContext<any, any, any>, name: string): Promise<void> {
-	try {
-		const Controller = method.controllerClassMetadata?.target as any;
-		if (!Controller) {
-			throw GenericError(`Internal: Invalid controller in method ${method.methodName}`);
+export interface RouteInfo {
+	method: 'GET' | 'POST';
+	endpoint: string;
+	role: string;
+	format: string;
+}
+
+export interface RestOptions {
+	validateRoles: (user: Express.User | undefined, roles: Array<string>) => boolean;
+	controllers: any[];
+	tmpPath: string;
+}
+
+export class ExpressMethod {
+	parameters = new ExpressParameters();
+	metadata: MetadataStorage;
+
+	constructor() {
+		this.metadata = getMetadataStorage();
+	}
+
+	private static getMethodResultFormat(method: MethodMetadata): string {
+		if (method.binary) {
+			return 'binary';
 		}
-		const instance = new Controller();// Container.get(Controller) as any;
-		const func = instance[method.methodName];
+		if (!method.getReturnType) {
+			return 'void';
+		}
+		const target = method.getReturnType();
+		if (target === String) {
+			return 'string';
+		}
+		return 'json';
+	}
+
+	private buildArguments(method: MethodMetadata, context: RestContext<any, any, any>) {
 		const args = [];
 		const params = method.params.sort((a, b) => a.index - b.index);
 		for (const param of params) {
-			const arg = validateArgument(param, context);
+			const arg = this.parameters.validateArgument(param, context);
 			if (arg) {
 				args.push(arg);
 			}
 		}
-		if (method.binary !== undefined) {
+		return args;
+	}
+
+	private async callMethod(method: MethodMetadata, context: RestContext<any, any, any>, name: string): Promise<void> {
+		try {
+			const Controller = method.controllerClassMetadata?.target as any;
+			if (!Controller) {
+				throw GenericError(`Internal: Invalid controller in method ${method.methodName}`);
+			}
+			const instance = new Controller();// Container.get(Controller) as any;
+			const func = instance[method.methodName];
+			const args = this.buildArguments(method, context);
+			if (method.binary !== undefined) {
+				// eslint-disable-next-line prefer-spread
+				const result = await func.apply(instance, args);
+				ApiBaseResponder.sendBinary(context.req, context.res, result);
+				return;
+			}
+			if (method.getReturnType === undefined) {
+				// eslint-disable-next-line prefer-spread
+				await func.apply(instance, args);
+				ApiBaseResponder.sendOK(context.req, context.res);
+				return;
+			}
+			const target = method.getReturnType();
+			if (target === String) {
+				// eslint-disable-next-line prefer-spread
+				const result = await func.apply(instance, args);
+				ApiBaseResponder.sendString(context.req, context.res, result);
+				return;
+			}
+			const resultType = this.metadata.resultType(target);
+			if (!resultType) {
+				throw GenericError(
+					`The value used as a result type of '@${name}' for '${String(method.getReturnType())}' of '${method.target.name}.${method.methodName}' ` +
+					`is not a class decorated with '@ResultType' decorator!`,
+				);
+			}
 			// eslint-disable-next-line prefer-spread
-			const result = await func.apply(instance, args);
-			ApiBaseResponder.sendBinary(context.req, context.res, result);
-			return;
+			const result = await instance[method.methodName].apply(instance, args);
+			ApiBaseResponder.sendJSON(context.req, context.res, result);
+		} catch (e) {
+			// console.error(e);
+			log.error(e);
+			ApiBaseResponder.sendError(context.req, context.res, e);
 		}
-		if (method.getReturnType === undefined) {
-			// eslint-disable-next-line prefer-spread
-			await func.apply(instance, args);
-			ApiBaseResponder.sendOK(context.req, context.res);
-			return;
+	}
+
+	public POST(
+		post: MethodMetadata, ctrl: ControllerClassMetadata, router: Router, options: RestOptions,
+		uploadHandler: (field: string, autoClean?: boolean) => express.RequestHandler
+	): RouteInfo {
+		let route = (post.route || '/');
+		if (post.customPathParameters) {
+			route = (!post.route) ? '/:pathParameters' : post.route.split('{')[0] + ':pathParameters';
 		}
-		const target = method.getReturnType();
-		if (target === String) {
-			// eslint-disable-next-line prefer-spread
-			const result = await func.apply(instance, args);
-			ApiBaseResponder.sendString(context.req, context.res, result);
-			return;
+		const roles = post.roles || ctrl.roles || [];
+		const handlers: Array<express.RequestHandler> = [];
+		for (const param of post.params) {
+			if ((param.kind === 'arg' && param.mode === 'file')) {
+				handlers.push(uploadHandler(param.name));
+			}
 		}
-		const resultType = getMetadataStorage().resultType(target);
-		if (!resultType) {
-			throw GenericError(
-				`The value used as a result type of '@${name}' for '${String(method.getReturnType())}' of '${method.target.name}.${method.methodName}' ` +
-				`is not a class decorated with '@ResultType' decorator!`,
-			);
+
+		router.post(route, ...handlers, async (req, res, next) => {
+			try {
+				if (!options.validateRoles(req.user, roles)) {
+					throw UnauthError();
+				}
+				if (post.customPathParameters) {
+					req.params = {
+						...req.params,
+						...processCustomPathParameters(
+							post.customPathParameters,
+							req.params.pathParameters,
+							post
+						), pathParameters: undefined
+					} as any;
+				}
+				await this.callMethod(post, {req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user}, 'Post');
+			} catch (e) {
+				ApiBaseResponder.sendError(req, res, e);
+			}
+		});
+		return {
+			method: 'POST',
+			endpoint: ctrl.route + route,
+			role: roles.length > 0 ? roles.join(',') : 'public',
+			format: ExpressMethod.getMethodResultFormat(post)
+		};
+	}
+
+	public GET(get: MethodMetadata, ctrl: ControllerClassMetadata, router: Router, options: RestOptions): RouteInfo {
+		let route = (get.route || '/');
+		if (get.customPathParameters) {
+			route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
 		}
-		// eslint-disable-next-line prefer-spread
-		const result = await instance[method.methodName].apply(instance, args);
-		ApiBaseResponder.sendJSON(context.req, context.res, result);
-	} catch (e) {
-		// console.error(e);
-		log.error(e);
-		ApiBaseResponder.sendError(context.req, context.res, e);
+		const roles = get.roles || ctrl.roles || [];
+		router.get(route, async (req, res, next) => {
+			try {
+				if (!options.validateRoles(req.user, roles)) {
+					throw UnauthError();
+				}
+				if (get.customPathParameters) {
+					req.params = {
+						...req.params,
+						...processCustomPathParameters(
+							get.customPathParameters,
+							req.params.pathParameters,
+							get
+						), pathParameters: undefined
+					} as any;
+				}
+				await this.callMethod(get, {req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user}, 'Get');
+			} catch (e) {
+				ApiBaseResponder.sendError(req, res, e);
+			}
+		});
+		return {
+			method: 'GET',
+			endpoint: ctrl.route + route,
+			role: roles.length > 0 ? roles.join(',') : 'public',
+			format: ExpressMethod.getMethodResultFormat(get)
+		};
 	}
 }
