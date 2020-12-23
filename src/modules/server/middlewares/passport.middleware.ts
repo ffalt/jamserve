@@ -93,7 +93,9 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 								req.user = user;
 							}
 							next();
-							req.engine.rateLimit.loginSlowDownReset(req);
+							req.engine.rateLimit.loginSlowDownReset(req).catch(e => {
+								throw e;
+							});
 						})
 						.catch(e => {
 							throw e;

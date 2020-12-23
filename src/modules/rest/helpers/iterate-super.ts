@@ -2,7 +2,7 @@ import {MetadataStorage} from '../metadata/metadata-storage';
 import {ControllerClassMetadata} from '../definitions/controller-metadata';
 import {ClassMetadata} from '../definitions/class-metadata';
 
-export function iterateControllers(metadata: MetadataStorage, ctrl: ControllerClassMetadata, onControl: (ctrl: ControllerClassMetadata) => void) {
+export function iterateControllers(metadata: MetadataStorage, ctrl: ControllerClassMetadata, onControl: (ctrl: ControllerClassMetadata) => void): void {
 	onControl(ctrl);
 	let superClass = Object.getPrototypeOf(ctrl.target);
 	while (superClass.prototype !== undefined) {
@@ -14,7 +14,7 @@ export function iterateControllers(metadata: MetadataStorage, ctrl: ControllerCl
 	}
 }
 
-export function iterateArguments(metadata: MetadataStorage, argument: ClassMetadata, onArgument: (argument: ClassMetadata) => void) {
+export function iterateArguments(metadata: MetadataStorage, argument: ClassMetadata, onArgument: (argument: ClassMetadata) => void): void {
 	onArgument(argument);
 	let superClass = Object.getPrototypeOf(argument.target);
 	while (superClass.prototype !== undefined) {
