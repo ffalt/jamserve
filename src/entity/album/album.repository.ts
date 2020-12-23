@@ -28,29 +28,36 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 				return [['artistORM', 'name', direction]];
 			case AlbumOrderFields.year:
 				return [['year', direction]];
-			case AlbumOrderFields.seriesNr: {
-				switch (this.em.dialect) {
-					case 'sqlite': {
-						return [[Sequelize.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
-					}
-					case 'postgres': {
-						return [[Sequelize.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
-					}
-					default: {
-						throw new Error(`Implement LPAD request for dialect ${this.em.dialect}`);
-					}
-				}
-			}
+			case AlbumOrderFields.seriesNr:
+				return this.seriesNrOrder(direction);
 			case AlbumOrderFields.default:
-				// order of setting properties matches order of sort queries. important!
-				return [
-					['artistORM', 'name', direction],
-					['albumType', direction],
-					['year', direction === 'ASC' ? 'DESC' : 'ASC'],
-					['name', direction]
-				];
+				return this.defaultOrder(direction);
 		}
 		return [];
+	}
+
+	private defaultOrder(direction: string): Array<OrderItem> {
+		// order of setting properties matches order of sort queries. important!
+		return [
+			['artistORM', 'name', direction],
+			['albumType', direction],
+			['year', direction === 'ASC' ? 'DESC' : 'ASC'],
+			['name', direction]
+		];
+	}
+
+	private seriesNrOrder(direction: string): Array<OrderItem> {
+		switch (this.em.dialect) {
+			case 'sqlite': {
+				return [[Sequelize.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
+			}
+			case 'postgres': {
+				return [[Sequelize.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
+			}
+			default: {
+				throw new Error(`Implement LPAD request for dialect ${this.em.dialect}`);
+			}
+		}
 	}
 
 	async buildFilter(filter?: AlbumFilterArgs, _?: User): Promise<FindOptions<Album>> {
