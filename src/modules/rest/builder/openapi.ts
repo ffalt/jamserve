@@ -1,207 +1,23 @@
 import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version';
 import {getMetadataStorage} from '../metadata';
-import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata';
-import {ClassMetadata} from '../definitions/class-metadata';
-import {CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue} from '../definitions/types';
-import {getDefaultValue} from '../helpers/default-value';
+import {CustomPathParameterAliasRouteOptions} from '../definitions/types';
 import {ControllerClassMetadata} from '../definitions/controller-metadata';
-import {EnumMetadata} from '../definitions/enum-metadata';
 import {MethodMetadata} from '../definitions/method-metadata';
-import {OpenAPIObject, OperationObject, ParameterLocation, ParameterObject, ReferenceObject, ResponsesObject, SchemaObject} from 'openapi3-ts';
+import {OpenAPIObject, OperationObject, ParameterObject, ReferenceObject, ResponsesObject, SchemaObject} from 'openapi3-ts';
 import {Errors} from './express-error';
 import {ContentObject, PathsObject, RequestBodyObject} from 'openapi3-ts/src/model/OpenApi';
-import {iterateArguments, iterateControllers} from '../helpers/iterate-super';
+import {iterateControllers} from '../helpers/iterate-super';
 import {MetadataStorage} from '../metadata/metadata-storage';
-
-export const exampleID = 'c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0';
-type Schemas = { [schema: string]: SchemaObject | ReferenceObject };
-type Property = (SchemaObject | ReferenceObject);
-type Properties = { [propertyName: string]: (SchemaObject | ReferenceObject) };
-const SCHEMA_JSON = '#/components/schemas/JSON';
-const SCHEMA_ID = '#/components/schemas/ID';
+import {SCHEMA_ID, Schemas} from './openapi-helpers';
+import {OpenApiRefBuilder} from './openapi-refs';
 
 class OpenApiBuilder {
 	metadata: MetadataStorage;
+	refsBuilder: OpenApiRefBuilder;
 
 	constructor(public extended: boolean = true) {
 		this.metadata = getMetadataStorage();
-	}
-
-	mapArgFields(mode: string, argumentType: ClassMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: string[]) {
-		const argumentInstance = new (argumentType.target as any)();
-		argumentType.fields!.forEach(field => {
-			if (hideParameters && hideParameters.includes(field.name)) {
-				return;
-			}
-			field.typeOptions.defaultValue = getDefaultValue(
-				argumentInstance,
-				field.typeOptions,
-				field.name
-			);
-			const typeOptions: FieldOptions & TypeOptions = field.typeOptions;
-			const o: ParameterObject = {
-				in: mode as ParameterLocation,
-				name: field.name,
-				description: field.description,
-				deprecated: field.deprecationReason ? true : undefined,
-				required: !typeOptions.nullable || mode === 'path',
-				example: typeOptions.isID ? exampleID : typeOptions.example
-			};
-			const type = field.getType();
-			o.schema = this.buildFieldSchema(type, typeOptions, schemas);
-			if (!o.schema) {
-				throw new Error(`Unknown Argument Type, did you forget to register an enum? ${JSON.stringify(field)}`);
-			}
-			if (typeOptions.array) {
-				o.schema = {type: 'array', items: o.schema};
-			}
-			parameters.push(o);
-		});
-	}
-
-	buildFieldSchema(type: TypeValue, typeOptions: FieldOptions & TypeOptions, schemas: Schemas): Property | undefined {
-		if (typeOptions.isID) {
-			return {$ref: SCHEMA_ID};
-		} else if (type === String) {
-			return {type: 'string', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined};
-		} else if (type === Number) {
-			return {
-				type: 'integer', default: typeOptions.defaultValue,
-				minimum: typeOptions.min, maximum: typeOptions.max, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined
-			};
-		} else if (type === Boolean) {
-			return {type: 'boolean', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined};
-		} else {
-			const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
-			if (enumInfo) {
-				return {$ref: this.getEnumRef(enumInfo, schemas)};
-			}
-		}
-		return;
-	}
-
-	getResultRef(resultClassValue: TypeValue, name: string, schemas: Schemas): string {
-		const argumentType = getMetadataStorage().resultType(resultClassValue);
-		if (!argumentType) {
-			if (resultClassValue === Object) {
-				return SCHEMA_JSON;
-			}
-			throw new Error(`Missing ReturnType for method ${name}`);
-		}
-		if (!schemas[argumentType.name]) {
-			this.buildRef(argumentType, schemas, this.getResultRef.bind(this));
-		}
-		return '#/components/schemas/' + argumentType.name;
-	}
-
-	buildRef(argumentType: ClassMetadata, schemas: Schemas, recursiveBuild: (classValue: TypeValue, name: string, schemas: Schemas) => string) {
-		const argumentInstance = new (argumentType.target as any)();
-		const properties: Properties = {};
-		const required: Array<string> = [];
-		for (const field of argumentType.fields) {
-			field.typeOptions.defaultValue = getDefaultValue(
-				argumentInstance,
-				field.typeOptions,
-				field.name
-			);
-			const typeOptions = field.typeOptions;
-			if (!typeOptions.nullable) {
-				required.push(field.name);
-			}
-			const type = field.getType();
-			let f: Property | undefined = this.buildFieldSchema(type, typeOptions, schemas);
-			if (!f) {
-				f = {$ref: recursiveBuild(type, argumentType.name, schemas)};
-			}
-			properties[field.name] = typeOptions.array ? {type: 'array', items: f} : f;
-		}
-		schemas[argumentType.name] = {
-			type: 'object',
-			properties,
-			required: required.length > 0 ? required : undefined
-		};
-		const superClass = Object.getPrototypeOf(argumentType.target);
-		if (superClass.prototype !== undefined) {
-			const allOf: (SchemaObject | ReferenceObject)[] = [{$ref: recursiveBuild(superClass, argumentType.name, schemas)}];
-			if (Object.keys(properties).length > 0) {
-				allOf.push({
-					properties,
-					required: required.length > 0 ? required : undefined
-				});
-			}
-			schemas[argumentType.name] = {allOf};
-		}
-	}
-
-	getParamRef(paramClass: TypeValue, name: string, schemas: Schemas): string {
-		const argumentType = this.metadata.argumentType(paramClass);
-		if (!argumentType) {
-			return SCHEMA_JSON;
-		}
-		if (!schemas[argumentType.name]) {
-			this.buildRef(argumentType, schemas, this.getParamRef.bind(this));
-		}
-		return '#/components/schemas/' + argumentType.name;
-	}
-
-	getEnumRef(enumInfo: EnumMetadata, schemas: Schemas): string {
-		const name = enumInfo.name;
-		if (!schemas[name]) {
-			schemas[name] = {type: 'string', enum: Object.values(enumInfo.enumObj)};
-		}
-		return '#/components/schemas/' + name;
-	}
-
-	collectParameter(
-		param: RestParamMetadata, parameters: Array<ParameterObject>,
-		ctrl: ControllerClassMetadata, schemas: Schemas, hideParameters?: string[]
-	): void {
-		if (hideParameters && hideParameters.includes(param.name)) {
-			return;
-		}
-		const typeOptions: FieldOptions & TypeOptions = param.typeOptions;
-		const o: ParameterObject = {
-			in: param.mode as ParameterLocation,
-			name: param.name,
-			description: typeOptions.description,
-			deprecated: typeOptions.deprecationReason || ctrl.deprecationReason ? true : undefined,
-			required: !param.typeOptions.nullable || param.mode === 'path',
-			example: typeOptions.isID ? exampleID : typeOptions.example,
-			schema: this.buildParameterSchema(param, schemas)
-		};
-		parameters.push(o);
-	}
-
-	collectParameterObj(param: RestParamsMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: string[]): void {
-		const argumentType = this.metadata.argumentTypes.find(it => it.target === param.getType());
-		if (!argumentType) {
-			throw new Error(
-				`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
-				`is not a class decorated with '@ObjParamsType' decorator!`,
-			);
-		}
-		iterateArguments(this.metadata, argumentType, argument => {
-			this.mapArgFields(param.mode, argument, parameters, schemas, hideParameters);
-		});
-	}
-
-	buildParameters(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, alias?: CustomPathParameterAliasRouteOptions): Array<ParameterObject> {
-		const params = method.params;
-		const parameters: Array<ParameterObject> = [];
-		for (const param of params) {
-			if (param.kind === 'args' && ['path', 'query'].includes(param.mode)) {
-				this.collectParameterObj(param, parameters, schemas, alias?.hideParameters);
-			} else if (param.kind === 'arg' && ['path', 'query'].includes(param.mode)) {
-				this.collectParameter(param, parameters, ctrl, schemas, alias?.hideParameters);
-			}
-		}
-		return parameters.sort((a, b) => {
-			const result = (a.required === b.required) ? 0 : a.required ? -1 : 1;
-			if (result === 0) {
-				return a.name.localeCompare(b.name);
-			}
-			return result;
-		});
+		this.refsBuilder = new OpenApiRefBuilder(extended);
 	}
 
 	fillErrorResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, responses: ResponsesObject): void {
@@ -239,7 +55,7 @@ class OpenApiBuilder {
 				});
 				responses['200'] = {description: 'string data', content};
 			} else {
-				let schema: SchemaObject | ReferenceObject = {$ref: this.getResultRef(type, method.methodName, schemas)};
+				let schema: SchemaObject | ReferenceObject = {$ref: this.refsBuilder.getResultRef(type, method.methodName, schemas)};
 				if (method.returnTypeOptions?.array) {
 					schema = {type: 'array', items: schema};
 				}
@@ -253,44 +69,15 @@ class OpenApiBuilder {
 		return responses;
 	}
 
-	buildParameterSchema(param: RestParamMetadata, schemas: Schemas): SchemaObject {
-		const typeOptions: FieldOptions & TypeOptions = param.typeOptions;
-		let result: SchemaObject;
-		if (typeOptions.isID) {
-			result = {$ref: SCHEMA_ID};
-		} else if (param.getType() === String) {
-			result = {type: 'string'};
-		} else if (param.getType() === Number) {
-			result = {type: 'integer', default: typeOptions.defaultValue, minimum: typeOptions.min, maximum: typeOptions.max};
-		} else if (param.getType() === Boolean) {
-			result = {type: 'boolean', default: typeOptions.defaultValue};
-		} else {
-			const enumInfo = this.metadata.enums.find(e => e.enumObj === param.getType());
-			if (enumInfo) {
-				result = {$ref: this.getEnumRef(enumInfo, schemas)};
-			} else {
-				throw new Error(`Implement OpenApi collectParameter ${JSON.stringify(param)}`);
-			}
-		}
-		if (typeOptions.array) {
-			result = {type: 'array', items: result};
-		}
-		if (this.extended || !result.$ref) {
-			result.description = param.description;
-			result.deprecated = param.deprecationReason ? true : undefined;
-		}
-		return result;
-	}
-
 	buildRequestBody(method: MethodMetadata, schemas: Schemas): RequestBodyObject | undefined {
 		const params = method.params;
 		const refs: Array<SchemaObject | ReferenceObject> = [];
 		let isJson = true;
 		for (const param of params) {
 			if (param.kind === 'args' && param.mode === 'body') {
-				refs.push({$ref: this.getParamRef(param.getType(), param.methodName, schemas)});
+				refs.push({$ref: this.refsBuilder.getParamRef(param.getType(), param.methodName, schemas)});
 			} else if (param.kind === 'arg' && param.mode === 'body') {
-				const schema = this.buildParameterSchema(param, schemas);
+				const schema = this.refsBuilder.buildParameterSchema(param, schemas);
 				const properties: { [propertyName: string]: (SchemaObject | ReferenceObject) } = {};
 				properties[param.name] = schema;
 				refs.push({properties, description: param.description, required: [param.name]});
@@ -334,7 +121,7 @@ class OpenApiBuilder {
 	}
 
 	buildOpenApiMethod(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, isPost: boolean, alias?: CustomPathParameterAliasRouteOptions): { path: string; o: OperationObject } {
-		const parameters: Array<ParameterObject> = this.buildParameters(method, ctrl, schemas, alias);
+		const parameters: Array<ParameterObject> = this.refsBuilder.buildParameters(method, ctrl, schemas, alias);
 		const path = (ctrl.route || '') + (alias?.route || method.route || '');
 		const roles = method.roles || ctrl.roles || [];
 		const o: OperationObject = {
@@ -439,14 +226,8 @@ class OpenApiBuilder {
 			tagNames.sort();
 			openapi.tags = tags;
 			openapi['x-tagGroups'] = [
-				{
-					name: 'API',
-					tags: [...apiTags]
-				},
-				{
-					name: 'Models',
-					tags: tagNames
-				}
+				{name: 'API', tags: [...apiTags]},
+				{name: 'Models', tags: tagNames}
 			];
 		}
 		return openapi;
