@@ -11,6 +11,8 @@ import {MetaStatBuilder} from '../../../utils/stats-builder';
 import {slugify} from '../../../utils/slug';
 import {Genre} from '../../../entity/genre/genre';
 import {extractAlbumName} from '../../../utils/album-name';
+import {Album} from '../../../entity/album/album';
+import {Track} from '../../../entity/track/track';
 
 const log = logger('Worker.MetaMerger');
 
@@ -21,7 +23,7 @@ export class MetaMerger {
 	constructor(private orm: Orm, private changes: Changes, private rootID: string) {
 	}
 
-	private async collectArtistNames(artist: Artist): Promise<{ artistName: string; artistSortName: string; slug: string }> {
+	private static async collectArtistNames(artist: Artist): Promise<{ artistName: string; artistSortName: string; slug: string }> {
 		const metaStatBuilder = new MetaStatBuilder();
 		const tracks = await artist.tracks.getItems();
 		for (const track of tracks) {
@@ -39,7 +41,7 @@ export class MetaMerger {
 		return {artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name};
 	}
 
-	private async collectArtistAlbumTypes(artist: Artist): Promise<Array<AlbumType>> {
+	private static async collectArtistAlbumTypes(artist: Artist): Promise<Array<AlbumType>> {
 		const types = new Set<AlbumType>();
 		const albums = await artist.albums.getItems();
 		for (const album of albums) {
@@ -48,23 +50,22 @@ export class MetaMerger {
 		return [...types];
 	}
 
+	private async linkArtist(a: Artist, trackInfo:MetaMergeTrackInfo):Promise<void> {
+		await a.roots.add(this.root);
+		await a.folders.add(trackInfo.folder);
+		this.orm.Artist.persistLater(a);
+	}
+
 	private async addMeta(trackInfo: MetaMergeTrackInfo): Promise<void> {
-
-		const linkArtist = async (a: Artist) => {
-			await a.roots.add(this.root);
-			await a.folders.add(trackInfo.folder);
-			this.orm.Artist.persistLater(a);
-		};
-
 		const artist = await this.cache.findOrCreateArtist(trackInfo, false);
-		await linkArtist(artist);
+		await this.linkArtist(artist, trackInfo);
 		await trackInfo.track.artist.set(artist);
 		await artist.tracks.add(trackInfo.track);
 
 		const albumArtist: Artist = (trackInfo.folder.artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME) ?
 			await this.cache.findOrCreateCompilationArtist() :
 			await this.cache.findOrCreateArtist(trackInfo, true);
-		await linkArtist(albumArtist);
+		await this.linkArtist(albumArtist, trackInfo);
 		await trackInfo.track.albumArtist.set(albumArtist);
 		await albumArtist.albumTracks.add(trackInfo.track);
 
@@ -161,32 +162,36 @@ export class MetaMerger {
 			this.changes.artists.removed.add(artist);
 			this.changes.artists.updated.delete(artist);
 		} else {
-			if (artist.name !== MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
-				const {artistName, artistSortName, slug} = await this.collectArtistNames(artist);
-				artist.name = artistName;
-				artist.slug = slug;
-				artist.nameSort = artistSortName;
-			}
-			const albums = (await artist.albums.getItems()).filter(t => t.artist.id() === artist.id && !this.changes.albums.removed.has(t));
-			await artist.albums.set(albums);
-			const folders: Array<Folder> = [];
-			for (const folder of (await artist.folders.getItems())) {
-				if ((await folder.albums.getItems()).find(a => (a.artist.id() === artist.id) && !this.changes.folders.removed.has(folder))) {
-					folders.push(folder);
-				}
-			}
-			await artist.folders.set(folders);
-			const genreMap = new Map<string, Genre>();
-			for (const track of allTracks) {
-				const genres = await track.genres.getItems();
-				for (const genre of genres) {
-					genreMap.set(genre.id, genre);
-				}
-			}
-			await artist.genres.set([...genreMap.values()]);
-			artist.albumTypes = await this.collectArtistAlbumTypes(artist);
-			this.orm.Artist.persistLater(artist);
+			await this.updateArtistMeta(artist, allTracks);
 		}
+	}
+
+	private async updateArtistMeta(artist: Artist, tracks: Array<Track>): Promise<void> {
+		if (artist.name !== MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
+			const {artistName, artistSortName, slug} = await MetaMerger.collectArtistNames(artist);
+			artist.name = artistName;
+			artist.slug = slug;
+			artist.nameSort = artistSortName;
+		}
+		const albums = (await artist.albums.getItems()).filter(t => t.artist.id() === artist.id && !this.changes.albums.removed.has(t));
+		await artist.albums.set(albums);
+		const folders: Array<Folder> = [];
+		for (const folder of (await artist.folders.getItems())) {
+			if ((await folder.albums.getItems()).find(a => (a.artist.id() === artist.id) && !this.changes.folders.removed.has(folder))) {
+				folders.push(folder);
+			}
+		}
+		await artist.folders.set(folders);
+		const genreMap = new Map<string, Genre>();
+		for (const track of tracks) {
+			const genres = await track.genres.getItems();
+			for (const genre of genres) {
+				genreMap.set(genre.id, genre);
+			}
+		}
+		await artist.genres.set([...genreMap.values()]);
+		artist.albumTypes = await MetaMerger.collectArtistAlbumTypes(artist);
+		this.orm.Artist.persistLater(artist);
 	}
 
 	private async applyChangedArtistsMeta(): Promise<void> {
@@ -235,39 +240,43 @@ export class MetaMerger {
 			this.changes.albums.removed.add(album);
 			this.changes.albums.updated.delete(album);
 		} else {
-			const folders: Array<Folder> = [];
-			const albumFolders = await album.folders.getItems();
-			for (const folder of albumFolders) {
-				const folderAlbums = await folder.albums.getItems();
-				if (folderAlbums.find(a => a.id === album.id) && !this.changes.folders.removed.has(folder)) {
-					folders.push(folder);
-				}
-			}
-			await album.folders.set(folders);
-
-			const metaStatBuilder = new MetaStatBuilder();
-			folders.forEach(folder => metaStatBuilder.statID('albumType', folder.albumType));
-			album.albumType = (metaStatBuilder.mostUsed('albumType') as AlbumType) || AlbumType.unknown;
-
-			let duration = 0;
-			const genreMap = new Map<string, Genre>();
-			for (const track of tracks) {
-				const tag = await track.tag.get();
-				duration += (tag?.mediaDuration || 0);
-				metaStatBuilder.statID('seriesNr', tag?.seriesNr);
-				metaStatBuilder.statNumber('year', tag?.year);
-				metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag?.album));
-				const genres = await track.genres.getItems();
-				genres.forEach(genre => genreMap.set(genre.id, genre));
-			}
-			album.name = metaStatBuilder.mostUsed('album', album.name) || album.name;
-			album.slug = slugify(album.name);
-			album.duration = duration;
-			album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
-			album.year = metaStatBuilder.mostUsedNumber('year');
-			await album.genres.set([...genreMap.values()]);
-			this.orm.Album.persistLater(album);
+			await this.updateAlbumMeta(album, tracks);
 		}
+	}
+
+	private async updateAlbumMeta(album: Album, tracks: Track[]): Promise<void> {
+		const folders: Array<Folder> = [];
+		const albumFolders = await album.folders.getItems();
+		for (const folder of albumFolders) {
+			const folderAlbums = await folder.albums.getItems();
+			if (folderAlbums.find(a => a.id === album.id) && !this.changes.folders.removed.has(folder)) {
+				folders.push(folder);
+			}
+		}
+		await album.folders.set(folders);
+
+		const metaStatBuilder = new MetaStatBuilder();
+		folders.forEach(folder => metaStatBuilder.statID('albumType', folder.albumType));
+		album.albumType = (metaStatBuilder.mostUsed('albumType') as AlbumType) || AlbumType.unknown;
+
+		let duration = 0;
+		const genreMap = new Map<string, Genre>();
+		for (const track of tracks) {
+			const tag = await track.tag.get();
+			duration += (tag?.mediaDuration || 0);
+			metaStatBuilder.statID('seriesNr', tag?.seriesNr);
+			metaStatBuilder.statNumber('year', tag?.year);
+			metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag?.album));
+			const genres = await track.genres.getItems();
+			genres.forEach(genre => genreMap.set(genre.id, genre));
+		}
+		album.name = metaStatBuilder.mostUsed('album', album.name) || album.name;
+		album.slug = slugify(album.name);
+		album.duration = duration;
+		album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
+		album.year = metaStatBuilder.mostUsedNumber('year');
+		await album.genres.set([...genreMap.values()]);
+		this.orm.Album.persistLater(album);
 	}
 
 	private async applyChangedAlbumsMeta(): Promise<void> {
@@ -300,7 +309,7 @@ export class MetaMerger {
 			await this.applyChangedGenreMeta(id);
 			await this.flushIfNeeded('Genre');
 		}
-		await this.flush('Genre')
+		await this.flush('Genre');
 	}
 
 	async mergeMeta(): Promise<void> {
