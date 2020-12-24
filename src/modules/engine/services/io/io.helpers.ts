@@ -29,7 +29,7 @@ export class DelayedRequests<T extends WorkerRequestParameters> {
 		return cmd;
 	}
 
-	startTimeOut(delayedCmd: DelayedRequest<T>, onStart: (request: IoRequest<T>) => void) {
+	startTimeOut(delayedCmd: DelayedRequest<T>, onStart: (request: IoRequest<T>) => void): void {
 		if (delayedCmd.timeout) {
 			clearTimeout(delayedCmd.timeout);
 		}
