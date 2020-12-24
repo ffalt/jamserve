@@ -277,11 +277,7 @@ export class WorkerScan {
 		for (const subDir of dir.directories) {
 			if (subDir.path !== folder.path) {
 				const subFolder = folders.find(f => f.path === subDir.path);
-				if (!subFolder) {
-					result.children.push(await this.buildNode(subDir, folder));
-				} else {
-					result.children.push(await this.scanNode(subDir, subFolder));
-				}
+				result.children.push(!subFolder ? await this.buildNode(subDir, folder) : await this.scanNode(subDir, subFolder));
 			}
 		}
 		for (const child of folders) {
@@ -377,12 +373,7 @@ export class WorkerScan {
 				await this.removeFolder(oldParent);
 			}
 		}
-		let rootMatch: MatchNode;
-		if (!parent) {
-			rootMatch = await this.buildNode(dir);
-		} else {
-			rootMatch = await this.scanNode(dir, parent);
-		}
+		const rootMatch: MatchNode = !parent ? await this.buildNode(dir) : await this.scanNode(dir, parent);
 		if (this.orm.em.hasChanges()) {
 			log.debug('Syncing Track/Artwork Changes to DB');
 			await this.orm.em.flush();
