@@ -27,12 +27,7 @@ export function prepareResponseTag(tag: RawTag): void {
 	});
 }
 
-export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefined> {
-	if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {
-		return;
-	}
-	const simple = flacInfo.comment.tag;
-	const builder = new ID3V24TagBuilder('utf8');
+export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: { [key: string]: string }): void {
 	builder
 		.album(simple.ALBUM)
 		.albumSort(simple.ALBUMSORT)
@@ -125,11 +120,13 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefin
 		.custom('REPLAYGAIN_TRACK_GAIN', simple.REPLAYGAIN_TRACK_GAIN)
 		.custom('REPLAYGAIN_TRACK_PEAK', simple.REPLAYGAIN_TRACK_PEAK)
 		.comment('comment', simple.COMMENT)
-		.comment('description', simple.DESCRIPTION)
-	;
-	// builder.popm('POPM', simple['RATING:user@email']);
-	// builder.idtext('TXXX', 'MusicMagic Fingerprint', simple.FINGERPRINT=MusicMagic Fingerprint);
+		.comment('description', simple.DESCRIPTION);
+}
 
+// builder.popm('POPM', simple['RATING:user@email']);
+// builder.idtext('TXXX', 'MusicMagic Fingerprint', simple.FINGERPRINT=MusicMagic Fingerprint);
+
+export function flacToRawTagChapters(builder: ID3V24TagBuilder, simple: { [key: string]: string }): void {
 	const pad = '000';
 	let nr = 1;
 	let id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
@@ -144,12 +141,25 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefin
 		nr++;
 		id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
 	}
+}
 
+export function flacToRawTagPictures(builder: ID3V24TagBuilder, flacInfo: FlacInfo): void {
 	if (flacInfo.pictures) {
 		for (const pic of flacInfo.pictures) {
 			builder.picture(pic.pictureType, pic.description, pic.mimeType, pic.pictureData);
 		}
 	}
+}
+
+export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefined> {
+	if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {
+		return;
+	}
+	const simple = flacInfo.comment.tag;
+	const builder = new ID3V24TagBuilder('utf8');
+	flacToRawTagBase(builder, simple);
+	flacToRawTagChapters(builder, simple);
+	flacToRawTagPictures(builder, flacInfo);
 	const tag = {version: 4, frames: builder.rawBuilder.build()};
 	prepareResponseTag(tag);
 	return tag;
