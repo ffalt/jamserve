@@ -90,35 +90,6 @@ export class MetaMerger {
 		this.orm.Track.persistLater(trackInfo.track);
 	}
 
-	private async applyChangedTrackMeta(): Promise<void> {
-		const changedTracks = this.changes.tracks.added.ids().concat(this.changes.tracks.updated.ids());
-		if (changedTracks.length === 0) {
-			return;
-		}
-		const folderCache = new Map<string, Folder>();
-		for (const id of changedTracks) {
-			const track = await this.orm.Track.oneOrFailByID(id);
-			const tag = await track.tag.get();
-			let folder = folderCache.get(track.folder.idOrFail());
-			if (!folder) {
-				folder = await track.folder.getOrFail();
-				folderCache.set(folder.id, folder);
-			}
-			if (tag && folder) {
-				const trackInfo: MetaMergeTrackInfo = {track, tag, folder};
-				await this.addMeta(trackInfo);
-			}
-			if (this.orm.em.changesCount() > 500) {
-				log.debug('Syncing new Track Meta to DB');
-				await this.orm.em.flush();
-			}
-		}
-		if (this.orm.em.hasChanges()) {
-			log.debug('Syncing new Track Meta to DB');
-			await this.orm.em.flush();
-		}
-	}
-
 	private async loadChangedMeta(): Promise<void> {
 		const trackIDs = this.changes.tracks.updated.ids().concat(this.changes.tracks.removed.ids());
 		if (trackIDs.length > 0) {
@@ -135,10 +106,45 @@ export class MetaMerger {
 			const genres = await this.orm.Genre.findIDsFilter({trackIDs});
 			this.changes.genres.updated.appendIDs(genres);
 		}
+		await this.flush('Track/Folder');
+	}
+
+	private async flush(section: string): Promise<void> {
 		if (this.orm.em.hasChanges()) {
-			log.debug('Syncing Track/Folder Changes to DB');
+			log.debug('Syncing ' + section + ' Meta to DB');
 			await this.orm.em.flush();
 		}
+	}
+
+	private async flushIfNeeded(section: string): Promise<void> {
+		if (this.orm.em.changesCount() > 500) {
+			log.debug('Syncing ' + section + ' Meta to DB');
+			await this.orm.em.flush();
+		}
+	}
+
+	private async applyChangedTrackMeta(id: string, folderCache: Map<string, Folder>) {
+		const track = await this.orm.Track.oneOrFailByID(id);
+		let folder = folderCache.get(track.folder.idOrFail());
+		if (!folder) {
+			folder = await track.folder.getOrFail();
+			folderCache.set(folder.id, folder);
+		}
+		const tag = await track.tag.get();
+		if (tag && folder) {
+			const trackInfo: MetaMergeTrackInfo = {track, tag, folder};
+			await this.addMeta(trackInfo);
+		}
+	}
+
+	private async applyChangedTracksMeta(): Promise<void> {
+		const changedTracks = this.changes.tracks.added.ids().concat(this.changes.tracks.updated.ids());
+		const folderCache = new Map<string, Folder>();
+		for (const id of changedTracks) {
+			await this.applyChangedTrackMeta(id, folderCache);
+			await this.flushIfNeeded('Track');
+		}
+		await this.flush('Track');
 	}
 
 	private async applyChangedArtistMeta(id: string): Promise<void> {
@@ -187,145 +193,124 @@ export class MetaMerger {
 		const artistIDs = this.changes.artists.updated.ids().concat(this.changes.artists.added.ids());
 		for (const id of artistIDs) {
 			await this.applyChangedArtistMeta(id);
-			if (this.orm.em.changesCount() > 500) {
-				log.debug('Syncing new Artist Meta to DB');
-				await this.orm.em.flush();
-			}
+			await this.flushIfNeeded('Artist');
 		}
-		if (this.orm.em.hasChanges()) {
-			log.debug('Syncing new Artist Meta to DB');
-			await this.orm.em.flush();
+		await this.flush('Artist');
+	}
+
+	private async applyChangedSerieMeta(id: string): Promise<void> {
+		const series = await this.orm.Series.oneOrFailByID(id);
+		log.debug('Updating series', series.name);
+		const albumTypes = new Set<AlbumType>();
+		const albums = (await series.albums.getItems()).filter(t => !this.changes.albums.removed.has(t));
+		const currentTracks = await this.orm.Track.findFilter({seriesIDs: [id]});
+		const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
+		await series.tracks.set(tracks);
+		if (tracks.length === 0) {
+			this.changes.series.removed.add(series);
+			this.changes.series.updated.delete(series);
+		} else {
+			albums.forEach(album => albumTypes.add(album.albumType));
+			series.albumTypes = [...albumTypes];
+			this.orm.Series.persistLater(series);
 		}
 	}
 
 	private async applyChangedSeriesMeta(): Promise<void> {
 		const seriesIDs = this.changes.series.updated.ids().concat(this.changes.series.added.ids());
-
 		for (const id of seriesIDs) {
-			const series = await this.orm.Series.oneOrFailByID(id);
-			log.debug('Updating series', series.name);
-			const albumTypes = new Set<AlbumType>();
-			const albums = (await series.albums.getItems()).filter(t => {
-				return !this.changes.albums.removed.has(t);
-			});
-			const currentTracks = await this.orm.Track.findFilter({seriesIDs: [id]});
-			const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
-			await series.tracks.set(tracks);
-			if (tracks.length === 0) {
-				this.changes.series.removed.add(series);
-				this.changes.series.updated.delete(series);
-			} else {
-				for (const album of albums) {
-					albumTypes.add(album.albumType);
-				}
-				series.albumTypes = [...albumTypes];
-				this.orm.Series.persistLater(series);
-			}
-			if (this.orm.em.changesCount() > 500) {
-				log.debug('Syncing new Series Meta to DB');
-				await this.orm.em.flush();
-			}
+			await this.applyChangedSerieMeta(id);
+			await this.flushIfNeeded('Series');
 		}
-		if (this.orm.em.hasChanges()) {
-			log.debug('Syncing new Series Meta to DB');
-			await this.orm.em.flush();
+		await this.flush('Series');
+	}
+
+	private async applyChangedAlbumMeta(id: string): Promise<void> {
+		const album = await this.orm.Album.oneOrFailByID(id);
+		log.debug('Updating album', album.name);
+		const currentTracks = await this.orm.Track.findFilter({albumIDs: [id]});
+		const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
+		await album.tracks.set(tracks);
+		if (tracks.length === 0) {
+			this.changes.albums.removed.add(album);
+			this.changes.albums.updated.delete(album);
+		} else {
+			const folders: Array<Folder> = [];
+			const albumFolders = await album.folders.getItems();
+			for (const folder of albumFolders) {
+				const folderAlbums = await folder.albums.getItems();
+				if (folderAlbums.find(a => a.id === album.id) && !this.changes.folders.removed.has(folder)) {
+					folders.push(folder);
+				}
+			}
+			await album.folders.set(folders);
+
+			const metaStatBuilder = new MetaStatBuilder();
+			folders.forEach(folder => metaStatBuilder.statID('albumType', folder.albumType));
+			album.albumType = (metaStatBuilder.mostUsed('albumType') as AlbumType) || AlbumType.unknown;
+
+			let duration = 0;
+			const genreMap = new Map<string, Genre>();
+			for (const track of tracks) {
+				const tag = await track.tag.get();
+				duration += (tag?.mediaDuration || 0);
+				metaStatBuilder.statID('seriesNr', tag?.seriesNr);
+				metaStatBuilder.statNumber('year', tag?.year);
+				metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag?.album));
+				const genres = await track.genres.getItems();
+				genres.forEach(genre => genreMap.set(genre.id, genre));
+			}
+			album.name = metaStatBuilder.mostUsed('album', album.name) || album.name;
+			album.slug = slugify(album.name);
+			album.duration = duration;
+			album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
+			album.year = metaStatBuilder.mostUsedNumber('year');
+			await album.genres.set([...genreMap.values()]);
+			this.orm.Album.persistLater(album);
 		}
 	}
 
-	private async applyChangedAlbumMeta(): Promise<void> {
+	private async applyChangedAlbumsMeta(): Promise<void> {
 		const albumIDs = this.changes.albums.updated.ids().concat(this.changes.albums.added.ids());
 		for (const id of albumIDs) {
-			const album = await this.orm.Album.oneOrFailByID(id);
-			log.debug('Updating album', album.name);
-			const currentTracks = await this.orm.Track.findFilter({albumIDs: [id]});
-			const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
-			await album.tracks.set(tracks);
-			if (tracks.length === 0) {
-				this.changes.albums.removed.add(album);
-				this.changes.albums.updated.delete(album);
-			} else {
-				const folders: Array<Folder> = [];
-				const albumFolders = await album.folders.getItems();
-				for (const folder of albumFolders) {
-					const folderAlbums = await folder.albums.getItems();
-					if (folderAlbums.find(a => a.id === album.id) && !this.changes.folders.removed.has(folder)) {
-						folders.push(folder);
-					}
-				}
-				await album.folders.set(folders);
-
-				const metaStatBuilder = new MetaStatBuilder();
-				for (const folder of folders) {
-					metaStatBuilder.statID('albumType', folder.albumType);
-				}
-				album.albumType = (metaStatBuilder.mostUsed('albumType') as AlbumType) || AlbumType.unknown;
-
-				let duration = 0;
-				const genreMap = new Map<string, Genre>();
-				for (const track of tracks) {
-					const tag = await track.tag.get();
-					duration += (tag?.mediaDuration || 0);
-					metaStatBuilder.statID('seriesNr', tag?.seriesNr);
-					metaStatBuilder.statNumber('year', tag?.year);
-					metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag?.album));
-					const genres = await track.genres.getItems();
-					for (const genre of genres) {
-						genreMap.set(genre.id, genre);
-					}
-				}
-				album.name = metaStatBuilder.mostUsed('album', album.name) || album.name;
-				album.slug = slugify(album.name);
-				album.duration = duration;
-				album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
-				album.year = metaStatBuilder.mostUsedNumber('year');
-				await album.genres.set([...genreMap.values()]);
-				this.orm.Album.persistLater(album);
-			}
-			if (this.orm.em.changesCount() > 500) {
-				log.debug('Syncing new Album Meta to DB');
-				await this.orm.em.flush();
-			}
+			await this.applyChangedAlbumMeta(id);
+			await this.flushIfNeeded('Album');
 		}
-		if (this.orm.em.hasChanges()) {
-			log.debug('Syncing new Album Meta to DB');
-			await this.orm.em.flush();
+		await this.flush('Album');
+	}
+
+	private async applyChangedGenreMeta(id: string): Promise<void> {
+		const genre = await this.orm.Genre.oneOrFailByID(id);
+		log.debug('Updating genre', genre.name);
+		const currentTracks = await this.orm.Track.findFilter({genreIDs: [id]});
+		const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
+		if (tracks.length === 0) {
+			this.changes.genres.removed.add(genre);
+			this.changes.genres.updated.delete(genre);
+			this.orm.Genre.removeLater(genre);
+		} else {
+			await genre.tracks.set(tracks);
+			this.orm.Genre.persistLater(genre);
 		}
 	}
 
 	private async applyChangedGenresMeta(): Promise<void> {
 		const genreIDs = this.changes.genres.updated.ids();
 		for (const id of genreIDs) {
-			const genre = await this.orm.Genre.oneOrFailByID(id);
-			log.debug('Updating genre', genre.name);
-			const currentTracks = await this.orm.Track.findFilter({genreIDs: [id]});
-			const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
-			if (tracks.length === 0) {
-				this.changes.genres.removed.add(genre);
-				this.changes.genres.updated.delete(genre);
-				this.orm.Genre.removeLater(genre);
-			} else {
-				await genre.tracks.set(tracks);
-				this.orm.Genre.persistLater(genre);
-			}
-			if (this.orm.em.changesCount() > 500) {
-				log.debug('Syncing new Genre Meta to DB');
-				await this.orm.em.flush();
-			}
+			await this.applyChangedGenreMeta(id);
+			await this.flushIfNeeded('Genre');
 		}
-		if (this.orm.em.hasChanges()) {
-			log.debug('Syncing new Genre Meta to DB');
-			await this.orm.em.flush();
-		}
+		await this.flush('Genre')
 	}
 
 	async mergeMeta(): Promise<void> {
 		this.root = await this.orm.Root.oneOrFailByID(this.rootID);
 		this.cache = new MetaMergerCache(this.orm, this.changes, this.root);
 		await this.loadChangedMeta(); // register all album/series/artist/genre to check for changes
-		await this.applyChangedTrackMeta(); // add/update track meta
-		await this.applyChangedAlbumMeta(); // update albums
-		await this.applyChangedArtistsMeta(); // update artists
-		await this.applyChangedSeriesMeta(); // update series
-		await this.applyChangedGenresMeta(); // update genres
+		await this.applyChangedTracksMeta();
+		await this.applyChangedAlbumsMeta();
+		await this.applyChangedArtistsMeta();
+		await this.applyChangedSeriesMeta();
+		await this.applyChangedGenresMeta();
 	}
 }
