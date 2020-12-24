@@ -195,6 +195,22 @@ export class OpenApiRefBuilder {
 		});
 	}
 
+	buildUploadSchema(param: RestParamMetadata, schemas: Schemas): SchemaObject {
+		return {
+			properties: {
+				[param.name]: {
+					type: 'object',
+					description: param.description,
+					properties: {
+						type: {description: 'Mime Type', type: 'string'},
+						file: {description: 'Binary Data', type: 'string', format: 'binary'}
+					},
+					required: ['type', 'file']
+				}
+			}, required: [param.name], description: 'Binary Part'
+		};
+	}
+
 	buildParameterSchema(param: RestParamMetadata, schemas: Schemas): SchemaObject {
 		const typeOptions: FieldOptions & TypeOptions = param.typeOptions;
 		let result: SchemaObject;

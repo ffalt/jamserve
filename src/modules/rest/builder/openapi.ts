@@ -88,44 +88,17 @@ class OpenApiBuilder {
 				refs.push({$ref: this.refsBuilder.getParamRef(param.getType(), param.methodName, schemas)});
 			} else if (param.kind === 'arg' && param.mode === 'body') {
 				const schema = this.refsBuilder.buildParameterSchema(param, schemas);
-				const properties: { [propertyName: string]: (SchemaObject | ReferenceObject) } = {};
-				properties[param.name] = schema;
-				refs.push({properties, description: param.description, required: [param.name]});
+				refs.push({properties: {[param.name]: schema}, description: param.description, required: [param.name]});
 			} else if (param.kind === 'arg' && param.mode === 'file') {
 				isJson = false;
-				const properties: { [propertyName: string]: (SchemaObject | ReferenceObject) } = {};
-				properties[param.name] = {
-					type: 'object',
-					description: param.description,
-					properties: {
-						type: {
-							description: 'Mime Type',
-							type: 'string'
-						},
-						file: {
-							description: 'Binary Data',
-							type: 'string',
-							format: 'binary'
-						}
-					},
-					required: ['type', 'file']
-				};
-				const upload: SchemaObject = {properties, required: [param.name], description: 'Binary Part'};
-				refs.push(upload);
+				refs.push(this.refsBuilder.buildUploadSchema(param, schemas));
 			}
 		}
 		if (refs.length > 0) {
-			const result: RequestBodyObject = {
+			return {
 				required: true,
-				content: {}
+				content: {[isJson ? 'application/json' : 'multipart/form-data']: {schema: refs.length === 1 ? refs[0] : {allOf: refs}}}
 			};
-			const schema = refs.length === 1 ? refs[0] : {allOf: refs};
-			if (isJson) {
-				result.content['application/json'] = {schema};
-			} else {
-				result.content['multipart/form-data'] = {schema};
-			}
-			return result;
 		}
 		return;
 	}
