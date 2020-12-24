@@ -219,7 +219,7 @@ export class FolderController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const folder = await orm.Folder.oneOrFailByID(args.id);
-		return await engine.io.newFolder(folder.id, args.name, folder.root.idOrFail());
+		return await engine.io.folder.create(folder.id, args.name, folder.root.idOrFail());
 	}
 
 	@Post(
@@ -232,7 +232,7 @@ export class FolderController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const folder = await orm.Folder.oneOrFailByID(args.id);
-		return await engine.io.renameFolder(folder.id, args.name, folder.root.idOrFail());
+		return await engine.io.folder.rename(folder.id, args.name, folder.root.idOrFail());
 	}
 
 	@Post(
@@ -248,7 +248,7 @@ export class FolderController {
 			throw InvalidParamError('ids', 'Must have entries');
 		}
 		const folder = await orm.Folder.oneOrFailByID(args.ids[0]);
-		return await engine.io.moveFolders(args.ids, args.newParentID, folder.root.idOrFail());
+		return await engine.io.folder.move(args.ids, args.newParentID, folder.root.idOrFail());
 	}
 
 	@Post(
@@ -261,7 +261,7 @@ export class FolderController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const folder = await orm.Folder.oneOrFailByID(id);
-		return await engine.io.deleteFolder(folder.id, folder.root.idOrFail());
+		return await engine.io.folder.delete(folder.id, folder.root.idOrFail());
 	}
 
 }

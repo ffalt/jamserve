@@ -7,7 +7,7 @@ import {AlbumOrderFields, ArtistOrderFields, DefaultOrderFields, FolderOrderFiel
 import {Field, ObjectType} from 'type-graphql';
 import {Base, PaginatedResponse} from '../base/base';
 import {Collection, Entity, ManyToMany, OneToMany, Property} from '../../modules/orm';
-import {RootStatus} from '../../modules/engine/services/io.types';
+import {RootStatus} from '../../modules/engine/services/io/io.types';
 
 @ObjectType()
 @Entity()

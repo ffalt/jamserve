@@ -28,7 +28,7 @@ import {
 	WorkerRequestReplaceArtwork,
 	WorkerRequestUpdateRoot,
 	WorkerRequestWriteTrackTags
-} from '../modules/engine/services/worker.types';
+} from '../modules/engine/services/worker/worker.types';
 import {Track} from '../entity/track/track';
 import {mockImage, writeMockImage} from './mock/mock.image';
 import {buildMockRoot, buildSeriesMockRoot, extendSpecMockRoot, MockRoot, MockSpecRoot, validateMock, writeAndStoreMock, writeMockRoot} from './mock/mock.root';
@@ -92,7 +92,7 @@ describe('WorkerService', () => {
 						//Arrange
 
 						//Act
-						const changes = await workerService.refreshRoot({rootID: mockRoot.id});
+						const changes = await workerService.root.refresh({rootID: mockRoot.id});
 
 						//Assert
 						expectChanges(changes, {});
@@ -104,7 +104,7 @@ describe('WorkerService', () => {
 						await fse.ensureDir(mockRoot.path);
 
 						//Act
-						const changes = await workerService.refreshRoot({rootID: mockRoot.id});
+						const changes = await workerService.root.refresh({rootID: mockRoot.id});
 
 						//Assert
 						expectChanges(changes, {
@@ -131,11 +131,11 @@ describe('WorkerService', () => {
 						//Arrange
 						await fse.remove(mockRoot.path);
 						await fse.ensureDir(mockRoot.path);
-						await workerService.refreshRoot({rootID: mockRoot.id});
+						await workerService.root.refresh({rootID: mockRoot.id});
 						await writeMockRoot(mockRoot);
 
 						//Act
-						const changes = await workerService.refreshRoot({rootID: mockRoot.id});
+						const changes = await workerService.root.refresh({rootID: mockRoot.id});
 
 						//Assert
 						expectChanges(changes, {
@@ -167,7 +167,7 @@ describe('WorkerService', () => {
 						// dir2.removeCallback();
 
 						await fse.ensureDir(mockRoot2.path);
-						changes = await workerService.refreshRoot({rootID: mockRoot2.id});
+						changes = await workerService.root.refresh({rootID: mockRoot2.id});
 						await fse.remove(mockRoot2.path);
 						expectChanges(changes, {
 							tracksRemoved: mockRoot2.expected.tracks,
@@ -393,7 +393,7 @@ describe('WorkerService', () => {
 
 						// rescan and expect:
 						// (Artist B) and (Album 2 by Artist B) must be removed
-						changes = await workerService.refreshRoot({rootID: mockRoot2.id});
+						changes = await workerService.root.refresh({rootID: mockRoot2.id});
 						expectChanges(changes, {
 							tracksUpdate: 2, // 2 Tracks must be updated
 							foldersUpdate: 3, // Root & Album Folder & Artist Folder must be updated
@@ -411,7 +411,7 @@ describe('WorkerService', () => {
 					it('should remove tracks on scan', async () => {
 						const tracks = await orm.Track.findFilter({rootIDs: [mockRoot.id]});
 						for (const track of tracks) {
-							const changes = await workerService.removeTracks({rootID: mockRoot.id, trackIDs: [track.id]});
+							const changes = await workerService.track.remove({rootID: mockRoot.id, trackIDs: [track.id]});
 							expect(changes.tracks.removed.size, 'Removed Tracks count doesnt match').toBe(1);
 						}
 						const album = await orm.Album.findFilter({rootIDs: [mockRoot.id]});
@@ -419,7 +419,7 @@ describe('WorkerService', () => {
 						const artists = await orm.Artist.findFilter({rootIDs: [mockRoot.id]});
 						expect(artists.length, 'All artists should have been removed').toBe(0);
 						await writeMockRoot(mockRoot);
-						const restoreChanges = await workerService.refreshRoot({rootID: mockRoot.id});
+						const restoreChanges = await workerService.root.refresh({rootID: mockRoot.id});
 						expect(restoreChanges.tracks.added.size, 'Restored Tracks count doesnt match').toBe(tracks.length);
 					});
 				});
@@ -439,7 +439,7 @@ describe('WorkerService', () => {
 					});
 
 					it('should rescan', async () => {
-						const changes = await workerService.refreshRoot({rootID: mockRoot.id});
+						const changes = await workerService.root.refresh({rootID: mockRoot.id});
 						expectChanges(changes, {});
 						await validateMock(mockRoot, workerService, orm);
 					});
@@ -471,10 +471,10 @@ describe('WorkerService', () => {
 							if (!folder) {
 								throw Error('Invalid Test Setup');
 							}
-							await expect(workerService.createFolder({rootID: mockRoot.id, parentID: folder.id, name: ''})).rejects.toThrow('Invalid Directory Name');
-							await expect(workerService.createFolder({rootID: mockRoot.id, parentID: folder.id, name: '.'})).rejects.toThrow('Invalid Directory Name');
-							await expect(workerService.createFolder({rootID: mockRoot.id, parentID: folder.id, name: '//..*.'})).rejects.toThrow('Invalid Directory Name');
-							await expect(workerService.createFolder({rootID: mockRoot.id, parentID: UNKNOWN_UUID, name: 'valid'})).rejects.toThrow('Destination Folder not found');
+							await expect(workerService.folder.create({rootID: mockRoot.id, parentID: folder.id, name: ''})).rejects.toThrow('Invalid Directory Name');
+							await expect(workerService.folder.create({rootID: mockRoot.id, parentID: folder.id, name: '.'})).rejects.toThrow('Invalid Directory Name');
+							await expect(workerService.folder.create({rootID: mockRoot.id, parentID: folder.id, name: '//..*.'})).rejects.toThrow('Invalid Directory Name');
+							await expect(workerService.folder.create({rootID: mockRoot.id, parentID: UNKNOWN_UUID, name: 'valid'})).rejects.toThrow('Destination Folder not found');
 
 							const findWithParent = async (): Promise<Folder | undefined> => {
 								for (const f of folders) {
@@ -490,12 +490,12 @@ describe('WorkerService', () => {
 								throw Error('Invalid Test Setup');
 							}
 							const parentID = child.parent.idOrFail();
-							await expect(workerService.createFolder({rootID: mockRoot.id, parentID, name: path.basename(child.path)})).rejects.toThrow('Folder name already used in Destination');
+							await expect(workerService.folder.create({rootID: mockRoot.id, parentID, name: path.basename(child.path)})).rejects.toThrow('Folder name already used in Destination');
 						});
 
 						it('should create a folder', async () => {
 							const parent = await orm.Folder.findOneOrFail({where: {root: mockRoot.id}});
-							const changes = await workerService.createFolder({rootID: mockRoot.id, parentID: parent.id, name: randomString(10)});
+							const changes = await workerService.folder.create({rootID: mockRoot.id, parentID: parent.id, name: randomString(10)});
 							expectChanges(changes, {
 								foldersUpdate: 1,
 								foldersNew: 1
@@ -512,17 +512,17 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.renameFolder({rootID: mockRoot.id, folderID: folder.id, newName: ''})).rejects.toThrow('Invalid Directory Name');
-							await expect(workerService.renameFolder({rootID: mockRoot.id, folderID: folder.id, newName: '.'})).rejects.toThrow('Invalid Directory Name');
-							await expect(workerService.renameFolder({rootID: mockRoot.id, folderID: folder.id, newName: '//..*.'})).rejects.toThrow('Invalid Directory Name');
-							await expect(workerService.renameFolder({rootID: mockRoot.id, folderID: folder.id, newName: path.basename(folder.path)})).rejects.toThrow('Folder name already used in Destination');
-							await expect(workerService.renameFolder({rootID: mockRoot.id, folderID: UNKNOWN_UUID, newName: 'valid'})).rejects.toThrow('Folder not found');
+							await expect(workerService.folder.rename({rootID: mockRoot.id, folderID: folder.id, newName: ''})).rejects.toThrow('Invalid Directory Name');
+							await expect(workerService.folder.rename({rootID: mockRoot.id, folderID: folder.id, newName: '.'})).rejects.toThrow('Invalid Directory Name');
+							await expect(workerService.folder.rename({rootID: mockRoot.id, folderID: folder.id, newName: '//..*.'})).rejects.toThrow('Invalid Directory Name');
+							await expect(workerService.folder.rename({rootID: mockRoot.id, folderID: folder.id, newName: path.basename(folder.path)})).rejects.toThrow('Folder name already used in Destination');
+							await expect(workerService.folder.rename({rootID: mockRoot.id, folderID: UNKNOWN_UUID, newName: 'valid'})).rejects.toThrow('Folder not found');
 						});
 
 						it('should handle fs errors', async () => {
 							const mockFn = jest.spyOn(fse, 'rename');
 							mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
-							await expect(workerService.renameFolder({rootID: mockRoot.id, folderID: folder.id, newName: 'valid'})).rejects.toThrow('Folder renaming failed');
+							await expect(workerService.folder.rename({rootID: mockRoot.id, folderID: folder.id, newName: 'valid'})).rejects.toThrow('Folder renaming failed');
 							expect(mockFn).toHaveBeenCalled();
 							mockFn.mockRestore();
 						});
@@ -536,7 +536,7 @@ describe('WorkerService', () => {
 							async function testRename(folder: Folder, newName: string): Promise<Folder | undefined> {
 								const trackCount = await orm.Track.countFilter({childOfID: folder.id});
 								const folderCount = await orm.Folder.countFilter({childOfID: folder.id});
-								await workerService.renameFolder({rootID: mockRoot.id, folderID: folder.id, newName});
+								await workerService.folder.rename({rootID: mockRoot.id, folderID: folder.id, newName});
 								const updatedFolder = await orm.Folder.oneOrFailByID(folder.id);
 								const all = await orm.Folder.findFilter({childOfID: updatedFolder.id});
 								expect(folderCount, `Folder count does not match: ${updatedFolder.path}`).toBe(all.length);
@@ -575,13 +575,13 @@ describe('WorkerService', () => {
 						});
 
 						it('should not remove root folders', async () => {
-							await expect(workerService.deleteFolders({rootID: mockRoot.id, folderIDs: [rootFolder.id]})).rejects.toThrow('Root folder can not be deleted');
+							await expect(workerService.folder.remove({rootID: mockRoot.id, folderIDs: [rootFolder.id]})).rejects.toThrow('Root folder can not be deleted');
 						});
 
 						it('should handle fs errors', async () => {
 							const mockFn = jest.spyOn(fse, 'move'); // mock move, since we don't delete, but move to trash folder
 							mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
-							await expect(workerService.deleteFolders({rootID: mockRoot.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder removing failed');
+							await expect(workerService.folder.remove({rootID: mockRoot.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder removing failed');
 							expect(mockFn).toHaveBeenCalled();
 							mockFn.mockRestore();
 						});
@@ -591,7 +591,7 @@ describe('WorkerService', () => {
 							const artworkCount = await orm.Artwork.countFilter({childOfID: artistFolder.id});
 							const trackCount = await orm.Track.countFilter({childOfID: artistFolder.id});
 							const albumCount = await orm.Album.countFilter({artist: 'artist 1'});
-							const changes = await workerService.deleteFolders({rootID: mockRoot.id, folderIDs: [artistFolder.id]});
+							const changes = await workerService.folder.remove({rootID: mockRoot.id, folderIDs: [artistFolder.id]});
 							expectChanges(changes, {
 								tracksRemoved: trackCount,
 								foldersUpdate: 1,
@@ -604,7 +604,7 @@ describe('WorkerService', () => {
 							// restore the folder and rescan
 							const mockFolder = mockRoot.folders.find(f => f.name === 'artist 1');
 							await writeMockFolder(mockFolder!);
-							const restorechanges = await workerService.refreshRoot({rootID: mockRoot.id});
+							const restorechanges = await workerService.root.refresh({rootID: mockRoot.id});
 							expectChanges(restorechanges, {
 								tracksNew: trackCount,
 								foldersNew: folderCount,
@@ -630,19 +630,19 @@ describe('WorkerService', () => {
 						});
 
 						it('should not move folders with invalid parameters', async () => {
-							await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: rootFolder.id, folderIDs: [rootFolder.id]})).rejects.toThrow('Folder cannot be moved to itself');
-							await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: rootFolder.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder name already used in Destination');
-							await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [rootFolder.id]})).rejects.toThrow('Root folder can not be moved');
-							await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder cannot be moved to itself');
-							await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [album2Folder.id]})).rejects.toThrow('Folder name already used in Destination');
-							await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: UNKNOWN_UUID, folderIDs: [albumFolder.id]})).rejects.toThrow('Destination Folder not found');
-							await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [UNKNOWN_UUID]})).rejects.toThrow('Folder not found');
+							await expect(workerService.folder.move({rootID: mockRoot.id, newParentID: rootFolder.id, folderIDs: [rootFolder.id]})).rejects.toThrow('Folder cannot be moved to itself');
+							await expect(workerService.folder.move({rootID: mockRoot.id, newParentID: rootFolder.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder name already used in Destination');
+							await expect(workerService.folder.move({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [rootFolder.id]})).rejects.toThrow('Root folder can not be moved');
+							await expect(workerService.folder.move({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [artistFolder.id]})).rejects.toThrow('Folder cannot be moved to itself');
+							await expect(workerService.folder.move({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [album2Folder.id]})).rejects.toThrow('Folder name already used in Destination');
+							await expect(workerService.folder.move({rootID: mockRoot.id, newParentID: UNKNOWN_UUID, folderIDs: [albumFolder.id]})).rejects.toThrow('Destination Folder not found');
+							await expect(workerService.folder.move({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [UNKNOWN_UUID]})).rejects.toThrow('Folder not found');
 						});
 
 						it('should handle fs errors', async () => {
 							const mockFn = jest.spyOn(fse, 'move');
 							mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
-							await expect(workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [albumFolder.id]})).rejects.toThrow('Folder moving failed');
+							await expect(workerService.folder.move({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [albumFolder.id]})).rejects.toThrow('Folder moving failed');
 							expect(mockFn).toHaveBeenCalled();
 							mockFn.mockRestore();
 						});
@@ -654,7 +654,7 @@ describe('WorkerService', () => {
 							if (!oldParentID) {
 								throw Error('Invalid Test Setup');
 							}
-							let changes = await workerService.moveFolders({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [albumFolder.id]});
+							let changes = await workerService.folder.move({rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [albumFolder.id]});
 							expectChanges(changes, {
 								foldersUpdate: 5, // 3 = the multialbum with 2 childs, 1 = the old parent, 1 = the new parent
 								artistsUpdate: 1,
@@ -664,7 +664,7 @@ describe('WorkerService', () => {
 								tracksUpdate: trackCount
 							});
 							// move it back
-							changes = await workerService.moveFolders({rootID: mockRoot.id, newParentID: oldParentID as string, folderIDs: [albumFolder.id]});
+							changes = await workerService.folder.move({rootID: mockRoot.id, newParentID: oldParentID as string, folderIDs: [albumFolder.id]});
 							expectChanges(changes, {
 								foldersUpdate: 5,
 								albumsUpdate: 1,
@@ -686,11 +686,11 @@ describe('WorkerService', () => {
 						});
 
 						it('should not refresh folders with invalid parameters', async () => {
-							await expect(workerService.refreshFolders({...opts, folderIDs: [UNKNOWN_UUID]})).rejects.toThrow('Folder not found');
-							await expect(workerService.refreshFolders({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
+							await expect(workerService.folder.refresh({...opts, folderIDs: [UNKNOWN_UUID]})).rejects.toThrow('Folder not found');
+							await expect(workerService.folder.refresh({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
 						});
 						it('should  refresh a folder', async () => {
-							const changes = await workerService.refreshFolders(opts);
+							const changes = await workerService.folder.refresh(opts);
 							expectChanges(changes, {foldersUpdate: 1});
 						});
 					});
@@ -707,44 +707,44 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.createRoot({...opts, path: ''})).rejects.toThrow('Root Directory invalid');
-							await expect(workerService.createRoot({...opts, path: ' '})).rejects.toThrow('Root Directory invalid');
-							await expect(workerService.createRoot({...opts, path: '*'})).rejects.toThrow('Root Directory invalid');
-							await expect(workerService.createRoot({...opts, path: '.'})).rejects.toThrow('Root Directory must be absolute');
-							await expect(workerService.createRoot({...opts, path: '..'})).rejects.toThrow('Root Directory must be absolute');
-							await expect(workerService.createRoot({...opts, path: './data/'})).rejects.toThrow('Root Directory must be absolute');
-							await expect(workerService.createRoot({...opts, path: mockRoot.path})).rejects.toThrow('Root path already used');
+							await expect(workerService.root.create({...opts, path: ''})).rejects.toThrow('Root Directory invalid');
+							await expect(workerService.root.create({...opts, path: ' '})).rejects.toThrow('Root Directory invalid');
+							await expect(workerService.root.create({...opts, path: '*'})).rejects.toThrow('Root Directory invalid');
+							await expect(workerService.root.create({...opts, path: '.'})).rejects.toThrow('Root Directory must be absolute');
+							await expect(workerService.root.create({...opts, path: '..'})).rejects.toThrow('Root Directory must be absolute');
+							await expect(workerService.root.create({...opts, path: './data/'})).rejects.toThrow('Root Directory must be absolute');
+							await expect(workerService.root.create({...opts, path: mockRoot.path})).rejects.toThrow('Root path already used');
 						});
 
 						it('should create a root', async () => {
 							const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio2'));
 							await fse.mkdir(mediaPath);
-							const changes = await workerService.createRoot({...opts, path: mediaPath});
+							const changes = await workerService.root.create({...opts, path: mediaPath});
 							expectChanges(changes, {});
 						});
 
 						it('should create a root with inaccessible path', async () => {
-							const changes = await workerService.createRoot({...opts, path: '/invalid/test/path/'});
+							const changes = await workerService.root.create({...opts, path: '/invalid/test/path/'});
 							expectChanges(changes, {});
 						});
 
 						it('should not allow already scanned path or parts of path in a new root', async () => {
-							const changes = await workerService.createRoot({...opts, path: '/invalid/test/path/'});
+							const changes = await workerService.root.create({...opts, path: '/invalid/test/path/'});
 							expectChanges(changes, {});
-							await expect(workerService.createRoot({...opts, path: '/invalid/test/path/'})).rejects.toThrow('Root path already used');
-							await expect(workerService.createRoot({...opts, path: '/invalid/test/'})).rejects.toThrow('Root path already used');
-							await expect(workerService.createRoot({...opts, path: '/invalid/test/path/other'})).rejects.toThrow('Root path already used');
+							await expect(workerService.root.create({...opts, path: '/invalid/test/path/'})).rejects.toThrow('Root path already used');
+							await expect(workerService.root.create({...opts, path: '/invalid/test/'})).rejects.toThrow('Root path already used');
+							await expect(workerService.root.create({...opts, path: '/invalid/test/path/other'})).rejects.toThrow('Root path already used');
 						});
 					});
 
 					describe('remove roots', () => {
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.removeRoot({rootID: ''})).rejects.toThrow('Invalid ID');
-							await expect(workerService.removeRoot({rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
+							await expect(workerService.root.remove({rootID: ''})).rejects.toThrow('Invalid ID');
+							await expect(workerService.root.remove({rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
 						});
 
 						it('should remove a root', async () => {
-							const changes = await workerService.removeRoot({rootID: mockRoot.id});
+							const changes = await workerService.root.remove({rootID: mockRoot.id});
 							expectChanges(changes, {
 								tracksRemoved: mockRoot.expected.tracks,
 								artistsRemoved: mockRoot.expected.artists.length,
@@ -767,18 +767,18 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.updateRoot({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
-							await expect(workerService.updateRoot({...opts, path: ''})).rejects.toThrow('Root Directory invalid');
+							await expect(workerService.root.update({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
+							await expect(workerService.root.update({...opts, path: ''})).rejects.toThrow('Root Directory invalid');
 						});
 
 						it('should update a root name only', async () => {
-							const changes = await workerService.updateRoot({...opts, name: 'something', path: mockRoot.path});
+							const changes = await workerService.root.update({...opts, name: 'something', path: mockRoot.path});
 							expectChanges(changes, {});
 						});
 
 						it('should update a root path', async () => {
 							await fse.mkdir(mediaPath);
-							const changes = await workerService.updateRoot({...opts});
+							const changes = await workerService.root.update({...opts});
 							expectChanges(changes, {
 								foldersNew: 1,
 								tracksRemoved: mockRoot.expected.tracks,
@@ -808,20 +808,20 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.moveArtworks({...opts, newParentID: artwork.folder.idOrFail()})).rejects.toThrow('File name is already used in folder');
-							await expect(workerService.moveArtworks({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
-							await expect(workerService.moveArtworks({...opts, artworkIDs: [UNKNOWN_UUID]})).rejects.toThrow('Artwork not found');
-							await expect(workerService.moveArtworks({...opts, newParentID: UNKNOWN_UUID})).rejects.toThrow('Destination Folder not found');
+							await expect(workerService.artwork.move({...opts, newParentID: artwork.folder.idOrFail()})).rejects.toThrow('File name is already used in folder');
+							await expect(workerService.artwork.move({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
+							await expect(workerService.artwork.move({...opts, artworkIDs: [UNKNOWN_UUID]})).rejects.toThrow('Artwork not found');
+							await expect(workerService.artwork.move({...opts, newParentID: UNKNOWN_UUID})).rejects.toThrow('Destination Folder not found');
 						});
 
 						it('should move artworks', async () => {
 							const oldFolderID = artwork.folder.idOrFail();
-							let changes = await workerService.moveArtworks({rootID: mockRoot.id, artworkIDs: [artwork.id], newParentID: folder.id});
+							let changes = await workerService.artwork.move({rootID: mockRoot.id, artworkIDs: [artwork.id], newParentID: folder.id});
 							expectChanges(changes, {
 								foldersUpdate: 2,
 								artworksUpdate: 1
 							});
-							changes = await workerService.moveArtworks({rootID: mockRoot.id, artworkIDs: [artwork.id], newParentID: oldFolderID});
+							changes = await workerService.artwork.move({rootID: mockRoot.id, artworkIDs: [artwork.id], newParentID: oldFolderID});
 							expectChanges(changes, {
 								foldersUpdate: 2,
 								artworksUpdate: 1
@@ -842,29 +842,29 @@ describe('WorkerService', () => {
 						it('should handle invalid parameters', async () => {
 							const artwork = await orm.Artwork.oneOrFailFilter({name: 'front.png'});
 							const ext = path.extname(artwork.name);
-							await expect(workerService.renameArtwork({...opts, newName: ''})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameArtwork({...opts, newName: '.'})).rejects.toThrow(/Changing File extension not supported/);
-							await expect(workerService.renameArtwork({...opts, newName: '/'})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameArtwork({...opts, newName: '\\'})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameArtwork({...opts, newName: '*' + ext})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameArtwork({...opts, newName: '//..*.'})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameArtwork({...opts, newName: 'none.invalid'})).rejects.toThrow(/Changing File extension not supported/);
-							await expect(workerService.renameArtwork({...opts, newName: artwork.name})).rejects.toThrow('File name already used in Destination');
-							await expect(workerService.renameArtwork({...opts, artworkID: UNKNOWN_UUID, newName: 'valid' + ext})).rejects.toThrow('Artwork not found');
+							await expect(workerService.artwork.rename({...opts, newName: ''})).rejects.toThrow('Invalid Name');
+							await expect(workerService.artwork.rename({...opts, newName: '.'})).rejects.toThrow(/Changing File extension not supported/);
+							await expect(workerService.artwork.rename({...opts, newName: '/'})).rejects.toThrow('Invalid Name');
+							await expect(workerService.artwork.rename({...opts, newName: '\\'})).rejects.toThrow('Invalid Name');
+							await expect(workerService.artwork.rename({...opts, newName: '*' + ext})).rejects.toThrow('Invalid Name');
+							await expect(workerService.artwork.rename({...opts, newName: '//..*.'})).rejects.toThrow('Invalid Name');
+							await expect(workerService.artwork.rename({...opts, newName: 'none.invalid'})).rejects.toThrow(/Changing File extension not supported/);
+							await expect(workerService.artwork.rename({...opts, newName: artwork.name})).rejects.toThrow('File name already used in Destination');
+							await expect(workerService.artwork.rename({...opts, artworkID: UNKNOWN_UUID, newName: 'valid' + ext})).rejects.toThrow('Artwork not found');
 						});
 
 						it('should handle fs errors', async () => {
 							const ext = path.extname(artwork.name);
 							const mockFn = jest.spyOn(fse, 'rename');
 							mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
-							await expect(workerService.renameArtwork({...opts, newName: 'valid' + ext})).rejects.toThrow('File renaming failed');
+							await expect(workerService.artwork.rename({...opts, newName: 'valid' + ext})).rejects.toThrow('File renaming failed');
 							expect(mockFn).toHaveBeenCalled();
 							mockFn.mockRestore();
 						});
 
 						it('should rename an artwork', async () => {
 							const ext = path.extname(artwork.name);
-							const changes = await workerService.renameArtwork({...opts, newName: 'valid' + ext});
+							const changes = await workerService.artwork.rename({...opts, newName: 'valid' + ext});
 							expectChanges(changes, {foldersUpdate: 1, artworksUpdate: 1});
 						});
 					});
@@ -879,20 +879,20 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.removeArtwork({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
-							await expect(workerService.removeArtwork({...opts, artworkID: UNKNOWN_UUID})).rejects.toThrow('Artwork not found');
+							await expect(workerService.artwork.remove({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
+							await expect(workerService.artwork.remove({...opts, artworkID: UNKNOWN_UUID})).rejects.toThrow('Artwork not found');
 						});
 
 						it('should handle fs errors', async () => {
 							const mockFn = jest.spyOn(fse, 'move');
 							mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
-							await expect(workerService.removeArtwork(opts)).rejects.toThrow('Moving to Trash failed');
+							await expect(workerService.artwork.remove(opts)).rejects.toThrow('Moving to Trash failed');
 							expect(mockFn).toHaveBeenCalled();
 							mockFn.mockRestore();
 						});
 
 						it('should remove an artwork', async () => {
-							const changes = await workerService.removeArtwork(opts);
+							const changes = await workerService.artwork.remove(opts);
 							expectChanges(changes, {
 								foldersUpdate: 1,
 								artworksRemoved: 1
@@ -910,15 +910,15 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.downloadArtwork({...opts, artworkURL: ''})).rejects.toThrow('Invalid Image URL');
-							await expect(workerService.downloadArtwork({...opts, artworkURL: mockNockURL('invalid')})).rejects.toThrow('Invalid Image URL');
-							await expect(workerService.downloadArtwork({...opts, folderID: UNKNOWN_UUID, artworkURL: mockNockURL('nonexisting.png')})).rejects.toThrow('Folder not found');
+							await expect(workerService.artwork.download({...opts, artworkURL: ''})).rejects.toThrow('Invalid Image URL');
+							await expect(workerService.artwork.download({...opts, artworkURL: mockNockURL('invalid')})).rejects.toThrow('Invalid Image URL');
+							await expect(workerService.artwork.download({...opts, folderID: UNKNOWN_UUID, artworkURL: mockNockURL('nonexisting.png')})).rejects.toThrow('Folder not found');
 						});
 
 						it('should handle 404s', async () => {
 							const scope = mockNock()
 								.get('/nonexisting.png').reply(404);
-							await expect(workerService.downloadArtwork({...opts, artworkURL: mockNockURL('nonexisting.png')})).rejects.toThrow('Not Found');
+							await expect(workerService.artwork.download({...opts, artworkURL: mockNockURL('nonexisting.png')})).rejects.toThrow('Not Found');
 							expect(scope.isDone(), 'No request has been made').toBe(true);
 						});
 
@@ -926,7 +926,7 @@ describe('WorkerService', () => {
 							const image = await mockImage('png');
 							const scope = mockNock()
 								.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
-							const changes = await workerService.downloadArtwork({...opts, artworkURL: mockNockURL('image.png')});
+							const changes = await workerService.artwork.download({...opts, artworkURL: mockNockURL('image.png')});
 							expect(scope.isDone(), 'No request has been made').toBe(true);
 							expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
 						});
@@ -945,15 +945,15 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.createArtwork({...opts, artworkFilename: ''})).rejects.toThrow('Invalid Artwork File Name');
-							await expect(workerService.createArtwork({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
-							await expect(workerService.createArtwork({...opts, folderID: UNKNOWN_UUID})).rejects.toThrow('Folder not found');
+							await expect(workerService.artwork.create({...opts, artworkFilename: ''})).rejects.toThrow('Invalid Artwork File Name');
+							await expect(workerService.artwork.create({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
+							await expect(workerService.artwork.create({...opts, folderID: UNKNOWN_UUID})).rejects.toThrow('Folder not found');
 						});
 
 						it('should handle fs errors', async () => {
 							const mockFn = jest.spyOn(fse, 'copy');
 							mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
-							await expect(workerService.createArtwork(opts)).rejects.toThrow('Importing artwork failed');
+							await expect(workerService.artwork.create(opts)).rejects.toThrow('Importing artwork failed');
 							expect(mockFn).toHaveBeenCalled();
 							mockFn.mockRestore();
 						});
@@ -961,26 +961,26 @@ describe('WorkerService', () => {
 						it('should handle image errors', async () => {
 							const invalidImageFile = path.resolve(mockRoot.path, 'invalid');
 							await fse.writeFile(invalidImageFile, 'INVALID');
-							await expect(workerService.createArtwork({...opts, artworkFilename: invalidImageFile})).rejects.toThrow('Image Format invalid/not known');
+							await expect(workerService.artwork.create({...opts, artworkFilename: invalidImageFile})).rejects.toThrow('Image Format invalid/not known');
 						});
 
 						it('should create an artwork', async () => {
-							const changes = await workerService.createArtwork(opts);
+							const changes = await workerService.artwork.create(opts);
 							expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
 							expect((await orm.Artwork.oneOrFailByID(changes.artworks.added.ids()[0])).name).toBe('front.png');
 						});
 
 						it('should create & auto name an artwork', async () => {
-							const changes = await workerService.createArtwork({...opts, types: []});
+							const changes = await workerService.artwork.create({...opts, types: []});
 							expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
 							expect((await orm.Artwork.oneOrFailByID(changes.artworks.added.ids()[0])).name).toBe('cover.png');
 						});
 
 						it('should create & auto unique name an artwork', async () => {
-							let changes = await workerService.createArtwork({...opts, types: []});
+							let changes = await workerService.artwork.create({...opts, types: []});
 							expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
 							expect((await orm.Artwork.oneOrFailByID(changes.artworks.added.ids()[0])).name).toBe('cover.png');
-							changes = await workerService.createArtwork({...opts, types: []});
+							changes = await workerService.artwork.create({...opts, types: []});
 							expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
 							expect((await orm.Artwork.oneOrFailByID(changes.artworks.added.ids()[0])).name).toBe('cover-2.png');
 						});
@@ -999,15 +999,15 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.replaceArtwork({...opts, artworkFilename: ''})).rejects.toThrow('Invalid Artwork File Name');
-							await expect(workerService.replaceArtwork({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
-							await expect(workerService.replaceArtwork({...opts, artworkID: UNKNOWN_UUID})).rejects.toThrow('Artwork not found');
+							await expect(workerService.artwork.replace({...opts, artworkFilename: ''})).rejects.toThrow('Invalid Artwork File Name');
+							await expect(workerService.artwork.replace({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
+							await expect(workerService.artwork.replace({...opts, artworkID: UNKNOWN_UUID})).rejects.toThrow('Artwork not found');
 						});
 
 						it('should handle fs errors', async () => {
 							const mockFn = jest.spyOn(fse, 'copy');
 							mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
-							await expect(workerService.replaceArtwork(opts)).rejects.toThrow('Importing artwork failed');
+							await expect(workerService.artwork.replace(opts)).rejects.toThrow('Importing artwork failed');
 							expect(mockFn).toHaveBeenCalled();
 							mockFn.mockRestore();
 						});
@@ -1015,11 +1015,11 @@ describe('WorkerService', () => {
 						it('should handle image errors', async () => {
 							const invalidImageFile = path.resolve(mockRoot.path, 'invalid');
 							await fse.writeFile(invalidImageFile, 'INVALID');
-							await expect(workerService.replaceArtwork({...opts, artworkFilename: invalidImageFile})).rejects.toThrow('Image Format invalid/not known');
+							await expect(workerService.artwork.replace({...opts, artworkFilename: invalidImageFile})).rejects.toThrow('Image Format invalid/not known');
 						});
 
 						it('should replace an artwork', async () => {
-							const changes = await workerService.replaceArtwork(opts);
+							const changes = await workerService.artwork.replace(opts);
 							expectChanges(changes, {artworksUpdate: 1});
 							expect((await orm.Artwork.oneOrFailByID(changes.artworks.updated.ids()[0])).name).toBe('front.jpeg');
 						});
@@ -1045,14 +1045,14 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.moveTracks({...opts, newParentID: albumFolder.id})).rejects.toThrow('File name is already used in folder');
-							await expect(workerService.moveTracks({...opts, newParentID: album2Folder.id})).rejects.toThrow('File name is already used in folder');
-							await expect(workerService.moveTracks({...opts, newParentID: UNKNOWN_UUID})).rejects.toThrow('Destination Folder not found');
-							await expect(workerService.moveTracks({...opts, trackIDs: [UNKNOWN_UUID], newParentID: albumFolder.id})).rejects.toThrow('Track not found');
+							await expect(workerService.track.move({...opts, newParentID: albumFolder.id})).rejects.toThrow('File name is already used in folder');
+							await expect(workerService.track.move({...opts, newParentID: album2Folder.id})).rejects.toThrow('File name is already used in folder');
+							await expect(workerService.track.move({...opts, newParentID: UNKNOWN_UUID})).rejects.toThrow('Destination Folder not found');
+							await expect(workerService.track.move({...opts, trackIDs: [UNKNOWN_UUID], newParentID: albumFolder.id})).rejects.toThrow('Track not found');
 						});
 
 						it('should move tracks', async () => {
-							let changes = await workerService.moveTracks({...opts, newParentID: album3Folder.id});
+							let changes = await workerService.track.move({...opts, newParentID: album3Folder.id});
 							expectChanges(changes, {
 								artistsUpdate: 1,
 								foldersUpdate: 2,
@@ -1061,7 +1061,7 @@ describe('WorkerService', () => {
 								genresUpdate: 1
 							});
 
-							changes = await workerService.moveTracks({...opts, newParentID: albumFolder.id});
+							changes = await workerService.track.move({...opts, newParentID: albumFolder.id});
 							expectChanges(changes, {
 								artistsUpdate: 1,
 								foldersUpdate: 2,
@@ -1085,27 +1085,27 @@ describe('WorkerService', () => {
 
 						it('should handle invalid parameters', async () => {
 							const ext = path.extname(track.fileName);
-							await expect(workerService.renameTrack({...opts, newName: ''})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameTrack({...opts, newName: '.'})).rejects.toThrow(/Changing File extension not supported/);
-							await expect(workerService.renameTrack({...opts, newName: '/'})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameTrack({...opts, newName: '\\'})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameTrack({...opts, newName: '*' + ext})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameTrack({...opts, newName: '//..*.'})).rejects.toThrow('Invalid Name');
-							await expect(workerService.renameTrack({...opts, newName: 'none.invalid'})).rejects.toThrow(/Changing File extension not supported/);
-							await expect(workerService.renameTrack({...opts, newName: track.fileName})).rejects.toThrow('File name already used in Destination');
-							await expect(workerService.renameTrack({...opts, trackID: UNKNOWN_UUID})).rejects.toThrow('Track not found');
+							await expect(workerService.track.rename({...opts, newName: ''})).rejects.toThrow('Invalid Name');
+							await expect(workerService.track.rename({...opts, newName: '.'})).rejects.toThrow(/Changing File extension not supported/);
+							await expect(workerService.track.rename({...opts, newName: '/'})).rejects.toThrow('Invalid Name');
+							await expect(workerService.track.rename({...opts, newName: '\\'})).rejects.toThrow('Invalid Name');
+							await expect(workerService.track.rename({...opts, newName: '*' + ext})).rejects.toThrow('Invalid Name');
+							await expect(workerService.track.rename({...opts, newName: '//..*.'})).rejects.toThrow('Invalid Name');
+							await expect(workerService.track.rename({...opts, newName: 'none.invalid'})).rejects.toThrow(/Changing File extension not supported/);
+							await expect(workerService.track.rename({...opts, newName: track.fileName})).rejects.toThrow('File name already used in Destination');
+							await expect(workerService.track.rename({...opts, trackID: UNKNOWN_UUID})).rejects.toThrow('Track not found');
 						});
 
 						it('should handle fs errors', async () => {
 							const mockFn = jest.spyOn(fse, 'rename');
 							mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
-							await expect(workerService.renameTrack(opts)).rejects.toThrow('File renaming failed');
+							await expect(workerService.track.rename(opts)).rejects.toThrow('File renaming failed');
 							expect(mockFn).toHaveBeenCalled();
 							mockFn.mockRestore();
 						});
 
 						it('should rename a track', async () => {
-							const changes = await workerService.renameTrack(opts);
+							const changes = await workerService.track.rename(opts);
 							expectChanges(changes, {
 								foldersUpdate: 1,
 								tracksUpdate: 1,
@@ -1126,20 +1126,20 @@ describe('WorkerService', () => {
 						});
 
 						it('should handle invalid parameters', async () => {
-							await expect(workerService.removeTracks({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
-							await expect(workerService.removeTracks({...opts, trackIDs: [UNKNOWN_UUID]})).rejects.toThrow('Track not found');
+							await expect(workerService.track.remove({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
+							await expect(workerService.track.remove({...opts, trackIDs: [UNKNOWN_UUID]})).rejects.toThrow('Track not found');
 						});
 
 						it('should handle fs errors', async () => {
 							const mockFn = jest.spyOn(fse, 'move');
 							mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
-							await expect(workerService.removeTracks(opts)).rejects.toThrow('Moving to Trash failed');
+							await expect(workerService.track.remove(opts)).rejects.toThrow('Moving to Trash failed');
 							expect(mockFn).toHaveBeenCalled();
 							mockFn.mockRestore();
 						});
 
 						it('should remove a track', async () => {
-							const changes = await workerService.removeTracks({rootID: mockRoot.id, trackIDs: [track.id]});
+							const changes = await workerService.track.remove({rootID: mockRoot.id, trackIDs: [track.id]});
 							expectChanges(changes, {
 								foldersUpdate: 1,
 								tracksRemoved: 1,
@@ -1160,12 +1160,12 @@ describe('WorkerService', () => {
 						});
 
 						it('should not refresh tracks with invalid parameters', async () => {
-							await expect(workerService.refreshTracks({...opts, trackIDs: [UNKNOWN_UUID]})).rejects.toThrow('Track not found');
-							await expect(workerService.refreshTracks({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
+							await expect(workerService.track.refresh({...opts, trackIDs: [UNKNOWN_UUID]})).rejects.toThrow('Track not found');
+							await expect(workerService.track.refresh({...opts, rootID: UNKNOWN_UUID})).rejects.toThrow('Root not found');
 						});
 
 						it('should refresh a track', async () => {
-							const changes = await workerService.refreshTracks(opts);
+							const changes = await workerService.track.refresh(opts);
 							expectChanges(changes, {foldersUpdate: 1, tracksUpdate: 1, artistsUpdate: 1, albumsUpdate: 1, genresUpdate: 1});
 						});
 
@@ -1187,7 +1187,7 @@ describe('WorkerService', () => {
 								];
 								req.tags.push({trackID: track.id, tag: rawTag});
 							}
-							const changes = await workerService.writeTrackTags(req);
+							const changes = await workerService.track.writeTags(req);
 							expectChanges(changes, {foldersUpdate: 3, tracksUpdate: tracks.length, artistsUpdate: 1, albumsUpdate: 1, genresUpdate: 1});
 							const updatedAlbum = await orm.Album.oneOrFailFilter({artist: 'artist 1', name: 'album 1'});
 							expect(updatedAlbum.albumType).toBe(AlbumType.bootleg);
@@ -1210,7 +1210,7 @@ describe('WorkerService', () => {
 								];
 								req.tags.push({trackID: track.id, tag: rawTag});
 							}
-							const changes = await workerService.writeTrackTags(req);
+							const changes = await workerService.track.writeTags(req);
 							expectChanges(changes, {foldersUpdate: 3, tracksUpdate: tracks.length, artistsUpdate: 2, albumsRemoved: 1, albumsNew: 1, genresUpdate: 1});
 							await orm.Album.oneOrFailFilter({artist: 'artist 5', name: 'album 1'});
 						});

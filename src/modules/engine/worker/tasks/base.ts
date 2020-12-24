@@ -5,12 +5,15 @@ import {ImageModule} from '../../../image/image.module';
 import {AudioModule} from '../../../audio/audio.module';
 import {Root} from '../../../../entity/root/root';
 import {Inject} from 'typescript-ioc';
+import {ChangesWorker} from '../changes';
 
 export class BaseWorker {
 	@Inject
 	protected audioModule!: AudioModule;
 	@Inject
 	protected imageModule!: ImageModule;
+	@Inject
+	protected changesWorker!: ChangesWorker;
 
 	async renameFile(dir: string, oldName: string, newName: string): Promise<string> {
 		if (containsFolderSystemChars(newName)) {

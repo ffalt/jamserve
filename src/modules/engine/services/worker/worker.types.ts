@@ -1,5 +1,5 @@
-import {ArtworkImageType, RootScanStrategy, TrackHealthID} from '../../../types/enums';
-import {RawTag} from '../../audio/rawTag';
+import {ArtworkImageType, RootScanStrategy, TrackHealthID} from '../../../../types/enums';
+import {RawTag} from '../../../audio/rawTag';
 
 export interface WorkerRequestParameters {
 	rootID: string;
@@ -72,7 +72,7 @@ export interface WorkerRequestRemoveTracks extends WorkerRequestParameters {
 	trackIDs: Array<string>;
 }
 
-export interface WorkerRequestDeleteFolders extends WorkerRequestParameters {
+export interface WorkerRequestRemoveFolders extends WorkerRequestParameters {
 	folderIDs: Array<string>;
 }
 

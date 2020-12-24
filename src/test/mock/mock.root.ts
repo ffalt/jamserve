@@ -751,7 +751,7 @@ export async function writeAndStoreMock(mockRoot: MockRoot, workerService: Worke
 	});
 	await orm.Root.persistAndFlush(root);
 	mockRoot.id = root.id;
-	const changes = await workerService.refreshRoot({rootID: mockRoot.id});
+	const changes = await workerService.root.refresh({rootID: mockRoot.id});
 	const admin = await orm.User.oneOrFail({where: {name: 'admin'}});
 	if (changes.tracks.added.size > 0) {
 		const track = await orm.Track.oneOrFailByID(changes.tracks.added.ids()[0]);

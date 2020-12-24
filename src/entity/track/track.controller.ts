@@ -129,7 +129,7 @@ export class TrackController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const track = await orm.Track.oneOrFailByID(args.id);
-		return await engine.io.renameTrack(args.id, args.name, track.root.idOrFail());
+		return await engine.io.track.rename(args.id, args.name, track.root.idOrFail());
 	}
 
 	@Post(
@@ -142,7 +142,7 @@ export class TrackController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const folder = await orm.Folder.oneOrFailByID(args.folderID);
-		return await engine.io.moveTracks(args.ids, args.folderID, folder.root.idOrFail());
+		return await engine.io.track.move(args.ids, args.folderID, folder.root.idOrFail());
 	}
 
 	@Post(
@@ -155,7 +155,7 @@ export class TrackController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const track = await orm.Track.oneOrFailByID(id);
-		return await engine.io.removeTrack(id, track.root.idOrFail());
+		return await engine.io.track.remove(id, track.root.idOrFail());
 	}
 
 	@Post(
@@ -168,7 +168,7 @@ export class TrackController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const track = await orm.Track.oneOrFailByID(args.id);
-		return await engine.io.fixTrack(args.id, args.fixID, track.root.idOrFail());
+		return await engine.io.track.fix(args.id, args.fixID, track.root.idOrFail());
 	}
 
 	@Post(
@@ -181,6 +181,6 @@ export class TrackController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		const track = await orm.Track.oneOrFailByID(args.id);
-		return await engine.io.writeRawTag(args.id, args.tag, track.root.idOrFail());
+		return await engine.io.track.writeTags(args.id, args.tag, track.root.idOrFail());
 	}
 }

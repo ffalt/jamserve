@@ -1,7 +1,7 @@
 import {Arg, Args, Ctx, FieldResolver, ID, Query, Resolver, Root as GQLRoot} from 'type-graphql';
 import {Root, RootPageQL, RootQL, RootStatusQL} from './root';
 import {Context} from '../../modules/server/middlewares/apollo.context';
-import {RootStatus} from '../../modules/engine/services/io.types';
+import {RootStatus} from '../../modules/engine/services/io/io.types';
 import {RootsArgs} from './root.args';
 import {Track, TrackQL} from '../track/track';
 import {Folder, FolderQL} from '../folder/folder';

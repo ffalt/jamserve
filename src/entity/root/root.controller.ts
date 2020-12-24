@@ -62,7 +62,7 @@ export class RootController {
 		@BodyParams() args: RootMutateArgs,
 		@Ctx() {engine}: Context
 	): Promise<AdminChangeQueueInfo> {
-		return await engine.io.createRoot(args.name, args.path, args.strategy);
+		return await engine.io.root.create(args.name, args.path, args.strategy);
 	}
 
 	@Post(
@@ -75,7 +75,7 @@ export class RootController {
 		@BodyParams() args: RootMutateArgs,
 		@Ctx() {engine}: Context
 	): Promise<AdminChangeQueueInfo> {
-		return await engine.io.updateRoot(id, args.name, args.path, args.strategy);
+		return await engine.io.root.update(id, args.name, args.path, args.strategy);
 	}
 
 	@Post(
@@ -87,7 +87,7 @@ export class RootController {
 		@BodyParam('id', {description: 'Root Id', isID: true}) id: string,
 		@Ctx() {engine}: Context
 	): Promise<AdminChangeQueueInfo> {
-		return await engine.io.removeRoot(id);
+		return await engine.io.root.delete(id);
 	}
 
 	@Post(
@@ -100,9 +100,9 @@ export class RootController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		if (args.id) {
-			return await engine.io.refreshRoot(args.id);
+			return await engine.io.root.refresh(args.id);
 		} else {
-			const result = await engine.io.refresh(orm);
+			const result = await engine.io.root.refreshAll(orm);
 			return result[result.length - 1];
 		}
 	}
@@ -117,9 +117,9 @@ export class RootController {
 		@Ctx() {orm, engine}: Context
 	): Promise<AdminChangeQueueInfo> {
 		if (args.id) {
-			return await engine.io.refreshRootMeta(args.id);
+			return await engine.io.root.refreshMeta(args.id);
 		} else {
-			const result = await engine.io.refresh(orm);
+			const result = await engine.io.root.refreshAll(orm);
 			return result[result.length - 1];
 		}
 	}

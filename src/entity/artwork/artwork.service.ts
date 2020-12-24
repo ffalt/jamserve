@@ -17,23 +17,23 @@ export class ArtworkService {
 	private imageModule!: ImageModule;
 
 	async createByUrl(folder: Folder, url: string, types: Array<ArtworkImageType>): Promise<AdminChangeQueueInfo> {
-		return this.ioService.downloadArtwork(folder.id, url, types, folder.root.idOrFail());
+		return this.ioService.artwork.download(folder.id, url, types, folder.root.idOrFail());
 	}
 
 	async createByFile(folder: Folder, filename: string, types: Array<ArtworkImageType>): Promise<AdminChangeQueueInfo> {
-		return this.ioService.createArtwork(folder.id, filename, types, folder.root.idOrFail());
+		return this.ioService.artwork.create(folder.id, filename, types, folder.root.idOrFail());
 	}
 
 	async upload(artwork: Artwork, filename: string): Promise<AdminChangeQueueInfo> {
-		return this.ioService.replaceArtwork(artwork.id, filename, (await artwork.folder.getOrFail()).root.idOrFail());
+		return this.ioService.artwork.replace(artwork.id, filename, (await artwork.folder.getOrFail()).root.idOrFail());
 	}
 
 	async rename(artwork: Artwork, newName: string): Promise<AdminChangeQueueInfo> {
-		return this.ioService.renameArtwork(artwork.id, newName, (await artwork.folder.getOrFail()).root.idOrFail());
+		return this.ioService.artwork.rename(artwork.id, newName, (await artwork.folder.getOrFail()).root.idOrFail());
 	}
 
 	async remove(artwork: Artwork): Promise<AdminChangeQueueInfo> {
-		return this.ioService.deleteArtwork(artwork.id, (await artwork.folder.getOrFail()).root.idOrFail());
+		return this.ioService.artwork.delete(artwork.id, (await artwork.folder.getOrFail()).root.idOrFail());
 	}
 
 	async getImage(orm: Orm, artwork: Artwork, size: number | undefined, format: string | undefined): Promise<ImageResult> {
