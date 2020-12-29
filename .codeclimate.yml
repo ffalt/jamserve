@@ -12,8 +12,7 @@ plugins:
   tslint:
     enabled: false
 exclude_patterns:
-  - static/redoc/**/*
-  - static/graphql/**/*
+  - static/**/*
   - src/test/**/*
   - node_modules/**
   - CHANGELOG.md
