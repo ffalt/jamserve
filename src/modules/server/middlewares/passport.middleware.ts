@@ -25,11 +25,11 @@ function jwthash(token: string): string {
 export function usePassPortMiddleWare(router: express.Router, engine: EngineService): express.RequestHandler {
 	router.use(passport.initialize());
 	router.use(passport.session());
-	passport.serializeUser((user: User, done) => {
+	passport.serializeUser((user, done) => {
 		done(null, user?.id || '_invalid_');
 	});
 	passport.deserializeUser((id: string, done) => {
-		engine.user.findByID(engine.orm.fork(), id).then(user => done(null, user ? user : false)).catch(done);
+		engine.user.findByID(engine.orm.fork(), id).then(user => done(null, user)).catch(done);
 	});
 
 	passport.use('local', new passportLocal.Strategy(

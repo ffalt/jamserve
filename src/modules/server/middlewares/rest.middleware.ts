@@ -24,21 +24,20 @@ export class RestMiddleware {
 			tmpPath: this.configService.getDataPath(['cache', 'uploads']),
 			controllers: RestControllers(),
 			validateRoles: (user, roles) => {
-				const u = user as User;
 				if (roles.length > 0) {
 					if (!user) {
 						return false;
 					}
-					if (roles.includes(UserRole.stream) && !u.roleStream) {
+					if (roles.includes(UserRole.stream) && !user.roleStream) {
 						return false;
 					}
-					if (roles.includes(UserRole.admin) && !u.roleAdmin) {
+					if (roles.includes(UserRole.admin) && !user.roleAdmin) {
 						return false;
 					}
-					if (roles.includes(UserRole.podcast) && !u.rolePodcast) {
+					if (roles.includes(UserRole.podcast) && !user.rolePodcast) {
 						return false;
 					}
-					if (roles.includes(UserRole.upload) && !u.roleUpload) {
+					if (roles.includes(UserRole.upload) && !user.roleUpload) {
 						return false;
 					}
 				}

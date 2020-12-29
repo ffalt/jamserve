@@ -1,4 +1,5 @@
 import session, {Cookie} from 'express-session';
+import { User as OwnUser } from '../entity/user/user';
 
 export interface SessionData extends Partial<session.SessionData> {
 	passport: { user: string };
@@ -19,3 +20,14 @@ declare module 'express-session' {
 		cookie: Cookie;
 	}
 }
+
+declare global {
+	namespace Express {
+		// eslint-disable-next-line @typescript-eslint/no-empty-interface
+		interface User extends OwnUser {
+
+		}
+	}
+}
+
+
