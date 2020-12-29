@@ -1,6 +1,7 @@
 import fse from 'fs-extra';
 import {ID3v2, ID3V24TagBuilder} from 'jamp3';
 import path from 'path';
+import {mockImage} from './mock.image';
 
 export interface MockSpecTrack {
 	name: string;
@@ -15,6 +16,7 @@ export interface MockSpecTrack {
 	mbTrackID?: string;
 	group?: string;
 	groupNr?: string;
+	trackImage?: boolean;
 }
 
 export interface MockTrack extends MockSpecTrack {
@@ -55,6 +57,10 @@ export async function writeMockTrack(mock: MockTrack): Promise<void> {
 		.albumArtist(mock.albumArtist)
 		.work(mock.groupNr)
 		.grouping(mock.group);
+	if (mock.trackImage) {
+		const image = await mockImage('png');
+		builder.picture(0, 'track image', image.mime, image.buffer);
+	}
 	const id3v2 = new ID3v2();
 	await id3v2.writeBuilder(mock.path, builder, {keepBackup: false});
 }

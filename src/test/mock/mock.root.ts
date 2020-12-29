@@ -315,7 +315,8 @@ export function buildMockRoot(dir: string, nr: number, strategy: RootScanStrateg
 								album: 'series 1 album 2',
 								number: 1,
 								total: 3,
-								genre: 'Audiobook'
+								genre: 'Audiobook',
+								trackImage: true
 							},
 							{
 								name: '3 - title 3 - series 1 album 3 - artist 5.mp3',
