@@ -75,7 +75,7 @@
     "sequelize": "6.3.5",
     "sharp": "0.27.0",
     "shuffle-seed": "1.1.6",
-    "sqlite3": "5.0.0",
+    "sqlite3": "5.0.1",
     "type-graphql": "1.1.1",
     "typescript-ioc": "3.2.2",
     "waveform-data": "3.3.4",
