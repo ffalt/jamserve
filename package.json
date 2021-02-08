@@ -111,7 +111,7 @@
     "@types/mustache": "4.1.0",
     "@types/node": "14.14.14",
     "@types/on-finished": "2.3.1",
-    "@types/passport": "1.0.4",
+    "@types/passport": "1.0.6",
     "@types/passport-jwt": "3.0.3",
     "@types/passport-local": "1.0.33",
     "@types/seedrandom": "2.4.28",
