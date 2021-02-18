@@ -132,7 +132,7 @@
     "jest-openapi": "0.11.0",
     "nock": "13.0.5",
     "openapi3-ts": "2.0.0",
-    "standard-version": "9.0.0",
+    "standard-version": "9.1.1",
     "supertest": "6.0.1",
     "tmp": "0.2.1",
     "ts-jest": "26.4.4",
