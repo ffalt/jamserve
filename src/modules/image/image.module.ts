@@ -2,7 +2,7 @@ import fse from 'fs-extra';
 import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
 import path from 'path';
-import sharp from 'sharp';
+import sharp, {FormatEnum} from 'sharp';
 import {downloadFile} from '../../utils/download';
 import {SupportedWriteImageFormat} from '../../utils/filetype';
 import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
@@ -112,7 +112,7 @@ export class ImageModule {
 			if (size) {
 				sharpy.resize(size, size, {fit: sharp.fit.cover, position: sharp.strategy.entropy});
 			}
-			sharpy.toFormat(format);
+			sharpy.toFormat(format as keyof FormatEnum);
 			const buffer = await sharpy.toBuffer();
 			return {buffer: {buffer, contentType: mime}};
 		}
@@ -134,7 +134,7 @@ export class ImageModule {
 				buffer: {
 					buffer: await sharp(buffer, {failOnError: false})
 						.resize(size, size, {fit: sharp.fit.cover})
-						.toFormat(destFormat)
+						.toFormat(destFormat as keyof FormatEnum)
 						.toBuffer(),
 					contentType
 				}
@@ -144,7 +144,7 @@ export class ImageModule {
 			return {
 				buffer: {
 					buffer: await sharp(buffer, {failOnError: false})
-						.toFormat(destFormat)
+						.toFormat(destFormat as keyof FormatEnum)
 						.toBuffer(),
 					contentType
 				}
