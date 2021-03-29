@@ -104,7 +104,7 @@
     "@types/helmet": "4.0.0",
     "@types/jest": "26.0.22",
     "@types/jest-expect-message": "1.0.3",
-    "@types/jsdom": "16.2.8",
+    "@types/jsdom": "16.2.9",
     "@types/method-override": "0.0.31",
     "@types/mime-types": "2.1.0",
     "@types/multer": "1.4.5",
