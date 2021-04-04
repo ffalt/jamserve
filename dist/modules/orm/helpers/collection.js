@@ -34,6 +34,9 @@ class Collection {
         this.initialized = false;
         this.changeSet = undefined;
     }
+    async getIDs(options) {
+        return (await this.getItems(options)).map(item => item.id);
+    }
     async getItems(options) {
         if (this.list) {
             return this.list;

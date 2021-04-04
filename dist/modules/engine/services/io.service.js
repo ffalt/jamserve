@@ -12,9 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.IoService = void 0;
 const worker_service_1 = require("./worker.service");
 const orm_service_1 = require("./orm.service");
-const io_types_1 = require("./io.types");
+const io_types_1 = require("./io/io.types");
 const typescript_ioc_1 = require("typescript-ioc");
 const logger_1 = require("../../../utils/logger");
+const io_commands_artwork_1 = require("./io/io.commands.artwork");
+const io_commands_folder_1 = require("./io/io.commands.folder");
+const io_commands_root_1 = require("./io/io.commands.root");
+const io_commands_track_1 = require("./io/io.commands.track");
 const log = logger_1.logger('IO');
 let IoService = class IoService {
     constructor() {
@@ -22,14 +26,12 @@ let IoService = class IoService {
         this.afterRefreshListeners = [];
         this.rootStatus = new Map();
         this.queue = [];
-        this.delayedTrackTagWrite = new Map();
-        this.delayedTrackFix = new Map();
         this.nextID = Date.now();
         this.history = [];
-    }
-    generateRequestID() {
-        this.nextID += 1;
-        return this.nextID.toString();
+        this.artwork = new io_commands_artwork_1.IoCommandsArtwork(this);
+        this.folder = new io_commands_folder_1.IoCommandsFolder(this);
+        this.root = new io_commands_root_1.IoCommandsRoot(this);
+        this.track = new io_commands_track_1.IoCommandsTrack(this);
     }
     async runRequest(cmd) {
         this.clearAfterRefresh();
@@ -73,9 +75,6 @@ let IoService = class IoService {
         }
         this.afterScanTimeout = undefined;
     }
-    findRequest(rootID, mode) {
-        return this.queue.find(c => !!c.parameters.rootID && (c.parameters.rootID === rootID && c.mode === mode));
-    }
     async next() {
         const cmd = this.queue.shift();
         if (cmd) {
@@ -99,10 +98,20 @@ let IoService = class IoService {
             log.error(e);
         });
     }
+    generateRequestID() {
+        this.nextID += 1;
+        return this.nextID.toString();
+    }
     addRequest(req) {
         this.queue.push(req);
         this.run();
         return this.getRequestInfo(req);
+    }
+    findRequest(rootID, mode) {
+        return this.queue.find(c => !!c.parameters.rootID && (c.parameters.rootID === rootID && c.mode === mode));
+    }
+    find(param) {
+        return this.queue.find(param);
     }
     getRequestInfo(req) {
         const pos = this.queue.indexOf(req);
@@ -124,15 +133,11 @@ let IoService = class IoService {
         if (done) {
             return { id, error: done.error, done: done.date };
         }
-        for (const d of this.delayedTrackTagWrite) {
-            if (d[1].request.id === id) {
-                return { id };
-            }
+        if (this.track.delayedTrackTagWrite.findbyID(id)) {
+            return { id };
         }
-        for (const d of this.delayedTrackFix) {
-            if (d[1].request.id === id) {
-                return { id };
-            }
+        if (this.track.delayedTrackFix.findbyID(id)) {
+            return { id };
         }
         return { id, error: 'ID not found', done: Date.now() };
     }
@@ -146,183 +151,6 @@ let IoService = class IoService {
             status.scanning = !!cmd;
         }
         return status;
-    }
-    async startUpRefresh(orm, forceRescan) {
-        if (!forceRescan) {
-            await this.refresh(orm);
-        }
-        else {
-            await this.refreshMeta(orm);
-        }
-    }
-    async refreshMeta(orm) {
-        const roots = await orm.Root.all();
-        const result = [];
-        for (const root of roots) {
-            result.push(await this.refreshRootMeta(root.id));
-        }
-        return result;
-    }
-    async refresh(orm) {
-        const roots = await orm.Root.all();
-        const result = [];
-        for (const root of roots) {
-            result.push(await this.refreshRoot(root.id));
-        }
-        return result;
-    }
-    async refreshRoot(rootID) {
-        const oldRequest = this.findRequest(rootID, io_types_1.WorkerRequestMode.refreshRoot);
-        if (oldRequest) {
-            return this.getRequestInfo(oldRequest);
-        }
-        return this.newRequest(io_types_1.WorkerRequestMode.refreshRoot, p => this.workerService.refreshRoot(p), { rootID });
-    }
-    async refreshRootMeta(rootID) {
-        const oldRequest = this.findRequest(rootID, io_types_1.WorkerRequestMode.refreshRootMeta);
-        if (oldRequest) {
-            return this.getRequestInfo(oldRequest);
-        }
-        return this.newRequest(io_types_1.WorkerRequestMode.refreshRootMeta, p => this.workerService.refreshRootMeta(p), { rootID });
-    }
-    async removeRoot(rootID) {
-        const oldRequest = this.findRequest(rootID, io_types_1.WorkerRequestMode.removeRoot);
-        if (oldRequest) {
-            return this.getRequestInfo(oldRequest);
-        }
-        return this.newRequest(io_types_1.WorkerRequestMode.removeRoot, p => this.workerService.removeRoot(p), { rootID });
-    }
-    async moveFolders(folderIDs, newParentID, rootID) {
-        const oldRequest = this.queue.find(c => (!!c.parameters.rootID) && (c.parameters.rootID === rootID) &&
-            (c.mode === io_types_1.WorkerRequestMode.moveFolders) && (c.parameters.newParentID === newParentID));
-        if (oldRequest) {
-            for (const id of folderIDs) {
-                if (!oldRequest.parameters.folderIDs.includes(id)) {
-                    oldRequest.parameters.folderIDs.push(id);
-                }
-            }
-            return this.getRequestInfo(oldRequest);
-        }
-        return this.newRequest(io_types_1.WorkerRequestMode.moveFolders, p => this.workerService.moveFolders(p), { rootID, newParentID, folderIDs });
-    }
-    async deleteFolder(id, rootID) {
-        const oldRequest = this.findRequest(rootID, io_types_1.WorkerRequestMode.deleteFolders);
-        if (oldRequest) {
-            if (!oldRequest.parameters.folderIDs.includes(id)) {
-                oldRequest.parameters.folderIDs.push(id);
-            }
-            return this.getRequestInfo(oldRequest);
-        }
-        return this.newRequest(io_types_1.WorkerRequestMode.deleteFolders, p => this.workerService.deleteFolders(p), { rootID, folderIDs: [id] });
-    }
-    async renameArtwork(artworkID, newName, rootID) {
-        return this.newRequest(io_types_1.WorkerRequestMode.renameArtwork, p => this.workerService.renameArtwork(p), { rootID, artworkID, newName });
-    }
-    async replaceArtwork(artworkID, artworkFilename, rootID) {
-        return this.newRequest(io_types_1.WorkerRequestMode.replaceArtwork, p => this.workerService.replaceArtwork(p), { rootID, artworkID, artworkFilename });
-    }
-    async createArtwork(folderID, artworkFilename, types, rootID) {
-        return this.newRequest(io_types_1.WorkerRequestMode.createArtwork, p => this.workerService.createArtwork(p), { rootID, folderID, artworkFilename, types });
-    }
-    async downloadArtwork(folderID, artworkURL, types, rootID) {
-        return this.newRequest(io_types_1.WorkerRequestMode.downloadArtwork, p => this.workerService.downloadArtwork(p), { rootID, folderID, artworkURL, types });
-    }
-    async deleteArtwork(artworkID, rootID) {
-        return this.newRequest(io_types_1.WorkerRequestMode.deleteArtwork, p => this.workerService.removeArtwork(p), { rootID, artworkID });
-    }
-    async removeTrack(id, rootID) {
-        const oldRequest = this.findRequest(rootID, io_types_1.WorkerRequestMode.removeTracks);
-        if (oldRequest) {
-            if (!oldRequest.parameters.trackIDs.includes(id)) {
-                oldRequest.parameters.trackIDs.push(id);
-            }
-            return this.getRequestInfo(oldRequest);
-        }
-        return this.newRequest(io_types_1.WorkerRequestMode.removeTracks, p => this.workerService.removeTracks(p), { rootID, trackIDs: [id] });
-    }
-    async moveTracks(trackIDs, newParentID, rootID) {
-        const oldRequest = this.queue.find(c => ((!!c.parameters.rootID) && (c.parameters.rootID === rootID) &&
-            (c.mode === io_types_1.WorkerRequestMode.moveTracks) && c.parameters.newParentID === newParentID));
-        if (oldRequest) {
-            for (const id of trackIDs) {
-                if (!oldRequest.parameters.trackIDs.includes(id)) {
-                    oldRequest.parameters.trackIDs.push(id);
-                }
-            }
-            return this.getRequestInfo(oldRequest);
-        }
-        return this.newRequest(io_types_1.WorkerRequestMode.moveTracks, p => this.workerService.moveTracks(p), { rootID, trackIDs, newParentID });
-    }
-    async renameTrack(trackID, newName, rootID) {
-        return this.newRequest(io_types_1.WorkerRequestMode.renameTrack, p => this.workerService.renameTrack(p), { rootID, trackID, newName });
-    }
-    async writeRawTag(trackID, tag, rootID) {
-        const oldRequest = this.findRequest(rootID, io_types_1.WorkerRequestMode.writeTrackTags);
-        if (oldRequest) {
-            oldRequest.parameters.tags.push({ trackID, tag });
-            return this.getRequestInfo(oldRequest);
-        }
-        let delayedCmd = this.delayedTrackTagWrite.get(rootID);
-        if (delayedCmd) {
-            if (delayedCmd.timeout) {
-                clearTimeout(delayedCmd.timeout);
-            }
-            (delayedCmd.request.parameters).tags.push({ trackID, tag });
-        }
-        else {
-            delayedCmd = {
-                request: new io_types_1.IoRequest(this.generateRequestID(), io_types_1.WorkerRequestMode.writeTrackTags, p => this.workerService.writeTrackTags(p), { rootID, tags: [{ trackID, tag }] }),
-                timeout: undefined
-            };
-            this.delayedTrackTagWrite.set(rootID, delayedCmd);
-        }
-        delayedCmd.timeout = setTimeout(() => {
-            this.delayedTrackTagWrite.delete(rootID);
-            if (delayedCmd) {
-                this.addRequest(delayedCmd.request);
-            }
-        }, 10000);
-        return this.getRequestInfo(delayedCmd.request);
-    }
-    async fixTrack(trackID, fixID, rootID) {
-        const oldRequest = this.findRequest(rootID, io_types_1.WorkerRequestMode.fixTrack);
-        if (oldRequest) {
-            oldRequest.parameters.fixes.push({ trackID, fixID });
-            return this.getRequestInfo(oldRequest);
-        }
-        let delayedCmd = this.delayedTrackFix.get(rootID);
-        if (delayedCmd) {
-            if (delayedCmd.timeout) {
-                clearTimeout(delayedCmd.timeout);
-            }
-            (delayedCmd.request.parameters).fixes.push({ trackID, fixID });
-        }
-        else {
-            delayedCmd = {
-                request: new io_types_1.IoRequest(this.generateRequestID(), io_types_1.WorkerRequestMode.fixTrack, p => this.workerService.fixTracks(p), { rootID, fixes: [{ trackID, fixID }] }),
-                timeout: undefined
-            };
-            this.delayedTrackFix.set(rootID, delayedCmd);
-        }
-        delayedCmd.timeout = setTimeout(() => {
-            this.delayedTrackFix.delete(rootID);
-            if (delayedCmd) {
-                this.addRequest(delayedCmd.request);
-            }
-        }, 10000);
-        return this.getRequestInfo(delayedCmd.request);
-    }
-    async renameFolder(folderID, newName, rootID) {
-        return this.newRequest(io_types_1.WorkerRequestMode.renameFolder, p => this.workerService.renameFolder(p), { rootID, folderID, newName });
-    }
-    async newFolder(parentID, name, rootID) {
-        return this.newRequest(io_types_1.WorkerRequestMode.createFolder, p => this.workerService.createFolder(p), { rootID, parentID, name });
-    }
-    async updateRoot(rootID, name, path, strategy) {
-        return this.newRequest(io_types_1.WorkerRequestMode.updateRoot, p => this.workerService.updateRoot(p), { rootID, name, path, strategy });
-    }
-    async createRoot(name, path, strategy) {
-        return this.newRequest(io_types_1.WorkerRequestMode.createRoot, p => this.workerService.createRoot(p), { rootID: '', name, path, strategy });
     }
     registerAfterRefresh(listener) {
         this.afterRefreshListeners.push(listener);

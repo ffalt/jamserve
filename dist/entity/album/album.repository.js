@@ -32,28 +32,33 @@ class AlbumRepository extends base_repository_1.BaseRepository {
                 return [['artistORM', 'name', direction]];
             case enums_1.AlbumOrderFields.year:
                 return [['year', direction]];
-            case enums_1.AlbumOrderFields.seriesNr: {
-                switch (this.em.dialect) {
-                    case 'sqlite': {
-                        return [[sequelize_1.default.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
-                    }
-                    case 'postgres': {
-                        return [[sequelize_1.default.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
-                    }
-                    default: {
-                        throw new Error(`Implement LPAD request for dialect ${this.em.dialect}`);
-                    }
-                }
-            }
+            case enums_1.AlbumOrderFields.seriesNr:
+                return this.seriesNrOrder(direction);
             case enums_1.AlbumOrderFields.default:
-                return [
-                    ['artistORM', 'name', direction],
-                    ['albumType', direction],
-                    ['year', direction === 'ASC' ? 'DESC' : 'ASC'],
-                    ['name', direction]
-                ];
+                return this.defaultOrder(direction);
         }
         return [];
+    }
+    defaultOrder(direction) {
+        return [
+            ['artistORM', 'name', direction],
+            ['albumType', direction],
+            ['year', direction === 'ASC' ? 'DESC' : 'ASC'],
+            ['name', direction]
+        ];
+    }
+    seriesNrOrder(direction) {
+        switch (this.em.dialect) {
+            case 'sqlite': {
+                return [[sequelize_1.default.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
+            }
+            case 'postgres': {
+                return [[sequelize_1.default.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
+            }
+            default: {
+                throw new Error(`Implement LPAD request for dialect ${this.em.dialect}`);
+            }
+        }
     }
     async buildFilter(filter, _) {
         if (!filter) {

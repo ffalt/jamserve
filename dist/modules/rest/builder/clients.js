@@ -3,12 +3,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getClientZip = exports.getCustomParameterTemplate = exports.callDescription = exports.getCallParamType = exports.getResultType = exports.writeParts = exports.writeTemplate = exports.wrapLong = void 0;
+exports.getClientZip = exports.getCustomParameterTemplate = exports.callDescription = exports.getCallParamType = exports.getResultType = exports.buildParts = exports.buildTemplate = exports.wrapLong = exports.buildCallSections = exports.buildPartService = exports.buildServiceParts = void 0;
 const metadata_1 = require("../metadata");
 const mustache_1 = __importDefault(require("mustache"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const archiver_1 = __importDefault(require("archiver"));
 const path_1 = __importDefault(require("path"));
+function generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls) {
+    const name = call.methodName.replace(/\//g, '_');
+    const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
+    const paramType = getCallParamType(call);
+    if (upload) {
+        return generateUploadClientCalls(call, name, paramType, upload);
+    }
+    if (call.binary) {
+        return generateBinaryClientCalls(call, name, paramType);
+    }
+    return generateRequestClientCalls(call, name, paramType, method);
+}
+async function buildServiceParts(generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls, buildPartService) {
+    const metadata = metadata_1.getMetadataStorage();
+    const sections = {};
+    buildCallSections(metadata.gets, 'get', sections, (call, method) => generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls));
+    buildCallSections(metadata.posts, 'post', sections, (call, method) => generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls));
+    const keys = Object.keys(sections).filter(key => !['Auth', 'Base'].includes(key));
+    const parts = [];
+    for (const key of keys) {
+        const part = key[0].toUpperCase() + key.slice(1);
+        parts.push({ name: key.toLowerCase(), part, content: await buildPartService(key, part, sections[key]) });
+    }
+    return parts;
+}
+exports.buildServiceParts = buildServiceParts;
+async function buildPartService(template, key, part, calls) {
+    const list = calls.map(call => {
+        return { ...call, name: call.name.replace(key + '_', ''), paramsType: wrapLong(call.paramsType) };
+    });
+    const withHttpEvent = !!calls.find(c => c.resultType.includes('HttpEvent'));
+    const withJam = !!calls.find(c => c.resultType.includes('Jam.'));
+    const withJamParam = !!calls.find(c => c.paramsType.includes('JamParameter'));
+    return buildTemplate(template, { list, part, withHttpEvent, withJam, withJamParam });
+}
+exports.buildPartService = buildPartService;
+function buildCallSections(calls, method, sections, generateClientCalls) {
+    for (const call of calls) {
+        const tag = call.controllerClassMetadata.name.replace('Controller', '');
+        sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, method));
+    }
+}
+exports.buildCallSections = buildCallSections;
 function wrapLong(s) {
     if (s && s.length > 140) {
         return s.split('&').map(s => s.trim()).join(' &\n\t');
@@ -16,22 +59,19 @@ function wrapLong(s) {
     return s;
 }
 exports.wrapLong = wrapLong;
-async function writeTemplate(name, template, data) {
-    return {
-        name,
-        content: mustache_1.default.render((await fs_extra_1.default.readFile(template)).toString(), data)
-    };
+async function buildTemplate(template, data = {}) {
+    return mustache_1.default.render((await fs_extra_1.default.readFile(template)).toString(), data);
 }
-exports.writeTemplate = writeTemplate;
-async function writeParts(name, template, serviceParts) {
+exports.buildTemplate = buildTemplate;
+async function buildParts(template, serviceParts) {
     const list = serviceParts
         .sort((a, b) => a.name.localeCompare(b.name));
     list.forEach((p, i) => {
         p.isLast = i === list.length - 1;
     });
-    return writeTemplate(name, template, { list });
+    return buildTemplate(template, { list });
 }
-exports.writeParts = writeParts;
+exports.buildParts = buildParts;
 function getResultType(call) {
     var _a;
     const metadata = metadata_1.getMetadataStorage();

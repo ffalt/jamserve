@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildAxiosClientZip = exports.buildAxiosClientList = void 0;
-const metadata_1 = require("../metadata");
 const version_1 = require("../../engine/rest/version");
 const typescript_1 = require("./typescript");
 const clients_1 = require("./clients");
@@ -72,22 +71,10 @@ function generateBinClientCall(call, name, paramsType) {
     };
 }
 function generateBinaryClientCalls(call, name, paramType) {
-    return [
-        generateUrlClientCall(call, name, paramType),
-        generateBinClientCall(call, name, paramType)
-    ];
+    return [generateUrlClientCall(call, name, paramType), generateBinClientCall(call, name, paramType)];
 }
-function generateClientCalls(call, method) {
+function generateRequestClientCalls(call, name, paramType, method) {
     var _a;
-    const name = call.methodName.replace(/\//g, '_');
-    const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
-    const paramType = clients_1.getCallParamType(call);
-    if (upload) {
-        return generateUploadClientCalls(call, name, paramType, upload);
-    }
-    if (call.binary) {
-        return generateBinaryClientCalls(call, name, paramType);
-    }
     const resultType = clients_1.getResultType(call);
     return [{
             name,
@@ -104,48 +91,20 @@ function generateClientCalls(call, method) {
             description: clients_1.callDescription(call)
         }];
 }
-async function writePartService(key, part, calls) {
-    const l = calls.map(call => {
-        return { ...call, name: call.name.replace(key + '_', ''), paramsType: clients_1.wrapLong(call.paramsType) };
-    });
-    const withHttpEvent = !!calls.find(c => c.resultType.includes('HttpEvent'));
-    const withJam = !!calls.find(c => c.resultType.includes('Jam.'));
-    const withJamParam = !!calls.find(c => c.paramsType.includes('JamParameter'));
-    return clients_1.writeTemplate(`services/jam.${key.toLowerCase()}.service.ts`, './static/templates/client-axios/jam.part.service.ts.template', { list: l, part, withHttpEvent, withJam, withJamParam });
-}
 async function buildAxiosClientList() {
-    const metadata = metadata_1.getMetadataStorage();
-    const sections = {};
-    for (const call of metadata.gets) {
-        const ctrl = call.controllerClassMetadata;
-        const tag = ctrl.name.replace('Controller', '');
-        sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, 'get'));
-    }
-    for (const call of metadata.posts) {
-        const ctrl = call.controllerClassMetadata;
-        const tag = ctrl.name.replace('Controller', '');
-        sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, 'post'));
-    }
-    const keys = Object.keys(sections);
-    const parts = [];
-    const list = [];
-    for (const key of keys) {
-        const part = key[0].toUpperCase() + key.slice(1);
-        if (key !== 'Auth' && key !== 'Base') {
-            parts.push({ name: key.toLowerCase(), part });
-            list.push(await writePartService(key, part, sections[key]));
-        }
-    }
-    list.push(await clients_1.writeParts('jam.service.ts', './static/templates/client-axios/jam.service.ts.template', parts));
-    list.push(await clients_1.writeTemplate(`jam.base.service.ts`, './static/templates/client-axios/jam.base.service.ts.template', {}));
-    list.push(await clients_1.writeTemplate(`jam.http.service.ts`, './static/templates/client-axios/jam.http.service.ts.template', {}));
-    list.push(await clients_1.writeTemplate(`jam.configuration.ts`, './static/templates/client-axios/jam.configuration.ts.template', {}));
-    list.push(await clients_1.writeTemplate(`index.ts`, './static/templates/client-axios/index.ts.template', {}));
-    list.push(await clients_1.writeTemplate(`jam.auth.service.ts`, './static/templates/client-axios/jam.auth.service.ts.template', { apiPrefix: `/jam/${version_1.JAMAPI_URL_VERSION}`, version: version_1.JAMAPI_VERSION }));
-    list.push({ name: 'model/jam-rest-data.ts', content: typescript_1.buildTSResultTypes() });
-    list.push({ name: 'model/jam-rest-params.ts', content: typescript_1.buildTSParameterTypes() });
-    list.push({ name: 'model/jam-enums.ts', content: typescript_1.buildTSEnums() });
-    return list;
+    const parts = await clients_1.buildServiceParts(generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls, (key, part, calls) => clients_1.buildPartService('./static/templates/client-axios/jam.part.service.ts.template', key, part, calls));
+    return parts.map(part => ({ name: `services/jam.${part.name}.service.ts`, content: part.content }))
+        .concat([
+        { name: 'jam.service.ts', content: await clients_1.buildParts('./static/templates/client-axios/jam.service.ts.template', parts) },
+        { name: `jam.base.service.ts`, content: await clients_1.buildTemplate('./static/templates/client-axios/jam.base.service.ts.template') },
+        { name: `jam.http.service.ts`, content: await clients_1.buildTemplate('./static/templates/client-axios/jam.http.service.ts.template') },
+        { name: `jam.configuration.ts`, content: await clients_1.buildTemplate('./static/templates/client-axios/jam.configuration.ts.template') },
+        { name: `index.ts`, content: await clients_1.buildTemplate('./static/templates/client-axios/index.ts.template') },
+        { name: `jam.auth.service.ts`, content: await clients_1.buildTemplate('./static/templates/client-axios/jam.auth.service.ts.template', { apiPrefix: `/jam/${version_1.JAMAPI_URL_VERSION}`, version: version_1.JAMAPI_VERSION }) },
+        { name: 'model/jam-rest-data.ts', content: typescript_1.buildTSResultTypes() },
+        { name: 'model/jam-rest-params.ts', content: typescript_1.buildTSParameterTypes() },
+        { name: 'model/jam-enums.ts', content: typescript_1.buildTSEnums() }
+    ]);
 }
 exports.buildAxiosClientList = buildAxiosClientList;
 async function buildAxiosClientZip() {

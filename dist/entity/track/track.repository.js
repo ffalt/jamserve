@@ -21,10 +21,7 @@ class TrackRepository extends base_repository_1.BaseRepository {
             case enums_1.TrackOrderFields.parent:
                 return [['path', direction]];
             case enums_1.TrackOrderFields.filename:
-                return [
-                    ['path', direction],
-                    ['fileName', direction]
-                ];
+                return [['path', direction], ['fileName', direction]];
             case enums_1.TrackOrderFields.album:
                 return [['albumORM', 'name', direction]];
             case enums_1.TrackOrderFields.trackNr:

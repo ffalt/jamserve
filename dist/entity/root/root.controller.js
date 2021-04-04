@@ -30,29 +30,29 @@ let RootController = class RootController {
         return engine.transform.Root.rootStatus(await orm.Root.oneOrFailByID(id));
     }
     async create(args, { engine }) {
-        return await engine.io.createRoot(args.name, args.path, args.strategy);
+        return await engine.io.root.create(args.name, args.path, args.strategy);
     }
     async update(id, args, { engine }) {
-        return await engine.io.updateRoot(id, args.name, args.path, args.strategy);
+        return await engine.io.root.update(id, args.name, args.path, args.strategy);
     }
     async remove(id, { engine }) {
-        return await engine.io.removeRoot(id);
+        return await engine.io.root.delete(id);
     }
     async refresh(args, { orm, engine }) {
         if (args.id) {
-            return await engine.io.refreshRoot(args.id);
+            return await engine.io.root.refresh(args.id);
         }
         else {
-            const result = await engine.io.refresh(orm);
+            const result = await engine.io.root.refreshAll(orm);
             return result[result.length - 1];
         }
     }
     async refreshMeta(args, { orm, engine }) {
         if (args.id) {
-            return await engine.io.refreshRootMeta(args.id);
+            return await engine.io.root.refreshMeta(args.id);
         }
         else {
-            const result = await engine.io.refresh(orm);
+            const result = await engine.io.root.refreshAll(orm);
             return result[result.length - 1];
         }
     }

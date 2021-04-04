@@ -19,6 +19,7 @@ const fs_extra_1 = __importDefault(require("fs-extra"));
 const image_module_1 = require("../../../image/image.module");
 const audio_module_1 = require("../../../audio/audio.module");
 const typescript_ioc_1 = require("typescript-ioc");
+const changes_1 = require("../changes");
 class BaseWorker {
     async renameFile(dir, oldName, newName) {
         if (fs_utils_1.containsFolderSystemChars(newName)) {
@@ -64,5 +65,9 @@ __decorate([
     typescript_ioc_1.Inject,
     __metadata("design:type", image_module_1.ImageModule)
 ], BaseWorker.prototype, "imageModule", void 0);
+__decorate([
+    typescript_ioc_1.Inject,
+    __metadata("design:type", changes_1.ChangesWorker)
+], BaseWorker.prototype, "changesWorker", void 0);
 exports.BaseWorker = BaseWorker;
 //# sourceMappingURL=base.js.map

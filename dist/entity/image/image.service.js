@@ -71,12 +71,12 @@ let ImageService = ImageService_1 = class ImageService {
                 return ImageService_1.getCoverArtTextFolder(o);
             case enums_1.DBObjectType.episode:
                 return await ImageService_1.getCoverArtTextEpisode(o);
+            case enums_1.DBObjectType.podcast:
+                return ImageService_1.getCoverArtTextPodcast(o);
             case enums_1.DBObjectType.playlist:
                 return o.name;
             case enums_1.DBObjectType.series:
                 return o.name;
-            case enums_1.DBObjectType.podcast:
-                return ImageService_1.getCoverArtTextPodcast(o);
             case enums_1.DBObjectType.album:
                 return o.name;
             case enums_1.DBObjectType.artist:
@@ -85,51 +85,37 @@ let ImageService = ImageService_1 = class ImageService {
                 return o.name;
             case enums_1.DBObjectType.root:
                 return o.name;
-            default:
-                return type;
         }
+        return type;
     }
-    async getObjImage(orm, o, type, size, format) {
-        let result;
+    async getObjImageByType(orm, o, type, size, format) {
         switch (type) {
             case enums_1.DBObjectType.track:
-                result = await this.trackService.getImage(orm, o, size, format);
-                break;
+                return this.trackService.getImage(orm, o, size, format);
             case enums_1.DBObjectType.folder:
-                result = await this.folderService.getImage(orm, o, size, format);
-                break;
+                return this.folderService.getImage(orm, o, size, format);
             case enums_1.DBObjectType.artist:
-                result = await this.artistService.getImage(orm, o, size, format);
-                break;
+                return this.artistService.getImage(orm, o, size, format);
             case enums_1.DBObjectType.album:
-                result = await this.albumService.getImage(orm, o, size, format);
-                break;
+                return this.albumService.getImage(orm, o, size, format);
             case enums_1.DBObjectType.user:
-                result = await this.userService.getImage(orm, o, size, format);
-                break;
+                return this.userService.getImage(orm, o, size, format);
             case enums_1.DBObjectType.podcast:
-                result = await this.podcastService.getImage(orm, o, size, format);
-                break;
+                return this.podcastService.getImage(orm, o, size, format);
             case enums_1.DBObjectType.episode:
-                result = await this.podcastService.getEpisodeImage(orm, o, size, format);
-                break;
+                return this.podcastService.getEpisodeImage(orm, o, size, format);
             case enums_1.DBObjectType.series:
-                result = await this.seriesService.getImage(orm, o, size, format);
-                break;
+                return this.seriesService.getImage(orm, o, size, format);
             case enums_1.DBObjectType.artwork:
-                result = await this.artworkService.getImage(orm, o, size, format);
-                break;
-            case enums_1.DBObjectType.root: {
-                result = await this.rootService.getImage(orm, o, size, format);
-                break;
-            }
-            default:
-                break;
+                return this.artworkService.getImage(orm, o, size, format);
+            case enums_1.DBObjectType.root:
+                return this.rootService.getImage(orm, o, size, format);
         }
-        if (!result) {
-            return this.paintImage(o, type, size, format);
-        }
-        return result;
+        return;
+    }
+    async getObjImage(orm, o, type, size, format) {
+        var _a;
+        return (_a = await this.getObjImageByType(orm, o, type, size, format)) !== null && _a !== void 0 ? _a : await this.paintImage(o, type, size, format);
     }
     async paintImage(obj, type, size, format) {
         const s = await this.getCoverArtText(obj, type);

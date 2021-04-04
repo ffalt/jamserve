@@ -82,22 +82,22 @@ let FolderController = class FolderController {
     }
     async create(args, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(args.id);
-        return await engine.io.newFolder(folder.id, args.name, folder.root.idOrFail());
+        return await engine.io.folder.create(folder.id, args.name, folder.root.idOrFail());
     }
     async rename(args, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(args.id);
-        return await engine.io.renameFolder(folder.id, args.name, folder.root.idOrFail());
+        return await engine.io.folder.rename(folder.id, args.name, folder.root.idOrFail());
     }
     async move(args, { orm, engine }) {
         if (args.ids.length === 0) {
             throw rest_1.InvalidParamError('ids', 'Must have entries');
         }
         const folder = await orm.Folder.oneOrFailByID(args.ids[0]);
-        return await engine.io.moveFolders(args.ids, args.newParentID, folder.root.idOrFail());
+        return await engine.io.folder.move(args.ids, args.newParentID, folder.root.idOrFail());
     }
     async remove(id, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(id);
-        return await engine.io.deleteFolder(folder.id, folder.root.idOrFail());
+        return await engine.io.folder.delete(folder.id, folder.root.idOrFail());
     }
 };
 __decorate([

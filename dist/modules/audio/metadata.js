@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rawTagToID3v2 = exports.trackTagToRawTag = exports.id3v2ToFlacMetaData = exports.id3v2ToRawTag = exports.flacToRawTag = exports.prepareResponseTag = void 0;
+exports.rawTagToID3v2 = exports.trackTagToRawTag = exports.id3v2ToFlacMetaData = exports.id3v2ToRawTag = exports.flacToRawTag = exports.flacToRawTagPictures = exports.flacToRawTagChapters = exports.flacToRawTagBase = exports.prepareResponseTag = void 0;
 const jamp3_1 = require("jamp3");
 const moment_1 = __importDefault(require("moment"));
 const block_picture_1 = require("./formats/flac/lib/block.picture");
@@ -26,12 +26,7 @@ function prepareResponseTag(tag) {
     });
 }
 exports.prepareResponseTag = prepareResponseTag;
-async function flacToRawTag(flacInfo) {
-    if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {
-        return;
-    }
-    const simple = flacInfo.comment.tag;
-    const builder = new jamp3_1.ID3V24TagBuilder('utf8');
+function flacToRawTagBase(builder, simple) {
     builder
         .album(simple.ALBUM)
         .albumSort(simple.ALBUMSORT)
@@ -125,6 +120,9 @@ async function flacToRawTag(flacInfo) {
         .custom('REPLAYGAIN_TRACK_PEAK', simple.REPLAYGAIN_TRACK_PEAK)
         .comment('comment', simple.COMMENT)
         .comment('description', simple.DESCRIPTION);
+}
+exports.flacToRawTagBase = flacToRawTagBase;
+function flacToRawTagChapters(builder, simple) {
     const pad = '000';
     let nr = 1;
     let id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
@@ -139,11 +137,25 @@ async function flacToRawTag(flacInfo) {
         nr++;
         id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
     }
+}
+exports.flacToRawTagChapters = flacToRawTagChapters;
+function flacToRawTagPictures(builder, flacInfo) {
     if (flacInfo.pictures) {
         for (const pic of flacInfo.pictures) {
             builder.picture(pic.pictureType, pic.description, pic.mimeType, pic.pictureData);
         }
     }
+}
+exports.flacToRawTagPictures = flacToRawTagPictures;
+async function flacToRawTag(flacInfo) {
+    if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {
+        return;
+    }
+    const simple = flacInfo.comment.tag;
+    const builder = new jamp3_1.ID3V24TagBuilder('utf8');
+    flacToRawTagBase(builder, simple);
+    flacToRawTagChapters(builder, simple);
+    flacToRawTagPictures(builder, flacInfo);
     const tag = { version: 4, frames: builder.rawBuilder.build() };
     prepareResponseTag(tag);
     return tag;

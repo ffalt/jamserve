@@ -19,19 +19,19 @@ const path_1 = __importDefault(require("path"));
 const image_module_1 = require("../../modules/image/image.module");
 let ArtworkService = class ArtworkService {
     async createByUrl(folder, url, types) {
-        return this.ioService.downloadArtwork(folder.id, url, types, folder.root.idOrFail());
+        return this.ioService.artwork.download(folder.id, url, types, folder.root.idOrFail());
     }
     async createByFile(folder, filename, types) {
-        return this.ioService.createArtwork(folder.id, filename, types, folder.root.idOrFail());
+        return this.ioService.artwork.create(folder.id, filename, types, folder.root.idOrFail());
     }
     async upload(artwork, filename) {
-        return this.ioService.replaceArtwork(artwork.id, filename, (await artwork.folder.getOrFail()).root.idOrFail());
+        return this.ioService.artwork.replace(artwork.id, filename, (await artwork.folder.getOrFail()).root.idOrFail());
     }
     async rename(artwork, newName) {
-        return this.ioService.renameArtwork(artwork.id, newName, (await artwork.folder.getOrFail()).root.idOrFail());
+        return this.ioService.artwork.rename(artwork.id, newName, (await artwork.folder.getOrFail()).root.idOrFail());
     }
     async remove(artwork) {
-        return this.ioService.deleteArtwork(artwork.id, (await artwork.folder.getOrFail()).root.idOrFail());
+        return this.ioService.artwork.delete(artwork.id, (await artwork.folder.getOrFail()).root.idOrFail());
     }
     async getImage(orm, artwork, size, format) {
         return this.imageModule.get(artwork.id, path_1.default.join(artwork.path, artwork.name), size, format);

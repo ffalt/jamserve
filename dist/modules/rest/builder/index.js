@@ -14,8 +14,10 @@ __exportStar(require("./angular"), exports);
 __exportStar(require("./axios"), exports);
 __exportStar(require("./builder"), exports);
 __exportStar(require("./express"), exports);
+__exportStar(require("./express-parameters"), exports);
 __exportStar(require("./express-error"), exports);
 __exportStar(require("./express-responder"), exports);
+__exportStar(require("./express-method"), exports);
 __exportStar(require("./openapi"), exports);
 __exportStar(require("./typescript"), exports);
 //# sourceMappingURL=index.js.map

@@ -25,7 +25,7 @@ let PodcastTransformService = class PodcastTransformService extends base_transfo
             lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined,
             error: o.errorMessage,
             description: o.description,
-            episodeIDs: podcastArgs.podcastIncEpisodeIDs ? (await o.episodes.getItems()).map(t => t.id) : undefined,
+            episodeIDs: podcastArgs.podcastIncEpisodeIDs ? await o.episodes.getIDs() : undefined,
             episodeCount: podcastArgs.podcastIncEpisodeCount ? await o.episodes.count() : undefined,
             state: podcastArgs.podcastIncState ? await this.state(orm, o.id, enums_1.DBObjectType.podcast, user.id) : undefined
         };

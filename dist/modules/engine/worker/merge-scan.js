@@ -34,13 +34,24 @@ class WorkerMergeScan {
         return !!name.match(/(\[(extra|various)]|^(extra|various)$)/);
     }
     static getMultiAlbumFolderType(node) {
-        const a = node.children.find(d => {
-            return (d.folder.folderType === enums_1.FolderType.artist);
-        });
+        const a = node.children.find(d => d.folder.folderType === enums_1.FolderType.artist);
         return a ? enums_1.FolderType.collection : enums_1.FolderType.multialbum;
+    }
+    static getMultipleAlbumFolderType(metaStat, strategy) {
+        return (metaStat.hasMultipleArtists || strategy === enums_1.RootScanStrategy.compilation) ? enums_1.FolderType.collection : enums_1.FolderType.artist;
     }
     static getMixedFolderType(node, _, __) {
         return WorkerMergeScan.getMultiAlbumFolderType(node);
+    }
+    static getTrackFolderType(node, metaStat, strategy) {
+        if (metaStat.hasMultipleAlbums && metaStat.albumType === enums_1.AlbumType.series) {
+            return enums_1.FolderType.artist;
+        }
+        const dirCount = node.children.filter(d => d.folder.folderType !== enums_1.FolderType.extras).length;
+        if (dirCount > 0) {
+            return WorkerMergeScan.getMixedFolderType(node, metaStat, strategy);
+        }
+        return enums_1.FolderType.album;
     }
     static getFolderType(node, metaStat, strategy) {
         if (node.folder.level === 0) {
@@ -50,25 +61,18 @@ class WorkerMergeScan {
             return enums_1.FolderType.extras;
         }
         if (metaStat.trackCount > 0) {
-            if (metaStat.hasMultipleAlbums && metaStat.albumType === enums_1.AlbumType.series) {
-                return enums_1.FolderType.artist;
-            }
-            const dirCount = node.children.filter(d => d.folder.folderType !== enums_1.FolderType.extras).length;
-            if (dirCount > 0) {
-                return WorkerMergeScan.getMixedFolderType(node, metaStat, strategy);
-            }
-            return enums_1.FolderType.album;
+            return this.getTrackFolderType(node, metaStat, strategy);
         }
         if (node.children.length === 0) {
-            return (metaStat.trackCount === 0) ? enums_1.FolderType.extras : enums_1.FolderType.album;
+            return enums_1.FolderType.extras;
         }
         if (metaStat.hasMultipleAlbums) {
-            return (metaStat.hasMultipleArtists || strategy === enums_1.RootScanStrategy.compilation) ? enums_1.FolderType.collection : enums_1.FolderType.artist;
+            return WorkerMergeScan.getMultipleAlbumFolderType(metaStat, strategy);
         }
         if (node.children.length === 1) {
             return (strategy === enums_1.RootScanStrategy.compilation) ? enums_1.FolderType.collection : enums_1.FolderType.artist;
         }
-        if (!metaStat.hasMultipleArtists && node.children.filter(d => d.folder.folderType === enums_1.FolderType.artist).length > 0) {
+        if (!metaStat.hasMultipleArtists && !!node.children.find(d => d.folder.folderType === enums_1.FolderType.artist)) {
             return enums_1.FolderType.artist;
         }
         return WorkerMergeScan.getMultiAlbumFolderType(node);
