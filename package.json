@@ -63,7 +63,7 @@
     "node-fetch": "2.6.1",
     "node-worker-threads-pool": "1.4.3",
     "on-finished": "2.3.0",
-    "p-queue": "6.6.2",
+    "p-queue": "7.0.0",
     "passport": "0.4.1",
     "passport-jwt": "4.0.0",
     "passport-local": "1.0.0",
