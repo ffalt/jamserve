@@ -86,7 +86,7 @@
   "devDependencies": {
     "@apidevtools/json-schema-ref-parser": "9.0.7",
     "@types/archiver": "5.1.0",
-    "@types/bcrypt": "3.0.0",
+    "@types/bcrypt": "3.0.1",
     "@types/chance": "1.1.1",
     "@types/compression": "1.7.0",
     "@types/cookie-parser": "1.4.2",
