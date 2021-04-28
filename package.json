@@ -105,7 +105,7 @@
     "@types/fluent-ffmpeg": "2.1.17",
     "@types/fs-extra": "9.0.11",
     "@types/graphql-type-json": "0.3.2",
-    "@types/jest": "26.0.22",
+    "@types/jest": "26.0.23",
     "@types/jest-expect-message": "1.0.3",
     "@types/jsdom": "16.2.10",
     "@types/method-override": "0.0.31",
