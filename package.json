@@ -81,7 +81,7 @@
     "tiny-async-pool": "^1.2.0",
     "type-graphql": "1.1.1",
     "typescript-ioc": "3.2.2",
-    "waveform-data": "3.3.4",
+    "waveform-data": "4.0.0",
     "which": "2.0.2",
     "winston": "3.3.3",
     "yauzl": "2.10.0"
