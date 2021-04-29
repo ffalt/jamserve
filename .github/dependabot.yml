@@ -1,0 +1,134 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "@types/node"
+    versions:
+    - 14.14.22
+    - 14.14.24
+    - 14.14.25
+    - 14.14.26
+    - 14.14.28
+    - 14.14.30
+    - 14.14.31
+    - 14.14.32
+    - 14.14.33
+    - 14.14.34
+    - 14.14.35
+    - 14.14.36
+    - 15.0.0
+  - dependency-name: "@typescript-eslint/parser"
+    versions:
+    - 4.14.1
+    - 4.14.2
+    - 4.15.0
+    - 4.15.1
+    - 4.15.2
+    - 4.16.1
+    - 4.17.0
+    - 4.18.0
+    - 4.19.0
+    - 4.20.0
+    - 4.21.0
+    - 4.22.0
+  - dependency-name: "@typescript-eslint/eslint-plugin"
+    versions:
+    - 4.14.1
+    - 4.14.2
+    - 4.15.0
+    - 4.15.1
+    - 4.15.2
+    - 4.16.1
+    - 4.17.0
+    - 4.18.0
+    - 4.19.0
+    - 4.20.0
+    - 4.21.0
+    - 4.22.0
+  - dependency-name: "@types/bcrypt"
+    versions:
+    - 3.0.1
+  - dependency-name: eslint
+    versions:
+    - 7.24.0
+  - dependency-name: p-queue
+    versions:
+    - 7.0.0
+    - 7.1.0
+  - dependency-name: typescript
+    versions:
+    - 4.2.4
+  - dependency-name: "@types/sharp"
+    versions:
+    - 0.27.2
+    - 0.27.3
+    - 0.28.0
+  - dependency-name: standard-version
+    versions:
+    - 9.1.0
+    - 9.1.1
+    - 9.2.0
+  - dependency-name: sharp
+    versions:
+    - 0.28.0
+    - 0.28.1
+  - dependency-name: "@types/fluent-ffmpeg"
+    versions:
+    - 2.1.17
+  - dependency-name: "@types/supertest"
+    versions:
+    - 2.0.11
+  - dependency-name: d3-scale
+    versions:
+    - 3.2.4
+  - dependency-name: apollo-server-express
+    versions:
+    - 2.22.0
+    - 2.22.2
+  - dependency-name: jsdom
+    versions:
+    - 16.5.2
+  - dependency-name: mustache
+    versions:
+    - 4.2.0
+  - dependency-name: "@types/jsdom"
+    versions:
+    - 16.2.9
+  - dependency-name: "@types/fs-extra"
+    versions:
+    - 9.0.6
+    - 9.0.7
+    - 9.0.8
+    - 9.0.9
+  - dependency-name: "@types/jest"
+    versions:
+    - 26.0.22
+  - dependency-name: d3-array
+    versions:
+    - 2.12.1
+  - dependency-name: sequelize
+    versions:
+    - 6.6.1
+    - 6.6.2
+  - dependency-name: mime-types
+    versions:
+    - 2.1.28
+    - 2.1.29
+  - dependency-name: "@types/passport"
+    versions:
+    - 1.0.5
+    - 1.0.6
+  - dependency-name: helmet
+    versions:
+    - 4.4.1
+  - dependency-name: openapi3-ts
+    versions:
+    - 2.0.1
+  - dependency-name: "@types/which"
+    versions:
+    - 2.0.0
