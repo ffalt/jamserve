@@ -15,7 +15,6 @@ class GpodderClient extends webservice_client_1.WebserviceClient {
         return super.parseResult(response);
     }
     async validateClientConfig() {
-        var _a;
         const now = Date.now();
         if (this.clientConfig && this.clientConfig.valid_until > now) {
             return this.clientConfig;
@@ -23,7 +22,7 @@ class GpodderClient extends webservice_client_1.WebserviceClient {
         const url = `https://gpodder.net/clientconfig.json`;
         log.info('requesting', url);
         const data = await this.getJson(url);
-        const isValid = data && ((_a = data.mygpo) === null || _a === void 0 ? void 0 : _a.baseurl) && data['mygpo-feedservice'].baseurl && (!isNaN(data.update_timeout));
+        const isValid = data && data.mygpo?.baseurl && data['mygpo-feedservice'].baseurl && (!isNaN(data.update_timeout));
         if (!isValid) {
             throw new Error('Gpodder API has changed & can not be used with this server version');
         }

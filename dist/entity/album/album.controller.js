@@ -41,7 +41,7 @@ let AlbumController = class AlbumController {
     }
     async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const albumIDs = await orm.Album.findIDsFilter(filter, user);
-        const orders = [{ orderBy: (order === null || order === void 0 ? void 0 : order.orderBy) ? order.orderBy : enums_1.TrackOrderFields.default, orderDesc: (order === null || order === void 0 ? void 0 : order.orderDesc) || false }];
+        const orders = [{ orderBy: order?.orderBy ? order.orderBy : enums_1.TrackOrderFields.default, orderDesc: order?.orderDesc || false }];
         return await orm.Track.searchTransformFilter({ albumIDs }, orders, page, user, o => engine.transform.Track.trackBase(orm, o, trackArgs, user));
     }
     async similarTracks(id, page, trackArgs, { orm, engine, user }) {

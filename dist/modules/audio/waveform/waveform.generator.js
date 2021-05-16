@@ -78,7 +78,7 @@ class WaveformGenerator {
             .attr('fill', 'darkgreen')
             .attr('d', waveArea);
         const node = svg.node();
-        return (node === null || node === void 0 ? void 0 : node.outerHTML) || '';
+        return node?.outerHTML || '';
     }
 }
 exports.WaveformGenerator = WaveformGenerator;

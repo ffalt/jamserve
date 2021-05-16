@@ -45,12 +45,12 @@ let StreamService = class StreamService {
     }
     async streamTrack(track, format, maxBitRate) {
         const tag = await track.tag.get();
-        return await this.streamFile(path_1.default.join(track.path, track.fileName), track.id, tag === null || tag === void 0 ? void 0 : tag.mediaFormat, format, maxBitRate);
+        return await this.streamFile(path_1.default.join(track.path, track.fileName), track.id, tag?.mediaFormat, format, maxBitRate);
     }
     async streamEpisode(episode, format, maxBitRate) {
         const tag = await episode.tag.get();
-        if (episode.path && (tag === null || tag === void 0 ? void 0 : tag.mediaFormat)) {
-            return this.streamFile(episode.path, episode.id, tag === null || tag === void 0 ? void 0 : tag.mediaFormat, format, maxBitRate);
+        if (episode.path && tag?.mediaFormat) {
+            return this.streamFile(episode.path, episode.id, tag?.mediaFormat, format, maxBitRate);
         }
         return Promise.reject(rest_1.GenericError('Podcast episode not ready'));
     }

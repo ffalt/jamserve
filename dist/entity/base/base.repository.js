@@ -14,7 +14,7 @@ const shuffle_seed_1 = __importDefault(require("shuffle-seed"));
 class BaseRepository extends orm_1.EntityRepository {
     buildDefaultOrder(order) {
         const direction = base_1.OrderHelper.direction(order);
-        switch (order === null || order === void 0 ? void 0 : order.orderBy) {
+        switch (order?.orderBy) {
             case enums_1.DefaultOrderFields.created:
                 return [['createdAt', direction]];
             case enums_1.DefaultOrderFields.updated:
@@ -66,8 +66,8 @@ class BaseRepository extends orm_1.EntityRepository {
     }
     async buildFindOptions(filter, order, user, page) {
         const options = filter ? await this.buildFilter(filter, user) : {};
-        options.limit = page === null || page === void 0 ? void 0 : page.take;
-        options.offset = page === null || page === void 0 ? void 0 : page.skip;
+        options.limit = page?.take;
+        options.offset = page?.skip;
         options.order = this.buildOrderBy(order);
         this.ensureOrderIncludes(options);
         return options;

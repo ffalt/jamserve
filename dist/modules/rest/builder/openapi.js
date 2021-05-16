@@ -21,8 +21,7 @@ class OpenApiBuilder {
             }
         }
         if (parameters.find(p => {
-            var _a, _b, _c;
-            return ((_a = p.schema) === null || _a === void 0 ? void 0 : _a.$ref) === openapi_helpers_1.SCHEMA_ID || ((_c = (_b = p.schema) === null || _b === void 0 ? void 0 : _b.items) === null || _c === void 0 ? void 0 : _c.$ref) === openapi_helpers_1.SCHEMA_ID;
+            return p.schema?.$ref === openapi_helpers_1.SCHEMA_ID || p.schema?.items?.$ref === openapi_helpers_1.SCHEMA_ID;
         })) {
             responses['404'] = { description: express_error_1.Errors.itemNotFound };
         }
@@ -51,10 +50,9 @@ class OpenApiBuilder {
         return responses;
     }
     fillJSONResponses(type, method, schemas, responses) {
-        var _a;
         const content = {};
         let schema = { $ref: this.refsBuilder.getResultRef(type, method.methodName, schemas) };
-        if ((_a = method.returnTypeOptions) === null || _a === void 0 ? void 0 : _a.array) {
+        if (method.returnTypeOptions?.array) {
             schema = { type: 'array', items: schema };
         }
         content['application/json'] = { schema };
@@ -98,11 +96,11 @@ class OpenApiBuilder {
     }
     buildOpenApiMethod(method, ctrl, schemas, isPost, alias) {
         const parameters = this.refsBuilder.buildParameters(method, ctrl, schemas, alias);
-        const path = (ctrl.route || '') + ((alias === null || alias === void 0 ? void 0 : alias.route) || method.route || '');
+        const path = (ctrl.route || '') + (alias?.route || method.route || '');
         const roles = method.roles || ctrl.roles || [];
         const o = {
-            operationId: `${ctrl.name}.${method.methodName}${(alias === null || alias === void 0 ? void 0 : alias.route) || ''}`,
-            summary: `${method.summary || method.description} ${(alias === null || alias === void 0 ? void 0 : alias.name) || ''}`.trim(),
+            operationId: `${ctrl.name}.${method.methodName}${alias?.route || ''}`,
+            summary: `${method.summary || method.description} ${alias?.name || ''}`.trim(),
             description: method.description,
             deprecated: method.deprecationReason || ctrl.deprecationReason ? true : undefined,
             tags: method.tags || ctrl.tags,
@@ -193,14 +191,13 @@ class OpenApiBuilder {
         }
     }
     build() {
-        var _a;
         const openapi = this.buildOpenApiBase(version_1.JAMAPI_VERSION);
         const schemas = {
             'ID': { type: 'string', format: 'uuid' },
             'JSON': { type: 'object' }
         };
         this.buildControllers(schemas, openapi);
-        openapi.components = { schemas, securitySchemes: (_a = openapi.components) === null || _a === void 0 ? void 0 : _a.securitySchemes };
+        openapi.components = { schemas, securitySchemes: openapi.components?.securitySchemes };
         if (this.extended) {
             this.buildExtensions(openapi, schemas);
         }

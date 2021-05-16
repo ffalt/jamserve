@@ -28,7 +28,6 @@ Features:
 *   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/specs/jam.openapi.json)
 *   Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
 *   Database Support for [postgresql](https://www.postgresql.org/) and SQLite for local development
-    (planned: some more supported by [sequelize](https://sequelize.org))
 
 ## Requirements
 

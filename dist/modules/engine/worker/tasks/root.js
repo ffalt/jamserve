@@ -136,9 +136,8 @@ let RootWorker = class RootWorker extends base_1.BaseWorker {
         }
     }
     logNode(node) {
-        var _a, _b;
-        let stat = [' '.repeat(((_a = node === null || node === void 0 ? void 0 : node.folder) === null || _a === void 0 ? void 0 : _a.level) || 0) + ((node === null || node === void 0 ? void 0 : node.changed) ? '** ' : '|- ') + ((_b = node === null || node === void 0 ? void 0 : node.folder) === null || _b === void 0 ? void 0 : _b.path)];
-        ((node === null || node === void 0 ? void 0 : node.children) || []).forEach(n => {
+        let stat = [' '.repeat(node?.folder?.level || 0) + (node?.changed ? '** ' : '|- ') + node?.folder?.path];
+        (node?.children || []).forEach(n => {
             stat = stat.concat(this.logNode(n));
         });
         return stat;

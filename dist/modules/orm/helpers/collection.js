@@ -45,7 +45,7 @@ class Collection {
         const func = this.sourceFunc('get');
         options = options || this.getOrderOptions();
         const sources = await func(options);
-        let list = sources.map(source => { var _a; return entity._em.mapEntity(((_a = this.field.linkedEntity) === null || _a === void 0 ? void 0 : _a.name) || '', source); });
+        let list = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name || '', source));
         if (this.changeSet) {
             if (this.changeSet.set) {
                 list = this.changeSet.set;

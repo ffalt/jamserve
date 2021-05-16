@@ -21,7 +21,7 @@ class MetadataServiceSimilarTracks {
         const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
         const list = await orm.Track.find({ where: { tag: { mbTrackID: mbTrackIDs } } });
         for (const sim of ids) {
-            const t = await list.find(async (tr) => { var _a; return ((_a = (await tr.tag.get())) === null || _a === void 0 ? void 0 : _a.mbTrackID) === sim.mbid; });
+            const t = await list.find(async (tr) => (await tr.tag.get())?.mbTrackID === sim.mbid);
             if (!t) {
                 vals.push(sim);
             }
@@ -66,7 +66,7 @@ class MetadataServiceSimilarTracks {
         }
         const songs = await this.getSimilarSongs(orm, similars);
         const ids = await this.findSongTrackIDs(orm, songs);
-        return orm.Track.search({ where: { id: ids }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
+        return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
     }
     async byArtist(orm, artist, page) {
         const similar = await this.service.similarArtists.byArtistIdName(orm, artist.mbArtistID, artist.name);
@@ -78,16 +78,16 @@ class MetadataServiceSimilarTracks {
     }
     async byAlbum(orm, album, page) {
         const artist = await album.artist.get();
-        const similar = await this.service.similarArtists.byArtistIdName(orm, album.mbArtistID, artist === null || artist === void 0 ? void 0 : artist.name);
+        const similar = await this.service.similarArtists.byArtistIdName(orm, album.mbArtistID, artist?.name);
         return this.getSimilarArtistTracks(orm, similar, page);
     }
     async byTrack(orm, track, page) {
         let data;
         const tag = await track.tag.get();
-        if (tag === null || tag === void 0 ? void 0 : tag.mbTrackID) {
+        if (tag?.mbTrackID) {
             data = await this.service.lastFMSimilarTracks(orm, tag.mbTrackID);
         }
-        else if ((tag === null || tag === void 0 ? void 0 : tag.title) && (tag === null || tag === void 0 ? void 0 : tag.artist)) {
+        else if (tag?.title && tag?.artist) {
             data = await this.service.lastFMSimilarTracksSearch(orm, tag.title, tag.artist);
         }
         let ids = [];
@@ -102,7 +102,7 @@ class MetadataServiceSimilarTracks {
             });
             ids = await this.findSongTrackIDs(orm, songs);
         }
-        return orm.Track.search({ where: { id: ids }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
+        return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
     }
 }
 exports.MetadataServiceSimilarTracks = MetadataServiceSimilarTracks;

@@ -13,7 +13,7 @@ class FolderRepository extends base_repository_1.BaseRepository {
     }
     buildOrder(order) {
         const direction = base_1.OrderHelper.direction(order);
-        switch (order === null || order === void 0 ? void 0 : order.orderBy) {
+        switch (order?.orderBy) {
             case enums_1.FolderOrderFields.created:
                 return [['createdAt', direction]];
             case enums_1.FolderOrderFields.updated:
@@ -46,7 +46,7 @@ class FolderRepository extends base_repository_1.BaseRepository {
             }
         }
         if (filter.parentIDs) {
-            parentIDs = parentIDs.concat(filter === null || filter === void 0 ? void 0 : filter.parentIDs);
+            parentIDs = parentIDs.concat(filter?.parentIDs);
         }
         const result = orm_1.QHelper.buildQuery([
             { id: filter.ids },

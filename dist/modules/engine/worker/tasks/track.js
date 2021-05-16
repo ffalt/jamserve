@@ -110,7 +110,7 @@ let TrackWorker = class TrackWorker extends base_1.BaseWorker {
         for (const track of tracks) {
             changes.tracks.updated.add(track);
             const oldParent = await track.folder.get();
-            if ((oldParent === null || oldParent === void 0 ? void 0 : oldParent.id) !== newParentID) {
+            if (oldParent?.id !== newParentID) {
                 changes.folders.updated.add(oldParent);
                 await fs_extra_1.default.move(path_1.default.join(track.path, track.fileName), path_1.default.join(newParent.path, track.fileName));
                 track.path = fs_utils_1.ensureTrailingPathSeparator(newParent.path);

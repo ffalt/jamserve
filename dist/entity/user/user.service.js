@@ -52,7 +52,7 @@ let UserService = class UserService {
         return user;
     }
     async authJWT(orm, jwtPayload) {
-        if (!(jwtPayload === null || jwtPayload === void 0 ? void 0 : jwtPayload.id)) {
+        if (!jwtPayload?.id) {
             return Promise.reject(rest_1.InvalidParamError('token', 'Invalid token'));
         }
         return await orm.User.findOneByID(jwtPayload.id);

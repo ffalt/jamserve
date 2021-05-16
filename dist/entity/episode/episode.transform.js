@@ -17,7 +17,6 @@ const episode_service_1 = require("./episode.service");
 const audio_module_1 = require("../../modules/audio/audio.module");
 let EpisodeTransformService = class EpisodeTransformService extends base_transform_1.BaseTransformService {
     async episodeBase(orm, o, episodeArgs, user) {
-        var _a, _b;
         const chapters = o.chaptersJSON ? JSON.parse(o.chaptersJSON) : undefined;
         const enclosures = o.enclosuresJSON ? JSON.parse(o.enclosuresJSON) : undefined;
         const podcast = await o.podcast.getOrFail();
@@ -38,7 +37,7 @@ let EpisodeTransformService = class EpisodeTransformService extends base_transfo
             podcastName: podcast.name,
             status: this.episodeService.isDownloading(o.id) ? enums_1.PodcastStatus.downloading : o.status,
             created: o.createdAt.valueOf(),
-            duration: (_b = (_a = tag === null || tag === void 0 ? void 0 : tag.mediaDuration) !== null && _a !== void 0 ? _a : o.duration) !== null && _b !== void 0 ? _b : 0,
+            duration: tag?.mediaDuration ?? o.duration ?? 0,
             tag: episodeArgs.episodeIncTag ? await this.mediaTag(orm, tag) : undefined,
             media: episodeArgs.episodeIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
             tagRaw: episodeArgs.episodeIncRawTag && o.path ? await this.audioModule.readRawTag(o.path) : undefined,

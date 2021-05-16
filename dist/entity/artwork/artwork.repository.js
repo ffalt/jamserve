@@ -18,13 +18,13 @@ class ArtworkRepository extends base_repository_1.BaseRepository {
             return {};
         }
         let folderIDs = [];
-        if (filter === null || filter === void 0 ? void 0 : filter.childOfID) {
+        if (filter?.childOfID) {
             const folderRepo = this.em.getRepository(folder_1.Folder);
             const folder = await folderRepo.oneOrFailByID(filter.childOfID);
             folderIDs = folderIDs.concat(await folderRepo.findAllDescendantsIds(folder));
             folderIDs.push(filter.childOfID);
         }
-        if (filter === null || filter === void 0 ? void 0 : filter.folderIDs) {
+        if (filter?.folderIDs) {
             folderIDs = folderIDs.concat(filter.folderIDs);
         }
         return orm_1.QHelper.buildQuery([

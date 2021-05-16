@@ -17,7 +17,7 @@ function usePassPortMiddleWare(router, engine) {
     router.use(passport_1.default.initialize());
     router.use(passport_1.default.session());
     passport_1.default.serializeUser((user, done) => {
-        done(null, (user === null || user === void 0 ? void 0 : user.id) || '_invalid_');
+        done(null, user?.id || '_invalid_');
     });
     passport_1.default.deserializeUser((id, done) => {
         engine.user.findByID(engine.orm.fork(), id).then(user => done(null, user)).catch(done);

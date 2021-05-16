@@ -13,7 +13,7 @@ class ArtistRepository extends base_repository_1.BaseRepository {
     }
     buildOrder(order) {
         const direction = base_1.OrderHelper.direction(order);
-        switch (order === null || order === void 0 ? void 0 : order.orderBy) {
+        switch (order?.orderBy) {
             case enums_1.ArtistOrderFields.created:
                 return [['createdAt', direction]];
             case enums_1.ArtistOrderFields.updated:

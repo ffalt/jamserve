@@ -49,8 +49,7 @@ class WebserviceJSONClient extends webservice_client_1.WebserviceClient {
         return Promise.reject(e);
     }
     isRateLimitError(body) {
-        var _a;
-        return !!((_a = body === null || body === void 0 ? void 0 : body.error) === null || _a === void 0 ? void 0 : _a.includes('allowable rate limit'));
+        return !!body?.error?.includes('allowable rate limit');
     }
     async get(req) {
         const url = this.reqToUrl(req);

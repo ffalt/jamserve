@@ -236,10 +236,10 @@ class MetaMerger {
         const genreMap = new Map();
         for (const track of tracks) {
             const tag = await track.tag.get();
-            duration += ((tag === null || tag === void 0 ? void 0 : tag.mediaDuration) || 0);
-            metaStatBuilder.statID('seriesNr', tag === null || tag === void 0 ? void 0 : tag.seriesNr);
-            metaStatBuilder.statNumber('year', tag === null || tag === void 0 ? void 0 : tag.year);
-            metaStatBuilder.statSlugValue('album', (tag === null || tag === void 0 ? void 0 : tag.album) && album_name_1.extractAlbumName(tag === null || tag === void 0 ? void 0 : tag.album));
+            duration += (tag?.mediaDuration || 0);
+            metaStatBuilder.statID('seriesNr', tag?.seriesNr);
+            metaStatBuilder.statNumber('year', tag?.year);
+            metaStatBuilder.statSlugValue('album', tag?.album && album_name_1.extractAlbumName(tag?.album));
             const genres = await track.genres.getItems();
             genres.forEach(genre => genreMap.set(genre.id, genre));
         }

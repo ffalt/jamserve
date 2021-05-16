@@ -120,14 +120,13 @@ let TransformService = class TransformService {
         };
     }
     async nowPlaying(orm, o, nowPlayingArgs, trackArgs, episodeArgs, user) {
-        var _a, _b;
         return {
             userName: o.user.name,
             userID: o.user.id,
             minutesAgo: Math.round(moment_1.default.duration(moment_1.default().diff(moment_1.default(o.time))).asMinutes()),
-            trackID: nowPlayingArgs.nowPlayingIncTrackIDs ? (_a = o.track) === null || _a === void 0 ? void 0 : _a.id : undefined,
+            trackID: nowPlayingArgs.nowPlayingIncTrackIDs ? o.track?.id : undefined,
             track: nowPlayingArgs.nowPlayingIncTracks && o.track ? (await this.Track.trackBase(orm, o.track, trackArgs, user)) : undefined,
-            episodeID: nowPlayingArgs.nowPlayingIncEpisodeIDs ? (_b = o.episode) === null || _b === void 0 ? void 0 : _b.id : undefined,
+            episodeID: nowPlayingArgs.nowPlayingIncEpisodeIDs ? o.episode?.id : undefined,
             episode: nowPlayingArgs.nowPlayingIncEpisodes && o.episode ? (await this.Episode.episodeBase(orm, o.episode, episodeArgs, user)) : undefined
         };
     }

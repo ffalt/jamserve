@@ -39,11 +39,11 @@ class MetaMergerCache {
             return;
         }
         const cache = this.seriesCache.find(a => (a.series.name === trackInfo.tag.series) && a.artist.id === artistID);
-        return cache === null || cache === void 0 ? void 0 : cache.series;
+        return cache?.series;
     }
     async getSeriesByID(id, changes) {
         const cache = this.seriesCache.find(a => a.series.id === id);
-        if (cache === null || cache === void 0 ? void 0 : cache.series) {
+        if (cache?.series) {
             return cache.series;
         }
         const series = await this.orm.Series.findOneByID(id);
@@ -101,7 +101,7 @@ class MetaMergerCache {
     async findAlbumInCache(trackInfo, artist) {
         if (trackInfo.tag.mbReleaseID) {
             const cache = this.albumCache.find(a => a.album.mbReleaseID === trackInfo.tag.mbReleaseID);
-            if (cache === null || cache === void 0 ? void 0 : cache.album) {
+            if (cache?.album) {
                 return cache.album;
             }
         }
@@ -117,14 +117,13 @@ class MetaMergerCache {
         return;
     }
     async getAlbumByID(id) {
-        var _a;
         const cache = this.albumCache.find(a => a.album.id === id);
-        if (cache === null || cache === void 0 ? void 0 : cache.album) {
+        if (cache?.album) {
             return cache.album;
         }
         const album = await this.orm.Album.findOneByID(id);
         if (album) {
-            this.albumCache.push({ album, artist: await album.artist.getOrFail(), series: (_a = (await album.series.get())) === null || _a === void 0 ? void 0 : _a.name });
+            this.albumCache.push({ album, artist: await album.artist.getOrFail(), series: (await album.series.get())?.name });
             this.changes.albums.updated.add(album);
         }
         return album || undefined;

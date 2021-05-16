@@ -34,9 +34,9 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends base_1.BaseWor
         artwork.statCreated = stat.ctime;
         artwork.statModified = stat.mtime;
         artwork.fileSize = stat.size;
-        artwork.format = info === null || info === void 0 ? void 0 : info.format;
-        artwork.height = info === null || info === void 0 ? void 0 : info.height;
-        artwork.width = info === null || info === void 0 ? void 0 : info.width;
+        artwork.format = info?.format;
+        artwork.height = info?.height;
+        artwork.width = info?.width;
     }
     async rename(orm, artworkID, newName, changes) {
         const artwork = await orm.Artwork.findOneByID(artworkID);
@@ -165,7 +165,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends base_1.BaseWor
         for (const artwork of artworks) {
             changes.artworks.updated.add(artwork);
             const oldParent = await artwork.folder.get();
-            if ((oldParent === null || oldParent === void 0 ? void 0 : oldParent.id) !== newParentID) {
+            if (oldParent?.id !== newParentID) {
                 changes.folders.updated.add(oldParent);
                 await fs_extra_1.default.move(path_1.default.join(artwork.path, artwork.name), path_1.default.join(newParent.path, artwork.name));
                 artwork.path = fs_utils_1.ensureTrailingPathSeparator(newParent.path);

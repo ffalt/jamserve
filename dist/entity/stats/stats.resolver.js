@@ -18,7 +18,7 @@ const stats_1 = require("./stats");
 const stats_args_1 = require("./stats.args");
 let StatsResolver = class StatsResolver {
     async stats(args, { engine, orm }) {
-        return await engine.stats.getStats(orm, args === null || args === void 0 ? void 0 : args.rootID);
+        return await engine.stats.getStats(orm, args?.rootID);
     }
 };
 __decorate([

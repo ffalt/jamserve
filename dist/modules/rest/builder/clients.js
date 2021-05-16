@@ -73,7 +73,6 @@ async function buildParts(template, serviceParts) {
 }
 exports.buildParts = buildParts;
 function getResultType(call) {
-    var _a;
     const metadata = metadata_1.getMetadataStorage();
     let resultType;
     if (call.getReturnType) {
@@ -94,10 +93,10 @@ function getResultType(call) {
             }
             else {
                 const fObjectType = metadata.resultType(type);
-                resultType = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) ? ('Jam.' + (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name)) : 'any';
+                resultType = fObjectType?.name ? ('Jam.' + fObjectType?.name) : 'any';
             }
         }
-        if ((_a = call.returnTypeOptions) === null || _a === void 0 ? void 0 : _a.array) {
+        if (call.returnTypeOptions?.array) {
             resultType = 'Array<' + resultType + '>';
         }
     }
@@ -127,7 +126,7 @@ function getCallParamArgType(param, metadata) {
         }
         else {
             const fObjectType = metadata.argumentTypes.find(it => it.target === type);
-            typeString = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) ? ('JamParameter.' + (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name)) : 'any';
+            typeString = fObjectType?.name ? ('JamParameter.' + fObjectType?.name) : 'any';
         }
     }
     if (param.typeOptions.array) {
@@ -138,18 +137,17 @@ function getCallParamArgType(param, metadata) {
 function getCallParamArgsType(param, metadata) {
     const type = param.getType();
     const fObjectType = metadata.argumentTypes.find(it => it.target === type);
-    let typeString = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) ? ('JamParameters.' + (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name)) : 'any';
+    let typeString = fObjectType?.name ? ('JamParameters.' + fObjectType?.name) : 'any';
     if (param.typeOptions.array) {
         typeString = 'Array<' + typeString + '>';
     }
     return typeString;
 }
 function getCallParamType(call) {
-    var _a;
     const metadata = metadata_1.getMetadataStorage();
     const types = [];
     if (call.params.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
-        types.push('JamParameters.' + ((_a = call.controllerClassMetadata) === null || _a === void 0 ? void 0 : _a.name.replace('Controller', '')) + call.methodName[0].toUpperCase() + call.methodName.slice(1) + 'Args');
+        types.push('JamParameters.' + call.controllerClassMetadata?.name.replace('Controller', '') + call.methodName[0].toUpperCase() + call.methodName.slice(1) + 'Args');
     }
     else {
         for (const param of call.params) {
@@ -165,8 +163,7 @@ function getCallParamType(call) {
 }
 exports.getCallParamType = getCallParamType;
 function callDescription(call) {
-    var _a;
-    const roles = ((_a = call.controllerClassMetadata) === null || _a === void 0 ? void 0 : _a.roles) || call.roles || [];
+    const roles = call.controllerClassMetadata?.roles || call.roles || [];
     const result = (call.description || '') + (roles && roles.length > 0 ? ` // Rights needed: ${roles.join(',')}` : '');
     return result.trim();
 }

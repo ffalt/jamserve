@@ -178,19 +178,19 @@ let MetaDataService = class MetaDataService {
     }
     async lyricsByTrack(orm, track) {
         const tag = await track.tag.get();
-        if (tag === null || tag === void 0 ? void 0 : tag.lyrics) {
+        if (tag?.lyrics) {
             return { lyrics: tag.lyrics };
         }
-        const song = tag === null || tag === void 0 ? void 0 : tag.title;
+        const song = tag?.title;
         if (!song) {
             return {};
         }
         try {
             let result;
-            if (tag === null || tag === void 0 ? void 0 : tag.artist) {
+            if (tag?.artist) {
                 result = await this.lyrics(orm, tag.artist, song);
             }
-            if ((!result || !result.lyrics) && (tag === null || tag === void 0 ? void 0 : tag.albumArtist) && ((tag === null || tag === void 0 ? void 0 : tag.artist) !== (tag === null || tag === void 0 ? void 0 : tag.albumArtist))) {
+            if ((!result || !result.lyrics) && tag?.albumArtist && (tag?.artist !== tag?.albumArtist)) {
                 result = await this.lyrics(orm, tag.albumArtist, song);
             }
             return result || {};

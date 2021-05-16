@@ -20,14 +20,13 @@ let TrackTransformService = class TrackTransformService extends base_transform_1
         return await Promise.all(list.map(t => this.trackBase(orm, t, trackArgs, user)));
     }
     async trackBase(orm, o, trackArgs, user) {
-        var _a;
         const tag = await o.tag.get();
         return {
             id: o.id,
             name: o.fileName || o.name,
             objType: enums_1.JamObjectType.track,
             created: o.createdAt.valueOf(),
-            duration: (_a = tag === null || tag === void 0 ? void 0 : tag.mediaDuration) !== null && _a !== void 0 ? _a : 0,
+            duration: tag?.mediaDuration ?? 0,
             parentID: o.folder.idOrFail(),
             artistID: o.artist.id(),
             albumArtistID: o.albumArtist.id(),

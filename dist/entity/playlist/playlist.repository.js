@@ -23,7 +23,7 @@ class PlaylistRepository extends base_repository_1.BaseRepository {
             { user: orm_1.QHelper.inOrEqual(filter.userIDs) },
             orm_1.QHelper.or([
                 { isPublic: true },
-                { user: user === null || user === void 0 ? void 0 : user.id }
+                { user: user?.id }
             ])
         ]) : {};
     }

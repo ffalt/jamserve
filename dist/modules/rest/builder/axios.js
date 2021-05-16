@@ -5,7 +5,6 @@ const version_1 = require("../../engine/rest/version");
 const typescript_1 = require("./typescript");
 const clients_1 = require("./clients");
 function generateUploadClientCalls(call, name, paramType, upload) {
-    var _a;
     return [{
             name,
             paramsType: '',
@@ -15,12 +14,11 @@ function generateUploadClientCalls(call, name, paramType, upload) {
             baseFunc: 'upload',
             baseFuncParameters: `${paramType ? 'params' : '{}'}, '${upload.name}', file, onUploadProgress`,
             tick: '\'',
-            apiPath: (((_a = call.controllerClassMetadata) === null || _a === void 0 ? void 0 : _a.route) || '') + (call.route || ''),
+            apiPath: (call.controllerClassMetadata?.route || '') + (call.route || ''),
             description: clients_1.callDescription(call)
         }];
 }
 function generateUrlClientCall(call, name, paramsType) {
-    var _a;
     let route = (call.route || '');
     let validate = undefined;
     let baseParam = 'params';
@@ -40,13 +38,12 @@ function generateUrlClientCall(call, name, paramsType) {
         baseFuncParameters: baseParam + ', forDom',
         tick: call.customPathParameters ? '`' : '\'',
         validate,
-        apiPath: (((_a = call.controllerClassMetadata) === null || _a === void 0 ? void 0 : _a.route) || '') + route,
+        apiPath: (call.controllerClassMetadata?.route || '') + route,
         description: clients_1.callDescription(call),
         sync: true
     };
 }
 function generateBinClientCall(call, name, paramsType) {
-    var _a;
     let route = (call.route || '');
     let validate = undefined;
     let baseParam = 'params';
@@ -66,7 +63,7 @@ function generateBinClientCall(call, name, paramsType) {
         baseFuncParameters: baseParam,
         tick: call.customPathParameters ? '`' : '\'',
         validate,
-        apiPath: (((_a = call.controllerClassMetadata) === null || _a === void 0 ? void 0 : _a.route) || '') + route,
+        apiPath: (call.controllerClassMetadata?.route || '') + route,
         description: clients_1.callDescription(call)
     };
 }
@@ -74,7 +71,6 @@ function generateBinaryClientCalls(call, name, paramType) {
     return [generateUrlClientCall(call, name, paramType), generateBinClientCall(call, name, paramType)];
 }
 function generateRequestClientCalls(call, name, paramType, method) {
-    var _a;
     const resultType = clients_1.getResultType(call);
     return [{
             name,
@@ -87,7 +83,7 @@ function generateRequestClientCalls(call, name, paramType, method) {
                 : (method === 'post' ? 'requestPostDataOK' : 'requestOK'),
             baseFuncParameters: paramType ? 'params' : '{}',
             tick: call.customPathParameters ? '`' : '\'',
-            apiPath: (((_a = call.controllerClassMetadata) === null || _a === void 0 ? void 0 : _a.route) || '') + (call.route || ''),
+            apiPath: (call.controllerClassMetadata?.route || '') + (call.route || ''),
             description: clients_1.callDescription(call)
         }];
 }

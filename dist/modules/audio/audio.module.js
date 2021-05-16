@@ -53,7 +53,7 @@ let AudioModule = class AudioModule {
         this.setSettings(this.settingsService.settings.externalServices);
     }
     setSettings(externalServices) {
-        const enabled = externalServices === null || externalServices === void 0 ? void 0 : externalServices.enabled;
+        const enabled = externalServices?.enabled;
         this.musicbrainz.enabled = enabled;
         this.acoustid.enabled = enabled;
         this.lastFM.enabled = enabled;

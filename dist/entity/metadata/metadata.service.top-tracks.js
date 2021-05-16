@@ -17,7 +17,7 @@ class MetadataServiceTopTracks {
                 };
             });
             const ids = await this.service.similarTracks.findSongTrackIDs(orm, songs);
-            return orm.Track.search({ where: { id: ids }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
+            return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
         }
         return { items: [], ...(page || {}), total: 0 };
     }

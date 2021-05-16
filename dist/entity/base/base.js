@@ -89,7 +89,7 @@ function PaginatedResponse(EntityClass, EntityQLClass) {
 exports.PaginatedResponse = PaginatedResponse;
 class OrderHelper {
     static direction(args) {
-        return (args === null || args === void 0 ? void 0 : args.orderDesc) ? 'DESC' : 'ASC';
+        return args?.orderDesc ? 'DESC' : 'ASC';
     }
     static inverse(order) {
         return order === 'ASC' ? 'DESC' : 'ASC';

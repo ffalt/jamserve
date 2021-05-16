@@ -60,7 +60,7 @@ class MusicbrainzClient extends webservice_json_client_1.WebserviceJSONClient {
         return `${this.reqToHost(req)}${req.path}?${q.join('&')}`;
     }
     isRateLimitError(body) {
-        return !!((body === null || body === void 0 ? void 0 : body.error) && body.error.includes('allowable rate limit'));
+        return !!(body?.error && body.error.includes('allowable rate limit'));
     }
     async search(params) {
         const data = await this.get({

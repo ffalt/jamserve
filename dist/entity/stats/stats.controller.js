@@ -19,7 +19,7 @@ const stats_filter_1 = require("./stats.filter");
 const enums_1 = require("../../types/enums");
 let StatsController = class StatsController {
     async get(filter, { orm, engine }) {
-        return await engine.stats.getStats(orm, filter === null || filter === void 0 ? void 0 : filter.rootID);
+        return await engine.stats.getStats(orm, filter?.rootID);
     }
     async user({ orm, engine, user }) {
         return engine.stats.getUserStats(orm, user);

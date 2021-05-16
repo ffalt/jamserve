@@ -20,7 +20,7 @@ class MetadataServiceSimilarArtists {
                 names.push(a.name);
             }
         });
-        return await orm.Folder.search({ where: { folderType: enums_1.FolderType.artist, artist: names }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
+        return await orm.Folder.search({ where: { folderType: enums_1.FolderType.artist, artist: names }, limit: page?.take, offset: page?.skip });
     }
     async findSimilarArtists(orm, similarArtists, page) {
         const names = [];
@@ -29,7 +29,7 @@ class MetadataServiceSimilarArtists {
                 names.push(a.name);
             }
         });
-        return await orm.Artist.search({ where: { name: names }, limit: page === null || page === void 0 ? void 0 : page.take, offset: page === null || page === void 0 ? void 0 : page.skip });
+        return await orm.Artist.search({ where: { name: names }, limit: page?.take, offset: page?.skip });
     }
     async byArtistIdName(orm, mbArtistID, artist) {
         let similar = [];

@@ -44,7 +44,7 @@ let ImageService = ImageService_1 = class ImageService {
     }
     static async getCoverArtTextEpisode(episode) {
         const tag = await episode.tag.get();
-        let text = tag === null || tag === void 0 ? void 0 : tag.title;
+        let text = tag?.title;
         if (!text && episode.path) {
             text = path_1.default.basename(episode.path);
         }
@@ -114,8 +114,7 @@ let ImageService = ImageService_1 = class ImageService {
         return;
     }
     async getObjImage(orm, o, type, size, format) {
-        var _a;
-        return (_a = await this.getObjImageByType(orm, o, type, size, format)) !== null && _a !== void 0 ? _a : await this.paintImage(o, type, size, format);
+        return await this.getObjImageByType(orm, o, type, size, format) ?? await this.paintImage(o, type, size, format);
     }
     async paintImage(obj, type, size, format) {
         const s = await this.getCoverArtText(obj, type);

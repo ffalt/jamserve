@@ -26,7 +26,7 @@ let AutocompleteController = class AutocompleteController {
             result.tracks = [];
             for (const track of list) {
                 const tag = await track.tag.get();
-                result.tracks.push({ id: track.id, name: (tag === null || tag === void 0 ? void 0 : tag.title) || track.name || '' });
+                result.tracks.push({ id: track.id, name: tag?.title || track.name || '' });
             }
         }
         if (filter.album !== undefined && filter.album > 0) {

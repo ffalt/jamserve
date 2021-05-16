@@ -143,14 +143,13 @@ let ApolloMiddleware = class ApolloMiddleware {
                 return err;
             },
             context: async ({ req, res }) => {
-                var _a;
                 if (!req.user)
                     throw new apollo_server_express_1.AuthenticationError('you must be logged in');
                 return {
                     req, res,
                     orm: this.orm.fork(),
                     engine: this.engine,
-                    sessionID: (_a = req.session) === null || _a === void 0 ? void 0 : _a.id,
+                    sessionID: req.session?.id,
                     user: req.user
                 };
             },

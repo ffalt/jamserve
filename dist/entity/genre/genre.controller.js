@@ -39,7 +39,7 @@ let GenreController = class GenreController {
     }
     async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
         const genreIDs = await orm.Genre.findIDsFilter(filter, user);
-        const orders = [{ orderBy: (order === null || order === void 0 ? void 0 : order.orderBy) ? order.orderBy : enums_1.TrackOrderFields.default, orderDesc: (order === null || order === void 0 ? void 0 : order.orderDesc) || false }];
+        const orders = [{ orderBy: order?.orderBy ? order.orderBy : enums_1.TrackOrderFields.default, orderDesc: order?.orderDesc || false }];
         return await orm.Track.searchTransformFilter({ genreIDs }, orders, page, user, o => engine.transform.Track.trackBase(orm, o, trackArgs, user));
     }
     async albums(page, albumArgs, filter, order, { orm, engine, user }) {

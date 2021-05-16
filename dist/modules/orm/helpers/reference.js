@@ -48,18 +48,16 @@ class Reference {
         return entity._source.get(this.field.name);
     }
     idOrFail() {
-        var _a;
         const result = this.id();
         if (!result) {
-            throw new Error(`${(_a = this.field.linkedEntity) === null || _a === void 0 ? void 0 : _a.name} not found`);
+            throw new Error(`${this.field.linkedEntity?.name} not found`);
         }
         return result;
     }
     async getOrFail() {
-        var _a;
         const result = await this.get();
         if (!result) {
-            throw new Error(`${(_a = this.field.linkedEntity) === null || _a === void 0 ? void 0 : _a.name} not found`);
+            throw new Error(`${this.field.linkedEntity?.name} not found`);
         }
         return result;
     }

@@ -36,10 +36,10 @@ let BaseTransformService = class BaseTransformService {
     }
     async trackMedia(o, fileSize) {
         return {
-            bitRate: o === null || o === void 0 ? void 0 : o.mediaBitRate,
-            format: o === null || o === void 0 ? void 0 : o.mediaFormat,
-            channels: o === null || o === void 0 ? void 0 : o.mediaChannels,
-            sampleRate: o === null || o === void 0 ? void 0 : o.mediaSampleRate,
+            bitRate: o?.mediaBitRate,
+            format: o?.mediaFormat,
+            channels: o?.mediaChannels,
+            sampleRate: o?.mediaSampleRate,
             size: fileSize
         };
     }

@@ -15,11 +15,11 @@ let PlaylistService = class PlaylistService {
         switch (media.objType) {
             case enums_1.DBObjectType.episode: {
                 const episodeTag = await media.obj.tag.get();
-                return ((episodeTag === null || episodeTag === void 0 ? void 0 : episodeTag.mediaDuration) || 0);
+                return (episodeTag?.mediaDuration || 0);
             }
             case enums_1.DBObjectType.track: {
                 const trackTag = await media.obj.tag.get();
-                return ((trackTag === null || trackTag === void 0 ? void 0 : trackTag.mediaDuration) || 0);
+                return (trackTag?.mediaDuration || 0);
             }
         }
         return 0;

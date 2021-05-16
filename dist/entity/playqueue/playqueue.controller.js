@@ -24,8 +24,7 @@ let PlayQueueController = class PlayQueueController {
         return engine.transform.playQueue(orm, await engine.playQueue.get(orm, user), playqueueArgs, trackArgs, episodeArgs, user);
     }
     async set(args, { req, engine, orm, user }) {
-        var _a;
-        await engine.playQueue.set(orm, args, user, ((_a = req.session) === null || _a === void 0 ? void 0 : _a.client) || 'unknown');
+        await engine.playQueue.set(orm, args, user, req.session?.client || 'unknown');
     }
     async clear({ orm, engine, user }) {
         await engine.playQueue.clear(orm, user);

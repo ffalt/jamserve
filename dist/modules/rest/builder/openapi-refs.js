@@ -156,10 +156,10 @@ class OpenApiRefBuilder {
         const parameters = [];
         for (const param of params) {
             if (param.kind === 'args' && ['path', 'query'].includes(param.mode)) {
-                this.collectParameterObj(param, parameters, schemas, alias === null || alias === void 0 ? void 0 : alias.hideParameters);
+                this.collectParameterObj(param, parameters, schemas, alias?.hideParameters);
             }
             else if (param.kind === 'arg' && ['path', 'query'].includes(param.mode)) {
-                this.collectParameter(param, parameters, ctrl, schemas, alias === null || alias === void 0 ? void 0 : alias.hideParameters);
+                this.collectParameter(param, parameters, ctrl, schemas, alias?.hideParameters);
             }
         }
         return parameters.sort((a, b) => {

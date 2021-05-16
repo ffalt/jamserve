@@ -222,7 +222,7 @@ class EntityManager {
         const model = this.model(entityName);
         const opts = { ...options, raw: true, attributes: ['id'] };
         const result = await model.findOne(opts);
-        return result === null || result === void 0 ? void 0 : result.id;
+        return result?.id;
     }
     async findIDs(entityName, options) {
         const model = this.model(entityName);

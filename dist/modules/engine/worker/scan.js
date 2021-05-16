@@ -46,9 +46,9 @@ class WorkerScan {
         const name = path_1.default.basename(file.path);
         const info = await this.imageModule.getImageInfo(file.path);
         artwork.types = artwork_type_1.artWorkImageNameToType(name);
-        artwork.format = info === null || info === void 0 ? void 0 : info.format;
-        artwork.height = info === null || info === void 0 ? void 0 : info.height;
-        artwork.width = info === null || info === void 0 ? void 0 : info.width;
+        artwork.format = info?.format;
+        artwork.height = info?.height;
+        artwork.width = info?.width;
         artwork.statCreated = file.ctime;
         artwork.statModified = file.mtime;
         artwork.fileSize = file.size;
@@ -95,19 +95,19 @@ class WorkerScan {
     static async buildTrackMatch(track) {
         const tag = await track.tag.get();
         return {
-            artist: (tag === null || tag === void 0 ? void 0 : tag.albumArtist) || (tag === null || tag === void 0 ? void 0 : tag.artist),
-            artistSort: (tag === null || tag === void 0 ? void 0 : tag.albumArtistSort) || (tag === null || tag === void 0 ? void 0 : tag.artistSort),
-            genres: tag === null || tag === void 0 ? void 0 : tag.genres,
-            album: tag === null || tag === void 0 ? void 0 : tag.album,
-            series: tag === null || tag === void 0 ? void 0 : tag.series,
-            year: tag === null || tag === void 0 ? void 0 : tag.year,
-            trackTotal: tag === null || tag === void 0 ? void 0 : tag.trackTotal,
-            discTotal: tag === null || tag === void 0 ? void 0 : tag.discTotal,
-            disc: tag === null || tag === void 0 ? void 0 : tag.disc,
-            track: tag === null || tag === void 0 ? void 0 : tag.trackNr,
-            mbArtistID: tag === null || tag === void 0 ? void 0 : tag.mbArtistID,
-            mbReleaseID: tag === null || tag === void 0 ? void 0 : tag.mbReleaseID,
-            mbAlbumType: `${(tag === null || tag === void 0 ? void 0 : tag.mbAlbumType) || ''}/${(tag === null || tag === void 0 ? void 0 : tag.mbAlbumStatus) || ''}`,
+            artist: tag?.albumArtist || tag?.artist,
+            artistSort: tag?.albumArtistSort || tag?.artistSort,
+            genres: tag?.genres,
+            album: tag?.album,
+            series: tag?.series,
+            year: tag?.year,
+            trackTotal: tag?.trackTotal,
+            discTotal: tag?.discTotal,
+            disc: tag?.disc,
+            track: tag?.trackNr,
+            mbArtistID: tag?.mbArtistID,
+            mbReleaseID: tag?.mbReleaseID,
+            mbAlbumType: `${tag?.mbAlbumType || ''}/${tag?.mbAlbumStatus || ''}`,
         };
     }
     async setTrackValues(file, track) {

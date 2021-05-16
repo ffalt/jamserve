@@ -46,7 +46,7 @@ let TrackService = class TrackService {
     }
     async getImage(orm, track, size, format) {
         const tag = await track.tag.get();
-        if (tag === null || tag === void 0 ? void 0 : tag.nrTagImages) {
+        if (tag?.nrTagImages) {
             const result = await this.imageModule.getExisting(track.id, size, format);
             if (result) {
                 return result;

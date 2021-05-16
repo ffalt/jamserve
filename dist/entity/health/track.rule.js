@@ -35,7 +35,7 @@ const GARBAGE_FRAMES_IDS = [
     'POPM'
 ];
 function hasID3v2Tag(track, tag) {
-    return !!(tag === null || tag === void 0 ? void 0 : tag.format) && audio_module_1.ID3TrackTagRawFormatTypes.includes(tag.format);
+    return !!tag?.format && audio_module_1.ID3TrackTagRawFormatTypes.includes(tag.format);
 }
 function isMP3(track, tag) {
     return !!tag && tag.mediaFormat === enums_1.AudioFormatType.mp3;
@@ -50,25 +50,25 @@ const trackRules = [
         all: true,
         run: async (folder, track, tag) => {
             const missing = [];
-            if (!(tag === null || tag === void 0 ? void 0 : tag.album)) {
+            if (!tag?.album) {
                 missing.push('album');
             }
-            if (!(tag === null || tag === void 0 ? void 0 : tag.artist)) {
+            if (!tag?.artist) {
                 missing.push('artist');
             }
-            if (!(tag === null || tag === void 0 ? void 0 : tag.albumArtist)) {
+            if (!tag?.albumArtist) {
                 missing.push('album artist');
             }
-            if (!(tag === null || tag === void 0 ? void 0 : tag.genres) || tag.genres.length === 0) {
+            if (!tag?.genres || tag.genres.length === 0) {
                 missing.push('genre');
             }
-            if (!(tag === null || tag === void 0 ? void 0 : tag.trackNr)) {
+            if (!tag?.trackNr) {
                 missing.push('track nr');
             }
-            if (folder.albumType !== undefined && !track.series && !(tag === null || tag === void 0 ? void 0 : tag.trackTotal)) {
+            if (folder.albumType !== undefined && !track.series && !tag?.trackTotal) {
                 missing.push('total track count');
             }
-            if (folder.albumType !== undefined && enums_1.AlbumTypesArtistMusic.includes(folder.albumType) && !(tag === null || tag === void 0 ? void 0 : tag.year)) {
+            if (folder.albumType !== undefined && enums_1.AlbumTypesArtistMusic.includes(folder.albumType) && !tag?.year) {
                 missing.push('year');
             }
             if (missing.length > 0) {
@@ -143,8 +143,7 @@ const trackRules = [
         name: 'MP3 has unaccounted data',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
-            var _a;
-            if ((_a = tagCache.mp3Warnings) === null || _a === void 0 ? void 0 : _a.mpeg) {
+            if (tagCache.mp3Warnings?.mpeg) {
                 const warnings = tagCache.mp3Warnings.mpeg.filter(m => analyzeErrors.mpeg.includes(m.msg));
                 if (warnings.length > 0) {
                     return {
@@ -162,8 +161,7 @@ const trackRules = [
         name: 'VBR Header is missing',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
-            var _a;
-            if ((_a = tagCache.mp3Warnings) === null || _a === void 0 ? void 0 : _a.xing) {
+            if (tagCache.mp3Warnings?.xing) {
                 const warning = tagCache.mp3Warnings.xing.find(m => {
                     return analyzeErrors.xingMissing.includes(m.msg);
                 });
@@ -179,8 +177,7 @@ const trackRules = [
         name: 'VBR Header is invalid',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
-            var _a;
-            if ((_a = tagCache.mp3Warnings) === null || _a === void 0 ? void 0 : _a.xing) {
+            if (tagCache.mp3Warnings?.xing) {
                 const warnings = tagCache.mp3Warnings.xing.filter(m => analyzeErrors.xing.includes(m.msg));
                 if (warnings.length > 0) {
                     return {

@@ -12,7 +12,7 @@ class BookmarkRepository extends base_repository_1.BaseRepository {
     }
     buildOrder(order) {
         const direction = base_1.OrderHelper.direction(order);
-        switch (order === null || order === void 0 ? void 0 : order.orderBy) {
+        switch (order?.orderBy) {
             case enums_1.BookmarkOrderFields.created:
                 return [['createdAt', direction]];
             case enums_1.BookmarkOrderFields.updated:
@@ -38,9 +38,9 @@ class BookmarkRepository extends base_repository_1.BaseRepository {
                 { episode: orm_1.QHelper.inOrEqual(filter.episodeIDs) },
                 { createdAt: orm_1.QHelper.gte(filter.since) },
                 { user: orm_1.QHelper.inOrEqual(filter.userIDs) },
-                { user: (user === null || user === void 0 ? void 0 : user.roleAdmin) ? undefined : user === null || user === void 0 ? void 0 : user.id }
+                { user: user?.roleAdmin ? undefined : user?.id }
             ]
-            : [{ user: (user === null || user === void 0 ? void 0 : user.roleAdmin) ? undefined : user === null || user === void 0 ? void 0 : user.id }]);
+            : [{ user: user?.roleAdmin ? undefined : user?.id }]);
     }
 }
 exports.BookmarkRepository = BookmarkRepository;

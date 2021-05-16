@@ -53,7 +53,7 @@ function buildTSField(field, metadata, sl, withDefault = false) {
         }
         else {
             const fObjectType = metadata.resultType(fType);
-            fieldType = (fObjectType === null || fObjectType === void 0 ? void 0 : fObjectType.name) || 'any';
+            fieldType = fObjectType?.name || 'any';
         }
     }
     if (typeOptions.array) {
@@ -104,9 +104,8 @@ function buildTSResultTypes() {
 }
 exports.buildTSResultTypes = buildTSResultTypes;
 function getCombinedType(call) {
-    var _a;
     if (call.params.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
-        const combineName = ((_a = call.controllerClassMetadata) === null || _a === void 0 ? void 0 : _a.name.replace('Controller', '')) +
+        const combineName = call.controllerClassMetadata?.name.replace('Controller', '') +
             call.methodName[0].toUpperCase() + call.methodName.slice(1) + 'Args';
         const names = [];
         call.params.forEach(p => {

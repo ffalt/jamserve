@@ -14,7 +14,7 @@ let UserTransformService = class UserTransformService {
             id: o.id,
             name: o.name,
             created: o.createdAt.valueOf(),
-            email: ((currentUser === null || currentUser === void 0 ? void 0 : currentUser.id) === o.id || (currentUser === null || currentUser === void 0 ? void 0 : currentUser.roleAdmin)) ? o.email : undefined,
+            email: (currentUser?.id === o.id || currentUser?.roleAdmin) ? o.email : undefined,
             roles: {
                 admin: o.roleAdmin,
                 podcast: o.rolePodcast,

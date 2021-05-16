@@ -12,7 +12,7 @@ class SessionRepository extends base_repository_1.BaseRepository {
     }
     buildOrder(order) {
         const direction = base_1.OrderHelper.direction(order);
-        switch (order === null || order === void 0 ? void 0 : order.orderBy) {
+        switch (order?.orderBy) {
             case enums_1.SessionOrderFields.expires:
             case enums_1.SessionOrderFields.default:
                 return [['expires', direction]];
@@ -29,7 +29,7 @@ class SessionRepository extends base_repository_1.BaseRepository {
             { expires: orm_1.QHelper.lte(filter.expiresTo) },
             { expires: orm_1.QHelper.gte(filter.expiresFrom) },
             { user: orm_1.QHelper.inOrEqual(filter.userIDs) },
-            { user: user === null || user === void 0 ? void 0 : user.id }
+            { user: user?.id }
         ]) : {};
     }
     async byUserID(userID) {

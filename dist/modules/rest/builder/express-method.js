@@ -38,9 +38,8 @@ class ExpressMethod {
         return args;
     }
     async callMethod(method, context, name) {
-        var _a;
         try {
-            const Controller = (_a = method.controllerClassMetadata) === null || _a === void 0 ? void 0 : _a.target;
+            const Controller = method.controllerClassMetadata?.target;
             if (!Controller) {
                 throw express_error_1.GenericError(`Internal: Invalid controller in method ${method.methodName}`);
             }

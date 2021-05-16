@@ -17,8 +17,8 @@ let SessionTransformService = class SessionTransformService {
             client: o.client,
             expires: o.expires ? o.expires.valueOf() : undefined,
             mode: o.mode,
-            platform: ua === null || ua === void 0 ? void 0 : ua.platform,
-            os: ua === null || ua === void 0 ? void 0 : ua.os,
+            platform: ua?.platform,
+            os: ua?.os,
             agent: o.agent
         };
     }
