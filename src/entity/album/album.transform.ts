@@ -48,14 +48,14 @@ export class AlbumTransformService extends BaseTransformService {
 
 	async albumIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMAlbum>>): Promise<AlbumIndex> {
 		return this.index(result, async (item) => {
-			const artist = await item.artist.getOrFail();
-			return {
-				id: item.id,
-				name: item.name,
-				artist: artist.name,
-				artistID: artist.id,
-				trackCount: await item.tracks.count()
-			};
+				const artist = await item.artist.get();
+				return {
+					id: item.id,
+					name: item.name,
+					artist: artist?.name || '[INVALID ARTIST]',
+					artistID: artist?.id || (await item.artist.id()) || 'INVALID_ARTIST_ID',
+					trackCount: await item.tracks.count()
+				};
 		});
 	}
 
