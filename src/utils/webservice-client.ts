@@ -35,7 +35,7 @@ export class WebserviceClient {
 		});
 	}
 
-	protected async getJson<T>(url: string, parameters?: any | undefined): Promise<T> {
+	protected async getJson<T>(url: string, parameters?: any | undefined, ignoreStatus?: boolean): Promise<T> {
 		this.checkDisabled();
 		await this.limit();
 		const params = parameters ? `?${new URLSearchParams(parameters)}` : '';
@@ -43,7 +43,7 @@ export class WebserviceClient {
 			headers: {'User-Agent': this.userAgent},
 			timeout: 20000
 		});
-		if (response.status !== 200) {
+		if (!ignoreStatus && response.status !== 200) {
 			return Promise.reject(new Error('Invalid Result'));
 		}
 		const result = await this.parseResult<T>(response);

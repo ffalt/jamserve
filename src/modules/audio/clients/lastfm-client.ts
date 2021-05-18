@@ -2,6 +2,7 @@ import {logger} from '../../../utils/logger';
 import {WebserviceClient} from '../../../utils/webservice-client';
 import {LastFM} from './lastfm-rest-data';
 import {LastFMClientApiOptions} from './lastfm-client.interface';
+import {Response} from 'node-fetch';
 
 const log = logger('LastFM');
 
@@ -86,6 +87,17 @@ export class LastFMClient extends WebserviceClient {
 		this.options = options;
 	}
 
+	protected async parseResult<T>(response: Response): Promise<T | undefined> {
+		if (response.status === 404) {
+			return {} as T;
+		}
+		try {
+			return response.json();
+		} catch (err) {
+			return Promise.reject(err);
+		}
+	}
+
 	private async get(api: string, params: { [name: string]: string }): Promise<LastFM.Result> {
 		log.info('requesting', api, JSON.stringify(params));
 		params.method = api;
@@ -96,7 +108,10 @@ export class LastFMClient extends WebserviceClient {
 		sortedParams.api_key = this.options.key;
 		sortedParams.format = 'json';
 		try {
-			const data = await this.getJson('https://ws.audioscrobbler.com/2.0/', sortedParams);
+			const data = await this.getJson<any>('https://ws.audioscrobbler.com/2.0/', sortedParams, true);
+			if (data?.error) {
+				return {};
+			}
 			return LastFMClientBeautify.beautify(data) as LastFM.Result;
 		} catch (e) {
 			log.error(e);
