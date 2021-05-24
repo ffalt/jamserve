@@ -91,7 +91,7 @@
     "@mapbox/node-pre-gyp": "1.0.5",
     "@types/archiver": "5.1.0",
     "@types/bcrypt": "5.0.0",
-    "@types/chance": "1.1.1",
+    "@types/chance": "1.1.2",
     "@types/compression": "1.7.0",
     "@types/cookie-parser": "1.4.2",
     "@types/d3-array": "^2.9.0",
