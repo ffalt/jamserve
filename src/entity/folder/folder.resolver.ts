@@ -9,6 +9,7 @@ import {Album, AlbumQL} from '../album/album';
 import {Track, TrackQL} from '../track/track';
 import {Artwork, ArtworkQL} from '../artwork/artwork';
 import {FolderIndexArgs, FoldersArgsQL} from './folder.args';
+import {Genre, GenreQL} from '../genre/genre';
 
 @Resolver(FolderQL)
 export class FolderResolver {
@@ -33,6 +34,11 @@ export class FolderResolver {
 	@FieldResolver(() => [FolderQL])
 	async children(@GQLRoot() folder: Folder): Promise<Array<Folder>> {
 		return folder.children.getItems();
+	}
+
+	@FieldResolver(() => [GenreQL])
+	async genres(@GQLRoot() folder: Folder): Promise<Array<Genre>> {
+		return folder.genres.getItems();
 	}
 
 	@FieldResolver(() => Int)
@@ -103,6 +109,11 @@ export class FolderResolver {
 	@FieldResolver(() => Date)
 	statModified(@GQLRoot() timestamp: number): Date {
 		return new Date(timestamp);
+	}
+
+	@FieldResolver(() => String)
+	title(@GQLRoot() folder: Folder): string {
+		return folder.title || folder.name;
 	}
 
 }
