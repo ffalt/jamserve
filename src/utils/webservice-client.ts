@@ -1,13 +1,13 @@
+import rateLimiter from 'limiter';
 import fetch, {Response} from 'node-fetch';
-import {RateLimiter} from 'limiter';
 
 export class WebserviceClient {
 	enabled = false;
-	private readonly limiter: RateLimiter;
+	private readonly limiter: rateLimiter.RateLimiter;
 	private readonly userAgent: string;
 
 	constructor(requestPerInterval: number, requestIntervalMS: number, userAgent: string) {
-		this.limiter = new RateLimiter({tokensPerInterval: requestPerInterval, interval: requestIntervalMS});
+		this.limiter = new rateLimiter.RateLimiter(requestPerInterval, requestIntervalMS);
 		this.userAgent = userAgent;
 	}
 
@@ -30,7 +30,9 @@ export class WebserviceClient {
 
 	protected async limit(): Promise<void> {
 		const limiter = this.limiter;
-		await limiter.removeTokens(1);
+		return new Promise<void>(resolve => {
+			limiter.removeTokens(1, () => resolve());
+		});
 	}
 
 	protected async getJson<T>(url: string, parameters?: any | undefined, ignoreStatus?: boolean): Promise<T> {
