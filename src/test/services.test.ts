@@ -11,7 +11,7 @@ import {mockNock, mockNockURL} from './mock/mock.nock';
 import {Orm} from '../modules/engine/services/orm.service';
 import {Container, Snapshot} from 'typescript-ioc';
 import {PodcastStatus} from '../types/enums';
-import nock = require('nock');
+import nock from 'nock';
 
 initTest();
 

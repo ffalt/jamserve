@@ -1,4 +1,5 @@
 import {ApolloServer, AuthenticationError} from 'apollo-server-express';
+import {ApolloServerPluginLandingPageDisabled} from 'apollo-server-core';
 import {OrmService} from '../../engine/services/orm.service';
 import {EngineService} from '../../engine/services/engine.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
@@ -157,8 +158,10 @@ export class ApolloMiddleware {
 		const apollo = new ApolloServer({
 			schema: this.schema,
 			debug: true,
-			plugins: [() => apolloLogger],
-			playground: false,
+			plugins: [
+				() => apolloLogger,
+				ApolloServerPluginLandingPageDisabled
+			],
 			introspection: true,
 			formatError: (err): Error => {
 				// if (err.message.startsWith('Database Error: ')) {
@@ -184,6 +187,7 @@ export class ApolloMiddleware {
 				} as any;
 			},
 		});
+		await apollo.start();
 		return apollo.getMiddleware({path: `/`, cors: false});
 	}
 

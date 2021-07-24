@@ -4,13 +4,14 @@ import {Orm} from '../../modules/engine/services/orm.service';
 import {Folder as ORMFolder} from './folder';
 import {IncludesFolderArgs, IncludesFolderChildrenArgs} from './folder.args';
 import {User} from '../user/user';
-import {FolderBase, FolderIndex, FolderParent, FolderTag} from './folder.model';
+import {FolderIndex} from './folder.model';
 import {DBObjectType, FolderType} from '../../types/enums';
 import {MetaDataService} from '../metadata/metadata.service';
 import {IndexResult, IndexResultGroup} from '../base/base';
 import {GenreTransformService} from '../genre/genre.transform';
 import {ExtendedInfo} from '../metadata/metadata.model';
 import {GenreBase} from '../genre/genre.model';
+import {FolderBase, FolderParent, FolderTag} from './folder-base.model';
 
 @InRequestScope
 export class FolderTransformService extends BaseTransformService {

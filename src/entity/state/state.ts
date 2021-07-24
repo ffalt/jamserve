@@ -29,7 +29,7 @@ export class State extends Base {
 	@Property(() => ORM_DATETIME, {nullable: true})
 	lastPlayed?: Date;
 
-	@ManyToOne<User>(() => User, user => user.states)
+	@ManyToOne<User>(() => 'User', user => user.states)
 	user: Reference<User> = new Reference<User>(this);
 }
 

@@ -1,7 +1,8 @@
 import {State} from './state';
 import {DBObjectType} from '../../types/enums';
 import {User} from '../user/user';
-import {EntityManager, EntityRepository, Op} from '../../modules/orm';
+import seq from 'sequelize';
+import {EntityManager, EntityRepository} from '../../modules/orm';
 
 // This is not a service, to avoid circular usage orm => orm.baseRepository => stateServide => orm
 export class StateHelper {
@@ -60,7 +61,7 @@ export class StateHelper {
 
 	async getHighestRatedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateRepo.find({
-			where: {user: userID, destType, rated: {[Op.gte]: 1}},
+			where: {user: userID, destType, rated: {[seq.Op.gte]: 1}},
 			order: [['rated', 'DESC']]
 		});
 		return states.map(a => a.destID);
@@ -68,7 +69,7 @@ export class StateHelper {
 
 	async getAvgHighestDestIDs(destType: DBObjectType): Promise<Array<string>> {
 		// TODO: calc avg in db
-		const states = await this.stateRepo.find({where: {destType, rated: {[Op.gte]: 1}}});
+		const states = await this.stateRepo.find({where: {destType, rated: {[seq.Op.gte]: 1}}});
 		const ratings: { [id: string]: Array<number> } = {};
 		states.forEach(state => {
 			if (state.rated !== undefined) {
@@ -87,7 +88,7 @@ export class StateHelper {
 
 	async getFrequentlyPlayedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateRepo.find({
-			where: {user: userID, destType, played: {[Op.gte]: 1}},
+			where: {user: userID, destType, played: {[seq.Op.gte]: 1}},
 			order: [
 				['played', 'DESC'],
 				['lastPlayed', 'DESC']
@@ -98,7 +99,7 @@ export class StateHelper {
 
 	async getFavedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateRepo.find({
-			where: {user: userID, destType, faved: {[Op.ne]: null}},
+			where: {user: userID, destType, faved: {[seq.Op.ne]: null}},
 			order: [['faved', 'DESC']]
 		});
 		return states.map(a => a.destID);
@@ -106,7 +107,7 @@ export class StateHelper {
 
 	async getRecentlyPlayedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateRepo.find({
-			where: {user: userID, destType, played: {[Op.gte]: 1}},
+			where: {user: userID, destType, played: {[seq.Op.gte]: 1}},
 			order: [['lastPlayed', 'DESC']]
 		});
 		return states.map(a => a.destID);

@@ -1,4 +1,4 @@
-import nock = require('nock');
+import nock from 'nock';
 import {Server} from '../modules/server/server';
 import tmp from 'tmp';
 import yauzl, {Entry, ZipFile} from 'yauzl';

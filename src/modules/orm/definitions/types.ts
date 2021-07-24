@@ -5,8 +5,8 @@ export const bannedTypes: Function[] = [Promise, Array, Object, Function];
 export type RecursiveArray<TValue> = Array<RecursiveArray<TValue> | TValue>;
 
 export declare type TypeValue = ClassType | Function | object | symbol;
-export declare type TypeValueThunk = (type?: void) => TypeValue;
-export declare type ReturnTypeFuncValue = TypeValue | RecursiveArray<TypeValue> | undefined;
+export declare type TypeValueThunk = (type?: void) => TypeValue | string;
+export declare type ReturnTypeFuncValue = TypeValue | RecursiveArray<TypeValue> | string | undefined;
 export declare type ReturnTypeFunc = (returns?: void) => ReturnTypeFuncValue;
 
 export interface DecoratorTypeOptions {

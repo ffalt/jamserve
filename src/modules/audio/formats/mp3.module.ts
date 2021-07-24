@@ -4,16 +4,19 @@ import {logger} from '../../../utils/logger';
 import {FORMAT} from '../audio.format';
 import {AudioScanResult} from '../audio.module';
 import {id3v2ToRawTag, rawTagToID3v2} from '../metadata';
-import path from 'path';
+import path, {dirname} from 'path';
 import {TagFormatType} from '../../../types/enums';
 import {RawTag} from '../rawTag';
 import {analyzeMP3} from '../tasks/task-analyze-mp3';
 import {rewriteAudio} from '../tasks/task-rewrite-mp3';
 import {fixMP3} from '../tasks/task-fix-mp3';
 import {removeID3v1} from '../tasks/task-remove-id3v1';
+import {fileURLToPath} from 'url';
 
 const USE_TASKS = process.env.JAM_USE_TASKS;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const taskPath = path.join(__dirname, '..', 'tasks');
 export const taskRewriteMp3 = path.join(taskPath, 'task-rewrite-mp3.js');
 export const taskFixMp3 = path.join(taskPath, 'task-fix-mp3.js');

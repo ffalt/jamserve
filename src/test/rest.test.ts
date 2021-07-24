@@ -1,5 +1,5 @@
-import jestOpenAPI = require('jest-openapi');
-import nock = require('nock');
+import jestOpenAPI from 'jest-openapi';
+import nock from 'nock';
 import {Server} from '../modules/server/server';
 import tmp from 'tmp';
 import fse from 'fs-extra';

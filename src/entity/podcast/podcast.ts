@@ -74,7 +74,7 @@ export class PodcastQL extends Podcast {
 	lastCheck!: Date;
 
 	@Field(() => StateQL)
-	state!: State
+	state!: State;
 }
 
 @ObjectType()

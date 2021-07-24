@@ -18,7 +18,7 @@ import {AcousticBrainz} from '../../modules/audio/clients/acousticbrainz-rest-da
 import {Acoustid} from '../../modules/audio/clients/acoustid-rest-data';
 import {CoverArtArchive} from '../../modules/audio/clients/coverartarchive-rest-data';
 import {MusicBrainz} from '../../modules/audio/clients/musicbrainz-rest-data';
-import {Op} from '../../modules/orm';
+import seq from 'sequelize';
 import {ApiBinaryResult, InvalidParamError} from '../../modules/rest';
 import fetch from 'node-fetch';
 
@@ -45,7 +45,7 @@ export class MetaDataService {
 
 	async cleanUp(orm: Orm): Promise<void> {
 		const olderThan = Date.now() - moment.duration(1, 'd').asMilliseconds();
-		const removed = await orm.MetaData.removeByQueryAndFlush({where: {createdAt: {[Op.lt]: new Date(olderThan)}}});
+		const removed = await orm.MetaData.removeByQueryAndFlush({where: {createdAt: {[seq.Op.lt]: new Date(olderThan)}}});
 		if (removed > 0) {
 			log.info(`Removed meta data cache entries: ${removed} `);
 		}

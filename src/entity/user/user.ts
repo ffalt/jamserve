@@ -39,27 +39,25 @@ export class User extends Base {
 	@Property(() => Boolean)
 	rolePodcast!: boolean;
 
-	@OneToMany<Session>(() => Session, session => session.user, {order: [{orderBy: SessionOrderFields.expires}]})
+	@OneToMany<Session>(() => 'Session', session => session.user, {order: [{orderBy: SessionOrderFields.expires}]})
 	sessions: Collection<Session> = new Collection<Session>(this);
 
 	@Field(() => PlayQueueQL, {nullable: true})
-	@OneToOne<PlayQueue>(() => PlayQueue, playQueue => playQueue.user, {nullable: true})
+	@OneToOne<PlayQueue>(() => 'PlayQueue', playQueue => playQueue.user, {nullable: true})
 	playQueue: Reference<PlayQueue> = new Reference<PlayQueue>(this);
 
-	@OneToMany<Bookmark>(() => Bookmark, bookmark => bookmark.user, {order: [{orderBy: BookmarkOrderFields.media}, {orderBy: BookmarkOrderFields.position}]})
+	@OneToMany<Bookmark>(() => 'Bookmark', bookmark => bookmark.user, {order: [{orderBy: BookmarkOrderFields.media}, {orderBy: BookmarkOrderFields.position}]})
 	bookmarks: Collection<Bookmark> = new Collection<Bookmark>(this);
 
-	@OneToMany<Playlist>(() => Playlist, playlist => playlist.user)
+	@OneToMany<Playlist>(() => 'Playlist', playlist => playlist.user)
 	playlists: Collection<Playlist> = new Collection<Playlist>(this);
 
-	@OneToMany<State>(() => State, state => state.user)
+	@OneToMany<State>(() => 'State', state => state.user)
 	states: Collection<State> = new Collection<State>(this);
 }
 
-
 @ObjectType()
 export class UserFavoritesQL {
-
 }
 
 @ObjectType()

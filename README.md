@@ -63,7 +63,7 @@ optional for metadata matching & mp3 repair support
 
 *   run command `npm install` in the root folder of this repository
 *   in folder `config`: 
-    copy file `firststart.config.dist.js` to `firststart.config.js` and 
+    copy file `firststart.config.dist.json` to `firststart.config.json` and 
     add an admin user / add some media folders (can be changed on runtime via the frontend UI)
 *   set environment variables or create an environment variables file `.env`
 
@@ -147,23 +147,23 @@ JAM_DB_PORT=5432
 
 ```
 
-Example **config/firststart.config.js**:
+Example **config/firststart.config.json**:
 
-```javascript
+```json lines
 /*
   Add Admin user and media folders on first start
  */
-module.exports = {
+{
   /*
     Default Admin user
   */
-  adminUser: {
-    name: 'admin',
+  "adminUser": {
+    "name": "admin",
     /*
       Since the default admin password is stored in clear in this file,
       you MUST change it on first login
     */
-    pass: 'your admin password'
+    "pass": "your admin password"
   },
   /*
     Default Media folders
@@ -173,13 +173,13 @@ module.exports = {
     'compilation' -- bunch of compilation folders
     'audiobook' -- bunch of audiobook folders
    */
-  roots: [
-    {name: 'Music', path: 'path/to/music', strategy: 'auto'},
-    {name: 'Compilations', path: 'path/to/compilations', strategy: 'compilation'},
-    {name: 'Soundtracks', path: 'path/to/soundtracks', strategy: 'compilation'},
-    {name: 'Audiobooks', path: 'path/to/audiobooks', strategy: 'audiobook'}
+  "roots": [
+    {"name": "Music", ",path": "path/to/music", strategy: "auto"},
+    {"name": "Compilations", "path": "path/to/compilations", "strategy": "compilation"},
+    {"name": "Soundtracks", "path": "path/to/soundtracks", "strategy": "compilation"},
+    {"name": "Audiobooks", "path": "path/to/audiobooks", "strategy": "audiobook"}
   ]
-};
+}
 ```
 
 ## Commands

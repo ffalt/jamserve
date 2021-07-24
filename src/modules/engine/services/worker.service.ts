@@ -1,4 +1,3 @@
-import {ChangesWorker} from '../worker/changes';
 import {ArtworkWorker} from '../worker/tasks/artwork';
 import {FolderWorker} from '../worker/tasks/folder';
 import {RootWorker} from '../worker/tasks/root';
@@ -11,6 +10,7 @@ import {WorkerCommandsFolder} from './worker/worker.commands.folder';
 import {WorkerCommandsArtwork} from './worker/worker.commands.artwork';
 import {WorkerCommandsRoot} from './worker/worker.commands.root';
 import {WorkerCommandsTrack} from './worker/worker.commands.track';
+import {ChangesWorker} from '../worker/changes-worker';
 
 @InRequestScope
 export class WorkerService {

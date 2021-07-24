@@ -3,7 +3,6 @@ import {buildRestMeta, restRouter, RestOptions} from '../../rest';
 import {UserRole} from '../../../types/enums';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../../utils/logger';
-import {User} from '../../../entity/user/user';
 import {RestControllers} from '../../engine/rest/controllers';
 import {ConfigService} from '../../engine/services/config.service';
 import {registerRestEnums} from '../../engine/rest/enum-registration';

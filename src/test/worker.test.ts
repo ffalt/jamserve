@@ -13,6 +13,7 @@ import {Folder} from '../entity/folder/folder';
 import {mockNock, mockNockURL} from './mock/mock.nock';
 import {Artwork} from '../entity/artwork/artwork';
 import {Container} from 'typescript-ioc';
+import {jest} from '@jest/globals';
 
 import {
 	WorkerRequestCreateArtwork,
@@ -37,7 +38,7 @@ import {initTest} from './init';
 import {expectChanges, validateMockRoot} from './mock/mock.changes';
 import {Orm} from '../modules/engine/services/orm.service';
 import {v4} from 'uuid';
-import nock = require('nock');
+import nock from 'nock';
 
 const UNKNOWN_UUID = v4();
 

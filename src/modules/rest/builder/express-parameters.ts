@@ -173,6 +173,9 @@ export class ExpressParameters {
 			case 'path':
 				return context.req.params;
 			case 'file': {
+				if (!context.req.file) {
+					return {};
+				}
 				const upload: UploadFile = {
 					name: context.req.file.path,
 					size: context.req.file.size,

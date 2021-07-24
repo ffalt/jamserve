@@ -2,7 +2,8 @@ import {DBObjectType, DefaultOrderFields, ListType} from '../../types/enums';
 import {InvalidParamError, NotFoundError} from '../../modules/rest/builder';
 import {IndexResult, IndexResultGroup, OrderHelper, PageResult} from './base';
 import {StateHelper} from '../state/state.helper';
-import {EntityRepository, FindOptions, IDEntity, Op, Order, OrderItem, WhereOptions} from '../../modules/orm';
+import {EntityRepository, FindOptions, IDEntity, Order, OrderItem, WhereOptions} from '../../modules/orm';
+import seq from 'sequelize';
 import {User} from '../user/user';
 import {DefaultOrderArgs, PageArgs} from './base.args';
 import {paginate} from './base.utils';
@@ -306,12 +307,12 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		if (!options.where) {
 			return ids;
 		}
-		let where: WhereOptions<Entity> = {id: {[Op.in]: ids}};
+		let where: WhereOptions<Entity> = {id: {[seq.Op.in]: ids}};
 		if (options.where &&
 			(Object.keys(options.where).length > 0 ||
 				Object.getOwnPropertySymbols(options.where).length > 0)
 		) {
-			where = {[Op.and]: [where, options.where]};
+			where = {[seq.Op.and]: [where, options.where]};
 		}
 		const list = await this.findIDs({...options, where});
 		return list.sort((a, b) => ids.indexOf(a) - ids.indexOf(b));

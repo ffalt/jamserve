@@ -1,5 +1,6 @@
 import {NoExplicitTypeError} from 'type-graphql';
 import {bannedTypes, ReturnTypeFunc, TypeOptions, TypeValue, TypeValueThunk} from '../definitions/types';
+import {getMetadataStorage} from '../metadata';
 
 export type MetadataKey = 'design:type' | 'design:returntype' | 'design:paramtypes';
 
@@ -43,11 +44,16 @@ export function findType({metadataKey, prototype, propertyKey, returnTypeFunc, t
 
 	if (returnTypeFunc) {
 		const getType = (): TypeValueThunk => {
-			if (Array.isArray(returnTypeFunc())) {
-				options.array = true;
-				return (returnTypeFunc() as [TypeValue])[0] as TypeValueThunk;
+			let r = returnTypeFunc();
+			if (typeof r === 'string') {
+				const fStringResolvedObjectType = getMetadataStorage().entities.find(it => it.target.name === r);
+				r = fStringResolvedObjectType!.target;
 			}
-			return returnTypeFunc() as TypeValueThunk;
+			if (Array.isArray(r)) {
+				options.array = true;
+				return (r as [TypeValue])[0] as TypeValueThunk;
+			}
+			return r as TypeValueThunk;
 		};
 		return {
 			getType,

@@ -2,7 +2,7 @@ import {OrmService} from '../../modules/engine/services/orm.service';
 import {Session} from './session';
 import {SessionMode} from '../../types/enums';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {Op} from '../../modules/orm';
+import seq from 'sequelize';
 import {SessionData} from '../../types/express';
 
 export interface SessionNotifyEventObject {
@@ -67,7 +67,7 @@ export class SessionService {
 
 	async clearExpired(): Promise<void> {
 		const orm = this.ormService.fork();
-		await orm.Session.removeByQueryAndFlush({where: {expires: {[Op.lt]: Date.now()}}});
+		await orm.Session.removeByQueryAndFlush({where: {expires: {[seq.Op.lt]: Date.now()}}});
 	}
 
 	async byJwth(jwth: string): Promise<Session | undefined> {

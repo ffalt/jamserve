@@ -6,13 +6,13 @@ import {DBObjectType} from '../../types/enums';
 import {Track} from '../track/track';
 import {Episode} from '../episode/episode';
 import {User} from '../user/user';
-import {Op} from '../../modules/orm';
+import seq from 'sequelize';
 
 @InRequestScope
 export class BookmarkService {
 
 	async create(orm: Orm, destID: string, user: User, position: number, comment: string | undefined): Promise<Bookmark> {
-		let bookmark = await orm.Bookmark.findOne({where: {user: user.id, position: position, [Op.or]: [{episode: {id: destID}}, {track: {id: destID}}]}});
+		let bookmark = await orm.Bookmark.findOne({where: {user: user.id, position: position, [seq.Op.or]: [{episode: {id: destID}}, {track: {id: destID}}]}});
 		if (!bookmark) {
 			const result = await orm.findInStreamTypes(destID);
 			if (!result) {
@@ -37,7 +37,7 @@ export class BookmarkService {
 		await orm.Bookmark.removeByQueryAndFlush({
 			where: {
 				user: userID,
-				[Op.or]: [
+				[seq.Op.or]: [
 					{episode: destID},
 					{track: destID}
 				]

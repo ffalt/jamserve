@@ -1,5 +1,5 @@
 import {EntityCache, EntityManager} from './manager';
-import {DataTypes, Sequelize} from 'sequelize';
+import seq, {Sequelize} from 'sequelize';
 import {getMetadataStorage} from '../metadata';
 import {ORMConfig} from '../definitions/config';
 import {ModelBuilder} from '../builder/schema';
@@ -34,7 +34,7 @@ export class ORM {
 		let table = await queryInterface.describeTable('State');
 		if (table?.played && table.played.type !== 'INTEGER') {
 			await queryInterface.removeColumn('State', 'played');
-			await queryInterface.addColumn('State', 'played', {type: DataTypes.INTEGER, allowNull: true});
+			await queryInterface.addColumn('State', 'played', {type: seq.DataTypes.INTEGER, allowNull: true});
 		}
 		table = await queryInterface.describeTable('Artist');
 		if (table?.genres) {

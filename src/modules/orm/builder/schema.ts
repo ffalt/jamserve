@@ -1,5 +1,5 @@
 import {EntityMetadata} from '../definitions/entity-metadata';
-import {DataTypes, ModelAttributes, Sequelize} from 'sequelize';
+import seq, {ModelAttributes, Sequelize} from 'sequelize';
 import {ModelAttributeColumnOptions, ModelOptions} from 'sequelize/types/lib/model';
 import {PropertyMetadata} from '../definitions/property-metadata';
 import {DataType} from 'sequelize/types/lib/data-types';
@@ -23,38 +23,38 @@ export class ModelBuilder {
 		const allowNull = opts.nullable === true;
 		if (type === ORM_ID && (opts as PrimaryFieldOptions).primaryKey) {
 			return {
-				type: DataTypes.UUID,
-				defaultValue: DataTypes.UUIDV4,
+				type: seq.DataTypes.UUID,
+				defaultValue: seq.DataTypes.UUIDV4,
 				allowNull: false,
 				unique: true,
 				primaryKey: true
 			};
 		}
 		if (type === ORM_ID) {
-			return {type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull};
+			return {type: seq.DataTypes.UUID, defaultValue: seq.DataTypes.UUIDV4, allowNull};
 		}
 		if (type === Boolean) {
-			return {type: DataTypes.BOOLEAN, allowNull};
+			return {type: seq.DataTypes.BOOLEAN, allowNull};
 		}
 		if (type === ORM_INT) {
-			return {type: DataTypes.INTEGER, allowNull};
+			return {type: seq.DataTypes.INTEGER, allowNull};
 		}
 		if (type === ORM_DATETIME || type === Date) {
-			return {type: DataTypes.DATE, allowNull};
+			return {type: seq.DataTypes.DATE, allowNull};
 		}
 		if (type === ORM_FLOAT || type === Number) {
-			return {type: DataTypes.FLOAT, allowNull};
+			return {type: seq.DataTypes.FLOAT, allowNull};
 		}
 		if (type === String) {
 			return {
-				type: DataTypes.TEXT,
+				type: seq.DataTypes.TEXT,
 				allowNull
 			};
 		}
 		const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
 		if (enumInfo) {
 			return {
-				type: DataTypes.TEXT,
+				type: seq.DataTypes.TEXT,
 				allowNull
 			};
 		}
@@ -181,13 +181,13 @@ export class ModelBuilder {
 		}
 		// console.log(destModel.name + ' belongsTo ' + sourceModel.name);
 		sourceModel.hasMany(destModel, {
-			type: DataTypes.UUID,
+			type: seq.DataTypes.UUID,
 			as: sourceField.name + 'ORM',
 			onDelete: o2m.onDelete,
 			foreignKey: destField.name
 		});
 		destModel.belongsTo(sourceModel, {
-			type: DataTypes.UUID,
+			type: seq.DataTypes.UUID,
 			as: destField.name + 'ORM',
 			// onDelete: o2m.onDelete,
 			foreignKey: {

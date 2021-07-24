@@ -4,6 +4,7 @@ import path from 'path';
 import {FirstStartConfig} from '../../../config/firststart.config';
 import {getMaxAge} from '../../../utils/max-age';
 import {Dialect} from 'sequelize';
+import fse from 'fs-extra';
 
 export interface ENVConfigDB {
 	dialect: Dialect;
@@ -74,10 +75,11 @@ export class ConfigService {
 	firstStart?: FirstStartConfig;
 
 	constructor() {
-		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.js');
+		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
 		try {
-			this.firstStart = require(configFirstStartFile);
+			this.firstStart = fse.readJSONSync(configFirstStartFile);
 		} catch (e) {
+			console.error('Error loading first start config', e);
 			this.firstStart = {
 				adminUser: undefined,
 				roots: []
