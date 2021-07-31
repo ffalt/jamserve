@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/ffalt/jamserve/compare/v0.4.13...v0.5.0) (2021-07-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* **esm:** "firststart.config.js" is now a json file
+"firststart.config.json"
+
+### Features
+
+* **images:** enable webp format ([065d035](https://github.com/ffalt/jamserve/commit/065d03524ddaf203cf394d156557714b2c45a525))
+
+
+### Bug Fixes
+
+* **graphql:** add missing resolvers ([cb82cd3](https://github.com/ffalt/jamserve/commit/cb82cd3af1f864606321208e18097869a94e131d))
+* **index:** don't fail album index if missing artist bug strikes ([391c43f](https://github.com/ffalt/jamserve/commit/391c43f21c1099725050613f5bab8fe35d4de343))
+* **lastfm:** lfm started to answer 404 if data not found instead of empty result ([c4f83c5](https://github.com/ffalt/jamserve/commit/c4f83c5ec528dbf1f1035e556b46fb3bec4476d1))
+
+
+### build
+
+* **esm:** use esm, fix circular deps issues ([6f88a37](https://github.com/ffalt/jamserve/commit/6f88a378d53388ca686227e60cb445d2d37e768c))
+
 ### [0.4.13](https://github.com/ffalt/jamserve/compare/v0.4.12...v0.4.13) (2021-05-16)
 
 ### [0.4.12](https://github.com/ffalt/jamserve/compare/v0.4.11...v0.4.12) (2021-04-04)
