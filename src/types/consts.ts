@@ -4,7 +4,7 @@ export const MUSICBRAINZ_VARIOUS_ARTISTS_NAME = 'Various Artists';
 export const cUnknownArtist = '[Unknown Artist]';
 export const cUnknownAlbum = '[Unknown Album]';
 
-export const ApiImageTypes = ['image/jpeg', 'image/png', 'image/tiff'];
+export const ApiImageTypes = ['image/jpeg', 'image/png', 'image/tiff', 'image/webp'];
 export const ApiDownloadTypes = ['application/zip', 'application/tar'];
 export const ApiWaveformTypes = ['image/svg+xml', 'application/json', 'application/binary'];
 export const AudioFormats = ['mp3', 'm4a', 'mp4', 'ogg', 'oga', 'flv', 'flac', 'webma', 'wav'];

@@ -421,7 +421,7 @@ type FolderQL {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  title: String
+  title: String!
   path: String!
   statCreated: DateTime!
   statModified: DateTime!

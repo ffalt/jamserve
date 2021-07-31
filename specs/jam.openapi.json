@@ -12982,6 +12982,12 @@
 									"type": "string",
 									"format": "binary"
 								}
+							},
+							"image/webp": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
 							}
 						}
 					},
@@ -13062,6 +13068,12 @@
 								}
 							},
 							"image/tiff": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/webp": {
 								"schema": {
 									"type": "string",
 									"format": "binary"
@@ -13147,6 +13159,12 @@
 									"type": "string",
 									"format": "binary"
 								}
+							},
+							"image/webp": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
 							}
 						}
 					},
@@ -13214,6 +13232,12 @@
 								}
 							},
 							"image/tiff": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/webp": {
 								"schema": {
 									"type": "string",
 									"format": "binary"
@@ -13800,6 +13824,12 @@
 								}
 							},
 							"image/tiff": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/webp": {
 								"schema": {
 									"type": "string",
 									"format": "binary"
@@ -25465,7 +25495,8 @@
 				"enum": [
 					"png",
 					"jpeg",
-					"tiff"
+					"tiff",
+					"webp"
 				]
 			},
 			"LastFMLookupType": {

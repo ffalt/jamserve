@@ -23,7 +23,8 @@ export const AlbumTypesArtistMusic = [AlbumType.album, AlbumType.live, AlbumType
 export enum ImageFormatType {
 	png = 'png',
 	jpeg = 'jpeg',
-	tiff = 'tiff'
+	tiff = 'tiff',
+	webp = 'webp'
 }
 
 export enum ArtworkImageType {
