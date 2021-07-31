@@ -82,8 +82,14 @@ export class ImageModule {
 		if (!mime) {
 			return Promise.reject('Unknown Image Format Request');
 		}
-		const buffer = await image.getBufferAsync(mime);
-		return {buffer: {buffer, contentType: mime}};
+		if (mime === 'image/webp') {
+			const png_buffer = await image.getBufferAsync('image/png');
+			const buffer = await sharp(png_buffer).webp().toBuffer();
+			return {buffer: {buffer, contentType: mime}};
+		} else {
+			const buffer = await image.getBufferAsync(mime);
+			return {buffer: {buffer, contentType: mime}};
+		}
 	}
 
 	private async getImage(filename: string, size: number | undefined, name: string): Promise<ImageResult> {
