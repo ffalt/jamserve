@@ -29,9 +29,10 @@ async function start(): Promise<void> {
 		author: pack.author,
 		description: pack.description,
 		license: pack.license,
+		type: pack.type,
 		repository: pack.repository,
 		scripts: {
-			start: 'node dist/index.js'
+			start: 'node --experimental-modules --es-module-specifier-resolution=node dist/index.js'
 		},
 		engines: pack.engines,
 		dependencies: pack.dependencies,
