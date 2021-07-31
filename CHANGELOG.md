@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/ffalt/jamserve/compare/v0.5.0...v0.5.1) (2021-07-31)
+
+
+### Bug Fixes
+
+* **image:** placeholder image webp support ([0945bd5](https://github.com/ffalt/jamserve/commit/0945bd5e77a5c0b89a47546e6371c1716bfe1d85))
+
 ## [0.5.0](https://github.com/ffalt/jamserve/compare/v0.4.13...v0.5.0) (2021-07-31)
 
 
